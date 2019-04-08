@@ -70,6 +70,9 @@ Ext.define('HreRem.model.OfertaActivo', {
     	},
     	{
     		name: 'ofertaExpress'
+    	},
+    	{
+    		name: 'gencat'
     	}
 
     ],

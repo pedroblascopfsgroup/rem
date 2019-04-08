@@ -485,8 +485,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		 enableComboRentaAntigua: function(get){
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
-			var situacionActivo = get('activo.situacionComercialCodigo');
-			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.SITUACION_COMERCIAL['ALQUILADO'] == situacionActivo){
+			var situacionActivo = get('patrimonio.estadoAlquiler');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] == situacionActivo){
 				return false;
 			}else{
 				return true;
@@ -513,7 +513,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		filtrarComboMotivosOcultacionVenta: function(get) {
 			var bloqueoCheckOcultar = get('datospublicacionactivo.deshabilitarCheckOcultarVenta');
-
 			if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
 				 this.getData().comboMotivosOcultacionVenta.filter([{
                      filterFn: function(rec){
@@ -522,7 +521,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
                  }]);
 			} else {
 				this.getData().comboMotivosOcultacionVenta.clearFilter();
+				if (this.getView('activosdetalle').lookupReference('chkbxocultarventa') != null)
+					this.getView('activosdetalle').lookupReference('chkbxocultarventa').setDisabled(true);
+				if (this.getView('activosdetalle').lookupReference('comboMotivoOcultacionVenta') != null) 
+					this.getView('activosdetalle').lookupReference('comboMotivoOcultacionVenta').setDisabled(true)
+		
+				
+				
+				
 			}
+		},
+		disabledData: function (){
+
 		},
 
 		filtrarComboMotivosOcultacionAlquiler: function(get) {
@@ -1803,6 +1813,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoAdecuacionesAlquilerByActivo',
 				extraParams: {id: '{activo.id}'}
 			}
+
 		},
 
 		comboSituacionActivo: {

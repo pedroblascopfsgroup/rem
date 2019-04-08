@@ -11,6 +11,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
     bind: {
         store: '{storeCalifiacionNegativa}' // TODO hay que hacerse un store y en ese store apuntar a los model
     },
+    requires: ['HreRem.view.common.CheckBoxModelBase'],
 
     initComponent: function () {
     	
@@ -103,6 +104,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 		         
 		        }
 		    ];
+		
 
 		    me.dockedItems = [
 		        {
@@ -116,12 +118,14 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 		            }
 		        }
 		    ];
+		    
+		    me.selModel = Ext.create('HreRem.view.common.CheckBoxModelBase');
 
 		    me.saveSuccessFn = function() {
 		    	var me = this;
 		    	me.up('informecomercialactivo').funcionRecargar();
 		    	return true;
-		    },
+		    };
 
 		    me.callParent();
    },

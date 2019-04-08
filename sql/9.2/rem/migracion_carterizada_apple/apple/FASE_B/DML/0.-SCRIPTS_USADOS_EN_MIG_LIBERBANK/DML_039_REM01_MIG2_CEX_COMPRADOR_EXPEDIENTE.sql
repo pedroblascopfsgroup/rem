@@ -1,0 +1,211 @@
+--/*
+--#########################################
+--## AUTOR=GUILLERMO LLIDÓ
+--## FECHA_CREACION=20170828
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-1607
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Proceso de migración MIG2_CEX_COMPRADOR_EXPEDIENTE -> CEX_COMPRADOR_EXPEDIENTE
+--##                    
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+TABLE_COUNT_1 NUMBER(10,0) := 0;
+TABLE_COUNT_2 NUMBER(10,0) := 0;
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01'; --REM01
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER'; --REMMASTER
+V_TABLA VARCHAR2(40 CHAR) := 'CEX_COMPRADOR_EXPEDIENTE';
+V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG2_CEX_COMPRADOR_EXPEDIENTE';
+V_TABLA_TMP VARCHAR2(40 CHAR) := 'TMP_MIG2_CEX_COMP_EXP';
+V_SENTENCIA VARCHAR2(32000 CHAR);
+V_AUX NUMBER(16);
+
+BEGIN
+ 
+ -- INICIO CREACIÓN TABLA TMP
+ /*
+ SELECT COUNT(1) INTO TABLE_COUNT_1 FROM ALL_TABLES WHERE TABLE_NAME = ''||V_TABLA_TMP||'' AND OWNER= ''||V_ESQUEMA||'';
+
+	IF TABLE_COUNT_1 > 0 THEN
+
+		DBMS_OUTPUT.PUT_LINE('[INFO] TABLA '||V_ESQUEMA||'.'||V_TABLA_TMP||' YA EXISTENTE. SE PROCEDE A BORRAR Y CREAR DE NUEVO.');
+
+		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA_TMP||'';
+		
+	END IF;
+    
+    V_SENTENCIA := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA_TMP||'
+	(
+		CEX_COD_OFERTA   	    NUMBER(16),         
+		CEX_COD_COMPRADOR       NUMBER(16)
+	)';
+
+  --  DBMS_OUTPUT.PUT_LINE(V_SENTENCIA);
+    
+	EXECUTE IMMEDIATE V_SENTENCIA;	
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA_TMP||' CREADA');  
+
+	IF V_ESQUEMA_MASTER != V_ESQUEMA THEN
+
+	EXECUTE IMMEDIATE 'GRANT ALL ON "'||V_ESQUEMA||'"."'||V_TABLA_TMP||'" TO "'||V_ESQUEMA_MASTER||'" WITH GRANT OPTION';
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] PERMISOS SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_TMP||' OTORGADOS A '||V_ESQUEMA_MASTER||''); 
+
+	END IF;
+	
+ -- FIN CREACIÓN TABLA TMP
+ 
+      --Inicio del proceso de volcado sobre CEX_COMPRADOR_EXPEDIENTE
+      DBMS_OUTPUT.PUT_LINE('[INFO] Se empienza a rellenar la tabla '||V_ESQUEMA||'.'||V_TABLA_TMP||'.');
+      
+     V_SENTENCIA := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TMP||' TMP(
+		   TMP.CEX_COD_OFERTA
+		  ,TMP.CEX_COD_COMPRADOR
+		  
+		)SELECT DISTINCT 
+           MIG2.CEX_COD_OFERTA,
+           MIG2.CEX_COD_COMPRADOR           
+		FROM  '||V_ESQUEMA||'.MIG2_CEX_COMPRADOR_EXPEDIENTE MIG2
+			INNER JOIN '||V_ESQUEMA||'.CLC_CLIENTE_COMERCIAL CLC ON ((CLC.CLC_REM_ID = MIG2.CLC_REM_ID) OR (MIG2.CLC_REM_ID IS NULL AND CLC.CLC_COD_CLIENTE_PRINEX = MIG2.CEX_COD_COMPRADOR ))
+			inner join '||V_ESQUEMA||'.MIG2_COM_COMPRADORES MIG3 ON MIG2.CEX_COD_COMPRADOR = MIG3.COM_COD_COMPRADOR 
+			INNER JOIN '||V_ESQUEMA||'.COM_COMPRADOR COM ON (REPLACE(UPPER(COM.COM_DOCUMENTO),CHR(32),'''')= REPLACE(UPPER(MIG3.COM_DOCUMENTO),CHR(32),'''')) AND COM.BORRADO = 0 
+			INNER JOIN '||V_ESQUEMA||'.COM_COMPRADOR COM ON COM.CLC_ID = CLC.CLC_ID AND COM.BORRADO = 0 
+			INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIG2.CEX_COD_OFERTA AND OFR.BORRADO =0 
+			INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+			LEFT JOIN '||V_ESQUEMA||'.DD_ECV_ESTADOS_CIVILES ECV ON ECV.DD_ECV_CODIGO = MIG2.CEX_COD_ESTADO_CIVIL AND ECV.BORRADO = 0
+			LEFT JOIN '||V_ESQUEMA||'.DD_REM_REGIMENES_MATRIMONIALES REM ON REM.DD_REM_CODIGO = MIG2.CEX_COD_REGIMEN_MATRIMONIAL AND REM.BORRADO = 0
+			LEFT JOIN '||V_ESQUEMA||'.DD_UAC_USOS_ACTIVO UAC ON UAC.DD_UAC_CODIGO = MIG2.CEX_COD_USO_ACTIVO AND UAC.BORRADO = 0
+			LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = MIG2.CEX_COD_TIPO_DOC_RTE AND TDI.BORRADO = 0
+			LEFT JOIN '||V_ESQUEMA||'.DD_EPB_ESTADOS_PBC EPB ON EPB.DD_EPB_CODIGO = MIG2.CEX_IND_PBC AND EPB.BORRADO = 0
+			LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = MIG2.CEX_COD_LOCALIDAD_RTE AND LOC.BORRADO = 0
+			LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA  PRV ON PRV.DD_PRV_CODIGO = MIG2.CEX_COD_PROVINCIA_RTE AND PRV.BORRADO = 0 
+		WHERE  	MIG3.VALIDACION IN  (1,0) 
+        GROUP BY MIG2.CEX_COD_OFERTA,
+                 MIG2.CEX_COD_COMPRADOR'; 
+                   
+    --     DBMS_OUTPUT.PUT_LINE(V_SENTENCIA);
+         
+        EXECUTE IMMEDIATe V_SENTENCIA;
+ */  
+      DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+                            
+        V_SENTENCIA := 'INSERT INTO '||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE CEX(
+															   COM_ID
+															  ,ECO_ID
+															  ,DD_ECV_ID
+															  ,DD_REM_ID
+															  ,CEX_DOCUMENTO_CONYUGE
+															  ,CEX_ANTIGUO_DEUDOR
+															  ,DD_UAC_ID
+															  ,CEX_IMPTE_PROPORCIONAL_OFERTA
+															  ,CEX_IMPTE_FINANCIADO
+															  ,CEX_RESPONSABLE_TRAMITACION
+															  ,CEX_PORCION_COMPRA
+															  ,CEX_TITULAR_RESERVA
+															  ,CEX_TITULAR_CONTRATACION
+															  ,CEX_NOMBRE_RTE
+															  ,CEX_APELLIDOS_RTE
+															  ,DD_TDI_ID_RTE
+															  ,CEX_DOCUMENTO_RTE
+															  ,CEX_TELEFONO1_RTE
+															  ,CEX_TELEFONO2_RTE
+															  ,CEX_EMAIL_RTE
+															  ,CEX_DIRECCION_RTE
+															  ,CEX_CODIGO_POSTAL_RTE
+															  ,VERSION
+															  ,BORRADO
+															  ,CEX_FECHA_PETICION
+															  ,CEX_FECHA_RESOLUCION
+															  ,DD_LOC_ID_RTE
+															  ,DD_PRV_ID_RTE
+															  ,DD_EPB_ID
+														)    
+                            SELECT   DISTINCT
+                                COM.COM_ID                          AS COM_ID,
+                                ECO.ECO_ID                          AS ECO_ID,
+                                ECV.DD_ECV_ID                       AS DD_ECV_ID,
+                                REM.DD_REM_ID                       AS DD_REM_ID,
+                                MIG2.CEX_DOCUMENTO_CONYUGE          AS CEX_DOCUMENTO_CONYUGE,
+                                MIG2.CEX_IND_ANTIGUO_DEUDOR         AS CEX_ANTIGUO_DEUDOR,
+                                UAC.DD_UAC_ID                       AS DD_UAC_ID,
+                                MIG2.CEX_IMPORTE_PROPORCIONAL_OFR   AS CEX_IMPTE_PROPORCIONAL_OFERTA,
+                                MIG2.CEX_IMPORTE_FINANCIADO         AS CEX_IMPTE_FINANCIADO,
+                                MIG2.CEX_RESPONSABLE_TRAMITACION    AS CEX_RESPONSABLE_TRAMITACION,
+                                MIG2.CEX_PORCENTAJE_COMPRA          AS CEX_PORCION_COMPRA,
+                                MIG2.CEX_IND_TITULAR_RESERVA        AS CEX_TITULAR_RESERVA,
+                                MIG2.CEX_IND_TITULAR_CONTRATACION   AS CEX_TITULAR_CONTRATACION,
+                                MIG2.CEX_NOMBRE_REPRESENTANTE       AS CEX_NOMBRE_RTE,
+                                MIG2.CEX_APELLIDOS_REPRESENTANTE    AS CEX_APELLIDOS_RTE,
+                                TDI.DD_TDI_ID                       AS DD_TDI_ID_RTE,
+                                MIG2.CEX_DOCUMENTO_RTE              AS CEX_DOCUMENTO_RTE,
+                                MIG2.CEX_TELEFONO1_RTE              AS CEX_TELEFONO1_RTE,
+                                MIG2.CEX_TELEFONO2_RTE              AS CEX_TELEFONO2_RTE,
+                                MIG2.CEX_EMAIL_RTE                  AS CEX_EMAIL_RTE,
+                                MIG2.CEX_DIRECCION_RTE              AS CEX_DIRECCION_RTE,            
+                                MIG2.CEX_CODIGO_POSTAL_RTE          AS CEX_CODIGO_POSTAL_RTE,
+                                13                                  AS VERSION,
+                                0                                   AS BORRADO,
+                                MIG2.CEX_FECHA_PETICION             AS CEX_FECHA_PETICION,
+                                MIG2.CEX_FECHA_RESOLUCION           AS CEX_FECHA_RESOLUCION,
+                                LOC.DD_LOC_ID                       AS DD_LOC_ID_RTE,
+                                PRV.DD_PRV_ID                       AS DD_PRV_ID_RTE,
+                                EPB.DD_EPB_ID						AS DD_EPB_ID
+                    FROM  '||V_ESQUEMA||'.MIG2_CEX_COMPRADOR_EXPEDIENTE MIG2
+
+                        inner join '||V_ESQUEMA||'.MIG2_COM_COMPRADORES MIG3 ON MIG2.cex_cod_comprador||''@''||MIG2.clc_rem_id = MIG3.COM_COD_COMPRADOR||''@''||MIG3.clc_rem_id 
+                        INNER JOIN '||V_ESQUEMA||'.COM_COMPRADOR COM ON (REPLACE(UPPER(COM.COM_DOCUMENTO),CHR(32),'''')= REPLACE(UPPER(MIG3.COM_DOCUMENTO),CHR(32),'''')) AND COM.BORRADO = 0 
+
+                        INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_NUM_OFERTA = MIG2.CEX_COD_OFERTA AND OFR.BORRADO = 0 
+                        INNER JOIN '||V_ESQUEMA||'.ACT_OFR AFR ON OFR.OFR_ID = AFR.OFR_ID 
+					    INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AFR.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0
+					    INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0 AND CRA.DD_CRA_CODIGO = ''08'' 
+                        INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+                        LEFT JOIN '||V_ESQUEMA||'.DD_ECV_ESTADOS_CIVILES ECV ON ECV.DD_ECV_CODIGO = MIG2.CEX_COD_ESTADO_CIVIL AND ECV.BORRADO = 0
+                        LEFT JOIN '||V_ESQUEMA||'.DD_REM_REGIMENES_MATRIMONIALES REM ON REM.DD_REM_CODIGO = MIG2.CEX_COD_REGIMEN_MATRIMONIAL AND REM.BORRADO = 0
+                        LEFT JOIN '||V_ESQUEMA||'.DD_UAC_USOS_ACTIVO UAC ON UAC.DD_UAC_CODIGO = MIG2.CEX_COD_USO_ACTIVO AND UAC.BORRADO = 0
+                        LEFT JOIN '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID TDI ON TDI.DD_TDI_CODIGO = MIG2.CEX_COD_TIPO_DOC_RTE AND TDI.BORRADO = 0
+                        LEFT JOIN '||V_ESQUEMA||'.DD_EPB_ESTADOS_PBC EPB ON EPB.DD_EPB_CODIGO = MIG2.CEX_IND_PBC AND EPB.BORRADO = 0
+                        LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = MIG2.CEX_COD_LOCALIDAD_RTE AND LOC.BORRADO = 0
+                        LEFT JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA  PRV ON PRV.DD_PRV_CODIGO = MIG2.CEX_COD_PROVINCIA_RTE AND PRV.BORRADO = 0 
+                    WHERE  	MIG3.VALIDACION IN  (1,0) AND (COM.COM_ID,ECO.ECO_ID) NOT IN (SELECT CX.COM_ID,CX.ECO_ID FROM '||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE CX) ';
+		
+      --  DBMS_OUTPUT.PUT_LINE(V_SENTENCIA);
+        
+        EXECUTE IMMEDIATE V_SENTENCIA;
+															
+      --  DBMS_OUTPUT.PUT_LINE('Se inserta el registro '||V_AUX||' para la oferta '||CEX.CEX_OFERTA||' para el expediente '||CEX.CEX_COMPRADOR);
+                  
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+      
+   COMMIT;
+   
+      V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''STATS'','''||V_TABLA||''',''10''); END;';
+      EXECUTE IMMEDIATE V_SENTENCIA;
+      
+EXCEPTION
+      WHEN OTHERS THEN
+            DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+            DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+            DBMS_OUTPUT.put_line(SQLERRM);
+            ROLLBACK;
+            RAISE;
+END;
+
+/
+
+EXIT;

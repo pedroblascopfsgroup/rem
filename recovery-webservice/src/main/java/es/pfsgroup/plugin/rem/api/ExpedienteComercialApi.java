@@ -1120,6 +1120,8 @@ public interface ExpedienteComercialApi {
 
 	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
 
+	DtoExpedienteComercial getExpedienteComercialByOferta(Long numOferta);
+
 	/**
 	 * Metodo que comprueba si el documento Contrato está subido al expediente
 	 *
@@ -1141,12 +1143,22 @@ public interface ExpedienteComercialApi {
 	DtoModificarCompradores vistaCrearComprador(VBusquedaDatosCompradorExpediente vista); //QUA
 
 	boolean checkConOpcionCompra(TareaExterna tareaExterna);
+	
+	public DtoAviso getAvisosExpedienteById(Long id);
 
 	Long getCompradorIdByDocumento(String dniComprador, String codtipoDoc);
 
 	List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
 
 	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);
+	
+	public boolean comprobarExpedienteAnuladoGencat (ExpedienteComercial expediente);
+	
+	public boolean descongelaExpedienteGencat(ExpedienteComercial expediente);
+
+	public boolean comprobarExpedienteBloqueadoGencat(ExpedienteComercial expediente);
+
+	public boolean comprobarExpedientePreBloqueadoGencat(ExpedienteComercial expediente);
 
 	boolean esAgora(TareaExterna tareaExterna);
 
@@ -1159,4 +1171,6 @@ public interface ExpedienteComercialApi {
 	 * Comprobación de los campos de los compradores en una oferta de venta para poder avanzar la tarea.
 	 */
 	boolean checkCamposComprador(TareaExterna tareaExterna);
+
+	boolean checkInquilinos(TareaExterna tareaExterna);
 }

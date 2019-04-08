@@ -61,6 +61,9 @@ Ext.define('HreRem.model.ExpedienteFinanciacion', {
 	    				}
     				}
     			}
+	    },
+	    {
+	    	name: 'entidadFinancieraCodigo'
 	    }
     ],
 

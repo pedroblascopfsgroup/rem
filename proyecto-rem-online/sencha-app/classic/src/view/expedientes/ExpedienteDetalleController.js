@@ -266,6 +266,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var contador = 0;
 				me.saveMultipleRecords(contador, records);
 			}
+
 		} else {
 		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
@@ -396,6 +397,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onClickBotonEditar: function(btn) {
 		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/getIsExpedienteGencat');
+
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {idActivo: me.getViewModel().data.expediente.data.idActivo, idExpediente: me.getViewModel().data.expediente.id},
+		     success: function(response, opts) {
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data == "false"){
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').show();
 		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
@@ -407,7 +417,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 								field.fireEvent('edit');});
 								
 		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
-		
+		    	}else{
+		    		 me.fireEvent("errorToast", HreRem.i18n("msg.no.editable.afectado.gencat"));
+		    	}
+		    },
+		    failure: function (a, operation) {
+		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+		});
+
+
 	},
     
 	onClickBotonGuardar: function(btn) {
@@ -751,20 +770,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
-		var me = this,
-    	disabled = value == 0,
-    	entidadFinanciacion = me.lookupReference('entidadFinanciacion');
+		var me = this;
+    	var disabled = value == 0;
+    	var esBankia = me.getViewModel().get("expediente.esBankia");
+    	
+    	  	
 		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
 		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');
+		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');  
+		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk')
     	
-    	entidadFinanciacion.setDisabled(disabled);
-    	entidadFinanciacion.allowBlank = disabled;
+    	    	
+    	comboEntidadFinancieraCodigo.setDisabled(disabled);
+    	comboEntidadFinancieraCodigo.allowBlank = disabled;
+    	
+    	if(esBankia) {
+    		numExpedienteRiesgo.allowBlank = false;
+    		comboTipoFinanciacion.allowBlank = false;
+    		cncyCapitalConcedidoBnk.allowBlank = false;
+    	}
     	
     	
     	if(disabled) {
-    		entidadFinanciacion.setValue("");
     		numExpedienteRiesgo.setValue("");
     		comboTipoFinanciacion.setValue("");
+    		comboEntidadFinancieraCodigo.setValue("");
     	}
 	},
 	
@@ -970,7 +1000,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			model = Ext.create('HreRem.model.FichaComprador'),
 			idExpediente = window.expediente.get("id"),
 			form = window.down('formBase');
-		
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		
 		form.reset(true);
@@ -1721,7 +1750,49 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
     },
     
-    onChangeComboProvincia: function(combo) {
+	onChangeComboEntidadFinanciera: function(combo, nValue, oValue, eOps) {
+	
+		var me =this;
+		var esBankia = me.getViewModel().get("expediente.esBankia");
+		var valorComboEsBankia = CONST.COMBO_ENTIDAD_FINANCIERA['BANKIA'];			
+		
+		bloqueBankia = me.lookupReference("bloqueBankia");
+		dummyBloqueBankia = me.lookupReference("dummyBloqueBankia");
+		numeroExpedienteRef = me.lookupReference("numeroExpedienteRef");
+		tipoFinanciacionRef = me.lookupReference("tipoFinanciacionRef");
+		fechaInicioFinanciacion = me.lookupReference("fechaInicioFinanciacion"); 
+		fechaFinFinanciacion = me.lookupReference("fechaFinFinanciacion");
+		estadoExpedienteRef = me.lookupReference("estadoExpedienteRef"); 
+		capitalCondedidoRef = me.lookupReference("capitalCondedidoRef");
+		
+		
+		if(!Ext.isEmpty(nValue)) {
+			if (esBankia && nValue == valorComboEsBankia) { 
+				bloqueBankia.setHidden(false);
+				dummyBloqueBankia.setHidden(false);
+				
+				numeroExpedienteRef.setHidden(true);
+				tipoFinanciacionRef.setHidden(true);
+				fechaInicioFinanciacion.setHidden(true);
+				fechaFinFinanciacion.setHidden(true);
+				estadoExpedienteRef.setHidden(true);
+				capitalCondedidoRef.setHidden(true);
+				
+			} else if ((esBankia && nValue != valorComboEsBankia) || (!esBankia && nValue == valorComboEsBankia) || (!esBankia && nValue != valorComboEsBankia)){
+				bloqueBankia.setHidden(true);
+				dummyBloqueBankia.setHidden(true);
+				
+				numeroExpedienteRef.setHidden(false);
+				tipoFinanciacionRef.setHidden(false);
+				fechaInicioFinanciacion.setHidden(false);
+				fechaFinFinanciacion.setHidden(false);
+				estadoExpedienteRef.setHidden(false);
+				capitalCondedidoRef.setHidden(false);
+			}
+    	} 
+	},
+
+	onChangeComboProvincia: function(combo) {
     	var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);   
 
@@ -2400,7 +2471,6 @@ comprobarObligatoriedadRte: function(){
 
 		try{
 			var me = this;
-			
 			var venta = null;
 	    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
 	    		if (me.getViewModel().data.esOfertaVentaFicha == true){
@@ -2409,8 +2479,11 @@ comprobarObligatoriedadRte: function(){
 	    			venta = false;
 	    		}
 	    	}
+	    	
 	    	me.comprobarObligatoriedadRte();
-			campoEstadoCivil = me.lookupReference('estadoCivil'),
+			var comprador = me.getViewModel().get('comprador'),
+			codTipoPersona = me.lookupReference('tipoPersona'),
+	    	campoEstadoCivil = me.lookupReference('estadoCivil'),
 			campoRegEconomico = me.lookupReference('regimenMatrimonial'),
 			campoNumConyuge = me.lookupReference('numRegConyuge'),
 			campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
@@ -2427,14 +2500,14 @@ comprobarObligatoriedadRte: function(){
 			//Si el expediente es de tipo alquiler
 			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "02" || venta == false){
 				// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
-				if(me.lookupReference('tipoPersona').getValue() === "1" ) {
+				if((Ext.isEmpty(codTipoPersona.getValue()) && comprador.get('codTipoPersona') == "1") || codTipoPersona.getValue() === "1") {
 					if(!Ext.isEmpty(campoApellidos)){
 						campoApellidos.setDisabled(false);
 					}
 					if(!Ext.isEmpty(campoEstadoCivil)){
 						campoEstadoCivil.allowBlank = false;
 						//campoEstadoCivil.validate();
-						if(campoEstadoCivil.getValue() === "02") {
+						if((Ext.isEmpty(campoEstadoCivil.getValue()) && comprador.get('codEstadoCivil') === "02") || campoEstadoCivil.getValue() === "02") {
 							// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 							if(!Ext.isEmpty(campoRegEconomico)){
 								campoRegEconomico.allowBlank = false;
@@ -2446,10 +2519,11 @@ comprobarObligatoriedadRte: function(){
 									//campoNumConyuge.validate();
 								}
 								if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
-									if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
+									if((Ext.isEmpty(campoRegEconomico.getValue()) && comprador.get('codigoRegimenMatrimonial') === "01" || comprador.get('codigoRegimenMatrimonial') === "03") 
+											|| campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
 										campoNumConyuge.allowBlank = false;
 										//campoNumConyuge.validate();
-									}else if(campoRegEconomico.getValue() === "02" ){
+									}else if((Ext.isEmpty(campoRegEconomico.getValue()) && comprador.get('codigoRegimenMatrimonial') === "02") || campoRegEconomico.getValue() === "02" ){
 										campoNumConyuge.allowBlank = true;
 									}
 								}
@@ -2497,7 +2571,7 @@ comprobarObligatoriedadRte: function(){
 			} else {
 
 				//Si el tipo de expediente es de tipo venta
-				if(me.lookupReference('tipoPersona').getValue() === "1" ) {
+				if((Ext.isEmpty(codTipoPersona.getValue()) && comprador.get('codTipoPersona') == "1") || codTipoPersona.getValue() === "1") {
 					
 					if(!Ext.isEmpty(campoNombreRte)){
 						campoNombreRte.allowBlank = true;
@@ -2522,13 +2596,13 @@ comprobarObligatoriedadRte: function(){
 					if(!Ext.isEmpty(campoEstadoCivil)){
 						campoEstadoCivil.allowBlank = false;
 						//campoEstadoCivil.validate();
-						if(campoEstadoCivil.getValue() === "02") {
+						if((Ext.isEmpty(campoEstadoCivil.getValue()) && comprador.get('codEstadoCivil') === "02") || campoEstadoCivil.getValue() === "02") {
 							// Si el Estado civil es 'Casado', entonces Reg. economica es obligatorio.
 							if(!Ext.isEmpty(campoRegEconomico)){
 								campoRegEconomico.allowBlank = false;
 								//campoRegEconomico.validate();
 								campoRegEconomico.setDisabled(false);
-								if(campoRegEconomico.getValue() == "01"){
+								if((Ext.isEmpty(campoRegEconomico.getValue()) && comprador.get('codigoRegimenMatrimonial') === "01") || campoRegEconomico.getValue() === "01"){
 									campoTipoConyuge.allowBlank = false;
 									campoNumConyuge.allowBlank = false;
 								}else{
@@ -3842,8 +3916,8 @@ comprobarObligatoriedadRte: function(){
 		    			var data = null;
 
 		                try {
-	                        data = Ext.decode(response.responseText).data;
-	                        activosPropagables = data;
+		                		data = Ext.decode(response.responseText).data;
+		                		activosPropagables = data;
 		                } catch (e){ };
 
 		    			var tabData = me.createTabData(form);
@@ -4198,6 +4272,36 @@ comprobarObligatoriedadRte: function(){
     	window.destroy();
     	me.refrescarActivoExpediente(false);
 	},
+
+
+
+	onClickAbrirExpedienteComercial: function() {
+
+    	var me = this;
+    	var expediente = me.getViewModel().data.expediente;
+    	var numOfertaOrigen = expediente.data.idOfertaAnterior;
+    	var data;
+    	var url =  $AC.getRemoteUrl('expedientecomercial/getExpedienteByIdOferta');
+    	Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {numOferta: numOfertaOrigen},
+		     success: function(response, opts) {
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data){
+		    		me.getView().up('activosmain').fireEvent('abrirDetalleExpedienteOferta', data.data);
+		    	}
+		    	else {
+		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	}
+
+		    },
+
+		     failure: function (a, operation) {
+		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+	 });
+  },
 	
 	esObligatorio: function(){
 		
@@ -4971,4 +5075,5 @@ comprobarFormatoModificar: function() {
 			
 			
 	}
+
 });

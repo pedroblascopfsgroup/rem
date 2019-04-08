@@ -508,6 +508,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}   
     	},
     	
+    	comboEntidadFinanciera: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadFinanciera'}
+			}   
+    	},
+    	
     	comboEntidadesAvalistas: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -876,7 +885,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'generic/getComitesByCartera',
-		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
+		        extraParams: {
+		        	carteraCodigo: '{expediente.entidadPropietariaCodigo}',
+		        	subcarteraCodigo: '{expediente.subcarteraCodigo}'
+		        }
 	    	}	    	
 	    },
 	    
@@ -885,7 +897,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'generic/getComitesByCartera',
-		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
+		        extraParams: {
+		        	carteraCodigo: '{expediente.entidadPropietariaCodigo}',
+		        	subcarteraCodigo: '{expediente.subcarteraCodigo}'
+		        }
 	    	}	    	
 	    },
 

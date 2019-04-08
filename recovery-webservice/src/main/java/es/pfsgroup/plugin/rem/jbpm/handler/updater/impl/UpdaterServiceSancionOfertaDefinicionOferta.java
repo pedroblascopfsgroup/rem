@@ -15,15 +15,21 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -46,6 +52,15 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private GencatApi gencatApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
+	
+	@Autowired
+	private ComunicacionGencatApi comunicacionGencatApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
@@ -58,23 +73,43 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
 		/*
 		 * Si tiene atribuciones guardamos la fecha de aceptación de la tarea
 		 * como fecha de sanción, en caso contrario, la fecha de sanción será la
 		 * de resolución del comité externo.
 		 */
-		if (ofertaApi.checkAtribuciones(tramite.getTrabajo())) {
-			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-			if (!Checks.esNulo(ofertaAceptada)) {
-				ExpedienteComercial expediente = expedienteComercialApi
-						.expedienteComercialPorOferta(ofertaAceptada.getId());
+		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		ExpedienteComercial expediente = expedienteComercialApi
+				.expedienteComercialPorOferta(ofertaAceptada.getId());
+		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(expediente)) {
+			List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
+			for (ActivoOferta activoOferta : listActivosOferta) {
+				ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
+				if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+					Oferta oferta = expediente.getOferta();	
+					OfertaGencat ofertaGencat = null;
+					if (!Checks.esNulo(comunicacionGencat)) {
+						ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
+					}
+					if(!Checks.esNulo(ofertaGencat)) {
+							if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+								gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+							}
+					}else{	
+						gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+					}					
+				}
+			}
+			
+			if (ofertaApi.checkAtribuciones(tramite.getTrabajo())) {
 				expediente.setFechaSancion(new Date());
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.APROBADO);
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
 
+				
 				// Una vez aprobado el expediente, se congelan el resto de
 				// ofertas que no estén rechazadas (aceptadas y pendientes)
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
@@ -88,13 +123,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				// Se comprueba si cada activo tiene KO de admisión o de gestión
 				// y se envía una notificación
 				notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
-
-			}
-		} else {
-			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-			if (!Checks.esNulo(ofertaAceptada)) {
-				ExpedienteComercial expediente = expedienteComercialApi
-						.expedienteComercialPorOferta(ofertaAceptada.getId());
+			} else {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.PTE_SANCION);
 				Filter filtroSinFormalizacion = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -103,23 +132,20 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(expediente.getOferta().getActivoPrincipal().getId());
 				
 				DDEstadosExpedienteComercial estado;
+
 				
 				if(perimetro.getAplicaFormalizar() == 0){
-					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroSinFormalizacion);
+					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroSinFormalizacion);	
 				}else{
 					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				}
 				 
 				expediente.setEstado(estado);
 			}
-		}
-		boolean aplicaSuperior = false;
-		DDComiteSancion comite = null;
-		ExpedienteComercial expediente = null;
-		for (TareaExternaValor valor : valores) {
-			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());			
-			if (!Checks.esNulo(ofertaAceptada)) {
-				expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			
+			boolean aplicaSuperior = false;
+			DDComiteSancion comite = null;
+			for (TareaExternaValor valor : valores) {			
 				if (COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					if (DDSiNo.SI.equals(valor.getValor())) {
 						expediente.setRiesgoReputacional(1);
@@ -158,13 +184,12 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					}
 				}
 			}
-		}
-		if(!Checks.esNulo(expediente) && !aplicaSuperior && !Checks.esNulo(comite)) {
-			expediente.setComiteSuperior(comite);
-			expediente.setComiteSancion(comite);
-		}
-		
 
+			if(!aplicaSuperior && !Checks.esNulo(comite)) {
+				expediente.setComiteSuperior(comite);
+				expediente.setComiteSancion(comite);
+			}
+		}
 	}
 
 	public String[] getCodigoTarea() {

@@ -1,0 +1,26 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;PROPIETARIOS_CABECERA;PRO_CODIGO;NUMBER(16,0);SI;;Identificador único del propietario
+2;PROPIETARIOS_CABECERA;LOCALIDAD_PROPIETARIO;VARCHAR2(20 CHAR);SI;;Localidad del propietario (código según dicc. datos)
+3;PROPIETARIOS_CABECERA;PROVINCIA_PROPIETARIO;VARCHAR2(20 CHAR);SI;;Provincia del propietario (código según dicc. datos)
+4;PROPIETARIOS_CABECERA;TIPO_PERSONA;VARCHAR2(20 CHAR);SI;;Tipo de propietario. (código según dicc. datos)
+5;PROPIETARIOS_CABECERA;PRO_NOMBRE;VARCHAR2(100 CHAR);SI;;Nombre del propietario del activo o denominación social
+6;PROPIETARIOS_CABECERA;PRO_APELLIDO1;VARCHAR2(100 CHAR);SI;;Apellido 1 del propietario del activo.
+7;PROPIETARIOS_CABECERA;PRO_APELLIDO2;VARCHAR2(100 CHAR);SI;;Apellido 2 del propietario del activo.
+8;PROPIETARIOS_CABECERA;TIPO_DOCUMENTO;VARCHAR2(20 CHAR);SI;;Tipo documento . (código según dicc. datos)
+9;PROPIETARIOS_CABECERA;PRO_NIF;VARCHAR2(20 CHAR);SI;;Número de documento identificativo del propietario.
+10;PROPIETARIOS_CABECERA;PRO_DIR;VARCHAR2(250 CHAR);SI;;Dirección del propietario.
+11;PROPIETARIOS_CABECERA;PRO_TELF;VARCHAR2(20 CHAR);SI;;Teléfono del propietario.
+12;PROPIETARIOS_CABECERA;PRO_EMAIL;VARCHAR2(50 CHAR);SI;;Dirección de correo electrónico del propietario.
+13;PROPIETARIOS_CABECERA;PRO_CP;NUMBER(8,0);SI;;Código postal del propietario.
+14;PROPIETARIOS_CABECERA;LOCALIDAD_CONTACTO;VARCHAR2(20 CHAR);SI;;Localidad de la persona de contacto (código según dicc. datos)
+15;PROPIETARIOS_CABECERA;PROVINCIA_CONTACTO;VARCHAR2(20 CHAR);SI;;Provincia de la persona de contacto (código según dicc. datos)
+16;PROPIETARIOS_CABECERA;PRO_CONTACTO_NOM;VARCHAR2(100 CHAR);SI;;Nombre de la persona de contacto.
+17;PROPIETARIOS_CABECERA;PRO_CONTACTO_TELF1;VARCHAR2(20 CHAR);SI;;Teléfono 1 de la persona de contacto.
+18;PROPIETARIOS_CABECERA;PRO_CONTACTO_TELF2;VARCHAR2(20 CHAR);SI;;Teléfono 2 de la persona de contacto.
+19;PROPIETARIOS_CABECERA;PRO_CONTACTO_EMAIL;VARCHAR2(50 CHAR);SI;;Dirección de correo electrónico de la persona de contacto.
+20;PROPIETARIOS_CABECERA;PRO_CONTACTO_DIR;VARCHAR2(250 CHAR);SI;;Dirección de la persona de contacto.
+21;PROPIETARIOS_CABECERA;PRO_CONTACTO_CP;NUMBER(8,0);SI;;Código postal de la persona de contacto.
+22;PROPIETARIOS_CABECERA;PRO_OBSERVACIONES;VARCHAR2(1000 CHAR);SI;;Observaciones referentes al propietario del activo.
+23;PROPIETARIOS_CABECERA;PRO_PAGA_EJECUTANTE;NUMBER(1,0);SI;;Indicador de si el pagador es el ejecutante.
+24;PROPIETARIOS_CABECERA;PRO_COD_CARTERA;VARCHAR2(20 CHAR);SI;;Cartera del propietario
+25;PROPIETARIOS_CABECERA;PRO_SOCIEDAD_PAGADORA;VARCHAR2(200 CHAR);SI;;

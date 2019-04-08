@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',
-    requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
+    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
             'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
             'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController'],
 
@@ -54,7 +54,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             abrirFormulario: 'abrirFormularioAnyadirCarga',
          	onClickRemove: 'onClickRemoveCarga',
          	onClickPropagation :  'onClickPropagation'
-         }
+         },
+         
+         'tituloinformacionregistralactivo calificacionnegativagrid': {
+          	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          }
     },
     
 	cargarTabData: function (form) {
@@ -673,6 +677,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onAgregarGestoresClick: function(btn){
 		
 		var me = this;
+		
+		btn.setDisabled(true);
 
     	var url =  $AC.getRemoteUrl('activo/insertarGestorAdicional');
     	var parametros = btn.up("combogestores").getValues();
@@ -721,11 +727,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonEditar: function(btn) {
 		var me = this;
 
-
 		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]'),
 						function (field, index) 
 							{ 
-								field.fireEvent('edit');});
+								field.fireEvent('edit');
+							});
 								
 		btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]')[0].focus();
 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
@@ -734,13 +740,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
  			me.getViewModel().set("editing", true);
  		}
 
-		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]'),
-		function (field, index) {
-			field.fireEvent('edit');
-		});
  		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').show();
-		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
 	},
 
 	onSaveFormularioCompletoTabComercial: function(btn, form){
@@ -1570,13 +1570,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onClickAbrirExpedienteComercial: function(grid, rowIndex, colIndex) {
-    	
     	var me = this,
     	record = grid.getStore().getAt(rowIndex);
     	me.getView().fireEvent('abrirDetalleExpediente', record);
     	
     },
-    
+
     onEnlaceTrabajoClick: function(grid, rowIndex, colIndex) {
     	
     	var me = this,
@@ -1620,7 +1619,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                     method : 'POST',
 	                     params: {docCliente: docCliente},
 	                     success: function(response, opts) {
-	                    	 if (!Ext.isEmpty(form1)) {
+
+	                    	if (!Ext.isEmpty(form1)) {
 	     						form1.reset();
 	     					}
 	     					if (!Ext.isEmpty(form2)) {
@@ -2837,7 +2837,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
   onClickPropagation : function(btn) {
-	
+	  
 	  var me = this,
 	    idActivo = me.getViewModel().get('activo').id,
 	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
@@ -2886,6 +2886,56 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    }
 	});
   	},
+  	
+  	onClickPropagationCalificacionNegativa : function(grid) {
+  	
+	  var me = this,
+	    idActivo = me.getViewModel().get('activo').id,
+	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
+	    form = grid.up('form');
+	
+	  form.mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {idActivo: idActivo},
+		
+			success: function(response, opts){
+		
+				form.unmask();
+				var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+				var tabPropagableData = null;
+				if(me.getViewModel() != null){
+					if(me.getViewModel().get('activo') != null){
+						if(me.getViewModel().get('activo').data != null){
+							me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
+						}
+					}
+				}
+		
+				var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
+		              return activo.activoId == me.getViewModel().get("activo.id");
+		            }), 1)[0];
+				
+		        // Abrimos la ventana de selección de activos
+			    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
+			          form : null,
+			          activoActual : activo,
+			          activos : activosPropagables,
+			          tabData : grid.getSelection(),
+			          propagableData : null,
+			          targetGrid: grid.targetGrid
+			        }).show();
+		
+		    	me.getView().add(ventanaOpcionesPropagacionCambios);
+			},
+		
+		    failure: function(record, operation) {
+		        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		  	}
+		});
+	},
 
 	onClickBotonCancelarCarga: function(btn) { 
 		var me = this;
@@ -3248,6 +3298,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	      }
 	    } else {
+	    	
 			if(targetGrid=='mediadoractivo') {
 				
 		        var successFn = function(record, operation) {
@@ -3274,7 +3325,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            me.getView().unmask();
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 		        };
-		        me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados), successFn);
+		        me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados, window.tabData), successFn);
 			}
 	    }
 	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -3377,6 +3428,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
   createTabDataHistoricoMediadores : function(list) {
+	
     var me = this, tabData = {};
     tabData.id = me.getViewModel().get("activo.id");
     tabData.models = [];
@@ -3408,19 +3460,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    return tabData;
 	},
 	
-	createTabDataCalificacionesNegativas : function(list) {
+	createTabDataCalificacionesNegativas : function(list, recordsGridArray) {
+		
 		var me = this, tabData = {};
 	    tabData.id = me.getViewModel().get("activo.id");
 	    tabData.models = [];
+	    
+	    var l_idMotivos = [];
+	    
+	    for (var i = 0; i < recordsGridArray.length; i++) {
+	    	l_idMotivos.push(recordsGridArray[i].data.idMotivo);
+	    }
 	    
 	    Ext.Array.each(list, function(record, index) {
 	          var model = {};
 	          model.name = 'calificacionNegativa';
 	          model.type = 'activo';
-	          model.data = {};
+	          model.data = {idsMotivo: l_idMotivos};
 	          model.data.idActivo = record.data.activoId;
 	          tabData.models.push(model);
 	        });
+	    
 	    return tabData;
 	},
 
@@ -3634,7 +3694,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
-
+        
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 		me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
         if(!isDirty && estadoPubAlquilerPublicado) {
@@ -3642,6 +3702,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             checkbox.setReadOnly(readOnly);
             checkbox.setValue(true);
 		}
+        if(!checkbox.getValue()){
+        	checkbox.up('activosdetallemain').lookupReference('textareaMotivoPublicacionAlquiler').reset();
+        }
     },
 
 	onChangeCheckboxPublicarSinPrecioVenta: function(checkbox, isDirty) {
@@ -3803,7 +3866,51 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		 	failure: function(record, operation) {
 		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		    }
-    	});
+		})
+	},
+
+	onClickGuardarComercial: function(btn) {
+        var me = this;
+        var genericSave = false;
+        var form;
+        var idActivo = me.getViewModel().getData().activo.id;
+        var mask;
+        var afterSave;
+
+        var tab = btn.up('tabpanel').getActiveTab();
+
+        if (tab.xtype === "gencatcomercialactivo") {
+            // GUARDAR PESTANYA GENCAT
+        	afterSave = function(btn){
+        		btn.up().up().funcionRecargar();
+        	}
+            form = tab.down('gencatcomercialactivoform').getForm();
+            mask = btn.up().up().down("gencatcomercialactivo");
+            genericSave = true;
+        }
+
+        if(genericSave && form && form.isValid()) {
+
+            mask.mask(HreRem.i18n('msg.mask.loading'))
+
+            form.submit({
+                waitMsg: HreRem.i18n('msg.mask.loading'),
+                params: {
+                    idActivo: idActivo
+                },
+                success: function(fp, o) {
+                    mask.unmask();
+                    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                    afterSave(btn);
+                    me.limpiarBotonesGuardado(btn,tab);
+                },
+                failure: function(fp, o) {
+                    mask.unmask();
+                    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                    me.onClickBotonCancelarComercial(btn);
+                }
+            });
+        }
 
 	},
 
@@ -4031,8 +4138,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 			}
 		} else {
-            scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-        }
+			scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		}
 	},
 
     actualizarGridHistoricoDestinoComercial : function(form) {
@@ -4097,6 +4204,42 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             }
         }
     },
+    
+    onClickBotonCancelarComercial: function(btn) {
+        var me = this;
+        var activeTab = btn.up('tabpanel').getActiveTab();
+
+        if (activeTab.xtype === "gencatcomercialactivo") {
+
+            setTimeout(function(){
+                activeTab.down('gencatcomercialactivoform').getBindRecord().reject();
+            }, 300);
+
+        }
+
+        me.limpiarBotonesGuardado(btn,activeTab);
+    },
+
+    limpiarBotonesGuardado: function(btn, activeTab) {
+    	var me = this;
+
+
+        btn.hide();
+        btn.up('tabbar').down('button[itemId=botonguardar]').hide();
+        btn.up('tabbar').down('button[itemId=botoneditar]').show();
+
+        Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
+                        function (field, index)
+                            {
+                                field.fireEvent('save');
+                                field.fireEvent('update');});
+
+        if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+             me.getViewModel().set("editingFirstLevel", false);
+         } else {
+             me.getViewModel().set("editing", false);
+         }
+    },
 
     onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {
     	var me = this;
@@ -4115,6 +4258,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             conTitulo.setDisabled(false);
             conTitulo.setValue(0);
         }
+
 	},
 
 	enableChkPerimetroAlquiler: function(get){
@@ -4132,7 +4276,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			 return true;
 		 }
 	 },
-
+	 
 	 onChangeCheckPerimetroAlquiler: function(checkbox, newValue, oldValue, eOpts) {
 		 
 		 var me = this;
@@ -4181,7 +4325,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             fechaSubsanacion.setDisabled(true);
         }
     },
-    
+
 	 onEnlaceAbrirOferta: function(button) {
 	    	var me = this;
 	    	var idExpediente = me.getViewModel().get('contrato.idExpediente');

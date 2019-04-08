@@ -1,0 +1,41 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;COM_PROPIETARIOS-CABECERA;CPR_COD_COM_PROP_EXTERNO;VARCHAR2(10 CHAR);SI;;Código identificador único de la comunidad de propietarios en EXTERNO
+2;COM_PROPIETARIOS-CABECERA;CPR_CONSTITUIDA;NUMBER(1,0);SI;;Indicador de si la comunidad de propietarios está constituida o no.
+3;COM_PROPIETARIOS-CABECERA;CPR_NOMBRE;VARCHAR2(100 CHAR);SI;;Nombre de la comunidad de propietarios.
+4;COM_PROPIETARIOS-CABECERA;CPR_NIF;VARCHAR2(20 CHAR);SI;;Documento identificativo de la comunidad de propietarios.
+5;COM_PROPIETARIOS-CABECERA;CPR_DIRECCION;VARCHAR2(250 CHAR);SI;;Dirección de la comunidad de propietarios.
+6;COM_PROPIETARIOS-CABECERA;CPR_NUM_CUENTA;VARCHAR2(50 CHAR);SI;;Número de cuenta completo de la comunidad de propietarios.
+7;COM_PROPIETARIOS-CABECERA;CPR_PRESIDENTE_NOMBRE;VARCHAR2(100 CHAR);SI;;Nombre del presidente de la comunidad de propietarios.
+8;COM_PROPIETARIOS-CABECERA;CPR_PRESIDENTE_TELF;VARCHAR2(20 CHAR);SI;;Número de teléfono del presidente de la comunidad de propietarios.
+9;COM_PROPIETARIOS-CABECERA;CPR_PRESIDENTE_TELF2;VARCHAR2(20 CHAR);NO;;Número de teléfono 2 del presidente de la comunidad de propietarios.
+10;COM_PROPIETARIOS-CABECERA;CPR_PRESIDENTE_EMAIL;VARCHAR2(100 CHAR);SI;;Email del presidente de la comunidad de propietarios.
+11;COM_PROPIETARIOS-CABECERA;CPR_PRESIDENTE_DIR;VARCHAR2(250 CHAR);SI;;Dirección del presidente de la comunidad de propietarios.
+12;COM_PROPIETARIOS-CABECERA;CPR_FECHA_INI;DATE;NO;;Fecha inicio de presidencia de la comunidad de propietarios
+13;COM_PROPIETARIOS-CABECERA;CPR_FECHA_FIN;DATE;NO;;Fecha fin de presidencia de la comunidad de propietarios
+14;COM_PROPIETARIOS-CABECERA;CPR_ADMINISTRADOR_NOMBRE;VARCHAR2(100 CHAR);SI;;Nombre del administrador de la comunidad de propietarios.
+15;COM_PROPIETARIOS-CABECERA;CPR_ADMINISTRADOR_TELF;VARCHAR2(20 CHAR);SI;;Número de teléfono del administrador de la comunidad de propietarios.
+16;COM_PROPIETARIOS-CABECERA;CPR_ADMINISTRADOR_TELF2;VARCHAR2(20 CHAR);NO;;Número de teléfono 2 del administrador de la comunidad de propietarios.
+17;COM_PROPIETARIOS-CABECERA;CPR_ADMINISTRADOR_DIR;VARCHAR2(250 CHAR);SI;;Dirección del administrador de la comunidad de propietarios.
+18;COM_PROPIETARIOS-CABECERA;CPR_ADMINISTRADOR_EMAIL;VARCHAR2(100 CHAR);SI;;Email del administrador de la comunidad de propietarios.
+19;COM_PROPIETARIOS-CABECERA;CPR_IMPORTEMEDIO;NUMBER(16,2);NO;;Importe medio de cuota a aportar a la comunidad de propietarios.
+20;COM_PROPIETARIOS-CABECERA;CPR_ESTATUTOS;NUMBER(1,0);NO;;Indicador de si la comunidad de propietarios dispone o no de la documentación asociada a los estatutos.
+21;COM_PROPIETARIOS-CABECERA;CPR_LIBRO_EDIFICIO;NUMBER(1,0);NO;;Indicador de si la comunidad de propietarios dispone o no de la documentación asociada al libro del edificio.
+22;COM_PROPIETARIOS-CABECERA;CPR_CERTIFICADO_ITE;NUMBER(1,0);NO;;Indicador de si la comunidad de propietarios dispone o no de la documentación asociada al certificado de Inspección Técnica del Edificio.
+23;COM_PROPIETARIOS-CABECERA;CPR_OBSERVACIONES;VARCHAR2(512 CHAR);NO;;Observaciones sobre la comunidad de propietarios.
+24;COM_PROPIETARIOS-CABECERA;CPR_FECHA_COMUNICACION;DATE;NO;;
+25;COM_PROPIETARIOS-CABECERA;CPR_ENVIO_CARTAS;NUMBER(1,0);NO;;
+26;COM_PROPIETARIOS-CABECERA;CPR_NUMERO_CARTAS;NUMBER(1,0);NO;;
+27;COM_PROPIETARIOS-CABECERA;CPR_CONTACTO_TELF;NUMBER(1,0);NO;;
+28;COM_PROPIETARIOS-CABECERA;CPR_VISITA;NUMBER(1,0);NO;;
+29;COM_PROPIETARIOS-CABECERA;CPR_BUROFAX;NUMBER(1,0);NO;;
+30;COM_PROPIETARIOS-CABECERA;CPR_NO_CORRESPONDE;NUMBER(1,0);NO;;No corresponde por tipología
+31;COM_PROPIETARIOS-CABECERA;CPR_CERRADO_SIN_LOCALIZAR;NUMBER(1,0);NO;;Cerrado proceso localización sin resultado positivo
+32;COM_PROPIETARIOS-CABECERA;CPR_ENVIO_CARTA_VENTA;NUMBER(1,0);NO;;Fecha envío carta comunicando venta a comunidad
+33;COM_PROPIETARIOS-CABECERA;CPR_NO_CONSTITUIDA;NUMBER(1,0);NO;;No constituida
+34;COM_PROPIETARIOS-CABECERA;CPR_SOLICITUD_901;DATE;NO;;Fecha solicitud 901
+35;COM_PROPIETARIOS-CABECERA;CPR_CATASTRO;NUMBER(1,0);NO;;Resultado del catastro (S/N)
+36;COM_PROPIETARIOS-CABECERA;CPR_CATASTRO_OBSERVACIONES;VARCHAR2(512 CHAR);NO;;Observaciones del catastro
+37;COM_PROPIETARIOS-CABECERA;CPR_PLUSVALIA_EXENTO;NUMBER(1,0);NO;;Plusvalía venta-exento (S/N)
+38;COM_PROPIETARIOS-CABECERA;CPR_AUTOLIQUIDACION;NUMBER(1,0);NO;;Plusvalía venta-autoliquidación (S/N)
+39;COM_PROPIETARIOS-CABECERA;CPR_F_ESCRITO_AYTO;NUMBER(1,0);NO;;Plusvalía venta-f escrito ayuntamiento (S/N)
+40;COM_PROPIETARIOS-CABECERA;CPR_VENTA_OBSERVACIONES;VARCHAR2(512 CHAR);NO;;Plusvalía venta-observaciones

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 
 
@@ -126,6 +127,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	
 	private Date fechaSubsanacion;
 	private String idMotivo;
+	private List<String> idsMotivo;
 	
 	/*
 
@@ -714,6 +716,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setNoEstaInscrito(Boolean noEstaInscrito) {
 		this.noEstaInscrito = noEstaInscrito;
+	}
+	public List<String> getIdsMotivo() {
+		return idsMotivo;
+	}
+	public void setIdsMotivo(List<String> idsMotivo) {
+		this.idsMotivo = idsMotivo;
 	}
 
 

@@ -1236,6 +1236,7 @@ public class ActivoAdapter {
 		return visitasDetalles;
 
 	}
+	
 
 	public List<DtoActivoCatastro> getListCatastroById(Long id) {
 		Activo activo = activoApi.get(id);
@@ -2146,8 +2147,10 @@ public class ActivoAdapter {
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "idSupervisor", tareaActivo.getSupervisorActivo().getId());
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "nombreUsuarioSupervisor", tareaActivo.getSupervisorActivo().getApellidoNombre());
 				}
-				beanUtilNotNull.copyProperty(dtoListadoTareas, "subtipoTareaCodigoSubtarea",
-						tareaActivo.getSubtipoTarea().getCodigoSubtarea());
+				if (!Checks.esNulo(tareaActivo.getSubtipoTarea())) {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "subtipoTareaCodigoSubtarea",
+							tareaActivo.getSubtipoTarea().getCodigoSubtarea());
+				}
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "codigoTarea",
 						tarea.getTareaProcedimiento().getCodigo());
 
@@ -2329,6 +2332,16 @@ public class ActivoAdapter {
 		}
 
 		return idBpm;
+	}
+	
+	@Transactional(readOnly = false)
+	public Long crearTramiteGencat(Long idActivo) {
+
+		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT);
+		
+		ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+
+		return jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
 	}
 	
 	public void crearRegistroHistorialComercialConCodigoEstado(Activo activo, String codigoEstado){
@@ -2572,6 +2585,12 @@ public class ActivoAdapter {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
 		return dl.getFileItem(id,nombreDocumento);
+	}
+	
+	public FileItem downloadComunicacionGencat(Long id,String nombreDocumento) throws Exception {
+		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+		Downloader dl = downloaderFactoryApi.getDownloader(key);
+		return dl.getFileItemComunicacionGencat(id,nombreDocumento);
 	}
 
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
@@ -3529,6 +3548,8 @@ public class ActivoAdapter {
 			
 			if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
 				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.getIdPersonaHaya()));
+			} else if (!Checks.esNulo(clientes) && !clientes.isEmpty()) {
+				clienteComercial.setIdPersonaHaya(clientes.get(0).getIdPersonaHaya());
 			}
 					
 			clienteComercial = genericDao.save(ClienteComercial.class, clienteComercial);
@@ -3544,9 +3565,11 @@ public class ActivoAdapter {
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
-			if (!Checks.esNulo(dto.getDeDerechoTanteo())) {
-			    oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
+
+			if (!Checks.esNulo(dto.getDerechoTanteo())) {
+			    oferta.setDesdeTanteo(dto.getDerechoTanteo());
 			}
+			
 			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
 			oferta.setActivosOferta(listaActOfr);
 
@@ -3627,7 +3650,7 @@ public class ActivoAdapter {
 				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
 				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 				
-				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
 				}
@@ -4199,6 +4222,20 @@ public class ActivoAdapter {
 		activoTramite.getAuditoria().setBorrado(true);
 		activoTramite.getAuditoria().setUsuarioBorrar(usuarioLogado.getNombre());
 		activoTramite.getAuditoria().setFechaBorrar(new Date());
+		activoTramiteDao.saveOrUpdate(activoTramite);
+	}
+	
+	/**
+	 * @param usuarioLogado
+	 * @param activoTramite
+	 */
+	public void cerrarActivoTramite(Usuario usuarioLogado, ActivoTramite activoTramite) {
+		DDEstadoProcedimiento estadoTramite = (DDEstadoProcedimiento) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProcedimiento.class,
+						DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO);
+		activoTramite.setEstadoTramite(estadoTramite);
+		activoTramite.setFechaFin(new Date());
+		activoTramite.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
+		activoTramite.getAuditoria().setFechaModificar(new Date());
 		activoTramiteDao.saveOrUpdate(activoTramite);
 	}
 

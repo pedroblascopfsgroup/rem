@@ -2556,6 +2556,116 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
+
+	@Override
+	public Boolean esActivoConComunicacionComunicada(Long numActivoHaya) {
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			 resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"') " +
+			 		" AND com.DD_ECG_ID = ( " +
+			 		" SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO = 'COMUNICADO')");
+		}
+
+		return !"0".equals(resultado);
+
+	}
+
+	public Boolean esActivoConComunicacionViva(Long numActivoHaya) {
+
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"') " +
+			 		" AND com.DD_ECG_ID IN ( SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO IN ('CREADO','COMUNICADO'))");
+		}
+
+		return !"0".equals(resultado);
+
+	}
+
+	public Boolean esActivoSinComunicacionViva(Long numActivoHaya) {
+
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"') " +
+			 		" AND com.DD_ECG_ID NOT IN ( SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO IN ('CREADO','COMUNICADO'))");
+		}
+
+		return "0".equals(resultado);
+
+	}
+	
+	public Boolean esActivoConMultiplesComunicacionesVivas(Long numActivoHaya) {
+		
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"') " +
+			 		" AND com.DD_ECG_ID IN ( SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO IN ('CREADO','COMUNICADO'))");
+		}
+
+		return Integer.parseInt(resultado)>1;
+	}
+
+	public Boolean esNIFValido(String nif) {
+
+		return nif == null || nif.matches("^[A-Za-z0-9]{1}[0-9]{7}[A-Za-z]{1}$");
+
+	}
+
+	@Override
+	public boolean esActivoConComunicacionReclamada(Long numActivoHaya) {
+
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_RCG_RECLAMACION_GENCAT rec " +
+						" WHERE REC.CMG_ID = (SELECT CMG_ID FROM ACT_CMG_COMUNICACION_GENCAT com " +
+						" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO " +
+						" WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"')) " +
+						" AND RCG_FECHA_RECLAMACION IS NULL " +
+						" AND RCG_FECHA_AVISO IS NOT NULL");
+		}
+
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean esActivoConComunicacionGenerada(Long numActivoHaya) {
+
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			 resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT cmg " +
+			 		" JOIN   ACT_ADG_ADECUACION_GENCAT adg on cmg.cmg_id = adg.cmg_id" +
+			 		" JOIN ACT_ACTIVO act on act.act_id = cmg.act_id"+
+			 		" WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"' AND adg.BORRADO = 0");
+		}
+
+		return !"0".equals(resultado);
+
+		}
+
+	@Override
+	public boolean esActivoConAdecuacionFinalizada(Long numActivoHaya) {
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			 resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " +
+			 		"FROM ACT_ACTIVO ACT " +
+			 	    "JOIN ACT_CMG_COMUNICACION_GENCAT CMG ON CMG.ACT_ID=ACT.ACT_ID " +
+			 		"JOIN ACT_TRA_TRAMITE TRA ON ACT.ACT_ID=TRA.ACT_ID " +
+			 		"JOIN DD_TPO_TIPO_PROCEDIMIENTO TPO ON TRA.DD_TPO_ID = TPO.DD_TPO_ID AND TPO.DD_TPO_CODIGO= 'T016' "+
+			 		"JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.DD_TPO_ID=TPO.DD_TPO_ID AND TAP.TAP_CODIGO = 'T016_ProcesoAdecuacion' " +
+			 		"JOIN TAC_TAREAS_ACTIVOS TAC ON TRA.TRA_ID = TAC.TRA_ID " +
+			 		"JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAC.TAR_ID = TAR.TAR_ID " +
+			 		"JOIN TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TAR.TAR_ID " +
+			 		"WHERE ACT.ACT_NUM_ACTIVO='"+numActivoHaya+"' AND TAR.TAR_TAREA_FINALIZADA= 1");
+		}
+
+		return !"0".equals(resultado);
+	}
+
+
 	@Override
 	public Boolean isAgrupacionSinActivoPrincipal(String mumAgrupacionRem) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)" 

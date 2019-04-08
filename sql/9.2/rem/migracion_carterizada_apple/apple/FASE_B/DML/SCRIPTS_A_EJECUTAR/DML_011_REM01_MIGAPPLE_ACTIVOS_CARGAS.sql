@@ -1,0 +1,225 @@
+--/*
+--#########################################
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170608
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-2209
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Proceso de migración 'MIG_ACA_CARGAS_ACTIVO' -> 'ACT_CRG_CARGAS', 'BIE_CAR_CARGAS'
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01'; --REM01
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER'; --REMMASTER
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
+V_TABLA VARCHAR2(30 CHAR) := 'BIE_CAR_CARGAS';
+V_TABLA_2 VARCHAR2(30 CHAR) := 'ACT_CRG_CARGAS';
+V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_ACA_CARGAS_ACTIVO';
+V_SENTENCIA VARCHAR2(2000 CHAR);
+
+BEGIN
+  
+  DBMS_OUTPUT.PUT_LINE('[INICIO] Comienza la migración de ACTIVOS CARGAS');
+
+  -------------------------------------------------
+  --INSERCION EN BIE_CAR_CARGAS--
+  -------------------------------------------------
+  DBMS_OUTPUT.PUT_LINE('	[INFO] INSERCION EN BIE_CAR_CARGAS');
+  
+  
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+	  BIE_ID,
+	  BIE_CAR_ID,
+	  DD_TPC_ID,
+	  BIE_CAR_TITULAR,
+	  BIE_CAR_IMPORTE_REGISTRAL,
+	  BIE_CAR_IMPORTE_ECONOMICO,
+	  BIE_CAR_FECHA_PRESENTACION,
+	  BIE_CAR_FECHA_INSCRIPCION,
+	  BIE_CAR_FECHA_CANCELACION,
+	  VERSION,
+	  USUARIOCREAR,
+	  FECHACREAR,
+	  BORRADO,
+	  BIE_CAR_REGISTRAL,
+	  BIE_CAR_ECONOMICA,
+	  DD_SIC_ID,
+	  DD_SIC_ID2
+  )
+  WITH ACTIVOS AS (
+    SELECT 
+		ACT_ID, 
+		BIE_ID, 
+		MIG.ACT_NUMERO_ACTIVO, 
+		MIG.CRG_TITULAR, 
+		MIG.CRG_IMPORTE_REGISTRAL, 
+		MIG.CRG_IMPORTE_ECONOMICO,
+		MIG.CRG_FECHA_INSCRIPCION, 
+		MIG.CRG_FECHA_PRESENTACION, 
+		MIG.CRG_FECHA_CANCELACION,
+		MIG.TIPO_CARGA,
+		MIG.SITUACION_CARGA
+    FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' 	MIG
+    INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO 	ACT  ON MIG.ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
+	WHERE MIG.VALIDACION = 0
+  )
+  SELECT
+	  ACT.BIE_ID                                                        BIE_ID,
+	  '||V_ESQUEMA||'.S_BIE_CAR_CARGAS.NEXTVAL                          BIE_CAR_ID,
+	  (SELECT DD_TPC_ID
+	  FROM '||V_ESQUEMA||'.DD_TPC_TIPO_CARGA
+	  WHERE DD_TPC_DESCRIPCION = ''DESCONOCIDO'')                       DD_TPC_ID,
+	  ACT.CRG_TITULAR													BIE_CAR_TITULAR,
+	  NVL(ACT.CRG_IMPORTE_REGISTRAL, 0)									BIE_CAR_IMPORTE_REGISTRAL,
+	  NVL(ACT.CRG_IMPORTE_ECONOMICO, 0)									BIE_CAR_IMPORTE_ECONOMICO,
+	  ACT.CRG_FECHA_PRESENTACION										BIE_CAR_FECHA_PRESENTACION,
+	  ACT.CRG_FECHA_INSCRIPCION											BIE_CAR_FECHA_INSCRIPCION,
+	  ACT.CRG_FECHA_CANCELACION											BIE_CAR_FECHA_CANCELACION,
+	  0                                                                 VERSION,
+	  '''||V_USUARIO||'''                                               USUARIOCREAR,
+	  SYSDATE                                                           FECHACREAR,
+	  0                                                                 BORRADO,
+	  CASE WHEN ACT.TIPO_CARGA = ''REG'' THEN 1
+	       ELSE 0 END 													BIE_CAR_REGISTRAL,
+	  CASE WHEN ACT.TIPO_CARGA = ''ECO'' THEN 1
+	       ELSE 0 END 													BIE_CAR_ECONOMICA,
+	  CASE WHEN ACT.TIPO_CARGA = ''REG'' THEN  
+			  (
+			  SELECT DD_SIC_ID
+			  FROM '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA
+			  WHERE DD_SIC_CODIGO = ACT.SITUACION_CARGA
+			  )    														
+		   ELSE NULL END 												DD_SIC_ID,
+	  CASE WHEN ACT.TIPO_CARGA = ''ECO'' THEN  
+			  (
+			  SELECT DD_SIC_ID
+			  FROM '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA
+			  WHERE DD_SIC_CODIGO = ACT.SITUACION_CARGA
+			  )    														
+		   ELSE NULL END 												DD_SIC_ID2     
+  FROM ACTIVOS ACT
+  WHERE NOT EXISTS (
+    SELECT 1 
+    FROM '||V_ESQUEMA||'.'||V_TABLA||' BIE_CAR 
+    WHERE BIE_CAR.BIE_ID = (SELECT BIE_ID
+							FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT2
+							WHERE ACT2.ACT_ID = ACT.ACT_ID)
+  )
+  ');
+  
+  DBMS_OUTPUT.PUT_LINE('	[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');  
+  
+ 
+  -------------------------------------------------
+  --INSERCION EN ACT_CRG_CARGAS--
+  -------------------------------------------------
+  DBMS_OUTPUT.PUT_LINE('	[INFO] INSERCION EN ACT_CRG_CARGAS');
+ 
+ 
+  EXECUTE IMMEDIATE ('
+  INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_2||' (
+		CRG_ID,
+		ACT_ID,
+		BIE_CAR_ID,
+		DD_TCA_ID,
+		DD_STC_ID,
+		CRG_DESCRIPCION,
+		CRG_ORDEN,
+		CRG_FECHA_CANCEL_REGISTRAL,
+		VERSION,
+		USUARIOCREAR,
+		FECHACREAR,
+		BORRADO,
+		DD_ODT_ID,
+		CRG_OBSERVACIONES,
+		CRG_CARGAS_PROPIAS
+  )
+  WITH MIG_CARGAS AS (
+		SELECT
+			ACT.ACT_ID,
+			BIE_CAR.BIE_CAR_ID,
+			ACT.BIE_ID,
+			MIG.ACT_NUMERO_ACTIVO,
+			MIG.SITUACION_CARGA,
+			MIG.TIPO_CARGA,
+			MIG.SUBTIPO_CARGA,
+			MIG.CRG_DESCRIPCION,
+			MIG.CRG_ORDEN,
+			MIG.CRG_FECHA_CANCEL_REGISTRAL,			
+			MIG.DD_ODT_ID,
+			MIG.CRG_OBSERVACIONES,
+			MIG.CRG_CARGAS_PROPIAS
+		FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' 	 MIG
+		INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO 	 ACT      ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+		INNER JOIN '||V_ESQUEMA||'.'||V_TABLA||' BIE_CAR  ON BIE_CAR.BIE_ID = ACT.BIE_ID
+		WHERE MIG.VALIDACION = 0
+  )
+  SELECT
+		'||V_ESQUEMA||'.S_ACT_CRG_CARGAS.NEXTVAL 			            	CRG_ID,
+		MIG.ACT_ID                                             				ACT_ID,
+		MIG.BIE_CAR_ID		                                          		BIE_CAR_ID,
+		(SELECT DD_TCA_ID
+		FROM '||V_ESQUEMA||'.DD_TCA_TIPO_CARGA
+		WHERE DD_TCA_CODIGO = MIG.TIPO_CARGA)                   			DD_TCA_ID,
+		(SELECT DD_STC_ID
+		FROM '||V_ESQUEMA||'.DD_STC_SUBTIPO_CARGA
+		WHERE DD_STC_CODIGO = MIG.SUBTIPO_CARGA)                			DD_STC_ID,
+		MIG.CRG_DESCRIPCION								                    CRG_DESCRIPCION,
+		MIG.CRG_ORDEN							                            CRG_ORDEN,
+		MIG.CRG_FECHA_CANCEL_REGISTRAL							            CRG_FECHA_CANCEL_REGISTRAL,
+		0                                                 	    			VERSION,
+		'''||V_USUARIO||'''                                               	USUARIOCREAR,
+		SYSDATE                                               				FECHACREAR,
+		0                                                     				BORRADO,
+		(SELECT DD_ODT_ID
+		FROM '||V_ESQUEMA||'.DD_ODT_ORIGEN_DATO
+		WHERE DD_ODT_CODIGO = MIG.DD_ODT_ID)								DD_ODT_ID,
+		MIG.CRG_OBSERVACIONES												CRG_OBSERVACIONES,
+		MIG.CRG_CARGAS_PROPIAS												CRG_CARGAS_PROPIAS
+  FROM MIG_CARGAS MIG
+  JOIN '||V_ESQUEMA||'.'||V_TABLA||' BIE_CAR ON BIE_CAR.BIE_CAR_ID = MIG.BIE_CAR_ID
+  WHERE NOT EXISTS (
+    SELECT 1 
+    FROM '||V_ESQUEMA||'.'||V_TABLA_2||' CRG 
+    WHERE CRG.ACT_ID = MIG.ACT_ID OR BIE_CAR.BIE_CAR_ID = CRG.BIE_CAR_ID
+  )
+  ');
+
+  DBMS_OUTPUT.PUT_LINE('	[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_2||' cargada. '||SQL%ROWCOUNT||' Filas.');
+  
+  COMMIT;
+  
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''STATS'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''STATS'','''||V_TABLA_2||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+  
+  DBMS_OUTPUT.PUT_LINE('[FIN] Acaba la migración de ACTIVOS CARGAS');
+  
+  
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT;

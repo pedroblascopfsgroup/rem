@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190314
+--## FECHA_CREACION=20190408
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5838
+--## INCIDENCIA_LINK=HREOS-6080
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -22,6 +22,7 @@
 --##    0.10 Se añade filtro codigo postal para Backoffice Inmobiliario
 --##	0.11 Se modifica la vista entera para añadirle el código de la subcartera
 --##	0.12 Se modifica la vista para que no saque registros nulos
+--##	0.13 Se corrige la query de GACT
 --##########################################
 --*/
 

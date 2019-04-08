@@ -197,10 +197,6 @@ pipeline {
 
         stage('Deploy') {
             steps {
-/*                
-                timeout (time:6, unit:'MINUTES') {
-                    deploySpringBatch("iba018@ibd03",22)
-                }*/
                 timeout (time:10, unit:'MINUTES') {
                     deployFrontal("recovecp@iap01", 2228)
                 }

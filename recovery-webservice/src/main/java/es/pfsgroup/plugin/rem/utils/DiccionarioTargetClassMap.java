@@ -103,6 +103,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosOfertas", DDEstadoOferta.class);
 		mapa.put("tiposOfertas", DDTipoOferta.class);
 		mapa.put("tiposTextoOferta", DDTiposTextoOferta.class);
+		mapa.put("estadosVisita", DDEstadosVisita.class);
 		mapa.put("estadosVisitaOferta", DDEstadosVisitaOferta.class);
 		mapa.put("estadosInformeComercial", DDEstadoInformeComercial.class);
 		mapa.put("tiposArras", DDTiposArras.class);
@@ -210,6 +211,13 @@ public class DiccionarioTargetClassMap{
 		mapa.put("calificacionNegativa", DDCalificacionNegativa.class);
 		mapa.put("motivosCalificacionNegativa", DDMotivoCalificacionNegativa.class);
 		mapa.put("tipoTituloActivoTPA", DDTipoTituloActivoTPA.class);
+		mapa.put("sancionGencat", DDSancionGencat.class);
+		mapa.put("estadoComunicacionGencat", DDEstadoComunicacionGencat.class);
+		mapa.put("tipoDocumentoGencat", DDTipoDocumentoGencat.class);
+		mapa.put("tipoNotificacionGencat", DDTipoNotificacionGencat.class);
+		mapa.put("tipoDocumentoComunicacion", DDTipoDocumentoComunicacion.class);
+		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
+		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("clasificacionApple", DDClasificacionApple.class);
 		mapa.put("entidadFinanciera", DDEntidadFinanciera.class);
 		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);

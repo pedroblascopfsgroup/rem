@@ -291,10 +291,10 @@ public class AgrupacionAdapter {
 				.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado).getResults().get(0);
 
 		try {
-
 			BeanUtils.copyProperties(dtoAgrupacion, agrupacion);
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVista.getPublicados());
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroActivos", agrupacionVista.getActivos());
+			
 
 			if (agrupacion.getTipoAgrupacion() != null) {
 
@@ -344,6 +344,8 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorComercialBackOffice",
 								agrupacionTemp.getUsuarioGestorComercialBackOffice().getId());
 					}
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoAgrupacionApi.countActivosAfectoGENCAT(agrupacion));
 
 					if (!Checks.esNulo(agrupacion.getTipoAlquiler())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoAlquilerCodigo", agrupacion.getTipoAlquiler().getCodigo());
@@ -372,6 +374,7 @@ public class AgrupacionAdapter {
 							}
 						}
 					}
+
 				}
 
 				// Si es de tipo 'Asistida'.
@@ -443,6 +446,10 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
 								agrupacionTemp.getProvincia().getCodigo());
 					}
+
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoAgrupacionApi.countActivosAfectoGENCAT(agrupacion));
+
 					if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "idNumActivoPrincipal",
 								agrupacion.getActivoPrincipal().getNumActivo());
@@ -1930,8 +1937,9 @@ public class AgrupacionAdapter {
 
 			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
+
 			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-			activoManager.crearExpediente(oferta, trabajo);
+			activoManager.crearExpediente(oferta, trabajo, null);
 			trabajoApi.createTramiteTrabajo(trabajo);
 		}
 
@@ -2100,7 +2108,6 @@ public class AgrupacionAdapter {
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
-			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
 
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 

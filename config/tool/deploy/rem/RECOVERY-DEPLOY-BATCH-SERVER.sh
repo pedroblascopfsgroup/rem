@@ -30,6 +30,11 @@ if [[ "$1" == "formacion" ]] ; then
 	BASE_DIR=/recovery/map018/batch-server
 fi
 
+BASE_DIR=/recovery/rem/batch-server
+if [[ "$1" == "val06" ]] ; then
+BASE_DIR=/recovery/map023/batch-server
+fi
+
 cp config/$1/config.ini $BASE_DIR/programas/etl/config/
 cd $LOCAL_PATH
 rm -f $BASE_DIR/shells/*.sh

@@ -91,7 +91,6 @@ Ext.define('HreRem.view.comercial.ComercialVisitasController', {
 	onVisitasListDobleClick: function(grid,record,tr,rowIndex) {
     	var me = this,
     	record = grid.getStore().getAt(rowIndex);
-    	
     	Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record}).show();
     	
         	

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Rasul Akhmeddibirov
---## FECHA_CREACION=20190225
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190328
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3350
+--## INCIDENCIA_LINK=HREOS-5997
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -13,8 +13,12 @@
 --##        0.1 Versión inicial
 --##		HREOS-2030: Nuevos filtros en buscador de ofertas.
 --##        HREOS-2236: Nuevos filtros en buscador de ofertas.
+--##		REMVIP-1645: Optimización de la vista.
+--##		HREOS-4912: (20181204 - Alberto Checa) GENCAT - Aviso al crear un expediente comercial
+--##		HREOS-5360: Se cambia la forma de calcular si un activo es afecto GENCAT
 --##		REMVIP-1645 Optimización de la vista.
 --##		REMVIP-3350 Añadir la columna contraoferta al grid.
+--##		HREOS-5997 Correción GENCAT
 --##########################################
 --*/
 
@@ -98,7 +102,12 @@ BEGIN
 				ACT.ACT_NUM_ACTIVO_PRINEX AS NUM_ACTIVO_PRINEX,
 				OFR.OFR_OFERTA_EXPRESS AS OFERTA_EXPRESS,
 				OFR.OFR_NECESITA_FINANCIACION AS NECESITA_FINANCIACION,
-                OFR.OFR_OBSERVACIONES AS OBSERVACIONES
+                OFR.OFR_OBSERVACIONES AS OBSERVACIONES,
+				CASE WHEN (SELECT count(OFR.OFR_ID) FROM OFR_OFERTAS AUX_OFR
+                         	JOIN ACT_OFR ON AUX_OFR.OFR_ID = ACT_OFR.OFR_ID
+                            LEFT JOIN REM01.VI_ACTIVOS_AFECTOS_GENCAT GEN ON GEN.ACT_ID = ACT_OFR.ACT_ID
+                            WHERE AUX_OFR.OFR_ID = OFR.OFR_ID AND GEN.ACT_ID IS NOT NULL) > 0 THEN 1
+        		ELSE 0 END AS GENCAT
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
 		JOIN '|| V_ESQUEMA ||'.V_FIRST_ACTIVO_OFERTA VAO ON VAO.OFR_ID = OFR.OFR_ID
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = VAO.ACT_ID and act.borrado = 0
@@ -157,6 +166,8 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_OFERTAS_ACTIVOS_AGRUPACION.DD_CAP_CODIGO IS ''Código canal prescripción.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_OFERTAS_ACTIVOS_AGRUPACION.FECHAMODIFICAR IS ''Fecha modificación de la oferta.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_OFERTAS_ACTIVOS_AGRUPACION.CARTERA_CODIGO IS ''Cartera de la Oferta.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_OFERTAS_ACTIVOS_AGRUPACION.GENCAT IS ''Activos que pertenecen a GENCAT.''';
+
   
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_OFERTAS_ACTIVOS_AGRUPACION...Creada OK');
   EXCEPTION

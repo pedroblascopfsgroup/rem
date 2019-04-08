@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.activo;
+		package es.pfsgroup.plugin.rem.activo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +15,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -31,6 +32,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -38,13 +40,17 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
@@ -98,9 +104,10 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	private TareaActivoManager tareaActivoManager;
     
     @Autowired
-    private ActivoTareaExternaDao activoTareaExternaDao;
+    private GencatManager gencatManager;
     
-	
+    private ActivoTareaExternaDao activoTareaExternaDao;
+
 	public ActivoTramite get(Long idTramite){
 		return activoTramiteDao.get(idTramite);
 	}
@@ -838,5 +845,100 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		}
 
 		return listaTareaExterna;
+	}
+	
+	@Override
+	public boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo, Long idExpediente){
+		
+		boolean tieneTramiteGENCAT = false;
+		boolean exosteGencatActivo = false;
+		boolean tieneOfertaCreadaPorGencat = false;
+		
+		if(!Checks.esNulo(idActivo)){
+			
+			ComunicacionGencat comunicacionGencat = gencatManager.getComunicacionGencatByIdActivo(idActivo);
+			if (!Checks.esNulo(comunicacionGencat)) {
+				List <ActivoOferta> ofertas = comunicacionGencat.getActivo().getOfertas();
+				for (ActivoOferta activoOferta : ofertas) {
+					Long ofertaId = activoOferta.getOferta();	
+					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", ofertaId),genericDao.createFilter(FilterType.EQUALS,"comunicacion.id", comunicacionGencat.getId()));
+					if((Checks.esNulo(ofertaGencat)) || (!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado())) {
+						tieneOfertaCreadaPorGencat = false;
+					}else {
+						tieneOfertaCreadaPorGencat = true;
+						break;
+					}
+				}
+			}
+			if(!tieneOfertaCreadaPorGencat) {
+			// Comprueba si todos los tramites gencat están cerrados.
+				Activo activo = activoApi.get(idActivo);
+				List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+				if(!Checks.estaVacio(actTraList)){
+					for (ActivoTramite activoTramite : actTraList) {
+						if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
+							if(!Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())
+								|| !Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo())
+							){
+								exosteGencatActivo = false;
+							}else{
+								exosteGencatActivo = true;
+								break;
+							}
+						}
+					}
+					if(exosteGencatActivo) {
+						tieneTramiteGENCAT = true;
+					}else {
+						if(!Checks.esNulo(comunicacionGencat)) {
+							if(DDEstadoComunicacionGencat.COD_CREADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo()) 
+									|| DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())){
+								if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())) {
+									ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"id", idExpediente));
+									if (!Checks.esNulo(expediente)) {
+										OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", expediente.getOferta().getId()));
+										if (!Checks.esNulo(ofertaGencat)) {
+											tieneTramiteGENCAT = true;
+										} else {
+											tieneTramiteGENCAT = false;
+										}
+									}
+								} else {
+									tieneTramiteGENCAT = true;
+								}
+							}else{
+								if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+									tieneTramiteGENCAT = true;
+								// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
+								} else if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+									tieneTramiteGENCAT = false;
+								}	
+							}
+						}			
+					}
+				}
+			}
+		}
+		
+		return tieneTramiteGENCAT;
+	}
+	
+	public boolean tieneTramiteGENCATVigenteByIdActivo(TareaExterna tareaExterna){
+		boolean tramiteGencatActivo = false;
+		boolean tieneTramiteGENCAT = false;
+		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+		List<ActivoOferta> listaActivos = expediente.getOferta().getActivosOferta();
+		if (!Checks.estaVacio(listaActivos)) {
+			for (ActivoOferta activoOferta : listaActivos) {
+				tieneTramiteGENCAT = tieneTramiteGENCATVigenteByIdActivo(activoOferta.getActivoId(), expediente.getId());
+				if (tieneTramiteGENCAT) {
+					tramiteGencatActivo = true;
+				}
+			}
+		}
+		
+		return tramiteGencatActivo;
 	}
 }

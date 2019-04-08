@@ -44,6 +44,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -83,12 +84,14 @@ import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
+import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
@@ -193,6 +196,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private NotificacionAdapter notificacionAdapter;
 
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
 
 	@Autowired
 	private ProveedoresDao proveedoresDao;
@@ -212,7 +220,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private AgendaAdapter adapter;
-	
+
 	@Autowired
 	private GenericAdapter genericAdapter;
 
@@ -221,9 +229,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	ActivoTareaExternaApi activoTareaExternaApi;
-	
-	@Autowired
-	private ExpedienteComercialDao expedienteComercialDao;
 
 	@Autowired
 	private ActivoAdapter activoAdapterApi;
@@ -418,6 +423,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					&& Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
+
 			
 			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
@@ -452,6 +458,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (Checks.esNulo(activo)) {
 						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 						break;
+
 					} else {
 						this.validacionesActivoOfertaLote(errorsList, activo);
 						
@@ -998,7 +1005,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
 
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-				activoApi.crearExpediente(oferta, trabajo);
+				activoApi.crearExpediente(oferta, trabajo, null);
 				ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(trabajo);
 
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
@@ -1194,6 +1201,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public void descongelarOfertas(ExpedienteComercial expediente) throws Exception {
 		DDEstadoOferta estado = null;
 		Filter filtro = null;
+		boolean descongelar = false;
 
 		if (Checks.esNulo(expediente)) {
 			throw new Exception("Parámetros incorrectos. El expediente es nulo.");
@@ -1202,12 +1210,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Descongela el resto de ofertas del activo
 			List<Oferta> listaOfertas = this.trabajoToOfertas(expediente.getTrabajo());
 			if (!Checks.esNulo(listaOfertas)) {
-
 				for (Oferta oferta : listaOfertas) {
-					if ((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))) {
-
-						ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
-
+					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
+					descongelar = expedienteComercialApi.descongelaExpedienteGencat(exp);
+					if ((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) && descongelar) {
 						// HREOS-1937 - Si tiene expediente poner oferta
 						// ACEPTADA. Si no tiene poner oferta PENDIENTE
 						if (!Checks.esNulo(exp)) {
@@ -1217,25 +1223,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 									DDEstadoOferta.CODIGO_PENDIENTE);
 						}
-
-						estado = genericDao.get(DDEstadoOferta.class, filtro);
-						oferta.setEstadoOferta(estado);
-						updateStateDispComercialActivosByOferta(oferta);
-						genericDao.save(Oferta.class, oferta);
-
-						if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
-							List<ActivoTramite> tramites = activoTramiteApi
-									.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
-							if (!Checks.estaVacio(tramites)) {
-								Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
-								for (TareaActivo tarea : tareasTramite) {
-									// Si se ha borrado sin acabarse, al
-									// descongelar se vuelven a mostrar.
-									if (tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())) {
-										tarea.getAuditoria().setBorrado(false);
+							estado = genericDao.get(DDEstadoOferta.class, filtro);
+							oferta.setEstadoOferta(estado);
+							updateStateDispComercialActivosByOferta(oferta);
+							genericDao.save(Oferta.class, oferta);
+	
+							if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
+								List<ActivoTramite> tramites = activoTramiteApi
+										.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
+								if (!Checks.estaVacio(tramites)) {
+									Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
+									for (TareaActivo tarea : tareasTramite) {
+										// Si se ha borrado sin acabarse, al
+										// descongelar se vuelven a mostrar.
+										if (tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())) {
+											tarea.getAuditoria().setBorrado(false);
+										}
 									}
 								}
-							}
 						}
 					}
 				}
@@ -1626,7 +1631,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			}
 
-			if ((!Checks.esNulo(errorsList) && errorsList.isEmpty()) 
+			if ((!Checks.esNulo(errorsList) && errorsList.isEmpty())
 					|| (!Checks.esNulo(errorsList) && !Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem")))) {
 				if (oferta == null || oferta.getNumOferta() == null) {
 					oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
@@ -2583,7 +2588,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			//Si el honorario es menor de 100 € el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149 + HREOS-5244
-			if(dto.getHonorarios() < 100.00 && !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo()))) {
+			if((dto.getHonorarios() != null && dto.getHonorarios() < 100.00) && !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo()))) {
 				dto.setHonorarios(100.00);
 			}else {
 				dto.setHonorarios(dto.getHonorarios());
@@ -3090,21 +3095,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 			Double importeOferta = this.getImporteOferta(ofertaAceptada);
 			Double importeUmbral = 500000.0;
-			
+
 			// Oferta sobre un solo activo
 			if(Checks.esNulo(agrupacion)) {
-				Activo activo = ofertaAceptada.getActivoPrincipal();											
-				
+				Activo activo = ofertaAceptada.getActivoPrincipal();
+
 				// Si disponemos de un activo, recuperamos los datos a comprobar
 				if(!Checks.esNulo(activo)) {
 					ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo);
 					Double importeTasacion = null;
-					Double precioAprobadoVenta = null;	
+					Double precioAprobadoVenta = null;
 					Double precioMinimoAutorizado = null;
 					Double precioDescuentoPublicado = null;
-					
+
 					importeTasacion = (!Checks.esNulo(tasacion)) ? tasacion.getImporteTasacionFin() : null;
-					List<VPreciosVigentes> precios = activoApi.getPreciosVigentesById(activo.getId());																										
+					List<VPreciosVigentes> precios = activoApi.getPreciosVigentesById(activo.getId());
 					for(VPreciosVigentes p : precios) {
 						if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(p.getCodigoTipoPrecio())) {
 							precioAprobadoVenta = p.getImporte();
@@ -3114,26 +3119,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							precioDescuentoPublicado = p.getImporte();
 						}
 					}
-	
+
 					Filter filterInfLiber = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					ActivoInfoLiberbank activoInfoLiberbank = genericDao.get(ActivoInfoLiberbank.class, filterInfLiber);
-					
+
 					if(!Checks.esNulo(activoInfoLiberbank) && !Checks.esNulo(activoInfoLiberbank.getCategoriaContable())
 							&& DDCategoriaContable.COD_INMOVILIZADO.equals(activoInfoLiberbank.getCategoriaContable().getCodigo())) {
 						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_INVERSION_INMOBILIARIA);
 						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-	
+
 						return comiteSancion;
 					}
-	
+
 					if (!Checks.esNulo(activoInfoLiberbank) && !Checks.esNulo(activoInfoLiberbank.getCodPromocion()) && !Checks.esNulo(activoInfoLiberbank.getCategoriaContable()) &&
 							DDCategoriaContable.COD_INMOVILIZADO.equals(activoInfoLiberbank.getCategoriaContable().getCodigo())){
-	
+
 						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-	
+
 						return comiteSancion;
-	
+
 					}else if(((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral)
 							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))
 					|| ((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral)
@@ -3142,133 +3147,133 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))) {
 						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-						
+
 						return comiteSancion;
-					} else if((((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral) 
-							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta < precioMinimoAutorizado)) 
+					} else if((((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral)
+							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta < precioMinimoAutorizado))
 							|| (!Checks.esNulo(importeTasacion) && importeTasacion >= importeUmbral))
-					|| (((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral) 
+					|| (((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral)
 							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta < precioMinimoAutorizado))
 							|| (!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta >= importeUmbral))) {
-											
+
 						DDTipoActivo tipoActivo = activo.getTipoActivo();
 						DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
-						if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo()) 
-								|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo.getCodigo()) 
+						if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo())
+								|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo.getCodigo())
 								|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo())) {
-							
+
 							Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_RESIDENCIAL);
 							DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-							
+
 							return comiteSancion;
 						} else {
 							Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_SINGULAR_TERCIARIO);
 							DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-							
+
 							return comiteSancion;
-						}					
+						}
 					}
 				}
-			
+
 			// Oferta sobre un lote
 			} else {
 				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 				Double sumaTasaciones = 0.0;
 				Double sumaPrecioActivos = 0.0;
-				
+
 				List<VTasacionCalculoLBK> vista = activoApi.getVistaTasacion(agrupacion.getId());
-	
+
 				for(VTasacionCalculoLBK reg: vista) {
 					Double importeTasacion = reg.getImporteTasacion();
 					Double precioAprobadoVenta = reg.getImportePrecioAprobado();
 					Double precioMinimoAutorizado = reg.getImportePrecioMinimo();
 					Double precioDescuentoPublicado = reg.getImportePrecioDescuento();
 					Double precioMinimoActivo = CompareDoubles(precioAprobadoVenta, precioMinimoAutorizado, precioDescuentoPublicado);
-					
+
 					if(!Checks.esNulo(precioMinimoActivo)) {
 						sumaPrecioActivos += precioMinimoActivo;
 					}
-	
+
 					sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
 				}
-	
+
 				Integer tipoResidencial = 0;
 				Integer tipoSingularTerciario = 0;
-	
+
 				for(ActivoAgrupacionActivo aga : activos) {
 					Activo activo = aga.getActivo();
 					DDTipoActivo tipoActivo = activo.getTipoActivo();
 					DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
-	
+
 					Filter filterInfLiber = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					ActivoInfoLiberbank activoInfoLiberbank = genericDao.get(ActivoInfoLiberbank.class, filterInfLiber);
-	
+
 					if(!Checks.esNulo(activoInfoLiberbank) && !Checks.esNulo(activoInfoLiberbank.getCategoriaContable())
 							&& DDCategoriaContable.COD_INMOVILIZADO.equals(activoInfoLiberbank.getCategoriaContable().getCodigo())) {
 						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_INVERSION_INMOBILIARIA);
 						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-						
+
 						return comiteSancion;
 					}
-	
+
 					if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo())
 							|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo.getCodigo())
 							|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo())) {
-	
+
 						tipoResidencial++;
 					} else {
 						tipoSingularTerciario++;
 					}
 				}
-		
-				if(((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
+
+				if(((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral)
 						&& (!Checks.esNulo(importeOferta) && importeOferta >= sumaPrecioActivos))) {
 					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-					
+
 					return comiteSancion;
-				} else if((((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
-						&& (!Checks.esNulo(importeOferta) && importeOferta <= sumaPrecioActivos)) 
+				} else if((((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral)
+						&& (!Checks.esNulo(importeOferta) && importeOferta <= sumaPrecioActivos))
 						|| (sumaTasaciones >= importeUmbral))) {
-					
+
 					if(tipoResidencial != 0 && tipoSingularTerciario != 0) {
 						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_INVERSION_INMOBILIARIA);
 						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-						
+
 						return comiteSancion;
 					} else if(tipoResidencial > 0) {
 						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_RESIDENCIAL);
 						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-						
+
 						return comiteSancion;
 					} else if(tipoSingularTerciario > 0) {
 						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_SINGULAR_TERCIARIO);
 						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-						
+
 						return comiteSancion;
-					}							
+					}
 				}
-				
+
 			}
-			
+
 			return null;
 
 		}else{
 			return null;
 		}
 	}
-	
+
 	private void validacionesActivoOfertaLote(HashMap<String, String> errorsList, Activo activo) {
 		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
 		List<Oferta> ofertas = this.getListaOfertasByActivo(activo);
 		List<ActivoAgrupacion> agrupaciones = new ArrayList<ActivoAgrupacion>();
 		Boolean loteComercialVivo = false;
-		
+
 		for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
 			agrupaciones.add(activoAgrupacionActivo.getAgrupacion());
 		}
-		
+
 		for (ActivoAgrupacion agr : agrupaciones) {
 			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agr.getTipoAgrupacion().getCodigo())) {
 				for (Oferta oferta : agr.getOfertas()) {
@@ -3280,7 +3285,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}
-		
+
 		if (!Checks.esNulo(activo.getSituacionComercial()) && DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())
 				|| !Checks.esNulo(activo.getSituacionComercial()) && DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE.equals(activo.getSituacionComercial().getCodigo())
 				|| !Checks.esNulo(perimetroActivo) && perimetroActivo.getIncluidoEnPerimetro() == 0
@@ -3374,6 +3379,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return minus;
 	}
+
 
 	@Override
 	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId) {
@@ -3610,6 +3616,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {
 			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
+	}
+
+	@Override
+	public DtoOferta getOfertaOrigenByIdExpediente(Long numExpediente) {
+
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByNumExpediente(numExpediente);
+		Oferta oferta = expediente.getOferta();
+		DtoOferta dtoOferta = new DtoOferta();
+		OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+
+		if(!Checks.esNulo(ofertaGencat) && !Checks.esNulo(ofertaGencat.getIdOfertaAnterior())) {
+		  Oferta ofertaOrigen = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaGencat.getIdOfertaAnterior()));
+		  dtoOferta.setNumOferta(Long.toString(ofertaOrigen.getNumOferta()));
+		}
+
+	    return dtoOferta;
 	}
 	
 	public String getDestinoComercialActivo(Long idActivo, Long idAgrupacion, Long idExpediente) {

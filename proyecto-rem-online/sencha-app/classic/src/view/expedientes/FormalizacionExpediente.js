@@ -282,7 +282,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						reference : 'fechaFinFinanciacion',
 						fieldLabel : HreRem.i18n('fieldlabel.fin.financiacion'),
 						bind : {
-							value : '{financiacion.fechaFinFinanciacion}',
+							value : '{financiacion.fechaFinFinanciacion}'
 						},
 						maxValue : null,
 						listeners : {

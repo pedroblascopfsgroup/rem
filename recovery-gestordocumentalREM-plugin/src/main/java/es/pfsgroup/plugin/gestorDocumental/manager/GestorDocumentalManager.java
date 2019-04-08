@@ -1,7 +1,14 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
@@ -67,6 +75,51 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS = "rest.client.gestor.documental.documentos";
 	private static final String ERROR_SERVER_NOT_RESPONDING="El servidor de gestor documental no responde.";
+	private static final Map<String, String> contents;
+	
+	static {
+		contents = new HashMap<String, String>();
+		contents.put(".csv", "text/csv");
+		contents.put(".doc", "application/msword");
+		contents.put(".htm", "text/html");
+		contents.put(".me", "application/x-troff-me");
+		contents.put(".ppt", "application/vnd.ms-powerpoint");
+		contents.put(".xml", "text/xml");
+		contents.put(".eml", "message/rfc822");
+		contents.put(".zip", "application/x-zip-compressed");
+		contents.put(".gif", "image/gif");
+		contents.put(".pps", "application/vnd.ms-pps");
+		contents.put(".xlsm", "application/vnd.ms-excel.sheet.macroEnabled.12");
+		contents.put(".txt", "text/plain");
+		contents.put(".xlk", "application/octet-stream");
+		contents.put(".css", "text/css");
+		contents.put(".mpt", "application/vnd.ms-project");
+		contents.put(".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		contents.put(".js", "application/javascript");
+		contents.put(".url", "application/x-url");
+		contents.put(".xls", "application/vnd.ms-excel");
+		contents.put(".bmp", "image/bmp");
+		contents.put(".mpp", "application/vnd.ms-project");
+		contents.put(".rar", "application/x-rar-compressed");
+		contents.put(".rtf", "application/rtf");
+		contents.put(".tif", "image/tiff");
+		contents.put(".xlsb", "application/vnd.ms-excel.sheet.binary.macroEnabled.12");
+		contents.put(".odt", "application/vnd.oasis.opendocument.text");
+		contents.put(".pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+		contents.put(".docm", "application/vnd.ms-word.document.macroEnabled.12");
+		contents.put(".html", "text/html");
+		contents.put(".log", "application/octet-stream");
+		contents.put(".jpeg", "image/pjpeg");
+		contents.put(".jpg", "image/jpeg");
+		contents.put(".ods", "application/vnd.oasis.opendocument.spreadsheet");
+		contents.put(".msg", "application/vnd.ms-outlook-template");
+		contents.put(".pdf", "application/pdf");
+		contents.put(".dot", "application/msword");
+		contents.put(".tiff", "image/tiff");
+		contents.put(".exe", "application/x-exe");
+		contents.put(".png", "image/png");
+		contents.put(".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+	}
 	
 	@Override
 	public RespuestaDocumentosExpedientes documentosExpediente(CabeceraPeticionRestClientDto cabecera, DocumentosExpedienteDto docExpDto) throws GestorDocumentalException {
@@ -140,7 +193,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	}
 	
 	@Override
-	public RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login, String nombreDocumento) throws GestorDocumentalException,UserException {
+	public RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login, String nombreDocumento) throws GestorDocumentalException,UserException, IOException {
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_GET);
 		serverRequest.setPath(getPathDescargarDoc(idDocumento, login));		
@@ -160,15 +213,55 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		return this.rellenarRespuestaDescarga(bytes,nombreDocumento);
 	}
 	
-	private RespuestaDescargarDocumento rellenarRespuestaDescarga(byte[] contenido, String nombreDocumento){
+	private RespuestaDescargarDocumento rellenarRespuestaDescarga(byte[] contenido, String nombreDocumento) throws IOException{
 		
-		Byte[] bytes = ArrayUtils.toObject(contenido);
+		//Byte[] bytes = ArrayUtils.toObject(contenido);
 		
 		RespuestaDescargarDocumento respuesta = new RespuestaDescargarDocumento();
-		respuesta.setContenido(bytes);
-		respuesta.setNombreDocumento(nombreDocumento);
 		
+		respuesta.setNombreDocumento(nombreDocumento);
+		String nomFichero = respuesta.getNombreDocumento();
+		String ext = null;
+		String contentType = respuesta.getContentType();
+		
+		if(respuesta.getNombreDocumento().contains(".")){
+			
+			nomFichero = respuesta.getNombreDocumento().substring(0, respuesta.getNombreDocumento().lastIndexOf("."));
+			ext =respuesta.getNombreDocumento().substring(respuesta.getNombreDocumento().lastIndexOf("."));
+			
+			if(Checks.esNulo(respuesta.getContentType())){
+				contentType = contents.get(ext.toLowerCase());
+			}
+		}
+		
+		if(!Checks.esNulo(contentType) && Checks.esNulo(ext)){
+			for (Map.Entry<String, String> entry : contents.entrySet())
+			{
+				if(entry.getValue().equals(contentType)){
+					ext = entry.getKey();
+				}
+			}
+		}
+		
+		File fileSalidaTemporal = null;
+		FileItem resultado = new FileItem();
+		InputStream stream =  new ByteArrayInputStream(contenido);
+		
+
+		fileSalidaTemporal = File.createTempFile(nomFichero, ext);
+		fileSalidaTemporal.deleteOnExit();
+		
+		resultado.setFileName(nomFichero + ext);
+		if(!Checks.esNulo(contentType)) {
+			resultado.setContentType(contentType);	
+		}		
+		resultado.setFile(fileSalidaTemporal);
+        OutputStream outputStream = resultado.getOutputStream();
+        IOUtils.copy(stream, outputStream);
+		outputStream.close();
+		respuesta.setFileItem(resultado);
 		return respuesta;
+		
 	}
 	
 	private String getPathDescargarDoc(Long idDocumento, BajaDocumentoDto login) {

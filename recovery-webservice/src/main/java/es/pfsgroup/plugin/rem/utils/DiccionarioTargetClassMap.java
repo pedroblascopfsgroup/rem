@@ -219,6 +219,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
 		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("clasificacionApple", DDClasificacionApple.class);
+		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
+		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

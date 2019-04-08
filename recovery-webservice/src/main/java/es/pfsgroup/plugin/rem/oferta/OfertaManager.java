@@ -424,7 +424,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 
-			if (!Checks.esNulo(ofertaDto.getIndicadorOfertaLote()) && ofertaDto.getIndicadorOfertaLote()) {
+			
+			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
@@ -443,32 +444,36 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
-		if (!Checks.esNulo(ofertaDto.getIndicadorOfertaLote()) && ofertaDto.getIndicadorOfertaLote()) {
+		if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
 			List<ActivosLoteOfertaDto> numActivos = ofertaDto.getActivosLote();
 			DDCartera cartera = null;
 			DDSubcartera subcartera = null;
 			ActivoPropietario propietario = null;
 			Integer geolocalizacion = 0;
+			
+			if (!Checks.esNulo(numActivos) && !numActivos.isEmpty()) {
+				for (int i=0; i<numActivos.size(); i++) {
+					Activo activo = activoApi.getByNumActivo(numActivos.get(i).getIdActivoHaya());
+					
+					if (Checks.esNulo(activo)) {
+						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
+						break;
 
-			for (int i=0; i<numActivos.size(); i++) {
-
-				Activo activo = activoApi.getByNumActivo(numActivos.get(i).getIdActivoHaya());
-				
-				if (Checks.esNulo(activo)) {
-					errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
-					break;
-				} else {
-					this.validacionesActivoOfertaLote(errorsList, activo);
-
-					if (i==0) {
-						cartera = activo.getCartera();
-						subcartera = activo.getSubcartera();
-						propietario = activo.getPropietarioPrincipal();
-						geolocalizacion = activoApi.getGeolocalizacion(activo);
 					} else {
-						this.validacionesLote(errorsList, activo, cartera, subcartera, propietario, geolocalizacion);
+						this.validacionesActivoOfertaLote(errorsList, activo);
+						
+						if (i==0) {
+							cartera = activo.getCartera();
+							subcartera = activo.getSubcartera();
+							propietario = activo.getPropietarioPrincipal();
+							geolocalizacion = activoApi.getGeolocalizacion(activo);
+						} else {
+							this.validacionesLote(errorsList, activo, cartera, subcartera, propietario, geolocalizacion);
+						}
 					}
 				}
+			} else {
+				errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
 			Activo activo = genericDao.get(Activo.class,
@@ -568,8 +573,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// ValidateAlta
 		errorsList = validateOfertaPostRequestData(ofertaDto, null, true);
 		if (errorsList.isEmpty()) {
-			if (!Checks.esNulo(ofertaDto.getIndicadorOfertaLote())
-						&& ofertaDto.getIndicadorOfertaLote()
+			if (!Checks.esNulo(ofertaDto.getOfertaLote()) 
+						&& ofertaDto.getOfertaLote() 
 						&& !Checks.esNulo(ofertaDto.getActivosLote())
 						&& !ofertaDto.getActivosLote().isEmpty()) {
 				DtoAgrupacionesCreateDelete dtoAgrupacion = new DtoAgrupacionesCreateDelete();
@@ -630,47 +635,43 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getImporte())) {
 				oferta.setImporteOferta(ofertaDto.getImporte());
 			}
-			if (!Checks.esNulo(ofertaDto.getIndicadorOfertaLote()) && ofertaDto.getIndicadorOfertaLote()) {
+			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
 				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 				
 				for (ActivosLoteOfertaDto idActivo : ofertaDto.getActivosLote()) {
 					ActivoAgrupacion agrupacion = null;
 					List<ActivoOferta> buildListaActOfr = new ArrayList<ActivoOferta>();
-					List<ActivoAgrupacionActivo> listaAgrups = null;
+					List<ActivoAgrupacionActivo> listaAgrups = null;	
+					Activo activo = genericDao.get(Activo.class,
+							genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo.getIdActivoHaya()));
+					if (!Checks.esNulo(activo)) {
 				
-					for (int i=0; i<ofertaDto.getActivosLote().size(); i++) {
-						
-						Activo activo = genericDao.get(Activo.class,
-								genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo.getIdActivoHaya()));
-						if (!Checks.esNulo(activo)) {
-					
-							// Verificamos si el activo pertenece a una agrupación
-							// restringida
-							DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
-							dtoAgrupActivo.setActId(activo.getId());
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-							listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-							if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
-								ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
-								if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
-									// Seteamos la agrupación restringida a la oferta
-									agrupacion = agrAct.getAgrupacion();
-									oferta.setAgrupacion(agrupacion);
-								}
-							}
-				
-							if (!Checks.esNulo(agrupacion)) {
-								// Oferta sobre 1 lote restringido de n activos
-								buildListaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
-								listaActOfr.addAll(buildListaActOfr);
-							} else {
-								// Oferta sobre 1 único activo
-								buildListaActOfr = buildListaActivoOferta(activo, null, oferta);
-								listaActOfr.addAll(buildListaActOfr);
+						// Verificamos si el activo pertenece a una agrupación
+						// restringida
+						DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
+						dtoAgrupActivo.setActId(activo.getId());
+						dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+						listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
+						if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
+							ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
+							if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
+								// Seteamos la agrupación restringida a la oferta
+								agrupacion = agrAct.getAgrupacion();
+								oferta.setAgrupacion(agrupacion);
 							}
 						}
-
+			
+						if (!Checks.esNulo(agrupacion)) {
+							// Oferta sobre 1 lote restringido de n activos
+							buildListaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
+							listaActOfr.addAll(buildListaActOfr);
+						} else {
+							// Oferta sobre 1 único activo
+							buildListaActOfr = buildListaActivoOferta(activo, null, oferta);
+							listaActOfr.addAll(buildListaActOfr);
+						}
 					}
+						
 					// Seteamos la lista de ActivosOferta
 					oferta.setActivosOferta(listaActOfr);
 					// Seteamos la agrupación a la que pertenece la oferta
@@ -2587,7 +2588,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 			//Si el honorario es menor de 100 € el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149 + HREOS-5244
-			if(dto.getHonorarios() < 100.00 && !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo()))) {
+			if((dto.getHonorarios() != null && dto.getHonorarios() < 100.00) && !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo()))) {
 				dto.setHonorarios(100.00);
 			}else {
 				dto.setHonorarios(dto.getHonorarios());
@@ -3562,6 +3563,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					clienteComercialDto.setCesionDatos(clienteGDPR.getCesionDatos());
 					clienteComercialDto.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
 					clienteComercialDto.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
+					clienteComercialDto.setIdPersonaHaya(clienteCom.getIdPersonaHaya());
 					if(!Checks.esNulo(clienteCom.getEstadoCivil())) {
 						clienteComercialDto.setEstadoCivilCodigo(clienteCom.getEstadoCivil().getCodigo());
 						clienteComercialDto.setEstadoCivilDescripcion(clienteCom.getEstadoCivil().getDescripcion());

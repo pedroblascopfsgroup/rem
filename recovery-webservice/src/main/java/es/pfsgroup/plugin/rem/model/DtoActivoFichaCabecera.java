@@ -65,6 +65,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String codPromocionFinal;
 	private String catContableDescripcion;
 	private String motivoActivo;
+	private Boolean tieneRegistroContrato;
 
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -1735,6 +1736,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setTieneComunicacionGencat(Boolean tieneComunicacionGencat) {
 		this.tieneComunicacionGencat = tieneComunicacionGencat;
+	}
+		
+	public Boolean getTieneRegistroContrato() {
+		return tieneRegistroContrato;
+	}
+
+	public void setTieneRegistroContrato(Boolean tieneRegistroContrato) {
+		this.tieneRegistroContrato = tieneRegistroContrato;
 	}
 	
 }

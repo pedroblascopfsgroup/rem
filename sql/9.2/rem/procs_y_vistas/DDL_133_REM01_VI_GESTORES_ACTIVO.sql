@@ -153,8 +153,8 @@ V_MSQL1 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_1||' AS
 				FROM (
 /*Gestores de grupo*/
 SELECT act.act_id,
-                TO_NUMBER(COALESCE(dist2.cod_cartera,dist1.cod_cartera,dist0.cod_cartera)) cod_cartera, 
-                TO_NUMBER(COALESCE(dist2.cod_subcartera,dist1.cod_subcartera,dist0.cod_subcartera)) cod_subcartera,  
+                TO_NUMBER(COALESCE(dist2.cod_cartera,dist1.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO, 
+                TO_NUMBER(COALESCE(dist2.cod_subcartera,dist1.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO,  
                 NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, 
                 COALESCE(dist2.tipo_gestor,dist1.tipo_gestor,dist0.tipo_gestor) tipo_gestor, 
                 COALESCE(dist2.username,dist1.username,dist0.username) username,
@@ -182,8 +182,8 @@ SELECT act.act_id,
 UNION ALL
 /*Gestor de grupo - SUPERVISOR COMERCIAL BACKOFFICE*/
 SELECT  act.act_id , 
-                TO_NUMBER(COALESCE(dist2.cod_cartera,dist1.cod_cartera,dist0.cod_cartera)) cod_cartera, 
-                TO_NUMBER(COALESCE(dist2.cod_subcartera,dist1.cod_subcartera,dist0.cod_subcartera)) cod_subcartera, 
+                TO_NUMBER(COALESCE(dist2.cod_cartera,dist1.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO, 
+                TO_NUMBER(COALESCE(dist2.cod_subcartera,dist1.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO, 
                 NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, 
                 COALESCE(dist2.tipo_gestor,dist1.tipo_gestor,dist0.tipo_gestor) tipo_gestor, 
                 COALESCE(dist2.username,dist1.username,dist0.username) username,
@@ -211,8 +211,8 @@ SELECT  act.act_id ,
            UNION ALL
 /*Gestor de grupo - SUPERVISOR COMERCIAL BACKOFFICE LIBERBANK*/
 SELECT  act.act_id, 
-                    TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)) cod_cartera, 
-                    TO_NUMBER(COALESCE(dist1.cod_subcartera,dist0.cod_subcartera)) cod_subcartera, 
+                    TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO, 
+                    TO_NUMBER(COALESCE(dist1.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO, 
                     NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, 
                     COALESCE(dist1.tipo_gestor,dist0.tipo_gestor) tipo_gestor, 
                     COALESCE(dist1.username,dist0.username) username,
@@ -235,8 +235,8 @@ SELECT  act.act_id,
            UNION ALL
 /*Gestor capa de control*/
            SELECT act.act_id, 
-                  TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)) cod_cartera, 
-                  TO_NUMBER(COALESCE(dist1.cod_subcartera,dist0.cod_subcartera)) cod_subcartera ,
+                  TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO, 
+                  TO_NUMBER(COALESCE(dist1.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO ,
                   NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, 
                   COALESCE(dist1.tipo_gestor,dist0.tipo_gestor)  tipo_gestor,
                   COALESCE(dist1.username,dist0.username)  username, 
@@ -259,8 +259,8 @@ SELECT  act.act_id,
            UNION ALL
 /*Gestor Comercial BackOffice Inmobiliario*/
            SELECT act.act_id, 
-                  TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)) cod_cartera, 
-                  TO_NUMBER(COALESCE(dist1.cod_subcartera,dist0.cod_subcartera)) cod_subcartera ,
+                  TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO, 
+                  TO_NUMBER(COALESCE(dist1.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO ,
                   NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, 
                   COALESCE(dist1.tipo_gestor,dist0.tipo_gestor)  tipo_gestor,
                   COALESCE(dist1.username,dist0.username)  username, 
@@ -295,8 +295,8 @@ SELECT  act.act_id,
            UNION ALL
 /*Supervisor Comercial BackOffice Inmobiliario*/
            SELECT act.act_id, 
-                  TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)), 
-                  TO_NUMBER(COALESCE(dist1.cod_subcartera,dist0.cod_subcartera)),
+                  TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO, 
+                  TO_NUMBER(COALESCE(dist1.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO,
                   NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, 
                   COALESCE(dist1.tipo_gestor,dist0.tipo_gestor)tipo_gestor,
                   COALESCE(dist1.username,dist0.username) username, 
@@ -329,8 +329,8 @@ SELECT  act.act_id,
            UNION ALL
 /*Gestor del activo*/
 SELECT act.act_id,
-	   TO_NUMBER( COALESCE (dist9.cod_cartera,dist8.cod_cartera,dist7.cod_cartera,dist6.cod_cartera,dist5.cod_cartera,dist4.cod_cartera,dist3.cod_cartera,dist2.cod_cartera,dist1.cod_cartera,dist0.cod_cartera)) cod_cartera, 
-	   TO_NUMBER( COALESCE (dist9.cod_subcartera,dist8.cod_subcartera,dist7.cod_subcartera,dist6.cod_subcartera,dist5.cod_subcartera,dist4.cod_subcartera,dist3.cod_subcartera,dist2.cod_subcartera,dist1.cod_subcartera,dist0.cod_subcartera)) dd_scr_subcartera, 
+	   TO_NUMBER( COALESCE (dist9.cod_cartera,dist8.cod_cartera,dist7.cod_cartera,dist6.cod_cartera,dist5.cod_cartera,dist4.cod_cartera,dist3.cod_cartera,dist2.cod_cartera,dist1.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO, 
+	   TO_NUMBER( COALESCE (dist9.cod_subcartera,dist8.cod_subcartera,dist7.cod_subcartera,dist6.cod_subcartera,dist5.cod_subcartera,dist4.cod_subcartera,dist3.cod_subcartera,dist2.cod_subcartera,dist1.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO, 
 	   TO_NUMBER (COALESCE (dist9.cod_estado_activo,dist8.cod_estado_activo,dist7.cod_estado_activo,dist6.cod_estado_activo,dist5.cod_estado_activo,dist4.cod_estado_activo,dist3.cod_estado_activo,dist2.cod_estado_activo,dist1.cod_estado_activo,dist0.cod_estado_activo)) dd_eac_codigo,
 	   NULL dd_tcr_codigo, 
 	   COALESCE (dist9.cod_provincia,dist8.cod_provincia, dist7.cod_provincia, dist6.cod_provincia, dist5.cod_provincia, dist4.cod_provincia, dist3.cod_provincia, dist2.cod_provincia, dist1.cod_provincia, dist0.cod_provincia) cod_provincia,
@@ -453,8 +453,8 @@ SELECT act.act_id,
            UNION ALL
 /*supervisor del activo*/
 SELECT act.act_id, 
-        TO_NUMBER (COALESCE (dist7.cod_cartera, dist6.cod_cartera, dist5.cod_cartera, dist4.cod_cartera, dist3.cod_cartera, dist2.cod_cartera, dist1.cod_cartera, dist0.cod_cartera)) dd_cra_codigo,
-        TO_NUMBER (COALESCE (dist7.cod_subcartera, dist6.cod_subcartera, dist5.cod_subcartera, dist4.cod_subcartera, dist3.cod_subcartera, dist2.cod_subcartera, dist1.cod_subcartera, dist0.cod_subcartera)) dd_scr_subcartera, 
+        TO_NUMBER (COALESCE (dist7.cod_cartera, dist6.cod_cartera, dist5.cod_cartera, dist4.cod_cartera, dist3.cod_cartera, dist2.cod_cartera, dist1.cod_cartera, dist0.cod_cartera)) DD_CRA_CODIGO,
+        TO_NUMBER (COALESCE (dist7.cod_subcartera, dist6.cod_subcartera, dist5.cod_subcartera, dist4.cod_subcartera, dist3.cod_subcartera, dist2.cod_subcartera, dist1.cod_subcartera, dist0.cod_subcartera)) DD_SCR_CODIGO, 
         TO_NUMBER (COALESCE (dist7.cod_estado_activo, dist6.cod_estado_activo, dist5.cod_estado_activo, dist4.cod_estado_activo, dist3.cod_estado_activo, dist2.cod_estado_activo, dist1.cod_estado_activo, dist0.cod_estado_activo )) dd_eac_codigo,
         NULL dd_tcr_codigo, 
         COALESCE (dist7.cod_provincia, dist6.cod_provincia, dist5.cod_provincia, dist4.cod_provincia, dist3.cod_provincia, dist2.cod_provincia, dist1.cod_provincia, dist0.cod_provincia) cod_provincia, 
@@ -641,8 +641,8 @@ SELECT act.act_id,
           UNION ALL
 /*Gestoría de administración*/
            SELECT DISTINCT act.act_id, 
-                TO_NUMBER (COALESCE (dist9.cod_cartera, dist8.cod_cartera, dist7.cod_cartera, dist6.cod_cartera, dist5.cod_cartera, dist4.cod_cartera, dist3.cod_cartera, dist2.cod_cartera, dist1.cod_cartera, dist0.cod_cartera)) cod_cartera, 
-                TO_NUMBER (COALESCE (dist9.cod_subcartera, dist8.cod_subcartera, dist7.cod_subcartera, dist6.cod_subcartera, dist5.cod_subcartera, dist4.cod_subcartera, dist3.cod_subcartera, dist2.cod_subcartera, dist1.cod_subcartera, dist0.cod_subcartera)) cod_subcartera,
+                TO_NUMBER (COALESCE (dist9.cod_cartera, dist8.cod_cartera, dist7.cod_cartera, dist6.cod_cartera, dist5.cod_cartera, dist4.cod_cartera, dist3.cod_cartera, dist2.cod_cartera, dist1.cod_cartera, dist0.cod_cartera)) DD_CRA_CODIGO, 
+                TO_NUMBER (COALESCE (dist9.cod_subcartera, dist8.cod_subcartera, dist7.cod_subcartera, dist6.cod_subcartera, dist5.cod_subcartera, dist4.cod_subcartera, dist3.cod_subcartera, dist2.cod_subcartera, dist1.cod_subcartera, dist0.cod_subcartera)) DD_SCR_CODIGO,
                 TO_NUMBER (COALESCE(dist1.cod_estado_activo,dist0.cod_estado_activo)) DD_EAC_CODIGO, 
                 NULL dd_tcr_codigo, 
                 COALESCE(dist5.cod_provincia, dist4.cod_provincia) DD_PRV_CODIGO, 

@@ -247,13 +247,13 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			String errores = trabajoApi.upload(fileItem);			
 
-			model.put("errores", errores);
+			model.put("errorMessage", errores);
 			model.put("success", errores==null);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 			model.put("success", false);
-			model.put("errores", e.getCause());
+			model.put("errorMessage", e.getCause());
 		}
 		return createModelAndViewJson(model);
 	}
@@ -294,7 +294,7 @@ public class TrabajoController extends ParadiseJsonController {
        		}
        		
        	} catch (Exception e) { 
-       		logger.error(e.getMessage());
+       		logger.error(e.getMessage(),e);
        	}
 
 	}

@@ -118,7 +118,7 @@ BEGIN
 
                     V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.ZON_PEF_USU
                                WHERE ZON_ID = '||V_ZON_ID||'';
-                    --EXECUTE IMMEDIATE V_MSQL;
+                    EXECUTE IMMEDIATE V_MSQL;
 
                     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ZON_PEF_USU... Borrada la relación usuario/perfil satisfactoriamente.');
                 ELSE

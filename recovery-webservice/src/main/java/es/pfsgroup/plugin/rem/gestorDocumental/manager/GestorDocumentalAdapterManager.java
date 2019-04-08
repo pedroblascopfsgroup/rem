@@ -270,7 +270,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		try {
 			respuesta = gestorDocumentalApi.descargarDocumento(idDocumento, login,nombreDocumento);
-			fileItem = GestorDocToRecoveryAssembler.getFileItem(respuesta);
+			fileItem = respuesta.getFileItem();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
@@ -381,7 +381,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		idSistemaOrigen = trabajo.getActivo().getNumActivo().toString();
 		DDCartera cartera = trabajo.getActivo().getCartera();
 		DDSubcartera subcartera = trabajo.getActivo().getSubcartera();
-		cliente = getClienteByCarteraySubcartera(cartera, subcartera);
+		ActivoPropietario actPro = trabajo.getActivo().getPropietarioPrincipal();
+		cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);
 				
 		String estadoTrabajo = Checks.esNulo(trabajo.getEstado()) ? null : trabajo.getEstado().getCodigo();
 		String codClase = GestorDocumentalConstants.CODIGO_CLASE_ACTUACION_TECNICA;
@@ -574,7 +575,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				idSistemaOrigen = actOfe.getPrimaryKey().getActivo().getNumActivo().toString();
 				DDCartera cartera = actOfe.getPrimaryKey().getActivo().getCartera();
 				DDSubcartera subcartera = actOfe.getPrimaryKey().getActivo().getSubcartera();
-				cliente = getClienteByCarteraySubcartera(cartera, subcartera);
+				ActivoPropietario actPro = actOfe.getPrimaryKey().getActivo().getPropietarioPrincipal();
+				cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);
 			}
 		}
 		String estadoExpediente = "Alta";
@@ -608,22 +610,44 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return idExpediente;	
 	}
 
-	private String getClienteByCarteraySubcartera(DDCartera cartera, DDSubcartera subcartera) {
+	private String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
 		if(Checks.esNulo(subcartera)) {
 			return "";
 		}
 
 		MapeoGestorDocumental mgd = new MapeoGestorDocumental();
-
-		if(!Checks.esNulo(cartera)) {
-			mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
-					genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
-			if(!Checks.esNulo(mgd)){
-				if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+		if(Checks.esNulo(actPro)){
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+						return "";
+					}
+				}else{
 					return "";
 				}
-			}else{
-				return "";
+			}
+		} else {
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera),
+						genericDao.createFilter(FilterType.EQUALS, "activoPropietario", actPro));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+						return "";
+					}
+				}else{
+					mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+							genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+					if(!Checks.esNulo(mgd)){
+						if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+							return "";
+						}
+					}else{
+						return "";
+					}
+				}
 			}
 		}
 		
@@ -816,7 +840,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			idSistemaOrigen = comunicacionGencat.getId().toString();
 			DDCartera cartera = comunicacionGencat.getActivo().getCartera();
 			DDSubcartera subcartera = comunicacionGencat.getActivo().getSubcartera();
-			cliente = getClienteByCarteraySubcartera(cartera, subcartera);
+			ActivoPropietario actPro = comunicacionGencat.getActivo().getPropietarioPrincipal();
+			cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);		
 		}
 		String estadoExpediente = "Alta";
 		String codClase = "31";

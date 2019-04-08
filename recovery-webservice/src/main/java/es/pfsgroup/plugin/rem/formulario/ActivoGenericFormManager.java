@@ -418,6 +418,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				
             				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+            				
                 			if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getFechaFirma())) {
                 				item.setValue(formatoFecha.format(expediente.getReserva().getFechaFirma()));
                 			}
@@ -639,6 +640,10 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 			            				if(!Checks.esNulo(codigoComite)) {
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            				}
+			            			}else if(trabajoApi.checkCerberusAgoraApple(tareaExterna)){
+			            				codigoComite = DDComiteSancion.CODIGO_CERBERUS;
+										if(!Checks.esNulo(codigoComite))
+											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            			}else {
 			            				if(!Checks.esNulo(expediente.getComiteSancion()))
 			            					item.setValue(expediente.getComiteSancion().getCodigo());

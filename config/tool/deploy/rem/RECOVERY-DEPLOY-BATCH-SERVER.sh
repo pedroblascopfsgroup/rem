@@ -17,8 +17,17 @@ fi
 
 LOCAL_PATH=`pwd`
 BASE_DIR=/recovery/rem/batch-server
+
 if [[ "$1" == "val03" ]] ; then
-BASE_DIR=/recovery/rem/batch-server-val03
+	BASE_DIR=/recovery/rem/batch-server-val03
+fi
+
+if [[ "$1" == "val05" ]] ; then
+	BASE_DIR=/recovery/map024/batch-server
+fi
+
+if [[ "$1" == "formacion" ]] ; then
+	BASE_DIR=/recovery/map018/batch-server
 fi
 
 BASE_DIR=/recovery/rem/batch-server

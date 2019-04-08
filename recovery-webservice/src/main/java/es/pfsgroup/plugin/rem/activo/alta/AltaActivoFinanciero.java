@@ -325,7 +325,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// ActivoConfigDocumento - Calificación energética.
 		ActivoConfigDocumento configDocumento = new ActivoConfigDocumento();
 		beanUtilNotNull.copyProperty(configDocumento, "tipoDocumentoActivo",
-				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumentoActivo.class, DDTipoDocumentoActivo.CODIGO_CEE));
+				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumentoActivo.class, DDTipoDocumentoActivo.CODIGO_CEE_ACTIVO));
 		configDocumento = genericDao.save(ActivoConfigDocumento.class, configDocumento);
 
 		// ActivoAdmisionDocumento - Calificación energética.

@@ -1705,6 +1705,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem"))) {
 					map.put("codigoAgrupacionComercialRem", errorsList.get("codigoAgrupacionComercialRem"));
 				}
+				
+				if(!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getNumAgrupRem()) && ofertaDto.getOfertaLote()) {
+					map.put("idAgrupacionComercialRem", oferta.getAgrupacion().getNumAgrupRem());
+				}
 
 				map.put("success", true);
 			} else {

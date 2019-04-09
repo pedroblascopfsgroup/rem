@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -277,6 +278,58 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 					cliente.setRegimenMatrimonial(regimen);
 				}
 			}
+			
+			if (!Checks.esNulo(clienteDto.getConyugeTipoDocumento())) {
+				DDTipoDocumento doc = genericDao.get(DDTipoDocumento.class, 
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getConyugeTipoDocumento()));
+				if (!Checks.esNulo(doc)) {
+					cliente.setTipoDocumentoConyuge(doc);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getConyugeDocumento())) {
+				cliente.setDocumentoConyuge(clienteDto.getConyugeDocumento());
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodPais())) {
+				DDPaises pais = genericDao.get(DDPaises.class, 
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPais()));
+				if (!Checks.esNulo(pais)) {
+					cliente.setPais(pais);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getDireccionRepresentante())) {
+				cliente.setDireccionRepresentante(clienteDto.getDireccionRepresentante());
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodProvinciaRepresentante())) {
+				DDProvincia provincia = genericDao.get(DDProvincia.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaRepresentante()));
+				if (!Checks.esNulo(provincia)) {
+					cliente.setProvinciaRepresentante(provincia);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodMunicipioRepresentante())) {
+				Localidad localidad = genericDao.get(Localidad.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioRepresentante()));
+				if (!Checks.esNulo(localidad)) {
+					cliente.setMunicipioRepresentante(localidad);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodPaisRepresentante())) {
+				DDPaises pais = genericDao.get(DDPaises.class, 
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisRepresentante()));
+				if (!Checks.esNulo(pais)) {
+					cliente.setPaisRepresentante(pais);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
+				cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
+			}
 
 			clienteComercialDao.save(cliente);
 			
@@ -503,7 +556,59 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				}else{
 					cliente.setRegimenMatrimonial(null);
 				}
-			}				
+			}
+			
+			if (!Checks.esNulo(clienteDto.getConyugeTipoDocumento())) {
+				DDTipoDocumento doc = genericDao.get(DDTipoDocumento.class, 
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getConyugeTipoDocumento()));
+				if (!Checks.esNulo(doc)) {
+					cliente.setTipoDocumentoConyuge(doc);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getConyugeDocumento())) {
+				cliente.setDocumentoConyuge(clienteDto.getConyugeDocumento());
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodPais())) {
+				DDPaises pais = genericDao.get(DDPaises.class, 
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPais()));
+				if (!Checks.esNulo(pais)) {
+					cliente.setPais(pais);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getDireccionRepresentante())) {
+				cliente.setDireccionRepresentante(clienteDto.getDireccionRepresentante());
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodProvinciaRepresentante())) {
+				DDProvincia provincia = genericDao.get(DDProvincia.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaRepresentante()));
+				if (!Checks.esNulo(provincia)) {
+					cliente.setProvinciaRepresentante(provincia);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodMunicipioRepresentante())) {
+				Localidad localidad = genericDao.get(Localidad.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioRepresentante()));
+				if (!Checks.esNulo(localidad)) {
+					cliente.setMunicipioRepresentante(localidad);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodPaisRepresentante())) {
+				DDPaises pais = genericDao.get(DDPaises.class, 
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisRepresentante()));
+				if (!Checks.esNulo(pais)) {
+					cliente.setPaisRepresentante(pais);
+				}
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
+				cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
+			}
 			
 			clienteComercialDao.saveOrUpdate(cliente);
 			

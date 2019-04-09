@@ -8,6 +8,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -31,26 +32,98 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	private String nombre;
 	@Size(max=120,groups = { Insert.class, Update.class })
 	private String apellidos;
-	@Size(max=120,groups = { Insert.class, Update.class })
-	private String direccion;
+
 	@Diccionary(clase = Localidad.class, message = "El municipio no existe", groups = { Insert.class,
 			Update.class })
-	private String codigoMunicipio;
+	private String codMunicipio;
 	@Diccionary(clase = DDProvincia.class, message = "La provincia no existe", groups = { Insert.class,
 			Update.class })
-	private String codigoProvincia;
+	private String codProvincia;
 	@Size(max=20,groups = { Insert.class, Update.class })
-	private String codPostal;
+	private String codigoPostal;
 	@Diccionary(clase = DDEstadosCiviles.class, message = "El estado civil no existe", groups = { Insert.class,
 			Update.class })
-	private String codigoEstadoCivil;
-	@Diccionary(clase = DDRegimenesMatrimoniales.class, message = "El regimen economico no existe", groups = { Insert.class,
+	private String codEstadoCivil;
+	@Diccionary(clase = DDRegimenesMatrimoniales.class, message = "El regimen matrimonial no existe", groups = { Insert.class,
 			Update.class })
-	private String codigoRegimenEconomico;
+	private String codRegimenMatrimonial;
 	
 	private Boolean rechazarCesionDatosPublicidad;
 	private Boolean rechazarCesionDatosPropietario;
 	private Boolean rechazarCesionDatosProveedores;
+	
+	//REMVIP-3846
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String razonSocial;
+	@Size(max=14,groups = { Insert.class, Update.class })
+	private String telefono1;
+	@Size(max=14,groups = { Insert.class, Update.class })
+	private String telefono2;
+	@Size(max=50,groups = { Insert.class, Update.class })
+	private String email;
+	
+	private String idProveedorRemPrescriptor;
+	private String idProveedorRemResponsable;
+	
+	@Size(max=20,groups = { Insert.class, Update.class })
+	private String codTipoVia;
+	
+	@Size(max=100,groups = { Insert.class, Update.class })
+	private String nombreCalle;
+	@Size(max=100,groups = { Insert.class, Update.class })
+	private String numeroCalle;
+	@Size(max=10,groups = { Insert.class, Update.class })
+	private String escalera;
+	@Size(max=11,groups = { Insert.class, Update.class })
+	private String planta;
+	@Size(max=17,groups = { Insert.class, Update.class })
+	private String puerta;
+	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String codPedania;
+	@Size(max=100,groups = { Insert.class, Update.class })
+	private String observaciones;
+
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String conyugeNombre;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String conyugeApellidos;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoDocumento.class, message = "El conyugeTipoDocumento no existe", groups = { Insert.class,
+			Update.class })
+	private String conyugeTipoDocumento;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String conyugeDocumento;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoPersona.class, message = "El codTipoPersona no existe", groups = { Insert.class,
+			Update.class })
+	private String codTipoPersona;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoPersona.class, message = "El codTipoPersona no existe", groups = { Insert.class,
+			Update.class })
+	private String codPais;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoDocumento.class, message = "El codTipoDocumentoRepresentante no existe", groups = { Insert.class,
+			Update.class })
+	private String codTipoDocumentoRepresentante;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String documentoRepresentante;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String direccionRepresentante;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDProvincia.class, message = "La provincia no existe", groups = { Insert.class,
+			Update.class })
+	private String codProvinciaRepresentante;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = Localidad.class, message = "El municipio no existe", groups = { Insert.class,
+			Update.class })
+	private String codMunicipioRepresentante;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoPersona.class, message = "El codTipoPersona no existe", groups = { Insert.class,
+			Update.class })
+	private String codPaisRepresentante;
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String codigoPostalRepresentante;
 	
 	public Boolean getRechazarCesionDatosPublicidad() {
 		return rechazarCesionDatosPublicidad;
@@ -94,40 +167,198 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setApellidos(String apellidos) {
 		this.apellidos = apellidos;
 	}
-	public String getDireccion() {
-		return direccion;
-	}
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
-	}
 	public String getCodigoMunicipio() {
-		return codigoMunicipio;
+		return codMunicipio;
 	}
 	public void setCodigoMunicipio(String codigoMunicipio) {
-		this.codigoMunicipio = codigoMunicipio;
+		this.codMunicipio = codigoMunicipio;
 	}
 	public String getCodigoProvincia() {
-		return codigoProvincia;
+		return codProvincia;
 	}
 	public void setCodigoProvincia(String codigoProvincia) {
-		this.codigoProvincia = codigoProvincia;
+		this.codProvincia = codigoProvincia;
 	}
 	public String getCodPostal() {
-		return codPostal;
+		return codigoPostal;
 	}
 	public void setCodPostal(String codPostal) {
-		this.codPostal = codPostal;
+		this.codigoPostal = codPostal;
 	}
 	public String getCodigoEstadoCivil() {
-		return codigoEstadoCivil;
+		return codEstadoCivil;
 	}
 	public void setCodigoEstadoCivil(String codigoEstadoCivil) {
-		this.codigoEstadoCivil = codigoEstadoCivil;
+		this.codEstadoCivil = codigoEstadoCivil;
 	}
-	public String getCodigoRegimenEconomico() {
-		return codigoRegimenEconomico;
+	public String getCodRegimenMatrimonial() {
+		return codRegimenMatrimonial;
 	}
-	public void setCodigoRegimenEconomico(String codigoRegimenEconomico) {
-		this.codigoRegimenEconomico = codigoRegimenEconomico;
+	public void setCodRegimenMatrimonial(String codRegimenMatrimonial) {
+		this.codRegimenMatrimonial = codRegimenMatrimonial;
+	}
+	public String getRazonSocial() {
+		return razonSocial;
+	}
+	public void setRazonSocial(String razonSocial) {
+		this.razonSocial = razonSocial;
+	}
+	public String getTelefono1() {
+		return telefono1;
+	}
+	public void setTelefono1(String telefono1) {
+		this.telefono1 = telefono1;
+	}
+	public String getTelefono2() {
+		return telefono2;
+	}
+	public void setTelefono2(String telefono2) {
+		this.telefono2 = telefono2;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getIdProveedorRemPrescriptor() {
+		return idProveedorRemPrescriptor;
+	}
+	public void setIdProveedorRemPrescriptor(String idProveedorRemPrescriptor) {
+		this.idProveedorRemPrescriptor = idProveedorRemPrescriptor;
+	}
+	public String getIdProveedorRemResponsable() {
+		return idProveedorRemResponsable;
+	}
+	public void setIdProveedorRemResponsable(String idProveedorRemResponsable) {
+		this.idProveedorRemResponsable = idProveedorRemResponsable;
+	}
+	public String getCodTipoVia() {
+		return codTipoVia;
+	}
+	public void setCodTipoVia(String codTipoVia) {
+		this.codTipoVia = codTipoVia;
+	}
+	public String getNombreCalle() {
+		return nombreCalle;
+	}
+	public void setNombreCalle(String nombreCalle) {
+		this.nombreCalle = nombreCalle;
+	}
+	public String getNumeroCalle() {
+		return numeroCalle;
+	}
+	public void setNumeroCalle(String numeroCalle) {
+		this.numeroCalle = numeroCalle;
+	}
+	public String getEscalera() {
+		return escalera;
+	}
+	public void setEscalera(String escalera) {
+		this.escalera = escalera;
+	}
+	public String getPlanta() {
+		return planta;
+	}
+	public void setPlanta(String planta) {
+		this.planta = planta;
+	}
+	public String getPuerta() {
+		return puerta;
+	}
+	public void setPuerta(String puerta) {
+		this.puerta = puerta;
+	}
+
+	public String getCodPedania() {
+		return codPedania;
+	}
+	public void setCodPedania(String codPedania) {
+		this.codPedania = codPedania;
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+	
+	public String getConyugeNombre() {
+		return conyugeNombre;
+	}
+	public void setConyugeNombre(String conyugeNombre) {
+		this.conyugeNombre = conyugeNombre;
+	}
+	public String getConyugeApellidos() {
+		return conyugeApellidos;
+	}
+	public void setConyugeApellidos(String conyugeApellidos) {
+		this.conyugeApellidos = conyugeApellidos;
+	}
+	public String getConyugeTipoDocumento() {
+		return conyugeTipoDocumento;
+	}
+	public void setConyugeTipoDocumento(String conyugeTipoDocumento) {
+		this.conyugeTipoDocumento = conyugeTipoDocumento;
+	}
+	public String getConyugeDocumento() {
+		return conyugeDocumento;
+	}
+	public void setConyugeDocumento(String conyugeDocumento) {
+		this.conyugeDocumento = conyugeDocumento;
+	}
+	public String getCodTipoPersona() {
+		return codTipoPersona;
+	}
+	public void setCodTipoPersona(String codTipoPersona) {
+		this.codTipoPersona = codTipoPersona;
+	}
+	public String getCodPais() {
+		return codPais;
+	}
+	public void setCodPais(String codPais) {
+		this.codPais = codPais;
+	}
+	public String getCodTipoDocumentoRepresentante() {
+		return codTipoDocumentoRepresentante;
+	}
+	public void setCodTipoDocumentoRepresentante(String codTipoDocumentoRepresentante) {
+		this.codTipoDocumentoRepresentante = codTipoDocumentoRepresentante;
+	}
+	public String getDocumentoRepresentante() {
+		return documentoRepresentante;
+	}
+	public void setDocumentoRepresentante(String documentoRepresentante) {
+		this.documentoRepresentante = documentoRepresentante;
+	}
+	public String getDireccionRepresentante() {
+		return direccionRepresentante;
+	}
+	public void setDireccionRepresentante(String direccionRepresentante) {
+		this.direccionRepresentante = direccionRepresentante;
+	}
+	public String getCodProvinciaRepresentante() {
+		return codProvinciaRepresentante;
+	}
+	public void setCodProvinciaRepresentante(String codProvinciaRepresentante) {
+		this.codProvinciaRepresentante = codProvinciaRepresentante;
+	}
+	public String getCodMunicipioRepresentante() {
+		return codMunicipioRepresentante;
+	}
+	public void setCodMunicipioRepresentante(String codMunicipioRepresentante) {
+		this.codMunicipioRepresentante = codMunicipioRepresentante;
+	}
+	public String getCodPaisRepresentante() {
+		return codPaisRepresentante;
+	}
+	public void setCodPaisRepresentante(String codPaisRepresentante) {
+		this.codPaisRepresentante = codPaisRepresentante;
+	}
+	public String getCodigoPostalRepresentante() {
+		return codigoPostalRepresentante;
+	}
+	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
+		this.codigoPostalRepresentante = codigoPostalRepresentante;
 	}
 }

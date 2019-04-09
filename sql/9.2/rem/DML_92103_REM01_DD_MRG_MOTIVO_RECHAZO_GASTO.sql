@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MARIAM LLISO M
---## FECHA_CREACION=20190314
+--## FECHA_CREACION=20190409
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.7
 --## INCIDENCIA_LINK=HREOS-5806
@@ -54,12 +54,6 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 	
 
-	--Comprobamos el dato a insertar
-        V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET BORRADO = 1,  USUARIOBORRAR = ''HREOS-5806'', FECHABORRAR = sysdate';
-        EXECUTE IMMEDIATE V_SQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO]: BORRADO LOGICO A TODO LA TABLA: '||V_TEXT_TABLA||'] ');
-        
-	 
 	-- LOOP para insertar los valores en la tabla indicada
     	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA||'] ');
     	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST

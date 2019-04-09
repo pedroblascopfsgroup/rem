@@ -215,7 +215,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			throw new Exception(e.getMessage());
 		}
 

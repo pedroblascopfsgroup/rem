@@ -91,7 +91,8 @@ DECLARE
         T_USUARIO('aruedag'             , 'HAYAGESTPUBL'    , '1'),
         T_USUARIO('mgrau'               , 'HAYAGESTPUBL'    , '1'),
         T_USUARIO('ogf.oruiz'           , 'HAYAGESTPUBL'    , '1'),
-        T_USUARIO('ogf.jexposito'       , 'HAYAGESTPUBL'    , '1')
+        T_USUARIO('ogf.jexposito'       , 'HAYAGESTPUBL'    , '1'),
+        T_USUARIO('tdiez'               , 'HAYAGESTPUBL'    , '1')
 
     ); 
     V_TMP_USUARIO T_USUARIO;

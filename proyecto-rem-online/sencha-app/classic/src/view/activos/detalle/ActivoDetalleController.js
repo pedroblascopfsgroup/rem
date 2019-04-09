@@ -4094,27 +4094,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
-    onSaveFormularioCompletoTabPatrimonio: function(btn, form){
-    	var me = this;
-    	var chkPerimetroAlquiler = me.getViewModel().get('patrimonio.chkPerimetroAlquiler');
-    	var isRestringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
-    	var activoChkPerimetroAlquiler = me.getViewModel().get('activo.activoChkPerimetroAlquiler');
-
-    	if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
-    		Ext.Msg.confirm(
-				HreRem.i18n("title.agrupacion.restringida"),
-				HreRem.i18n("msg.confirm.agrupacion.restringida"),
-				function(btnConfirm){
-					if (btnConfirm == "yes"){
-						me.onSaveFormularioCompleto(btn, form, true);
-					}
-				}
-			);
-    	} else {
-    		me.onSaveFormularioCompleto(btn, form, false);
-    	}
-    },
-
 	manageToastJsonResponse : function(scope,jsonData) {
 		var me= this;
 
@@ -4168,6 +4147,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var chkPerimetroAlquiler = me.getViewModel().get('patrimonio.chkPerimetroAlquiler');
         var destinoComercialAlquiler = me.getViewModel().get('activo.isDestinoComercialAlquiler');
         var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
+        var isRestringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
+    	var activoChkPerimetroAlquiler = me.getViewModel().get('activo.activoChkPerimetroAlquiler');
 
         if(comboEstadoAlquiler != null && comboTipoInquilino != null && comboOcupado != null){
             if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && comboOcupado.value == CONST.COMBO_OCUPACION["SI"]){
@@ -4180,7 +4161,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 comboTipoInquilino.setValue(null);
                 me.onSaveFormularioCompleto(btn, form);
             } else {
-                me.onSaveFormularioCompleto(btn, form);
+            	if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
+            		Ext.Msg.confirm(
+        				HreRem.i18n("title.agrupacion.restringida"),
+        				HreRem.i18n("msg.confirm.agrupacion.restringida"),
+        				function(btnConfirm){
+        					if (btnConfirm == "yes"){
+        						me.onSaveFormularioCompleto(btn, form, true);
+        					}
+        				}
+        			);
+            	} else {
+            		me.onSaveFormularioCompleto(btn, form, false);
+            	}
             }
         }
 

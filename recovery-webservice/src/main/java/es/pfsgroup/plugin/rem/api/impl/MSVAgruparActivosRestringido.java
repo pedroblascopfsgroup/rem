@@ -98,7 +98,7 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 						}
 					}
 				}
-				activoDao.publicarAgrupacionSinHistorico(idAgr, genericAdapter.getUsuarioLogado().getUsername(), null, true);
+				activoDao.publicarAgrupacionConHistorico(idAgr, genericAdapter.getUsuarioLogado().getUsername(), null, true);
 				transactionManager.commit(transaction);
 			}
 		}catch(NumberFormatException e){

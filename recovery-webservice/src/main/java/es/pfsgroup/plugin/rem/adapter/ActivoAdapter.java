@@ -4143,7 +4143,7 @@ public class ActivoAdapter {
 	 */
 	private Boolean publicarActivoConHistorico(String username, Activo activo) {
 
-		return activoDao.publicarActivoConHistorico(activo.getId(),username,true);
+		return activoDao.publicarActivoConHistorico(activo.getId(),username,null,true);
 	}
 
 	/**

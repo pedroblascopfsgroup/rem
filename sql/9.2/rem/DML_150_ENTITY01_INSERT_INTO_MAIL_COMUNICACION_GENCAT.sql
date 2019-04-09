@@ -1,10 +1,10 @@
 --/* 
 --##########################################
---## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190114
+--## AUTOR=DAP
+--## FECHA_CREACION=20190409
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5084
+--## INCIDENCIA_LINK=HREOS-6184
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insertar en la tabla MAIL_COMUNICACION_GENCAT.
@@ -40,9 +40,8 @@ BEGIN
 	IF V_NUM_TABLAS = 1 THEN
 
 	 V_SQL:= 'DELETE FROM '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT WHERE DE IN ( ''GENCAT_Proceso_Comunicacion'', ''GENCAT_Proceso_Reclamacion'' )';
-	DBMS_OUTPUT.PUT_LINE(V_SQL);
 	  EXECUTE IMMEDIATE V_SQL;
-	  DBMS_OUTPUT.PUT_LINE(V_NUM_TABLAS || 'registros borrados');
+	  DBMS_OUTPUT.PUT_LINE(SQL%ROWCOUNT || 'registros borrados');
 
 	
 V_SQL := 'INSERT INTO '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT	(
@@ -55,18 +54,16 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT	(
 					) 
 		values ( 
 				 ''noreply.rem@haya.es'',
-				 ''jpoyatos@haya.es'',
+				 ''jpoyatos@haya.es;backup.rem@pfsgroup.es;GFORMADM'',
 				 '''',
-				 ''Comunicaciones generadas a día de hoy.'',
-				 ''Comunicaciones para GENCAT a fecha del día DDMMYYYY'',
-				''Excel_comunicaciones.xls''
+				 ''Los activos del Excel adjunto están bloqueados en REM a DDMMYYYY'',
+				 ''Comunicación activos con ofertas afectas por GENCAT, DDMMYYYY'',
+				''ExcelComunicacion.xls''
 				 
 				)';
 
-
-		DBMS_OUTPUT.PUT_LINE(V_SQL);
     	EXECUTE IMMEDIATE V_SQL ; 
- 	DBMS_OUTPUT.PUT_LINE('[INFO]: MAIL ENVIADO');
+ 	DBMS_OUTPUT.PUT_LINE(SQL%ROWCOUNT||' registro/s insertado/s.');
 	END IF;               
 
   COMMIT;

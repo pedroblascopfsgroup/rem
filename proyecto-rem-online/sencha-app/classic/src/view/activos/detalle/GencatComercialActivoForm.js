@@ -8,6 +8,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 	recordClass: "HreRem.model.Gencat",
     requires	: [
     	'HreRem.model.Gencat',
+    	'HreRem.model.GencatHistorico',
     	'HreRem.model.NotificacionGencat',
     	'HreRem.view.activos.detalle.OfertasAsociadasActivoList',
     	'HreRem.view.activos.detalle.DocumentosComunicacionGencatList',

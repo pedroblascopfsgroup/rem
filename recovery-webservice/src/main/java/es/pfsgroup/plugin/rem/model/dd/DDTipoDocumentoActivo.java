@@ -47,7 +47,8 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
     public static final String CODIGO_VPO_SOLICITUD_AUTORIZACION = "95";
     public static final String CODIGO_VPO_NOTIFICACION_ADJUDICACION = "94";
     public static final String CODIGO_VPO_SOLICITUD_IMPORTE = "93";
-    public static final String CODIGO_CEE = "92";
+    public static final String CODIGO_CEE_TRABAJO = "92";
+    public static final String CODIGO_CEE_ACTIVO = "11";
     public static final String CODIGO_LPO = "91";
     public static final String CODIGO_CEDULA_HABITABILIDAD = "90";
     public static final String CODIGO_CFO = "89";

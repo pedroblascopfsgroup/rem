@@ -40,17 +40,56 @@ DECLARE
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
 
-        --         NOMBRE_FUNCION                                  NOMBRE_PERFIL
-        T_FUNCION('ACTUALIZAR_PUBLICAR'                         , 'HAYAGESTPUBL'),
-        T_FUNCION('PRECIOS_ACTUALIZAR'                          , 'HAYAGESTPUBL'),
-        T_FUNCION('ASISTIDAPDV_CARGA'                           , 'HAYAGESTPUBL'),
-        T_FUNCION('MASIVO_PUBLICACION_VENTA'                    , 'HAYAGESTPUBL'),
-        T_FUNCION('MASIVO_PUBLICACION_ALQUILER'                 , 'HAYAGESTPUBL'),
-        T_FUNCION('MASIVO_OCULTACION_VENTA'                     , 'HAYAGESTPUBL'),
-        T_FUNCION('MASIVO_OCULTACION_ALQUILER'                  , 'HAYAGESTPUBL'),
-        T_FUNCION('MASIVO_PUBLICACION_VENTA_RESTRINGIDO'        , 'HAYAGESTPUBL'),
-        T_FUNCION('MASIVO_PUBLICACION_ALQUILER_RESTRINGIDO'     , 'HAYAGESTPUBL'),
-        T_FUNCION('MASIVO_INDICADOR_ACTIVO'                     , 'HAYAGESTPUBL')
+        --         NOMBRE_FUNCION                                     NOMBRE_PERFIL
+        T_FUNCION('MASIVO_DESDESPUBLICAR_FORZADO'                 , 'HAYAGESTPUBL'),
+        T_FUNCION('ACTUALIZAR_PUBLICAR'                           , 'HAYAGESTPUBL'),
+        T_FUNCION('ACTUALIZAR_OCULTARACTIVO'                      , 'HAYAGESTPUBL'),
+        T_FUNCION('ACTUALIZAR_DESOCULTARACTIVO'                   , 'HAYAGESTPUBL'),
+        T_FUNCION('ACTUALIZAR_OCULTARPRECIO'                      , 'HAYAGESTPUBL'),
+        T_FUNCION('ACTUALIZAR_DESOCULTARPRECIO'                   , 'HAYAGESTPUBL'),
+        T_FUNCION('ACTUALIZAR_DESPUBLICAR'                        , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_DESPUBLICAR_FORZADO'                    , 'HAYAGESTPUBL'),
+        T_FUNCION('PRECIOS_ACTUALIZAR'                            , 'HAYAGESTPUBL'),
+        T_FUNCION('PRECIOS_BLOQUEAR'                              , 'HAYAGESTPUBL'),
+        T_FUNCION('PRECIOS_DESBLOQUEAR'                           , 'HAYAGESTPUBL'),
+        T_FUNCION('VALORES_FSV_ACTUALIZAR'                        , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PROPUESTA_PRECIOS'                      , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PROPUESTA_PRECIOS'                      , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PROPUESTA_PRECIOS'                      , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PROPUESTA_PRECIOS'                      , 'HAYAGESTPUBL'),
+        T_FUNCION('ALTA_ACTIVOS_FINAN'                            , 'HAYAGESTPUBL'),
+        T_FUNCION('ALTA_ACTIVOS_THIRD_PARTY'                      , 'HAYAGESTPUBL'),
+        T_FUNCION('ASISTIDAPDV_CARGA'                             , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_LOTE_COMERCIAL'                         , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PROYECTO'                               , 'HAYAGESTPUBL'),
+        T_FUNCION('SUBIR_LISTA_ACTIVOS_IBI'                       , 'HAYAGESTPUBL'),
+        T_FUNCION('CARGA_ACTIVOS_GASTOS_PORCENTAJE'               , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PRINEX_LBK'                             , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PUBLICACION_VENTA'                      , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PUBLICACION_ALQUILER'                   , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_OCULTACION_VENTA'                       , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_OCULTACION_ALQUILER'                    , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_OK_TECNICO'                             , 'HAYAGESTPUBL'),
+        T_FUNCION('VENTA_DE_CARTERA'                              , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PUBLICACION_VENTA_RESTRINGIDO'          , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PUBLICACION_ALQUILER_RESTRINGIDO'       , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_PLUSVALIA'                              , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_DESOCULTAR_ACTIVOS_VENTA'               , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_DESOCULTAR_ACTIVOS_ALQUILER'            , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_INDICADOR_ACTIVO'                       , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_RECLAMACIONES'                          , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_ADECUACION'                             , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_EXCLUIR_ACTIVOS_DWH'                    , 'HAYAGESTPUBL'),
+        T_FUNCION('CARGA_MASIVA_SANCION'                          , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_COMUNICACIONES'                         , 'HAYAGESTPUBL'),
+        T_FUNCION('SUBIR_CARGA_GESTORES'                          , 'HAYAGESTPUBL'),
+        T_FUNCION('PERIMETRO_ACTUALIZAR'                          , 'HAYAGESTPUBL'),
+        T_FUNCION('CARGA_MASIVA_IMPUESTOS'                        , 'HAYAGESTPUBL'),
+        T_FUNCION('CARGA_MASIVA_ENVIO_BUROFAX'                    , 'HAYAGESTPUBL'),
+        T_FUNCION('MASIVO_AGRUPAR_ACTIVOS_PROMOCION_ALQUILER'     , 'HAYAGESTPUBL')
+
+
+        
 
     ); 
     V_TMP_FUNCION T_FUNCION;
@@ -92,26 +131,24 @@ BEGIN
 
                 IF V_EXISTE_RELACION = 0 THEN
 
-                    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF
-                               FUN_ID
+                    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF (
+                                 FUN_ID
                                , PEF_ID
                                , FP_ID
                                , VERSION
                                , USUARIOCREAR
                                , FECHACREAR
                                , BORRADO
-                               VALUES (
-                                    SELECT
-                                    S_FUN_PEF.NEXTVAL
+                               ) VALUES (
+                                      (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES
+                                       WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(1))||''')
                                     , (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES
                                        WHERE PEF_CODIGO = '''||TRIM(V_TMP_FUNCION(2))||''')
-                                    , (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES
-                                       WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(1))||''')
+                                    , S_FUN_PEF.NEXTVAL
                                     , 0
                                     , '''||V_ITEM||'''
                                     , SYSDATE
                                     , 0
-                                    FROM DUAL
                                )';
 
                     EXECUTE IMMEDIATE V_MSQL;
@@ -140,6 +177,7 @@ EXCEPTION
           DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(ERR_MSG);
+          DBMS_OUTPUT.put_line(V_MSQL);
           ROLLBACK;
           RAISE;   
 END;

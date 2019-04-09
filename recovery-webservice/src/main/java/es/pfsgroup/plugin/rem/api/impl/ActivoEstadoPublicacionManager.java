@@ -971,7 +971,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		boolean esVivienda = DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo());
 
 		for(DtoAdmisionDocumento aListDtoAdmisionDocumento : listDtoAdmisionDocumento) {
-			if (DDTipoDocumentoActivo.CODIGO_CEE.equals(aListDtoAdmisionDocumento.getCodigoTipoDocumentoActivo())) {
+			if (DDTipoDocumentoActivo.CODIGO_CEE_ACTIVO.equals(aListDtoAdmisionDocumento.getCodigoTipoDocumentoActivo())) {
 				conCee = true;
 			}
 		}

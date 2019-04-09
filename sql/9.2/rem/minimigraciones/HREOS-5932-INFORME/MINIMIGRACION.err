@@ -1,0 +1,40 @@
+MINIMIGRACION.sh: 11: [: /home/guillermo.llido@pfsgroup.es/sw/instantclient_12_2: unexpected operator
+MINIMIGRACION.sh: 15: [: unexpected operator
+[INICIO] INICIO CONFIGURACION MINIMIGRACION.sh
+[INFO] 16:41:07
+
+[INFO] Se ha establecido la variable de entorno NLS_LANG=SPANISH_SPAIN.WE8ISO8859P1
+[INFO] Ya existe el directorio Loader/logs/
+[INFO] Ya existe el directorio Loader/bad/
+[INFO] Ya existe el directorio Logs/
+[INFO] Ya existe el directorio List/
+
+[FIN] FIN CONFIGURACION MINIMIGRACION.sh
+
+-----------------------------------------------------------------
+
+[INICIO] INICIO CREACIÓN DE TABLAS AUXILIARES
+[INFO] 16:41:07
+
+[INFO] Inicio creación DDL/DDL_001_REM01_TABLE.sql
+[INFO] Fin creación DDL/DDL_001_REM01_TABLE.sql
+
+[FIN] FIN CARGA DE TABLAS AUXILIARES
+
+-----------------------------------------------------------------
+
+[INICIO] INICIO CARGA DE TABLAS AUXILIARES
+[INFO] 16:41:08
+
+[INFO] Inicio carga auxiliar GENERAL
+[INFO] Fin carga auxiliar GENERAL
+
+[FIN] FIN CARGA DE TABLAS AUXILIARES
+
+-----------------------------------------------------------------
+
+[INICIO] INICIO CARGA DE TABLAS FINALES
+[INFO] 16:41:11
+ls: no se puede acceder a 'DML/DML_*.sql': No existe el archivo o el directorio
+[FIN] FIN CARGA DE TABLAS FINALES
+MINIMIGRACION.sh: 145: MINIMIGRACION.sh: Syntax error: "(" unexpected

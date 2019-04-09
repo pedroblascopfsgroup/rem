@@ -230,9 +230,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     
 	     mostrarComboBO: function(get) {
 			var codigoCartera=get('agrupacionficha.codigoCartera');
+			var codigoSubCartera=get('agrupacionficha.codSubcartera');
 	         var tipoAgrup= get('agrupacionficha.tipoAgrupacionCodigo');
-	         if((codigoCartera == CONST.CARTERA['LIBERBANK'] || codigoCartera == CONST.CARTERA['BANKIA'] || codigoCartera == CONST.CARTERA['SAREB']) 
-	         	&& tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
+	         if((codigoCartera == CONST.CARTERA['LIBERBANK'] || codigoCartera == CONST.CARTERA['BANKIA'] || codigoCartera == CONST.CARTERA['SAREB'] 
+	         	|| (codigoCartera == CONST.CARTERA['CERBERUS']) && codigoSubCartera == CONST.SUBCARTERA['APPLEINMOBILIARIO']) 
+	         		&& tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
 	             return true;
 	         }else{
 	             return false;

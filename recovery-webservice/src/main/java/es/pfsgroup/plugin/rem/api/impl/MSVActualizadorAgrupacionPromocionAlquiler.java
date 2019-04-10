@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
@@ -572,6 +574,14 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}
 		genericDao.save(ActivoLocalizacion.class, actLocUA);
 		actualizarEstadoPublicacion(activoMatriz);
+		
+		//--SE INSERTA REGISTRO EN EL HISTORICO
+		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+		BeanUtils.copyProperties(activoPublicacionHistorico, nuevaPublicacion);
+		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
+		
+		
+		
 		return new ResultadoProcesarFila();
 	}
 	//HREOS-5902. Los registros de la fila son correctos. Se lanza el SP_CAMBIO_ESTADO_PUBLICACION.

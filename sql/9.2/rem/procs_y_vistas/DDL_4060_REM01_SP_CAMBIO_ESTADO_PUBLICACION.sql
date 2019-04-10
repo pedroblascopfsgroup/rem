@@ -28,8 +28,7 @@ SET SERVEROUTPUT ON;
 
 create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFAULT NULL
 														, pCondAlquiler VARCHAR2 DEFAULT 1
-                                                        , pUSUARIOMODIFICAR IN VARCHAR2 DEFAULT 'SP_CAMBIO_EST_PUB'
-                                                        , pHISTORIFICAR IN VARCHAR2 DEFAULT 'N') IS
+                                                        , pUSUARIOMODIFICAR IN VARCHAR2 DEFAULT 'SP_CAMBIO_EST_PUB') IS
 
 	  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
 	  ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
@@ -1163,17 +1162,16 @@ END IF;
            NVL(fDD_MTO_CODIGO_V, '00') <> NVL(hDD_MTO_CODIGO_V, '00') THEN
 
 		IF vACTUALIZADO_V = 'S' THEN
-			IF pHISTORIFICAR = 'S' THEN
-	        	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION
-	                        SET AHP_FECHA_FIN_VENTA = SYSDATE
-	                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-	                            ,FECHAMODIFICAR = SYSDATE
-	                        WHERE (AHP_FECHA_INI_VENTA IS NOT NULL AND AHP_FECHA_FIN_VENTA IS NULL)
-	                            AND BORRADO = 0
-	                            AND ACT_ID = '||nACT_ID||'
-	                    ';
-	          	EXECUTE IMMEDIATE V_MSQL;
-			END IF;
+        	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION
+                        SET AHP_FECHA_FIN_VENTA = SYSDATE
+                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                            ,FECHAMODIFICAR = SYSDATE
+                        WHERE (AHP_FECHA_INI_VENTA IS NOT NULL AND AHP_FECHA_FIN_VENTA IS NULL)
+                            AND BORRADO = 0
+                            AND ACT_ID = '||nACT_ID||'
+                    ';
+          	EXECUTE IMMEDIATE V_MSQL;
+	          	
 		  	V_MSQL := '
 		    	INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
 		                                          ,DD_TPU_A_ID,DD_TPU_V_ID,DD_EPV_ID,DD_EPA_ID,DD_TCO_ID,DD_MTO_V_ID
@@ -1214,17 +1212,16 @@ END IF;
 		END IF;
 		
 		IF vACTUALIZADO_A = 'S' THEN
-			IF pHISTORIFICAR = 'S' THEN
-	          	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION
-	                        SET AHP_FECHA_FIN_ALQUILER = SYSDATE
-	                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-	                            ,FECHAMODIFICAR = SYSDATE
-	                        WHERE (AHP_FECHA_INI_ALQUILER IS NOT NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
-	                            AND BORRADO = 0
-	                            AND ACT_ID = '||nACT_ID||'
-	                    ';
-	          	EXECUTE IMMEDIATE V_MSQL;
-			END IF;
+          	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION
+                        SET AHP_FECHA_FIN_ALQUILER = SYSDATE
+                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                            ,FECHAMODIFICAR = SYSDATE
+                        WHERE (AHP_FECHA_INI_ALQUILER IS NOT NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
+                            AND BORRADO = 0
+                            AND ACT_ID = '||nACT_ID||'
+                    ';
+          	EXECUTE IMMEDIATE V_MSQL;
+	          	
 			V_MSQL := '
 		    	INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
 		                                          ,DD_TPU_A_ID,DD_TPU_V_ID,DD_EPV_ID,DD_EPA_ID,DD_TCO_ID,DD_MTO_V_ID

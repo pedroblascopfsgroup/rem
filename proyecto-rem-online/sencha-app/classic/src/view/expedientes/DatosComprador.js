@@ -396,15 +396,22 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 							                			fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 							                			reference: 'tipoDocConyuge',
 							                			name: 'codTipoDocumentoConyuge',
-							                			
+							                			editable:true,
+							                			allowBlank:true,
 							                			bind: {
 							                				store: '{comboTipoDocumento}'
-							                			}
+							                			},
+										            	listeners: {
+										            		change: 'comprobarObligatoriedadCamposNexos'										         
+										            	}
 							                		},
 													{
 											        	fieldLabel:  HreRem.i18n('fieldlabel.num.reg.conyuge'),
 											        	reference: 'numRegConyuge',
-											        	name: 'documentoConyuge'
+											        	name: 'documentoConyuge',
+										            	listeners: {
+										            		change: 'comprobarObligatoriedadCamposNexos'										         
+										            	}
 											        },
 											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.relacion.hre'),

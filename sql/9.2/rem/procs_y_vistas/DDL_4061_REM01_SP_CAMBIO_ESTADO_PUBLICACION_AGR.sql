@@ -31,8 +31,7 @@ SET DEFINE OFF;
 
 create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAULT NULL
 														, pCondAlquiler VARCHAR2 DEFAULT 1
-                                                        , pUSUARIOMODIFICAR IN VARCHAR2 DEFAULT 'SP_CAMBIO_EST_PUB_AGR'
-                                                        , pHISTORIFICAR IN VARCHAR2 DEFAULT 'N') IS
+                                                        , pUSUARIOMODIFICAR IN VARCHAR2 DEFAULT 'SP_CAMBIO_EST_PUB_AGR') IS
 
 	  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
 	  ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
@@ -1313,7 +1312,6 @@ ELSE
            NVL(fDD_MTO_CODIGO_V, '00') <> NVL(hDD_MTO_CODIGO_V, '00') THEN
            
         IF vACTUALIZADO_V = 'S' THEN
-			IF pHISTORIFICAR = 'S' THEN
 	          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
 	                        SET AHP_FECHA_FIN_VENTA = SYSDATE
 	                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
@@ -1322,7 +1320,6 @@ ELSE
 	                            AND BORRADO = 0
 	                            AND EXISTS '|| replace(vQUERY,'AUX','');
 	          EXECUTE IMMEDIATE V_MSQL;
-			END IF;
 			
           	V_MSQL := '
             	INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
@@ -1364,7 +1361,6 @@ ELSE
         END IF;
         
         IF vACTUALIZADO_A = 'S' THEN
-			IF pHISTORIFICAR = 'S' THEN
 	          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
 	                        SET AHP_FECHA_FIN_ALQUILER = SYSDATE
 	                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
@@ -1373,7 +1369,6 @@ ELSE
 	                            AND BORRADO = 0
 	                            AND EXISTS '|| replace(vQUERY,'AUX','');
 	          EXECUTE IMMEDIATE V_MSQL;
-			END IF;
 			
           	V_MSQL := '
             	INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID

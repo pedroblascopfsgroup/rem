@@ -1211,6 +1211,25 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			return null;
 		}
 	}
+	
+	@Override 
+	public ActivoAgrupacion getAgrupacionPAByIdActivoConFechaBaja(Long idActivo) {
+
+		HQLBuilder hb = new HQLBuilder("select act.agrupacion	 from ActivoAgrupacionActivo act where act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+
+		List<ActivoAgrupacion> lista = getHibernateTemplate().find(hb.toString());
+		
+		if (!Checks.estaVacio(lista)) {
+			return lista.get(0);
+		} else {
+			return null;
+		}
+	}
+	
+//	@Override
+//	public boolean isAgrupacionDadaDeBaja(Long idActivo) {
+//		
+//	}
 
 	@Override
 	public boolean isIntegradoEnAgrupacionPA(Long idActivo) {
@@ -1326,19 +1345,22 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	
 	public void validateAgrupacion(Long idActivo) {
-		if (isActivoMatriz(idActivo)) {
-			ActivoAgrupacion agrupacion = getAgrupacionPAByIdActivo(idActivo);
-			if (existenUAsconOfertasVivas(agrupacion.getId())) {
-				logger.error(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS);
-				throw new JsonViewerException(messageServices.getMessage(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS));
-				
-			}
-		}else if (isUnidadAlquilable(idActivo)) {
-			ActivoAgrupacion agrupacion = getAgrupacionPAByIdActivo(idActivo);
-			if (existeAMconOfertasVivas(agrupacion.getId())) {
-				logger.error(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS);
-				throw new JsonViewerException(messageServices.getMessage(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS));
-				
+		
+		ActivoAgrupacion agrupacion = getAgrupacionPAByIdActivo(idActivo);
+		
+		if(!Checks.esNulo(agrupacion)) { 
+			if (isActivoMatriz(idActivo)) {
+				if (existenUAsconOfertasVivas(agrupacion.getId())) {
+					logger.error(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS);
+					throw new JsonViewerException(messageServices.getMessage(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS));
+					
+				}
+			}else if (isUnidadAlquilable(idActivo)) {
+				if (existeAMconOfertasVivas(agrupacion.getId())) {
+					logger.error(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS);
+					throw new JsonViewerException(messageServices.getMessage(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS));
+					
+				}
 			}
 		}
 	}

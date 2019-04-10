@@ -2670,25 +2670,27 @@ public class AgrupacionAdapter {
 				if (!Checks.esNulo(dto.getFechaBaja())) {
 					List<ActivoAgrupacionActivo> activoAgrupacionPA = new ArrayList<ActivoAgrupacionActivo>();
 					Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
-					activoAgrupacionPA = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
+					Filter filtroActivosAgrupacion = genericDao.createFilter(FilterType.EQUALS, "principal", 0);
+					activoAgrupacionPA = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion, filtroActivosAgrupacion);
 					if (!Checks.estaVacio(activoAgrupacionPA)) {
 						
 						for (ActivoAgrupacionActivo activo : activoAgrupacionPA) {
 							Long idActivo = activo.getActivo().getId();
-							Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-							Activo activoActual = activo.getActivo();
-							PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
-							if (!Checks.esNulo(perimetroActivo)) {
-								perimetroActivo.setActivo(activoActual);
-								perimetroActivo.setIncluidoEnPerimetro(0);
-								perimetroActivo.setAplicaTramiteAdmision(0);
-								perimetroActivo.setAplicaGestion(0);
-								perimetroActivo.setAplicaAsignarMediador(0);
-								perimetroActivo.setAplicaComercializar(0);
-								perimetroActivo.setAplicaFormalizar(0);
-								perimetroActivo.setAplicaPublicar(false);
+								Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+								Activo activoActual = activo.getActivo();
+								PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
 								
-								genericDao.save(PerimetroActivo.class, perimetroActivo);
+								if (!Checks.esNulo(perimetroActivo)) {
+									perimetroActivo.setActivo(activoActual);
+									perimetroActivo.setIncluidoEnPerimetro(0);
+									perimetroActivo.setAplicaTramiteAdmision(0);
+									perimetroActivo.setAplicaGestion(0);
+									perimetroActivo.setAplicaAsignarMediador(0);
+									perimetroActivo.setAplicaComercializar(0);
+									perimetroActivo.setAplicaFormalizar(0);
+									perimetroActivo.setAplicaPublicar(false);
+									
+									genericDao.save(PerimetroActivo.class, perimetroActivo);
 							}
 						}
 					}	

@@ -18,7 +18,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
         var me = this;
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
-
 			{   
 				xtype:'fieldsettable',
 				layout:'hbox',

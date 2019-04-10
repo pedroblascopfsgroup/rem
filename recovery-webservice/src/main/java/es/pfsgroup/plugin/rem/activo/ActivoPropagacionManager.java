@@ -31,7 +31,7 @@ public class ActivoPropagacionManager implements ActivoPropagacionApi {
 
 		if (activo != null) {
 			if ( activoDao.isActivoMatriz(activo.getId())) {
-				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId());
 				DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
 				filter.setLimit(1000);
 				filter.setStart(0);
@@ -40,7 +40,7 @@ public class ActivoPropagacionManager implements ActivoPropagacionApi {
 			} else {
 				for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
 					if (activoAgrupacionActivo.getAgrupacion() != null
-							&& isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA, DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+							&& isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA, DDTipoAgrupacion.AGRUPACION_ASISTIDA, DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
 						DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
 						filter.setLimit(1000);
 						filter.setStart(0);

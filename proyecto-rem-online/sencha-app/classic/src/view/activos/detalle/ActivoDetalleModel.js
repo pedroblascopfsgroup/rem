@@ -495,9 +495,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		 enableCheckPerimetroAlquiler: function(get){
 		 	var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
-
+		 	
 		 	if(comboEstadoAlquiler != null){
-		 		if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
+		 		if((comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"])){
 			 		return true;
 		 		}
 		 	}
@@ -668,6 +668,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				
 				return tiposDeOferta;
 		},
+		
+		 enableDestinoComercial: function(get) {
+			 var me = this;
+			 if(me.get('activo.activoMatriz') == "true") { //Comprobar si es un AM. 
+				 //Comprobar si la PA está dada de baja.
+				 if(me.get('activo.agrupacionDadaDeBaja') == "true") {
+					   	return false; //Se puede editar.
+					   } else {
+					   	return true; //No se puede editar.
+					   }
+			 }
+			 
+			if(get('esUA') == true) {
+				return true;
+			} else {
+				return false;
+			}
+		 },
+		 
+		 esAM: function(get) {
+			var me = this;
+			var esAM = false;
+			
+			if(me.get('activo.activoMatriz')) {
+				esAM = true;
+			}
+			
+			return esAM;
+		 },
 				
 		esUA: function(){
 			var me = this; 

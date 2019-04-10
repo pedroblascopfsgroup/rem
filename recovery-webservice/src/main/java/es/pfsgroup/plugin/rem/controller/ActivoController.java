@@ -2836,6 +2836,8 @@ public class ActivoController extends ParadiseJsonController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView propagarActivosMatriz(String idActivo, ModelMap model){
+		
+		
 		try{
 			
 		model.put(RESPONSE_DATA_KEY, activoApi.getActivosPropagables(Long.valueOf(idActivo)));

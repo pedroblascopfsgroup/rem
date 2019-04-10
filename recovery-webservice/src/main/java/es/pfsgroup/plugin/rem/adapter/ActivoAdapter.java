@@ -2763,49 +2763,7 @@ public class ActivoAdapter {
 							presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
 				}
 			}
-			//Lógica anterior
-			/*
-			dtoFilter.setEstadoContable("1");
-
-			// Gastado + Pendiente de pago, para el ejercicio actual
-			dtoFilter.setEjercicioPresupuestario(ejercicioActual);
-			vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
-			if (vista.getTotalCount() > 0) {
-
-				List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
-						.getResults();
-				presupuestoGrafico.setGastado(new Double(0));
-				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
-
-					presupuestoGrafico.setGastado(
-							presupuestoGrafico.getGastado() + new Double(activoTrabajoTemp.getImporteParticipa()));
-
-				}
-
-			} else {
-				presupuestoGrafico.setGastado(new Double(0));
-			}
-
-			// Pendiente de pago, para el ejercicio actual
-			dtoFilter.setEstadoCodigo(DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
-			dtoFilter.setEjercicioPresupuestario(ejercicioActual);
-			vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
-			if (vista.getTotalCount() > 0) {
-
-				List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
-						.getResults();
-				presupuestoGrafico.setDispuesto(new Double(0));
-				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
-
-					presupuestoGrafico.setDispuesto(
-							presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
-
-				}
-
-			} else {
-				presupuestoGrafico.setDispuesto(new Double(0));
-			}*/
-
+			
 			presupuestoGrafico.setGastado(presupuestoGrafico.getGastado() - presupuestoGrafico.getDispuesto());
 			presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible() + presupuestoGrafico.getDispuesto()
 					+ presupuestoGrafico.getGastado());

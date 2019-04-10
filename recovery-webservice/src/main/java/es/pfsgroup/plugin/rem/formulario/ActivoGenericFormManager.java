@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
+import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -54,7 +55,6 @@ import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
@@ -124,6 +124,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     
     @Autowired
 	private TareaActivoApi tareaActivoApi;
+    
+    @Autowired
+	private PresupuestoApi presupuestoManager;
 
     
     /**
@@ -141,7 +144,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
      * @param idTareaExterna
      * @return GenericForm
      */
-    public GenericForm getForm(Long idTareaExterna) {
+    public GenericForm getForm(Long idTareaExterna) throws Exception{
     	return this.get(idTareaExterna);
     }
     
@@ -151,7 +154,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
      * @param idTareaExterna id. de la tarea externa
      * @return GenericForm devuelve el formulario asociado a la tarea externa.
      */
-    public GenericForm get(Long idTareaExterna) {
+    public GenericForm get(Long idTareaExterna) throws Exception {
         TareaExterna tareaExterna = tareaExternaManager.get(idTareaExterna);
 
         GenericForm form = new GenericForm();
@@ -166,7 +169,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
         form.setItems(items);
 
         //obtenerValoresDeLosCombos(items);
-        asignaValoresALosItems(items, tareaExterna); //Comentado para la demo, usa métodos de procedimientos.
+        asignaValoresALosItems(items, tareaExterna); 
 
         return form;
     }
@@ -274,7 +277,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
     
     //TODO: Hay que refactorizar este método.
-    private void asignaValoresALosItems(List<GenericFormItem> items, TareaExterna tareaExterna) {
+    private void asignaValoresALosItems(List<GenericFormItem> items, TareaExterna tareaExterna) throws Exception{
         List<TareaExternaValor> valores = tareaExterna.getValores();
         for (GenericFormItem item : items) {
 
@@ -295,13 +298,14 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			
             			// El saldo disponible debe ser el del activo, para el ejercicio actual
             			// Si no hay saldo disponible en ejercicio actual, se muestra 0€
-            			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", ((TareaActivo) tareaExterna.getTareaPadre()).getActivo().getId().toString());
-            			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
-            			List<VBusquedaActivosTrabajoPresupuesto> lista = genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicio);
-            			if(!Checks.estaVacio(lista))
-            				item.setValue(lista.get(0).getSaldoDisponible() + "€");
-            			else
-            				item.setValue("0€");
+            			String saldo = "0";
+            			try{
+            				saldo = presupuestoManager.obtenerSaldoDisponible(((TareaActivo) tareaExterna.getTareaPadre()).getActivo().getId(), ejercicioActual);
+            			}catch(Exception e){
+            				logger.error("Error obteniendo saldo",e);
+            			}
+            			
+            			item.setValue(saldo + "€");
 
             		}
             		if(item.getNombre().equals("nombrePropuesta"))

@@ -71,6 +71,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
@@ -120,7 +121,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -248,6 +248,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+	
+	@Autowired
+	private PresupuestoApi presupuestoManager;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -2626,7 +2629,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.checkSuperaPresupuestoActivoTarea")
-	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea) {
+	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea)  throws Exception {
 		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
 
 		return checkSuperaPresupuestoActivo(trabajo);
@@ -2634,7 +2637,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.checkSuperaPresupuestoActivo")
-	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo) {
+	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo)  throws Exception {
 
 		if (getExcesoPresupuestoActivo(trabajo) > 0L)
 			return true;
@@ -2644,7 +2647,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.getExcesoPresupuestoActivo")
-	public Float getExcesoPresupuestoActivo(Trabajo trabajo) {
+	public Float getExcesoPresupuestoActivo(Trabajo trabajo) throws Exception {
 
 		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
 		String ejercicioActual = dfAnyo.format(new Date());
@@ -2672,26 +2675,26 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			else
 				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial();
 
-		// Obtiene el acumulado de presupuestos de trabajos del activo, para el
-		// ejercicio actual
-		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo",
-				trabajo.getActivo().getId().toString());
-		Filter filtroEjercicioActual = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
-		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = genericDao
-				.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicioActual);
-
+		
+		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = listaTrabajosActivo =presupuestoManager.listarTrabajosActivo(trabajo.getActivo().getId(), ejercicioActual);;
+			
+				
 		BigDecimal importeParticipacionTrabajo = new BigDecimal(0);
-		for (VBusquedaActivosTrabajoPresupuesto trabajoActivo : listaTrabajosActivo) {
-			if (!Checks.esNulo(trabajoActivo.getImporteParticipa()))
-				importeParticipacionTrabajo = new BigDecimal(trabajoActivo.getImporteParticipa());
-			else
-				importeParticipacionTrabajo = new BigDecimal(0);
-
-			acumuladoTrabajosActivoImporte = acumuladoTrabajosActivoImporte + importeParticipacionTrabajo.doubleValue();
-		}
-
-		BigDecimal importeExcesoPresupuesto = new BigDecimal(
-				acumuladoTrabajosActivoImporte - ultimoPresupuestoActivoImporte);
+		BigDecimal importeExcesoPresupuesto = new BigDecimal(0);
+		
+		if(listaTrabajosActivo !=null){
+			for (VBusquedaActivosTrabajoPresupuesto trabajoActivo : listaTrabajosActivo) {
+				if (!Checks.esNulo(trabajoActivo.getImporteParticipa()))
+					importeParticipacionTrabajo = new BigDecimal(trabajoActivo.getImporteParticipa());
+				else
+					importeParticipacionTrabajo = new BigDecimal(0);
+	
+				acumuladoTrabajosActivoImporte = acumuladoTrabajosActivoImporte + importeParticipacionTrabajo.doubleValue();
+			}
+	
+			importeExcesoPresupuesto = new BigDecimal(
+					acumuladoTrabajosActivoImporte - ultimoPresupuestoActivoImporte);
+			}
 
 		return importeExcesoPresupuesto.floatValue();
 	}

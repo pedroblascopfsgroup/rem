@@ -221,7 +221,14 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name:'estaFirmado',
     			type: 'boolean'
-    		}
+			},
+			{
+				name: 'esCarteraLiberbank',
+				calculate: function(data) { 
+    				return CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo;
+    			},
+    			depends: 'entidadPropietariaCodigo'
+			}
     		 
     ],
     formulas: {

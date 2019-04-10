@@ -1046,10 +1046,13 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		Oferta oferta = expComercial.getOferta();
 		Comprador comprador = new Comprador();
 		
-		CompradorExpediente compradorExp = genericDao.get(CompradorExpediente.class, genericDao.createFilter(FilterType.EQUALS,"expediente",expComercial.getId()), genericDao.createFilter(FilterType.EQUALS, "borrado", false), genericDao.createFilter(FilterType.EQUALS, "titularContratacion", 1));
+		Order orden = new Order(OrderType.DESC, "porcionCompra");
 		
-		if(!Checks.esNulo(compradorExp)) {
-			comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS,"id",compradorExp.getComprador()));
+		List<CompradorExpediente> compradoresExp = genericDao.getListOrdered(CompradorExpediente.class, orden ,genericDao.createFilter(FilterType.EQUALS,"expediente",expComercial.getId())
+				, genericDao.createFilter(FilterType.EQUALS, "borrado", false), genericDao.createFilter(FilterType.EQUALS, "titularContratacion", 1));
+		
+		if(!Checks.estaVacio(compradoresExp)) {
+			comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS,"id",compradoresExp.get(0).getComprador()));
 		}
 		String codSitPos = "0";
 		String codTipoPer = "0";

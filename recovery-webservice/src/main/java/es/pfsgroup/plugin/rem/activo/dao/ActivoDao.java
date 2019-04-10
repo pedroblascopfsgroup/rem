@@ -163,13 +163,12 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 *
 	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
 	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+	 * @param eleccionUsuarioTipoPublicacionAlquiler: indica si el tipo de publicación de alquiler es pre-publicado o publicado forzado.
 	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
 	 */
-	Boolean publicarActivoConHistorico(Long idActivo, String username, boolean doFlush);
+	Boolean publicarActivoConHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler, boolean doFlush);
 
-	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username, boolean doFlush);
-
-	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler, boolean doFlush);
+	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler, boolean doFlush);
 
 	/**
 	 * Establece la fecha fin de los registros de un activo en el Historico de destino comercial
@@ -189,18 +188,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
 
 	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo);
-
-
-	/**
-	 * Este método lanza el procedimiento de cambio de estado de publicación sin generar un histórico para los
-	 * movimientos realizados.
-	 *
-	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
-	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
-	 * @param eleccionUsuarioTipoPublicacionAlquiler: indica si el tipo de publicación de alquiler es pre-publicado o publicado forzado.
-	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
-	 */
-	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush);
 
 	Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
 

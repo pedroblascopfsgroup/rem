@@ -8763,6 +8763,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			for(TareaExternaValor valor :  valores) {
 				if(UpdaterServiceSancionOfertaResolucionExpediente.MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 					valorComboMotivoAnularReserva= valor.getValor();
+					break;
 				}
 			}
 			

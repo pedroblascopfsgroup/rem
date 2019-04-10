@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.activo.MaestroDeActivos;
 
 @Component
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
@@ -169,8 +170,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			
 		}
 		
-		
-		Long newNumActivo = Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO) + 1 FROM ACT_ACTIVO"));
+		MaestroDeActivos maestroDeActivos = new MaestroDeActivos(unidadAlquilable.getNumActivo(), unidadAlquilable.getId(), activoMatriz.getId());
+		Long newNumActivo = maestroDeActivos.getNewNumActivo(unidadAlquilable.getNumActivo(), unidadAlquilable.getId(), activoMatriz.getId());
 		Long newNumActivoRem = Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO_REM) + 1 FROM ACT_ACTIVO"));
 		Filter tipoTituloFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivo.UNIDAD_ALQUILABLE);
 		DDTipoTituloActivo tituloUnidadAlquilable = genericDao.get(DDTipoTituloActivo.class, tipoTituloFilter);

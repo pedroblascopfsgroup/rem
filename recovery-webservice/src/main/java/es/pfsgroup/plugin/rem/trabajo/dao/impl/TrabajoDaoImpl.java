@@ -81,7 +81,6 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	}
 	
 	//Prepara lso filtros de la consulta 
-	@SuppressWarnings("static-access")
 	private void rellenarFiltrosBusquedaTrabajos(DtoTrabajoFilter dto, HQLBuilder hb, GastoProveedor gasto) {
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());

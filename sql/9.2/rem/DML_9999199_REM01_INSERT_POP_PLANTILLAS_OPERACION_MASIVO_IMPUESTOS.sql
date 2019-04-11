@@ -58,11 +58,14 @@ BEGIN
         IF V_NUM_TABLAS > 0 THEN				
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.POP_PLANTILLAS_OPERACION '||
-                    'SET POP_DIRECTORIO = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					', DD_OPM_ID = (SELECT DD_OPM_ID FROM '|| V_ESQUEMA ||'.DD_OPM_OPERACION_MASIVA WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''')'||
-					', USUARIOMODIFICAR = ''HREOS-4298'' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE POP_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+       	  
+           V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.POP_PLANTILLAS_OPERACION
+                      SET POP_DIRECTORIO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+					            , DD_OPM_ID = (SELECT DD_OPM_ID FROM '|| V_ESQUEMA ||'.DD_OPM_OPERACION_MASIVA WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''')
+					            , USUARIOMODIFICAR = ''HREOS-5539''
+                      , FECHAMODIFICAR = SYSDATE 
+					            WHERE POP_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           
@@ -71,10 +74,28 @@ BEGIN
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
           V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_POP_PLANTILLAS_OPERACION.NEXTVAL FROM DUAL';
-          EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.POP_PLANTILLAS_OPERACION (' ||
-                      'POP_ID, POP_NOMBRE, POP_DIRECTORIO, DD_OPM_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''' ,'''||V_TMP_TIPO_DATA(2)||''',(SELECT DD_OPM_ID FROM '|| V_ESQUEMA ||'.DD_OPM_OPERACION_MASIVA WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''), 0, ''HREOS-4298'',SYSDATE,0 FROM DUAL';
+          EXECUTE IMMEDIATE V_MSQL INTO V_ID;
+
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.POP_PLANTILLAS_OPERACION (
+                      POP_ID
+                      , POP_NOMBRE
+                      , POP_DIRECTORIO
+                      , DD_OPM_ID
+                      , VERSION
+                      , USUARIOCREAR
+                      , FECHACREAR
+                      , BORRADO
+                      ) VALUES (
+                          '|| V_ID ||'
+                        , '''||V_TMP_TIPO_DATA(1)||'''
+                        , '''||V_TMP_TIPO_DATA(2)||'''
+                        , (SELECT DD_OPM_ID FROM '|| V_ESQUEMA ||'.DD_OPM_OPERACION_MASIVA WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''')
+                        , 0
+                        , ''HREOS-5539''
+                        , SYSDATE
+                        , 0
+                      ');
+
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         
@@ -92,7 +113,7 @@ EXCEPTION
           DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(err_msg);
-
+          DBMS_OUTPUT.put_line(V_MSQL);
           ROLLBACK;
           RAISE;          
 

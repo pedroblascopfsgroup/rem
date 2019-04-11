@@ -94,7 +94,7 @@ BEGIN
                         , ''HREOS-5539''
                         , SYSDATE
                         , 0
-                      ');
+                      )';
 
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');

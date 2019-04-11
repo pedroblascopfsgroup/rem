@@ -80,7 +80,7 @@ BEGIN
                                 , ''HREOS-5539''
                                 , SYSDATE
                                 , '''||V_TMP_FUNCION(5)||'''
-                            ');
+                            )';
 		    	
 				EXECUTE IMMEDIATE V_MSQL_1;
 				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA insertados correctamente.');

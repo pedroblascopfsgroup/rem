@@ -120,6 +120,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -581,7 +582,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						&& !Checks.esNulo(ofertaDto.getActivosLote())
 						&& !ofertaDto.getActivosLote().isEmpty()) {
 				DtoAgrupacionesCreateDelete dtoAgrupacion = new DtoAgrupacionesCreateDelete();
-				dtoAgrupacion.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
+				if(DDTipoOferta.CODIGO_VENTA.equals(ofertaDto.getCodTipoOferta())) {
+					dtoAgrupacion.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA);
+				} else if(DDTipoOferta.CODIGO_ALQUILER.equals(ofertaDto.getCodTipoOferta())) {
+					dtoAgrupacion.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER);
+				}
 				dtoAgrupacion.setNombre("Agrupación creada desde CRM");
 				ActivoProveedor prescriptor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(
 						FilterType.EQUALS, "codigoProveedorRem", ofertaDto.getIdProveedorRemPrescriptor()));
@@ -604,9 +609,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						FilterType.EQUALS, "numAgrupRem", numAgrupacionRem));
 				for (int i=0; i<ofertaDto.getActivosLote().size(); i++) {					
 					try {
+						Activo activo = activoApi.get(ofertaDto.getActivosLote().get(i).getIdActivoHaya());
+						agrup.setTipoAlquiler(activo.getTipoAlquiler());
 						agrupacionAdapter.createActivoAgrupacion(ofertaDto.getActivosLote().get(i).getIdActivoHaya(), agrup.getId(), i+1, false);
 					} catch (Exception e) {
+						logger.error("Error en ofertaManager", e);
 						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
+						return errorsList;
 					}
 				}
 			}
@@ -644,7 +653,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				for (ActivosLoteOfertaDto idActivo : ofertaDto.getActivosLote()) {
 					ActivoAgrupacion agrupacion = null;
 					List<ActivoOferta> buildListaActOfr = new ArrayList<ActivoOferta>();
-					List<ActivoAgrupacionActivo> listaAgrups = null;	
+					List<ActivoAgrupacionActivo> listaAgrups = null;
+
 					Activo activo = genericDao.get(Activo.class,
 							genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo.getIdActivoHaya()));
 					if (!Checks.esNulo(activo)) {
@@ -674,12 +684,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							listaActOfr.addAll(buildListaActOfr);
 						}
 					}
-						
-					// Seteamos la lista de ActivosOferta
-					oferta.setActivosOferta(listaActOfr);
-					// Seteamos la agrupación a la que pertenece la oferta
-					oferta.setAgrupacion(agrup);
 				}
+				
+				// Seteamos la lista de ActivosOferta
+				oferta.setActivosOferta(listaActOfr);
+				// Seteamos la agrupación a la que pertenece la oferta
+				oferta.setAgrupacion(agrup);
+				
 			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
 				ActivoAgrupacion agrupacion = null;
 				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();

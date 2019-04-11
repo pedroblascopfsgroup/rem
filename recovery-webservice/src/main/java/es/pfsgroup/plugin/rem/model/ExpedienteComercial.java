@@ -264,6 +264,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_COMOA3")
     private Long comoa3;
+    
+    @Column (name="ECO_DEVOL_AUTO_NUMBER")
+    private Boolean devolAutoNumber;
 
     @Version   
 	private Long version;
@@ -797,4 +800,12 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setComoa3(Long comoa3) {
 		this.comoa3 = comoa3;
 	}
+	public Boolean getDevolAutoNumber() {
+		return devolAutoNumber;
+	}
+
+	public void setDevolAutoNumber(Boolean devolAutoNumber) {
+		this.devolAutoNumber = devolAutoNumber;
+	}
+	
 }

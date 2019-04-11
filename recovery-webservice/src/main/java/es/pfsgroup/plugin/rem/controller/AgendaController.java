@@ -23,17 +23,20 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
+import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
@@ -56,6 +59,9 @@ public class AgendaController extends TareaController {
 	@Resource
 	Properties appProperties;
 
+    @Autowired
+    private ActivoTareaExternaApi activoTareaExternaManagerApi;
+	
 	@Autowired
 	ExcelReportGeneratorApi excelReportGeneratorApi;
 
@@ -360,7 +366,7 @@ public class AgendaController extends TareaController {
 		ExpedienteComercial eco = null;
 		List<ActivoTramite> listaTramites = null;
 		Boolean salto = false;
-
+		WSDevolBankiaDto dto = null;
 		try {
 
 			if (Checks.esNulo(idExpediente)) {
@@ -378,7 +384,6 @@ public class AgendaController extends TareaController {
 								&& !listaTramites.isEmpty() && Checks.esNulo(listaTramites.get(0))))) {
 					throw new JsonViewerException("No se ha podido recuperar el trámite del expediente comercial.");
 				}
-
 				List<TareaExterna> listaTareas = activoTramiteApi
 						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
 				if(listaTareas != null && listaTareas.size() > 0){
@@ -390,9 +395,8 @@ public class AgendaController extends TareaController {
 							if(salto){
 								//Se entiende que cuando salta a la tarea anterior a Resolución Expendiente, la reserva y el expediente han llegado en los siguientes estados
 								expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, tareaSalto.getTareaProcedimiento().getCodigo(), true);
-								WSDevolBankiaDto dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
+								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
 										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
-								
 								beanUtilNotNull.copyProperties(eco, dto);
 							}
 							else{
@@ -428,7 +432,8 @@ public class AgendaController extends TareaController {
 		ExpedienteComercial eco = null;
 		List<ActivoTramite> listaTramites = null;
 		Boolean salto = false;
-
+		WSDevolBankiaDto dto = null;
+		String valorComboMotivoAnularReserva = null;
 		try {
 
 			if (Checks.esNulo(idExpediente)) {
@@ -443,21 +448,56 @@ public class AgendaController extends TareaController {
 				listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
 				if (Checks.esNulo(listaTramites)
 						|| (!Checks.esNulo(listaTramites) && listaTramites.isEmpty() || (!Checks.esNulo(listaTramites)
-								&& !listaTramites.isEmpty() && Checks.esNulo(listaTramites.get(0))))) {
+								&& !listaTramites.isEmpty() && Checks.esNulo(listaTramites.get(0))))) { 
 					throw new JsonViewerException("No se ha podido recuperar el trámite del expediente comercial.");
 				}
 
 				List<TareaExterna> listaTareas = activoTramiteApi
 						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				
+				List<TareaExterna> listaTareas2 = activoTramiteApi
+						.getListaTareaExternaByIdTramite(listaTramites.get(0).getId());
 				if (listaTareas != null && listaTareas.size() > 0) {
+					
+					for (TareaExterna tarea : listaTareas2) {
+						if (ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE.equals(tarea.getTareaProcedimiento().getCodigo())) {
+							List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tarea.getId());
+							for(TareaExternaValor valor :  valores) {
+								if(UpdaterServiceSancionOfertaResolucionExpediente.MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+									valorComboMotivoAnularReserva= valor.getValor();
+									break;
+								}
+							}
+							if (!Checks.esNulo(valorComboMotivoAnularReserva)) break;
+						}
+					}
 					for (TareaExterna tarea : listaTareas) {
 						if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION
 								.equals(tarea.getTareaProcedimiento().getCodigo())) {
 							// Salto a la tarea Respuesta Bankia Anulacion
 							// Devolucion y llamada UVEM cosem1: 6
-							salto = adapter.saltoRespuestaBankiaAnulacionDevolucion(tarea.getId());
+							
+							if (!eco.getDevolAutoNumber()) {
+								salto = adapter.saltoTareaByCodigo(tarea.getId(), ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);
+								//llamar al ws
+								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
+								UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+							}else {
+								Long correcw = eco.getCorrecw();
+								Long comoa3 = eco.getComoa3();
+								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
+										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+								if (correcw == 0 && comoa3 == 0) {
+									throw new JsonViewerException("No se puede anular la devoluci&oacute;n.");
+								}else {
+									TareaExterna tareaSalto = activoTramiteApi.getTareaAnteriorByCodigoTarea(listaTramites.get(0).getId(), ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE);
+									salto = adapter.saltoTareaByCodigo(tarea.getId(), tareaSalto.getTareaProcedimiento().getCodigo());
+								}
+							}
+							
+							/*salto = adapter.saltoRespuestaBankiaAnulacionDevolucion(tarea.getId());
 							if (salto) {
-								WSDevolBankiaDto dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(),
+								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(),
 										UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
 										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA,
 										UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
@@ -466,7 +506,7 @@ public class AgendaController extends TareaController {
 							} else {
 								logger.error("Error al saltar a tarea anterior a Resolución Expediente");
 								throw new Exception();
-							}
+							}*/
 							break;
 						} else {
 							throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");

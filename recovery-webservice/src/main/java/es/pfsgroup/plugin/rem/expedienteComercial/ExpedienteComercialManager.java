@@ -8774,6 +8774,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
 				
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);
+				
+				if (!Checks.esNulo(dto) && dto.getCorrecw() == 1 ) {
+					expedienteComercial.setDevolAutoNumber(true);
+				}else {
+					expedienteComercial.setDevolAutoNumber(false);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

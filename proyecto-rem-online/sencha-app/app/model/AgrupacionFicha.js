@@ -98,7 +98,8 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name : 'acreedorPDV'
 		    	},
 		    	{
-		    		name : 'codigoPostal'
+		    		name : 'codigoPostal',
+		    		type: 'string'
 		    	},
 		    	{
 	    			name: 'propietario',

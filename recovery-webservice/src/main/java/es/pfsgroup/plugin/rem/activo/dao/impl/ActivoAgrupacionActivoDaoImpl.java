@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
@@ -12,6 +13,9 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.NotificacionGencat;
+import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
+import es.pfsgroup.plugin.rem.model.VisitaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Repository("ActivoAgrupacionActivoDao")
@@ -52,7 +56,7 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 	}
     
     @Override
-    public void deleteTramiteGencat(ComunicacionGencat comunicacionGencat) {
+    public void deleteTramiteGencat(ComunicacionGencat comunicacionGencat, List<NotificacionGencat> notificacionesGencat, List<ReclamacionGencat> reclamacionesGencat, VisitaGencat visitaGencat) {
     	StringBuilder sb;
     	
     	sb = new StringBuilder("delete from AdecuacionGencat ag where ag.comunicacion.id = "+comunicacionGencat.getId());		
@@ -61,14 +65,18 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 		sb = new StringBuilder("delete from OfertaGencat og where og.comunicacion.id = "+comunicacionGencat.getId());		
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
-//		sb = new StringBuilder("delete from NotificacionGencat ng where ng.id = "+idNotificacionGencat);		
-//		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
-//		
-//		sb = new StringBuilder("delete from ReclamacionGencat rg where rg.id = "+idReclamacionGencat);		
-//		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
-//		
-//		sb = new StringBuilder("delete from VisitaGencat vg where vg.id = "+idVisitaGencat);		
-//		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		if (!Checks.estaVacio(notificacionesGencat)) {
+			sb = new StringBuilder("delete from NotificacionGencat ng where comunicacion.id = "+comunicacionGencat.getId());		
+			this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		}
+		if (!Checks.estaVacio(reclamacionesGencat)) {
+			sb = new StringBuilder("delete from ReclamacionGencat rg where comunicacion.id = "+comunicacionGencat.getId());		
+			this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		}
+		if (!Checks.esNulo(visitaGencat)) {
+			sb = new StringBuilder("delete from VisitaGencat vg where comunicacion.id = "+comunicacionGencat.getId());		
+			this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		}
 		
 		sb = new StringBuilder("delete from ComunicacionGencat cg where cg.id = "+comunicacionGencat.getId());		
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();

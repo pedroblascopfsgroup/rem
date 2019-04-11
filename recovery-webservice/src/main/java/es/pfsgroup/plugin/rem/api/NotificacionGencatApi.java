@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import es.pfsgroup.plugin.rem.model.NotificacionGencat;
 
 public interface NotificacionGencatApi {
@@ -11,7 +13,7 @@ public interface NotificacionGencatApi {
 	 * @param idComunicacionGencat
 	 * @return
 	 */
-	public NotificacionGencat getNotificacionByIdComunicacionGencat(Long idComunicacionnGencat);
+	public List<NotificacionGencat> getNotificacionByIdComunicacionGencat(Long idComunicacionnGencat);
 			
 	/**
 	 * Método que realiza la persistencia de datos de un objecto de tipo OfertaGencat

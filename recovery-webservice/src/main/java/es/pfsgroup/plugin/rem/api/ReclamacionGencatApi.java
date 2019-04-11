@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
 
 public interface ReclamacionGencatApi {
@@ -11,7 +13,7 @@ public interface ReclamacionGencatApi {
 	 * @param idComunicacionGencat
 	 * @return
 	 */
-	public ReclamacionGencat getReclamacionByIdComunicacionGencat(Long idComunicacionnGencat);
+	public List<ReclamacionGencat> getReclamacionByIdComunicacionGencat(Long idComunicacionnGencat);
 			
 	/**
 	 * Método que realiza la persistencia de datos de un objecto de tipo ReclamacionGencat

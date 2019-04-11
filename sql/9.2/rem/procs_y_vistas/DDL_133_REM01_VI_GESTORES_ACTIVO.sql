@@ -860,6 +860,7 @@ SELECT act.act_id,
             AND dist1.cod_municipio IS NULL
             AND dist1.cod_postal IS NULL
             AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+            AND dist1.cod_provincia is null
             )
         left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
        ON (dist2.cod_estado_activo = dd_eac.dd_eac_codigo

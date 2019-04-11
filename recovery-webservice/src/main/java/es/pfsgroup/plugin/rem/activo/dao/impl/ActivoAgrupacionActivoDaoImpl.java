@@ -181,6 +181,15 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 		
 		return HibernateQueryUtils.list(this, hql);
 	}
+	
+	@Override
+	public List<ActivoAgrupacionActivo> getListActivoAgrupacionActivoByAgrupacionID(Long idAgrupacion) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivoAgrupacionActivo aa");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.id", idAgrupacion);
+		
+		return HibernateQueryUtils.list(this, hql);
+	}
 
 	@Override
 	public boolean activoEnAgrupacionLoteComercial(Long idActivo) {

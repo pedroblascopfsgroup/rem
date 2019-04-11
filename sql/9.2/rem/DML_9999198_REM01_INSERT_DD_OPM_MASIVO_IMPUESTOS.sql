@@ -79,6 +79,7 @@ BEGIN
                                 , 0
                                 , ''HREOS-5539''
                                 , SYSDATE
+                                ,0 
                                 , '''||V_TMP_FUNCION(5)||'''
                             )';
 		    	

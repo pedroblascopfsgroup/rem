@@ -38,44 +38,47 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA
     (
-		 --	CODIGO				STR_TARIFA_PLANA	STR_FECHA_INI_TP		
-		 T_TIPO_DATA('26',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('27',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('28',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('29',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('30',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('31',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('32',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('57',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('60',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('61',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('63',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('64',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('66',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('67',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('68',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('69',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('70',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('71',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('72',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('73',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('100',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('101',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('102',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('103',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('104',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('105',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('109',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('110',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('111',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('112',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('113',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('114',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('115',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('116',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('117',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('120',		1	,				'10/05/2019'),
-		 T_TIPO_DATA('129',		1	,				'10/05/2019')
+		 --	CODIGO				STR_TARIFA_PLANA	STR_FECHA_INI_TP	CARTERA	
+		 ------------------------------------------------------------------
+		 --SAREB
+		 ------------------------------------------------------------------
+		 T_TIPO_DATA('26',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('27',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('28',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('29',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('30',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('31',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('32',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('57',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('60',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('61',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('63',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('64',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('66',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('67',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('68',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('69',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('70',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('71',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('72',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('73',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('100',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('101',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('102',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('103',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('104',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('105',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('109',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('110',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('111',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('112',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('113',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('114',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('115',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('116',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('117',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('120',		1	,				'10/05/2019'		,'02'),
+		 T_TIPO_DATA('129',		1	,				'10/05/2019'		,'02')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -93,64 +96,103 @@ BEGIN
 		V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
 		-- Comprobar el dato a insertar.
-		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE STR_FECHA_FIN_TP IS NULL AND DD_STR_ID = ( 
-																SELECT DD_STR_ID 
-																FROM DD_STR_SUBTIPO_TRABAJO 
-																WHERE DD_STR_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''
+		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE STR_FECHA_FIN_TP IS NULL 
+																AND DD_STR_ID = ( 
+																	SELECT DD_STR_ID 
+																	FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO 
+																	WHERE DD_STR_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''
+																)
+																AND DD_CRA_ID = ( 
+																	SELECT DD_CRA_ID 
+																	FROM '||V_ESQUEMA||'.DD_CRA_CARTERA 
+																	WHERE DD_CRA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(4)) ||'''
 																)';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
        		IF V_NUM_TABLAS = 0 THEN				
-			-- Comprobar secuencias de la tabla.
 			
 			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
 			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 			IF V_NUM_TABLAS > 0 THEN
 			
-				V_SQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
-				EXECUTE IMMEDIATE V_SQL INTO V_NUM_SEQUENCE;
-		
-				V_SQL := 'SELECT NVL(MAX(HIST_TP_ID), 0) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||'';
-				EXECUTE IMMEDIATE V_SQL INTO V_NUM_MAXID;
-				   
-				WHILE V_NUM_SEQUENCE <= V_NUM_MAXID LOOP
+				V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''' AND BORRADO = 0';
+				EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+				IF V_NUM_TABLAS > 0 THEN
+				
+				
 					V_SQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
 					EXECUTE IMMEDIATE V_SQL INTO V_NUM_SEQUENCE;
-				END LOOP;
-
-				-- Si no existe se inserta.
-				DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-
-				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
-				      	'HIST_TP_ID, 
-					DD_STR_ID, 
-					STR_TARIFA_PLANA, 
-					STR_FECHA_INI_TP, 
-					VERSION, 
-					USUARIOCREAR, 
-					FECHACREAR, 
-					BORRADO) ' ||
-		              	'SELECT 
-					'|| V_NUM_SEQUENCE || ', 
-					(SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''), 
-					'||V_TMP_TIPO_DATA(2)||',
-					TO_DATE('''||TRIM(V_TMP_TIPO_DATA(3))||''', ''dd/mm/yyyy''),
-					0, 
-					'|| V_USU_MODIFICAR ||',
-					SYSDATE,
-					0 FROM DUAL';
-				EXECUTE IMMEDIATE V_MSQL;
-				DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
 			
+					V_SQL := 'SELECT NVL(MAX(HIST_TP_ID), 0) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||'';
+					EXECUTE IMMEDIATE V_SQL INTO V_NUM_MAXID;
+					   
+					WHILE V_NUM_SEQUENCE <= V_NUM_MAXID LOOP
+						V_SQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
+						EXECUTE IMMEDIATE V_SQL INTO V_NUM_SEQUENCE;
+					END LOOP;
+
+					-- Si no existe se inserta.
+					DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+
+					V_MSQL :=  'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
+							   'HIST_TP_ID, 
+								DD_STR_ID, 
+								STR_TARIFA_PLANA, 
+								STR_FECHA_INI_TP, 
+								VERSION, 
+								USUARIOCREAR, 
+								FECHACREAR, 
+								BORRADO,
+								DD_CRA_ID) ' ||
+									'SELECT 
+								'|| V_NUM_SEQUENCE || ', 
+								(SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''), 
+								'||V_TMP_TIPO_DATA(2)||',
+								TO_DATE('''||TRIM(V_TMP_TIPO_DATA(3))||''', ''dd/mm/yyyy''),
+								0, 
+								'|| V_USU_MODIFICAR ||',
+								SYSDATE,
+								0,
+								(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''')
+								FROM DUAL';
+					EXECUTE IMMEDIATE V_MSQL;
+					DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+			
+				ELSE
+					DBMS_OUTPUT.PUT_LINE('[INFO]: NO EXISTE LA CARTERA CON DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''');
+				END IF;
+
 			ELSE
 				DBMS_OUTPUT.PUT_LINE('[INFO]: NO EXISTE EL SUBTIPO DE TRABAJO CON DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
 			END IF;
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('[INFO]: EXISTE UNA TARIFA PLANA VIGENTE PARA EL SUBTIPO DE TRABAJO CON DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
+			DBMS_OUTPUT.PUT_LINE('[INFO]: EXISTE UNA TARIFA PLANA VIGENTE PARA EL SUBTIPO DE TRABAJO CON DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' Y CODIGO CARTERA '''||TRIM(V_TMP_TIPO_DATA(4))||''' ');
 		END IF;
 	END LOOP;
 
+	
+	
+	V_MSQL :=  'MERGE INTO '||V_ESQUEMA||'.HIST_TP_TARIFA_PLANA T1
+				USING (
+					SELECT STR.DD_STR_CODIGO, TP.HIST_TP_ID
+					FROM '||V_ESQUEMA||'.HIST_TP_TARIFA_PLANA     TP
+					JOIN '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO   STR ON TP.DD_STR_ID = STR.DD_STR_ID
+					WHERE STR.DD_STR_CODIGO IN (''26'',''27'',''28'',''29'',''36'',''57'',''59'',''60'',''61'',''62'',''63'',''64'',''65'',''66'',''67'',''68'',''69'',''70'',''71'',''72'',''73'')
+					  AND TP.DD_CRA_ID IS NULL
+				) T2
+				ON (T1.HIST_TP_ID = T2.HIST_TP_ID)
+				WHEN MATCHED THEN UPDATE SET
+					T1.DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO IN (''03'')),
+					T1.USUARIOMODIFICAR = '|| V_USU_MODIFICAR ||',
+					T1.FECHAMODIFICAR = SYSDATE
+	
+	';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO]: Añadimos cartera a los historicos de Bankia.');
+	
+	
 	COMMIT;
 
 	DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA '||V_TEXT_TABLA||' ACTUALIZADA CORRECTAMENTE ');

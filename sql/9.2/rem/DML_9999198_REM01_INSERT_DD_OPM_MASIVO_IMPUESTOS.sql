@@ -59,12 +59,28 @@ BEGIN
 				DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA...no se modifica nada.');
 				
 			ELSE
-				V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA' ||
-							' (DD_OPM_ID, DD_OPM_CODIGO, DD_OPM_DESCRIPCION, DD_OPM_DESCRIPCION_LARGA, FUN_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_OPM_VALIDACION_FORMATO)' || 
-							' SELECT '||V_ESQUEMA||'.S_DD_OPM_OPERACION_MASIVA.NEXTVAL,' ||
-							' '''||V_TMP_FUNCION(1)||''','''||V_TMP_FUNCION(2)||''','''||V_TMP_FUNCION(3)||''','||
-							' (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||V_TMP_FUNCION(4)||'''), '||
-							' 0, ''HREOS-4330'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
+				V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA (
+							  DD_OPM_ID
+                            , DD_OPM_CODIGO
+                            , DD_OPM_DESCRIPCION
+                            , DD_OPM_DESCRIPCION_LARGA
+                            , FUN_ID
+                            , VERSION
+                            , USUARIOCREAR
+                            , FECHACREAR
+                            , BORRADO
+                            , DD_OPM_VALIDACION_FORMATO
+                            ) VALUES (
+                                  S_DD_OPM_OPERACION_MASIVA.NEXTVAL
+                                , '''||V_TMP_FUNCION(1)||'''
+                                , '''||V_TMP_FUNCION(2)||'''
+                                , '''||V_TMP_FUNCION(3)||'''
+                                , (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||V_TMP_FUNCION(4)||''')
+                                , 0
+                                , ''HREOS-5539''
+                                , SYSDATE
+                                , '''||V_TMP_FUNCION(5)||'''
+                            ');
 		    	
 				EXECUTE IMMEDIATE V_MSQL_1;
 				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA insertados correctamente.');
@@ -83,7 +99,7 @@ EXCEPTION
           DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(err_msg);
-
+          DBMS_OUTPUT.put_line(V_MSQL_1);
           ROLLBACK;
           RAISE;          
 

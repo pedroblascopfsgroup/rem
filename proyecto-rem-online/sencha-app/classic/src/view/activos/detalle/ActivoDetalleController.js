@@ -2913,10 +2913,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						}
 					}
 				}
-		
 				var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
 		              return activo.activoId == me.getViewModel().get("activo.id");
 		            }), 1)[0];
+		            
+		        var algunActivoEstaInscrito = false;
+		        for (var i = 0; i < activosPropagables.length; i ++){
+		        		if ( CONST.DD_ETI_ESTADO_TITULO["INSCRITO"] == activosPropagables[i].estadoTitulo)	{
+		        			//activosPropagables.shift(activosPropagables[i]);
+		        			activosPropagables.splice(i,1);
+		        			algunActivoEstaInscrito = true;
+		        		}
+		        }
 				
 		        // Abrimos la ventana de selección de activos
 			    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
@@ -2929,8 +2937,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			        }).show();
 		
 		    	me.getView().add(ventanaOpcionesPropagacionCambios);
+		    	
+		    	
+		    	//En caso de que algun activo este incrito, se le alertara al usuario.
+		    	if ( algunActivoEstaInscrito ) {
+		    		me.fireEvent("warnToast", "No se podr&aacute; propagar a todos los activos debido a que alguno est&aacute; inscrito");
+		    	}
+		    	  
 			},
-		
 		    failure: function(record, operation) {
 		        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		  	}

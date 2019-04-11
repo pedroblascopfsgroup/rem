@@ -642,7 +642,7 @@ Ext.define('HreRem.ux.util.Constants', {
 	ESTADOS_MOTIVOS_CAL_NEGATIVA:{
 		PENDIENTE: '01',
 		SUBSANADO: '02'
-	},
+	}, 
     
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
@@ -680,5 +680,16 @@ Ext.define('HreRem.ux.util.Constants', {
  	}, 
  	COMBO_ENTIDAD_FINANCIERA:{
  		BANKIA: '01'
+ 	},
+ 	DD_ETI_ESTADO_TITULO :{
+		TRAMITACION: "01",
+		INSCRITO: "02",
+		IMPOSIBLE_INSCRIPCION: "03",
+		DESCONOCIDO: "04",
+		INMATRICULADOS: "05",
+		SUBSANAR: "06",
+		NULO: "07"
  	}
+ 	
+ 	
 });

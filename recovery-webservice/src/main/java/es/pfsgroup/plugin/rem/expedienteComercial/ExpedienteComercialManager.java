@@ -43,6 +43,7 @@ import es.capgemini.devon.pagination.PageImpl;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.config.Config;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -8772,6 +8773,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			try {
 				dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 						UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
+				
+				dto.setCorrecw(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "corecw.valor")).getValor()));
+				dto.setComoa3(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "comoa3.valor")).getValor()));
 				
 				beanUtilNotNull.copyProperties(expedienteComercial, dto);
 				

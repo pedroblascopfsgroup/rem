@@ -3,11 +3,14 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
@@ -54,7 +58,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.activo.MaestroDeActivos;
@@ -101,7 +104,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		Auditoria auditoria = new Auditoria();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		auditoria.setUsuarioCrear(usuarioLogado.getUsername());
-		auditoria.setFechaCrear(new Date());
+		auditoria.setFechaCrear(new Date());  
 		
 		//-----Nuevo Bien 
 		NMBBien bien = new NMBBien();
@@ -279,8 +282,13 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		nuevaPublicacion.setCheckSinPrecioAlquiler(false);
 		nuevaPublicacion.setCheckSinPrecioVenta(false);
 		nuevaPublicacion.setAuditoria(auditoria);
+		nuevaPublicacion.setFechaInicioAlquiler(new Date());
 		
 		genericDao.save(ActivoPublicacion.class, nuevaPublicacion);
+		//--SE INSERTA REGISTRO EN EL HISTORICO
+		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+		BeanUtils.copyProperties(activoPublicacionHistorico, nuevaPublicacion);
+		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
 		
 		
 		//----Perimetro del activo matriz
@@ -573,6 +581,11 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}
 		genericDao.save(ActivoLocalizacion.class, actLocUA);
 		actualizarEstadoPublicacion(activoMatriz);
+		
+
+		
+		
+		
 		return new ResultadoProcesarFila();
 	}
 	//HREOS-5902. Los registros de la fila son correctos. Se lanza el SP_CAMBIO_ESTADO_PUBLICACION.

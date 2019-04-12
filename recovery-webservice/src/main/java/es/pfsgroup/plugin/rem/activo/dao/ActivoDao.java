@@ -274,4 +274,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	Boolean isPANoDadaDeBaja(Long idActivo);
 
+	
+	ActivoAgrupacion getAgrupacionPAByIdActivoConFechaBaja(Long idActivo);
 }

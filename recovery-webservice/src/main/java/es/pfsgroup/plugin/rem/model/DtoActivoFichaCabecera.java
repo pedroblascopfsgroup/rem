@@ -227,6 +227,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Long idPrinexHPM;
 	private Boolean isPANoDadaDeBaja;
 	
+	private Boolean agrupacionDadaDeBaja;
+	
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -1779,9 +1782,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setIsPANoDadaDeBaja(Boolean isPANoDadaDeBaja) {
 		this.isPANoDadaDeBaja = isPANoDadaDeBaja;
 	}
-	
-	
-	
 
+	public Boolean getAgrupacionDadaDeBaja() {
+		return agrupacionDadaDeBaja;
+	}
+
+	public void setAgrupacionDadaDeBaja(Boolean agrupacionDadaDeBaja) {
+		this.agrupacionDadaDeBaja = agrupacionDadaDeBaja;
+	}
 	
 }

@@ -276,7 +276,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     			
 		pmap.put(TAB_PATRIMONIO,
 			Arrays.asList(
-					"checkHPM"
+					"chkPerimetroAlquiler"
 		   	));
 
         mapUAs = Collections.unmodifiableMap(pmap);

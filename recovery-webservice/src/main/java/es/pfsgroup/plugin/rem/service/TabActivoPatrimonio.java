@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
@@ -52,6 +53,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private ActivoPropagacionApi activoPropagacionApi;
 
 
 	@Override
@@ -90,6 +94,11 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 			if(!Checks.esNulo(activoP.getTipoInquilino())) {
 				activoPatrimonioDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
+			}
+			
+			if(activoDao.isActivoMatriz(activo.getId())) {
+				activoPatrimonioDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
+				activoPatrimonioDto.setCamposPropagablesUas(TabActivoService.TAB_PATRIMONIO);
 			}
 		}
 
@@ -240,13 +249,15 @@ public class TabActivoPatrimonio implements TabActivoService {
 			DDTipoComercializacion comercializacionVenta= genericDao.get(DDTipoComercializacion.class, filtro);
 			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_VENTA);
 			DDSituacionComercial scm= genericDao.get(DDSituacionComercial.class, filtro2);
-			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())){
-				activo.setTipoComercializacion(comercializacionVenta);
-				ActivoPublicacion activoPubli = activo.getActivoPublicacion();
-				activoPubli.setTipoComercializacion(comercializacionVenta);
-				activo.setSituacionComercial(scm);
-				activo.setActivoPublicacion(activoPubli);
-				activoDao.save(activo);
+			if(!Checks.esNulo(activo.getTipoComercializacion())) {
+				if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())){
+					activo.setTipoComercializacion(comercializacionVenta);
+					ActivoPublicacion activoPubli = activo.getActivoPublicacion();
+					activoPubli.setTipoComercializacion(comercializacionVenta);
+					activo.setSituacionComercial(scm);
+					activo.setActivoPublicacion(activoPubli);
+					activoDao.save(activo);
+				}
 			}
 		}
 		//-----------------------------------------------------

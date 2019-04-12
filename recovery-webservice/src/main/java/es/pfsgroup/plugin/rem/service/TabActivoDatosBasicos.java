@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -678,6 +679,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getPrincipal() == 1) {
 							
 							activoDto.setActivoMatriz(true);
+							activoDto.setAgrupacionDadaDeBaja(Checks.esNulo(activoDao.getAgrupacionPAByIdActivo(activo.getId())));
+							
 							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
 							Long countUnidadesAlquilables = activoDao.countUAsByIdAgrupacionPA(agrupacionActivo.getAgrupacion().getId());
 							activoDto.setUnidadesAlquilablesEnAgrupacion(countUnidadesAlquilables);

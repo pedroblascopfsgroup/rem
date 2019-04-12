@@ -3175,7 +3175,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickGuardarPropagarCambios: function(btn) {
-		
     	var me = this,
     	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
@@ -3754,7 +3753,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    			method : 'POST',
 		        		params: {idActivo: idActivo},
 	    		    		success: function(response, opts){	
-	    		    	
 	    		    			var activosSeleccionados = Ext.decode(response.responseText).data.activosPropagables;
 	    		    			
 		    		    			if(me.getViewModel() != null){
@@ -4208,6 +4206,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var destinoComercialAlquiler = me.getViewModel().get('activo.isDestinoComercialAlquiler');
         var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
 
+
         if(comboEstadoAlquiler != null && comboTipoInquilino != null && comboOcupado != null){
             if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && comboOcupado.value == CONST.COMBO_OCUPACION["SI"]){
                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -4219,7 +4218,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 comboTipoInquilino.setValue(null);
                 me.onSaveFormularioCompleto(btn, form);
             } else {
-                me.onSaveFormularioCompleto(btn, form);
+                 me.onSaveFormularioCompleto(btn, form);
             }
         }
 
@@ -4264,12 +4263,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	enableChkPerimetroAlquiler: function(get){
-		var me = this;
+		 var me = this;
 		 var esGestorAlquiler = me.getViewModel().get('activo.esGestorAlquiler');
 		 var estadoAlquiler = me.getViewModel().get('patrimonio.estadoAlquiler');
 		 var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
+		 var incluidoEnPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro');
+		 var tipoTituloCodigo = me.getViewModel().get('activo.tipoTituloCodigo');
 		 if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || (esGestorAlquiler == true || esGestorAlquiler == "true")){
-			if(tieneOfertaAlquilerViva === true && (estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"])){
+			 var isAM = me.getViewModel().get('activo.activoMatriz'); /*Si el activo no es Activo Matriz devolverá undefined*/
+			 var dadaDeBaja = me.getViewModel().get('activo.agrupacionDadaDeBaja');
+			 
+			 if(isAM == true) {
+				 /*Comprobar si su PA está dada de baja*/
+				 if(dadaDeBaja == "true") {
+				   	return false; //El checkbox será editable.
+				   } else {
+				   	return true; //El checkbox no será editable.
+				   }
+			 }
+			 
+			 if((tipoTituloCodigo == CONST.TIPO_TITULO_ACTIVO['UNIDAD_ALQUILABLE'] && incluidoEnPerimetro) || (tieneOfertaAlquilerViva === true && (estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]))){
 				return true;
 			} else {
 				return undefined;
@@ -4280,20 +4293,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	 },
 
 	 onChangeCheckPerimetroAlquiler: function(checkbox, newValue, oldValue, eOpts) {
-		 
+
 		 var me = this;
 		 var comboTipoAlquiler = me.lookupReference('comboTipoAlquilerRef');
 		 var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
 
+	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
+		 
 	   	 if (!checkbox.checked) {
 		    		comboTipoAlquiler.setValue("");
 		            comboAdecuacion.setValue("");
-	   	 }
-
-	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
+	   	 } 
 	},
-
 	
+	onRenderCheckPerimetroAlquiler: function(checkbox) {
+	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
+		
+	},
 
     onChangeCalificacionNegativa: function(me, nValue, oValue){
     	

@@ -5304,7 +5304,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.estaVacio(activoCalificacionNegativaList)){
 					for (ActivoCalificacionNegativa actCal : activoCalificacionNegativaList) { 
 						if(dto.getMotivoCalificacionNegativa().equalsIgnoreCase(actCal.getMotivoCalificacionNegativa().getCodigo())){
-							return false;
+							//return false;
+							//HREOS-6156 Al propagar, si tiene el mismo motivo, actualiza los datos de la calificación negativa.
+							activoCalificacionNegativa = actCal;
 						}
 					}
 				}

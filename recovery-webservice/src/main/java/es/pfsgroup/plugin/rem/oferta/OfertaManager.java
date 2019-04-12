@@ -2215,7 +2215,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						dto.setTipoDocumento(titularAdicional.getTipoDocumento().getCodigo());
 					}
 					dto.setNumDocumento(titularAdicional.getDocumento());
-					dto.setNombre(titularAdicional.getNombre());
+					dto.setNombre(titularAdicional.getNombreCompleto());
 					dto.setOfertaID(String.valueOf(oferta.getId()));
 					dto.setId(String.valueOf(titularAdicional.getId() + "t"));
 					if (!Checks.esNulo(titularAdicional.getTipoPersona())) {

@@ -2218,6 +2218,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					dto.setNombre(titularAdicional.getNombre());
 					dto.setOfertaID(String.valueOf(oferta.getId()));
 					dto.setId(String.valueOf(titularAdicional.getId() + "t"));
+					if (!Checks.esNulo(titularAdicional.getTipoPersona())) {
+						dto.setTipoPersona(titularAdicional.getTipoPersona().getDescripcion());
+					}
+					if (!Checks.esNulo(titularAdicional.getRegimenMatrimonial())) {
+						dto.setRegimenMatrimonial(titularAdicional.getRegimenMatrimonial().getDescripcion());
+					}
+					if (!Checks.esNulo(titularAdicional.getEstadoCivil())) {
+						dto.setEstadoCivil(titularAdicional.getEstadoCivil().getDescripcion());
+					}
 					listaOfertantes.add(dto);
 				}
 			}

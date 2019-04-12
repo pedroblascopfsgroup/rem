@@ -857,27 +857,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					dir = dir.concat(", esc "+titDto.getEscalera());
 				titAdi.setDireccion(dir);
 				
-				if (titDto.getCodigoMunicipio() != null) {
+				if (titDto.getCodMunicipio() != null) {
 					titAdi.setLocalidad((Localidad) genericDao.get(Localidad.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoMunicipio())));
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodMunicipio())));
 				}
-				if (titDto.getCodigoProvincia() != null) {
+				if (titDto.getCodProvincia() != null) {
 					titAdi.setProvincia((DDProvincia) genericDao.get(DDProvincia.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoProvincia())));
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodProvincia())));
 				}
-				titAdi.setCodPostal(titDto.getCodPostal());
-				if (titDto.getCodigoEstadoCivil() != null) {
+				titAdi.setCodPostal(titDto.getCodigoPostal());
+				if (titDto.getCodEstadoCivil() != null) {
 					titAdi.setEstadoCivil((DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoEstadoCivil())));
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodEstadoCivil())));
 				}
 				if (titDto.getCodRegimenMatrimonial() != null) {
 					titAdi.setRegimenMatrimonial((DDRegimenesMatrimoniales) genericDao.get(
 							DDRegimenesMatrimoniales.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodRegimenMatrimonial())));
 				}
-				titAdi.setRechazarCesionDatosPropietario(titDto.getRechazarCesionDatosPropietario());
-				titAdi.setRechazarCesionDatosProveedores(titDto.getRechazarCesionDatosProveedores());
-				titAdi.setRechazarCesionDatosPublicidad(titDto.getRechazarCesionDatosPublicidad());
+				titAdi.setRechazarCesionDatosPropietario(!titDto.getCesionDatos());
+				titAdi.setRechazarCesionDatosProveedores(!titDto.getComunicacionTerceros());
+				titAdi.setRechazarCesionDatosPublicidad(!titDto.getTransferenciasInternacionales());
 				
 				titAdi.setRazonSocial(titDto.getRazonSocial());
 				titAdi.setTelefono1(titDto.getTelefono1());

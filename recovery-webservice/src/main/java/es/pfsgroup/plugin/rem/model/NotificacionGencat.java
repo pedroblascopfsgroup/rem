@@ -63,7 +63,11 @@ public class NotificacionGencat implements Serializable, Auditable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ADC_ID")
-	private AdjuntoComunicacion adcId;
+	private AdjuntoComunicacion adjuntoComunicacion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ADC_ID_SANCION")
+	private AdjuntoComunicacion adjuntoComunicacionSancion;
 	
 	@Version   
 	private Long version;
@@ -127,14 +131,6 @@ public class NotificacionGencat implements Serializable, Auditable {
 		this.cierreNotificacion = fechaCierre;
 	}
 	
-	public AdjuntoComunicacion getDocumentoId() {
-		return adcId;
-	}
-
-	public void setDocumentoId(AdjuntoComunicacion adcId) {
-		this.adcId = adcId;
-	}
-	
 	public Long getVersion() {
 		return version;
 	}
@@ -149,6 +145,22 @@ public class NotificacionGencat implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public AdjuntoComunicacion getAdjuntoComunicacion() {
+		return adjuntoComunicacion;
+	}
+
+	public void setAdjuntoComunicacion(AdjuntoComunicacion adjuntoComunicacion) {
+		this.adjuntoComunicacion = adjuntoComunicacion;
+	}
+
+	public AdjuntoComunicacion getAdjuntoComunicacionSancion() {
+		return adjuntoComunicacionSancion;
+	}
+
+	public void setAdjuntoComunicacionSancion(AdjuntoComunicacion adjuntoComunicacionSancion) {
+		this.adjuntoComunicacionSancion = adjuntoComunicacionSancion;
 	}
 
 }

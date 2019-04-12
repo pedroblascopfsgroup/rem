@@ -595,4 +595,11 @@ public interface ParticularValidatorApi {
 	 * @return true si existe, false si no existe o es nulo
 	 */
 	public Boolean existeCalculo(String codCalculo);
+	
+	/**
+	 *  Valida que el activo no pertenezca a las carteras Bankia y Liberbank
+	 * @param numActivo
+	 * @return 1 - FALSE si no hay error, 0 - TRUE si hay error y pertenece a estas carteras 
+	 */
+	public Boolean isActivoNotBankiaLiberbank(String numActivo);
 }

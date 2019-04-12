@@ -2736,5 +2736,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		AND BORRADO= 0");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean isActivoNotBankiaLiberbank(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID NOT IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO IN ('03','08')"
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
+
+		return !"0".equals(resultado);
+	}
 
 }

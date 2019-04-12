@@ -140,6 +140,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVEnvioBurofaxExcelValidator envioBurofax;
+	
+	@Autowired
+	private MSVActualizacionSuperficieExcelValidator actualizadorSuperficie;
 
 	
 
@@ -272,6 +275,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return envioBurofax;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALIDADOR_CARGA_MASIVA_IMPUESTOS.equals(codTipoOperacion)) {
 			return cargaMasivaImpuestos;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALIDADOR_ACTUALIZACION_SUPERFICIE.equals(codTipoOperacion)) {
+			return actualizadorSuperficie;
 		}
 		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES.equals(codTipoOperacion)) {
 			return cargaMasivaSancionValidator;

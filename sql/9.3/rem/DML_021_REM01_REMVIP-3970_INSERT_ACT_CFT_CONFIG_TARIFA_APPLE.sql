@@ -14,6 +14,8 @@
 --##########################################
 --*/
 
+ALTER SESSION SET NLS_NUMERIC_CHARACTERS = ',.';
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;

@@ -214,7 +214,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		var me = this;
 		
 		var window = btn.up('[reference=ventanacrearnotificacionRef]');
-		
 		var form = window.down('[reference=crearNotificacionFormRef]');
 		if(form.isValid()){
     		
@@ -222,7 +221,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
                 waitMsg: HreRem.i18n('msg.mask.loading'),
                 params: {
                 	idEntidad: window.idActivo,
-                	idActivo: window.idActivo
+                	idActivo: window.idActivo,
+                	id: window.idNotificacion
                 },
 
                 success: function(fp, o) {
@@ -499,5 +499,18 @@ comprobarFormatoNIF:function(value) {
  		}
 
  		
- 	}
+ 	},
+	onGridNotificacionesActivoRowClick: function(grid) { 
+		var me = this,
+			idActivo = me.getViewModel().get("activo.id"),
+			record = grid.getSelection()[0].getData(),
+			data = {
+				idActivo: idActivo, 
+				parent: grid,
+				record: record,
+				idNotificacion: record.id
+			};
+
+		Ext.create("HreRem.view.activos.detalle.VentanaCrearNotificacion", data).show();
+	  }
 });

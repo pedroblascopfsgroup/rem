@@ -130,7 +130,7 @@ public class NotificacionGencat implements Serializable, Auditable {
 	public void setCierreNotificacion(Date fechaCierre) {
 		this.cierreNotificacion = fechaCierre;
 	}
-	
+
 	public Long getVersion() {
 		return version;
 	}
@@ -162,5 +162,6 @@ public class NotificacionGencat implements Serializable, Auditable {
 	public void setAdjuntoComunicacionSancion(AdjuntoComunicacion adjuntoComunicacionSancion) {
 		this.adjuntoComunicacionSancion = adjuntoComunicacionSancion;
 	}
-
+//setDocumentoAdjuntoSancion
+	//setDocumentoId
 }

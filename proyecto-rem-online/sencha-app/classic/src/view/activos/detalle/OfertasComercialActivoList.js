@@ -220,8 +220,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				    hideLabel: true,
 				    boxLabel: HreRem.i18n('check.comercial.ofertas.anuladas.fieldlabel'),
 				    fieldLabel: ' ',
-				    
-					reference: 'chkbxPerimetroAdmision',
 					addUxReadOnlyEditFieldPlugin: false,
 					listeners: {
 						change: 'onChkbxOfertasAnuladas'

@@ -5,8 +5,11 @@ Ext.define('HreRem.view.activos.detalle.NotificacionesActivoList', {
     bind: {
         store: '{storeNotificacionesActivo}'
     },
+	listeners : {
+		rowdblclick: 'onGridNotificacionesActivoRowClick'
+	},  
     topBar:  false,
-    removeButton: false,
+    removeButton: false, 
     
     estaComunicado: false,
     addButton:  false,
@@ -49,6 +52,11 @@ Ext.define('HreRem.view.activos.detalle.NotificacionesActivoList', {
 		            dataIndex: 'fechaSancionNotificacion',
 		            text: HreRem.i18n('fieldlabel.fecha.sancion.notificacion'),
 		            formatter: 'date("d/m/Y")',
+		            flex: 1
+		        },
+		        {
+		            dataIndex: 'nombreSancion',
+		            text: HreRem.i18n('header.nombre.documento.sancion'),
 		            flex: 1
 		        },
 		        {

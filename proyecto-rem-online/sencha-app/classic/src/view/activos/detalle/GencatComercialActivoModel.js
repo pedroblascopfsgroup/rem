@@ -79,7 +79,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoNotificacionGencat'}
-			}   	
+			},autoLoad: true
     	},
     	
     	comboEstadoVisita: {

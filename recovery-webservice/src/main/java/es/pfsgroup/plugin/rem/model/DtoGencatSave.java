@@ -58,6 +58,7 @@ public class DtoGencatSave extends DtoTabActivo {
 	private Date dateFechaNotificacion;
 	private String motivoNotificacion;
 	private String documentoNotificion;
+	private String documentoSancion;
 	private Date dateFechaSancionNotificacion;
 	private String fechaSancionNotificacion;
 	private Date dateCierreNotificacion;
@@ -287,7 +288,12 @@ public class DtoGencatSave extends DtoTabActivo {
 	public void setDocumentoNotificion(String documentoNotificion) {
 		this.documentoNotificion = documentoNotificion;
 	}
-
+	public String getDocumentoSancion() {
+		return documentoSancion;
+	}
+	public void setDocumentoSancion(String documentoSancion) {
+		this.documentoSancion = documentoSancion;
+	}
 	public Date getDateFechaSancionNotificacion() {
 		return dateFechaSancionNotificacion;
 	}

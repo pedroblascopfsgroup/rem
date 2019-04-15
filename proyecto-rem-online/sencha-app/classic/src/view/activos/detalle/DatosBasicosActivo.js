@@ -466,8 +466,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.gestion'),
 								bind:{
-									value: '{activo.aplicaGestion}',
-									readOnly : '{activo.unidadAlquilable}'
+									value: '{activo.aplicaGestion}'
 								},
 								reference: 'chkbxPerimetroGestion',
 								listeners: {
@@ -484,8 +483,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroGestion',
 								bind:{
-									value: '{activo.motivoAplicaGestion}',
-									readOnly: '{esUA}'
+									value: '{activo.motivoAplicaGestion}'
 								}		
 							},
 							
@@ -519,7 +517,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
 								reference: 'chkbxPerimetroPublicar',
 								bind: {
-									readOnly: '{activo.unidadAlquilable}',
+									
 									value: '{activo.aplicaPublicar}'
 								}
 							},
@@ -533,8 +531,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroPublicar',
 								bind: {
-									value: '{activo.motivoAplicaPublicar}',
-									readOnly: '{esUA}'
+									value: '{activo.motivoAplicaPublicar}'
 								}
 							},
 
@@ -544,7 +541,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
-									readOnly : '{activo.unidadAlquilable}',
 									value: '{activo.aplicaComercializar}'
 								},
 								listeners: {
@@ -563,7 +559,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									store: '{comboMotivoAplicaComercializarActivo}',
 									value: '{activo.motivoAplicaComercializarCodigo}',
-									readOnly: '{esUA}',
 									visible: '{activo.aplicaComercializar}'
 								}
 							},
@@ -584,7 +579,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.formalizar'),
 								reference: 'chkbxPerimetroFormalizar',
 								bind: {
-									readOnly: '{activo.unidadAlquilable}',
 									value: '{activo.aplicaFormalizar}'
 								},
 								listeners: {
@@ -601,8 +595,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroFormalizar',
 								bind: {
-									value: '{activo.motivoAplicaFormalizar}',
-									readOnly: '{esUA}'
+									value: '{activo.motivoAplicaFormalizar}'
 								}
 							},
 							//Bloque Comercialización

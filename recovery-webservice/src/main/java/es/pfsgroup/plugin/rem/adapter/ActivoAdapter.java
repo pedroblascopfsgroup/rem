@@ -2697,7 +2697,7 @@ public class ActivoAdapter {
 		
 		Activo activo = getActivoById(Long.parseLong(dtoPresupuestoFiltro.getIdActivo()));
 		if(activoDao.isUnidadAlquilable(activo.getId())) {
-			activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId()));
+			activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId()).getId())); 
 			dtoPresupuestoFiltro.setIdActivo(Long.toString(activo.getId()));
 			dtoPresupuestoFiltro.setIdActivo(String.valueOf(activo.getId()));
 			dtoPresupuestoFiltro.setIdPresupuesto(String.valueOf(activo.getPresupuesto().get(0).getId()));
@@ -2756,16 +2756,19 @@ public class ActivoAdapter {
 
 		DtoPresupuestoGraficoActivo presupuestoGrafico = new DtoPresupuestoGraficoActivo();
 
-		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
+		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy"); 
 		String ejercicioActual = dfAnyo.format(new Date());
 		
 		Activo activo = getActivoById(Long.parseLong(dtoFilter.getIdActivo()));
 		Boolean esMatrizoUA = false;
 		
 		if(activoDao.isUnidadAlquilable(activo.getId())) {
-			activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId()));
-			esMatrizoUA = true;
-			dtoFilter.setIdActivo(Long.toString(activo.getId()));
+			if(!Checks.esNulo(activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId()))){
+				activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId()).getId()));
+				esMatrizoUA = true;
+				dtoFilter.setIdActivo(Long.toString(activo.getId()));
+			}
+			
 		}else if(activoDao.isActivoMatriz(activo.getId())) {
 			esMatrizoUA = true;
 		}

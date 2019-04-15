@@ -1707,9 +1707,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	////////////////////// OFERTA ////////////////////////////////
 		Oferta nuevaOferta = new Oferta();
 		Oferta oferta = expedienteComercial.getOferta();
-		
 		nuevaOferta.setAuditoria(auditoria);
-		
 		// Datos Generales
 		Long numOferta = activoDao.getNextNumOferta();
 		nuevaOferta.setNumOferta(numOferta);
@@ -1721,13 +1719,18 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		nuevaOferta.setVentaDirecta(oferta.getVentaDirecta());
 		nuevaOferta.setOrigen(oferta.getOrigen());
 		nuevaOferta.setOfertaExpress(oferta.getOfertaExpress());
-		
-		nuevaOferta.setImporteOferta(oferta.getImporteOferta());
 		nuevaOferta.setCanalPrescripcion(oferta.getCanalPrescripcion());
 		nuevaOferta.setPrescriptor(oferta.getPrescriptor());
-		
+		nuevaOferta.setImporteOferta(oferta.getImporteOferta());
 		// Activo/s
-		List<ActivoOferta> listaActOfr = ofertaApi.buildListaActivoOferta(cmg.getActivo(), null, nuevaOferta);
+		List<ActivoOferta> listaActOfr = ofertaApi.buildListaActivoOferta(cmg.getActivo(), null, nuevaOferta); 
+		Long idActivo = cmg.getActivo().getId();
+		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo", idActivo);
+		Filter filtroIdOferta = genericDao.createFilter(FilterType.EQUALS, "oferta", oferta.getId());
+		ActivoOferta actOfr = genericDao.get(ActivoOferta.class, filtroIdActivo, filtroIdOferta);
+		if (!Checks.esNulo(actOfr)) {
+			nuevaOferta.setImporteOferta(actOfr.getImporteActivoOferta());
+		}
 		nuevaOferta.setActivosOferta(listaActOfr);
 		
 		//  Comprador

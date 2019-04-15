@@ -193,7 +193,7 @@ pipeline {
         stage('Update-DB') {
             steps {
                 deployPitertul("ops-bd@iap03", 22)
-                build job: 'rem-bd-auxiliares', wait: false
+                //build job: 'rem-bd-auxiliares', wait: false
             }
         }
 

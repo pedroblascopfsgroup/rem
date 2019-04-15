@@ -20,8 +20,7 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 
 	Page getListActivosTrabajo(DtoActivosTrabajoFilter dto);
 	
-	Page getListActivosTrabajoPresupuesto(DtoActivosTrabajoFilter dto);
-
+	
 	Page getObservaciones(DtoTrabajoFilter dto);
 	
 	Page getListActivosAgrupacion(DtoAgrupacionFilter dto, Usuario usuLogado);

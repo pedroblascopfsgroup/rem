@@ -927,6 +927,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					if(!Checks.esNulo(listaNotificacionGencat.get(i).getAdjuntoComunicacion())) {
 						dtoNotificacionActivo.setNombre(listaNotificacionGencat.get(i).getAdjuntoComunicacion().getNombre());
 					}
+					if(!Checks.esNulo(listaNotificacionGencat.get(i).getAdjuntoComunicacionSancion())) {
+						dtoNotificacionActivo.setNombreSancion(listaNotificacionGencat.get(i).getAdjuntoComunicacionSancion().getNombre());
+					}
 					listaNotificaciones.add(dtoNotificacionActivo);
 				}
 			}
@@ -997,27 +1000,50 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		if (comunicacionGencat != null) {
 			try {
 				
-				Filter filtroIdTipoNotificacion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoNotificacion.getMotivoNotificacion());
-				
-				DDTipoNotificacionGencat tipoNotificacionGencat = genericDao.get(DDTipoNotificacionGencat.class, filtroIdTipoNotificacion, filtroBorrado);
-				AdjuntoComunicacion adj = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "id",Long.valueOf(dtoNotificacion.getIdDocumento())));
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				SimpleDateFormat dateformat3 = new SimpleDateFormat("dd/MM/yyyy");
+				NotificacionGencat notificacion = new NotificacionGencat();
 				
-				Date fechaNotificacion = dateformat3.parse(dtoNotificacion.getFechaNotificacion());
-				Date fechaSancion = dateformat3.parse(dtoNotificacion.getFechaSancionNotificacion());
-				Date fechaCierre = dateformat3.parse(dtoNotificacion.getCierreNotificacion());
+				if(!Checks.esNulo(dtoNotificacion.getId())){
+					notificacion = genericDao.get(NotificacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoNotificacion.getId()));
+				}
+				
+				if(!Checks.esNulo(dtoNotificacion.getMotivoNotificacion())) {
+					Filter filtroIdTipoNotificacion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoNotificacion.getMotivoNotificacion());
+					DDTipoNotificacionGencat tipoNotificacionGencat = genericDao.get(DDTipoNotificacionGencat.class, filtroIdTipoNotificacion, filtroBorrado);
+					notificacion.setTipoNotificacion(tipoNotificacionGencat);
+				}
+				if(Checks.esNulo(dtoNotificacion.getId())) {
+					if(!Checks.esNulo(dtoNotificacion.getIdDocumento())) {
+						AdjuntoComunicacion adj = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "id",Long.valueOf(dtoNotificacion.getIdDocumento())));
+						notificacion.setAdjuntoComunicacion(adj);
+					}
+				}else {
+					if(!Checks.esNulo(dtoNotificacion.getIdDocumento())) {
+						AdjuntoComunicacion adj = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "id",Long.valueOf(dtoNotificacion.getIdDocumento())));
+						notificacion.setAdjuntoComunicacionSancion(adj);
+					}
+				}
+				
+				
+				if(!Checks.esNulo(dtoNotificacion.getFechaNotificacion())) {
+					Date fechaNotificacion = dateformat3.parse(dtoNotificacion.getFechaNotificacion());
+					notificacion.setFechaNotificacion(fechaNotificacion);
+				}
+				if(!Checks.esNulo(dtoNotificacion.getFechaSancionNotificacion())) {
+					Date fechaSancion = dateformat3.parse(dtoNotificacion.getFechaSancionNotificacion());
+					notificacion.setFechaSancionNotificacion(fechaSancion);
+				}
+				if(!Checks.esNulo(dtoNotificacion.getCierreNotificacion())) {
+					Date fechaCierre = dateformat3.parse(dtoNotificacion.getCierreNotificacion());
+					notificacion.setCierreNotificacion(fechaCierre);
+				}
 				
 				//Insertar Notificacion
-				NotificacionGencat notificacion = new NotificacionGencat();
-				notificacion.setCheckNotificacion(true);
-				notificacion.setComunicacion(comunicacionGencat);
 				
-				notificacion.setFechaNotificacion(fechaNotificacion);
-				notificacion.setTipoNotificacion(tipoNotificacionGencat);
-				notificacion.setFechaSancionNotificacion(fechaSancion);
-				notificacion.setCierreNotificacion(fechaCierre);
-				notificacion.setAdjuntoComunicacion(adj);
+				notificacion.setCheckNotificacion(true);
+				notificacion.setComunicacion(comunicacionGencat);	
+				
 				Auditoria auditoria = new Auditoria();
 				auditoria.setBorrado(false);
 				auditoria.setFechaCrear(new Date());
@@ -1026,7 +1052,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				notificacion.setVersion(new Long(0));
 				notificacion.setAuditoria(auditoria);
 				
-				notificacionGencatDao.save(notificacion);
+				
+				
+				notificacionGencatDao.saveOrUpdate(notificacion);
+				
+				
+				
 			}
 			catch (java.text.ParseException e) {
 				logger.error("Error en gencatManager", e);
@@ -1707,9 +1738,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	////////////////////// OFERTA ////////////////////////////////
 		Oferta nuevaOferta = new Oferta();
 		Oferta oferta = expedienteComercial.getOferta();
-		
 		nuevaOferta.setAuditoria(auditoria);
-		
 		// Datos Generales
 		Long numOferta = activoDao.getNextNumOferta();
 		nuevaOferta.setNumOferta(numOferta);
@@ -1721,13 +1750,18 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		nuevaOferta.setVentaDirecta(oferta.getVentaDirecta());
 		nuevaOferta.setOrigen(oferta.getOrigen());
 		nuevaOferta.setOfertaExpress(oferta.getOfertaExpress());
-		
-		nuevaOferta.setImporteOferta(oferta.getImporteOferta());
 		nuevaOferta.setCanalPrescripcion(oferta.getCanalPrescripcion());
 		nuevaOferta.setPrescriptor(oferta.getPrescriptor());
-		
+		nuevaOferta.setImporteOferta(oferta.getImporteOferta());
 		// Activo/s
-		List<ActivoOferta> listaActOfr = ofertaApi.buildListaActivoOferta(cmg.getActivo(), null, nuevaOferta);
+		List<ActivoOferta> listaActOfr = ofertaApi.buildListaActivoOferta(cmg.getActivo(), null, nuevaOferta); 
+		Long idActivo = cmg.getActivo().getId();
+		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo", idActivo);
+		Filter filtroIdOferta = genericDao.createFilter(FilterType.EQUALS, "oferta", oferta.getId());
+		ActivoOferta actOfr = genericDao.get(ActivoOferta.class, filtroIdActivo, filtroIdOferta);
+		if (!Checks.esNulo(actOfr)) {
+			nuevaOferta.setImporteOferta(actOfr.getImporteActivoOferta());
+		}
 		nuevaOferta.setActivosOferta(listaActOfr);
 		
 		//  Comprador
@@ -1933,7 +1967,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		listaDDTipoDocumento = genericDao.getList(DDTipoDocumentoComunicacion.class);
 		
 		for (DDTipoDocumentoComunicacion tipDoc : listaDDTipoDocumento) {
-			if (!DDTipoDocumentoComunicacion.CODIGO_NOTIFICACION_VARIACIONES_DATOS_GENCAT.equals(tipDoc.getCodigo())) {
+			if (!DDTipoDocumentoComunicacion.CODIGO_NOTIFICACION_VARIACIONES_DATOS_GENCAT.equals(tipDoc.getCodigo())
+					&& !DDTipoDocumentoComunicacion.CODIGO_SANCION_NOTIFICACION_GENCAT.equals(tipDoc.getCodigo())) {
 				DtoTiposDocumentoComunicacion aux = new DtoTiposDocumentoComunicacion();
 				aux.setCodigo(tipDoc.getCodigo());
 				aux.setDescripcion(tipDoc.getDescripcion());
@@ -1945,21 +1980,24 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	}
 	
 	@Override
-	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoNotificacion() {
+	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoNotificacion(Long idNotificacion) {
 		
-		List <DtoTiposDocumentoComunicacion> listDtoTipoDocumento = new ArrayList <DtoTiposDocumentoComunicacion>();
-		List <DDTipoDocumentoComunicacion> listaDDTipoDocumento= new ArrayList <DDTipoDocumentoComunicacion>();		
-		
-		listaDDTipoDocumento = genericDao.getList(DDTipoDocumentoComunicacion.class);
-		
-		for (DDTipoDocumentoComunicacion tipDoc : listaDDTipoDocumento) {
-			if (DDTipoDocumentoComunicacion.CODIGO_NOTIFICACION_VARIACIONES_DATOS_GENCAT.equals(tipDoc.getCodigo())) {
-				DtoTiposDocumentoComunicacion aux = new DtoTiposDocumentoComunicacion();
-				aux.setCodigo(tipDoc.getCodigo());
-				aux.setDescripcion(tipDoc.getDescripcion());
-				aux.setDescripcionLarga(tipDoc.getDescripcionLarga());
-				listDtoTipoDocumento.add(aux);
-			}
+		List <DtoTiposDocumentoComunicacion> listDtoTipoDocumento = new ArrayList <DtoTiposDocumentoComunicacion>();	
+		DtoTiposDocumentoComunicacion aux = new DtoTiposDocumentoComunicacion();
+		DDTipoDocumentoComunicacion tipoDocumento;
+	
+		if(Checks.esNulo(idNotificacion)) {
+			tipoDocumento = genericDao.get(DDTipoDocumentoComunicacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDTipoDocumentoComunicacion.CODIGO_NOTIFICACION_VARIACIONES_DATOS_GENCAT));
+			aux.setCodigo(tipoDocumento.getCodigo());
+			aux.setDescripcion(tipoDocumento.getDescripcion());
+			aux.setDescripcionLarga(tipoDocumento.getDescripcionLarga());
+			listDtoTipoDocumento.add(aux);
+		}else {
+			 tipoDocumento = genericDao.get(DDTipoDocumentoComunicacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDTipoDocumentoComunicacion.CODIGO_SANCION_NOTIFICACION_GENCAT));
+			 aux.setCodigo(tipoDocumento.getCodigo());
+			 aux.setDescripcion(tipoDocumento.getDescripcion());
+			 aux.setDescripcionLarga(tipoDocumento.getDescripcionLarga());
+			 listDtoTipoDocumento.add(aux);	
 		}
 		return listDtoTipoDocumento;
 	}

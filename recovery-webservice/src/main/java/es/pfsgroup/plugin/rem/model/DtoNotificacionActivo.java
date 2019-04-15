@@ -7,18 +7,26 @@ public class DtoNotificacionActivo extends WebDto {
 	private static final long serialVersionUID = -5099553289919679527L;
 	
 	private Long idActivo;
+	private Long id;
 	private String fechaNotificacion;
 	private String motivoNotificacion;
 	private String fechaSancionNotificacion;
 	private String cierreNotificacion;
 	private String idDocumento;
 	private String nombre;
+	private String nombreSancion;
 	
 	public Long getIdActivo() {
 		return idActivo;
 	}
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 	public String getFechaNotificacion() {
 		return fechaNotificacion;
@@ -55,6 +63,12 @@ public class DtoNotificacionActivo extends WebDto {
 	}
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+	public String getNombreSancion() {
+		return nombreSancion;
+	}
+	public void setNombreSancion(String nombreSancion) {
+		this.nombreSancion = nombreSancion;
 	}
 	
 }

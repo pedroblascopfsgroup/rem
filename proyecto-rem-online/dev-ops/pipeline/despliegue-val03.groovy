@@ -89,10 +89,12 @@ def deployPitertul(String host, int port) {
                 echo "Desplegando PITERTUL..."
                 sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -cliente:rem -componente:pitertul -custom-dir:${entorno}"
 
-                withCredentials([string(credentialsId: 'password-BBDD-producto', variable: 'PASSWORD')]) {
-                    echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
-                    sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xbi:si -Xgrants:si -Pmaster:${PASSWORD} -Pentity01:${PASSWORD} -Pdwh:${PASSWORD} -Psystempfs:${PASSWORD}\""
-                }
+                withCredentials([string(credentialsId: 'password-BBDD-val03', variable: 'PASSWORD')]) {
+			withCredentials([string(credentialsId: 'password-BBDD-val03-grants', variable: 'PASSGRANTS')]) {
+                    		echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
+                    		sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xgrants:si -Pmaster:${PASSWORD} -Pentity01:${PASSWORD} -Pdwh:${PASSWORD} -Psystempfs:${PASSGRANTS}\""
+			}                
+		}
 
             }
             
@@ -191,7 +193,7 @@ pipeline {
         stage('Update-DB') {
             steps {
                 deployPitertul("ops-bd@iap03", 22)
-                build job: 'rem-bd-auxiliares', wait: false
+                //build job: 'rem-bd-auxiliares', wait: false
             }
         }
 

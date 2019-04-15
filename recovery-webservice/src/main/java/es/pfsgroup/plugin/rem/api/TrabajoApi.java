@@ -212,14 +212,6 @@ public interface TrabajoApi {
 	@BusinessOperationDefinition("trabajoManager.getListActivosTrabajo")
 	public Page getListActivos(DtoActivosTrabajoFilter dto);
 
-	/**
-	 * Devuelve la lista de activos de un trabajo con datos de presupuestos
-	 * 
-	 * @param dto
-	 * @return
-	 */
-	@BusinessOperationDefinition("trabajoManager.getListActivosTrabajoPresupuesto")
-	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto);
 
 	@BusinessOperationDefinition("trabajoManager.findOne")
 	Trabajo findOne(Long id);

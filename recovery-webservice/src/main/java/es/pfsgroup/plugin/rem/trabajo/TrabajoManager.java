@@ -2208,12 +2208,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return trabajoDao.getListActivosTrabajo(dto);
 	}
 
-	@Override
-	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto) {
-
-		return trabajoDao.getListActivosTrabajoPresupuesto(dto);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getObservaciones(DtoTrabajoFilter dto) {
@@ -2676,7 +2670,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial();
 
 		
-		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = listaTrabajosActivo =presupuestoManager.listarTrabajosActivo(trabajo.getActivo().getId(), ejercicioActual);;
+		List<VBusquedaActivosTrabajoPresupuesto>  listaTrabajosActivo =presupuestoManager.listarTrabajosActivo(trabajo.getActivo().getId(), ejercicioActual);;
 			
 				
 		BigDecimal importeParticipacionTrabajo = new BigDecimal(0);

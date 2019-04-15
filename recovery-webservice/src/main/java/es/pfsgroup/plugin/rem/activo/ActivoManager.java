@@ -25,7 +25,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -170,7 +169,6 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
@@ -458,12 +456,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.getListActivos")
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuarioLogado) {
 		return activoDao.getListActivos(dto, usuarioLogado);
-	}
-
-	@Override
-	@BusinessOperation(overrides = "activoManager.getListHistoricoPresupuestos")
-	public Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuarioLogado) {
-		return activoDao.getListHistoricoPresupuestos(dto, usuarioLogado);
 	}
 
 	@Override

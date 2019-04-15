@@ -25,7 +25,7 @@ DECLARE
 	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
 	ERR_NUM NUMBER;-- Numero de errores
 	ERR_MSG VARCHAR2(2048);-- Mensaje de error
-	V_SQL VARCHAR2(4000 CHAR);
+	V_SQL VARCHAR2(32000 CHAR);
 
 BEGIN
 

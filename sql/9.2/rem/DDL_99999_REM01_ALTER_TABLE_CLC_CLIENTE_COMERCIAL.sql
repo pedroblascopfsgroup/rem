@@ -36,9 +36,9 @@ DECLARE
     V_TEMP_CAMPOS T_CAMPOS;
     C_CAMPOS T_ARRAY_CAMPOS := T_ARRAY_CAMPOS(
     	T_CAMPOS('DD_TDI_ID_CONYUGE', 'NUMBER(16,0)', 'Tipo de documento del conyuge', '1', 'FK_DD_TDI_ID_CONYUGE_CLC', 'REM01.DD_TDI_TIPO_DOCUMENTO_ID', 'DD_TDI_ID'),
-    	T_CAMPOS('CLC_DOCUMENTO_CONYUGE', 'VARCHAR2(14 CHAR)', 'Documento del conyuge', '0'),
+    	T_CAMPOS('CLC_DOCUMENTO_CONYUGE', 'VARCHAR2(50 CHAR)', 'Documento del conyuge', '0'),
         T_CAMPOS('DD_PAI_ID', 'NUMBER(16,0)', 'País del cliente', '1', 'FK_DD_PAI_ID_CLC', 'REM01.DD_PAI_PAISES', 'DD_PAI_ID'),
-        T_CAMPOS('CLC_DIRECCION_RTE', 'VARCHAR2(100 CHAR)', 'Dirección del representante', '0'),
+        T_CAMPOS('CLC_DIRECCION_RTE', 'VARCHAR2(120 CHAR)', 'Dirección del representante', '0'),
         T_CAMPOS('DD_PRV_ID_RTE', 'NUMBER(16,0)', 'Provincia del representante', '1', 'FK_DD_PRV_ID_RTE_CLC', 'REMMASTER.DD_PRV_PROVINCIA', 'DD_PRV_ID'),
         T_CAMPOS('DD_LOC_ID_RTE', 'NUMBER(16,0)', 'Municipio del representante', '1', 'FK_DD_LOC_ID_RTE_CLC', 'REMMASTER.DD_LOC_LOCALIDAD', 'DD_LOC_ID'),
         T_CAMPOS('DD_PAI_ID_RTE', 'NUMBER(16,0)', 'País del representante', '1', 'FK_DD_PAI_ID_RTE_CLC', 'REM01.DD_PAI_PAISES', 'DD_PAI_ID'),

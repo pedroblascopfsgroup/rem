@@ -2611,8 +2611,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	public Boolean esNIFValido(String nif) {
 
-		return nif == null || nif.matches("^[A-Za-z0-9]{1}[0-9]{7}[A-Za-z]{1}$");
-
+		return nif == null || nif.matches("^\\d{8}[a-zA-Z]{1}$") || nif.matches("^[a-zA-Z]{1}\\d{7}[a-zA-Z0-9]{1}$");
+										   
 	}
 
 	@Override

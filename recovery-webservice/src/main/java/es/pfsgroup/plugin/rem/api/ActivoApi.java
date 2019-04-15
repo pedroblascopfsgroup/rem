@@ -220,9 +220,7 @@ public interface ActivoApi {
 	@BusinessOperationDefinition("activoManager.checkHayPresupuestoEjercicioActual")
 	boolean checkHayPresupuestoEjercicioActual(Long idActivo);
 
-	@BusinessOperationDefinition("activoManager.getListHistoricoPresupuestos")
-	Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuarioLogado);
-
+	
 	@BusinessOperationDefinition("activoManager.comprobarPestanaCheckingInformacion")
 	Boolean comprobarPestanaCheckingInformacion(Long idActivo);
 

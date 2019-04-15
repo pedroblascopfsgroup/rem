@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 
 @Component
@@ -121,6 +122,8 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 					tmp.setNuevoCompradorNif( exc.dameCelda(fila, POSICION_COLUMNA_NIF));
 					tmp.setNuevoCompradorNombre( exc.dameCelda(fila, POSICION_COLUMNA_NOMBRE) );
 					tmp.setSancion((DDSancionGencat) dictionaryDao.getByCode(DDSancionGencat.class, DDSancionGencat.COD_EJERCE));
+					//Set estado comunicación
+					tmp.setEstadoComunicacion((DDEstadoComunicacionGencat) dictionaryDao.getByCode(DDEstadoComunicacionGencat.class, DDEstadoComunicacionGencat.COD_SANCIONADO));
 					OfertaGencat ofertaGencat = ofertaGencatApi.getOfertaByIdComunicacionGencat(tmp.getId());
 					
 					if (!Checks.esNulo(ofertaGencat)) {

@@ -7,6 +7,9 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.NotificacionGencat;
+import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
+import es.pfsgroup.plugin.rem.model.VisitaGencat;
 
 public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionActivo, Long>{
 	
@@ -63,8 +66,9 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 
 	public List<ActivoAgrupacionActivo> getListActivoAgrupacionVentaByIdActivo(Long idActivo);
 
-	// TODO borrar metodo y mover a sus DAO correspondientes
-	public void deleteTramiteGencat(ComunicacionGencat comunicacionGencat);
+	public void deleteTramiteGencat(ComunicacionGencat comunicacionGencat, List<NotificacionGencat> notificacionesGencat, List<ReclamacionGencat> reclamacionesGencat, VisitaGencat visitaGencat);
 
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion);
+
+	List<ActivoAgrupacionActivo> getListActivoAgrupacionActivoByAgrupacionID(Long idAgrupacion);
 }

@@ -1109,7 +1109,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onClickBotonModificarCompradorSinWizard : function(btn) {
 		var me = this, window = btn.up("window"), form = window.down("form");
-
+		me.comprobarObligatoriedadCamposNexos();
 		form.recordName = "comprador";
 		form.recordClass = "HreRem.model.FichaComprador";
 
@@ -2350,7 +2350,7 @@ comprobarObligatoriedadRte: function(){
     	}
     },
 
-	comprobarObligatoriedadCamposNexos: function(a, b ,c) {
+	comprobarObligatoriedadCamposNexos: function(field, newValue, oldValue) {
 
 		try{
 			var me = this;
@@ -2398,7 +2398,6 @@ comprobarObligatoriedadRte: function(){
 			campoTelefono2Rte = me.lookupReference('telefono2Rte'),
 			campoCodigoPostalRte = me.lookupReference('codigoPostalRte'),
 			campoEmailRte = me.lookupReference('emailRte');
-			
 			//Si el expediente es de tipo alquiler
 			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "02" || venta == false){
 				if(!Ext.isEmpty(codTipoPersona.getValue())){
@@ -2414,7 +2413,6 @@ comprobarObligatoriedadRte: function(){
 									// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 									if(!Ext.isEmpty(campoRegEconomico)){
 										campoRegEconomico.allowBlank = false;
-										//campoRegEconomico.validate();
 									}
 									if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
 										if(!Ext.isEmpty(campoNumConyuge)){
@@ -2424,45 +2422,55 @@ comprobarObligatoriedadRte: function(){
 											if(!!Ext.isEmpty(campoRegEconomico.getValue())){
 												if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
 													campoNumConyuge.allowBlank = false;
+													campoTipoConyuge.allowBlank = false;
 												}else if(campoRegEconomico.getValue() === "02" ){
 													campoNumConyuge.allowBlank = true;
+													campoTipoConyuge.allowBlank = true;
+													if(!Ext.isEmpty(campoNumConyuge.getValue())){
+														campoTipoConyuge.allowBlank = false;
+													}
 												}
 											}
 										}
 									}else{
 										if(!Ext.isEmpty(campoNumConyuge)){
 											campoNumConyuge.allowBlank = true;
+											campoTipoConyuge.allowBlank = true;
+											if(!Ext.isEmpty(campoNumConyuge.getValue())){
+												campoTipoConyuge.allowBlank = false;
+											}
 										}
 									}
 								} else {
 										campoRegEconomico.allowBlank = true;
 										campoNumConyuge.allowBlank = true;
 										campoTipoConyuge.allowBlank = true;
-										campoRegEconomico.setValue("");
-										comprador.set("descripcionRegimenMatrimonial", null);
-										campoTipoConyuge.setValue("");
-										comprador.set("descripcionTipoDocumentoConyuge", null);
-										campoNumConyuge.setValue("");
-										me.getViewModel().set('comprador', comprador);
+										campoRegEconomico.setValue();
+										if(campoEstadoCivil.getValue() === "01") {
+											campoTipoConyuge.setValue();
+											campoNumConyuge.setValue();
+										}else{
+											if(!Ext.isEmpty(campoNumConyuge.getValue())){
+												campoTipoConyuge.allowBlank = false;
+											}
+										}
 									
 								}
 							}
 						
 						}
-						campoTipoRte.setValue("");
-						comprador.set("descripcionTipoDocumentoRte", null);						
-						campoNumRte.setValue("");
-						campoNombreRazonSocialRte.setValue("");
-						campoApellidosRte.setValue("");
-						campoDireccionRte.setValue("");
-						campoPovinciaRte.setValue("");
-						campoTelefono1Rte.setValue("");
-						campoTelefono2Rte.setValue("");
-						campoMunicipioRte.setValue("");
-						campoCodigoPostalRte.setValue("");
-						campoEmailRte.setValue("");
-						campoPaisRte.setValue("");
-						me.getViewModel().set('comprador', comprador);
+						campoTipoRte.setValue();						
+						campoNumRte.setValue();
+						campoNombreRazonSocialRte.setValue();
+						campoApellidosRte.setValue();
+						campoDireccionRte.setValue();
+						campoPovinciaRte.setValue();
+						campoTelefono1Rte.setValue();
+						campoTelefono2Rte.setValue();
+						campoMunicipioRte.setValue();
+						campoCodigoPostalRte.setValue();
+						campoEmailRte.setValue();
+						campoPaisRte.setValue();
 					} else {
 						//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
 						if(!Ext.isEmpty(campoEstadoCivil)){
@@ -2474,17 +2482,13 @@ comprobarObligatoriedadRte: function(){
 						if(!Ext.isEmpty(campoApellidos)){
 							campoApellidos.setDisabled(true);
 						}
-						campoEstadoCivil.setValue("");
-						comprador.set("descripcionEstadoCivil", null);						
-						campoRegEconomico.setValue("");
-						comprador.set("descripcionRegimenMatrimonial", null);
-						campoTipoConyuge.setValue("");
-						comprador.set("descripcionTipoDocumentoConyuge", null);
-						campoNumConyuge.setValue("");
-						campoRelacionHre.setValue("");
-						campoAntDeudor.setValue("");
-						campoRelAntDeudor.setValue("");
-						me.getViewModel().set('comprador', comprador);
+						campoEstadoCivil.setValue();						
+						campoRegEconomico.setValue();
+						campoTipoConyuge.setValue();
+						campoNumConyuge.setValue();
+						campoRelacionHre.setValue();
+						campoAntDeudor.setValue();
+						campoRelAntDeudor.setValue();
 					}
 				}
 			} else {
@@ -2527,8 +2531,9 @@ comprobarObligatoriedadRte: function(){
 											}else{
 												campoTipoConyuge.allowBlank = true;
 												campoNumConyuge.allowBlank = true;
-												campoTipoConyuge.setValue("");									
-												campoNumConyuge.setValue("");
+												if(!Ext.isEmpty(campoNumConyuge.getValue())){
+													campoTipoConyuge.allowBlank = false;
+												}												
 											}
 										}
 									}
@@ -2537,31 +2542,33 @@ comprobarObligatoriedadRte: function(){
 										campoRegEconomico.allowBlank = true;	
 										campoNumConyuge.allowBlank = true;
 										campoTipoConyuge.allowBlank = true;
-										campoRegEconomico.setValue("");	
-										comprador.set("descripcionRegimenMatrimonial", null);
-										campoTipoConyuge.setValue("");
-										comprador.set("descripcionTipoDocumentoConyuge", null);
-										campoNumConyuge.setValue("");
-										me.getViewModel().set('comprador', comprador);
+										campoRegEconomico.setValue();	
+										if(campoEstadoCivil.getValue() === "01") {
+											campoTipoConyuge.setValue();
+											campoNumConyuge.setValue();
+										}else{
+											if(!Ext.isEmpty(campoNumConyuge.getValue())){
+												campoTipoConyuge.allowBlank = false;
+											}
+										}
 										
 									
 								}						
 							}						
 						}
-						campoTipoRte.setValue("");
+						campoTipoRte.setValue();
 						comprador.set("descripcionTipoDocumentoRte", null);						
-						campoNumRte.setValue("");
-						campoNombreRazonSocialRte.setValue("");
-						campoApellidosRte.setValue("");
-						campoDireccionRte.setValue("");
-						campoPovinciaRte.setValue("");
-						campoTelefono1Rte.setValue("");
-						campoTelefono2Rte.setValue("");
-						campoMunicipioRte.setValue("");
-						campoCodigoPostalRte.setValue("");
-						campoEmailRte.setValue("");
-						campoPaisRte.setValue("");
-						me.getViewModel().set('comprador', comprador);
+						campoNumRte.setValue();
+						campoNombreRazonSocialRte.setValue();
+						campoApellidosRte.setValue();
+						campoDireccionRte.setValue();
+						campoPovinciaRte.setValue();
+						campoTelefono1Rte.setValue();
+						campoTelefono2Rte.setValue();
+						campoMunicipioRte.setValue();
+						campoCodigoPostalRte.setValue();
+						campoEmailRte.setValue();
+						campoPaisRte.setValue();
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
 						if(!Ext.isEmpty(campoEstadoCivil)){
@@ -2595,18 +2602,17 @@ comprobarObligatoriedadRte: function(){
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = false;
 						}
-						campoEstadoCivil.setValue("");
-						comprador.set("descripcionEstadoCivil", null);						
-						campoRegEconomico.setValue("");
-						comprador.set("descripcionRegimenMatrimonial", null);
-						campoTipoConyuge.setValue("");
-						comprador.set("descripcionTipoDocumentoConyuge", null);
-						campoNumConyuge.setValue("");
-						campoRelacionHre.setValue("");
-						campoAntDeudor.setValue("");
-						campoRelAntDeudor.setValue("");
-						me.getViewModel().set('comprador', comprador);
+						campoEstadoCivil.setValue();						
+						campoRegEconomico.setValue();
+						campoTipoConyuge.setValue();
+						campoNumConyuge.setValue();
+						campoRelacionHre.setValue();
+						campoAntDeudor.setValue();
+						campoRelAntDeudor.setValue();
 					}
+				}
+				if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){
+					field.setValue();
 				}
 				codTipoPersona.validate();
 				campoPorcionCompra.validate();
@@ -2627,7 +2633,6 @@ comprobarObligatoriedadRte: function(){
 				campoPais.validate();
 				form.recordName = "comprador";
 				form.recordClass = "HreRem.model.FichaComprador";
-				//form.getForm().updateRecord();
 
 			}
 				

@@ -721,9 +721,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
 	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 		boolean resultado = true;
-
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
+		String tipoOferta = oferta.getTipoOferta().getCodigo();
+		
+		if(!Checks.esNulo(dto.getIdActivo())){
+			Activo activo = activoAdapter.getActivoById(dto.getIdActivo());
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			Filter filtroTofVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+			Filter filtroTofAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
+			ActivoValoraciones precioVenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofVenta);
+			ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofAlquiler);
+			
+			if(DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)){
+				if(Checks.esNulo(precioVenta) || (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))){
+					throw new JsonViewerException("Activo sin precio");
+				}
+			}else if(DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)){
+				if(Checks.esNulo(precioRenta) || (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))){
+					throw new JsonViewerException("Activo sin precio");
+				}
+			}
+		}
 
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
@@ -5284,7 +5304,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.estaVacio(activoCalificacionNegativaList)){
 					for (ActivoCalificacionNegativa actCal : activoCalificacionNegativaList) { 
 						if(dto.getMotivoCalificacionNegativa().equalsIgnoreCase(actCal.getMotivoCalificacionNegativa().getCodigo())){
-							return false;
+							//return false;
+							//HREOS-6156 Al propagar, si tiene el mismo motivo, actualiza los datos de la calificación negativa.
+							activoCalificacionNegativa = actCal;
 						}
 					}
 				}

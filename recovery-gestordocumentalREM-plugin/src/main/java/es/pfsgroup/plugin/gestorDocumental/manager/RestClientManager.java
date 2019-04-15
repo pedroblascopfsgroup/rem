@@ -21,8 +21,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
-import es.capgemini.devon.exception.UserException;
-import es.capgemini.pfs.config.Config;
 import es.capgemini.pfs.config.ConfigManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;

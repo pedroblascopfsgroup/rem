@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,9 +23,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.config.Config;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -74,7 +78,13 @@ public class AgendaController extends TareaController {
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -427,6 +437,7 @@ public class AgendaController extends TareaController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	@Transactional(readOnly = false)
 	public ModelAndView solicitarAnulacionDevolucionReservaByIdExp(Long idExpediente, ModelMap model) {
 
 		ExpedienteComercial eco = null;
@@ -482,11 +493,26 @@ public class AgendaController extends TareaController {
 								//llamar al ws
 								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 								UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+								
+								dto.setCorrecw(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "corecw.valor")).getValor()));
+								dto.setComoa3(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "comoa3.valor")).getValor()));
+								
+								eco.setCorrecw(dto.getCorrecw());
+								eco.setComoa3(dto.getComoa3());
+								genericDao.save(ExpedienteComercial.class, eco);
+								
 							}else {
-								Long correcw = eco.getCorrecw();
-								Long comoa3 = eco.getComoa3();
 								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+								dto.setCorrecw(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "corecw.valor")).getValor()));
+								dto.setComoa3(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "comoa3.valor")).getValor()));
+								
+								eco.setCorrecw(dto.getCorrecw());
+								eco.setComoa3(dto.getComoa3());
+								genericDao.save(ExpedienteComercial.class, eco);
+								Long correcw = eco.getCorrecw();
+								Long comoa3 = eco.getComoa3();
+								
 								if (correcw == 0 && comoa3 == 0) {
 									throw new JsonViewerException("No se puede anular la devoluci&oacute;n.");
 								}else {
@@ -495,18 +521,6 @@ public class AgendaController extends TareaController {
 								}
 							}
 							
-							/*salto = adapter.saltoRespuestaBankiaAnulacionDevolucion(tarea.getId());
-							if (salto) {
-								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(),
-										UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
-										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA,
-										UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
-								
-								beanUtilNotNull.copyProperties(eco, dto);
-							} else {
-								logger.error("Error al saltar a tarea anterior a Resolución Expediente");
-								throw new Exception();
-							}*/
 							break;
 						} else {
 							throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");

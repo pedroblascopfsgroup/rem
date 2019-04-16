@@ -8754,43 +8754,40 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		
-		if(Checks.esNulo(expedienteComercial.getCorrecw())) {
-			Oferta ofertaAceptada = expedienteComercial.getOferta();
-			
-			List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
-			
-			String valorComboMotivoAnularReserva = null;
-			
-			for(TareaExternaValor valor :  valores) {
-				if(UpdaterServiceSancionOfertaResolucionExpediente.MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
-					valorComboMotivoAnularReserva= valor.getValor();
-					break;
-				}
-			}
-			
-			WSDevolBankiaDto dto = null;
-			
-			try {
-				dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
-						UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
-				
-				dto.setCorrecw(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "corecw.valor")).getValor()));
-				dto.setComoa3(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "comoa3.valor")).getValor()));
-				
-				beanUtilNotNull.copyProperties(expedienteComercial, dto);
-				
-				if (!Checks.esNulo(dto) && dto.getCorrecw() == 1 ) {
-					expedienteComercial.setDevolAutoNumber(true);
-				}else {
-					expedienteComercial.setDevolAutoNumber(false);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		Oferta ofertaAceptada = expedienteComercial.getOferta();
 		
+		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
+		
+		String valorComboMotivoAnularReserva = null;
+		
+		for(TareaExternaValor valor :  valores) {
+			if(UpdaterServiceSancionOfertaResolucionExpediente.MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+				valorComboMotivoAnularReserva= valor.getValor();
+				break;
+			}
 		}
+		
+		WSDevolBankiaDto dto = null;
+		
+		try {
+			dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
+					UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
+			
+			dto.setCorrecw(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "corecw.valor")).getValor()));
+			dto.setComoa3(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "comoa3.valor")).getValor()));
+			
+			beanUtilNotNull.copyProperties(expedienteComercial, dto);
+			
+			if (!Checks.esNulo(dto) && dto.getCorrecw() == 1 ) {
+				expedienteComercial.setDevolAutoNumber(true);
+			}else {
+				expedienteComercial.setDevolAutoNumber(false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		
 		return Checks.esNulo(expedienteComercial.getCorrecw()) ? false : expedienteComercial.getCorrecw() == 1;
 	}

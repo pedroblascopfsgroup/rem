@@ -54,7 +54,7 @@ BEGIN
 		
 	-- Borramos los gestores en GAC_GESTOR_ADD_ACTIVO
 	loop
-		delete from #ESQUEMA#.GAC_GESTOR_ADD_ACTIVO t1
+		delete from REM01.GAC_GESTOR_ADD_ACTIVO t1
 		where exists (select 1 from GAC_GESTOR_ADD_ACTIVO gac
 			join GEE_GESTOR_ENTIDAD gee on gee.gee_id=gac.gee_id
 			join REMMASTER.DD_TGE_TIPO_GESTOR tge on tge.dd_tge_id=gee.dd_tge_id
@@ -71,7 +71,7 @@ BEGIN
     end loop;
 	-- Borramos los gestores en GEE_GESTOR_ENTIDAD
 	loop
-		delete from #ESQUEMA#.GEE_GESTOR_ENTIDAD t1
+		delete from REM01.GEE_GESTOR_ENTIDAD t1
 		where exists (select 1 from GEE_GESTOR_ENTIDAD gee
 			join REMMASTER.DD_TGE_TIPO_GESTOR tge on tge.dd_tge_id=gee.dd_tge_id
 			where gee.USUARIOCREAR='SP_AGA_V4' and t1.gee_id=gee.gee_id)
@@ -87,7 +87,7 @@ BEGIN
     end loop;
 	-- Borramos los gestores en GAH_GESTOR_ACTIVO_HISTORICO
 	loop
-		delete from #ESQUEMA#.GAH_GESTOR_ACTIVO_HISTORICO t1
+		delete from REM01.GAH_GESTOR_ACTIVO_HISTORICO t1
 		where exists (select 1 from GAH_GESTOR_ACTIVO_HISTORICO gac
 			join GEH_GESTOR_ENTIDAD_HIST gee on gee.geh_id=gac.geh_id
 			join REMMASTER.DD_TGE_TIPO_GESTOR tge on tge.dd_tge_id=gee.dd_tge_id
@@ -104,10 +104,10 @@ BEGIN
     end loop;
 	-- Borramos los gestores en GEH_GESTOR_ENTIDAD_HIST
 	loop
-		delete from #ESQUEMA#.GEH_GESTOR_ENTIDAD_HIST t1
+		delete from REM01.GEH_GESTOR_ENTIDAD_HIST t1
 		where exists (select 1 from GEH_GESTOR_ENTIDAD_HIST gee
 			join REMMASTER.DD_TGE_TIPO_GESTOR tge on tge.dd_tge_id=gee.dd_tge_id
-			where gee.USUARIOCREAR='SP_AGA_V4' and t1.gee_id=gee.gee_id)
+			where gee.USUARIOCREAR='SP_AGA_V4' and t1.geh_id=gee.geh_id)
 		and rownum <=5000;
 		
 		V_NUM_TABLAS := sql%rowcount;

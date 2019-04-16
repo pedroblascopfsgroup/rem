@@ -36,6 +36,9 @@ Ext.define('HreRem.model.NotificacionGencat', {
 		},
 		{
 			name:'id'
+		},
+		{
+			name:'idHComunicacion'
 		}
     ]
 });

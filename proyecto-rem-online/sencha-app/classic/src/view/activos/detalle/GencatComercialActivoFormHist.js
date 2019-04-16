@@ -355,16 +355,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
 								bind: {
 									value: '{gencatHistorico.fechaRealizacionVisita}'									
 								}
-			    			},
-			    			{ 
-								text: HreRem.i18n('button.solicitar.visita'),
-								xtype: 'button',
-								width: 200,
-								handler: 'onClickSolicitarVisita',
-								bind: {
-									disabled: me.formDeHistorico || '{!gencat.usuarioValido}'
-								}
-							}
+			    			}
 						]
 		        	},
 		        	{

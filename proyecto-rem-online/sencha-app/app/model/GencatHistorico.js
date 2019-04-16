@@ -132,6 +132,9 @@ Ext.define('HreRem.model.GencatHistorico', {
 		{
 			name:'usuarioCompleto',
 			type:'boolean'
+		},
+		{
+			name:'nombreSancion'
 		}
 		
     ],

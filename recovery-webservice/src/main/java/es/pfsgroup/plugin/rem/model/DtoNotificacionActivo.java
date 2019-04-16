@@ -15,6 +15,7 @@ public class DtoNotificacionActivo extends WebDto {
 	private String idDocumento;
 	private String nombre;
 	private String nombreSancion;
+	private String idHComunicacion;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -69,6 +70,12 @@ public class DtoNotificacionActivo extends WebDto {
 	}
 	public void setNombreSancion(String nombreSancion) {
 		this.nombreSancion = nombreSancion;
+	}
+	public String getIdHComunicacion() {
+		return idHComunicacion;
+	}
+	public void setIdHComunicacion(String idHComunicacion) {
+		this.idHComunicacion = idHComunicacion;
 	}
 	
 }

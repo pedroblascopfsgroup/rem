@@ -2672,6 +2672,15 @@ public class AgrupacionAdapter {
 					Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
 					Filter filtroActivosAgrupacion = genericDao.createFilter(FilterType.EQUALS, "principal", 0);
 					activoAgrupacionPA = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion, filtroActivosAgrupacion);
+					Activo am = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId()); 
+					Filter filterIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", am.getId());
+					Filter filterIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+					ActivoAgrupacionActivo aga = genericDao.get(ActivoAgrupacionActivo.class, filterIdActivo, filterIdAgrupacion);
+					
+					if(!Checks.esNulo(aga)) {
+						aga.setPrincipal(0);
+					}
+					
 					if (!Checks.estaVacio(activoAgrupacionPA)) {
 						
 						for (ActivoAgrupacionActivo activo : activoAgrupacionPA) {
@@ -2679,6 +2688,11 @@ public class AgrupacionAdapter {
 								Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 								Activo activoActual = activo.getActivo();
 								PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
+								ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+								
+								if(!Checks.esNulo(activoPatrimonio)) {
+									activoPatrimonio.setCheckHPM(false);
+								}
 								
 								if (!Checks.esNulo(perimetroActivo)) {
 									perimetroActivo.setActivo(activoActual);

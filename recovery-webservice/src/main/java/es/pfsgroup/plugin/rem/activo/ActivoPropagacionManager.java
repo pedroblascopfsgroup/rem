@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -31,12 +32,14 @@ public class ActivoPropagacionManager implements ActivoPropagacionApi {
 
 		if (activo != null) {
 			if ( activoDao.isActivoMatriz(activo.getId())) {
-				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId());
-				DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
-				filter.setLimit(1000);
-				filter.setStart(0);
-				Page page = agrupacionAdapter.getListActivosAgrupacionById(filter, agr.getId());
-				return page.getResults(); // "teoricamente" solo puede haber una agrupacion de esos tipos en el activo.
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				if(!Checks.esNulo(agr)) {
+					DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
+					filter.setLimit(1000);
+					filter.setStart(0);
+					Page page = agrupacionAdapter.getListActivosAgrupacionById(filter, agr.getId());
+					return page.getResults(); // "teoricamente" solo puede haber una agrupacion de esos tipos en el activo.
+				}
 			} else {
 				for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
 					if (activoAgrupacionActivo.getAgrupacion() != null

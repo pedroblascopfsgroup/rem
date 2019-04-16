@@ -2702,7 +2702,6 @@ public class ActivoAdapter {
 			dtoPresupuestoFiltro.setIdActivo(String.valueOf(activo.getId()));
 			dtoPresupuestoFiltro.setIdPresupuesto(String.valueOf(activo.getPresupuesto().get(0).getId()));
 		}
-		
 
 		Page pagePresupuestosActivo = activoApi.getListHistoricoPresupuestos(dtoPresupuestoFiltro, usuarioLogado);
 

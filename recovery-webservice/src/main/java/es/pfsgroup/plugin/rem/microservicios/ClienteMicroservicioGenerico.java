@@ -15,7 +15,7 @@ import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import net.sf.json.JSONObject;
 
 @Component
-public class Cliente {
+public class ClienteMicroservicioGenerico {
 
 	@Autowired
 	private HttpClientFacade httpClient;

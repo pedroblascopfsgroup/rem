@@ -39,12 +39,12 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpedien
     	me.buttons = [ { itemId: 'btnGuardar', text: HreRem.i18n("btn.saveBtnText"), handler: "onClickGuardarPropagarCambios"}, { itemId: 'btnCancelar', text: HreRem.i18n("btn.cancelBtnText"), handler: 'onClickCancelarPropagarCambios'}];
     	
     	me.items = [
-    	
     	{
     		xtype: 'container',
     		margin: '0 10 0 0',
     		reference: "campos",
     		flex: 1.5,
+    		hidden: true,
     		layout: {
     			type: 'vbox',
     			align: 'stretch'
@@ -76,7 +76,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpedien
 			    	}
     		]
     	},
-    	
+    	 
     	{
     		xtype: 'fieldset',
     		padding: 10,

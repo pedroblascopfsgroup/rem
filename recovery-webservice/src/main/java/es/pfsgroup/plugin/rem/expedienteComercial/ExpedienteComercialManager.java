@@ -3469,8 +3469,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.getProvinciaCodigo());
 				comprador.setProvincia(provincia);
 				reiniciarPBC = true;
-			}else {
-				comprador.setProvincia(null);
 			}
 
 			if (!Checks.esNulo(dto.getMunicipioCodigo())) {
@@ -3478,8 +3476,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Localidad localidad = genericDao.get(Localidad.class, filtroLocalidad);
 				comprador.setLocalidad(localidad);
 				reiniciarPBC = true;
-			}else {
-				comprador.setLocalidad(null);
 			}
 
 			if (!Checks.esNulo(dto.getCodigoPostal())) {
@@ -3499,13 +3495,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			comprador.setDireccion(dto.getDireccion());
 
+			if (!Checks.esNulo(dto.getTelefono1())) {
+				comprador.setTelefono1(dto.getTelefono1());
+			}
 
-			comprador.setTelefono1(dto.getTelefono1());
+			if (!Checks.esNulo(dto.getTelefono2())) {
+				comprador.setTelefono2(dto.getTelefono2());
+			}
 
-			comprador.setTelefono2(dto.getTelefono2());
-
-			comprador.setEmail(dto.getEmail());
-			
+			if (!Checks.esNulo(dto.getEmail())) {
+				comprador.setEmail(dto.getEmail());
+			}
 
 			// HREOS-4937 -- GDPR
 			// Actualizamos datos GDPR del comprador
@@ -3618,20 +3618,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
 				compradorExpediente.setEstadoCivil(estadoCivil);
 				reiniciarPBC = true;
-			}else {
-				compradorExpediente.setEstadoCivil(null);
 			}
 
-			compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+			if (!Checks.esNulo(dto.getDocumentoConyuge())) {
+				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+			}
 
 			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
 				compradorExpediente.setTipoDocumentoConyuge((DDTipoDocumento) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge()));
-			}else {
-				compradorExpediente.setTipoDocumentoConyuge(null);
 			}
 
-			compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
+			if (!Checks.esNulo(dto.getRelacionAntDeudor())) {
+				compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
+			}
 
 			compradorExpediente.setRelacionHre(dto.getRelacionHre());
 
@@ -3640,20 +3640,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						.dameValorDiccionarioByCod(DDRegimenesMatrimoniales.class, dto.getCodigoRegimenMatrimonial());
 				compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
 				reiniciarPBC = true;
-			}else {
-				compradorExpediente.setRegimenMatrimonial(null);
 			}
 
-			compradorExpediente.setAntiguoDeudor(dto.getAntiguoDeudor());
-
+			if (!Checks.esNulo(dto.getAntiguoDeudor())) {
+				compradorExpediente.setAntiguoDeudor(dto.getAntiguoDeudor());
+			}
 
 			// Datos representante
 			if (!Checks.esNulo(dto.getCodTipoDocumentoRte())) {
 				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoRte());
 				compradorExpediente.setTipoDocumentoRepresentante(tipoDocumento);
-			}else {
-				compradorExpediente.setTipoDocumentoRepresentante(null);
 			}
 
 			compradorExpediente.setNombreRepresentante(dto.getNombreRazonSocialRte());
@@ -3663,8 +3660,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				DDProvincia provinciaRte = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class,
 						dto.getProvinciaRteCodigo());
 				compradorExpediente.setProvinciaRepresentante(provinciaRte);
-			}else {
-				compradorExpediente.setProvinciaRepresentante(null);
 			}
 
 			if (!Checks.esNulo(dto.getMunicipioRteCodigo())) {
@@ -3672,8 +3667,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.getMunicipioRteCodigo());
 				Localidad localidadRte = (Localidad) genericDao.get(Localidad.class, filtroLocalidadRte);
 				compradorExpediente.setLocalidadRepresentante(localidadRte);
-			}else {
-				compradorExpediente.setLocalidadRepresentante(null);
 			}
 
 			compradorExpediente.setCodigoPostalRepresentante(dto.getCodigoPostalRte());
@@ -3687,16 +3680,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPais());
 				DDPaises pais = genericDao.get(DDPaises.class, filtroPais);
 				compradorExpediente.setPais(pais);
-			}else {
-				compradorExpediente.setPais(null);
 			}
 
 			if (!Checks.esNulo(dto.getCodigoPaisRte())) {
 				Filter filtroPaisRte = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPaisRte());
 				DDPaises paisRte = genericDao.get(DDPaises.class, filtroPaisRte);
 				compradorExpediente.setPaisRte(paisRte);
-			}else {
-				compradorExpediente.setPaisRte(null);
 			}
 
 			if (!Checks.esNulo(dto.getCodigoGradoPropiedad())) {
@@ -3704,8 +3693,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.getCodigoGradoPropiedad());
 				DDTipoGradoPropiedad gradoPropiedad = genericDao.get(DDTipoGradoPropiedad.class, filtroGradoPropiedad);
 				compradorExpediente.setGradoPropiedad(gradoPropiedad);
-			}else {
-				compradorExpediente.setGradoPropiedad(null);
 			}
 
 			if (!Checks.esNulo(docAdjunto)) {

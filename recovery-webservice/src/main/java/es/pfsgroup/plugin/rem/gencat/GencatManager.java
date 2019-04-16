@@ -1895,6 +1895,28 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		*/
 	/////////////////////////////////////////////////////////////////
+			
+	//////////////// INSERTAR DATOS IDENTIFICACION EN COM_COMPRADOR ////////////////////////
+		Comprador comprador = genericDao.get(Comprador.class, 
+				genericDao.createFilter(FilterType.EQUALS, "documento", clienteComercial.getDocumento())
+				, genericDao.createFilter(FilterType.EQUALS, "tipoDocumento", clienteComercial.getTipoDocumento()));
+		if (!Checks.esNulo(comprador)) {
+			comprador.setNombre(cmg.getNuevoCompradorNombre());
+			comprador.setApellidos(cmg.getNuevoCompradorApellido1()+" "+cmg.getNuevoCompradorApellido2());
+			genericDao.update(Comprador.class, comprador);
+			
+			CompradorExpediente compradoresExp = genericDao.get(CompradorExpediente.class ,genericDao.createFilter(FilterType.EQUALS,"expediente", nuevoExpedienteComercial.getId())
+					,genericDao.createFilter(FilterType.EQUALS,"comprador", comprador.getId()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		
+			//////////////// BORRADO DE DATOS EN REPRESENTANTE ///////////////	
+			if(!Checks.esNulo(compradoresExp)) {
+				compradoresExp.setNombreRepresentante(null);
+				compradoresExp.setApellidosRepresentante(null);
+				genericDao.update(CompradorExpediente.class, compradoresExp);
+			}
+		}
+	////////////////////////////////////////////////////////////////
+		
 	}
 	
 	@SuppressWarnings("static-access")

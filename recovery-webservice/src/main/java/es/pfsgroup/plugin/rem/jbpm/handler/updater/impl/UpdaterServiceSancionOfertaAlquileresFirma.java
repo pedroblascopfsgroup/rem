@@ -77,9 +77,17 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		}
 		DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_ALQUILADO);
 		DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
-		activo.setSituacionComercial(situacionComercial);
-		activo.getSituacionPosesoria().setOcupado(1);
-		activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
+		
+		if (!Checks.esNulo(situacionComercial)) {
+			activo.setSituacionComercial(situacionComercial);
+		}
+		
+		if (!Checks.esNulo(activo.getSituacionPosesoria())) {
+			activo.getSituacionPosesoria().setOcupado(1);
+			if(!Checks.esNulo(tipoTituloActivoTPA)) {
+				activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
+			}
+		}
 		
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		

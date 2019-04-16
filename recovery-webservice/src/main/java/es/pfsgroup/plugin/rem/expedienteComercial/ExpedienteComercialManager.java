@@ -7924,66 +7924,53 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		ArrayList<String> mailsParaEnviarComercializadora = new ArrayList<String>();
 
-		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
-			Usuario gestorActivoGestorLlaves = gestorActivoApi.getGestorByActivoYTipo(
-					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_LLAVES);
-			if (gestorActivoGestorLlaves != null && gestorActivoGestorLlaves.getEmail() != null) {
-				mailsParaEnviarComercializadora.add(gestorActivoGestorLlaves.getEmail());
-			}
-		}
-
-		if (expediente.getOferta() != null
-				&& expediente.getOferta().getActivoPrincipal().getInfoComercial().getMediadorInforme() != null) {
-			ActivoProveedor custodio = expediente.getOferta().getActivoPrincipal().getInfoComercial()
-					.getMediadorInforme();
-			if (custodio.getEmail() != null) {
-				mailsParaEnviarComercializadora.add(custodio.getEmail());
-			}
-		}
-
-		if (expediente.getOferta() != null && expediente.getOferta().getPrescriptor() != null
-				&& expediente.getOferta().getPrescriptor().getEmail() != null) {
-			mailsParaEnviarComercializadora.add(expediente.getOferta().getPrescriptor().getEmail());
-		}
-
-		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
-			Usuario gestorActivoGestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
-					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
-			if (gestorActivoGestorAlquileres != null && gestorActivoGestorAlquileres.getEmail() != null) {
-				mailsParaEnviarComercializadora.add(gestorActivoGestorAlquileres.getEmail());
-			}
-		}
-
-		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
-			Usuario gestorActivoSupervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
-					expediente.getOferta().getActivoPrincipal(),
-					GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES);
-			if (gestorActivoSupervisorAlquileres != null && gestorActivoSupervisorAlquileres.getEmail() != null) {
-				mailsParaEnviarComercializadora.add(gestorActivoSupervisorAlquileres.getEmail());
-			}
-		}
-
-		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
-			Usuario gestorActivoGestor = gestorActivoApi.getGestorByActivoYTipo(
-					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-			if (gestorActivoGestor != null && gestorActivoGestor.getEmail() != null) {
-				mailsParaEnviarComercializadora.add(gestorActivoGestor.getEmail());
-			}
-		}
-
-		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
-			Usuario gestorActivoSupervisor = gestorActivoApi.getGestorByActivoYTipo(
-					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
-			if (gestorActivoSupervisor != null && gestorActivoSupervisor.getEmail() != null) {
-				mailsParaEnviarComercializadora.add(gestorActivoSupervisor.getEmail());
-			}
-		}
-
-		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
-			Usuario gestorActivoHPM = gestorActivoApi.getGestorByActivoYTipo(
-					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_HPM);
-			if (gestorActivoHPM != null && gestorActivoHPM.getEmail() != null) {
-				mailsParaEnviarComercializadora.add(gestorActivoHPM.getEmail());
+		//HREOS-4374, HREOS-4487, HREOS-5176, HREOS-6183
+		if(!Checks.esNulo(expediente.getOferta())) {
+			
+			if (!Checks.esNulo(expediente.getOferta().getActivoPrincipal())) {
+				Usuario gestorActivoGestorLlaves = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_LLAVES);
+				if (!Checks.esNulo(gestorActivoGestorLlaves) && !Checks.esNulo(gestorActivoGestorLlaves.getEmail())) {
+					mailsParaEnviarComercializadora.add(gestorActivoGestorLlaves.getEmail());
+				}
+			
+				//En ocasiones, getInfoComercial da nulo pese a la comprobación de la Oferta y el ActivoPrincipal
+				if (!Checks.esNulo(expediente.getOferta().getActivoPrincipal().getInfoComercial())){
+					if (!Checks.esNulo(expediente.getOferta().getActivoPrincipal().getInfoComercial().getMediadorInforme())) {
+						ActivoProveedor custodio = expediente.getOferta().getActivoPrincipal().getInfoComercial().getMediadorInforme();
+						if (!Checks.esNulo(custodio.getEmail())) {
+							mailsParaEnviarComercializadora.add(custodio.getEmail());
+						}
+					}
+				}
+		
+				if (!Checks.esNulo(expediente.getOferta().getPrescriptor()) && !Checks.esNulo(expediente.getOferta().getPrescriptor().getEmail())) {
+					mailsParaEnviarComercializadora.add(expediente.getOferta().getPrescriptor().getEmail());
+				}
+		
+				Usuario gestorActivoGestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
+				if (!Checks.esNulo(gestorActivoGestorAlquileres) && !Checks.esNulo(gestorActivoGestorAlquileres.getEmail())) {
+					mailsParaEnviarComercializadora.add(gestorActivoGestorAlquileres.getEmail());
+				}
+	
+				Usuario gestorActivoSupervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES);
+				if (!Checks.esNulo(gestorActivoSupervisorAlquileres) && !Checks.esNulo(gestorActivoSupervisorAlquileres.getEmail())) {
+					mailsParaEnviarComercializadora.add(gestorActivoSupervisorAlquileres.getEmail());
+				}
+	
+				Usuario gestorActivoGestor = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+				if (!Checks.esNulo(gestorActivoGestor) && !Checks.esNulo(gestorActivoGestor.getEmail())) {
+					mailsParaEnviarComercializadora.add(gestorActivoGestor.getEmail());
+				}
+	
+				Usuario gestorActivoSupervisor = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+				if (!Checks.esNulo(gestorActivoSupervisor) && !Checks.esNulo(gestorActivoSupervisor.getEmail())) {
+					mailsParaEnviarComercializadora.add(gestorActivoSupervisor.getEmail());
+				}
+	
+				Usuario gestorActivoHPM = gestorActivoApi.getGestorByActivoYTipo(expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_HPM);
+				if (!Checks.esNulo(gestorActivoHPM) && !Checks.esNulo(gestorActivoHPM.getEmail())) {
+					mailsParaEnviarComercializadora.add(gestorActivoHPM.getEmail());
+				}
 			}
 		}
 

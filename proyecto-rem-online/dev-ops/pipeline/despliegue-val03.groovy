@@ -200,10 +200,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 timeout (time:10, unit:'MINUTES') {
-                    deployFrontal("map017@192.168.49.33", 8447)
+                    deployFrontal("map017@192.168.49.33", 22)
                 }
                 timeout (time:5, unit:'MINUTES') {
-                    deployProcesos("map017@192.168.49.33", 8447)
+                    deployProcesos("map017@192.168.49.33", 22)
                 }
             }
             

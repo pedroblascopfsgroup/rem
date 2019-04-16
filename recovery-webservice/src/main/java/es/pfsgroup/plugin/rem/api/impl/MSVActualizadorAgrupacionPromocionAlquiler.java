@@ -47,10 +47,12 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
+import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
@@ -262,6 +264,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}
 		
 		//-----Nueva Publicacion
+		
 		ActivoPublicacion nuevaPublicacion = new ActivoPublicacion();
 		nuevaPublicacion.setActivo(unidadAlquilable);
 		Filter epaFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER);
@@ -272,8 +275,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		nuevaPublicacion.setEstadoPublicacionVenta(estadoPublicacionVenta);
 		Filter tcoFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializacion.CODIGO_SOLO_ALQUILER);
 		DDTipoComercializacion tipoComercializacion = genericDao.get(DDTipoComercializacion.class, tcoFilter);
-		nuevaPublicacion.setTipoComercializacion(tipoComercializacion);
-		nuevaPublicacion.setCheckPublicarAlquiler(true);
+		nuevaPublicacion.setTipoComercializacion(tipoComercializacion);		
 		nuevaPublicacion.setCheckPublicarVenta(false);
 		nuevaPublicacion.setCheckOcultarAlquiler(false);
 		nuevaPublicacion.setCheckOcultarVenta(false);
@@ -364,7 +366,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				
 			}
 		}
-		
 		//-----Nuevo NMBInformacionRegistralBien (Superficie construida)
 		if(!Checks.esNulo(exc.dameCelda(fila, 11))){
 			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
@@ -582,9 +583,104 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		genericDao.save(ActivoLocalizacion.class, actLocUA);
 		actualizarEstadoPublicacion(activoMatriz);
 		
+		ActivoSituacionPosesoria actSitPosAM = activoMatriz.getSituacionPosesoria();
+		ActivoSituacionPosesoria actSitPosUA = new ActivoSituacionPosesoria();
+		
+		if(!Checks.esNulo(actSitPosAM)) {
+/*d*/		if (!Checks.esNulo(actSitPosAM.getTipoTituloPosesorio())) {
+				actSitPosUA.setTipoTituloPosesorio(actSitPosAM.getTipoTituloPosesorio());
+			}
+		if (!Checks.estaVacio(actSitPosAM.getActivoOcupanteLegal())) {
+				List<ActivoOcupanteLegal> ocupantesIlegalesAM = actSitPosAM.getActivoOcupanteLegal();
+				List<ActivoOcupanteLegal> ocupantesIlegalesUA = new ArrayList<ActivoOcupanteLegal>();
+				for (ActivoOcupanteLegal ocupanteIlegalAM : ocupantesIlegalesAM) {
+					ActivoOcupanteLegal ocupanteIlegalUA = new ActivoOcupanteLegal();
+					if (!Checks.esNulo(ocupanteIlegalAM.getNombreOcupante())) {
+						ocupanteIlegalUA.setNombreOcupante(ocupanteIlegalAM.getNombreOcupante());
+					}
+					if (!Checks.esNulo(ocupanteIlegalAM.getNifOcupante())) {
+						ocupanteIlegalUA.setNifOcupante(ocupanteIlegalAM.getNifOcupante());
+					}
+					if (!Checks.esNulo(ocupanteIlegalAM.getEmailOcupante())) {
+						ocupanteIlegalUA.setEmailOcupante(ocupanteIlegalAM.getEmailOcupante());
+					}
+					if (!Checks.esNulo(ocupanteIlegalAM.getTelefonoOcupante())) {
+						ocupanteIlegalUA.setTelefonoOcupante(ocupanteIlegalAM.getTelefonoOcupante());
+					}
+					if (!Checks.esNulo(ocupanteIlegalAM.getObservacionesOcupante())) {
+						ocupanteIlegalUA.setObservacionesOcupante(ocupanteIlegalAM.getObservacionesOcupante());
+					}
+					ocupanteIlegalUA.setAuditoria(auditoria);
+					genericDao.save(ActivoOcupanteLegal.class, ocupanteIlegalUA);
+					ocupantesIlegalesUA.add(ocupanteIlegalUA);
+				}
+				actSitPosUA.setActivoOcupanteLegal(ocupantesIlegalesUA);
+			}
+			if (!Checks.esNulo(actSitPosAM.getFechaRevisionEstado())) {
+				actSitPosUA.setFechaRevisionEstado(actSitPosAM.getFechaRevisionEstado());
+			}
+			if (!Checks.esNulo(actSitPosAM.getFechaTomaPosesion())) {
+				actSitPosUA.setFechaTomaPosesion(actSitPosAM.getFechaTomaPosesion());
+			}
+			if (!Checks.esNulo(actSitPosAM.getOcupado())) {
+				actSitPosUA.setOcupado(actSitPosAM.getOcupado());
+			}
+/*d*/		if (!Checks.esNulo(actSitPosAM.getConTitulo())) {
+				actSitPosUA.setConTitulo(actSitPosAM.getConTitulo());
+			}
+			if (!Checks.esNulo(actSitPosAM.getRiesgoOcupacion())) {
+				actSitPosUA.setRiesgoOcupacion(actSitPosAM.getRiesgoOcupacion());
+			}
+			if (!Checks.esNulo(actSitPosAM.getFechaTitulo())) {
+				actSitPosUA.setFechaTitulo(actSitPosAM.getFechaTitulo());
+			}
+			if (!Checks.esNulo(actSitPosAM.getFechaVencTitulo())) {
+				actSitPosUA.setFechaVencTitulo(actSitPosAM.getFechaVencTitulo());
+			}
+			if (!Checks.esNulo(actSitPosAM.getRentaMensual())) {
+				actSitPosUA.setRentaMensual(actSitPosAM.getRentaMensual());
+			}
+			if (!Checks.esNulo(actSitPosAM.getFechaSolDesahucio())) {
+				actSitPosUA.setFechaSolDesahucio(actSitPosAM.getFechaSolDesahucio());
+			}
+			if (!Checks.esNulo(actSitPosAM.getFechalanzamiento())) {
+				actSitPosUA.setFechalanzamiento(actSitPosAM.getFechalanzamiento());
+			}
+			if (!Checks.esNulo(actSitPosAM.getFechaLanzamientoEfectivo())) {
+				actSitPosUA.setFechaLanzamientoEfectivo(actSitPosAM.getFechaLanzamientoEfectivo());
+			}
+			if (!Checks.esNulo(actSitPosAM.getAccesoTapiado())) {
+				actSitPosUA.setAccesoTapiado(actSitPosAM.getAccesoTapiado());
+			}
+			if (!Checks.esNulo(actSitPosAM.getFechaAccesoTapiado())) {
+				actSitPosUA.setFechaAccesoTapiado(actSitPosAM.getFechaAccesoTapiado());
+			}
+			if (!Checks.esNulo(actSitPosAM.getAccesoAntiocupa())) {
+				actSitPosUA.setAccesoAntiocupa(actSitPosAM.getAccesoAntiocupa());
+			}
+			if (!Checks.esNulo(actSitPosAM.getFechaAccesoAntiocupa())) {
+				actSitPosUA.setFechaAccesoAntiocupa(actSitPosAM.getFechaAccesoAntiocupa());
+			}
+			actSitPosUA.setAuditoria(auditoria);
+			actSitPosUA.setActivo(unidadAlquilable);
+			
+			if (!Checks.esNulo(actSitPosAM.getOtro())) {
+				actSitPosUA.setOtro(actSitPosAM.getOtro());
+			}
+			if (!Checks.esNulo(actSitPosAM.getPublicadoPortalExterno())) {
+				actSitPosUA.setPublicadoPortalExterno(actSitPosAM.getPublicadoPortalExterno());
+			}
+			if (!Checks.esNulo(actSitPosAM.getEditadoFechaTomaPosesion())) {
+				actSitPosUA.setEditadoFechaTomaPosesion(actSitPosAM.getEditadoFechaTomaPosesion());
+			}
+/*d*/		if (!Checks.esNulo(actSitPosAM.getSitaucionJuridica())) {
+				actSitPosUA.setSitaucionJuridica(actSitPosAM.getSitaucionJuridica());
+			}
 
-		
-		
+			
+			genericDao.save(ActivoSituacionPosesoria.class, actSitPosUA);
+
+		}
 		
 		return new ResultadoProcesarFila();
 	}

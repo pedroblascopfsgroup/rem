@@ -47,7 +47,9 @@ public class DDMotivosOcultacion implements Auditable, Dictionary {
 	public static final String CODIGO_VENDIDO = "13";
 	public static final String CODIGO_SIN_PRECIO = "14";
 	public static final String CODIGO_OFERTA_EXPRESS = "15";
-
+	public static final String CODIGO_ACTIVO_MATRIZ_ALQUILADO = "16";
+	public static final String CODIGO_DIVISION_EN_UAS = "17";
+	
 	@Id
 	@Column(name = "DD_MTO_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivosOcultacionGenerator")

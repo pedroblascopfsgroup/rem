@@ -3013,19 +3013,23 @@ public class ActivoAdapter {
 	public boolean guardarCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
-		
-		if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+		boolean success = false;
+		if(Checks.esNulo(dto) || (Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad))) {
+			success = false;
+		}else if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad))) {
+			success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
+			activoApi.updateCondicionantesDisponibilidad(idActivo);
+		}else if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
 				|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))
 			    || (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
-			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
+			success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
 			activoApi.updateCondicionantesDisponibilidad(idActivo);
-			if (success)
+		}
+			if (success) {
 				actualizarEstadoPublicacionActivo(idActivo);
+			}
 
 			return success;
-		}else {
-			return false;
-		}
 	}
 
 	@Transactional(readOnly = false)

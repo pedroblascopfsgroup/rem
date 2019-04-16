@@ -142,7 +142,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 			form.submit({
 				url: url,
 				waitMsg: HreRem.i18n('msg.mask.loading'),
-				params: {docCliente : me.docCliente, idEntidad: me.idEntidad},
+				params: {docCliente : me.parent.numDocumento, idEntidad: me.idEntidad},
 				success: function(fp, o) {
 					if(o.result.success == "false") {
 						me.fireEvent("errorToast", o.result.errores);
@@ -153,13 +153,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 
 						if(!Ext.isEmpty(me.parent.oferta)) {
 							url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
-							params.docCliente = me.docCliente;
+							params.docCliente = me.parent.numDocumento;
 							params.idActivo = me.parent.oferta.data.idActivo;
 							params.idAgrupacion = me.parent.oferta.data.idAgrupacion;
 
 						} else {
 							url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-							params.docCliente = me.docCliente;
+							params.docCliente = me.parent.numDocumento;
 							params.idExpediente = me.parent.expediente.get('id');
 						}
 

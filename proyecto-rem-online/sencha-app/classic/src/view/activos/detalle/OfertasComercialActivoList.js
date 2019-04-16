@@ -4,7 +4,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     bind		: {
         store: '{storeOfertasActivo}'
     },
-    requires	: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm'],
+    requires	: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm', 'HreRem.view.expedientes.wizards.oferta.SlideDatosOferta'],
     topBar		: true,
 	removeButton: false,
     listeners	: {
@@ -241,7 +241,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo'),
 		idActivo= activo.get('id'),
-		numActivo= activo.get('numActivo');
+		numActivo= activo.get('numActivo'),
+		viewPortWidth = Ext.Element.getViewportWidth(),
+		viewPortHeight = Ext.Element.getViewportHeight();
 
 		var noContieneTipoAlquiler = false;
 
@@ -257,10 +259,24 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			var parent= me.up('ofertascomercialactivo'),
 			oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
 
-			// HREOS-2930 Permitir acceso menú lateral con ventana Alta de oferta abierta
-			var ventana = Ext.create('HreRem.view.activos.detalle.WizardAltaOferta',{oferta: oferta, parent: parent});
-			me.up('activosdetallemain').add(ventana);
-			ventana.show();
+			Ext.create('HreRem.view.common.WizardBase',
+					{
+						slides: [
+							'slidedocumentoidentidadcliente',
+							'slidedatosoferta',
+							'slideadjuntardocumento'
+						],
+						title: HreRem.i18n('title.nueva.oferta'),
+						oferta: oferta,
+						parent: parent,
+						modoEdicion: true,
+						width: viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth / 1.5,
+						height: viewPortHeight > 500 ? 500 : viewPortHeight - 100,
+						x: viewPortWidth / 2 - ((viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth /1.5) / 2),
+						y: viewPortHeight / 2 - ((viewPortHeight > 500 ? 500 : viewPortHeight - 100) / 2)
+					}
+				).show();
+
 		} else {
 			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirTipoAlquiler.error"));
 		}

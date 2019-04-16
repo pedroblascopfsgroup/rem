@@ -392,16 +392,24 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 						reference: 'tipoDocConyuge',
 						name: 'codTipoDocumentoConyuge',
+						editable: true,
+						allowBlank:true,
 						padding: '5px',
 						bind: {
 							store: '{comboTipoDocumento}'
-						}
+						},
+		            	listeners: {
+		            		change: 'comprobarObligatoriedadCamposNexos'										         
+		            	}
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.num.reg.conyuge'),
 						reference: 'numRegConyuge',
 						name: 'documentoConyuge',
-						padding: '5px'
+						padding: '5px',
+		            	listeners: {
+		            		change: 'comprobarObligatoriedadCamposNexos'										         
+		            	}
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.relacion.hre'),
@@ -455,18 +463,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						bind: {
 							store: '{comboTipoDocumento}'
 						},
-						listeners: {
-							change: 'onChangeComboboxTipoDocumento'
-						}
+		            	listeners: {
+		            		change: 'comprobarObligatoriedadCamposNexos'										         
+		            	}
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
 						reference: 'numeroDocumentoRte',
 						name: 'numDocumentoRte',
 						padding: '5px',
-						listeners: {
-							change: 'onChangeTextfieldNumDocumentoRte'
-						}
+		            	listeners: {
+		            		change: 'comprobarObligatoriedadCamposNexos'										         
+		            	}
 					},
 					{
 						fieldLabel: HreRem.i18n('header.nombre.razon.social'),

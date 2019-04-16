@@ -10,38 +10,38 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		var me = this,
 			form = me.getView(),
 			wizard = form.up('wizardBase');
-
-		wizard.mask(HreRem.i18n('msg.mask.espere'));
-
-		Ext.Ajax.request({
-			url: $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador'),
-			method: 'GET',
-			params: {
-				docCliente: wizard.comprador.get('numDocumento'),
-				idExpediente: wizard.comprador.get('idExpedienteComercial')
-			},
-			success: function(response, opts) {
-				wizard.unmask();
-				var data = Ext.decode(response.responseText);
-				if (!Ext.isEmpty(data.data)) {
-					form.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-					form.lookupReference('btnBorrarDocumentoAdjunto').show();
+		if(wizard.expediente){
+			wizard.mask(HreRem.i18n('msg.mask.espere'));		
+			Ext.Ajax.request({
+				url: $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador'),
+				method: 'GET',
+				params: {
+					docCliente: wizard.comprador.get('numDocumento'),
+					idExpediente: wizard.comprador.get('idExpedienteComercial')
+				},
+				success: function(response, opts) {
+					wizard.unmask();
+					var data = Ext.decode(response.responseText);
+					if (!Ext.isEmpty(data.data)) {
+						form.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+						form.lookupReference('btnBorrarDocumentoAdjunto').show();
+					}
+				},
+				failure: function(record, operation) {
+					me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
+					wizard.unmask();
 				}
-			},
-			failure: function(record, operation) {
-				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
-				wizard.unmask();
+			});
+	
+			form.getForm().findField('cesionDatos').setValue(wizard.comprador.get('cesionDatos'));
+			form.getForm().findField('comunicacionTerceros').setValue(wizard.comprador.get('comunicacionTerceros'));
+			form.getForm().findField('transferenciasInternacionales').setValue(wizard.comprador.get('transferenciasInternacionales'));
+	
+			if (wizard.comprador.get('cesionDatos')) {
+				form.lookupReference('btnGenerarDocumento').disable();
+				form.lookupReference('btnSubirDocumento').disable();
+				form.lookupReference('btnFinalizar').enable();
 			}
-		});
-
-		form.getForm().findField('cesionDatos').setValue(wizard.comprador.get('cesionDatos'));
-		form.getForm().findField('comunicacionTerceros').setValue(wizard.comprador.get('comunicacionTerceros'));
-		form.getForm().findField('transferenciasInternacionales').setValue(wizard.comprador.get('transferenciasInternacionales'));
-
-		if (wizard.comprador.get('cesionDatos')) {
-			form.lookupReference('btnGenerarDocumento').disable();
-			form.lookupReference('btnSubirDocumento').disable();
-			form.lookupReference('btnFinalizar').enable();
 		}
 	},
 
@@ -89,6 +89,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			esInternacional = form.getForm().findField('carteraInternacional').getValue(),
 			btnGenerarDoc = form.lookupReference('btnGenerarDocumento'),
 			btnSubirDoc = form.lookupReference('btnSubirDocumento'),
+			docOfertaComercial = form.getForm().findField('docOfertaComercial'),
 			btnFinalizar = form.lookupReference('btnFinalizar');
 
 		if (checkbox.getValue()) {
@@ -111,8 +112,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnGenerarDoc.disable();
 			btnSubirDoc.disable();
 		}
-
-		btnFinalizar.disable();
+		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != ''){
+			btnFinalizar.enable();
+		}else{
+			btnFinalizar.disable();
+		}
 	},
 
 	onChangeCheckboxComunicacionTerceros: function(checkbox, newVal, oldVal) {
@@ -123,6 +127,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			esInternacional = form.getForm().findField('carteraInternacional').getValue(),
 			btnGenerarDoc = form.lookupReference('btnGenerarDocumento'),
 			btnSubirDoc = form.lookupReference('btnSubirDocumento'),
+			docOfertaComercial = form.getForm().findField('docOfertaComercial'),
 			btnFinalizar = form.lookupReference('btnFinalizar');
 
 		if (checkCesionDatos) {
@@ -145,8 +150,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnGenerarDoc.disable();
 			btnSubirDoc.disable();
 		}
-
-		btnFinalizar.disable();
+		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != ''){
+			btnFinalizar.enable();
+		}else{
+			btnFinalizar.disable();
+		}
 	},
 
 	onRenderTextfieldDocumentoOfertaComercial: function(text) {
@@ -173,6 +181,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			esInternacional = form.getForm().findField('carteraInternacional').getValue(),
 			btnGenerarDoc = form.lookupReference('btnGenerarDocumento'),
 			btnSubirDoc = form.lookupReference('btnSubirDocumento'),
+			docOfertaComercial = form.getForm().findField('docOfertaComercial'),
 			btnFinalizar = form.lookupReference('btnFinalizar');
 
 		if (checkCesionDatos) {
@@ -196,7 +205,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnSubirDoc.disable();
 		}
 
-		btnFinalizar.disable();
+		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != ''){
+			btnFinalizar.enable();
+		}else{
+			btnFinalizar.disable();
+		}
 	},
 
 	onClickBotonGenerarDoc: function(btn) {
@@ -269,10 +282,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		var me = this,
 			form = me.getView(),
 			wizard = form.up('wizardBase'),
-			//ventanaDetalle = btn.up().up(),
-			//ventanaAlta = ventanaDetalle.up().xtype,
-			url = null,
-			ventanaWizard = null,
 			valueDestComercial,
 			destinoComercialActivo;
 
@@ -283,42 +292,37 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 
 		if (!Ext.isEmpty(wizard.oferta)) {
 			// TODO: terminar esta parte con respecto al wizard de oferta.
-			if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0) {
-				valueDestComercial = ventanaDetalle.up().getViewModel().data.valueDestComercial;
-				destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercialActivo;
+			if (form.config.xtype.indexOf('slideadjuntardocumento') >= 0) {
+				valueDestComercial = wizard.oferta.data.destinoComercial;
+				destinoComercialActivo = wizard.oferta.data.destinoComercialActivo;
 			} else {
-				valueDestComercial = form.findField('comboTipoOferta').getSelection().data.descripcion;
-				destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercial;
-				ventanaDetalle.up().getViewModel().data.valueDestComercial = valueDestComercial;
-				ventanaDetalle.up().getViewModel().data.destinoComercialActivo = destinoComercialActivo;
+				valueDestComercial = form.getForm().findField('tipoOferta').getSelection().data.descripcion;
+				destinoComercialActivo = wizard.oferta.data.destinoComercial;
+				wizard.oferta.data.valueDestComercial = valueDestComercial;
+				wizard.oferta.data.destinoComercialActivo = destinoComercialActivo;
 			}
 
 			if (destinoComercialActivo === valueDestComercial || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO['ALQUILER_VENTA']) {
-				if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {
-					ventanaDetalle.setController('activodetalle');
-					var cesionDatos = form.findField('cesionDatos').getValue(),
-						comunicacionTerceros = form.findField('comunicacionTerceros').getValue(),
-						transferenciasInternacionales = form.findField('transferenciasInternacionales').getValue();
-					ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('cesionDatos').setValue(cesionDatos);
-					ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
-					ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
+				if (form.config.xtype.indexOf('slideadjuntardocumento') >= 0 && wizard.oferta) {
+					var cesionDatos = form.getForm().findField('cesionDatos').getValue(),
+						comunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue(),
+						transferenciasInternacionales = form.getForm().findField('transferenciasInternacionales').getValue();
+					form.up().down('slidedatosoferta').getForm().findField('cesionDatos').setValue(cesionDatos);
+					form.up().down('slidedatosoferta').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
+					form.up().down('slidedatosoferta').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
 	
-					me.onClickBotonGuardarOferta(btn);
+					me.onClickBotonGuardarOferta();
 	
-				} else if (ventanaDetalle.config.xtype.indexOf('detalle') >= 0) {
+				} else if (form.config.xtype.indexOf('slidedatosoferta') >= 0) {
 	
-					ventanaDetalle.setController('activodetalle');
 					var pedirDocValor = form.findField('pedirDoc').getValue();
 	
 					if (pedirDocValor == 'false') {
 						var docCliente = me.getViewModel().get('oferta.numDocumentoCliente');
-							me.getView().mask(HreRem.i18n('msg.mask.loading'));
-							url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
-							ventanaWizard = btn.up('wizardaltaoferta');
-							var idActivo = ventanaWizard.oferta.data.idActivo,
-							idAgrupacion = ventanaWizard.oferta.data.idAgrupacion;
-	
-						ventanaWizard.mask('Cargando documentos comprador');
+						me.getView().mask(HreRem.i18n('msg.mask.loading'));
+						var url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
+						var idActivo = wizard.oferta.data.idActivo,
+						idAgrupacion = wizard.oferta.data.idAgrupacion;
 	
 						Ext.Ajax.request({
 							url: url,
@@ -333,7 +337,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 							success: function(response, opts) {
 								var data = Ext.decode(response.responseText);
 								if (!Ext.isEmpty(data.data)) {
-									var ventanaWizardAdjuntarDocumento = ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento'),
+									var ventanaWizardAdjuntarDocumento = wizard.down('slideadjuntardocumento'),
 										esInternacional = ventanaWizardAdjuntarDocumento.getForm().findField('carteraInternacional').getValue(),
 										cesionDatos = ventanaWizardAdjuntarDocumento.getForm().findField('cesionDatos'),
 										transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales');
@@ -368,19 +372,19 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 						var valorCesionDatos = form.findField('cesionDatos').getValue(),
 							valorComTerceros = form.findField('comunicacionTerceros').getValue(),
 							valorTransferInternacionales = form.findField('transferenciasInternacionales').getValue();
-						ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(valorCesionDatos);
-						ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(valorComTerceros);
-						ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(valorTransferInternacionales);
+						wizard.down('slideadjuntardocumento').getForm().findField('cesionDatos').setValue(valorCesionDatos);
+						wizard.down('slideadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(valorComTerceros);
+						wizard.down('slideadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(valorTransferInternacionales);
 	
-						btn.up('wizardaltaoferta').height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 100;
-						btn.up('wizardaltaoferta').setY(Ext.Element.getViewportHeight() / 2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 100) / 2));
+						wizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 100;
+						wizard.setY(Ext.Element.getViewportHeight() / 2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 100) / 2));
 
 						me.getView().unmask();
 						wizard.nextSlide();
 	
 					} else {
 	
-						me.onClickBotonGuardarOferta(btn);
+						me.onClickBotonGuardarOferta();
 					}
 				}
 
@@ -465,6 +469,108 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
 			}
 		});
+	},
+
+	onSaveFormularioCompletoOferta : function(form, window) {
+		var me = this,
+		record = form.getForm().getValues(),
+		ofertaForm = null,
+		wizardAltaOferta = form.up('wizardBase');
+
+		model = me.getViewModel().get('oferta');
+
+		if(!Ext.isEmpty(wizardAltaOferta.down('slidedatosoferta'))) {
+			ofertaForm = wizardAltaOferta.down('slidedatosoferta').form;
+		}
+
+		if (ofertaForm.isValid()) {
+
+			window.mask(HreRem.i18n("msg.mask.espere"));
+
+			model.save({
+				success : function(record) {
+					form.reset();
+					ofertaForm.reset();
+					window.unmask();
+					if (Ext.isDefined(model.data.idActivo)){
+						window.parent.up('activosdetalle').lookupController().refrescarActivo(true);
+					}
+					else {
+						window.setController('agrupaciondetalle');
+						window.getController().refrescarAgrupacion(true);
+					}
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					window.destroy();
+				},
+				failure : function(record, operation) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						window.unmask();
+				}
+
+			});
+
+		} else {
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+	},
+	
+	onClickBotonGuardarOferta: function(){
+		var me = this,
+		window = me.getView().up('wizardBase'),
+		form = window.down('form'),
+		model = null,
+		data = window.oferta.data,
+		ventanaDetalle = window.down('slidedatosoferta');
+
+		bindRecord = ventanaDetalle.getForm().getValues();
+
+		if(Ext.isDefined(data.idActivo)){
+			model = Ext.create('HreRem.model.OfertaComercialActivo', {
+				idActivo : data.idActivo,
+				importeOferta: bindRecord.importeOferta,
+				tipoOferta: bindRecord.comboTipoOferta,
+				numDocumentoCliente: bindRecord.numDocumentoCliente,
+				tipoDocumento: bindRecord.comboTipoDocumento,
+				nombreCliente: bindRecord.nombreCliente,
+				apellidosCliente: bindRecord.apellidosCliente,
+				cesionDatos: bindRecord.cesionDatos,
+				comunicacionTerceros: bindRecord.comunicacionTerceros,
+				transferenciasInternacionales: bindRecord.transferenciasInternacionales,
+				codigoPrescriptor: bindRecord.buscadorPrescriptores,
+				regimenMatrimonial: bindRecord.comboRegimenMatrimonial,
+				estadoCivil: bindRecord.comboEstadoCivil,
+				codigoSucursal: bindRecord.buscadorSucursales,
+				intencionFinanciar: bindRecord.intencionfinanciar,
+				tipoPersona: bindRecord.comboTipoOferta,
+				razonSocialCliente: bindRecord.razonSocialCliente,
+				deDerechoTanteo: bindRecord.dederechotanteo
+			});
+		}else{
+			model = Ext.create('HreRem.model.OfertaComercial', {
+				idAgrupacion : data.idAgrupacion,
+				importeOferta: bindRecord.importeOferta,
+				tipoOferta: bindRecord.comboTipoOferta,
+				numDocumentoCliente: bindRecord.numDocumentoCliente,
+				tipoDocumento: bindRecord.comboTipoDocumento,
+				nombreCliente: bindRecord.nombreCliente,
+				apellidosCliente: bindRecord.apellidosCliente,
+				cesionDatos: bindRecord.cesionDatos,
+				comunicacionTerceros: bindRecord.comunicacionTerceros,
+				transferenciasInternacionales: bindRecord.transferenciasInternacionales,
+				codigoPrescriptor: bindRecord.buscadorPrescriptores,
+				regimenMatrimonial: bindRecord.comboRegimenMatrimonial,
+				estadoCivil: bindRecord.comboEstadoCivil,
+				codigoSucursal: bindRecord.buscadorSucursales,
+				intencionFinanciar: bindRecord.intencionfinanciar,
+				tipoPersona: bindRecord.comboTipoOferta,
+				razonSocialCliente: bindRecord.razonSocialCliente,
+				deDerechoTanteo: bindRecord.dederechotanteo
+			});
+		}
+
+		me.getViewModel().set('oferta', model);
+
+		me.onSaveFormularioCompletoOferta(form, window);
 	}
 
 });

@@ -245,6 +245,19 @@ public class StockDto implements WebcomRESTDto{
 
 	private StringDataType codTipoUsoDestino;
 	
+	//HREOS-6082
+	@WebcomRequired
+	private BooleanDataType indicadorAm;
+	
+	@WebcomRequired
+	private LongDataType idHayaAm;
+	
+	@WebcomRequired
+	private LongDataType idPa;
+	
+	@WebcomRequired
+	private LongDataType idSubdivisionPa;
+	
 
 	// Modificaciones WS Stock
 	private StringDataType codTipoAlquiler;
@@ -837,5 +850,29 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setCodigoAgrupacionComercialRem(LongDataType codigoAgrupacionComercialRem) {
 		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
+	}
+	public BooleanDataType getIndicadorAm() {
+		return indicadorAm;
+	}
+	public void setIndicadorAm(BooleanDataType indicadorAm) {
+		this.indicadorAm = indicadorAm;
+	}
+	public LongDataType getIdHayaAm() {
+		return idHayaAm;
+	}
+	public void setIdHayaAm(LongDataType idHayaAm) {
+		this.idHayaAm = idHayaAm;
+	}
+	public LongDataType getIdPa() {
+		return idPa;
+	}
+	public void setIdPa(LongDataType idPa) {
+		this.idPa = idPa;
+	}
+	public LongDataType getIdSubdivisionPa() {
+		return idSubdivisionPa;
+	}
+	public void setIdSubdivisionPa(LongDataType idSubdivisionPa) {
+		this.idSubdivisionPa = idSubdivisionPa;
 	}
 }

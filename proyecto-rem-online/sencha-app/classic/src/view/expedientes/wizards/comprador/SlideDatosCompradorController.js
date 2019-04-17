@@ -1036,15 +1036,16 @@ comprobarObligatoriedadRte: function(){
 			me.fireEvent('errorToast', HreRem.i18n('msg.form.invalido'));
 			return;
 		}
-
-		form.updateRecord();
-
-		if (pedirDocValor === 'false') {
-			wizard.comprador = modelComprador;
-			wizard.nextSlide();
-
-		} else {
-			me.guardarModeloComprador();
+		if(!modelComprador){
+			form.updateRecord();
+	
+			if (pedirDocValor === 'false') {
+				wizard.comprador = modelComprador;
+				wizard.nextSlide();
+	
+			} else {
+				me.guardarModeloComprador();
+			}
 		}
 	},
 

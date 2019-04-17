@@ -146,11 +146,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 	
 		    				   if(!Ext.isEmpty(pedirDoc)){
 		    					   slideDatos.getForm().findField('pedirDoc').setValue(pedirDoc);
-		           				   if(pedirDoc == "true"){
-		           					  slideDatos.down('button[itemId=btnCrear]').setText("Crear");
-		           				   }else{
-		           					  slideDatos.down('button[itemId=btnCrear]').setText("Continuar");
-		           				   }
 		           		       }
 	
 		    				   if(!Ext.isEmpty(datos.compradorId)){

@@ -2,7 +2,7 @@
 --/*
 --###########################################
 --## AUTOR=VICTOR OLIVARES
---## FECHA_CREACION=20190313
+--## FECHA_CREACION=20190410
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5803
@@ -14,6 +14,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial Aleix Arnau
 --##	    0.2 Actualización gestor formalización y subcarteras   
+--##	    0.3 Pier - Modificacion del gestor de admisión
 --###########################################
 ----*/
 
@@ -49,9 +50,10 @@ DECLARE
 		T_TIPO_DATA('GALQ',07,135,null,null,'dleganes','Daniel Leganés'),
 		T_TIPO_DATA('SCOM',07,135,null,null,'pdorado','Paula Dorado'),
 		T_TIPO_DATA('GIAADMT',07,135,null,null,'ogf02','OGF Administración'),
+		T_TIPO_DATA('GFORM',07,135,null,null,'cgarciah','Cristina Garcia Hernandez'),
 		T_TIPO_DATA('GFORM',07,135,null,null,'chernandez','Cristina Hernández Martín'),
 		T_TIPO_DATA('GIAFORM',07,135,null,null,'ogf03','OGF Formalización'),
-		T_TIPO_DATA('GTOADM',07,135,null,null,'ogf01','OGF Admisión'),
+		T_TIPO_DATA('GGADM',07,135,null,null,'ogf01','OGF Admisión'),
 		T_TIPO_DATA('GCOMAG',07,135,null,null,'rjimeno','Raúl Jimeno'),
 		T_TIPO_DATA('GCOMAG',07,135,null,null,'pgarciad','Pedro García'),
 		T_TIPO_DATA('PTEC',07,135,null,null,'A82451410','HOMESERVE ASISTENCIA SPAIN, S.A.U.'),
@@ -61,9 +63,10 @@ DECLARE
 		T_TIPO_DATA('GALQ',07,137,null,null,'dleganes','Daniel Leganés'),
 		T_TIPO_DATA('SCOM',07,137,null,null,'pdorado','Paula Dorado'),
 		T_TIPO_DATA('GIAADMT',07,137,null,null,'ogf02','OGF Administración'),
+		T_TIPO_DATA('GFORM',07,137,null,null,'cgarciah','Cristina Garcia Hernandez'),
 		T_TIPO_DATA('GFORM',07,137,null,null,'chernandez','Cristina Hernández Martín'),
 		T_TIPO_DATA('GIAFORM',07,137,null,null,'ogf03','OGF Formalización'),
-		T_TIPO_DATA('GTOADM',07,137,null,null,'ogf01','OGF Admisión'),
+		T_TIPO_DATA('GGADM',07,137,null,null,'ogf01','OGF Admisión'),
 		T_TIPO_DATA('GCOMAG',07,137,null,null,'rjimeno','Raúl Jimeno'),
 		T_TIPO_DATA('GCOMAG',07,137,null,null,'pgarciad','Pedro García'),
 		T_TIPO_DATA('PTEC',07,137,null,null,'A82451410','HOMESERVE ASISTENCIA SPAIN, S.A.U.'),

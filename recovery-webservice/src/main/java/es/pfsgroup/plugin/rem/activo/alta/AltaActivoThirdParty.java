@@ -312,7 +312,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		
 		//ActivoConfigDocumento
 		ActivoConfigDocumento configDocumento = new ActivoConfigDocumento();
-		beanUtilNotNull.copyProperty(configDocumento, "tipoDocumentoActivo", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumentoActivo.class, DDTipoDocumentoActivo.CODIGO_CEE));
+		beanUtilNotNull.copyProperty(configDocumento, "tipoDocumentoActivo", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumentoActivo.class, DDTipoDocumentoActivo.CODIGO_CEE_ACTIVO));
 		configDocumento = genericDao.save(ActivoConfigDocumento.class, configDocumento);
 		
 		//ActivoAdmisionDocumento

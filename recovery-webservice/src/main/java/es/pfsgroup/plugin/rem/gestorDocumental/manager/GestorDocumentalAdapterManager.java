@@ -10,8 +10,6 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -33,8 +31,8 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedient
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
@@ -104,9 +102,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     @Autowired
     private ActivoAgrupacionApi activoAgrupacionApi;
 
-	@Autowired
-	private ApplicationContext applicationContext;
-
+	
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
 
@@ -375,7 +371,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		idSistemaOrigen = trabajo.getActivo().getNumActivo().toString();
 		DDCartera cartera = trabajo.getActivo().getCartera();
 		DDSubcartera subcartera = trabajo.getActivo().getSubcartera();
-		cliente = getClienteByCarteraySubcartera(cartera, subcartera);
+		ActivoPropietario actPro = trabajo.getActivo().getPropietarioPrincipal();
+		cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);
 				
 		String estadoTrabajo = Checks.esNulo(trabajo.getEstado()) ? null : trabajo.getEstado().getCodigo();
 		String codClase = GestorDocumentalConstants.CODIGO_CLASE_ACTUACION_TECNICA;
@@ -568,7 +565,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				idSistemaOrigen = actOfe.getPrimaryKey().getActivo().getNumActivo().toString();
 				DDCartera cartera = actOfe.getPrimaryKey().getActivo().getCartera();
 				DDSubcartera subcartera = actOfe.getPrimaryKey().getActivo().getSubcartera();
-				cliente = getClienteByCarteraySubcartera(cartera, subcartera);
+				ActivoPropietario actPro = actOfe.getPrimaryKey().getActivo().getPropietarioPrincipal();
+				cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);
 			}
 		}
 		String estadoExpediente = "Alta";
@@ -602,22 +600,44 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return idExpediente;	
 	}
 
-	private String getClienteByCarteraySubcartera(DDCartera cartera, DDSubcartera subcartera) {
+	private String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
 		if(Checks.esNulo(subcartera)) {
 			return "";
 		}
 
 		MapeoGestorDocumental mgd = new MapeoGestorDocumental();
-
-		if(!Checks.esNulo(cartera)) {
-			mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
-					genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
-			if(!Checks.esNulo(mgd)){
-				if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+		if(Checks.esNulo(actPro)){
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+						return "";
+					}
+				}else{
 					return "";
 				}
-			}else{
-				return "";
+			}
+		} else {
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera),
+						genericDao.createFilter(FilterType.EQUALS, "activoPropietario", actPro));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+						return "";
+					}
+				}else{
+					mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+							genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+					if(!Checks.esNulo(mgd)){
+						if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+							return "";
+						}
+					}else{
+						return "";
+					}
+				}
 			}
 		}
 		
@@ -728,23 +748,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 
 		return list;
-	}
-
-	/**
-	 * Este método lanza un nuevo hilo de ejecución con una clase runnable pasada por parámetro para llevar a cabo labores de
-	 * consistencia entre las relaciones de los documentos adjuntos en las bases de REM y los documentos localizados en el
-	 * gestor documental. Establece el contexto de seguridad para la sesión en el nuevo hilo así como inicializar los autowired.
-	 *
-	 * @param caru: clase runnable para llevar a cabo labores de consistencia de documentos.
-	 */
-	private void launchNewTasker(ConsistenciaAdjuntosRunnableUtils caru) {
-		// Inicializa los elementos Autowired de la clase runnable.
-		applicationContext.getAutowireCapableBeanFactory().autowireBean(caru);
-
-		// Traslada el contexto de seguridad de Spring hacia el nuevo hilo.
-		caru.setSpringSecurityContext(SecurityContextHolder.getContext());
-
-		caru.iniciar();
 	}
 
 	@Override

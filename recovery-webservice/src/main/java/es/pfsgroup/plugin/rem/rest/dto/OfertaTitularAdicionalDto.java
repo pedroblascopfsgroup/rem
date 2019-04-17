@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Size;
 
-import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -47,10 +47,11 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	@Diccionary(clase = DDRegimenesMatrimoniales.class, message = "El regimen matrimonial no existe", groups = { Insert.class,
 			Update.class })
 	private String codRegimenMatrimonial;
+
 	
-	private Boolean rechazarCesionDatosPublicidad;
-	private Boolean rechazarCesionDatosPropietario;
-	private Boolean rechazarCesionDatosProveedores;
+	private Boolean transferenciasInternacionales;
+	private Boolean cesionDatos;
+	private Boolean comunicacionTerceros;
 	
 	//REMVIP-3846
 	@Size(max=50,groups = { Insert.class, Update.class })
@@ -99,7 +100,7 @@ public class OfertaTitularAdicionalDto implements Serializable {
 			Update.class })
 	private String codTipoPersona;
 	@Size(max=5,groups = { Insert.class, Update.class })
-	@Diccionary(clase = DDTipoPersona.class, message = "El codTipoPersona no existe", groups = { Insert.class,
+	@Diccionary(clase = DDPaises.class, message = "El codPais no existe", groups = { Insert.class,
 			Update.class })
 	private String codPais;
 	@Size(max=5,groups = { Insert.class, Update.class })
@@ -119,36 +120,11 @@ public class OfertaTitularAdicionalDto implements Serializable {
 			Update.class })
 	private String codMunicipioRepresentante;
 	@Size(max=5,groups = { Insert.class, Update.class })
-	@Diccionary(clase = DDTipoPersona.class, message = "El codTipoPersona no existe", groups = { Insert.class,
+	@Diccionary(clase = DDPaises.class, message = "El codPaisRepresentante no existe", groups = { Insert.class,
 			Update.class })
 	private String codPaisRepresentante;
 	@Size(max=5,groups = { Insert.class, Update.class })
 	private String codigoPostalRepresentante;
-	
-	public Boolean getRechazarCesionDatosPublicidad() {
-		return rechazarCesionDatosPublicidad;
-	}
-	public void setRechazarCesionDatosPublicidad(Boolean rechazarCesionDatosPublicidad) {
-		this.rechazarCesionDatosPublicidad = rechazarCesionDatosPublicidad;
-	}
-	public Boolean getRechazarCesionDatosPropietario() {
-		return rechazarCesionDatosPropietario;
-	}
-	public void setRechazarCesionDatosPropietario(Boolean rechazarCesionDatosPropietario) {
-		this.rechazarCesionDatosPropietario = rechazarCesionDatosPropietario;
-	}
-	public Boolean getRechazarCesionDatosProveedores() {
-		return rechazarCesionDatosProveedores;
-	}
-	public void setRechazarCesionDatosProveedores(Boolean rechazarCesionDatosProveedires) {
-		this.rechazarCesionDatosProveedores = rechazarCesionDatosProveedires;
-	}
-	public String getNombre() {
-		return nombre;
-	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
 	public String getCodTipoDocumento() {
 		return codTipoDocumento;
 	}
@@ -161,41 +137,65 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 	public String getApellidos() {
 		return apellidos;
 	}
 	public void setApellidos(String apellidos) {
 		this.apellidos = apellidos;
 	}
-	public String getCodigoMunicipio() {
+	public String getCodMunicipio() {
 		return codMunicipio;
 	}
-	public void setCodigoMunicipio(String codigoMunicipio) {
-		this.codMunicipio = codigoMunicipio;
+	public void setCodMunicipio(String codMunicipio) {
+		this.codMunicipio = codMunicipio;
 	}
-	public String getCodigoProvincia() {
+	public String getCodProvincia() {
 		return codProvincia;
 	}
-	public void setCodigoProvincia(String codigoProvincia) {
-		this.codProvincia = codigoProvincia;
+	public void setCodProvincia(String codProvincia) {
+		this.codProvincia = codProvincia;
 	}
-	public String getCodPostal() {
+	public String getCodigoPostal() {
 		return codigoPostal;
 	}
-	public void setCodPostal(String codPostal) {
-		this.codigoPostal = codPostal;
+	public void setCodigoPostal(String codigoPostal) {
+		this.codigoPostal = codigoPostal;
 	}
-	public String getCodigoEstadoCivil() {
+	public String getCodEstadoCivil() {
 		return codEstadoCivil;
 	}
-	public void setCodigoEstadoCivil(String codigoEstadoCivil) {
-		this.codEstadoCivil = codigoEstadoCivil;
+	public void setCodEstadoCivil(String codEstadoCivil) {
+		this.codEstadoCivil = codEstadoCivil;
 	}
 	public String getCodRegimenMatrimonial() {
 		return codRegimenMatrimonial;
 	}
 	public void setCodRegimenMatrimonial(String codRegimenMatrimonial) {
 		this.codRegimenMatrimonial = codRegimenMatrimonial;
+	}
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
 	}
 	public String getRazonSocial() {
 		return razonSocial;
@@ -269,7 +269,6 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setPuerta(String puerta) {
 		this.puerta = puerta;
 	}
-
 	public String getCodPedania() {
 		return codPedania;
 	}
@@ -282,7 +281,6 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	
 	public String getConyugeNombre() {
 		return conyugeNombre;
 	}
@@ -361,4 +359,7 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
 	}
+	
+	
+	
 }

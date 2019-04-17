@@ -1838,7 +1838,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(activo.getSubcartera().getCodigo())) ||
 							(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())))) {
 							activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA)));
-							activoDaoImpl.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+							activoDaoImpl.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername(), null, true);
 				}
 				if (activo.getAdjuntos() != null && activo.getAdjuntos().size() > 0) {
 					adjuntoActivo = activo.getAdjuntos().get(activo.getAdjuntos().size() - 1);
@@ -3102,33 +3102,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 */
 	private void rellenarDatosVentaFormalizacion(Formalizacion formalizacion, DtoFormalizacionResolucion resolucionDto) {
 		if(formalizacion != null && formalizacion.getExpediente() != null && formalizacion.getExpediente().getTrabajo() != null){
-			List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(formalizacion.getExpediente().getTrabajo().getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
-	
+			List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(
+					formalizacion.getExpediente().getTrabajo().getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
+
 			if (!Checks.estaVacio(listaTramites)) {
 				List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(listaTramites.get(0).getId());
 				TareaExterna tex = null;
-	
+
 				for (TareaExterna tarea : listaTareas) {
 					if (tarea.getTareaProcedimiento() != null && tarea.getTareaProcedimiento().getCodigo().equals("T013_FirmaPropietario")) {
 						tex = tarea;
 						break;
 					}
 				}
-	
+
 				if (!Checks.esNulo(tex)) {
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-	
 					try {
 						String fechaFirma = activoTramiteApi.getTareaValorByNombre(tex.getValores(), "fechaFirma");
-						if(!Checks.esNulo(fechaFirma)){
+						if (!Checks.esNulo(fechaFirma)) {
 							resolucionDto.setFechaVenta(df.parse(fechaFirma));
 						}
-	
+						resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
 					} catch (ParseException e) {
 						logger.error("error en expedienteComercialManager", e);
 					}
-	
-					resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
 				}
 			}
 		}
@@ -3499,14 +3497,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			comprador.setDireccion(dto.getDireccion());
 
-
 			comprador.setTelefono1(dto.getTelefono1());
 
 			comprador.setTelefono2(dto.getTelefono2());
 
 			comprador.setEmail(dto.getEmail());
 			
-
 			// HREOS-4937 -- GDPR
 			// Actualizamos datos GDPR del comprador
 			if (!Checks.esNulo(dto.getCesionDatos())) {
@@ -3604,25 +3600,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
 				compradorExpediente.setEstadoCivil(estadoCivil);
 				reiniciarPBC = true;
+			}else {
+				compradorExpediente.setEstadoCivil(null);
 			}
 
 			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
 				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge());
 				compradorExpediente.setTipoDocumentoConyuge(tipoDocumento);
-			}
 
-			// Nexos
-			if (!Checks.esNulo(dto.getCodEstadoCivil())) {
-				DDEstadosCiviles estadoCivil = (DDEstadosCiviles) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
-				compradorExpediente.setEstadoCivil(estadoCivil);
-				reiniciarPBC = true;
 			}else {
-				compradorExpediente.setEstadoCivil(null);
+				compradorExpediente.setTipoDocumentoConyuge(null);
 			}
 
-			compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+			if (!Checks.esNulo(dto.getDocumentoConyuge())) {
+				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+			}else {
+				compradorExpediente.setDocumentoConyuge(null);
+			}
 
 			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
 				compradorExpediente.setTipoDocumentoConyuge((DDTipoDocumento) utilDiccionarioApi
@@ -3645,8 +3640,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			compradorExpediente.setAntiguoDeudor(dto.getAntiguoDeudor());
-
-
 			// Datos representante
 			if (!Checks.esNulo(dto.getCodTipoDocumentoRte())) {
 				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi

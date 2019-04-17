@@ -701,10 +701,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo"),
 		subtipoTrabajoCodigo = me.getViewModel().get("trabajo.subtipoTrabajoCodigo"),
 		codigoTarifaTrabajo = me.getViewModel().get('trabajo.codigoTarifaTrabajo'),
-		descripcionTarifaTrabajo = me.getViewModel().get('trabajo.descripcionTarifaTrabajo');
+		descripcionTarifaTrabajo = me.getViewModel().get('trabajo.descripcionTarifaTrabajo'),
+		subcarteraCodigo = me.getViewModel().get('trabajo.subcarteraCodigo');
 		
 		store.getProxy().extraParams = {idTrabajo: idTrabajo, cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo
-			, codigoTarifa: codigoTarifaTrabajo, descripcionTarifa: descripcionTarifaTrabajo};	
+			, codigoTarifa: codigoTarifaTrabajo, descripcionTarifa: descripcionTarifaTrabajo, subcarteraCodigo: subcarteraCodigo};	
 		
 		return true;		
 

@@ -343,8 +343,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComitesByCartera(String carteraCodigo, ModelMap model){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesByCartera(carteraCodigo)));	
+	public ModelAndView getComitesByCartera(String carteraCodigo, String subcarteraCodigo, ModelMap model){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesByCartera(carteraCodigo, subcarteraCodigo)));	
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)

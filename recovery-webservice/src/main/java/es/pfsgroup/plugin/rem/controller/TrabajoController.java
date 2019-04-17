@@ -247,13 +247,13 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			String errores = trabajoApi.upload(fileItem);			
 
-			model.put("errores", errores);
+			model.put("errorMessage", errores);
 			model.put("success", errores==null);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 			model.put("success", false);
-			model.put("errores", e.getCause());
+			model.put("errorMessage", e.getCause());
 		}
 		return createModelAndViewJson(model);
 	}
@@ -294,7 +294,7 @@ public class TrabajoController extends ParadiseJsonController {
        		}
        		
        	} catch (Exception e) { 
-       		logger.error(e.getMessage());
+       		logger.error(e.getMessage(),e);
        	}
 
 	}
@@ -342,14 +342,17 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivos(DtoActivosTrabajoFilter dto, HttpServletRequest request){
-
-		Page page = trabajoApi.getListActivos(dto);
-		
 		ModelMap model = new ModelMap();
-		model.put("data", page.getResults());
-		model.put("totalCount", page.getTotalCount());
-		trustMe.registrarSuceso(request, Long.parseLong(dto.getIdTrabajo()), ENTIDAD_CODIGO.CODIGO_TRABAJO, "activos", ACCION_CODIGO.CODIGO_VER);
-		
+		try {
+			Page page = trabajoApi.getListActivos(dto);
+			
+			
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
 		return createModelAndViewJson(model);
 	}
 	
@@ -408,7 +411,7 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);		
 		}
 		

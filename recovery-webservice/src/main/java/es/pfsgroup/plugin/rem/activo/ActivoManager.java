@@ -25,7 +25,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -170,7 +169,6 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
@@ -219,6 +217,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -460,12 +459,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	@BusinessOperation(overrides = "activoManager.getListHistoricoPresupuestos")
-	public Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuarioLogado) {
-		return activoDao.getListHistoricoPresupuestos(dto, usuarioLogado);
-	}
-
-	@Override
 	@BusinessOperation(overrides = "activoManager.isIntegradoAgrupacionRestringida")
 	public boolean isIntegradoAgrupacionRestringida(Long id, Usuario usuarioLogado) {
 		Integer contador = activoDao.isIntegradoAgrupacionRestringida(id, usuarioLogado);
@@ -704,9 +697,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
 	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 		boolean resultado = true;
-
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
+		String tipoOferta = oferta.getTipoOferta().getCodigo();
+		
+		if(!Checks.esNulo(dto.getIdActivo())){
+			Activo activo = activoAdapter.getActivoById(dto.getIdActivo());
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			Filter filtroTofVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+			Filter filtroTofAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
+			ActivoValoraciones precioVenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofVenta);
+			ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofAlquiler);
+			
+			if(DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)){
+				if(Checks.esNulo(precioVenta) || (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))){
+					throw new JsonViewerException("Activo sin precio");
+				}
+			}else if(DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)){
+				if(Checks.esNulo(precioRenta) || (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))){
+					throw new JsonViewerException("Activo sin precio");
+				}
+			}
+		}
 
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
@@ -1059,7 +1072,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				} else if (DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
 				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
+					if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())||
+					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())||
+					DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
+					{
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
+					} else {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
+					}
 				} else {
 					// 1º Clase de activo (financiero/inmobiliario) y sin
 					// formalización.
@@ -1171,7 +1191,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorBusqueda.setClienteComercial(cliente);
 				compradorBusqueda.setDocumento(cliente.getDocumento());
 			}
-
 			if (!Checks.esNulo(cliente.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
 					.equals(cliente.getTipoPersona().getCodigo())) {
 				compradorBusqueda.setNombre(cliente.getRazonSocial());
@@ -2860,7 +2879,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoOferta.getPrimaryKey().getOferta().getId());
 				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 				if (!Checks.esNulo(expediente)) {
-					if (!Checks.esNulo(expediente.getFechaVenta()) && DDTipoOferta.CODIGO_ALQUILER.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
+					if (!Checks.esNulo(expediente.getFechaInicioAlquiler()) && Checks.esNulo(expediente.getFechaFinAlquiler()) && DDTipoOferta.CODIGO_ALQUILER.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
 						return true;
 				}
 			}
@@ -5186,6 +5205,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 //				dto.getNumeroActivo()
 				if (!Checks.esNulo(dto.getIdActivo())) {
 					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo()));
+					if(!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getEstado())) {
+						if(DDEstadoTitulo.ESTADO_INSCRITO.equals(activo.getTitulo().getEstado().getCodigo())) {
+							return false;
+						}
+					}
 					activoCalificacionNegativa.setActivo(activo);
 				} else {
 					return false;
@@ -5195,7 +5219,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.estaVacio(activoCalificacionNegativaList)){
 					for (ActivoCalificacionNegativa actCal : activoCalificacionNegativaList) { 
 						if(dto.getMotivoCalificacionNegativa().equalsIgnoreCase(actCal.getMotivoCalificacionNegativa().getCodigo())){
-							return false;
+							//return false;
+							//HREOS-6156 Al propagar, si tiene el mismo motivo, actualiza los datos de la calificación negativa.
+							activoCalificacionNegativa = actCal;
 						}
 					}
 				}
@@ -5228,7 +5254,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				DDCalificacionNegativa calificacionNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo","02"));
 				activoCalificacionNegativa.setCalificacionNegativa(calificacionNegativa);
 				
-				if(DDEstadoMotivoCalificacionNegativa.DD_SUBSANADO_CODIGO.equals(activoCalificacionNegativa.getEstadoMotivoCalificacionNegativa().getCodigo())) {
+				if(!Checks.esNulo(activoCalificacionNegativa.getEstadoMotivoCalificacionNegativa()) 
+						&& DDEstadoMotivoCalificacionNegativa.DD_SUBSANADO_CODIGO.equals(activoCalificacionNegativa.getEstadoMotivoCalificacionNegativa().getCodigo())) {
 					if (!Checks.esNulo(dto.getFechaSubsanacion())) {
 						beanUtilNotNull.copyProperty(activoCalificacionNegativa, "fechaSubsanacion", dto.getFechaSubsanacion());
 					}

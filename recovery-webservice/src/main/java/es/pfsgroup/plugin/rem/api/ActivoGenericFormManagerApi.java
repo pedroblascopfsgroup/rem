@@ -22,7 +22,7 @@ public interface ActivoGenericFormManagerApi {
 	 * @param id
 	 * @return GenericForm
 	 */
-	public GenericForm getForm(Long id);
+	public GenericForm getForm(Long id) throws Exception;
 
 	/**
 	 * Guarda los valores de la pantalla genérica en bbdd

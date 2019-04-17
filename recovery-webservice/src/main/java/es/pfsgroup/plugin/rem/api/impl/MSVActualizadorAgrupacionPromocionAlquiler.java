@@ -240,7 +240,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}
 		
 		//--Patrimonio Unidad Alquilable
-		Filter patrimonioFilter = genericDao.createFilter(FilterType.EQUALS, "id", activoMatriz.getId());
+		Filter patrimonioFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
 		ActivoPatrimonio patrimonioAm = genericDao.get(ActivoPatrimonio.class, patrimonioFilter);
 		ActivoPatrimonio patrimonioUa = new ActivoPatrimonio();
 		if (!Checks.esNulo(unidadAlquilable.getId())) {
@@ -277,6 +277,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		DDTipoComercializacion tipoComercializacion = genericDao.get(DDTipoComercializacion.class, tcoFilter);
 		nuevaPublicacion.setTipoComercializacion(tipoComercializacion);		
 		nuevaPublicacion.setCheckPublicarVenta(false);
+		nuevaPublicacion.setCheckPublicarAlquiler(false);
 		nuevaPublicacion.setCheckOcultarAlquiler(false);
 		nuevaPublicacion.setCheckOcultarVenta(false);
 		nuevaPublicacion.setCheckOcultarPrecioAlquiler(false);

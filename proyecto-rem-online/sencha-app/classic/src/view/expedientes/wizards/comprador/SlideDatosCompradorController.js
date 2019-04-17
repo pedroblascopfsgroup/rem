@@ -1038,15 +1038,15 @@ comprobarObligatoriedadRte: function(){
 		}
 		if(!modelComprador){
 			form.updateRecord();
-	
-			if (pedirDocValor === 'false') {
-				wizard.comprador = modelComprador;
-				wizard.nextSlide();
-	
-			} else {
-				me.guardarModeloComprador();
-			}
 		}
+		if (pedirDocValor === 'false') {
+			wizard.comprador = modelComprador;
+			wizard.nextSlide();
+
+		} else {
+			me.guardarModeloComprador();
+		}
+		
 	},
 
 	/**

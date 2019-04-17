@@ -25,23 +25,27 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 					if (!Ext.isEmpty(data.data)) {
 						form.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
 						form.lookupReference('btnBorrarDocumentoAdjunto').show();
+						if (wizard.comprador.get('cesionDatos')) {
+							form.lookupReference('btnGenerarDocumento').disable();
+							form.lookupReference('btnSubirDocumento').disable();
+							form.lookupReference('btnFinalizar').enable();
+						}
 					}
 				},
 				failure: function(record, operation) {
 					me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
 					wizard.unmask();
+					if (wizard.comprador.get('cesionDatos')) {
+						form.lookupReference('btnGenerarDocumento').disable();
+						form.lookupReference('btnSubirDocumento').disable();
+						form.lookupReference('btnFinalizar').disable();
+					}
 				}
 			});
 	
 			form.getForm().findField('cesionDatos').setValue(wizard.comprador.get('cesionDatos'));
 			form.getForm().findField('comunicacionTerceros').setValue(wizard.comprador.get('comunicacionTerceros'));
 			form.getForm().findField('transferenciasInternacionales').setValue(wizard.comprador.get('transferenciasInternacionales'));
-	
-			if (wizard.comprador.get('cesionDatos')) {
-				form.lookupReference('btnGenerarDocumento').disable();
-				form.lookupReference('btnSubirDocumento').disable();
-				form.lookupReference('btnFinalizar').enable();
-			}
 		}
 	},
 

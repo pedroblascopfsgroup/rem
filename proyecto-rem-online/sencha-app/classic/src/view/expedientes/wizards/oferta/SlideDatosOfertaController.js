@@ -181,7 +181,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 
                 } else if (ventanaDetalle.config.xtype.indexOf('slidedatosoferta') >= 0) {
 
-                    //ventanaDetalle.setController('activodetalle');
                     pedirDocValor = form.findField('pedirDoc').getValue();
 
                     if (pedirDocValor == 'false'){
@@ -190,7 +189,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                         var url = $AC.getRemoteUrl('activooferta/getListAdjuntos'),
                         idActivo = wizard.oferta.data.idActivo,
                         idAgrupacion = wizard.oferta.data.idAgrupacion;
-						//wizard.mask("Cargando documentos comprador");
+						wizard.mask("Cargando documentos comprador");
                         Ext.Ajax.request({
                              url: url,
                              method : 'GET',
@@ -204,8 +203,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                                     esInternacional = ventanaWizardAdjuntarDocumento.getForm().findField('carteraInternacional').getValue(),
                                     cesionDatos = ventanaWizardAdjuntarDocumento.getForm().findField('cesionDatos'),
                                     transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
-                                    btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[itemId=btnGenerarDoc]');
-                                    btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
+                                    btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('btnGenerarDocumento');
+                                    btnFinalizar =  ventanaWizardAdjuntarDocumento.down('btnFinalizar');
                                     if (esInternacional) {
                                     	Ext.global.console.log("internacional");
                                     	Ext.global.console.log("cesion datos "+cesionDatos.getValue());
@@ -228,7 +227,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
-                                    //wizard.unmask()
+                                    wizard.unmask()
                                  }
                              },
 

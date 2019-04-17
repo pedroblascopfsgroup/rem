@@ -31,7 +31,7 @@ DECLARE
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
   USUARIO_MIGRACION VARCHAR2(50 CHAR):= 'MIG_APPLE';
-  USUARIOCREAR VARCHAR2(50 CHAR):= 'REMVIP-3934';
+  USUARIOCREAR VARCHAR2(50 CHAR):= 'REMVIP-3934-2';
 
 BEGIN
       
@@ -56,15 +56,15 @@ BEGIN
 							WHERE ACT.USUARIOCREAR = ''MIG_APPLE'' AND TGE.DD_TGE_CODIGO IN (''GFORM'',''GIAFORM'')
 						)
 						SELECT ACT.ACT_NUM_ACTIVO, TGE.DD_TGE_CODIGO, TGE.DD_TGE_DESCRIPCION, AUX.GEE_ID, TGE.DD_TGE_ID, AUX.USUARIO, ACT.ACT_ID, PRV.DD_PRV_CODIGO, PRV.DD_PRV_DESCRIPCION,
-							   (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME IN CASE WHEN TGE.DD_TGE_CODIGO = ''GFORM'' AND PRV.DD_PRV_CODIGO IN (''4'',''11'',''14'',''18'',''21'',''23'',''29'',''41'') THEN ''pdiez''
-																									 WHEN TGE.DD_TGE_CODIGO = ''GFORM'' AND PRV.DD_PRV_CODIGO NOT IN (''4'',''11'',''14'',''18'',''21'',''23'',''29'',''41'') THEN ''mfuentesm''
+							   (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME IN CASE WHEN TGE.DD_TGE_CODIGO = ''GFORM'' AND PRV.DD_PRV_CODIGO IN (''3'',''4'',''6'',''10'',''11'',''12'',''14'',''18'',''21'',''22'',''23'',''29'',''30'',''31'',''41'',''44'',''46'',''50'') THEN ''pdiez''
+																									 WHEN TGE.DD_TGE_CODIGO = ''GFORM'' AND PRV.DD_PRV_CODIGO NOT IN (''3'',''4'',''6'',''10'',''11'',''12'',''14'',''18'',''21'',''22'',''23'',''29'',''30'',''31'',''41'',''44'',''46'',''50'') THEN ''mfuentesm''
 																									 WHEN TGE.DD_TGE_CODIGO = ''GIAFORM'' AND PRV.DD_PRV_CODIGO IN (''1'',''3'',''7'',''12'',''15'',''20'',''26'',''27'',''32'',''33'',''35'',''36'',''38'',''39'',''46'',''48'',''51'',''52'') THEN ''ogf03''
 																									 WHEN TGE.DD_TGE_CODIGO = ''GIAFORM'' AND PRV.DD_PRV_CODIGO IN (''4'',''6'',''10'',''11'',''14'',''18'',''21'',''22'',''23'',''29'',''30'',''31'',''41'',''44'',''50'') THEN ''mediterraneo03''
 																									 WHEN TGE.DD_TGE_CODIGO = ''GIAFORM'' AND PRV.DD_PRV_CODIGO NOT IN (''1'',''3'',''7'',''12'',''15'',''20'',''26'',''27'',''32'',''33'',''35'',''36'',''38'',''39'',''46'',''48'',''51'',''52'',''4'',''6'',''10'',''11'',''14'',''18'',''21'',''22'',''23'',''29'',''30'',''31'',''41'',''44'',''50'') THEN ''gestinov03''
 																																												  
 								END) AS USU_ID,
-								(SELECT USU_USERNAME FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME IN CASE WHEN TGE.DD_TGE_CODIGO = ''GFORM'' AND PRV.DD_PRV_CODIGO IN (''4'',''11'',''14'',''18'',''21'',''23'',''29'',''41'') THEN ''pdiez''
-																									 WHEN TGE.DD_TGE_CODIGO = ''GFORM'' AND PRV.DD_PRV_CODIGO NOT IN (''4'',''11'',''14'',''18'',''21'',''23'',''29'',''41'') THEN ''mfuentesm''
+								(SELECT USU_USERNAME FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME IN CASE WHEN TGE.DD_TGE_CODIGO = ''GFORM'' AND PRV.DD_PRV_CODIGO IN (''3'',''4'',''6'',''10'',''11'',''12'',''14'',''18'',''21'',''22'',''23'',''29'',''30'',''31'',''41'',''44'',''46'',''50'') THEN ''pdiez''
+																									 WHEN TGE.DD_TGE_CODIGO = ''GFORM'' AND PRV.DD_PRV_CODIGO NOT IN (''3'',''4'',''6'',''10'',''11'',''12'',''14'',''18'',''21'',''22'',''23'',''29'',''30'',''31'',''41'',''44'',''46'',''50'') THEN ''mfuentesm''
 																									 WHEN TGE.DD_TGE_CODIGO = ''GIAFORM'' AND PRV.DD_PRV_CODIGO IN (''1'',''3'',''7'',''12'',''15'',''20'',''26'',''27'',''32'',''33'',''35'',''36'',''38'',''39'',''46'',''48'',''51'',''52'') THEN ''ogf03''
 																									 WHEN TGE.DD_TGE_CODIGO = ''GIAFORM'' AND PRV.DD_PRV_CODIGO IN (''4'',''6'',''10'',''11'',''14'',''18'',''21'',''22'',''23'',''29'',''30'',''31'',''41'',''44'',''50'') THEN ''mediterraneo03''
 																									 WHEN TGE.DD_TGE_CODIGO = ''GIAFORM'' AND PRV.DD_PRV_CODIGO NOT IN (''1'',''3'',''7'',''12'',''15'',''20'',''26'',''27'',''32'',''33'',''35'',''36'',''38'',''39'',''46'',''48'',''51'',''52'',''4'',''6'',''10'',''11'',''14'',''18'',''21'',''22'',''23'',''29'',''30'',''31'',''41'',''44'',''50'') THEN ''gestinov03''

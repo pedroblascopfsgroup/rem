@@ -19,15 +19,20 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
      * @type
      */
     parent: null,
+
     record: null,
+    
     idNotificacion: null,
     
+    idHComunicacion: null,
+
     initComponent: function() {
     	var me = this,
     		deshabilitarCamposDespuesAlCrear = true,
     		habilitarCamposAlCrear = false,
     		allowBlankAlCrear = false,
-    		idNotificacion = null;
+    		idNotificacion = null,
+    		idHComunicacion = null;
 
     	if(!Ext.isEmpty(me.record)){
     		var notificacionGencat = me.record,

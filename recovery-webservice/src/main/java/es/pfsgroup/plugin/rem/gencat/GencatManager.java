@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -749,10 +750,11 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	private List<DtoAdjunto> getAdjuntosComunicacionHistorico(HistoricoComunicacionGencat hComunicacionGencat, List<DtoAdjunto> listaAdjuntos) 
 			throws IllegalAccessException, InvocationTargetException {
 		
-		for (HistoricoComunicacionGencatAdjunto referenciaAdjunto : hComunicacionGencat.getAdjuntos()) {
+		List<AdjuntoComunicacion> adjuntos = genericDao.getList(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "historicoComunicacionGencat", hComunicacionGencat), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		
+		for (AdjuntoComunicacion adjunto : adjuntos) {
 			DtoAdjunto dto = new DtoAdjunto();
 
-			AdjuntoComunicacion adjunto = referenciaAdjunto.getAdjuntoComunicacion();
 			BeanUtils.copyProperties(dto, adjunto);
 			dto.setIdEntidad(hComunicacionGencat.getActivo().getId());
 			dto.setDescripcionTipo(adjunto.getTipoDocumentoComunicacion().getDescripcion());
@@ -966,7 +968,11 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				for (int i = 0; i < historicoNotificacionGencatlist.size(); i++) {
 					dtoNotificacionActivo = new DtoNotificacionActivo();
 					BeanUtils.copyProperties(dtoNotificacionActivo, historicoNotificacionGencatlist.get(i));
+					dtoNotificacionActivo.setNombre(historicoNotificacionGencatlist.get(i).getAdjuntoComunicacion().getNombre());
 					dtoNotificacionActivo.setMotivoNotificacion(historicoNotificacionGencatlist.get(i).getTipoNotificacion() != null ? historicoNotificacionGencatlist.get(i).getTipoNotificacion().getDescripcion() : null);
+					if (!Checks.esNulo(historicoNotificacionGencatlist.get(i)) && !Checks.esNulo(historicoNotificacionGencatlist.get(i).getAdjuntoComunicacionSancion()) && !Checks.esNulo(historicoNotificacionGencatlist.get(i).getAdjuntoComunicacionSancion().getNombre())) {
+						dtoNotificacionActivo.setNombreSancion(historicoNotificacionGencatlist.get(i).getAdjuntoComunicacionSancion().getNombre());
+					}
 					listaNotificaciones.add(dtoNotificacionActivo);
 				}
 			}
@@ -1043,21 +1049,92 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				
 				notificacion.setCheckNotificacion(true);
 				notificacion.setComunicacion(comunicacionGencat);	
-				
-				Auditoria auditoria = new Auditoria();
-				auditoria.setBorrado(false);
-				auditoria.setFechaCrear(new Date());
-				auditoria.setUsuarioCrear(usuarioLogado.getApellidoNombre());
-				
-				notificacion.setVersion(new Long(0));
-				notificacion.setAuditoria(auditoria);
-				
-				
+				if (!Checks.esNulo(dtoNotificacion.getId())) {
+					Auditoria auditoria = new Auditoria();
+					auditoria.setBorrado(false);
+					auditoria.setFechaCrear(notificacion.getAuditoria().getFechaCrear());
+					auditoria.setUsuarioCrear(notificacion.getAuditoria().getUsuarioCrear());
+					auditoria.setFechaModificar(new Date());
+					auditoria.setUsuarioModificar(usuarioLogado.getUsername());
+					notificacion.setAuditoria(auditoria);
+				}				
 				
 				notificacionGencatDao.saveOrUpdate(notificacion);
+
+			}
+			catch (java.text.ParseException e) {
+				logger.error("Error en gencatManager", e);
+			}
+			
+		}
+		
+		return dtoNotificacion;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public DtoNotificacionActivo createHistoricoNotificacionComunicacion(DtoNotificacionActivo dtoNotificacion) {
+		
+		HistoricoComunicacionGencat historicoComunicacionGencat = genericDao.get(HistoricoComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoNotificacion.getIdHComunicacion())));
+		
+		if (!Checks.esNulo(historicoComunicacionGencat)) {
+			try {
+				HistoricoNotificacionGencat notificacion = new HistoricoNotificacionGencat();
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				SimpleDateFormat dateformat3 = new SimpleDateFormat("dd/MM/yyyy");
+				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				if(!Checks.esNulo(dtoNotificacion.getId())){
+					notificacion = genericDao.get(HistoricoNotificacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoNotificacion.getId()));
+				}
+				if(!Checks.esNulo(dtoNotificacion.getMotivoNotificacion())) {
+					Filter filtroIdTipoNotificacion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoNotificacion.getMotivoNotificacion());
+					DDTipoNotificacionGencat tipoNotificacionGencat = genericDao.get(DDTipoNotificacionGencat.class, filtroIdTipoNotificacion, filtroBorrado);
+					notificacion.setTipoNotificacion(tipoNotificacionGencat);
+				}
+				if(Checks.esNulo(dtoNotificacion.getId())) {
+					if(!Checks.esNulo(dtoNotificacion.getIdDocumento())) {
+						AdjuntoComunicacion adj = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "id",Long.valueOf(dtoNotificacion.getIdDocumento())));
+						notificacion.setAdjuntoComunicacion(adj);
+					}
+				}else {
+					if(!Checks.esNulo(dtoNotificacion.getIdDocumento())) {
+						AdjuntoComunicacion adj = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "id",Long.valueOf(dtoNotificacion.getIdDocumento())));
+						notificacion.setAdjuntoComunicacionSancion(adj);
+					}
+				}
 				
+				//Insertar Notificacion
+				notificacion.setCheckNotificacion(true);
+				notificacion.setHistoricoComunicacion(historicoComunicacionGencat);
+				if(!Checks.esNulo(dtoNotificacion.getFechaNotificacion())) {
+					Date fechaNotificacion = dateformat3.parse(dtoNotificacion.getFechaNotificacion());
+					notificacion.setFechaNotificacion(fechaNotificacion);
+				}
+				if(!Checks.esNulo(dtoNotificacion.getFechaSancionNotificacion())) {
+					Date fechaSancion = dateformat3.parse(dtoNotificacion.getFechaSancionNotificacion());
+					notificacion.setFechaSancionNotificacion(fechaSancion);
+				}
+				if(!Checks.esNulo(dtoNotificacion.getCierreNotificacion())) {
+					Date fechaCierre = dateformat3.parse(dtoNotificacion.getCierreNotificacion());
+					notificacion.setCierreNotificacion(fechaCierre);
+				}
+
+				if (!Checks.esNulo(dtoNotificacion.getId())) {
+					Auditoria auditoria = new Auditoria();
+					auditoria.setBorrado(false);
+					auditoria.setFechaCrear(notificacion.getAuditoria().getFechaCrear());
+					auditoria.setUsuarioCrear(notificacion.getAuditoria().getUsuarioCrear());
+					auditoria.setFechaModificar(new Date());
+					auditoria.setUsuarioModificar(usuarioLogado.getUsername());
+					notificacion.setAuditoria(auditoria);
+				}				
 				
-				
+				if (Checks.esNulo(dtoNotificacion.getId())) {
+					genericDao.save(HistoricoNotificacionGencat.class, notificacion);
+				} else {
+					genericDao.update(HistoricoNotificacionGencat.class, notificacion);
+				}
 			}
 			catch (java.text.ParseException e) {
 				logger.error("Error en gencatManager", e);
@@ -1895,6 +1972,28 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		*/
 	/////////////////////////////////////////////////////////////////
+			
+	//////////////// INSERTAR DATOS IDENTIFICACION EN COM_COMPRADOR ////////////////////////
+		Comprador comprador = genericDao.get(Comprador.class, 
+				genericDao.createFilter(FilterType.EQUALS, "documento", clienteComercial.getDocumento())
+				, genericDao.createFilter(FilterType.EQUALS, "tipoDocumento", clienteComercial.getTipoDocumento()));
+		if (!Checks.esNulo(comprador)) {
+			comprador.setNombre(cmg.getNuevoCompradorNombre());
+			comprador.setApellidos(cmg.getNuevoCompradorApellido1()+" "+cmg.getNuevoCompradorApellido2());
+			genericDao.update(Comprador.class, comprador);
+			
+			CompradorExpediente compradoresExp = genericDao.get(CompradorExpediente.class ,genericDao.createFilter(FilterType.EQUALS,"expediente", nuevoExpedienteComercial.getId())
+					,genericDao.createFilter(FilterType.EQUALS,"comprador", comprador.getId()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		
+			//////////////// BORRADO DE DATOS EN REPRESENTANTE ///////////////	
+			if(!Checks.esNulo(compradoresExp)) {
+				compradoresExp.setNombreRepresentante(null);
+				compradoresExp.setApellidosRepresentante(null);
+				genericDao.update(CompradorExpediente.class, compradoresExp);
+			}
+		}
+	////////////////////////////////////////////////////////////////
+		
 	}
 	
 	@SuppressWarnings("static-access")

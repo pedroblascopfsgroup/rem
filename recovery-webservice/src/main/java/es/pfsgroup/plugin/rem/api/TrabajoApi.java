@@ -210,7 +210,7 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.getListActivosTrabajo")
-	public Page getListActivos(DtoActivosTrabajoFilter dto);
+	public Page getListActivos(DtoActivosTrabajoFilter dto) throws InstantiationException, IllegalAccessException, Exception;
 
 
 	@BusinessOperationDefinition("trabajoManager.findOne")

@@ -899,10 +899,22 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					ua.getInfoRegistral().setSuperficieParcela(Float.valueOf(activoDto.getSuperficieParcela()));
 				}
 			}
-			superficie_construida += ua.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().floatValue();
-			superficie_util += ua.getInfoRegistral().getSuperficieUtil();
-			superficie_repercusion += ua.getInfoRegistral().getSuperficieElementosComunes();
-			superficie_parcela += ua.getInfoRegistral().getSuperficieParcela();
+			if(!Checks.esNulo(ua.getInfoRegistral())) {
+				if(!Checks.esNulo(ua.getInfoRegistral().getInfoRegistralBien())) {
+					if(!Checks.esNulo(ua.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida())) {
+						superficie_construida += ua.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().floatValue();
+					}
+				}
+				if(!Checks.esNulo(ua.getInfoRegistral().getSuperficieUtil())) {
+					superficie_util += ua.getInfoRegistral().getSuperficieUtil();
+				}
+				if(!Checks.esNulo(ua.getInfoRegistral().getSuperficieElementosComunes())) {
+					superficie_repercusion += ua.getInfoRegistral().getSuperficieElementosComunes();
+				}
+				if(!Checks.esNulo(ua.getInfoRegistral().getSuperficieElementosComunes())) {
+					superficie_parcela += ua.getInfoRegistral().getSuperficieParcela();
+				}
+			}
 		}
 		
 		if(superficie_construida > activoMatriz.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().floatValue()) {

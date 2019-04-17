@@ -205,6 +205,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'direccion',
 						reference: 'direccion',
 						padding: '5px',
+						allowBlank: false,
 						bind: {
 							allowBlank: '{esObligatorio}'
 						}
@@ -215,6 +216,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						reference: 'provinciaCombo',
 						name: 'provinciaCodigo',
 						padding: '5px',
+						allowBlank: false,
 						chainedStore: 'comboMunicipio',
 						chainedReference: 'municipioCombo',
 						bind: {
@@ -237,6 +239,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 						reference: 'municipioCombo',
 						name: 'municipioCodigo',
+						allowBlank: false,
 						padding: '5px',
 						bind: {
 							store: '{comboMunicipio}',
@@ -269,6 +272,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'codigoPais',
 						reference: 'pais',
 						padding: '5px',
+						allowBlank: false,
 						bind: {
 							store: '{comboPaises}',
 							allowBlank: '{esObligatorio}'

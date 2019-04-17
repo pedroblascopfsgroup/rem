@@ -345,7 +345,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 										esInternacional = ventanaWizardAdjuntarDocumento.getForm().findField('carteraInternacional').getValue(),
 										cesionDatos = ventanaWizardAdjuntarDocumento.getForm().findField('cesionDatos'),
 										transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales');
-									var btnFinalizar = ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
+									var btnFinalizar = ventanaWizardAdjuntarDocumento.down('button[reference=btnFinalizar]');
 									if (esInternacional) {
 										if (transferenciasInternacionales.getValue()) {
 											btnFinalizar.enable();

@@ -203,8 +203,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                                     esInternacional = ventanaWizardAdjuntarDocumento.getForm().findField('carteraInternacional').getValue(),
                                     cesionDatos = ventanaWizardAdjuntarDocumento.getForm().findField('cesionDatos'),
                                     transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
-                                    btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('btnGenerarDocumento');
-                                    btnFinalizar =  ventanaWizardAdjuntarDocumento.down('btnFinalizar');
+                                    btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[reference=btnGenerarDocumento]');
+                                    btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[reference=btnFinalizar]');
                                     if (esInternacional) {
                                     	Ext.global.console.log("internacional");
                                     	Ext.global.console.log("cesion datos "+cesionDatos.getValue());

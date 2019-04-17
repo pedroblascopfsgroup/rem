@@ -273,4 +273,6 @@ public interface GencatApi {
 	 * @return boolean
 	 */
 	public boolean comprobacionDocumentoAnulacion(Long idActivo);
+
+	public DtoNotificacionActivo createHistoricoNotificacionComunicacion(DtoNotificacionActivo dtoNotificacion);
 }

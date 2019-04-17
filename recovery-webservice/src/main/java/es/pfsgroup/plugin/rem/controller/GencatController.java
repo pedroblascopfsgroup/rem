@@ -333,7 +333,11 @@ public class GencatController {
 				notificacionActivo.setIdDocumento(idAdjunto);
 			}
 			//model.put("success", true);
-			model.put("data", gencatApi.createNotificacionComunicacion(notificacionActivo));
+			if (Checks.esNulo(notificacionActivo.getIdHComunicacion())) {
+				model.put("data", gencatApi.createNotificacionComunicacion(notificacionActivo));
+			} else {
+				model.put("data", gencatApi.createHistoricoNotificacionComunicacion(notificacionActivo));
+			}
 			model.put("success", true);
 		}
 		catch (Exception e) {

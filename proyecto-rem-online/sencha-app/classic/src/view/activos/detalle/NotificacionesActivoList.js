@@ -20,7 +20,7 @@ Ext.define('HreRem.view.activos.detalle.NotificacionesActivoList', {
     	if (estado) { 
     		estado = estado.value;
     	}
-    	var hide = estado === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ? false : true;
+    	var hide = estado === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] && ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM'])|| $AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM'])) ? false : true;
     	if (me.down('toolbar')) {
     		me.down('toolbar').setHidden(hide);
     	}

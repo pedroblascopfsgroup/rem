@@ -1036,9 +1036,9 @@ comprobarObligatoriedadRte: function(){
 			me.fireEvent('errorToast', HreRem.i18n('msg.form.invalido'));
 			return;
 		}
-		if(!modelComprador){
-			form.updateRecord();
-		}
+
+		form.updateRecord();
+		
 		if (pedirDocValor === 'false') {
 			wizard.comprador = modelComprador;
 			wizard.nextSlide();

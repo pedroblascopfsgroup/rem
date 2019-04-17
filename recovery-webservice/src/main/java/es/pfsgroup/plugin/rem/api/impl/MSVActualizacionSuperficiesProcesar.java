@@ -59,19 +59,19 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 		
-		ActivoInfoRegistral infoRegistral = new ActivoInfoRegistral();
-		
 		Activo activo = null;
+		ActivoInfoRegistral infoRegistral = new ActivoInfoRegistral();		
+		NMBInformacionRegistralBien infoRegBien = new NMBInformacionRegistralBien();
 			
 		if (!Checks.esNulo(exc.dameCelda(fila, COL_NUM.COL_NUM_ID_ACTIVO_HAYA))) {
 			activo = activoApi.getByNumActivo(this.obtenerLongExcel(exc.dameCelda(fila, COL_NUM.COL_NUM_ID_ACTIVO_HAYA)));
-			infoRegistral.setActivo(activo);
+			infoRegistral = activo.getInfoRegistral();
 		} else{
 			throw new ParseException("Error al procesar la fila " + fila, COL_NUM.COL_NUM_ID_ACTIVO_HAYA);
 		}
 		
 		if(!Checks.esNulo(exc.dameCelda(fila, COL_NUM.COL_NUM_SUP_CONSTRUIDA))) {
-			NMBInformacionRegistralBien infoRegBien = new NMBInformacionRegistralBien();
+			infoRegBien = infoRegistral.getInfoRegistralBien();
 			infoRegBien.setSuperficieConstruida(this.obtenerBigDecimalExcel(exc.dameCelda(fila, COL_NUM.COL_NUM_SUP_CONSTRUIDA)));
 			infoRegistral.setInfoRegistralBien(infoRegBien);
 		}
@@ -88,7 +88,11 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 			infoRegistral.setSuperficieParcela(this.obtenerFloatExcel(exc.dameCelda(fila, COL_NUM.COL_NUM_PARCELA)));
 		}
 		
-		genericDao.save(ActivoInfoRegistral.class, infoRegistral);
+		activo.setInfoRegistral(infoRegistral);
+		
+		genericDao.update(NMBInformacionRegistralBien.class, infoRegBien);
+		genericDao.update(ActivoInfoRegistral.class, infoRegistral);
+		genericDao.update(Activo.class, activo);
 		
 		return new ResultadoProcesarFila();
 	}

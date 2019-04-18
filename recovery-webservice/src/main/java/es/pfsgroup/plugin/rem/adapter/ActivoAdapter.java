@@ -29,7 +29,6 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
-import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
@@ -184,7 +183,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -268,15 +266,16 @@ public class ActivoAdapter {
 	@Autowired
 	private ActivoAvisadorApi activoAvisadorApi;
 
-	@Autowired
-	private TrabajoApi trabajoApi;
 
 	@Resource
 	private Properties appProperties;
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
-
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
+	
 	@Autowired
 	private DownloaderFactoryApi downloaderFactoryApi;
 
@@ -2684,7 +2683,6 @@ public class ActivoAdapter {
 
 	public DtoPage findAllHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dtoPresupuestoFiltro) {
 
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
 		Activo activo = getActivoById(Long.parseLong(dtoPresupuestoFiltro.getIdActivo()));
 		if(activoDao.isUnidadAlquilable(activo.getId())) {
@@ -2693,8 +2691,6 @@ public class ActivoAdapter {
 			dtoPresupuestoFiltro.setIdActivo(String.valueOf(activo.getId()));
 			dtoPresupuestoFiltro.setIdPresupuesto(String.valueOf(activo.getPresupuesto().get(0).getId()));
 		}
-
-		Page pagePresupuestosActivo = activoApi.getListHistoricoPresupuestos(dtoPresupuestoFiltro, usuarioLogado);
 
 		List<VBusquedaPresupuestosActivo> presupuestosActivo = presupuestoManager.getListHistoricoPresupuestos(dtoPresupuestoFiltro);
 
@@ -2734,6 +2730,7 @@ public class ActivoAdapter {
 
 	// public List<DtoPresupuestoGraficoActivo>
 	// findLastPresupuesto(DtoActivosTrabajoFilter dtoFilter) {
+	@SuppressWarnings("unchecked")
 	public DtoPresupuestoGraficoActivo findLastPresupuesto(DtoActivosTrabajoFilter dtoFilter) {
 
 		DtoPresupuestoGraficoActivo presupuestoGrafico = new DtoPresupuestoGraficoActivo();
@@ -2775,12 +2772,11 @@ public class ActivoAdapter {
 		// Se calcula el disponible, el gasto conforme la lógica anterior, pero optimizando costes
 		dtoFilter.setEjercicioPresupuestario(ejercicioActual);
 		List<VBusquedaActivosTrabajoPresupuesto> activosTrabajo = presupuestoManager.getListActivosPresupuesto(dtoFilter);
-		if (!Checks.estaVacio(activosTrabajo)) {
-			presupuestoGrafico.setDisponible(new Double(activosTrabajo.get(0).getSaldoDisponible()));
-			presupuestoGrafico.setGastado(new Double(0));
-			presupuestoGrafico.setDispuesto(new Double(0));
-			
-			for(VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : activosTrabajo){
+		
+		
+		if(esMatrizoUA) {
+			Page vista = trabajoApi.getActivoMatrizPresupuesto(dtoFilter);
+			if (vista.getTotalCount() > 0) {
 				
 				List<VBusquedaActivoMatrizPresupuesto>  activosMatriz = (List<VBusquedaActivoMatrizPresupuesto>) vista.getResults();
 				VBusquedaActivoMatrizPresupuesto activoMatriz = activosMatriz.get(0);
@@ -2798,6 +2794,35 @@ public class ActivoAdapter {
 				presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
 				
 			}
+		}else if (!Checks.estaVacio(activosTrabajo)) {
+			presupuestoGrafico.setDisponible(new Double(activosTrabajo.get(0).getSaldoDisponible()));
+			presupuestoGrafico.setGastado(new Double(0));
+			presupuestoGrafico.setDispuesto(new Double(0));
+			
+			for(VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : activosTrabajo){
+				
+				if("1".equals(activoTrabajoTemp.getEstadoContable())){
+					presupuestoGrafico.setGastado(
+							presupuestoGrafico.getGastado() + new Double(activoTrabajoTemp.getImporteParticipa()));
+				}
+				
+				if("1".equals(activoTrabajoTemp.getEstadoContable()) && DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO.equals(activoTrabajoTemp.getCodigoEstado())){
+					presupuestoGrafico.setDispuesto(
+							presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
+				}
+			}
+			
+			presupuestoGrafico.setGastado(presupuestoGrafico.getGastado() - presupuestoGrafico.getDispuesto());
+			presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible() + presupuestoGrafico.getDispuesto()
+					+ presupuestoGrafico.getGastado());
+			presupuestoGrafico.setDisponiblePorcentaje(
+					Double.valueOf(((presupuestoGrafico.getDisponible() / presupuestoGrafico.getPresupuesto()) * 100)));
+			presupuestoGrafico.setDispuestoPorcentaje(
+					Double.valueOf(((presupuestoGrafico.getDispuesto() / presupuestoGrafico.getPresupuesto()) * 100)));
+			presupuestoGrafico.setGastadoPorcentaje(
+					Double.valueOf(((presupuestoGrafico.getGastado() / presupuestoGrafico.getPresupuesto()) * 100)));
+
+			presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
 
 		} else {
 
@@ -2807,7 +2832,17 @@ public class ActivoAdapter {
 			} else {
 				presupuestoGrafico.setDisponible(presupuestoActivo.getImporteInicial());
 			}
+			presupuestoGrafico.setDisponiblePorcentaje(new Double(100));
+			presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
+			presupuestoGrafico.setDispuesto(new Double(0));
+			presupuestoGrafico.setGastado(new Double(0));
+			presupuestoGrafico.setDispuestoPorcentaje(new Double(0));
+			presupuestoGrafico.setGastadoPorcentaje(new Double(0));
+			presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible());
+
 		}
+			
+		
 		return presupuestoGrafico;
 
 	}

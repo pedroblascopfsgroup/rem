@@ -2241,12 +2241,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		//flashDao.getList(VBusquedaActivosTrabajoParticipa.class,filtrosArray);
 		return trabajoDao.getListActivosTrabajo(dto);
 	}
-
-	@Override
-	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto) {
-
-		return trabajoDao.getListActivosTrabajoPresupuesto(dto);
-	}
 	
 	@Override
 	public Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto) {

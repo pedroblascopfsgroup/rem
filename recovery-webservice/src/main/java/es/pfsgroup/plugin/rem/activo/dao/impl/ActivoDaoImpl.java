@@ -696,38 +696,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 
 	@Override
-	public Boolean publicarActivoConHistorico(Long idActivo, String username,boolean doFlush) {
+	public Boolean publicarActivoConHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler, boolean doFlush) {
     	// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
 		if(doFlush){
 			getHibernateTemplate().flush();
 		}
 		
-		return this.publicarActivo(idActivo, username, true, null);
+		return this.publicarActivo(idActivo, username, eleccionUsuarioTipoPublicacionAlquiler);
 	}
 	
 	@Override
-	public Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
-		// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
+	public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler, boolean doFlush) {
 		if(doFlush){
 			getHibernateTemplate().flush();
 		}
-		return this.publicarActivo(idActivo, username, false, eleccionUsuarioTipoPublicacionAlquiler);
-	}
-
-	@Override
-	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
-		if(doFlush){
-			getHibernateTemplate().flush();
-		}
-		return this.publicarAgrupacion(idAgrupacion, username, false, eleccionUsuarioTipoPublicacionAlquiler);
-	}
-	
-	@Override
-	public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username,boolean doFlush) {
-		if(doFlush){
-			getHibernateTemplate().flush();
-		}
-		return this.publicarAgrupacion(idAgrupacion, username, true, null);
+		return this.publicarAgrupacion(idAgrupacion, username, eleccionUsuarioTipoPublicacionAlquiler);
 	}
 
 	/**
@@ -738,14 +721,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
 	 * @return Devuelve True si la operación ha sido satisfactoria, False si no ha sido satisfactoria.
 	 */
-	private Boolean publicarActivo(Long idActivo, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
-		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
+	private Boolean publicarActivo(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
+		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam);  END;";
 
 		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
 		callProcedureSql.setParameter("idActivoParam", idActivo);
 		callProcedureSql.setParameter("eleccionUsuarioParam", eleccionUsuarioTipoPublicacionAlquiler);
 		callProcedureSql.setParameter("usernameParam", username);
-		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
 
 		int resultado = callProcedureSql.executeUpdate();
 
@@ -760,14 +742,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
 	 * @return Devuelve True si la operacion ha sido satisfactoria, False si no ha sido satisfactoria.
 	 */
-	private Boolean publicarAgrupacion(Long idAgrupacion, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
-		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLI_AGR(:idAgrupacionParam, :eleccionUsusarioParam, :usernameParam, :historificarParam); END;";
+	private Boolean publicarAgrupacion(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
+		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLI_AGR(:idAgrupacionParam, :eleccionUsusarioParam, :usernameParam); END;";
 
 		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
 		callProcedureSql.setParameter("idAgrupacionParam", idAgrupacion);
 		callProcedureSql.setParameter("eleccionUsusarioParam", eleccionUsuarioTipoPublicacionAlquiler);
 		callProcedureSql.setParameter("usernameParam", username);
-		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
 
 		int resultado = callProcedureSql.executeUpdate();
 

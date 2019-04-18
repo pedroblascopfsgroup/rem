@@ -1160,5 +1160,5 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean checkCamposComprador(TareaExterna tareaExterna);
 
-
+	boolean checkInquilinos(TareaExterna tareaExterna);
 }

@@ -33,6 +33,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
@@ -477,5 +478,16 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setGastoProveedorAvisos(List<GastoProveedorAvisos> gastoProveedorAvisos) {
 		this.gastoProveedorAvisos = gastoProveedorAvisos;
 	}
-
+	
+	public DDSubcartera getSubcartera() {
+		
+		DDSubcartera subcartera = null;
+		
+		if(!Checks.estaVacio(this.gastoProveedorActivos)) {
+			subcartera = this.gastoProveedorActivos.get(0).getActivo().getSubcartera();			
+		}
+	
+		return subcartera;
+	
+	}	
 }

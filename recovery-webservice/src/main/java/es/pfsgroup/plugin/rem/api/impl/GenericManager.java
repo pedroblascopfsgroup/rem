@@ -837,12 +837,29 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
-	public List<DDComiteSancion> getComitesByCartera(String carteraCodigo) {
-
+	public List<DDComiteSancion> getComitesByCartera(String carteraCodigo, String subcarteraCodigo) {
+		List<DDComiteSancion> listaComites = null;
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
-
-		return (List<DDComiteSancion>) genericDao.getListOrdered(DDComiteSancion.class, order, filter);
+		Filter comitecerberusappleagora = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS);
+		Filter comitecerberushaya = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS);
+		Filter comitecerberusexterno = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_EXTERNO_CERBERUS);
+		DDComiteSancion comiteexterno = genericDao.get(DDComiteSancion.class, filter, comitecerberusexterno);
+		
+		if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(carteraCodigo)) {
+			if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(subcarteraCodigo)||
+			DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcarteraCodigo)||
+			DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcarteraCodigo)) {
+				listaComites = genericDao.getList(DDComiteSancion.class, filter, comitecerberusappleagora);
+				return listaComites;
+			} else {
+				listaComites = genericDao.getList(DDComiteSancion.class, filter, comitecerberushaya);				
+				listaComites.add(comiteexterno);
+				return listaComites;
+			}
+		}
+		listaComites = genericDao.getListOrdered(DDComiteSancion.class, order, filter);
+		return listaComites;
 
 	}
 
@@ -852,9 +869,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 
 		ExpedienteComercial expComercial = genericDao.get(ExpedienteComercial.class, filter, filtroBorrado);
-
-		if (!Checks.esNulo(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-			return getComitesByCartera(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo());
+		Activo activo = expComercial.getOferta().getActivoPrincipal();
+		
+		if (!Checks.esNulo(activo.getCartera().getCodigo())) {
+			return getComitesByCartera(activo.getCartera().getCodigo(), activo.getSubcartera().getCodigo());
 			// return (List<DDComiteSancion>)
 			// genericDao.getListOrdered(DDComiteSancion.class, order, filter,
 			// filtroBorrado);

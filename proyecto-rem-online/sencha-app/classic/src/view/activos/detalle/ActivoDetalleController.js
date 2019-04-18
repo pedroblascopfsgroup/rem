@@ -1,9 +1,10 @@
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',
-    requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
-            'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion',
-            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController'],
+
+    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
+            'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
+            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController','HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -54,7 +55,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             abrirFormulario: 'abrirFormularioAnyadirCarga',
          	onClickRemove: 'onClickRemoveCarga',
          	onClickPropagation :  'onClickPropagation'
-         }
+         },
+         
+         'tituloinformacionregistralactivo calificacionnegativagrid': {
+          	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          }
     },
     
 	cargarTabData: function (form) {
@@ -1621,7 +1626,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                     method : 'POST',
 	                     params: {docCliente: docCliente},
 	                     success: function(response, opts) {
-	                    	 if (!Ext.isEmpty(form1)) {
+
+	                    	if (!Ext.isEmpty(form1)) {
 	     						form1.reset();
 	     					}
 	     					if (!Ext.isEmpty(form2)) {
@@ -2824,7 +2830,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
   onClickPropagation : function(btn) {
-	
+	  
 	  var me = this,
 	    idActivo = me.getViewModel().get('activo').id,
 	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
@@ -2873,6 +2879,56 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    }
 	});
   	},
+  	
+  	onClickPropagationCalificacionNegativa : function(grid) {
+  	
+	  var me = this,
+	    idActivo = me.getViewModel().get('activo').id,
+	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
+	    form = grid.up('form');
+	
+	  form.mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {idActivo: idActivo},
+		
+			success: function(response, opts){
+		
+				form.unmask();
+				var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+				var tabPropagableData = null;
+				if(me.getViewModel() != null){
+					if(me.getViewModel().get('activo') != null){
+						if(me.getViewModel().get('activo').data != null){
+							me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
+						}
+					}
+				}
+		
+				var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
+		              return activo.activoId == me.getViewModel().get("activo.id");
+		            }), 1)[0];
+				
+		        // Abrimos la ventana de selección de activos
+			    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
+			          form : null,
+			          activoActual : activo,
+			          activos : activosPropagables,
+			          tabData : grid.getSelection(),
+			          propagableData : null,
+			          targetGrid: grid.targetGrid
+			        }).show();
+		
+		    	me.getView().add(ventanaOpcionesPropagacionCambios);
+			},
+		
+		    failure: function(record, operation) {
+		        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		  	}
+		});
+	},
 
 	onClickBotonCancelarCarga: function(btn) { 
 		var me = this;
@@ -3234,6 +3290,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	      }
 	    } else {
+	    	
 			if(targetGrid=='mediadoractivo') {
 				
 		        var successFn = function(record, operation) {
@@ -3260,7 +3317,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            me.getView().unmask();
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 		        };
-		        me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados), successFn);
+		        me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados, window.tabData), successFn);
 			}
 	    }
 	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -3385,6 +3442,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
   createTabDataHistoricoMediadores : function(list) {
+	
     var me = this, tabData = {};
     tabData.id = me.getViewModel().get("activo.id");
     tabData.models = [];
@@ -3416,19 +3474,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    return tabData;
 	},
 	
-	createTabDataCalificacionesNegativas : function(list) {
+	createTabDataCalificacionesNegativas : function(list, recordsGridArray) {
+		
 		var me = this, tabData = {};
 	    tabData.id = me.getViewModel().get("activo.id");
 	    tabData.models = [];
+	    
+	    var l_idMotivos = [];
+	    
+	    for (var i = 0; i < recordsGridArray.length; i++) {
+	    	l_idMotivos.push(recordsGridArray[i].data.idMotivo);
+	    }
 	    
 	    Ext.Array.each(list, function(record, index) {
 	          var model = {};
 	          model.name = 'calificacionNegativa';
 	          model.type = 'activo';
-	          model.data = {};
+	          model.data = {idsMotivo: l_idMotivos};
 	          model.data.idActivo = record.data.activoId;
 	          tabData.models.push(model);
 	        });
+	    
 	    return tabData;
 	},
 
@@ -3642,6 +3708,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
+
         if(me.getViewModel().get('activo').getData().activoMatriz){
         	if(me.getViewModel().get('activo').getData().estadoAlquilerCodigo == CONST.ESTADO_PUBLICACION_ALQUILER['NO_PUBLICADO']){
         		checkbox.setReadOnly(readOnly);
@@ -3655,6 +3722,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	            checkbox.setReadOnly(readOnly);
 	            checkbox.setValue(true);
 			}
+
+        	if(!checkbox.getValue()){
+        	checkbox.up('activosdetallemain').lookupReference('textareaMotivoPublicacionAlquiler').reset();
+
+        	}
         }
     },
 

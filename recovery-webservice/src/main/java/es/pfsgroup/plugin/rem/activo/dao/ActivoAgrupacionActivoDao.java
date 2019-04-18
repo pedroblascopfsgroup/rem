@@ -78,4 +78,6 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion);
 
+	List<ActivoAgrupacionActivo> getListActivoAgrupacionActivoByAgrupacionID(Long idAgrupacion);
+
 }

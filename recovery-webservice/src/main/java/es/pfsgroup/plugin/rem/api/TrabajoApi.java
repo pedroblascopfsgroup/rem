@@ -210,16 +210,8 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.getListActivosTrabajo")
-	public Page getListActivos(DtoActivosTrabajoFilter dto);
+	public Page getListActivos(DtoActivosTrabajoFilter dto) throws InstantiationException, IllegalAccessException, Exception;
 
-	/**
-	 * Devuelve la lista de activos de un trabajo con datos de presupuestos
-	 * 
-	 * @param dto
-	 * @return
-	 */
-	@BusinessOperationDefinition("trabajoManager.getListActivosTrabajoPresupuesto")
-	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto);
 
 	@BusinessOperationDefinition("trabajoManager.findOne")
 	Trabajo findOne(Long id);
@@ -403,7 +395,7 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.checkSuperaPresupuestoActivoTarea")
-	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea);
+	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea) throws Exception;
 
 	/**
 	 * Verifica desde una tarea si el presupuesto acumulado del trabajo supera
@@ -415,7 +407,7 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.checkSuperaPresupuestoActivo")
-	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo);
+	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo) throws Exception;
 
 	/**
 	 * Obtiene el importe de exceso de presupuesto del activo, para el acumulado
@@ -426,7 +418,7 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.getExcesoPresupuestoActivo")
-	public Float getExcesoPresupuestoActivo(Trabajo trabajo);
+	public Float getExcesoPresupuestoActivo(Trabajo trabajo) throws Exception;
 
 	/**
 	 * Evalúa para una tarea, si existe tarifa(s) asociados al trabajo
@@ -720,10 +712,25 @@ public interface TrabajoApi {
 	 */
 	public boolean checkBankia(Trabajo trabajo);
 	/**
-	 * Método que comprueba si el activo pertenece a la cartera Cajamar.
+	 * Método que comprueba si el activo pertenece a la cartera Cerberus subcarteras Agora/Apple.
 	 * 
 	 * @param tareaExterna
 	 * @return true si pertenece a la cartera, false si no.
+	 */
+	public boolean checkCerberusAgoraApple(TareaExterna tareaExterna);
+
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Cerberus subcarteras Agora/Apple.
+	 * 
+	 * @param trabajo
+	 * @return true si pertenece a alguna de sus subcarteras, false si no
+	 */
+	public boolean checkCerberusAgoraApple(Trabajo trabajo);
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Cajamar.
+	 * 
+	 * @param tareaExterna
+	 * @return true si pertenece a a alguna de sus subcarteras, false si no.
 	 */
 	public boolean checkCajamar(TareaExterna tareaExterna);
 
@@ -837,7 +844,6 @@ public interface TrabajoApi {
 	boolean checkJaipur(Trabajo trabajo);
 
 	boolean checkGaleon(Trabajo trabajo);
-	
 	
 	@BusinessOperationDefinition("trabajoManager.getListActivoMatrizPresupuesto")
 	Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto);

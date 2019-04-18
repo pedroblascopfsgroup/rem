@@ -83,6 +83,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	
 	initComponent: function() {
 		
+		
 		var me = this;
 		
 		if(Ext.isEmpty(me.confirmSaveTxt)){
@@ -108,12 +109,14 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
        	 	autoCancel: false,
        	 	errorSummary: false
         });
-        
-        if(me.editOnSelect) {
+		
+		
+		if (!Ext.isDefined(me.selModel)) {
 			me.selModel = 'rowmodel';
-		} else {
+		} else if (!me.editOnSelect) {
 			me.rowEditing.triggerEvent ='none';
 		}
+       
 		
 		var addRowPluginFunction = function() {
 			Ext.apply(me, {
@@ -122,6 +125,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 				});	
 				
 		};
+		
+		
 		
 		if(Ext.isEmpty(me.rowPluginSecurity) && Ext.isEmpty(me.secFunToEdit)) {		
 			addRowPluginFunction();
@@ -186,7 +191,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 
 			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClick', scope: this, hidden: !me.addButton  };
 			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteClick', scope: this, disabled: true, hidden: !me.removeButton };
-			var configPropagationButton = {iconCls:'x-fa fa-th-list', itemId:'propagationButton', handler: 'onClickPropagation', disabled: true, hidden: !me.propagationButton };
+			var configPropagationButton = {iconCls:'x-fa fa-th-list', itemId:'propagationButton', handler: 'onClickPropagationButton', scope: this, disabled: true, hidden: !me.propagationButton };
 			
 			if(!Ext.isEmpty(me.buttonSecurity)) {
 				
@@ -284,6 +289,11 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 		});
 
     },
+    
+    onClickPropagationButton: function(btn) {
+		var me = this;
+		me.fireEvent("onClickPropagation", me);
+	},
     
     onGridBaseSelectionChange: function(grid, records) {
     	

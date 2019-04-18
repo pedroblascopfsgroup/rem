@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 
 
@@ -126,6 +127,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	
 	private Date fechaSubsanacion;
 	private String idMotivo;
+	private List<String> idsMotivo;
 	
 	private Boolean unidadAlquilable;
 	
@@ -723,8 +725,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setUnidadAlquilable(Boolean unidadAlquilable) {
 		this.unidadAlquilable = unidadAlquilable;
 	}
+	public List<String> getIdsMotivo() {
+		return idsMotivo;
+	}
+	public void setIdsMotivo(List<String> idsMotivo) {
+		this.idsMotivo = idsMotivo;
 
+	}
 
-
-	
 }

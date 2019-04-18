@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.gestorDocumental.api;
 
+import java.io.IOException;
+
 import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.BajaDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
@@ -47,8 +49,9 @@ public interface GestorDocumentalApi {
 	 * @param login
 	 * @return RespuestaDescargarDocumento
 	 * @throws GestorDocumentalException 
+	 * @throws IOException 
 	 */
-	RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login, String nombreDocumento) throws GestorDocumentalException,UserException;
+	RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login, String nombreDocumento) throws GestorDocumentalException,UserException, IOException;
 
 	/**
 	 * Permite obtener un listado de documentos dentro de un expediente (con o sin relaciones)

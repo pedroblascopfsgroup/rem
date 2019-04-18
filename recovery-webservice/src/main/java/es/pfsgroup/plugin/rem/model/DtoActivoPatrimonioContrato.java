@@ -29,6 +29,7 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	private Date ultimoReciboPagado;
 	private Date ultimoReciboAdeudado;
 	private Boolean multiplesResultados;
+	private Boolean tieneRegistro;
 	private String numeroActivoHaya;
 	private Long ofertaREM;
 	private Long idExpediente;
@@ -142,5 +143,10 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	public void setIdExpediente(Long idExpediente) {
 		this.idExpediente = idExpediente;
 	}
-	
+	public Boolean getTieneRegistro() {
+		return tieneRegistro;
+	}
+	public void setTieneRegistro(Boolean tieneRegistro) {
+		this.tieneRegistro = tieneRegistro;
+	}	
 }

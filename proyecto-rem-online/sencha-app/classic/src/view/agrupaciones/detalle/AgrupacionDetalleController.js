@@ -1053,31 +1053,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	} 
     },
     
-    onChangeCheckboxOcultar: function(checkbox, isDirty) {
-        var me = this;
-        var combobox = me.lookupReference(checkbox.comboRefChained);
-        var textarea = me.lookupReference(combobox.textareaRefChained);
-
-        if(checkbox.getValue()) {
-            combobox.setDisabled(false);
-            textarea.setReadOnly(false);
-        } else {
-            combobox.setDisabled(true);
-            combobox.clearValue();
-            textarea.setReadOnly(true);
-            textarea.reset();
-        }
-
-		if (isDirty) {
-	        combobox.getStore().clearFilter();
-	        combobox.getStore().filter([{
-	            filterFn: function(rec){
-	                return rec.getData().esMotivoManual === 'true';
-	            }
-	        }]);
-        }
-    },
-    
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
     	
         var me = this;
@@ -1097,18 +1072,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			checkbox.up('agrupacionesdetallemain').getViewModel().get('datospublicacionagrupacion').set('eleccionUsuarioTipoPublicacionAlquiler', null);
 			checkboxPublicarAlquiler.setValue(false);
 		}
-    },
-    
-    onChangeComboMotivoOcultacion: function(combo) {
-    	var me = this;
-    	var record = combo.findRecord(combo.valueField, combo.getValue());
-    	var textArea = me.lookupReference(combo.textareaRefChained);
-
-    	if(record && record.data.esMotivoManual === 'true') {
-    		textArea.setReadOnly(false);
-    	} else {
-    		textArea.setReadOnly(true);
-    	}
     },
     
     onChangeComboOtro: function(combo) {

@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -54,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
@@ -152,6 +154,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
 
+	@Autowired
+	private ActivoPatrimonioContratoDao activoPatrimonioContratoDao;
+	
 	@Resource
 	private MessageService messageServices;
 	
@@ -663,7 +668,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 		}
 		
-		
 		if (!Checks.esNulo(activo)) {
 			boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
 			activoDto.setUnidadAlquilable(isUnidadAlquilable);
@@ -704,7 +708,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}	
 		}
 
-
+		Boolean tieneRegistro = false;
+		List<ActivoPatrimonioContrato> listActivoPatrimonioContrato = activoPatrimonioContratoDao.getActivoPatrimonioContratoByActivo(activo.getId());
+		if(!Checks.estaVacio(listActivoPatrimonioContrato)) {
+			tieneRegistro = true;
+		} 
+		activoDto.setTieneRegistroContrato(tieneRegistro);
 		return activoDto;
 	}
 
@@ -935,13 +944,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				// Hace throws en caso de inflingir alguna valdiacion con el cambio de TipoComercializacion a realizar
 				validarCambiosTipoComercializacion(activo,dto);
 
-				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
-				activo.setTipoComercializacion(tipoComercializacion);
-				activo.getActivoPublicacion().setTipoComercializacion(tipoComercializacion);
+				activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
 
 				// Actualizar registros del Historico Destino Comercial
 				activoApi.updateHistoricoDestinoComercial(activo, null);
-
 			}
 			
 			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {

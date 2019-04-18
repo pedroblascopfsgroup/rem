@@ -99,9 +99,11 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_EMISOR);
 				return error;
 			}
-			if(!Checks.esNulo(gasto.getDestinatarioGasto()) && !COD_DESTINATARIO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo()) &&  Checks.esNulo(gasto.getPropietario())) {
-				error = messageServices.getMessage(VALIDACION_PROPIETARIO);
-				return error;
+			if(!Checks.esNulo(gasto.getDestinatarioGasto()) && !Checks.esNulo(gasto.getDestinatarioGasto().getCodigo())) {
+				if(!COD_DESTINATARIO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo()) &&  Checks.esNulo(gasto.getPropietario())) {
+					error = messageServices.getMessage(VALIDACION_PROPIETARIO);
+					return error;
+				}
 			}
 			if(Checks.esNulo(gasto.getFechaEmision())) {
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_FECHA_EMISION);
@@ -129,7 +131,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 			
-			if(!Checks.esNulo(gasto.getPropietario())){
+			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera())){
 				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())){
 					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
 							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
@@ -139,21 +141,23 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					}
 				}
 			}else{
-				if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
-						(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
-								(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
-					error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-					return error;
+				if(!Checks.esNulo(gasto.getPropietario().getCartera())) {
+					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
+							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
+									(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
+						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+						return error;
+					}
 				}
 			}
-			
-			if(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getSubtipoGasto().getCodigo())){
-				if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
-					error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
-					return error;
+			if(!Checks.esNulo(gasto.getPropietario().getCartera()) && (!Checks.esNulo(gasto.getSubtipoGasto().getCodigo()))) {
+				if(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getSubtipoGasto().getCodigo())){
+					if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
+						error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
+						return error;
+					}
 				}
 			}
-			
 			if(Checks.estaVacio(gasto.getGastoProveedorActivos()) && !gasto.esAutorizadoSinActivos()) {
 				error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
 				return error;
@@ -182,7 +186,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		
 		// Si no recibimos un estado
 		if(Checks.esNulo(codigo)) {
-			if(!Checks.esNulo(gasto.getEstadoGasto())) {
+			if(!Checks.esNulo(gasto.getEstadoGasto()) && !Checks.esNulo(gasto.getEstadoGasto().getCodigo())) {
 				if(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo())) {
 					codigo = estadoGastoDesdeIncompleto(gasto);
 					
@@ -305,7 +309,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		// Si tenemos definido un estado, lo búscamos y modificamos en el gasto
 		
 		if(!Checks.esNulo(codigo)) {
-			if(codigo.equals(DDEstadoGasto.RETENIDO)) {
+			if(codigo.equals(DDEstadoGasto.RETENIDO) && !Checks.esNulo(gasto.getEstadoGasto().getCodigo())) {
 				if(gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.INCOMPLETO)) {
 					cambiarEstadosAutorizacionGasto(gasto,null,null);
 				}else if(gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.PENDIENTE)) {
@@ -345,7 +349,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	}
 	
 	private String validacionEstadoAutorizacionHaya(GastoProveedor gasto) {
-		if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya())) {			
+		if(!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya()) && !Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {			
 			if(DDEstadoAutorizacionHaya.CODIGO_PENDIENTE.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {
 				return gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.SUBSANADO)? DDEstadoGasto.SUBSANADO : DDEstadoGasto.PENDIENTE;
 			}else if(DDEstadoAutorizacionHaya.CODIGO_AUTORIZADO.equals(gasto.getGastoGestion().getEstadoAutorizacionHaya().getCodigo())) {

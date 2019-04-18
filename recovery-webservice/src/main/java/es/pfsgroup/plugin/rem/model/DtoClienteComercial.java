@@ -33,7 +33,7 @@ public class DtoClienteComercial {
     private String documentoRepresentante;
     private String tipoDocumentoRteCodigo;
     private String tipoDocumentoRteDescripcion;
-
+    private String idPersonaHaya;
     
 	public Long getId() {
 		return id;
@@ -221,5 +221,11 @@ public class DtoClienteComercial {
 	}
 	public void setProvinciaDescripcion(String provinciaDescripcion) {
 		this.provinciaDescripcion = provinciaDescripcion;
+	}
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
 	}
 }

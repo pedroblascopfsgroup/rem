@@ -263,7 +263,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if (!Checks.estaVacio(motivosVigentes) && motivosVigentes.get(0).getCalificacionNegativa() != null) {
 				BeanUtils.copyProperty(activoDto, "calificacionNegativa", motivosVigentes.get(0).getCalificacionNegativa().getCodigo());
 				
-				if (!Checks.esNulo(motivosVigentes.get(0).getEstadoMotivoCalificacionNegativa().getCodigo()) && !Checks.esNulo(motivosVigentes.get(0).getResponsableSubsanar()) && !Checks.esNulo(motivosVigentes.get(0).getResponsableSubsanar().getCodigo())) {
+				if (!Checks.esNulo(motivosVigentes.get(0).getEstadoMotivoCalificacionNegativa()) && !Checks.esNulo(motivosVigentes.get(0).getEstadoMotivoCalificacionNegativa().getCodigo()) && !Checks.esNulo(motivosVigentes.get(0).getResponsableSubsanar()) && !Checks.esNulo(motivosVigentes.get(0).getResponsableSubsanar().getCodigo())) {
 					BeanUtils.copyProperty(activoDto, "estadoMotivoCalificacionNegativa", motivosVigentes.get(0).getEstadoMotivoCalificacionNegativa().getCodigo());
 					BeanUtils.copyProperty(activoDto, "responsableSubsanar", motivosVigentes.get(0).getResponsableSubsanar().getCodigo());
 				}else {
@@ -299,7 +299,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		Boolean puedeEditar = false, campoMarcado = false;
 		
 		for(ActivoCalificacionNegativa acn : activoCNList) {
-			if(DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO.equals(acn.getEstadoMotivoCalificacionNegativa().getCodigo())) {
+			if(!Checks.esNulo(acn.getEstadoMotivoCalificacionNegativa()) 
+					&&DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO.equals(acn.getEstadoMotivoCalificacionNegativa().getCodigo())) {
 				puedeEditar = true;
 				campoMarcado = true;
 				break;

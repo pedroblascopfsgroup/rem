@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MARIAM LLISO
---## FECHA_CREACION=20190412
+--## FECHA_CREACION=20190418
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5808
@@ -35,7 +35,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('CMSUP', 'SuperUsuario: Actualización superficies', 'SuperUsuario (Área Admisión): Actualización superficie construida/ útil', 'CARGA_MASIVA_SUPERFICIE','n*,n,n,n,n')
+	  T_FUNCION('CMSUP', 'SuperUsuario: Actualización superficies', 'SuperUsuario (Área Admisión): Actualización superficie construida/ útil', 'CARGA_MASIVA_SUPERFICIE','n*,d,d,d,d')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

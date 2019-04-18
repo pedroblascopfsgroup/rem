@@ -24,6 +24,8 @@ import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 
 
@@ -62,11 +64,13 @@ public class GencatAdapter {
 			//Datos comunicación
 			Filter filtroComunicacionIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
-			List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroComunicacionIdActivo, filtroBorrado);
-			ComunicacionGencat comunicacionGencat = null;
-			if (!Checks.esNulo(resultComunicacion) && !resultComunicacion.isEmpty()) {
-				comunicacionGencat = resultComunicacion.get(0);
+			String idHComunicacion = webFileItem.getParameter("idHComunicacion");
+			ComunicacionGencat comunicacionGencat;
+			if (Checks.esNulo(idHComunicacion)) {
+				comunicacionGencat = genericDao.get(ComunicacionGencat.class, filtroComunicacionIdActivo, filtroBorrado);
+			} else {
+				RelacionHistoricoComunicacion relHistoricoComunicacion = genericDao.get(RelacionHistoricoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "historicoComunicacionGencat.id", Long.parseLong(idHComunicacion)));
+				comunicacionGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "id", relHistoricoComunicacion.getIdComunicacionGencat()));
 			}
 						
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {

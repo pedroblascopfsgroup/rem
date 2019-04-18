@@ -24,6 +24,7 @@
 --##	0.11v2 Se modifica la vista entera para añadirle el código de la subcartera
 --##	0.12 Se modifica la vista para que no saque registros nulos
 --##	0.13 Se corrige la query de GACT
+--##	0.14 Se corrige la query de GESTCOMALQ
 --##########################################
 --*/
 
@@ -2131,37 +2132,76 @@ SELECT act.act_id,
                     AND (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
                       OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
                       OR dist2.tipo_gestor = TGE.DD_TGE_CODIGO)
-			
-UNION ALL
-/*Gestor comercial alquiler - Obligatorio cartera, no mira por más campos*/
-    SELECT act.act_id, 
-        TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO, 
-        TO_NUMBER(COALESCE(dist1.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO,  
-        NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, 
-        COALESCE(dist1.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor,
-        COALESCE(dist1.username, dist0.username) username,
-        COALESCE(dist1.nombre_usuario, dist0.nombre_usuario) nombre  
-    FROM '||V_ESQUEMA||'.act_activo act 
-              INNER JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
-                    JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
-                    JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO ACT_PTA ON ACT_PTA.ACT_ID = ACT.ACT_ID 
-                    JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GESTCOMALQ''
-                    LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
-                        ON (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
-                            AND dist0.cod_cartera = dd_cra.dd_cra_codigo
-                            AND dist0.cod_subcartera IS NULL)
-                    LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
-                        ON (dist1.tipo_gestor = TGE.DD_TGE_CODIGO
-                            AND dist1.cod_cartera = dd_cra.dd_cra_codigo
-                            AND dist1.cod_subcartera = dd_scr.dd_scr_codigo)
-         where act.borrado = 0 
-			AND (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
-			  OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
  )';
 
 V_MSQL6 := '  CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_6||' AS 
 				SELECT ACT_ID , DD_CRA_CODIGO, DD_SCR_CODIGO, DD_EAC_CODIGO, DD_TCR_CODIGO, DD_PRV_CODIGO, DD_LOC_CODIGO, COD_POSTAL, TIPO_GESTOR, USERNAME, NOMBRE 
 				FROM (
+/*Gestor comercial alquiler - Obligatorio cartera, no mira por más campos*/
+    SELECT act.act_id,
+        TO_NUMBER(COALESCE(dist3.cod_cartera, dist2.cod_cartera, dist1.cod_cartera, dist0.cod_cartera)) DD_CRA_CODIGO,
+        TO_NUMBER(COALESCE(dist3.cod_subcartera, dist2.cod_subcartera, dist1.cod_subcartera, dist0.cod_subcartera)) DD_SCR_CODIGO,
+        NULL dd_eac_codigo, NULL dd_tcr_codigo, 
+        COALESCE (dist3.cod_provincia, dist2.cod_provincia, dist1.cod_provincia,dist0.cod_provincia) dd_prv_codigo, 
+        NULL dd_loc_codigo, NULL cod_postal,
+        COALESCE(dist3.tipo_gestor, dist2.tipo_gestor, dist1.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor,
+        COALESCE(dist3.username, dist2.username, dist1.username, dist0.username) username,
+        COALESCE(dist3.nombre_usuario, dist2.nombre_usuario, dist1.nombre_usuario, dist0.nombre_usuario) nombre  
+        FROM '||V_ESQUEMA||'.act_activo act
+        JOIN '||V_ESQUEMA||'.act_loc_localizacion aloc ON act.act_id = aloc.act_id
+        JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+        JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+        JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+        JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+        JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+        JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+        JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GESTCOMALQ''
+         LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
+                ON (dist0.cod_estado_activo IS NULL
+                    AND dist0.cod_tipo_comerzialzacion IS NULL
+                    AND dist0.cod_cartera = dd_cra.dd_cra_codigo
+                    AND dist0.cod_subcartera IS NULL
+                    AND dist0.cod_provincia IS NULL
+                    AND dist0.cod_municipio IS NULL
+                    AND dist0.cod_postal IS NULL
+                    AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+                    )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
+                ON (dist1.cod_estado_activo IS NULL
+                    AND dist1.cod_tipo_comerzialzacion IS NULL
+                    AND dist1.cod_cartera = dd_cra.dd_cra_codigo
+                    AND dist1.cod_subcartera = dd_scr.dd_scr_codigo
+                    AND dist1.cod_provincia IS NULL
+                    AND dist1.cod_municipio IS NULL
+                    AND dist1.cod_postal IS NULL
+                    AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+                    )
+             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
+                ON (dist2.cod_estado_activo IS NULL
+                    AND dist2.cod_tipo_comerzialzacion IS NULL
+                    AND dist2.cod_cartera = dd_cra.dd_cra_codigo
+                    AND dist2.cod_subcartera IS NULL
+                    AND dist2.cod_provincia = dd_prov.dd_prv_codigo
+                    AND dist2.cod_municipio IS NULL
+                    AND dist2.cod_postal IS NULL
+                    AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+                    )
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3
+                ON (dist3.cod_estado_activo IS NULL
+                    AND dist3.cod_tipo_comerzialzacion IS NULL
+                    AND dist3.cod_cartera = dd_cra.dd_cra_codigo
+                    AND dist3.cod_subcartera = dd_scr.dd_scr_codigo
+                    AND dist3.cod_provincia = dd_prov.dd_prv_codigo
+                    AND dist3.cod_municipio IS NULL
+                    AND dist3.cod_postal IS NULL
+                    AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+            )
+         where act.borrado = 0
+			AND (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			  OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+              OR dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+              OR dist3.tipo_gestor = TGE.DD_TGE_CODIGO)
+UNION ALL              
   /*Supervisor comercial alquiler - Admite cartera nula*/
     SELECT act.act_id, 
         TO_NUMBER(COALESCE(dist1.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO, 

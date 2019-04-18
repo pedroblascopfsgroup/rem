@@ -328,10 +328,16 @@ public class GencatController {
 		
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
-			String idAdjunto = gencatAdapter.upload(webFileItem);
-			notificacionActivo.setIdDocumento(idAdjunto);
+			if(!Checks.esNulo(webFileItem) && !Checks.esNulo(webFileItem.getFileItem())) {
+				String idAdjunto = gencatAdapter.upload(webFileItem);
+				notificacionActivo.setIdDocumento(idAdjunto);
+			}
 			//model.put("success", true);
-			model.put("data", gencatApi.createNotificacionComunicacion(notificacionActivo));
+			if (Checks.esNulo(notificacionActivo.getIdHComunicacion())) {
+				model.put("data", gencatApi.createNotificacionComunicacion(notificacionActivo));
+			} else {
+				model.put("data", gencatApi.createHistoricoNotificacionComunicacion(notificacionActivo));
+			}
 			model.put("success", true);
 		}
 		catch (Exception e) {
@@ -443,9 +449,9 @@ public class GencatController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTiposDocumentoNotificacion(ModelMap model) {
+	public ModelAndView getTiposDocumentoNotificacion(Long idNotificacion, ModelMap model) {
 		try {
-			model.put(RESPONSE_SUCCESS_DATA, gencatApi.getTiposDocumentoNotificacion());
+			model.put(RESPONSE_SUCCESS_DATA, gencatApi.getTiposDocumentoNotificacion(idNotificacion));
 		} catch (Exception e) {
 			logger.error("error en gencatController", e);
 			model.put(RESPONSE_SUCCESS_DATA, false);

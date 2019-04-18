@@ -1,6 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -2611,8 +2613,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	public Boolean esNIFValido(String nif) {
 
-		return nif == null || nif.matches("^[A-Za-z0-9]{1}[0-9]{7}[A-Za-z]{1}$");
-
+		return nif == null || nif.matches("^\\d{8}[a-zA-Z]{1}$") || nif.matches("^[a-zA-Z]{1}\\d{7}[a-zA-Z0-9]{1}$");
+										   
 	}
 
 	@Override
@@ -2750,6 +2752,148 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
 
 		return !"0".equals(resultado);
+	}
+
+	public Boolean validadorTipoOferta(Long numExpediente) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
+				+"		AND OFR.DD_TOF_ID = (SELECT DD_TOF_ID FROM DD_TOF_TIPOS_OFERTA TOF"
+				+"		WHERE TOF.DD_TOF_CODIGO = '01' AND TOF.BORRADO = 0)"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE =  "+numExpediente+""
+				+"		AND ECO.BORRADO = 0 AND OFR.BORRADO = 0");
+		
+		return !"1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean validadorTipoCartera(Long numExpediente) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
+				+"		JOIN ACT_OFR AFR ON AFR.OFR_ID = OFR.OFR_ID"
+				+"		JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AFR.ACT_ID"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0"
+				+"		AND EXISTS (SELECT 1 FROM ACT_ACTIVO ACT1"
+				+"		JOIN DD_SCR_SUBCARTERA DD ON ACT1.DD_SCR_ID = DD.DD_SCR_ID"
+				+"		WHERE DD.DD_SCR_CODIGO IN ('05','07','08','09','14','15','19','18','56','57','58','59','60','136','64')"
+				+"		AND ACT.ACT_ID = ACT1.ACT_ID)");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean validadorEstadoOfertaTramitada(Long numExpediente) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0 AND OFR.BORRADO = 0"
+				+"		AND OFR.DD_EOF_ID IN (SELECT EEO.DD_EOF_ID"
+				+"		FROM DD_EOF_ESTADOS_OFERTA EEO"
+				+"		WHERE EEO.DD_EOF_CODIGO <> '01')");
+		
+		return !"0".equals(resultado);
+	}                         
+	
+	@Override
+	public Boolean validadorEstadoExpedienteSolicitado(Long numExpediente) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID NOT IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('01','03','04','05','06','08','10','11','16'))");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean validadorFechaMayorIgualFechaAltaOferta(Long numExpediente, String fecha) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0 AND OFR.BORRADO = 0"
+				+"		AND nvl(OFR.OFR_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+		
+		return !"1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean validadorFechaMayorIgualFechaSancion(Long numExpediente, String fecha) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND nvl(ECO.ECO_FECHA_SANCION, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+		
+		return !"1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean validadorFechaMayorIgualFechaAceptacion(Long numExpediente, String fecha) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND nvl(ECO.ECO_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+	
+		return !"1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean validadorFechaMayorIgualFechaReserva(Long numExpediente, String fecha) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String existeReserva = rawDao.getExecuteSQL("SELECT COUNT(*) " 
+				+"  	FROM ECO_EXPEDIENTE_COMERCIAL ECO" 
+				+" 		JOIN RES_RESERVAS RES ON RES.ECO_ID = ECO.ECO_ID"
+				+" 		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0 AND RES.BORRADO = 0");
+		
+		if("1".equals(existeReserva)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)  "
+					+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+					+"		JOIN RES_RESERVAS RES ON RES.ECO_ID = ECO.ECO_ID"
+					+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0 AND RES.BORRADO = 0"
+					+"		AND nvl(RES.RES_FECHA_FIRMA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+			
+			return !"1".equals(resultado);
+		} else {
+			return false;
+		}		
+	}
+	
+	@Override
+	public Boolean validadorFechaMayorIgualFechaVenta(Long numExpediente, String fecha) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND nvl(ECO.ECO_FECHA_VENTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+		
+		return !"1".equals(resultado);
 	}
 
 }

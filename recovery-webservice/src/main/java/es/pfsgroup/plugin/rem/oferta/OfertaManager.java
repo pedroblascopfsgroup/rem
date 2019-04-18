@@ -609,7 +609,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						FilterType.EQUALS, "numAgrupRem", numAgrupacionRem));
 				for (int i=0; i<ofertaDto.getActivosLote().size(); i++) {					
 					try {
-						Activo activo = activoApi.get(ofertaDto.getActivosLote().get(i).getIdActivoHaya());
+						Activo activo = activoApi.getByNumActivo(ofertaDto.getActivosLote().get(i).getIdActivoHaya());
 						agrup.setTipoAlquiler(activo.getTipoAlquiler());
 						agrupacionAdapter.createActivoAgrupacion(ofertaDto.getActivosLote().get(i).getIdActivoHaya(), agrup.getId(), i+1, false);
 					} catch (Exception e) {
@@ -2220,9 +2220,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						dto.setTipoDocumento(titularAdicional.getTipoDocumento().getCodigo());
 					}
 					dto.setNumDocumento(titularAdicional.getDocumento());
-					dto.setNombre(titularAdicional.getNombre());
+					dto.setNombre(titularAdicional.getNombreCompleto());
 					dto.setOfertaID(String.valueOf(oferta.getId()));
 					dto.setId(String.valueOf(titularAdicional.getId() + "t"));
+					if (!Checks.esNulo(titularAdicional.getTipoPersona())) {
+						dto.setTipoPersona(titularAdicional.getTipoPersona().getDescripcion());
+					}
+					if (!Checks.esNulo(titularAdicional.getRegimenMatrimonial())) {
+						dto.setRegimenMatrimonial(titularAdicional.getRegimenMatrimonial().getDescripcion());
+					}
+					if (!Checks.esNulo(titularAdicional.getEstadoCivil())) {
+						dto.setEstadoCivil(titularAdicional.getEstadoCivil().getDescripcion());
+					}
 					listaOfertantes.add(dto);
 				}
 			}

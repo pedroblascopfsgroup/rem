@@ -65,6 +65,43 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Numero activos que no esten en la excel y que compartan agrupacion restringida con un activo que si este en la excel '||V_COUNT||'');
 	
+	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932 (ID_HAYA)
+				SELECT ACT_NUM_ACTIVO FROM (
+
+							(SELECT ACT.ACT_NUM_ACTIVO FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+							inner join '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO aga on act.act_id = aga.act_id
+							inner join '||V_ESQUEMA||'.ACT_AGR_AGRUPACION agr on aga.agr_id = agr.agr_id AND AGR.AGR_FECHA_BAJA IS NULL
+							WHERE AGR.AGR_NUM_AGRUP_REM in (SELECT AGR.AGR_NUM_AGRUP_REM
+													FROM '||V_ESQUEMA||'.AUX_HREOS_5932 AUX
+													INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACt on ACT.ACT_NUM_ACTIVO = aux.id_haya
+													inner join '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO aga on act.act_id = aga.act_id
+													inner join '||V_ESQUEMA||'.ACT_AGR_AGRUPACION agr on aga.agr_id = agr.agr_id AND AGR.AGR_FECHA_BAJA IS NULL
+													inner join '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION tag on tag.dd_tag_id = agr.dd_tag_id 
+													WHERE TAG.DD_TAG_CODIGO = ''02''
+												)
+							)MINUS(
+								SELECT ACT.ACT_NUM_ACTIVO 
+								FROM '||V_ESQUEMA||'.AUX_HREOS_5932 AUX
+								INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACt on ACT.ACT_NUM_ACTIVO = aux.id_haya
+							))';
+	
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se insertan los activos que no esten en la excel y que compartan agrupacion restringida con un activo que si este en la excel '||V_COUNT||'');
+	
+	-- BORRADO VENDIDOS
+	
+	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.AUX_HREOS_5932 
+				WHERE ID_HAYA IN (SELECT AUX.ID_HAYA 
+									FROM '||V_ESQUEMA||'.AUX_HREOS_5932 aux
+									INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO act on AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
+									inner join '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL scm on scm.dd_scm_id = ACT.DD_SCM_ID
+									WHERE SCM.DD_SCM_CODIGO = ''05'')';
+	
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han eliminado '||SQL%ROWCOUNT||' vendidos.');
+	
 	--DD_TCO_TIPO_COMERCIALIZACION
 	EXECUTE IMMEDIATE  'UPDATE '||V_ESQUEMA||'.AUX_HREOS_5932 SET DESTINO_COMERCIAL = ''02'' WHERE UPPER(TRIM(DESTINO_COMERCIAL)) = UPPER(TRIM(''Alquiler y venta''))';
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros. DESTINO_COMERCIAL - Alquiler y venta'); 
@@ -103,9 +140,9 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros. RENTA_ANTIGUA - No'); 
 	
 	-- DD_EAL_ESTADO_ALQUILER
-	EXECUTE IMMEDIATE  'UPDATE AUX_HREOS_5932 SET ALQUILADO = ''01'' WHERE TRIM(ALQUILADO) = TRIM(''N'') OR UPPER(TRIM(ALQUILADO)) = UPPER(TRIM(''Libre''))';
+	EXECUTE IMMEDIATE  'UPDATE '||V_ESQUEMA||'.AUX_HREOS_5932 SET ALQUILADO = ''01'' WHERE TRIM(ALQUILADO) = TRIM(''N'') OR UPPER(TRIM(ALQUILADO)) = UPPER(TRIM(''Libre''))';
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros. ESTADO_ALQUILER - Libre'); 
-	EXECUTE IMMEDIATE  'UPDATE AUX_HREOS_5932 SET ALQUILADO = ''02'' WHERE TRIM(ALQUILADO) = TRIM(''S'') OR UPPER(TRIM(ALQUILADO)) = UPPER(TRIM(''Alquilado'')) ';
+	EXECUTE IMMEDIATE  'UPDATE '||V_ESQUEMA||'.AUX_HREOS_5932 SET ALQUILADO = ''02'' WHERE TRIM(ALQUILADO) = TRIM(''S'') OR UPPER(TRIM(ALQUILADO)) = UPPER(TRIM(''Alquilado'')) ';
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros. ESTADO_ALQUILER - Alquilado'); 
 	
 	--DD_TPI_TIPO_INQUILINO

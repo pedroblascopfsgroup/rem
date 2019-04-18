@@ -167,6 +167,9 @@ Ext.define('HreRem.model.Gencat', {
 			name:'documentoNotificion'
 		},
 		{
+			name:'documentoSancion'
+		},
+		{
 			name:'fechaSancionNotificacion',
 			type:'date',
 			dateFormat: 'c'

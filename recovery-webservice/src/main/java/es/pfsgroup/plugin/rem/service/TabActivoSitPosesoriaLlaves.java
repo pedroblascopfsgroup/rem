@@ -188,7 +188,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			DDTipoTituloPosesorio tipoTitulo = (DDTipoTituloPosesorio) 
 					diccionarioApi.dameValorDiccionario(DDTipoTituloPosesorio.class,  new Long(dto.getTipoTituloPosesorioCodigo()));
 			
-			if(!Checks.esNulo(dto.getFechaTitulo())) {
+			if(!Checks.esNulo(tipoTitulo)) {
 				activoSituacionPosesoria.setTipoTituloPosesorio(tipoTitulo);
 			}
 				

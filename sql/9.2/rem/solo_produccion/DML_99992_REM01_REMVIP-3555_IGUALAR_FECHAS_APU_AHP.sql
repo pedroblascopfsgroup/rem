@@ -36,7 +36,6 @@ DECLARE
                         JOIN '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP ON AHP.ACT_ID = APU.ACT_ID
                         WHERE (AHP.AHP_FECHA_INI_VENTA IS NOT NULL AND AHP.AHP_FECHA_FIN_VENTA IS NULL) 
                         AND AHP.DD_TCO_ID IN (1,2)
-                        AND APU.APU_FECHA_INI_VENTA <> AHP.AHP_FECHA_INI_VENTA
                         AND AHP.BORRADO = 0
                     ) T2
                     ON (T1.APU_ID = T2.APU_ID)
@@ -53,7 +52,6 @@ DECLARE
                         JOIN '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP ON AHP.ACT_ID = APU.ACT_ID
                         WHERE (AHP.AHP_FECHA_INI_ALQUILER IS NOT NULL AND AHP.AHP_FECHA_FIN_ALQUILER IS NULL) 
                         AND AHP.DD_TCO_ID IN (2,3)
-                        AND APU.APU_FECHA_INI_ALQUILER <> AHP.AHP_FECHA_INI_ALQUILER
                         AND AHP.BORRADO = 0
                     ) T2
                     ON (T1.APU_ID = T2.APU_ID)

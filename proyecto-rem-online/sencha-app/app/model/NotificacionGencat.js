@@ -15,6 +15,7 @@ Ext.define('HreRem.model.NotificacionGencat', {
 		{
 			name:'fechaSancionNotificacion',
 			type:'date',
+			reference: 'fechaSancionNotificacion',
 			dateFormat: 'c'
 		},
 		{
@@ -32,6 +33,12 @@ Ext.define('HreRem.model.NotificacionGencat', {
 		{
 			name: 'descripcion',
 			xtype: 'textarea'
+		},
+		{
+			name:'id'
+		},
+		{
+			name:'idHComunicacion'
 		}
     ]
 });

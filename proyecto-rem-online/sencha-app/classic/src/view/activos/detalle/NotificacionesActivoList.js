@@ -5,8 +5,11 @@ Ext.define('HreRem.view.activos.detalle.NotificacionesActivoList', {
     bind: {
         store: '{storeNotificacionesActivo}'
     },
+	listeners : {
+		rowdblclick: 'onGridNotificacionesActivoRowClick'
+	},  
     topBar:  false,
-    removeButton: false,
+    removeButton: false, 
     
     estaComunicado: false,
     addButton:  false,
@@ -17,7 +20,7 @@ Ext.define('HreRem.view.activos.detalle.NotificacionesActivoList', {
     	if (estado) { 
     		estado = estado.value;
     	}
-    	var hide = estado === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ? false : true;
+    	var hide = estado === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] && ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM'])|| $AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM'])) ? false : true;
     	if (me.down('toolbar')) {
     		me.down('toolbar').setHidden(hide);
     	}
@@ -49,6 +52,11 @@ Ext.define('HreRem.view.activos.detalle.NotificacionesActivoList', {
 		            dataIndex: 'fechaSancionNotificacion',
 		            text: HreRem.i18n('fieldlabel.fecha.sancion.notificacion'),
 		            formatter: 'date("d/m/Y")',
+		            flex: 1
+		        },
+		        {
+		            dataIndex: 'nombreSancion',
+		            text: HreRem.i18n('header.nombre.documento.sancion'),
 		            flex: 1
 		        },
 		        {

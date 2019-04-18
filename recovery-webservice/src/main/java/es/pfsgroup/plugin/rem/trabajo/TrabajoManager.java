@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gencat.GencatManager;
+import es.pfsgroup.plugin.rem.dao.FlashDao;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
@@ -118,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.TrabajoRecargosProveedor;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
@@ -252,11 +254,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private PresupuestoApi presupuestoManager;
+	
+	@Autowired
+	FlashDao flashDao;
 
 	@Autowired
 	private GencatManager gencatManager;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	
 
 	@Override
 	public String managerName() {
@@ -2168,15 +2175,32 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	@Override
-	public Page getListActivos(DtoActivosTrabajoFilter dto) {
+	public Page getListActivos(DtoActivosTrabajoFilter dto) throws InstantiationException, IllegalAccessException, Exception {
 
+		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idTrabajo", dto.getIdTrabajo());
+   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idActivo", dto.getIdActivo());
+   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
+   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
+   		
+   		ArrayList<Filter> filtros = new ArrayList<Filter>();
+   		if(!Checks.esNulo(dto.getIdTrabajo())){
+   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idTrabajo", dto.getIdTrabajo());
+   			filtros.add(filtro);
+   		}
+   		if(!Checks.esNulo(dto.getIdActivo())){
+   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", dto.getIdActivo());
+   			filtros.add(filtro);
+   		}
+   		
+   		Filter[] filtrosArray = new Filter[filtros.size()];
+   		int i = 0;
+   		for(Filter f : filtros){
+   			filtrosArray[i] = f;
+   			i++;
+   		}
+   		
+		//flashDao.getList(VBusquedaActivosTrabajoParticipa.class,filtrosArray);
 		return trabajoDao.getListActivosTrabajo(dto);
-	}
-
-	@Override
-	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto) {
-
-		return trabajoDao.getListActivosTrabajoPresupuesto(dto);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2640,7 +2664,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial();
 
 		
-		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = listaTrabajosActivo =presupuestoManager.listarTrabajosActivo(trabajo.getActivo().getId(), ejercicioActual);;
+		List<VBusquedaActivosTrabajoPresupuesto>  listaTrabajosActivo =presupuestoManager.listarTrabajosActivo(trabajo.getActivo().getId(), ejercicioActual);;
 			
 				
 		BigDecimal importeParticipacionTrabajo = new BigDecimal(0);

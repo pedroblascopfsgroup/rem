@@ -41,7 +41,7 @@ public class DtoGencatSave extends DtoTabActivo {
 	
 	//Adecuacion
 	private Boolean necesitaReforma;
-	private Long importeReforma;
+	private String importeReforma;
 	private Date dateFechaRevision;
 	private String fechaRevision;
 	
@@ -58,6 +58,7 @@ public class DtoGencatSave extends DtoTabActivo {
 	private Date dateFechaNotificacion;
 	private String motivoNotificacion;
 	private String documentoNotificion;
+	private String documentoSancion;
 	private Date dateFechaSancionNotificacion;
 	private String fechaSancionNotificacion;
 	private Date dateCierreNotificacion;
@@ -212,10 +213,10 @@ public class DtoGencatSave extends DtoTabActivo {
 	public void setNecesitaReforma(Boolean necesitaReforma) {
 		this.necesitaReforma = necesitaReforma;
 	}
-	public Long getImporteReforma() {
+	public String getImporteReforma() {
 		return importeReforma;
 	}
-	public void setImporteReforma(Long importeReforma) {
+	public void setImporteReforma(String importeReforma) {
 		this.importeReforma = importeReforma;
 	}
 	public Date getDateFechaRevision() {
@@ -287,7 +288,12 @@ public class DtoGencatSave extends DtoTabActivo {
 	public void setDocumentoNotificion(String documentoNotificion) {
 		this.documentoNotificion = documentoNotificion;
 	}
-
+	public String getDocumentoSancion() {
+		return documentoSancion;
+	}
+	public void setDocumentoSancion(String documentoSancion) {
+		this.documentoSancion = documentoSancion;
+	}
 	public Date getDateFechaSancionNotificacion() {
 		return dateFechaSancionNotificacion;
 	}

@@ -1,0 +1,120 @@
+--/*
+--##########################################
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190312
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-3322
+--## PRODUCTO=NO
+--##
+--## Finalidad: Insertar un registro de alquiler para los activos DD_TCO_CODIGO = 02
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##		0.2 Correcciones REMVIP-3555
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+    V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+    --V_COUNT NUMBER(16); -- Vble. para contar.
+    --V_COUNT_INSERT NUMBER(16):= 0; -- Vble. para contar inserts
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	V_USUARIO VARCHAR2(32 CHAR):= 'REMVIP-3322';
+    
+    
+ BEGIN
+
+    	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP (
+             		  AHP_ID
+				    , ACT_ID
+				    , DD_EPV_ID
+				    , DD_EPA_ID
+				    , DD_TCO_ID
+				    , DD_MTO_V_ID
+				    , AHP_CHECK_PUBLICAR_V
+				    , AHP_CHECK_OCULTAR_V
+				    , AHP_CHECK_OCULTAR_PRECIO_V
+				    , AHP_CHECK_PUB_SIN_PRECIO_V
+				    , DD_MTO_A_ID
+				    , AHP_CHECK_PUBLICAR_A
+				    , AHP_CHECK_OCULTAR_A
+				    , AHP_CHECK_OCULTAR_PRECIO_A
+				    , AHP_CHECK_PUB_SIN_PRECIO_A
+				    , AHP_FECHA_INI_VENTA
+				    , AHP_FECHA_FIN_VENTA
+				    , AHP_FECHA_INI_ALQUILER
+				    , AHP_FECHA_FIN_ALQUILER
+			    	, DD_TPU_V_ID
+			    	, DD_TPU_A_ID
+				    , USUARIOCREAR
+				    , FECHACREAR
+					, USUARIOMODIFICAR
+				    , FECHAMODIFICAR
+		)
+		SELECT '||V_ESQUEMA||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL,
+				ACT_ID,
+				DD_EPV_ID,
+				DD_EPA_ID,
+				DD_TCO_ID,
+				DD_MTO_V_ID,
+				AHP_CHECK_PUBLICAR_V,
+		        AHP_CHECK_OCULTAR_V,
+		        AHP_CHECK_OCULTAR_PRECIO_V,
+		        AHP_CHECK_PUB_SIN_PRECIO_V,
+				DD_MTO_A_ID,
+				AHP_CHECK_PUBLICAR_A,
+				AHP_CHECK_OCULTAR_A,
+				AHP_CHECK_OCULTAR_PRECIO_A,
+				AHP_CHECK_PUB_SIN_PRECIO_A,
+				NULL,
+				NULL,
+				AHP_FECHA_INI_ALQUILER,
+				AHP_FECHA_FIN_ALQUILER,
+				DD_TPU_V_ID, 
+				DD_TPU_A_ID,
+				USUARIOCREAR,
+				SYSDATE,
+				'''||V_USUARIO||''',
+				SYSDATE
+			FROM (
+			SELECT * FROM (
+		    WITH TODO AS (
+		    SELECT AHP.AHP_ID, ACT.ACT_ID, ACT.ACT_NUM_ACTIVO, AHP.AHP_FECHA_INI_ALQUILER,  AHP.AHP_FECHA_INI_VENTA,
+		        AHP.AHP_FECHA_FIN_ALQUILER, AHP.AHP_FECHA_FIN_VENTA, AHP.DD_TCO_ID, AHP.DD_EPV_ID, AHP.DD_MTO_V_ID, AHP.DD_EPA_ID, AHP.DD_MTO_A_ID, AHP.AHP_CHECK_PUBLICAR_A, AHP.AHP_CHECK_OCULTAR_A, AHP.AHP_CHECK_OCULTAR_PRECIO_A, AHP.AHP_CHECK_PUB_SIN_PRECIO_A, DD_TPU_A_ID,
+		        DD_TPU_V_ID, AHP.AHP_CHECK_PUBLICAR_V, AHP.AHP_CHECK_OCULTAR_V, AHP.AHP_CHECK_OCULTAR_PRECIO_V, AHP.AHP_CHECK_PUB_SIN_PRECIO_V, AHP.USUARIOCREAR
+		    FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+		    JOIN '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP ON AHP.ACT_ID = ACT.ACT_ID AND AHP.BORRADO = 0
+		    WHERE ACT.BORRADO = 0
+		    )
+		    SELECT ACT_ID, ACT_NUM_ACTIVO,AHP_FECHA_INI_ALQUILER, AHP_FECHA_INI_VENTA, AHP_FECHA_FIN_ALQUILER, AHP_FECHA_FIN_VENTA, DD_TCO_ID, DD_EPV_ID, DD_MTO_V_ID, DD_EPA_ID, DD_MTO_A_ID, AHP_CHECK_PUBLICAR_A, AHP_CHECK_OCULTAR_A, AHP_CHECK_OCULTAR_PRECIO_A, AHP_CHECK_PUB_SIN_PRECIO_A, DD_TPU_A_ID,
+        		DD_TPU_V_ID, AHP_CHECK_PUBLICAR_V, AHP_CHECK_OCULTAR_V, AHP_CHECK_OCULTAR_PRECIO_V, AHP_CHECK_PUB_SIN_PRECIO_V, USUARIOCREAR
+		    FROM TODO
+		)WHERE DD_TCO_ID = 2)';
+    				
+      EXECUTE IMMEDIATE V_SQL;
+      
+	  DBMS_OUTPUT.PUT_LINE('Se han creado los registros en la histórica correctamente');
+      
+ COMMIT;
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.PUT_LINE(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

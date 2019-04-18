@@ -166,7 +166,7 @@ public class GestorDocToRecoveryAssembler {
 	
 	
 	
-	public static FileItem getFileItem(RespuestaDescargarDocumento descargar) throws IOException {
+	public static FileItem getFileItem(byte[] contenido, RespuestaDescargarDocumento descargar) throws IOException {
 		
 		String nomFichero = descargar.getNombreDocumento();
 		String ext = null;
@@ -193,7 +193,7 @@ public class GestorDocToRecoveryAssembler {
 		
 		File fileSalidaTemporal = null;
 		FileItem resultado = new FileItem();
-		InputStream stream =  new ByteArrayInputStream(ArrayUtils.toPrimitive(descargar.getContenido()));
+		InputStream stream =  new ByteArrayInputStream(contenido);
 		
 		fileSalidaTemporal = File.createTempFile(nomFichero, ext);
 		fileSalidaTemporal.deleteOnExit();

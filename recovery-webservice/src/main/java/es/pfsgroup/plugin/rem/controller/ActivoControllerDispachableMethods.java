@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,14 +193,21 @@ class ActivoControllerDispachableMethods {
 			@Override
 			public void execute(Long id, DtoActivoDatosRegistrales dto, HttpServletRequest request) {
 				if (dto != null ){
-					List<DtoActivoDatosRegistrales> l_DatosRegistrales = this.controller.getCalificacionNegativabyId(id);
 					
-					int counter = 0;
-					for (DtoActivoDatosRegistrales auxDto : l_DatosRegistrales) {
-						l_DatosRegistrales.get(counter).setIdActivo(dto.getIdActivo());
-						this.controller.createCalificacionNegativa(dto.getIdActivo(), l_DatosRegistrales.get(counter), new ModelMap());
-						counter++;
+					List<DtoActivoDatosRegistrales> l_DatosRegistralesAux = this.controller.getCalificacionNegativabyId(id);
+					List<DtoActivoDatosRegistrales> l_DatosRegistrales = new ArrayList<DtoActivoDatosRegistrales>();
+					
+					for (DtoActivoDatosRegistrales dtoADR : l_DatosRegistralesAux) {
+						if (dto.getIdsMotivo().contains(dtoADR.getIdMotivo())) {
+							l_DatosRegistrales.add(dtoADR);
+						}
 					}
+					
+					for (int i = 0; i < l_DatosRegistrales.size(); i++) {
+						l_DatosRegistrales.get(i).setIdActivo(dto.getIdActivo());
+						this.controller.createCalificacionNegativa(dto.getIdActivo(), l_DatosRegistrales.get(i), new ModelMap());
+					}
+					
 				}
 				
 			}

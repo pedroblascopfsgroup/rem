@@ -81,7 +81,6 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	}
 	
 	//Prepara lso filtros de la consulta 
-	@SuppressWarnings("static-access")
 	private void rellenarFiltrosBusquedaTrabajos(DtoTrabajoFilter dto, HQLBuilder hb, GastoProveedor gasto) {
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
@@ -163,18 +162,6 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
-	@Override
-	public Page getListActivosTrabajoPresupuesto(DtoActivosTrabajoFilter dto) {
-
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosTrabajoPresupuesto acttbj");		
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idTrabajo", dto.getIdTrabajo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idActivo", dto.getIdActivo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.ejercicio", dto.getEjercicioPresupuestario());
-		
-   		return HibernateQueryUtils.page(this, hb, dto);
-	}
 	
 	@Override
 	public Page getObservaciones(DtoTrabajoFilter dto) {
@@ -199,7 +186,38 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	
 	@Override
 	public Page getSeleccionTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, Usuario usuarioLogado)
-	{
+	{		
+		
+		Page page = null; 
+		
+		if (!Checks.esNulo(filtro) || !Checks.esNulo(usuarioLogado)) {
+		
+			page = getSeleccionTarifasTrabajoConSubcartera(filtro, usuarioLogado);
+			
+			if (page.getTotalCount() == 0) {
+				page = getSeleccionTarifasTrabajoSinSubcartera(filtro, usuarioLogado);
+			}			
+		}
+		
+		return page;
+	}
+	
+	private Page getSeleccionTarifasTrabajoConSubcartera(DtoGestionEconomicaTrabajo filtro, Usuario usuarioLogado) {
+
+		HQLBuilder hb = new HQLBuilder(" from ConfiguracionTarifa cfgTar");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.tipoTrabajo.codigo", filtro.getTipoTrabajoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.subtipoTrabajo.codigo", filtro.getSubtipoTrabajoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.cartera.codigo", filtro.getCarteraCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.proveedor.id", filtro.getIdProveedor());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.codigo", filtro.getCodigoTarifaTrabajo());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.descripcion", filtro.getDescripcionTarifaTrabajo());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.subcartera.codigo", filtro.getSubcarteraCodigo());
+
+		return HibernateQueryUtils.page(this, hb, filtro);
+	}
+	
+	private Page getSeleccionTarifasTrabajoSinSubcartera(DtoGestionEconomicaTrabajo filtro, Usuario usuarioLogado) {
+
 		HQLBuilder hb = new HQLBuilder(" from ConfiguracionTarifa cfgTar");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.tipoTrabajo.codigo", filtro.getTipoTrabajoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.subtipoTrabajo.codigo", filtro.getSubtipoTrabajoCodigo());

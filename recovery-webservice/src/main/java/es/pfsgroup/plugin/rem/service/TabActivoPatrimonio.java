@@ -23,10 +23,12 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 @Component
 public class TabActivoPatrimonio implements TabActivoService {
@@ -200,6 +202,18 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 				if (!Checks.esNulo(tipoEstadoAlquiler)) {
 					activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+				}
+				if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(tipoEstadoAlquiler.getCodigo())){
+					if (!Checks.estaVacio(activo.getOfertas())) {
+						for (ActivoOferta activoOferta : activo.getOfertas()) {
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
+									activoOferta.getPrimaryKey().getOferta().getId());
+							ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+							if (!Checks.esNulo(expediente) && Checks.esNulo(expediente.getFechaFinAlquiler())) {
+								expediente.setFechaFinAlquiler(new Date());
+							}
+						}
+					}
 				}
 
 			}

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Nieto
---## FECHA_CREACION=20190306
+--## AUTOR=Mariam Lliso
+--## FECHA_CREACION=20190402
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5889
+--## INCIDENCIA_LINK=HREOS-6032
 --## PRODUCTO=NO
 --##
 --## Finalidad: Bloquear definición de oferta sin documento 

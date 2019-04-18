@@ -595,4 +595,15 @@ public interface ParticularValidatorApi {
 	 * @return true si existe, false si no existe o es nulo
 	 */
 	public Boolean existeCalculo(String codCalculo);
+
+	Boolean isOfferOfGiants(String numOferta);
+
+	Boolean existeOferta(String numOferta);
+
+	Boolean esOfertaPendienteDeSancion(String numOferta);
+
+	Boolean isAgrupacionOfGiants(String numAgrupacion);
+
+	Boolean isActivoOfGiants(String numActivo);
+
 }

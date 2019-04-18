@@ -208,6 +208,64 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeOferta(String numOferta){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS WHERE "
+				+ "OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isOfferOfGiants(String numOferta){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ "JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID "
+				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND DD_CRA_CODIGO = '12' "
+				+ "AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esOfertaPendienteDeSancion(String numOferta){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ECO_EXPEDIENTE_COMERCIAL ECO "
+				+ "JOIN OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID "
+				+ "WHERE OFR.OFR_NUM_OFERTA ="+numOferta+" "
+				+ "AND (EEC.DD_EEC_CODIGO = '10' OR EEC.DD_EEC_CODIGO = '23') "
+				+ "AND ECO.BORRADO = 0");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isAgrupacionOfGiants(String numAgrupacion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_AGR_AGRUPACION AGR "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
+				+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID "
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ "AND DD_CRA_CODIGO = '12' ");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoOfGiants(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_ACTIVO ACT "
+				+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID "
+				+ "WHERE CRA.DD_CRA_CODIGO = '12' "
+				+ "AND ACT.ACT_NUM_ACTIVO = "+numActivo+" ");
+		
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean isActivoVendido(String numActivo){

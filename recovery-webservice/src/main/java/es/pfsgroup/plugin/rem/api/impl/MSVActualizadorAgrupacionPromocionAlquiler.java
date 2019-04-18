@@ -3,9 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,9 +31,11 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.activo.MaestroDeActivos;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -62,7 +62,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.activo.MaestroDeActivos;
 
 @Component
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
@@ -96,6 +95,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROMOCION_ALQUILER;
 	}
+	
 
 	@Override
 	@Transactional(readOnly = false)
@@ -174,13 +174,10 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
 			
 		}
-		
-		MaestroDeActivos maestroDeActivos = new MaestroDeActivos(unidadAlquilable.getNumActivo(), unidadAlquilable.getId(), activoMatriz.getId());
-		Long newNumActivo = maestroDeActivos.getNewNumActivo(unidadAlquilable.getNumActivo(), unidadAlquilable.getId(), activoMatriz.getId());
 		Long newNumActivoRem = Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO_REM) + 1 FROM ACT_ACTIVO"));
 		Filter tipoTituloFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivo.UNIDAD_ALQUILABLE);
 		DDTipoTituloActivo tituloUnidadAlquilable = genericDao.get(DDTipoTituloActivo.class, tipoTituloFilter);
-		unidadAlquilable.setNumActivo(newNumActivo);
+		unidadAlquilable.setNumActivo(Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO) + 100 FROM ACT_ACTIVO")));
 		unidadAlquilable.setNumActivoRem(newNumActivoRem);
 		unidadAlquilable.setAuditoria(auditoria);
 		unidadAlquilable.setBien(bien);
@@ -217,7 +214,18 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			unidadAlquilable.setDescripcion(descripcion);
 		}
 		 
-		genericDao.save(Activo.class, unidadAlquilable);	  
+		genericDao.save(Activo.class, unidadAlquilable);
+
+		//--Seteo mediante maestro de activos
+		MaestroDeActivos maestroActivos = new MaestroDeActivos(activoMatriz.getId(), activoMatriz.getNumActivo(), unidadAlquilable.getId());
+		ActivoOutputDto activoOutput = maestroActivos.altaActivo();
+		if (!Checks.esNulo(activoOutput)) {
+			Long numActivoUnidadAlquilable = Long.valueOf(activoOutput.getNumActivoUnidadAlquilable());
+			unidadAlquilable.setNumActivo(numActivoUnidadAlquilable);
+			genericDao.save(Activo.class, unidadAlquilable);
+		} 
+		
+		
 		 //-- Lista propietarios 
 		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){  
 			List<ActivoPropietarioActivo> propietariosUA = new ArrayList<ActivoPropietarioActivo>();

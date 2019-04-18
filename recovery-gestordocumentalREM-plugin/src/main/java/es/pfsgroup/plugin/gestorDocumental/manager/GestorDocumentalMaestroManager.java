@@ -40,26 +40,49 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventResponseType output = null;
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventRequestType input = GDActivoInputAssembler.dtoToInputActivo(dto);
 		logger.info("LLamando al WS MAESTRO_ACTIVOS...Parametros de entrada...");
-		logger.info("ID_ACTIVO_ORIGEN: " + dto.getIdActivoOrigen());
-		logger.info("ID_ORIGEN: " + dto.getIdOrigen());
-		logger.info("ID_ACTIVO_HAYA: " + dto.getIdActivoHaya());
+		logger.info("ID_HAYA_ACTIVO_MATRIZ: " + dto.getIdActivoMatriz());
+		logger.info("ID_REM_ACTIVO_MATRIZ: " + dto.getNumRemActivoMatriz());
+		logger.info("ID_CLIENTE_ACTIVO_MATRIZ: " + dto.getIdCliente()); 
+		logger.info("ID_REM_UNIDAD_ALQUILABLE: " + dto.getIdUnidadAlquilable());
+		logger.info("FC_ALTA: " + dto.getFechaOperacion());
+		logger.info("UNIDAD_ALQUILABLE");
+		logger.info("REM");
+		logger.info("1");
+		logger.info("14");
+		logger.info("NULL");
+		logger.info("NULL");
+		logger.info("NULL");
+		logger.info("NULL");
 		try {	
 			String urlWSDL = getWSURL(WEB_SERVICE_ACTIVOS);
 			String targetNamespace = getWSNamespace();
 			String name = getWSName();
-			
-			URL wsdlLocation = new URL(urlWSDL);
-			QName qName = new QName(targetNamespace, name);
-			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsWS(wsdlLocation, qName);
-			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsPort servicePort = service.getWs();
-			output = servicePort.processEvent(input);
-			logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
-			logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
-			logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
+			if(!Checks.esNulo(urlWSDL)) {
+				URL wsdlLocation = new URL(urlWSDL);
+				QName qName = new QName(targetNamespace, name);
+				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsWS(wsdlLocation, qName);
+				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsPort servicePort = service.getWs();
+				output = servicePort.processEvent(input);
+				logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
+				logger.info("WS invocado! Valores de respuesta del MAESTRO: ");					
+				if (!Checks.esNulo(output) 
+						&& !Checks.esNulo(output.getParameters()) 
+						&& !Checks.estaVacio(output.getParameters().getParameter()) 
+						&& !Checks.esNulo(output.getParameters().getParameter().get(0)) 
+						&& !Checks.esNulo(output.getParameters().getParameter().get(0).getCode())
+						&& output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
+					logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
+				} else {
+					logger.error("RESULTADO_COD_MAESTRO: " + output.getResultCode());
+					logger.error("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
+				}
+			}else{
+				return null;
+			}
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
 		}
-		return GDActivoOutputAssembler.outputToDtoActivo(output);
+			return GDActivoOutputAssembler.outputToDtoActivo(output);
 	}
 
 	@Override

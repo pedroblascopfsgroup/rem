@@ -19,39 +19,14 @@ public class GDActivoOutputAssembler {
 		ActivoOutputDto dto = new ActivoOutputDto();
 		dto.setResultCode(output.getResultCode());
 		dto.setResultDescription(output.getResultDescription());
-		
 		if(output.getParameters() != null) {
 			for(KeyValuePair param : output.getParameters().getParameter()) {
 				if(ActivoInputDto.ID_ACTIVO_HAYA.equals(param.getCode())) {
-					dto.setIdActivoHaya(param.getValue());
-				}else if(ActivoInputDto.ID_ACTIVO_ORIGEN.equals(param.getCode())) {
-					dto.setIdActivoOrigen(param.getValue());
+					dto.setNumActivoUnidadAlquilable(String.valueOf(param.getValue()));
 				}
 			}
 		}
 		
 		return dto;
 	}
-	
-	public static PersonaOutputDto outputToDtoPersona(ProcessEventResponseType output) {
-
-		if (output == null) {
-			return null;
-		}
-
-		PersonaOutputDto dto = new PersonaOutputDto();
-		dto.setResultCode(output.getResultCode());
-		dto.setResultDescription(output.getResultDescription());
-		
-		if(output.getParameters() != null) {
-			for(KeyValuePair param : output.getParameters().getParameter()) {
-				if(PersonaInputDto.ID_INTERVINIENTE_HAYA.equals(param.getCode())) {
-					dto.setIdIntervinienteHaya(param.getValue());
-				}
-			}
-		}
-		
-		return dto;
-	}
-
 }

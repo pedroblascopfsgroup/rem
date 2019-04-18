@@ -178,6 +178,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
 			
 		}
+		
+		
 		Long newNumActivoRem = Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO_REM) + 1 FROM ACT_ACTIVO"));
 		Filter tipoTituloFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivo.UNIDAD_ALQUILABLE);
 		DDTipoTituloActivo tituloUnidadAlquilable = genericDao.get(DDTipoTituloActivo.class, tipoTituloFilter);
@@ -402,6 +404,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			}
 			genericDao.save(NMBInformacionRegistralBien.class, bieInfoRegistral);
 			
+			
+			
 			//-----Nuevo ActivoInfoRegistral (superficie util)
 			if(!Checks.esNulo(exc.dameCelda(fila, 12))){
 				ActivoInfoRegistral actInfoRegistral = new ActivoInfoRegistral();
@@ -428,6 +432,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 					actInfoRegistral.setFechaCfo(infoRegistralActivoMatriz.getFechaCfo());
 				
 				actInfoRegistral.setAuditoria(auditoria);
+				float superficieA0 = 0;			//Se pone la superficie de  elementos comunes y la superficie de la parcela a 0 en la creación de las UAs
+				actInfoRegistral.setSuperficieElementosComunes(superficieA0);
+				actInfoRegistral.setSuperficieParcela(superficieA0);
 				genericDao.save(ActivoInfoRegistral.class, actInfoRegistral);
 			}
 		}

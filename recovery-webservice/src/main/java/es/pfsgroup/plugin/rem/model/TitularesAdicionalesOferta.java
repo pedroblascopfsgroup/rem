@@ -24,10 +24,14 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
 /**
@@ -102,14 +106,71 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
     @Column(name = "TIA_DOCUMENTO")
     private String documento;
     
+    //REMVIP-3846
+    @Column(name = "TIA_RAZON_SOCIAL")
+    private String razonSocial;
+    
+    @Column(name = "TIA_TELEFONO1")
+    private String telefono1;
+    
+    @Column(name = "TIA_TELEFONO2")
+    private String telefono2;
+    
+    @Column(name = "TIA_EMAIL")
+    private String email;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TVI_ID")
+	private DDTipoVia tipoVia;
+    
+    @Column(name = "TIA_OBSERVACIONES")
+    private String observaciones;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID_CONYUGE")
+	private DDTipoDocumento tipoDocumentoConyuge;
+    
+    @Column(name="TIA_DOCUMENTO_CONYUGE")
+    private String documentoConyuge;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TPE_ID")
+	private DDTiposPersona tipoPersona;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID")
+    private DDPaises pais;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID_RTE")
+	private DDTipoDocumento tipoDocumentoRepresentante;
+    
+    @Column(name = "TIA_DOCUMENTO_RTE")
+    private String documentoRepresentante;
+    
+    @Column(name="TIA_DIRECCION_RTE")
+	private String direccionRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_ID_RTE")
+    private DDProvincia provinciaRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_LOC_ID_RTE")
+    private Localidad municipioRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID_RTE")
+    private DDPaises paisRepresentante;
+    
+    @Column(name = "TIA_CODPOSTAL_RTE")
+    private String codPostalRepresentante;
+    
     @Version   
 	private Long version;
 
 	@Embedded
-	private Auditoria auditoria;
-	
-    
-	
+	private Auditoria auditoria;	
 	
     public Long getId() {
 		return id;
@@ -133,6 +194,26 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+	
+	public String getNombreCompleto(){
+		String nombre= "";
+		if(!Checks.esNulo(this.razonSocial)){
+			nombre= this.razonSocial;
+		}
+		else if(!Checks.esNulo(this.nombre)){
+			if(!Checks.esNulo(this.apellidos)){
+				nombre= this.nombre + " " + this.apellidos;
+			}
+			else{
+				nombre= this.nombre;
+			}
+		}
+		else if(!Checks.esNulo(this.apellidos)){
+				nombre= this.apellidos;
+		}
+		
+		return nombre;
 	}
 
 	public DDTipoDocumento getTipoDocumento() {
@@ -243,5 +324,143 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 		this.rechazarCesionDatosProveedores = rechazarCesionDatosProveedores;
 	}
 
-	
+	public String getRazonSocial() {
+		return razonSocial;
+	}
+
+	public void setRazonSocial(String razonSocial) {
+		this.razonSocial = razonSocial;
+	}
+
+	public String getTelefono1() {
+		return telefono1;
+	}
+
+	public void setTelefono1(String telefono1) {
+		this.telefono1 = telefono1;
+	}
+
+	public String getTelefono2() {
+		return telefono2;
+	}
+
+	public void setTelefono2(String telefono2) {
+		this.telefono2 = telefono2;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public DDTipoVia getTipoVia() {
+		return tipoVia;
+	}
+
+	public void setTipoVia(DDTipoVia tipoVia) {
+		this.tipoVia = tipoVia;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public DDTiposPersona getTipoPersona() {
+		return tipoPersona;
+	}
+
+	public void setTipoPersona(DDTiposPersona tipoPersona) {
+		this.tipoPersona = tipoPersona;
+	}
+
+	public DDPaises getPais() {
+		return pais;
+	}
+
+	public void setPais(DDPaises pais) {
+		this.pais = pais;
+	}
+
+	public DDTipoDocumento getTipoDocumentoRepresentante() {
+		return tipoDocumentoRepresentante;
+	}
+
+	public void setTipoDocumentoRepresentante(DDTipoDocumento tipoDocumentoRepresentante) {
+		this.tipoDocumentoRepresentante = tipoDocumentoRepresentante;
+	}
+
+	public String getDocumentoRepresentante() {
+		return documentoRepresentante;
+	}
+
+	public void setDocumentoRepresentante(String documentoRepresentante) {
+		this.documentoRepresentante = documentoRepresentante;
+	}
+
+	public String getDireccionRepresentante() {
+		return direccionRepresentante;
+	}
+
+	public void setDireccionRepresentante(String direccionRepresentante) {
+		this.direccionRepresentante = direccionRepresentante;
+	}
+
+	public DDProvincia getProvinciaRepresentante() {
+		return provinciaRepresentante;
+	}
+
+	public void setProvinciaRepresentante(DDProvincia provinciaRepresentante) {
+		this.provinciaRepresentante = provinciaRepresentante;
+	}
+
+	public Localidad getMunicipioRepresentante() {
+		return municipioRepresentante;
+	}
+
+	public void setMunicipioRepresentante(Localidad municipioRepresentante) {
+		this.municipioRepresentante = municipioRepresentante;
+	}
+
+	public DDPaises getPaisRepresentante() {
+		return paisRepresentante;
+	}
+
+	public void setPaisRepresentante(DDPaises paisRepresentante) {
+		this.paisRepresentante = paisRepresentante;
+	}
+
+	public String getCodPostalRepresentante() {
+		return codPostalRepresentante;
+	}
+
+	public void setCodPostalRepresentante(String codPostalRepresentante) {
+		this.codPostalRepresentante = codPostalRepresentante;
+	}
+
+	public DDTipoDocumento getTipoDocumentoConyuge() {
+		return tipoDocumentoConyuge;
+	}
+
+	public void setTipoDocumentoConyuge(DDTipoDocumento tipoDocumentoConyuge) {
+		this.tipoDocumentoConyuge = tipoDocumentoConyuge;
+	}
+
+	public String getDocumentoConyuge() {
+		return documentoConyuge;
+	}
+
+	public void setDocumentoConyuge(String documentoConyuge) {
+		this.documentoConyuge = documentoConyuge;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
 }

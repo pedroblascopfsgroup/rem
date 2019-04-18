@@ -69,6 +69,8 @@ public class AgendaController extends TareaController {
 	
 	
 	private final Log logger = LogFactory.getLog(getClass());
+	
+	private static final String RESPONSE_SUCCESS_KEY = "success";
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -94,14 +96,25 @@ public class AgendaController extends TareaController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getFormularioTarea(Long idTarea, ModelMap model) {
-		model.put("data", adapter.getFormularioTarea(idTarea));
+		try{
+			model.put("data", adapter.getFormularioTarea(idTarea));
+		}catch(Exception e){
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error(e.getMessage(),e);
+		}
+		
 		return createModelAndViewJson(model);
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getValidacionPrevia(Long idTarea, ModelMap model) {
-		model.put("data", adapter.getValidacionPrevia(idTarea));
+		try{
+			model.put("data", adapter.getValidacionPrevia(idTarea));
+		}catch(Exception e){
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error(e.getMessage(),e);
+		}
 		return createModelAndViewJson(model);
 	}
 

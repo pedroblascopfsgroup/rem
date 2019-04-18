@@ -33,6 +33,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -92,7 +93,7 @@ public class ClienteComercial implements Serializable, Auditable {
     private String documento;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TDI_ID_REPRESENTANTE	")
+    @JoinColumn(name = "DD_TDI_ID_REPRESENTANTE")
 	private DDTipoDocumento tipoDocumentoRepresentante;
     
     @Column(name = "CLC_DOCUMENTO_REPRESENTANTE")
@@ -192,6 +193,36 @@ public class ClienteComercial implements Serializable, Auditable {
     @Column(name = "CLC_ID_PERSONA_HAYA")
     private String idPersonaHaya;
 
+    //REMVIP-3846
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID_CONYUGE")
+	private DDTipoDocumento tipoDocumentoConyuge;
+    
+    @Column(name="CLC_DOCUMENTO_CONYUGE")
+    private String documentoConyuge;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID")
+    private DDPaises pais;
+    
+    @Column(name = "CLC_DIRECCION_RTE")
+    private String direccionRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_ID_RTE")
+    private DDProvincia provinciaRepresentante;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_LOC_ID_RTE")
+    private Localidad municipioRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PAI_ID_RTE")
+    private DDPaises paisRepresentante;
+    
+    @Column(name = "CLC_CODIGO_POSTAL_RTE")
+    private String codigoPostalRepresentante;
+    
 	@Version   
 	private Long version;
 
@@ -545,5 +576,69 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setIdPersonaHaya(String idPersonaHaya) {
 		this.idPersonaHaya = idPersonaHaya;
+	}
+
+	public DDPaises getPais() {
+		return pais;
+	}
+
+	public void setPais(DDPaises pais) {
+		this.pais = pais;
+	}
+
+	public String getDireccionRepresentante() {
+		return direccionRepresentante;
+	}
+
+	public void setDireccionRepresentante(String direccionRepresentante) {
+		this.direccionRepresentante = direccionRepresentante;
+	}
+
+	public DDProvincia getProvinciaRepresentante() {
+		return provinciaRepresentante;
+	}
+
+	public void setProvinciaRepresentante(DDProvincia provinciaRepresentante) {
+		this.provinciaRepresentante = provinciaRepresentante;
+	}
+
+	public Localidad getMunicipioRepresentante() {
+		return municipioRepresentante;
+	}
+
+	public void setMunicipioRepresentante(Localidad municipioRepresentante) {
+		this.municipioRepresentante = municipioRepresentante;
+	}
+
+	public DDPaises getPaisRepresentante() {
+		return paisRepresentante;
+	}
+
+	public void setPaisRepresentante(DDPaises paisRepresentante) {
+		this.paisRepresentante = paisRepresentante;
+	}
+
+	public String getCodigoPostalRepresentante() {
+		return codigoPostalRepresentante;
+	}
+
+	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
+		this.codigoPostalRepresentante = codigoPostalRepresentante;
+	}
+
+	public DDTipoDocumento getTipoDocumentoConyuge() {
+		return tipoDocumentoConyuge;
+	}
+
+	public void setTipoDocumentoConyuge(DDTipoDocumento tipoDocumentoConyuge) {
+		this.tipoDocumentoConyuge = tipoDocumentoConyuge;
+	}
+
+	public String getDocumentoConyuge() {
+		return documentoConyuge;
+	}
+
+	public void setDocumentoConyuge(String documentoConyuge) {
+		this.documentoConyuge = documentoConyuge;
 	}   
 }

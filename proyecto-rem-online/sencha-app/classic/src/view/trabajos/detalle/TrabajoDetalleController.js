@@ -282,12 +282,20 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var codPromo;
 		//Si no se ha seleccionado ning�n activo
 		if(Ext.isEmpty(arraySelection)){
-			
 			var storeListaActivosTrabajo = me.lookupReference('listaActivosSubidaRef').getStore();
-			if(!Ext.isEmpty(storeListaActivosTrabajo) && !Ext.isEmpty(storeListaActivosTrabajo.data)){
+			if(!Ext.isEmpty(storeListaActivosTrabajo) && storeListaActivosTrabajo.data.length != 0){
 				codPromo = me.lookupReference('codigoPromocionPrinex').getValue();
 				var actuacionTecnica = (me.lookupReference('tipoTrabajo').getValue() == CONST.TIPOS_TRABAJO.ACTUACION_TECNICA ? true : false);
+				var propietario = storeListaActivosTrabajo.data.items[0].data.propietarioId;
 				for (var i=0; i < storeListaActivosTrabajo.data.length; i++) {
+					var propietarioAux = storeListaActivosTrabajo.data.items[i].data.propietarioId;
+					if(propietarioAux != propietario && me.lookupReference('checkEnglobaTodosActivosRef').checked != false){
+						Ext.MessageBox.alert(
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.mensaje")
+						);
+						return false;
+					}
 					if (storeListaActivosTrabajo.data.items[i].data.tienePerimetroGestion != "1"){
 						Ext.MessageBox.alert(
 								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
@@ -701,10 +709,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		tipoTrabajoCodigo = me.getViewModel().get("trabajo.tipoTrabajoCodigo"),
 		subtipoTrabajoCodigo = me.getViewModel().get("trabajo.subtipoTrabajoCodigo"),
 		codigoTarifaTrabajo = me.getViewModel().get('trabajo.codigoTarifaTrabajo'),
-		descripcionTarifaTrabajo = me.getViewModel().get('trabajo.descripcionTarifaTrabajo');
+		descripcionTarifaTrabajo = me.getViewModel().get('trabajo.descripcionTarifaTrabajo'),
+		subcarteraCodigo = me.getViewModel().get('trabajo.subcarteraCodigo');
 		
 		store.getProxy().extraParams = {idTrabajo: idTrabajo, cartera: carteraCodigo, tipoTrabajo: tipoTrabajoCodigo, subtipoTrabajo: subtipoTrabajoCodigo
-			, codigoTarifa: codigoTarifaTrabajo, descripcionTarifa: descripcionTarifaTrabajo};	
+			, codigoTarifa: codigoTarifaTrabajo, descripcionTarifa: descripcionTarifaTrabajo, subcarteraCodigo: subcarteraCodigo};	
 		
 		return true;		
 

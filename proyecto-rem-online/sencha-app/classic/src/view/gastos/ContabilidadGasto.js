@@ -61,8 +61,11 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 											        },
 													{ 
 														xtype: 'textfieldbase',
-														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
-										                bind: '{contabilidad.cuentaContable}',
+														reference: 'cuentaContable',
+										                bind: {
+										                	value: '{contabilidad.cuentaContable}',
+										                	fieldLabel: '{marcaObligatorioCuenta}'
+										                },
 										                maskRe: /[0-9]/
 													},
 													{
@@ -86,8 +89,10 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													},
 													{ 
 														xtype: 'textfieldbase',
-														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'),
-										                bind: '{contabilidad.partidaPresupuestaria}'
+										                bind: {
+										                	value: '{contabilidad.partidaPresupuestaria}',
+										                	fieldLabel: '{marcaObligatorioPartida}'
+										                }
 													},	
 													{ 
 														xtype: 'displayfieldbase',

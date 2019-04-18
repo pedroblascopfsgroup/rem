@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Javier Pons
---## FECHA_CREACION=20190130
+--## AUTOR=MArco Munoz
+--## FECHA_CREACION=20190418
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.1.0
---## INCIDENCIA_LINK=REMVIP-3197
+--## INCIDENCIA_LINK=HREOS-6143
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Javier Pons - REMVIP-3197 - (20190130)
 --##########################################
 --*/
 
@@ -331,7 +332,9 @@ BEGIN
                 INNER join '||V_ESQUEMA||'.act_activo act on act.act_id = gac.ACT_ID
 		        INNER join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on tge.DD_TGE_ID = gee.DD_TGE_ID
 		        INNER join '||V_ESQUEMA||'.ACT_ETP_ENTIDAD_PROVEEDOR etp on etp.DD_CRA_ID = act.DD_CRA_ID and etp.PVE_ID = pve.PVE_ID
-		    WHERE tge.DD_TGE_CODIGO = ''PTEC'') PVEPRV ON PVEPRV.ACT_ID = act.ACT_ID and PVEPRV.RN = 1
+		    WHERE tge.DD_TGE_CODIGO = ''PTEC''
+		      and act.act_id not in (SELECT DISTINCT t1.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO t1 JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = t1.DD_CRA_ID WHERE CRA.DD_CRA_CODIGO IN (''02''))
+		) PVEPRV ON PVEPRV.ACT_ID = act.ACT_ID and PVEPRV.RN = 1 
 
 		LEFT JOIN (
             SELECT DDTCE.DD_TCE_CODIGO, CFD.DD_TPA_ID, ADO.ACT_ID, ROW_NUMBER() OVER(PARTITION BY ADO.ACT_ID ORDER BY CFD.FECHACREAR DESC) RN

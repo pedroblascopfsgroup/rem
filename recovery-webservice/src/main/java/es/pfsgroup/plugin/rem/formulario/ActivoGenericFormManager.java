@@ -574,8 +574,22 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					}
             				}
             			}
-            		}            		
+            		}   
             		
+            		if(item.getNombre().equals("comboTarifaPlana"))
+            		{
+            			Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+            			if (!Checks.esNulo(trabajo)) {
+            					if(!Checks.esNulo(trabajo.getEsTarifaPlana())) {            						
+            						if(BooleanUtils.toBoolean(trabajo.getEsTarifaPlana())) {
+            							item.setValue(DDSiNo.SI);
+            						} else {
+            							item.setValue(DDSiNo.NO);
+            						}
+            					}
+            				
+            			}
+            		}           		
             			
             	}
             	if(item.getType().equals(TIPO_COMBOBOX_INICIAL_ED))

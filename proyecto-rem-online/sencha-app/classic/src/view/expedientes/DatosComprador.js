@@ -153,6 +153,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel: HreRem.i18n('fieldlabel.titular.contratacion'),
 														reference: 'titularContratacion',
 														name: 'titularContratacion',
+														
 											        	bind: {
 										            		store: '{comboSiNoRem}',
 										            		hidden: '{!comprador.titularContratacion}'
@@ -188,6 +189,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 														reference: 'tipoDocumento',
 														name: 'codTipoDocumento',
+														
 											        	bind: {
 										            		store: '{comboTipoDocumento}',
 										            		disabled: me.deshabilitarCamposDoc
@@ -250,7 +252,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														xtype: 'comboboxfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 														reference: 'municipioCombo',
-														name: 'municipioCodigo',
+														name: 'municipioCodigo',														
 														disabled: true,
 										            	bind: {
 										            		store: '{comboMunicipio}'
@@ -277,6 +279,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														fieldLabel: HreRem.i18n('fieldlabel.pais'),
 														reference: 'pais',
 														name: 'codigoPais',
+														
 										            	bind: {
 										            		store: '{comboPaises}',
 										            		allowBlank: '{esObligatorio}'
@@ -365,6 +368,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel: HreRem.i18n('fieldlabel.estado.civil'),
 														reference: 'estadoCivil',
 														name: 'codEstadoCivil',
+														
 											        	bind: {
 										            		store: '{comboEstadoCivil}'
 										            	},
@@ -378,6 +382,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
 														reference: 'regimenMatrimonial',
 														name: 'codigoRegimenMatrimonial',
+														
 														bind: {
 										            		store: '{comboRegimenesMatrimoniales}'
 										            	},
@@ -391,14 +396,22 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 							                			fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 							                			reference: 'tipoDocConyuge',
 							                			name: 'codTipoDocumentoConyuge',
+							                			editable:true,
+							                			allowBlank:true,
 							                			bind: {
 							                				store: '{comboTipoDocumento}'
-							                			}
+							                			},
+										            	listeners: {
+										            		change: 'comprobarObligatoriedadCamposNexos'										         
+										            	}
 							                		},
 													{
 											        	fieldLabel:  HreRem.i18n('fieldlabel.num.reg.conyuge'),
 											        	reference: 'numRegConyuge',
-											        	name: 'documentoConyuge'
+											        	name: 'documentoConyuge',
+										            	listeners: {
+										            		change: 'comprobarObligatoriedadCamposNexos'										         
+										            	}
 											        },
 											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.relacion.hre'),
@@ -410,6 +423,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.antiguo.deudor'),
 											        	reference: 'antiguoDeudor',
 											        	name: 'antiguoDeudor',
+											        	
 											        	bind: {
 											        		store: '{comboSiNoRem}'
 										            	}
@@ -419,6 +433,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.relacion.ant.deudor'),
 											        	reference: 'relacionAntDeudor',
 											        	name: 'relacionAntDeudor',
+											        	
 											        	bind: {
 											        		store: '{comboSiNoRem}'
 										            	}
@@ -443,19 +458,12 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 														reference: 'tipoDocumentoRte',
 														name: 'codTipoDocumentoRte',
+														
 											        	bind: {
 										            		store: '{comboTipoDocumento}'
 										            	},
 										            	listeners : {
-										            		change: function(combo, value) {
-										            			var me = this;
-										            			if(value) {
-										            				me.up('formBase').down('[reference=numeroDocumentoRte]').allowBlank = false;
-										            			} else {
-										            				me.up('formBase').down('[reference=numeroDocumentoRte]').allowBlank = true;
-										            				me.up('formBase').down('[reference=numeroDocumentoRte]').setValue("");
-										            			}
-										            		}
+										            		change: 'comprobarObligatoriedadCamposNexos'										            		
 										            	}
 											        },
 											        {
@@ -463,15 +471,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														reference: 'numeroDocumentoRte',
 														name: 'numDocumentoRte',
 										            	listeners : {
-										            		change: function(combo, value) {
-										            			var me = this;
-										            			if(value) {
-										            				me.up('formBase').down('[reference=tipoDocumentoRte]').allowBlank = false;
-										            			} else {
-										            				me.up('formBase').down('[reference=tipoDocumentoRte]').allowBlank = true;
-										            				me.up('formBase').down('[reference=tipoDocumentoRte]').setValue("");
-										            			}
-										            		}
+										            		change: 'comprobarObligatoriedadCamposNexos'
 										            	}
 							                		},
 													{
@@ -514,6 +514,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														reference: 'municipioComboRte',
 														name: 'municipioRteCodigo',
 														disabled: true,
+														
 										            	bind: {
 										            		store: '{comboMunicipioRte}'
 										            	}
@@ -539,6 +540,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														fieldLabel: HreRem.i18n('fieldlabel.pais'),
 														reference: 'paisRte',
 														name: 'codigoPaisRte',
+														
 										            	bind: {
 										            		store: '{comboPaises}'
 										            	},

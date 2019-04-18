@@ -59,7 +59,6 @@ import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -199,7 +198,7 @@ public class AgendaAdapter {
 		return proxyFactory.proxy(EXTTareasApi.class).buscarTareasPendientesDelegator(dto);
 	}
 
-	public String getValidacionPrevia(Long id){
+	public String getValidacionPrevia(Long id) throws Exception{
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(id);
 		GenericForm formulario = actGenericFormManager.get(tar.getTareaExterna().getId());
 
@@ -255,7 +254,7 @@ public class AgendaAdapter {
 		}
 	}
 
-	public List<DtoCampo>  getFormularioTarea(Long id){
+	public List<DtoCampo>  getFormularioTarea(Long id) throws Exception{
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(id);
 		GenericForm formulario = actGenericFormManager.get(tar.getTareaExterna().getId());
 		List<GenericFormItem> campos = formulario.getItems();
@@ -353,7 +352,7 @@ public class AgendaAdapter {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) {
+	private DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
 		GenericForm genericForm = actGenericFormManager.get(tar.getTareaExterna().getId());
 

@@ -355,6 +355,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									        	fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 												reference: 'comboMotivoOcultacionAlquiler',
 												textareaRefChained: 'textareaMotivoOcultacionManualAlquiler',
+												disabled: true,
 												bind: {
 								            		store: '{comboMotivosOcultacionAlquiler}',
 								            		value: '{datospublicacionactivo.motivoOcultacionAlquilerCodigo}'

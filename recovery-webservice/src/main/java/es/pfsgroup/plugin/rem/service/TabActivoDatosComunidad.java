@@ -110,7 +110,12 @@ public class TabActivoDatosComunidad implements TabActivoService {
 						beanUtilNotNull.copyProperty(datosComunidad, "situacionCodigo", activo.getComunidadPropietarios().getSituacion().getCodigo());
 					}
 				}
-					
+			}
+			
+			if(activoDao.isUnidadAlquilable(activo.getId())) {    
+				datosComunidad.setUnidadAlquilable(true);
+			}else {
+				datosComunidad.setUnidadAlquilable(false);
 			}
 			
 			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	

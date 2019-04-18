@@ -47,6 +47,11 @@ public class TabActivoCargas implements TabActivoService {
 			} else {
 				activoDto.setConCargas(0);
 			}
+			if(activoDao.isUnidadAlquilable(activo.getId())) {
+				activoDto.setUnidadAlquilable(true);
+			}else {
+				activoDto.setUnidadAlquilable(false);
+			}
 		
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	

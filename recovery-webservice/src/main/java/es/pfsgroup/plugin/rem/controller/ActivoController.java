@@ -214,7 +214,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTabActivo(Long id, String tab, ModelMap model, HttpServletRequest request) {
-		try {
+		try { 
 			model.put(RESPONSE_DATA_KEY, adapter.getTabActivo(id, tab));
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, tab, ACCION_CODIGO.CODIGO_VER);
 

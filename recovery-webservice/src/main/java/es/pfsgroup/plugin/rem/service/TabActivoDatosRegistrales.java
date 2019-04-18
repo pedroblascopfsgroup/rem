@@ -148,7 +148,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				BeanUtils.copyProperties(activoDto, activo.getPdvs().get(0));
 		}
 		
-
 		if (activo.getTitulo() != null) {
 			BeanUtils.copyProperties(activoDto, activo.getTitulo());
 			if (activo.getTitulo().getEstado() != null) {
@@ -329,6 +328,12 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			activoDto.setNoEstaInscrito(true);
 		}else{
 			activoDto.setNoEstaInscrito(false);
+		}
+		
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			activoDto.setUnidadAlquilable(true);
+		}else {
+			activoDto.setUnidadAlquilable(false);
 		}
 		
 		

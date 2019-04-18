@@ -43,8 +43,11 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
@@ -53,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
@@ -104,7 +108,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		//-----Usuariocrear, Fechacrear
 		Auditoria auditoria = new Auditoria();
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado(); 
 		auditoria.setUsuarioCrear(usuarioLogado.getUsername());
 		auditoria.setFechaCrear(new Date());  
 		
@@ -247,6 +251,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			unidadAlquilable.setPropietariosActivo(propietariosUA);
 		}
 		
+		unidadAlquilable.setComunidadPropietarios(activoMatriz.getComunidadPropietarios());
+		
 		//--Patrimonio Unidad Alquilable
 		Filter patrimonioFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
 		ActivoPatrimonio patrimonioAm = genericDao.get(ActivoPatrimonio.class, patrimonioFilter);
@@ -387,10 +393,13 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			bieInfoRegistral.setBien(bien);
 			bieInfoRegistral.setSuperficieConstruida(BigDecimal.valueOf(Double.valueOf(exc.dameCelda(fila, 11))));
 			bieInfoRegistral.setAuditoria(auditoria);
-			if (!Checks.esNulo(bieInfoRegistralActivoMatriz.getLocalidad()))
+			if(!Checks.esNulo(bieInfoRegistralActivoMatriz)) {
 				bieInfoRegistral.setLocalidad(bieInfoRegistralActivoMatriz.getLocalidad());
-			if (!Checks.esNulo(bieInfoRegistralActivoMatriz.getProvincia()))
 				bieInfoRegistral.setProvincia(bieInfoRegistralActivoMatriz.getProvincia());	
+				bieInfoRegistral.setTomo(bieInfoRegistralActivoMatriz.getTomo());
+				bieInfoRegistral.setLibro(bieInfoRegistralActivoMatriz.getLibro());
+				bieInfoRegistral.setFolio(bieInfoRegistralActivoMatriz.getFolio());
+			}
 			genericDao.save(NMBInformacionRegistralBien.class, bieInfoRegistral);
 			
 			//-----Nuevo ActivoInfoRegistral (superficie util)
@@ -423,6 +432,89 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			}
 		}
 		
+		ActivoAdjudicacionJudicial adJUA = new ActivoAdjudicacionJudicial();
+		ActivoAdjudicacionJudicial adJAM = activoMatriz.getAdjJudicial();
+		if(!Checks.esNulo(adJAM)) {
+			adJUA.setActivo(unidadAlquilable);
+			adJUA.setAuditoria(auditoria);
+			adJUA.setAdjudicacionBien(adJAM.getAdjudicacionBien());
+			adJUA.setDefectosTestimonio(adJAM.getDefectosTestimonio());
+			adJUA.setEntidadEjecutante(adJAM.getEntidadEjecutante());
+			adJUA.setEstadoAdjudicacion(adJAM.getEstadoAdjudicacion());
+			adJUA.setFechaAdjudicacion(adJAM.getFechaAdjudicacion());
+			adJUA.setIdAsunto(adJAM.getIdAsunto());
+			adJUA.setJuzgado(adJAM.getJuzgado());
+			adJUA.setLetrado(adJAM.getLetrado());
+			adJUA.setNumAuto(adJAM.getNumAuto());
+			adJUA.setPlazaJuzgado(adJAM.getPlazaJuzgado());
+			adJUA.setProcurador(adJAM.getProcurador());
+		
+			genericDao.save(ActivoAdjudicacionJudicial.class, adJUA);
+		}
+		ActivoAdjudicacionNoJudicial adNJUA = new ActivoAdjudicacionNoJudicial();
+		ActivoAdjudicacionNoJudicial adJNAM = activoMatriz.getAdjNoJudicial();
+		if(!Checks.esNulo(adJNAM)) {
+			adNJUA.setActivo(unidadAlquilable);
+			adNJUA.setAuditoria(auditoria);
+			adNJUA.setDefectosTestimonio(adJNAM.getDefectosTestimonio());
+			adNJUA.setEntidadEjecutante(adJNAM.getEntidadEjecutante());
+			adNJUA.setFechaFirmaTitulo(adJNAM.getFechaFirmaTitulo());
+			adNJUA.setFechaTitulo(adJNAM.getFechaTitulo());
+			adNJUA.setNumReferencia(adJNAM.getNumReferencia());
+			adNJUA.setTramitadorTitulo(adJNAM.getTramitadorTitulo());
+			adNJUA.setValorAdquisicion(adJNAM.getValorAdquisicion());
+			
+			genericDao.save(ActivoAdjudicacionNoJudicial.class, adNJUA);
+		}
+		
+		
+		ActivoTitulo activoTituloUa = new ActivoTitulo();
+		activoTituloUa.setActivo(unidadAlquilable);
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
+		ActivoTitulo activoTituloAM = genericDao.get(ActivoTitulo.class, f1);
+		
+		if(!Checks.esNulo(activoTituloAM)) {
+			activoTituloUa.setFechaEntregaGestoria(activoTituloAM.getFechaEntregaGestoria());
+			activoTituloUa.setFechaEnvioAuto(activoTituloAM.getFechaEnvioAuto());
+			activoTituloUa.setFechaNotaSimple(activoTituloAM.getFechaNotaSimple());
+			activoTituloUa.setFechaInscripcionReg(activoTituloAM.getFechaInscripcionReg());
+			activoTituloUa.setFechaPres1Registro(activoTituloAM.getFechaPres1Registro());
+			activoTituloUa.setFechaPres2Registro(activoTituloAM.getFechaPres2Registro());
+			activoTituloUa.setFechaRetiradaReg(activoTituloAM.getFechaRetiradaReg());
+/*d*/		activoTituloUa.setEstado(activoTituloAM.getEstado());
+
+			activoTituloUa.setAuditoria(auditoria);
+		}
+		genericDao.save(ActivoTitulo.class, activoTituloUa);
+		
+		List<ActivoCargas> cargasUa = new ArrayList <ActivoCargas>();
+		List<ActivoCargas> cargasAM = activoMatriz.getCargas();
+	
+		if(!Checks.estaVacio(cargasAM)) {
+			for (ActivoCargas cargaAM : cargasAM) {
+				ActivoCargas cargaUA = new  ActivoCargas();
+				
+				cargaUA.setActivo(unidadAlquilable);
+				cargaUA.setAuditoria(auditoria);
+				cargaUA.setCargaBien(cargaAM.getCargaBien());
+				cargaUA.setCargasPropias(cargaAM.getCargasPropias());
+				cargaUA.setDescripcionCarga(cargaAM.getDescripcionCarga());
+				cargaUA.setFechaCancelacionRegistral(cargaAM.getFechaCancelacionRegistral());
+				cargaUA.setObservaciones(cargaAM.getObservaciones());
+				cargaUA.setOrdenCarga(cargaAM.getOrdenCarga());
+				cargaUA.setOrigenDato(cargaAM.getOrigenDato());
+				cargaUA.setSubtipoCarga(cargaAM.getSubtipoCarga());
+				cargaUA.setTipoCargaActivo(cargaAM.getTipoCargaActivo());
+				cargasUa.add(cargaUA);
+			}
+		}
+		unidadAlquilable.setCargas(cargasUa);
+		unidadAlquilable.setConCargas(activoMatriz.getConCargas());
+		unidadAlquilable.setFechaRevisionCarga(activoMatriz.getFechaRevisionCarga());
+		unidadAlquilable.setVpo(activoMatriz.getVpo());
+		
+		
+
 		//-----Insercion de gestores a la Unidad Alquilable
 		if (!Checks.esNulo(activoMatriz)) {
 			GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
@@ -686,7 +778,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				actSitPosUA.setSitaucionJuridica(actSitPosAM.getSitaucionJuridica());
 			}
 
-			
+			genericDao.save(Activo.class, unidadAlquilable);
 			genericDao.save(ActivoSituacionPosesoria.class, actSitPosUA);
 
 		}

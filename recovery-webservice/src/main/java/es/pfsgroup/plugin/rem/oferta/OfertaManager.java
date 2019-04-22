@@ -866,9 +866,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							DDRegimenesMatrimoniales.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodRegimenMatrimonial())));
 				}
-				titAdi.setRechazarCesionDatosPropietario(!titDto.getCesionDatos());
-				titAdi.setRechazarCesionDatosProveedores(!titDto.getComunicacionTerceros());
-				titAdi.setRechazarCesionDatosPublicidad(!titDto.getTransferenciasInternacionales());
+				if(titDto.getCesionDatos() != null){
+					titAdi.setRechazarCesionDatosPropietario(!titDto.getCesionDatos());
+				}
+				if(titDto.getComunicacionTerceros() != null){
+					titAdi.setRechazarCesionDatosProveedores(!titDto.getComunicacionTerceros());
+				}
+				if(titDto.getTransferenciasInternacionales() != null){
+					titAdi.setRechazarCesionDatosPublicidad(!titDto.getTransferenciasInternacionales());
+				}
 				
 				titAdi.setRazonSocial(titDto.getRazonSocial());
 				titAdi.setTelefono1(titDto.getTelefono1());

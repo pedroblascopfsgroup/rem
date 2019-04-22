@@ -700,6 +700,38 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
+
+		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+
+		validateSaveOferta(dto, oferta, estadoOferta);
+		
+		oferta.setEstadoOferta(estadoOferta);
+
+		// Al aceptar la oferta, se crea el trabajo de sancion oferta y el
+		// expediente comercial
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
+			comprobarPrecio(oferta, dto);
+			resultado = doAceptaOferta(oferta);
+		}
+
+		// si la oferta ha sido rechazada guarda los motivos de rechazo y
+		// enviamos un email/notificacion.
+		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
+			resultado = doRechazaOferta(dto, oferta);
+		}
+		
+		
+		if(!resultado){
+			resultado = this.persistOferta(oferta);
+		}
+		
+		
+
+		return resultado;
+	}
+	
+	private void comprobarPrecio(Oferta oferta,DtoOfertaActivo dto){
 		String tipoOferta = oferta.getTipoOferta().getCodigo();
 		
 		if(!Checks.esNulo(dto.getIdActivo())){
@@ -720,34 +752,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 		}
-
-		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
-
-		validateSaveOferta(dto, oferta, estadoOferta);
-		
-		oferta.setEstadoOferta(estadoOferta);
-
-		// Al aceptar la oferta, se crea el trabajo de sancion oferta y el
-		// expediente comercial
-		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
-			resultado = doAceptaOferta(oferta);
-		}
-
-		// si la oferta ha sido rechazada guarda los motivos de rechazo y
-		// enviamos un email/notificacion.
-		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
-			resultado = doRechazaOferta(dto, oferta);
-		}
-		
-		
-		if(!resultado){
-			resultado = this.persistOferta(oferta);
-		}
-		
-		
-
-		return resultado;
 	}
 
 	private boolean persistOferta(Oferta oferta) {

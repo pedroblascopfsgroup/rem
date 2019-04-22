@@ -731,26 +731,32 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return resultado;
 	}
 	
-	private void comprobarPrecio(Oferta oferta,DtoOfertaActivo dto){
+	private void comprobarPrecio(Oferta oferta, DtoOfertaActivo dto) {
 		String tipoOferta = oferta.getTipoOferta().getCodigo();
-		
-		if(!Checks.esNulo(dto.getIdActivo())){
+
+		if (!Checks.esNulo(dto.getIdActivo())) {
 			Activo activo = activoAdapter.getActivoById(dto.getIdActivo());
 			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			Filter filtroTofVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-			Filter filtroTofAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
+			Filter filtroTofVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
+					DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+			Filter filtroTofAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
+					DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
 			ActivoValoraciones precioVenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofVenta);
 			ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofAlquiler);
-			
-			if(DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)){
-				if(Checks.esNulo(precioVenta) || (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))){
-					throw new JsonViewerException("Activo sin precio");
+
+			if (oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null
+					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo()))
+				if (DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)) {
+					if (Checks.esNulo(precioVenta)
+							|| (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))) {
+						throw new JsonViewerException("Activo sin precio");
+					}
+				} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)) {
+					if (Checks.esNulo(precioRenta)
+							|| (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))) {
+						throw new JsonViewerException("Activo sin precio");
+					}
 				}
-			}else if(DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)){
-				if(Checks.esNulo(precioRenta) || (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))){
-					throw new JsonViewerException("Activo sin precio");
-				}
-			}
 		}
 	}
 

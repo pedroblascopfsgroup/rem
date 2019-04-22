@@ -578,7 +578,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 
 			}
-
+			
 			activoPublicacionDao.save(actPubli);
 		}
 	}
@@ -1485,6 +1485,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// quitar las escritas para el precio o valoracion anterior
 
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
+				activoValoracion.setFechaCambioValorActivo(new Date());
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
 
@@ -1501,7 +1502,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoValoracion.setActivo(activo);
 				activoValoracion.setTipoPrecio(tipoPrecio);
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
-
+				activoValoracion.setFechaCambioValorActivo(new Date());
 				genericDao.save(ActivoValoraciones.class, activoValoracion);
 			}
 

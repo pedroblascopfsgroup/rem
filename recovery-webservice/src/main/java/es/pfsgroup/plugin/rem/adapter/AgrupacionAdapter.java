@@ -614,8 +614,11 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo());
 					}
 				}
-
-
+				
+				//TODO
+				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+					
+				}
 
 				// Resolvemos si la agrupación será editable
 				dtoAgrupacion.setEsEditable(true);

@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -144,6 +145,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		AuthenticationData authData = new AuthenticationData();
 		try{
 			Usuario usuario = adapter.getUsuarioLogado();
+			Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
+			UsuarioCartera uca = genericDao.get(UsuarioCartera.class, filtroUca);
+			
 			if (usuario != null) {
 				List<String> authorities = new ArrayList<String>();
 				List<String> roles = new ArrayList<String>();
@@ -173,6 +177,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
 	
 				authData.setEsGestorSustituto(esGestorSustituto(usuario));
+				
+				if(!Checks.esNulo(uca)){
+					authData.setCodigoCartera(uca.getCartera().getCodigo());
+				}
 			}
 		}catch(LazyInitializationException e){
 			logger.info(e.getMessage());

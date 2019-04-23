@@ -635,7 +635,8 @@ comprobarObligatoriedadRte: function(){
 		var me = this,
 			wizard = me.getView().up('wizardBase'),
 			datosClienteUrsusWindow = Ext.create('HreRem.view.expedientes.DatosClienteUrsus', {
-				clienteUrsus: datosClienteUrsus
+				clienteUrsus: datosClienteUrsus,
+				storeProblemasVenta: wizard.storeProblemasVenta
 			});
 
 		wizard.setX(Ext.Element.getViewportWidth() / 30);

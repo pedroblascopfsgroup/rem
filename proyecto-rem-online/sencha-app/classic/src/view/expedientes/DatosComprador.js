@@ -13,13 +13,11 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     cls: '',//panel-base shadow-panel
     collapsed: false,
     modal	: true,
-
     
     idComprador: null,
     expediente: null,
     modoEdicion: true, // Inicializado para evitar errores.
     deshabilitarCamposDoc: false,
-    
     
     requires: ['HreRem.model.FichaComprador'],
     

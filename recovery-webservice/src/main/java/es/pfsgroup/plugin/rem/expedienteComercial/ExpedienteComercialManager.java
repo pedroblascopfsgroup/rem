@@ -236,6 +236,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
@@ -5234,6 +5235,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return datosClienteDto;
+	}
+	
+	@Override
+	public List<DatosClienteProblemasVentaDto> buscarProblemasVentaClienteUrsus(String numeroUrsus, String idExpediente) throws Exception {
+		
+		List<DatosClienteProblemasVentaDto> datosClienteProblemasVentaDto = new ArrayList<DatosClienteProblemasVentaDto>();
+
+		try {
+			if(!Checks.esNulo(numeroUrsus)) {
+				Integer numURSUS = Integer.parseInt(numeroUrsus);
+			
+				if (!Checks.esNulo(idExpediente)) {
+					DDSubcartera subcarteraExpediente = getCodigoSubCarteraExpediente(Long.parseLong(idExpediente));
+					if (!Checks.esNulo(subcarteraExpediente) && DDSubcartera.CODIGO_BAN_BH.equals(subcarteraExpediente.getCodigo())) {
+						datosClienteProblemasVentaDto = uvemManagerApi.ejecutarDatosClienteProblemasVenta(numURSUS, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA_HABITAT);
+					} else {
+						datosClienteProblemasVentaDto = uvemManagerApi.ejecutarDatosClienteProblemasVenta(numURSUS, DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+					}
+				}
+			}
+
+		} catch (NumberFormatException nfe) {
+			logger.error("error en expedienteComercialManager", nfe);
+
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager", e);
+			throw e;
+		}
+
+		return datosClienteProblemasVentaDto;
 	}
 
 	@Override

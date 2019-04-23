@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.expedientedetalle',
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 'HreRem.model.DatosClienteUrsus', 
                 'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
@@ -398,8 +398,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			    		return true;
 			    	}
 		    	}
-		    	
-		    }
+		 }
 	 },
 
 
@@ -1069,6 +1068,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getHistoricoCondiciones',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
+		},
+		
+		storeProblemasVenta: {
+			model: 'HreRem.model.DatosClienteUrsus',
+			autoLoad: true,
+			autoSync: true,
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus',
+				extraParams: {numeroUrsus: '', idExpediente: '{expediente.id}'}
+			}
 		}
 		
 		

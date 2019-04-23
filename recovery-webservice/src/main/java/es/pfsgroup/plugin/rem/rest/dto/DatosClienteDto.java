@@ -41,6 +41,7 @@ public class DatosClienteDto {
 	 private String SubsectorDeActividadEconomica;
 	 private String numeroClienteUrsus;
 	 private String numeroClienteUrsusConyuge;
+	 private Boolean hayOcurrencias;
 	 
 	public String getClaseDeDocumentoIdentificador() {
 		return ClaseDeDocumentoIdentificador;
@@ -317,6 +318,12 @@ public class DatosClienteDto {
 	}
 	public void setNumeroClienteUrsusConyuge(String numeroClienteUrsusConyuge) {
 		this.numeroClienteUrsusConyuge = numeroClienteUrsusConyuge;
+	}
+	public Boolean getHayOcurrencias() {
+		return hayOcurrencias;
+	}
+	public void setHayOcurrencias(Boolean hayOcurrencias) {
+		this.hayOcurrencias = hayOcurrencias;
 	}
 
 }

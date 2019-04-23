@@ -713,6 +713,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
+//<<<<<<< Updated upstream
 	onCompradoresListDobleClick: function(gridView, record) {
 		var me = this,
 			codigoEstado = me.getViewModel().get('expediente.codigoEstado'),
@@ -726,6 +727,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if((codigoEstado !== CONST.ESTADOS_EXPEDIENTE['VENDIDO'] && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))) {
 			var idCliente = record.get('id'),
 				expediente= me.getViewModel().get('expediente'),
+				storeProblemasVenta = me.getViewModel().get('storeProblemasVenta'),
 				edicion = me.getViewModel().get('puedeModificarCompradores'),
 				wizardTitle = HreRem.i18n('title.windows.datos.comprador');
 
@@ -741,6 +743,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					],
 					title: wizardTitle,
 					expediente: expediente,
+					storeProblemasVenta: storeProblemasVenta,
 					idComprador: idCliente,
 					modoEdicion: edicion,
 					width: viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth / 1.5,
@@ -1650,6 +1653,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		     }
 		});		
 	},
+
 	onClickBotonCerrarClienteUrsus: function(btn){
 		var window = btn.up("window");
 		window.destroy();

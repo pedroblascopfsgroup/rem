@@ -49,9 +49,9 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	private String codRegimenMatrimonial;
 
 	
-	private Boolean transferenciasInternacionales;
-	private Boolean cesionDatos;
-	private Boolean comunicacionTerceros;
+	private Boolean transferenciasInternacionales = Boolean.FALSE;
+	private Boolean cesionDatos = Boolean.FALSE;
+	private Boolean comunicacionTerceros = Boolean.FALSE;
 	
 	//REMVIP-3846
 	@Size(max=50,groups = { Insert.class, Update.class })

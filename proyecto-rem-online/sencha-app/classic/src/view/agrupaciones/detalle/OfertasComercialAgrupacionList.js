@@ -207,8 +207,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			{
 				if(!Ext.isEmpty(me.lookupController().lookupReference('listadoactivosagrupacion'))) {
 					var arrayOfertas = me.getView().getStore();
-					debugger;
-/*					if(agrupacion.get('cambioEstadoActivo')){
+					/*if(agrupacion.get('cambioEstadoActivo')){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
 					}
 					if(agrupacion.get('cambioEstadoPrecio')){

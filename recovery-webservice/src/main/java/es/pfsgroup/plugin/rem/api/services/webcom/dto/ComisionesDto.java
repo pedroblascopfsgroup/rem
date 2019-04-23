@@ -1,21 +1,18 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
-import java.util.List;
-
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class ComisionesDto implements WebcomRESTDto {
 	@WebcomRequired
 	private LongDataType idComisionRem;
 	@WebcomRequired
-	private LongDataType idActivoRem;
+	private LongDataType idActivoHaya;
 	@WebcomRequired
 	private DateDataType fechaAccion;
 	@WebcomRequired
@@ -48,17 +45,7 @@ public class ComisionesDto implements WebcomRESTDto {
 	
 	private LongDataType baja;
 	
-	@NestedDto(groupBy="idComisionRem", type=ActivoComisionDto.class)
-	private List<ActivoComisionDto> actComisiones;
-
-	public List<ActivoComisionDto> getActivoComisiones() {
-		return actComisiones;
-	}
-
-	public void setActivoComisiones(List<ActivoComisionDto> activoComisiones) {
-		this.actComisiones = activoComisiones;
-	}
-
+	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
 	}
@@ -178,13 +165,14 @@ public class ComisionesDto implements WebcomRESTDto {
 	public void setBaja(LongDataType baja) {
 		this.baja = baja;
 	}
-	
-	public LongDataType getIdActivoRem() {
-		return idActivoRem;
+
+	public LongDataType getIdActivoHaya() {
+		return idActivoHaya;
 	}
 
-	public void setIdActivoRem(LongDataType idActivoRem) {
-		this.idActivoRem = idActivoRem;
+	public void setIdActivoHaya(LongDataType idActivoHaya) {
+		this.idActivoHaya = idActivoHaya;
 	}
+	
 
 }

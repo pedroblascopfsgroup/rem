@@ -507,9 +507,6 @@ public class AgendaController extends TareaController {
 								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 								UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
 								
-								dto.setCorrecw(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "corecw.valor")).getValor()));
-								dto.setComoa3(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "comoa3.valor")).getValor()));
-								
 								eco.setCorrecw(dto.getCorrecw());
 								eco.setComoa3(dto.getComoa3());
 								genericDao.save(ExpedienteComercial.class, eco);
@@ -517,8 +514,6 @@ public class AgendaController extends TareaController {
 							}else {
 								dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
-								dto.setCorrecw(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "corecw.valor")).getValor()));
-								dto.setComoa3(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "comoa3.valor")).getValor()));
 								
 								eco.setCorrecw(dto.getCorrecw());
 								eco.setComoa3(dto.getComoa3());

@@ -8779,9 +8779,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 					UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
 			
-			dto.setCorrecw(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "corecw.valor")).getValor()));
-			dto.setComoa3(Long.parseLong(genericDao.get(Config.class, genericDao.createFilter(FilterType.EQUALS, "id", "comoa3.valor")).getValor()));
-			
 			beanUtilNotNull.copyProperties(expedienteComercial, dto);
 			
 			if (!Checks.esNulo(dto) && dto.getCorrecw() == 1 ) {
@@ -8843,5 +8840,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}
+		return false;
 	}
 }

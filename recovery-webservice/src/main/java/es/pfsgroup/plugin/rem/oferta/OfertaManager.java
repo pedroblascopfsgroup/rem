@@ -29,7 +29,6 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
-import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -117,7 +116,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -868,9 +866,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							DDRegimenesMatrimoniales.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodRegimenMatrimonial())));
 				}
-				titAdi.setRechazarCesionDatosPropietario(!titDto.getCesionDatos());
-				titAdi.setRechazarCesionDatosProveedores(!titDto.getComunicacionTerceros());
-				titAdi.setRechazarCesionDatosPublicidad(!titDto.getTransferenciasInternacionales());
+				if(titDto.getCesionDatos() != null){
+					titAdi.setRechazarCesionDatosPropietario(!titDto.getCesionDatos());
+				}
+				if(titDto.getComunicacionTerceros() != null){
+					titAdi.setRechazarCesionDatosProveedores(!titDto.getComunicacionTerceros());
+				}
+				if(titDto.getTransferenciasInternacionales() != null){
+					titAdi.setRechazarCesionDatosPublicidad(!titDto.getTransferenciasInternacionales());
+				}
 				
 				titAdi.setRazonSocial(titDto.getRazonSocial());
 				titAdi.setTelefono1(titDto.getTelefono1());
@@ -1717,7 +1721,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					map.put("codigoAgrupacionComercialRem", errorsList.get("codigoAgrupacionComercialRem"));
 				}
 				
-				if(!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getNumAgrupRem()) && ofertaDto.getOfertaLote()) {
+				if(!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getNumAgrupRem())
+						&& (ofertaDto.getOfertaLote() != null  && ofertaDto.getOfertaLote())) {
 					map.put("idAgrupacionComercialRem", oferta.getAgrupacion().getNumAgrupRem());
 				}
 

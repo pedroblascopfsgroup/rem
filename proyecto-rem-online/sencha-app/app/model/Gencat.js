@@ -153,7 +153,10 @@ Ext.define('HreRem.model.Gencat', {
 		//Notificacion
 		{
 			name:'checkNotificacion',
-			type: 'boolean'
+			type: 'boolean',calculate: function(data) {
+				return !(data.estaComunicado && data.usuarioValido );
+			},
+			depends: ['estaComunicado', 'usuarioValido']
 		},
 		{
 			name:'fechaNotificacion',

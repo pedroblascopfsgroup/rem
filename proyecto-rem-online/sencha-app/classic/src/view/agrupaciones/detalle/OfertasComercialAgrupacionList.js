@@ -197,10 +197,8 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
-		debugger;
 		
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
-			debugger;
 			var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
 			if (agrupacion.get('codigoCartera')==CONST.CARTERA['BANKIA'] && (agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'] 
 				|| agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] || agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['RESTRINGIDA']))

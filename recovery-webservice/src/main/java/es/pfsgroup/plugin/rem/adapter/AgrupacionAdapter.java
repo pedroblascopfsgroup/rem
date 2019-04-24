@@ -1857,7 +1857,7 @@ public class AgrupacionAdapter {
 		boolean resultado = false;
 		if(agr != null && agr.getActivos() != null && agr.getActivos().size() > 0){
 			for(ActivoAgrupacionActivo activo : agr.getActivos()){
-				if(DDTipoComercializar.CODIGO_RETAIL.equals(activo.getActivo().getTipoComercializar().getCodigo())){
+				if(activo.getActivo().getTipoComercializar() != null && DDTipoComercializar.CODIGO_RETAIL.equals(activo.getActivo().getTipoComercializar().getCodigo())){
 					resultado = true;
 					break;
 				}

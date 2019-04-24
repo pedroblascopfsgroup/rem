@@ -56,6 +56,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          	onClickPropagation :  'onClickPropagation'
          },
          
+         'datospublicacionactivo historicocondicioneslist': {
+          	onClickPropagation :  'onClickPropagationCalificacionNegativa'
+         },
+         
          'tituloinformacionregistralactivo calificacionnegativagrid': {
           	onClickPropagation: 'onClickPropagationCalificacionNegativa'
           }
@@ -3316,8 +3320,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		        var successFn = function(record, operation) {
 		            window.destroy();
-		            /* me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); */
-		            me.manageToastJsonResponse(me, record.responseText);
+		            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		            me.getView().unmask();
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 		        };
@@ -3378,6 +3381,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     				activos = [];
     			} else if (targetGrid=='calificacionNegativa') {
     				propagableData = me.createTabDataCalificacionesNegativas(activos);
+    				activos = []
+    			}else if (targetGrid=='condicionesespecificas'){
+    				propagableData = me.createTabDataCondicionesEspecificas(activos);
     				activos = []
     			}
     		}
@@ -3448,16 +3454,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     return tabData;
   },
 
-  	createTabDataCondicionesEspecificas : function(listadoActivos, data) {
+  	createTabDataCondicionesEspecificas : function(listadoActivos, recordsGridArray) {
 	    var me = this, tabData = {};
 	    tabData.id = me.getViewModel().get("activo.id");
 	    tabData.models = [];
+	    
+	    var l_CondicionEspecifica = [];
+	    
+	    for (var i = 0; i < recordsGridArray.length; i++) {
+	    	l_CondicionEspecifica.push(recordsGridArray[i].data.texto);
+	    }
 
 	    Ext.Array.each(listadoActivos, function(record, index) {
 	          var model = {};
 	          model.name = 'condicionesespecificas';
 	          model.type = 'activo';
-	          model.data = {texto: data.texto};
+	          model.data = {texto: l_CondicionEspecifica[0]};
 	          model.data.idActivo = record.data.activoId;
 	          tabData.models.push(model);
 	        });

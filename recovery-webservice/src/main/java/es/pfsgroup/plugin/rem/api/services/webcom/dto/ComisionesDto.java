@@ -12,6 +12,8 @@ public class ComisionesDto implements WebcomRESTDto {
 	@WebcomRequired
 	private LongDataType idComisionRem;
 	@WebcomRequired
+	private LongDataType idActivoHaya;
+	@WebcomRequired
 	private DateDataType fechaAccion;
 	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;
@@ -42,7 +44,8 @@ public class ComisionesDto implements WebcomRESTDto {
 	private DoubleDataType porcentaje;
 	
 	private LongDataType baja;
-
+	
+	
 	public DateDataType getFechaAccion() {
 		return fechaAccion;
 	}
@@ -161,6 +164,14 @@ public class ComisionesDto implements WebcomRESTDto {
 
 	public void setBaja(LongDataType baja) {
 		this.baja = baja;
+	}
+
+	public LongDataType getIdActivoHaya() {
+		return idActivoHaya;
+	}
+
+	public void setIdActivoHaya(LongDataType idActivoHaya) {
+		this.idActivoHaya = idActivoHaya;
 	}
 	
 

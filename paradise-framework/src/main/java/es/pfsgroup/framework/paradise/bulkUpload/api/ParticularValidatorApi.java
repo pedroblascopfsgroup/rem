@@ -675,4 +675,14 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean validadorFechaMayorIgualFechaVenta(Long numExpediente, String fecha);
 
+	Boolean isOfferOfGiants(String numOferta);
+
+	Boolean existeOferta(String numOferta);
+
+	Boolean esOfertaPendienteDeSancion(String numOferta);
+
+	Boolean isAgrupacionOfGiants(String numAgrupacion);
+
+	Boolean isActivoOfGiants(String numActivo);
+
 }

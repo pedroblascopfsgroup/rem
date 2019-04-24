@@ -198,6 +198,27 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		var gencat = context.record.get("gencat");
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		
+		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
+			var agrupacion = me.lookupController().getViewModel().get('agrupacionficha');
+			if (agrupacion.get('codigoCartera')==CONST.CARTERA['BANKIA'] && (agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'] 
+				|| agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] || agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['RESTRINGIDA']))
+			{
+				if(!Ext.isEmpty(me.lookupController().lookupReference('listadoactivosagrupacion'))) {
+					var arrayOfertas = me.getView().getStore();
+					/*if(agrupacion.get('cambioEstadoActivo')){
+						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
+					}
+					if(agrupacion.get('cambioEstadoPrecio')){
+						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
+					}
+					if(agrupacion.get('cambioEstadoPublicacion')){
+						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+					}*/
+				}
+				
+			} 
+		}
+		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
 			if (gencat == "true") {
 				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');

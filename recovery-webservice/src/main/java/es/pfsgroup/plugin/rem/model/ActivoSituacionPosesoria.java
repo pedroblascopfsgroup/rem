@@ -127,6 +127,12 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
     @JoinColumn(name = "DD_SIJ_ID")
     private DDSituacionJuridica sitaucionJuridica;
 	
+	@Column(name = "SPS_FECHA_ULT_CAMBIO_TIT")
+	private Date fechaUltCambioTit;
+	
+	@Column(name = "SPS_FECHA_ULT_CAMBIO_POS")
+	private Date fechaUltCambioPos;
+	
 	@Version   
 	private Long version;
 
@@ -338,6 +344,22 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 
 	public void setSitaucionJuridica(DDSituacionJuridica sitaucionJuridica) {
 		this.sitaucionJuridica = sitaucionJuridica;
+	}
+
+	public Date getFechaUltCambioPos() {
+		return fechaUltCambioPos;
+	}
+
+	public void setFechaUltCambioPos(Date fechaUltCambioPos) {
+		this.fechaUltCambioPos = fechaUltCambioPos;
+	}
+
+	public Date getFechaUltCambioTit() {
+		return fechaUltCambioTit;
+	}
+
+	public void setFechaUltCambioTit(Date fechaUltCambioTit) {
+		this.fechaUltCambioTit = fechaUltCambioTit;
 	}
 
 }

@@ -32,7 +32,8 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
     		habilitarCamposAlCrear = false,
     		allowBlankAlCrear = false,
     		idNotificacion = null,
-    		idHComunicacion = null;
+    		idHComunicacion = null,
+    		bloqueoEditarArchivoSancion = false;
 
     	if(!Ext.isEmpty(me.record)){
     		var notificacionGencat = me.record,
@@ -45,9 +46,12 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
     		deshabilitarCamposDespuesAlCrear = false;
     		habilitarCamposAlCrear = true;
     		idNotificacion = notificacionGencat.id;
+    		me.setTitle(HreRem.i18n("title.sancionar.notificacion.gencat"));
+    	}else{
+    		me.setTitle(HreRem.i18n("title.crear.notificacion.gencat"));
     	}
     	
-    	me.setTitle(HreRem.i18n("title.crear.notificacion.gencat"));
+    	
     	var comboTipoDocumentoComunicacion = new Ext.data.Store({
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -58,6 +62,10 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
 				}
 			}
     	});
+    	
+    	if(!Ext.isEmpty(fechaSancion)){
+    		bloqueoEditarArchivoSancion = true;
+    	}
     	me.buttons = [ 
     		{ 
     			formBind: true, 
@@ -152,6 +160,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
 						        anchor: '100%',
 						        width: '100%',
 						        allowBlank: allowBlankAlCrear,
+						        disabled: bloqueoEditarArchivoSancion,
 						        msgTarget: 'side',
 						        buttonConfig: {
 						        	iconCls: 'ico-search-white',
@@ -189,7 +198,8 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
 				            	store: comboTipoDocumentoComunicacion,				            	
 				            	displayField: 'descripcion',
 							    valueField: 'codigo',
-								allowBlank: allowBlankAlCrear,
+								allowBlank: allowBlankAlCrear, 
+								disabled: bloqueoEditarArchivoSancion,
 								width: '100%',
 								listeners: {
 			                        change: function(fld, value) {

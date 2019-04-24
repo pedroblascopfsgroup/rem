@@ -271,20 +271,16 @@ public class UvemManager implements UvemManagerApi {
 				((GMPAJC93_INS) servicio).setCodigoTipoDeViacotivw((short) 1);
 				((GMPAJC93_INS) servicio).setDenominacionTipoDeViaTrabajoNotiv1("cl");
 				((GMPAJC93_INS) servicio).setNombreDeLaVianovisa("dummy");
-				
 				//Ejemplo Grid para Problemas con la venta en Cliente Ursus:
 				//Rellenaremos 'iter' ocurrencias (estructuras) de un máximo de 10 para almacenarlas en el vector VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu.
 				Short iter = 2;
 				((GMPAJC93_INS) servicio).setNumeroDeOcurrenciasDeAvisonuocav(Short.valueOf(iter));
-				
 				VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
 				StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu estructura = new StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
-				
 				//Cada estructura llevará un código cotlav, un código comeav y un liavi1 correspondiente con los dos primeros:
 				String[] cod_cotlav = {COTLAV_CLVAAPCO,          COTLAV_CLVAAPCO,          COTLAV_CLVAAPCO,          COTLAV_CLCDD4,      COTLAV_CLCDB4};
 				String[] cod_comeav = {"CL00024E",               "CL00027E",               "CL00108E",               COMEAV_0413,        COMEAV_80};
 				String[] cod_liavi1 = {LIAVI1_CLVAAPCO_CL00024E, LIAVI1_CLVAAPCO_CL00027E, LIAVI1_CLVAAPCO_CL00108E, LIAVI1_CLCDD4_0414, LIAVI1_CLCDB4_80};
-				
 				//Rellenamos el vector de estructuras
 				int i = 0;
 				for(i=0; i<iter; i++) {
@@ -297,6 +293,9 @@ public class UvemManager implements UvemManagerApi {
 				
 				//Lo almacenamos en el servicio para hacer pruebas:
 				((GMPAJC93_INS) servicio).setNumeroDeOcurrenciasnumocu(vector);
+				((GMPAJC93_INS) servicio).setCodigoEstadoCivilcoesci('2');
+				((GMPAJC93_INS) servicio).setIdentClienteConyugeOfertaidclww(800830277);
+				((GMPAJC93_INS) servicio).setNombreYApellidosTitularnotio1("Ana Checa Soler");
 
 			} else if (servicio instanceof GMPDJB13_INS) {
 				((GMPDJB13_INS) servicio).setLongitudMensajeDeSalidarcslon(2);
@@ -733,7 +732,7 @@ public class UvemManager implements UvemManagerApi {
 			datos.setDatosComplementariosDelDomicilio(servicioGMPAJC93_INS.getDatosComplementariosDelDomicilioobdom1());
 			datos.setBarrioColoniaOApartado(servicioGMPAJC93_INS.getBarrioColoniaOApartadonobar2());
 			datos.setEdadDelCliente(servicioGMPAJC93_INS.getEdadDelClientenuedaw() + "");
-			datos.setCodigoEstadoCivil(servicioGMPAJC93_INS.getCodigoEstadoCivilcoesci() + "");
+			datos.setCodigoEstadoCivil(servicioGMPAJC93_INS.getCodigoEstadoCivilcoesci());
 			datos.setEstadoCivilActual(servicioGMPAJC93_INS.getEstadoCivilActualcoesc1());
 			datos.setNumeroDeHijos(servicioGMPAJC93_INS.getNumeroDeHijosnuhijw() + "");
 			datos.setSEXO(servicioGMPAJC93_INS.getSEXOCOSEXO() + "");
@@ -763,6 +762,8 @@ public class UvemManager implements UvemManagerApi {
 			if(!Checks.esNulo(servicioGMPAJC93_INS.getNumeroDeOcurrenciasDeAvisonuocav())){
 				datos.setHayOcurrencias(servicioGMPAJC93_INS.getNumeroDeOcurrenciasDeAvisonuocav() > 0);
 			}
+			if (!Checks.esNulo(servicioGMPAJC93_INS))
+				datos.setNombreYApellidosConyuge(servicioGMPAJC93_INS.getNombreYApellidosTitularnotio1());
 
 		} catch (WIException e) {
 			errorDesc = e.getMessage();

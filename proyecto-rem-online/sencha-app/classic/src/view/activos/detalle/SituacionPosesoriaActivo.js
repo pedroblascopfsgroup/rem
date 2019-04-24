@@ -29,32 +29,70 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.situacion.posesoria'),
 				defaultType: 'textfieldbase',
+				border: false,
 				items :
 					[
 						
+						{
+				        	xtype:'fieldset',
+				        	height: '80%',
+				        	border: false,
+							layout: {
+							        type: 'table',
+							        // The total column count must be specified here
+							        columns: 2,
+							        trAttrs: {height: '30px', width: '100%'},
+							        tdAttrs: {width: '50%'},
+							        tableAttrs: {
+							            style: {
+							                width: '75%'
+											}
+							        }
+							},
+				        	defaultType: 'textfieldbase',
+							rowspan: 1,
+							items: [
+								{ 	// Este campo es necesario para corregir lo que parece un BUG. 
+									// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
+					            	hidden: true
+								},
+								
+						        {
+									xtype: 'comboboxfieldbase',
+									reference: 'conPosesion',
+									fieldLabel: HreRem.i18n('fieldlabel.con.posesion'),
+									readOnly: true,
+						        	bind: {				        		
+						        		store: '{comboSiNoRem}',
+					            		value: '{situacionPosesoria.indicaPosesion}'
+					            	},
+					            	labelWidth: 100,
+					            	width: 80
+						        },
+						        {
+						        	xtype:'textfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
+						        	readOnly: true,
+						        	bind: {
+						        		value: '{situacionPosesoria.diasCambioPosesion}',
+						        		hidden: '{!activo.isCarteraBankia}'
+						        	},
+					            	labelWidth: 120,
+					            	width: 60
+						        }
 
-					
-						{ 	// Este campo es necesario para corregir lo que parece un BUG. 
-							// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
-			            	hidden: true
+
+							]
 						},
-				        {
-							xtype: 'comboboxfieldbase',
-							reference: 'conPosesion',
-							fieldLabel: HreRem.i18n('fieldlabel.con.posesion'),
-							readOnly: true,
-				        	bind: {				        		
-				        		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.indicaPosesion}'
-			            	}
-				        },
-		                { 
+				
+						{ 
 							xtype:'datefieldbase',
 							reference: 'fechaRevisionEstadoPosesorio',
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.revision.estado.posesorio'),
 			            	bind:		'{situacionPosesoria.fechaRevisionEstado}',
                             readOnly: true
 						},
+		        
 						{
 				        	xtype:'fieldset',
 				        	height: '100%',

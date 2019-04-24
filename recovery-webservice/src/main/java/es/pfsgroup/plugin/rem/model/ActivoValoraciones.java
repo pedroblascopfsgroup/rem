@@ -85,6 +85,9 @@ public class ActivoValoraciones implements Serializable, Auditable {
 	@Column(name = "VAL_LIQUIDEZ")
 	private String liquidez;
 	
+	@Column(name = "VAL_FECHA_CAMB_VALOR")
+	private Date fechaCambioValorActivo;
+	
 	@Version   
 	private Long version;
 	
@@ -201,6 +204,14 @@ public class ActivoValoraciones implements Serializable, Auditable {
 
 	public void setLiquidez(String liquidez) {
 		this.liquidez = liquidez;
+	}
+
+	public Date getFechaCambioValorActivo() {
+		return fechaCambioValorActivo;
+	}
+
+	public void setFechaCambioValorActivo(Date fechaCambioValorActivo) {
+		this.fechaCambioValorActivo = fechaCambioValorActivo;
 	}
 
 }

@@ -1247,6 +1247,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.down('[name=fechaReunionComite]').hide();
 			me.down('[name=comiteInternoSancionador]').hide();
 		}
+		if(CONST.CARTERA['GIANTS'] == codigoCartera && $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL'])){
+    		if(me.down('[name=fechaRespuesta]').getValue() != null && me.down('[name=fechaRespuesta]').getValue() != ""){
+    			me.down('[name=fechaRespuesta]').setReadOnly(true);
+    		}
+    		if(me.down('[name=comboResolucion]').getValue() != null && me.down('[name=comboResolucion]').getValue() != ""){
+    			me.down('[name=comboResolucion]').setReadOnly(true);
+    		}
+    		if(me.down('[name=numImporteContra]').getValue() != null && me.down('[name=numImporteContra]').getValue() != ""){
+    			me.down('[name=numImporteContra]').setReadOnly(true);
+    		}
+    		if(me.down('[name=observaciones]').getValue() != null && me.down('[name=observaciones]').getValue() != ""){
+    			me.down('[name=observaciones]').setReadOnly(true);
+    		}
+    	}
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));

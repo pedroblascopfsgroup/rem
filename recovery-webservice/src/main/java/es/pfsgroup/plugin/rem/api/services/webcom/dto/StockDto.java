@@ -245,6 +245,17 @@ public class StockDto implements WebcomRESTDto{
 
 	private StringDataType codTipoUsoDestino;
 	
+	@MappedColumn("NOMBRE_GMO")
+	@WebcomRequired
+	private StringDataType nombreGMO;
+	
+	@MappedColumn("TELEFONO_GMO")
+	@WebcomRequired
+	private StringDataType telefonoGMO;
+	
+	@MappedColumn("EMAIL_GMO")
+	@WebcomRequired
+	private StringDataType emailGMO;
 
 	// Modificaciones WS Stock
 	private StringDataType codTipoAlquiler;

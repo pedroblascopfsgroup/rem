@@ -79,6 +79,12 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												readOnly: true
 											},
 											{
+												fieldLabel:  HreRem.i18n('fieldlabel.ultima.modificacion'),
+												bind: '{datospublicacionactivo.diasCambioPublicacionVenta}',
+												readOnly: true,
+												hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!=CONST.CARTERA['BANKIA'])  
+											},
+											{
 												xtype: 'currencyfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
 												reference: 'precioWebVenta',
@@ -252,6 +258,12 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.estado.alquiler'),
 												bind: '{datospublicacionactivo.estadoPublicacionAlquiler}',
 												readOnly: true
+											},
+											{
+												fieldLabel:  HreRem.i18n('fieldlabel.ultima.modificacion'),
+												bind: '{datospublicacionactivo.diasCambioPublicacionAlquiler}',
+												readOnly: true,
+												hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!= CONST.CARTERA['BANKIA'])
 											},
 											{
 												xtype: 'currencyfieldbase',

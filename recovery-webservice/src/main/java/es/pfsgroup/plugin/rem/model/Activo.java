@@ -434,6 +434,9 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_CAP_ID")
     private DDClasificacionApple clasificacionApple;
     
+    @Column(name = "ACT_FECHA_CAMBIO_TIPO_ACT")
+    private Date fechaUltCambioTipoActivo;
+    
 	
     // Getters del activo --------------------------------------------
     
@@ -1748,6 +1751,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setClasificacionApple(DDClasificacionApple clasificacionApple) {
 		this.clasificacionApple = clasificacionApple;
+	}
+
+	public Date getFechaUltCambioTipoActivo() {
+		return fechaUltCambioTipoActivo;
+	}
+
+	public void setFechaUltCambioTipoActivo(Date fechaUltCambioTipoActivo) {
+		this.fechaUltCambioTipoActivo = fechaUltCambioTipoActivo;
 	}
 	
 	

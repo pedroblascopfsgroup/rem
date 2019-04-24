@@ -46,6 +46,8 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private String eleccionUsuarioTipoPublicacionAlquiler;
 	private String motivoPublicacion;
 	private String motivoPublicacionAlquiler;
+	private Integer diasCambioPublicacionVenta;
+	private Integer diasCambioPublicacionAlquiler;
 
 
 	public String getTipoPublicacionVentaDescripcion() {
@@ -343,5 +345,23 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	public void setMotivoPublicacionAlquiler(String motivoPublicacionAlquiler) {
 		this.motivoPublicacionAlquiler = motivoPublicacionAlquiler;
 	}
+
+	public Integer getDiasCambioPublicacionVenta() {
+		return diasCambioPublicacionVenta;
+	}
+
+	public void setDiasCambioPublicacionVenta(Integer diasCambioPublicacionVenta) {
+		this.diasCambioPublicacionVenta = diasCambioPublicacionVenta;
+	}
+
+	public Integer getDiasCambioPublicacionAlquiler() {
+		return diasCambioPublicacionAlquiler;
+	}
+
+	public void setDiasCambioPublicacionAlquiler(Integer diasCambioPublicacionAlquiler) {
+		this.diasCambioPublicacionAlquiler = diasCambioPublicacionAlquiler;
+	}
+
+
 
 }

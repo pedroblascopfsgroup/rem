@@ -1152,13 +1152,13 @@ public interface ExpedienteComercialApi {
 
 	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);
 	
-	public boolean comprobarExpedienteAnuladoGencat (ExpedienteComercial expediente);
+	public boolean comprobarExpedienteAnuladoGencat(List<ComunicacionGencat> comunicacionesGencat);
 	
 	public boolean descongelaExpedienteGencat(ExpedienteComercial expediente);
 
-	public boolean comprobarExpedienteBloqueadoGencat(ExpedienteComercial expediente);
+	public boolean comprobarExpedienteBloqueadoGencat(List<ComunicacionGencat> comunicacionesGencat);
 
-	public boolean comprobarExpedientePreBloqueadoGencat(ExpedienteComercial expediente);
+	public boolean comprobarExpedientePreBloqueadoGencat(List<ComunicacionGencat> comunicacionesGencat);
 
 	boolean esAgora(TareaExterna tareaExterna);
 
@@ -1173,4 +1173,6 @@ public interface ExpedienteComercialApi {
 	boolean checkCamposComprador(TareaExterna tareaExterna);
 
 	boolean checkInquilinos(TareaExterna tareaExterna);
+
+	public List<ComunicacionGencat> comunicacionesVivas(ExpedienteComercial expediente);
 }

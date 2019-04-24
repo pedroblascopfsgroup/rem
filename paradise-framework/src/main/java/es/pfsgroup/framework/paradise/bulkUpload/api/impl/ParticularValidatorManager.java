@@ -2,11 +2,13 @@ package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.syntax.Numbers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -2667,10 +2669,48 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return Integer.parseInt(resultado)>1;
 	}
 
-	public Boolean esNIFValido(String nif) {
+	public Boolean esNIFValido(String doc) {
 
-		return nif == null || nif.matches("^\\d{8}[a-zA-Z]{1}$") || nif.matches("^[a-zA-Z]{1}\\d{7}[a-zA-Z0-9]{1}$");
-										   
+		String[] asignacionLetraNIF = { "T", "R", "W", "A", "G", "M", "Y", "F", "P", "D", "X", "B", "N", "J", "Z", "S",
+				"Q", "V", "H", "L", "C", "K", "E" };
+		String[] asignacionLetraCIF = { "A", "B", "C", "D", "E", "F", "G", "H", "K", "L", "M", "N", "P", "Q", "S" };
+		int resto;
+		int numDoc;
+		String letraDoc;
+		String digitoFindoc;
+
+		if (doc.length() != 9) {
+			return false;
+		} else {
+			try {
+				// NIF
+				if (!Character.isLetter(doc.charAt(0))) {
+					numDoc = Integer.parseInt(doc.substring(0, doc.length() - 1));
+					letraDoc = String.valueOf(doc.charAt(8));
+					resto = numDoc % 23;
+
+					return letraDoc.equals(asignacionLetraNIF[resto]);
+
+				// CIF
+				} else {
+					letraDoc = String.valueOf(doc.charAt(0)).toUpperCase();
+
+					if (letraDoc.matches("^[KPQS]{1}")) {
+						digitoFindoc = String.valueOf(doc.charAt(doc.length() - 1));
+						return "ABCDEFGHIJ".contains(digitoFindoc);
+
+					} else if (letraDoc.matches("^[ABEH]{1}")) {
+						digitoFindoc = String.valueOf(doc.charAt(doc.length() - 1));
+						Integer.parseInt(digitoFindoc);
+						return true;
+					} else {
+						return Arrays.binarySearch(asignacionLetraCIF, letraDoc) >= 0;
+					}
+				}
+			} catch (NumberFormatException ex) {
+				return false;
+			}
+		}
 	}
 
 	@Override

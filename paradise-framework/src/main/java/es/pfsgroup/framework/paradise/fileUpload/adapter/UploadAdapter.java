@@ -45,7 +45,7 @@ public class UploadAdapter {
 		try {
 			
 			String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/";
-			if(!Checks.esNulo(multipartFile.getOriginalFilename())) {
+			if(!Checks.esNulo(multipartFile) && !Checks.esNulo(multipartFile.getOriginalFilename())) {
 				file = new File(rutaFichero+multipartFile.getOriginalFilename());
 				file.createNewFile(); 
 			    FileOutputStream fos = new FileOutputStream(file); 

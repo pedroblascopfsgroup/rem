@@ -534,7 +534,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			
 			for (GestorEntidadHistorico gestor : gestoresEntidad) {
 				String gestorCode = gestor.getTipoGestor().getCodigo();
-				if ( !gestorCode.equals("SUPADM") || !gestorCode.equals("GGADM") || !gestorCode.equals("GIAADMT")) {
+				if ( !gestorCode.matches("SADM|SUPADM|SADM|SCOM|GCOM|GTOADM|GGADM|GADM|GADMT|GIAADMT")) {
 					//---- Se insertan los gestores				
 					GestorEntidadDto dtoGestores = new GestorEntidadDto();
 					dtoGestores.setIdEntidad(unidadAlquilable.getId());

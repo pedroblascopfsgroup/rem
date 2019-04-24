@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190321
+--## AUTOR=JINLI HU
+--## FECHA_CREACION=20190412
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5838
+--## INCIDENCIA_LINK=REMVIP-3624
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -22,6 +22,7 @@
 --##        1.0 HREOS-5443 Daniel Algaba: corrección para que no filtre por la TMP_GEST_CONT en activos con subcarteras
 --##        1.1 HREOS-5838 Guillermo Llidó : se añaden las subcarteras de Agora para que pueda asignar gestores
 --##        1.2 HREOS-5838 Daniel Algaba : corrección subcarteras
+--##		1.3 REMVIP-3624 JINLI HU : añadir filtro para la asignación de gestor/supervisor de BO para los activos de sareb/bankia que tengan el tipo de comercialización a Singular 
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -90,7 +91,16 @@ BEGIN
                     ACT_ID, TIPO_GESTOR, USERNAME )
               SELECT ACT.ACT_ID,ACT.TIPO_GESTOR, ACT.USERNAME
                 FROM '||V_ESQUEMA||'.V_GESTORES_ACTIVO ACT
-               WHERE ACT.TIPO_GESTOR IN '||V_GESTOR||
+               WHERE ACT.TIPO_GESTOR IN '||V_GESTOR||'
+               AND NOT EXISTS (SELECT *
+								FROM '||V_ESQUEMA||'.ACT_ACTIVO R1
+								JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = R1.DD_CRA_ID
+								JOIN '||V_ESQUEMA||'.DD_TCR_TIPO_COMERCIALIZAR TCR ON TCR.DD_TCR_ID = R1.DD_TCR_ID
+								WHERE TCR.DD_TCR_CODIGO = ''01''
+								AND CRA.DD_CRA_CODIGO IN (''02'',''03'')
+								AND ACT.TIPO_GESTOR IN (''HAYAGBOINM'',''HAYASBOINM'',''SBOINM'',''GCBOINM'')
+								AND R1.ACT_ID = ACT.ACT_ID)'||
+               
                V_ACT_ID
                ;
       

@@ -8723,7 +8723,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) &&
 					!DDEstadosExpedienteComercial.PTE_SANCION.equals(expediente.getEstado().getCodigo()) &&
 					((!Checks.esNulo(expediente.getReserva()) && !DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()))
-						|| (Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())))) {
+						|| (Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()))
+						|| DDEstadosExpedienteComercial.ANULADO.equals(expediente.getEstado().getCodigo())
+						|| DDEstadosExpedienteComercial.ANULADO_PDTE_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+						|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()))) {
 				if (gencatApi.comprobarExpedienteAnuladoGencat(comunicacionesVivas)) {
 					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()	+ "<div class='div-aviso red'> Expediente anulado por GENCAT </div>");
 				} else if (gencatApi.comprobarExpedienteBloqueadoGencat(comunicacionesVivas)) {

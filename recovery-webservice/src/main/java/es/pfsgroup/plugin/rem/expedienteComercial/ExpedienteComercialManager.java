@@ -3585,7 +3585,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
 			}
 
-			if (!Checks.esNulo(dto.getTitularContratacion())) {
+			if (!Checks.esNulo(dto.getTitularContratacion()) && Checks.esNulo(expedienteComercial.getCompradorPrincipal())) {
 				compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
 
 				if (dto.getTitularContratacion() == 1) {
@@ -3593,6 +3593,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				} else if (dto.getTitularContratacion() == 0) {
 					compradorExpediente.setTitularReserva(1);
 				}
+			}else {
+				compradorExpediente.setTitularReserva(1);
+				compradorExpediente.setTitularContratacion(0);
 			}
 			// Nexos
 			if (!Checks.esNulo(dto.getCodEstadoCivil())) {

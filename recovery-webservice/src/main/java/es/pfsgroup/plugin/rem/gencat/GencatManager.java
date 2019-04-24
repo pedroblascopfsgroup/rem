@@ -1882,6 +1882,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 		this.copiarGestoresNuevaOfertaGENCAT(expedienteComercial, nuevoExpedienteComercial);
 		
+		Filter ofertaExpediente = genericDao.createFilter(FilterType.EQUALS, "oferta", nuevoExpedienteComercial.getOferta().getId());
+		ActivoOferta actOfrExpediente = genericDao.get(ActivoOferta.class, ofertaExpediente);
+		if (!Checks.esNulo(actOfrExpediente)) {
+			actOfrExpediente.setImporteActivoOferta(actOfr.getImporteActivoOferta());
+		}
+		genericDao.save(ActivoOferta.class, actOfrExpediente);
 		genericDao.save(ExpedienteComercial.class, nuevoExpedienteComercial);
 		
 		// Condiciones
@@ -1941,7 +1947,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 		ofertaGencat.setOferta(nuevaOferta);
 		ofertaGencat.setComunicacion(cmg);
-		ofertaGencat.setImporte(nuevaOferta.getImporteOferta());
+		if (!Checks.esNulo(actOfr)) {
+			ofertaGencat.setImporte(actOfr.getImporteActivoOferta());
+		}else {
+			ofertaGencat.setImporte(nuevaOferta.getImporteOferta());
+		}
+		
 		ofertaGencat.setIdOfertaAnterior(oferta.getId());
 		if(!Checks.esNulo(expedienteComercial.getCondicionante())) {
 			

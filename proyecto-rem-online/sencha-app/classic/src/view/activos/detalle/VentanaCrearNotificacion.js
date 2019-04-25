@@ -20,20 +20,52 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
      */
     parent: null,
 
+    record: null,
+    
+    idNotificacion: null,
+    
+    idHComunicacion: null,
+
     initComponent: function() {
+    	var me = this,
+    		deshabilitarCamposDespuesAlCrear = true,
+    		habilitarCamposAlCrear = false,
+    		allowBlankAlCrear = false,
+    		idNotificacion = null,
+    		idHComunicacion = null,
+    		bloqueoEditarArchivoSancion = false;
 
-    	var me = this;
-
-    	me.setTitle(HreRem.i18n("title.crear.notificacion.gencat"));
+    	if(!Ext.isEmpty(me.record)){
+    		var notificacionGencat = me.record,
+	    		fechaNotificacion = notificacionGencat.fechaNotificacion,
+	    		nombreDocumento = notificacionGencat.nombre,
+	    		fechaSancion = notificacionGencat.fechaSancionNotificacion,
+	    		cierreNotificacion = notificacionGencat.cierreNotificacion;
+    		
+    		allowBlankAlCrear = true,
+    		deshabilitarCamposDespuesAlCrear = false;
+    		habilitarCamposAlCrear = true;
+    		idNotificacion = notificacionGencat.id;
+    		me.setTitle(HreRem.i18n("title.sancionar.notificacion.gencat"));
+    	}else{
+    		me.setTitle(HreRem.i18n("title.crear.notificacion.gencat"));
+    	}
+    	
     	
     	var comboTipoDocumentoComunicacion = new Ext.data.Store({
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'gencat/getTiposDocumentoNotificacion'
+				remoteUrl: 'gencat/getTiposDocumentoNotificacion',
+				extraParams:{
+					idNotificacion: idNotificacion
+				}
 			}
     	});
-
+    	
+    	if(!Ext.isEmpty(fechaSancion)){
+    		bloqueoEditarArchivoSancion = true;
+    	}
     	me.buttons = [ 
     		{ 
     			formBind: true, 
@@ -66,9 +98,12 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
 			    				fieldLabel: HreRem.i18n('fieldlabel.fecha.notificacion'),
 			    				name: 'fechaNotificacion',
 			    				allowBlank: false,
+			    				disabled: habilitarCamposAlCrear,
 			    				addUxReadOnlyEditFieldPlugin : false,
 			    				maxValue: null,
-			    				width: '100%'
+			    				width: '100%',
+			    				value:fechaNotificacion
+			    				
 			    			},
 			    			{
 			    				xtype: "comboboxfieldbase",
@@ -77,6 +112,7 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
 			    				addUxReadOnlyEditFieldPlugin : false,
 			    				allowBlank: false,
 			    				width: '100%',
+			    				disabled: habilitarCamposAlCrear,
 			    				bind: {
 			    					store: '{comboNotificacionGencat}'
 			    				}
@@ -85,27 +121,46 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
 			    				xtype: "datefieldbase",
 			    				fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion.notificacion'),
 			    				name: 'fechaSancionNotificacion',
+			    				reference: 'fechaSancionNotificacion',
+			    				value: fechaSancion,
 			    				addUxReadOnlyEditFieldPlugin : false,
-			    				allowBlank: false,
 			    				maxValue: null,
-			    				width: '100%'
+			    				width: '100%',
+			    				disabled: deshabilitarCamposDespuesAlCrear,
+			    				allowBlank:allowBlankAlCrear,
+			    				listeners: {
+			                        change: function(fld, value) {
+			                        	me = this;
+						        		var fileUpload = me.lookupController().lookupReference('fileUpload');
+						        		var tipoDocumento = me.lookupController().lookupReference('tipoDocumento');
+			                        	if(!Ext.isEmpty(value)) {
+			                        		tipoDocumento.allowBlank = false;
+			                        		tipoDocumento.validate();
+			                        		fileUpload.allowBlank = false;
+			                        		fileUpload.validate();
+			                        	}
+			                        }
+			                    }
 			    			},
 			    			{
 			    				xtype: "datefieldbase",
 			    				fieldLabel: HreRem.i18n('fieldlabel.cierre.notificacion'),
 			    				name: 'cierreNotificacion',
+			    				value: cierreNotificacion,
 			    				addUxReadOnlyEditFieldPlugin : false,
-			    				allowBlank: false,
 			    				maxValue: null,
-			    				width: '100%'
+			    				width: '100%',
+			    				disabled: deshabilitarCamposDespuesAlCrear
 			    			},
 			    			{
 								xtype: 'filefield',
 						        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
 						        name: 'fileUpload',
+						        reference:'fileUpload',
 						        anchor: '100%',
 						        width: '100%',
-						        allowBlank: false,
+						        allowBlank: allowBlankAlCrear,
+						        disabled: bloqueoEditarArchivoSancion,
 						        msgTarget: 'side',
 						        buttonConfig: {
 						        	iconCls: 'ico-search-white',
@@ -115,12 +170,19 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
 						        listeners: {
 			                        change: function(fld, value) {
 			                        	var lastIndex = null,
-			                        	fileName = null;
+			                        	fileName = null,
+			                        	me = this;
+						        		var campoFechaSancion = me.lookupController().lookupReference('fechaSancionNotificacion');
+						        		var tipoDocumento = me.lookupController().lookupReference('tipoDocumento');
 			                        	if(!Ext.isEmpty(value)) {
 				                        	lastIndex = value.lastIndexOf('\\');
 									        if (lastIndex == -1) return;
 									        fileName = value.substring(lastIndex + 1);
 				                            fld.setRawValue(fileName);
+				                            campoFechaSancion.allowBlank = false;
+				                            campoFechaSancion.validate();
+				                            tipoDocumento.allowBlank = false;
+			                        		tipoDocumento.validate();
 			                        	}
 			                        }
 			                    }
@@ -129,19 +191,34 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
 								xtype: 'combobox',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 					        	name: 'tipo',
+					        	reference: 'tipoDocumento',
 					        	editable: false,
 					        	allowBlank: false,
 					        	msgTarget: 'side',
-				            	store: comboTipoDocumentoComunicacion,
+				            	store: comboTipoDocumentoComunicacion,				            	
 				            	displayField: 'descripcion',
 							    valueField: 'codigo',
-								allowBlank: false,
-								width: '100%'
+								allowBlank: allowBlankAlCrear, 
+								disabled: bloqueoEditarArchivoSancion,
+								width: '100%',
+								listeners: {
+			                        change: function(fld, value) {
+			                        	me = this;
+						        		var fileUpload = me.lookupController().lookupReference('fileUpload');
+						        		var campoFechaSancion = me.lookupController().lookupReference('fechaSancionNotificacion');
+			                        	if(!Ext.isEmpty(value)) {
+			                        		campoFechaSancion.allowBlank = false;
+			                        		campoFechaSancion.validate();
+			                        		fileUpload.allowBlank = false;
+			                        		fileUpload.validate();
+			                        	}
+			                        }
+			                    }
 					        },
 					        {
 			                	xtype: 'textarea',
 			                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
-			                	allowBlank: false,
+			                	allowBlank: true,
 			                	name: 'descripcion',
 			                	maxLength: 256,
 			                	msgTarget: 'side',
@@ -152,6 +229,14 @@ Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
     	];
 
     	me.callParent();
+    	
+    	if(!Ext.isEmpty(me.record)){
+    		var comboMotivoNotificacion = me.down('[reference="crearNotificacionFormRef"]').getForm().findField('motivoNotificacion'),
+    			store = me.lookupController().getViewModel().get('comboNotificacionGencat'),
+    			record = store.findRecord('descripcion', me.record.motivoNotificacion);
+    		
+				comboMotivoNotificacion.setValue(record.get('codigo'));
+    	}
     }
     
 });

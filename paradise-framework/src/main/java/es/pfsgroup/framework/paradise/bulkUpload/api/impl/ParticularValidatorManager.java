@@ -2,11 +2,13 @@ package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.syntax.Numbers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -206,6 +208,64 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 FROM ACT_ACTIVO WHERE"
 				+ "		 	ACT_NUM_ACTIVO ="+numActivo+" "
 				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeOferta(String numOferta){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS WHERE "
+				+ "OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isOfferOfGiants(String numOferta){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ "JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID "
+				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND DD_CRA_CODIGO = '12' "
+				+ "AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esOfertaPendienteDeSancion(String numOferta){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ECO_EXPEDIENTE_COMERCIAL ECO "
+				+ "JOIN OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID "
+				+ "WHERE OFR.OFR_NUM_OFERTA ="+numOferta+" "
+				+ "AND (EEC.DD_EEC_CODIGO = '10' OR EEC.DD_EEC_CODIGO = '23') "
+				+ "AND ECO.BORRADO = 0");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isAgrupacionOfGiants(String numAgrupacion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_AGR_AGRUPACION AGR "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
+				+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID "
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ "AND DD_CRA_CODIGO = '12' ");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoOfGiants(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_ACTIVO ACT "
+				+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID "
+				+ "WHERE CRA.DD_CRA_CODIGO = '12' "
+				+ "AND ACT.ACT_NUM_ACTIVO = "+numActivo+" ");
+		
 		return !"0".equals(resultado);
 	}
 
@@ -2609,10 +2669,48 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return Integer.parseInt(resultado)>1;
 	}
 
-	public Boolean esNIFValido(String nif) {
+	public Boolean esNIFValido(String doc) {
 
-		return nif == null || nif.matches("^[A-Za-z0-9]{1}[0-9]{7}[A-Za-z]{1}$");
+		String[] asignacionLetraNIF = { "T", "R", "W", "A", "G", "M", "Y", "F", "P", "D", "X", "B", "N", "J", "Z", "S",
+				"Q", "V", "H", "L", "C", "K", "E" };
+		String[] asignacionLetraCIF = { "A", "B", "C", "D", "E", "F", "G", "H", "K", "L", "M", "N", "P", "Q", "S" };
+		int resto;
+		int numDoc;
+		String letraDoc;
+		String digitoFindoc;
 
+		if (doc.length() != 9) {
+			return false;
+		} else {
+			try {
+				// NIF
+				if (!Character.isLetter(doc.charAt(0))) {
+					numDoc = Integer.parseInt(doc.substring(0, doc.length() - 1));
+					letraDoc = String.valueOf(doc.charAt(8));
+					resto = numDoc % 23;
+
+					return letraDoc.equals(asignacionLetraNIF[resto]);
+
+				// CIF
+				} else {
+					letraDoc = String.valueOf(doc.charAt(0)).toUpperCase();
+
+					if (letraDoc.matches("^[KPQS]{1}")) {
+						digitoFindoc = String.valueOf(doc.charAt(doc.length() - 1));
+						return "ABCDEFGHIJ".contains(digitoFindoc);
+
+					} else if (letraDoc.matches("^[ABEH]{1}")) {
+						digitoFindoc = String.valueOf(doc.charAt(doc.length() - 1));
+						Integer.parseInt(digitoFindoc);
+						return true;
+					} else {
+						return Arrays.binarySearch(asignacionLetraCIF, letraDoc) >= 0;
+					}
+				}
+			} catch (NumberFormatException ex) {
+				return false;
+			}
+		}
 	}
 
 	@Override

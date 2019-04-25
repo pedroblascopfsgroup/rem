@@ -529,10 +529,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public Boolean setDatosPublicacionActivo(DtoDatosPublicacionActivo dto) throws JsonViewerException{
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(dto.getIdActivo());
 
-		if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
-			if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {
-				this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
-			}
+		if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {
+			this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
 		}
 
 		return false;
@@ -561,13 +559,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 			// Registrar los cambios en la publicación.
 			activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
-			if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
-				activosPublicacion.add(activoPublicacion);
-			}
+			activosPublicacion.add(activoPublicacion);
 		}
 		this.actualizarDatosEstadoActualPublicaciones(dto, activosPublicacion);
 
-		activoDao.publicarAgrupacionSinHistorico(id, genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler(),true);
+		activoDao.publicarAgrupacionConHistorico(id, genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler(), true);
 		return true;
 	}
 	
@@ -587,9 +583,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						
 			// Registrar los cambios en la publicación.
 			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
-			if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
-				this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);
-			}
+			this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);
 		}
 		
 		return true;
@@ -782,15 +776,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean registrarHistoricoPublicacion(ActivoPublicacion activoPublicacion, DtoDatosPublicacionActivo dto) {
 		try {
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
-					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
-					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta())))) {
+					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || 
+					!Checks.esNulo(dto.getPublicarVenta()) || !Checks.esNulo(dto.getOcultarVenta()))) {
 				ActivoPublicacionHistorico activoPublicacionHistoricoVenta = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualVenta(activoPublicacion.getActivo().getId());
 				activoPublicacionHistoricoVenta.setFechaFinVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
 				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistoricoVenta);
 			}
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
-					(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
-					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler())) ||
+					(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || 
+					!Checks.esNulo(dto.getPublicarAlquiler()) || !Checks.esNulo(dto.getOcultarAlquiler()) || 
 					(!Checks.esNulo(dto.getEleccionUsuarioTipoPublicacionAlquiler()) && (DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo()) && !dto.getEleccionUsuarioTipoPublicacionAlquiler().equals("0"))) )) {
 				ActivoPublicacionHistorico activoPublicacionHistoricoAlquiler = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualAlquiler(activoPublicacion.getActivo().getId());
 				activoPublicacionHistoricoAlquiler.setFechaFinAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
@@ -890,7 +884,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * este modo, se informa hacia la interfaz.
 	 */
 	private Boolean publicarActivoProcedure(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler) throws JsonViewerException{
-		if(activoDao.publicarActivoSinHistorico(idActivo, username, eleccionUsuarioTipoPublicacionAlquiler,true)) {
+		if(activoDao.publicarActivoConHistorico(idActivo, username, eleccionUsuarioTipoPublicacionAlquiler, true)) {
 			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 			Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			if (!Checks.esNulo(eleccionUsuarioTipoPublicacionAlquiler) && "0".equals(eleccionUsuarioTipoPublicacionAlquiler)){
@@ -1133,9 +1127,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Activo activo = activoApi.get(idActivo);
 
 		if(activoApi.isActivoIntegradoAgrupacionRestringida(idActivo)) {
-			activoDao.publicarAgrupacionConHistorico(activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(idActivo).getAgrupacion().getId(), genericAdapter.getUsuarioLogado().getUsername(),doFlush);
+			activoDao.publicarAgrupacionConHistorico(activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(idActivo).getAgrupacion().getId(), genericAdapter.getUsuarioLogado().getUsername(), null, doFlush);
 		} else {
-			activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername(),doFlush);
+			activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername(), null, doFlush);
 		}
 
 		return true;

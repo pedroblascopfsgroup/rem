@@ -257,7 +257,7 @@ public interface GencatApi {
 	/*
 	 * Obtiene los tipos de documento para el combobox del panel Notificaciones en la pestaña GENCAT
 	 */
-	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoNotificacion();
+	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoNotificacion(Long idNotificacion);
 
 	/**
 	 * Crea la nueva oferta asociada a un activo
@@ -273,4 +273,6 @@ public interface GencatApi {
 	 * @return boolean
 	 */
 	public boolean comprobacionDocumentoAnulacion(Long idActivo);
+
+	public DtoNotificacionActivo createHistoricoNotificacionComunicacion(DtoNotificacionActivo dtoNotificacion);
 }

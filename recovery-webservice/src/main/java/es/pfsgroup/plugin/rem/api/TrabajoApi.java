@@ -38,7 +38,6 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
@@ -211,16 +210,8 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.getListActivosTrabajo")
-	public Page getListActivos(DtoActivosTrabajoFilter dto);
+	public Page getListActivos(DtoActivosTrabajoFilter dto) throws InstantiationException, IllegalAccessException, Exception;
 
-	/**
-	 * Devuelve la lista de activos de un trabajo con datos de presupuestos
-	 * 
-	 * @param dto
-	 * @return
-	 */
-	@BusinessOperationDefinition("trabajoManager.getListActivosTrabajoPresupuesto")
-	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto);
 
 	@BusinessOperationDefinition("trabajoManager.findOne")
 	Trabajo findOne(Long id);
@@ -404,7 +395,7 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.checkSuperaPresupuestoActivoTarea")
-	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea);
+	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea) throws Exception;
 
 	/**
 	 * Verifica desde una tarea si el presupuesto acumulado del trabajo supera
@@ -416,7 +407,7 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.checkSuperaPresupuestoActivo")
-	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo);
+	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo) throws Exception;
 
 	/**
 	 * Obtiene el importe de exceso de presupuesto del activo, para el acumulado
@@ -427,7 +418,7 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("trabajoManager.getExcesoPresupuestoActivo")
-	public Float getExcesoPresupuestoActivo(Trabajo trabajo);
+	public Float getExcesoPresupuestoActivo(Trabajo trabajo) throws Exception;
 
 	/**
 	 * Evalúa para una tarea, si existe tarifa(s) asociados al trabajo

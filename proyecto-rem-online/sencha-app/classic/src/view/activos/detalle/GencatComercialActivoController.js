@@ -189,13 +189,24 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		var me = this;
 		
 		var idActivo = me.getViewModel().get("activo.id");
+		comercialActivo = grid.up("gencatcomercialactivoform"),
+		comercialActivoFormHist = grid.up("gencatcomercialactivoformhist");
+		
+		if (comercialActivo != undefined){
+			var gridActivo = comercialActivo;
+		} else { 
+			var gridActivo = comercialActivoFormHist;
+		}
+		
 		var data = {
 			idActivo: idActivo, 
-			parent: grid
+			parent: grid,
+			idHComunicacion: gridActivo.idHComunicacion
 		};
 		Ext.create("HreRem.view.activos.detalle.VentanaCrearNotificacion", data).show();
 		
 	},
+
 	
 	//Sin utilizar desde HREOS-5509
 //	onClickAdjuntarDocumentoNotificaciones: function(btn) {
@@ -214,15 +225,16 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		var me = this;
 		
 		var window = btn.up('[reference=ventanacrearnotificacionRef]');
-		
 		var form = window.down('[reference=crearNotificacionFormRef]');
 		if(form.isValid()){
-    		
+
             form.submit({
                 waitMsg: HreRem.i18n('msg.mask.loading'),
                 params: {
                 	idEntidad: window.idActivo,
-                	idActivo: window.idActivo
+                	idActivo: window.idActivo,
+                	id: window.idNotificacion,
+                	idHComunicacion: window.idHComunicacion
                 },
 
                 success: function(fp, o) {
@@ -237,6 +249,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
                 		window.parent.fireEvent("aftercreate", window.parent);
                 	}
                 	window.close();
+                	window.parent.up('[reference=comercialactivotabpanelref]').funcionRecargar();
                 },
                 failure: function(fp, o) {
                 	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
@@ -499,5 +512,19 @@ comprobarFormatoNIF:function(value) {
  		}
 
  		
- 	}
+ 	},
+	onGridNotificacionesActivoRowClick: function(grid) { 
+		var me = this,
+			idActivo = me.getViewModel().get("activo.id"),
+			record = grid.getSelection()[0].getData(),
+			data = {
+				idActivo: idActivo, 
+				parent: grid,
+				record: record,
+				idNotificacion: record.id,
+				idHComunicacion: grid.up().idHComunicacion
+			};
+
+		Ext.create("HreRem.view.activos.detalle.VentanaCrearNotificacion", data).show();
+	  }
 });

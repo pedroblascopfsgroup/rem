@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -20,25 +19,13 @@ public class ReclamacionGencatManager extends AbstractEntityDao<ReclamacionGenca
 	private GenericABMDao genericDao;
 		
 	@Override
-	public ReclamacionGencat getReclamacionByIdComunicacionGencat(Long idComunicacionGencat) {
+	public List<ReclamacionGencat> getReclamacionByIdComunicacionGencat(Long idComunicacionGencat) {
 				
 		Filter filtroIdReclamacion = genericDao.createFilter(FilterType.EQUALS, "comunicacion.id", idComunicacionGencat);
 		Filter filtroBorradoReclamacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		
-		if(!Checks.esNulo(idComunicacionGencat)) {
-			List<ReclamacionGencat> reclamacionGencatList = genericDao.getList(ReclamacionGencat.class, filtroIdReclamacion, filtroBorradoReclamacion);
-			
-			if(!Checks.estaVacio(reclamacionGencatList)) {
-				return reclamacionGencatList.get(0);
-			} else {
-				return null;
-			}
-			
-						
-		} else {
-			return null;
-		}
-	
+
+		List<ReclamacionGencat> reclamacionGencatList = genericDao.getList(ReclamacionGencat.class, filtroIdReclamacion, filtroBorradoReclamacion);
+		return reclamacionGencatList;	
 	}
 
 }

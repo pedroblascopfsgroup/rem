@@ -1856,7 +1856,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(activo.getSubcartera().getCodigo())) ||
 							(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())))) {
 							activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA)));
-							activoDaoImpl.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+							activoDaoImpl.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername(), null, true);
 				}
 				if (activo.getAdjuntos() != null && activo.getAdjuntos().size() > 0) {
 					adjuntoActivo = activo.getAdjuntos().get(activo.getAdjuntos().size() - 1);
@@ -8722,202 +8722,93 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	public DtoAviso getAvisosExpedienteById(Long id) {
-		boolean expedienteAnulado = false;
-		boolean expedienteBloqueado = false;
-		boolean expedientePreBloqueado = false;
-		boolean disclaimerGencat = false;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		ExpedienteComercial expediente = findOne(id);
-		if (!Checks.esNulo(expediente)) {
-			expedienteAnulado = comprobarExpedienteAnuladoGencat(expediente);
-			expedienteBloqueado = comprobarExpedienteBloqueadoGencat(expediente);
-			expedientePreBloqueado = comprobarExpedientePreBloqueadoGencat(expediente);
-		}
-		
 		DtoAviso avisosFormateados = new DtoAviso();
 		avisosFormateados.setDescripcion("");
 		avisosFormateados.setId(id.toString());
-
 		if (!Checks.esNulo(expediente)) {
-			if (!Checks.esNulo(expediente.getOferta().getAgrupacion())){
-				for (ExpedienteAvisadorApi avisador : avisadores) {
-					DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
-					if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-						if (aviso.getDescripcion().contains("GENCAT") && !disclaimerGencat) {
-							if (expedienteAnulado) {
-								disclaimerGencat = true;
-								avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-							} else if (!expedienteAnulado && expedienteBloqueado) {
-								disclaimerGencat = true;
-								avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-							} else if (!expedienteAnulado && !expedienteBloqueado && expedientePreBloqueado){
-								disclaimerGencat = true;
-								avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-							} 
-						} else if (!aviso.getDescripcion().contains("GENCAT")) {
-							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-						}
-					}
+			List<ComunicacionGencat> comunicacionesVivas = comunicacionesVivas(expediente);
+			for (ExpedienteAvisadorApi avisador : avisadores) {
+				DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
+				if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
+					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
 				}
-			} else {
-				for (ExpedienteAvisadorApi avisador : avisadores) {
-					DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
-					if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-						avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-					}
-				}
+			}
+			if (!Checks.estaVacio(comunicacionesVivas)) {
+				if (comprobarExpedienteAnuladoGencat(comunicacionesVivas)) {
+					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'> Expediente anulado por GENCAT </div>");
+				} else if (comprobarExpedienteBloqueadoGencat(comunicacionesVivas)) {
+					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'> Expediente bloqueado por GENCAT </div>");
+				} else if (comprobarExpedientePreBloqueadoGencat(comunicacionesVivas)){
+					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'> Expediente pre-bloqueado por GENCAT </div>");
+				} 
 			}
 		}
 		return avisosFormateados;
 	}
 	
 	@Override
-	public boolean comprobarExpedienteAnuladoGencat(ExpedienteComercial expediente) {
-		boolean expedienteAnulado = false;
-		boolean bloqueado = false;
-		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())){
-			
-			Oferta oferta = expediente.getOferta();	
-			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-
-			if(!Checks.estaVacio(ofertaGencat) && Checks.esNulo(ofertaGencat.get(0).getIdOfertaAnterior()) && !ofertaGencat.get(0).getAuditoria().isBorrado()) {
-				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
-				for (ActivoOferta actOfr : actOfrList){
-					Activo activo = actOfr.getPrimaryKey().getActivo();
-					Order order = new Order(OrderType.DESC,"id");
-					List<ComunicacionGencat> comGenLista = genericDao.getListOrdered(ComunicacionGencat.class, order ,genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-					if(!Checks.estaVacio(comGenLista)) {
-						ComunicacionGencat comGen = comGenLista.get(0);
-					
-						List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-						if(!Checks.estaVacio(actTraList)){
-							for (ActivoTramite activoTramite : actTraList) {
-								if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
-									if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
-										bloqueado = true;
-									}else{
-										bloqueado = false;
-										break;
-									}
-								}
-							}
-						}
-						
-						if (!Checks.esNulo(comGen) && bloqueado && !Checks.esNulo(comGen.getSancion()) &&
-								DDSancionGencat.COD_EJERCE.equals(comGen.getSancion().getCodigo()) && activoApi.isAfectoGencat(activo)) {
-							expedienteAnulado = true;
-							break;
-						}
+	public List<ComunicacionGencat> comunicacionesVivas(ExpedienteComercial expediente) {
+		List<ComunicacionGencat> comunicacionesGencat = new ArrayList<ComunicacionGencat>();
+		if (!Checks.esNulo(expediente)) {
+			List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+			for (ActivoOferta actOfr : actOfrList) {
+				ComunicacionGencat comunicacionGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", actOfr.getActivoId()));
+				if (!Checks.esNulo(comunicacionGencat)) {
+					if (!Checks.esNulo(comunicacionGencat)) {
+						comunicacionesGencat.add(comunicacionGencat);
 					}
 				}
 			}
 		}
-		return expedienteAnulado;
+		
+		return comunicacionesGencat;
 	}
 	
 	@Override
-	public boolean comprobarExpedienteBloqueadoGencat(ExpedienteComercial expediente) {
-		boolean expedienteBloqueado = false;
-		boolean bloqueado = false;
-		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())){
-			
-			Oferta oferta = expediente.getOferta();	
-			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-			
-			if(!Checks.estaVacio(ofertaGencat) && Checks.esNulo(ofertaGencat.get(0).getIdOfertaAnterior()) && !ofertaGencat.get(0).getAuditoria().isBorrado()) {
-				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
-				ComunicacionGencat comGen = null;
-				for (ActivoOferta actOfr : actOfrList){
-					Activo activo = actOfr.getPrimaryKey().getActivo();
-					Order order = new Order(OrderType.DESC,"id");
-					List<ComunicacionGencat> comGenLista = genericDao.getListOrdered(ComunicacionGencat.class, order ,genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-					if(!Checks.estaVacio(comGenLista)) {
-						comGen = comGenLista.get(0);
-					}
-					if (!Checks.esNulo(comGen) && !Checks.esNulo(comGen.getEstadoComunicacion()) && !DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGen.getEstadoComunicacion().getCodigo())
-							&& !DDEstadoComunicacionGencat.COD_ANULADO.equals(comGen.getEstadoComunicacion().getCodigo())
-							&& !DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGen.getEstadoComunicacion().getCodigo()) && activoApi.isAfectoGencat(activo) &&
-							!DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) && !DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
-						expedienteBloqueado = true;
-					}
-					List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-					if(!Checks.estaVacio(actTraList)){
-						for (ActivoTramite activoTramite : actTraList) {
-							if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
-								if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
-									bloqueado = true;
-								}else{
-									bloqueado = false;
-									break;
-								}
-							}
-						}
-						if(bloqueado && !Checks.esNulo(comGen) && Checks.esNulo(comGen.getSancion())
-								&& !Checks.esNulo(comGen.getEstadoComunicacion()) && !DDEstadoComunicacionGencat.COD_ANULADO.equals(comGen.getEstadoComunicacion().getCodigo())
-								&& !DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGen.getEstadoComunicacion().getCodigo()))
-						{
-							expedienteBloqueado = true;
-						}
-					}
-				}
+	public boolean comprobarExpedienteAnuladoGencat(List<ComunicacionGencat> comunicacionesGencat) {
+		for (ComunicacionGencat comunicacionGencat : comunicacionesGencat) {
+			if (!Checks.esNulo(comunicacionGencat) && !Checks.esNulo(comunicacionGencat.getEstadoComunicacion())
+					&& !Checks.esNulo(comunicacionGencat.getFechaSancion())
+					&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())
+					&& !Checks.esNulo(comunicacionGencat.getSancion())
+					&& DDSancionGencat.COD_EJERCE.equals(comunicacionGencat.getSancion().getCodigo())) {
+				return true;
 			}
-			
 		}
-		return expedienteBloqueado;
+		return false;
 	}
 	
 	@Override
-	public boolean comprobarExpedientePreBloqueadoGencat(ExpedienteComercial expediente) {
-		boolean expedientePreBloqueado = false;
-		boolean bloqueado = false;
-		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())){
-			Oferta oferta = expediente.getOferta();	
-			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-
-			if(!Checks.estaVacio(ofertaGencat) && Checks.esNulo(ofertaGencat.get(0).getIdOfertaAnterior()) && !ofertaGencat.get(0).getAuditoria().isBorrado())  {
-				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
-				Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
-				for (ActivoOferta actOfr : actOfrList){
-					Activo activo = actOfr.getPrimaryKey().getActivo();	
-					List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-					if(!Checks.estaVacio(actTraList)){
-						for (ActivoTramite activoTramite : actTraList) {
-							if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
-								if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
-									bloqueado = true;
-								}else{
-									bloqueado = false; 
-									break;
-								}
-							}
-						}
-						if(!bloqueado){
-							if (!Checks.esNulo(reserva)){
-								if (activoApi.isAfectoGencat(activo) && DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())) {
-									expedientePreBloqueado = true;
-									break;
-								}
-							}else {
-								if (activoApi.isAfectoGencat(activo) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
-									expedientePreBloqueado = true;
-									break;
-								}
-							}
-						}
-					}
-				}
+	public boolean comprobarExpedienteBloqueadoGencat(List<ComunicacionGencat> comunicacionesGencat) {
+		for (ComunicacionGencat comunicacionGencat : comunicacionesGencat) {
+			if (!Checks.esNulo(comunicacionGencat) && !Checks.esNulo(comunicacionGencat.getEstadoComunicacion())
+					&& !Checks.esNulo(comunicacionGencat.getFechaComunicacion())
+					&& DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())) {
+				return true;
 			}
-			
 		}
-		return expedientePreBloqueado;
+		return false;
+	}
+	
+	@Override
+	public boolean comprobarExpedientePreBloqueadoGencat(List<ComunicacionGencat> comunicacionesGencat) {
+		for (ComunicacionGencat comunicacionGencat : comunicacionesGencat) {
+			if (!Checks.esNulo(comunicacionGencat) && !Checks.esNulo(comunicacionGencat.getEstadoComunicacion())
+					&& DDEstadoComunicacionGencat.COD_CREADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Override
 	public boolean descongelaExpedienteGencat(ExpedienteComercial expediente) {
 		boolean descongelar = false;
 		boolean expedienteAnulado = false;
-				
-		expedienteAnulado = comprobarExpedienteAnuladoGencat(expediente);
+		List<ComunicacionGencat> comunicacionesVivas = comunicacionesVivas(expediente);
+		expedienteAnulado = comprobarExpedienteAnuladoGencat(comunicacionesVivas);
 		if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())) {
 			Oferta oferta = expediente.getOferta();	
 			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));

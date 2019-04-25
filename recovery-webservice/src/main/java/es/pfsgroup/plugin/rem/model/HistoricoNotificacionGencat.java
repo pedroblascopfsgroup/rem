@@ -61,6 +61,14 @@ public class HistoricoNotificacionGencat implements Serializable, Auditable {
 	@Column(name = "HNG_FECHA_CIERRE_NOTIFICACION")
 	private Date cierreNotificacion;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ADC_ID")
+	private AdjuntoComunicacion adjuntoComunicacion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ADC_ID_SANCION")
+	private AdjuntoComunicacion adjuntoComunicacionSancion;
+	
 	@Version   
 	private Long version;
     
@@ -137,6 +145,22 @@ public class HistoricoNotificacionGencat implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public AdjuntoComunicacion getAdjuntoComunicacion() {
+		return adjuntoComunicacion;
+	}
+
+	public void setAdjuntoComunicacion(AdjuntoComunicacion adjuntoComunicacion) {
+		this.adjuntoComunicacion = adjuntoComunicacion;
+	}
+
+	public AdjuntoComunicacion getAdjuntoComunicacionSancion() {
+		return adjuntoComunicacionSancion;
+	}
+
+	public void setAdjuntoComunicacionSancion(AdjuntoComunicacion adjuntoComunicacionSancion) {
+		this.adjuntoComunicacionSancion = adjuntoComunicacionSancion;
 	}
 
 }

@@ -11,6 +11,7 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -48,9 +49,9 @@ public class OfertaTitularAdicionalDto implements Serializable {
 			Update.class })
 	private String codRegimenMatrimonial;
 	
-	private Boolean rechazarCesionDatosPublicidad;
-	private Boolean rechazarCesionDatosPropietario;
-	private Boolean rechazarCesionDatosProveedores;
+	private Boolean transferenciasInternacionales = Boolean.FALSE;
+	private Boolean cesionDatos = Boolean.FALSE;
+	private Boolean comunicacionTerceros = Boolean.FALSE;
 	
 	//REMVIP-3846
 	@Size(max=50,groups = { Insert.class, Update.class })
@@ -99,7 +100,7 @@ public class OfertaTitularAdicionalDto implements Serializable {
 			Update.class })
 	private String codTipoPersona;
 	@Size(max=5,groups = { Insert.class, Update.class })
-	@Diccionary(clase = DDTipoPersona.class, message = "El codTipoPersona no existe", groups = { Insert.class,
+	@Diccionary(clase = DDPaises.class, message = "El codPais no existe", groups = { Insert.class,
 			Update.class })
 	private String codPais;
 	@Size(max=5,groups = { Insert.class, Update.class })
@@ -119,29 +120,29 @@ public class OfertaTitularAdicionalDto implements Serializable {
 			Update.class })
 	private String codMunicipioRepresentante;
 	@Size(max=5,groups = { Insert.class, Update.class })
-	@Diccionary(clase = DDTipoPersona.class, message = "El codTipoPersona no existe", groups = { Insert.class,
+	@Diccionary(clase = DDPaises.class, message = "El codPaisRepresentante no existe", groups = { Insert.class,
 			Update.class })
 	private String codPaisRepresentante;
 	@Size(max=5,groups = { Insert.class, Update.class })
 	private String codigoPostalRepresentante;
 	
-	public Boolean getRechazarCesionDatosPublicidad() {
-		return rechazarCesionDatosPublicidad;
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
 	}
-	public void setRechazarCesionDatosPublicidad(Boolean rechazarCesionDatosPublicidad) {
-		this.rechazarCesionDatosPublicidad = rechazarCesionDatosPublicidad;
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
 	}
-	public Boolean getRechazarCesionDatosPropietario() {
-		return rechazarCesionDatosPropietario;
+	public Boolean getCesionDatos() {
+		return cesionDatos;
 	}
-	public void setRechazarCesionDatosPropietario(Boolean rechazarCesionDatosPropietario) {
-		this.rechazarCesionDatosPropietario = rechazarCesionDatosPropietario;
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
 	}
-	public Boolean getRechazarCesionDatosProveedores() {
-		return rechazarCesionDatosProveedores;
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
 	}
-	public void setRechazarCesionDatosProveedores(Boolean rechazarCesionDatosProveedires) {
-		this.rechazarCesionDatosProveedores = rechazarCesionDatosProveedires;
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
 	}
 	public String getNombre() {
 		return nombre;
@@ -167,28 +168,28 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setApellidos(String apellidos) {
 		this.apellidos = apellidos;
 	}
-	public String getCodigoMunicipio() {
+	public String getCodMunicipio() {
 		return codMunicipio;
 	}
-	public void setCodigoMunicipio(String codigoMunicipio) {
+	public void setCodMunicipio(String codigoMunicipio) {
 		this.codMunicipio = codigoMunicipio;
 	}
-	public String getCodigoProvincia() {
+	public String getCodProvincia() {
 		return codProvincia;
 	}
-	public void setCodigoProvincia(String codigoProvincia) {
+	public void setCodProvincia(String codigoProvincia) {
 		this.codProvincia = codigoProvincia;
 	}
-	public String getCodPostal() {
+	public String getCodigoPostal() {
 		return codigoPostal;
 	}
-	public void setCodPostal(String codPostal) {
+	public void setCodigoPostal(String codPostal) {
 		this.codigoPostal = codPostal;
 	}
-	public String getCodigoEstadoCivil() {
+	public String getCodEstadoCivil() {
 		return codEstadoCivil;
 	}
-	public void setCodigoEstadoCivil(String codigoEstadoCivil) {
+	public void setCodEstadoCivil(String codigoEstadoCivil) {
 		this.codEstadoCivil = codigoEstadoCivil;
 	}
 	public String getCodRegimenMatrimonial() {

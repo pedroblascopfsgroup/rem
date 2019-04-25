@@ -36,9 +36,9 @@ function asignar_grants() {
 	systempfs.refresh_grants_rem;
 	end;
 	/
-	exit" > grants-cj.sql
+	exit" > grants.sql
 	header "Asignando GRANTS [$ENTORNO - $DB_PRODUCTO]..."
- 	sqlplus SYSTEMPFS/$PW_SYSTEMPFS@${DB_PRODUCTO} @grants-cj.sql
+ 	sqlplus SYSTEMPFS/$PW_SYSTEMPFS@${DB_PRODUCTO} @grants.sql
 	header "GRANTS asignados en [$ENTORNO] !!"
 }
 

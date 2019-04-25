@@ -16,6 +16,8 @@ public class AuthenticationData {
 	
 	private Integer esGestorSustituto;
 	
+	private String codigoCartera;
+	
 
 	public String getUserName() {
 		return userName;
@@ -65,4 +67,11 @@ public class AuthenticationData {
 		this.esGestorSustituto = esGestorSustituto;
 	}
 
+	public String getCodigoCartera() {
+		return codigoCartera;
+	}
+
+	public void setCodigoCartera(String codigoCartera) {
+		this.codigoCartera = codigoCartera;
+	}
 }

@@ -3594,8 +3594,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					compradorExpediente.setTitularReserva(1);
 				}
 			}else {
-				compradorExpediente.setTitularReserva(1);
-				compradorExpediente.setTitularContratacion(0);
+				if(compradorExpediente.getTitularReserva() == null){
+					compradorExpediente.setTitularReserva(1);
+				}
+				if(compradorExpediente.getTitularContratacion() == null){
+					compradorExpediente.setTitularContratacion(0);
+				}
+				
 			}
 			// Nexos
 			if (!Checks.esNulo(dto.getCodEstadoCivil())) {
@@ -3815,7 +3820,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			//Campos comunes sin que dependa del tipo de persona						Campos del titular
 			if (!Checks.esNulo(comprador.getPorcentajeCompra())){						//Porcentaje de compra
-				if (!Checks.esNulo(comprador.getCodTipoDocumento())) {					//Tipo de documento
+				if (!Checks.esNulo(comprador.getCodTipoDocumento())) {	     			//Tipo de documento
 					if (!Checks.esNulo(comprador.getNumDocumento())) {					//Número de documento
 						if (!Checks.esNulo(comprador.getProvinciaCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {			//Provincia
 							if (!Checks.esNulo(comprador.getMunicipioCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {		//Municipio
@@ -3823,7 +3828,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									if (!Checks.esNulo(comprador.getCodigoPais())) {	//País de residencia
 										
 										//Campos dependientes de si el tipo de persona es física
-										if (!Checks.esNulo(DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona()))) {							
+										if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {							
 											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Nombre
 												if (!Checks.esNulo(comprador.getApellidos())) {																			//Apellidos
 													if (!Checks.esNulo(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) &&				//Si está casado en gananciales
@@ -3835,13 +3840,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										}
 				
 										//Campos dependientes de si el tipo de persona es jurídica
-										if (!Checks.esNulo(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona()))) {						
+										if (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {						
 											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Razón social (Titular)
 												if (!Checks.esNulo(comprador.getNombreRazonSocialRte())) {																//Nombre del representante
 													if (!Checks.esNulo(comprador.getApellidosRte())) {																	//Apellidos del representante
 														if (!Checks.esNulo(comprador.getCodTipoDocumentoRte())) {														//Tipo de documento del representante
 															if (!Checks.esNulo(comprador.getNumDocumentoRte())) {														//Número de documento del representante
-																if (!Checks.esNulo(DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) &&					//Si el país del titular es España
+																if (DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais()) &&					//Si el país del titular es España
 																	!Checks.esNulo(comprador.getProvinciaRteCodigo()) &&												//Provincia y Municipio del representante
 																	!Checks.esNulo(comprador.getMunicipioRteCodigo())) {												//son obligatorios
 																	if (!Checks.esNulo(comprador.getCodigoPaisRte())) {													//País de residencia del representante

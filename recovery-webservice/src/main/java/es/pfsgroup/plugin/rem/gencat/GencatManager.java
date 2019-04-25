@@ -11,13 +11,13 @@ import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -35,7 +35,6 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.AdecuacionGencatDao;
@@ -47,6 +46,7 @@ import es.pfsgroup.plugin.rem.activo.dao.VisitaGencatDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.AdecuacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -58,15 +58,13 @@ import es.pfsgroup.plugin.rem.api.ReclamacionGencatApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
 import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
-import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
@@ -76,7 +74,6 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencatAdjunto;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
@@ -1491,6 +1488,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			historicoOfertaGencat.setTiposPersona(ofertaGencat.getTiposPersona());
 			historicoOfertaGencat.setVersion(ofertaGencat.getVersion());
 			historicoOfertaGencat.setAuditoria(ofertaGencat.getAuditoria());
+			historicoOfertaGencat.setIdOfertaAnterior(ofertaGencat.getIdOfertaAnterior());
 			
 		}
 		
@@ -1882,6 +1880,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 		this.copiarGestoresNuevaOfertaGENCAT(expedienteComercial, nuevoExpedienteComercial);
 		
+		Filter ofertaExpediente = genericDao.createFilter(FilterType.EQUALS, "oferta", nuevoExpedienteComercial.getOferta().getId());
+		ActivoOferta actOfrExpediente = genericDao.get(ActivoOferta.class, ofertaExpediente);
+		if (!Checks.esNulo(actOfrExpediente)) {
+			actOfrExpediente.setImporteActivoOferta(actOfr.getImporteActivoOferta());
+		}
+		genericDao.save(ActivoOferta.class, actOfrExpediente);
 		genericDao.save(ExpedienteComercial.class, nuevoExpedienteComercial);
 		
 		// Condiciones
@@ -1941,7 +1945,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 		ofertaGencat.setOferta(nuevaOferta);
 		ofertaGencat.setComunicacion(cmg);
-		ofertaGencat.setImporte(nuevaOferta.getImporteOferta());
+		if (!Checks.esNulo(actOfr)) {
+			ofertaGencat.setImporte(actOfr.getImporteActivoOferta());
+		}else {
+			ofertaGencat.setImporte(nuevaOferta.getImporteOferta());
+		}
+		
 		ofertaGencat.setIdOfertaAnterior(oferta.getId());
 		if(!Checks.esNulo(expedienteComercial.getCondicionante())) {
 			
@@ -2300,6 +2309,114 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			
 		}
 		
+	}
+	
+	@Override
+	public boolean comprobarExpedienteAnuladoGencat(List<ComunicacionGencat> comunicacionesGencat) {
+		for (ComunicacionGencat comunicacionGencat : comunicacionesGencat) {
+			if (!Checks.esNulo(comunicacionGencat) && !Checks.esNulo(comunicacionGencat.getFechaSancion())
+					&& !Checks.esNulo(comunicacionGencat.getSancion())
+					&& DDSancionGencat.COD_EJERCE.equals(comunicacionGencat.getSancion().getCodigo())) {
+				List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", comunicacionGencat.getActivo().getId()));
+				if(!Checks.estaVacio(actTraList)) {
+					for (ActivoTramite activoTramite : actTraList) {
+						if (ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())
+								&& (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())
+										|| DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean comprobarExpedienteBloqueadoGencat(List<ComunicacionGencat> comunicacionesGencat) {
+		for (ComunicacionGencat comunicacionGencat : comunicacionesGencat) {
+			if (!Checks.esNulo(comunicacionGencat) && !Checks.esNulo(comunicacionGencat.getFechaComunicacion())
+					&& DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())) {
+				List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", comunicacionGencat.getActivo().getId()));
+				if(!Checks.estaVacio(actTraList)) {
+					for (ActivoTramite activoTramite : actTraList) {
+						if (ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())
+								&& (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())
+										|| DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean comprobarExpedientePreBloqueadoGencat(List<ComunicacionGencat> comunicacionesGencat) {
+		for (ComunicacionGencat comunicacionGencat : comunicacionesGencat) {
+			if (!Checks.esNulo(comunicacionGencat) && DDEstadoComunicacionGencat.COD_CREADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean descongelaExpedienteGencat(ExpedienteComercial expediente) {
+		boolean descongelar = false;
+		boolean expedienteAnulado = false;
+		List<ComunicacionGencat> comunicacionesVivas = comunicacionesVivas(expediente);
+		expedienteAnulado = comprobarExpedienteAnuladoGencat(comunicacionesVivas);
+		if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())) {
+			Oferta oferta = expediente.getOferta();	
+			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+			
+			if(!Checks.estaVacio(ofertaGencat) && expedienteAnulado) {
+				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+				for (ActivoOferta actOfr : actOfrList){
+					Activo activo = actOfr.getPrimaryKey().getActivo();
+					if (activoApi.isAfectoGencat(activo)) {
+						return descongelar;
+					}
+				}
+			} else {
+				descongelar = true;
+			}
+		} else {
+			descongelar = true;	
+		}
+		return descongelar;
+	}
+	
+	@Override
+	public List<ComunicacionGencat> comunicacionesVivas(ExpedienteComercial expediente) {
+		List<ComunicacionGencat> comunicacionesGencat = new ArrayList<ComunicacionGencat>();
+		if (!Checks.esNulo(expediente)) {
+			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta()), genericDao.createFilter(FilterType.NULL, "idOfertaAnterior"));
+			List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+			if (!Checks.estaVacio(ofertaGencat)) {
+				for (ActivoOferta actOfr : actOfrList) {
+					ComunicacionGencat comunicacionGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", actOfr.getActivoId()));
+					if (!Checks.esNulo(comunicacionGencat)) {
+						comunicacionesGencat.add(comunicacionGencat);
+					}
+				}
+			}
+		}
+		
+		return comunicacionesGencat;
+	}
+	
+	@Override
+	public boolean esOfertaGencat(ExpedienteComercial expediente) {
+		boolean provieneOfertaGencat = false;
+		List<OfertaGencat> esOfertaGencat = genericDao.getList(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta()), genericDao.createFilter(FilterType.NOTNULL, "idOfertaAnterior"));
+		List<HistoricoOfertaGencat> esOfertaGencatHistorico = genericDao.getList(HistoricoOfertaGencat.class, genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta()), genericDao.createFilter(FilterType.NOTNULL, "idOfertaAnterior"));
+		if (!Checks.estaVacio(esOfertaGencat) || !Checks.estaVacio(esOfertaGencatHistorico) ) {
+			provieneOfertaGencat = true;
+		}
+		return provieneOfertaGencat;
 	}
 
 }

@@ -1873,7 +1873,7 @@ public class AgrupacionAdapter {
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		String offerType = oferta.getTipoOferta().getCodigo();
 		
-		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
+		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
 				dto.getCodigoEstadoOferta());
 		
 		if (!Checks.esNulo(dto.getIdAgrupacion())) {
@@ -1892,7 +1892,7 @@ public class AgrupacionAdapter {
 				ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo,
 						filtroTofAlquiler);
 
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())
 						&& (oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null
 								&& DDCartera.CODIGO_CARTERA_LIBERBANK
 										.equals(oferta.getActivoPrincipal().getCartera().getCodigo()))) {
@@ -1906,7 +1906,14 @@ public class AgrupacionAdapter {
 								|| (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))) {
 							throw new JsonViewerException("Activo " + numActivo + " sin precio");
 						}
+						if(Checks.esNulo(activo.getTipoAlquiler())){
+							throw new JsonViewerException("El valor de Tipo de Alquiler del activo "+numActivo+" no permite la realización de una oferta");
+						}
 					}
+				}
+				
+				if(DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && DDTipoOferta.CODIGO_ALQUILER.equals(offerType) && Checks.esNulo(activo.getTipoAlquiler())){
+					throw new JsonViewerException("El valor de Tipo de Alquiler del activo "+activo.getNumActivo()+" no permite la realización de una oferta");
 				}
 			}
 		}
@@ -1923,7 +1930,7 @@ public class AgrupacionAdapter {
 		
 		// Si se pretende aceptar la oferta, comprobar primero si la agrupación
 		// de la oferta es de tipo 'Lote comercial'.
-		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
 			if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
 					.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 				// En caso que la agrupación sea formalizable comprobamos tenga
@@ -1939,11 +1946,11 @@ public class AgrupacionAdapter {
 		}
 
 		// try {
-		oferta.setEstadoOferta(tipoOferta);
+		oferta.setEstadoOferta(estadoOferta);
 
 		// Si el estado de la oferta cambia a Aceptada cambiamos el resto de
 		// estados a Congelada excepto los que ya estuvieran en Rechazada
-		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
 			// Comprobar si la agrupación de la oferta es de tipo 'Lote
 			// comercial'.
 			if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
@@ -1978,7 +1985,7 @@ public class AgrupacionAdapter {
 		persistOferta(oferta);
 
 		// si la oferta ha sido rechazada enviamos un email/notificacion.
-		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
+		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 
 			if (!Checks.esNulo(dto.getMotivoRechazoCodigo())) {
 				DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi

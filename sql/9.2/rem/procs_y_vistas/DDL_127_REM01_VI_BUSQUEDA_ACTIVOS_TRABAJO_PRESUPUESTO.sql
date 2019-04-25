@@ -53,7 +53,7 @@ BEGIN
 		
 	AS	
   SELECT /*+ PARALELL*/
-      TBJ.TBJ_ID || ACT.ACT_ID as VAT_ID
+      TBJ.TBJ_ID || ACT.ACT_ID as VAT_ID,
       TBJ.TBJ_ID,
       EST.DD_EST_CODIGO,
       EST.DD_EST_DESCRIPCION,

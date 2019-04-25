@@ -711,7 +711,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// Al aceptar la oferta, se crea el trabajo de sancion oferta y el
 		// expediente comercial
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
-			comprobarPrecio(oferta, dto);
+			comprobarTramitarOferta(oferta, dto);
 			resultado = doAceptaOferta(oferta);
 		}
 
@@ -731,7 +731,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return resultado;
 	}
 	
-	private void comprobarPrecio(Oferta oferta, DtoOfertaActivo dto) {
+	private void comprobarTramitarOferta(Oferta oferta, DtoOfertaActivo dto) {
 		String tipoOferta = oferta.getTipoOferta().getCodigo();
 
 		if (!Checks.esNulo(dto.getIdActivo())) {
@@ -744,8 +744,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			ActivoValoraciones precioVenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofVenta);
 			ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofAlquiler);
 
-			if (oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null
-					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo()))
+			if (activo != null && activo.getCartera() != null
+					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
 				if (DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)) {
 					if (Checks.esNulo(precioVenta)
 							|| (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))) {
@@ -757,6 +757,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						throw new JsonViewerException("Activo sin precio");
 					}
 				}
+			}
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta) && Checks.esNulo(activo.getTipoAlquiler())){
+				throw new JsonViewerException("El valor de Tipo de Alquiler del activo "+activo.getNumActivo()+" no permite la realización de una oferta");
+			}
+				
 		}
 	}
 

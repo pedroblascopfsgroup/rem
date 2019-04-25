@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190326
+--## AUTOR=Sergio Ortuño
+--## FECHA_CREACION=20190424
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-3770
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Blindaje del nullable
 --##########################################
 --*/
 
@@ -39,8 +40,13 @@ DECLARE
 		V_SQL := 'UPDATE '||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE SET BORRADO = 0 WHERE BORRADO IS NULL';
 		EXECUTE IMMEDIATE V_SQL;
 	
+		V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = ''BORRADO'' AND TABLE_NAME = ''CEX_COMPRADOR_EXPEDIENTE'' AND NULLABLE = ''Y''';
+		EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+			IF V_COUNT > 0 THEN
 	    V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE MODIFY BORRADO NOT NULL';
 	    EXECUTE IMMEDIATE V_SQL;
+	   
+	   END IF;
 	END IF;
 
  COMMIT;

@@ -14,6 +14,8 @@ public class ComisionesDto implements WebcomRESTDto {
 	@WebcomRequired
 	private LongDataType idActivoHaya;
 	@WebcomRequired
+	private LongDataType idActivoHaya;
+	@WebcomRequired
 	private DateDataType fechaAccion;
 	@WebcomRequired
 	private LongDataType idUsuarioRemAccion;

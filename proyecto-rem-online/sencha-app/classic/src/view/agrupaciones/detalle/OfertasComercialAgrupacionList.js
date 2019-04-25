@@ -203,8 +203,6 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			if (agrupacion.get('codigoCartera')==CONST.CARTERA['BANKIA'] && (agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'] 
 				|| agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] || agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['RESTRINGIDA']))
 			{
-
-				debugger;
 				if(agrupacion.get('cambioEstadoActivo')){
 					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
 				}

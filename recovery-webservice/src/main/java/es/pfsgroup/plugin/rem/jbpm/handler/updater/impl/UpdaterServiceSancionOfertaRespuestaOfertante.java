@@ -110,7 +110,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 								for (ActivoOferta activoOferta : listActivosOferta) {
 									ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-									if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.PTE_SANCION.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+									if(Checks.esNulo(expediente.getReserva()) && (DDRespuestaOfertante.CODIGO_ACEPTA.equals(valor.getValor()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(activoOferta.getPrimaryKey().getActivo().getCartera().getCodigo())) 
+											&& activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 										Oferta oferta = expediente.getOferta();	
 										OfertaGencat ofertaGencat = null;
 										if (!Checks.esNulo(comunicacionGencat)) {

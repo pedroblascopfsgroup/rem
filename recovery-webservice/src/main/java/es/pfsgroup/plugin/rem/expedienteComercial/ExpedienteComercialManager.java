@@ -3844,8 +3844,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 					if (!Checks.esNulo(comprador.getCodTipoPersona()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {						
 						if (!Checks.esNulo(comprador.getNombreRazonSocial()) && !Checks.esNulo(comprador.getNombreRazonSocialRte()) && !Checks.esNulo(comprador.getApellidosRte()) 
-								&& !Checks.esNulo(comprador.getCodTipoDocumentoRte()) && !Checks.esNulo(comprador.getNumDocumentoRte()) && !Checks.esNulo(DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) 
-								&& !Checks.esNulo(comprador.getProvinciaRteCodigo()) && !Checks.esNulo(comprador.getMunicipioRteCodigo()) && !Checks.esNulo(comprador.getCodigoPaisRte())) {
+								&& !Checks.esNulo(comprador.getCodTipoDocumentoRte()) && !Checks.esNulo(comprador.getNumDocumentoRte()) 
+								&& (!Checks.esNulo(comprador.getProvinciaRteCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))
+								&& (!Checks.esNulo(comprador.getMunicipioRteCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))
+								&& !Checks.esNulo(comprador.getCodigoPaisRte())) {
 							camposCompradores = true;
 						} else {
 							return false;

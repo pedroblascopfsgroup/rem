@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190417
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20190425
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.1.0
 --## INCIDENCIA_LINK=REMVIP-3658

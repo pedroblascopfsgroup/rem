@@ -99,7 +99,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 							for (ActivoOferta activoOferta : listActivosOferta) {
 								ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-								if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+								if(Checks.esNulo(expediente.getReserva()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 									Oferta oferta = expediente.getOferta();	
 									OfertaGencat ofertaGencat = null;
 									if (!Checks.esNulo(comunicacionGencat)) {

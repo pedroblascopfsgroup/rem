@@ -136,15 +136,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				            	}
 					        },
 					        {
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
-					        	name: 'estadoActivoCodigo',
-					        	bind: {
-				            		store: '{comboEstadoActivo}',
-				            		value: '{activo.estadoActivoCodigo}'
-				            	}
-					        },
-					        {
 			                	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
 					        	name: 'tipoUsoDestinoCodigo',
@@ -161,7 +152,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                		value: '{activo.motivoActivo}'
 			                	},
 			                	maxLength: 50
-			                }
+			                },
+					        {
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
+					        	name: 'estadoActivoCodigo',
+					        	bind: {
+				            		store: '{comboEstadoActivo}',
+				            		value: '{activo.estadoActivoCodigo}'
+				            	}
+					        }
 						]
 					},{ // Columna 3
 						defaultType: 'textfieldbase',
@@ -171,10 +171,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	xtype: 'textareafieldbase',
 			                	labelWidth: 200,
 			                	rowspan: 5,
-			                	height: 160,
+			                	height: 130,
 			                	labelAlign: 'top',
 			                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
 			                	bind:		'{activo.descripcion}'
+			                },
+			                {
+			                	xtype: 'textfieldbase',
+			                	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
+			                	name: 'ultimaModEstAct',
+			                	bind: {
+			                		value: '{activo.diasCambioEstadoActivo}',
+			                		hidden: '{!activo.isCarteraBankia}'
+			                	}
 			                }
 						]
 					}]

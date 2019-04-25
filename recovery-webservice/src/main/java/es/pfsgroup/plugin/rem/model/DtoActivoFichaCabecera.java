@@ -66,6 +66,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String catContableDescripcion;
 	private String motivoActivo;
 	private Boolean tieneRegistroContrato;
+	private Integer diasCambioEstadoActivo;
 
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -223,6 +224,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	//HREOS-4545
 	private Boolean tieneOfertaAlquilerViva;
 	private Boolean esGestorAlquiler;
+	
+	private Boolean cambioEstadoPublicacion;;
+	private Boolean cambioEstadoPrecio;
+	private Boolean cambioEstadoActivo; 
 
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -1744,6 +1749,38 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setTieneRegistroContrato(Boolean tieneRegistroContrato) {
 		this.tieneRegistroContrato = tieneRegistroContrato;
+	}
+
+	public Integer getDiasCambioEstadoActivo() {
+		return diasCambioEstadoActivo;
+	}
+
+	public void setDiasCambioEstadoActivo(Integer diasCambioEstadoActivo) {
+		this.diasCambioEstadoActivo = diasCambioEstadoActivo;
+	}
+
+	public Boolean getCambioEstadoPublicacion() {
+		return cambioEstadoPublicacion;
+	}
+
+	public void setCambioEstadoPublicacion(Boolean cambioEstadoPublicacion) {
+		this.cambioEstadoPublicacion = cambioEstadoPublicacion;
+	}
+
+	public Boolean getCambioEstadoPrecio() {
+		return cambioEstadoPrecio;
+	}
+
+	public void setCambioEstadoPrecio(Boolean cambioEstadoPrecio) {
+		this.cambioEstadoPrecio = cambioEstadoPrecio;
+	}
+
+	public Boolean getCambioEstadoActivo() {
+		return cambioEstadoActivo;
+	}
+
+	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
+		this.cambioEstadoActivo = cambioEstadoActivo;
 	}
 	
 }

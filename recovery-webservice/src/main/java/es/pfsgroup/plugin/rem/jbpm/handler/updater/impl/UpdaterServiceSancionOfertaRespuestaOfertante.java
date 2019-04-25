@@ -110,7 +110,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 								for (ActivoOferta activoOferta : listActivosOferta) {
 									ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-									if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+									if(Checks.esNulo(expediente.getReserva()) && (DDRespuestaOfertante.CODIGO_ACEPTA.equals(valor.getValor()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(activoOferta.getPrimaryKey().getActivo().getCartera().getCodigo())) 
+											&& activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 										Oferta oferta = expediente.getOferta();	
 										OfertaGencat ofertaGencat = null;
 										if (!Checks.esNulo(comunicacionGencat)) {
@@ -144,7 +145,11 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 														
 						}else {
 							//Resuelve el expediente
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+							if(!DDCartera.CODIGO_CARTERA_GIANTS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+							} else{
+								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTA_DENEGADA);
+							}
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 							expediente.setFechaVenta(null);
 							expediente.setEstado(estado);

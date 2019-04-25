@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -279,6 +280,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if (activo.getEstadoActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "estadoActivoCodigo", activo.getEstadoActivo().getCodigo());
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
+				
+				if(!Checks.esNulo(activo.getFechaUltCambioTipoActivo())) {
+						Date fechaInicial=activo.getFechaUltCambioTipoActivo();
+						Date fechaFinal=new Date();
+						Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+						activoDto.setDiasCambioEstadoActivo(dias);
+				}
+			}
 		}
 		
 		if (activo.getTipoUsoDestino() != null) {
@@ -369,7 +379,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					break;
 				}
 			}
-
+			
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 			BeanUtils.copyProperty(activoDto, "perteneceAgrupacionRestringidaVigente", perteneceAgrupacionRestringidaVigente);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionComercial", pertenceAgrupacionComercial);
@@ -649,9 +659,52 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		} 
 		activoDto.setTieneRegistroContrato(tieneRegistro);
 		
+		//HREOS-5779
+		
+		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+		
+			Boolean cambioEstadoPublicacion = Boolean.FALSE;
+			Boolean cambioEstadoPrecio = Boolean.FALSE;
+			Boolean cambioEstadoActivo = Boolean.FALSE; 
+
+			if(((!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()))
+					||((!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTit()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTit()))
+							))) {
+				cambioEstadoActivo = Boolean.TRUE;
+	
+			}
+
+			
+			if(((!Checks.esNulo(activo.getActivoPublicacion().getFechaInicioAlquiler())&& calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaInicioAlquiler()))
+					|| ((!Checks.esNulo(activo.getActivoPublicacion().getFechaInicioVenta()) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaInicioVenta()))
+					
+					))) {
+				cambioEstadoPublicacion = Boolean.TRUE;
+	
+			}
+			
+			activoDto.setCambioEstadoActivo(cambioEstadoActivo);
+			activoDto.setCambioEstadoPrecio(cambioEstadoPrecio);
+			activoDto.setCambioEstadoPublicacion(cambioEstadoPublicacion);
+
+		}
+		
 		
 		return activoDto;
 	}
+	
+	public Boolean calculodiasCambiosActivo(Date fechaIni){
+		
+		Boolean cumpleCond = Boolean.FALSE;
+		Date fechaInicial=fechaIni;
+		Date fechaFinal=new Date();
+		Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+		if (dias<7) {
+			cumpleCond=Boolean.TRUE; 
+		}
+		
+		return cumpleCond;
+	} 
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
@@ -718,6 +771,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (!Checks.esNulo(dto.getTipoActivoCodigo())) {
 				DDTipoActivo tipoActivo = (DDTipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDTipoActivo.class,  dto.getTipoActivoCodigo());
 				activo.setTipoActivo(tipoActivo);
+				activo.setFechaUltCambioTipoActivo(new Date());
 				reiniciarPBC = true;
 			}
 			

@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
@@ -23,8 +21,6 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.SalesforceResponseDto;
-import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 
 public interface GencatApi {
 
@@ -275,4 +271,31 @@ public interface GencatApi {
 	public boolean comprobacionDocumentoAnulacion(Long idActivo);
 
 	public DtoNotificacionActivo createHistoricoNotificacionComunicacion(DtoNotificacionActivo dtoNotificacion);
+	
+	public boolean comprobarExpedienteAnuladoGencat(List<ComunicacionGencat> comunicacionesGencat);
+	
+	/**
+	 * Comprobación para saber si se tiene que descongelar un expediente afectado por GENCAT
+	 * 
+	 * @param expediente
+	 */
+	public boolean descongelaExpedienteGencat(ExpedienteComercial expediente);
+
+	public boolean comprobarExpedienteBloqueadoGencat(List<ComunicacionGencat> comunicacionesGencat);
+
+	public boolean comprobarExpedientePreBloqueadoGencat(List<ComunicacionGencat> comunicacionesGencat);
+	
+	/**
+	 * Lista de todas las comunicaciones vivas de los activos que conforman un expediente
+	 * 
+	 * @param expediente
+	 */
+	public List<ComunicacionGencat> comunicacionesVivas(ExpedienteComercial expediente);
+	
+	/**
+	 * Comprobamos si el expediente es un expediente creado por GENCAT
+	 * 
+	 * @param expediente
+	 */
+	boolean esOfertaGencat(ExpedienteComercial expediente);
 }

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -98,55 +100,65 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 					genericDao.createFilter(FilterType.EQUALS, "username", NPLREO_SUPPORT));
 			Usuario mailTracker = genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "username", MAILTRACKER_SUPPORT));
-			String titulo = "La Oferta #numoferta ha sido TRAMITADA";
-			String contenido = "<p> Le informamos que la citada propuesta ha sido TRAMITADA.</p>";
-			
-			
+			String titulo = "The offer #numoferta has been PROCESSED";
+			String contenido = "<p>We are pleased to inform you that the next proposal has been PROCESSED.</p>";
+						
 			DtoPage dto = expedienteComercialApi.getActivosExpedienteVista(expediente.getId());
 			
 			if(dto != null && dto.results.size() > 0){
-				contenido += "<p><b>Activos de la oferta</b></p>";
+				contenido += "<p><b>Assets included in the offer</b></p>";
 				List<VListadoActivosExpediente> activos = (List<VListadoActivosExpediente>)dto.results;
 				for (VListadoActivosExpediente activoOferta : activos) {
-					contenido += "<p>Activo: " + activoOferta.getNumActivo()
-							+ ", Tipo : " + activoOferta.getTipoActivo() 
-							+ ", Municipio : " + activoOferta.getMunicipio()
-							+ ", Direcci&oacute;n : " + activoOferta.getDireccion()
-							+ ", &Iacute;mporte participaci&oacute;n : " + activoOferta.getImporteParticipacion()+ "euros"
-							+ ", Precio m&iacute;nimo autorizado : " + activoOferta.getPrecioMinimo()+ "euros"
-							+"</p>";
+					contenido += "<p>Asset: " + activoOferta.getNumActivo()
+							+ ", Type: " + activoOferta.getTipoActivo() 
+							+ ", Town: " + activoOferta.getMunicipio()
+							+ ", Address: " + activoOferta.getDireccion()
+							+ ", Participation amount: " + activoOferta.getImporteParticipacion()+ " euros"
+							+ ", Minimum authorized Price: " + activoOferta.getPrecioMinimo()+ " euros</p>";
 				}
 			}
 
 			WebDto dtopage = new WebDto();
 			dtopage.setLimit(100);
-			 Page pagina = expedienteComercialApi.getCompradoresByExpediente(expediente.getId(), dtopage);
-			 List<VBusquedaCompradoresExpediente> compradores = (List<VBusquedaCompradoresExpediente>) pagina.getResults();
-			 
-			 if(compradores != null && compradores.size() > 0){
-				 contenido += "<p><b>Compradores</b></p>";
-				 for (VBusquedaCompradoresExpediente comprador : compradores) {
-					 contenido += "<p>Nombre o raz&oacute;n social: " + comprador.getNombreComprador()
-						+ ", Documento : " + comprador.getNumDocumentoComprador() 
-						+ ", % compra : " + comprador.getPorcentajeCompra()
-						+"</p>";
-					 
-				 }
-			 }
+			Page pagina = expedienteComercialApi.getCompradoresByExpediente(expediente.getId(), dtopage);
+			List<VBusquedaCompradoresExpediente> compradores = (List<VBusquedaCompradoresExpediente>) pagina.getResults();
 			
-
+			if(compradores != null && compradores.size() > 0){
+				contenido += "<p><b>Customers</b></p>";
+				for (VBusquedaCompradoresExpediente comprador : compradores) {
+					contenido += "<p>Name/Business name: " + comprador.getNombreComprador()
+							+ ", Id: " + comprador.getNumDocumentoComprador() 
+							+ ", Buying %: " + comprador.getPorcentajeCompra() + "</p>";
+				}
+			}
+			
+			ActivoProveedor mediador = tramite.getActivo().getInfoComercial().getMediadorInforme();
+			
+			if (!Checks.esNulo(mediador)) {
+				contenido += "<p><b>Broker name</b></p>"
+						+ "<p>Name: " + mediador.getNombre()
+						+ ", Email: " + mediador.getEmail() + "</p>";
+			}
+			
+			contenido += "<p><b>Total offer amount: " + expediente.getOferta().getImporteOferta() + "</b></p>";
+			
 			CondicionanteExpediente condiciones = expediente.getCondicionante();
 
 			if (condiciones != null) {
 				if (condiciones.getTipoImpuesto() != null && condiciones.getTipoAplicable() != null) {
-					contenido += "<p><b>Condiciones fiscales</b></p>";
-					contenido += "<p>Tipo de impuesto: " + condiciones.getTipoImpuesto().getDescripcion()
-							+ ", Tipo aplicable: " + condiciones.getTipoAplicable().toString() +"</p>";
+					contenido += "<p><b>Tax requirements</b></p>"
+							+ "<p>Type of tax: " + condiciones.getTipoImpuesto().getDescripcion()
+							+ ", Applicable rate: " + condiciones.getTipoAplicable().toString() + "</p>";
 				}
 			}
 
-			contenido += "<p> Quedamos a su disposición para cualquier consulta o aclaración.</p>"
-					+ "<p> Saludos cordiales.</p>" + "<p> Fdo: #gestorTarea </p>" + "<p> Email: #mailGestorTarea </p>";
+			Date fechaEnvioCorreo = new Date();
+			contenido += "<p><b>Date: " + fechaEnvioCorreo + "</b></p>";
+			
+			contenido += "<p>We are at your disposal for any question.</p>"
+					+ "<p>Kind regards.</p>" 
+					+ "<p>#gestorTarea</p>" 
+					+ "<p>Email: #mailGestorTarea</p>";
 			
 			contenido = contenido.replace("#gestorTarea", gestorNombre)
 					 .replace("#mailGestorTarea", gestorEmail);
@@ -171,7 +183,7 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 			dtoSendNotificator.setTitulo(titulo);
 			dtoSendNotificator.setNumTrabajo(null);
 
-			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateBody(dtoSendNotificator, contenido));
 		}
 
 	}

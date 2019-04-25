@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -90,6 +91,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		
 		ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 		
+		ActivoInfoRegistral infoRegistral = activo.getInfoRegistral();
+		
 		//Evalua si ha encontrado un registro de perimetro para el activo dado. 
 		//En caso de que no exista, crea uno nuevo relacionado sin datos
 		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
@@ -108,6 +111,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		String  tmpMotivoAplicaFormalizar = exc.dameCelda(fila,11);
 		Integer tmpAplicaPublicar = getCheckValue(exc.dameCelda(fila, 12));
 		String  tmpMotivoAplicaPublicar = exc.dameCelda(fila,13);
+		Integer tmpLPO = getCheckValue(exc.dameCelda(fila, 14));
 
 		perimetroActivo.setActivo(activo);
 		//Incluido en perimetro		---------------------------
@@ -236,6 +240,10 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		}
 
 		if(!Checks.esNulo(tmpMotivoAplicaPublicar)) perimetroActivo.setMotivoAplicaPublicar(tmpMotivoAplicaPublicar);
+		
+		//Modificar Licencia Primera Ocupación (LPO)--------------------------
+		if(!CHECK_NO_CAMBIAR.equals(tmpLPO)) infoRegistral.setLpo(tmpLPO);
+				
 
 
 		// ---------------------------

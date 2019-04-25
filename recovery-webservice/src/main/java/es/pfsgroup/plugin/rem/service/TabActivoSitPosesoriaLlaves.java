@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -99,6 +101,16 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			
 			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
+				
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
+					
+					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTit())) {
+							Date fechaInicial=activo.getSituacionPosesoria().getFechaUltCambioTit();
+							Date fechaFinal=new Date();
+							Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+							activoDto.setDiasCambioTitulo(dias);
+					}
+				}
 			}
 			
 			if(!Checks.esNulo(activo.getCartera())) {
@@ -106,6 +118,13 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 					if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
 						BeanUtils.copyProperty(activoDto, "situacionJuridica", activo.getSituacionPosesoria().getSitaucionJuridica().getDescripcion());
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion());
+						
+						if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos())) {
+								Date fechaInicial=activo.getSituacionPosesoria().getFechaUltCambioPos();
+								Date fechaFinal=new Date();
+								Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+								activoDto.setDiasCambioPosesion(dias);
+						}
 					}					
 				} else {
 					if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
@@ -174,10 +193,12 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTitulo());
 			DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 			activoSituacionPosesoria.setConTitulo(tituloActivoTPA);
+			activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 		}
 
 		if(!Checks.esNulo(dto.getFechaTomaPosesion())){
 			activoSituacionPosesoria.setEditadoFechaTomaPosesion(true);
+			activoSituacionPosesoria.setFechaUltCambioPos(new Date());
 		}
 //		if(!Checks.esNulo(dto.getIndicaPosesion())){
 //			activo.getSituacionPosesoria().getSitaucionJuridica().setIndicaPosesion(dto.getIndicaPosesion());

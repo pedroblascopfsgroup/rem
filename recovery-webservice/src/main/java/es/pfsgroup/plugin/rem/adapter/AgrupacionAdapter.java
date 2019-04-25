@@ -1930,25 +1930,39 @@ public class AgrupacionAdapter {
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		String offerType = oferta.getTipoOferta().getCodigo();
 		
-		if(!Checks.esNulo(dto.getIdAgrupacion())){
-			List<ActivoAgrupacionActivo> agaList = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionID(dto.getIdAgrupacion());
-			
-			for(ActivoAgrupacionActivo aga : agaList){
+		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
+				dto.getCodigoEstadoOferta());
+		
+		if (!Checks.esNulo(dto.getIdAgrupacion())) {
+			List<ActivoAgrupacionActivo> agaList = activoAgrupacionActivoDao
+					.getListActivoAgrupacionActivoByAgrupacionID(dto.getIdAgrupacion());
+
+			for (ActivoAgrupacionActivo aga : agaList) {
 				Activo activo = aga.getActivo();
 				Long numActivo = activo.getNumActivo();
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter filtroTofVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-				Filter filtroTofAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
+				Filter filtroTofVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
+						DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+				Filter filtroTofAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
+						DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
 				ActivoValoraciones precioVenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofVenta);
-				ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofAlquiler);
-				
-				if(DDTipoOferta.CODIGO_VENTA.equals(offerType)){
-					if(Checks.esNulo(precioVenta) || (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))){
-						throw new JsonViewerException("Activo "+numActivo+" sin precio");
-					}
-				}else if(DDTipoOferta.CODIGO_ALQUILER.equals(offerType)){
-					if(Checks.esNulo(precioRenta) || (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))){
-						throw new JsonViewerException("Activo "+numActivo+" sin precio");
+				ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo,
+						filtroTofAlquiler);
+
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+						&& (oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null
+								&& DDCartera.CODIGO_CARTERA_LIBERBANK
+										.equals(oferta.getActivoPrincipal().getCartera().getCodigo()))) {
+					if (DDTipoOferta.CODIGO_VENTA.equals(offerType)) {
+						if (Checks.esNulo(precioVenta)
+								|| (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))) {
+							throw new JsonViewerException("Activo " + numActivo + " sin precio");
+						}
+					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(offerType)) {
+						if (Checks.esNulo(precioRenta)
+								|| (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))) {
+							throw new JsonViewerException("Activo " + numActivo + " sin precio");
+						}
 					}
 				}
 			}
@@ -1963,9 +1977,7 @@ public class AgrupacionAdapter {
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
 		}
 
-		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
-				dto.getCodigoEstadoOferta());
-
+		
 		// Si se pretende aceptar la oferta, comprobar primero si la agrupación
 		// de la oferta es de tipo 'Lote comercial'.
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {

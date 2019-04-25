@@ -78,7 +78,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			String name = getWSName();
 			//si es nulo o no está activo no avanzar para no estropear los codigos en local
 			
-			Boolean activo = (Boolean) (!Checks.esNulo(appProperties.getProperty("ws.MAESTRO_PERSONAS.active")) ? appProperties.getProperty("ws.MAESTRO_PERSONAS.active") : false);
+			Boolean activo = !Checks.esNulo(appProperties.getProperty("ws.MAESTRO_PERSONAS.active")) ? Boolean.valueOf(appProperties.getProperty("ws.MAESTRO_PERSONAS.active")) : false;
 			if(!Checks.esNulo(urlWSDL) && activo) {
 				URL wsdlLocation = new URL(urlWSDL);
 				QName qName = new QName(targetNamespace, name);

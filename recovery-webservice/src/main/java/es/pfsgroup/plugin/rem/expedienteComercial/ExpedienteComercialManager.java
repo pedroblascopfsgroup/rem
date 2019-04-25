@@ -281,6 +281,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String DESCRIPCION_COMITE_HAYA = "Haya";
 	private static final String SI = "Si";
 	private static final String NO = "No";
+	private static final String PROBLEMA = "Problema";
+
 
 	@Resource
 	private MessageService messageServices;
@@ -8840,21 +8842,56 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean hayDiscrepanciasClientesURSUS(Long idExpediente){
+		
 		Boolean flagHayDiscrepancias = false;
+		Boolean problemasPorComprador = false;
 		Filter filterExpediente = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
+		
+		
+		
 		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filterExpediente);
 		List<CompradorExpediente> compradores = expedienteComercial.getCompradores();
 		for (CompradorExpediente compradorExpediente : compradores) {
 			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "id", compradorExpediente.getComprador());
 			Comprador comprador = genericDao.get(Comprador.class, filterComprador);
-			
+			problemasPorComprador = false;
 			if(!Checks.esNulo(comprador)) {
+				try {
+					List<DatosClienteProblemasVentaDto> problemasClienteUrsus = buscarProblemasVentaClienteUrsus(String.valueOf(comprador.getIdCompradorUrsus()),String.valueOf(idExpediente));
+					for (DatosClienteProblemasVentaDto datosClienteProblemasVentaDto : problemasClienteUrsus) {
+						if(PROBLEMA.equals(datosClienteProblemasVentaDto.getTipoMensaje())){
+							problemasPorComprador = true;
+							
+							break;
+							
+						}
+						
+					}
+					//CompradorURSUS.set(estadoCivilURSUS)
+					if(!problemasPorComprador) {
+						
+						problemasPorComprador = true;
+					}
+					if(problemasPorComprador) {
+						flagHayDiscrepancias = true;
+						comprador.setProblemasUrsus(true);
+						genericDao.save(Comprador.class, comprador);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			
-				
+			
 			}
 			
 		}
-		
+		/*
+		 * 		comprador.getClienteComercial().getEstadoCivil().getCodigo();
+				comprador.getClienteComercial().getRegimenMatrimonial().getCodigo();
+				comprador.getClienteComercial().getDocumentoConyuge();
+				*/
+				
 		//Comprobaciones para compradores.
 		
 		

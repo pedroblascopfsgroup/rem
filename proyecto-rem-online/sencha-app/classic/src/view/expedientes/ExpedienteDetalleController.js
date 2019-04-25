@@ -3866,7 +3866,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		     url: url,
 		     params: {idExpediente : me.getViewModel().get("expediente.id")},
 		     success: function (a, operation, context) {
-		    
+		    	 if(data.success == "true"){
+		    		 me.fireEvent("errorToast", HreRem.i18n("msg.algun.comprador.ha.cambiado"));
+		    		
+			     }else{
+			    	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			     }
 		 		me.refrescarExpediente(true);
 		 	},
            failure: function (a, operation, context) {

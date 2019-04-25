@@ -134,7 +134,23 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     	ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
     	DtoDatosPublicacionActivo dto = activoPublicacionDao.convertirEntidadTipoToDto(activoPublicacion);
 		dto.setPrecioWebVenta(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(idActivo));
+
+		if(!Checks.esNulo(activoValoracionDao.getDateCambioPrecioWebVenta(idActivo))) {
+			
+			Date fechaInicial=activoValoracionDao.getDateCambioPrecioWebVenta(idActivo);
+			Date fechaFinal=new Date();
+			Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
+			
+			dto.setDiasCambioPrecioVentaWeb(dias);
+		}
 		dto.setPrecioWebAlquiler(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo));
+		
+		if(!Checks.esNulo(activoValoracionDao.getDateCambioPrecioWebAlquiler(idActivo))) {
+			Date fechaInicial=activoValoracionDao.getDateCambioPrecioWebAlquiler(idActivo);
+			Date fechaFinal=new Date();
+			Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
+			dto.setDiasCambioPrecioAlqWeb(dias);
+		}
 		DDAdecuacionAlquiler adecuacionAlquiler = activoPatrimonioDao.getAdecuacionAlquilerFromPatrimonioByIdActivo(idActivo);
 		if(!Checks.esNulo(adecuacionAlquiler)) {
 			dto.setAdecuacionAlquilerCodigo(adecuacionAlquiler.getCodigo());

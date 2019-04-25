@@ -101,7 +101,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	    						listeners: {
 				                	select: 'onChangeChainedCombo'
 				            	},
-				            	allowBlank: false
+				            	allowBlank: false,
+				            	style:'margin-left:10px'
 					        },
 					        {
 								xtype: 'comboboxfieldbase',
@@ -112,7 +113,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				            		value: '{activo.subtipoActivoCodigo}',
 				            		disabled: '{!activo.tipoActivoCodigo}'
 				            	},
-	    						allowBlank: false
+	    						allowBlank: false,
+				            	style:'margin-left:10px'
 					        },
 					        {
 								xtype: 'comboboxfieldbase',
@@ -122,8 +124,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				            		store: '{comboTipoActivoBde}',
 				            		value: '{activo.tipoActivoCodigoBde}',
 				            		hidden: '{!activo.isCarteraLiberbank}'
-				            	}
-
+				            	},
+				            	style:'margin-left:10px'
 					        },
 					        {
 					        	xtype: 'comboboxfieldbase',
@@ -133,7 +135,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				            		store: '{comboSubtipoActivoBde}',
 				            		value: '{activo.subtipoActivoCodigoBde}',
 				            		hidden: '{!activo.isCarteraLiberbank}'
-				            	}
+				            	},
+				            	style:'margin-left:10px'
 					        },
 					        {
 			                	xtype: 'comboboxfieldbase',
@@ -142,7 +145,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	bind: {
 				            		store: '{comboTipoUsoDestino}',
 				            		value: '{activo.tipoUsoDestinoCodigo}'
-				            	}
+				            	},
+				            	style:'margin-left:10px'
 			                },
 			                {
 			                	xtype: 'textfieldbase',
@@ -151,8 +155,68 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	bind: {
 			                		value: '{activo.motivoActivo}'
 			                	},
-			                	maxLength: 50
+			                	maxLength: 50,
+			                	style:'margin-left:10px'
 			                },
+			                
+							{
+					        	xtype:'fieldset',
+					        	height: '80%',
+					        	border: false,
+								layout: {
+								        type: 'table',
+								        // The total column count must be specified here
+								        columns: 2,
+								        trAttrs: {height: '30px', width: '100%'},
+								        tdAttrs: {width: '70%'},
+								        tableAttrs: {
+								            style: {
+								                width: '100%'
+												}
+								        }
+								},
+					        	defaultType: 'textfieldbase',
+								rowspan: 1,
+								items: [
+									{ 	// Este campo es necesario para corregir lo que parece un BUG. 
+										// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
+						            	hidden: true
+									},
+									
+							        {
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
+							        	name: 'estadoActivoCodigo',
+							        	bind: {
+						            		store: '{comboEstadoActivo}',
+						            		value: '{activo.estadoActivoCodigo}'
+						            	},
+						            	labelWidth: 130,
+						            	width: 400
+							        },
+					                {
+					                	xtype: 'textfieldbase',
+					                	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
+					                	name: 'ultimaModEstAct',
+					                	readOnly: true,
+					                	bind: {
+					                		value: '{activo.diasCambioEstadoActivo}',
+					                		hidden: '{!activo.isCarteraBankia}',
+					                		readOnly: true
+					                	},
+						            	labelWidth: 120,
+						            	width: 60
+					                }
+								]
+							},
+			                
+			                
+			                
+			                
+			                
+			                
+			                
+			                
 					        {
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
@@ -175,15 +239,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	labelAlign: 'top',
 			                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
 			                	bind:		'{activo.descripcion}'
-			                },
-			                {
-			                	xtype: 'textfieldbase',
-			                	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
-			                	name: 'ultimaModEstAct',
-			                	bind: {
-			                		value: '{activo.diasCambioEstadoActivo}',
-			                		hidden: '{!activo.isCarteraBankia}'
-			                	}
 			                }
 						]
 					}]

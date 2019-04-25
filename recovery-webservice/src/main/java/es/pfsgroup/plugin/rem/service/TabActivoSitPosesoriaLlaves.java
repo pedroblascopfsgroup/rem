@@ -99,16 +99,23 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "tipoTituloPosesorioCodigo", activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo());
 			}
 			
+			if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaAccesoTapiado())) {
+				
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
+					
+					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaAccesoTapiado())) {
+						activoDto.setDiasTapiado(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaAccesoTapiado()));
+					}
+				}
+			}
+			
+			
 			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 				
 				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
-					
 					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTit())) {
-							Date fechaInicial=activo.getSituacionPosesoria().getFechaUltCambioTit();
-							Date fechaFinal=new Date();
-							Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
-							activoDto.setDiasCambioTitulo(dias);
+						activoDto.setDiasCambioTitulo(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTit()));
 					}
 				}
 			}
@@ -120,10 +127,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion());
 						
 						if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos())) {
-								Date fechaInicial=activo.getSituacionPosesoria().getFechaUltCambioPos();
-								Date fechaFinal=new Date();
-								Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
-								activoDto.setDiasCambioPosesion(dias);
+							activoDto.setDiasCambioPosesion(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()));
 						}
 					}					
 				} else {
@@ -313,6 +317,14 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 	}
 	
+	public Integer calculodiasCambiosActivo(Date fechaIni){
+		
+		Boolean cumpleCond = Boolean.FALSE;
+		Date fechaInicial=fechaIni;
+		Date fechaFinal=new Date();
+		return (int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+
+	} 
 	
 
 }

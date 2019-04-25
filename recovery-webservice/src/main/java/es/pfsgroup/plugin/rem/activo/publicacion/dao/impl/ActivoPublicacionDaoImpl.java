@@ -20,8 +20,7 @@ import java.util.Date;
 
 @Repository("ActivoPublicacionDao")
 public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacion, Long> implements ActivoPublicacionDao {
-
-
+	
 	@Override
 	public DtoDatosPublicacionActivo convertirEntidadTipoToDto(ActivoPublicacion entidad) {
 		DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
@@ -67,16 +66,18 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 			if(!Checks.esNulo(dto.getFechaInicioEstadoAlquiler())) {
 				Date fechaInicial=dto.getFechaInicioEstadoAlquiler();
 				Date fechaFinal=new Date();
-				Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+				Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
 				dto.setDiasCambioPublicacionAlquiler(dias);
 			}
 			
-			if(!Checks.esNulo(dto.getFechaInicioEstadoVenta())) {
+
+			if(!Checks.esNulo(dto.getFechaInicioEstadoVenta())){
 				Date fechaInicialVenta=dto.getFechaInicioEstadoVenta();
 				Date fechaFinalVenta=new Date();
-				Integer dias=(int) ((fechaFinalVenta.getTime()-fechaInicialVenta.getTime())/86400000);
+				Integer dias=(int) (((long)fechaFinalVenta.getTime()-(long)fechaInicialVenta.getTime())/86400000);
 				dto.setDiasCambioPublicacionVenta(dias);
 			}
+			
 		}
 		
 		

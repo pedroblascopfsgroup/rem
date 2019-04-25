@@ -73,23 +73,94 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									},
 									items :
 										[
+											
 											{
-												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.estado.venta'),
-												bind: '{datospublicacionactivo.estadoPublicacionVenta}',
-												readOnly: true
+									        	xtype:'fieldset',
+									        	height: '100%',
+									        	border: false,
+												layout: {
+												        type: 'table',
+												        // The total column count must be specified here
+												        columns: 2,
+												        trAttrs: {height: '30px', width: '100%'},
+												        tdAttrs: {width: '65%'},
+												        tableAttrs: {
+												            style: {
+												                width: '100%'
+																}
+												        }
+												},
+									        	defaultType: 'textfieldbase',
+												rowspan: 1,
+												items: [
+													{ 	
+										            	hidden: true
+													},
+											        {
+														fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.estado.venta'),
+														bind: '{datospublicacionactivo.estadoPublicacionVenta}',
+														readOnly: true,
+										            	labelWidth: 150,
+										            	width: 280,
+										            	style:'margin-top:10px'
+											        },
+											        {
+														fieldLabel:  HreRem.i18n('fieldlabel.ultima.modificacion'),
+														bind: '{datospublicacionactivo.diasCambioPublicacionVenta}',
+														readOnly: true,
+														hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!=CONST.CARTERA['BANKIA']),
+										            	labelWidth: 110,
+										            	width: 60,
+										            	style:'margin-top:10px'
+											        }
+
+
+												]
 											},
 											{
-												fieldLabel:  HreRem.i18n('fieldlabel.ultima.modificacion'),
-												bind: '{datospublicacionactivo.diasCambioPublicacionVenta}',
-												readOnly: true,
-												hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!=CONST.CARTERA['BANKIA'])  
-											},
-											{
-												xtype: 'currencyfieldbase',
-												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
-												reference: 'precioWebVenta',
-												bind: '{onInitChangePrecioWebVenta}',
-												readOnly: true
+									        	xtype:'fieldset',
+									        	height: '100%',
+									        	border: false,
+												layout: {
+												        type: 'table',
+												        // The total column count must be specified here
+												        columns: 2,
+												        trAttrs: {height: '30px', width: '100%'},
+												        tdAttrs: {width: '50%'},
+												        tableAttrs: {
+												            style: {
+												                width: '100%'
+																}
+												        }
+												},
+									        	defaultType: 'textfieldbase',
+												rowspan: 1,
+												items: [
+													{ 	
+										            	hidden: true
+													},
+											        {
+														xtype: 'currencyfieldbase',
+														fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
+														reference: 'precioWebVenta',
+														bind: '{onInitChangePrecioWebVenta}',
+														readOnly: true,
+										            	labelWidth: 100,
+										            	width: 200,
+										            	style:'margin-top:10px'
+											        },
+											        {
+														fieldLabel:  HreRem.i18n('fieldlabel.ultima.modificacion'),
+														bind: '{datospublicacionactivo.diasCambioPrecioVentaWeb}',
+														readOnly: true,
+														hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!=CONST.CARTERA['BANKIA']),
+										            	labelWidth: 110,
+										            	width: 60,
+										            	style:'margin-top:10px'
+											        }
+
+
+												]
 											},
 											{
 	                                            xtype: 'datefieldbase',
@@ -136,7 +207,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												},
 											    listeners: {
 											        dirtychange: 'onChangeCheckboxPublicarVenta'
-											   }
+											   },
+											   style:'margin-left:10px'
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),
@@ -148,7 +220,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												},
 												listeners: {
 													dirtychange: 'onChangeCheckboxOcultar'
-												}
+												},
+												style:'margin-left:10px'
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.publicar.sin.precio'),
@@ -186,7 +259,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												},
 												listeners: {
 													change: 'onChangeComboMotivoOcultacionVenta'
-												}
+												},
+												style:'margin-left:10px'
 											},
 											{
 												xtype: 'label',
@@ -255,21 +329,91 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									items :
 										[
 											{
-												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.estado.alquiler'),
-												bind: '{datospublicacionactivo.estadoPublicacionAlquiler}',
-												readOnly: true
+									        	xtype:'fieldset',
+									        	height: '100%',
+									        	border: false,
+												layout: {
+												        type: 'table',
+												        // The total column count must be specified here
+												        columns: 2,
+												        trAttrs: {height: '30px', width: '100%'},
+												        tdAttrs: {width: '60%'},
+												        tableAttrs: {
+												            style: {
+												                width: '100%'
+																}
+												        }
+												},
+									        	defaultType: 'textfieldbase',
+												rowspan: 1,
+												items: [
+													{ 	
+										            	hidden: true
+													},
+											        {
+														fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.estado.alquiler'),
+														bind: '{datospublicacionactivo.estadoPublicacionAlquiler}',
+														readOnly: true,
+										            	labelWidth: 150,
+										            	width: 280,
+										            	style:'margin-top:10px'
+											        },
+											        {
+														fieldLabel:  HreRem.i18n('fieldlabel.ultima.modificacion'),
+														bind: '{datospublicacionactivo.diasCambioPublicacionAlquiler}',
+														readOnly: true,
+														hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!= CONST.CARTERA['BANKIA']),
+										            	labelWidth: 110,
+										            	width: 60,
+										            	style:'margin-top:10px'
+											        }
+
+
+												]
 											},
 											{
-												fieldLabel:  HreRem.i18n('fieldlabel.ultima.modificacion'),
-												bind: '{datospublicacionactivo.diasCambioPublicacionAlquiler}',
-												readOnly: true,
-												hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!= CONST.CARTERA['BANKIA'])
-											},
-											{
-												xtype: 'currencyfieldbase',
-												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
-												bind: '{onInitChangePrecioWebAlquiler}',
-												readOnly: true
+									        	xtype:'fieldset',
+									        	height: '100%',
+									        	border: false,
+												layout: {
+												        type: 'table',
+												        // The total column count must be specified here
+												        columns: 2,
+												        trAttrs: {height: '30px', width: '100%'},
+												        tdAttrs: {width: '40%'},
+												        tableAttrs: {
+												            style: {
+												                width: '100%'
+																}
+												        }
+												},
+									        	defaultType: 'textfieldbase',
+												rowspan: 1,
+												items: [
+													{ 	
+										            	hidden: true
+													},
+											        {
+														xtype: 'currencyfieldbase',
+														fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
+														bind: '{onInitChangePrecioWebAlquiler}',
+														readOnly: true,
+										            	labelWidth: 100,
+										            	width: 200,
+										            	style:'margin-top:10px'
+											        },
+											        {
+														fieldLabel:  HreRem.i18n('fieldlabel.ultima.modificacion'),
+														bind: '{datospublicacionactivo.diasCambioPrecioAlqWeb}',
+														readOnly: true,
+														hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!=CONST.CARTERA['BANKIA']),
+										            	labelWidth: 110,
+										            	width: 60,
+										            	style:'margin-top:10px'
+											        }
+
+
+												]
 											},
 	                                        {
 	                                            xtype: 'datefieldbase',
@@ -289,7 +433,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	                                                store: '{comboAdecuacionAlquiler}',
 	                                                value: '{datospublicacionactivo.adecuacionAlquilerCodigo}'
 	                                            },
-	                                            readOnly: true
+	                                            readOnly: true,
+	                                            style:'margin-left:10px'
 	                                        }
 										]
 								},
@@ -324,7 +469,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												},
                                                 listeners: {
                                                      dirtychange: 'onChangeCheckboxPublicarAlquiler'
-                                                }
+                                                },
+                                                style:'margin-left:10px'
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),
@@ -337,7 +483,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												},
 												listeners: {
                                                     dirtychange: 'onChangeCheckboxOcultar'
-                                                }
+                                                },
+                                                style:'margin-left:10px'
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.publicar.sin.precio'),
@@ -374,7 +521,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								            	},
 												listeners: {
 													change: 'onChangeComboMotivoOcultacionAlquiler'
-												}
+												},
+												style:'margin-left:10px'
 									        },
 									        {
 												xtype: 'label',

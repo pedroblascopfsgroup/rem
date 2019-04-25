@@ -1485,7 +1485,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// quitar las escritas para el precio o valoracion anterior
 
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
-				activoValoracion.setFechaCambioValorActivo(new Date());
+				
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA) 
+						|| dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)){
+					activoValoracion.setFechaCambioValorVenta(new Date());
+					
+				}
+				
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)){
+					activoValoracion.setFechaCambioValorAlq(new Date());
+				}
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
 
@@ -1502,7 +1513,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoValoracion.setActivo(activo);
 				activoValoracion.setTipoPrecio(tipoPrecio);
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
-				activoValoracion.setFechaCambioValorActivo(new Date());
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA) 
+						|| dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)){
+					activoValoracion.setFechaCambioValorVenta(new Date());
+					
+				}
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)){
+					activoValoracion.setFechaCambioValorAlq(new Date());
+				}
+
 				genericDao.save(ActivoValoraciones.class, activoValoracion);
 			}
 

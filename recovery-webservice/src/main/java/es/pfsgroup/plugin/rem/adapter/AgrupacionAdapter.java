@@ -615,9 +615,56 @@ public class AgrupacionAdapter {
 					}
 				}
 				
-				//TODO
-				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
-					
+				//HREOS-5779
+				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA) 
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER)
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)) {
+					if (!Checks.esNulo(agrupacion.getActivos()) && !agrupacion.getActivos().isEmpty()) {
+						Boolean cambioEstadoPublicacion = Boolean.FALSE;
+						Boolean cambioEstadoPrecio = Boolean.FALSE;
+						Boolean cambioEstadoActivo = Boolean.FALSE; 
+						for(ActivoAgrupacionActivo activoAgrup:agrupacion.getActivos()) {
+							
+							
+							if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activoAgrup.getActivo().getCartera().getCodigo())) {
+
+								if((!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioPos()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioPos()))
+										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTit()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTit()))
+										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaAccesoTapiado()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaAccesoTapiado()))
+										|| (!Checks.esNulo(activoAgrup.getActivo().getFechaUltCambioTipoActivo()) && calculodiasCambiosActivo(activoAgrup.getActivo().getFechaUltCambioTipoActivo()))	
+									) {
+									cambioEstadoActivo = Boolean.TRUE;
+						
+								}
+
+								
+								if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaInicioAlquiler())&& calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaInicioAlquiler()))
+										||(!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaInicioVenta()) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaInicioVenta()))
+									) {
+									cambioEstadoPublicacion = Boolean.TRUE;
+						
+								}
+								
+								if(!Checks.esNulo(activoAgrup.getActivo().getValoracion())) {
+									for(ActivoValoraciones valoracion: activoAgrup.getActivo().getValoracion())
+									{
+										if(((!Checks.esNulo(valoracion.getFechaCambioValorVenta())) && calculodiasCambiosActivo(valoracion.getFechaCambioValorVenta()))
+											||	((!Checks.esNulo(valoracion.getFechaCambioValorAlq())) && calculodiasCambiosActivo(valoracion.getFechaCambioValorAlq()))
+											) {
+											cambioEstadoPrecio = Boolean.TRUE;
+											break;
+										}
+									}
+								}	
+								
+								dtoAgrupacion.setCambioEstadoActivo(cambioEstadoActivo);
+								dtoAgrupacion.setCambioEstadoPrecio(cambioEstadoPrecio);
+								dtoAgrupacion.setCambioEstadoPublicacion(cambioEstadoPublicacion);
+
+							}
+							
+						}
+					}
 				}
 
 				// Resolvemos si la agrupación será editable
@@ -3375,4 +3422,17 @@ public class AgrupacionAdapter {
 
 		return dto;
 	}
+	
+	public Boolean calculodiasCambiosActivo(Date fechaIni){
+		
+		Boolean cumpleCond = Boolean.FALSE;
+		Date fechaInicial=fechaIni;
+		Date fechaFinal=new Date();
+		Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+		if (dias<7) {
+			cumpleCond=Boolean.TRUE; 
+		}
+		
+		return cumpleCond;
+	} 
 }

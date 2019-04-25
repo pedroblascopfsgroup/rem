@@ -48,6 +48,8 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private String motivoPublicacionAlquiler;
 	private Integer diasCambioPublicacionVenta;
 	private Integer diasCambioPublicacionAlquiler;
+	private Integer diasCambioPrecioVentaWeb;
+	private Integer diasCambioPrecioAlqWeb;
 
 
 	public String getTipoPublicacionVentaDescripcion() {
@@ -360,6 +362,22 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setDiasCambioPublicacionAlquiler(Integer diasCambioPublicacionAlquiler) {
 		this.diasCambioPublicacionAlquiler = diasCambioPublicacionAlquiler;
+	}
+
+	public Integer getDiasCambioPrecioVentaWeb() {
+		return diasCambioPrecioVentaWeb;
+	}
+
+	public void setDiasCambioPrecioVentaWeb(Integer diasCambioPrecioVentaWeb) {
+		this.diasCambioPrecioVentaWeb = diasCambioPrecioVentaWeb;
+	}
+
+	public Integer getDiasCambioPrecioAlqWeb() {
+		return diasCambioPrecioAlqWeb;
+	}
+
+	public void setDiasCambioPrecioAlqWeb(Integer diasCambioPrecioAlqWeb) {
+		this.diasCambioPrecioAlqWeb = diasCambioPrecioAlqWeb;
 	}
 
 

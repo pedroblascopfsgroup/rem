@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -236,6 +237,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ActivoAdapter activoAdapterApi;
+	
+	@Autowired
+	private GencatApi gencatApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -1316,7 +1320,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(listaOfertas)) {
 				for (Oferta oferta : listaOfertas) {
 					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
-					descongelar = expedienteComercialApi.descongelaExpedienteGencat(exp);
+					descongelar = gencatApi.descongelaExpedienteGencat(exp);
 					if ((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) && descongelar) {
 						// HREOS-1937 - Si tiene expediente poner oferta
 						// ACEPTADA. Si no tiene poner oferta PENDIENTE

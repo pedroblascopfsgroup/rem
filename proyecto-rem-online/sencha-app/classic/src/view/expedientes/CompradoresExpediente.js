@@ -70,6 +70,16 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							hidden: '{!esEditableCompradores}'
 						}
 					},
+					{
+						xtype: 'button',
+						text: HreRem.i18n('btn.validar.compradores'),
+						handler: 'validarCompradores',
+						margin: '10 40 5 10',
+						visible:true
+						/*bind: {
+							hidden: '{!esEditableCompradores}'
+						}*/
+					},
                 	{
 					    xtype		: 'gridBase',
 					    topBar		: $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']),
@@ -239,7 +249,15 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							          					                
 					            		}
 							        }]
-						   }  
+						   } , {
+
+							   text: HreRem.i18n('header.problemas.ursus'),
+							   dataIndex: 'problemasUrsus',
+							   flex: 1,
+					           renderer: coloredRender,
+					           hidden: cartera(),
+					           hideable: !cartera()
+						   } 
 							  
 
 						   

@@ -279,6 +279,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String STR_MISSING_VALUE = "---";
 	public static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
 	private static final String DESCRIPCION_COMITE_HAYA = "Haya";
+	private static final String SI = "Si";
+	private static final String NO = "No";
 
 	@Resource
 	private MessageService messageServices;
@@ -3437,13 +3439,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
 			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			if(SI.equals(dto.getProblemasUrsus()))
+				comprador.setProblemasUrsus(true);
+			else {
+				comprador.setProblemasUrsus(false);
+			}
 
 			if (!Checks.esNulo(dto.getCodTipoPersona())) {
 				DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());
 				comprador.setTipoPersona(tipoPersona);
 			}
-
+			
 			// Datos de identificación
 			if (!Checks.esNulo(dto.getApellidos())) {
 				reiniciarPBC = true;
@@ -8828,5 +8835,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean hayDiscrepanciasClientesURSUS(Long idExpediente){
+		Boolean flagHayDiscrepancias = false;
+		Filter filterExpediente = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
+		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filterExpediente);
+		List<CompradorExpediente> compradores = expedienteComercial.getCompradores();
+		for (CompradorExpediente compradorExpediente : compradores) {
+			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "id", compradorExpediente.getComprador());
+			Comprador comprador = genericDao.get(Comprador.class, filterComprador);
+			
+			if(!Checks.esNulo(comprador)) {
+			
+				
+			}
+			
+		}
+		
+		//Comprobaciones para compradores.
+		
+		
+		return flagHayDiscrepancias;
 	}
 }

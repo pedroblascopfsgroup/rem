@@ -11,6 +11,7 @@ public class DtoComprador {
 	private String porcentajeComprador;
 	private String provinciaCodigo;
 	private String provinciaDescripcion;
+	private String problemasUrsus;
 	
 	public String getNombreComprador() {
 		return nombreComprador;
@@ -65,6 +66,12 @@ public class DtoComprador {
 	}
 	public void setProvinciaDescripcion(String provinciaDescripcion) {
 		this.provinciaDescripcion = provinciaDescripcion;
+	}
+	public String getProblemasUrsus() {
+		return problemasUrsus;
+	}
+	public void setProblemasUrsus(String problemasUrsus) {
+		this.problemasUrsus = problemasUrsus;
 	}
 	
 }

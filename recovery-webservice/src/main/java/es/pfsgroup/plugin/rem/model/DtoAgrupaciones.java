@@ -66,7 +66,6 @@ public class DtoAgrupaciones extends WebDto {
 	private Integer activosGencat;
 	private String codSubcartera;
 
-
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
 	}

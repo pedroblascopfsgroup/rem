@@ -3663,7 +3663,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
-
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
         } else {
@@ -4290,7 +4289,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	enableChkPerimetroAlquiler: function(get){
-		var me = this;
+		 var me = this;
 		 var esGestorAlquiler = me.getViewModel().get('activo.esGestorAlquiler');
 		 var estadoAlquiler = me.getViewModel().get('patrimonio.estadoAlquiler');
 		 var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
@@ -4302,6 +4301,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 		 }else{
 			 return true;
+		 }
+	 },
+	 
+	 editableFechaRevision: function(get){
+		if($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBLI']) || $AU.userIsRol(CONST.PERFILES['HAYASUPPUBLI']))
+		 {
+			return true; 
+		 }else{
+			return false;
 		 }
 	 },
 	 

@@ -189,6 +189,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												}
 											},
 											{
+	                                            xtype: 'datefieldbase',
+	                                            fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.fecha.revision'),
+	                                            allowBlank: false,
+	            								reference: 'datefieldFechaRevisionVenta',
+	            	                            bind:	{
+	            	                             	value: '{datospublicacionactivo.fechaRevisionVenta}',
+	            	                              	disabled: '{datospublicacionactivo.isEnableFechaRevisionVenta}',
+	            	                              	readOnly: '{editableFechaRevision}'
+	            	                            }
+	                                        },
+											{
 												xtype: 'label',
 												colspan: 1
 											},
@@ -376,6 +387,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 													change: 'onChangeComboMotivoOcultacionAlquiler'
 												}
 									        },
+									        {
+	                                            xtype: 'datefieldbase',
+	                                            fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.fecha.revision'),
+	                                            allowBlank: false,
+	            								reference: 'datefieldFechaRevisionAlquiler',
+	            	                            bind:	{
+	            	                             	value: '{datospublicacionactivo.fechaRevisionAlquiler}',
+	            	                              	disabled: '{datospublicacionactivo.isEnableFechaRevisionAlquiler}',
+	            	                              	readOnly: '{editableFechaAlquiler}'
+	            	                            }
+	                                        },
 									        {
 												xtype: 'label',
 												colspan: 1

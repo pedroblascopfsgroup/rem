@@ -52,7 +52,13 @@ Ext.define('HreRem.view.common.WindowBase', {
     		                 success: function(fp, o) {
 
     		                 	if(o.result.success == "false") {    		                 		
-    		                 		me.fireEvent("errorToast", HreRem.i18n("msg.falta.permisos"));
+    		                 		if(o.result.errorMessage.includes("Ya existe un elemento con el nombre")){
+    		                 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.fichero.duplicado"));
+    		                 		}else if(o.result.errorMessage.includes("Extensi")){
+    		            	 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.extension.documento.no.permitida"));	            	 			
+    		                 		}else{
+    		                 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		                 		}
     		                 	}else{
     		                 		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
     		                 	}

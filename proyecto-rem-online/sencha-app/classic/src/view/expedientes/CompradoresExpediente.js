@@ -75,7 +75,9 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						text: HreRem.i18n('btn.validar.compradores'),
 						handler: 'validarCompradores',
 						margin: '10 40 5 10',
-						visible:true
+						visible:true,
+						hidden: cartera(),
+				        hideable: !cartera()
 						/*bind: {
 							hidden: '{!esEditableCompradores}'
 						}*/

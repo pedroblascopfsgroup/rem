@@ -215,7 +215,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			tmpAplicaFormalizar = CHECK_VALOR_NO;
 			
 			// Comprobamos si es necesario actualizar el estado de publicación del activo.
-			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+			//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 		}
 		
 		//Aplica Formalizar			---------------------------
@@ -252,9 +252,10 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		updaterState.updaterStateDisponibilidadComercial(activo);
 
 		//Actualizar registro historico destino comercial del activo
-		activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
+		//activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
 
 		activoApi.saveOrUpdate(activo);
+		
 		
 		//postProcesado
 		//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());

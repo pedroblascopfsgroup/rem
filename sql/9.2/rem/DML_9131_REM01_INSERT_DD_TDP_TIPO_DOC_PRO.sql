@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20190425
+--## FECHA_CREACION=20190426
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-3992
@@ -54,6 +54,14 @@ BEGIN
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+	V_SQL := 'SELECT COUNT(1)
+		FROM '||V_ESQUEMA||'.DD_TDP_TIPO_DOC_PRO 
+		WHERE dd_tdp_codigo = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+	--Si NO existe lo insertamos
+	IF V_NUM_TABLAS = 0 THEN
  		
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
@@ -82,7 +90,12 @@ BEGIN
 
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS INSERTADOS '||SQL%ROWCOUNT||' CORRECTAMENTE');
+
+	 ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO]: YA EXISTE REGISTRO PARA EL CODIGO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''''); 
+	END IF;
             
+
       
       END LOOP;
     COMMIT;

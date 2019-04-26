@@ -45,6 +45,8 @@ public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 		this.setTipoPublicacionAlquilerDescripcion(aux.getTipoPublicacionAlquilerDescripcion());
 		this.setEleccionUsuarioTipoPublicacionAlquiler(aux.getEleccionUsuarioTipoPublicacionAlquiler());
 		this.setMotivoPublicacion(aux.getMotivoPublicacion());
+		this.setFechaRevisionVenta(aux.getFechaRevisionVenta());
+		this.setFechaRevisionAlquiler(aux.getFechaRevisionAlquiler());
 	}
 	
 	private Long id;

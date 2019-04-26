@@ -134,7 +134,26 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     	ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
     	DtoDatosPublicacionActivo dto = activoPublicacionDao.convertirEntidadTipoToDto(activoPublicacion);
 		dto.setPrecioWebVenta(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(idActivo));
+
+		if(!Checks.esNulo(activoValoracionDao.getDateCambioPrecioWebVenta(idActivo))) {
+			
+			Date fechaInicial=activoValoracionDao.getDateCambioPrecioWebVenta(idActivo);
+			Date fechaFinal=new Date();
+			Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
+			
+			dto.setDiasCambioPrecioVentaWeb(dias);
+		}
 		dto.setPrecioWebAlquiler(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo));
+		dto.setFechaRevisionVenta(activoPublicacion.getFechaRevisionVenta());
+		dto.setFechaRevisionAlquiler(activoPublicacion.getFechaRevisionAlquiler());
+
+		if(!Checks.esNulo(activoValoracionDao.getDateCambioPrecioWebAlquiler(idActivo))) {
+			Date fechaInicial=activoValoracionDao.getDateCambioPrecioWebAlquiler(idActivo);
+			Date fechaFinal=new Date();
+			Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
+			dto.setDiasCambioPrecioAlqWeb(dias);
+		}
+
 		DDAdecuacionAlquiler adecuacionAlquiler = activoPatrimonioDao.getAdecuacionAlquilerFromPatrimonioByIdActivo(idActivo);
 		if(!Checks.esNulo(adecuacionAlquiler)) {
 			dto.setAdecuacionAlquilerCodigo(adecuacionAlquiler.getCodigo());
@@ -149,7 +168,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDeshabilitarCheckPublicarSinPrecioAlquiler(this.deshabilitarCheckPublicarSinPrecioAlquiler(idActivo));
 		dto.setDeshabilitarCheckNoMostrarPrecioVenta(this.deshabilitarCheckNoMostrarPrecioVenta(idActivo));
 		dto.setDeshabilitarCheckNoMostrarPrecioAlquiler(this.deshabilitarCheckNoMostrarPrecioAlquiler(idActivo));
-
+				
     	return dto;
 	}
 
@@ -631,25 +650,36 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualAlquiler", dto.getMotivoOcultacionManualAlquiler());
 				beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarVenta", dto.getPublicarVenta());
 				beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarVenta", dto.getOcultarVenta());
+				
 				if(!Checks.esNulo(dto.getOcultarVenta()) && !dto.getOcultarVenta()) {
 					// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
 					activoPublicacion.setMotivoOcultacionVenta(null);
 					activoPublicacion.setMotivoOcultacionManualVenta(null);
+					activoPublicacion.setFechaRevisionVenta(null);
+				}else {
+					if(!Checks.esNulo(dto.getFechaRevisionVenta()))
+						activoPublicacion.setFechaRevisionVenta(dto.getFechaRevisionVenta());
 				}
+				
 				beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", dto.getNoMostrarPrecioVenta());
 				beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioVenta", dto.getPublicarSinPrecioVenta());
 				beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarAlquiler", dto.getPublicarAlquiler());
 				beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarAlquiler", dto.getOcultarAlquiler());
+				
 				if(!Checks.esNulo(dto.getOcultarAlquiler()) && !dto.getOcultarAlquiler()) {
 					// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
 					activoPublicacion.setMotivoOcultacionAlquiler(null);
 					activoPublicacion.setMotivoOcultacionManualAlquiler(null);
+					activoPublicacion.setFechaRevisionAlquiler(null);
+				}else {
+					if(!Checks.esNulo(dto.getFechaRevisionAlquiler()))
+						activoPublicacion.setFechaRevisionAlquiler(dto.getFechaRevisionAlquiler());
 				}
+				
 				beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", dto.getNoMostrarPrecioAlquiler());
 				beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", dto.getPublicarSinPrecioAlquiler());
 				activoPublicacion.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
-	
-	
+					
 				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) 
 						|| !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) 
 						|| !Checks.esNulo(dto.getPublicarVenta()) 

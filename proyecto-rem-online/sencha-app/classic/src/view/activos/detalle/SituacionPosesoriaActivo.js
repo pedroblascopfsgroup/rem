@@ -45,15 +45,14 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							        tdAttrs: {width: '50%'},
 							        tableAttrs: {
 							            style: {
-							                width: '75%'
+							                width: '100%'
 											}
 							        }
 							},
 				        	defaultType: 'textfieldbase',
 							rowspan: 1,
 							items: [
-								{ 	// Este campo es necesario para corregir lo que parece un BUG. 
-									// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
+								{
 					            	hidden: true
 								},
 								
@@ -66,8 +65,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        		store: '{comboSiNoRem}',
 					            		value: '{situacionPosesoria.indicaPosesion}'
 					            	},
-					            	labelWidth: 100,
-					            	width: 80
+					            	labelWidth: 80,
+					            	width: 200
 						        },
 						        {
 						        	xtype:'textfieldbase',
@@ -121,7 +120,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		value: '{situacionPosesoria.accesoTapiado}'
 					            	},
 					            	labelWidth: 80,
-					            	width: 150,
+					            	width: 200,
 					            	listeners: {
 					            		change: function(combo, value) {
 					            			var me = this;
@@ -139,13 +138,24 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            	}
 						        },
 						        {
+						        	xtype:'textfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
+						        	readOnly: true,
+						        	bind: {
+						        		value: '{situacionPosesoria.diasTapiado}',
+						        		hidden: '{!activo.isCarteraBankia}'
+						        	},
+					            	labelWidth: 120,
+					            	width: 60
+						        },
+						        {
 						        	xtype:'datefieldbase',
 						        	reference: 'datefieldTapiado',
 						        	fieldLabel: 'Fecha tapiado',
 						        	bind: {
 						        		value: '{situacionPosesoria.fechaAccesoTapiado}'
 						        	},
-					            	labelWidth: 80,
+					            	labelWidth: 100,
 					            	width: 200
 						        },
 						        {
@@ -156,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		value: '{situacionPosesoria.accesoAntiocupa}'
 					            	},
 					            	labelWidth: 80,
-					            	width: 150,
+					            	width: 180,
 					            	listeners: {
 					            		change: function(combo, value) {
 					            			var me = this;
@@ -191,7 +201,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                	bind:	{
 		                		value: '{situacionPosesoria.fechaTomaPosesion}',
 		                		readOnly: '{esSituacionJudicial}'
-		                	}
+		                	},
+		                	style:'margin-left:10px'
 		                },
 		                {
 							xtype: 'checkboxfieldbase',
@@ -215,7 +226,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            	},
 			            	listeners: {
 			            		change: 'onChangeComboOcupado'
-			            	}
+			            	},
+			            	style:'margin-left:10px'
 				        },				      
 				        { 
 				        	xtype: 'comboboxfieldbase',
@@ -234,18 +246,65 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            	},
                             readOnly: true
 				        },
-				        { 
-				        	xtype: 'comboboxfieldbase',
-				        	reference: 'comboSituacionPosesoriaConTitulo',
-							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
-							allowBlank: false,
-				        	bind: {
-				        		store : '{comboDDTipoTituloActivoTPA}',
-			            		value: '{situacionPosesoria.conTitulo}',
-                                disabled: '{disabledComboConTituloTPA}',
-                                readOnly: '{esTipoEstadoAlquilerAlquilado}'
-			            	}
-				        },
+				        
+						{
+				        	xtype:'fieldset',
+				        	height: '80%',
+				        	border: false,
+							layout: {
+							        type: 'table',
+							        // The total column count must be specified here
+							        columns: 2,
+							        trAttrs: {height: '30px', width: '100%'},
+							        tdAttrs: {width: '50%'},
+							        tableAttrs: {
+							            style: {
+							                width: '100%'
+											}
+							        }
+							},
+				        	defaultType: 'textfieldbase',
+							rowspan: 1,
+							items: [
+								{ 	  
+					            	hidden: true
+								},
+								
+						        {
+							        xtype: 'comboboxfieldbase',
+							        reference: 'comboSituacionPosesoriaConTitulo',
+									fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
+									allowBlank: false,
+							        bind: {
+							        	store : '{comboDDTipoTituloActivoTPA}',
+						            	value: '{situacionPosesoria.conTitulo}',
+			                            disabled: '{disabledComboConTituloTPA}',
+			                            readOnly: '{esTipoEstadoAlquilerAlquilado}'
+						            },
+							        
+					            	labelWidth: 80,
+					            	width: 200
+						        },
+						        {
+						        	xtype:'textfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
+						        	readOnly: true,
+						        	bind: {
+						        		value: '{situacionPosesoria.diasCambioTitulo}',
+						        		hidden: '{!activo.isCarteraBankia}'
+						        	},
+					            	labelWidth: 120,
+					            	width: 60
+						        }
+
+
+							]
+						},
+				        
+				        
+				        
+				        
+
 				        {
 							xtype: 'textfieldbase',
 							reference: 'disponibilidadJuridicaRef',

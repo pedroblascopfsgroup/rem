@@ -3663,7 +3663,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
-
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
         } else {
@@ -3696,7 +3695,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var textarea = me.lookupReference(checkbox.textareaRefChained);
         
         if(!isDirty && estadoPubVentaPublicado) {
-    		var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData());
+			
             checkbox.setReadOnly(readOnly);
             checkbox.setValue(false);
     	}
@@ -3733,22 +3733,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    var checkboxPublicarVenta = checkbox.up('activosdetallemain').lookupReference('chkbxpublicarventa');
 	    var estadoPubVentaPublicado = me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
-	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+			me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+			var checkboxPublicarVentaDeshabilitado = me.getViewModel().get('datospublicacionactivo').getData().deshabilitarCheckPublicarVenta;
 
+	
 	    if (!estadoCheckPublicarFicha){
             checkbox.setValue(false);
         } else {
-		    if(isDirty && !estadoPubVentaPublicado) {
-		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		        checkboxPublicarVenta.setReadOnly(readOnly);
-		    } else if (!isDirty && !estadoPubVentaPublicado) {
-		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		        checkboxPublicarVenta.setReadOnly(readOnly);
-	    		checkboxPublicarVenta.setValue(false);
-		    } else {
-		    	checkboxPublicarVenta.setReadOnly(true);
-		    }
-        }
+		    if(!estadoPubVentaPublicado && checkbox.getValue() && checkboxPublicarVentaDeshabilitado) {
+			
+				checkboxPublicarVenta.setValue(true);
+				
+		    } else if (!estadoPubVentaPublicado && !checkbox.getValue() && checkboxPublicarVentaDeshabilitado) {
+		        
+				checkboxPublicarVenta.setValue(false);
+				
+				
+		    } 
+		}
+	 
 	},
 
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
@@ -3758,22 +3761,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
+			var checkboxPublicarAlquilerDeshabilitado = me.getViewModel().get('datospublicacionactivo').getData().deshabilitarCheckPublicarAlquiler;
 
+		
 		if(!estadoCheckPublicarFicha){
             checkbox.setValue(false);
         } else {
-			if(isDirty && !estadoPubAlquilerPublicado) {
-				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-	            checkboxPublicarAlquiler.setReadOnly(readOnly);
-			} else if (!isDirty && !estadoPubAlquilerPublicado) {
-				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-				checkboxPublicarAlquiler.setReadOnly(readOnly);
+			if(isDirty && !estadoPubAlquilerPublicado && checkboxPublicarAlquilerDeshabilitado) {
+	            checkboxPublicarAlquiler.setValue(true);
+			} else if (!isDirty && !estadoPubAlquilerPublicado && !checkbox.getValue() && checkboxPublicarAlquilerDeshabilitado) {
+				
+				
 				checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
 				checkboxPublicarAlquiler.setValue(false);
 						}
-						if (!estadoCheckPublicarFicha) {
-							checkboxPublicarAlquiler.setReadOnly(true);
-			} else {
+						 else {
 				var readOnly = Ext
 						.isEmpty(me.getViewModel().get(
 								'datospublicacionactivo').getData().precioWebAlquiler)
@@ -3797,7 +3799,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var me = this;
         var list = Ext.ComponentQuery.query('activosdetallemain');
         for(var i=0; i < list.length; i++) {
-        	if(list[i].tab.active) list[i].lookupReference('chkbxpublicaralquiler').setValue(false);
+			if(list[i].tab.active) list[i].lookupReference('chkbxpublicaralquiler').setValue(false);
+			if(list[i].tab.active) list[i].lookupReference('chkbxpublicarsinprecioalquiler').setValue(false);
         }
         btn.up('window').destroy();
     },
@@ -4286,7 +4289,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	enableChkPerimetroAlquiler: function(get){
-		var me = this;
+		 var me = this;
 		 var esGestorAlquiler = me.getViewModel().get('activo.esGestorAlquiler');
 		 var estadoAlquiler = me.getViewModel().get('patrimonio.estadoAlquiler');
 		 var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
@@ -4298,6 +4301,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 		 }else{
 			 return true;
+		 }
+	 },
+	 
+	 editableFechaRevision: function(get){
+		if($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBLI']) || $AU.userIsRol(CONST.PERFILES['HAYASUPPUBLI']))
+		 {
+			return true; 
+		 }else{
+			return false;
 		 }
 	 },
 	 

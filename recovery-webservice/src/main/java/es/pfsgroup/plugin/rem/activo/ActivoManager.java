@@ -97,6 +97,7 @@ import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -104,7 +105,6 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
-import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
@@ -264,7 +264,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private TareaActivoManager tareaActivoManager;
 
 	@Autowired
-	private GencatManager gencatManager;
+	private GencatApi gencatApi;
 
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
@@ -557,9 +557,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
 		boolean anuladoGencat = false;
-		List<ComunicacionGencat> comunicacionesGencat = expedienteComercialApi.comunicacionesVivas(expediente);
+		List<ComunicacionGencat> comunicacionesGencat = gencatApi.comunicacionesVivas(expediente);
 		if (!Checks.esNulo(expediente) && !Checks.estaVacio(comunicacionesGencat)) {
-			anuladoGencat = expedienteComercialApi.comprobarExpedienteAnuladoGencat(comunicacionesGencat);
+			anuladoGencat = gencatApi.comprobarExpedienteAnuladoGencat(comunicacionesGencat);
 		}
 		if (!Checks.esNulo(estadoOferta) && (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) && anuladoGencat) {
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXPEDIENTE_ANULADO_POR_GENCAT));
@@ -1398,7 +1398,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// quitar las escritas para el precio o valoracion anterior
 
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
-				activoValoracion.setFechaCambioValorActivo(new Date());
+				
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA) 
+						|| dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)){
+					activoValoracion.setFechaCambioValorVenta(new Date());
+					
+				}
+				
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)){
+					activoValoracion.setFechaCambioValorAlq(new Date());
+				}
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
 
@@ -1415,7 +1426,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoValoracion.setActivo(activo);
 				activoValoracion.setTipoPrecio(tipoPrecio);
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
-				activoValoracion.setFechaCambioValorActivo(new Date());
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA) 
+						|| dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)){
+					activoValoracion.setFechaCambioValorVenta(new Date());
+					
+				}
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)){
+					activoValoracion.setFechaCambioValorAlq(new Date());
+				}
+
 				genericDao.save(ActivoValoraciones.class, activoValoracion);
 			}
 

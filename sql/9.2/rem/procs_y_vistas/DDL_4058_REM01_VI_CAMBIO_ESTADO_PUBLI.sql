@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña
---## FECHA_CREACION=20181210
---## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.3
---## INCIDENCIA_LINK=HREOS-4931
+--## AUTOR=David Gonzalez
+--## FECHA_CREACION=20190425
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.11.0
+--## INCIDENCIA_LINK=HREOS-6184
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -13,6 +13,7 @@
 --##        	0.1 Versión inicial
 --##		0.2 Modificado precio_v y precio_a - Maria Presencia Herrero - REMVIP-2638
 --##		0.3 Sergio Beleña -HREOS-4931- Optimización de tiempos 
+--##    0.4 David Gonzalez -HREOS-6184- Ajustes joins
 --##########################################
 --*/
 
@@ -82,14 +83,14 @@ BEGIN
                  WHEN PTA.ACT_ID IS NOT NULL THEN 1
                  ELSE 0
                END AS ADECUADO  
-             , V.ES_CONDICIONADO ES_CONDICONADO          
+             , DECODE (V.est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado        
           FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
           JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID AND TCO.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
           
-          LEFT JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.BORRADO=0
+          LEFT JOIN '|| V_ESQUEMA ||'.V_ACT_ESTADO_DISP V ON V.ACT_ID = APU.ACT_ID
           
           LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON APU.DD_MTO_A_ID = MTO.DD_MTO_ID AND MTO.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO2 ON APU.DD_MTO_V_ID = MTO2.DD_MTO_ID AND MTO2.BORRADO = 0
@@ -247,7 +248,7 @@ BEGIN
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.ADECUADO IS ''Adecuado 0/1'' ';      
     EXECUTE IMMEDIATE V_MSQL;                         
 
-    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.ES_CONDICONADO IS ''Campo calculado en la vista V_COND_DISPONIBILIDAD'' ';      
+    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.es_condicionado IS ''Campo calculado en la vista V_ACT_ESTADO_DISP'' ';      
     EXECUTE IMMEDIATE V_MSQL;         
 END;
 /

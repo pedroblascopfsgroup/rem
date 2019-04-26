@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190307
---## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3503
+--## AUTOR=David Gonzalez
+--## FECHA_CREACION=20190425
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.11.0
+--## INCIDENCIA_LINK=HREOS-6184
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -27,6 +27,7 @@
 --##    	0.14 HREOS-5003 - Añadimos Obra nueva (Vandalizado) a VANDALIZADO
 --##		0.15 HREOS-5562 - Ocultación Automática, motivo "Revisión publicación", comentar la linea "OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1"
 --##		0.16 REMVIP-3503 - Correcciones cálculo ocupado_sin_titulo y ocupado_con_titulo (nueva columna DD_TPA_ID)
+--##    0.17 David Gonzalez - HREOS-6184 - Ajustes joins
 --##########################################
 --*/
 
@@ -117,25 +118,7 @@ AS
                 DECODE (ico.ico_posible_hacer_inf, 1, 0, 0, 1, 0) AS sin_acceso,                                                                                                            
                 CASE WHEN (sps1.sps_ocupado = 1 AND (TPA.DD_TPA_CODIGO = ''02'' OR TPA.DD_TPA_CODIGO = ''03'')) THEN 1 ELSE 0 END AS ocupado_sintitulo, 
                 CASE WHEN (sps1.sps_estado_portal_externo = 1) THEN 1 ELSE 0 END AS estado_portal_externo,  -- ESTADO PUBLICACION PORTALES EXTERNOS
-                CASE WHEN ( (sps1.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2)               -- SIN TOMA POSESION INICIAL
-                           OR eac1.dd_eac_codigo=''05''                                                   -- RUINA
-
-                           OR NVL2 (tit.act_id, 0, 1) = 1
-                           OR NVL2 (eon.dd_eon_id, 1, 0) = 1
-                           OR NVL2 (npa.act_id, 1, 0) = 1
-                           OR (eac1.dd_eac_codigo = ''02''  OR   eac1.dd_eac_codigo = ''06'' OR eac1.dd_eac_codigo = ''07'')               -- OBRA NUEVA EN CONSTRUCCIÓN/VANDALIZADO
-                           OR (sps1.sps_ocupado = 1 AND TPA.DD_TPA_CODIGO = ''01'')                        -- OCUPADO CON TITULO
-                           OR sps1.sps_acc_tapiado = 1                                                  -- TAPIADO
-                           OR (sps1.sps_ocupado = 1 AND (TPA.DD_TPA_CODIGO = ''02'' OR TPA.DD_TPA_CODIGO = ''03''))                        -- OCUPADO SIN TITULO
-                           OR NVL2 (reg2.reg_id, 1, 0) = 1
-
-                           OR NVL2(sps1.sps_otro,1,0) = 1                                               -- OTROS MOTIVOS                           
-						   --OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1                              -- sin_informe_aprobado         	 
-                          ) 
-						   OR NVL2 (vcg.con_cargas, vcg.con_cargas, 0) = 1
-					THEN ''01''
-                    ELSE ''02''
-                  END AS est_disp_com_codigo,
+                vact.est_disp_com_codigo as est_disp_com_codigo,
                   0 AS borrado
              FROM '||V_ESQUEMA||'.act_activo act LEFT JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba2 ON aba2.act_id = act.act_id 
 				  
@@ -158,7 +141,9 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.vi_activos_con_cargas vcg ON vcg.act_id = act.act_id
                   LEFT JOIN '||V_ESQUEMA||'.act_ico_info_comercial ico ON ico.act_id = act.act_id
                   LEFT JOIN '||V_ESQUEMA||'.vi_estado_actual_infmed vei ON vei.ico_id = ico.ico_id                                                                                          --SIN_INFORME_APROBADO
-            WHERE act.borrado = 0)';
+            LEFT JOIN '||V_ESQUEMA||'.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id
+            WHERE act.borrado = 0)
+          ';
 
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD...Creada OK');

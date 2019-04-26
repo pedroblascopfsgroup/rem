@@ -80,6 +80,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 				}
 			}
 		},
+		
+		comboClienteUrsusConyuge: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/buscarClientesUrsus',
+				extraParams: {
+					numeroDocumento: null, 
+					tipoDocumento: null
+				}
+			}
+		},
 
 		comboEstadoCivil: {
 			model: 'HreRem.model.ComboBase',

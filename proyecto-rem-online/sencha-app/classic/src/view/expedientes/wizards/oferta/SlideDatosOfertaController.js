@@ -149,7 +149,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
         wizard = ventanaDetalle.up(),
         url = null;
         var form = ventanaDetalle.getForm();
-
         if(form.isValid()){
             var valueDestComercial,destinoComercialActivo;
 
@@ -226,13 +225,14 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 									}
 
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-                                    ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
-                                    wizard.unmask()
+                                    ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();                                    
                                  }
+                                 wizard.unmask();
                              },
 
                              failure: function(record, operation) {
                                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                                wizard.unmask();
                              }
 
                         });
@@ -248,6 +248,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                         wizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
 
                         me.getView().unmask();
+                                               
                         wizard.nextSlide();
 
                     }else{

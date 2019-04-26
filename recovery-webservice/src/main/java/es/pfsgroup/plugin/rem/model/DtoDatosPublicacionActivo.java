@@ -50,6 +50,9 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Integer diasCambioPublicacionAlquiler;
 	private Date fechaRevisionVenta;
 	private Date fechaRevisionAlquiler;
+	private Integer diasCambioPrecioVentaWeb;
+	private Integer diasCambioPrecioAlqWeb;
+
 
 	public String getTipoPublicacionVentaDescripcion() {
 		return tipoPublicacionVentaDescripcion;
@@ -369,6 +372,22 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setFechaRevisionVenta(Date fechaRevisionVenta) {
 		this.fechaRevisionVenta = fechaRevisionVenta;
+	}
+
+	public Integer getDiasCambioPrecioVentaWeb() {
+		return diasCambioPrecioVentaWeb;
+	}
+
+	public void setDiasCambioPrecioVentaWeb(Integer diasCambioPrecioVentaWeb) {
+		this.diasCambioPrecioVentaWeb = diasCambioPrecioVentaWeb;
+	}
+
+	public Integer getDiasCambioPrecioAlqWeb() {
+		return diasCambioPrecioAlqWeb;
+	}
+
+	public void setDiasCambioPrecioAlqWeb(Integer diasCambioPrecioAlqWeb) {
+		this.diasCambioPrecioAlqWeb = diasCambioPrecioAlqWeb;
 	}
 
 	public Date getFechaRevisionAlquiler() {

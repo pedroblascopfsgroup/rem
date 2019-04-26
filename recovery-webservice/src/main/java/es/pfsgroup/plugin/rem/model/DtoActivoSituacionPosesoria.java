@@ -44,6 +44,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Integer diasCambioTitulo;
 	private Date diaCambioPosesion;
 	private Date diaCambioTitulo;
+	private Integer diasTapiado;
 		
 	public String getTipoEstadoAlquiler() {
 		return tipoEstadoAlquiler;
@@ -218,6 +219,12 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	}
 	public void setDiaCambioTitulo(Date diaCambioTitulo) {
 		this.diaCambioTitulo = diaCambioTitulo;
+	}
+	public Integer getDiasTapiado() {
+		return diasTapiado;
+	}
+	public void setDiasTapiado(Integer diasTapiado) {
+		this.diasTapiado = diasTapiado;
 	}
 
 	

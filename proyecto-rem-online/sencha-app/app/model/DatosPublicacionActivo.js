@@ -162,7 +162,13 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 				return !data.ocultarAlquiler;	
 			},
 			depends: 'ocultarAlquiler'
-        }
+        },
+        {
+	    	name:'diasCambioPrecioVentaWeb'
+	    },
+	    {
+	    	name:'diasCambioPrecioAlqWeb'
+	    }
 	],
 
 	proxy: {

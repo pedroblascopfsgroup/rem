@@ -203,17 +203,14 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			if (agrupacion.get('codigoCartera')==CONST.CARTERA['BANKIA'] && (agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'] 
 				|| agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] || agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['RESTRINGIDA']))
 			{
-				if(!Ext.isEmpty(me.lookupController().lookupReference('listadoactivosagrupacion'))) {
-					var arrayOfertas = me.getView().getStore();
-					/*if(agrupacion.get('cambioEstadoActivo')){
-						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
-					}
-					if(agrupacion.get('cambioEstadoPrecio')){
-						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
-					}
-					if(agrupacion.get('cambioEstadoPublicacion')){
-						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
-					}*/
+				if(agrupacion.get('cambioEstadoActivo')){
+					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
+				}
+				if(agrupacion.get('cambioEstadoPrecio')){
+					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
+				}
+				if(agrupacion.get('cambioEstadoPublicacion')){
+					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 				}
 				
 			} 

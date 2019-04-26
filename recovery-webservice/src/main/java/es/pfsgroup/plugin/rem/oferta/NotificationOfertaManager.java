@@ -70,6 +70,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	
 	private static final String STR_MISSING_VALUE = "---";
 	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};
+	
+	private List<String> mailsPara 	= new ArrayList<String>();
+	private List<String> mailsCC 	= new ArrayList<String>();
 
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
@@ -135,9 +138,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 					if(!Checks.esNulo(usuarioBackOffice)){
-						if (!Checks.esNulo(usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice))){
-							mailsSustituto.clear();
-							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+						mailsSustituto.clear();
+						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+						if (!Checks.estaVacio(mailsSustituto)){
 							mailsPara.addAll(mailsSustituto);
 							mailsCC.add(usuarioBackOffice.getEmail());
 						}else{
@@ -148,13 +151,23 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			
 			if(!Checks.esNulo(usuario)){
-				mailsPara.add(usuario.getEmail());
+				
+				if(!Checks.esNulo(usuario)){
+					mailsSustituto.clear();
+					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuario);
+					if (!Checks.estaVacio(mailsSustituto)){
+						mailsPara.addAll(mailsSustituto);
+						mailsCC.add(usuario.getEmail());
+					}else{
+						mailsPara.add(usuario.getEmail());
+					}
+				}
 				
 				Usuario directorEquipo = gestorActivoManager.getDirectorEquipoByGestor(usuario);
 				if (!Checks.esNulo(directorEquipo)){
-					if (!Checks.esNulo(usuarioRemApiImpl.getGestorSustitutoUsuario(directorEquipo))){
-						mailsSustituto.clear();
-						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(directorEquipo);
+					mailsSustituto.clear();
+					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(directorEquipo);
+					if (!Checks.estaVacio(mailsSustituto)){
 						mailsPara.addAll(mailsSustituto);
 						mailsCC.add(directorEquipo.getEmail());
 					}else{
@@ -164,9 +177,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			
 			if(!Checks.esNulo(supervisor)){
-				if (!Checks.esNulo(usuarioRemApiImpl.getGestorSustitutoUsuario(supervisor))){
-					mailsSustituto.clear();
-					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(supervisor);
+				mailsSustituto.clear();
+				mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(supervisor);
+				if (!Checks.estaVacio(mailsSustituto)){
 					mailsPara.addAll(mailsSustituto);
 					mailsCC.add(supervisor.getEmail());
 				}else{
@@ -188,9 +201,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				Usuario gesRes = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_RESERVA_CAJAMAR);
 				
 				if(!Checks.esNulo(gesRes)) {
-					if (!Checks.esNulo(usuarioRemApiImpl.getGestorSustitutoUsuario(gesRes))){
-						mailsSustituto.clear();
-						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gesRes);
+					mailsSustituto.clear();
+					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gesRes);
+					if (!Checks.estaVacio(mailsSustituto)){
 						mailsPara.addAll(mailsSustituto);
 						mailsCC.add(gesRes.getEmail());
 					}else{
@@ -201,9 +214,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				Usuario supRes = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR);
 				
 				if(!Checks.esNulo(supRes)){					
-					if (!Checks.esNulo(usuarioRemApiImpl.getGestorSustitutoUsuario(supRes))){
-						mailsSustituto.clear();
-						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(supRes);
+					mailsSustituto.clear();
+					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(supRes);
+					if (!Checks.estaVacio(mailsSustituto)){
 						mailsPara.addAll(mailsSustituto);
 						mailsCC.add(supRes.getEmail());
 					}else{
@@ -332,9 +345,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			List<String> mailsSustituto = new ArrayList<String>();
 
 			if(!Checks.esNulo(usuario)){			
-				if (!Checks.esNulo(usuarioRemApiImpl.getGestorSustitutoUsuario(usuario))){
-					mailsSustituto.clear();
-					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuario);
+				mailsSustituto.clear();
+				mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuario);
+				if (!Checks.estaVacio(mailsSustituto)){
 					mailsPara.addAll(mailsSustituto);
 					mailsCC.add(usuario.getEmail());
 				}else{
@@ -351,9 +364,12 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		}
 	}
 	
-	private ArrayList<String> getEmailDestinatariosAprobacion(Activo activo, Oferta ofertaAceptada, ExpedienteComercial expediente) {
+	private void getEmailDestinatariosAprobacion(Activo activo, Oferta ofertaAceptada, ExpedienteComercial expediente) {
 		
-		ArrayList<String> destinatarios = new ArrayList<String>();
+		mailsPara.clear();
+		mailsCC.clear();
+		
+		List<String> mailsSustituto = new ArrayList<String>();
 		
 		Usuario gestor = null;
 		ActivoProveedor prescriptor = null;
@@ -363,23 +379,28 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			
 			gestor = gestorActivoManager.getGestorByActivoYTipo(activo, codigoGestor);
 			
-			if(!Checks.esNulo(gestor)){
-				destinatarios.add(gestor.getEmail());
-			}
-			
+			if(!Checks.esNulo(gestor)){			
+				mailsSustituto.clear();
+				mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(gestor);
+				if (!Checks.estaVacio(mailsSustituto)){
+					mailsPara.addAll(mailsSustituto);
+					mailsCC.add(gestor.getEmail());
+				}else{
+					mailsPara.add(gestor.getEmail());
+				}
+			}			
 		}
 		
 		prescriptor = ofertaAceptada.getPrescriptor();
 		if(!Checks.esNulo(prescriptor)){
-			destinatarios.add(prescriptor.getEmail());
-		}		
-		
+			mailsPara.add(prescriptor.getEmail());
+		}
+				
 		custodio = ofertaAceptada.getActivoPrincipal().getInfoComercial().getMediadorInforme();
 		if(!Checks.esNulo(custodio)){
-			destinatarios.add(custodio.getEmail());
+			mailsPara.add(custodio.getEmail());
 		}
 		
-		return destinatarios;
 	}
 	
 	public String enviarMailAprobacion(Oferta oferta) {
@@ -396,11 +417,11 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			codigoCartera = tramite.getActivo().getCartera().getCodigo();			
 		}
 		
-		ArrayList<String> destinatarios = this.getEmailDestinatariosAprobacion(activo, oferta, expediente);
-		List<String> mailsCC = new ArrayList<String>();
+		getEmailDestinatariosAprobacion(activo, oferta, expediente);
+		
 		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
 		
-		if(!destinatarios.isEmpty()) {
+		if(!mailsPara.isEmpty()) {
 		
 			String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 			String cuerpo = "<p>Nos complace comunicarle que la oferta " + oferta.getNumOferta()
@@ -438,7 +459,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 
 			
-			genericAdapter.sendMail(destinatarios, mailsCC, asunto, cuerpoCorreo, adjuntos);
+			genericAdapter.sendMail(mailsPara, mailsCC, asunto, cuerpoCorreo, adjuntos);
 			
 		}
 		else {

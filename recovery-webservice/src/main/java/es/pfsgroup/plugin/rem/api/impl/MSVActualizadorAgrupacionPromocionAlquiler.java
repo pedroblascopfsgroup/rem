@@ -792,49 +792,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 
 		}
 		
-		//Documentos de admision
-/*		Filter filtroAdmision = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
-		List<ActivoAdmisionDocumento> listaActivoAdmisionAM = genericDao.getList(ActivoAdmisionDocumento.class, filtroAdmision);
-
-		//List<ActivoAdmisionDocumento> listaActivoAdmisionAM = activoMatriz.getAdmisionDocumento();
-		List<ActivoAdmisionDocumento> listaActivoAdmisionUA = new ArrayList<ActivoAdmisionDocumento>();
-		if(!Checks.estaVacio(listaActivoAdmisionAM)) {
-			for (ActivoAdmisionDocumento activoAdmisionDocumento : listaActivoAdmisionAM) {
-				ActivoAdmisionDocumento activoAdmisionUA = new ActivoAdmisionDocumento();
-				activoAdmisionUA.setActivo(unidadAlquilable);
-				activoAdmisionUA.setAuditoria(auditoria);
-				//Configuracion del documento				
-					ActivoConfigDocumento activoConfigDocumentoAM = activoAdmisionDocumento.getConfigDocumento();
-					ActivoConfigDocumento activoConfigDocumentoUA = new ActivoConfigDocumento();
-					activoConfigDocumentoUA.setAplicaCalificacion(activoConfigDocumentoAM.getAplicaCalificacion());
-					activoConfigDocumentoUA.setAplicaFechaCaducidad(activoConfigDocumentoAM.getAplicaFechaCaducidad());
-					activoConfigDocumentoUA.setAplicaFechaEtiqueta(activoConfigDocumentoAM.getAplicaFechaEtiqueta());
-					activoConfigDocumentoUA.setObligatorio(activoConfigDocumentoAM.getObligatorio());
-					activoConfigDocumentoUA.setTipoDocumentoActivo(activoConfigDocumentoAM.getTipoDocumentoActivo());
-					activoConfigDocumentoUA.setAuditoria(auditoria);
-					genericDao.save(ActivoConfigDocumento.class, activoConfigDocumentoUA);
-				//
-				activoAdmisionUA.setConfigDocumento(activoConfigDocumentoUA);
-				
-				activoAdmisionUA.setAplica(activoAdmisionDocumento.getAplica());
-				activoAdmisionUA.setEstadoDocumento(activoAdmisionDocumento.getEstadoDocumento());
-				activoAdmisionUA.setFechaCaducidad(activoAdmisionDocumento.getFechaCaducidad());
-				activoAdmisionUA.setFechaCalificacion(activoAdmisionDocumento.getFechaCalificacion());
-				activoAdmisionUA.setFechaEmision(activoAdmisionDocumento.getFechaEmision());
-				activoAdmisionUA.setFechaEtiqueta(activoAdmisionDocumento.getFechaEtiqueta());
-				activoAdmisionUA.setFechaObtencion(activoAdmisionDocumento.getFechaObtencion());
-				activoAdmisionUA.setFechaSolicitud(activoAdmisionDocumento.getFechaSolicitud());
-				activoAdmisionUA.setFechaVerificado(activoAdmisionDocumento.getFechaVerificado());
-				activoAdmisionUA.setNumDocumento(activoAdmisionDocumento.getNumDocumento());
-				activoAdmisionUA.setTipoCalificacionEnergetica(activoAdmisionDocumento.getTipoCalificacionEnergetica());
-			
-				genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionUA);
-				listaActivoAdmisionUA.add(activoAdmisionUA);
-			}
-			
-			unidadAlquilable.setAdmisionDocumento(listaActivoAdmisionUA);
-		}
-		*/
 		unidadAlquilable.setAdmision(activoMatriz.getAdmision());
 		genericDao.save(Activo.class, unidadAlquilable);
 		return new ResultadoProcesarFila();

@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -34,41 +35,33 @@ public class ExpedienteAvisoProblemasURSUS implements ExpedienteAvisadorApi {
 	
 	@Override
 	public DtoAviso getAviso(ExpedienteComercial expediente, Usuario usuarioLogado) {
-		System.out.println("En getAviso ProblemasURSUS");
 		DtoAviso dtoAviso = new DtoAviso();
 		
-		if (!Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(expediente.getCompradores())) {
+		if (!Checks.esNulo(expediente.getOferta()) && !Checks.estaVacio(expediente.getCompradores())) {
 			Oferta oferta = expediente.getOferta();
-			if (!Checks.esNulo(oferta.getAgrupacion())) {
-				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-				if (!Checks.esNulo(agrupacion.getActivos())) {		
-					List<ActivoAgrupacionActivo> listaActivos = agrupacion.getActivos();
-					
-					for (ActivoAgrupacionActivo listaActivo : listaActivos) {			
-						if (!Checks.esNulo(listaActivo.getActivo())) {
-							Activo activo = listaActivo.getActivo();	
-							
-							if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
-								List<CompradorExpediente> listaCompradores = expediente.getCompradores();
-								
-								for (CompradorExpediente listaComprador : listaCompradores) {
-									if (!Checks.esNulo(listaComprador.getComprador())) {
-										Long compradorId = listaComprador.getComprador();
-										Comprador comprador = genericDao.get(Comprador.class,genericDao.createFilter(FilterType.EQUALS,"id", compradorId));
-										
-										if (!Checks.esNulo(comprador.getProblemasUrsus()) && comprador.getProblemasUrsus()) {
-											dtoAviso.setId(String.valueOf(expediente.getId()));
-											dtoAviso.setDescripcion("Problemas URSUS");
-										}
-									}									
-								}								
-							}
+			if (!Checks.esNulo(oferta.getActivosOferta())) {
+				List<ActivoOferta> listaActivosOferta = oferta.getActivosOferta();
+				for (ActivoOferta listaActivoOferta : listaActivosOferta) {			
+					if (!Checks.esNulo(listaActivoOferta.getActivoId())) {
+						Long activoOfertaId = listaActivoOferta.getActivoId();
+						Activo activo = genericDao.get(Activo.class,genericDao.createFilter(FilterType.EQUALS,"id", activoOfertaId));
+						if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+							List<CompradorExpediente> listaCompradores = expediente.getCompradores();	
+							for (CompradorExpediente listaComprador : listaCompradores) {
+								if (!Checks.esNulo(listaComprador.getComprador())) {
+									Long compradorId = listaComprador.getComprador();
+									Comprador comprador = genericDao.get(Comprador.class,genericDao.createFilter(FilterType.EQUALS,"id", compradorId));
+									if (!Checks.esNulo(comprador.getProblemasUrsus()) && comprador.getProblemasUrsus()) {
+										dtoAviso.setId(String.valueOf(expediente.getId()));
+										dtoAviso.setDescripcion("Problemas URSUS");
+									}
+								}									
+							}								
 						}
 					}
 				}
 			}
-		}
-		
+		}						
 		return dtoAviso;
 	}
 	

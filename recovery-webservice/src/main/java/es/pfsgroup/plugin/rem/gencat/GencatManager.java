@@ -1885,7 +1885,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		if (!Checks.esNulo(actOfrExpediente)) {
 			actOfrExpediente.setImporteActivoOferta(actOfr.getImporteActivoOferta());
 		}
-		genericDao.save(ActivoOferta.class, actOfrExpediente);
+		genericDao.update(ActivoOferta.class, actOfrExpediente);
 		genericDao.save(ExpedienteComercial.class, nuevoExpedienteComercial);
 		
 		// Condiciones

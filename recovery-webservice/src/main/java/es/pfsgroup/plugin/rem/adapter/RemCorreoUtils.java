@@ -157,6 +157,17 @@ public class RemCorreoUtils {
 					i++;
 				}
 			}
+			if (!Checks.estaVacio(direccionesMailCc)){
+				for (String para : direccionesMailCc) {
+					if (para != null && para.length() > 0) {
+						if (i > 0) {
+							paraAcumulado = paraAcumulado.concat(",");
+						}
+						paraAcumulado = paraAcumulado.concat("(CC:)").concat(para);
+						i++;
+					}
+				}
+			}
 			traza.setTo(paraAcumulado);
 		}
 		traza.setFrom(emailFrom);

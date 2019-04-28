@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
@@ -406,7 +407,21 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			}
 			genericDao.save(NMBInformacionRegistralBien.class, bieInfoRegistral);
 			
+			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
+			ActivoBancario infoBancarioActivoMatriz = genericDao.get(ActivoBancario.class, f2);
+			ActivoBancario infoBancario =new ActivoBancario();
+			if (!Checks.esNulo(infoBancarioActivoMatriz)) {
+				infoBancario.setActivo(unidadAlquilable);
+				infoBancario.setClaseActivo(infoBancarioActivoMatriz.getClaseActivo());
+				infoBancario.setEstadoExpIncorriente(infoBancarioActivoMatriz.getEstadoExpIncorriente());
+				infoBancario.setSubtipoClaseActivo(infoBancarioActivoMatriz.getSubtipoClaseActivo());
+				infoBancario.setNumExpRiesgo(infoBancarioActivoMatriz.getNumExpRiesgo());
+				infoBancario.setTipoProducto(infoBancarioActivoMatriz.getTipoProducto());
+				infoBancario.setEstadoExpRiesgo(infoBancarioActivoMatriz.getEstadoExpRiesgo());
+				infoBancario.setProductoDescripcion(infoBancario.getProductoDescripcion());
+			}
 			
+			genericDao.save(ActivoBancario.class, infoBancario);
 			
 			//-----Nuevo ActivoInfoRegistral (superficie util)
 			if(!Checks.esNulo(exc.dameCelda(fila, 12))){

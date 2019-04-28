@@ -17,6 +17,9 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
@@ -49,6 +52,7 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 	public static final String SUPERFICIES_UTIL = "Sumatorio de las superficies útiles superior a la del activo matriz";
 	public static final String PORCENTAJE_PARTICIPACION = "% de participación erróneo";
 	public static final String PARTICIPACION_TOTAL= "El % de participación de las UAs supera el 100%";
+	public static final String USUARIOSUPER = "HAYASUPER";
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -228,15 +232,27 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		String usernameLogado = msvProcesoApi.getUsername();
 		
+		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+
+		
+		
 		try{
 			String numAgrupacion = exc.dameCelda(1, 0);
 			if(particularValidator.existeAgrupacion(numAgrupacion) 
 					&& particularValidator.esAgrupacionVigente(exc.dameCelda(1, 0))
 					&& particularValidator.tieneActivoMatriz(exc.dameCelda(1, 0))){
-				String gestor = particularValidator.getGestorComercialAlquilerByAgrupacion(numAgrupacion);
-				String supervisor = particularValidator.getSupervisorComercialAlquilerByAgrupacion(numAgrupacion);
-				if((!usernameLogado.equals(gestor) && !usernameLogado.equals(supervisor)) && !usernameLogado.equals("SUPER")){
-					listaFilas.add(1);
+
+				List <Perfil> perfiles = usu.getPerfiles();
+				if(!Checks.estaVacio(perfiles)) {
+					for (Perfil perfil : perfiles) {
+						if(!USUARIOSUPER.equals(perfil.getCodigo())) {
+							String gestor = particularValidator.getGestorComercialAlquilerByAgrupacion(numAgrupacion);
+							String supervisor = particularValidator.getSupervisorComercialAlquilerByAgrupacion(numAgrupacion);
+							if((!usernameLogado.equals(gestor) && !usernameLogado.equals(supervisor))){
+								listaFilas.add(1);
+							}
+						}
+					}
 				}
 			}
 		}catch(Exception e){
@@ -292,7 +308,7 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 	private List<Integer> esTipoViaCorrecto(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		List<String> tiposVia = new ArrayList<String>(Arrays.asList("CL","PL","AV","CT","UB","LU","PT","PA","PJ","CA"
-				,"PG","RO","PR","CJ","CV","CN","CO","TV","RA"));
+				,"PG","RO","PR","CJ","CV","CN","CO","TV","RA",""));
 		
 		int i = 0;
 		try{
@@ -321,10 +337,8 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 		try{
 			for(i=1; i<this.numFilasHoja; i++){
 				try{
-					String tipoViaActual = exc.dameCelda(i, 5);
 					String nombreViaActual = exc.dameCelda(i, 6);
-					if((Checks.esNulo(tipoViaActual) && !Checks.esNulo(nombreViaActual)) 
-							|| (!Checks.esNulo(tipoViaActual) && Checks.esNulo(nombreViaActual))){
+					if(Checks.esNulo(nombreViaActual)){
 						listaFilas.add(i);
 					}
 				}catch(Exception e){

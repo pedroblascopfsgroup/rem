@@ -218,7 +218,6 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"maxPrecioVenta",
     				"fechaCalificacion",
     				"descalificado",
-    				
     				"sujetoAExpediente",
     				"promocionVpo"
     			));
@@ -230,11 +229,11 @@ public class ActivoPropagacionUAsFieldTabMap {
     			));
 
    
-/*
+
 
     	pmap.put(TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD,
     			Arrays.asList(
-    					"idActivo" /*,
+    					"idActivo" ,
     					"ruina",
     					"pendienteInscripcion",
     					"obraNuevaSinDeclarar",
@@ -245,10 +244,11 @@ public class ActivoPropagacionUAsFieldTabMap {
     					"tapiado",
     					"otro",
     					"ocupadoSinTitulo",
-    					"divHorizontalNoInscrita"
+    					"divHorizontalNoInscrita",
+    					"sinInformeAprobadoREM"
 			    ));
 
-*/
+
 
     	pmap.put(TAB_COMUNIDAD_PROPIETARIOS,
     			Arrays.asList(
@@ -278,6 +278,7 @@ public class ActivoPropagacionUAsFieldTabMap {
 			Arrays.asList(
 					"chkPerimetroAlquiler"
 		   	));
+
 
         mapUAs = Collections.unmodifiableMap(pmap);
     }

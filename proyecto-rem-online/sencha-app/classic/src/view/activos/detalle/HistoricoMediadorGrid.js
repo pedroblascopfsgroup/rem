@@ -11,7 +11,14 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
     bind: {
         store: '{storeHistoricoMediador}'
     },
-
+    
+    listeners: {
+    	boxready: function() {
+    		var me = this;
+    		me.evaluarEdicion();
+    	}
+    },
+    
     initComponent: function () {
 
      	var me = this;
@@ -80,5 +87,12 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		    },
 
 		    me.callParent();
-   }
+    },
+    
+    evaluarEdicion: function() {    	
+ 		var me = this;
+ 		if(me.lookupController().getViewModel().get('activo').get('unidadAlquilable')) {
+ 			me.setTopBar(false);
+ 		}
+    }
 });

@@ -2508,15 +2508,17 @@ public class AgrupacionAdapter {
 													List<ActivoAgrupacionActivo> listaAgrupaciones = activo.getAgrupaciones();
 													
 													for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupaciones) {
-															
-														if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-															throw new JsonViewerException("El activo pertenece a una agrupación restringida");
-														} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-															throw new JsonViewerException("El activo pertenece a un lote comercial de venta");
-														} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-															throw new JsonViewerException("El activo pertenece a una agrupación comercial de alquiler");
-														} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-															throw new JsonViewerException("El activo ya pertenece a otra agrupación de promoción de alquiler");
+														if(Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getFechaBaja())){
+														
+															if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+																throw new JsonViewerException("El activo pertenece a una agrupación restringida");
+															} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+																throw new JsonViewerException("El activo pertenece a un lote comercial de venta");
+															} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+																throw new JsonViewerException("El activo pertenece a una agrupación comercial de alquiler");
+															} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+																throw new JsonViewerException("El activo ya pertenece a otra agrupación de promoción de alquiler");
+															}
 														}
 													}
 												}

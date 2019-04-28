@@ -222,7 +222,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							xtype: 'comboboxfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
 				        	bind: {
-				        		readOnly : '{!esUA}',
+				        		readOnly : '{esUA}',
 			            		store: '{comboTipoVia}',
 			            		value: '{activo.tipoViaCodigo}'			            		
 			            	},
@@ -257,7 +257,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							fieldLabel:  HreRem.i18n('fieldlabel.nombre.via'),
 		                	bind:{
 		                		value: '{activo.nombreVia}',
-		                		readOnly : '{!esUA}'
+		                		readOnly : '{esUA}'
 		                	},
 		                	allowBlank: false
 		                },
@@ -288,7 +288,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
 		                	bind:{
 		                		value: '{activo.numeroDomicilio}',
-		                		readOnly : '{!esUA}'
+		                		readOnly : '{esUA}'
 		                	}
 		                },
 		                {
@@ -329,7 +329,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
 			                bind:{
 			                	value: '{activo.escalera}',
-			                	readOnly : '{!esUA}'
+			                	readOnly : '{esUA}'
 			                }
 						},
 				        { 
@@ -350,7 +350,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),
 		                	bind:{
 		                		value: '{activo.piso}',
-		                		readOnly : '{!esUA}'
+		                		readOnly : '{esUA}'
 		                	}
 		                },	               
 		                {
@@ -371,7 +371,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.puerta'),
 		                	bind:{
 		                		value: '{activo.puerta}',
-		                		readOnly : '{!esUA}'
+		                		readOnly : '{esUA}'
 		                	}
 		                },
 		                {

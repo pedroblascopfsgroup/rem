@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -159,6 +160,7 @@ import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
@@ -1255,7 +1257,20 @@ public class ActivoAdapter {
 	}
 
 	public List<DtoActivoCatastro> getListCatastroById(Long id) {
+		
 		Activo activo = activoApi.get(id);
+		// Si es una UA cogemos los datos del activo matriz
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		if(esUA) {
+			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			if (!Checks.esNulo(agrupacion)) {
+				Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+				if (!Checks.esNulo(activoMatriz)) {
+					activo=activoMatriz;
+					}
+			}
+		}
+		//Activo activo = activoApi.get(id);
 		List<DtoActivoCatastro> listaDtoCatastro = new ArrayList<DtoActivoCatastro>();
 
 		if (activo.getInfoAdministrativa() != null && activo.getCatastro() != null) {
@@ -2688,8 +2703,21 @@ public class ActivoAdapter {
 		if(activoDao.isUnidadAlquilable(activo.getId())) {
 			activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId()).getId())); 
 			dtoPresupuestoFiltro.setIdActivo(Long.toString(activo.getId()));
-			dtoPresupuestoFiltro.setIdActivo(String.valueOf(activo.getId()));
-			dtoPresupuestoFiltro.setIdPresupuesto(String.valueOf(activo.getPresupuesto().get(0).getId()));
+			String presupuestoId="";
+			if (!Checks.esNulo(activo.getPresupuesto())) {
+				List<PresupuestoActivo> presupuestos= activo.getPresupuesto();
+				for(PresupuestoActivo presupuesto:presupuestos) {
+					Calendar cal1 = Calendar.getInstance();
+					Calendar cal2 = Calendar.getInstance();
+					cal1.setTime(presupuesto.getFechaAsignacion());
+					cal2.setTime(new Date());
+					if(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)) {
+						presupuestoId =Long.toString(presupuesto.getId());
+						break;
+					}
+				}
+			}
+			dtoPresupuestoFiltro.setIdPresupuesto(presupuestoId);
 		}
 
 		List<VBusquedaPresupuestosActivo> presupuestosActivo = presupuestoManager.getListHistoricoPresupuestos(dtoPresupuestoFiltro);

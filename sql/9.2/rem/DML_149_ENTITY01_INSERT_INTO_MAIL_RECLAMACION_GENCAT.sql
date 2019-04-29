@@ -59,7 +59,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.MAIL_RECLAMACION_GENCAT	(
 				 '''',
 				 ''Reclamaciones generadas a día de hoy.'',
 				 ''Reclamaciones para GENCAT a fecha del día DDMMYYYY'',
-				''Excel_comunicaciones.xls''
+				''Excel_reclamaciones.xls''
 				 
 				)';
 

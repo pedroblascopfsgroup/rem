@@ -1129,9 +1129,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "  	INNER JOIN TAC_TAREAS_ACTIVOS tac ON tra.TRA_ID = tac.TRA_ID "
 				+ "  	INNER JOIN TAR_TAREAS_NOTIFICACIONES tar ON tac.TAR_ID = TAR.TAR_ID "
 				+ "		INNER JOIN ACT_ACTIVO act ON act.ACT_ID = v.ACT_ID "
-				+ " 	WHERE act.ACT_NUM_ACTIVO LIKE '%''"+numActivo+"''%' "
+				+ " 	WHERE act.ACT_NUM_ACTIVO ="+numActivo+" "
 				+ "    	AND tar.TAR_FECHA_FIN IS NULL "
-				+ "     AND ROWNUM=1 ";
+				+ "     FETCH FIRST 1 ROWS ONLY ";
 		
 		String resultado = rawDao.getExecuteSQL(query);
 

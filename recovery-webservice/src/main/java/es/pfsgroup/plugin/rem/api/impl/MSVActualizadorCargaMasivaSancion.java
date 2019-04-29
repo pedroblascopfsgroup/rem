@@ -35,10 +35,12 @@ import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaGencatApi;
+import es.pfsgroup.plugin.rem.gencat.NotificacionesGencatManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
@@ -70,6 +72,9 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private NotificacionesGencatManager notificacionesGencat;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -89,6 +94,7 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 	private static final String COD_NO_EJERCE = "No ejerce";
 
 	public static final String DD_TIPO_DOCUMENTO_CODIGO_NIF = "15";
+	private SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
 	@Transactional(readOnly = false)
@@ -96,11 +102,12 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 			throws IOException, ParseException, JsonViewerException, SQLException {
 
 		Activo activo = null;
+		activo = activoApi.getByNumActivo(Long.valueOf(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO)));
 		List<ComunicacionGencat> list = new ArrayList<ComunicacionGencat>();
-
+		Date fechaSanc;
+		
 		if (COD_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
-			activo = activoApi.getByNumActivo(Long.valueOf(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO)));
-
+			
 			if (!Checks.esNulo(activo)) {
 				Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
@@ -174,12 +181,19 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 			} else if (COD_NO_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
 				tmp.setSancion((DDSancionGencat) dictionaryDao.getByCode(DDSancionGencat.class,
 						DDSancionGencat.COD_NO_EJERCE));
+				tmp.setEstadoComunicacion((DDEstadoComunicacionGencat) dictionaryDao
+						.getByCode(DDEstadoComunicacionGencat.class, DDEstadoComunicacionGencat.COD_SANCIONADO));
 			}
-			comunicacionGencatApi.saveOrUpdate(tmp);
-
-			if (activo != null) {
+			
+			
+			if (!Checks.esNulo(activo)) {
+				DtoGencatSave gencatDto = new DtoGencatSave();
+				gencatDto.setFechaSancion(dateformat.format(tmp.getFechaSancion()));
+				gencatDto.setSancion(tmp.getSancion().getDescripcion());
+				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, tmp.getSancion());
 				darDeBajaAgrupacionRestringida(activo);
 			}
+			comunicacionGencatApi.saveOrUpdate(tmp);
 		}
 
 		return new ResultadoProcesarFila();

@@ -224,7 +224,12 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'idOfertaAnterior'
+    		},
+    		{
+    			name:'noEsOfertaFinalGencat',
+    			type: 'boolean'
     		}
+    		
     		 
     ],
     formulas: {

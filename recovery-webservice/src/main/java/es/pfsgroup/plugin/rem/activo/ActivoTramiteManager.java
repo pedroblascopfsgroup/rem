@@ -29,9 +29,11 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -50,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -106,7 +109,20 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
     @Autowired
     private GencatManager gencatManager;
     
+    @Autowired 
+    private GencatApi gencatApi;
+    
+    @Autowired 
+    private ExpedienteComercialDao expedienteComercialDao;
+    
+    
     private ActivoTareaExternaDao activoTareaExternaDao;
+    
+	@Override
+	public ExpedienteComercial findOne(Long id) {
+		return expedienteComercialDao.get(id);
+	}
+
 
 	public ActivoTramite get(Long idTramite){
 		return activoTramiteDao.get(idTramite);
@@ -848,10 +864,29 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	}
 	
 	@Override
-	public boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo, Long idExpediente){
-		
+	public boolean tieneTramiteGENCATVigenteByIdActivo(Long idExpediente){
+		ExpedienteComercial expediente = findOne(idExpediente);
+		List<ComunicacionGencat> comunicacionesVivas = gencatApi.comunicacionesVivas(expediente);
 		boolean tieneTramiteGENCAT = false;
-		boolean exosteGencatActivo = false;
+		boolean provieneOfertaGencat = false;
+		provieneOfertaGencat = gencatApi.esOfertaGencat(expediente);
+		if (!Checks.estaVacio(comunicacionesVivas) && !provieneOfertaGencat && 
+				!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) &&
+				!DDEstadosExpedienteComercial.PTE_SANCION.equals(expediente.getEstado().getCodigo()) &&
+				((!Checks.esNulo(expediente.getReserva()) && !DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()))
+					|| (Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()))
+					|| DDEstadosExpedienteComercial.ANULADO.equals(expediente.getEstado().getCodigo())
+					|| DDEstadosExpedienteComercial.ANULADO_PDTE_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+					|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()))) {
+		
+			if(gencatManager.comprobarExpedienteAnuladoGencat(comunicacionesVivas)
+					|| gencatManager.comprobarExpedienteBloqueadoGencat(comunicacionesVivas)
+					||gencatManager.comprobarExpedientePreBloqueadoGencat(comunicacionesVivas)){
+				tieneTramiteGENCAT = true;
+			}
+		}
+		
+/*		boolean exosteGencatActivo = false;
 		boolean tieneOfertaCreadaPorGencat = false;
 		
 		if(!Checks.esNulo(idActivo)){
@@ -918,7 +953,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 					}
 				}
 			}
-		}
+		}*/
 		
 		return tieneTramiteGENCAT;
 	}
@@ -932,7 +967,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		List<ActivoOferta> listaActivos = expediente.getOferta().getActivosOferta();
 		if (!Checks.estaVacio(listaActivos)) {
 			for (ActivoOferta activoOferta : listaActivos) {
-				tieneTramiteGENCAT = tieneTramiteGENCATVigenteByIdActivo(activoOferta.getActivoId(), expediente.getId());
+				tieneTramiteGENCAT = tieneTramiteGENCATVigenteByIdActivo(expediente.getId());
 				if (tieneTramiteGENCAT) {
 					tramiteGencatActivo = true;
 				}

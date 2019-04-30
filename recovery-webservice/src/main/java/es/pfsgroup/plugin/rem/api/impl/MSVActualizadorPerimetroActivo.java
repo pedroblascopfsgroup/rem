@@ -252,7 +252,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		updaterState.updaterStateDisponibilidadComercial(activo);
 
 		//Actualizar registro historico destino comercial del activo
-		//activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
+		activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
 
 		activoApi.saveOrUpdate(activo);
 		

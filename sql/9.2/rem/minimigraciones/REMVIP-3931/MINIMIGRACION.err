@@ -1,0 +1,42 @@
+MINIMIGRACION.sh: 11: [: /home/guillermo.llido@pfsgroup.es/sw/instantclient_12_2: unexpected operator
+MINIMIGRACION.sh: 15: [: unexpected operator
+[INICIO] INICIO CONFIGURACION MINIMIGRACION.sh
+[INFO] 13:37:36
+
+[INFO] Se ha establecido la variable de entorno NLS_LANG=SPANISH_SPAIN.WE8ISO8859P1
+[INFO] Ya existe el directorio Loader/logs/
+[INFO] Ya existe el directorio Loader/bad/
+[INFO] Ya existe el directorio Logs/
+[INFO] Ya existe el directorio List/
+
+[FIN] FIN CONFIGURACION MINIMIGRACION.sh
+
+-----------------------------------------------------------------
+
+[INICIO] INICIO CREACIÓN DE TABLAS AUXILIARES
+[INFO] 13:37:36
+
+[INFO] Inicio creación DDL/DDL_001_REM01.sql
+[INFO] Fin creación DDL/DDL_001_REM01.sql
+
+[FIN] FIN CARGA DE TABLAS AUXILIARES
+
+-----------------------------------------------------------------
+
+[INICIO] INICIO CARGA DE TABLAS AUXILIARES
+[INFO] 13:37:37
+
+[INFO] Inicio carga auxiliar GENERAL
+[INFO] Fin carga auxiliar GENERAL
+
+[FIN] FIN CARGA DE TABLAS AUXILIARES
+
+-----------------------------------------------------------------
+
+[INICIO] INICIO CARGA DE TABLAS FINALES
+[INFO] 13:37:43
+
+[INFO] Inicio carga final DML/DML_001_REM01.sql
+-e 
+
+======>>> [ERROR] Error en @DML/DML_001_REM01.sql

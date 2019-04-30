@@ -1848,7 +1848,16 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		Long clcremid = activoDao.getNextClienteRemId();
 		clienteComercial.setIdClienteRem(clcremid);
 		clienteComercial.setNombre(cmg.getNuevoCompradorNombre());
-		clienteComercial.setApellidos(cmg.getNuevoCompradorApellido1()+" "+cmg.getNuevoCompradorApellido2());
+		String apellidos = null;
+		if(!Checks.esNulo(cmg.getNuevoCompradorApellido1())){
+			apellidos = cmg.getNuevoCompradorApellido1();
+		}
+		if(!Checks.esNulo(apellidos) && !Checks.esNulo(cmg.getNuevoCompradorApellido2())) {
+			apellidos = apellidos+" "+cmg.getNuevoCompradorApellido2();
+		}else if(Checks.esNulo(apellidos)&& !Checks.esNulo(cmg.getNuevoCompradorApellido2())) {
+			apellidos = cmg.getNuevoCompradorApellido2();
+		}
+		clienteComercial.setApellidos(apellidos);
 		clienteComercial.setDocumento(cmg.getNuevoCompradorNif());
 		DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDTipoDocumento.class, DD_TIPO_DOCUMENTO_CODIGO_NIF);
@@ -1992,7 +2001,17 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				, genericDao.createFilter(FilterType.EQUALS, "tipoDocumento", clienteComercial.getTipoDocumento()));
 		if (!Checks.esNulo(comprador)) {
 			comprador.setNombre(cmg.getNuevoCompradorNombre());
-			comprador.setApellidos(cmg.getNuevoCompradorApellido1()+" "+cmg.getNuevoCompradorApellido2());
+			apellidos = null;
+			if(!Checks.esNulo(cmg.getNuevoCompradorApellido1())){
+				apellidos = cmg.getNuevoCompradorApellido1();
+			}
+			if(!Checks.esNulo(apellidos) && !Checks.esNulo(cmg.getNuevoCompradorApellido2())) {
+				apellidos = apellidos+" "+cmg.getNuevoCompradorApellido2();
+			}else if(Checks.esNulo(apellidos)&& !Checks.esNulo(cmg.getNuevoCompradorApellido2())) {
+				apellidos = cmg.getNuevoCompradorApellido2();
+			}
+			cmg.getNuevoCompradorApellido2();
+			comprador.setApellidos(apellidos);
 			genericDao.update(Comprador.class, comprador);
 			
 			CompradorExpediente compradoresExp = genericDao.get(CompradorExpediente.class ,genericDao.createFilter(FilterType.EQUALS,"expediente", nuevoExpedienteComercial.getId())

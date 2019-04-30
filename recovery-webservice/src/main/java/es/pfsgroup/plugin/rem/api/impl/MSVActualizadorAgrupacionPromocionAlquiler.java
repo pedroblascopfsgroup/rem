@@ -505,7 +505,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			activoTituloUa.setFechaPres1Registro(activoTituloAM.getFechaPres1Registro());
 			activoTituloUa.setFechaPres2Registro(activoTituloAM.getFechaPres2Registro());
 			activoTituloUa.setFechaRetiradaReg(activoTituloAM.getFechaRetiradaReg());
-/*d*/		activoTituloUa.setEstado(activoTituloAM.getEstado());
+			activoTituloUa.setFechaPresHacienda(activoTituloAM.getFechaPresHacienda());
+			activoTituloUa.setEstado(activoTituloAM.getEstado());
 
 			activoTituloUa.setAuditoria(auditoria);
 		}

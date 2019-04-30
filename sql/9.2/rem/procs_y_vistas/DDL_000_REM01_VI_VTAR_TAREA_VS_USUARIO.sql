@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160802
+--## AUTOR=RAMON LLINARES
+--## FECHA_CREACION=20190430
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.0
 --## INCIDENCIA_LINK=0
@@ -350,9 +350,9 @@ execute immediate
 '    ( '||Chr(13)||Chr(10)||
 '--      SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_PART1 '||Chr(13)||Chr(10)||
 '--        UNION '||Chr(13)||Chr(10)||
-'      SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_PART2 '||Chr(13)||Chr(10)||
+'      SELECT /*+ no_merge(VTAR2) */ * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_PART2 VTAR2'||Chr(13)||Chr(10)||
 '		 UNION ALL '||Chr(13)||Chr(10)||
-'	   SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_PART3 '||Chr(13)||Chr(10)||
+'	   SELECT /*+ no_merge(VTAR3) */ * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_PART3 VTAR3'||Chr(13)||Chr(10)||
 '    ) V '||Chr(13)||Chr(10)||
 '  JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON V.TAR_ID = TAR.TAR_ID '||Chr(13)||Chr(10)||
 '  LEFT JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAR.TAR_ID = TAC.TAR_ID '||Chr(13)||Chr(10)||

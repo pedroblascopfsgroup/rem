@@ -105,9 +105,9 @@ BEGIN
 					,   NULL
 					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
 					,   NULL
-					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
-					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
 					,   TO_DATE(TRIM('''||FILA.FECHA_CADUCIDAD||'''),''MM/DD/YYYY'')
+					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
+					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
 					,   (SELECT DD_TCE_ID FROM DD_TCE_TIPO_CALIF_ENERGETICA WHERE DD_TCE_CODIGO = TRIM('''||FILA.CALIFICACION||'''))
 					,   0   
 					,   '''||V_USUARIOMODIFICAR||'''

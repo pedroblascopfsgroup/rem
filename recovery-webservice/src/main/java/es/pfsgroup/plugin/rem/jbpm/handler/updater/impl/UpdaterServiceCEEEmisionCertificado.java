@@ -49,10 +49,10 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	@Transactional
+	@Transactional(readOnly = false)
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		Activo activo = tramite.getActivo();
-		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE_ACTIVO);
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE_TRABAJO);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 		ActivoAdmisionDocumento documentoCEE = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
 		

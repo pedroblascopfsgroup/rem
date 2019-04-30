@@ -3848,7 +3848,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 															if (!Checks.esNulo(comprador.getNumDocumentoRte())) {														//Número de documento del representante
 																if (DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais()) &&					//Si el país del titular es España
 																	!Checks.esNulo(comprador.getProvinciaRteCodigo()) &&												//Provincia y Municipio del representante
-																	!Checks.esNulo(comprador.getMunicipioRteCodigo())) {												//son obligatorios
+																	!Checks.esNulo(comprador.getMunicipioRteCodigo()) || 
+																	!DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {												//son obligatorios
 																	if (!Checks.esNulo(comprador.getCodigoPaisRte())) {													//País de residencia del representante
 																		return true;
 																	}

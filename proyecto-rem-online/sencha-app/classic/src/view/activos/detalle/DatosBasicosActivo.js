@@ -208,24 +208,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            	width: 60
 					                }
 								]
-							},
-			                
-			                
-			                
-			                
-			                
-			                
-			                
-			                
-					        {
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
-					        	name: 'estadoActivoCodigo',
-					        	bind: {
-				            		store: '{comboEstadoActivo}',
-				            		value: '{activo.estadoActivoCodigo}'
-				            	}
-					        }
+							}
 						]
 					},{ // Columna 3
 						defaultType: 'textfieldbase',

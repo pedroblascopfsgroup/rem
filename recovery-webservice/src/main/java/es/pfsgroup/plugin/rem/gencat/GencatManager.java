@@ -1599,7 +1599,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				}
 				
 				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
-				bajaAgrupacionRestringida(activo, gencatDto);
+				bajaAgrupacionConActivosGenCat(activo, gencatDto);
 
 				return true;
 			}
@@ -1618,7 +1618,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					comunicacionGencat.setActivo(activo);
 					comunicacionGencatDao.saveOrUpdate(comunicacionGencat);	
 					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
-					bajaAgrupacionRestringida(activo,gencatDto);
+					bajaAgrupacionConActivosGenCat(activo,gencatDto);
 
 					return true;
 				}
@@ -1630,24 +1630,22 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		return false;
 	}
 	
-	public void bajaAgrupacionRestringida(Activo activo, DtoGencatSave gencatDto){
+	public void bajaAgrupacionConActivosGenCat(Activo activo, DtoGencatSave gencatDto){
 		
 		List<ActivoAgrupacionActivo> listaAgrupaciones = activo.getAgrupaciones();
 		if(!Checks.estaVacio(listaAgrupaciones)){
 			for(ActivoAgrupacionActivo agr : listaAgrupaciones){
 				DDTipoAgrupacion tipoAgrupacion = agr.getAgrupacion().getTipoAgrupacion();
 				if(!Checks.esNulo(tipoAgrupacion)){
-					if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(tipoAgrupacion.getCodigo())){
-						if(Checks.esNulo(agr.getAgrupacion().getFechaBaja())) {
-							if (!Checks.esNulo(gencatDto.getSancion()) && gencatDto.getSancion().equals(DDSancionGencat.COD_EJERCE)){
-								ActivoAgrupacion agrupacion = new ActivoAgrupacion();
-								agrupacion = agr.getAgrupacion();
-								Date date = Calendar.getInstance().getTime();
-								agr.getAgrupacion().setFechaBaja(date);
-								genericDao.save(ActivoAgrupacion.class, agrupacion);
-							}
-						}		 
-					}
+					if(Checks.esNulo(agr.getAgrupacion().getFechaBaja())) {
+						if (!Checks.esNulo(gencatDto.getSancion()) && gencatDto.getSancion().equals(DDSancionGencat.COD_EJERCE)){
+							ActivoAgrupacion agrupacion = new ActivoAgrupacion();
+							agrupacion = agr.getAgrupacion();
+							Date date = Calendar.getInstance().getTime();
+							agr.getAgrupacion().setFechaBaja(date);
+							genericDao.save(ActivoAgrupacion.class, agrupacion);
+						}
+					}		 
 				}
 			}
 		}

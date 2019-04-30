@@ -137,6 +137,7 @@ public class DtoFichaExpediente extends WebDto {
 	private String subcarteraCodigo;
 	private Boolean estaFirmado;
 	private Long idOfertaAnterior;
+	private Boolean noEsOfertaFinalGencat;
 
 	public Long getId() {
 		return id;
@@ -691,6 +692,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setIdOfertaAnterior(Long idOfertaAnterior) {
 		this.idOfertaAnterior = idOfertaAnterior;
+	}
+
+	public Boolean getNoEsOfertaFinalGencat() {
+		return noEsOfertaFinalGencat;
+	}
+
+	public void setNoEsOfertaFinalGencat(Boolean noEsOfertaFinalGencat) {
+		this.noEsOfertaFinalGencat = noEsOfertaFinalGencat;
 	}
 	
 	

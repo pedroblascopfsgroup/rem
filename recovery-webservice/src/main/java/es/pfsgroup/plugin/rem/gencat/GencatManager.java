@@ -1042,6 +1042,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					notificacion.setCierreNotificacion(fechaCierre);
 				}
 				
+				if(comunicacionGencat.getEstadoComunicacion().getCodigo().equals(DDEstadoComunicacionGencat.COD_COMUNICADO) && !Checks.esNulo(comunicacionGencat.getFechaPrevistaSancion())) {
+					comunicacionGencat.setFechaPrevistaSancion(null);
+				}
+				
 				//Insertar Notificacion
 				
 				notificacion.setCheckNotificacion(true);
@@ -2198,9 +2202,13 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		if (resultComunicacion != null && !resultComunicacion.isEmpty()) {
 			comunicacionGencat = resultComunicacion.get(0);
 		}
-		
+				
 		if (Checks.esNulo(comunicacionGencat)) {
 			throw new IllegalArgumentException(ERROR_FALTA_COMUNICACION);
+		}
+		
+		if(!Checks.esNulo(comunicacionGencat) && comunicacionGencat.getEstadoComunicacion().getCodigo().equals(DDEstadoComunicacionGencat.COD_COMUNICADO) && !Checks.esNulo(comunicacionGencat.getFechaPrevistaSancion())) {
+			comunicacionGencat.setFechaPrevistaSancion(null);
 		}
 		
 		//Se comprueba si ya se ha enviado previamente una visita

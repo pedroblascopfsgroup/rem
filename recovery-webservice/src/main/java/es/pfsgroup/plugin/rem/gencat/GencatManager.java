@@ -1641,15 +1641,17 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			for(ActivoAgrupacionActivo agr : listaAgrupaciones){
 				DDTipoAgrupacion tipoAgrupacion = agr.getAgrupacion().getTipoAgrupacion();
 				if(!Checks.esNulo(tipoAgrupacion)){
-					if(Checks.esNulo(agr.getAgrupacion().getFechaBaja())) {
-						if (!Checks.esNulo(gencatDto.getSancion()) && gencatDto.getSancion().equals(DDSancionGencat.COD_EJERCE)){
-							ActivoAgrupacion agrupacion = new ActivoAgrupacion();
-							agrupacion = agr.getAgrupacion();
-							Date date = Calendar.getInstance().getTime();
-							agr.getAgrupacion().setFechaBaja(date);
-							genericDao.save(ActivoAgrupacion.class, agrupacion);
-						}
-					}		 
+					if(!DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(tipoAgrupacion.getCodigo())){
+						if(Checks.esNulo(agr.getAgrupacion().getFechaBaja())) {
+							if (!Checks.esNulo(gencatDto.getSancion()) && gencatDto.getSancion().equals(DDSancionGencat.COD_EJERCE)){
+								ActivoAgrupacion agrupacion = new ActivoAgrupacion();
+								agrupacion = agr.getAgrupacion();
+								Date date = Calendar.getInstance().getTime();
+								agr.getAgrupacion().setFechaBaja(date);
+								genericDao.save(ActivoAgrupacion.class, agrupacion);
+							}
+						}		 
+					}
 				}
 			}
 		}

@@ -183,6 +183,7 @@ import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VActivoOfertaImporte;
+import es.pfsgroup.plugin.rem.model.VActivosAfectosGencat;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosSubdivision;
 import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpedienteDecorator;
@@ -1146,7 +1147,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				} else {
 					dto.setBloqueado(true);
 				}
+				
 				dto.setNoEsOfertaFinalGencat(Boolean.FALSE);
+				
 				List<OfertaGencat> ofertaGencats = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
 				if(!Checks.estaVacio(ofertaGencats)){
 					if(!Checks.esNulo(ofertaGencats.get(0).getIdOfertaAnterior())) {
@@ -1159,7 +1162,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					else{
 						dto.setNoEsOfertaFinalGencat(Boolean.TRUE);
 					}
+					
 				}
+				else {
+					if(!Checks.estaVacio(expediente.getOferta().getActivosOferta()))
+					{
+						for(ActivoOferta actOferta:expediente.getOferta().getActivosOferta()) {
+							VActivosAfectosGencat activoAfecto =genericDao.get(VActivosAfectosGencat.class,genericDao.createFilter(FilterType.EQUALS,"id", actOferta.getActivoId()));
+							if(!Checks.esNulo(activoAfecto)) {
+								dto.setNoEsOfertaFinalGencat(Boolean.TRUE);
+							}
+						}
+					}
+				}
+				
+
 
 				dto.setDefinicionOfertaScoring(false);
 

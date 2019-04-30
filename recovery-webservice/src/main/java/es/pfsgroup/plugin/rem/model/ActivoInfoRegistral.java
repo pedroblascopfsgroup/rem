@@ -107,10 +107,9 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 
 	@Column(name = "REG_FECHA_CFO")
 	private Date fechaCfo;
-	
-	@Column(name = "REG_LPO")
-	private Integer lpo;
-	
+
+
+
 
 	@Version   
 	private Long version;
@@ -266,17 +265,6 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	public void setFechaCfo(Date fechaCfo) {
 		this.fechaCfo = fechaCfo;
 	}
-	
-	public Integer getLpo() {
-		// null
-		// 0 - NO 
-		// 1 - SI
-		return lpo;
-	}
-
-	public void setLpo(Integer lpo) {
-		this.lpo = lpo;
-	}
 
 	public Long getVersion() {
 		return version;
@@ -293,5 +281,8 @@ public class ActivoInfoRegistral implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-		
+	
+	
+	
+	
 }

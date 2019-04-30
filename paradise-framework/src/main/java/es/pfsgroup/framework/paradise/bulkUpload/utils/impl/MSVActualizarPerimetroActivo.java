@@ -71,7 +71,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_TIPO_ALQUILER = 9;
 	public static final int COL_NUM_CON_FORMALIZAR_SN = 10;
 	public static final int COL_NUM_CON_PUBLICAR_SN = 12;
-	public static final int COL_NUM_CON_LPO_SN = 14;
 
 	// Codigos tipo comercializacion
 	public static final String CODIGO_VENTA = "01";
@@ -370,7 +369,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String valorConComercial = "-";
 			String valorConFormalizar = "-";
 			String valorConPublicar = "-";
-			String valorLPO = "-";
 
 			for(int i=1; i<this.numFilasHoja;i++){
 				
@@ -384,16 +382,13 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
 					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
 					valorConPublicar = exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).trim().toUpperCase();
-					valorLPO = exc.dameCelda(i, COL_NUM_CON_LPO_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_LPO_SN).trim().toUpperCase();
 
-					
 					// Valida valores correctos de los campos S/N/<nulo>
 					if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
 							|| !("S".equals(valorConGestion) || "N".equals(valorConGestion) || "-".equals(valorConGestion))
 							|| !("S".equals(valorConComercial) || "N".equals(valorConComercial) || "-".equals(valorConComercial))
 							|| !("S".equals(valorConFormalizar) || "N".equals(valorConFormalizar) || "-".equals(valorConFormalizar))
 							|| !("S".equals(valorConPublicar) || "N".equals(valorConPublicar) || "-".equals(valorConPublicar))
-							|| !("S".equals(valorLPO) || "N".equals(valorLPO) || "-".equals(valorLPO))
 							)
 						listaFilas.add(i);
 				} catch (ParseException e) {

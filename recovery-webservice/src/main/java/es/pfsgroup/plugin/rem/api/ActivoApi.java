@@ -26,7 +26,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
-import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -1178,7 +1177,5 @@ public interface ActivoApi {
 	boolean esSubcarteraPromontoria(Long idActivo);
 
 	boolean esSubcarteraApple(Long idActivo);
-	
-	ActivoInfoRegistral saveOrUpdateActivoInfoRegistral(ActivoInfoRegistral activoInfoRegistral);
 
 }

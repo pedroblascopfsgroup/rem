@@ -69,7 +69,11 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 			DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtroTipoDocumento);
 			Filter filtroTipoDocumentoId = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo", tipoDocumento);
 			ActivoConfigDocumento config = genericDao.get(ActivoConfigDocumento.class, filtroTipoActivo, filtroTipoDocumentoId);
-			dtoDocumento.setIdConfiguracionDoc(config.getId());
+			
+			if(!Checks.esNulo(config.getId())){
+				dtoDocumento.setIdConfiguracionDoc(config.getId());
+			}
+			
 			//TODO: Pendiente de concretar si ha de ser SI aplica o NO aplica, cuando el documento se crea automáticamente por crear el trámite desde el trabajo.
 			dtoDocumento.setAplica(0);
 			

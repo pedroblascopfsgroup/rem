@@ -2327,17 +2327,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
 		DDEntidadesAvalistas entidadAvalista = new DDEntidadesAvalistas();
-
 		if (!Checks.esNulo(dto.getCodigoEntidad())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEntidad());
 			entidadAvalista = genericDao.get(DDEntidadesAvalistas.class, filtro);
 		}
-		
 		if (!Checks.esNulo(condiciones)) {
 			condiciones = dtoCondicionantestoCondicionante(condiciones, dto);
 			expedienteComercial.setCondicionante(condiciones);
 			if (!Checks.esNulo(dto.getCodigoEntidad())) {
 				condiciones.setEntidadBancariaFiador(entidadAvalista);
+			}
+			if (condiciones.getSolicitaReserva() == 0) {
+				Reserva reserva = expedienteComercial.getReserva();
+				if (!Checks.esNulo(reserva)) {
+					reserva.getAuditoria().setBorrado(true);
+					genericDao.update(Reserva.class, reserva);	
+				}
+			}else {
+				Reserva reserva = expedienteComercial.getReserva();
+				if (!Checks.esNulo(reserva)) {
+					reserva.getAuditoria().setBorrado(false);
+					genericDao.update(Reserva.class, reserva);	
+				}
+				
 			}
 		} else {
 			condiciones = new CondicionanteExpediente();
@@ -2345,9 +2357,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			condiciones = dtoCondicionantestoCondicionante(condiciones, dto);
 			expedienteComercial.setCondicionante(condiciones);
 		}
-
 		genericDao.save(CondicionanteExpediente.class, condiciones);
-
 		createReservaExpediente(expedienteComercial);
 
 		return true;

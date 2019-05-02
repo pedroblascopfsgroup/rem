@@ -3569,7 +3569,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					filtroExpedienteComercial);
 			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador,
 					filtroExpComComprador);
-
+			boolean esNuevo = false;
 			if (Checks.esNulo(compradorExpediente)) {
 				compradorExpediente = new CompradorExpediente();
 				compradorExpediente.setBorrado(false);
@@ -3578,6 +3578,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				pk.setComprador(comprador);
 				pk.setExpediente(expedienteComercial);
 				compradorExpediente.setPrimaryKey(pk);
+				esNuevo = true;
 
 			}
 
@@ -3717,8 +3718,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			genericDao.update(Comprador.class, comprador);
 
-			expedienteComercial.getCompradores().add(compradorExpediente);
-			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			if(esNuevo){
+				expedienteComercial.getCompradores().add(compradorExpediente);
+				genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			}else{
+				genericDao.update(CompradorExpediente.class, compradorExpediente);
+				genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			}
+			
 
 			if (reiniciarPBC) {
 				ofertaApi.resetPBC(expedienteComercial, false);

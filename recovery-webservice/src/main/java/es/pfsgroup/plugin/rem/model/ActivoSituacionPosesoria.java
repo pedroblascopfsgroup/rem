@@ -133,6 +133,9 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	@Column(name = "SPS_FECHA_ULT_CAMBIO_POS")
 	private Date fechaUltCambioPos;
 	
+	@Column(name = "SPS_FECHA_ULT_CAMBIO_TAPIADO")
+	private Date fechaUltCambioTapiado;
+	
 	@Version   
 	private Long version;
 
@@ -360,6 +363,14 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 
 	public void setFechaUltCambioTit(Date fechaUltCambioTit) {
 		this.fechaUltCambioTit = fechaUltCambioTit;
+	}
+
+	public Date getFechaUltCambioTapiado() {
+		return fechaUltCambioTapiado;
+	}
+
+	public void setFechaUltCambioTapiado(Date fechaUltCambioTapiado) {
+		this.fechaUltCambioTapiado = fechaUltCambioTapiado;
 	}
 
 }

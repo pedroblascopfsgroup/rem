@@ -1042,6 +1042,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					notificacion.setCierreNotificacion(fechaCierre);
 				}
 				
+				if(comunicacionGencat.getEstadoComunicacion().getCodigo().equals(DDEstadoComunicacionGencat.COD_COMUNICADO) && !Checks.esNulo(comunicacionGencat.getFechaPrevistaSancion())) {
+					comunicacionGencat.setFechaPrevistaSancion(null);
+				}
+				
 				//Insertar Notificacion
 				
 				notificacion.setCheckNotificacion(true);
@@ -1637,15 +1641,17 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			for(ActivoAgrupacionActivo agr : listaAgrupaciones){
 				DDTipoAgrupacion tipoAgrupacion = agr.getAgrupacion().getTipoAgrupacion();
 				if(!Checks.esNulo(tipoAgrupacion)){
-					if(Checks.esNulo(agr.getAgrupacion().getFechaBaja())) {
-						if (!Checks.esNulo(gencatDto.getSancion()) && gencatDto.getSancion().equals(DDSancionGencat.COD_EJERCE)){
-							ActivoAgrupacion agrupacion = new ActivoAgrupacion();
-							agrupacion = agr.getAgrupacion();
-							Date date = Calendar.getInstance().getTime();
-							agr.getAgrupacion().setFechaBaja(date);
-							genericDao.save(ActivoAgrupacion.class, agrupacion);
-						}
-					}		 
+					if(!DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(tipoAgrupacion.getCodigo())){
+						if(Checks.esNulo(agr.getAgrupacion().getFechaBaja())) {
+							if (!Checks.esNulo(gencatDto.getSancion()) && gencatDto.getSancion().equals(DDSancionGencat.COD_EJERCE)){
+								ActivoAgrupacion agrupacion = new ActivoAgrupacion();
+								agrupacion = agr.getAgrupacion();
+								Date date = Calendar.getInstance().getTime();
+								agr.getAgrupacion().setFechaBaja(date);
+								genericDao.save(ActivoAgrupacion.class, agrupacion);
+							}
+						}		 
+					}
 				}
 			}
 		}
@@ -1842,7 +1848,16 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		Long clcremid = activoDao.getNextClienteRemId();
 		clienteComercial.setIdClienteRem(clcremid);
 		clienteComercial.setNombre(cmg.getNuevoCompradorNombre());
-		clienteComercial.setApellidos(cmg.getNuevoCompradorApellido1()+" "+cmg.getNuevoCompradorApellido2());
+		String apellidos = null;
+		if(!Checks.esNulo(cmg.getNuevoCompradorApellido1())){
+			apellidos = cmg.getNuevoCompradorApellido1();
+		}
+		if(!Checks.esNulo(apellidos) && !Checks.esNulo(cmg.getNuevoCompradorApellido2())) {
+			apellidos = apellidos+" "+cmg.getNuevoCompradorApellido2();
+		}else if(Checks.esNulo(apellidos)&& !Checks.esNulo(cmg.getNuevoCompradorApellido2())) {
+			apellidos = cmg.getNuevoCompradorApellido2();
+		}
+		clienteComercial.setApellidos(apellidos);
 		clienteComercial.setDocumento(cmg.getNuevoCompradorNif());
 		DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDTipoDocumento.class, DD_TIPO_DOCUMENTO_CODIGO_NIF);
@@ -1986,7 +2001,17 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				, genericDao.createFilter(FilterType.EQUALS, "tipoDocumento", clienteComercial.getTipoDocumento()));
 		if (!Checks.esNulo(comprador)) {
 			comprador.setNombre(cmg.getNuevoCompradorNombre());
-			comprador.setApellidos(cmg.getNuevoCompradorApellido1()+" "+cmg.getNuevoCompradorApellido2());
+			apellidos = null;
+			if(!Checks.esNulo(cmg.getNuevoCompradorApellido1())){
+				apellidos = cmg.getNuevoCompradorApellido1();
+			}
+			if(!Checks.esNulo(apellidos) && !Checks.esNulo(cmg.getNuevoCompradorApellido2())) {
+				apellidos = apellidos+" "+cmg.getNuevoCompradorApellido2();
+			}else if(Checks.esNulo(apellidos)&& !Checks.esNulo(cmg.getNuevoCompradorApellido2())) {
+				apellidos = cmg.getNuevoCompradorApellido2();
+			}
+			cmg.getNuevoCompradorApellido2();
+			comprador.setApellidos(apellidos);
 			genericDao.update(Comprador.class, comprador);
 			
 			CompradorExpediente compradoresExp = genericDao.get(CompradorExpediente.class ,genericDao.createFilter(FilterType.EQUALS,"expediente", nuevoExpedienteComercial.getId())
@@ -2198,9 +2223,13 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		if (resultComunicacion != null && !resultComunicacion.isEmpty()) {
 			comunicacionGencat = resultComunicacion.get(0);
 		}
-		
+				
 		if (Checks.esNulo(comunicacionGencat)) {
 			throw new IllegalArgumentException(ERROR_FALTA_COMUNICACION);
+		}
+		
+		if(!Checks.esNulo(comunicacionGencat) && comunicacionGencat.getEstadoComunicacion().getCodigo().equals(DDEstadoComunicacionGencat.COD_COMUNICADO) && !Checks.esNulo(comunicacionGencat.getFechaPrevistaSancion())) {
+			comunicacionGencat.setFechaPrevistaSancion(null);
 		}
 		
 		//Se comprueba si ya se ha enviado previamente una visita

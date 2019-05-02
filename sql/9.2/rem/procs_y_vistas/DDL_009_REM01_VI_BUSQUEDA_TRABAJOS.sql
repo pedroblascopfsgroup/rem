@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=JUAN TORRELLA
---## FECHA_CREACION=20171222
+--## AUTOR=RAMON LLINARES
+--## FECHA_CREACION=20190502
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3462
@@ -52,7 +52,9 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_TRABAJOS 
 
 	AS
-		SELECT /*+ use_hash(rn,act)(rn,tbj) */
+		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) 
+	         leading(gac gee tge) use_hash(gee) use_hash(tge)
+	     */
 			tbj.tbj_id, 
 			act.act_id AS idactivo, 
 			rn.rango, 

@@ -4780,7 +4780,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		var me = this;
 		value = me.lookupReference('nuevoCompradorNumDoc');
-		
 		if(Ext.isEmpty(me.getViewModel().get('expediente.tipoExpedienteCodigo'))){
 			if(value != null){
 				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
@@ -4871,7 +4870,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 			}
 		}else{
-			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01"){
+			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01" || me.getViewModel().get('expediente.tipoExpedienteCodigo') == "02"){
 				if(value != null){
 					if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
 						|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){

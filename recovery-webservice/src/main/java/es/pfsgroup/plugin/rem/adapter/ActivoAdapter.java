@@ -2423,10 +2423,11 @@ public class ActivoAdapter {
 
 			activoAdmisionDocumento = new ActivoAdmisionDocumento();
 
-			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
+			//rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoAdmisionDocumento.getIdActivo());
-			activoAdmisionDocumento.setActivo(genericDao.get(Activo.class, filtro));
+			Activo act = genericDao.get(Activo.class, filtro);
+			activoAdmisionDocumento.setActivo(act);
 			filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoAdmisionDocumento.getIdConfiguracionDoc());
 			ActivoConfigDocumento tipodoc = null;
 			try {
@@ -2437,7 +2438,10 @@ public class ActivoAdapter {
 			activoAdmisionDocumento.setConfigDocumento(tipodoc);
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
+			
 			genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
+
+			
 		}
 
 		return true;

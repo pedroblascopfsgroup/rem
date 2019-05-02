@@ -99,16 +99,12 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "tipoTituloPosesorioCodigo", activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo());
 			}
 			
-			if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaAccesoTapiado())) {
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
 				
-				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
-					
-					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaAccesoTapiado())) {
-						activoDto.setDiasTapiado(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaAccesoTapiado()));
-					}
+				if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTapiado())) {
+					activoDto.setDiasTapiado(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTapiado()));
 				}
 			}
-			
 			
 			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
@@ -244,6 +240,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if(dto.getAccesoTapiado() == 0){
 				activoSituacionPosesoria.setFechaAccesoTapiado(null);
 			}
+			activoSituacionPosesoria.setFechaUltCambioTapiado(new Date());
 		}
 		
 		if(dto.getAccesoAntiocupa() != null){

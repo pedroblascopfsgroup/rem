@@ -560,7 +560,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     },
     				 			
      resetWindow: function() {
-    	var me = this;    	
+    	var me = this;    
 		//me.setBindRecord(comprador);
     },
     

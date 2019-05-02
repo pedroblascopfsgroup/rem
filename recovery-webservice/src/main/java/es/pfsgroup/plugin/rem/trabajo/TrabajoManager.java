@@ -1368,7 +1368,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
-				}
+				
 			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
 				tipoTramite = tipoProcedimientoManager
 						.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA); // Trámite
@@ -1433,6 +1433,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																			// averias
 			else
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
+		}
+		
 		}
 
 		// Tramites [FASE 2] -----------------------

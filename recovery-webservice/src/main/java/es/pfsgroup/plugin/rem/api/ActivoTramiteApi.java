@@ -293,10 +293,12 @@ public interface ActivoTramiteApi {
 	 * @param idActivo
 	 * @return 
 	 */
-	public boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo, Long idExpediente);
+	public boolean tieneTramiteGENCATVigenteByIdActivo(Long idExpediente);
 
 	String mismoNumeroAdjuntosComoTareasTipoUGValidacion(TareaExterna tareaExterna, String codigoDocAdjunto,
 			String uGestion, Long idTareaProcedimiento);
+
+	ExpedienteComercial findOne(Long id);
 
 }
 

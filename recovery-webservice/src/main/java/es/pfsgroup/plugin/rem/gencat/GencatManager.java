@@ -96,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
 import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -1901,6 +1902,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		genericDao.update(ActivoOferta.class, actOfrExpediente);
 		genericDao.save(ExpedienteComercial.class, nuevoExpedienteComercial);
 		
+		
+		
 		// Condiciones
 		
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
@@ -1912,11 +1915,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			condicionesNuevas.setFechaInicioExpediente(condiciones.getFechaInicioExpediente());
 			condicionesNuevas.setFechaInicioFinanciacion(condiciones.getFechaInicioFinanciacion());
 			condicionesNuevas.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
-			condicionesNuevas.setSolicitaReserva(condiciones.getSolicitaReserva());
-			condicionesNuevas.setTipoCalculoReserva(condiciones.getTipoCalculoReserva());
-			condicionesNuevas.setPorcentajeReserva(condiciones.getPorcentajeReserva());
-			condicionesNuevas.setPlazoFirmaReserva(condiciones.getPlazoFirmaReserva());
-			condicionesNuevas.setImporteReserva(condiciones.getImporteReserva());
+			condicionesNuevas.setSolicitaReserva(0);
 			condicionesNuevas.setTipoImpuesto(condiciones.getTipoImpuesto());
 			condicionesNuevas.setTipoAplicable(condiciones.getTipoAplicable());
 			condicionesNuevas.setRenunciaExencion(condiciones.getRenunciaExencion());

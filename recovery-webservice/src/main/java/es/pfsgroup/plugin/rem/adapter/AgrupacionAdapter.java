@@ -295,6 +295,16 @@ public class AgrupacionAdapter {
 	//Errores para la validacion de una agrupacion de PROMOCION DE ALQUILER
 	public static final String EXISTEN_UAS_CON_OFERTAS_VIVAS  = "Error: Hay Unidades Alquilables con ofertas vivas";
 	public static final String EXISTEN_UAS_CON_TRABAJOS_NO_FINALIZADOS  = "Error: Hay Unidades Alquilables con trabajos por finalizar";
+	// Errores validacion ventaVivas
+	private static final String ACTIVO_OFERTAS_VENTAS_VIVAS = "Activo con ofertas de venta vivas";
+	private static final String ACTIVO_OFERTAS_ALQUILER_VIVAS = "Activo con ofertas de alquiler vivas";
+	private static final String ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER = "Activo NO incluido en perímetro alquiler";
+	private static final String ACTIVO_SIN_PATRIMONIO_ACTIVO = "El activo no tiene patrimonio activo";
+	private static final String TIPO_NO_PERMITIDO_ACTIVO_MATRIZ = "Tipo de activo NO permitido como activo Activo matriz";
+	private static final String ACTIVO_VENDIDO = "Activo vendido";
+	private static final String ACTIVO_SIN_SITUACION_COMERCIAL = "El activo no tiene situación comercial";
+	private static final String ACTIVO_FUERA_PERIMETRO_HAYA = "El activo fuera del perímetro HAYA";
+	private static final String ACTIVO_INEXISTENTE = "Activo inexistente";
 
 
 	public static final String SPLIT_VALUE = ";s;";
@@ -2583,34 +2593,34 @@ public class AgrupacionAdapter {
 											}
 											
 											if (ventaVivas) {
-												throw new JsonViewerException("Activo con ofertas de venta vivas");
+												throw new JsonViewerException(ACTIVO_OFERTAS_VENTAS_VIVAS);
 											}else {
-												throw new JsonViewerException("Activo con ofertas de alquiler vivas");
+												throw new JsonViewerException(ACTIVO_OFERTAS_ALQUILER_VIVAS);
 											}
 										}
 									}else {
-										throw new JsonViewerException("Activo NO incluido en perímetro alquiler");
+										throw new JsonViewerException(ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER);
 									}
 								}else {
-									throw new JsonViewerException("El activo no tiene patrimonio activo");
+									throw new JsonViewerException(ACTIVO_SIN_PATRIMONIO_ACTIVO);
 								}
-							}else {
-								throw new JsonViewerException("Tipo de activo NO permitido como activo Activo matriz");
+							}else { 
+								throw new JsonViewerException(TIPO_NO_PERMITIDO_ACTIVO_MATRIZ);
 							}
 						}else {
-							throw new JsonViewerException("Activo vendido");
+							throw new JsonViewerException(ACTIVO_VENDIDO);
 						}
 					}else {
-						throw new JsonViewerException("El activo no tiene situación comercial");
+						throw new JsonViewerException(this.ACTIVO_SIN_SITUACION_COMERCIAL);
 					}
 				}else {
-					throw new JsonViewerException("El activo fuera del perímetro HAYA");
+					throw new JsonViewerException(this.ACTIVO_FUERA_PERIMETRO_HAYA);
 				}
 			}else {
-				throw new JsonViewerException("El activo no tiene perímetro");
+				throw new JsonViewerException(this.ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER);
 			}
 		}else{
-			throw new JsonViewerException("Activo inexistente");
+			throw new JsonViewerException(this.ACTIVO_INEXISTENTE);
 			
 		}
 

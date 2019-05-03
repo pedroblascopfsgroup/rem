@@ -43,7 +43,7 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 	
 	public static final String PROMOCION_NO_EXISTE = "Promoción alquiler inexistente";
 	public static final String PROMOCION_DADA_DE_BAJA = "Promoción alquiler dada de baja";
-	public static final String SIN_MA = "Promoción de alquiler sin activo matriz asociado";
+	public static final String SIN_MA = "Promoción de alquiler no existe";
 	public static final String GESTOR_DIFIERE = "Promoción de alquiler no gestionada por usted";
 	public static final String TIPOLOGIA_SUBTIPOLOGIA_ERRONEA = "Tipología/Subtipología del activo errónea";
 	public static final String VIA_ERRONEA = "Tipo de vía erróneo";

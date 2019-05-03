@@ -131,7 +131,10 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						xtype: 'displayfield',
 						name: 'objetoDummy',
 						reference: 'dummyBloqueBankia',
-						hidden: '{!expediente.esBankia}',
+						bind: {
+							hidden:'{esEntidadFinancieraBankia}',
+							disabled: '{esEntidadFinancieraBankia}'
+						},
 						colspan: 2
 					},
 					{
@@ -139,7 +142,10 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						collapsible : false,
 						defaultType : 'displayfieldbase',
 						reference: 'bloqueBankia',
-						hidden: '{!expediente.esBankia}',
+						bind: {
+							hidden:'{esEntidadFinancieraBankia}',
+							disabled: '{esEntidadFinancieraBankia}'
+						},
 						title : HreRem
 								.i18n('title.formalizacion.financiacion.bankia'),
 						colspan : 5,
@@ -201,7 +207,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 										store : '{comboEstadosFinanciacion}',
 										value : '{financiacion.estadosFinanciacionBankia}'
 									}
-									// hidden: true
 								}, {
 									xtype : 'currencyfieldbase',
 									fieldLabel : HreRem
@@ -225,7 +230,6 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									listeners : {
 										change : 'onHaCambiadoFechaInicioFinanciacionBankia'
 									}
-									// hidden: true
 								}, {
 									xtype : 'datefieldbase',
 									formatter : 'date("d/m/Y")',
@@ -238,14 +242,15 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									listeners : {
 										change : 'onHaCambiadoFechaFinFinanciacionBankia'
 									}
-									// hidden: true
 								}]
 					}, {
 						xtype : 'textfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.num.expediente'),
 						reference: 'numeroExpedienteRef',
 						bind : {
-							value : '{financiacion.numExpedienteRiesgo}'
+							value : '{financiacion.numExpedienteRiesgo}',
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						},
 						maxLength : 250
 						// colspan: 3
@@ -256,7 +261,9 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						reference: 'tipoFinanciacionRef',
 						bind : {
 							store : '{comboTiposFinanciacion}',
-							value : '{financiacion.tiposFinanciacionCodigo}'
+							value : '{financiacion.tiposFinanciacionCodigo}',
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						}
 						// colspan: 3
 
@@ -269,7 +276,9 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						fieldLabel : HreRem
 								.i18n('fieldlabel.inicio.financiacion'),
 						bind : {
-							value : '{financiacion.fechaInicioFinanciacion}'
+							value : '{financiacion.fechaInicioFinanciacion}',
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						},
 						maxValue : null,
 						listeners : {
@@ -282,7 +291,9 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						reference : 'fechaFinFinanciacion',
 						fieldLabel : HreRem.i18n('fieldlabel.fin.financiacion'),
 						bind : {
-							value : '{financiacion.fechaFinFinanciacion}'
+							value : '{financiacion.fechaFinFinanciacion}',
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						},
 						maxValue : null,
 						listeners : {
@@ -297,7 +308,9 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						reference: 'estadoExpedienteRef',
 						bind : {
 							store : '{comboEstadosFinanciacion}',
-							value : '{financiacion.estadosFinanciacion}'
+							value : '{financiacion.estadosFinanciacion}',
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						}
 					}, {
 						xtype : 'currencyfieldbase',
@@ -305,7 +318,9 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						reference: 'capitalCondedidoRef',
 						readOnly : true,
 						bind : {
-							value : '{financiacion.capitalConcedido}'
+							value : '{financiacion.capitalConcedido}',
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						}
 					}
 

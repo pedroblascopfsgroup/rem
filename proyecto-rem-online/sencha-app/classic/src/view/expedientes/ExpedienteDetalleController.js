@@ -774,26 +774,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	var disabled = value == 0;
     	var esBankia = me.getViewModel().get("expediente.esBankia");
     	
-    	  	
-		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
-		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');
-		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');  
-		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk')
-    	
+		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');
     	    	
     	comboEntidadFinancieraCodigo.setDisabled(disabled);
-    	comboEntidadFinancieraCodigo.allowBlank = disabled;
-    	
-    	if(esBankia) {
-    		numExpedienteRiesgo.allowBlank = false;
-    		comboTipoFinanciacion.allowBlank = false;
-    		cncyCapitalConcedidoBnk.allowBlank = false;
-    	}
-    	
-    	
+    	comboEntidadFinancieraCodigo.allowBlank = disabled; 	
+
     	if(disabled) {
-    		numExpedienteRiesgo.setValue("");
-    		comboTipoFinanciacion.setValue("");
     		comboEntidadFinancieraCodigo.setValue("");
     	}
 	},
@@ -1748,47 +1734,28 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
     },
-    
 	onChangeComboEntidadFinanciera: function(combo, nValue, oValue, eOps) {
-	
-		var me =this;
+		var me = this;
 		var esBankia = me.getViewModel().get("expediente.esBankia");
 		var valorComboEsBankia = CONST.COMBO_ENTIDAD_FINANCIERA['BANKIA'];			
-		
-		bloqueBankia = me.lookupReference("bloqueBankia");
-		dummyBloqueBankia = me.lookupReference("dummyBloqueBankia");
-		numeroExpedienteRef = me.lookupReference("numeroExpedienteRef");
-		tipoFinanciacionRef = me.lookupReference("tipoFinanciacionRef");
-		fechaInicioFinanciacion = me.lookupReference("fechaInicioFinanciacion"); 
-		fechaFinFinanciacion = me.lookupReference("fechaFinFinanciacion");
-		estadoExpedienteRef = me.lookupReference("estadoExpedienteRef"); 
-		capitalCondedidoRef = me.lookupReference("capitalCondedidoRef");
-		
-		
-		if(!Ext.isEmpty(nValue)) {
-			if (esBankia && nValue == valorComboEsBankia) { 
-				bloqueBankia.setHidden(false);
-				dummyBloqueBankia.setHidden(false);
-				
-				numeroExpedienteRef.setHidden(true);
-				tipoFinanciacionRef.setHidden(true);
-				fechaInicioFinanciacion.setHidden(true);
-				fechaFinFinanciacion.setHidden(true);
-				estadoExpedienteRef.setHidden(true);
-				capitalCondedidoRef.setHidden(true);
-				
-			} else if ((esBankia && nValue != valorComboEsBankia) || (!esBankia && nValue == valorComboEsBankia) || (!esBankia && nValue != valorComboEsBankia)){
-				bloqueBankia.setHidden(true);
-				dummyBloqueBankia.setHidden(true);
-				
-				numeroExpedienteRef.setHidden(false);
-				tipoFinanciacionRef.setHidden(false);
-				fechaInicioFinanciacion.setHidden(false);
-				fechaFinFinanciacion.setHidden(false);
-				estadoExpedienteRef.setHidden(false);
-				capitalCondedidoRef.setHidden(false);
-			}
-    	} 
+		var disabled = nValue == 0;
+    	    	  	
+		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
+		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');  
+		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk');	
+ 
+    	if(nValue == valorComboEsBankia) {
+    		numExpedienteRiesgo.allowBlank = false;
+    		comboTipoFinanciacion.allowBlank = false;
+    		cncyCapitalConcedidoBnk.allowBlank = false;
+    	}
+    	
+    	
+    	if(disabled) {
+    		numExpedienteRiesgo.setValue("");
+    		comboTipoFinanciacion.setValue("");
+    		comboEntidadFinancieraCodigo.setValue("");
+    	}
 	},
 
 	onChangeComboProvincia: function(combo) {

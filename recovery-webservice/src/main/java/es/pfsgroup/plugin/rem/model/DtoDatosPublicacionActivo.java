@@ -17,6 +17,8 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private String adecuacionAlquilerCodigo;
 	private Integer totalDiasPublicadoVenta;
 	private Integer totalDiasPublicadoAlquiler;
+	private Integer totalDiasPublicadoHistoricoVenta;
+	private Integer totalDiasPublicadoHistoricoAlquiler;
 	private Boolean publicarVenta;
 	private Boolean ocultarVenta;
 	private Boolean publicarSinPrecioVenta;
@@ -342,6 +344,22 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setMotivoPublicacionAlquiler(String motivoPublicacionAlquiler) {
 		this.motivoPublicacionAlquiler = motivoPublicacionAlquiler;
+	}
+
+	public Integer getTotalDiasPublicadoHistoricoVenta() {
+		return totalDiasPublicadoHistoricoVenta;
+	}
+
+	public void setTotalDiasPublicadoHistoricoVenta(Integer totalDiasPublicadoHistoricoVenta) {
+		this.totalDiasPublicadoHistoricoVenta = totalDiasPublicadoHistoricoVenta;
+	}
+
+	public Integer getTotalDiasPublicadoHistoricoAlquiler() {
+		return totalDiasPublicadoHistoricoAlquiler;
+	}
+
+	public void setTotalDiasPublicadoHistoricoAlquiler(Integer totalDiasPublicadoHistoricoAlquiler) {
+		this.totalDiasPublicadoHistoricoAlquiler = totalDiasPublicadoHistoricoAlquiler;
 	}
 
 }

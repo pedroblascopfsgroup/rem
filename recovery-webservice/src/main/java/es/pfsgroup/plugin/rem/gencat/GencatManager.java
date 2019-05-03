@@ -1916,6 +1916,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			condicionesNuevas.setFechaInicioFinanciacion(condiciones.getFechaInicioFinanciacion());
 			condicionesNuevas.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
 			condicionesNuevas.setSolicitaReserva(0);
+			condicionesNuevas.setTipoCalculoReserva(null);
+			condicionesNuevas.setPorcentajeReserva(null);
+			condicionesNuevas.setPlazoFirmaReserva(null);
+			condicionesNuevas.setImporteReserva(null);
 			condicionesNuevas.setTipoImpuesto(condiciones.getTipoImpuesto());
 			condicionesNuevas.setTipoAplicable(condiciones.getTipoAplicable());
 			condicionesNuevas.setRenunciaExencion(condiciones.getRenunciaExencion());

@@ -74,6 +74,9 @@ public class DtoOfertasFilter extends WebDto {
 	private Boolean comunicacionTerceros;
 	private Boolean transferenciasInternacionales;
 	private Long idDocAdjunto;
+	
+	//REMVIP-4116
+	private String subcarteraCodigo;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -442,6 +445,14 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setIdCliente(Long idCliente) {
 		this.idCliente = idCliente;
+	}
+	
+	//REMVIP-4116
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
 	}
 		
 }

@@ -200,6 +200,11 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
+    	
+    	if(combo.chainedStore == 'comboSubcarteraFiltered'){
+			var store=chainedCombo.getStore(); 
+			store.getProxy().setExtraParams({'idCartera':combo.getValue()});
+		}
 		
 		chainedCombo.getStore().load({ 			
 			callback: function(records, operation, success) {

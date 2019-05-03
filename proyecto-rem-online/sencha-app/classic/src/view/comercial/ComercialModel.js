@@ -138,6 +138,22 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'entidadesPropietarias'}
 			}
+		},
+		comboSubcartera: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'subentidadesPropietarias'}
+				}
+		},
+		
+		comboSubcarteraFiltered: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubcartera'
+				}
 		}
     	
     	

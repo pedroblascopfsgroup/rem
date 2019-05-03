@@ -1,9 +1,9 @@
 --/*
 --#########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190328
+--## FECHA_CREACION=20190402
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.9.0
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5932
 --## PRODUCTO=NO
 --## 
@@ -30,35 +30,32 @@ DECLARE
 	V_COUNT NUMBER(16);
 	PL_OUTPUT VARCHAR(32000 CHAR);
 	
-	CURSOR VALIDACION_3_7_A IS SELECT DISTINCT ID_HAYA FROM (  SELECT AUX.ID_HAYA FROM REM01.AUX_HREOS_5932 AUX WHERE AUX.ALQUILADO = '02'
-																	MINUS
-																SELECT AUX.ID_HAYA 
-																FROM REM01.AUX_HREOS_5932 AUX 
-																INNER JOIN REM01.ACT_ACTIVO ACt on AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
-																INNER JOIN REM01.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
-																INNER JOIN REM01.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID
-																WHERE AUX.ALQUILADO = '02' AND APU.DD_EPA_ID IN (SELECT EPA.DD_EPA_ID 
-																														FROM REM01.DD_EPA_ESTADO_PUB_ALQUILER EPA 
-																														WHERE EPA.DD_EPA_CODIGO IN ('01','04')
-																													)
+	CURSOR VALIDACION_3_7_A IS SELECT DISTINCT ID_HAYA FROM (  SELECT AUX.ID_HAYA , EPA.DD_EPA_DESCRIPCION
+                                                                    FROM REM01.AUX_HREOS_5932 AUX 
+                                                                    INNER JOIN REM01.ACT_ACTIVO ACt on AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
+                                                                    INNER JOIN REM01.DD_SCM_SITUACION_COMERCIAL SCM on SCM.DD_SCM_ID = ACT.DD_SCM_ID
+                                                                    INNER JOIN REM01.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
+                                                                    INNER JOIN REM01.DD_EPA_ESTADO_PUB_ALQUILER EPA ON EPA.DD_EPA_ID = APU.DD_EPA_ID
+                                                                    INNER JOIN REM01.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID
+                                                                    WHERE SCM.DD_SCM_CODIGO <> '05'
+                                                                    AND AUX.ALQUILADO = '02'
+                                                                    AND TCO.DD_TCO_CODIGO = '02'
+                                                                    AND ACT.BORRADO = 0 
+                                                                    AND EPA.DD_EPA_CODIGO NOT IN ('01','04')  
 															);
 
 
-	CURSOR VALIDACION_3_7_B IS	SELECT DISTINCT ID_HAYA FROM   (SELECT AUX.ID_HAYA FROM REM01.AUX_HREOS_5932 AUX WHERE AUX.ALQUILADO IN ('02','03') AND AUX.TIPO_CONTRATO_ALQUILER <> '01' 
-																MINUS
-																SELECT AUX.ID_HAYA 
-																FROM REM01.AUX_HREOS_5932 AUX 
-																INNER JOIN REM01.ACT_ACTIVO ACt on AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
-																INNER JOIN REM01.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
-																INNER JOIN REM01.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID
-																WHERE       AUX.ALQUILADO IN ('02','03') 
-																		AND AUX.TIPO_CONTRATO_ALQUILER <> '01' 
-																		AND TCO.DD_TCO_CODIGO IN ('01','02') 
-																		AND APU.DD_EPA_ID IN (SELECT EPA.DD_EPA_ID 
-																								FROM REM01.DD_EPA_ESTADO_PUB_ALQUILER EPA 
-																								WHERE EPA.DD_EPA_CODIGO IN ('01','04')
-																									)                             
-													
+	CURSOR VALIDACION_3_7_B IS	SELECT DISTINCT ID_HAYA FROM   (SELECT AUX.ID_HAYA 
+                                                                    FROM REM01.AUX_HREOS_5932 AUX 
+                                                                        INNER JOIN REM01.ACT_ACTIVO ACt on AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
+                                                                        INNER JOIN REM01.DD_SCM_SITUACION_COMERCIAL SCM on SCM.DD_SCM_ID = ACT.DD_SCM_ID
+                                                                        INNER JOIN REM01.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
+                                                                        INNER JOIN REM01.DD_EPA_ESTADO_PUB_ALQUILER EPA on EPA.DD_EPA_ID = APU.DD_EPA_ID
+                                                                        INNER JOIN REM01.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID
+                                                                        WHERE SCM.DD_SCM_CODIGO <> '05' AND ACT.BORRADO = 0  
+                                                                                AND AUX.TIPO_CONTRATO_ALQUILER <> '01' 
+                                                                                AND TCO.DD_TCO_CODIGO IN ('02') 
+                                                                                AND EPA.DD_EPA_CODIGO NOT IN ('01','04')
 																);
 																	
 												
@@ -81,17 +78,18 @@ BEGIN
 
 /** 3.7. A. En publicación alquiler pueden estar como “No publicados” u “Ocultos por Alquiler”, cualquier otro tipo es error **/
 
-		V_MSQL := 'SELECT COUNT(1) FROM (  SELECT AUX.ID_HAYA FROM '||V_ESQUEMA||'.AUX_HREOS_5932 AUX WHERE AUX.ALQUILADO = ''02''
-												MINUS
-											SELECT AUX.ID_HAYA 
-											FROM '||V_ESQUEMA||'.AUX_HREOS_5932 AUX 
-											INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACt on AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
-											INNER JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
-											INNER JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID
-											WHERE AUX.ALQUILADO = ''02'' AND APU.DD_EPA_ID IN (SELECT EPA.DD_EPA_ID 
-																									FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA 
-																									WHERE EPA.DD_EPA_CODIGO IN (''01'',''04'')
-																								)
+		V_MSQL := 'SELECT COUNT(1) FROM (  SELECT AUX.ID_HAYA , EPA.DD_EPA_DESCRIPCION
+                                                                    FROM '||V_ESQUEMA||'.AUX_HREOS_5932 AUX 
+                                                                    INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACt on AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
+                                                                    INNER JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM on SCM.DD_SCM_ID = ACT.DD_SCM_ID
+                                                                    INNER JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
+                                                                    INNER JOIN '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON EPA.DD_EPA_ID = APU.DD_EPA_ID
+                                                                    INNER JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID
+                                                                    WHERE SCM.DD_SCM_CODIGO <> ''05''
+                                                                    AND AUX.ALQUILADO = ''02''
+                                                                    AND TCO.DD_TCO_CODIGO = ''02''
+                                                                    AND ACT.BORRADO = 0 
+                                                                    AND EPA.DD_EPA_CODIGO NOT IN (''01'',''04'') 
 										)';
 		
 		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
@@ -126,20 +124,17 @@ BEGIN
 		
 /** 3.7. B. En publicación de venta (si corresponde) y si el tipo de alquiler NO es “Ordinario” pueden estar como “No publicados” u “Ocultos por Alquiler”, cualquier otro tipo es error**/
 	 
-		V_MSQL := 'SELECT COUNT(1) FROM   (SELECT AUX.ID_HAYA FROM '||V_ESQUEMA||'.AUX_HREOS_5932 AUX WHERE AUX.ALQUILADO IN (''02'',''03'') AND AUX.TIPO_CONTRATO_ALQUILER <> ''01'' 
-											MINUS
-											SELECT AUX.ID_HAYA FROM '||V_ESQUEMA||'.AUX_HREOS_5932 AUX 
-																INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACt on AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
-																INNER JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
-																INNER JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID
-																WHERE       AUX.ALQUILADO IN (''02'',''03'') 
-																		AND AUX.TIPO_CONTRATO_ALQUILER <> ''01'' 
-																		AND TCO.DD_TCO_CODIGO IN (''01'',''02'') 
-																		AND APU.DD_EPA_ID IN (SELECT EPA.DD_EPA_ID 
-																								FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA 
-																								WHERE EPA.DD_EPA_CODIGO IN (''01'',''04'')
-																									)                             
-								
+		V_MSQL := 'SELECT COUNT(1) FROM   (SELECT AUX.ID_HAYA 
+                                                                    FROM '||V_ESQUEMA||'.AUX_HREOS_5932 AUX 
+                                                                        INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACt on AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
+                                                                        INNER JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM on SCM.DD_SCM_ID = ACT.DD_SCM_ID
+                                                                        INNER JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
+                                                                        INNER JOIN '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA on EPA.DD_EPA_ID = APU.DD_EPA_ID
+                                                                        INNER JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID
+                                                                        WHERE SCM.DD_SCM_CODIGO <> ''05'' AND ACT.BORRADO = 0  
+                                                                                AND AUX.TIPO_CONTRATO_ALQUILER <> ''01'' 
+                                                                                AND TCO.DD_TCO_CODIGO IN (''02'') 
+                                                                                AND EPA.DD_EPA_CODIGO NOT IN (''01'',''04'')                          
                                             )';
 
 		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;

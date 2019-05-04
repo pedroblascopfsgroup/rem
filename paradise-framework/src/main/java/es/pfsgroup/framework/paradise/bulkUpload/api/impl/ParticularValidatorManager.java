@@ -2582,7 +2582,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_MTO_MOTIVOS_OCULTACION MTO"
 				+ "			WHERE ACT.ACT_ID = APU.ACT_ID"
 				+ "			AND APU.DD_MTO_V_ID = MTO.DD_MTO_ID"
-				+ "			AND MTO.DD_MTO_CODIGO IN ('09','10','11','12')"
+				+ "			AND MTO.DD_MTO_CODIGO IN ('09','10','11','12','16','17','18','19','20','21')"
 				+ "			AND ACT.ACT_NUM_ACTIVO = " + numActivo + " ");
 		
 		return !"0".equals(resultado);
@@ -2612,7 +2612,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_MTO_MOTIVOS_OCULTACION MTO"
 				+ "			WHERE ACT.ACT_ID = APU.ACT_ID"
 				+ "			AND APU.DD_MTO_A_ID = MTO.DD_MTO_ID"
-				+ "			AND MTO.DD_MTO_CODIGO IN ('09','10','11','12')"
+				+ "			AND MTO.DD_MTO_CODIGO IN ('09','10','11','12','16','17','18','19','20','21')"
 				+ "			AND ACT.ACT_NUM_ACTIVO = " + numActivo + " ");
 		
 		return !"0".equals(resultado);

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=LUIS ADELANTADO
---## FECHA_CREACION=20190307
+--## AUTOR=Juan Angel Sánchez
+--## FECHA_CREACION=20190503
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=f-UAs-sp-1
---## INCIDENCIA_LINK=HREOS-5586
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-6363
 --## PRODUCTO=NO
 --## Finalidad: DDL VISTA PARA LAS SUBDIVISIONES DE AGRUPACION
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 Añadida condición para comprobar que un activo pertenece a una agrupación Promoción Alquiler
+--##        0.3 Correccion en el calculo del ID
 --##########################################
 --*/
 
@@ -69,7 +70,12 @@ BEGIN
               SUBD.PLANTAS
 							FROM (
 									SELECT ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, VIV.VIV_NUM_PLANTAS_INTERIOR PLANTAS, SUM (DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)) DORMITORIOS, 
-										ORA_HASH(ACT.DD_TPA_ID||ACT.DD_SAC_ID||VIV.VIV_NUM_PLANTAS_INTERIOR||SUM(DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL))) ID
+									ORA_HASH (act.dd_tpa_id
+                                   			|| act.dd_sac_id
+                                   			|| NVL (viv.viv_num_plantas_interior, 0)
+                                   			|| NVL (SUM (DECODE (dis.dd_tph_id, 1, dis.dis_cantidad, NULL)), 0)
+                                   			|| NVL (SUM (DECODE (dis.dd_tph_id, 2, dis.dis_cantidad, NULL)), 0)
+                                  	) ID
 									FROM ' || V_ESQUEMA || '.ACT_ICO_INFO_COMERCIAL ICO 
 									JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.ACT_ID = ICO.ACT_ID
 									LEFT JOIN ' || V_ESQUEMA || '.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID

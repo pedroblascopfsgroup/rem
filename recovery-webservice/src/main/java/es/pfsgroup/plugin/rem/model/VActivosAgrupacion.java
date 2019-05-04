@@ -105,7 +105,7 @@ public class VActivosAgrupacion implements Serializable {
 	private String condPublAlquiler;
 	
 	@Column(name = "ID_PRINEX_HPM")
-	private Long idPrinexHPM;
+	private String idPrinexHPM;
 	
 	@Column(name ="REG_SUPERFICIE_UTIL")
 	private Float superficieUtil;
@@ -340,11 +340,11 @@ public class VActivosAgrupacion implements Serializable {
 		this.borrado = borrado;
 	}
 
-	public Long getIdPrinexHPM() {
+	public String getIdPrinexHPM() {
 		return idPrinexHPM;
 	}
 
-	public void setIdPrinexHPM(Long idPrinexHPM) {
+	public void setIdPrinexHPM(String idPrinexHPM) {
 		this.idPrinexHPM = idPrinexHPM;
 	}
 

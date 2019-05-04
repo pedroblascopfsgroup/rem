@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=JUAN RUIZ
---## FECHA_CREACION=20190313
+--## AUTOR=Juan Angel Sánchez
+--## FECHA_CREACION=20190504
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=f-UAs-sp-1
---## INCIDENCIA_LINK=HREOS-5586
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-6363
 --## PRODUCTO=NO
 --## Finalidad: Ampliar la tabla de Agrupaciones con un nuevo campo.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Se cambia el tipo de columna de Number a Varchar
 --##########################################
 --*/
 
@@ -42,7 +43,7 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO							TIPO CAMPO						DESCRIPCION
-    	T_ALTER(  'AGR_NUM_AGRUP_PRINEX_HPM',			'NUMBER(16,0)',				'Nº agrupación Prinex HPM')
+    	T_ALTER(  'AGR_NUM_AGRUP_PRINEX_HPM',			'VARCHAR2(20 CHAR)',		'Nº agrupación Prinex HPM')
 		);
     V_T_ALTER T_ALTER;
     
@@ -69,22 +70,40 @@ BEGIN
 		V_T_ALTER := V_ALTER(I);
 
 		-- Verificar si la columna existe. Si existe la columna, no se hace nada con esta (no se tiene en cuenta si los tipos coinciden).
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-		IF V_NUM_TABLAS = 0 THEN
-			-- Si no existe la columna se crea.
-			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
+		IF V_NUM_TABLAS = 1 THEN
+			V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA|| ' SET '||V_T_ALTER(1)||' = '''' ';
+			
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna BORRADA en tabla');
+			
 			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
+					   MODIFY ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
 			';
-
 			EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna INSERTADA en tabla, con tipo '||V_T_ALTER(2));
-
-			-- Crear comentario.
-			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		
-			EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
+			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna MODIFICADA en tabla, con tipo '||V_T_ALTER(2));
+		
+		ELSE
+			V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and DATA_TYPE = ''VARCHAR2'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+			IF V_NUM_TABLAS = 0 THEN
+				-- Si no existe la columna se crea.
+				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
+				V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
+						   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
+				';
+	
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna INSERTADA en tabla, con tipo '||V_T_ALTER(2));
+	
+				-- Crear comentario.
+				V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
+			ELSE
+				DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... La columna ya existe.');
+			END IF;
 		END IF;
 
 	END LOOP;

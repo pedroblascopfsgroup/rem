@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Juan Ruiz
---## FECHA_CREACION=20190314
+--## AUTOR=Juan Angel Sánchez
+--## FECHA_CREACION=20190504
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5774
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-6363
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_OPM_OPERACION_MASIVA los datos añadidos en T_ARRAY_DATA.
+--## Finalidad: Script que actualiza en DD_OPM_OPERACION_MASIVA los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -55,19 +55,16 @@ BEGIN
 			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 			
 			-- Si existe la FUNCION
-			IF V_NUM_TABLAS > 0 THEN	  
+			IF V_NUM_TABLAS > 1 THEN	  
 				DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA...no se modifica nada.');
 				
 			ELSE
-				V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA' ||
-							' (DD_OPM_ID, DD_OPM_CODIGO, DD_OPM_DESCRIPCION, DD_OPM_DESCRIPCION_LARGA, FUN_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_OPM_VALIDACION_FORMATO)' || 
-							' SELECT '||V_ESQUEMA||'.S_DD_OPM_OPERACION_MASIVA.NEXTVAL,' ||
-							' '''||V_TMP_FUNCION(1)||''','''||V_TMP_FUNCION(2)||''','''||V_TMP_FUNCION(3)||''','||
-							' (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||V_TMP_FUNCION(4)||'''), '||
-							' 0, ''HREOS-5774'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
+				V_MSQL_1 := 'UPDATE '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA' || 
+							' SET USUARIOMODIFICAR = ''HREOS-6363'', FECHAMODIFICAR = SYSDATE, DD_OPM_VALIDACION_FORMATO = '''||V_TMP_FUNCION(5)||''' ' || 
+							' WHERE DD_OPM_CODIGO = '''||V_TMP_FUNCION(1)||''' ';
 		    	
 				EXECUTE IMMEDIATE V_MSQL_1;
-				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA insertados correctamente.');
+				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA actualizados correctamente.');
 				
 		    END IF;	
       END LOOP;

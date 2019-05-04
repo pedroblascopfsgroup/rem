@@ -140,7 +140,7 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	private Integer uvemCodigoAgrupacionInmueble;
 	
 	@Column(name = "AGR_NUM_AGRUP_PRINEX_HPM")
-	private Long numAgrupPrinexHPM;
+	private String numAgrupPrinexHPM;
 
 	@Version   
 	private Long version;
@@ -369,11 +369,11 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 		this.tipoAlquiler = tipoAlquiler;
 	}
 
-	public Long getNumAgrupPrinexHPM() {
+	public String getNumAgrupPrinexHPM() {
 		return numAgrupPrinexHPM;
 	}
 
-	public void setNumAgrupPrinexHPM(Long numAgrupPrinexHPM) {
+	public void setNumAgrupPrinexHPM(String numAgrupPrinexHPM) {
 		this.numAgrupPrinexHPM = numAgrupPrinexHPM;
 	}
 	

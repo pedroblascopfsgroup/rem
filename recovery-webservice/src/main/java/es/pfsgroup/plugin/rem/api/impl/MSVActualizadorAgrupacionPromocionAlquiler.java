@@ -585,7 +585,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			
 			//-----ID Prinex HPM
 			if(!Checks.esNulo(exc.dameCelda(fila, 1))){
-				activoAgrupacionActivo.setIdPrinexHPM(Long.valueOf(exc.dameCelda(fila, 1)));
+				activoAgrupacionActivo.setIdPrinexHPM(exc.dameCelda(fila, 1));
 			}
 			
 			//-----% Participacion

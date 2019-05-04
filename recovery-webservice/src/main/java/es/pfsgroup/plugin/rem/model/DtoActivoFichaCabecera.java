@@ -225,7 +225,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Long numActivoMatriz;
 	private Double porcentajeParticipacion;
 	private Long unidadesAlquilablesEnAgrupacion;
-	private Long idPrinexHPM;
+	private String idPrinexHPM;
 	private Boolean isPANoDadaDeBaja;
 	
 	private Boolean agrupacionDadaDeBaja;
@@ -1768,11 +1768,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.activosPropagablesUas = activosPropagablesUas;
 	}
 
-	public Long getIdPrinexHPM() {
+	public String getIdPrinexHPM() {
 		return idPrinexHPM;
 	}
 
-	public void setIdPrinexHPM(Long idPrinexHPM) {
+	public void setIdPrinexHPM(String idPrinexHPM) {
 		this.idPrinexHPM = idPrinexHPM;
 	}
 

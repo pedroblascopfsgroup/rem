@@ -6903,6 +6903,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		String codigoError = "";
 
 		ExpedienteComercial expediente = this.findOne(idExpediente);
+		
 		// Validamos condiciones jurídicas.
 		if (expediente.getEstadoPbc() == null || expediente.getEstadoPbc().equals(0)
 				|| expediente.getRiesgoReputacional() == null
@@ -6910,6 +6911,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				|| expediente.getConflictoIntereses() == null || expediente.getConflictoIntereses().equals(1)) {
 			codigoError = "imposible.bloquear.responsabilidad.corporativa";
 
+		} else if(DDCartera.CODIGO_CARTERA_BANKIA.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+			//Si es Bankia, validamos las discrepancias de los compradores, si las hay, no se puede bloquear
+			codigoError = hayDiscrepanciasClientesURSUS(idExpediente) ? "no.bloqueo.validar.compradores" : "";
 		} else {
 			// Validamos los bloqueos
 			List<ActivoOferta> activosExpediente = expediente.getOferta().getActivosOferta();

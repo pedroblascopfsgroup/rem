@@ -71,6 +71,19 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 
 	onClickContinuar: function() {
 		var me = this;
+		
+		var idExpediente = me.getViewModel().get("comprador").data.idExpedienteComercial;
+		
+		if(me.getViewModel().get("comprador").data.esCarteraBankia){
+			Ext.Ajax.request({
+				url: $AC.getRemoteUrl('expedientecomercial/getComprobarCompradores'),
+				params: {
+					idExpediente: idExpediente
+				},
+				method: 'POST'
+			});
+		}
+		
 		if(me.comprobarFormato()){
 			me.comprobarDatosFormularioComprador();
 		}

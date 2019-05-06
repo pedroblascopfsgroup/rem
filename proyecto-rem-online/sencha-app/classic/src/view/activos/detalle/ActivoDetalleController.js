@@ -4079,8 +4079,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 }
             });
         }
-
->>>>>>> func-rem-GENCAT-conVisitas
 	},
 
 	existeCliente: function(btn){

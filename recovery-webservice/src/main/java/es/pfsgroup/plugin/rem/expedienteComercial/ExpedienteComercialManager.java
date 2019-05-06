@@ -8778,7 +8778,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return avisosFormateados;
 	}
 		
-	@Override
 	private List<DtoTipoDocExpedientes> generateListSubtipoExpedienteNoAgora(List <DDSubtipoDocumentoExpediente> listadoDDSubtipoDoc) {
 
 		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();

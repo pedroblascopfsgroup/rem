@@ -42,8 +42,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	@Autowired 
     private ActivoApi activoApi;
 	
-	@Autowired 
-    private ActivoDao activoDao;
 
 	
 	@Override

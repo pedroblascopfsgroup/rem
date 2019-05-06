@@ -473,25 +473,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			return null;
 		}
 	}
-
-    @Override
-   	public Long getPresupuestoActual(Long id) {
-    	SimpleDateFormat df = new SimpleDateFormat("yyyy");
-    	String yearNow = df.format(new Date());
-    	
-       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
-       			+ " where presupuesto.activo.id = " + id 
-       			+ " and presupuesto.ejercicio.anyo = " + yearNow);
-
-       	try {
-       		if (getHibernateTemplate().find(hb.toString()).size() > 0)
-	       		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
-       		else return null;
-       	} catch (Exception e) {
-       		e.printStackTrace();
-       		return null;
-       	}
-   	}
     
     @Override
    	public Long getUltimoHistoricoPresupuesto(Long id) {

@@ -76,7 +76,9 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                	xtype: 'comboboxfieldbase',
 		                	bind: {
 								store: '{comboEstadoExpediente}',
-								value: '{expediente.codigoEstado}'
+								value: '{expediente.codigoEstado}',
+								readOnly: '{expediente.noEsOfertaFinalGencat}'
+								
 							},
 							hidden: !$AU.userIsRol("HAYASUPER"),
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')

@@ -15,6 +15,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.activo.ActivoTramiteManager;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterServiceFactoryApi;
@@ -28,6 +29,9 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;
+    
+    @Autowired
+    private ActivoTramiteManager activoTramite;
     
     @Autowired
     private UpdaterServiceFactoryApi updaterServiceFactory;
@@ -155,8 +159,14 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	 */
 	protected boolean isDecisionNode(ExecutionContext executionContext) {
 		TareaExterna tareaExterna = getTareaExterna(executionContext);
-		String script = tareaExterna.getTareaProcedimiento().getScriptDecision();
-
+		String script = "";
+		if(!Checks.esNulo(tareaExterna.getTareaProcedimiento())) {
+			if(!Checks.esNulo(tareaExterna.getTareaProcedimiento().getAuditoria())) {
+				if(!tareaExterna.getTareaProcedimiento().getAuditoria().isBorrado()) {
+					script = tareaExterna.getTareaProcedimiento().getScriptDecision();
+				}
+			}
+		}
 		return (!StringUtils.isBlank(script));
 	}
 

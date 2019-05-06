@@ -16,11 +16,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     		var me = this;
     		me.evaluarEdicion();
     	},
-    	rowclick: 'onOfertaListClick'
+    	rowclick: 'onOfertaListClick'    		
     },
 
     initComponent: function () {
-
         var me = this;
 
         me.columns= [
@@ -200,7 +199,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 
             this.editOnSelect = allowEdit;
             return allowEdit;
-        });  
+        }); 
+      
 
         
         me.dockedItems = [
@@ -220,8 +220,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				    hideLabel: true,
 				    boxLabel: HreRem.i18n('check.comercial.ofertas.anuladas.fieldlabel'),
 				    fieldLabel: ' ',
-				    
-					reference: 'chkbxPerimetroAdmision',
 					addUxReadOnlyEditFieldPlugin: false,
 					listeners: {
 						change: 'onChkbxOfertasAnuladas'
@@ -268,40 +266,36 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	},
 	
 	editFuncion: function(editor, context){
-		var me= this;
 		
-			var estado = context.record.get("codigoEstadoOferta");	
-			if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
-				
-				Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-				   msg: HreRem.i18n('msg.desea.aceptar.oferta'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {
-				        	
-				        	me.saveFn(editor, me, context);
-
-						} else{
-				    		me.getStore().load(); 	
-				    	}
-					}
-				});
+		var me= this;
+		var estado = context.record.get("codigoEstadoOferta");
+		var gencat = context.record.get("gencat");
+		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
+		
+		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
+			if (gencat == "true") {
+				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
 			}
-			else{
-				
-	            // HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
-	            if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){
-	            	
-	            	me.onCambioARechazoOfertaList(me, context.record);
-
-	            } else {
-	            	
-	            	me.saveFn(editor, me, context);
-	            	
-	            }
+			Ext.Msg.show({
+			   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+			   msg: msg,
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {
+			        	me.saveFn(editor, me, context);
+					} else{
+			    		me.getStore().load(); 	
+			    	}
+				}
+			});
+		} else {
+			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
+			if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){
+				me.onCambioARechazoOfertaList(me, context.record);
+			} else {
+				me.saveFn(editor, me, context);
 			}
-					
+		}
 	},
 	
 	saveFn: function (editor, grid, context) {

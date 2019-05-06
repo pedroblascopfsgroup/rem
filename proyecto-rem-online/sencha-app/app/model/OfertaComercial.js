@@ -49,9 +49,6 @@ Ext.define('HreRem.model.OfertaComercial', {
     			name:'tipoDocumento'
     		},
     		{
-    			name:'deDerechoTanteo'
-    		},
-    		{
             	name: 'tipoPersona'
             },
             {

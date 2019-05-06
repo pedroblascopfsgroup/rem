@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.VisitaApi;
+import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.VisitasExcelReport;
@@ -40,6 +41,9 @@ public class VisitasController {
 
 	@Autowired
 	private VisitaApi visitaApi;
+	
+	@Autowired
+	private VisitaGencatApi visitaGencatApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -62,28 +66,26 @@ public class VisitasController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/visitas")
 	public void saveOrUpdateVisita(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		
 		VisitaRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
-
+		
 		try {
-
 			jsonFields = request.getJsonObject();
 			jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
 			List<VisitaDto> listaVisitaDto = jsonData.getData();
 
-
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-
-			} else {
+			} 
+			else {
 				listaRespuesta = visitaApi.saveOrUpdateVisitas(listaVisitaDto, jsonFields);
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
-
 			}
-
+			
 		} catch (Exception e) {
 			logger.error("Error visitas", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
@@ -182,6 +184,32 @@ public class VisitasController {
 			model.put("success", false);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getVisitaByIdComunicacionGencat(Long idComunicacionnGencat,ModelMap model){
+		try {
+			model.put("data", visitaGencatApi.getVisitaByIdComunicacionGencat(idComunicacionnGencat));
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getVisitaByIdVisitaGencat(Long numVisita,ModelMap model){
+		try {
+			model.put("data", visitaGencatApi.getVisitaByIdVisitaGencat(numVisita));
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
 		return createModelAndViewJson(model);
 	}
 }

@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Neste
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
+import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 
 /**
  * Esta clase es un DAO genéfico para obtener registros que han cambiado en BD.
@@ -132,6 +133,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 		try {
 			String nombreVistaDatosActuales = infoTablas.nombreVistaDatosActuales();
+			trace("[DETECCIÓN CAMBIOS] Obteniedno cambios de "+ nombreVistaDatosActuales);
 			if (infoTablas.procesarSoloCambiosMarcados()) {
 				nombreVistaDatosActuales = nombreVistaDatosActuales.concat(MARCADOR_CAMBIOS);
 			}
@@ -198,6 +200,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		FieldInfo[] fields = getDtoFields(dtoClass);
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
+		trace("[DETECCIÓN CAMBIOS] obteniedo registros "+ infoTablas.nombreVistaDatosActuales());
 		String queryString = SELECT + columns + FROM + infoTablas.nombreVistaDatosActuales();
 		queryString = this.paginarConsulta(cambios, columns, queryString);
 		try {
@@ -270,9 +273,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		String columns = columns4Select(fields, infoTablas.clavePrimaria());
 
 		Session session = this.sesionFactoryFacade.getSession(this);
-		if (logger.isDebugEnabled()) {
-			logger.trace("Inicando transacción");
-		}
+		
 		Transaction tx = session.beginTransaction();
 		try {
 			String queryDelete = "TRUNCATE TABLE " + infoTablas.nombreTablaDatosHistoricos();
@@ -291,9 +292,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 					llamada.logTiempoInsertarHistorico();
 				}
 			}
-			if (logger.isDebugEnabled()) {
-				logger.trace("Comiteando transacción");
-			}
+			
 			tx.commit();
 		} catch (CambiosBDDaoError e) {
 			logger.fatal(
@@ -496,14 +495,14 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 */
 	public void refreshMaterializedView(InfoTablasBD infoTablas) throws CambiosBDDaoError {
 
-		if (logger.isDebugEnabled()) {
-			logger.trace("Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
-		}
+		trace("[DETECCIÓN CAMBIOS] Refrescando vista matarializada: " + infoTablas.nombreVistaDatosActuales());
+		
 
 		// antes de refrescar la vista principal refrescamos las auxiliares
 		if (infoTablas.vistasAuxiliares() != null) {
 			for (String vistaAux : infoTablas.vistasAuxiliares()) {
 				if (!vistaAux.isEmpty()) {
+					trace("[DETECCIÓN CAMBIOS] Refrescando vista matarializada: " + vistaAux);
 					this.refreshMaterializedView(vistaAux);
 				}
 			}
@@ -601,6 +600,17 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			
 		}
 		return null;
+	}
+	
+	private void trace(String mensaje) {
+		Boolean webcomSimulado = Boolean.valueOf(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "true"));
+		if (webcomSimulado) {
+			logger.error(mensaje);
+		} else {
+			logger.trace(mensaje);
+		}
+
 	}
 
 }

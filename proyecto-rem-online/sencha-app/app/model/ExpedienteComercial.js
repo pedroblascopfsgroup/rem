@@ -221,7 +221,15 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name:'estaFirmado',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'idOfertaAnterior'
+    		},
+    		{
+    			name:'noEsOfertaFinalGencat',
+    			type: 'boolean'
     		}
+    		
     		 
     ],
     formulas: {

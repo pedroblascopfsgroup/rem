@@ -51,8 +51,15 @@ Ext.define('HreRem.view.common.WindowBase', {
     		                 params: params,
     		                 success: function(fp, o) {
 
-    		                 	if(o.result.success == "false") {
-    		                 		me.fireEvent("errorToast", o.result.errorMessage);
+    		                 	if(o.result.success == "false") {    		                 		    		                 		                 		
+    		                 		if(o.result.errorMessage.includes("Ya existe un elemento con el nombre")
+    		                 				|| o.result.errorMessage.includes("Error al crear el documento")){
+    		                 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.fichero.duplicado"));
+    		                 		}else if(o.result.errorMessage.includes("Extensi")){
+    		            	 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.extension.documento.no.permitida"));	            	 			
+    		                 		}else{
+    		                 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		                 		}
     		                 	}else{
     		                 		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
     		                 	}
@@ -67,7 +74,7 @@ Ext.define('HreRem.view.common.WindowBase', {
     		                 	}
     		                 },
     		                 progress: function(action, progress, event) {
-    		                	 
+
     		                 	if(limite > 0 && event.total/1000/1000 > limite){
     		                 		Ext.Ajax.getLatest().abort();
     		                 		me.fireEvent("errorToast", "No se puede subir ficheros mayores de "+limite+"Mb.");

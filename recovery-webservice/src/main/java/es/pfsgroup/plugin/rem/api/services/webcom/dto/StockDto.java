@@ -247,16 +247,16 @@ public class StockDto implements WebcomRESTDto{
 	
 	//HREOS-6082
 	@WebcomRequired
-	private BooleanDataType indicadorAm;
+	private BooleanDataType esActivoMatrizPA;
 	
 	@WebcomRequired
-	private LongDataType idHayaAm;
+	private LongDataType idActivoHayaPA;
 	
 	@WebcomRequired
-	private LongDataType idPa;
+	private LongDataType codigoAgrupacionPA;
 	
 	@WebcomRequired
-	private LongDataType idSubdivisionPa;
+	private LongDataType codigoCabeceraPA;
 	
 	@MappedColumn("NOMBRE_GMO")
 	@WebcomRequired
@@ -862,28 +862,28 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodigoAgrupacionComercialRem(LongDataType codigoAgrupacionComercialRem) {
 		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
 	}
-	public BooleanDataType getIndicadorAm() {
-		return indicadorAm;
+	public BooleanDataType getEsActivoMatrizPA() {
+		return esActivoMatrizPA;
 	}
-	public void setIndicadorAm(BooleanDataType indicadorAm) {
-		this.indicadorAm = indicadorAm;
+	public void setEsActivoMatrizPA(BooleanDataType esActivoMatrizPA) {
+		this.esActivoMatrizPA = esActivoMatrizPA;
 	}
-	public LongDataType getIdHayaAm() {
-		return idHayaAm;
+	public LongDataType getIdActivoHayaPA() {
+		return idActivoHayaPA;
 	}
-	public void setIdHayaAm(LongDataType idHayaAm) {
-		this.idHayaAm = idHayaAm;
+	public void setIdActivoHayaPA(LongDataType idActivoHayaPA) {
+		this.idActivoHayaPA = idActivoHayaPA;
 	}
-	public LongDataType getIdPa() {
-		return idPa;
+	public LongDataType getCodigoAgrupacionPA() {
+		return codigoAgrupacionPA;
 	}
-	public void setIdPa(LongDataType idPa) {
-		this.idPa = idPa;
+	public void setCodigoAgrupacionPA(LongDataType codigoAgrupacionPA) {
+		this.codigoAgrupacionPA = codigoAgrupacionPA;
 	}
-	public LongDataType getIdSubdivisionPa() {
-		return idSubdivisionPa;
+	public LongDataType getCodigoCabeceraPA() {
+		return codigoCabeceraPA;
 	}
-	public void setIdSubdivisionPa(LongDataType idSubdivisionPa) {
-		this.idSubdivisionPa = idSubdivisionPa;
+	public void setCodigoCabeceraPA(LongDataType codigoCabeceraPA) {
+		this.codigoCabeceraPA = codigoCabeceraPA;
 	}
 }

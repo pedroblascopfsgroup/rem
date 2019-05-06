@@ -142,9 +142,6 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVEnvioBurofaxExcelValidator envioBurofax;
 	
 	@Autowired
-	private MSVSuperGestEcoTrabajosExcelValidator cargaMasivaEcoTrabajos;
-	
-	@Autowired
 	private MSVOfertasGTAMExcelValidator ofertasGtam;
 	
 	@Autowired
@@ -294,9 +291,6 @@ public class MSVExcelValidatorFactoryImpl {
 			return validatorCargaMasivaComunicaciones;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_OFERTAS_GTAM.equals(codTipoOperacion)){
 			return ofertasGtam;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS.equals(codTipoOperacion)) {
-			return cargaMasivaEcoTrabajos;
 		}
 
 		return null;

@@ -45,9 +45,10 @@ public class PromocionController extends ParadiseJsonController {
 		try {
 			model.put("data", promocionAdapter.getAdjuntosPromocion(id));
 		} catch (GestorDocumentalException e) {
+			logger.error("error en promocionController", e);
 			model.put("success", false);
 			model.put("errorMessage",
-					"Ha habido un problema con la subida del fichero de promociones al gestor documental.");
+					"Gestor documental: No existe la promoción o no tiene permisos para listar el contenedor");
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
@@ -71,11 +72,11 @@ public class PromocionController extends ParadiseJsonController {
 		} catch (GestorDocumentalException e) {
 			logger.error("error en promocionController", e);
 			model.put("success", false);
-			model.put("errorMessage", "Ha habido un problema con la subida del fichero de promociones al gestor documental.");
+			model.put("errorMessage", "Gestor documental: No existe la promoción o no tiene permiso para subir el documento");
 		} catch (Exception e) {
 			logger.error("error en promocionController", e);
 			model.put("success", false);
-			model.put("errorMessage", "Ha habido un problema con la subida del fichero de promociones.");
+			model.put("errorMessage",e.getMessage());
 		}
 		return createModelAndViewJson(model);
 	}

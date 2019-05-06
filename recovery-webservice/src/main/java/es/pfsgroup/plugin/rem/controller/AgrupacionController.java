@@ -207,6 +207,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		}
 
 		catch (Exception e) {
+			logger.error("error anyadiendo activo a agrupación",e);
 			model.put("success", false);
 		}
 

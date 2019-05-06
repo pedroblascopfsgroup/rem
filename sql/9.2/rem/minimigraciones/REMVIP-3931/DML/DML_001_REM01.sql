@@ -25,8 +25,8 @@ DECLARE
 	
 	err_num NUMBER; -- Numero de error.
     err_msg VARCHAR2(2048); -- Mensaje de error.
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas.
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas.
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas.
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas.
     V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-3931';
     V_MSQL VARCHAR2(4000 CHAR);
     V_MAX_PTO_ID NUMBER(16,0);
@@ -87,28 +87,28 @@ BEGIN
 					,   CASE 
 						WHEN '''||FILA.dd_tpa_codigo||''' = ''02'' THEN (select cfd.cfd_id 
 															from ACT_CFD_CONFIG_DOCUMENTO cfd
-															inner join DD_TPD_TIPO_DOCUMENTO tpd on tpd.dd_tpd_id = cfd.dd_tpd_id and tpd.dd_tpd_codigo = ''92''
+															inner join DD_TPD_TIPO_DOCUMENTO tpd on tpd.dd_tpd_id = cfd.dd_tpd_id and tpd.dd_tpd_codigo = ''84''
 															inner join DD_TPA_TIPO_ACTIVO tpa on cfd.dd_tpa_id = tpa.dd_tpa_id and tpa.dd_tpa_codigo = ''02'')
 						WHEN '''||FILA.dd_tpa_codigo||''' = ''03'' THEN (select cfd.cfd_id 
 															from ACT_CFD_CONFIG_DOCUMENTO cfd
-															inner join DD_TPD_TIPO_DOCUMENTO tpd on tpd.dd_tpd_id = cfd.dd_tpd_id and tpd.dd_tpd_codigo = ''92''
+															inner join DD_TPD_TIPO_DOCUMENTO tpd on tpd.dd_tpd_id = cfd.dd_tpd_id and tpd.dd_tpd_codigo = ''84''
 															inner join DD_TPA_TIPO_ACTIVO tpa on cfd.dd_tpa_id = tpa.dd_tpa_id and tpa.dd_tpa_codigo = ''03'')
 						WHEN '''||FILA.dd_tpa_codigo||''' = ''05'' THEN (select cfd.cfd_id 
 															from ACT_CFD_CONFIG_DOCUMENTO cfd
-															inner join DD_TPD_TIPO_DOCUMENTO tpd on tpd.dd_tpd_id = cfd.dd_tpd_id and tpd.dd_tpd_codigo = ''92''
+															inner join DD_TPD_TIPO_DOCUMENTO tpd on tpd.dd_tpd_id = cfd.dd_tpd_id and tpd.dd_tpd_codigo = ''84''
 															inner join DD_TPA_TIPO_ACTIVO tpa on cfd.dd_tpa_id = tpa.dd_tpa_id and tpa.dd_tpa_codigo = ''05'')
 						END
 					,   1
 					,   1
 					,   NULL
-					,   NULL
-					,   NULL
 					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
-					,   NULL
+					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
+					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
+					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
 					,   TO_DATE(TRIM('''||FILA.FECHA_CADUCIDAD||'''),''MM/DD/YYYY'')
 					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
 					,   TO_DATE(TRIM('''||FILA.REM_FC_ALTA||'''),''MM/DD/YYYY'')
-					,   (SELECT DD_TCE_ID FROM DD_TCE_TIPO_CALIF_ENERGETICA WHERE DD_TCE_CODIGO = TRIM('''||FILA.CALIFICACION||'''))
+					,   (SELECT DD_TCE_ID FROM DD_TCE_TIPO_CALIF_ENERGETICA WHERE UPPER(DD_TCE_DESCRIPCION) = UPPER(TRIM('''||FILA.CALIFICACION||''')))
 					,   0   
 					,   '''||V_USUARIOMODIFICAR||'''
 					,   SYSDATE
@@ -131,12 +131,12 @@ BEGIN
         END IF;
   		
 	END LOOP;
-	
-    DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
     
 	CLOSE CERTIFICADOS;
 
 	COMMIT;
+	
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT||' registros ');
 	
 	DBMS_OUTPUT.PUT_LINE('[FIN]');
 

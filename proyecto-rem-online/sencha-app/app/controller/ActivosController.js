@@ -38,7 +38,7 @@ Ext.define('HreRem.controller.ActivosController', {
 					ref: 'configuracionMain',
 					selector: 'configuracionmain'
 				}
-				
+					
 	],
     
     
@@ -49,7 +49,8 @@ Ext.define('HreRem.controller.ActivosController', {
     		abrirDetalleActivoOfertas: 'abrirDetalleActivoComercialOfertas',
     		abrirDetalleActivoById: 'abrirDetalleActivoById',
     		onSaveFormularioCompleto: 'onSaveFormularioCompleto',
-    		cerrarTodas: 'cerrarTodas'
+    		cerrarTodas: 'cerrarTodas',
+    		abrirDetalleExpedienteOferta: 'abrirDetalleExpedienteOferta'
     	},
     	
     	/**
@@ -178,6 +179,10 @@ Ext.define('HreRem.controller.ActivosController', {
 			abrirDetalleActivo: 'abrirDetalleActivoComercialVisitas'
     	},
     	
+    	'gencatcomercialactivo': {    		
+			abrirDetalleActivo: 'abrirDetalleActivoComercialGencat'
+    	},
+    	
     	'ofertascomercialmain': {
     		abrirDetalleActivo: 'abrirDetalleActivoComercialOfertas',
 			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionComercialOfertas',
@@ -193,6 +198,10 @@ Ext.define('HreRem.controller.ActivosController', {
 			abrirDetalleTrabajoById: 'abrirDetalleTrabajoById'
     	},
     	
+    	'expedientedetalle': {
+    		abrirDetalleExpedienteOferta: 'abrirDetalleExpedienteOferta' 
+    	},
+    	
     	'configuracionmain': {
     		abrirDetalleProveedor: 'abrirDetalleProveedor'
     	},
@@ -203,6 +212,10 @@ Ext.define('HreRem.controller.ActivosController', {
     		abrirDetalleActivo: 'abrirDetalleActivoGastosActivos',
     		abrirDetalleTrabajo: 'abrirDetalleTrabajo',
     		refrescarGasto: 'refrescarDetalleGasto'
+    	},
+    	
+    	'gencatcomercialactivo':{
+    		abrirDetalleExpedienteOferta: 'abrirDetalleExpedienteOferta'
     	}
 
     },
@@ -676,8 +689,15 @@ Ext.define('HreRem.controller.ActivosController', {
     	titulo = "Expediente " + record.get("numExpediente"),
     	id = record.get("idExpediente");
 		me.redirectTo('activos', true);    	
-    	me.abrirDetalleExpedienteById(id, titulo, refLinks);    	
-    	
+    	me.abrirDetalleExpedienteById(id, titulo, refLinks);    	   	
+    },
+    
+    abrirDetalleExpedienteOferta: function(data, refLinks) {
+    	var me = this,
+    	titulo = "Expediente " + data.numExpediente,
+    	id = data.id;
+		me.redirectTo('activos', true);    	
+    	me.abrirDetalleExpedienteById(id, titulo, refLinks);    	   	
     },
     
     abrirDetalleExpedienteDirecto: function(id, titulo, refLinks) {
@@ -989,6 +1009,14 @@ Ext.define('HreRem.controller.ActivosController', {
     	id = record.get("idActivo");
 		me.redirectTo('activos', true);
     	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['VISITAS'])
+    },
+    
+    abrirDetalleActivoComercialGencat: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['GENCAT'])
     },
     
     abrirDetalleActivoGastosActivos: function(record) {

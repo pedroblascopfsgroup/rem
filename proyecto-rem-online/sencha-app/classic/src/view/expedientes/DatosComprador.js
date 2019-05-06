@@ -34,7 +34,6 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	try{
 	    	var me = this;
 	    	var modoEdicion = false;
-
 		  	var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 			var title = HreRem.i18n("title.windows.datos.comprador");
 			var labelTitlePorcentaje = HreRem.i18n('fieldlabel.porcion.compra');
@@ -562,7 +561,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     },
     
      resetWindow: function() {
-    	var me = this,    	
+    	var me = this;
     	form = me.down('formBase');
 		form.setBindRecord(comprador);
     },

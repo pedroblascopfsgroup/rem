@@ -677,7 +677,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		expedienteComercial.setEstado(estadoExpCom);
 
 		// Congela el resto de ofertas del activo
-		ofertaApi.congelarOfertasPendientes(expedienteComercial);;
+		ofertaApi.congelarOfertasPendientes(expedienteComercial);
 
 		// Borrar fecha de devolución e importe devolución. Poner a null.
 		expedienteComercial.setFechaDevolucionEntregas(null);

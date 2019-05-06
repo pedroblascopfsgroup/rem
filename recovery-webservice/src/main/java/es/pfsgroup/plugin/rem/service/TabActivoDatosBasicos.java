@@ -659,6 +659,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setIsLogUsuGestComerSupComerSupAdmin(false);
 		}
 		
+		//HREOS-4836 (GENCAT)
+		Boolean afectoAGencat = false;
+		if (!Checks.esNulo(activo)) {
+			afectoAGencat = activoApi.isAfectoGencat(activo);
+		}
+		activoDto.setAfectoAGencat(afectoAGencat);
+		
+		Boolean tieneComunicacionGencat = false;
+		if(afectoAGencat){
+			tieneComunicacionGencat = activoApi.tieneComunicacionGencat(activo);
+		}
+		activoDto.setTieneComunicacionGencat(tieneComunicacionGencat);
+	
 		List<VAdmisionDocumentos> admisionDocumentos = adapter.getListAdmisionCheckDocumentos(activo.getId());
 		
 		for (VAdmisionDocumentos doc : admisionDocumentos) {

@@ -49,10 +49,10 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	@Transactional
+	@Transactional(readOnly = false)
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		Activo activo = tramite.getActivo();
-		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE_ACTIVO);
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE_TRABAJO);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 		ActivoAdmisionDocumento documentoCEE = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
 		
@@ -69,7 +69,11 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 			DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtroTipoDocumento);
 			Filter filtroTipoDocumentoId = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo", tipoDocumento);
 			ActivoConfigDocumento config = genericDao.get(ActivoConfigDocumento.class, filtroTipoActivo, filtroTipoDocumentoId);
-			dtoDocumento.setIdConfiguracionDoc(config.getId());
+			
+			if(!Checks.esNulo(config.getId())){
+				dtoDocumento.setIdConfiguracionDoc(config.getId());
+			}
+			
 			//TODO: Pendiente de concretar si ha de ser SI aplica o NO aplica, cuando el documento se crea automáticamente por crear el trámite desde el trabajo.
 			dtoDocumento.setAplica(0);
 			

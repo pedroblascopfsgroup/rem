@@ -184,11 +184,6 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
         String[] valores = dto.getValues();
         TareaExterna tarea = dto.getForm().getTareaExterna();
 
-        //TareaNotificacion tareaPadre = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, tarea.getTareaPadre().getId());
-
-        //Procedimiento prc = tareaPadre.getProcedimiento();
-
-        //List<TareaExternaValor> listaValores = new ArrayList<TareaExternaValor>();
         for (int i = 0; i < valores.length; i++) {
             GenericFormItem item = dto.getForm().getItems().get(i);
             TareaExternaValor valor = new TareaExternaValor();
@@ -427,7 +422,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				
             				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-                			if(!Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getFechaFirma())){
+            				
+                			if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getFechaFirma())) {
                 				item.setValue(formatoFecha.format(expediente.getReserva().getFechaFirma()));
                 			}
             			}            			

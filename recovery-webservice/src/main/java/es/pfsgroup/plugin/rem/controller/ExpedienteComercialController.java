@@ -26,7 +26,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -38,9 +37,9 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
-import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GdprApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
@@ -54,7 +53,9 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
@@ -127,12 +128,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
-	private GenericAdapter genericAdapter;
-
-	@Autowired
-	private List<ExpedienteAvisadorApi> avisadores;
-
-	@Autowired
 	private UploadAdapter uploadAdapter;
 
 	@Autowired
@@ -159,6 +154,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@Autowired
 	private GdprApi gdprManager;
 
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+
+	@Autowired
+	private ActivoApi activoApi;
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTabExpediente(Long id, String tab, ModelMap model, HttpServletRequest request) {
@@ -181,22 +182,15 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings({ "unchecked" })
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosExpedienteById(Long id, WebDto webDto, ModelMap model) {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		ExpedienteComercial expediente = expedienteComercialApi.findOne(id);
 
-		DtoAviso avisosFormateados = new DtoAviso();
-		avisosFormateados.setDescripcion("");
-		avisosFormateados.setId(id.toString());
-
-		for (ExpedienteAvisadorApi avisador : avisadores) {
-			DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
-			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>"
-						+ aviso.getDescripcion() + "</div>");
-			}
+		try {
+			DtoAviso avisosFormateados = expedienteComercialApi.getAvisosExpedienteById(id);
+			model.put(RESPONSE_DATA_KEY, avisosFormateados);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
 		}
-
-		model.put(RESPONSE_DATA_KEY, avisosFormateados);
 
 		return createModelAndViewJson(model);
 	}
@@ -321,7 +315,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveCondicionesExpediente(dto, id));
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "condiciones", ACCION_CODIGO.CODIGO_MODIFICAR);
-			
+
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
@@ -698,7 +692,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTramitesTareas(Long idExpediente, WebDto webDto, ModelMap model, HttpServletRequest request) {
-		
+
 		ExpedienteComercial expediente = expedienteComercialApi.findOne(idExpediente);
 		List<DtoListadoTramites> tramites = trabajoAdapter
 				.getListadoTramitesTareasTrabajo(expediente.getTrabajo().getId(), webDto);
@@ -734,14 +728,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPosicionamientosExpediente(Long idExpediente, WebDto webDto, ModelMap model, HttpServletRequest request) {
-		
+
 		try {
 			DtoPage dto = expedienteComercialApi.getPosicionamientosExpediente(idExpediente);
 			model.put(RESPONSE_DATA_KEY, dto.getResults());
 			model.put(RESPONSE_TOTALCOUNT_KEY, dto.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);
 			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "posicionamiento", ACCION_CODIGO.CODIGO_VER);
-			
+
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
@@ -873,7 +867,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);
 			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "compradores", ACCION_CODIGO.CODIGO_VER);
-			
+
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
@@ -1502,7 +1496,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivosExpedienteCondiciones(ModelMap model, @RequestParam(value = "id") Long ecoId, DtoCondicionesActivoExpediente condiciones) {
@@ -1518,8 +1512,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
-	
+
+
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -1563,7 +1557,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_DATA_KEY, list);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "tanteos", ACCION_CODIGO.CODIGO_VER);
-			
+
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
@@ -1948,6 +1942,35 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		} catch (Exception e) {
 			model.put("success", false);
 			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getExpedienteByIdOferta(Long numOferta, ModelMap model){
+		try {
+			model.put("data", expedienteComercialApi.getExpedienteComercialByOferta(numOferta));
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIsExpedienteGencat(Long idExpediente, ModelMap model){
+		try {
+			boolean tieneBloqueoGencat = activoTramiteApi.tieneTramiteGENCATVigenteByIdActivo(idExpediente);
+			model.put("data", tieneBloqueoGencat);
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
 		}
 
 		return createModelAndViewJson(model);

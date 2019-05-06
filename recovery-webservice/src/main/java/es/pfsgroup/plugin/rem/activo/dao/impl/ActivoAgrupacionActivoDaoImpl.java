@@ -46,6 +46,17 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 		return HibernateQueryUtils.uniqueResult(this, hb);
 
 	} 
+	@Override
+	public ActivoAgrupacionActivo getAgrupacionPAByIdAgrupacion(long idAgrupacion) {
+		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aa");
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.tipoAgrupacion.codigo", DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.id", idAgrupacion);
+   	    HQLBuilder.addFiltroIgualQue(hb, "aa.auditoria.borrado", false );
+   	    HQLBuilder.addFiltroIgualQue(hb, "aa.agrupacion.auditoria.borrado", false );
+
+		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
+	
 
     @Override
 	public void deleteById(Long id) {

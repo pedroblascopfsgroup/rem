@@ -293,10 +293,10 @@ public class AgrupacionAdapter {
 				.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado).getResults().get(0);
 
 		try {
-
 			BeanUtils.copyProperties(dtoAgrupacion, agrupacion);
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVista.getPublicados());
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroActivos", agrupacionVista.getActivos());
+			
 
 			if (agrupacion.getTipoAgrupacion() != null) {
 
@@ -346,6 +346,8 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorComercialBackOffice",
 								agrupacionTemp.getUsuarioGestorComercialBackOffice().getId());
 					}
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoAgrupacionApi.countActivosAfectoGENCAT(agrupacion));
 
 					if (!Checks.esNulo(agrupacion.getTipoAlquiler())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoAlquilerCodigo", agrupacion.getTipoAlquiler().getCodigo());
@@ -374,6 +376,7 @@ public class AgrupacionAdapter {
 							}
 						}
 					}
+
 				}
 
 				// Si es de tipo 'Asistida'.
@@ -445,6 +448,10 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
 								agrupacionTemp.getProvincia().getCodigo());
 					}
+
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoAgrupacionApi.countActivosAfectoGENCAT(agrupacion));
+
 					if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "idNumActivoPrincipal",
 								agrupacion.getActivoPrincipal().getNumActivo());
@@ -1873,25 +1880,39 @@ public class AgrupacionAdapter {
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		String offerType = oferta.getTipoOferta().getCodigo();
 		
-		if(!Checks.esNulo(dto.getIdAgrupacion())){
-			List<ActivoAgrupacionActivo> agaList = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionID(dto.getIdAgrupacion());
-			
-			for(ActivoAgrupacionActivo aga : agaList){
+		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
+				dto.getCodigoEstadoOferta());
+		
+		if (!Checks.esNulo(dto.getIdAgrupacion())) {
+			List<ActivoAgrupacionActivo> agaList = activoAgrupacionActivoDao
+					.getListActivoAgrupacionActivoByAgrupacionID(dto.getIdAgrupacion());
+
+			for (ActivoAgrupacionActivo aga : agaList) {
 				Activo activo = aga.getActivo();
 				Long numActivo = activo.getNumActivo();
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter filtroTofVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-				Filter filtroTofAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
+				Filter filtroTofVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
+						DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
+				Filter filtroTofAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
+						DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
 				ActivoValoraciones precioVenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofVenta);
-				ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofAlquiler);
-				
-				if(DDTipoOferta.CODIGO_VENTA.equals(offerType)){
-					if(Checks.esNulo(precioVenta) || (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))){
-						throw new JsonViewerException("Activo "+numActivo+" sin precio");
-					}
-				}else if(DDTipoOferta.CODIGO_ALQUILER.equals(offerType)){
-					if(Checks.esNulo(precioRenta) || (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))){
-						throw new JsonViewerException("Activo "+numActivo+" sin precio");
+				ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo,
+						filtroTofAlquiler);
+
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+						&& (oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null
+								&& DDCartera.CODIGO_CARTERA_LIBERBANK
+										.equals(oferta.getActivoPrincipal().getCartera().getCodigo()))) {
+					if (DDTipoOferta.CODIGO_VENTA.equals(offerType)) {
+						if (Checks.esNulo(precioVenta)
+								|| (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))) {
+							throw new JsonViewerException("Activo " + numActivo + " sin precio");
+						}
+					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(offerType)) {
+						if (Checks.esNulo(precioRenta)
+								|| (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))) {
+							throw new JsonViewerException("Activo " + numActivo + " sin precio");
+						}
 					}
 				}
 			}
@@ -1906,9 +1927,7 @@ public class AgrupacionAdapter {
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
 		}
 
-		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
-				dto.getCodigoEstadoOferta());
-
+		
 		// Si se pretende aceptar la oferta, comprobar primero si la agrupación
 		// de la oferta es de tipo 'Lote comercial'.
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
@@ -1957,8 +1976,9 @@ public class AgrupacionAdapter {
 
 			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
+
 			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-			activoManager.crearExpediente(oferta, trabajo);
+			activoManager.crearExpediente(oferta, trabajo, null);
 			trabajoApi.createTramiteTrabajo(trabajo);
 		}
 
@@ -2127,7 +2147,6 @@ public class AgrupacionAdapter {
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
-			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
 
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 

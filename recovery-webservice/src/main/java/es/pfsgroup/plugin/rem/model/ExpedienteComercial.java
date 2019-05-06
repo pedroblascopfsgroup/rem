@@ -273,8 +273,8 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
-    
-
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -300,6 +300,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		if (estado != null && estado.getCodigo().equals(DDEstadosExpedienteComercial.ANULADO)){
 			this.fechaAnulacion = new Date();
 		}
+		
 	}
 
 	public Date getFechaAlta() {

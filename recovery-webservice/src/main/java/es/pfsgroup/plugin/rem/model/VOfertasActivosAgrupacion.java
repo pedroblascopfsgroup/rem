@@ -151,6 +151,8 @@ public class VOfertasActivosAgrupacion implements Serializable {
     @Column(name="OBSERVACIONES")
 	private String observaciones;	
 	
+    @Column(name="GENCAT")
+	private Boolean gencat;	
 
 	public Date getFechaModificar() {
 		return fechaModificar;
@@ -457,6 +459,14 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.observaciones = observaciones;
 	}
 
+	public Boolean getGencat() {
+		return gencat;
+	}
+
+	public void setGencat(Boolean gencat) {
+		this.gencat = gencat;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -512,5 +522,5 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	public void setClaseActivoBancario(Long claseActivoBancario) {
 		this.claseActivoBancario = claseActivoBancario;
 	}
-	
+
 }

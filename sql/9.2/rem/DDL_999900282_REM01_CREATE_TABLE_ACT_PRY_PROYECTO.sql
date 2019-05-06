@@ -124,8 +124,6 @@ BEGIN
 
 		V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PRY_DOBLE_GESTOR_ACTIVO IS ''Doble gestor del activo de la agrupación de tipo proyecto.'' ';      
 		EXECUTE IMMEDIATE V_SQL;					
-		
-    END IF;
     
     ---------------------------
     -------     PK      -------
@@ -191,6 +189,8 @@ BEGIN
     
     END LOOP; 
     DBMS_OUTPUT.PUT_LINE('[FIN CLAVES FORANEAS]');
+
+    END IF;
     
     COMMIT;  
       

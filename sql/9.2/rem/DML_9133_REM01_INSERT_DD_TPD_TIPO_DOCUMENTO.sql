@@ -34,7 +34,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('122', 'Ficha STD (Saneamiento Técnico Documental)', 'Ficha STD (Saneamiento Técnico Documental) P.Urquiza - Anexo Informes 0' ,'AI-03-FICH-28', 1 )
+    	T_TIPO_DATA('125', 'Ficha STD (Saneamiento Técnico Documental)', 'Ficha STD (Saneamiento Técnico Documental) P.Urquiza - Anexo Informes 0' ,'AI-03-FICH-28', 1 )
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

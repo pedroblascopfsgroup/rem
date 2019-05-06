@@ -41,6 +41,38 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 			]
 		});
 
+		me.gmap = Ext.create('HreRem.ux.panel.GMapPanel', {
+				gmapType: 'map',
+				center: {},
+				mapOptions : {
+					disableDefaultUI: true,
+					mapTypeId: google.maps.MapTypeId.ROADMAP,
+					zoom: 16
+				},
+				listeners: {
+					mapready: function(gmap, map) {
+						if(Ext.isDefined(map) && Ext.isDefined(map.center) && map.center.marker){
+
+							gmap.addMarker(map.center.marker);
+						}
+
+						if (map.center) {
+							if(map.center.marker){
+								gmap.addMarker(map.center.marker);
+							}
+						} else {
+							// Error al cargar el mapa, se añade una imagen por defecto.
+							if (gmap.getEl() && gmap.getEl().dom
+									&& gmap.getEl().dom.lastElementChild 
+									&& gmap.getEl().dom.lastElementChild.lastElementChild) {
+								var gmapDiv = gmap.getEl().dom.lastElementChild.lastElementChild;
+								gmapDiv.innerHTML = "<img style= 'width: 225px; height: 125px;' alt= 'Imagen de relleno de google maps' src='resources/images/imagenRellenoMaps.png' />"
+							}
+						}
+					}
+				}
+		});	
+
 		me.items = [
 					{
 						xtype:'toolfieldset',
@@ -152,39 +184,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										listeners: {
 										   'render': function(panel) {
 										       panel.body.on('click', function() {
-										    	   panel.add(
-										    			   Ext.create('HreRem.ux.panel.GMapPanel', {
-										    					gmapType: 'map',
-										    					center: {},
-										    					mapOptions : {
-										    						disableDefaultUI: true,
-										    						mapTypeId: google.maps.MapTypeId.ROADMAP,
-										    						zoom: 16
-										    					},
-										    					listeners: {
-										    						mapready: function(gmap, map) {
-										    							if(Ext.isDefined(map) && Ext.isDefined(map.center) && map.center.marker){
-
-										    								gmap.addMarker(map.center.marker);
-										    							}
-
-										    							if (map.center) {
-										    								if(map.center.marker){
-										    									gmap.addMarker(map.center.marker);
-										    								}
-										    							} else {
-										    								// Error al cargar el mapa, se añade una imagen por defecto.
-										    								if (gmap.getEl() && gmap.getEl().dom
-										    										&& gmap.getEl().dom.lastElementChild 
-										    										&& gmap.getEl().dom.lastElementChild.lastElementChild) {
-										    									var gmapDiv = gmap.getEl().dom.lastElementChild.lastElementChild;
-										    									gmapDiv.innerHTML = "<img style= 'width: 225px; height: 125px;' alt= 'Imagen de relleno de google maps' src='resources/images/imagenRellenoMaps.png' />"
-										    								}
-										    							}
-										    						}
-										    					}
-										    			})
-										    	   );
+										    	   panel.add(me.gmap);
 										       });
 										    }
 										}

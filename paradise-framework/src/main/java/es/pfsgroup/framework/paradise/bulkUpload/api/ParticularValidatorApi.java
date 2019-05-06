@@ -67,6 +67,11 @@ public interface ParticularValidatorApi {
 	Boolean esActivoAsistido(String numActivo);
 
 	Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto);
+	
+	Boolean existeTrabajo(String numTrabajo);
+	
+	Boolean existeGastoTrabajo(String numTrabajo);
+	
 
 	/**
 	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja

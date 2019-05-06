@@ -2834,6 +2834,38 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		FROM DD_CAI_CALCULO_IMPUESTO"
 				+"		WHERE DD_CAI_CODIGO = "+codCalculo+""
 				+"		AND BORRADO= 0");
+		
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeTrabajo(String numTrabajo) {
+		if(Checks.esNulo(numTrabajo))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+numTrabajo+""
+				+"		AND BORRADO= 0");
+		
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeGastoTrabajo(String numTrabajo) {
+		if(Checks.esNulo(numTrabajo))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT"
+				+ " CASE WHEN ( "
+				+ "		SELECT COUNT(*)	"
+				+ "		FROM ACT_TBJ_TRABAJO TBJ "
+				+ "		INNER JOIN GPV_TBJ GPTB ON GPTB.TBJ_ID=TBJ.TBJ_ID"
+				+ " 	WHERE TBJ.TBJ_NUM_TRABAJO = " + numTrabajo + " 	AND TBJ.BORRADO=0 "
+				+ "		GROUP BY TBJ.TBJ_NUM_TRABAJO"
+				+ "	) is null THEN 0"
+				+ "	 ELSE 1 END AS RESULTADO "
+				+ "	FROM DUAL");
 		return !"0".equals(resultado);
 	}
 	

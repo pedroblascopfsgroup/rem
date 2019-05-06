@@ -63,16 +63,16 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		dto.setFechaInicioEstadoAlquiler(entidad.getFechaInicioAlquiler());
 		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(entidad.getActivo().getCartera().getCodigo())){
 			
-			if(!Checks.esNulo(dto.getFechaInicioEstadoAlquiler())) {
-				Date fechaInicial=dto.getFechaInicioEstadoAlquiler();
+			if(!Checks.esNulo(entidad.getFechaCambioPubAlq())) {
+				Date fechaInicial=entidad.getFechaCambioPubAlq();
 				Date fechaFinal=new Date();
 				Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
 				dto.setDiasCambioPublicacionAlquiler(dias);
 			}
 			
 
-			if(!Checks.esNulo(dto.getFechaInicioEstadoVenta())){
-				Date fechaInicialVenta=dto.getFechaInicioEstadoVenta();
+			if(!Checks.esNulo(entidad.getFechaCambioPubVenta())){
+				Date fechaInicialVenta=entidad.getFechaCambioPubVenta();
 				Date fechaFinalVenta=new Date();
 				Integer dias=(int) (((long)fechaFinalVenta.getTime()-(long)fechaInicialVenta.getTime())/86400000);
 				dto.setDiasCambioPublicacionVenta(dias);

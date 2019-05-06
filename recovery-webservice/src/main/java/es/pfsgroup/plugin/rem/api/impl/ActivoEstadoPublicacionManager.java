@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
@@ -127,6 +128,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private UsuarioManager usuarioManager;
 
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+
 
 
 	@Override
@@ -688,7 +690,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						|| !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
 					activoPublicacion.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
 				}
-				
+				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) 
+						|| !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) 
+						|| !Checks.esNulo(dto.getPublicarVenta()) 
+						|| !Checks.esNulo(dto.getOcultarVenta())) {
+					activoPublicacion.setFechaCambioPubVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+				}
 				if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) 
 						|| !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) 
 						|| !Checks.esNulo(dto.getPublicarAlquiler()) 
@@ -696,6 +703,29 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						|| (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) 
 						|| !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
 					activoPublicacion.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+				}
+				
+				if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) 
+						|| !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) 
+						|| !Checks.esNulo(dto.getPublicarAlquiler()) 
+						|| !Checks.esNulo(dto.getOcultarAlquiler())) {
+					activoPublicacion.setFechaCambioPubAlq(new Date(System.currentTimeMillis() + 3600 * 1000));
+				}
+				
+				if(!Checks.esNulo(dto.getNoMostrarPrecioVenta())){
+					ActivoValoraciones activoVal =activoValoracionDao.getUltimaValoracionVenta(activoPublicacion.getActivo().getId());
+					if (!Checks.esNulo(activoVal)) {
+						activoVal.setFechaCambioValorVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+						activoValoracionDao.save(activoVal);
+					}
+				}
+				
+				if(!Checks.esNulo(dto.getNoMostrarPrecioAlquiler())){
+					ActivoValoraciones activoVal =activoValoracionDao.getUltimaValoracionAlquiler(activoPublicacion.getActivo().getId());
+					if (!Checks.esNulo(activoVal)) {
+						activoVal.setFechaCambioValorAlq(new Date(System.currentTimeMillis() + 3600 * 1000));
+						activoValoracionDao.save(activoVal);
+					}
 				}
 				
 				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())

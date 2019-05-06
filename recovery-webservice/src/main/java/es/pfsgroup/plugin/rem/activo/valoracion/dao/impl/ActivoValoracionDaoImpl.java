@@ -200,4 +200,36 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		}
 	}
 	
+	@Override
+	public ActivoValoraciones getUltimaValoracionVenta(Long idActivo){
+		Criteria criteria = getSession().createCriteria(ActivoValoraciones.class);
+		criteria.add(Restrictions.eq("activo.id", idActivo));
+		criteria.addOrder(Order.desc("id"));
+		List<ActivoValoraciones> listadoValoraciones= HibernateUtils.castList(ActivoValoraciones.class, criteria.list());
+		if(!listadoValoraciones.isEmpty()) {
+			return listadoValoraciones.get(0);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	
+	@Override
+	public ActivoValoraciones getUltimaValoracionAlquiler(Long idActivo){
+		Criteria criteria = getSession().createCriteria(ActivoValoraciones.class);
+		criteria.add(Restrictions.eq("activo.id", idActivo));
+		criteria.addOrder(Order.desc("id"));
+		List<ActivoValoraciones> listadoValoraciones= HibernateUtils.castList(ActivoValoraciones.class, criteria.list());
+		if(!listadoValoraciones.isEmpty()) {
+			return  listadoValoraciones.get(0);
+		}
+		else {
+			return null;
+		}
+	}
+
+
+	
+	
 }

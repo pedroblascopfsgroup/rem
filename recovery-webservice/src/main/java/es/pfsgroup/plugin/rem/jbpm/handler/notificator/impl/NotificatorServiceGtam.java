@@ -18,11 +18,13 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -53,6 +55,9 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	List<TareaExternaValor> valores = null;
 
@@ -86,6 +91,9 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 		if (expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null
 				&& expediente.getOferta().getActivoPrincipal().getCartera() != null
 				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo()) && enviar) {
+			
+			Activo activo = expediente.getOferta().getActivoPrincipal();
+			Usuario gesComercial = gestorActivoApi.getGestorByActivoYTipo(activo, "GCOM");
 			
 			String gestorNombre = "SIN_DATOS_NOMBRE_APELLIDO_GESTOR";
 			String gestorEmail = "SIN_DATOS_EMAIL_GESTOR";
@@ -163,7 +171,7 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 			contenido = contenido.replace("#gestorTarea", gestorNombre)
 					 .replace("#mailGestorTarea", gestorEmail);
 
-			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(expediente.getOferta(), tramite);
 
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
@@ -175,6 +183,10 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 			}
 			if (!Checks.esNulo(mailTracker)) {
 				usuarios.add(mailTracker);
+			}
+			
+			if (!Checks.esNulo(gesComercial)){
+				usuarios.add(gesComercial);
 			}
 
 			mailsPara = getEmailsNotificacion(usuarios);

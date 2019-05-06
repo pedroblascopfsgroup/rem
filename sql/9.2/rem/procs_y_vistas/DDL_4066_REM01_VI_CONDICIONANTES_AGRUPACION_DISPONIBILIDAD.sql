@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Javier Pons Ruiz
---## FECHA_CREACION=20190103
+--## FECHA_CREACION=20190105
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-2933
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Cambio para agrupación restringida(HREOS-6318) -JSL
 --##########################################
 --*/
 
@@ -36,12 +37,13 @@ BEGIN
   END IF;
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_AGR_DISPONIBILIDAD...');
-  EXECUTE IMMEDIATE '  CREATE OR REPLACE FORCE VIEW '|| V_ESQUEMA ||'."V_COND_AGR_DISPONIBILIDAD" ("AGR_ID", "SIN_TOMA_POSESION_INICIAL", 
+  EXECUTE IMMEDIATE '  CREATE OR REPLACE FORCE VIEW '|| V_ESQUEMA ||'."V_COND_AGR_DISPONIBILIDAD" ("AGR_ID", "DD_TAG_CODIGO","SIN_TOMA_POSESION_INICIAL", 
 		"OCUPADO_CONTITULO", "PENDIENTE_INSCRIPCION", "PROINDIVISO", "TAPIADO", "OBRANUEVA_SINDECLARAR", "OBRANUEVA_ENCONSTRUCCION", 
 		"DIVHORIZONTAL_NOINSCRITA", "RUINA", "VANDALIZADO", "OTRO", "SIN_INFORME_APROBADO", "REVISION", "PROCEDIMIENTO_JUDICIAL", 
 		"CON_CARGAS", "OCUPADO_SINTITULO", "ESTADO_PORTAL_EXTERNO", "ES_CONDICIONADO", "EST_DISP_COM_CODIGO", "BORRADO") AS 
   		SELECT
 		    aga.agr_id,
+			tag.dd_tag_codigo,
 		    max(sin_toma_posesion_inicial) as sin_toma_posesion_inicial,
 		    max(ocupado_contitulo) as ocupado_contitulo,
 		    max(pendiente_inscripcion) as pendiente_inscripcion,
@@ -62,17 +64,24 @@ BEGIN
 		    max(ocupado_sintitulo) as ocupado_sintitulo,
 		    max(estado_portal_externo) as estado_portal_externo,
 		    max(es_condicionado) as es_condicionado,
-		    max(est_disp_com_codigo)AS est_disp_com_codigo,
+		    (case 
+             	when tag.dd_tag_codigo=''02'' then min(est_disp_com_codigo)
+                else max(est_disp_com_codigo)
+            end) as est_disp_com_codigo,
 		    min(vcond.borrado) borrado
 		FROM '||V_ESQUEMA||'.V_Cond_Disponibilidad vcond
 		INNER JOIN '||V_ESQUEMA||'.Act_Aga_Agrupacion_Activo aga on aga.act_id = vcond.act_id
 		INNER JOIN '||V_ESQUEMA||'.Act_Agr_Agrupacion agr on agr.agr_id = aga.agr_id
-		GROUP BY aga.agr_id';
+		INNER JOIN '||V_ESQUEMA||'.dd_tag_tipo_agrupacion tag on tag.dd_tag_id = agr.dd_tag_id 
+		GROUP BY aga.agr_id, tag.dd_tag_codigo';
 
     -- Creamos comentarios     
     
 	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_COND_AGR_DISPONIBILIDAD.AGR_ID IS ''ID de la agrupación'' ';      
     EXECUTE IMMEDIATE V_MSQL;
+    
+    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_COND_AGR_DISPONIBILIDAD.DD_TAG_CODIGO IS ''Codigo de la agrupación'' ';      
+    EXECUTE IMMEDIATE V_MSQL;    
     
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_COND_AGR_DISPONIBILIDAD.SIN_TOMA_POSESION_INICIAL IS ''Condicionante de agrupación con activos sin toma de posesión inicial'' ';      
     EXECUTE IMMEDIATE V_MSQL;

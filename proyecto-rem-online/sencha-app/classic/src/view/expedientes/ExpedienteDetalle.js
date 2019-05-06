@@ -7,10 +7,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     			'HreRem.view.expedientes.DocumentosExpediente', 'HreRem.view.expedientes.ActivosExpediente',
     			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente',
     			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente',
-				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.OfertaTanteoYRetracto',
-				'HreRem.view.expedientes.GestoresExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente',
-				'HreRem.view.expedientes.ScoringExpediente', 'HreRem.view.expedientes.SeguroRentasExpediente',
-				'HreRem.model.HstcoSeguroRentas', 'HreRem.view.expedientes.FormalizacionAlquilerExpediente'],
+				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.ScoringExpediente',
+				'HreRem.view.expedientes.GestoresExpediente','HreRem.view.expedientes.ScoringExpediente',
+				'HreRem.view.expedientes.SeguroRentasExpediente', 'HreRem.model.HstcoSeguroRentas',
+				'HreRem.view.expedientes.FormalizacionAlquilerExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente'],
 
 
 	bloqueado: false,
@@ -32,16 +32,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			beforetabchange: function (tabPanel, tabNext, tabCurrent) {
 				if(tabNext.getTitle() == "Ficha"){
 					var itemsExpedienteForm = tabNext.getForm().getFields().items;
-
+			    	
 			    	var itemReserva = itemsExpedienteForm.find(function(item){return item.fieldLabel === "Fecha de reserva"});
 
 			    	if(itemReserva != null){
 			    		var me = tabNext;
-			    		me.lookupController().tareaDefinicionDeOferta(itemReserva);
+			    		me.lookupController().tareaDefinicionDeOferta(itemReserva);   
 			    	}
-
+					
 				}
-	        	tabPanel.down("[itemId=botoneditar]").setVisible(false);
+	        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
 	        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
 	        	if (tabCurrent != null) {
 	        		if (tabPanel.down("[itemId=botonguardar]").isVisible()){	

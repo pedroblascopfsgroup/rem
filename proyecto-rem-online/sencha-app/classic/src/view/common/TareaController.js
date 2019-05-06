@@ -232,6 +232,11 @@ Ext.define('HreRem.view.common.TareaController', {
 				  	  	me.getView().down('[handler=enlaceAbrirTrabajo]').hide();
 					  	me.getView().down('[handler=enlaceAbrirExpediente]').show();
 				  }
+				  if(codigoTramite == "T016"){
+				  //Se visibiliza boton-enlace EXPEDIENTE
+				  //Se oculta el trabajo
+					me.getView().down('[handler=enlaceAbrirTrabajo]').hide();
+				  }
 				  
 			  }
 			});

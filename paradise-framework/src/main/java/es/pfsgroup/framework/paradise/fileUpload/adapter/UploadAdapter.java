@@ -20,6 +20,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
@@ -34,43 +35,45 @@ public class UploadAdapter {
 	Properties appProperties;
 	
 	public WebFileItem getWebFileItem (HttpServletRequest request) {
-		
+		Boolean crear = true;
 		MultipartRequest multipartRequest = (MultipartRequest) request;
         MultipartFile multipartFile = multipartRequest.getFile("fileUpload");
         WebFileItem webFileItem = new WebFileItem();
-        FileItem fileItem;
+        FileItem fileItem = null;
 		File file;		
 		
 		try {
 			
 			String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/";
+			if(!Checks.esNulo(multipartFile) && !Checks.esNulo(multipartFile.getOriginalFilename())) {
+				file = new File(rutaFichero+multipartFile.getOriginalFilename());
+				file.createNewFile(); 
+			    FileOutputStream fos = new FileOutputStream(file); 
+			    fos.write(multipartFile.getBytes());
+			    fos.close();
 			
-			file = new File(rutaFichero+multipartFile.getOriginalFilename());
-			file.createNewFile(); 
-		    FileOutputStream fos = new FileOutputStream(file); 
-		    fos.write(multipartFile.getBytes());
-		    fos.close();
+				fileItem = new FileItem(file); 
+				fileItem.setContentType(multipartFile.getContentType());
+				fileItem.setLength(multipartFile.getSize());
+				String fileName = new String(multipartFile.getOriginalFilename().getBytes("ISO-8859-15"), "UTF-8");
+				fileItem.setFileName(fileName);
+				
+				Enumeration<?> parameters = request.getParameterNames();		
+				
+				while (parameters.hasMoreElements()) {			
+					String key = (String) parameters.nextElement();
 		
-			fileItem = new FileItem(file); 
-			fileItem.setContentType(multipartFile.getContentType());
-			fileItem.setLength(multipartFile.getSize());
-			String fileName = new String(multipartFile.getOriginalFilename().getBytes("ISO-8859-15"), "UTF-8");
-			fileItem.setFileName(fileName);
-			
-			Enumeration<?> parameters = request.getParameterNames();		
-			
-			while (parameters.hasMoreElements()) {			
-				String key = (String) parameters.nextElement();
-	
-				webFileItem.putParameter(key, new String(request.getParameter(key).getBytes("ISO-8859-15"), "UTF-8"));
+					webFileItem.putParameter(key, new String(request.getParameter(key).getBytes("ISO-8859-15"), "UTF-8"));
+				}
+			}else {
+				crear = false;
 			}
-		
 		} catch (Exception e) {
 			throw new BusinessOperationException(e);
 		}
-
-		webFileItem.setFileItem(fileItem);
-		
+		if(crear) {
+			webFileItem.setFileItem(fileItem);
+		}
 		return webFileItem;
 	}
 	

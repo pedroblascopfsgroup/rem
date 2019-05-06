@@ -21,6 +21,7 @@ public class DtoOfertaActivo extends WebDto {
 	private String tipoRechazoCodigo;
 	private String motivoRechazoCodigo;
 	private Boolean esAnulacion;
+	private Boolean gencat;
 	
 	
 	public Long getIdOferta() {
@@ -72,8 +73,10 @@ public class DtoOfertaActivo extends WebDto {
 	public void setEsAnulacion(Boolean esAnulacion) {
 		this.esAnulacion = esAnulacion;
 	}
-
-	
-	
-	
+	public Boolean getGencat() {
+		return gencat;
+	}
+	public void setGencat(Boolean gencat) {
+		this.gencat = gencat;
+	}
 }

@@ -22,6 +22,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.VisitaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -54,6 +55,9 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private GencatApi gencatApi;
 
 	@Override
 	public String managerName() {
@@ -333,8 +337,14 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					visita.setFechaVisita(visitaDto.getFecha());
 				}
 			}
-
+			
 			visitaDao.save(visita);
+			
+			//Si Webcom nos envia el idSalesforce despues de crear la visita la asociaremos a su comunicacion de GENCAT
+			if (!Checks.esNulo(visitaDto.getIdLeadSalesforce())) {
+				gencatApi.updateVisitaComunicacion(visita.getActivo().getId(), visitaDto.getIdLeadSalesforce(), visita);
+			}
+			
 		}
 
 		return errorsList;
@@ -490,8 +500,14 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if (((JSONObject) jsonFields).containsKey("telefonoContactoVisitas")) {
 				visita.setTelefonoContactoVisitas(visitaDto.getTelefonoContactoVisitas());
 			}
-
+			
 			visitaDao.saveOrUpdate(visita);
+			
+			//Si Webcom nos envia el idSalesforce despues de actualizar la visita la asociaremos a su comunicacion de GENCAT
+			if (!Checks.esNulo(visitaDto.getIdLeadSalesforce())) {
+				gencatApi.updateVisitaComunicacion(visita.getActivo().getId(), visitaDto.getIdLeadSalesforce(), visita);
+			}
+			
 		}
 
 		return errorsList;
@@ -599,14 +615,13 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			errorsList = new HashMap<String, String>();
 			map = new HashMap<String, Object>();
 			visitaDto = listaVisitaDto.get(i);
-
+			
 			visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
 			if (Checks.esNulo(visita)) {
 				errorsList = this.saveVisita(visitaDto);
-
-			} else {
+			} 
+			else {
 				errorsList = this.updateVisita(visita, visitaDto, jsonFields.getJSONArray("data").get(i));
-
 			}
 
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {

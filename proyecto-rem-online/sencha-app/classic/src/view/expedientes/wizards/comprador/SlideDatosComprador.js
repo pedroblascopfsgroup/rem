@@ -19,7 +19,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 	],
 
 	listeners: {
-		activate: 'onActivate'
+		activate: 'onActivate',
+		boxReady: 'getAvisoProblemasUrsus'
 	},
 
 	controller: 'slidedatoscomprador',
@@ -29,7 +30,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 
 	initComponent: function() {
 		var me = this;
-
+	
 		me.buttons = [{
 				text: HreRem.i18n('btn.cancelBtnText'),
 				handler: 'onClickCancelar'
@@ -429,7 +430,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px',
 						bind: {
 							store: '{comboClienteUrsusConyuge}',
-							hidden: !this.lookupController().esBankia(),
+							hidden: !this.lookupController().esBankia()
 						},
 						listeners: {
 							change: 'establecerNumClienteURSUSConyuge',

@@ -232,7 +232,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					           renderer: coloredRender,
 					           hidden: cartera(),
 					           hideable: !cartera()
-
 						   },{
 							   xtype: 'actioncolumn',
 							      width: 30,
@@ -259,10 +258,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					           renderer: coloredRender,
 					           hidden: cartera(),
 					           hideable: !cartera()
-						   } 
-							  
-
-						   
+						   }   
 						  ],
 					    dockedItems : [
 					        {

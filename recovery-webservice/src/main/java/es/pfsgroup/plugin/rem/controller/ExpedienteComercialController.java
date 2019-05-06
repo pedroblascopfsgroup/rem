@@ -1994,7 +1994,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getComprobarCompradores(ModelMap model, @RequestParam(value = "idExpediente") Long idExpediente){
 		Boolean hayProblemasUrsus = expedienteComercialApi.hayDiscrepanciasClientesURSUS(Long.valueOf(idExpediente));
 		
-		
 		try{
 			model.put(RESPONSE_DATA_KEY, hayProblemasUrsus);
 		} catch (Exception e) {

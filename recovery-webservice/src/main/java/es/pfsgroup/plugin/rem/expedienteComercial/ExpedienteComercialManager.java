@@ -1186,7 +1186,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 					}
 				}
-
+				if (!Checks.estaVacio(expediente.getCompradores())) {
+					Boolean problemasUrsus = hayProblemasURSUS(expediente.getId());
+					if (!Checks.esNulo(problemasUrsus))
+						dto.setProblemasUrsus(problemasUrsus);
+				}
 			}
 		}
 
@@ -8948,5 +8952,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return codigoRegistroEconomico;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean hayProblemasURSUS(Long idExpediente) {
+		
+		Filter filterExpediente = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente); 
+		
+		Boolean	hayProblemasUrsus = false;
+		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filterExpediente);
+		if ( !Checks.esNulo(expedienteComercial)) {
+			List<CompradorExpediente> compradores = expedienteComercial.getCompradores();
+			if ( !Checks.estaVacio(compradores)) {
+				for (CompradorExpediente compradorExpediente : compradores) {
+					Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "id", compradorExpediente.getComprador());
+					Comprador comprador = genericDao.get(Comprador.class, filterComprador);
+					if(!Checks.esNulo(comprador)) {
+						if(!Checks.esNulo(comprador.getProblemasUrsus())) {
+							hayProblemasUrsus = comprador.getProblemasUrsus();
+						} else {
+							hayProblemasUrsus = false;
+						}
+					}
+				}
+			}
+		}
+		return hayProblemasUrsus;
 	}
 }

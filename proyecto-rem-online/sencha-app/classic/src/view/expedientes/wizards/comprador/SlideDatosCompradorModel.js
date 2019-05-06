@@ -4,7 +4,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 
 	data: {},
 
-	stores: {
+	stores: {		
 		comboTipoPersona: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

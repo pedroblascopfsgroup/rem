@@ -321,7 +321,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
                           WHERE BORRADO = 0
                             AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||''')
                   , APU_CHECK_OCULTAR_V = '||pOCULTAR||'
-				  , APU_FECHA_INI_ALQUILER = SYSDATE
+				  , APU_FECHA_INI_VENTA = SYSDATE
                   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                   , FECHAMODIFICAR = SYSDATE
               WHERE BORRADO = 0
@@ -348,7 +348,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
                                    FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                                   WHERE PAC.ACT_ID = ACT.ACT_ID
                                     AND PAC.BORRADO = 0)
-				  , APU_FECHA_INI_ALQUILER = SYSDATE
+				  , APU_FECHA_INI_VENTA = SYSDATE
                   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                   , FECHAMODIFICAR = SYSDATE
               WHERE BORRADO = 0
@@ -371,7 +371,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
                                    FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                                   WHERE PAC.ACT_ID = ACT.ACT_ID
                                     AND PAC.BORRADO = 0)
-				  , APU_FECHA_INI_ALQUILER = SYSDATE
+				  , APU_FECHA_INI_VENTA = SYSDATE
                   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                   , FECHAMODIFICAR = SYSDATE
               WHERE BORRADO = 0

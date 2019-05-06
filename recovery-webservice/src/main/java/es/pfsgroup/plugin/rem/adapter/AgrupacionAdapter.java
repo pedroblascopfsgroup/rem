@@ -115,6 +115,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -638,10 +640,14 @@ public class AgrupacionAdapter {
 								}
 
 								
-								if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaInicioAlquiler())&& calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaInicioAlquiler()))
-										||(!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaInicioVenta()) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaInicioVenta()))
+								if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubAlq())&& calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubAlq()))
+										||(!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubVenta()) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubVenta()))
 									) {
-									cambioEstadoPublicacion = Boolean.TRUE;
+									if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionAlquiler()) && (!activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo().equals(DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER)))
+											|| (!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionVenta()) && (!activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionVenta().getCodigo().equals(DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA)))	
+												){
+											cambioEstadoPublicacion = Boolean.TRUE;
+										}
 						
 								}
 								

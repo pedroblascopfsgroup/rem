@@ -68,6 +68,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -678,12 +680,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 
 			
-			if((!Checks.esNulo(activo.getActivoPublicacion().getFechaInicioAlquiler())&& calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaInicioAlquiler()))
-					||(!Checks.esNulo(activo.getActivoPublicacion().getFechaInicioVenta()) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaInicioVenta()))
+			if((!Checks.esNulo(activo.getActivoPublicacion().getFechaCambioPubAlq())&& calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioPubAlq()))
+					||(!Checks.esNulo(activo.getActivoPublicacion().getFechaCambioPubVenta()) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioPubVenta()))
 					
 					) {
-				cambioEstadoPublicacion = Boolean.TRUE;
-	
+				if((!Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionAlquiler()) && (!activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo().equals(DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER)))
+					|| (!Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionVenta()) && (!activo.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo().equals(DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA)))	
+						){
+					cambioEstadoPublicacion = Boolean.TRUE;
+				}
 			}
 			
 			if(!Checks.esNulo(activo.getValoracion())) {

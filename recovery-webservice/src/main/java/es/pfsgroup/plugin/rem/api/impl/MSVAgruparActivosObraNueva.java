@@ -49,7 +49,7 @@ public class MSVAgruparActivosObraNueva extends AbstractMSVActualizador implemen
 			resultado.setErrorDesc(e.getMessage());
 			logger.error("Error en MSVAgruparActivosLoteComercialAlquiler",e);
 		}	
-		return new ResultadoProcesarFila();
+		return resultado;
 	}
 
 }

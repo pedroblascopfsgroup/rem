@@ -204,9 +204,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		} catch (JsonViewerException jvex) {
 			model.put("success", false);
 			model.put("msg", jvex.getMessage());
-		}
-
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("error anyadiendo activo a agrupación",e);
 			model.put("success", false);
 		}

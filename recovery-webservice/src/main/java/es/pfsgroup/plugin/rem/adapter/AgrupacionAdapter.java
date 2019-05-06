@@ -2573,19 +2573,20 @@ public class AgrupacionAdapter {
 											}
 										}else {
 											List <ActivoOferta> ofertasActivas = activo.getOfertas();
-											boolean ventaVivas = false;
+											Boolean ventaVivas = Boolean.FALSE;
+											Boolean alquilerVivas = Boolean.FALSE;
 											for (ActivoOferta activoOferta : ofertasActivas) {
 													if(!Checks.esNulo(activoOferta.getPrimaryKey())
 															&& !Checks.esNulo(activoOferta.getPrimaryKey().getOferta())
 															&& !Checks.esNulo(activoOferta.getPrimaryKey().getOferta().getTipoOferta())){
 													if(DDTipoOferta.CODIGO_VENTA.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo())){
 														if(DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
-															ventaVivas = true;
+															ventaVivas = Boolean.TRUE;
 															
 														}
 													}else {
 														if(DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
-															ventaVivas = false;
+															alquilerVivas = Boolean.TRUE;
 															
 														}
 													}
@@ -2594,8 +2595,14 @@ public class AgrupacionAdapter {
 											
 											if (ventaVivas) {
 												throw new JsonViewerException(ACTIVO_OFERTAS_VENTAS_VIVAS);
-											}else {
+											}
+											else if (alquilerVivas)
+											{
 												throw new JsonViewerException(ACTIVO_OFERTAS_ALQUILER_VIVAS);
+
+											}
+											else {
+												return Boolean.TRUE;
 											}
 										}
 									}else {
@@ -2703,16 +2710,27 @@ public class AgrupacionAdapter {
 						boolean esActivoMatrizValido = false;
 						esActivoMatrizValido = esActivoMatrizValido(act);
 						if(esActivoMatrizValido) {
-							ActivoAgrupacionActivo aga = new ActivoAgrupacionActivo();
+							ActivoAgrupacionActivo aga=activoAgrupacionActivoDao.getAgrupacionPAByIdAgrupacion(id);
+							
+							if(Checks.esNulo(aga)) {
+								aga = new ActivoAgrupacionActivo();
+							}
+							if(!Checks.esNulo(act.getDireccionCompleta())) {
+								pa.setDireccion(act.getDireccionCompleta());
+							}
 							aga.setActivo(act);
 							aga.setAgrupacion(pa);
 							aga.setFechaInclusion(new Date());
 							aga.setPrincipal(1);
-							
 							activoAgrupacionActivoDao.saveOrUpdate(aga);
 						}	
 					}
-					
+					else {
+							ActivoAgrupacionActivo aga = activoAgrupacionActivoDao.getAgrupacionPAByIdAgrupacion(id);
+							if(!Checks.esNulo(aga)) {
+								activoAgrupacionActivoDao.deleteById(aga.getId());
+							}
+					}
 					
 					
 					activoAgrupacionApi.saveOrUpdate(pa);

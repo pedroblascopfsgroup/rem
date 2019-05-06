@@ -26,10 +26,8 @@ import net.sf.json.JSONObject;
 @Component
 public class ClienteMicroservicioGenerico {
 
-	private static final class MS_PROPERTIES {
-		private static String BASE_URL = "192.168.31.221:3141";
-		private static String DEFAULT_TIMEOUT = "10000";
-	}
+	private String URL = "";
+	private String DEFAULT_TIMEOUT = "10000";
 	
 	@Autowired
 	private HttpClientFacade httpClient;
@@ -39,9 +37,17 @@ public class ClienteMicroservicioGenerico {
 
 	ObjectMapper mapper = new ObjectMapper();
 	
-	//Urls para el microservicio dependiendo del entorno. devon.properties ? 
-	private void iniciarServicio() throws WIException {
-		if (appProperties == null) {
+	public JSONObject send(String method, String endpoint, String jsonString)
+			throws NumberFormatException, HttpClientException, RestConfigurationException {
+	
+		Map<String, String> headers = new HashMap<String, String>();
+		headers = null;
+		
+		String serviceUrl = null;
+		String urlBase = null;
+		
+		//Urls para el microservicio dependiendo del entorno. devon.properties?
+		/*if (appProperties == null) {
 			// esto solo se ejecuta desde el jar ejecutable de pruebas. No
 			// podemos usar log4j
 			appProperties = new Properties();
@@ -52,27 +58,9 @@ public class ClienteMicroservicioGenerico {
 				e.printStackTrace();
 			}
 		}
-		this.URL = !Checks.esNulo(appProperties.getProperty("rest.client.microservicio.url.base"))
-				? appProperties.getProperty("rest.client.uvem.url.base") : "";
-		this.ALIAS = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.alias.integrador"))
-				? appProperties.getProperty("rest.client.uvem.alias.integrador") : "";
-
-		// parametros iniciales
-		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
-		htInitParams.put(WIService.WORFLOW_PARAM, URL);
-		htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
-
-		WIService.init(htInitParams);
-	}
-	
-	public JSONObject send(String method, String endpoint, String jsonString)
-			throws NumberFormatException, HttpClientException, RestConfigurationException {
-	
-		Map<String, String> headers = new HashMap<String, String>();
-		headers = null;
-		
-		String serviceUrl = null;
-		String urlBase = MS_PROPERTIES.BASE_URL;
+		urlBase = !Checks.esNulo(appProperties.getProperty("rest.client.microservicio.url.base"))
+				? appProperties.getProperty("rest.client.microservicio.url.base") : "";*/
+		urlBase = "192.168.31.222:3141";
 
 		if (urlBase == null) {
 			throw new RestConfigurationException("La url base del microservicio no esta definida");
@@ -80,7 +68,7 @@ public class ClienteMicroservicioGenerico {
 			serviceUrl = urlBase.concat("/").concat(endpoint);
 		}
 		
-		String timeout = MS_PROPERTIES.DEFAULT_TIMEOUT;
+		String timeout = this.DEFAULT_TIMEOUT;
 		
 		JSONObject result = httpClient.processRequest(serviceUrl, method, headers, jsonString,
 				Integer.parseInt(timeout), "UTF-8");

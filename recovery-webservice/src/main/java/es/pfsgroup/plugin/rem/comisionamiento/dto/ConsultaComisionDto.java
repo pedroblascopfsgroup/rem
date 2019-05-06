@@ -54,18 +54,11 @@ public class ConsultaComisionDto {
 	}	
 	
 	//Nombres de campos del microservicio.
-	private String refId;
 	private String leadOrigin;
 	private Double amount;
 	private String offerType;
 	private String comercialType;
 
-	public String getRefId() {
-		return refId;
-	}
-	public void setRefId(String refId) {
-		this.refId = refId;
-	}
 	public String getLeadOrigin() {
 		return leadOrigin;
 	}

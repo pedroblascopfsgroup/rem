@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.rem.comisionamiento;
 
 import java.io.IOException;
-
+import java.math.BigDecimal;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -9,8 +9,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionDto;
+import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
 import es.pfsgroup.plugin.rem.microservicios.ClienteMicroservicioGenerico;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
@@ -25,13 +27,15 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	ObjectMapper mapper = new ObjectMapper();
 	
 	@Override
-	public RespuestaComisionDto createCommission(ConsultaComisionDto parametros)
+	public BigDecimal createCommission(ConsultaComisionDto parametros)
 			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException {
+		
+		BigDecimal respuesta = null;
 		
 		//Al hacer los mapeos todo tiene que estar con los nombres de los objetos del microservicio?
 		
 		//Dto que hay que mandar
-		//{ "refId" : "a7c7b427-4ae4-4766-9596-d88e0f12cd6b", "leadOrigin" : "01", "amount" : 1500000, "offerType": "01", "comercialType": "02" }
+		//{ "leadOrigin" : "01", "amount" : 1500000, "offerType": "01", "comercialType": "02" }
 		
 		String jsonString = mapper.writeValueAsString(parametros);
 		JSONObject response = microservicio.send("POST", "commissions", jsonString);
@@ -70,6 +74,19 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		}*/
 		
 		//readValue o readValues?
-		return  mapper.readValue(response.toString(), RespuestaComisionDto.class);
+		RespuestaComisionDto respuestaMS = mapper.readValue(response.toString(), RespuestaComisionDto.class);
+		
+		if(!Checks.esNulo(respuestaMS)) {
+			if(!Checks.esNulo(respuestaMS.getResult())) {
+				//Devuelve una lista, pero por los filtros que le pasamos esa lista tendrá un elemento.
+				for (RespuestaComisionResultDto result : respuestaMS.getResult()) {
+					if(!Checks.esNulo(result.getAmount())) {
+						respuesta = new BigDecimal(result.getAmount());
+					}
+				}
+			}
+		}
+		
+		return respuesta;
 	}
 }

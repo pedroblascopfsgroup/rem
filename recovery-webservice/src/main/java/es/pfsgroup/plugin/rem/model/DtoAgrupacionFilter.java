@@ -40,6 +40,8 @@ public class DtoAgrupacionFilter extends WebDto {
 	private String tipoAlquiler;
 	private String condPublVenta;
 	private String condPublAlquiler;
+	private Long activo_gencat;
+
 
 	public String getNombre() {
 		return nombre;
@@ -271,4 +273,13 @@ public class DtoAgrupacionFilter extends WebDto {
 	public void setIdNumActivoPrincipal(Long idNumActivoPrincipal) {
 		this.idNumActivoPrincipal = idNumActivoPrincipal;
 	}
+
+	public Long getActivo_gencat() {
+		return activo_gencat;
+	}
+
+	public void setActivo_gencat(Long activo_gencat) {
+		this.activo_gencat = activo_gencat;
+	}
+
 }

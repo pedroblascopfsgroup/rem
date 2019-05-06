@@ -13,6 +13,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -24,14 +25,23 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 
+
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
-	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
 
+	//private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
+	
+	
+	@Autowired
+	private ActivoDao activoDao;
+
+	
 	@Autowired 
     private ActivoApi activoApi;
 
+	
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.get")
 	public String get(Long id) {
@@ -45,6 +55,8 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
+		activoApi.calcularFechaTomaPosesion(activo);
+
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
@@ -110,6 +122,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 		if (Checks.esNulo(activo.getSituacionPosesoria())) {
 			Auditoria auditoria = Auditoria.getNewInstance();
+
 			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
 			actSit.setActivo(activo);
 			actSit.setVersion(0L);
@@ -246,7 +259,21 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			}
 		}
 
-		// Aviso 16: Estado activo con demanda con afectación comercial
+		// Aviso 16: Estado activo afecto por GENCAT / bloqueado GENCAT
+		if(!Checks.esNulo(activo)) {
+			DtoAviso dtoAviso = new DtoAviso();
+			if (activoApi.isActivoBloqueadoGencat(activo)) {
+				dtoAviso.setDescripcion("Activo bloqueado por GENCAT");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			} else if(activoApi.isAfectoGencat(activo)) {
+				dtoAviso.setDescripcion("Activo afecto por GENCAT");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			}
+		}
+
+		// Aviso 17: Estado activo con demanda con afectación comercial
 		if(!(Checks.esNulo(activo.getTieneDemandaAfecCom())) && activo.getTieneDemandaAfecCom()==1) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Activo con demanda con afectación comercial");

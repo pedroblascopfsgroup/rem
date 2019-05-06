@@ -5,7 +5,11 @@ import java.util.List;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.NotificacionGencat;
+import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
+import es.pfsgroup.plugin.rem.model.VisitaGencat;
 
 public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionActivo, Long>{
 	
@@ -59,7 +63,11 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	 * @return Devuelve True si algún activo se encuentra en alguna agrupación de tipo 'lote comercial', False si no es así.
 	 */
 	public boolean algunActivoDeAgrRestringidaEnAgrLoteComercial(List<Long> activosID);
-	
+
+	public List<ActivoAgrupacionActivo> getListActivoAgrupacionVentaByIdActivo(Long idActivo);
+
+	public void deleteTramiteGencat(ComunicacionGencat comunicacionGencat, List<NotificacionGencat> notificacionesGencat, List<ReclamacionGencat> reclamacionesGencat, VisitaGencat visitaGencat);
+
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion);
 
 	List<ActivoAgrupacionActivo> getListActivoAgrupacionActivoByAgrupacionID(Long idAgrupacion);

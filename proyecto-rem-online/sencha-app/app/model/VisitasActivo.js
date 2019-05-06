@@ -32,13 +32,13 @@ Ext.define('HreRem.model.VisitasActivo', {
     		name : 'subEstadoVisitaDescripcion'
     	}
 
-    ],
+    ]/*,
     
     proxy: {
 		type: 'uxproxy',
 		localUrl: 'activos.json',
 		remoteUrl: 'activo/getActivoById'
         
-    }    
+    }*/
 
 });

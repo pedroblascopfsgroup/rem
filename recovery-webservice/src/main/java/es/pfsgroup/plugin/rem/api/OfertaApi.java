@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
+import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
@@ -97,6 +98,7 @@ public interface OfertaApi {
 	 * @return List<Oferta>
 	 */
 	public List<VOfertasActivosAgrupacion> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter);
+
 	
 	/**
 	 * Devuelve una lista de Ofertas aplicando el filtro que recibe.
@@ -572,6 +574,8 @@ public interface OfertaApi {
 	boolean estaViva(Oferta oferta);
 
 	public List<Oferta> getListaOfertasByActivo(Activo activo);
+	
+	public DtoOferta getOfertaOrigenByIdExpediente(Long numExpediente);
 
 	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId);
 

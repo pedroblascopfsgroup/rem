@@ -82,10 +82,13 @@ public class HttpClientFacade {
 
 			return execute(httpclient, method);
 		} catch (HttpClientException e) {
+			logger.error("error ws",e);
 			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + "]";
 			throw new HttpClientException(errorMsg, e.getResponseCode(), e);
 		} catch (Exception e) {
 			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + "]";
+			//Se añade este logger para poder ver en consola los errores que desvuelve el webservice
+			logger.error("error ws",e);
 			throw new HttpClientException(errorMsg, 0, e);
 		} finally {
 			if (method != null) {
@@ -93,7 +96,8 @@ public class HttpClientFacade {
 			}
 		}
 	}
-
+	
+	
 	private JSONObject execute(HttpClient httpclient, HttpMethod method)
 			throws HttpException, IOException, HttpClientException {
 		trace("Lanzando peticion : httpClient.executeMethod()");

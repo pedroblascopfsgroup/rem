@@ -228,6 +228,20 @@ class ActivoControllerDispachableMethods {
 				if (dto != null){
 					this.controller.createCondicionEspecifica(dto, new ModelMap());
 				}
+//				ModelAndView l_CondicionEspecificaAux = this.controller.getCondicionEspecificaByActivo(idActivo, new ModelMap());
+//				List<DtoCondicionEspecifica> l_CondicionEspecifica = new ArrayList<DtoCondicionEspecifica>();
+//				
+//				for (DtoCondicionEspecifica dtoCE : l_CondicionEspecificaAux) {
+//					if (dto.getTexto().contains(dtoCE.getTexto())) {
+//						l_CondicionEspecifica.add(dtoCE);
+//					}
+//				}
+//				
+//				for (int i = 0; i < l_CondicionEspecifica.size(); i++) {
+//					l_CondicionEspecifica.get(i).setIdActivo(dto.getIdActivo());
+//					this.controller.createCondicionEspecifica((DtoCondicionEspecifica) l_CondicionEspecifica, new ModelMap());
+//				}
+				
 			}
 		});
 

@@ -20,6 +20,7 @@
 --##        0.8 HREOS-5387 Daniel Algaba: añadimos el Supervisor comercial Backoffice Inmobiliario
 --##        0.9 HREOS-5239 Daniel Algaba: corrección multicartera CERBERUS
 --##        1.0 HREOS-5443 Daniel Algaba: corrección para que no filtre por la TMP_GEST_CONT en activos con subcarteras
+--##        1.1 HREOS-5387 Daniel Algaba: añadimos el Supervisor comercial Backoffice Inmobiliario
 --##        1.1 HREOS-5838 Guillermo Llidó : se añaden las subcarteras de Agora para que pueda asignar gestores
 --##        1.2 HREOS-5838 Daniel Algaba : corrección subcarteras
 --##		1.3 REMVIP-3624 JINLI HU : añadir filtro para la asignación de gestor/supervisor de BO para los activos de sareb/bankia que tengan el tipo de comercialización a Singular 
@@ -36,7 +37,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     P_ACT_ID        IN #ESQUEMA#.act_activo.act_id%TYPE,
     P_ALL_ACTIVOS   IN NUMBER,
     P_CLASE_ACTIVO  IN VARCHAR2) AS
---v1.0
+--v1.2
 
     V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -49,7 +50,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     V_CLASE_ACTIVO_NULL VARCHAR (500 CHAR);
 
     V_GESTOR_FINANCIERO VARCHAR2(4000 CHAR) := ' (''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''GESRES'',''SUPRES'',''HAYAGBOINM'',''HAYASBOINM'') ';
-    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''HAYASBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'', ''GESTCOMALQ'', ''SUPCOMALQ'')';
+    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''HAYASBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'', ''GESTCOMALQ'', ''SUPCOMALQ'', ''GFORMADM'')';
     V_GESTOR            VARCHAR2(4000 CHAR);
 
     CURSOR C_LOG IS
@@ -64,7 +65,7 @@ BEGIN
     #ESQUEMA#.OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_GEST_GAH');
     #ESQUEMA#.OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_GEST_CONT');
     #ESQUEMA#.OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_V_GESTORES_ACTIVO');
-    
+
     IF P_CLASE_ACTIVO = '01' THEN --ACTIVOS FINANCIEROS
         V_GESTOR := V_GESTOR_FINANCIERO;
         V_CLASE_ACTIVO :=  'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
@@ -86,7 +87,7 @@ BEGIN
     IF P_ACT_ID IS NOT NULL THEN --SI SE PASA UN ACTIVO, SE HARÁ ÚNICAMENTE PARA EL MISMO
         V_ACT_ID := ' AND ACT.ACT_ID = '||P_ACT_ID;
     END IF;
-    
+
     V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_V_GESTORES_ACTIVO (
                     ACT_ID, TIPO_GESTOR, USERNAME )
               SELECT ACT.ACT_ID,ACT.TIPO_GESTOR, ACT.USERNAME
@@ -103,9 +104,9 @@ BEGIN
                
                V_ACT_ID
                ;
-      
-    EXECUTE IMMEDIATE V_MSQL; 
-    
+
+    EXECUTE IMMEDIATE V_MSQL;
+
     #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','TMP_V_GESTORES_ACTIVO');
 
 
@@ -116,14 +117,14 @@ BEGIN
                 JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC        ON GAC.ACT_ID    = ACT.ACT_ID
                 JOIN '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH      ON GEH.GEH_ID    = ACT.GEH_ID AND GEH.BORRADO = 0
                 JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE           ON GEE.GEE_ID    = GAC.GEE_ID AND GEE.BORRADO = 0
-                JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE    ON TGE.DD_TGE_ID = GEE.DD_TGE_ID 
-                                                                      AND TGE.DD_TGE_ID = GEH.DD_TGE_ID 
+                JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE    ON TGE.DD_TGE_ID = GEE.DD_TGE_ID
+                                                                      AND TGE.DD_TGE_ID = GEH.DD_TGE_ID
                                                                       AND TGE.BORRADO = 0
                                                                       AND TGE.DD_TGE_CODIGO IN '||V_GESTOR||
                 V_ACT_ID;
-      
+
     EXECUTE IMMEDIATE V_MSQL;
-    
+
     #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','TMP_GEST_GAH');
 
 
@@ -132,7 +133,7 @@ BEGIN
     --------------------------------------------------------------------
 
         V_MSQL := ' INSERT INTO '||V_ESQUEMA||'.TMP_GEST_CONT (NUMERO, TIPO_GESTOR)
-          SELECT COUNT(1),GEST.TIPO_GESTOR 
+          SELECT COUNT(1),GEST.TIPO_GESTOR
             FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
             /*JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on act.act_id = pac.act_id and pac.borrado = 0 and pac.PAC_INCLUIDO = 0 *//*en perimetro haya*/
             /*JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO NOT IN (''05'')*/ /*VENDIDO*/
@@ -150,7 +151,7 @@ BEGIN
         EXECUTE IMMEDIATE V_MSQL ;
         
         #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','TMP_GEST_CONT');
-        
+
         --IF V_COUNT_GES = 0 THEN
 
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_GEST_ACT (
@@ -168,7 +169,7 @@ BEGIN
                     , GEST.TIPO_GESTOR
                 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
               /*JOIN '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO pac on act.act_id = pac.act_id and pac.borrado = 0 and pac.PAC_INCLUIDO = 0 *//*en perimetro haya*/
-              /*JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO NOT IN (''05'')*/ /*VENDIDO*/                
+              /*JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO NOT IN (''05'')*/ /*VENDIDO*/
                 JOIN '||V_ESQUEMA||'.TMP_V_GESTORES_ACTIVO GEST ON ACT.ACT_ID = GEST.ACT_ID AND GEST.TIPO_GESTOR IN '||V_GESTOR||'
                 JOIN '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU ON USU.USU_USERNAME = GEST.USERNAME
                 '||V_CLASE_ACTIVO||'
@@ -177,11 +178,11 @@ BEGIN
                         SELECT 1
                           FROM '||V_ESQUEMA||'.TMP_GEST_GAH GAH
                          WHERE ACT.ACT_ID = GAH.ACT_ID
-                           AND GEST.TIPO_GESTOR = GAH.TIPO_GESTOR)                         
+                           AND GEST.TIPO_GESTOR = GAH.TIPO_GESTOR)
                     '||V_ACT_ID;
 
             EXECUTE IMMEDIATE V_MSQL;
-            
+
             V_COUNT_1 := SQL%ROWCOUNT;
             
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_GEST_ACT (
@@ -209,9 +210,9 @@ BEGIN
                           FROM '||V_ESQUEMA||'.TMP_GEST_GAH GAH
                          WHERE ACT.ACT_ID = GAH.ACT_ID
                            AND GEST.TIPO_GESTOR = GAH.TIPO_GESTOR)
-                    AND EXISTS (SELECT 1 
+                    AND EXISTS (SELECT 1
                                   FROM TMP_GEST_CONT CONT
-                                 WHERE CONT.TIPO_GESTOR = GEST.TIPO_GESTOR)     
+                                 WHERE CONT.TIPO_GESTOR = GEST.TIPO_GESTOR)
                     '||V_ACT_ID;
 
             EXECUTE IMMEDIATE V_MSQL;
@@ -225,7 +226,7 @@ BEGIN
     #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','TMP_GEST_ACT');
 
     PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' En total se asignarán '||V_COUNT_1||' gestores.'||CHR(10);
-    
+
 
     IF V_COUNT_1 > 0 THEN
 
@@ -302,14 +303,14 @@ BEGIN
         EXECUTE IMMEDIATE V_MSQL;
 
         PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' GAH_GESTOR_ACTIVO_HISTORICO cargada. '||SQL%ROWCOUNT||' Filas.'||CHR(10);
-      
-      IF P_ACT_ID IS NULL THEN 
+
+      IF P_ACT_ID IS NULL THEN
         #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','GEE_GESTOR_ENTIDAD','2');
         #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','GAC_GESTOR_ADD_ACTIVO','2');
         #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','GEH_GESTOR_ENTIDAD_HIST','2');
         #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','GAH_GESTOR_ACTIVO_HISTORICO','2');
       END IF;
-      
+
         PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
 
       ELSE
@@ -317,7 +318,7 @@ BEGIN
           PL_OUTPUT := PL_OUTPUT || '[FIN] - NO EXISTEN GESTORES A ASIGNAR.'||CHR(10);
 
       END IF;
-    
+
     COMMIT;
 
 EXCEPTION

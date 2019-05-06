@@ -233,7 +233,6 @@ if [[ "$COMPILE" == "0" ]] ; then
 	        echo "echo 'exit' | sqlplus $ESQUEMA_EJECUCION/$executionPassWin @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}-$ESQUEMA_EJECUCION.log" >> ${executionFile}.bat
 	        echo $'\t'"echo \" -- : $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh ${executionFile}.bat > /dev/null
 	    fi
-
 	    exit 0
 	fi
 fi

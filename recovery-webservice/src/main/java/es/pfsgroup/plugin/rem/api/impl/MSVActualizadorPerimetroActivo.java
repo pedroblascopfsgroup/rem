@@ -85,182 +85,205 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, Object[] extraArgs) throws IOException, ParseException, JsonViewerException, SQLException {
-		
-		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-		
-		ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
-		
-		//Evalua si ha encontrado un registro de perimetro para el activo dado. 
-		//En caso de que no exista, crea uno nuevo relacionado sin datos
-		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		try {
+			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 
-		//Variables temporales para asignar valores de filas excel
-		Integer tmpIncluidoEnPerimetro = getCheckValue(exc.dameCelda(fila, 1));
-		Integer tmpAplicaGestion = getCheckValue(exc.dameCelda(fila, 2));
-		String  tmpMotivoAplicaGestion = exc.dameCelda(fila, 3);
-		Integer tmpAplicaComercializar = getCheckValue(exc.dameCelda(fila, 4));
-		String  tmpMotivoComercializacion = exc.dameCelda(fila, 5);
-		String  tmpMotivoNoComercializacion = exc.dameCelda(fila, 6);
-		String  tmpTipoComercializacion = exc.dameCelda(fila, 7);
-		String 	tmpDestinoComercial = exc.dameCelda(fila, 8);
-		String	tmpTipoAlquiler = exc.dameCelda(fila, 9);
-		Integer tmpAplicaFormalizar = getCheckValue(exc.dameCelda(fila, 10));
-		String  tmpMotivoAplicaFormalizar = exc.dameCelda(fila,11);
-		Integer tmpAplicaPublicar = getCheckValue(exc.dameCelda(fila, 12));
-		String  tmpMotivoAplicaPublicar = exc.dameCelda(fila,13);
+			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 
-		perimetroActivo.setActivo(activo);
-		//Incluido en perimetro		---------------------------
-		if(!CHECK_NO_CAMBIAR.equals(tmpIncluidoEnPerimetro)) perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
-		
-		// Si se quita del perimetro, forzamos el quitado de la gestión
-		if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro) && !CHECK_VALOR_NO.equals(perimetroActivo.getAplicaGestion())) tmpAplicaGestion=0;
-				
-		//Aplica gestion 			---------------------------
-		if(!CHECK_NO_CAMBIAR.equals(tmpAplicaGestion)){
-			perimetroActivo.setAplicaGestion(tmpAplicaGestion);
-			perimetroActivo.setFechaAplicaGestion(new Date());					
-		}
-		if(!Checks.esNulo(tmpMotivoAplicaGestion)) perimetroActivo.setMotivoAplicaGestion(tmpMotivoAplicaGestion);
-		
-		
-		//Aplica comercializacion	---------------------------
-		// Si se quita del perimetro, forzamos el quitado de comercializacion y actualizar la situación comercial del activo a No Comercializable
-		if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro) && !CHECK_VALOR_NO.equals(perimetroActivo.getAplicaComercializar())) tmpAplicaComercializar=0;
-		
-		if(!CHECK_NO_CAMBIAR.equals(tmpAplicaComercializar)){
-			perimetroActivo.setAplicaComercializar(tmpAplicaComercializar);
-			perimetroActivo.setFechaAplicaComercializar(new Date());
-		}
-		
-		//Motivo para Si comercializar
-		if(!Checks.esNulo(tmpMotivoComercializacion))
-			perimetroActivo.setMotivoAplicaComercializar((DDMotivoComercializacion)
-				utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoComercializacion.class, tmpMotivoComercializacion.substring(0, 2)));
-		
-		//Motivo para No comercializar
-		if(!Checks.esNulo(tmpMotivoNoComercializacion))
-			perimetroActivo.setMotivoNoAplicaComercializar(tmpMotivoNoComercializacion);
-		
-		//Tipo de comercializacion en el activo
-		if(!Checks.esNulo(tmpTipoComercializacion))
-			activo.setTipoComercializar((DDTipoComercializar)
-				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, tmpTipoComercializacion.substring(0, 2)));
-		
-		//Perimetro de alquiler - Double Gestor
-		if(!Checks.esNulo(tmpDestinoComercial)){
-			if(tmpDestinoComercial.substring(0, 2).equals(DDTipoComercializacion.CODIGO_VENTA) && !Checks.esNulo(activo.getActivoPublicacion()) 
-					&& (activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER) 
-							|| activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA))){
-				if(!Checks.esNulo(actPatrimonio)){
-					actPatrimonio.setCheckHPM(false);
-				}else{
-					//creamos el registro en la tabla si no existe.
-					String username = genericAdapter.getUsuarioLogado().getUsername();
-					Date fecha = new Date();
-					actPatrimonio = new ActivoPatrimonio();
-					actPatrimonio.setActivo(activo);
-					actPatrimonio.setCheckHPM(false);
-					Auditoria auditoria = new Auditoria();
-					auditoria.setUsuarioCrear(username);
-					auditoria.setFechaCrear(fecha);
-					auditoria.setBorrado(false);
-					actPatrimonio.setAuditoria(auditoria);
-				}
-				activoPatrimonio.save(actPatrimonio);
-				//Actualizamos los gestores
-				DtoActivoFichaCabecera dto = new DtoActivoFichaCabecera();
-				dto.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGO_VENTA);
-				activoAdapter.updateGestoresTabActivoTransactional(dto, activo.getId());
-			}else if((tmpDestinoComercial.substring(0, 2).equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER) 
-						|| tmpDestinoComercial.substring(0, 2).equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA)) 
-						&& !Checks.esNulo(activo.getActivoPublicacion()) 
-						&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)){
-				if(!Checks.esNulo(actPatrimonio)){
-					actPatrimonio.setCheckHPM(true);
-				}else{
-					//creamos el registro en la tabla si no existe.
-					String username = genericAdapter.getUsuarioLogado().getUsername();
-					Date fecha = new Date();
-					actPatrimonio = new ActivoPatrimonio();
-					actPatrimonio.setActivo(activo);
-					actPatrimonio.setCheckHPM(true);
-					Auditoria auditoria = new Auditoria();
-					auditoria.setUsuarioCrear(username);
-					auditoria.setFechaCrear(fecha);
-					auditoria.setBorrado(false);
-					actPatrimonio.setAuditoria(auditoria);
-				}
-				activoPatrimonio.save(actPatrimonio);
-				//Actualizamos los gestores
-				DtoActivoFichaCabecera dto = new DtoActivoFichaCabecera();
-				dto.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGO_SOLO_ALQUILER);
-				activoAdapter.updateGestoresTabActivoTransactional(dto, activo.getId());
+			// Evalua si ha encontrado un registro de perimetro para el activo
+			// dado.
+			// En caso de que no exista, crea uno nuevo relacionado sin datos
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+
+			// Variables temporales para asignar valores de filas excel
+			Integer tmpIncluidoEnPerimetro = getCheckValue(exc.dameCelda(fila, 1));
+			Integer tmpAplicaGestion = getCheckValue(exc.dameCelda(fila, 2));
+			String tmpMotivoAplicaGestion = exc.dameCelda(fila, 3);
+			Integer tmpAplicaComercializar = getCheckValue(exc.dameCelda(fila, 4));
+			String tmpMotivoComercializacion = exc.dameCelda(fila, 5);
+			String tmpMotivoNoComercializacion = exc.dameCelda(fila, 6);
+			String tmpTipoComercializacion = exc.dameCelda(fila, 7);
+			String tmpDestinoComercial = exc.dameCelda(fila, 8);
+			String tmpTipoAlquiler = exc.dameCelda(fila, 9);
+			Integer tmpAplicaFormalizar = getCheckValue(exc.dameCelda(fila, 10));
+			String tmpMotivoAplicaFormalizar = exc.dameCelda(fila, 11);
+			Integer tmpAplicaPublicar = getCheckValue(exc.dameCelda(fila, 12));
+			String tmpMotivoAplicaPublicar = exc.dameCelda(fila, 13);
+
+			perimetroActivo.setActivo(activo);
+			// Incluido en perimetro ---------------------------
+			if (!CHECK_NO_CAMBIAR.equals(tmpIncluidoEnPerimetro))
+				perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
+
+			// Si se quita del perimetro, forzamos el quitado de la gestión
+			if (CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro)
+					&& !CHECK_VALOR_NO.equals(perimetroActivo.getAplicaGestion()))
+				tmpAplicaGestion = 0;
+
+			// Aplica gestion ---------------------------
+			if (!CHECK_NO_CAMBIAR.equals(tmpAplicaGestion)) {
+				perimetroActivo.setAplicaGestion(tmpAplicaGestion);
+				perimetroActivo.setFechaAplicaGestion(new Date());
 			}
-		}
-		
-		//Tipo de Destino comercial en el activo
-		if(!Checks.esNulo(tmpDestinoComercial) && !Checks.esNulo(activo.getActivoPublicacion()))
-			activo.getActivoPublicacion().setTipoComercializacion((DDTipoComercializacion)
-					utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpDestinoComercial.substring(0, 2)));
-		
-		//Tipo de alquiler del activo
-		if(!Checks.esNulo(tmpTipoAlquiler))
-			activo.setTipoAlquiler((DDTipoAlquiler)
-					utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, tmpTipoAlquiler.substring(0, 2)));
-		
-		
-		if(CHECK_VALOR_NO.equals(tmpAplicaComercializar)) {
-			//Si Comercializar es NO, forzamos también a NO => Formalizar (por si no venía informado)
-			tmpAplicaFormalizar = CHECK_VALOR_NO;
-			
-			// Comprobamos si es necesario actualizar el estado de publicación del activo.
-			//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
-		}
-		
-		//Aplica Formalizar			---------------------------
-		if(!CHECK_NO_CAMBIAR.equals(tmpAplicaFormalizar)){
-			perimetroActivo.setAplicaFormalizar(tmpAplicaFormalizar);
-			perimetroActivo.setFechaAplicaFormalizar(new Date());					
-		} 
+			if (!Checks.esNulo(tmpMotivoAplicaGestion))
+				perimetroActivo.setMotivoAplicaGestion(tmpMotivoAplicaGestion);
 
-		if(!Checks.esNulo(tmpMotivoAplicaFormalizar)) perimetroActivo.setMotivoAplicaFormalizar(tmpMotivoAplicaFormalizar);
-		
-		// Si se quita del perimetro, forzamos el quitado de la publicación
-		if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro) && perimetroActivo.getAplicaPublicar()) tmpAplicaPublicar=0;
-				
-		//Aplica Publicar 		---------------------------
-		if(!CHECK_NO_CAMBIAR.equals(tmpAplicaPublicar)){
-			perimetroActivo.setAplicaPublicar(BooleanUtils.toBooleanObject(tmpAplicaPublicar));
-			perimetroActivo.setFechaAplicaPublicar(new Date());
-		}
+			// Aplica comercializacion ---------------------------
+			// Si se quita del perimetro, forzamos el quitado de
+			// comercializacion y actualizar la situación comercial del activo a
+			// No Comercializable
+			if (CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro)
+					&& !CHECK_VALOR_NO.equals(perimetroActivo.getAplicaComercializar()))
+				tmpAplicaComercializar = 0;
 
-		if(!Checks.esNulo(tmpMotivoAplicaPublicar)) perimetroActivo.setMotivoAplicaPublicar(tmpMotivoAplicaPublicar);
+			if (!CHECK_NO_CAMBIAR.equals(tmpAplicaComercializar)) {
+				perimetroActivo.setAplicaComercializar(tmpAplicaComercializar);
+				perimetroActivo.setFechaAplicaComercializar(new Date());
+			}
 
+			// Motivo para Si comercializar
+			if (!Checks.esNulo(tmpMotivoComercializacion))
+				perimetroActivo.setMotivoAplicaComercializar(
+						(DDMotivoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(
+								DDMotivoComercializacion.class, tmpMotivoComercializacion.substring(0, 2)));
 
-		// ---------------------------
-		//Persiste los datos, creando el registro de perimetro
-		// Todos los datos son de PerimetroActivo, a excepcion del tipo comercializacion que es del Activo
-		if(!Checks.esNulo(tmpTipoComercializacion) || !Checks.esNulo(tmpDestinoComercial) || !Checks.esNulo(tmpTipoAlquiler)) 
+			// Motivo para No comercializar
+			if (!Checks.esNulo(tmpMotivoNoComercializacion))
+				perimetroActivo.setMotivoNoAplicaComercializar(tmpMotivoNoComercializacion);
+
+			// Tipo de comercializacion en el activo
+			if (!Checks.esNulo(tmpTipoComercializacion))
+				activo.setTipoComercializar((DDTipoComercializar) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoComercializar.class, tmpTipoComercializacion.substring(0, 2)));
+
+			// Perimetro de alquiler - Double Gestor
+			if (!Checks.esNulo(tmpDestinoComercial)) {
+				if (tmpDestinoComercial.substring(0, 2).equals(DDTipoComercializacion.CODIGO_VENTA)
+						&& !Checks.esNulo(activo.getActivoPublicacion())
+						&& (activo.getActivoPublicacion().getTipoComercializacion().getCodigo()
+								.equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)
+								|| activo.getActivoPublicacion().getTipoComercializacion().getCodigo()
+										.equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA))) {
+					if (!Checks.esNulo(actPatrimonio)) {
+						actPatrimonio.setCheckHPM(false);
+					} else {
+						// creamos el registro en la tabla si no existe.
+						String username = genericAdapter.getUsuarioLogado().getUsername();
+						Date fecha = new Date();
+						actPatrimonio = new ActivoPatrimonio();
+						actPatrimonio.setActivo(activo);
+						actPatrimonio.setCheckHPM(false);
+						Auditoria auditoria = new Auditoria();
+						auditoria.setUsuarioCrear(username);
+						auditoria.setFechaCrear(fecha);
+						auditoria.setBorrado(false);
+						actPatrimonio.setAuditoria(auditoria);
+					}
+					activoPatrimonio.save(actPatrimonio);
+					// Actualizamos los gestores
+					DtoActivoFichaCabecera dto = new DtoActivoFichaCabecera();
+					dto.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGO_VENTA);
+					activoAdapter.updateGestoresTabActivoTransactional(dto, activo.getId());
+				} else if ((tmpDestinoComercial.substring(0, 2).equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)
+						|| tmpDestinoComercial.substring(0, 2).equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA))
+						&& !Checks.esNulo(activo.getActivoPublicacion()) && activo.getActivoPublicacion()
+								.getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)) {
+					if (!Checks.esNulo(actPatrimonio)) {
+						actPatrimonio.setCheckHPM(true);
+					} else {
+						// creamos el registro en la tabla si no existe.
+						String username = genericAdapter.getUsuarioLogado().getUsername();
+						Date fecha = new Date();
+						actPatrimonio = new ActivoPatrimonio();
+						actPatrimonio.setActivo(activo);
+						actPatrimonio.setCheckHPM(true);
+						Auditoria auditoria = new Auditoria();
+						auditoria.setUsuarioCrear(username);
+						auditoria.setFechaCrear(fecha);
+						auditoria.setBorrado(false);
+						actPatrimonio.setAuditoria(auditoria);
+					}
+					activoPatrimonio.save(actPatrimonio);
+					// Actualizamos los gestores
+					DtoActivoFichaCabecera dto = new DtoActivoFichaCabecera();
+					dto.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGO_SOLO_ALQUILER);
+					activoAdapter.updateGestoresTabActivoTransactional(dto, activo.getId());
+				}
+			}
+
+			// Tipo de Destino comercial en el activo
+			if (!Checks.esNulo(tmpDestinoComercial) && !Checks.esNulo(activo.getActivoPublicacion()))
+				activo.getActivoPublicacion().setTipoComercializacion((DDTipoComercializacion) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpDestinoComercial.substring(0, 2)));
+
+			// Tipo de alquiler del activo
+			if (!Checks.esNulo(tmpTipoAlquiler))
+				activo.setTipoAlquiler((DDTipoAlquiler) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoAlquiler.class, tmpTipoAlquiler.substring(0, 2)));
+
+			if (CHECK_VALOR_NO.equals(tmpAplicaComercializar)) {
+				// Si Comercializar es NO, forzamos también a NO => Formalizar
+				// (por si no venía informado)
+				tmpAplicaFormalizar = CHECK_VALOR_NO;
+
+				// Comprobamos si es necesario actualizar el estado de
+				// publicación del activo.
+				// activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+			}
+
+			// Aplica Formalizar ---------------------------
+			if (!CHECK_NO_CAMBIAR.equals(tmpAplicaFormalizar)) {
+				perimetroActivo.setAplicaFormalizar(tmpAplicaFormalizar);
+				perimetroActivo.setFechaAplicaFormalizar(new Date());
+			}
+
+			if (!Checks.esNulo(tmpMotivoAplicaFormalizar))
+				perimetroActivo.setMotivoAplicaFormalizar(tmpMotivoAplicaFormalizar);
+
+			// Si se quita del perimetro, forzamos el quitado de la publicación
+			if (CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro) && perimetroActivo.getAplicaPublicar())
+				tmpAplicaPublicar = 0;
+
+			// Aplica Publicar ---------------------------
+			if (!CHECK_NO_CAMBIAR.equals(tmpAplicaPublicar)) {
+				perimetroActivo.setAplicaPublicar(BooleanUtils.toBooleanObject(tmpAplicaPublicar));
+				perimetroActivo.setFechaAplicaPublicar(new Date());
+			}
+
+			if (!Checks.esNulo(tmpMotivoAplicaPublicar))
+				perimetroActivo.setMotivoAplicaPublicar(tmpMotivoAplicaPublicar);
+
+			// ---------------------------
+			// Persiste los datos, creando el registro de perimetro
+			// Todos los datos son de PerimetroActivo, a excepcion del tipo
+			// comercializacion que es del Activo
+			if (!Checks.esNulo(tmpTipoComercializacion) || !Checks.esNulo(tmpDestinoComercial)
+					|| !Checks.esNulo(tmpTipoAlquiler))
+				activoApi.saveOrUpdate(activo);
+			// Si en la excel se ha indicado que NO esta en perimetro,
+			// desmarcamos sus checks
+			if (CHECK_VALOR_NO.equals(perimetroActivo.getIncluidoEnPerimetro()))
+				this.desmarcarChecksFromPerimetro(perimetroActivo);
+
+			activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+
+			// Actualizar disponibilidad comercial del activo
+			updaterState.updaterStateDisponibilidadComercial(activo);
+
+			// Actualizar registro historico destino comercial del activo
+			activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
+
 			activoApi.saveOrUpdate(activo);
-		//Si en la excel se ha indicado que NO esta en perimetro, desmarcamos sus checks
-		if(CHECK_VALOR_NO.equals(perimetroActivo.getIncluidoEnPerimetro())) this.desmarcarChecksFromPerimetro(perimetroActivo);
-		
-		activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
-		
-		//Actualizar disponibilidad comercial del activo
-		updaterState.updaterStateDisponibilidadComercial(activo);
-
-		//Actualizar registro historico destino comercial del activo
-		activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
-
-		activoApi.saveOrUpdate(activo);
+			resultado.setCorrecto(true);
+		} catch (Exception e) {
+			resultado.setCorrecto(false);
+			resultado.setErrorDesc(e.getMessage());
+			logger.error("Error en MSVActualizadorPerimetroActivo",e);
+		}
 		
 		
-		//postProcesado
-		//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
-
-		return new ResultadoProcesarFila();
+		return resultado;
 	}
 	
 	@Override

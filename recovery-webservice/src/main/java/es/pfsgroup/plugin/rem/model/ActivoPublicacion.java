@@ -346,6 +346,7 @@ public class ActivoPublicacion implements Serializable, Auditable {
 
 	public void setFechaRevisionAlquiler(Date fechaRevisionAlquiler) {
 		this.fechaRevisionAlquiler = fechaRevisionAlquiler;
+	}
 
 	public Date getFechaCambioPubVenta() {
 		return fechaCambioPubVenta;

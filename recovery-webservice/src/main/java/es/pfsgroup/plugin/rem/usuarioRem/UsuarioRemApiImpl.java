@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -18,9 +19,6 @@ public class UsuarioRemApiImpl implements UsuarioRemApi{
 
 	@Autowired
 	private GenericABMDao genericDao;
-	
-	@Autowired
-	private Usuario usuario;
 	
 	public List<String> getGestorSustitutoUsuario(Usuario usuario) {
 

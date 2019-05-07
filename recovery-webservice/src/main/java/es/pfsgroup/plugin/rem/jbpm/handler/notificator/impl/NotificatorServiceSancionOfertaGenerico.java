@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.rest.model.DestinatariosRest;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApiImpl;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
@@ -113,7 +114,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private ExpedienteComercialDao expedienteComercialDao;
 	
 	@Autowired
-	private UsuarioRemApiImpl usuarioRemApiImpl;
+	private UsuarioRemApi usuarioRemApiImpl;
 	
 	@Override
 	public final void notificator(ActivoTramite tramite) {

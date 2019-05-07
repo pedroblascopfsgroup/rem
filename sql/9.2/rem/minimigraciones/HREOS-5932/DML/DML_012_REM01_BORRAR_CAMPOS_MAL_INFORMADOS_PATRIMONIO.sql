@@ -41,8 +41,6 @@ BEGIN
 				,   DD_TPI_ID = NULL
 				,   CHECK_SUBROGADO = NULL
 				,   PTA_RENTA_ANTIGUA = NULL
-				,   USUARIOMODIFICAR = ''AJUSTE DICCIONARIOS''
-				,   FECHAMODIFICAR = SYSDATE
 				WHERE ACT_ID in (select ACT.ACT_ID
 									from '||V_ESQUEMA||'.ACT_ACTIVO act
 									INNER JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON act.act_id = PTA.ACT_ID
@@ -59,8 +57,6 @@ BEGIN
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO SET 
 					DD_TAL_ID = NULL
-				,   USUARIOMODIFICAR = ''AJUSTE DICCIONARIOS''
-				,   FECHAMODIFICAR = SYSDATE
 				WHERE ACT_ID in (select ACT.ACT_ID
 									from '||V_ESQUEMA||'.ACT_ACTIVO act
 									INNER JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON act.act_id = PTA.ACT_ID
@@ -69,7 +65,55 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+	
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO 
+				SET DD_TAL_ID = NULL 
+				WHERE ACT_ID in (    
+									SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+									LEFT JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA on act.act_id = pta.act_id
+									WHERE act.BORRADO = 0 AND ACT.DD_TAL_ID is not null
+									MINUS 
+									SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+									INNER JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA on act.act_id = pta.act_id
+									WHERE act.BORRADO = 0
+								)'; 
+	
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 				
+				
+				
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO 
+				SET DD_TAL_ID = NULL 
+				WHERE ACT_ID in (    
+									SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+									LEFT JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA on act.act_id = pta.act_id
+									WHERE act.BORRADO = 0 AND ACT.DD_TAL_ID is not null
+									MINUS 
+									SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+									INNER JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA on act.act_id = pta.act_id
+									WHERE act.BORRADO = 0
+								)'; 
+	
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+
+	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO act
+				using (SELECT ACT.ACT_ID , APU. DD_TCO_ID 
+						FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT 
+						INNER JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU on ACT.ACT_ID = APU.ACT_ID
+						WHERE ACT.USUARIOMODIFICAR like ''HREOS-5932%'' AND ACT.BORRADO = 0) AUX
+				on (act.act_id = aux.act_id)
+				WHEN MATCHED THEN UPDATE SET 
+				act.dd_tco_id = aux.dd_tco_id'; 
+	
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+	
+	
 	COMMIT;
 	
 	DBMS_OUTPUT.PUT_LINE('[FIN]');

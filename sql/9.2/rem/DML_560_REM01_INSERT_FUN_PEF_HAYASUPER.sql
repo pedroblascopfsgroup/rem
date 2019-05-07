@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Flores
---## FECHA_CREACION=20190427
+--## FECHA_CREACION=20190507
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6305

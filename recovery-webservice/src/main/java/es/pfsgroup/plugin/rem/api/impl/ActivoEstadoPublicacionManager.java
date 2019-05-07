@@ -672,8 +672,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						|| !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) 
 						|| !Checks.esNulo(dto.getPublicarVenta()) 
 						|| !Checks.esNulo(dto.getOcultarVenta()) 
-						|| (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) 
-						|| !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
+						|| (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo()))) {
 					activoPublicacion.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
 				}
 				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) 
@@ -686,8 +685,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						|| !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) 
 						|| !Checks.esNulo(dto.getPublicarAlquiler()) 
 						|| !Checks.esNulo(dto.getOcultarAlquiler()) 
-						|| (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) 
-						|| !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
+						|| (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo()))) {
 					activoPublicacion.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
 				}
 				

@@ -8,6 +8,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.AdjuntosPromocion;
 
 @Component
@@ -43,6 +44,17 @@ public class DbDownloader implements Downloader {
 		fileItem.setFileName(adjPromo.getNombre());
 
 		return adjPromo.getAdjunto().getFileItem();
+	}
+	
+	@Override
+	public FileItem getFileItemComunicacionGencat(Long id,String nombreDocumento) {
+		AdjuntoComunicacion adjuntoActivo = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+
+		FileItem fileItem = adjuntoActivo.getAdjunto().getFileItem();
+		fileItem.setContentType(adjuntoActivo.getContentType());
+		fileItem.setFileName(adjuntoActivo.getNombre());
+
+		return adjuntoActivo.getAdjunto().getFileItem();
 	}
 
 }

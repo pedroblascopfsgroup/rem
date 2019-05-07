@@ -65,7 +65,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						xtype: 'button',
 						text: HreRem.i18n('btn.enviar.compradores'),
 						handler: 'enviarTitularesUvem',
-						margin: '10 40 5 10',
+						margin: '10 5 5 10',
 						bind: {
 							hidden: '{!esEditableCompradores}'
 						}
@@ -74,7 +74,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						xtype: 'button',
 						text: HreRem.i18n('btn.validar.compradores'),
 						handler: 'validarCompradores',
-						margin: '10 40 5 10',
+						margin: '10 5 5 10',
 						visible:true,
 						hidden: cartera(),
 				        hideable: !cartera()

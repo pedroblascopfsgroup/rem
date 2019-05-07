@@ -2,7 +2,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
 	extend		: 'Ext.tab.Panel',
 	cls: 'panel-base shadow-panel, tabPanel-segundo-nivel',
     xtype		: 'activoExpedienteTabPanel',
-    requires	: ['HreRem.view.expedientes.ActivoExpedienteCondiciones','HreRem.view.expedientes.ActivoExpedienteJuridico','HreRem.view.expedientes.ActivoExpedienteTanteo'],
+    requires	: ['HreRem.view.expedientes.ActivoExpedienteCondiciones','HreRem.view.expedientes.ActivoExpedienteJuridico'],
     flex		: 1,
     bloqueado: false,
     controller	: 'expedientedetalle',
@@ -47,7 +47,6 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
         me.items = [];
         me.items.push({xtype: 'activoexpedientecondiciones', reference: 'activoexpedientecondiciones'});
         me.items.push({xtype: 'activoexpedientejuridico', reference: 'activoexpedientejuridico'});
-        me.items.push({xtype: 'activoexpedientetanteo', reference: 'activoexpedientetanteo'});
         
         me.callParent(); 
        

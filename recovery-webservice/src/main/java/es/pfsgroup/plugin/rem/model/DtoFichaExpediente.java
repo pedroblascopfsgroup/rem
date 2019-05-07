@@ -136,8 +136,13 @@ public class DtoFichaExpediente extends WebDto {
 
 	private String subcarteraCodigo;
 	private Boolean estaFirmado;
+<<<<<<< HEAD
 	private Boolean problemasUrsus;
 	
+=======
+	private Long idOfertaAnterior;
+	private Boolean noEsOfertaFinalGencat;
+>>>>>>> 7f05ebec149a06d3e61d083ea0b5c749ef7b1f82
 
 	public Long getId() {
 		return id;
@@ -686,6 +691,7 @@ public class DtoFichaExpediente extends WebDto {
 		this.descMotivoAnulacionAlq = descMotivoAnulacionAlq;
 	}
 
+<<<<<<< HEAD
 	public Boolean getProblemasUrsus() {
 		return problemasUrsus;
 	}
@@ -693,5 +699,23 @@ public class DtoFichaExpediente extends WebDto {
 	public void setProblemasUrsus(Boolean problemasUrsus) {
 		this.problemasUrsus = problemasUrsus;
 	}
+=======
+	public Long getIdOfertaAnterior() {
+		return idOfertaAnterior;
+	}
+
+	public void setIdOfertaAnterior(Long idOfertaAnterior) {
+		this.idOfertaAnterior = idOfertaAnterior;
+	}
+
+	public Boolean getNoEsOfertaFinalGencat() {
+		return noEsOfertaFinalGencat;
+	}
+
+	public void setNoEsOfertaFinalGencat(Boolean noEsOfertaFinalGencat) {
+		this.noEsOfertaFinalGencat = noEsOfertaFinalGencat;
+	}
+	
+>>>>>>> 7f05ebec149a06d3e61d083ea0b5c749ef7b1f82
 	
 }

@@ -208,6 +208,16 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					extraParams: {diccionario: 'tiposPosesorio'}
 				}
 			},
+			
+			comboEstadoComunicacionGencat: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoComunicacionGencat'}
+				}
+			},
+
 			comboDDTipoTituloActivo: {
 				model : 'HreRem.model.ComboBase',
 				proxy : {

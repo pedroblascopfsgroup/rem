@@ -17,6 +17,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String poblacion;
 	private Date fechaDueD;
 	private String rating;
+	private String estadoComunicacionGencatCodigo;
 	private String numActivo;
 	private String numActivoRem;
 	private String idSareb;
@@ -208,6 +209,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean asignaGestPorCambioDeProv;
 
 	private Boolean isLogUsuGestComerSupComerSupAdmin;
+	
+	//HREOS-4836 (GENCAT)
+	private Boolean afectoAGencat;
+	
+	private Boolean tieneComunicacionGencat;
 
 	private int ocupado;
 	private int conTitulo;
@@ -1664,6 +1670,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
 	}
 
+	public Boolean getAfectoAGencat() {
+		return afectoAGencat;
+	}
+
+	public void setAfectoAGencat(Boolean afectoAGencat) {
+		this.afectoAGencat = afectoAGencat;
+	}
+
+	public String getEstadoComunicacionGencatCodigo() {
+		return estadoComunicacionGencatCodigo;
+	}
+
+	public void setEstadoComunicacionGencatCodigo(String estadoComunicacionGencatCodigo) {
+		this.estadoComunicacionGencatCodigo = estadoComunicacionGencatCodigo;
+	}
+
 	public Boolean getActivoChkPerimetroAlquiler() {
 		return activoChkPerimetroAlquiler;
 	}
@@ -1708,6 +1730,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		return tieneCEE;
 	}
 
+	public Boolean getTieneComunicacionGencat() {
+		return tieneComunicacionGencat;
+	}
+
+	public void setTieneComunicacionGencat(Boolean tieneComunicacionGencat) {
+		this.tieneComunicacionGencat = tieneComunicacionGencat;
+	}
+		
 	public Boolean getTieneRegistroContrato() {
 		return tieneRegistroContrato;
 	}

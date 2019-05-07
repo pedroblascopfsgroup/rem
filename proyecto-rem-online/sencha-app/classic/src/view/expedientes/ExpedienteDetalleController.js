@@ -268,6 +268,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var contador = 0;
 				me.saveMultipleRecords(contador, records);
 			}
+
 		} else {
 		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
@@ -398,6 +399,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onClickBotonEditar: function(btn) {
 		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/getIsExpedienteGencat');
+
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {idExpediente: me.getViewModel().data.expediente.id},
+		     success: function(response, opts) {
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data == "false"){
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').show();
 		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
@@ -409,7 +419,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 								field.fireEvent('edit');});
 								
 		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
-		
+		    	}else{
+		    		 me.fireEvent("errorToast", HreRem.i18n("msg.no.editable.afectado.gencat"));
+		    	}
+		    },
+		    failure: function (a, operation) {
+		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+		});
+
+
 	},
     
 	onClickBotonGuardar: function(btn) {
@@ -3097,8 +3116,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    			var data = null;
 
 		                try {
-	                        data = Ext.decode(response.responseText).data;
-	                        activosPropagables = data;
+		                		data = Ext.decode(response.responseText).data;
+		                		activosPropagables = data;
 		                } catch (e){ };
 
 		    			var tabData = me.createTabData(form);
@@ -3453,6 +3472,36 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	window.destroy();
     	me.refrescarActivoExpediente(false);
 	},
+
+
+
+	onClickAbrirExpedienteComercial: function() {
+
+    	var me = this;
+    	var expediente = me.getViewModel().data.expediente;
+    	var numOfertaOrigen = expediente.data.idOfertaAnterior;
+    	var data;
+    	var url =  $AC.getRemoteUrl('expedientecomercial/getExpedienteByIdOferta');
+    	Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {numOferta: numOfertaOrigen},
+		     success: function(response, opts) {
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data){
+		    		me.getView().up('activosmain').fireEvent('abrirDetalleExpedienteOferta', data.data);
+		    	}
+		    	else {
+		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	}
+
+		    },
+
+		     failure: function (a, operation) {
+		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+	 });
+  },
 	
 	esObligatorio: function(){
 		
@@ -3881,4 +3930,5 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    });
 
 	}
+
 });

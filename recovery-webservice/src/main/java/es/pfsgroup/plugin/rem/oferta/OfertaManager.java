@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.oferta;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -17,6 +18,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -57,6 +60,8 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
+import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -133,6 +138,8 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
@@ -242,6 +249,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private GestorExpedienteComercialManager gestorExpedienteComercialManager;
+	
+	@Autowired
+	private ComisionamientoApi comisionamientoApi;
 
 	@Override
 	public Oferta getOfertaById(Long id) {
@@ -2447,7 +2457,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		DtoGastoExpediente dto = new DtoGastoExpediente();
 		ActivoProveedor proveedor = null;
-		String codigoOferta = oferta.getTipoOferta().getCodigo();
+		String codigoOferta = null;
+		
+		Double importe = null;
+		if (!Checks.esNulo(oferta)) {
+			importe = oferta.getImporteOferta();
+			if (!Checks.esNulo(oferta.getTipoOferta())) {
+				codigoOferta = oferta.getTipoOferta().getCodigo();
+			}
+		}
+
+		String tipoComercializar = null;
+		if (!Checks.esNulo(activo)) {
+			if (!Checks.esNulo(activo.getTipoComercializar())) {
+				tipoComercializar = activo.getTipoComercializar().getCodigo();
+			}
+		} 
+		
+		ConsultaComisionDto consultaComisionDto = new ConsultaComisionDto();
+		consultaComisionDto.setAmount(importe);
+		consultaComisionDto.setLeadOrigin("01");  				//Habrá que cambiarlo por la variable leadOrigin.
+		consultaComisionDto.setOfferType(codigoOferta);
+		consultaComisionDto.setComercialType(tipoComercializar);
 
 			// Los honorarios de colaboración serán asignados al FDV de la oferta si
 			// existe,
@@ -2505,8 +2536,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			// Información del cálculo de la comisión para venta
-			BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion),
-					activo.getId(), idProveedor);
+			/*BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion),activo.getId(), idProveedor);*/
+			BigDecimal calculoComision = null;
+			try {
+				calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (RestConfigurationException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (HttpClientException e) {
+				e.printStackTrace();
+			}
+			
 			if (!Checks.esNulo(calculoComision)) {
 				Double calculoImporteC = calculoComision.doubleValue();
 				dto.setImporteCalculo(calculoImporteC);
@@ -2530,8 +2577,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		} else if(DDTipoOferta.CODIGO_ALQUILER.equals(codigoOferta)) {
 			DDTipoCalculo tipoCalculoC = null;
 			// Determinar tipo de calculo para alquiler
-			BigDecimal calculoComision = ofertaDao.getImporteCalculoAlquiler(oferta.getId(), TIPO_HONORARIOS.get(accion), idProveedor);
-
+			/*BigDecimal calculoComision = ofertaDao.getImporteCalculoAlquiler(oferta.getId(), TIPO_HONORARIOS.get(accion), idProveedor);*/
+			BigDecimal calculoComision = null;
+			try {
+				calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (RestConfigurationException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (HttpClientException e) {
+				e.printStackTrace();
+			}
+			
 			if (!Checks.esNulo(calculoComision)) {
 				Double calculoImporteC = calculoComision.doubleValue();
 				dto.setImporteCalculo(calculoImporteC);

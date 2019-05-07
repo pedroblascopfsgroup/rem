@@ -814,10 +814,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionVenta.codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA);
 		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		Order orden = new Order(OrderType.DESC, "id");
+		Filter filterFecha = genericDao.createFilter(FilterType.EQUALS, "fechaFinVenta", null);
+		Order orden = new Order(OrderType.DESC, "fechaInicioVenta");
 		
 		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
-				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria);
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria, filterFecha);
 		
 		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
 			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
@@ -879,10 +880,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionAlquiler.codigo", DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER);
 		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		Order orden = new Order(OrderType.DESC, "id");
+		Filter filterFecha = genericDao.createFilter(FilterType.EQUALS, "fechaFinAlquiler", null);
+		Order orden = new Order(OrderType.DESC, "fechaInicioVenta");
 		
 		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
-				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria);
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria, filterFecha);
 		
 		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
 			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);

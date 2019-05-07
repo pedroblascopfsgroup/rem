@@ -46,8 +46,8 @@ public class ClienteMicroservicioGenerico {
 		String serviceUrl = null;
 		String urlBase = null;
 		
-		//Urls para el microservicio dependiendo del entorno. devon.properties?
-		/*if (appProperties == null) {
+		//Url del microservicio dependiendo del entorno. 
+		if (appProperties == null) {
 			// esto solo se ejecuta desde el jar ejecutable de pruebas. No
 			// podemos usar log4j
 			appProperties = new Properties();
@@ -58,11 +58,12 @@ public class ClienteMicroservicioGenerico {
 				e.printStackTrace();
 			}
 		}
-		urlBase = !Checks.esNulo(appProperties.getProperty("rest.client.microservicio.url.base"))
-				? appProperties.getProperty("rest.client.microservicio.url.base") : "";*/
-		urlBase = "192.168.31.222:3141";
+		urlBase = !Checks.esNulo(appProperties.getProperty("rest.client.mscomisionamiento.url.base"))
+				? appProperties.getProperty("rest.client.mscomisionamiento.url.base") : "";
 
-		if (urlBase == null) {
+		if (Checks.esNulo(urlBase)) {
+			throw new RestConfigurationException("La url base del microservicio no esta definida");
+		} else if(urlBase.equals("")) {
 			throw new RestConfigurationException("La url base del microservicio no esta definida");
 		} else {
 			serviceUrl = urlBase.concat("/").concat(endpoint);

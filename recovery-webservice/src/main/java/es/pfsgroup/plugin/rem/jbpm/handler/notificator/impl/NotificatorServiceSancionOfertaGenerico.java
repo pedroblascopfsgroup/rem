@@ -664,11 +664,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GFORM");
 			}
 			
+			cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",
+					(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
+			cuerpo = cuerpo + String.format("<p>%s</p>",
+					(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
 			
 			if(!Checks.esNulo(gestorFormalizacion)){
 				
 				if (!Checks.estaVacio(usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion))){
-					cuerpo = cuerpo + usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion);
 					if(!Checks.esNulo(usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion))) {
 						cuerpo = cuerpo + String.format("<p>Gestor formalización Sustituto: %s </p>",
 								(gestorFormalizacion != null) ? usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion) : STR_MISSING_VALUE);
@@ -927,10 +930,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
 			gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GFORM");
 		}
-		
-		Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id",
-				gestorFormalizacion.getId());
-		List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
 
 		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",
 				(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
@@ -940,7 +939,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if(!Checks.esNulo(gestorFormalizacion)){
 			
 			if (!Checks.estaVacio(usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion))){
-				cuerpo = cuerpo + usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion);
 				if(!Checks.esNulo(usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion))) {
 					cuerpo = cuerpo + String.format("<p>Gestor formalización Sustituto: %s </p>",
 							(gestorFormalizacion != null) ? usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion) : STR_MISSING_VALUE);

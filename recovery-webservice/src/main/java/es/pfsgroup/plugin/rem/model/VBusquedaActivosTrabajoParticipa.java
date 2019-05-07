@@ -215,10 +215,6 @@ public class VBusquedaActivosTrabajoParticipa implements Serializable {
 		this.estadoContable = estadoContable;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public Float getParticipacion() {
 		return participacion;
 	}

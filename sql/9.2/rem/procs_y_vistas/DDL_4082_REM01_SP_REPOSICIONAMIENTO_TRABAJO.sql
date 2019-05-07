@@ -63,27 +63,35 @@ BEGIN
       ---------------------------------------------------------------------------------------------------------------
 
       DBMS_OUTPUT.PUT_LINE('[INFO] APROVISIONANDO LA TABLA AUXILIAR '||V_TABLA||'...');
-      V_MSQL := 'TRUNCATE TABLE '||V_TABLA||'';
-      EXECUTE IMMEDIATE V_MSQL;
-      V_MSQL := '
-            INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (TBJ_ID, ACT_ID, TPO_ID, TAP_ID ,TRA_ID)
-            SELECT DISTINCT TBJ.TBJ_ID
-							, ACT.ACT_ID
-							, TPO.DD_TPO_ID AS DD_TPO_ID
-							, TAP.TAP_ID AS TAP_ID
-							, TRA.TRA_ID
-            FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ 
-				LEFT JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = TBJ.DD_TTR_ID AND TTR.DD_TTR_CODIGO IN (''01'',''02'',''03'',''04'',''05'')
-				LEFT JOIN '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO EST ON EST.DD_EST_ID = TBJ.DD_EST_ID AND EST.DD_EST_CODIGO IN (''01'',''04'',''09'',''10'',''11'',''13'')
-				LEFT JOIN '||V_ESQUEMA||'.ACT_TBJ ATB ON ATB.TBJ_ID = TBJ.TBJ_ID
-				LEFT JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ATB.ACT_ID AND ACT.BORRADO = 0
-				LEFT JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON (TBJ.TBJ_ID = TRA.TBJ_ID) OR (ACT.ACT_ID = TRA.ACT_ID)
-				LEFT JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO ON TPO.DD_TPO_CODIGO = SUBSTR('''||TAREA_TRAMITE||''',1,4)           
-				LEFT JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_CODIGO = '''||TAREA_TRAMITE||'''
-				LEFT JOIN '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR ON STR.DD_STR_ID = TBJ.DD_STR_ID
-            WHERE TBJ.BORRADO = 0 AND TBJ.TBJ_NUM_TRABAJO = '||TRABAJO||' AND TRA.TRA_ID = '||ID_TRAMITE||'';
+
+      V_MSQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
+
+      -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+
       EXECUTE IMMEDIATE V_MSQL;
 
+      V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (TBJ_ID, ACT_ID, TPO_ID, TAP_ID ,TRA_ID ,TRA_PROCES_BPM)
+                    SELECT DISTINCT TBJ.TBJ_ID
+                                    , ACT.ACT_ID
+                                    , TPO.DD_TPO_ID AS DD_TPO_ID
+                                    , TAP.TAP_ID AS TAP_ID
+                                    , TRA.TRA_ID
+                                    , TRA.TRA_PROCESS_BPM  
+                    FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ
+                        LEFT JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = TBJ.DD_TTR_ID AND TTR.DD_TTR_CODIGO IN (''01'',''02'',''03'',''04'',''05'')
+                        LEFT JOIN '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO EST ON EST.DD_EST_ID = TBJ.DD_EST_ID AND EST.DD_EST_CODIGO IN (''01'',''04'',''09'',''10'',''11'',''13'')
+                        LEFT JOIN '||V_ESQUEMA||'.ACT_TBJ ATB ON ATB.TBJ_ID = TBJ.TBJ_ID
+                        LEFT JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ATB.ACT_ID AND ACT.BORRADO = 0
+                        LEFT JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON (TBJ.TBJ_ID = TRA.TBJ_ID) OR (ACT.ACT_ID = TRA.ACT_ID)
+                        LEFT JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO ON TPO.DD_TPO_CODIGO = SUBSTR('''||TAREA_TRAMITE||''',1,4)
+                        LEFT JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_CODIGO = '''||TAREA_TRAMITE||'''
+                        LEFT JOIN '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR ON STR.DD_STR_ID = TBJ.DD_STR_ID
+                    WHERE TBJ.BORRADO = 0 AND TBJ.TBJ_NUM_TRABAJO = '||TRABAJO||' AND TRA.TRA_ID = '||ID_TRAMITE||'';
+        
+      -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+
+      EXECUTE IMMEDIATE V_MSQL;
+      COMMIT;
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
 
       ---------------------------------------------------------------------------------------------------------------
@@ -98,18 +106,22 @@ BEGIN
             FETCH CURSOR_TRABAJOS INTO V_TBJ_ID;
             EXIT WHEN CURSOR_TRABAJOS%NOTFOUND;
 
-                  EXECUTE IMMEDIATE 'SELECT '||V_ESQUEMA||'.S_ACT_TRA_TRAMITE.NEXTVAL FROM DUAL' INTO S_TRA;
-                  EXECUTE IMMEDIATE 'SELECT '||V_ESQUEMA||'.S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL FROM DUAL' INTO S_TAR;
-                  EXECUTE IMMEDIATE 'SELECT '||V_ESQUEMA||'.S_TEX_TAREA_EXTERNA.NEXTVAL FROM DUAL' INTO S_TEX;
+                    V_MSQL := 'SELECT '||V_ESQUEMA||'.S_ACT_TRA_TRAMITE.NEXTVAL FROM DUAL';
+                    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                    EXECUTE IMMEDIATE V_MSQL INTO S_TRA;
+                    V_MSQL := 'SELECT '||V_ESQUEMA||'.S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL FROM DUAL';
+                    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                    EXECUTE IMMEDIATE V_MSQL INTO S_TAR;
+                    V_MSQL := 'SELECT '||V_ESQUEMA||'.S_TEX_TAREA_EXTERNA.NEXTVAL FROM DUAL';
+                    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                    EXECUTE IMMEDIATE V_MSQL INTO S_TEX;
 
-                  EXECUTE IMMEDIATE '
-                        UPDATE '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR TRA
-                        SET TRA.TRA_ID = '||S_TRA||'
-                              , TRA.TAR_ID = '||S_TAR||'
-                              , TRA.TEX_ID = '||S_TEX||'
-                        WHERE TBJ_ID = '||V_TBJ_ID||'
-                  '
-                  ;
+                    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR TRA
+                                SET     TRA.TAR_ID = '||S_TAR||'
+                                    ,   TRA.TEX_ID = '||S_TEX||'
+                                WHERE TBJ_ID = '||V_TBJ_ID||' ';
+                    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);                                
+                    EXECUTE IMMEDIATE V_MSQL;
 
       END LOOP;
 
@@ -123,33 +135,41 @@ BEGIN
 
       DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO USU_ID Y SUP_ID...');
 
-     EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
+     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 								FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 								JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO T2 ON T1.ACT_ID = T2.ACT_ID
 								JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD T3 ON T3.GEE_ID = T2.GEE_ID
-								JOIN '||V_ESQUEMA_MASTER||'..DD_TGE_TIPO_GESTOR T4 ON T4.DD_TGE_ID = T3.DD_TGE_ID
+								JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR T4 ON T4.DD_TGE_ID = T3.DD_TGE_ID
 								JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO T5 ON T5.DD_TPO_ID = T1.TPO_ID
 								JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO T6 ON T6.TAP_ID = T1.TAP_ID
 								WHERE T1.USU_ID IS NULL AND T5.DD_TPO_CODIGO = ''T004'' AND T6.TAP_CODIGO = '''||V_TAREA_TRAMITE||''' AND T4.DD_TGE_CODIGO = ''GACT'') T2
 							ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 							WHEN MATCHED THEN UPDATE SET
 								T1.USU_ID = T2.USU_ID';
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;                    
+
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
-EXECUTE IMMEDIATE 'MERGE INTO TRABAJOS_REPOSICIONAR T1
+
+    V_MSQL := 'MERGE INTO TRABAJOS_REPOSICIONAR T1
 						USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO T2 ON T1.ACT_ID = T2.ACT_ID
 							JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD T3 ON T3.GEE_ID = T2.GEE_ID
-							JOIN #ESQUEMA_MASTER#.DD_TGE_TIPO_GESTOR T4 ON T4.DD_TGE_ID = T3.DD_TGE_ID
+							JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR T4 ON T4.DD_TGE_ID = T3.DD_TGE_ID
 							JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO T5 ON T5.DD_TPO_ID = T1.TPO_ID
 							JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO T6 ON T6.TAP_ID = T1.TAP_ID
 							WHERE T1.SUP_ID IS NULL AND T5.DD_TPO_CODIGO = ''T004'' AND T6.TAP_CODIGO = '''||V_TAREA_TRAMITE||''' AND T4.DD_TGE_CODIGO = ''SUPACT'') T2
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL; 
+
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
-EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO T2 ON T1.ACT_ID = T2.ACT_ID
@@ -161,8 +181,12 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.USU_ID = T2.USU_ID';
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL; 
+
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
-EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO T2 ON T1.ACT_ID = T2.ACT_ID
@@ -174,8 +198,12 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
+    EXECUTE IMMEDIATE V_MSQL; 
+
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
-EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO T2 ON T1.ACT_ID = T2.ACT_ID
@@ -187,8 +215,12 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.USU_ID = T2.USU_ID';
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
+    EXECUTE IMMEDIATE V_MSQL; 
+
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
-EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO T2 ON T1.ACT_ID = T2.ACT_ID
@@ -200,8 +232,12 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);                       
+    EXECUTE IMMEDIATE V_MSQL; 
+
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
-EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO AUX ON AUX.TBJ_ID = T1.TBJ_ID
@@ -215,8 +251,12 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.USU_ID = T2.USU_ID';
-   DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
-EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
+    EXECUTE IMMEDIATE V_MSQL; 
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO AUX ON AUX.TBJ_ID = T1.TBJ_ID
@@ -230,8 +270,12 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
-DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
-EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL; 
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO AUX ON AUX.TBJ_ID = T1.TBJ_ID
@@ -245,8 +289,12 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.USU_ID = T2.USU_ID';
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);                       
+    EXECUTE IMMEDIATE V_MSQL; 
+
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
-EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
+
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						USING (SELECT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO AUX ON AUX.TBJ_ID = T1.TBJ_ID
@@ -260,28 +308,63 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
+    -- DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
+    EXECUTE IMMEDIATE V_MSQL;                             
 
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
 
 
-      DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL VOLCADO A LAS TABLAS DEFINITIVAS');
+    DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL VOLCADO A LAS TABLAS DEFINITIVAS');
 
-		
-		
-	  -- TODO : 
+
 	  ------------------------------
       -- FINALIZAR TAREAS ACTIVAS --
       ------------------------------
       DBMS_OUTPUT.PUT_LINE('[INFO] FINALIZANDO TAREAS ACTIVAS ...');
-      DBMS_OUTPUT.PUT_LINE('[INFO] Pendiente desarrollar ...');
-	  
+      
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES SET
+                        TAR.TAR_FECHA_FIN = SYSDATE
+                    ,   TAR.TAR_TAREA_FINALIZADA  = 1
+                    ,   TAR.USUARIOBORRAR = '''||V_USUARIO||'''
+                    ,   TAR.FECHABORRAR = SYSDATE
+                    ,   TAR.BORRADO = 1
+                    WHERE TAR_ID in (SELECT DISTINCT TAR.TAR_ID 
+                                        FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR aux
+                                        inner join '||V_ESQUEMA||'.ACT_TRA_TRAMITE tra on aux.tra_id = tra.tra_id
+                                        inner join '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC on tra.tra_id = tac.tra_id
+                                        INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR on tac.tar_id = tar.tar_id
+                                        inner join '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex on tex.tar_id = tar.tar_id
+                                    )';
+      -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      
+      EXECUTE IMMEDIATE V_MSQL;    
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES actualizada. '||SQL%ROWCOUNT||' Filas.');
+                            
+      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TEX_TAREA_EXTERNA SET
+            TEX.USUARIOBORRAR  = '''||V_USUARIO||'''
+        ,   TEX.FECHABORRAR = SYSDATE
+        ,   TAR.BORRADO = 1
+        WHERE TAR_ID in (SELECT DISTINCT TEX.TAR_ID 
+                            FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR aux
+                            inner join '||V_ESQUEMA||'.ACT_TRA_TRAMITE tra on aux.tra_id = tra.tra_id
+                            inner join '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC on tra.tra_id = tac.tra_id
+                            INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR on tac.tar_id = tar.tar_id
+                            inner join '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex on tex.tar_id = tar.tar_id
+                        )';  
+      -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      
+      EXECUTE IMMEDIATE V_MSQL;                        
+                
+      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TEX_TAREA_EXTERNA actualizada. '||SQL%ROWCOUNT||' Filas.');
+        
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT TAR_TAREAS_NOTIFICACIONES --
       ---------------------------------------------------------------------------------------------------------------
 
       DBMS_OUTPUT.PUT_LINE('[INFO] CREANDO TAREAS NOTIFICACIONES...');
 
-      EXECUTE IMMEDIATE '
+      V_MSQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TAR||'
             (
                   TAR_ID
@@ -329,8 +412,10 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
                   INNER JOIN '||V_ESQUEMA_MASTER||'.DD_STA_SUBTIPO_TAREA_BASE STA ON STA.DD_STA_ID = TAP.DD_STA_ID
       '
       ;
+        -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        EXECUTE IMMEDIATE V_MSQL;
 
-      DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAR||' cargada. '||SQL%ROWCOUNT||' Filas.');
+        DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAR||' cargada. '||SQL%ROWCOUNT||' Filas.');
 
       ---------------------------------------------------------------------------------------------------------------
       -- INSERT ETN_EXTAREAS_NOTIFICACIONES --
@@ -338,7 +423,7 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 
       DBMS_OUTPUT.PUT_LINE('[INFO] CREANDO TAREAS EXTERNAS NOTIFICACIONES...');
 
-      EXECUTE IMMEDIATE '
+      V_MSQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_ETN||'
             (
                   TAR_ID
@@ -350,6 +435,8 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
       '
       ;
+      -- DBMS_OUTPUT.PUT_LINE(V_MSQL); 
+      EXECUTE IMMEDIATE V_MSQL;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ETN||' cargada. '||SQL%ROWCOUNT||' Filas.');
 
@@ -359,7 +446,7 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 
       DBMS_OUTPUT.PUT_LINE('[INFO] CREANDO TAREAS EXTERNAS...');
 
-      EXECUTE IMMEDIATE '
+      V_MSQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TEX||'
             (
                   TEX_ID
@@ -375,21 +462,23 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
                   , DTYPE
             )
             SELECT DISTINCT
-                  MIG2.TEX_ID             AS TEX_ID
-                  , MIG2.TAR_ID          AS TAR_ID
-                  , MIG2.TAP_ID           AS TAP_ID
-                  , NULL                     AS TEX_TOKEN_ID_BPM
+                  MIG2.TEX_ID                   AS TEX_ID
+                  , MIG2.TAR_ID                 AS TAR_ID
+                  , MIG2.TAP_ID                 AS TAP_ID
+                  , MIG2.TRA_PROCES_BPM         AS TEX_TOKEN_ID_BPM
                   , 0                           AS TEX_DETENIDA
                   , 0                           AS VERSION
-                  , '''||V_USUARIO||'''     AS USUARIOCREAR
-                  , SYSDATE               AS FECHACREAR
-                  , 0                              AS BORRADO
-                  , 0                             AS TEX_NUM_AUTOP
-                  , ''EXTTareaExterna''     AS DTYPE
+                  , '''||V_USUARIO||'''         AS USUARIOCREAR
+                  , SYSDATE                     AS FECHACREAR
+                  , 0                           AS BORRADO
+                  , 0                           AS TEX_NUM_AUTOP
+                  , ''EXTTareaExterna''         AS DTYPE
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
                   INNER JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG2.TAP_ID
       '
       ;
+      -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      EXECUTE IMMEDIATE V_MSQL;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TEX||' cargada. '||SQL%ROWCOUNT||' Filas.');
 
@@ -399,7 +488,7 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 
       DBMS_OUTPUT.PUT_LINE('[INFO] CREANDO RELACION TAREAS ACTIVOS...');
 
-      EXECUTE IMMEDIATE '
+      V_MSQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TAC||'
             (
                   TAR_ID
@@ -436,10 +525,13 @@ EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
             WHERE UA.ORDEN = 1
       '
       ;
+      -- DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      EXECUTE IMMEDIATE V_MSQL;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAC||' cargada. '||SQL%ROWCOUNT||' Filas.');
 
      COMMIT;
+
 
 
 EXCEPTION

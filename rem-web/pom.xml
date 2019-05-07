@@ -1553,7 +1553,7 @@
 			<id>bau</id>
 			<properties>
 				<docker.cliente>bau</docker.cliente>
-				<docker.db.port>1521</docker.db.port>
+				<docker.db.port>1522</docker.db.port>
 			</properties>
 			<dependencies>
 				<!-- Versión de AspectJ -->

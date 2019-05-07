@@ -39,17 +39,17 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 	
-	public static final String OFERTA_NO_EXISTE = "The offer does not exist.";
-	public static final String OFERTA_NO_ES_DE_GIANTS = "The offer does not belong to GIANTS.";
-	public static final String OFERTA_NO_PENDIENTE_SANCION = "The offer is not pending sanction.";
-	public static final String AGRUPACION_NO_EXISTE = "The group does not exists.";
-	public static final String AGRUPACION_NO_ES_DE_GIANTS = "The group does not belong to GIANTS.";
-	public static final String ACTIVO_NO_EXISTE = "The asset does not exist.";
-	public static final String ACTIVO_NO_ES_DE_GIANT = "The asset does not belong to GIANTS.";
-	public static final String RESPUESTA_OFERTA_INCORRECTA = "The status of the resolution is incorrect. (Must be 1, 2 or 3)";
-	public static final String IMPORTE_CONTRAOFERTA_REQUERIDO = "The count offer amount must be filled.";
-	public static final String TIPO_RESOLUCION_INCORRECTO = "The type of commitee's resolution is incorrect. (Must be 1 or 3)";
-	public static final String TIPO_DE_CANCELACION_REQUERIDO = "The type of cancellation must be filled.";
+	public static final String OFERTA_NO_EXISTE					= "La oferta no existe.";
+	public static final String OFERTA_NO_ES_DE_GIANTS			= "La oferta no es de la cartera Giants.";
+	public static final String OFERTA_NO_PENDIENTE_SANCION		= "La oferta no es pendiente de sanción.";
+	public static final String AGRUPACION_NO_EXISTE				= "La agrupación no existe.";
+	public static final String AGRUPACION_NO_ES_DE_GIANTS		= "La agrupación no es de la cartera Giants.";
+	public static final String ACTIVO_NO_EXISTE					= "El activo no existe.";
+	public static final String ACTIVO_NO_ES_DE_GIANT			= "El activo no es de GIANTS.";
+	public static final String RESPUESTA_OFERTA_INCORRECTA		= "El estado de la resolución ('status of the resolucion') debe ser 01, 02 o 03.";
+	public static final String IMPORTE_CONTRAOFERTA_REQUERIDO	= "El importe de contraoferta ('count offer amount') debe estar relleno.";
+	public static final String TIPO_RESOLUCION_INCORRECTO		= "El tipo de resolución comité ('type of comitee's resolution') debe ser 01, 02 o 03.";
+	public static final String TIPO_DE_CANCELACION_REQUERIDO	= "El tipo de cancelacion ('type of cancellation') debe estar relleno.";
 	
 	@Autowired
 	private MSVBusinessValidationRunner validationRunner;

@@ -104,7 +104,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	chainedStore: 'comboSubtipoActivo',
 								chainedReference: 'subtipoActivoCombo',
 					        	bind: {
-					        		readOnly : '{!esUA}',
 				            		store: '{comboTipoActivo}',
 				            		value: '{activo.tipoActivoCodigo}'
 				            	},
@@ -118,7 +117,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
 					        	reference: 'subtipoActivoCombo',
 					        	bind: {
-					        		readOnly : '{!esUA}',
 				            		store: '{comboSubtipoActivo}',
 				            		value: '{activo.subtipoActivoCodigo}',
 				            		disabled: '{!activo.tipoActivoCodigo}'
@@ -190,7 +188,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	handler: 'checkVerificarPorcentajeParticipacion'
 			                }
 						]
-					},{ // Columna 3
+					},{ // Columna 3 
 						defaultType: 'textfieldbase',
 						flex: 1,
 						items:[
@@ -202,8 +200,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	labelAlign: 'top',
 			                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
 			                	bind:{
-			                		value: '{activo.descripcion}',
-			                		readOnly : '{!esUA}'
+			                		value: '{activo.descripcion}'
 			                	}
 			                }
 						]

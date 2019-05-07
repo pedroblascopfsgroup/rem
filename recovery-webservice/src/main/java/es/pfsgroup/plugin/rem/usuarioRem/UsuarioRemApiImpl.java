@@ -18,7 +18,10 @@ public class UsuarioRemApiImpl implements UsuarioRemApi{
 
 	@Autowired
 	private GenericABMDao genericDao;
-
+	
+	@Autowired
+	private Usuario usuario;
+	
 	public List<String> getGestorSustitutoUsuario(Usuario usuario) {
 
 		List<String> mailsPara = new ArrayList<String>();
@@ -43,6 +46,30 @@ public class UsuarioRemApiImpl implements UsuarioRemApi{
 		}
 
 		return mailsPara;
+	}
+	
+	public String getApellidoNombreSustituto(Usuario usuario) {
+		
+		String apellidoNombreSus = null;
+		
+		GestorSustituto gestorSustituto = genericDao.get(GestorSustituto.class,genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
+		if (!Checks.esNulo(gestorSustituto)) {
+			if (!Checks.esNulo(gestorSustituto)) {
+					if (!Checks.esNulo(gestorSustituto)) {
+						if ((gestorSustituto.getFechaFin() == null || gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date()))
+								&& (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date()))
+								&& !gestorSustituto.getAuditoria().isBorrado()) {
+
+							if (!Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto()) || !Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto().getEmail())) {
+								apellidoNombreSus = gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre();
+							}
+						}
+					}
+				}
+			}
+		
+		return apellidoNombreSus;
+		
 	}
 
 }

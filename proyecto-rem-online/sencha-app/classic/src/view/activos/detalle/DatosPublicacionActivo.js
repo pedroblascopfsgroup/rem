@@ -83,7 +83,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												        // The total column count must be specified here
 												        columns: 2,
 												        trAttrs: {height: '30px', width: '100%'},
-												        tdAttrs: {width: '65%'},
+												        tdAttrs: {width: '55%'},
 												        tableAttrs: {
 												            style: {
 												                width: '100%'
@@ -100,8 +100,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 														fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.estado.venta'),
 														bind: '{datospublicacionactivo.estadoPublicacionVenta}',
 														readOnly: true,
-										            	labelWidth: 150,
-										            	width: 280,
+										            	labelWidth: 140,
+										            	width: 240,
 										            	style:'margin-top:10px'
 											        },
 											        {
@@ -109,7 +109,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 														bind: '{datospublicacionactivo.diasCambioPublicacionVenta}',
 														readOnly: true,
 														hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!=CONST.CARTERA['BANKIA']),
-										            	labelWidth: 110,
+										            	labelWidth: 90,
 										            	width: 60,
 										            	style:'margin-top:10px'
 											        }
@@ -354,8 +354,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 														fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.estado.alquiler'),
 														bind: '{datospublicacionactivo.estadoPublicacionAlquiler}',
 														readOnly: true,
-										            	labelWidth: 150,
-										            	width: 280,
+										            	labelWidth: 140,
+										            	width: 240,
 										            	style:'margin-top:10px'
 											        },
 											        {
@@ -363,7 +363,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 														bind: '{datospublicacionactivo.diasCambioPublicacionAlquiler}',
 														readOnly: true,
 														hidden: (me.lookupController().getViewModel().get('activo').get('entidadPropietariaCodigo')!= CONST.CARTERA['BANKIA']),
-										            	labelWidth: 110,
+										            	labelWidth: 90,
 										            	width: 60,
 										            	style:'margin-top:10px'
 											        }

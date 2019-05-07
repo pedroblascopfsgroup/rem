@@ -640,15 +640,19 @@ public class AgrupacionAdapter {
 								}
 
 								
-								if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubAlq())&& calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubAlq()))
-										||(!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubVenta()) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubVenta()))
-									) {
-									if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionAlquiler()) && (!activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo().equals(DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER)))
-											|| (!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionVenta()) && (!activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionVenta().getCodigo().equals(DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA)))	
-												){
-											cambioEstadoPublicacion = Boolean.TRUE;
-										}
-						
+								if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubAlq())&& calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubAlq()))) {
+									if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionAlquiler()) && (!activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo().equals(DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER)))	
+											){
+										cambioEstadoPublicacion = Boolean.TRUE;
+									}
+								}
+								
+								
+								if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubVenta()) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubVenta()))) {
+									if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionVenta()) && (!activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionVenta().getCodigo().equals(DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA)))	
+											){
+										cambioEstadoPublicacion = Boolean.TRUE;
+									}
 								}
 								
 								if(!Checks.esNulo(activoAgrup.getActivo().getValoracion())) {

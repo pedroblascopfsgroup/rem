@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.DtoVActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -797,5 +798,19 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		
 		return  listDtoTipoAgrupacion;
+	}
+
+	@Override
+    public int countActivosAfectoGENCAT(ActivoAgrupacion agrupacion) {
+		int numActivos = 0;
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", agrupacion.getId());
+		VActivosAfectosGencatAgrupacion activos = genericDao.get(VActivosAfectosGencatAgrupacion.class, filtro);
+		
+		if (!Checks.esNulo(activos)) {
+			numActivos = activos.getContador();
+		}
+		return numActivos;
+
 	}
 }

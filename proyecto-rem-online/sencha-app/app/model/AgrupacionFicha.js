@@ -244,8 +244,26 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                     name:'subtipoActivoCodigo'
                 },
                 {
+		    		name:'activosGencat'
+		    	},
+		    	{
+		    		name:'isAgrupacionGencat',
+	    			calculate: function(data) {
+	    				var tipoAgrupacion = data.tipoAgrupacionCodigo;
+	    				if (tipoAgrupacion == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'] || tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])
+	    				{
+	    					if (data.activosGencat != null && data.activosGencat > 0) {
+	    						return false;
+	    					}
+	    				}
+	        			return true;
+	        		},
+	        		depends: ['tipoAgrupacionCodigo','activosGencat']
+		    	},
+		    	{
                 	name: 'codSubcartera'
                 }
+
     ],
     
 	proxy: {
@@ -259,5 +277,4 @@ Ext.define('HreRem.model.AgrupacionFicha', {
         },
 		extraParams: {pestana: '1'}
     }    
-
 });

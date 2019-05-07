@@ -146,6 +146,13 @@ public interface ActivoAgrupacionApi {
 	
 	public List<DtoTipoAgrupacion> getComboTipoAgrupacion();
 
+	/**
+	 * Cuenta el numero de activos afecto Gencat que estan presentes en una agrupacion
+	 * @param agrupacion
+	 * @return int n de activos
+	 */
+	public int countActivosAfectoGENCAT(ActivoAgrupacion agrupacion);
+
 	Usuario getGestorComercialAgrupacion(List<ActivosLoteOfertaDto> dtoActivos);
 
 }

@@ -5,12 +5,17 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.NotificacionGencat;
+import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
+import es.pfsgroup.plugin.rem.model.VisitaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Repository("ActivoAgrupacionActivoDao")
@@ -57,6 +62,34 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 	public void deleteById(Long id) {
 		
 		StringBuilder sb = new StringBuilder("delete from ActivoAgrupacionActivo aaa where aaa.id = "+id);		
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		
+	}
+    
+    @Override
+    public void deleteTramiteGencat(ComunicacionGencat comunicacionGencat, List<NotificacionGencat> notificacionesGencat, List<ReclamacionGencat> reclamacionesGencat, VisitaGencat visitaGencat) {
+    	StringBuilder sb;
+    	
+    	sb = new StringBuilder("delete from AdecuacionGencat ag where ag.comunicacion.id = "+comunicacionGencat.getId());		
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+    	
+		sb = new StringBuilder("delete from OfertaGencat og where og.comunicacion.id = "+comunicacionGencat.getId());		
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		
+		if (!Checks.estaVacio(notificacionesGencat)) {
+			sb = new StringBuilder("delete from NotificacionGencat ng where comunicacion.id = "+comunicacionGencat.getId());		
+			this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		}
+		if (!Checks.estaVacio(reclamacionesGencat)) {
+			sb = new StringBuilder("delete from ReclamacionGencat rg where comunicacion.id = "+comunicacionGencat.getId());		
+			this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		}
+		if (!Checks.esNulo(visitaGencat)) {
+			sb = new StringBuilder("delete from VisitaGencat vg where comunicacion.id = "+comunicacionGencat.getId());		
+			this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		}
+		
+		sb = new StringBuilder("delete from ComunicacionGencat cg where cg.id = "+comunicacionGencat.getId());		
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
 	}
@@ -152,6 +185,18 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 		HQLBuilder hql = new HQLBuilder("from ActivoAgrupacionActivo aa");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.id", idAgrupacion);
 		HQLBuilder.addFiltroWhereInSiNotNull(hql, "aa.activo.id", activosID);
+		
+		return HibernateQueryUtils.list(this, hql);
+	}
+	
+	@Override
+	public List<ActivoAgrupacionActivo> getListActivoAgrupacionVentaByIdActivo(Long idActivo) {
+
+		HQLBuilder hql = new HQLBuilder("from ActivoAgrupacionActivo aa");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.activo.id", idActivo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.tipoAgrupacion.codigo", DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA);
+		hql.appendWhere("aa.agrupacion.fechaBaja is null");
+		hql.appendWhere("aa.auditoria.borrado = 0");
 		
 		return HibernateQueryUtils.list(this, hql);
 	}

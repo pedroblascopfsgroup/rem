@@ -63,7 +63,13 @@ Ext.define('HreRem.model.ActivoAgrupacionActivo', {
     			name:'idPrinexHPM'
     		},
     		{
-    			name:'condPublAlquiler'
+    			name: 'estadoAlquiler'
+    		},
+    		{
+    			name: 'activoGencat'
+    		},
+    		{
+    			name: 'condPublAlquiler'
     		}
     ],
     

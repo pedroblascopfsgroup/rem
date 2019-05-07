@@ -140,6 +140,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
                                      FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
                                     WHERE BORRADO = 0
                                       AND DD_EPA_CODIGO = '''||pESTADO||''')
+					, APU_FECHA_INI_ALQUILER = SYSDATE
                     , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                     , FECHAMODIFICAR = SYSDATE
                 WHERE ACT_ID = '||nACT_ID||'
@@ -165,6 +166,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
                                      FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
                                     WHERE BORRADO = 0
                                       AND DD_EPV_CODIGO = '''||pESTADO||''')
+					, APU_FECHA_INI_VENTA = SYSDATE
                     , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                     , FECHAMODIFICAR = SYSDATE
                 WHERE ACT_ID = '||nACT_ID||'
@@ -191,6 +193,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 											WHERE BORRADO = 0
 											  AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||''')
 						  , APU_CHECK_OCULTAR_A = '||pOCULTAR||'
+						  , APU_FECHA_INI_ALQUILER = SYSDATE
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
 						  , APU_MOT_OCULTACION_MANUAL_A = NULL
@@ -215,6 +218,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 															 FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
 															WHERE PAC.ACT_ID = ACT.ACT_ID
 															  AND PAC.BORRADO = 0)
+						  , APU_FECHA_INI_ALQUILER = SYSDATE
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
 						  , APU_MOT_OCULTACION_MANUAL_V = NULL
@@ -235,6 +239,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 															 FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
 															WHERE PAC.ACT_ID = ACT.ACT_ID
 															  AND PAC.BORRADO = 0)
+						  , APU_FECHA_INI_ALQUILER = SYSDATE
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE ACT_ID = '||nACT_ID||'
@@ -282,6 +287,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 											WHERE BORRADO = 0
 											  AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||''')
 						  , APU_CHECK_OCULTAR_V = '||pOCULTAR||'
+						  , APU_FECHA_INI_VENTA = SYSDATE
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE ACT_ID = '||nACT_ID||'
@@ -305,6 +311,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 															 FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
 															WHERE PAC.ACT_ID = ACT.ACT_ID
 															  AND PAC.BORRADO = 0)
+						  , APU_FECHA_INI_VENTA = SYSDATE
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE ACT_ID = '||nACT_ID||'
@@ -324,6 +331,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 															 FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
 															WHERE PAC.ACT_ID = ACT.ACT_ID
 															  AND PAC.BORRADO = 0)
+						  , APU_FECHA_INI_VENTA = SYSDATE
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE ACT_ID = '||nACT_ID||'
@@ -1204,7 +1212,7 @@ END IF;
 		                                          ,APU_MOT_OCULTACION_MANUAL_A,APU_CHECK_PUBLICAR_A
 		                                          ,APU_CHECK_OCULTAR_A,APU_CHECK_OCULTAR_PRECIO_A
 		                                          ,APU_CHECK_PUB_SIN_PRECIO_A
-		                                          ,APU_FECHA_INI_VENTA
+		                                          ,SYSDATE
 		                                          ,VERSION
 		                                          ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
 												  ,0 BORRADO
@@ -1254,7 +1262,7 @@ END IF;
 		                                          ,APU_MOT_OCULTACION_MANUAL_A,APU_CHECK_PUBLICAR_A
 		                                          ,APU_CHECK_OCULTAR_A,APU_CHECK_OCULTAR_PRECIO_A
 		                                          ,APU_CHECK_PUB_SIN_PRECIO_A
-		                                          ,APU_FECHA_INI_ALQUILER
+		                                          ,SYSDATE
 		                                          ,VERSION
 		                                          ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
 												  ,0 BORRADO

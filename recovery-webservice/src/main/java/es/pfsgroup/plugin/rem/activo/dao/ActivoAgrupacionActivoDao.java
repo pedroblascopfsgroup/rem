@@ -5,7 +5,11 @@ import java.util.List;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.NotificacionGencat;
+import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
+import es.pfsgroup.plugin.rem.model.VisitaGencat;
 
 public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionActivo, Long>{
 	
@@ -69,6 +73,10 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	 * @return Activo
 	 */
 	public Activo getActivoMatrizByIdAgrupacion(Long idAgrupacion);
+
+	public List<ActivoAgrupacionActivo> getListActivoAgrupacionVentaByIdActivo(Long idActivo);
+
+	public void deleteTramiteGencat(ComunicacionGencat comunicacionGencat, List<NotificacionGencat> notificacionesGencat, List<ReclamacionGencat> reclamacionesGencat, VisitaGencat visitaGencat);
 	
 	/**
 	 * Este método devuelve el Activo Matriz de una agrupacion de tipo PA por medio de un idAgrupacion

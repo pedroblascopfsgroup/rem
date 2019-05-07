@@ -1487,9 +1487,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         if (me.down('[name=comite]').value != 'Haya') {
             me.habilitarCampo(me.down('[name=fechaEnvio]'));
         }
-    },
-    
-    
+    },   
     
     T015_DefinicionOfertaValidacion: function(){
     	var me = this;
@@ -2069,6 +2067,47 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     	});
     	
+    },
+
+    T016_ProcesoAdecuacionValidacion: function() {
+        var me = this;
+        var comboReforma = me.down('[name=necesitaReforma]');
+        var fechaRevision = me.down('[name=fechaRevision]');
+        var importeReforma = me.down('[name=importeReforma]');
+        comboReforma.allowBlank = false;
+        fechaRevision.allowBlank = false;
+        me.setFechaActual(me.down('[name=fechaRevision]'));
+        importeReforma.allowBlank = false;
+    	me.deshabilitarCampo(me.down('[name=importeReforma]'));
+        comboReforma.addListener('change', function(){
+	        if(comboReforma.value == '01'){
+	        	me.habilitarCampo(me.down('[name=importeReforma]'));
+	        	importeReforma.allowBlank = false;
+	        	importeReforma.validate();
+	        }
+	        else{
+	        	
+	        	me.deshabilitarCampo(me.down('[name=importeReforma]'));
+	        	me.down('[name=importeReforma]').reset();
+	        	importeReforma.allowBlank = true;
+	        	importeReforma.validate();
+	        }
+        });
+        fechaRevision.addListener('click', function(){
+        	me.down('[name=fechaRevision]').reset();
+        	me.setDate(me.down('[name=fechaRevision]'));
+        	
+        });
+    },
+    
+    T016_ComunicarGENCATValidacion: function() {
+        var me = this;
+        var fecha = me.down('[name=fechaTarea]');
+        var fechaComunicacion = me.down('[name=fechaComunicacion]');
+        fecha.setValue($AC.getCurrentDate()); 
+        //me.deshabilitarCampo(fecha);
+        fecha.setReadOnly(true);
+        fechaComunicacion.allowBlank = false;
     },
 
     habilitarCampo: function(campo) {

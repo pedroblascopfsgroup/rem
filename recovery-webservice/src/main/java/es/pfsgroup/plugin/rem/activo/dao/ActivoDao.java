@@ -254,6 +254,15 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	void validateAgrupacion(Long idActivo);
 
+	/**
+	 * Comprueba en un activo si tiene ofertas de venta.
+	 * @param idActivo
+	 * @return boolean true or false
+	 */
+	Boolean existenOfertasVentaActivo(Long idActivo);
+	
+	Boolean todasLasOfertasEstanAnuladas(Long idActivo);
+
 	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivoBorradoFalse(Long idActivo);
 
 

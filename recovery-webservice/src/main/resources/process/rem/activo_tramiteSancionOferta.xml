@@ -34,10 +34,8 @@
 <!-- 		<transition to="T013_PosicionamientoYFirma" name="ConFormalizacionDeTanteo"></transition> -->
 		<transition to="T013_ResolucionComite" name="ConFormalizacionSinTanteoSinAtribucion"></transition>
 		<transition to="forkReserva" name="ConFormalizacionSinTanteoConAtribucionConReserva"></transition>
-		<transition to="forkSinReservaConTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaConTanteo"></transition>
 		<transition to="forkSinReservaSinTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo"></transition>
 		<transition to="forkReservaCajamar" name="ApruebaConReservaCajamar"></transition>
-		<transition to="forkSinReservaConTanteoCajamar" name="ApruebaSinReservaConTanteoCajamar"></transition>
 		<transition to="forkSinReservaSinTanteoCajamar" name="ApruebaSinReservaSinTanteoCajamar"></transition>
 	</decision>
 	
@@ -118,10 +116,8 @@
 		<transition to="Fin" name="Rechaza"></transition>
 		<transition to="T013_RespuestaOfertante" name="Contraoferta"></transition>
 		<transition to="forkReserva" name="ApruebaConReserva"></transition>
-		<transition to="forkSinReservaConTanteo" name="ApruebaSinReservaConTanteo"></transition>
 		<transition to="forkSinReservaSinTanteo" name="ApruebaSinReservaSinTanteo"></transition>
 		<transition to="forkReservaCajamar" name="ApruebaConReservaCajamar"></transition>
-		<transition to="forkSinReservaConTanteoCajamar" name="ApruebaSinReservaConTanteoCajamar"></transition>
 		<transition to="forkSinReservaSinTanteoCajamar" name="ApruebaSinReservaSinTanteoCajamar"></transition>
 	</decision>
 
@@ -150,10 +146,8 @@
 	<decision name ="T013_RespuestaOfertanteDecision" expression="#{T013_RespuestaOfertanteDecision}">
 		<transition to="T013_RatificacionComite" name="AceptaBankia"></transition>
 		<transition to="forkReserva" name="AceptaConReserva"></transition>
-		<transition to="forkSinReservaConTanteo" name="AceptaSinReservaConTanteo"></transition>
 		<transition to="forkSinReservaSinTanteo" name="AceptaSinReservaSinTanteo"></transition>
 		<transition to="forkReservaCajamar" name="AceptaConReservaCajamar"></transition>
-		<transition to="forkSinReservaConTanteoCajamar" name="AceptaSinReservaConTanteoCajamar"></transition>
 		<transition to="forkSinReservaSinTanteoCajamar" name="AceptaSinReservaSinTanteoCajamar"></transition>
 		<transition to="Fin" name="Rechaza"></transition>
 	</decision>
@@ -183,7 +177,6 @@
 	<decision name="T013_RatificacionComiteDecision" expression="#{T013_RatificacionComiteDecision}">
 		<transition to="forkReserva" name="AceptaConReserva"></transition>
 		<transition to="T013_RespuestaOfertante" name="Contraoferta"></transition>
-		<transition to="forkSinReservaConTanteo" name="AceptaSinReservaConTanteo"></transition>
 		<transition to="forkSinReservaSinTanteo" name="AceptaSinReservaSinTanteo"></transition>
 		<transition to="Fin" name="Rechaza"></transition>
 	</decision>
@@ -191,12 +184,6 @@
 	<fork name="forkReserva">
 		<transition to="T013_InstruccionesReserva" name="reserva"></transition>
 		<transition to="T013_InformeJuridico" name="informe"></transition>
-	</fork>
-
-	<fork name="forkSinReservaConTanteo">
-		<transition to="T013_InformeJuridico" name="informe"></transition>
-		<transition to="T013_ResultadoPBC" name="resultado"></transition>
-		<transition to="T013_ResolucionTanteo" name="resolucion"></transition>
 	</fork>
 	
 	<fork name="forkSinReservaSinTanteo">
@@ -206,11 +193,6 @@
 
 	<fork name="forkReservaCajamar">
 		<transition to="T013_InstruccionesReserva" name="reserva"></transition>
-	</fork>
-
-	<fork name="forkSinReservaConTanteoCajamar">
-		<transition to="T013_ResultadoPBC" name="resultado"></transition>
-		<transition to="T013_ResolucionTanteo" name="resolucion"></transition>
 	</fork>
 	
 	<fork name="forkSinReservaSinTanteoCajamar">
@@ -235,20 +217,9 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T013_InstruccionesReservaDecision" name="avanzaBPM"></transition>
+		<transition to="forkSinTanteo" name="avanzaBPM"></transition>
 	</state>
-	
-	<decision name="T013_InstruccionesReservaDecision" expression="#{T013_InstruccionesReservaDecision}">
-		<transition to="forkConTanteo" name="Si"></transition>
-		<transition to="forkSinTanteo" name="No"></transition>
-	</decision>
-	
-	<fork name="forkConTanteo">
-		<transition to="T013_ObtencionContratoReserva" name="obtencion"></transition>
-		<transition to="T013_ResultadoPBC" name="resultado"></transition>
-		<transition to="T013_ResolucionTanteo" name="resolucion"></transition>
-	</fork>
-	
+		
 	<fork name="forkSinTanteo">
 		<transition to="T013_ObtencionContratoReserva" name="obtencion"></transition>
 		<transition to="T013_ResultadoPBC" name="resultado"></transition>
@@ -304,35 +275,7 @@
 		<transition to="Fin" name="NoAprobadoSinReserva"></transition>
 	</decision>
 	
-	<state name="T013_ResolucionTanteo">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="T013_ResolucionTanteoDecision" name="avanzaBPM"></transition>
-	</state>
-	
-	<decision name ="T013_ResolucionTanteoDecision" expression="#{T013_ResolucionTanteoDecision}">
-		<transition to="T013_ResolucionExpediente" name="EjerceConReserva"></transition>
-		<transition to="Fin" name="EjerceSinReserva"></transition>
-		<transition to="Fin" name="NoEjerce"></transition>
-	</decision>
-	
-		<state name="T013_ObtencionContratoReserva">
+	<state name="T013_ObtencionContratoReserva">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"

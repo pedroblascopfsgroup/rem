@@ -1888,6 +1888,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoAdecuacionesAlquilerByActivo',
 				extraParams: {id: '{activo.id}'}
 			}
+
 		},
 
 		comboSituacionActivo: {

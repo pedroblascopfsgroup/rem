@@ -21,6 +21,8 @@
 --##		0.9 Habilitamos el campo AGR.AGA_PRINCIPAL para usarlo para identificar el activo matriz en una agrupación de tipo Promoción Alquiler,
 --## 			añadimos la columna borrado para colorear aquellos activos dados de baja en el listado de activos. Tambien añadimos la columna ACT_AGA_ID_PRINEX_HPM (HREOS-5586)
 --##		1.0 Añadimos las superficies útiles, de parcela y de elemento común.
+--##        1.1 Se cambia la query de GENCAT para actualizarla a los nuevos requerimientos
+--##        1.2 Cambiamos la vista para que calcule desde la vista gencat.
 --##########################################
 --*/
 
@@ -110,6 +112,8 @@ BEGIN
 					WHERE (VAL5.VAL_FECHA_FIN IS NULL OR TO_DATE(VAL5.VAL_FECHA_FIN,''DD/MM/YYYY'') >= TO_DATE(sysdate,''DD/MM/YYYY''))
 						AND TO_DATE(VAL5.VAL_FECHA_INICIO,''DD/MM/YYYY'') <= TO_DATE(sysdate,''DD/MM/YYYY'') AND VAL5.BORRADO = 0) VAL2
 			WHERE VAL2.VAL_FECHA_INICIO = VAL2.FECHA_MAX AND VAL2.ACT_ID = ACT.ACT_ID) AS VAL_IMPORTE_DESCUENTO_PUBLICO,
+        CASE WHEN GEN.ACT_ID IS NOT NULL THEN 1
+        ELSE 0 END AS GENCAT,
         V_PUBL.COND_PUBL_VENTA,
         V_PUBL.COND_PUBL_ALQUILER
 		FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO 			AGR
@@ -131,7 +135,7 @@ BEGIN
         LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION 	TCO 	ON TCO.DD_TCO_ID= ACT_APU.DD_TCO_ID  AND TCO.BORRADO = 0
 		INNER JOIN '|| V_ESQUEMA ||'.V_COND_PUBLICACION             V_PUBL  ON V_PUBL.ACT_ID = ACT.ACT_ID
         LEFT JOIN (
-            SELECT DISTINCT T1.ACT_ID, SUM(T4.DIS_CANTIDAD) OVER (PARTITION BY T1.ACT_ID,T5.DD_TPH_DESCRIPCION) AS SUMA 
+            SELECT DISTINCT T1.ACT_ID, SUM(T4.DIS_CANTIDAD) OVER (PARTITION BY T1.ACT_ID,T5.DD_TPH_DESCRIPCION) AS SUMA
 				FROM '|| V_ESQUEMA ||'.ACT_ACTIVO T1
 				INNER JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL T2 ON T2.ACT_ID = T1.ACT_ID AND T2.BORRADO = 0
 				LEFT JOIN '|| V_ESQUEMA ||'.ACT_VIV_VIVIENDA 		T3 ON T3.ICO_ID = T2.ICO_ID	
@@ -147,7 +151,8 @@ BEGIN
 				LEFT JOIN '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION 	T4 ON T4.ICO_ID = T2.ICO_ID AND T4.BORRADO = 0
 				LEFT JOIN '|| V_ESQUEMA ||'.DD_TPH_TIPO_HABITACULO 	T5 ON T5.DD_TPH_ID = T4.DD_TPH_ID AND T5.BORRADO = 0
             WHERE T5.DD_TPH_CODIGO IN (''02'') AND T1.BORRADO = 0
-        ) BANYO ON (BANYO.ACT_ID = ACT.ACT_ID)';
+        ) BANYO ON (BANYO.ACT_ID = ACT.ACT_ID)
+        LEFT JOIN '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT GEN ON GEN.ACT_ID = ACT.ACT_ID';
 
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVOS_AGRUPACION...Creada OK');

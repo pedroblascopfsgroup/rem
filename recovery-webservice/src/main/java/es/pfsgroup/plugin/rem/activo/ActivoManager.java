@@ -2341,32 +2341,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activo)) {
 				Filter activoIDFiltro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 				Order order = new Order(OrderType.DESC, "id");
-				List<ActivoInformeComercialHistoricoMediador> historicoMediadorlist = genericDao
-						.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoIDFiltro);
+				List<ActivoInformeComercialHistoricoMediador> historicoMediadorlist = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoIDFiltro);
 				if (!Checks.estaVacio(historicoMediadorlist)) {
-					ActivoInformeComercialHistoricoMediador historicoAnteriorMediador = historicoMediadorlist.get(0); // El
-																														// primero
-																														// es
-																														// el
-																														// de
-																														// ID
-																														// más
-																														// alto
-																														// (el
-																														// último).
+					ActivoInformeComercialHistoricoMediador historicoAnteriorMediador = historicoMediadorlist.get(0); // El primero es el de ID más alto (el último).
 					beanUtilNotNull.copyProperty(historicoAnteriorMediador, "fechaHasta", new Date());
 					genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoAnteriorMediador);
 
 				} else {
-					// Si la lista esta vacia es porque es el la primera vez que
-					// se modifica el historico de mediadores, por lo que
-					// tenemos que introducir el que
+					// Si la lista esta vacia es porque es la primera vez que se modifica el historico de mediadores, por lo que tenemos que introducir el que
 					// habia antes. La fecha desde se deja vacia por ahora.
 					if (!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "fechaHasta", new Date());
 						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "activo", activo);
-						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "mediadorInforme",
-								activo.getInfoComercial().getMediadorInforme());
+						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "mediadorInforme", activo.getInfoComercial().getMediadorInforme());
 						genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorPrimero);
 					}
 				}
@@ -2376,22 +2363,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(historicoMediador, "fechaDesde", new Date());
 			beanUtilNotNull.copyProperty(historicoMediador, "activo", activo);
 
-			if (!Checks.esNulo(dto.getCodigo()) || !dto.getCodigo().equals("")) { // si
-																					// no
-																					// se
-																					// selecciona
-																					// mediador
-																					// en
-																					// el
-																					// combo,
-																					// se
-																					// devuelve
-																					// mediador
-																					// "",
-																					// no
-																					// null.
-				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
-						Long.parseLong(dto.getCodigo()));
+			if (!Checks.esNulo(dto.getCodigo()) || !dto.getCodigo().equals("")) { // si no se selecciona mediador en el combo, se devuelve mediador "", no null.
+				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(dto.getCodigo()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
 
 				if (Checks.esNulo(proveedor)) {
@@ -2399,16 +2372,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					throw new JsonViewerException(messageServices.getMessage(AVISO_MEDIADOR_NO_EXISTE));
 				}
 
-				if (!Checks.esNulo(proveedor.getFechaBaja())
-						|| (!Checks.esNulo(proveedor.getEstadoProveedor()) && DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR
-								.equals(proveedor.getEstadoProveedor().getCodigo()))) {
+				if (!Checks.esNulo(proveedor.getFechaBaja()) || (!Checks.esNulo(proveedor.getEstadoProveedor()) && DDEstadoProveedor.ESTADO_BAJA_PROVEEDOR.equals(proveedor.getEstadoProveedor().getCodigo()))) {
 					throw new JsonViewerException(messageServices.getMessage(AVISO_MEDIADOR_BAJA));
 				}
 
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
 
-				// Asignar el nuevo proveedor de tipo mediador al activo,
-				// informacion comercial.
+				// Asignar el nuevo proveedor de tipo mediador al activo, informacion comercial.
 				if (!Checks.esNulo(activo.getInfoComercial())) {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "mediadorInforme", proveedor);
 					genericDao.save(Activo.class, activo);
@@ -2420,6 +2390,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
 		
+			if(activoDao.isActivoMatriz(activo.getId())) {
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				if(!Checks.esNulo(agr)) {
+					List <ActivoAgrupacionActivo> activosList = agr.getActivos();
+					for(ActivoAgrupacionActivo act : activosList) {
+						//Creamos el registro de Mediador en cada una de las UAs, pero no en el AM, ya que venimos de crearlo.
+						if(activoDao.isUnidadAlquilable(act.getActivo().getId())){
+							dto.setIdActivo(act.getActivo().getId());
+							createHistoricoMediador(dto);
+						}
+					}
+					dto.setIdActivo(activo.getId()); //Necesario cuando se realiza la carga masiva, para que no de error por modificar el dto
+				}
+			}
+			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 			return false;

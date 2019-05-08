@@ -2576,19 +2576,7 @@ comprobarObligatoriedadRte: function(){
 								}						
 							}						
 						}
-						campoTipoRte.setValue();
-						comprador.set("descripcionTipoDocumentoRte", null);						
-						campoNumRte.setValue();
-						campoNombreRazonSocialRte.setValue();
-						campoApellidosRte.setValue();
-						campoDireccionRte.setValue();
-						campoPovinciaRte.setValue();
-						campoTelefono1Rte.setValue();
-						campoTelefono2Rte.setValue();
-						campoMunicipioRte.setValue();
-						campoCodigoPostalRte.setValue();
-						campoEmailRte.setValue();
-						campoPaisRte.setValue();
+
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
 						if(!Ext.isEmpty(campoEstadoCivil)){

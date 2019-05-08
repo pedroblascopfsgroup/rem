@@ -3748,18 +3748,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
 
 	    if (!estadoCheckPublicarFicha){
+	    	checkboxPublicarAlquiler.setReadOnly(true);
             checkbox.setValue(false);
-        } else {
-		    if(isDirty && !estadoPubVentaPublicado) {
-		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		        checkboxPublicarVenta.setReadOnly(readOnly);
-		    } else if (!isDirty && !estadoPubVentaPublicado) {
-		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		        checkboxPublicarVenta.setReadOnly(readOnly);
-	    		checkboxPublicarVenta.setValue(false);
-		    } else {
-		    	checkboxPublicarVenta.setReadOnly(true);
-		    }
+        } else if (!estadoPubVentaPublicado) {
+	        var readOnly = !(Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) || checkbox.getValue());
+	        checkboxPublicarVenta.setReadOnly(readOnly);
+	        if(!checkbox.getValue()) {
+	        	checkboxPublicarVenta.setValue(false);
+	        }
         }
 	},
 
@@ -3772,25 +3768,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
 
 		if(!estadoCheckPublicarFicha){
+			checkboxPublicarAlquiler.setReadOnly(true);
             checkbox.setValue(false);
-        } else {
-			if(isDirty && !estadoPubAlquilerPublicado) {
-				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-	            checkboxPublicarAlquiler.setReadOnly(readOnly);
-			} else if (!isDirty && !estadoPubAlquilerPublicado) {
-				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-				checkboxPublicarAlquiler.setReadOnly(readOnly);
-				checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
+        } else if (!estadoPubAlquilerPublicado) {
+			var readOnly = !(Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) || checkbox.getValue());
+            checkboxPublicarAlquiler.setReadOnly(readOnly);
+			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
+			if(!checkbox.getValue()) {
 				checkboxPublicarAlquiler.setValue(false);
-						}
-						if (!estadoCheckPublicarFicha) {
-							checkboxPublicarAlquiler.setReadOnly(true);
-			} else {
-				var readOnly = Ext
-						.isEmpty(me.getViewModel().get(
-								'datospublicacionactivo').getData().precioWebAlquiler)
-						&& !checkbox.getValue();
-				checkboxPublicarAlquiler.setReadOnly(readOnly);
 			}
 		}
     },

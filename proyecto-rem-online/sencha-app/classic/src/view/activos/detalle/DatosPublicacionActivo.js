@@ -803,7 +803,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									]
 								},
 								{
-									fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicado'),
+									fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicadoUltimaPublicacion'),
 									bind: '{datospublicacionactivo.totalDiasPublicadoVenta}',
 									readOnly: true
 								},
@@ -811,7 +811,13 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									fieldLabel: HreRem.i18n('title.publicaciones.estado.portalesExternos'),
 									bind: '{activoCondicionantesDisponibilidad.portalesExternosDescripcion}',
 									readOnly: true
+								},
+								{
+									fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicado'),
+									bind: '{datospublicacionactivo.totalDiasPublicadoHistoricoVenta}',
+									readOnly: true
 								}
+								
 							]
 					},
 // Histórico de estados de publicación alquiler.
@@ -841,13 +847,18 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									]
 								},
 								{
-									fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicado'),
+									fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicadoUltimaPublicacion'),
 									bind: '{datospublicacionactivo.totalDiasPublicadoAlquiler}',
 									readOnly: true
 								},
 								{
 									fieldLabel: HreRem.i18n('title.publicaciones.estado.portalesExternos'),
 									bind: '{activoCondicionantesDisponibilidad.portalesExternosDescripcion}',
+									readOnly: true
+								},
+								{
+									fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicado'),
+									bind: '{datospublicacionactivo.totalDiasPublicadoHistoricoAlquiler}',
 									readOnly: true
 								}
 							]

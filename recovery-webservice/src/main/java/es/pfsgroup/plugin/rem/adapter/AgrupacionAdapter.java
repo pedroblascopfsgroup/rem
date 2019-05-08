@@ -815,254 +815,275 @@ public class AgrupacionAdapter {
 
 	@Transactional(readOnly = false)
 	public void createActivoAgrupacion(Long numActivo, Long idAgrupacion, Integer activoPrincipal, boolean ventaCartera)
-			throws JsonViewerException {
+			throws JsonViewerException, IllegalAccessException, InvocationTargetException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
 
-		try {
-			// Validaciones
-			if (Checks.esNulo(agrupacion)) {
-				throw new JsonViewerException("La agrupación no existe");
+		// Validaciones
+		if (Checks.esNulo(agrupacion)) {
+			throw new JsonViewerException("La agrupación no existe");
+		}
+
+		int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
+
+		if (Checks.esNulo(activo)) {
+			throw new JsonViewerException("El activo no existe");
+		}
+
+		if (!Checks.esNulo(numActivo)) {
+			if (!DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+					&& !particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))) {
+				throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
+			} else if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+					&& particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))) {
+				throw new JsonViewerException("El activo se encuetra dentro del perímetro HAYA");
 			}
-			
-			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
+		}
 
-			if (Checks.esNulo(activo)) {
-				throw new JsonViewerException("El activo no existe");
-			}
+		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(numActivo) && !Checks.esNulo(activo)) {
 
-			if (!Checks.esNulo(numActivo)){
-				if(!DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
-				} else if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo se encuetra dentro del perímetro HAYA");
-				}
-			}
+			// Agrupacion Comercial
+			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+					|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER
+							.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 
-			if (!Checks.esNulo(agrupacion) && !Checks.esNulo(numActivo) && !Checks.esNulo(activo)) {
-
-				// Agrupacion Comercial
-				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-						|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-
-					// El activo no es comercializable
-					if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
-						throw new JsonViewerException("El activo no es comercializable");
-					}
-					
-					// El activo ya esta en una agrupacion comercial viva
-					if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
-						throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
-					}
-					
-									
-					// Agrupacion Comercial - Alquiler
-					if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-					
-						// El activo tiene ofertas vivas
-						if (particularValidator.existeActivoConExpedienteComercialVivo(Long.toString(numActivo))) {
-							throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-						}
-						
-						// El activo es de alquiler
-						if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())
-								|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) {
-
-							// El activo esta alquilado
-							if (particularValidator.esActivoAlquilado(Long.toString(numActivo))) {
-								throw new JsonViewerException("El activo está alquilado");
-							}
-
-							// El tipo de alquiler de la agrupacion es null    OR
-							// El tipo de alquiler del activo es distinto al de la agrupacion(Comercial - Alquiler)
-							if (Checks.esNulo(agrupacion.getTipoAlquiler()) ||
-									(!Checks.esNulo(activo.getTipoAlquiler()) && !Checks.esNulo(agrupacion.getTipoAlquiler())
-									&& !activo.getTipoAlquiler().getCodigo().equals(agrupacion.getTipoAlquiler().getCodigo()))) {
-								throw new JsonViewerException("El tipo de alquiler del activo es distinto al de la agrupación");
-							}
-						}
-					}
-
+				// El activo no es comercializable
+				if (particularValidator.isActivoNoComercializable(Long.toString(numActivo))) {
+					throw new JsonViewerException("El activo no es comercializable");
 				}
 
-
-				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
-					
-					
-					//existeOfertaAprobadaActivo
-					// El activo tiene ofertas vivas
-					if (particularValidator.existeOfertaAprobadaActivo(Long.toString(numActivo))) {
-						throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-					}
-					
-					
-					if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())){
-						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
-					}
-
-				}else if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())){
-
-					if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())){
-						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
-					}else if(!Checks.esNulo(activo.getTipoAlquiler()) && !Checks.esNulo(agrupacion.getTipoAlquiler())){
-						if(!activo.getTipoAlquiler().getCodigo().equals(agrupacion.getTipoAlquiler().getCodigo())){
-							throw new JsonViewerException("El tipo de alquiler del activo es distinto al de la agrupación");
-						}
-					}else if(particularValidator.esActivoAlquilado(Long.toString(numActivo))){
-						throw new JsonViewerException("El activo está alquilado");
-					}
-				}
-			}
-
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
+				// El activo ya esta en una agrupacion comercial viva
+				if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
 					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
 				}
-			}
 
-			//Si el activo es de Liberbank, además debe ser de la misma subcartera
-			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) && !Checks.estaVacio(agrupacion.getActivos())) {
-				if(!Checks.esNulo(activo.getSubcartera())) {
-					if(!agrupacion.getActivos().get(0).getActivo().getSubcartera().equals(activo.getSubcartera())) {
-						throw new JsonViewerException("El activo añadido tiene que tener la misma subcartera que los ya existentes");
+				// Agrupacion Comercial - Alquiler
+				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER
+						.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+
+					// El activo tiene ofertas vivas
+					if (particularValidator.existeActivoConExpedienteComercialVivo(Long.toString(numActivo))) {
+						throw new JsonViewerException("El activo tiene ofertas individuales vivas");
 					}
-				}else{
-					throw new JsonViewerException("El activo no se puede añadir por que no tiene subcartera");
 
+					// El activo es de alquiler
+					if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER
+							.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())
+							|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA
+									.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) {
+
+						// El activo esta alquilado
+						if (particularValidator.esActivoAlquilado(Long.toString(numActivo))) {
+							throw new JsonViewerException("El activo está alquilado");
+						}
+
+						// El tipo de alquiler de la agrupacion es null OR
+						// El tipo de alquiler del activo es distinto al de la
+						// agrupacion(Comercial - Alquiler)
+						if (Checks.esNulo(agrupacion.getTipoAlquiler()) || (!Checks.esNulo(activo.getTipoAlquiler())
+								&& !Checks.esNulo(agrupacion.getTipoAlquiler()) && !activo.getTipoAlquiler().getCodigo()
+										.equals(agrupacion.getTipoAlquiler().getCodigo()))) {
+							throw new JsonViewerException(
+									"El tipo de alquiler del activo es distinto al de la agrupación");
+						}
+					}
 				}
+
 			}
 
-			// Si la agrupación es asistida, el activo además de existir tiene
-			// que ser asistido.
-			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-				if(!activoApi.isActivoAsistido(activo)){
-					throw new JsonViewerException(AgrupacionValidator.ERROR_NOT_ASISTIDA);
-				}
-				//el activo no puede estar en otra agrupación asistida vigente
-				if(activoAgrupacionApi.estaActivoEnOtraAgrupacionVigente(agrupacion,activo)){
-					throw new JsonViewerException(AgrupacionValidator.ERROR_EN_OTRA_ASISTIDA);
-				}
-			}
+			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 
-			if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					&& activoApi.isActivoAsistido(activo)) {
-				throw new JsonViewerException(AgrupacionValidator.ERROR_OBRANUEVA_NO_ASISTIDA);
-			}
+				// existeOfertaAprobadaActivo
+				// El activo tiene ofertas vivas
+				if (particularValidator.existeOfertaAprobadaActivo(Long.toString(numActivo))) {
+					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+				}
 
-			// Si la agrupación es de tipo comercial y contiene ofertas, en
-			// cualquier estado, rechazar el activo.
-			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					 || DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-				
-				//Comprobamos no mezclar activos canarios y peninsulares
-				distintosTiposImpuesto(agrupacion, activo);
-				
-				//Comprobamos que los activos son del mismo propietario
-				comprobarDistintoPropietario(agrupacion, activo);
-				
-				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
-				if (tieneOfertasNoAnuladas(ofertasAgrupacion)) {
+				if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER
+						.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) {
 					throw new JsonViewerException(
-							"No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
-				}
-				// Si el activo es de tipo Formalizable, pero la agrupación en
-				// la que lo vamos a meter NO lo es, lanzamos una Excepcion
-				// Si el activo es no Formalizable, pero la agrupación en la que
-				// lo vamos a meter SI que lo es, también lanzamos una Excepcion
-				if (activoApi.esActivoFormalizable(activo.getNumActivo())
-						&& NO_ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())
-						|| !activoApi.esActivoFormalizable(activo.getNumActivo())
-								&& ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())) {
-					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
+							"El destino comercial del activo no coincide con el de la agrupación");
 				}
 
+			} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER
+					.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+
+				if (DDTipoComercializacion.CODIGO_VENTA
+						.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) {
+					throw new JsonViewerException(
+							"El destino comercial del activo no coincide con el de la agrupación");
+				} else if (!Checks.esNulo(activo.getTipoAlquiler()) && !Checks.esNulo(agrupacion.getTipoAlquiler())) {
+					if (!activo.getTipoAlquiler().getCodigo().equals(agrupacion.getTipoAlquiler().getCodigo())) {
+						throw new JsonViewerException("El tipo de alquiler del activo es distinto al de la agrupación");
+					}
+				} else if (particularValidator.esActivoAlquilado(Long.toString(numActivo))) {
+					throw new JsonViewerException("El activo está alquilado");
+				}
 			}
-			// Si es el primer activo, validamos si tenemos los datos necesarios
-			// del activo, y modificamos la agrupación con esos datos
-			if (num == 0) {
-				activoAgrupacionValidate(activo, agrupacion);
-				agrupacion = updateAgrupacionPrimerActivo(activo, agrupacion);
+		}
+
+		if (!Checks.esNulo(numActivo)) {
+			if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
+				throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
+			}
+		}
+
+		// Si el activo es de Liberbank, además debe ser de la misma subcartera
+		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
+				&& !Checks.estaVacio(agrupacion.getActivos())) {
+			if (!Checks.esNulo(activo.getSubcartera())) {
+				if (!agrupacion.getActivos().get(0).getActivo().getSubcartera().equals(activo.getSubcartera())) {
+					throw new JsonViewerException(
+							"El activo añadido tiene que tener la misma subcartera que los ya existentes");
+				}
+			} else {
+				throw new JsonViewerException("El activo no se puede añadir por que no tiene subcartera");
+
+			}
+		}
+
+		// Si la agrupación es asistida, el activo además de existir tiene
+		// que ser asistido.
+		if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			if (!activoApi.isActivoAsistido(activo)) {
+				throw new JsonViewerException(AgrupacionValidator.ERROR_NOT_ASISTIDA);
+			}
+			// el activo no puede estar en otra agrupación asistida vigente
+			if (activoAgrupacionApi.estaActivoEnOtraAgrupacionVigente(agrupacion, activo)) {
+				throw new JsonViewerException(AgrupacionValidator.ERROR_EN_OTRA_ASISTIDA);
+			}
+		}
+
+		if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+				&& activoApi.isActivoAsistido(activo)) {
+			throw new JsonViewerException(AgrupacionValidator.ERROR_OBRANUEVA_NO_ASISTIDA);
+		}
+
+		// Si la agrupación es de tipo comercial y contiene ofertas, en
+		// cualquier estado, rechazar el activo.
+		if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())
+				|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER
+						.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+
+			// Comprobamos no mezclar activos canarios y peninsulares
+			distintosTiposImpuesto(agrupacion, activo);
+
+			// Comprobamos que los activos son del mismo propietario
+			comprobarDistintoPropietario(agrupacion, activo);
+
+			List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
+			if (tieneOfertasNoAnuladas(ofertasAgrupacion)) {
+				throw new JsonViewerException(
+						"No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
+			}
+			// Si el activo es de tipo Formalizable, pero la agrupación en
+			// la que lo vamos a meter NO lo es, lanzamos una Excepcion
+			// Si el activo es no Formalizable, pero la agrupación en la que
+			// lo vamos a meter SI que lo es, también lanzamos una Excepcion
+			if (activoApi.esActivoFormalizable(activo.getNumActivo())
+					&& NO_ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())
+					|| !activoApi.esActivoFormalizable(activo.getNumActivo())
+							&& ES_FORMALIZABLE.equals(agrupacion.getIsFormalizacion())) {
+				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_COMPARTE_FORMALIZACION);
+			}
+
+		}
+		// Si es el primer activo, validamos si tenemos los datos necesarios
+		// del activo, y modificamos la agrupación con esos datos
+		if (num == 0) {
+			activoAgrupacionValidate(activo, agrupacion);
+			agrupacion = updateAgrupacionPrimerActivo(activo, agrupacion);
+			activoAgrupacionApi.saveOrUpdate(agrupacion);
+		}
+
+		// Validaciones de agrupación
+		agrupacionValidate(activo, agrupacion);
+
+		if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())
+				|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER
+						.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			saveAgrupacionLoteComercial(activo, agrupacion);
+		} else {
+			ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
+			activoAgrupacionActivo.setActivo(activo);
+			activoAgrupacionActivo.setAgrupacion(agrupacion);
+			Date today = new Date();
+			activoAgrupacionActivo.setFechaInclusion(today);
+			activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+		}
+
+		// Validaciones para las agrupaciones de tipo proyecto
+		if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
+			if (!activo.getCartera().equals(proyecto.getCartera())
+					|| !activo.getProvincia().equals(proyecto.getProvincia().getCodigo())) {
+				throw new JsonViewerException("El activo no tiene la misma Provincia o Cartera que la agrupación");
+			}
+		}
+
+		// En asistidas hay que hacer una serie de actualizaciones
+		// 'especiales'.
+		if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			activoApi.updateActivoAsistida(activo);
+		}
+
+		if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+
+			if (particularValidator.isMismoEpuActivoPrincipalAgrupacion(String.valueOf(numActivo),
+					String.valueOf(agrupacion.getNumAgrupRem()))) {
+				DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
+				dto.setIdActivo(activo.getId());
+
+				ActivoAgrupacionActivo aga = activoApi
+						.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
+				if (!Checks.esNulo(aga)) {
+					activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+				}
+
+				ActivoPublicacion activoPublicacionPrincipal = activoPublicacionDao
+						.getActivoPublicacionPorIdActivo(agrupacion.getActivoPrincipal().getId());
+				ActivoPublicacion activoPublicacion = activoPublicacionDao
+						.getActivoPublicacionPorIdActivo(activo.getId());
+				BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionVenta",
+						activoPublicacionPrincipal.getEstadoPublicacionVenta());
+				BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionAlquiler",
+						activoPublicacionPrincipal.getEstadoPublicacionAlquiler());
+				BeanUtils.copyProperty(activoPublicacion, "checkPublicarVenta",
+						activoPublicacionPrincipal.getCheckPublicarVenta());
+				BeanUtils.copyProperty(activoPublicacion, "checkPublicarAlquiler",
+						activoPublicacionPrincipal.getCheckPublicarAlquiler());
+				BeanUtils.copyProperty(activoPublicacion, "checkOcultarVenta",
+						activoPublicacionPrincipal.getCheckOcultarVenta());
+				BeanUtils.copyProperty(activoPublicacion, "checkOcultarAlquiler",
+						activoPublicacionPrincipal.getCheckOcultarAlquiler());
+				BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioVenta",
+						activoPublicacionPrincipal.getCheckSinPrecioVenta());
+				BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioAlquiler",
+						activoPublicacionPrincipal.getCheckSinPrecioAlquiler());
+				BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioVenta",
+						activoPublicacionPrincipal.getCheckOcultarPrecioVenta());
+				BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler",
+						activoPublicacionPrincipal.getCheckOcultarPrecioAlquiler());
+				activoPublicacionDao.saveOrUpdate(activoPublicacion);
+			} else {
+				throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
+			}
+		}
+
+		// Actualizar el tipoComercialización del activo
+		updaterState.updaterStateTipoComercializacion(activo);
+
+		// Actualizar el activo principal de la agrupación
+
+		if (!Checks.esNulo(activoPrincipal)) {
+			if (activoPrincipal == 1) {
+				agrupacion.setActivoPrincipal(activo);
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
-
-			// Validaciones de agrupación
-			agrupacionValidate(activo, agrupacion);
-
-			if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())
-					|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-				saveAgrupacionLoteComercial(activo, agrupacion);
-			} else {
-				ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
-				activoAgrupacionActivo.setActivo(activo);
-				activoAgrupacionActivo.setAgrupacion(agrupacion);
-				Date today = new Date();
-				activoAgrupacionActivo.setFechaInclusion(today);
-				activoAgrupacionActivoApi.save(activoAgrupacionActivo);
-			}
-
-			//Validaciones para las agrupaciones de tipo proyecto
-			if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-				ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
-				if(!activo.getCartera().equals(proyecto.getCartera())
-						|| !activo.getProvincia().equals(proyecto.getProvincia().getCodigo())){
-					throw new JsonViewerException("El activo no tiene la misma Provincia o Cartera que la agrupación");
-				}
-			}
-
-			// En asistidas hay que hacer una serie de actualizaciones
-			// 'especiales'.
-			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-				activoApi.updateActivoAsistida(activo);
-			}
-
-			if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-
-				if (particularValidator.isMismoEpuActivoPrincipalAgrupacion(String.valueOf(numActivo), String.valueOf(agrupacion.getNumAgrupRem()))) {
-					DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
-					dto.setIdActivo(activo.getId());
-
-					ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
-					if (!Checks.esNulo(aga)) {
-						activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
-					}
-					
-					ActivoPublicacion activoPublicacionPrincipal = activoPublicacionDao.getActivoPublicacionPorIdActivo(agrupacion.getActivoPrincipal().getId());
-					ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(activo.getId());
-					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionVenta", activoPublicacionPrincipal.getEstadoPublicacionVenta());
-					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionAlquiler", activoPublicacionPrincipal.getEstadoPublicacionAlquiler());
-					BeanUtils.copyProperty(activoPublicacion, "checkPublicarVenta", activoPublicacionPrincipal.getCheckPublicarVenta());
-					BeanUtils.copyProperty(activoPublicacion, "checkPublicarAlquiler", activoPublicacionPrincipal.getCheckPublicarAlquiler());
-					BeanUtils.copyProperty(activoPublicacion, "checkOcultarVenta", activoPublicacionPrincipal.getCheckOcultarVenta());
-					BeanUtils.copyProperty(activoPublicacion, "checkOcultarAlquiler", activoPublicacionPrincipal.getCheckOcultarAlquiler());
-					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioVenta", activoPublicacionPrincipal.getCheckSinPrecioVenta());
-					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", activoPublicacionPrincipal.getCheckSinPrecioAlquiler());
-					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", activoPublicacionPrincipal.getCheckOcultarPrecioVenta());
-					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", activoPublicacionPrincipal.getCheckOcultarPrecioAlquiler());
-					activoPublicacionDao.saveOrUpdate(activoPublicacion);
-				} else {
-					throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
-				}
-			}
-
-			// Actualizar el tipoComercialización del activo
-			updaterState.updaterStateTipoComercializacion(activo);
-
-			// Actualizar el activo principal de la agrupación
-			
-			if (!Checks.esNulo(activoPrincipal)) {
-				if (activoPrincipal == 1) {
-					agrupacion.setActivoPrincipal(activo);
-					activoAgrupacionApi.saveOrUpdate(agrupacion);
-				}
-			}
-
-		} catch (JsonViewerException jve) {
-			throw jve;
-		} catch (Exception e) {
-			throw new JsonViewerException(e);
 		}
+
 	}
 	
 	@Transactional(readOnly = false)
@@ -1924,7 +1945,7 @@ public class AgrupacionAdapter {
 		boolean resultado = false;
 		if(agr != null && agr.getActivos() != null && agr.getActivos().size() > 0){
 			for(ActivoAgrupacionActivo activo : agr.getActivos()){
-				if(DDTipoComercializar.CODIGO_RETAIL.equals(activo.getActivo().getTipoComercializar().getCodigo())){
+				if(activo.getActivo().getTipoComercializar() != null && DDTipoComercializar.CODIGO_RETAIL.equals(activo.getActivo().getTipoComercializar().getCodigo())){
 					resultado = true;
 					break;
 				}
@@ -1940,7 +1961,7 @@ public class AgrupacionAdapter {
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		String offerType = oferta.getTipoOferta().getCodigo();
 		
-		DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
+		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
 				dto.getCodigoEstadoOferta());
 		
 		if (!Checks.esNulo(dto.getIdAgrupacion())) {
@@ -1959,7 +1980,7 @@ public class AgrupacionAdapter {
 				ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo,
 						filtroTofAlquiler);
 
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())
 						&& (oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null
 								&& DDCartera.CODIGO_CARTERA_LIBERBANK
 										.equals(oferta.getActivoPrincipal().getCartera().getCodigo()))) {
@@ -1973,7 +1994,14 @@ public class AgrupacionAdapter {
 								|| (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))) {
 							throw new JsonViewerException("Activo " + numActivo + " sin precio");
 						}
+						if(Checks.esNulo(activo.getTipoAlquiler())){
+							throw new JsonViewerException("El valor de Tipo de Alquiler del activo "+numActivo+" no permite la realización de una oferta");
+						}
 					}
+				}
+				
+				if(DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && DDTipoOferta.CODIGO_ALQUILER.equals(offerType) && Checks.esNulo(activo.getTipoAlquiler())){
+					throw new JsonViewerException("El valor de Tipo de Alquiler del activo "+activo.getNumActivo()+" no permite la realización de una oferta");
 				}
 			}
 		}
@@ -1990,7 +2018,7 @@ public class AgrupacionAdapter {
 		
 		// Si se pretende aceptar la oferta, comprobar primero si la agrupación
 		// de la oferta es de tipo 'Lote comercial'.
-		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
 			if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
 					.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 				// En caso que la agrupación sea formalizable comprobamos tenga
@@ -2006,11 +2034,11 @@ public class AgrupacionAdapter {
 		}
 
 		// try {
-		oferta.setEstadoOferta(tipoOferta);
+		oferta.setEstadoOferta(estadoOferta);
 
 		// Si el estado de la oferta cambia a Aceptada cambiamos el resto de
 		// estados a Congelada excepto los que ya estuvieran en Rechazada
-		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
 			// Comprobar si la agrupación de la oferta es de tipo 'Lote
 			// comercial'.
 			if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
@@ -2046,7 +2074,7 @@ public class AgrupacionAdapter {
 		persistOferta(oferta);
 
 		// si la oferta ha sido rechazada enviamos un email/notificacion.
-		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
+		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 
 			if (!Checks.esNulo(dto.getMotivoRechazoCodigo())) {
 				DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi

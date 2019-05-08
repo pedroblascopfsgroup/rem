@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
+import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 
 /**
  * Task de Quartz que comprueba si ha habido algún cambio en BD que requiera de
@@ -50,6 +51,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	private RegistroLlamadasManager registroLlamadas;
 
 	public static Integer MAXIMO_INTENTOS_DEFAULT = 5;
+	
 	@Resource
 	private Properties appProperties;
 
@@ -131,7 +133,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		obtenerProperties();
 
 		long iteracion = System.currentTimeMillis();
-		logger.debug("[DETECCIÓN CAMBIOS] Inicio [it=" + iteracion + "]");
+		trace("[DETECCIÓN CAMBIOS] Inicio [it=" + iteracion + "]");
 		try {
 			List<DetectorCambiosBD> registroCambiosHandlersAjecutar = registroCambiosHandlers;
 			if (handlerToExecute != null) {
@@ -146,12 +148,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				if (!registroCambiosHandlersAjecutar.get(0).isApiRestCerrada()) {
 					for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
 						if (handler.isActivo()) {
-							logger.debug("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
-							logger.debug("[DETECCIÓN CAMBIOS] Optimizado: " + handler.procesarSoloCambiosMarcados());
+							trace("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
 							ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
-							long startTime = System.currentTimeMillis();
-
-							logger.trace(handler.getClass().getSimpleName() + ": obtenemos los cambios de la BD");
 							Class control = handler.getDtoClass();
 							CambiosList listPendientes = null;
 							CambiosList listPendientesTodosBloques = new CambiosList(tamanyoBloque);
@@ -160,11 +158,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							RestLlamada registro = new RestLlamada();
 							Date fechaEjecucion = new Date();
 							handler.actualizarVistaMaterializada(registro);
-							Boolean marcarComoEnviado = false;
 							Integer contError = 0;
+							Boolean marcarComoEnviado = true;
 
 							do {
-								boolean somethingdone = false;
 								registro.setIteracion(iteracion);
 								try {
 									if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
@@ -176,58 +173,35 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 										listPendientes = handler.listDatosCompletos(control, registro, listPendientes);
 									}
 
-									somethingdone = ((listPendientes != null) && (!listPendientes.isEmpty()));
-									if (somethingdone) {
-										logger.debug("[DETECCIÓN CAMBIOS] Enviando " + listPendientes.size()
-												+ " cambios mediante el handler " + handler.getClass().getName());
-									} else {
-										logger.debug(
-												"[DETECCIÓN CAMBIOS] No se han encontrado cambios para enviar. Handler: "
-														+ handler.getClass().getName());
-									}
+									
 									ejecutaTarea(handler, listPendientes, control, registro);
 									// pasamos de bloque
 									pasarDeBloque(listPendientes);
-									marcarComoEnviado = true;
 									contError = 0;
-									logger.trace(
-											"TIMER DETECTOR FULL detectaCambios [" + handler.getClass().getSimpleName()
-													+ "]: " + (System.currentTimeMillis() - startTime));
 								} catch (ErrorServicioWebcom e) {
-									if (e.isReintentable()) {
+									// si no es reintentable siguiente bloque
+									if (!e.isReintentable()) {
+										logger.error(
+												"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
+												e);
+										pasarDeBloque(listPendientes);
+									} else {
 										logger.error(
 												"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
 												e);
-									} else {
-										logger.fatal(
-												"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
-												e);
-									}
-									// si no es reintentable siguiente bloque
-									if (!e.isReintentable()) {
-										if (listPendientes.size() == listPendientes.getPaginacion()
-												.getTamanyoBloque()) {
-											listPendientes.getPaginacion().setHasMore(true);
-											listPendientes.getPaginacion().setNumeroBloque(
-													listPendientes.getPaginacion().getNumeroBloque() + 1);
-
-										} else {
-											listPendientes.getPaginacion().setHasMore(false);
-										}
-									} else {
-										marcarComoEnviado = false;
 										contError++;
+										if(contError < MAXIMO_INTENTOS){
+											continue;
+										}else{
+											marcarComoEnviado = false;
+										}
+										
 									}
 								} finally {
-									if (somethingdone && (registroLlamadas != null)) {
+									if (!Checks.estaVacio(listPendientes) && registroLlamadas != null) {
 										registro.logTiempoBorrarHistorico();
 										registro.logTiempoInsertarHistorico();
-										if (marcarComoEnviado) {
-											registroLlamadas.guardaRegistroLlamada(registro, handler,
-													DeteccionCambiosBDTask.MAXIMO_INTENTOS_DEFAULT);
-										} else {
-											registroLlamadas.guardaRegistroLlamada(registro, handler, contError);
-										}
+										registroLlamadas.guardaRegistroLlamada(registro, handler);
 
 										llamadas.add(registro);
 									}
@@ -246,20 +220,21 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 						}
 					}
 				} else {
-					logger.error("La API REST esta cerrada no se ejecutará");
+					trace("La API REST esta cerrada no se ejecutará");
 				}
 				registroCambiosHandlersAjecutar.get(0).closeSession();
 			} else {
-				logger.warn("El registro de cambios en BD aún no está disponible");
+				trace("El registro de cambios en BD aún no está disponible");
 			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
+			running = false;
 			handlerToExecute.eviarCorreoErrorDC(e.getMessage());
 			throw new ErrorServicioWebcom(e.getMessage());
 		} finally {
 			running = false;
-			logger.debug("[DETECCIÓN CAMBIOS] Fin [it=" + iteracion + "]");
+			trace("[DETECCIÓN CAMBIOS] Fin [it=" + iteracion + "]");
 		}
 
 	}
@@ -275,6 +250,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 					.equals(listPendientes.getPaginacion().getTamanyoBloque())) {
 				listPendientes.getPaginacion().setHasMore(true);
 				listPendientes.getPaginacion().setNumeroBloque(listPendientes.getPaginacion().getNumeroBloque() + 1);
+				trace("[DETECCIÓN CAMBIOS] pasando al bloque "+listPendientes.getPaginacion().getNumeroBloque());
 
 			} else {
 				listPendientes.getPaginacion().setHasMore(false);
@@ -293,9 +269,17 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void ejecutaTarea(DetectorCambiosBD<?> handler, List listPendientes, Class control, RestLlamada registro)
 			throws ErrorServicioWebcom {
+		if (!Checks.estaVacio(listPendientes)) {
+			trace("[DETECCIÓN CAMBIOS] Enviando " + listPendientes.size()
+					+ " cambios mediante el handler " + handler.getClass().getName());
+		} else {
+			trace(
+					"[DETECCIÓN CAMBIOS] No se han encontrado cambios para enviar. Handler: "
+							+ handler.getClass().getName());
+		}
 
 		if ((listPendientes != null) && (!listPendientes.isEmpty())) {
-			logger.trace(handler.getClass().getName() + ": invocando al servicio REST");
+			trace(handler.getClass().getName() + ": invocando al servicio REST");
 			handler.invocaServicio(listPendientes, registro);
 
 		} else {
@@ -360,7 +344,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	private void configuraRegistroLlamadas(ApplicationContext applicationContext, String[] registros) {
 		registroLlamadas = (RegistroLlamadasManager) applicationContext.getBean(registros[0]);
 		if (registros.length > 1) {
-			logger.warn("Se han encontrado " + registros.length + " implementaciones para "
+			trace("Se han encontrado " + registros.length + " implementaciones para "
 					+ RegistroLlamadasManager.class.getName() + ". Escogemos una al azar");
 		}
 	}
@@ -419,13 +403,19 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void marcarComoEnviado(DetectorCambiosBD handler, Class control, ArrayList<RestLlamada> llamadas,
 			CambiosList listPendientesTodosBloques, Date fechaEjecucion) throws Exception {
-		logger.trace(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
-		if (!handler.procesarSoloCambiosMarcados()) {
-			handler.marcaComoEnviados(control, llamadas);
+		trace(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+		handler.marcaComoEnviados(control, llamadas);
+	}
+	
+	private void trace(String mensaje) {
+		Boolean webcomSimulado = Boolean.valueOf(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "true"));
+		if (webcomSimulado) {
+			logger.error(mensaje);
 		} else {
-			handler.marcarComoEnviadosMarcadosComun(listPendientesTodosBloques, control);
-			handler.marcarComoEnviadosMarcadosEspecifico(fechaEjecucion);
+			logger.trace(mensaje);
 		}
+
 	}
 
 }

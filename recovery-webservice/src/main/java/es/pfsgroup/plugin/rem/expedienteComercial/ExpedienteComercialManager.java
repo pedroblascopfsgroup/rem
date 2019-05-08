@@ -6004,7 +6004,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			CondicionanteExpediente condiciones = expediente.getCondicionante();
 			
 			if (!Checks.esNulo(condiciones)) {
-				if (!Checks.esNulo(condiciones.getSolicitaFinanciacion())) {
+				if (!Checks.esNulo(dto.getSolicitaFinanciacion())) {
 					
 					Integer solicitaFinanciacion = null;
 					

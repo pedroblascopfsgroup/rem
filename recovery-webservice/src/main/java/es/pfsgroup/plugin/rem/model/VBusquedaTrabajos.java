@@ -120,6 +120,9 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="PROPIETARIO")
 	private Long propietario;
 	
+	@Column(name="ID_ACTIVO_UA")
+	private Long idActivoUa;
+	
 
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
@@ -375,6 +378,14 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setPropietario(Long propietario) {
 		this.propietario = propietario;
+	}
+
+	public Long getIdActivoUa() {
+		return idActivoUa;
+	}
+
+	public void setIdActivoUa(Long idActivoUa) {
+		this.idActivoUa = idActivoUa;
 	}
 
 }

@@ -1214,7 +1214,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			        type: 'uxproxy',
 			        localUrl: '/trabajos.json',
 			        remoteUrl: 'trabajo/findAll',
-		        	extraParams: {idActivo: '{activo.id}'},
+		        	extraParams: {idActivo: '{activo.id}',idActivoUa:'{activo.id}'},
 		        	actionMethods: {read: 'POST'} // Necesario para que el filtro no se mande en la URL lo que provoca un problema de encoding
 		        	
 		    	},	    		

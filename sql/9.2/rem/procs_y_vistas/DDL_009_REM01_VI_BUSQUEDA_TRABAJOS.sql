@@ -2,6 +2,8 @@
 --##########################################
 --## AUTOR=RAMON LLINARES
 --## FECHA_CREACION=20190502
+--## AUTOR=Juan Angel sanchez
+--## FECHA_CREACION=20171222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-3462
@@ -11,6 +13,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Cambio obtener id-activo de la unidad alquilable
 --##########################################
 --*/
 
@@ -86,7 +89,8 @@ BEGIN
 			DECODE (tbj.tbj_fecha_cierre_economico, NULL, 0, 1) AS con_cierre_economico,
           	tbj.tbj_fecha_cierre_economico, 
 			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, DECODE(tbj.TBJ_IMPORTE_TOTAL, NULL, 1, 0, 1, 0), 1) AS facturado, 
-			ttr.dd_ttr_filtrar
+			ttr.dd_ttr_filtrar,
+			tbj.act_id as id_activo_ua
 
      FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj JOIN ' || V_ESQUEMA || '.act_tbj atj ON atj.tbj_id = tbj.tbj_id
           LEFT JOIN ' || V_ESQUEMA || '.act_activo act ON act.act_id = atj.act_id and act.borrado = 0

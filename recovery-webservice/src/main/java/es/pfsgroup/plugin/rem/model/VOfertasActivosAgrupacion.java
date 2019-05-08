@@ -127,6 +127,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name="CARTERA_CODIGO")
 	private String carteraCodigo;
 	
+	@Column(name="SUBCARTERA_CODIGO")
+	private String subcarteraCodigo;
+	
 	@Column(name="NUM_ACTIVO_UVEM")
 	private Long numActivoUvem;
 	
@@ -401,6 +404,14 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setCarteraCodigo(String carteraCodigo) {
 		this.carteraCodigo = carteraCodigo;
+	}
+	
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
 	}
 
 	public String getTipoRechazoCodigo() {

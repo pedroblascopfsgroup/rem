@@ -93,6 +93,19 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.');
+		
+		DBMS_OUTPUT.put_line('	[INFO] SE INSERTA EL PERIMETRO EN LA TABLA AUX_HREOS_5932_PERIM ');
+  		
+  		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
+						(SELECT 
+							ACT_NUM_ACTIVO 
+							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
+							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3-6'' AND BORRADO = 0
+						)';
+  		
+  		EXECUTE IMMEDIATE V_MSQL;
+  		
+  		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 
 
 /**	3.6.3. A. Marcar “Ocupado SI”, “Con título SI” actualizando los discleimer correspondientes (cabecera del activo y publicación)	**/
@@ -350,7 +363,20 @@ BEGIN
 								
 		EXECUTE IMMEDIATE V_MSQL;
 		
-		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.');
+		
+		DBMS_OUTPUT.put_line('	[INFO] SE INSERTA EL PERIMETRO EN LA TABLA AUX_HREOS_5932_PERIM ');
+  		
+  		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
+						(SELECT 
+							ACT_NUM_ACTIVO 
+							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
+							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3-6-4'' AND BORRADO = 0
+						)';
+  		
+  		EXECUTE IMMEDIATE V_MSQL;
+  		
+  		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 
 /**	3.6.4. A. Marcar “Ocupado NO”, “Con título Vacío” actualizando los discleimer correspondientes (cabecera del activo y publicación)	**/
 

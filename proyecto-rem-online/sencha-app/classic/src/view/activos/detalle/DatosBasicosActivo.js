@@ -161,14 +161,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                
 							{
 					        	xtype:'fieldset',
-					        	height: '80%',
+					        	height: '100%',
 					        	border: false,
 								layout: {
 								        type: 'table',
 								        // The total column count must be specified here
 								        columns: 2,
 								        trAttrs: {height: '30px', width: '100%'},
-								        tdAttrs: {width: '70%'},
+								        tdAttrs: {width: '50%'},
 								        tableAttrs: {
 								            style: {
 								                width: '100%'
@@ -192,7 +192,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						            		value: '{activo.estadoActivoCodigo}'
 						            	},
 						            	labelWidth: 130,
-						            	width: 400
+						            	width: 300
 							        },
 					                {
 					                	xtype: 'textfieldbase',
@@ -204,7 +204,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					                		hidden: '{!activo.isCarteraBankia}',
 					                		readOnly: true
 					                	},
-						            	labelWidth: 120,
+						            	labelWidth: 90,
 						            	width: 60
 					                }
 								]

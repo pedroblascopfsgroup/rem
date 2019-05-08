@@ -198,6 +198,15 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 				            		store: '{comboEstadoOferta}'
 				            	}				            	
 							},
+				        	{ 
+					        	xtype: 'comboboxfieldbase',
+					        	multiSelect: false,
+					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.clase.activo'),
+					        	name: 'claseActivoBancario',
+					        	bind: {
+					        		store: '{comboClaseActivo}'
+					        	}
+							},
 							{ 
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.canal'),
@@ -207,15 +216,6 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 				            		store: '{comboCanalOferta}'
 				            	}
 							},
-				        	{ 
-					        	xtype: 'comboboxfieldbase',
-					        	multiSelect: false,
-					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.clase.activo'),
-					        	name: 'claseActivoBancario',
-					        	bind: {
-					        		store: '{comboClaseActivo}'
-					        	}
-							},							
 							{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.gestor'),
@@ -286,8 +286,24 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
     				        	bind: {
     			            		store: '{comboEntidadPropietaria}'
     			            	},
-    			            	reference: 'comboCarteraOfertaSearch'
+    			            	reference: 'comboCarteraOfertaSearch',
+    			            	chainedStore: 'comboSubcarteraFiltered',
+    							chainedReference: 'comboSubcarteraOfertaSearch',
+    							listeners: {
+    								select: 'onChangeChainedCombo'
+    							}
 	            	    	},
+					        { 
+								xtype: 'comboboxfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
+					        	name: 'subcarteraCodigo',
+					        	bind: {
+				            		store: '{comboSubcarteraFiltered}'
+				            	},
+				            	reference: 'comboSubcarteraOfertaSearch',
+				            	valueField: 'codigo',
+	    						displayField: 'descripcion'
+					        },
 	            	    	{ 
 					        	fieldLabel:  HreRem.i18n('fieldlabel.nombre.canal'),
 					        	name: 'nombreCanal',

@@ -27,6 +27,14 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 			type: 'number'
 		},
 		{
+			name:'totalDiasPublicadoHistoricoVenta',
+			type: 'number'
+		},
+		{
+			name:'totalDiasPublicadoHistoricoAlquiler',
+			type: 'number'
+		},
+		{
 			name: 'publicarVenta',
 			type: 'boolean'
 		},

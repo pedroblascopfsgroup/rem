@@ -3750,6 +3750,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	
 	    if (!estadoCheckPublicarFicha){
+	    	checkboxPublicarAlquiler.setReadOnly(true);
             checkbox.setValue(false);
         } else {
 		    if(!estadoPubVentaPublicado && checkbox.getValue() && checkboxPublicarVentaDeshabilitado) {
@@ -3760,10 +3761,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		        
 				checkboxPublicarVenta.setValue(false);
 				
-				
 		    } 
-		}
-	 
+		}        
 	},
 
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
@@ -3777,6 +3776,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		
 		if(!estadoCheckPublicarFicha){
+			checkboxPublicarAlquiler.setReadOnly(true);
             checkbox.setValue(false);
         } else {
 			if(isDirty && !estadoPubAlquilerPublicado && checkboxPublicarAlquilerDeshabilitado) {
@@ -3793,6 +3793,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 								'datospublicacionactivo').getData().precioWebAlquiler)
 						&& !checkbox.getValue();
 				checkboxPublicarAlquiler.setReadOnly(readOnly);
+
 			}
 		}
     },

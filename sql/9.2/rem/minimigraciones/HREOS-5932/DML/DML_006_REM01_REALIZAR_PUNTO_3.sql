@@ -63,6 +63,19 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.');
+		
+		DBMS_OUTPUT.put_line('	[INFO] SE INSERTA EL PERIMETRO EN LA TABLA AUX_HREOS_5932_PERIM ');
+  		
+  		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
+						(SELECT 
+							ACT_NUM_ACTIVO 
+							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
+							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3'' AND BORRADO = 0
+						)';
+  		
+  		EXECUTE IMMEDIATE V_MSQL;
+  		
+  		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.');
 
 /** 3.1. Incluirlos en el perímetro alquilable **/
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE INCLUYEN LOS ACTIVOS EN PERIMETRO ALQUILABLE');  
@@ -236,7 +249,20 @@ BEGIN
 				
 		EXECUTE IMMEDIATE V_MSQL;
 
-		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.');
+		
+		DBMS_OUTPUT.put_line('	[INFO] SE INSERTA EL PERIMETRO EN LA TABLA AUX_HREOS_5932_PERIM ');
+  		
+  		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
+						(SELECT 
+							ACT_NUM_ACTIVO 
+							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
+							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3-VA'' AND BORRADO = 0
+						)';
+  		
+  		EXECUTE IMMEDIATE V_MSQL;
+  		
+  		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 
 /** 3.3.1 A Modificar su destino comercial **/
 

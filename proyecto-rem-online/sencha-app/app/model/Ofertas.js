@@ -53,6 +53,9 @@ Ext.define('HreRem.model.Ofertas', {
 		},
 		{
 			name : 'carteraCodigo'
+		},
+		{
+			name : 'subcarteraCodigo'
 		}
  	
     		

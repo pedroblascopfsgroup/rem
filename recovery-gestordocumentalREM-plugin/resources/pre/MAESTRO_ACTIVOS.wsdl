@@ -51,7 +51,7 @@
 
 	<wsdl:service name="wsWS">
 		<wsdl:port binding="ws:wsBinding" name="ws">
-			<soap:address location="http://10.10.25.196:8080/WSIntegracionSOA/ws" />
+			<soap:address location="http://192.168.126.132:8080/WSIntegracionSOA/ws" />
 		</wsdl:port>
 	</wsdl:service>
 

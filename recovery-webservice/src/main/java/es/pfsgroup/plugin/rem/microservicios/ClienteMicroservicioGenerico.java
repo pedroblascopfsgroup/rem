@@ -59,8 +59,8 @@ public class ClienteMicroservicioGenerico {
 			}
 		}
 		urlBase = !Checks.esNulo(appProperties.getProperty("rest.client.mscomisionamiento.url.base"))
-				? appProperties.getProperty("rest.client.mscomisionamiento.url.base") : "";
-
+				? appProperties.getProperty("rest.client.mscomisionamiento.url.base") : "http://192.168.31.222:3141";
+		
 		if (Checks.esNulo(urlBase)) {
 			throw new RestConfigurationException("La url base del microservicio no esta definida");
 		} else if(urlBase.equals("")) {

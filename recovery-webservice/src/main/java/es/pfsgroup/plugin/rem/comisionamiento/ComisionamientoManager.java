@@ -37,7 +37,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	ObjectMapper mapper = new ObjectMapper();
 	
 	@Override
-	public BigDecimal createCommission(ConsultaComisionDto parametros)
+	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
 			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException {
 		
 		BigDecimal respuesta = null;
@@ -58,6 +58,6 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			}
 		}
 		
-		return respuesta;
+		return respuestaDto;
 	}
 }

@@ -448,54 +448,58 @@ Ext.define('HreRem.view.agenda.TareaPrueba',{
 					
 					
 					T004_AnalisisPeticionValidacion: function() {
-				    	 var me = this;
-				    	 var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-				 		 var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
-				 				
-				 		if(CONST.CARTERA['SAREB'] == codigoCartera && CONST.SUBCARTERA['SAREBINMOBILIARIO'] == codigoSubcartera) {
+				        var me = this;
+						var esTarifaPlana = me.up('tramitesdetalle').getViewModel().get('tramite.esTarifaPlana');
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
+						var esSubtipoTrabajoEnHistorico = me.up('tramitesdetalle').getViewModel().get('tramite.subtipoTrabajoEnElHistoricoDeTarifaPlana');
+						
+						if(CONST.CARTERA['SAREB'] == codigoCartera && CONST.SUBCARTERA['SAREBINMOBILIARIO'] == codigoSubcartera) {
 							me.ocultarCampo(me.down('[name=huecoTP]'));
 						}else{
 							me.ocultarCampo(me.down('[name=comboTarifaPlana]'));
 						}
-				    	 
-				    	 me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
-				    	 me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-				    	 me.deshabilitarCampo(me.down('[name=comboTarifaPlana]'));
-				    	 if(me.down('[name=comboTarifa]').value == '02'){
-				    		 me.bloquearCampo(me.down('[name=comboTarifa]'));
-				    	 }
-				    		 
-				    	 
-				    	 me.down('[name=comboTramitar]').addListener('change', function(combo){
-				    		 if(combo.value == '01'){
-				    			 me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-				    			 me.habilitarCampo(me.down('[name=comboCubierto]'));
-				    			 me.habilitarCampo(me.down('[name=comboTarifaPlana]'));
-				    			 if(me.down('[name=comboCubierto]').value == '01'){
-				    				 me.habilitarCampo(me.down('[name=comboAseguradoras]'));
-				    			 }
-				    			 me.habilitarCampo(me.down('[name=comboTarifa]'));
-				    		 }else{
-				    			 me.habilitarCampo(me.down('[name=motivoDenegacion]'));
-				    			 me.deshabilitarCampo(me.down('[name=comboCubierto]'));
-				    			 me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
-				    			 me.deshabilitarCampo(me.down('[name=comboTarifa]'));
-				    			 me.deshabilitarCampo(me.down('[name=comboTarifaPlana]'));
-				    		 }
-				    	 });
-				    	 
-				    	 me.down('[name=comboCubierto]').addListener('change', function(combo){
-				    		 if(combo.value == '01'){
-				    			 me.habilitarCampo(me.down('[name=comboAseguradoras]'));
-				    		 }else{
-				    			 me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
-				    		 }
-				    	 });
-				    	 
-				    	 
-				    	 
+						
+				        me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
+				        me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+				        me.deshabilitarCampo(me.down('[name=comboTarifaPlana]'));
+				        if (esTarifaPlana) {
+				            me.bloquearCampo(me.down('[name=comboTarifa]'));
+				        }
 
-				 		
+
+				        me.down('[name=comboTramitar]').addListener('change', function(combo) {
+				            if (combo.value == '01') {
+				            	me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+				                me.habilitarCampo(me.down('[name=comboCubierto]'));   
+				                if (esSubtipoTrabajoEnHistorico) {
+				                	me.habilitarCampo(me.down('[name=comboTarifaPlana]'));
+				                }
+				                if (me.down('[name=comboCubierto]').value == '01') {
+				                    me.habilitarCampo(me.down('[name=comboAseguradoras]'));
+				                }
+				                me.habilitarCampo(me.down('[name=comboTarifa]'));
+				            } else {
+				                me.habilitarCampo(me.down('[name=motivoDenegacion]'));
+				                me.deshabilitarCampo(me.down('[name=comboCubierto]'));
+				                me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
+				                me.deshabilitarCampo(me.down('[name=comboTarifa]'));
+				                me.deshabilitarCampo(me.down('[name=comboTarifaPlana]'));
+				            }
+				        });
+
+				        me.down('[name=comboCubierto]').addListener('change', function(combo) {
+				            if (combo.value == '01') {
+				                me.habilitarCampo(me.down('[name=comboAseguradoras]'));
+				            } else {
+				                me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
+				            }
+				        });
+
+
+
+
+
 				     },
 
 

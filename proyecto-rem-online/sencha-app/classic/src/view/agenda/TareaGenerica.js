@@ -721,7 +721,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var esTarifaPlana = me.up('tramitesdetalle').getViewModel().get('tramite.esTarifaPlana');
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
-			
+		var esSubtipoTrabajoEnHistorico = me.up('tramitesdetalle').getViewModel().get('tramite.subtipoTrabajoEnElHistoricoDeTarifaPlana');
+		
 		if(CONST.CARTERA['SAREB'] == codigoCartera && CONST.SUBCARTERA['SAREBINMOBILIARIO'] == codigoSubcartera) {
 			me.ocultarCampo(me.down('[name=huecoTP]'));
 		}else{
@@ -738,9 +739,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {
             if (combo.value == '01') {
-                me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-                me.habilitarCampo(me.down('[name=comboCubierto]'));
-                me.habilitarCampo(me.down('[name=comboTarifaPlana]'));
+            	me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+                me.habilitarCampo(me.down('[name=comboCubierto]'));   
+                if (esSubtipoTrabajoEnHistorico) {
+                	me.habilitarCampo(me.down('[name=comboTarifaPlana]'));
+                }
                 if (me.down('[name=comboCubierto]').value == '01') {
                     me.habilitarCampo(me.down('[name=comboAseguradoras]'));
                 }

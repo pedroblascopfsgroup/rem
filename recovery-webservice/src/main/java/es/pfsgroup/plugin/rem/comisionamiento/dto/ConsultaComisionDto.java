@@ -52,4 +52,36 @@ public class ConsultaComisionDto {
 	public void setCodLeadOrigin(String codLeadOrigin) {
 		this.codLeadOrigin = codLeadOrigin;
 	}	
+	
+	//Nombres de campos del microservicio.
+	private String leadOrigin;
+	private Double amount;
+	private String offerType;
+	private String comercialType;
+
+	public String getLeadOrigin() {
+		return leadOrigin;
+	}
+	public void setLeadOrigin(String leadOrigin) {
+		this.leadOrigin = leadOrigin;
+	}
+	public Double getAmount() {
+		return amount;
+	}
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+	public String getOfferType() {
+		return offerType;
+	}
+	public void setOfferType(String offerType) {
+		this.offerType = offerType;
+	}
+	public String getComercialType() {
+		return comercialType;
+	}
+	public void setComercialType(String comercialType) {
+		this.comercialType = comercialType;
+	}
+	
 }

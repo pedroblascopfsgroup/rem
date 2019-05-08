@@ -1418,8 +1418,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		problemasUrsus = expediente.get('problemasUrsus');
 		var esBankia = expediente.get('esBankia');
 		
-		if (esBankia && problemasUrsus) {
+		console.log(problemasUrsus);
+		
+		if (esBankia && problemasUrsus == "true") {
 			me.fireEvent('errorToast', HreRem.i18n('header.problemas.ursus'));
+			return;
 		}
 	}
 });

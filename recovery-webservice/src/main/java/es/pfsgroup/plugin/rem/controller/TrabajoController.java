@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -29,6 +30,10 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -38,6 +43,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -46,7 +52,11 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
 import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
@@ -67,14 +77,18 @@ import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
+import es.pfsgroup.plugin.rem.rest.dto.TrabajoRespuestaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
@@ -86,6 +100,9 @@ import net.sf.json.JSONObject;
 @Controller
 public class TrabajoController extends ParadiseJsonController {
 	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+		
 	@Autowired
 	private TrabajoApi trabajoApi;
 	
@@ -1263,23 +1280,137 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getSupervisorGestorTrabajo(Long idActivo, Long idAgrupacion, ModelMap model) {
-		Map<String,Long> mapaGestorSupervisor= new HashMap<String, Long>();
-		if(Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)){
+		Map<String, Long> mapaGestorSupervisor = new HashMap<String, Long>();
+		if (Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)) {
 			mapaGestorSupervisor.put("GACT", genericAdapter.getUsuarioLogado().getId());
 			mapaGestorSupervisor.put("SUPACT", genericAdapter.getUsuarioLogado().getId());
 			model.put("data", mapaGestorSupervisor);
-		}
-		else{
-			if(Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)){
-				
-				mapaGestorSupervisor=  trabajoApi.getSupervisorGestor(idAgrupacion);
+		} else {
+			if (Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)) {
+
+				mapaGestorSupervisor = trabajoApi.getSupervisorGestor(idAgrupacion);
 				model.put("data", mapaGestorSupervisor);
-				
+
 			}
 		}
 
 		return new ModelAndView("jsonView", model);
 
+	}
+
+	/**
+	 * En base a un número de activo y un código de proveedor, devuelve un listado
+	 * de los trabajos pendientes para ese par, e indica el listado de activos sobre
+	 * el que aplica el trabajo
+	 * 
+	 * Petición GET
+	 * HEADERS: 
+	 * Content-Type: application/json 
+	 * signature: token01
+	 * idPeticion: 01
+	 * 
+	 * @param numActivo
+	 * @param idProveedorRem
+	 * @param model
+	 * @param request
+	 * @param response
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET, value = "/trabajo/getActuacionesTecnicas")
+	public void getActuacionesTecnicas(Long numActivo, Long idProveedorRem, ModelMap model, RestRequestWrapper request,
+			HttpServletResponse response) {
+
+		DtoTrabajoFilter filtro = new DtoTrabajoFilter();
+		filtro.setNumActivo(numActivo);
+		filtro.setLimit(100);
+
+		Page page = trabajoApi.findAll(filtro, genericAdapter.getUsuarioLogado());
+
+		ArrayList<TrabajoRespuestaDto> actuaciones = new ArrayList<TrabajoRespuestaDto>();
+		TrabajoRespuestaDto actuacion;
+		VBusquedaTrabajos busquedaTrabajo;
+
+		// Recuperar lista de trabajos por activo
+		for (Object obj : page.getResults()) {
+			busquedaTrabajo = (VBusquedaTrabajos) obj;
+			Trabajo trabajo = trabajoApi.findOne(busquedaTrabajo.getId());
+
+			// Comprobación de criterios y generar listado
+			try {
+				
+				if (trabajo.getProveedorContacto().getId().equals(idProveedorRem)
+						&& trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)) {
+
+					List<ActivoTrabajo> activosTrabajo = trabajo.getActivosTrabajo();
+
+					if (!Checks.estaVacio(activosTrabajo)) {
+						actuacion = new TrabajoRespuestaDto();
+						List<Long> activosLista = new ArrayList<Long>();
+
+						for (ActivoTrabajo activoTrabajo : activosTrabajo) {
+							Activo activo = activoTrabajo.getActivo();
+
+							if (!Checks.esNulo(activo)) {
+								activosLista.add(activo.getNumActivo());
+							}
+						}
+
+						actuacion.setNumActivo(activosLista);
+						actuacion.setNumTrabajo(trabajo.getNumTrabajo());
+						actuacion.setFechaRealizacion(trabajo.getFechaEjecucionReal());
+						actuacion.setFechaExacta(!Checks.esNulo(trabajo.getFechaHoraConcreta()));
+						actuacion.setUrgentePrioridadReq(trabajo.getUrgente());
+						// En la ficha HREOS-6228 indican que requiriente corresponde a Tercero y su relación con los campos
+						actuacion.setNombreRequiriente(trabajo.getTerceroNombre());
+						actuacion.setTelefonoRequiriente(trabajo.getTerceroTel1());
+						actuacion.setEmailRequiriente(trabajo.getTerceroEmail());
+						actuacion.setDescripcionRequiriente(trabajo.getTerceroContacto()); 
+						actuacion.setRiesgoPrioridadReq(trabajo.getRiesgoInminenteTerceros());
+						actuacion.setFechaPrioridadReq(trabajo.getFechaCompromisoEjecucion());// ACT_TBJ_TRABAJO.TBJ_FECHA_FIN_COMPROMISO
+
+						// Devuelve el id de la tarea que no está finalizada.
+						List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+						if (!Checks.estaVacio(tramites)) {
+							List<TareaExterna> tareas = activoTramiteApi
+									.getListaTareaExternaActivasByIdTramite(tramites.get(0).getId());
+
+							if (!Checks.estaVacio(tareas)) {
+								actuacion.setIdTarea(tareas.get(0).getId());
+							}
+						}
+
+						// En la ficha HREOS-6228 indican que mediador se corresponde a contacto
+						ActivoProveedor mediador = trabajo.getMediador();
+						if (mediador != null) {
+							actuacion.setNombreContacto(mediador.getNombre());
+							actuacion.setTelefonoContacto(mediador.getTelefono1());
+							actuacion.setEmailContacto(mediador.getEmail());
+							actuacion.setDescripcionContacto(mediador.getObservaciones());
+
+						}
+						actuaciones.add(actuacion);
+					}
+
+				} // fin trabajo
+
+			} catch (NullPointerException e) {
+				logger.error("Error trabajo", e);
+			}
+
+		} // fin listado trabajos
+
+		try {
+			model.put("id", 0);
+			model.put("data", actuaciones);
+			model.put("error", "null");
+		} catch (Exception e) {
+			logger.error("Error trabajo", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", 0);
+			model.put("data", null);
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+		}
+		restApi.sendResponse(response, model, request);
 	}
 	
 }

@@ -270,6 +270,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String TAR_INFORME_JURIDICO = "Informe jurídico";
 	private static final String PESTANA_FICHA = "ficha";
 	private static final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
+	private static final String PESTANA_TANTEO_Y_RETRACTO_OFERTA = "ofertatanteoyretracto";
 	private static final String PESTANA_RESERVA = "reserva";
 	private static final String PESTANA_CONDICIONES = "condiciones";
 	private static final String PESTANA_FORMALIZACION = "formalizacion";
@@ -432,7 +433,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto = expedienteToDtoFichaExpediente(expediente);
 		} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 			dto = expedienteToDtoDatosBasicosOferta(expediente);
-		} else if (PESTANA_RESERVA.equals(tab)) {
+		} 
+		else if (PESTANA_TANTEO_Y_RETRACTO_OFERTA.equals(tab)) {
+			dto = expedienteToDtoTanteoYRetractoOferta(expediente);
+		} 
+		else if (PESTANA_RESERVA.equals(tab)) {
 			dto = expedienteToDtoReserva(expediente);
 		} else if (PESTANA_CONDICIONES.equals(tab)) {
 			dto = expedienteToDtoCondiciones(expediente);
@@ -3618,7 +3623,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					filtroExpedienteComercial);
 			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador,
 					filtroExpComComprador);
-
+			boolean esNuevo = false;
 			if (Checks.esNulo(compradorExpediente)) {
 				compradorExpediente = new CompradorExpediente();
 				compradorExpediente.setBorrado(false);
@@ -3627,6 +3632,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				pk.setComprador(comprador);
 				pk.setExpediente(expedienteComercial);
 				compradorExpediente.setPrimaryKey(pk);
+				esNuevo = true;
 
 			}
 
@@ -3634,7 +3640,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
 			}
 
-			if (!Checks.esNulo(dto.getTitularContratacion())) {
+			if (!Checks.esNulo(dto.getTitularContratacion()) && Checks.esNulo(expedienteComercial.getCompradorPrincipal())) {
 				compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
 
 				if (dto.getTitularContratacion() == 1) {
@@ -3642,6 +3648,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				} else if (dto.getTitularContratacion() == 0) {
 					compradorExpediente.setTitularReserva(1);
 				}
+			}else {
+				if(compradorExpediente.getTitularReserva() == null){
+					compradorExpediente.setTitularReserva(1);
+				}
+				if(compradorExpediente.getTitularContratacion() == null){
+					compradorExpediente.setTitularContratacion(0);
+				}
+				
 			}
 			// Nexos
 			if (!Checks.esNulo(dto.getCodEstadoCivil())) {
@@ -3758,8 +3772,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			genericDao.update(Comprador.class, comprador);
 
-			expedienteComercial.getCompradores().add(compradorExpediente);
-			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			if(esNuevo){
+				expedienteComercial.getCompradores().add(compradorExpediente);
+				genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			}else{
+				genericDao.update(CompradorExpediente.class, compradorExpediente);
+				genericDao.save(ExpedienteComercial.class, expedienteComercial);
+			}
+			
 
 			if (reiniciarPBC) {
 				ofertaApi.resetPBC(expedienteComercial, false);
@@ -3852,44 +3872,66 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public boolean checkCamposComprador(TareaExterna tareaExterna){
 		
+
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		boolean camposCompradores = false;
 		
 		if(!Checks.esNulo(expedienteComercial)) {
 			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",Long.toString(expedienteComercial.getId()));
 			Filter filtroTitular = genericDao.createFilter(FilterType.EQUALS, "titularContratacion",1);
-			List<VBusquedaDatosCompradorExpediente> compradores = genericDao.getList(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular); 
+			VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular); 
 			
-			for (VBusquedaDatosCompradorExpediente comprador : compradores) {		
-				if (!Checks.esNulo(comprador.getPorcentajeCompra()) && !Checks.esNulo(comprador.getCodTipoDocumento()) && !Checks.esNulo(comprador.getNumDocumento()) 
-						&& (!Checks.esNulo(comprador.getProvinciaCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) 
-						&& (!Checks.esNulo(comprador.getMunicipioCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) && !Checks.esNulo(comprador.getDireccion())
-						&& !Checks.esNulo(comprador.getCodigoPais())){													
-					if (!Checks.esNulo(comprador.getCodTipoPersona()) && DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {
-						if (!Checks.esNulo(comprador.getNombreRazonSocial()) && !Checks.esNulo(comprador.getApellidos()) && !Checks.esNulo(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) 
-							&& !Checks.esNulo(DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())))) {
-							camposCompradores = true;
-						} else {
-							return false;
+			//Campos comunes sin que dependa del tipo de persona						Campos del titular
+			if (!Checks.esNulo(comprador.getPorcentajeCompra())){						//Porcentaje de compra
+				if (!Checks.esNulo(comprador.getCodTipoDocumento())) {	     			//Tipo de documento
+					if (!Checks.esNulo(comprador.getNumDocumento())) {					//Número de documento
+						if (!Checks.esNulo(comprador.getProvinciaCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {			//Provincia
+							if (!Checks.esNulo(comprador.getMunicipioCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {		//Municipio
+								if (!Checks.esNulo(comprador.getDireccion())) {			//Dirección
+									if (!Checks.esNulo(comprador.getCodigoPais())) {	//País de residencia
+										
+										//Campos dependientes de si el tipo de persona es física
+										if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {							
+											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Nombre
+												if (!Checks.esNulo(comprador.getApellidos())) {																			//Apellidos
+													if (!Checks.esNulo(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) &&				//Si está casado en gananciales
+														!Checks.esNulo(DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())))) {
+														return true;
+													}
+												}
+											}
+										}
+				
+										//Campos dependientes de si el tipo de persona es jurídica
+										if (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {						
+											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Razón social (Titular)
+												if (!Checks.esNulo(comprador.getNombreRazonSocialRte())) {																//Nombre del representante
+													if (!Checks.esNulo(comprador.getApellidosRte())) {																	//Apellidos del representante
+														if (!Checks.esNulo(comprador.getCodTipoDocumentoRte())) {														//Tipo de documento del representante
+															if (!Checks.esNulo(comprador.getNumDocumentoRte())) {														//Número de documento del representante
+																if (DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais()) &&					//Si el país del titular es España
+																	!Checks.esNulo(comprador.getProvinciaRteCodigo()) &&												//Provincia y Municipio del representante
+																	!Checks.esNulo(comprador.getMunicipioRteCodigo()) || 
+																	!DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {												//son obligatorios
+																	if (!Checks.esNulo(comprador.getCodigoPaisRte())) {													//País de residencia del representante
+																		return true;
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+										
+									}
+								}
+							}
 						}
 					}
-					if (!Checks.esNulo(comprador.getCodTipoPersona()) && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {						
-						if (!Checks.esNulo(comprador.getNombreRazonSocial()) && !Checks.esNulo(comprador.getNombreRazonSocialRte()) && !Checks.esNulo(comprador.getApellidosRte()) 
-								&& !Checks.esNulo(comprador.getCodTipoDocumentoRte()) && !Checks.esNulo(comprador.getNumDocumentoRte()) 
-								&& (!Checks.esNulo(comprador.getProvinciaRteCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))
-								&& (!Checks.esNulo(comprador.getMunicipioRteCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPaisRte()))
-								&& !Checks.esNulo(comprador.getCodigoPaisRte())) {
-							camposCompradores = true;
-						} else {
-							return false;
-						}
-					}
-				} else {
-					return false;
 				}
 			}
 		}
-		return camposCompradores;
+		return false;
 	}
 
 	@Override
@@ -4284,8 +4326,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(estadoCivil))
 					compradorExpediente.setEstadoCivil(estadoCivil);
 			}
-
-			if (!Checks.esNulo(dto.getTitularContratacion())) {
+			if (!Checks.esNulo(dto.getTitularContratacion()) && Checks.esNulo(expediente.getCompradorPrincipal())) {
 				compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
 
 			} else {
@@ -4424,7 +4465,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
 
-				if (!Checks.esNulo(dto.getTitularContratacion())) {
+				if (!Checks.esNulo(dto.getTitularContratacion()) && Checks.esNulo(expediente.getCompradorPrincipal())) {
 					compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
 
 				} else {

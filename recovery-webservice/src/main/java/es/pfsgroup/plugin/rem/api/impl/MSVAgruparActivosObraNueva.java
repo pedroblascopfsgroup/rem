@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,8 @@ public class MSVAgruparActivosObraNueva extends AbstractMSVActualizador implemen
 	
 	@Autowired
 	ProcessAdapter processAdapter;
+	
+	protected static final Log logger = LogFactory.getLog(MSVAgruparActivosObraNueva.class);
 
 	@Override
 	public String getValidOperation() {
@@ -34,10 +38,18 @@ public class MSVAgruparActivosObraNueva extends AbstractMSVActualizador implemen
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
-		Long numAgrupRem = new Long(exc.dameCelda(1, 0));
-		Long agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
-		agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null,false);	
-		return new ResultadoProcesarFila();
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		try {
+			Long numAgrupRem = new Long(exc.dameCelda(1, 0));
+			Long agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(numAgrupRem);
+			agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null,false);	
+			resultado.setCorrecto(true);
+		} catch (Exception e) {
+			resultado.setCorrecto(false);
+			resultado.setErrorDesc(e.getMessage());
+			logger.error("Error en MSVAgruparActivosLoteComercialAlquiler",e);
+		}	
+		return resultado;
 	}
 
 }

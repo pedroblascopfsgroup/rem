@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -94,8 +93,9 @@ public abstract class WebcomDataType<T> {
 		return "DataType <".concat((getValue() != null ? getValue().toString() : "empty")).concat(">");
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static Object valueOf(Object o) {
-		if (o instanceof WebcomDataType) {
+		if (o != null && o instanceof WebcomDataType) {
 			return ((WebcomDataType) o).getValue();
 		} else {
 			return o;
@@ -228,6 +228,7 @@ public abstract class WebcomDataType<T> {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {

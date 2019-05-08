@@ -267,6 +267,9 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if(!Checks.esNulo(dtoOfertasFilter.getCarteraCodigo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.carteraCodigo", dtoOfertasFilter.getCarteraCodigo());
 		}
+		if(!Checks.esNulo(dtoOfertasFilter.getSubcarteraCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.subcarteraCodigo", dtoOfertasFilter.getSubcarteraCodigo());
+		}
 		
 		if(!Checks.esNulo(dtoOfertasFilter.getNumActivoUvem())){
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoUvem", dtoOfertasFilter.getNumActivoUvem());

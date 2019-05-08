@@ -180,7 +180,14 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										width: 225,
 										height: 125,
 										cls: 'cabecera-mapa',
-										margin: '10 10 10 20'
+										margin: '10 10 10 20',
+										listeners: {
+										   'render': function(panel) {
+										       panel.body.on('click', function() {
+										    	   panel.add(me.gmap);
+										       });
+										    }
+										}
 									},
 									{
 										xtype: 'image',
@@ -355,6 +362,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 
 		me.gmap.configurarMapa(latitud, longitud, token, title);
 
-		me.down('[tipo=panelgmap]').add(me.gmap);
+		//me.down('[tipo=panelgmap]').add(me.gmap);
+		me.down('[tipo=panelgmap]').setHtml("<img style= 'width: 225px; height: 125px;' alt= 'Imagen de relleno de google maps' src='resources/images/imagenPrecargaMapa.jpg' />");
 	}
 });

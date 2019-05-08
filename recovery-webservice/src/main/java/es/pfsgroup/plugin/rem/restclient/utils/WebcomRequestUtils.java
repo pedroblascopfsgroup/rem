@@ -6,13 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
@@ -27,9 +23,6 @@ public class WebcomRequestUtils {
 	public static final String JSON_PROPERTY_DATA = "data";
 
 	public static final String JSON_PROPERTY_ID = "id";
-
-	private static final Log logger = LogFactory
-			.getLog(WebcomRequestUtils.class);
 
 	private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
 
@@ -47,6 +40,7 @@ public class WebcomRequestUtils {
 		return json;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static JSONObject createJSONData(Map<String, Object> params) {
 		JSONObject data = new JSONObject();
 		if (params != null) {
@@ -131,6 +125,7 @@ public class WebcomRequestUtils {
 	 * @param dto
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public static String[] camposObligatorios(Class dtoClass) {
 		ArrayList<String> result = new ArrayList<String>();
 		Field[] fields = dtoClass.getDeclaredFields();

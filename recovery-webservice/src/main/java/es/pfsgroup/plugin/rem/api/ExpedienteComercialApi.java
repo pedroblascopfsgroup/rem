@@ -1177,10 +1177,6 @@ public interface ExpedienteComercialApi {
 	boolean checkInquilinos(TareaExterna tareaExterna);
 
 	boolean hayDiscrepanciasClientesURSUS(Long idExpediente);
-<<<<<<< HEAD
 	
 	boolean hayProblemasURSUS(Long idExpediente);
-=======
-
->>>>>>> 7f05ebec149a06d3e61d083ea0b5c749ef7b1f82
 }

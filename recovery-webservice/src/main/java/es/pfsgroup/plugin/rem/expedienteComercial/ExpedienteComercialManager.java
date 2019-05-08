@@ -9044,4 +9044,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return hayProblemasUrsus;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean checkDiscrepanciasUrsus(Long idTramite){
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "id", idTramite);
+		ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTramite);
+		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		if(!Checks.esNulo(ofertaAceptada)){
+			ExpedienteComercial expediente = expedienteComercialPorOferta(ofertaAceptada.getId());
+			return hayDiscrepanciasClientesURSUS(expediente.getId());
+		}
+			return false;
+	}
 }

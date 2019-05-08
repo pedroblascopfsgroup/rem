@@ -163,12 +163,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				genericDao.save(Bien.class, bien);
 				unidadAlquilable.setBien(bien);				
 			}
-			if (!Checks.esNulo(activoMatriz.getTipoActivo())) {
-				unidadAlquilable.setTipoActivo(activoMatriz.getTipoActivo()); 
-			}			
-			if ( !Checks.esNulo(activoMatriz.getSubtipoActivo())){
-				unidadAlquilable.setSubtipoActivo(activoMatriz.getSubtipoActivo());
-			}
+
 			//Estado del activo 
 			if ( !Checks.esNulo(activoMatriz.getEstadoActivo())) 
 					unidadAlquilable.setEstadoActivo(activoMatriz.getEstadoActivo());
@@ -179,7 +174,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			}
 			if (!Checks.esNulo(activoMatriz.getTipoAlquiler()))
 				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
-			
 		}
 		
 		
@@ -566,6 +560,20 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			for (DtoHistoricoMediador dto : dtoHistoricoMediador) {
 				dto.setIdActivo(unidadAlquilable.getId());
 				activoApi.createHistoricoMediador(dto);
+				
+				//Asignación del mediador del AM a la UA cuando se crea
+				unidadAlquilable.getInfoComercial().setMediadorInforme(activoApi.getMediador(activoMatriz));
+				
+				//Asignación del tipo de activo indicado en el Excel de Carga Masiva para que aparezcan los paneles Vivienda y Calidades en la pestaña Publicación
+				if(!Checks.esNulo(exc.dameCelda(fila, 2))){
+					String codTipo = exc.dameCelda(fila, 2);
+					if(codTipo.length() == 1){
+						codTipo = "0".concat(codTipo);
+					}
+					Filter tipoFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", codTipo);
+					DDTipoActivo tipoActivo = genericDao.get(DDTipoActivo.class, tipoFilter);
+					unidadAlquilable.getInfoComercial().setTipoActivo(tipoActivo);
+				}
 			}
 		}
 		//-----Nuevo ActivoAgrupacionActivo

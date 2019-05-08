@@ -53,6 +53,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.rest.model.DestinatariosRest;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApiImpl;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService
@@ -110,7 +112,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
-
+	
+	@Autowired
+	private UsuarioRemApi usuarioRemApiImpl;
+	
 	@Override
 	public final void notificator(ActivoTramite tramite) {
 
@@ -660,36 +665,26 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GFORM");
 			}
 			
-			Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id",
-					gestorFormalizacion.getId());
-			List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
-
 			cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",
 					(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
 			cuerpo = cuerpo + String.format("<p>%s</p>",
 					(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
 			
-			if (!Checks.esNulo(sgsList)) {
-				for (GestorSustituto sgs : sgsList) {
-					if (!Checks.esNulo(sgs)) {
-						if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date())
-								&& !Checks.esNulo(sgs.getFechaInicio())
-								&& (sgs.getFechaInicio().before(new Date())
-										|| sgs.getFechaInicio().equals(new Date()))) {
-							cuerpo = cuerpo + String.format("<p>Gestor formalización sustituto: %s </p>",
-									(sgs != null) ? sgs.getUsuarioGestorSustituto().getApellidoNombre() : STR_MISSING_VALUE);
-							cuerpo = cuerpo + String.format("<p>%s</p>",
-									(sgs != null) ? sgs.getUsuarioGestorSustituto().getEmail(): STR_MISSING_VALUE);
+			if(!Checks.esNulo(gestorFormalizacion)){
+				
+				if (!Checks.estaVacio(usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion))){
+					if(!Checks.esNulo(usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion))) {
+						cuerpo = cuerpo + String.format("<p>Gestor formalización Sustituto: %s </p>",
+								(gestorFormalizacion != null) ? usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion) : STR_MISSING_VALUE);
 						}
-					}
+						cuerpo = cuerpo + String.format("<p>%s</p>",
+							(gestorFormalizacion != null) ? usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion) : STR_MISSING_VALUE);
+				}else{
+					cuerpo = cuerpo + String.format("<p>Gestor formalización: %s </p>",
+							(gestorFormalizacion != null) ? gestorFormalizacion.getApellidoNombre() : STR_MISSING_VALUE);
+					cuerpo = cuerpo + String.format("<p>%s</p>",
+							(gestorFormalizacion != null) ? gestorFormalizacion.getEmail() : STR_MISSING_VALUE);
 				}
-			}
-			
-			if(sgsList.isEmpty()) {
-				cuerpo = cuerpo + String.format("<p>Gestor formalización: %s </p>",
-						(gestorFormalizacion != null) ? gestorFormalizacion.getApellidoNombre() : STR_MISSING_VALUE);
-				cuerpo = cuerpo + String.format("<p>%s</p>",
-						(gestorFormalizacion != null) ? gestorFormalizacion.getEmail() : STR_MISSING_VALUE);
 			}
 			
 
@@ -936,37 +931,27 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
 			gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GFORM");
 		}
-		
-		Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id",
-				gestorFormalizacion.getId());
-		List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
 
 		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",
 				(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
 		cuerpo = cuerpo + String.format("<p>%s</p>",
 				(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
 		
-		if (!Checks.esNulo(sgsList)) {
-			for (GestorSustituto sgs : sgsList) {
-				if (!Checks.esNulo(sgs)) {
-					if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date())
-							&& !Checks.esNulo(sgs.getFechaInicio())
-							&& (sgs.getFechaInicio().before(new Date())
-									|| sgs.getFechaInicio().equals(new Date()))) {
-						cuerpo = cuerpo + String.format("<p>Gestor formalización sustituto: %s </p>",
-								(sgs != null) ? sgs.getUsuarioGestorSustituto().getApellidoNombre() : STR_MISSING_VALUE);
-						cuerpo = cuerpo + String.format("<p>%s</p>",
-								(sgs != null) ? sgs.getUsuarioGestorSustituto().getEmail(): STR_MISSING_VALUE);
+		if(!Checks.esNulo(gestorFormalizacion)){
+			
+			if (!Checks.estaVacio(usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion))){
+				if(!Checks.esNulo(usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion))) {
+					cuerpo = cuerpo + String.format("<p>Gestor formalización Sustituto: %s </p>",
+							(gestorFormalizacion != null) ? usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion) : STR_MISSING_VALUE);
 					}
-				}
+					cuerpo = cuerpo + String.format("<p>%s</p>",
+						(gestorFormalizacion != null) ? usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion) : STR_MISSING_VALUE);
+			}else{
+				cuerpo = cuerpo + String.format("<p>Gestor formalización: %s </p>",
+						(gestorFormalizacion != null) ? gestorFormalizacion.getApellidoNombre() : STR_MISSING_VALUE);
+				cuerpo = cuerpo + String.format("<p>%s</p>",
+						(gestorFormalizacion != null) ? gestorFormalizacion.getEmail() : STR_MISSING_VALUE);
 			}
-		}
-		
-		if(sgsList.isEmpty()) {
-			cuerpo = cuerpo + String.format("<p>Gestor formalización: %s </p>",
-					(gestorFormalizacion != null) ? gestorFormalizacion.getApellidoNombre() : STR_MISSING_VALUE);
-			cuerpo = cuerpo + String.format("<p>%s</p>",
-					(gestorFormalizacion != null) ? gestorFormalizacion.getEmail() : STR_MISSING_VALUE);
 		}
 
 		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);

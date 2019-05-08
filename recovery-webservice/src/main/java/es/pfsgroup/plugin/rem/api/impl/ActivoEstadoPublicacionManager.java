@@ -814,10 +814,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionVenta.codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA);
 		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filterFecha = genericDao.createFilter(FilterType.NULL, "fechaFinVenta");
 		Order orden = new Order(OrderType.DESC, "id");
 		
 		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
-				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria);
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria, filterFecha);
 		
 		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
 			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
@@ -879,10 +880,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionAlquiler.codigo", DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER);
 		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filterFecha = genericDao.createFilter(FilterType.NULL, "fechaFinAlquiler");
 		Order orden = new Order(OrderType.DESC, "id");
 		
 		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
-				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria);
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria, filterFecha);
 		
 		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
 			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);

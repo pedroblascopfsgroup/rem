@@ -546,11 +546,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 									}
 							],
 							bind:{ disabled: '{activo.unidadAlquilable}'}
-				        },
-				        
+				        } 
 					]
-					
-                
     		},   		
            	{    
                 

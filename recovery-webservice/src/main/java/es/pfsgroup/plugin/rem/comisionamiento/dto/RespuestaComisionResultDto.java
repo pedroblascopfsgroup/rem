@@ -7,7 +7,7 @@ import antlr.collections.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RespuestaComisionResultDto {
 	private String amount;
-	//private String[] rule;
+	private RespuestaComisionReglaDto rule;
 	
 	public RespuestaComisionResultDto() {
 		
@@ -19,11 +19,11 @@ public class RespuestaComisionResultDto {
 	public void setAmount(String amount) {
 		this.amount = amount;
 	}
-//	public String[] getRule() {
-//		return rule;
-//	}
-//	public void setRule(String[] rule) {
-//		this.rule = rule;
-//	}
+	public RespuestaComisionReglaDto getRule() {
+		return rule;
+	}
+	public void setRule(RespuestaComisionReglaDto rule) {
+		this.rule = rule;
+	}
 	
 }

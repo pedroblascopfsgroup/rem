@@ -12,6 +12,7 @@ public class RespuestaComisionReglaDto {
 	private String stretchMax;
 	private String commissionPercentage;
 	private String maxCommissionAmount;
+	private String minCommissionAmount;
 	public String getId() {
 		return id;
 	}
@@ -77,6 +78,12 @@ public class RespuestaComisionReglaDto {
 	}
 	public void setMaxCommissionAmount(String maxCommissionAmount) {
 		this.maxCommissionAmount = maxCommissionAmount;
+	}
+	public String getMinCommissionAmount() {
+		return minCommissionAmount;
+	}
+	public void setMinCommissionAmount(String minCommissionAmount) {
+		this.minCommissionAmount = minCommissionAmount;
 	}
 	
 	

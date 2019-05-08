@@ -41,6 +41,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException {
 		
 		BigDecimal respuesta = null;
+		RespuestaComisionResultDto respuestaDto = null;
 		
 		String jsonString = mapper.writeValueAsString(parametros);
 		JSONObject response = microservicio.send("POST", "commissions", jsonString);
@@ -51,8 +52,9 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		//El result que hay en la respuesta hay que tratarlo como una lista.
 		List<RespuestaComisionResultDto> listaResult = mapper.readValue(respuestaMSString, new TypeReference<List<RespuestaComisionResultDto>>(){});
 		for (RespuestaComisionResultDto result : listaResult) {
-			if(!Checks.esNulo(result.getAmount())) {
-				respuesta = new BigDecimal(result.getAmount());
+			if(!Checks.esNulo(result.getAmount()) && !Checks.esNulo(result.getRule())) {
+				respuesta = new BigDecimal(result.getRule().getCommissionPercentage());
+				respuestaDto = result;
 			}
 		}
 		

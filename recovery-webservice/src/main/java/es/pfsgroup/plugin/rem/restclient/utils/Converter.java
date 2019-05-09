@@ -99,7 +99,11 @@ public class Converter {
 				f.setAccessible(true);
 				Class type = f.getType();
 				if (WebcomDataType.class.isAssignableFrom(type)) {
-					f.set(objectToUpdate, WebcomDataType.parse(type, data));
+					try{
+						f.set(objectToUpdate, WebcomDataType.parse(type, data));
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 				} else {
 					NestedDto nested = f.getAnnotation(NestedDto.class);
 					if (nested == null) {
@@ -148,18 +152,19 @@ public class Converter {
 				// checked exception to unchecked exceptions -> JOKE
 				// (Jorge Martín nos explicará esta broma algún día)
 			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
 				throw new ConverterError("Error en updateObjectFromHashMap", e);
 			} catch (SecurityException e) {
+				e.printStackTrace();
 				throw new ConverterError("Error en updateObjectFromHashMap", e);
 			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
 				throw new ConverterError("Error en updateObjectFromHashMap", e);
 			} catch (IllegalAccessException e) {
-				throw new ConverterError("Error en updateObjectFromHashMap", e);
-			} catch (WebcomDataTypeParseException e) {
-				throw new ConverterError("Error en updateObjectFromHashMap", e);
-			} catch (UnknownWebcomDataTypeException e) {
+				e.printStackTrace();
 				throw new ConverterError("Error en updateObjectFromHashMap", e);
 			} catch (InstantiationException e) {
+				e.printStackTrace();
 				throw new ConverterError("Error al poblar un DTO anidado", e);
 			}
 		}

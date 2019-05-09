@@ -29,6 +29,9 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USUARIO VARCHAR2(65 CHAR) := 'REMVIP-4214';    
     S_PVE NUMBER(16) := 0;  
+   
+   
+    
     
 BEGIN	
 	
@@ -132,7 +135,7 @@ BEGIN
 					''3'',
 					''102'',
 					NULL,
-					''01/01/1900'',
+					TO_DATE(''01/01/1999'',''DD/MM/YYYY''),
 					NULL,
 					''1'',
 					''4'',
@@ -197,4 +200,3 @@ END;
 /
 
 EXIT                    
-            

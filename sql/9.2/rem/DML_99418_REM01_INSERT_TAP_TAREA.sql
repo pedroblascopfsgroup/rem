@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20190508
+--## FECHA_CREACION=20190510
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5934
@@ -44,7 +44,7 @@ BEGIN
             ,''T013_ValidacionClientes'' 
             ,null 
             ,null  
-            ,''checkDiscrepanciasUrsus() ? ''Hay discrepancias'' : null '' 
+            ,''checkDiscrepanciasUrsus() ? ''''Hay discrepancias'''' : null '' 
             ,null
             ,null  
             ,''0''  

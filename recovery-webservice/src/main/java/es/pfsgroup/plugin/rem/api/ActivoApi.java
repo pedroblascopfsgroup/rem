@@ -1178,4 +1178,6 @@ public interface ActivoApi {
 
 	boolean esSubcarteraApple(Long idActivo);
 
+	void actualizarMotivoOcultacionUAs(DtoActivoPatrimonio patrimonioDto, Long id);
+
 }

@@ -2688,7 +2688,8 @@ public class AgrupacionAdapter {
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
 	
 			ActivoPromocionAlquiler pa = (ActivoPromocionAlquiler) agrupacion;
-	
+			Long idAM = activoDao.getIdActivoMatriz(pa.getId());
+			
 			try {
 				if (!permiteCambiarDestinoComercial(pa)) {
 					return "false"+SPLIT_VALUE+OFERTA_INCOMPATIBLE_AGR_MSG;
@@ -2728,11 +2729,13 @@ public class AgrupacionAdapter {
 							aga.setAgrupacion(pa);
 							aga.setFechaInclusion(new Date());
 							aga.setPrincipal(1);
+							activoAdapter.actualizarEstadoPublicacionActivo(act.getId());
 							activoAgrupacionActivoDao.saveOrUpdate(aga);
 						}	
 					}
 					else {
 							ActivoAgrupacionActivo aga = activoAgrupacionActivoDao.getAgrupacionPAByIdAgrupacion(id);
+							
 							if(!Checks.esNulo(aga)) {
 								activoAgrupacionActivoDao.deleteById(aga.getId());
 							}
@@ -2747,15 +2750,17 @@ public class AgrupacionAdapter {
 					Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
 					Filter filtroActivosAgrupacion = genericDao.createFilter(FilterType.EQUALS, "principal", 0);
 					activoAgrupacionPA = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion, filtroActivosAgrupacion);
-					Activo am = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId()); 
-					Filter filterIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", am.getId());
-					Filter filterIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
-					ActivoAgrupacionActivo aga = genericDao.get(ActivoAgrupacionActivo.class, filterIdActivo, filterIdAgrupacion);
 					
-					if(!Checks.esNulo(aga)) {
-						aga.setPrincipal(0);
+					if(!Checks.esNulo(idAM)) {
+						Filter filterIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idAM);
+						Filter filterIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+						ActivoAgrupacionActivo aga = genericDao.get(ActivoAgrupacionActivo.class, filterIdActivo, filterIdAgrupacion);
+					
+						if(!Checks.esNulo(aga)) {
+							aga.setPrincipal(0);
+						}
+						activoAdapter.actualizarEstadoPublicacionActivo(idAM);
 					}
-					
 					if (!Checks.estaVacio(activoAgrupacionPA)) {
 						
 						for (ActivoAgrupacionActivo activo : activoAgrupacionPA) {

@@ -80,7 +80,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"tipoComercializacionCodigo",
     				"bloqueoTipoComercializacionAutomatico",
     				"tipoAlquiler",
-    				"tipoComercializacionCodigo",
+    				
     				"isDestinoComercialAlquiler",
     				"incluyeDestinoComercialAlquiler",
     				"incluyeDestinoComercialVenta",

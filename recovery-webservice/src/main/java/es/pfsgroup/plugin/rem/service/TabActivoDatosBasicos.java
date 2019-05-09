@@ -311,16 +311,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
 		if(!Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())){
-			if(!Checks.esNulo(activo) && activoDao.isPANoDadaDeBaja(activo.getId())) {
-				DDTipoComercializacion comercializacionAlquiler =  genericDao.get(DDTipoComercializacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDTipoComercializacion.CODIGO_SOLO_ALQUILER));
-				BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", comercializacionAlquiler.getCodigo());
-				BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", comercializacionAlquiler.getDescripcion());
-				activoDto.setTipoComercializacionCodigo(comercializacionAlquiler.getCodigo());
-				activoDto.setTipoComercializacionDescripcion(comercializacionAlquiler.getDescripcion());
-			}else{
 				BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
 				BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", activo.getActivoPublicacion().getTipoComercializacion().getDescripcion());
-			}
 		}
 		
 		if(activo.getTipoAlquiler() != null){

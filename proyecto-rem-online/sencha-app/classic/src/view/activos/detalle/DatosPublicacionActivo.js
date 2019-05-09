@@ -308,7 +308,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												reference: 'chkbxpublicaralquiler',
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckPublicarAlquiler}',
-													value: '{datospublicacionactivo.publicarAlquiler}'
+													value: '{datospublicacionactivo.publicarAlquiler}',
+													disabled : '{bloquearPublicarAlquilerActivosMatrizNoPublicados}'
+													
 												},
                                                 listeners: {
                                                      dirtychange: 'onChangeCheckboxPublicarAlquiler'

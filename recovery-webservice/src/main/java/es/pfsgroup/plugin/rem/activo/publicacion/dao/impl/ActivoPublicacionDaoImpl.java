@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.activo.publicacion.dao.impl;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
@@ -13,13 +14,16 @@ import org.hibernate.Hibernate;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.Type;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 
 @Repository("ActivoPublicacionDao")
 public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacion, Long> implements ActivoPublicacionDao {
-
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	@Override
 	public DtoDatosPublicacionActivo convertirEntidadTipoToDto(ActivoPublicacion entidad) {
@@ -27,14 +31,19 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		if (Checks.esNulo(entidad)) {
 			return dto;
 		}
-
+		
 		dto.setIdActivo(entidad.getActivo().getId());
+		if(!Checks.esNulo(entidad.getActivo().getId())) {
+			dto.setIsMatriz(activoDao.isActivoMatriz(entidad.getActivo().getId()));
+			
+		}
 		if (!Checks.esNulo(entidad.getEstadoPublicacionVenta())) {
 			dto.setEstadoPublicacionVenta(entidad.getEstadoPublicacionVenta().getDescripcion());
 		}
 		
 		if (!Checks.esNulo(entidad.getEstadoPublicacionAlquiler())) {
 			dto.setEstadoPublicacionAlquiler(entidad.getEstadoPublicacionAlquiler().getDescripcion());
+			dto.setEstadoPublicacionAlquilerCodigo(entidad.getEstadoPublicacionAlquiler().getCodigo());
 		}
 		
 		dto.setPublicarVenta(entidad.getCheckPublicarVenta());

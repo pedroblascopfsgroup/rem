@@ -103,6 +103,17 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		}
 		activoDao.saveOrUpdate(activo);
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
+		/////////////////////////////////////////////////////////////////////////////
+		if(activoDao.isActivoMatriz(activo.getId())){
+			ActivoAgrupacion activoAgrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			List<ActivoAgrupacionActivo> listaActivosAgrupacion = activoAgrupacion.getActivos();
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosAgrupacion) {	
+				activoAdapter.actualizarEstadoPublicacionActivo(activoAgrupacionActivo.getActivo().getId());
+			}
+		}
+		/////////////////////////////////////////////////////////////////////////////
+		
+		
 		expedienteComercialApi.update(expedienteComercial);
 	}
 

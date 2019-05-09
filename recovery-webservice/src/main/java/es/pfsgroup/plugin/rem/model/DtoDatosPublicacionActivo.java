@@ -48,6 +48,8 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private String eleccionUsuarioTipoPublicacionAlquiler;
 	private String motivoPublicacion;
 	private String motivoPublicacionAlquiler;
+	private String estadoPublicacionAlquilerCodigo;
+	private Boolean isMatriz;
 
 
 	public String getTipoPublicacionVentaDescripcion() {
@@ -345,7 +347,6 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	public void setMotivoPublicacionAlquiler(String motivoPublicacionAlquiler) {
 		this.motivoPublicacionAlquiler = motivoPublicacionAlquiler;
 	}
-
 	public Integer getTotalDiasPublicadoHistoricoVenta() {
 		return totalDiasPublicadoHistoricoVenta;
 	}
@@ -361,5 +362,20 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	public void setTotalDiasPublicadoHistoricoAlquiler(Integer totalDiasPublicadoHistoricoAlquiler) {
 		this.totalDiasPublicadoHistoricoAlquiler = totalDiasPublicadoHistoricoAlquiler;
 	}
+	public String getEstadoPublicacionAlquilerCodigo() {
+		return estadoPublicacionAlquilerCodigo;
+	}
 
+	public void setEstadoPublicacionAlquilerCodigo(String estadoPublicacionAlquilerCodigo) {
+		this.estadoPublicacionAlquilerCodigo = estadoPublicacionAlquilerCodigo;
+	}
+
+	public Boolean getIsMatriz() {
+		return isMatriz;
+	}
+
+	public void setIsMatriz(Boolean isMatriz) {
+		this.isMatriz = isMatriz;
+	}
+	
 }

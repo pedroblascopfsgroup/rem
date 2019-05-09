@@ -65,7 +65,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            		store: '{comboSiNoRem}',
 			            	    value: '{datosRegistrales.hanCambiado}',
 			            	    readOnly: '{datosRegistrales.unidadAlquilable}'
-			            	},
+			            	}, 
     						listeners: {
 			                	change:  'onHanCambiadoSelect'
 			            	}

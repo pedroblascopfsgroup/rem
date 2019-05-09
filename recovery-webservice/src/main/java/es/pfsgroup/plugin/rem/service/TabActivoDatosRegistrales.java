@@ -130,23 +130,52 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	
 	public DtoActivoDatosRegistrales getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
-
 		DtoActivoDatosRegistrales activoDto = new DtoActivoDatosRegistrales();
-
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
 				
 		BeanUtils.copyProperties(activoDto, activo);
 
-		if (activo.getInfoRegistral() != null) {
-			BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
+		if (activo.getInfoRegistral() != null || esUA) {
+			if (!esUA) {
+				BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
+			}else {
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				Activo activoMatriz = null;
+				if (!Checks.esNulo(agr)) {
+					activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
+				}
+				if (!Checks.esNulo(activoMatriz)) {
+					BeanUtils.copyProperty(activoDto,"tipoTituloActivoMatriz", DDTipoTituloActivo.tipoTituloJudicial);
+					BeanUtils.copyProperties(activoDto, activoMatriz.getInfoRegistral());
+				}
+			}
+			
 		}
 		
-		if (activo.getAdjNoJudicial() != null) {
-			BeanUtils.copyProperties(activoDto, activo.getAdjNoJudicial());
+		if (activo.getAdjNoJudicial() != null || esUA) {
+			
+			if (!esUA) {
+				BeanUtils.copyProperties(activoDto, activo.getAdjNoJudicial());
+			}else {
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				Activo activoMatriz = null;
+				if (!Checks.esNulo(agr)) {
+					activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
+				}
+				if (!Checks.esNulo(activoMatriz)) {
+					BeanUtils.copyProperty(activoDto,"tipoTituloActivoMatriz", DDTipoTituloActivo.tipoTituloNoJudicial);
+					BeanUtils.copyProperties(activoDto, activoMatriz.getAdjNoJudicial());
+				}
+			}
 		}
 		
 		if (!Checks.estaVacio(activo.getPdvs())) {
 				BeanUtils.copyProperties(activoDto, activo.getPdvs().get(0));
 		}
+		
+		
+		
+		
 		
 		if (activo.getTitulo() != null) {
 			BeanUtils.copyProperties(activoDto, activo.getTitulo());
@@ -458,7 +487,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			
 			if (dto.getTipoTituloCodigo() != null) {
-				
+			
 				DDTipoTituloActivo tipoTitulo = (DDTipoTituloActivo) 
 						diccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, dto.getTipoTituloCodigo());
 				

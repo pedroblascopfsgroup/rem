@@ -612,4 +612,6 @@ public interface ParticularValidatorApi {
 	 * @return true si existe, false si no existe o es nulo
 	 */
 	public Boolean existeCalculo(String codCalculo);
+
+	Boolean existeActivoConOfertaVivaEstadoExpediente(String numActivo);
 }

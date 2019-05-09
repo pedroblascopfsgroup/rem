@@ -1057,6 +1057,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')");
 		return !"0".equals(resultado);
 	}
+	@Override
+	public Boolean existeActivoConOfertaVivaEstadoExpediente(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL( " SELECT count(1)      " 
+				+			"				 FROM ACT_AGA_AGRUPACION_ACTIVO aga      " 
+				+			"				 INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID      " 
+				+			"				 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID      " 
+				+			"				 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID      " 
+				+			"				 INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID      " 
+				+			"				 WHERE actOfr.ACT_ID =   (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO ="	+numActivo+ ")"
+				+			"                AND eco.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN ('02','03','08')) " 
+				+			"				 AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')");
+				
+		return !"0".equals(resultado);
+	}
 	
 	@Override
 	public Boolean existeActivoConExpedienteComercialVivo(String numActivo) {

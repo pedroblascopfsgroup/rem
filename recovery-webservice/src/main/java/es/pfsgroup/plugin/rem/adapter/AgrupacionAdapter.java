@@ -296,7 +296,7 @@ public class AgrupacionAdapter {
 	public static final String EXISTEN_UAS_CON_OFERTAS_VIVAS  = "Error: Hay Unidades Alquilables con ofertas vivas";
 	public static final String EXISTEN_UAS_CON_TRABAJOS_NO_FINALIZADOS  = "Error: Hay Unidades Alquilables con trabajos por finalizar";
 	// Errores validacion ventaVivas
-	private static final String ACTIVO_OFERTAS_VENTAS_VIVAS = "Activo con ofertas de venta vivas";
+	private static final String ACTIVO_OFERTAS_VIVAS = "Activo con ofertas vivas";
 	private static final String ACTIVO_OFERTAS_ALQUILER_VIVAS = "Activo con ofertas de alquiler vivas";
 	private static final String ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER = "Activo NO incluido en perímetro alquiler";
 	private static final String ACTIVO_SIN_PATRIMONIO_ACTIVO = "El activo no tiene patrimonio activo";
@@ -2547,8 +2547,10 @@ public class AgrupacionAdapter {
 								if(!Checks.esNulo(activoApi.getActivoPatrimonio(activo.getId()))) {
 									if(!Checks.esNulo(activoApi.getActivoPatrimonio(activo.getId()).getCheckHPM())
 											&& activoApi.getActivoPatrimonio(activo.getId()).getCheckHPM()){
-										if(!particularValidator.existeActivoConOfertaViva(Long.toString(activo.getNumActivo()))){
-											if(!DDSituacionComercial.CODIGO_ALQUILADO.equals(activo.getSituacionComercial().getCodigo())) {
+										if(!particularValidator.existeActivoConOfertaVivaEstadoExpediente(Long.toString(activo.getNumActivo()))){
+											Filter patrimonioFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+											ActivoPatrimonio patrimonioActivo = genericDao.get(ActivoPatrimonio.class, patrimonioFilter);
+											if(!Checks.esNulo(patrimonioActivo) && !DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(patrimonioActivo.getTipoEstadoAlquiler().getCodigo())) {
 												if (!Checks.estaVacio(activo.getAgrupaciones())) {
 													List<ActivoAgrupacionActivo> listaAgrupaciones = activo.getAgrupaciones();
 													
@@ -2590,7 +2592,7 @@ public class AgrupacionAdapter {
 																esGestorOSupervisorAlquilerComercial = Boolean.TRUE;  
 																break;
 															}
-														} 
+														}
 													}
 													if(esGestorOSupervisorAlquilerComercial) {
 														return Boolean.TRUE;
@@ -2607,38 +2609,7 @@ public class AgrupacionAdapter {
 												throw new JsonViewerException("Activo alquilado");
 											}
 										}else {
-											List <ActivoOferta> ofertasActivas = activo.getOfertas();
-											Boolean ventaVivas = Boolean.FALSE;
-											Boolean alquilerVivas = Boolean.FALSE;
-											for (ActivoOferta activoOferta : ofertasActivas) {
-													if(!Checks.esNulo(activoOferta.getPrimaryKey())
-															&& !Checks.esNulo(activoOferta.getPrimaryKey().getOferta())
-															&& !Checks.esNulo(activoOferta.getPrimaryKey().getOferta().getTipoOferta())){
-													if(DDTipoOferta.CODIGO_VENTA.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo())){
-														if(DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
-															ventaVivas = Boolean.TRUE;
-															
-														}
-													}else {
-														if(DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
-															alquilerVivas = Boolean.TRUE;
-															
-														}
-													}
-												}
-											}
-											
-											if (ventaVivas) {
-												throw new JsonViewerException(ACTIVO_OFERTAS_VENTAS_VIVAS);
-											}
-											else if (alquilerVivas)
-											{
-												throw new JsonViewerException(ACTIVO_OFERTAS_ALQUILER_VIVAS);
-
-											}
-											else {
-												return Boolean.TRUE;
-											}
+												throw new JsonViewerException(ACTIVO_OFERTAS_VIVAS);
 										}
 									}else {
 										throw new JsonViewerException(ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER);

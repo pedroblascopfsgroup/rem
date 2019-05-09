@@ -1371,16 +1371,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public boolean existenUAsconOfertasVivas(Long idAgrupacion) {   
-		String sql = "SELECT count(1) " + 
-				"FROM ACT_AGA_AGRUPACION_ACTIVO aga " + 
-				"INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID " + 
-				"INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID " + 
-				"INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID " + 
-				"INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID " + 
-				"WHERE aga.AGR_ID =  "+idAgrupacion +  
-				"AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01') " + 
-				"AND aga.AGA_PRINCIPAL = 0 " + 
-				"AND act.DD_TTA_ID  = ( SELECT DD_TTA_ID FROM DD_TTA_TIPO_TITULO_ACTIVO WHERE DD_TTA_CODIGO = '05')  ";
+		String sql = " SELECT count(1)      " 
+	+			"				 FROM ACT_AGA_AGRUPACION_ACTIVO aga      " 
+	+			"				 INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID      " 
+	+			"				 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID      " 
+	+			"				 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID      " 
+	+			"				 INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID      " 
+	+			"				 WHERE aga.AGR_ID =    "	+idAgrupacion
+	+			"                AND eco.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN ('02','03','08')) " 
+	+			"				 AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')      " 
+	+			"				 AND aga.AGA_PRINCIPAL = 0 " 
+	+			"				 AND act.DD_TTA_ID  = ( SELECT DD_TTA_ID FROM DD_TTA_TIPO_TITULO_ACTIVO WHERE DD_TTA_CODIGO = '05'); ";
 		
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;  
@@ -1406,14 +1407,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public boolean existeAMconOfertasVivas(Long idAgrupacion) { 
-		String sql = "SELECT count(*)    " + 
-				"	 			 FROM ACT_AGA_AGRUPACION_ACTIVO aga     " + 
-				"	 			 INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID     " + 
-				"	 			 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID     " + 
-				"	 			 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID     " + 
-				"	 			 WHERE aga.AGR_ID = " + idAgrupacion + 
-				"	 			  AND aga.AGA_PRINCIPAL = 1   " + 
-				"	 			  AND ofr.DD_EOF_ID IN (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')" ;
+		String sql = " SELECT count(1)      "
+	+			"				 FROM ACT_AGA_AGRUPACION_ACTIVO aga      " 
+	+			"				 INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID      " 
+	+			"				 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID      " 
+	+			"				 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID      " 
+	+			"				 INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID      " 
+	+			"				 WHERE aga.AGR_ID =    "	+idAgrupacion
+	+			"                AND eco.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN ('02','03','08')) " 
+	+			"				 AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')      " 
+	+			"				 AND aga.AGA_PRINCIPAL = 1 ";
 		
 		
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {

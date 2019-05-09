@@ -394,7 +394,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     			if(Ext.decode(response.responseText).errorCreacion)
     				me.fireEvent("errorToast", Ext.decode(response.responseText).errorCreacion); 
     			else
-    				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
     		},
 		 	failure: function(record, operation) {
 		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
@@ -641,7 +641,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
       
 	onChangeTipoTitulo: function(btn,value, oValue, eOps) {
-    	
     	var me = this;
     	me.lookupReference('judicial').setVisible(value == '01');
     	me.lookupReference('judicial').setDisabled(value != '01');
@@ -649,8 +648,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	me.lookupReference('noJudicial').setDisabled(value != '02');
 		me.lookupReference('pdv').setVisible(value == '03');
 		me.lookupReference('pdv').setDisabled(value != '03');
-    	if (value == '05' && oValue == null)
+    	if (value == '05' && oValue == null){
     		me.lookupReference('comboTipoTituloRef').readOnly = true;
+    		var tipoTitulo = me.getViewModel().get('datosRegistrales.tipoTituloActivoMatriz');
+    		if (tipoTitulo === '01'){
+		    	me.lookupReference('judicial').setVisible(true);
+		    	me.lookupReference('judicial').setDisabled(false);
+		    	me.lookupReference('noJudicial').setVisible(false);
+		    	me.lookupReference('noJudicial').setDisabled(true);
+    		}else if ( tipoTitulo === '02'){
+				me.lookupReference('judicial').setVisible(false);
+				me.lookupReference('judicial').setDisabled(true);
+				me.lookupReference('noJudicial').setVisible(true);
+				me.lookupReference('noJudicial').setDisabled(false);
+    		
+    		}
+    	}
+    	
     	
     },
     

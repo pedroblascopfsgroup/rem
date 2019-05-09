@@ -2733,9 +2733,10 @@ public class AgrupacionAdapter {
 							activoAgrupacionActivoDao.saveOrUpdate(aga);
 						}	
 					}
-					else {
+					else if(Checks.esNulo(dto.getActivoMatriz()) && Checks.esNulo(dto.getDescripcion()) && Checks.esNulo(dto.getNombre()) &&
+							Checks.esNulo(dto.getNumAgrupPrinexHPM()) && Checks.esNulo(dto.getFechaBaja())) {
 							ActivoAgrupacionActivo aga = activoAgrupacionActivoDao.getAgrupacionPAByIdAgrupacion(id);
-							
+							pa.setDireccion(null);
 							if(!Checks.esNulo(aga)) {
 								activoAgrupacionActivoDao.deleteById(aga.getId());
 							}

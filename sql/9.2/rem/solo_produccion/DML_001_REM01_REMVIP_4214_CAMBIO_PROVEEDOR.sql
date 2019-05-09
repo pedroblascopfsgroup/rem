@@ -135,7 +135,7 @@ BEGIN
 					''3'',
 					''102'',
 					NULL,
-					TO_DATE(''01/01/1999'',''DD/MM/YYYY''),
+					to_timestamp(''01/01/1999 20:57:30,000000000'',''DD/MM/YYYY HH24:MI:SSXFF''	),
 					NULL,
 					''1'',
 					''4'',

@@ -22,6 +22,7 @@ DECLARE
     V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_MSQL VARCHAR2(100 CHAR);
     V_COUNT NUMBER(16); -- Vble. para contar.
     V_NUM_TABLAS NUMBER(16);
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -58,10 +59,10 @@ DECLARE
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Tabla creada');
 		
 		--Creamos comentario
-		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
+		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');		
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Comentario creado.');		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... OK');
   		
     END IF;    
 	

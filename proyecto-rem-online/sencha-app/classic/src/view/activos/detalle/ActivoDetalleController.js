@@ -3763,25 +3763,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
         var me = this;
-        var estadoCheckPublicarFicha = me.getViewModel().get('activo.aplicaPublicar');
-		var checkboxPublicarAlquiler = checkbox.up('activosdetallemain').lookupReference('chkbxpublicaralquiler');
-		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
+        var estadoCheckPublicarFicha = me.getViewModel().get('activo.aplicaPublicar'),
+		checkboxPublicarAlquiler = checkbox.up('activosdetallemain').lookupReference('chkbxpublicaralquiler'),
+		esActivoMatrizNoPublicado = me.bloquearPublicarAlquilerActivosMatrizNoPublicados();
+		estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
-
-		if(!estadoCheckPublicarFicha){
+		if(esActivoMatrizNoPublicado){
 			checkboxPublicarAlquiler.setReadOnly(true);
-            checkbox.setValue(false);
-        } else if (!estadoPubAlquilerPublicado) {
-			var readOnly = !(Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) || checkbox.getValue());
-            checkboxPublicarAlquiler.setReadOnly(readOnly);
-			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
-			if(!checkbox.getValue()) {
-				checkboxPublicarAlquiler.setValue(false);
+			
+		}
+		else{
+			if(!estadoCheckPublicarFicha){
+				checkboxPublicarAlquiler.setReadOnly(true);
+	            checkbox.setValue(false);
+	        } else if (!estadoPubAlquilerPublicado) {
+				var readOnly = !(Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) || checkbox.getValue());
+	            checkboxPublicarAlquiler.setReadOnly(readOnly);
+				checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
+				if(!checkbox.getValue()) {
+					checkboxPublicarAlquiler.setValue(false);
+				}
+	        }
+		}	
+    },
+	 bloquearPublicarAlquilerActivosMatrizNoPublicados: function(get){
+		var me = this;
+		var estadoPublicacionAlquiler =me.getViewModel().get('datospublicacionactivo.estadoPublicacionAlquilerCodigo');
+		var esActivoMatriz = me.getViewModel().get('datospublicacionactivo.isMatriz');
+		if(esActivoMatriz){
+			if (!Ext.isEmpty(estadoPublicacionAlquiler) && estadoPublicacionAlquiler == CONST.ESTADO_PUBLICACION_ALQUILER['NO_PUBLICADO']){
+				return true;
 			}
 		}
-    },
-
+		return false;	
+	},
     establecerTipoPublicacionAlquiler: function(btn) {
         var me = this;
         var list = Ext.ComponentQuery.query('activosdetallemain');
@@ -5137,5 +5153,4 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         return str;
 
     }
-
 });

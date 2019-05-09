@@ -154,6 +154,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(activoDao.isActivoMatriz(idActivo)) {
 			if(DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())) {
 				dto.setPublicarAlquiler(false);
+				dto.setDeshabilitarCheckPublicarAlquiler(true);
 				
 			}
 			

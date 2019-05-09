@@ -140,6 +140,13 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 	    },
 	    {
 	    	name:'motivoPublicacionAlquiler'
+	    },
+	    {
+	    	name: 'estadoPublicacionAlquilerCodigo'
+	    },
+	    {
+	    	name: 'isMatriz',
+	    	type:'boolean'
 	    }
 
 	],

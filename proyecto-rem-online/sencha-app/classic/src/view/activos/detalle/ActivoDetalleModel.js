@@ -723,6 +723,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				vendido = me.get('activo.isVendidoOEntramite');
 			return (vendido === true || esUA === true);
 		}
+		 
+		
 	 },
 	
     stores: {

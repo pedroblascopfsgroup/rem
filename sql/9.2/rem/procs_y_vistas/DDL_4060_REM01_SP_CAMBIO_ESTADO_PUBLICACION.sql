@@ -894,7 +894,7 @@ END IF;
                               , nADMISION, nGESTION
                               , nINFORME_COMERCIAL, nPRECIO_A, nPRECIO_V
                               , nCEE_VIGENTE, nADECUADO
-                              , nES_CONDICIONADO
+                              , nES_CONDICIONADO;
         EXIT WHEN v_cursor%NOTFOUND;
 
         vACTUALIZADO_V := 'N';

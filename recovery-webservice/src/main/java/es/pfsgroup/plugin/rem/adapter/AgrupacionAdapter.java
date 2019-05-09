@@ -655,16 +655,11 @@ public class AgrupacionAdapter {
 									}
 								}
 								
-								if(!Checks.esNulo(activoAgrup.getActivo().getValoracion())) {
-									for(ActivoValoraciones valoracion: activoAgrup.getActivo().getValoracion())
-									{
-										if(((!Checks.esNulo(valoracion.getFechaCambioValorVenta())) && calculodiasCambiosActivo(valoracion.getFechaCambioValorVenta()))
-											||	((!Checks.esNulo(valoracion.getFechaCambioValorAlq())) && calculodiasCambiosActivo(valoracion.getFechaCambioValorAlq()))
-											) {
+
+								if(((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorVenta())) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorVenta()))
+									||	((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorAlq())) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorAlq()))
+										) {
 											cambioEstadoPrecio = Boolean.TRUE;
-											break;
-										}
-									}
 								}	
 								
 								dtoAgrupacion.setCambioEstadoActivo(cambioEstadoActivo);

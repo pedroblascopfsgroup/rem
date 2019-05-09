@@ -137,9 +137,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     	DtoDatosPublicacionActivo dto = activoPublicacionDao.convertirEntidadTipoToDto(activoPublicacion);
 		dto.setPrecioWebVenta(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(idActivo));
 
-		if(!Checks.esNulo(activoValoracionDao.getDateCambioPrecioWebVenta(idActivo))) {
+		if(!Checks.esNulo(activoPublicacion.getFechaCambioValorVenta())) {
 			
-			Date fechaInicial=activoValoracionDao.getDateCambioPrecioWebVenta(idActivo);
+			Date fechaInicial=activoPublicacion.getFechaCambioValorVenta();
 			Date fechaFinal=new Date();
 			Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
 			
@@ -147,8 +147,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		dto.setPrecioWebAlquiler(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo));
 		
-		if(!Checks.esNulo(activoValoracionDao.getDateCambioPrecioWebAlquiler(idActivo))) {
-			Date fechaInicial=activoValoracionDao.getDateCambioPrecioWebAlquiler(idActivo);
+		if(!Checks.esNulo(activoPublicacion.getFechaCambioValorAlq())) {
+			Date fechaInicial=activoPublicacion.getFechaCambioValorAlq();
 			Date fechaFinal=new Date();
 			Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
 			dto.setDiasCambioPrecioAlqWeb(dias);
@@ -699,19 +699,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				}
 				
 				if(!Checks.esNulo(dto.getNoMostrarPrecioVenta())){
-					ActivoValoraciones activoVal =activoValoracionDao.getUltimaValoracionVenta(activoPublicacion.getActivo().getId());
-					if (!Checks.esNulo(activoVal)) {
-						activoVal.setFechaCambioValorVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
-						activoValoracionDao.save(activoVal);
-					}
+					activoPublicacion.setFechaCambioValorVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
 				}
 				
 				if(!Checks.esNulo(dto.getNoMostrarPrecioAlquiler())){
-					ActivoValoraciones activoVal =activoValoracionDao.getUltimaValoracionAlquiler(activoPublicacion.getActivo().getId());
-					if (!Checks.esNulo(activoVal)) {
-						activoVal.setFechaCambioValorAlq(new Date(System.currentTimeMillis() + 3600 * 1000));
-						activoValoracionDao.save(activoVal);
-					}
+					activoPublicacion.setFechaCambioValorAlq(new Date(System.currentTimeMillis() + 3600 * 1000));
+						
 				}
 				
 				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,7 @@ public interface TrabajoApi {
 	 * @param TareaExterna
 	 * @return Trabajo
 	 */
+	
 	@BusinessOperation(overrides = "trabajoManager.getTrabajoByTareaExterna")
 	public Trabajo getTrabajoByTareaExterna(TareaExterna tarea);
 
@@ -127,6 +129,10 @@ public interface TrabajoApi {
 	 *            pasa la propuesta
 	 * @return
 	 */
+	
+	public Trabajo getTrabajoByNumeroTrabajo(Long numTrabajo);
+
+	
 	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio) throws Exception;
 
 	/**
@@ -831,6 +837,8 @@ public interface TrabajoApi {
 	 */
 	public boolean checkReservaNecesariaNotNull(ExpedienteComercial expediente);
 
+	
+	
 	public Boolean trabajoTieneTarifaPlana(TareaExterna tareaExterna);
 
 	boolean checkLiberbank(TareaExterna tareaExterna);
@@ -844,6 +852,7 @@ public interface TrabajoApi {
 	boolean checkJaipur(Trabajo trabajo);
 
 	boolean checkGaleon(Trabajo trabajo);
-	
+
+	Boolean esTrabajoTarifaPlana(Activo activo, DDSubtipoTrabajo subtipoTrabajo, Date fechaSolicitud);
 
 }

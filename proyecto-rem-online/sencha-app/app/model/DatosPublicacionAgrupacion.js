@@ -133,6 +133,30 @@ Ext.define('HreRem.model.DatosPublicacionAgrupacion', {
 	 	    {
 	 	        name:'eleccionUsuarioTipoPublicacionAlquiler'
 	 	    },
+	 	    {
+	            name:'fechaRevisionVenta',
+	            type:'date',
+	            dateFormat: 'c'	            
+	        },
+	        {
+	        	name: 'isEnableFechaRevisionVenta',
+        		calculate: function(data){
+					return !data.ocultarVenta;				
+				},
+				depends: 'ocultarVenta'
+	        },
+	        {
+	            name:'fechaRevisionAlquiler',
+	            type:'date',
+	            dateFormat: 'c'
+	        },
+	        {
+	        	name: 'isEnableFechaRevisionAlquiler',
+        		calculate: function(data){
+					return !data.ocultarAlquiler;	
+				},
+				depends: 'ocultarAlquiler'
+	        },
 	 	    // Condicionantes
 	 	    {
     			name:'ruina',

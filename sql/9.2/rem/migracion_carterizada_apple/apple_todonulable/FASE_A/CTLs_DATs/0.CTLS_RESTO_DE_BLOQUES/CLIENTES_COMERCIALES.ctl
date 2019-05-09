@@ -1,0 +1,37 @@
+OPTIONS (DIRECT=TRUE, BINDSIZE=512000, ROWS=10000, ERRORS=999999)
+LOAD DATA
+CHARACTERSET WE8ISO8859P1
+INFILE './CTLs_DATs/DATs/CLIENTES_COMERCIALES.dat'
+BADFILE './CTLs_DATs/bad/CLIENTES_COMERCIALES.bad'
+DISCARDFILE './CTLs_DATs/rejects/CLIENTES_COMERCIALES.bad'
+INTO TABLE REM01.MIG2_CLC_CLIENTE_COMERCIAL
+TRUNCATE
+TRAILING NULLCOLS
+(
+	CLC_COD_CLIENTE_ORIGEN          POSITION(1:20)                     CHAR                   							"REPLACE(REPLACE(REPLACE(TRIM(:CLC_COD_CLIENTE_ORIGEN),';',' '), '\"',''),'''','')",
+	CLC_RAZON_SOCIAL           		POSITION(21:276)                   CHAR                   							"REPLACE(REPLACE(REPLACE(TRIM(:CLC_RAZON_SOCIAL),';',' '), '\"',''),'''','')",
+	CLC_NOMBRE           			POSITION(277:532)                  CHAR                   							"REPLACE(REPLACE(REPLACE(TRIM(:CLC_NOMBRE),';',' '), '\"',''),'''','')",
+	CLC_APELLIDOS           		POSITION(533:788)                  CHAR  NULLIF(CLC_APELLIDOS=BLANKS)               "REPLACE(REPLACE(REPLACE(TRIM(:CLC_APELLIDOS),';',' '), '\"',''),'''','')",
+	CLC_FECHA_ALTA           		POSITION(789:796)                  DATE 'YYYYMMDD'  NULLIF(CLC_FECHA_ALTA=BLANKS)   "REPLACE(:CLC_FECHA_ALTA, '00000000', '')",
+	CLC_COD_USUARIO_LDAP_ACCION     POSITION(797:846)                  CHAR  NULLIF(CLC_COD_USUARIO_LDAP_ACCION=BLANKS) "REPLACE(REPLACE(REPLACE(TRIM(:CLC_COD_USUARIO_LDAP_ACCION),';',' '), '\"',''),'''','')",
+	CLC_COD_TIPO_DOCUMENTO          POSITION(847:866)                  CHAR                   							"REPLACE(REPLACE(REPLACE(TRIM(:CLC_COD_TIPO_DOCUMENTO),';',' '), '\"',''),'''','')",
+	CLC_DOCUMENTO           		POSITION(867:916)                  CHAR                   							"REPLACE(REPLACE(REPLACE(TRIM(:CLC_DOCUMENTO),';',' '), '\"',''),'''','')",
+	CLC_COD_TIPO_DOC_RTE            POSITION(917:936)                  CHAR                   							"REPLACE(REPLACE(REPLACE(TRIM(:CLC_COD_TIPO_DOC_RTE),';',' '), '\"',''),'''','')",
+	CLC_DOCUMENTO_RTE           	POSITION(937:986)                  CHAR                   							"REPLACE(REPLACE(REPLACE(TRIM(:CLC_DOCUMENTO_RTE),';',' '), '\"',''),'''','')",
+	CLC_TELEFONO1           		POSITION(987:1036)                 CHAR                   							"REPLACE(REPLACE(REPLACE(TRIM(:CLC_TELEFONO1),';',' '), '\"',''),'''','')",
+	CLC_TELEFONO2           		POSITION(1037:1086)                CHAR  NULLIF(CLC_TELEFONO2=BLANKS)               "REPLACE(REPLACE(REPLACE(TRIM(:CLC_TELEFONO2),';',' '), '\"',''),'''','')",
+	CLC_EMAIL           			POSITION(1087:1136)                CHAR  NULLIF(CLC_EMAIL=BLANKS)                   "REPLACE(REPLACE(REPLACE(TRIM(:CLC_EMAIL),';',' '), '\"',''),'''','')",
+	CLC_COD_TIPO_VIA           		POSITION(1137:1156)                CHAR  NULLIF(CLC_COD_TIPO_VIA=BLANKS)            "REPLACE(REPLACE(REPLACE(TRIM(:CLC_COD_TIPO_VIA),';',' '), '\"',''),'''','')",
+	CLC_CLC_DIRECCION           	POSITION(1157:1256)                CHAR  NULLIF(CLC_CLC_DIRECCION=BLANKS)           "REPLACE(REPLACE(REPLACE(TRIM(:CLC_CLC_DIRECCION),';',' '), '\"',''),'''','')",
+	CLC_NUMEROCALLE           		POSITION(1257:1356)                CHAR  NULLIF(CLC_NUMEROCALLE=BLANKS)             "REPLACE(REPLACE(REPLACE(TRIM(:CLC_NUMEROCALLE),';',' '), '\"',''),'''','')",
+	CLC_ESCALERA           			POSITION(1357:1366)                CHAR  NULLIF(CLC_ESCALERA=BLANKS)                "REPLACE(REPLACE(REPLACE(TRIM(:CLC_ESCALERA),';',' '), '\"',''),'''','')",
+	CLC_PLANTA           			POSITION(1367:1376)                CHAR  NULLIF(CLC_PLANTA=BLANKS)                  "REPLACE(REPLACE(REPLACE(TRIM(:CLC_PLANTA),';',' '), '\"',''),'''','')",
+	CLC_PUERTA           			POSITION(1377:1386)                CHAR  NULLIF(CLC_PUERTA=BLANKS)                  "REPLACE(REPLACE(REPLACE(TRIM(:CLC_PUERTA),';',' '), '\"',''),'''','')",
+	CLC_COD_LOCALIDAD           	POSITION(1387:1406)                CHAR  NULLIF(CLC_COD_LOCALIDAD=BLANKS)           "LPAD(NVL(REPLACE(REPLACE(REPLACE(TRIM(:CLC_COD_LOCALIDAD),';',' '), '\"',''),'''',''),'00000'),5,'0')",
+	CLC_CODIGO_POSTAL           	POSITION(1407:1411)                CHAR  NULLIF(CLC_CODIGO_POSTAL=BLANKS)           "REPLACE(REPLACE(REPLACE(TRIM(:CLC_CODIGO_POSTAL),';',' '), '\"',''),'''','')",
+	CLC_COD_UNIDADPOBLACIONAL       POSITION(1412:1431)                CHAR  NULLIF(CLC_COD_UNIDADPOBLACIONAL=BLANKS)   "REPLACE(REPLACE(REPLACE(TRIM(:CLC_COD_UNIDADPOBLACIONAL),';',' '), '\"',''),'''','')",
+	CLC_COD_PROVINCIA           	POSITION(1432:1451)                CHAR  NULLIF(CLC_COD_PROVINCIA=BLANKS)           "REPLACE(REPLACE(REPLACE(TRIM(:CLC_COD_PROVINCIA),';',' '), '\"',''),'''','')",
+	CLC_OBSERVACIONES           	POSITION(1452:1707)                CHAR  NULLIF(CLC_OBSERVACIONES=BLANKS)           "REPLACE(REPLACE(REPLACE(TRIM(:CLC_OBSERVACIONES),';',' '), '\"',''),'''','')",
+	DD_TPE_ID           			POSITION(1708:1724)                INTEGER EXTERNAL                   				"TO_NUMBER(SUBSTR(REPLACE(REPLACE(REPLACE(TRIM(:DD_TPE_ID),';',' '), '\"',''),'''',''),2,16))",
+VALIDACION CONSTANT "0"
+)

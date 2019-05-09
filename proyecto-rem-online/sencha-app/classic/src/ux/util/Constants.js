@@ -211,7 +211,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	BH: '06',
     	AGORAINMOBILIARIO: '135',
 		AGORAFINANCIERO: '137',
-		APPLEINMOBILIARIO: '138'
+		APPLEINMOBILIARIO: '138',
+		SAREBINMOBILIARIO: '04'
     },
     
     NOMBRE_SUBCARTERA: {
@@ -241,6 +242,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTEDI: 'GESTEDI',
 		HAYAGESTFORMADM: 'HAYAGESTFORMADM',
 		GESTIAFORM:'GESTIAFORM',
+		GESTOR_COMERCIAL: 'HAYAGESTCOM',
 		USUARIO_CONSULTA: 'HAYACONSU'
     },
     
@@ -485,7 +487,7 @@ Ext.define('HreRem.ux.util.Constants', {
 	ESTADOS_MOTIVOS_CAL_NEGATIVA:{
 		PENDIENTE: '01',
 		SUBSANADO: '02'
-	},
+	}, 
     
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
@@ -520,5 +522,19 @@ Ext.define('HreRem.ux.util.Constants', {
  		SUBSANADO: 'Subsanado',
  		COD_PENDIENTE: '01',
  		COD_SUBSANADO: '02'
+ 	}, 
+ 	COMBO_ENTIDAD_FINANCIERA:{
+ 		BANKIA: '01'
+ 	},
+ 	DD_ETI_ESTADO_TITULO :{
+		TRAMITACION: "01",
+		INSCRITO: "02",
+		IMPOSIBLE_INSCRIPCION: "03",
+		DESCONOCIDO: "04",
+		INMATRICULADOS: "05",
+		SUBSANAR: "06",
+		NULO: "07"
  	}
+ 	
+ 	
 });

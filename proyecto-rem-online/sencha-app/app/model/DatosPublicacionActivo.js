@@ -140,8 +140,43 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 	    },
 	    {
 	    	name:'motivoPublicacionAlquiler'
+	    },
+	    {
+	    	name:'diasCambioPublicacionVenta'
+	    },
+	    {
+	    	name:'diasCambioPublicacionAlquiler'
+	    },
+	    {
+            name:'fechaRevisionVenta',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+        	name: 'isEnableFechaRevisionVenta',
+    		calculate: function(data){
+				return !data.ocultarVenta;	
+			},
+			depends: 'ocultarVenta'
+        },
+        {
+            name:'fechaRevisionAlquiler',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+        	name: 'isEnableFechaRevisionAlquiler',
+    		calculate: function(data){
+				return !data.ocultarAlquiler;	
+			},
+			depends: 'ocultarAlquiler'
+        },
+        {
+	    	name:'diasCambioPrecioVentaWeb'
+	    },
+	    {
+	    	name:'diasCambioPrecioAlqWeb'
 	    }
-
 	],
 
 	proxy: {

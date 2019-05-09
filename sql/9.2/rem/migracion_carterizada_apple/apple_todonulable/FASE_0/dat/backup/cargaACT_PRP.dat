@@ -1,0 +1,8 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;ACT_PRP;ACT_PRP_ACT_NUMERO_ACTIVO;NUMBER(16,0);NO;;Código identificador único del Activo.
+2;ACT_PRP;ACT_PRP_NUM_PROPUESTA;NUMBER(16,0);NO;;Código identificador único de la Propuesta de Precio.
+3;ACT_PRP;ACT_PRP_PRECIO_PROPUESTO;NUMBER(16,2);NO;;Importe  de la Propuesta de Precio del Activo
+4;ACT_PRP;ACT_PRP_PRECIO_SANCIONADO;NUMBER(16,2);NO;;Importe  del Precio Sancionado del Activo
+5;ACT_PRP;ACT_PRP_MOTIVO_DESCARTE;VARCHAR(256 CHAR);NO;;Motivo de Descarte de la Asociacion del Activo a la Propuesta
+6;ACT_PRP;ACT_PRP_VALOR_LIQUIDATIVO;NUMBER(16,2);NO;;Valor liquidativo del activo
+7;ACT_PRP;DD_EPA_ID;VARCHAR(20 CHAR);NO;;Estado de la propuesta

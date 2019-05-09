@@ -6,6 +6,7 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import org.hibernate.Criteria;
@@ -19,8 +20,7 @@ import java.util.Date;
 
 @Repository("ActivoPublicacionDao")
 public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacion, Long> implements ActivoPublicacionDao {
-
-
+	
 	@Override
 	public DtoDatosPublicacionActivo convertirEntidadTipoToDto(ActivoPublicacion entidad) {
 		DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
@@ -61,6 +61,25 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		dto.setMotivoOcultacionManualAlquiler(entidad.getMotivoOcultacionManualAlquiler());
 		dto.setFechaInicioEstadoVenta(entidad.getFechaInicioVenta());
 		dto.setFechaInicioEstadoAlquiler(entidad.getFechaInicioAlquiler());
+		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(entidad.getActivo().getCartera().getCodigo())){
+			
+			if(!Checks.esNulo(entidad.getFechaCambioPubAlq())) {
+				Date fechaInicial=entidad.getFechaCambioPubAlq();
+				Date fechaFinal=new Date();
+				Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
+				dto.setDiasCambioPublicacionAlquiler(dias);
+			}
+			
+
+			if(!Checks.esNulo(entidad.getFechaCambioPubVenta())){
+				Date fechaInicialVenta=entidad.getFechaCambioPubVenta();
+				Date fechaFinalVenta=new Date();
+				Integer dias=(int) (((long)fechaFinalVenta.getTime()-(long)fechaInicialVenta.getTime())/86400000);
+				dto.setDiasCambioPublicacionVenta(dias);
+			}
+			
+		}
+		
 		
 		if(!Checks.esNulo(entidad.getTipoPublicacionVenta())) {
 			dto.setTipoPublicacionVentaCodigo(entidad.getTipoPublicacionVenta().getCodigo());
@@ -70,6 +89,9 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 			dto.setTipoPublicacionAlquilerCodigo(entidad.getTipoPublicacionAlquiler().getCodigo());
 			dto.setTipoPublicacionAlquilerDescripcion(entidad.getTipoPublicacionAlquiler().getDescripcion());
 		}
+		
+		dto.setFechaRevisionVenta(entidad.getFechaRevisionVenta());
+		dto.setFechaRevisionAlquiler(entidad.getFechaRevisionAlquiler());
 
 		return dto;
 	}

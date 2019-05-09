@@ -681,6 +681,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onAgregarGestoresClick: function(btn){
 		
 		var me = this;
+		
+		btn.setDisabled(true);
 
     	var url =  $AC.getRemoteUrl('activo/insertarGestorAdicional');
     	var parametros = btn.up("combogestores").getValues();
@@ -2921,10 +2923,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						}
 					}
 				}
-		
 				var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
 		              return activo.activoId == me.getViewModel().get("activo.id");
 		            }), 1)[0];
+		            
+		        var algunActivoEstaInscrito = false;
+		        for (var i = 0; i < activosPropagables.length; i ++){
+		        		if ( CONST.DD_ETI_ESTADO_TITULO["INSCRITO"] == activosPropagables[i].estadoTitulo)	{
+		        			//activosPropagables.shift(activosPropagables[i]);
+		        			activosPropagables.splice(i,1);
+		        			algunActivoEstaInscrito = true;
+		        		}
+		        }
 				
 		        // Abrimos la ventana de selección de activos
 			    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
@@ -2937,8 +2947,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			        }).show();
 		
 		    	me.getView().add(ventanaOpcionesPropagacionCambios);
+		    	
+		    	
+		    	//En caso de que algun activo este incrito, se le alertara al usuario.
+		    	if ( algunActivoEstaInscrito ) {
+		    		me.fireEvent("warnToast", "No se podr&aacute; propagar a todos los activos debido a que alguno est&aacute; inscrito");
+		    	}
+		    	  
 			},
-		
 		    failure: function(record, operation) {
 		        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		  	}
@@ -3659,7 +3675,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
-
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
         } else {
@@ -3692,7 +3707,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var textarea = me.lookupReference(checkbox.textareaRefChained);
         
         if(!isDirty && estadoPubVentaPublicado) {
-    		var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData());
+			
             checkbox.setReadOnly(readOnly);
             checkbox.setValue(false);
     	}
@@ -3729,18 +3745,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    var checkboxPublicarVenta = checkbox.up('activosdetallemain').lookupReference('chkbxpublicarventa');
 	    var estadoPubVentaPublicado = me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
-	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+			me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+			var checkboxPublicarVentaDeshabilitado = me.getViewModel().get('datospublicacionactivo').getData().deshabilitarCheckPublicarVenta;
 
+	
 	    if (!estadoCheckPublicarFicha){
 	    	checkboxPublicarAlquiler.setReadOnly(true);
             checkbox.setValue(false);
-        } else if (!estadoPubVentaPublicado) {
-	        var readOnly = !(Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) || checkbox.getValue());
-	        checkboxPublicarVenta.setReadOnly(readOnly);
-	        if(!checkbox.getValue()) {
-	        	checkboxPublicarVenta.setValue(false);
-	        }
-        }
+        } else {
+		    if(!estadoPubVentaPublicado && checkbox.getValue() && checkboxPublicarVentaDeshabilitado) {
+			
+				checkboxPublicarVenta.setValue(true);
+				
+		    } else if (!estadoPubVentaPublicado && !checkbox.getValue() && checkboxPublicarVentaDeshabilitado) {
+		        
+				checkboxPublicarVenta.setValue(false);
+				
+		    } 
+		}        
 	},
 
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
@@ -3750,16 +3772,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
+			var checkboxPublicarAlquilerDeshabilitado = me.getViewModel().get('datospublicacionactivo').getData().deshabilitarCheckPublicarAlquiler;
 
+		
 		if(!estadoCheckPublicarFicha){
 			checkboxPublicarAlquiler.setReadOnly(true);
             checkbox.setValue(false);
-        } else if (!estadoPubAlquilerPublicado) {
-			var readOnly = !(Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) || checkbox.getValue());
-            checkboxPublicarAlquiler.setReadOnly(readOnly);
-			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
-			if(!checkbox.getValue()) {
+        } else {
+			if(isDirty && !estadoPubAlquilerPublicado && checkboxPublicarAlquilerDeshabilitado) {
+	            checkboxPublicarAlquiler.setValue(true);
+			} else if (!isDirty && !estadoPubAlquilerPublicado && !checkbox.getValue() && checkboxPublicarAlquilerDeshabilitado) {
+				
+				
+				checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
 				checkboxPublicarAlquiler.setValue(false);
+						}
+						 else {
+				var readOnly = Ext
+						.isEmpty(me.getViewModel().get(
+								'datospublicacionactivo').getData().precioWebAlquiler)
+						&& !checkbox.getValue();
+				checkboxPublicarAlquiler.setReadOnly(readOnly);
+
 			}
 		}
     },
@@ -3778,7 +3812,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var me = this;
         var list = Ext.ComponentQuery.query('activosdetallemain');
         for(var i=0; i < list.length; i++) {
-        	if(list[i].tab.active) list[i].lookupReference('chkbxpublicaralquiler').setValue(false);
+			if(list[i].tab.active) list[i].lookupReference('chkbxpublicaralquiler').setValue(false);
+			if(list[i].tab.active) list[i].lookupReference('chkbxpublicarsinprecioalquiler').setValue(false);
         }
         btn.up('window').destroy();
     },
@@ -4095,27 +4130,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
-    onSaveFormularioCompletoTabPatrimonio: function(btn, form){
-    	var me = this;
-    	var chkPerimetroAlquiler = me.getViewModel().get('patrimonio.chkPerimetroAlquiler');
-    	var isRestringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
-    	var activoChkPerimetroAlquiler = me.getViewModel().get('activo.activoChkPerimetroAlquiler');
-
-    	if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
-    		Ext.Msg.confirm(
-				HreRem.i18n("title.agrupacion.restringida"),
-				HreRem.i18n("msg.confirm.agrupacion.restringida"),
-				function(btnConfirm){
-					if (btnConfirm == "yes"){
-						me.onSaveFormularioCompleto(btn, form, true);
-					}
-				}
-			);
-    	} else {
-    		me.onSaveFormularioCompleto(btn, form, false);
-    	}
-    },
-
 	manageToastJsonResponse : function(scope,jsonData) {
 		var me= this;
 
@@ -4169,7 +4183,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var chkPerimetroAlquiler = me.getViewModel().get('patrimonio.chkPerimetroAlquiler');
         var destinoComercialAlquiler = me.getViewModel().get('activo.isDestinoComercialAlquiler');
         var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
-
+        var isRestringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
+    	var activoChkPerimetroAlquiler = me.getViewModel().get('activo.activoChkPerimetroAlquiler');
         if(comboEstadoAlquiler != null && comboTipoInquilino != null && comboOcupado != null){
             if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && comboOcupado.value == CONST.COMBO_OCUPACION["SI"]){
                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -4179,9 +4194,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.alquiler"));
             }else if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['LIBRE']){
                 comboTipoInquilino.setValue(null);
-                me.onSaveFormularioCompleto(btn, form);
+                if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
+            		Ext.Msg.confirm(
+        				HreRem.i18n("title.agrupacion.restringida"),
+        				HreRem.i18n("msg.confirm.agrupacion.restringida"),
+        				function(btnConfirm){
+        					if (btnConfirm == "yes"){
+        						me.onSaveFormularioCompleto(btn, form, true);
+        					}
+        				}
+        			);
+            	} else {
+            		me.onSaveFormularioCompleto(btn, form, false);
+            	}
             } else {
-                me.onSaveFormularioCompleto(btn, form);
+            	if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
+            		Ext.Msg.confirm(
+        				HreRem.i18n("title.agrupacion.restringida"),
+        				HreRem.i18n("msg.confirm.agrupacion.restringida"),
+        				function(btnConfirm){
+        					if (btnConfirm == "yes"){
+        						me.onSaveFormularioCompleto(btn, form, true);
+        					}
+        				}
+        			);
+            	} else {
+            		me.onSaveFormularioCompleto(btn, form, false);
+            	}
             }
         }
 
@@ -4263,7 +4302,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	enableChkPerimetroAlquiler: function(get){
-		var me = this;
+		 var me = this;
 		 var esGestorAlquiler = me.getViewModel().get('activo.esGestorAlquiler');
 		 var estadoAlquiler = me.getViewModel().get('patrimonio.estadoAlquiler');
 		 var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
@@ -4275,6 +4314,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 		 }else{
 			 return true;
+		 }
+	 },
+	 
+	 editableFechaRevision: function(get){
+		if($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBLI']) || $AU.userIsRol(CONST.PERFILES['HAYASUPPUBLI']))
+		 {
+			return true; 
+		 }else{
+			return false;
 		 }
 	 },
 	 

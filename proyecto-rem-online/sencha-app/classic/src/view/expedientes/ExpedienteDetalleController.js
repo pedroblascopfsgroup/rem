@@ -770,20 +770,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
-		var me = this,
-    	disabled = value == 0,
-    	entidadFinanciacion = me.lookupReference('entidadFinanciacion');
-		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
-		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');
+		var me = this;
+    	var disabled = value == 0;
+    	var esBankia = me.getViewModel().get("expediente.esBankia");
     	
-    	entidadFinanciacion.setDisabled(disabled);
-    	entidadFinanciacion.allowBlank = disabled;
-    	
-    	
+		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');
+    	    	
+    	comboEntidadFinancieraCodigo.setDisabled(disabled);
+    	comboEntidadFinancieraCodigo.allowBlank = disabled; 	
+
     	if(disabled) {
-    		entidadFinanciacion.setValue("");
-    		numExpedienteRiesgo.setValue("");
-    		comboTipoFinanciacion.setValue("");
+    		comboEntidadFinancieraCodigo.setValue("");
     	}
 	},
 	
@@ -1737,8 +1734,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
     },
-    
-    onChangeComboProvincia: function(combo, newValue, oldValue) {
+	onChangeComboEntidadFinanciera: function(combo, nValue, oValue, eOps) {
+		var me = this;
+		var esBankia = me.getViewModel().get("expediente.esBankia");
+		var valorComboEsBankia = CONST.COMBO_ENTIDAD_FINANCIERA['BANKIA'];			
+		var disabled = nValue == 0;
+    	    	  	
+		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
+		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');  
+		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk');	
+ 
+    	if(nValue == valorComboEsBankia) {
+    		numExpedienteRiesgo.allowBlank = false;
+    		comboTipoFinanciacion.allowBlank = false;
+    		cncyCapitalConcedidoBnk.allowBlank = false;
+    	}
+    	
+    	
+    	if(disabled) {
+    		numExpedienteRiesgo.setValue("");
+    		comboTipoFinanciacion.setValue("");
+    		comboEntidadFinancieraCodigo.setValue("");
+    	}
+	},
+
+	onChangeComboProvincia: function(combo) {
     	var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);   
 

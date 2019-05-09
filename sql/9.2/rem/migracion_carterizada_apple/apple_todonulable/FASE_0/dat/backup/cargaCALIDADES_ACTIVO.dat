@@ -1,0 +1,156 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;CALIDADES_ACTIVO;ACT_NUMERO_ACTIVO;NUMBER(16,0);NO;;Código identificador único del activo.
+2;CALIDADES_ACTIVO;CRI_PTA_ENT_NORMAL;NUMBER(1,0);NO;;Indicador del estado de la puerta de la entrada normal.
+3;CALIDADES_ACTIVO;CRI_PTA_ENT_BLINDADA;NUMBER(1,0);NO;;Indicador del estado de la puerta de la entrada blindada.
+4;CALIDADES_ACTIVO;CRI_PTA_ENT_ACORAZADA;NUMBER(1,0);NO;;Indicador del estado de la puerta de la entrada acorazada.
+5;CALIDADES_ACTIVO;CRI_PTA_PASO_MACIZAS;NUMBER(1,0);NO;;Indicador del estado de las puertas de paso macizas.
+6;CALIDADES_ACTIVO;CRI_PTA_PASO_HUECAS;NUMBER(1,0);NO;;Indicador del estado de las puertas de paso huecas.
+7;CALIDADES_ACTIVO;CRI_PTA_PASO_LACADAS;NUMBER(1,0);NO;;Indicador del estado de las puertas de paso lacadas.
+8;CALIDADES_ACTIVO;CRI_ARMARIOS_EMPOTRADOS;NUMBER(1,0);NO;;Indicador si existen armarios empotrados.
+9;CALIDADES_ACTIVO;NIVEL_ACABADO_INTERIOR;VARCHAR2(20 CHAR);NO;;Nivel de acabado interior
+10;CALIDADES_ACTIVO;CRI_CRP_INT_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otro tipo de calidad relacionado con la carpintería interior.
+11;CALIDADES_ACTIVO;CRE_VTNAS_HIERRO;NUMBER(1,0);NO;;Indicador del estado de las ventanas de hierro.
+12;CALIDADES_ACTIVO;CRE_VTNAS_ALU_ANODIZADO;NUMBER(1,0);NO;;Indicador del estado de las ventanas de aluminio anodizado.
+13;CALIDADES_ACTIVO;CRE_VTNAS_ALU_LACADO;NUMBER(1,0);NO;;Indicador del estado de las ventanas de aluminio lacado en blanco.
+14;CALIDADES_ACTIVO;CRE_VTNAS_PVC;NUMBER(1,0);NO;;Indicador del estado de las ventanas de PVC.
+15;CALIDADES_ACTIVO;CRE_VTNAS_MADERA;NUMBER(1,0);NO;;Indicador del estado de las ventanas de madera.
+16;CALIDADES_ACTIVO;CRE_PERS_PLASTICO;NUMBER(1,0);NO;;Indicador del estado de las persianas de plástico.
+17;CALIDADES_ACTIVO;CRE_PERS_ALU;NUMBER(1,0);NO;;Indicador del estado de las persianas de aluminio.
+18;CALIDADES_ACTIVO;CRE_VTNAS_CORREDERAS;NUMBER(1,0);NO;;Indicador del estado de las ventanas correderas.
+19;CALIDADES_ACTIVO;CRE_VTNAS_ABATIBLES;NUMBER(1,0);NO;;Indicador del estado de las ventanas abatibles.
+20;CALIDADES_ACTIVO;CRE_VTNAS_OSCILOBAT;NUMBER(1,0);NO;;Indicador del estado de las ventanas oscilobatientes.
+21;CALIDADES_ACTIVO;CRE_DOBLE_CRISTAL;NUMBER(1,0);NO;;Ventanas de doble acristalamiento o climalit.
+22;CALIDADES_ACTIVO;CRE_EST_DOBLE_CRISTAL;NUMBER(1,0);NO;;Indicador del estado de las ventanas de doble acristalamiento o climalit.
+23;CALIDADES_ACTIVO;CRE_CRP_EXT_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otro tipo de calidad relacionado con la carpintería exterior.
+24;CALIDADES_ACTIVO;PRV_HUMEDAD_PARED;NUMBER(1,0);NO;;Indicador de si el activo tiene humedades en las paredes.
+25;CALIDADES_ACTIVO;PRV_HUMEDAD_TECHO;NUMBER(1,0);NO;;Indicador de si el activo tiene humedades en el techo.
+26;CALIDADES_ACTIVO;PRV_GRIETA_PARED;NUMBER(1,0);NO;;Indicador de si el activo tiene grietas en las paredes.
+27;CALIDADES_ACTIVO;PRV_GRIETA_TECHO;NUMBER(1,0);NO;;Indicador de si el activo tiene grietas en el techo.
+28;CALIDADES_ACTIVO;PRV_GOTELE;NUMBER(1,0);NO;;Indicador del estado de la pintura de tipo gotelet en pared.
+29;CALIDADES_ACTIVO;PRV_PLASTICA_LISA;NUMBER(1,0);NO;;Indicador del estado de la pintura de tipo plástica liso en pared.
+30;CALIDADES_ACTIVO;PRV_PAPEL_PINTADO;NUMBER(1,0);NO;;Indicador del estado de la pintura de tipo papel pintado en pared.
+31;CALIDADES_ACTIVO;PRV_PINTURA_LISA_TECHO;NUMBER(1,0);NO;;Indicador de si el activo dispone de pintura lisa en el techo.
+32;CALIDADES_ACTIVO;PRV_PINTURA_LISA_TECHO_EST;NUMBER(1,0);NO;;Indicador del estado de la pintura lisa en techos.
+33;CALIDADES_ACTIVO;PRV_MOLDURA_ESCAYOLA;NUMBER(1,0);NO;;Indicador de si el activo dispone moldura de escayola en el techo.
+34;CALIDADES_ACTIVO;PRV_MOLDURA_ESCAYOLA_EST;NUMBER(1,0);NO;;Indicador del estado de la moldura de escayola.
+35;CALIDADES_ACTIVO;PRV_PARAMENTOS_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otro tipo de calidad relacionado con los paramentos verticales.
+36;CALIDADES_ACTIVO;PRV_PINTURA_GOTELE_TECHO_EST;NUMBER(1,0);NO;;Indicador del estado de la pintura en techos de gotele.
+37;CALIDADES_ACTIVO;PRV_PINTURA_PAPEL_TECHO_EST;NUMBER(1,0);NO;;Indicador del estado de la pintura en techos de papel pintado.
+38;CALIDADES_ACTIVO;SOL_TARIMA_FLOTANTE;NUMBER(1,0);NO;;Indicador del estado del suelo de tarima flotante.
+39;CALIDADES_ACTIVO;SOL_PARQUE;NUMBER(1,0);NO;;Indicador del estado del suelo de parquet.
+40;CALIDADES_ACTIVO;SOL_MARMOL;NUMBER(1,0);NO;;Indicador del estado del suelo de mármol.
+41;CALIDADES_ACTIVO;SOL_PLAQUETA;NUMBER(1,0);NO;;Indicador del estado del suelo de plaqueta.
+42;CALIDADES_ACTIVO;SOL_SOLADO_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otro tipo de calidad relacionado con los suelos.
+43;CALIDADES_ACTIVO;INF_OCIO;NUMBER(1,0);NO;;Indicador de si el activo dispone de centros de ocio cerca.
+44;CALIDADES_ACTIVO;INF_HOTELES;NUMBER(1,0);NO;;Indicador de si el activo dispone de hoteles cerca.
+45;CALIDADES_ACTIVO;INF_HOTELES_DESC;VARCHAR2(250 CHAR);NO;;Descripción de los hoteles que se encuentran cerca del activo.
+46;CALIDADES_ACTIVO;INF_TEATROS;NUMBER(1,0);NO;;Indicador de si el activo dispone de teatros cerca.
+47;CALIDADES_ACTIVO;INF_TEATROS_DESC;VARCHAR2(250 CHAR);NO;;Descripción de los teatros que se encuentran cerca del activo.
+48;CALIDADES_ACTIVO;INF_SALAS_CINE;NUMBER(1,0);NO;;Indicador de si el activo dispone de salas de cine cerca.
+49;CALIDADES_ACTIVO;INF_SALAS_CINE_DESC;VARCHAR2(250 CHAR);NO;;Descripción de las salas de cine que se encuentran cerca del activo.
+50;CALIDADES_ACTIVO;INF_INST_DEPORT;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalaciones deportivas cerca.
+51;CALIDADES_ACTIVO;INF_INST_DEPORT_DESC;VARCHAR2(250 CHAR);NO;;Descripción de las instalaciones deportivas que se encuentran cerca del activo.
+52;CALIDADES_ACTIVO;INF_CENTROS_COMERC;NUMBER(1,0);NO;;Indicador de si el activo dispone de centros comerciales cerca.
+53;CALIDADES_ACTIVO;INF_CENTROS_COMERC_DESC;VARCHAR2(250 CHAR);NO;;Descripción de los centros comerciales que se encuentran cerca del activo.
+54;CALIDADES_ACTIVO;INF_OCIO_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otros centros de ocio cerca del activo.
+55;CALIDADES_ACTIVO;INF_CENTROS_EDU;NUMBER(1,0);NO;;Indicador de si el activo dispone de centros educativos cerca.
+56;CALIDADES_ACTIVO;INF_ESCUELAS_INF;NUMBER(1,0);NO;;Indicador de si el activo dispone de escuelas infantiles cerca.
+57;CALIDADES_ACTIVO;INF_ESCUELAS_INF_DESC;VARCHAR2(250 CHAR);NO;;Descripción de las escuelas infantiles que se encuentran cerca del activo.
+58;CALIDADES_ACTIVO;INF_COLEGIOS;NUMBER(1,0);NO;;Indicador de si el activo dispone de colegios cerca.
+59;CALIDADES_ACTIVO;INF_COLEGIOS_DESC;VARCHAR2(250 CHAR);NO;;Descripción de los colegios que se encuentran cerca del activo.
+60;CALIDADES_ACTIVO;INF_INSTITUTOS;NUMBER(1,0);NO;;Indicador de si el activo dispone de institutos cerca.
+61;CALIDADES_ACTIVO;INF_INSTITUTOS_DESC;VARCHAR2(250 CHAR);NO;;Descripción de los institutos que se encuentran cerca del activo.
+62;CALIDADES_ACTIVO;INF_UNIVERSIDADES;NUMBER(1,0);NO;;Indicador de si el activo dispone de universidades cerca.
+63;CALIDADES_ACTIVO;INF_UNIVERSIDADES_DESC;VARCHAR2(250 CHAR);NO;;Descripción de las universidades que se encuentran cerca del activo.
+64;CALIDADES_ACTIVO;INF_CENTROS_EDU_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otros centros educativos que se encuentran cerca del activo.
+65;CALIDADES_ACTIVO;INF_CENTROS_SANIT;NUMBER(1,0);NO;;Indicador de si el activo dispone de centros sanitarios cerca.
+66;CALIDADES_ACTIVO;INF_CENTROS_SALUD;NUMBER(1,0);NO;;Indicador de si el activo dispone de centros de salud cerca.
+67;CALIDADES_ACTIVO;INF_CENTROS_SALUD_DESC;VARCHAR2(250 CHAR);NO;;Descripción de los centros de salud que se encuentran cerca del activo.
+68;CALIDADES_ACTIVO;INF_CLINICAS;NUMBER(1,0);NO;;Indicador de si el activo dispone de clínicas cerca.
+69;CALIDADES_ACTIVO;INF_CLINICAS_DESC;VARCHAR2(250 CHAR);NO;;Descripción de las clínicas que se encuentran cerca del activo.
+70;CALIDADES_ACTIVO;INF_HOSPITALES;NUMBER(1,0);NO;;Indicador de si el activo dispone de hospitales cerca.
+71;CALIDADES_ACTIVO;INF_HOSPITALES_DESC;VARCHAR2(250 CHAR);NO;;Descripción de los hospitales que se encuentran cerca del activo.
+72;CALIDADES_ACTIVO;INF_CENTROS_SANIT_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de los centros sanitarios que se encuentran cerca del activo.
+73;CALIDADES_ACTIVO;INF_PARKING_SUP_SUF;NUMBER(1,0);NO;;Indicador de si el activo dispone de parking en superficie suficiente.
+74;CALIDADES_ACTIVO;INF_COMUNICACIONES;NUMBER(1,0);NO;;Indicador de si el activo está bien comunicado.
+75;CALIDADES_ACTIVO;INF_FACIL_ACCESO;NUMBER(1,0);NO;;Indicador de si el activo dispone de fácil acceso por carretera.
+76;CALIDADES_ACTIVO;INF_FACIL_ACCESO_DESC;VARCHAR2(250 CHAR);NO;;Descripción de los hoteles que se encuentran cerca del activo.
+77;CALIDADES_ACTIVO;INF_LINEAS_BUS;NUMBER(1,0);NO;;Indicador de si el activo dispone de líneas de autobuses cerca.
+78;CALIDADES_ACTIVO;INF_LINEAS_BUS_DESC;VARCHAR2(250 CHAR);NO;;Descripción de las líneas de autobús que se encuentran cerca del activo.
+79;CALIDADES_ACTIVO;INF_METRO;NUMBER(1,0);NO;;Indicador de si el activo dispone de líneas de metro cerca.
+80;CALIDADES_ACTIVO;INF_METRO_DESC;VARCHAR2(250 CHAR);NO;;Descripción de las paradas de metro que se encuentran cerca del activo.
+81;CALIDADES_ACTIVO;INF_EST_TREN;NUMBER(1,0);NO;;Indicador de si el activo dispone de estaciones de tren cerca.
+82;CALIDADES_ACTIVO;INF_EST_TREN_DESC;VARCHAR2(250 CHAR);NO;;Descripción de las estaciones de tren que se encuentran cerca del activo.
+83;CALIDADES_ACTIVO;INF_COMUNICACIONES_OTRO;VARCHAR2(250 CHAR);NO;;Descripción de otras comunicaciones que dispone el activo.
+84;CALIDADES_ACTIVO;ZCO_ZONAS_COMUNES;NUMBER(1,0);NO;;Indicador de si el activo dispone de zonas comunes.
+85;CALIDADES_ACTIVO;ZCO_JARDINES;NUMBER(1,0);NO;;Indicador de si el activo dispone de jardines o zonas verdes.
+86;CALIDADES_ACTIVO;ZCO_PISCINA;NUMBER(1,0);NO;;Indicador de si el activo dispone de piscina.
+87;CALIDADES_ACTIVO;ZCO_INST_DEP;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalaciones deportivas.
+88;CALIDADES_ACTIVO;ZCO_PADEL;NUMBER(1,0);NO;;Indicador de si el activo dispone de pista de padel.
+89;CALIDADES_ACTIVO;ZCO_TENIS;NUMBER(1,0);NO;;Indicador de si el activo dispone de pista de tenis.
+90;CALIDADES_ACTIVO;ZCO_PISTA_POLIDEP;NUMBER(1,0);NO;;Indicador de si el activo dispone de pista polideportiva.
+91;CALIDADES_ACTIVO;ZCO_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otras instalaciones deportivas que dispone el activo.
+92;CALIDADES_ACTIVO;ZCO_ZONA_INFANTIL;NUMBER(1,0);NO;;Indicador de si el activo dispone de zona infantil o no.
+93;CALIDADES_ACTIVO;ZCO_CONSERJE_VIGILANCIA;NUMBER(1,0);NO;;Indicador de si el activo dispone de conserje de vigilancia o no.
+94;CALIDADES_ACTIVO;ZCO_GIMNASIO;NUMBER(1,0);NO;;Indicador de si el activo dispone de gimnasio o no.
+95;CALIDADES_ACTIVO;ZCO_ZONA_COMUN_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otras zonas comunes que dispone el activo.
+96;CALIDADES_ACTIVO;INS_ELECTR;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación eléctrica.
+97;CALIDADES_ACTIVO;INS_ELECTR_CON_CONTADOR;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación eléctrica con contador.
+98;CALIDADES_ACTIVO;INS_ELECTR_BUEN_ESTADO;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación eléctrica en buen estado.
+99;CALIDADES_ACTIVO;INS_ELECTR_DEFECTUOSA_ANTIGUA;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación eléctrica defectuosa o muy antiguas.
+100;CALIDADES_ACTIVO;INS_AGUA;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de agua.
+101;CALIDADES_ACTIVO;INS_AGUA_CON_CONTADOR;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de agua con contador.
+102;CALIDADES_ACTIVO;INS_AGUA_BUEN_ESTADO;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de agua en buen estado.
+103;CALIDADES_ACTIVO;INS_AGUA_DEFECTUOSA_ANTIGUA;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de agua defectuosa o antigua.
+104;CALIDADES_ACTIVO;INS_AGUA_CALIENTE_CENTRAL;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de agua caliente central.
+105;CALIDADES_ACTIVO;INS_AGUA_CALIENTE_GAS_NATURAL;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de agua caliente con gas natural.
+106;CALIDADES_ACTIVO;INS_GAS;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de gas.
+107;CALIDADES_ACTIVO;INS_GAS_CON_CONTADOR;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de gas con contador.
+108;CALIDADES_ACTIVO;INS_GAS_INST_BUEN_ESTADO;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de gas en buen estado.
+109;CALIDADES_ACTIVO;INS_GAS_DEFECTUOSA_ANTIGUA;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de gas defectuosa o antigua.
+110;CALIDADES_ACTIVO;INS_CALEF;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de calefacción.
+111;CALIDADES_ACTIVO;INS_CALEF_CENTRAL;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de calefacción central.
+112;CALIDADES_ACTIVO;INS_CALEF_GAS_NATURAL;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de calefacción de gas natural.
+113;CALIDADES_ACTIVO;INS_CALEF_RADIADORES_ALU;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de calefacción con radiadores de aluminio.
+114;CALIDADES_ACTIVO;INS_CALEF_PREINSTALACION;NUMBER(1,0);NO;;Indicador de si el activo dispone de preinstalación de calefacción.
+115;CALIDADES_ACTIVO;INS_AIRE;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de aire acondicionado.
+116;CALIDADES_ACTIVO;INS_AIRE_PREINSTALACION;NUMBER(1,0);NO;;Indicador de si el activo dispone de preinstalación de aire acondicionado.
+117;CALIDADES_ACTIVO;INS_AIRE_INSTALACION;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de aire acondicionado.
+118;CALIDADES_ACTIVO;INS_AIRE_FRIO_CALOR;NUMBER(1,0);NO;;Indicador de si el activo dispone de instalación de aire acondicionado de frio/calor.
+119;CALIDADES_ACTIVO;INS_INST_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otras instalaciones que dispone el activo.
+120;CALIDADES_ACTIVO;BNY_DUCHA_BANYERA;NUMBER(1,0);NO;;Indicador de si el activo dispone de ducha o bañera.
+121;CALIDADES_ACTIVO;BNY_DUCHA;NUMBER(1,0);NO;;Indicador del estado de la ducha del activo.
+122;CALIDADES_ACTIVO;BNY_BANYERA;NUMBER(1,0);NO;;Indicador del estado de la bañera del activo.
+123;CALIDADES_ACTIVO;BNY_BANYERA_HIDROMASAJE;NUMBER(1,0);NO;;Indicador del estado de la bañera de hidromasaje del activo.
+124;CALIDADES_ACTIVO;BNY_COLUMNA_HIDROMASAJE;NUMBER(1,0);NO;;Indicador del estado de la columna de hidromasaje del activo.
+125;CALIDADES_ACTIVO;BNY_ALICATADO_MARMOL;NUMBER(1,0);NO;;Indicador del estado del alicatado en mármol del baño del activo.
+126;CALIDADES_ACTIVO;BNY_ALICATADO_GRANITO;NUMBER(1,0);NO;;Indicador del estado del alicatado en granito del baño del activo.
+127;CALIDADES_ACTIVO;BNY_ALICATADO_AZULEJO;NUMBER(1,0);NO;;Indicador del estado del alicatado en azulejo del baño del activo.
+128;CALIDADES_ACTIVO;BNY_ENCIMERA;NUMBER(1,0);NO;;Indicador de si el activo dispone encimera en el baño.
+129;CALIDADES_ACTIVO;BNY_MARMOL;NUMBER(1,0);NO;;Indicador del estado de la encimera de mármol del baño del activo.
+130;CALIDADES_ACTIVO;BNY_GRANITO;NUMBER(1,0);NO;;Indicador del estado de la encimera de granito del baño del activo.
+131;CALIDADES_ACTIVO;BNY_OTRO_MATERIAL;NUMBER(1,0);NO;;Indicador del estado de la encimera de otro material del baño del activo.
+132;CALIDADES_ACTIVO;BNY_SANITARIOS;NUMBER(1,0);NO;;Indicador de si el activo dispone sanitarios.
+133;CALIDADES_ACTIVO;BNY_SANITARIOS_EST;NUMBER(1,0);NO;;Indicador del estado de los sanitarios del activo.
+134;CALIDADES_ACTIVO;BNY_SUELOS;NUMBER(1,0);NO;;Indicador del estado del suelo de los baños del activo.
+135;CALIDADES_ACTIVO;BNY_GRIFO_MONOMANDO;NUMBER(1,0);NO;;Indicador de si el activo dispone de grifo monomando.
+136;CALIDADES_ACTIVO;BNY_GRIFO_MONOMANDO_EST;NUMBER(1,0);NO;;Indicador del estado de la grifería con monomando del activo.
+137;CALIDADES_ACTIVO;BNY_BANYO_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otras calidades asociadas a los baños del activo.
+138;CALIDADES_ACTIVO;COC_AMUEBLADA;NUMBER(1,0);NO;;Indicador de si el activo dispone de cocina amueblada.
+139;CALIDADES_ACTIVO;COC_AMUEBLADA_EST;NUMBER(1,0);NO;;Indicador del estado de la cocina amueblada del activo.
+140;CALIDADES_ACTIVO;COC_ENCIMERA;NUMBER(1,0);NO;;Indicador de si el activo dispone de encimera en la cocina.
+141;CALIDADES_ACTIVO;COC_ENCI_GRANITO;NUMBER(1,0);NO;;Indicador del estado de la encimera de granito de la cocina del activo.
+142;CALIDADES_ACTIVO;COC_ENCI_MARMOL;NUMBER(1,0);NO;;Indicador del estado de la encimera de mármol de la cocina del activo.
+143;CALIDADES_ACTIVO;COC_ENCI_OTRO_MATERIAL;NUMBER(1,0);NO;;Indicador del estado de la encimera de otro material de la cocina del activo.
+144;CALIDADES_ACTIVO;COC_VITRO;NUMBER(1,0);NO;;Indicador del estado de la vitrocerámica de la cocina del activo.
+145;CALIDADES_ACTIVO;COC_LAVADORA;NUMBER(1,0);NO;;Indicador del estado de la lavadora del activo.
+146;CALIDADES_ACTIVO;COC_FRIGORIFICO;NUMBER(1,0);NO;;Indicador del estado del frigorífico del activo.
+147;CALIDADES_ACTIVO;COC_LAVAVAJILLAS;NUMBER(1,0);NO;;Indicador del estado del lavavajillas del activo.
+148;CALIDADES_ACTIVO;COC_MICROONDAS;NUMBER(1,0);NO;;Indicador del estado del microondas del activo.
+149;CALIDADES_ACTIVO;COC_HORNO;NUMBER(1,0);NO;;Indicador del estado del horno del activo.
+150;CALIDADES_ACTIVO;COC_SUELOS;NUMBER(1,0);NO;;Indicador del estado del suelo de la cocina del activo.
+151;CALIDADES_ACTIVO;COC_AZULEJOS;NUMBER(1,0);NO;;Indicador de si el activo dispone de azulejos en la cocina.
+152;CALIDADES_ACTIVO;COC_AZULEJOS_EST;NUMBER(1,0);NO;;Indicador del estado de los azulejos de la cocina del activo.
+153;CALIDADES_ACTIVO;COC_GRIFOS_MONOMANDO;NUMBER(1,0);NO;;Indicador de si el activo dispone de grifos monomando en la cocina.
+154;CALIDADES_ACTIVO;COC_GRIFOS_MONOMANDO_EST;NUMBER(1,0);NO;;Indicador del estado de los grifos monomando de la cocina del activo.
+155;CALIDADES_ACTIVO;COC_COCINA_OTROS;VARCHAR2(250 CHAR);NO;;Descripción de otras calidades asociadas a la cocina.

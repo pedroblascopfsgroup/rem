@@ -48,6 +48,12 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private String eleccionUsuarioTipoPublicacionAlquiler;
 	private String motivoPublicacion;
 	private String motivoPublicacionAlquiler;
+	private Integer diasCambioPublicacionVenta;
+	private Integer diasCambioPublicacionAlquiler;
+	private Date fechaRevisionVenta;
+	private Date fechaRevisionAlquiler;
+	private Integer diasCambioPrecioVentaWeb;
+	private Integer diasCambioPrecioAlqWeb;
 
 
 	public String getTipoPublicacionVentaDescripcion() {
@@ -344,6 +350,54 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setMotivoPublicacionAlquiler(String motivoPublicacionAlquiler) {
 		this.motivoPublicacionAlquiler = motivoPublicacionAlquiler;
+	}
+
+	public Integer getDiasCambioPublicacionVenta() {
+		return diasCambioPublicacionVenta;
+	}
+
+	public void setDiasCambioPublicacionVenta(Integer diasCambioPublicacionVenta) {
+		this.diasCambioPublicacionVenta = diasCambioPublicacionVenta;
+	}
+
+	public Integer getDiasCambioPublicacionAlquiler() {
+		return diasCambioPublicacionAlquiler;
+	}
+
+	public void setDiasCambioPublicacionAlquiler(Integer diasCambioPublicacionAlquiler) {
+		this.diasCambioPublicacionAlquiler = diasCambioPublicacionAlquiler;
+	}
+
+	public Date getFechaRevisionVenta() {
+		return fechaRevisionVenta;
+	}
+
+	public void setFechaRevisionVenta(Date fechaRevisionVenta) {
+		this.fechaRevisionVenta = fechaRevisionVenta;
+	}
+
+	public Integer getDiasCambioPrecioVentaWeb() {
+		return diasCambioPrecioVentaWeb;
+	}
+
+	public void setDiasCambioPrecioVentaWeb(Integer diasCambioPrecioVentaWeb) {
+		this.diasCambioPrecioVentaWeb = diasCambioPrecioVentaWeb;
+	}
+
+	public Integer getDiasCambioPrecioAlqWeb() {
+		return diasCambioPrecioAlqWeb;
+	}
+
+	public void setDiasCambioPrecioAlqWeb(Integer diasCambioPrecioAlqWeb) {
+		this.diasCambioPrecioAlqWeb = diasCambioPrecioAlqWeb;
+	}
+
+	public Date getFechaRevisionAlquiler() {
+		return fechaRevisionAlquiler;
+	}
+
+	public void setFechaRevisionAlquiler(Date fechaRevisionAlquiler) {
+		this.fechaRevisionAlquiler = fechaRevisionAlquiler;
 	}
 
 	public Integer getTotalDiasPublicadoHistoricoVenta() {

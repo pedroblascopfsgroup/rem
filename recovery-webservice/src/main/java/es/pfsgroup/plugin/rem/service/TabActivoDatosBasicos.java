@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
@@ -60,12 +61,15 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -279,6 +283,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if (activo.getEstadoActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "estadoActivoCodigo", activo.getEstadoActivo().getCodigo());
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
+				
+				if(!Checks.esNulo(activo.getFechaUltCambioTipoActivo())) {
+						Date fechaInicial=activo.getFechaUltCambioTipoActivo();
+						Date fechaFinal=new Date();
+						Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+						activoDto.setDiasCambioEstadoActivo(dias);
+				}
+			}
 		}
 		
 		if (activo.getTipoUsoDestino() != null) {
@@ -369,7 +382,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					break;
 				}
 			}
-
+			
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 			BeanUtils.copyProperty(activoDto, "perteneceAgrupacionRestringidaVigente", perteneceAgrupacionRestringidaVigente);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionComercial", pertenceAgrupacionComercial);
@@ -649,9 +662,73 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		} 
 		activoDto.setTieneRegistroContrato(tieneRegistro);
 		
+		//HREOS-5779
+		
+		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+		
+			Boolean cambioEstadoPublicacion = Boolean.FALSE;
+			Boolean cambioEstadoPrecio = Boolean.FALSE;
+			Boolean cambioEstadoActivo = Boolean.FALSE; 
+
+			if((!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()))
+					|| (!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTit()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTit()))
+					|| (!Checks.esNulo(activo.getSituacionPosesoria().getFechaAccesoTapiado()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaAccesoTapiado()))
+					|| (!Checks.esNulo(activo.getFechaUltCambioTipoActivo()) && calculodiasCambiosActivo(activo.getFechaUltCambioTipoActivo()))	
+							) {
+				cambioEstadoActivo = Boolean.TRUE;
+	
+			}
+
+			
+			if((!Checks.esNulo(activo.getActivoPublicacion().getFechaCambioPubAlq())&& calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioPubAlq()))) {
+				if((!Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionAlquiler()) && (!activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo().equals(DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER)))	
+						){
+					cambioEstadoPublicacion = Boolean.TRUE;
+				}
+			}
+			
+			
+			if((!Checks.esNulo(activo.getActivoPublicacion().getFechaCambioPubVenta()) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioPubVenta()))) {
+				if((!Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionVenta()) && (!activo.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo().equals(DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA)))	
+						){
+					cambioEstadoPublicacion = Boolean.TRUE;
+				}
+			}
+			
+			if(!Checks.esNulo(activo.getValoracion())) {
+				for(ActivoValoraciones valoracion: activo.getValoracion())
+				{
+					if(((!Checks.esNulo(valoracion.getFechaCambioValorVenta())) && calculodiasCambiosActivo(valoracion.getFechaCambioValorVenta()))
+							||	((!Checks.esNulo(valoracion.getFechaCambioValorAlq())) && calculodiasCambiosActivo(valoracion.getFechaCambioValorAlq()))
+						) {
+							cambioEstadoPrecio = Boolean.TRUE;
+							break;
+						}
+				}
+			}	
+			
+			activoDto.setCambioEstadoActivo(cambioEstadoActivo);
+			activoDto.setCambioEstadoPrecio(cambioEstadoPrecio);
+			activoDto.setCambioEstadoPublicacion(cambioEstadoPublicacion);
+
+		}
+		
 		
 		return activoDto;
 	}
+	
+	public Boolean calculodiasCambiosActivo(Date fechaIni){
+		
+		Boolean cumpleCond = Boolean.FALSE;
+		Date fechaInicial=fechaIni;
+		Date fechaFinal=new Date();
+		Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+		if (dias<7) {
+			cumpleCond=Boolean.TRUE; 
+		}
+		
+		return cumpleCond;
+	} 
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
@@ -769,6 +846,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (!Checks.esNulo(dto.getEstadoActivoCodigo())) {
 				DDEstadoActivo estadoActivo = (DDEstadoActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoActivo.class,  dto.getEstadoActivoCodigo());
 				activo.setEstadoActivo(estadoActivo);
+				activo.setFechaUltCambioTipoActivo(new Date());
 			}
 			
 			// Se genera un registro en el histórico por la modificación de los datos en el apartado de 'Datos Admisión' de informe comercial.

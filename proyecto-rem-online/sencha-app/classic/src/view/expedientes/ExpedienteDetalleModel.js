@@ -399,7 +399,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			    	}
 		    	}
 		    	
-		    }
+		    },
+		 esEntidadFinancieraBankia: function(get) {
+			 var entidadFinancieraCod = get('financiacion.entidadFinancieraCodigo') == "01";
+			 var esBankia = get("expediente.esBankia");
+			 var vCombo = CONST.COMBO_ENTIDAD_FINANCIERA['BANKIA'];
+			 
+			 if(!Ext.isEmpty(entidadFinancieraCod)) {
+				 if (esBankia && entidadFinancieraCod == vCombo) {
+					 return false; // Se muestra el bloque bankia
+				 } else if ((esBankia && entidadFinancieraCod != vCombo) || (!esBankia && entidadFinancieraCod == vCombo) || (!esBankia && entidadFinancieraCod != vCombo)) {
+					 return true; // Se esconde el boque bankia
+				 }
+			}
+		 }
 	 },
 
 
@@ -505,6 +518,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'entidadesFinancieras'}
+			}   
+    	},
+    	
+    	comboEntidadFinanciera: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadFinanciera'}
 			}   
     	},
     	

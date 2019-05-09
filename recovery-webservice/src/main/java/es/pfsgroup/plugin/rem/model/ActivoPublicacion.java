@@ -106,6 +106,17 @@ public class ActivoPublicacion implements Serializable, Auditable {
 	@Column(name = "APU_MOTIVO_PUBLICACION_ALQ")
 	private String motivoPublicacionAlquiler;
 	
+	@Column(name = "APU_FECHA_REV_VENTA")
+	private Date fechaRevisionVenta;
+	
+	@Column(name = "APU_FECHA_REV_ALQUILER")
+	private Date fechaRevisionAlquiler;
+
+	@Column(name = "APU_FECHA_CAMB_PUBL_VENTA")
+	private Date fechaCambioPubVenta;
+	
+	@Column(name = "APU_FECHA_CAMB_PUBL_ALQ")
+	private Date fechaCambioPubAlq;
 
 	@Version
 	private Long version;
@@ -319,6 +330,38 @@ public class ActivoPublicacion implements Serializable, Auditable {
 
 	public void setMotivoPublicacionAlquiler(String motivoPublicacionAlquiler) {
 		this.motivoPublicacionAlquiler = motivoPublicacionAlquiler;
+	}
+
+	public Date getFechaRevisionVenta() {
+		return fechaRevisionVenta;
+	}
+
+	public void setFechaRevisionVenta(Date fechaRevisionVenta) {
+		this.fechaRevisionVenta = fechaRevisionVenta;
+	}
+
+	public Date getFechaRevisionAlquiler() {
+		return fechaRevisionAlquiler;
+	}
+
+	public void setFechaRevisionAlquiler(Date fechaRevisionAlquiler) {
+		this.fechaRevisionAlquiler = fechaRevisionAlquiler;
+	}
+
+	public Date getFechaCambioPubVenta() {
+		return fechaCambioPubVenta;
+	}
+
+	public void setFechaCambioPubVenta(Date fechaCambioPubVenta) {
+		this.fechaCambioPubVenta = fechaCambioPubVenta;
+	}
+
+	public Date getFechaCambioPubAlq() {
+		return fechaCambioPubAlq;
+	}
+
+	public void setFechaCambioPubAlq(Date fechaCambioPubAlq) {
+		this.fechaCambioPubAlq = fechaCambioPubAlq;
 	}
 	
 }

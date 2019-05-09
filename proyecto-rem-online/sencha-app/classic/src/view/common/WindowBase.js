@@ -51,15 +51,16 @@ Ext.define('HreRem.view.common.WindowBase', {
     		                 params: params,
     		                 success: function(fp, o) {
 
-    		                 	if(o.result.success == "false") {    		                 		    		                 		                 		
-    		                 		if(o.result.errorMessage.includes("Ya existe un elemento con el nombre")
-    		                 				|| o.result.errorMessage.includes("Error al crear el documento")){
-    		                 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.fichero.duplicado"));
-    		                 		}else if(o.result.errorMessage.includes("Extensi")){
-    		            	 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.extension.documento.no.permitida"));	            	 			
-    		                 		}else{
-    		                 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-    		                 		}
+    		                	 if(o.result.success == "false") {    		                 		    		                 		                 		
+     		                 		if(o.result.errorMessage.includes("documento no permitida")){
+     		                 			me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.extension.documento.no.permitida"));
+     		                 		}else if(o.result.errorMessage.includes("]")){
+     		                 			me.fireEvent("errorToast", o.result.errorMessage.split("]")[1]);
+     		                 		}else{
+     		                 			me.fireEvent("errorToast", o.result.errorMessage);
+     		                 		}
+	            	 			
+    		                 	
     		                 	}else{
     		                 		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
     		                 	}

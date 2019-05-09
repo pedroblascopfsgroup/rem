@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190510
+--## FECHA_CREACION=20190511
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-4214
@@ -133,7 +133,7 @@ BEGIN
 					''3'',
 					''102'',
 					NULL,
-					TO_DATE(''01/01/0001'',''DD/MM/YYYY''),
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					NULL,
 					''1'',
 					''4'',
@@ -162,10 +162,7 @@ BEGIN
 					NULL,
 					''20460'',
 					''17790'',
-					to_timestamp(
-						''17/01/19 20:57:30,000000000'',
-						''DD/MM/RR HH24:MI:SSXFF''
-					)
+					to_timestamp(''17/01/2019 20:57:30,000000000'',''DD/MM/YYYY HH24:MI:SSXFF''	)
 				)';
 	
     EXECUTE IMMEDIATE V_MSQL;

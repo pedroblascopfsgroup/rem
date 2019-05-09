@@ -632,7 +632,7 @@ public class AgrupacionAdapter {
 
 								if((!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioPos()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioPos()))
 										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTit()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTit()))
-										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaAccesoTapiado()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaAccesoTapiado()))
+										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTapiado()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTapiado()))
 										|| (!Checks.esNulo(activoAgrup.getActivo().getFechaUltCambioTipoActivo()) && calculodiasCambiosActivo(activoAgrup.getActivo().getFechaUltCambioTipoActivo()))	
 									) {
 									cambioEstadoActivo = Boolean.TRUE;

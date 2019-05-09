@@ -672,7 +672,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 			if((!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()))
 					|| (!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTit()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTit()))
-					|| (!Checks.esNulo(activo.getSituacionPosesoria().getFechaAccesoTapiado()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaAccesoTapiado()))
+					|| (!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTapiado()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTapiado()))
 					|| (!Checks.esNulo(activo.getFechaUltCambioTipoActivo()) && calculodiasCambiosActivo(activo.getFechaUltCambioTipoActivo()))	
 							) {
 				cambioEstadoActivo = Boolean.TRUE;

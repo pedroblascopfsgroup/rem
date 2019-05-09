@@ -409,6 +409,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						bind:		'{activo.fechaAltaActivoRem}',
 						readOnly	: true
 					},
+					{
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.ofertas.vivas'),
+						bind:		'{activo.ofertasVivas}',
+						readOnly	: true
+					},
+					{
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.trabajos.vivos'),
+						bind:		'{activo.trabajosVivos}',
+						readOnly	: true
+					},
 					
 		            {    
 		                

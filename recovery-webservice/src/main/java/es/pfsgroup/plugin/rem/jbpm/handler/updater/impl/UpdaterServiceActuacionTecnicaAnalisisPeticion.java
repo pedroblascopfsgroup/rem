@@ -92,7 +92,7 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 			if(COMBO_ASEGURADORAS.equals(valor.getNombre())){
 				trabajo.setCiaAseguradora(valor.getValor());
 			}
-			if(COMBO_TARIFA_PLANA.equals(valor.getNombre())){
+			if(COMBO_TARIFA_PLANA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){				
 				if(valor.getValor().equals(DDSiNo.SI)){
 					trabajo.setEsTarifaPlana(true);
 				} else {

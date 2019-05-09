@@ -6004,8 +6004,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			CondicionanteExpediente condiciones = expediente.getCondicionante();
 			
 			if (!Checks.esNulo(condiciones)) {
-				if (!Checks.esNulo(condiciones.getSolicitaFinanciacion())) {
-					
+
 					Integer solicitaFinanciacion = null;
 					
 					if (!Checks.esNulo(dto.getSolicitaFinanciacion())) {
@@ -6025,7 +6024,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					} else if (solicitaFinanciacion == 0) {
 						condiciones.setEntidadFinanciera(null);
 					}
-				}
+				
 
 				if (!Checks.esNulo(dto.getEstadosFinanciacion())
 						|| !Checks.esNulo(dto.getEstadosFinanciacionBankia())) {

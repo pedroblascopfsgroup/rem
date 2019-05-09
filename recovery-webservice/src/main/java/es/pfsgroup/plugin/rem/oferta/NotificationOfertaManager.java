@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApiImpl;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
@@ -66,7 +67,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
-	private UsuarioRemApiImpl usuarioRemApiImpl;
+	private UsuarioRemApi usuarioRemApiImpl;
 	
 	private static final String STR_MISSING_VALUE = "---";
 	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};

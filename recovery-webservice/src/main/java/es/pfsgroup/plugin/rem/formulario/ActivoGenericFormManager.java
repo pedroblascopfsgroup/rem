@@ -173,6 +173,17 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
         return form;
     }
+    @Transactional
+    public void validateAndSaveValues(DtoGenericForm dto) {
+    	TareaExterna tarea = dto.getForm().getTareaExterna();
+    	String validacion = validacionPreviaDeLaTarea(tarea);	
+    	if(Checks.esNulo(validacion)){
+    		saveValues(dto);
+    	}else{
+    		throw new UserException(validacion);
+    	}
+    }
+    
     
     /**
      * Guarda los valores obtenidos del formulario genérico de tareas en bbdd y envía la señal de avanzar el trámite asociado a la tarea.

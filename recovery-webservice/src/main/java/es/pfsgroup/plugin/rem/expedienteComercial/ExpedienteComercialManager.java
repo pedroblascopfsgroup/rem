@@ -8217,7 +8217,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
+		
+		if(esApple(tareaExterna)) {
+			return true;
+		}
+		
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
 		try {
 			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
 			for (DtoAdjunto adjunto : adjuntosExpediente) {
@@ -8253,8 +8259,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@SuppressWarnings("unused")
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
+		
+		if(esApple(tareaExterna)) {
+			return true;
+		}
+		
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		boolean depositoRelleno = false;
+		
 		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
 			//Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 			depositoRelleno = false;

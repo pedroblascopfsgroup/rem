@@ -145,7 +145,11 @@ public abstract class WebcomDataType<T> {
 				return (E) dateDataType(parseDate);
 
 			} else if (DoubleDataType.class.equals(type)) {
-				return (E) doubleDataType(data != null ? Double.parseDouble(data.toString()) : null);
+				Double aux = null;
+				if(data != null){
+					aux = Double.parseDouble(data.toString());
+				}
+				return (E) doubleDataType(aux);
 
 			} else if (StringDataType.class.equals(type)) {
 				return (E) stringDataType(data != null ? data.toString() : null);
@@ -154,10 +158,13 @@ public abstract class WebcomDataType<T> {
 				throw new UnknownWebcomDataTypeException(type);
 			}
 		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 			throw new WebcomDataTypeParseException(e);
 		} catch (SecurityException e) {
+			e.printStackTrace();
 			throw new WebcomDataTypeParseException(e);
 		} catch (ParseException e) {
+			e.printStackTrace();
 			throw new WebcomDataTypeParseException(e);
 		}
 

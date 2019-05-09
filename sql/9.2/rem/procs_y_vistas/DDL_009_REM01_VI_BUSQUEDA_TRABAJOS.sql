@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=RAMON LLINARES
---## FECHA_CREACION=20190502
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190508
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3462
+--## INCIDENCIA_LINK=HREOS-6379
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -54,8 +54,7 @@ BEGIN
 	AS
 		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) */
 			tbj.tbj_id, 
-			act.act_id AS idactivo, 
-			rn.rango, 
+			act.act_id AS idactivo,
 			tbj.tbj_num_trabajo, 
 			tbj.tbj_webcom_id, 
 			tbj.tbj_cubre_seguro, 
@@ -108,9 +107,6 @@ BEGIN
           LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve ON pve.pve_id = pvc.pve_id
           LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 ON pve2.pve_id = tbj.mediador_id
           LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios solic ON solic.usu_id = tbj.usu_id
-          LEFT JOIN
-          (SELECT act_id, tbj_id, ROW_NUMBER() OVER(PARTITION BY tbj_id ORDER BY act_id) rango
-             FROM ' || V_ESQUEMA || '.act_tbj) rn ON (rn.act_id = act.act_id AND rn.tbj_id = tbj.tbj_id)
           where tbj.borrado = 0
           ';
 

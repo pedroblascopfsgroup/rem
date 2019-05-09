@@ -38,7 +38,8 @@ DECLARE
 
 	T_TIPO_DATA('183','Factura Registro (admisión)','Factura Registro (admisión)','AI-01-FACT-13'),
 	T_TIPO_DATA('184','Factura Notario (admisión)','Factura Notario (admisión)','AI-01-FACT-09'),
-	T_TIPO_DATA('185','Factura mensagería-correos (admisión)','Factura mensagería-correos (admisión)','AI-15-FACT-AM')
+	T_TIPO_DATA('185','Factura mensajería-correos (admisión)','Factura mensagería-correos (admisión)','AI-15-FACT-AM'),
+        T_TIPO_DATA('187','Factura Gestoría (admisión)','Factura Gestoría (admisión)','AI-15-FACT-75')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

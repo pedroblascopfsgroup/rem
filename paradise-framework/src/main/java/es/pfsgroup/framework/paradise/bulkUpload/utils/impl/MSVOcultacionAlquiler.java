@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
@@ -54,7 +51,6 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 	private static final String AGRUPACION_ACTIVO_OCULTO = "Hay activos que están ocultos";
 	private static final String NO_ES_ACTIVO_PRINCIPAL = "El activo no es el activo principal de la agrupación restringida";
 	private static final String AGRUPACION_RESTRINGIDA = "02";
-	private static final String FECHA_REVISION_PUBLICACION_NO_INFORMADA = "Es obligatorio informar una fecha en el campo Fecha Revisión Publicación si se desea ocultar de forma manual un activo";
 
 	private static final Integer MAX_CHAR_TEXTO_LIBRE = 250;
 
@@ -62,7 +58,6 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 		static final int NUM_ACTIVO_HAYA = 0;
 		static final int MOTIVO_OCULTACION = 1;
 		static final int DESCRIPCION_MOTIVO = 2;
-		static final int FECHA_REVISION_PUBLICACION = 3;
 	}
 
 	@Autowired
@@ -130,7 +125,6 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 			mapaErrores.put(ACTIVO_NO_COMERCIALIZABLE, activosNoComercializablesRows(exc));
 			mapaErrores.put(DESTINO_FINAL_NO_ALQUILER, destinoFinalNoAlquilerByRows(exc));
 			mapaErrores.put(ACTIVO_OCULTO, activoOcultoByRows(exc));
-			mapaErrores.put(FECHA_REVISION_PUBLICACION_NO_INFORMADA, isFechaRevisionPublicacionInformada(exc));
 
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
 				||!mapaErrores.get(ACTIVO_VENDIDO).isEmpty()
@@ -146,7 +140,6 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 				||!mapaErrores.get(AGRUPACION_ACTIVO_NO_PUBLICABLE).isEmpty()
 				||!mapaErrores.get(AGRUPACION_ACTIVO_NO_COMERCIALIZABLE).isEmpty()
 				||!mapaErrores.get(AGRUPACION_DESTINO_FINAL_NO_ALQUILER).isEmpty()
-				||!mapaErrores.get(FECHA_REVISION_PUBLICACION_NO_INFORMADA).isEmpty()
 				||!mapaErrores.get(AGRUPACION_ACTIVO_OCULTO).isEmpty()){
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -212,9 +205,7 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 			for(i=1; i<this.numFilasHoja;i++){
 				String codigoMotivo = exc.dameCelda(i, COL_NUM.MOTIVO_OCULTACION);
 				if(!codigoMotivo.equalsIgnoreCase("09") && !codigoMotivo.equalsIgnoreCase("10") && !codigoMotivo.equalsIgnoreCase("11") &&
-						!codigoMotivo.equalsIgnoreCase("12") && !codigoMotivo.equalsIgnoreCase("16") && !codigoMotivo.equalsIgnoreCase("17") && 
-						!codigoMotivo.equalsIgnoreCase("18") && !codigoMotivo.equalsIgnoreCase("19") && !codigoMotivo.equalsIgnoreCase("20") && 
-						!codigoMotivo.equalsIgnoreCase("21")) {
+						!codigoMotivo.equalsIgnoreCase("12")) {
 					listaFilas.add(i);
 				}
 			}
@@ -514,38 +505,6 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 			if (i != 0) listaFilas.add(i);
 			logger.error(e.getMessage());
 			e.printStackTrace();
-		}
-
-		return listaFilas;
-	}
-	
-	private List<Integer> isFechaRevisionPublicacionInformada(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		int i = 0;
-		try {
-			for(i=1; i<this.numFilasHoja;i++){
-				String fechaRevisionPublicacion = exc.dameCelda(i, COL_NUM.FECHA_REVISION_PUBLICACION);
-				if(Checks.esNulo(fechaRevisionPublicacion)) {
-					listaFilas.add(i);
-				} else if(fechaRevisionPublicacion.equals("") || fechaRevisionPublicacion.equals(" ")) {
-					listaFilas.add(i);
-				} else {
-					try {
-						SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			            Date fecha = sdf.parse(exc.dameCelda(i, COL_NUM.FECHA_REVISION_PUBLICACION));
-			            
-						if(!exc.dameCelda(i, COL_NUM.FECHA_REVISION_PUBLICACION).equals(sdf.format(fecha))){
-							listaFilas.add(i);
-						}
-					} catch (ParseException ex) {
-						listaFilas.add(i);
-					}
-				}
-			}
-		} catch (Exception e) {
-			if (i != 0) listaFilas.add(i);
-			logger.error(e.getMessage());
 		}
 
 		return listaFilas;

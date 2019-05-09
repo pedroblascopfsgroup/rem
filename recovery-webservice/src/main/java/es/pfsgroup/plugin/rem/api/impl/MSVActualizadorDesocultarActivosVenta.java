@@ -51,7 +51,6 @@ public class MSVActualizadorDesocultarActivosVenta extends AbstractMSVActualizad
 		DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
 		dto.setIdActivo(activo.getId());
 		dto.setOcultarVenta(false);
-		dto.setFechaRevisionVenta(null);
 		if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
 			if (activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
 				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());

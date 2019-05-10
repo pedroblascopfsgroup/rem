@@ -34,7 +34,6 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 				pestanyaDatosPublicacion.ocultarBotonesEdicion = !muestraEdicion;
 				me.up('activosdetallemain').getViewModel().get('filtrarComboMotivosOcultacionVenta');
 				me.up('activosdetallemain').getViewModel().get('filtrarComboMotivosOcultacionAlquiler');
-				
 			}
 		},
 

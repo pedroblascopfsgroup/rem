@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20190505
+--## FECHA_CREACION=20190508
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-5779
 --## PRODUCTO=NO
---## Finalidad: Añadir nuevas columnas APU_FECHA_CAMB_PUBL_VENTA y APU_FECHA_CAMB_PUBL_ALQ en la tabla ACT_APU_ACTIVO_PUBLICACION.
+--## Finalidad: Añadir nuevas columnas APU_FECHA_CAMB_PUBL_VENTA, APU_FECHA_CAMB_PUBL_ALQ, VAL_FECHA_CAMB_VENTA y VAL_FECHA_CAMB_ALQ en la tabla ACT_APU_ACTIVO_PUBLICACION.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,6 +35,10 @@ DECLARE
     V_COMMENT_TABLE_0 VARCHAR2(500 CHAR):= 'Indica la fecha del último cambio de publicación de venta del activo.'; -- Vble. para los comentarios de las tablas
     V_COLUMN_NAME_1 VARCHAR2(30):= 'APU_FECHA_CAMB_PUBL_ALQ'; -- Vble. para el nombre de las columnas.
     V_COMMENT_TABLE_1 VARCHAR2(500 CHAR):= 'Indica la fecha del último cambio de publicación de alquiler del activo.'; -- Vble. para los comentarios de las tablas
+    V_COLUMN_NAME_2 VARCHAR2(30):= 'APU_FECHA_CAMB_PREC_VENTA'; -- Vble. para el nombre de las columnas.
+    V_COMMENT_TABLE_2 VARCHAR2(500 CHAR):= 'Indica la fecha del último cambio del precio de venta del activo.'; -- Vble. para los comentarios de las tablas
+    V_COLUMN_NAME_3 VARCHAR2(30):= 'APU_FECHA_CAMB_PREC_ALQ'; -- Vble. para el nombre de las columnas.
+    V_COMMENT_TABLE_3 VARCHAR2(500 CHAR):= 'Indica la fecha del último cambio del precio de alquiler del activo.'; -- Vble. para los comentarios de las tablas
     
 BEGIN
 	-- Comprobar si existe la columna ACT_FECHA_CAMBIO_TIPO_ACT.
@@ -62,6 +66,34 @@ BEGIN
 		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_COLUMN_NAME_1||' DATE)';
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME_1||' IS '''||V_COMMENT_TABLE_1||'''';
 		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME_1||'... Creada');
+	END IF;
+	
+	COMMIT;
+	
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = '''||V_COLUMN_NAME_2||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
+	IF V_NUM_TABLAS > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME_2||'... Ya existe. Se continua.');
+	ELSE
+		-- Se crea la columna y se le agrega un comentario.
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_COLUMN_NAME_2||' DATE)';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME_2||' IS '''||V_COMMENT_TABLE_2||'''';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME_2||'... Creada');
+	END IF;
+	
+	COMMIT;
+	
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = '''||V_COLUMN_NAME_3||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
+	IF V_NUM_TABLAS > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME_3||'... Ya existe. Se continua.');
+	ELSE
+		-- Se crea la columna y se le agrega un comentario.
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_COLUMN_NAME_3||' DATE)';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME_3||' IS '''||V_COMMENT_TABLE_3||'''';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME_3||'... Creada');
 	END IF;
 	
 	COMMIT;

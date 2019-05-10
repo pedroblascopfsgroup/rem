@@ -175,17 +175,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 								}
 							},
 							{
-								 xtype: 'datefieldbase',
-	                             fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.fecha.revision'),
-	                             allowBlank: false,
-								 reference: 'datefieldFechaRevisionVenta',
-	                             bind:	{
-	                              	value: '{datospublicacionagrupacion.fechaRevisionVenta}',
-	                               	disabled: '{datospublicacionagrupacion.isEnableFechaRevisionVenta}',
-	                               	readOnly: false
-	                             }
-                            },
-							{
 								xtype: 'label',
 								colspan: 1
 							},
@@ -357,17 +346,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 				                	change: 'onChangeComboMotivoOcultacionAlquiler'
 				            	}
 					        },
-					        {
-                                xtype: 'datefieldbase',
-                                fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.fecha.revision'),
-                                allowBlank: false,
-								reference: 'datefieldFechaRevisionAlquiler',
-	                            bind:	{
-	                             	value: '{datospublicacionagrupacion.fechaRevisionAlquiler}',
-	                              	disabled: '{datospublicacionagrupacion.isEnableFechaRevisionAlquiler}',
-	                              	readOnly: false
-	                            }
-                            },
 					        {
 								xtype: 'label',
 								colspan: 2

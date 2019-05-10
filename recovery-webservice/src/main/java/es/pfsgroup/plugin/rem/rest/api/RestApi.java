@@ -67,6 +67,7 @@ public interface RestApi {
 	public static final String REST_API_BANKIA = "BANKIA";
 	public static final String REST_API_ENVIAR_CAMBIOS = "CAMBIOS";
 	public static final String REST_MSG_TAREA_INVALIDA = "INVALID";
+	public static final String REST_MSG_VALIDACION_TAREA = "VALIDACION_TAREA_ERROR";
 
 	/**
 	 * Valida la firma

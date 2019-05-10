@@ -69,6 +69,7 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean cambioEstadoPrecio;
 	private Boolean cambioEstadoActivo; 
 
+
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
 	}

@@ -986,7 +986,7 @@ ELSE
                               , nADMISION, nGESTION
                               , nINFORME_COMERCIAL, nPRECIO_A, nPRECIO_V
                               , nCEE_VIGENTE, nADECUADO
-                              , nES_CONDICIONADO
+                              , nES_CONDICIONADO;
         EXIT WHEN v_cursor%NOTFOUND;
         
         vACTUALIZADO_V := 'N';
@@ -1244,7 +1244,7 @@ ELSE
 				  ON (ACT.ACT_ID = AUX.ACT_ID)
 				WHEN MATCHED THEN
 				  UPDATE
-					 SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICIONADO|'
+					 SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICIONADO||'
 					   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 					   , FECHAMODIFICAR = SYSDATE
 				  WHERE BORRADO = 0

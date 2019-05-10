@@ -894,7 +894,7 @@ END IF;
                               , nADMISION, nGESTION
                               , nINFORME_COMERCIAL, nPRECIO_A, nPRECIO_V
                               , nCEE_VIGENTE, nADECUADO
-                              , nES_CONDICIONADO
+                              , nES_CONDICIONADO;
         EXIT WHEN v_cursor%NOTFOUND;
 
         vACTUALIZADO_V := 'N';
@@ -1103,7 +1103,7 @@ END IF;
 
         IF vACTUALIZAR_COND = 'S' THEN
 		    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-						SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICIONADO|'
+						SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICIONADO||'
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE ACT_ID = '||nACT_ID||'

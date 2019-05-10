@@ -89,9 +89,6 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 			dto.setTipoPublicacionAlquilerCodigo(entidad.getTipoPublicacionAlquiler().getCodigo());
 			dto.setTipoPublicacionAlquilerDescripcion(entidad.getTipoPublicacionAlquiler().getDescripcion());
 		}
-		
-		dto.setFechaRevisionVenta(entidad.getFechaRevisionVenta());
-		dto.setFechaRevisionAlquiler(entidad.getFechaRevisionAlquiler());
 
 		return dto;
 	}

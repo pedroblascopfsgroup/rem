@@ -3,8 +3,6 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
@@ -46,7 +44,6 @@ public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador 
 		static final int NUM_ACTIVO_HAYA = 0;
 		static final int MOTIVO_OCULTACION = 1;
 		static final int DESCRIPCION_MOTIVO = 2;
-		static final int FECHA_REVISION_PUBLICACION = 3;
 	}
 
 	@Override
@@ -61,9 +58,6 @@ public class MSVActualizadorOcultarActivosVenta extends AbstractMSVActualizador 
 		if(!Checks.esNulo(exc.dameCelda(fila, COL_NUM.DESCRIPCION_MOTIVO))){
 			dto.setMotivoOcultacionManualVenta(exc.dameCelda(fila, COL_NUM.DESCRIPCION_MOTIVO));
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		Date fechaRevisionPublicacion = sdf.parse(exc.dameCelda(fila, COL_NUM.FECHA_REVISION_PUBLICACION));
-		dto.setFechaRevisionVenta(fechaRevisionPublicacion);
 		
 		if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
 			if (activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {

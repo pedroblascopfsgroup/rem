@@ -1307,7 +1307,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			   	data = {};
 			   };			   
 			   if(data.success === "true") {
-				   	me.lookupReference('formalizacionExpediente').funcionRecargar();
+				   	me.lookupReference('bloqueBankia').funcionRecargar();
 				   	me.getView().unmask();
 			   }else {
 			   		Utils.defaultRequestFailure(response, opts);

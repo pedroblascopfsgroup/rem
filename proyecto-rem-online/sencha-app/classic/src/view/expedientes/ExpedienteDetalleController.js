@@ -3906,6 +3906,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	validarCompradores: function() {
 		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		//var gridCompradores = me.lookupReference('listadoCompradores');
 		//var longitudListaCompradores = gridCompradores.getView().getStore().getData().items.length;
 		//var problemasUrsus = gridCompradores.getView().getStore().getData().items[i].data.problemasUrsus;

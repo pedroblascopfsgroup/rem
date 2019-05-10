@@ -228,7 +228,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		
 		 //-- Lista propietarios 
-		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){  
+		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){    
 			List<ActivoPropietarioActivo> propietariosUA = new ArrayList<ActivoPropietarioActivo>();
 			List<ActivoPropietarioActivo> propietariosAM = activoMatriz.getPropietariosActivo();
 			//Bucle para evitar la Excepcion "Found shared references to a collection:"
@@ -254,7 +254,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		Filter patrimonioFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
 		ActivoPatrimonio patrimonioAm = genericDao.get(ActivoPatrimonio.class, patrimonioFilter);
 		ActivoPatrimonio patrimonioUa = new ActivoPatrimonio();
-		if (!Checks.esNulo(unidadAlquilable.getId())) {
+		if (!Checks.esNulo(unidadAlquilable.getId()) && !Checks.esNulo(patrimonioAm)) { 
 			patrimonioUa.setActivo(unidadAlquilable);
 			if (!Checks.esNulo(patrimonioAm.getAdecuacionAlquiler()))
 				patrimonioUa.setAdecuacionAlquiler(patrimonioAm.getAdecuacionAlquiler());
@@ -729,31 +729,31 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 /*d*/		if (!Checks.esNulo(actSitPosAM.getTipoTituloPosesorio())) {
 				actSitPosUA.setTipoTituloPosesorio(actSitPosAM.getTipoTituloPosesorio());
 			}
-		if (!Checks.estaVacio(actSitPosAM.getActivoOcupanteLegal())) {
-				List<ActivoOcupanteLegal> ocupantesIlegalesAM = actSitPosAM.getActivoOcupanteLegal();
-				List<ActivoOcupanteLegal> ocupantesIlegalesUA = new ArrayList<ActivoOcupanteLegal>();
-				for (ActivoOcupanteLegal ocupanteIlegalAM : ocupantesIlegalesAM) {
-					ActivoOcupanteLegal ocupanteIlegalUA = new ActivoOcupanteLegal();
-					if (!Checks.esNulo(ocupanteIlegalAM.getNombreOcupante())) {
-						ocupanteIlegalUA.setNombreOcupante(ocupanteIlegalAM.getNombreOcupante());
+			if (!Checks.estaVacio(actSitPosAM.getActivoOcupanteLegal())) {
+					List<ActivoOcupanteLegal> ocupantesIlegalesAM = actSitPosAM.getActivoOcupanteLegal();
+					List<ActivoOcupanteLegal> ocupantesIlegalesUA = new ArrayList<ActivoOcupanteLegal>();
+					for (ActivoOcupanteLegal ocupanteIlegalAM : ocupantesIlegalesAM) {
+						ActivoOcupanteLegal ocupanteIlegalUA = new ActivoOcupanteLegal();
+						if (!Checks.esNulo(ocupanteIlegalAM.getNombreOcupante())) {
+							ocupanteIlegalUA.setNombreOcupante(ocupanteIlegalAM.getNombreOcupante());
+						}
+						if (!Checks.esNulo(ocupanteIlegalAM.getNifOcupante())) {
+							ocupanteIlegalUA.setNifOcupante(ocupanteIlegalAM.getNifOcupante());
+						}
+						if (!Checks.esNulo(ocupanteIlegalAM.getEmailOcupante())) {
+							ocupanteIlegalUA.setEmailOcupante(ocupanteIlegalAM.getEmailOcupante());
+						}
+						if (!Checks.esNulo(ocupanteIlegalAM.getTelefonoOcupante())) {
+							ocupanteIlegalUA.setTelefonoOcupante(ocupanteIlegalAM.getTelefonoOcupante());
+						}
+						if (!Checks.esNulo(ocupanteIlegalAM.getObservacionesOcupante())) {
+							ocupanteIlegalUA.setObservacionesOcupante(ocupanteIlegalAM.getObservacionesOcupante());
+						}
+						ocupanteIlegalUA.setAuditoria(auditoria);
+						genericDao.save(ActivoOcupanteLegal.class, ocupanteIlegalUA);
+						ocupantesIlegalesUA.add(ocupanteIlegalUA);
 					}
-					if (!Checks.esNulo(ocupanteIlegalAM.getNifOcupante())) {
-						ocupanteIlegalUA.setNifOcupante(ocupanteIlegalAM.getNifOcupante());
-					}
-					if (!Checks.esNulo(ocupanteIlegalAM.getEmailOcupante())) {
-						ocupanteIlegalUA.setEmailOcupante(ocupanteIlegalAM.getEmailOcupante());
-					}
-					if (!Checks.esNulo(ocupanteIlegalAM.getTelefonoOcupante())) {
-						ocupanteIlegalUA.setTelefonoOcupante(ocupanteIlegalAM.getTelefonoOcupante());
-					}
-					if (!Checks.esNulo(ocupanteIlegalAM.getObservacionesOcupante())) {
-						ocupanteIlegalUA.setObservacionesOcupante(ocupanteIlegalAM.getObservacionesOcupante());
-					}
-					ocupanteIlegalUA.setAuditoria(auditoria);
-					genericDao.save(ActivoOcupanteLegal.class, ocupanteIlegalUA);
-					ocupantesIlegalesUA.add(ocupanteIlegalUA);
-				}
-				actSitPosUA.setActivoOcupanteLegal(ocupantesIlegalesUA);
+					actSitPosUA.setActivoOcupanteLegal(ocupantesIlegalesUA);
 			}
 			if (!Checks.esNulo(actSitPosAM.getFechaRevisionEstado())) {
 				actSitPosUA.setFechaRevisionEstado(actSitPosAM.getFechaRevisionEstado());
@@ -761,64 +761,17 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			if (!Checks.esNulo(actSitPosAM.getFechaTomaPosesion())) {
 				actSitPosUA.setFechaTomaPosesion(actSitPosAM.getFechaTomaPosesion());
 			}
+			if (!Checks.esNulo(actSitPosAM.getSitaucionJuridica())) {
+				actSitPosUA.setSitaucionJuridica(actSitPosAM.getSitaucionJuridica());
+			}
 			if (!Checks.esNulo(actSitPosAM.getOcupado())) {
-				actSitPosUA.setOcupado(actSitPosAM.getOcupado());
-			}
-/*d*/		if (!Checks.esNulo(actSitPosAM.getConTitulo())) {
-				actSitPosUA.setConTitulo(actSitPosAM.getConTitulo());
-			}
-			if (!Checks.esNulo(actSitPosAM.getRiesgoOcupacion())) {
-				actSitPosUA.setRiesgoOcupacion(actSitPosAM.getRiesgoOcupacion());
-			}
-			if (!Checks.esNulo(actSitPosAM.getFechaTitulo())) {
-				actSitPosUA.setFechaTitulo(actSitPosAM.getFechaTitulo());
-			}
-			if (!Checks.esNulo(actSitPosAM.getFechaVencTitulo())) {
-				actSitPosUA.setFechaVencTitulo(actSitPosAM.getFechaVencTitulo());
-			}
-			if (!Checks.esNulo(actSitPosAM.getRentaMensual())) {
-				actSitPosUA.setRentaMensual(actSitPosAM.getRentaMensual());
-			}
-			if (!Checks.esNulo(actSitPosAM.getFechaSolDesahucio())) {
-				actSitPosUA.setFechaSolDesahucio(actSitPosAM.getFechaSolDesahucio());
-			}
-			if (!Checks.esNulo(actSitPosAM.getFechalanzamiento())) {
-				actSitPosUA.setFechalanzamiento(actSitPosAM.getFechalanzamiento());
-			}
-			if (!Checks.esNulo(actSitPosAM.getFechaLanzamientoEfectivo())) {
-				actSitPosUA.setFechaLanzamientoEfectivo(actSitPosAM.getFechaLanzamientoEfectivo());
-			}
-			if (!Checks.esNulo(actSitPosAM.getAccesoTapiado())) {
-				actSitPosUA.setAccesoTapiado(actSitPosAM.getAccesoTapiado());
-			}
-			if (!Checks.esNulo(actSitPosAM.getFechaAccesoTapiado())) {
-				actSitPosUA.setFechaAccesoTapiado(actSitPosAM.getFechaAccesoTapiado());
-			}
-			if (!Checks.esNulo(actSitPosAM.getAccesoAntiocupa())) {
-				actSitPosUA.setAccesoAntiocupa(actSitPosAM.getAccesoAntiocupa());
-			}
-			if (!Checks.esNulo(actSitPosAM.getFechaAccesoAntiocupa())) {
-				actSitPosUA.setFechaAccesoAntiocupa(actSitPosAM.getFechaAccesoAntiocupa());
+				actSitPosUA.setOcupado(0);
 			}
 			actSitPosUA.setAuditoria(auditoria);
 			actSitPosUA.setActivo(unidadAlquilable);
 			
-			if (!Checks.esNulo(actSitPosAM.getOtro())) {
-				actSitPosUA.setOtro(actSitPosAM.getOtro());
-			}
-			if (!Checks.esNulo(actSitPosAM.getPublicadoPortalExterno())) {
-				actSitPosUA.setPublicadoPortalExterno(actSitPosAM.getPublicadoPortalExterno());
-			}
-			if (!Checks.esNulo(actSitPosAM.getEditadoFechaTomaPosesion())) {
-				actSitPosUA.setEditadoFechaTomaPosesion(actSitPosAM.getEditadoFechaTomaPosesion());
-			}
-/*d*/		if (!Checks.esNulo(actSitPosAM.getSitaucionJuridica())) {
-				actSitPosUA.setSitaucionJuridica(actSitPosAM.getSitaucionJuridica());
-			}
-
-			
 			genericDao.save(ActivoSituacionPosesoria.class, actSitPosUA);
-
+			
 		}
 		
 		unidadAlquilable.setAdmision(activoMatriz.getAdmision());

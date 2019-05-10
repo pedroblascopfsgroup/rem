@@ -215,7 +215,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
-		if(form.isFormValid() && form.disableValidation) {
+		if(form.isFormValid() || form.disableValidation) {
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -1305,10 +1305,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			   	data = Ext.decode(response.responseText);
 			   }  catch (e){
 			   	data = {};
-			   };			   
+			   };
 			   if(data.success === "true") {
-				   	me.lookupReference('bloqueBankia').funcionRecargar();
-				   	me.getView().unmask();
+				   me.lookupReference('cncyCapitalConcedidoBnk').setValue(data.data);
+				   me.getView().unmask();
 			   }else {
 			   		Utils.defaultRequestFailure(response, opts);
 			   }

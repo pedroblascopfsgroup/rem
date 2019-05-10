@@ -5886,7 +5886,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception {
+	public Double obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception {
 		try {
 			ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getIdExpediente()));
 
@@ -5909,7 +5909,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 						genericDao.save(Formalizacion.class, formalizacion);
 
-						return true;
+						return formalizacion.getCapitalConcedido();
 					}
 				} else {
 					throw new Exception("En número del expediente y el tipo de riesgo han de estar informados");
@@ -5923,7 +5923,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			throw new JsonViewerException(e.getMessage());
 		}
 
-		return false;
+		return null;
 	}
 
 	@Override

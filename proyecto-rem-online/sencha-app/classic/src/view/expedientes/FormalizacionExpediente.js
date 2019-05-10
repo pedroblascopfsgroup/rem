@@ -3,7 +3,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	xtype : 'formalizacionexpediente',
 	cls : 'panel-base shadow-panel',
 	collapsed : false,
-	disableValidation : true,
+	disableValidation : false,
 	reference : 'formalizacionExpediente',
 	scrollable : 'y',
 	saveMultiple : true,
@@ -212,7 +212,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									fieldLabel : HreRem
 											.i18n('fieldlabel.capital.concedido'),
 									reference: 'cncyCapitalConcedidoBnk',
-									readOnly : true,
+									readOnly: true,
 									bind : {
 										value: '{financiacion.capitalConcedido}'
 									},

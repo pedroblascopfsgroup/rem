@@ -1378,8 +1378,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView obtencionDatosPrestamo(ModelMap model, DtoObtencionDatosFinanciacion dto) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.obtencionDatosPrestamo(dto));
-
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.obtencionDatosPrestamo(dto));
+			
 		} catch (JsonViewerException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("msgError", e.getMessage());
@@ -1414,8 +1415,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveFormalizacionFinanciacion(ModelMap model, DtoFormalizacionFinanciacion dto, HttpServletRequest request) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveFormalizacionFinanciacion(dto));
-			trustMe.registrarSuceso(request, Long.parseLong(dto.getId()), ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "formalizacion", ACCION_CODIGO.CODIGO_MODIFICAR);
+		
+				model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveFormalizacionFinanciacion(dto));
+				trustMe.registrarSuceso(request, Long.parseLong(dto.getId()), ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "formalizacion", ACCION_CODIGO.CODIGO_MODIFICAR);
+		
+			
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);

@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -8939,10 +8940,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						flagHayDiscrepancias = true;
 						comprador.setProblemasUrsus(true);
 						genericDao.save(Comprador.class, comprador);
+						crearTareaValidacionClientes(expedienteComercial);
 					}
 					else if(comprador.getProblemasUrsus()) {
 						comprador.setProblemasUrsus(false);
 						genericDao.save(Comprador.class, comprador);
+						finalizarTareaValidacionClientes(expedienteComercial);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -9056,5 +9059,51 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return hayDiscrepanciasClientesURSUS(expediente.getId());
 		}
 			return false;
+	}
+	
+	private void crearTareaValidacionClientes (ExpedienteComercial expedienteComercial){
+		Boolean existeTareaValidacion = false;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajo(expedienteComercial.getTrabajo().getId());		
+		List<TareaProcedimiento> tareasActivas = activoTramiteApi.getTareasActivasByIdTramite(tramite.getId());
+		for (TareaProcedimiento tarea : tareasActivas){
+			if(tarea.getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
+				existeTareaValidacion = true;	
+			}else {
+				existeTareaValidacion = false;
+			}
+		}
+		
+		if (!existeTareaValidacion){
+			tramiteDao.creaTareaValidacion(usuarioLogado.getUsername(), expedienteComercial.getNumExpediente().toString());
+		}
+	}
+	
+	private void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial){
+		
+		TareaNotificacion tarNot = new TareaNotificacion();
+		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajo(expedienteComercial.getTrabajo().getId());
+		if (!Checks.esNulo(tramite)){
+			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+			for (TareaExterna tarea : tareasActivas){
+				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
+					tarNot = tarea.getTareaPadre();
+					if (!Checks.esNulo(tarNot)){
+						tarNot.setFechaFin(new Date());
+						
+						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+						if (!Checks.esNulo(usuarioLogado)){
+							tarNot.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+							tarNot.getAuditoria().setFechaBorrar(new Date());
+							tarNot.getAuditoria().setBorrado(true);
+							
+							genericDao.update(TareaNotificacion.class, tarNot);
+						}
+					}
+					
+				}
+			}
+		}
 	}
 }

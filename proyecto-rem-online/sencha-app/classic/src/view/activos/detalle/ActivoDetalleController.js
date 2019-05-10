@@ -5152,5 +5152,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
        
         return str;
 
-    }
+    },
+    
+
+	checkOfertaTrabajoVivo : function (obj){
+		var me = this,
+		url = 'url a la funcion del controller';
+		//TODO falta id activo
+		if (me.getViewModel().get('activoMatriz')){
+			Ext.Ajax.request({
+	    		url: url,
+	    		params: {idActivo: idActivo},
+	    		success: function(response, opts){
+	    			var result = Ext.decode(response.responseText);
+	    				if (result.data == 'true'){
+	    					obj.reset();
+	    					me.fireEvent("errorToast", 'aqui el error');
+	    				}
+	    		},
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", "No se ha podido verificar si existe alg&uacute;n tramite activo"); 
+			    }
+	    	});
+		}
+	}
 });

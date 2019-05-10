@@ -722,8 +722,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			if(me.get('activo.isVendidoOEntramite') != undefined)
 				vendido = me.get('activo.isVendidoOEntramite');
 			return (vendido === true || esUA === true);
+		},
+		
+		editableTipoActivo: function(get){
+			//No se podrán editar las coordenadas de latitud y longitud si se trata de una UA
+			var me = this;
+			var unidadAlquilable = get('activo.unidadAlquilable');
+			var editable = get('editing');
+			
+			if((unidadAlquilable != undefined || unidadAlquilable != null))
+				return (!editable || unidadAlquilable);
+			else
+				return !editable;
 		}
-		 
 		
 	 },
 	

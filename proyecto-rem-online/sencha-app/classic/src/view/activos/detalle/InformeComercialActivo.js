@@ -529,7 +529,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                	reference: 'botonVerificarCoordenadasInforme',
 					                	disabled: true,
 					                	bind:{
-					                		disabled: '{!editing}'
+					                		disabled: '{editableTipoActivo}'
 					                	},
 					                	text: HreRem.i18n('btn.verificar.coordenadas'),
 					                	handler: 'onClickVerificarDireccion'

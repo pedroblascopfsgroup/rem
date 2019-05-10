@@ -314,7 +314,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                	reference: 'botonVerificarDireccion',
 		                	disabled: true,
 		                	bind:{
-		                		disabled: '{!editing}'
+		                		disabled: '{editableTipoActivo}'
 		                	},
 		                	rowspan: 2,
 		                	text: HreRem.i18n('btn.verificar.direccion'),

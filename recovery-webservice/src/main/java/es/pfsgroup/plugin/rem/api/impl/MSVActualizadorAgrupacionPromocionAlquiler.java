@@ -45,12 +45,10 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
-import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
-import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
@@ -557,25 +555,32 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		//------Insercion del api (Mediador)
 		if ( !Checks.esNulo(activoMatriz)) {
 			List<DtoHistoricoMediador> dtoHistoricoMediador = activoApi.getHistoricoMediadorByActivo(activoMatriz.getId());
-			for (DtoHistoricoMediador dto : dtoHistoricoMediador) {
-				dto.setIdActivo(unidadAlquilable.getId());
-				activoApi.createHistoricoMediador(dto);
-				
-				//Asignación del mediador del AM a la UA cuando se crea
-				unidadAlquilable.getInfoComercial().setMediadorInforme(activoApi.getMediador(activoMatriz));
-				
-				//Asignación del tipo de activo indicado en el Excel de Carga Masiva para que aparezcan los paneles Vivienda y Calidades en la pestaña Publicación
-				if(!Checks.esNulo(exc.dameCelda(fila, 2))){
-					String codTipo = exc.dameCelda(fila, 2);
-					if(codTipo.length() == 1){
-						codTipo = "0".concat(codTipo);
-					}
-					Filter tipoFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", codTipo);
-					DDTipoActivo tipoActivo = genericDao.get(DDTipoActivo.class, tipoFilter);
-					unidadAlquilable.getInfoComercial().setTipoActivo(tipoActivo);
+			if(dtoHistoricoMediador.isEmpty()) {
+				//Si está vacío significa que el AM no tiene histórico pero puede tener un mediador asignado, así que lo introducimos en el dto para crearle un registo a la nueva UA correctamente
+				//No será necesario, por tanto, un bucle para trasladar el histórico del AM a las UAs, puesto que está vacío.
+				DtoHistoricoMediador dtoAux = new DtoHistoricoMediador();
+				dtoAux.setIdActivo(unidadAlquilable.getId());
+				dtoAux.setCodigo(activoMatriz.getInfoComercial().getMediadorInforme().getCodigoProveedorRem().toString());
+				activoApi.createHistoricoMediador(dtoAux);
+			}else {
+				for (DtoHistoricoMediador dto : dtoHistoricoMediador) {
+					dto.setIdActivo(unidadAlquilable.getId());
+					activoApi.createHistoricoMediador(dto);
 				}
 			}
 		}
+				
+		//Asignación del tipo de activo indicado en el Excel de Carga Masiva para que aparezcan los paneles Vivienda y Calidades en la pestaña Publicación
+		if(!Checks.esNulo(exc.dameCelda(fila, 2))){
+			String codTipo = exc.dameCelda(fila, 2);
+			if(codTipo.length() == 1){
+				codTipo = "0".concat(codTipo);
+			}
+			Filter tipoFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", codTipo);
+			DDTipoActivo tipoActivo = genericDao.get(DDTipoActivo.class, tipoFilter);
+			unidadAlquilable.getInfoComercial().setTipoActivo(tipoActivo);
+		}
+		
 		//-----Nuevo ActivoAgrupacionActivo
 		if(!Checks.esNulo(exc.dameCelda(fila, 0))){
 			ActivoAgrupacionActivo activoAgrupacionActivo= new ActivoAgrupacionActivo();

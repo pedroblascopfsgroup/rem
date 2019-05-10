@@ -32,10 +32,8 @@ Ext.define('HreRem.view.common.ImageFieldBase', {
     setValue: function (v) {
         var me = this;
         me.callParent(arguments);
-
         me.value = v;
         var imgEl = Ext.getDom(me.id+'-inputEl');
-        debugger;
         if(!Ext.isEmpty(imgEl)) {
         	if(!Ext.isEmpty(v)) {
 	        	imgEl.src=v;

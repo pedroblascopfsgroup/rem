@@ -2787,7 +2787,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
 				+ "WHERE AGR_NUM_AGRUP_REM ="+numAgrupacion+" "
 				+ "AND AGR.BORRADO = 0 "
-				+ "AND AGA.AGA_PRINCIPAL = 1");
+				+ "AND AGA.AGA_PRINCIPAL = 1"
+				+ "AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
 		return !"0".equals(resultado);
 	}
 	

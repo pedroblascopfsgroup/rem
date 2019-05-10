@@ -35,13 +35,15 @@ Ext.define('HreRem.view.common.ImageFieldBase', {
 
         me.value = v;
         var imgEl = Ext.getDom(me.id+'-inputEl');
+        debugger;
         if(!Ext.isEmpty(imgEl)) {
         	if(!Ext.isEmpty(v)) {
 	        	imgEl.src=v;
 	        	imgEl.width=me.width;
+	        	imgEl.hidden=false;
         	} else {
         		imgEl.hidden=true;
-        		if(!Ext.isEmpty(me.alt)) {
+        		if(!Ext.isEmpty(imgEl.alt)) {
 	        		me.inputEl.insertSibling({
 			            tag: 'div',
 			            html: '<div class="min-text-logo-cartera">'+me.alt+'</div>'

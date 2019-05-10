@@ -632,7 +632,7 @@ public class AgrupacionAdapter {
 
 								if((!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioPos()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioPos()))
 										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTit()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTit()))
-										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaAccesoTapiado()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaAccesoTapiado()))
+										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTapiado()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTapiado()))
 										|| (!Checks.esNulo(activoAgrup.getActivo().getFechaUltCambioTipoActivo()) && calculodiasCambiosActivo(activoAgrup.getActivo().getFechaUltCambioTipoActivo()))	
 									) {
 									cambioEstadoActivo = Boolean.TRUE;
@@ -655,16 +655,11 @@ public class AgrupacionAdapter {
 									}
 								}
 								
-								if(!Checks.esNulo(activoAgrup.getActivo().getValoracion())) {
-									for(ActivoValoraciones valoracion: activoAgrup.getActivo().getValoracion())
-									{
-										if(((!Checks.esNulo(valoracion.getFechaCambioValorVenta())) && calculodiasCambiosActivo(valoracion.getFechaCambioValorVenta()))
-											||	((!Checks.esNulo(valoracion.getFechaCambioValorAlq())) && calculodiasCambiosActivo(valoracion.getFechaCambioValorAlq()))
-											) {
+
+								if(((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorVenta())) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorVenta()))
+									||	((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorAlq())) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorAlq()))
+										) {
 											cambioEstadoPrecio = Boolean.TRUE;
-											break;
-										}
-									}
 								}	
 								
 								dtoAgrupacion.setCambioEstadoActivo(cambioEstadoActivo);

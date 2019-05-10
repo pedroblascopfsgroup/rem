@@ -298,7 +298,7 @@ public class AgrupacionAdapter {
 	// Errores validacion ventaVivas
 	private static final String ACTIVO_OFERTAS_VIVAS = "Activo con ofertas vivas";
 	private static final String ACTIVO_OFERTAS_ALQUILER_VIVAS = "Activo con ofertas de alquiler vivas";
-	private static final String ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER = "Activo NO incluido en perímetro alquiler";
+	private static final String ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER = "Activo NO incluido en perímetro de alquiler";
 	private static final String ACTIVO_SIN_PATRIMONIO_ACTIVO = "El activo no tiene patrimonio activo";
 	private static final String TIPO_NO_PERMITIDO_ACTIVO_MATRIZ = "Tipo de activo NO permitido como activo Activo matriz";
 	private static final String ACTIVO_VENDIDO = "Activo vendido";
@@ -2624,16 +2624,16 @@ public class AgrupacionAdapter {
 							throw new JsonViewerException(ACTIVO_VENDIDO);
 						}
 					}else {
-						throw new JsonViewerException(this.ACTIVO_SIN_SITUACION_COMERCIAL);
+						throw new JsonViewerException(ACTIVO_SIN_SITUACION_COMERCIAL);
 					}
 				}else {
-					throw new JsonViewerException(this.ACTIVO_FUERA_PERIMETRO_HAYA);
+					throw new JsonViewerException(ACTIVO_FUERA_PERIMETRO_HAYA);
 				}
 			}else {
-				throw new JsonViewerException(this.ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER);
+				throw new JsonViewerException(ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER);
 			}
 		}else{
-			throw new JsonViewerException(this.ACTIVO_INEXISTENTE);
+			throw new JsonViewerException(ACTIVO_INEXISTENTE);
 			
 		}
 

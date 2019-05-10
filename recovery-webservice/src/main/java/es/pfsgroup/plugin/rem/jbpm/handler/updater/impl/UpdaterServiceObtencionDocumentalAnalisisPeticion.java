@@ -10,6 +10,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -24,6 +25,9 @@ public class UpdaterServiceObtencionDocumentalAnalisisPeticion implements Update
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoApi activoApi;
 
 	@Override
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
@@ -53,6 +57,7 @@ public class UpdaterServiceObtencionDocumentalAnalisisPeticion implements Update
 		}
 
 		genericDao.save(Trabajo.class, trabajo);
+		activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
 
 	}
 

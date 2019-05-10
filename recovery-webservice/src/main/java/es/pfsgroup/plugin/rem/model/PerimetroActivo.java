@@ -109,10 +109,10 @@ public class PerimetroActivo implements Serializable, Auditable {
 	private String motivoAplicaPublicar;
     
     @Column(name = "PAC_OFERTAS_VIVAS")
-	private Integer ofertasVivas; 
+	private Boolean ofertasVivas; 
     
     @Column(name = "PAC_TRABAJOS_VIVOS")
-	private Integer trabajosVivos; 
+	private Boolean trabajosVivos; 
     
     @Version   
 	private Long version;
@@ -275,19 +275,19 @@ public class PerimetroActivo implements Serializable, Auditable {
 		this.motivoAplicaFormalizar = motivoAplicaFormalizar;
 	}
 	
-	public Integer getOfertasVivas() {
+	public Boolean getOfertasVivas() {
 		return ofertasVivas;
 	}
 
-	public void setOfertasVivas(Integer ofertasVivas) {
+	public void setOfertasVivas(Boolean ofertasVivas) {
 		this.ofertasVivas = ofertasVivas;
 	}
 	
-	public Integer getTrabajosVivos() {
+	public Boolean getTrabajosVivos() {
 		return trabajosVivos;
 	}
 
-	public void setTrabajosVivos(Integer trabajosVivos) {
+	public void setTrabajosVivos(Boolean trabajosVivos) {
 		this.trabajosVivos = trabajosVivos;
 	}
 

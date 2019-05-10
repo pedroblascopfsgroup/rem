@@ -512,16 +512,10 @@ Ext.define('HreRem.model.Activo', {
     			dateFormat: 'c'
 			},
 			{
-				name: 'ofertasVivas',
-				calculate: function(data) { 
-    				return data == 1 ? 'Si' : 'No';
-    			},
+				name: 'ofertasVivas'
 			},
 			{
-				name: 'trabajosVivos',
-				calculate: function(data) { 
-    				return data == 1 ? 'Si' : 'No';
-    			},
+				name: 'trabajosVivos'	
 			},
 			{
 				name: 'aplicaTramiteAdmision',

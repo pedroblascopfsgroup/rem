@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -46,6 +47,9 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     
     @Autowired
     private ActivoAdapter activoAdapter;
+    
+    @Autowired
+    private ActivoApi activoApi;
     
     @Autowired
     private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
@@ -115,6 +119,8 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		
 		
 		expedienteComercialApi.update(expedienteComercial);
+		activoApi.actualizarOfertasTrabajosVivos(activo);
+		
 	}
 
 	public String[] getCodigoTarea() {

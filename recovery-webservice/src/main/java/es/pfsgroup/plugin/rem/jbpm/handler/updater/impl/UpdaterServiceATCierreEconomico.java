@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -31,7 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 public class UpdaterServiceATCierreEconomico implements UpdaterService {
 	
 	@Autowired
-	ActivoManager activoApi;
+	ActivoApi activoApi;
 	
 	@Autowired
     private GenericABMDao genericDao;
@@ -155,6 +156,8 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 		}
 	
 		genericDao.save(Trabajo.class, trabajo);
+		
+		activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
 	}
 
 	public String[] getCodigoTarea() {

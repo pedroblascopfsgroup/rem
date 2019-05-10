@@ -13,6 +13,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -33,6 +34,9 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
     
     @Autowired
     private ProveedoresDao proveedoresDao;
+    
+    @Autowired
+    private ActivoApi activoApi;
     
 	private static final String CODIGO_T004_ANALISIS_PETICION = "T004_AnalisisPeticion";
 	
@@ -93,6 +97,7 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 			}				
 		}
 		genericDao.save(Trabajo.class, trabajo);
+		activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
 
 	}
 

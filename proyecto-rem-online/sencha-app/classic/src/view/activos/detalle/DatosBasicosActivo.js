@@ -412,12 +412,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.ofertas.vivas'),
-						bind:		'{activo.ofertasVivas}',
+						bind:{
+								value:'{activo.ofertasVivas}'
+									
+						},
 						readOnly	: true
 					},
 					{
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.trabajos.vivos'),
+						colspan: 2,
 						bind:		'{activo.trabajosVivos}',
 						readOnly	: true
 					},

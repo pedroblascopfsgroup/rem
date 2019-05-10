@@ -135,7 +135,7 @@ BEGIN
 					''3'',
 					''102'',
 					NULL,
-					to_timestamp(''01/01/1999 20:57:30,000000000'',''DD/MM/YYYY HH24:MI:SSXFF''	),
+					TO_DATE(''01/01/1999'',''DD/MM/YYYY''	),
 					NULL,
 					''1'',
 					''4'',
@@ -164,7 +164,7 @@ BEGIN
 					NULL,
 					''20460'',
 					''17790'',
-					to_timestamp(''17/01/2019 20:57:30,000000000'',''DD/MM/YYYY HH24:MI:SSXFF''	)
+					TO_DATE(''17/01/2019'',''DD/MM/YYYY'')
 				)';
 	
     EXECUTE IMMEDIATE V_MSQL;

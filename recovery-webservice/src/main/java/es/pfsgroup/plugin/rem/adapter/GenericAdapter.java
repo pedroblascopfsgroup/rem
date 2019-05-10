@@ -163,19 +163,21 @@ public class GenericAdapter {
 		
 	}
 	
-	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
+	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
+			List<DtoAdjuntoMail> adjuntos) {
 		String usuarioLogado = RestApi.REST_LOGGED_USER_USERNAME;
-		if(this.getUsuarioLogado() != null){
-			try{
+		try {
+			if (this.getUsuarioLogado() != null) {
 				usuarioLogado = this.getUsuarioLogado().getUsername();
-			}catch(Exception e){
-				logger.info("No se puede obtner usuariologado, usamos rest",e);
-			}
-			
-		}
-		Thread hiloCorreo = new Thread(new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos,usuarioLogado));
 
-		hiloCorreo.start();	
+			}
+		} catch (Exception e) {
+			logger.info("No se puede obtner usuariologado, usamos rest", e);
+		}
+		Thread hiloCorreo = new Thread(
+				new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos, usuarioLogado));
+
+		hiloCorreo.start();
 	}
 	
 	/**

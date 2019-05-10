@@ -3923,6 +3923,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			    	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 			     }
 		 		me.refrescarExpediente(true);
+		 		me.getView().unmask();
 		 	},
            failure: function (a, operation, context) {
            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

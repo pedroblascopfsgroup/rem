@@ -3,7 +3,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     alias: 'controller.activodetalle',
     requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
             'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
-            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController'],
+            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.activos.detalle.InformeComercialActivo'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -62,7 +62,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          
          'tituloinformacionregistralactivo calificacionnegativagrid': {
           	onClickPropagation: 'onClickPropagationCalificacionNegativa'
-          }
+          },
+          
+          'informecomercialactivo historicomediadorgrid': {
+           	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+           }
     },
     
 	cargarTabData: function (form) {
@@ -3437,13 +3441,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-  createTabDataHistoricoMediadores : function(list) {
+  createTabDataHistoricoMediadores : function(listadoActivos, records4) {
 	
     var me = this, tabData = {};
     tabData.id = me.getViewModel().get("activo.id");
     tabData.models = [];
 
-    Ext.Array.each(list, function(record, index) {
+    Ext.Array.each(listadoActivos, function(record, index) {
           var model = {};
           model.name = 'mediadoractivo';
           model.type = 'activo';

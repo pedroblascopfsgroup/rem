@@ -2,15 +2,9 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'historicomediadorgrid',
 	topBar		: true,
-	propagationButton: true,
-	targetGrid	: 'mediadoractivo',
-	idPrincipal : 'activo.id',
 	editOnSelect: false,
 	disabledDeleteBtn: true,
 
-    bind: {
-        store: '{storeHistoricoMediador}'
-    },
 
     initComponent: function () {
 

@@ -34,6 +34,10 @@ if [ "$1" == "val06" ] ; then
     BASE_DIR=/home/map023
 fi
 
+if [ "$1" == "val08" ] ; then
+    BASE_DIR=/home/map020
+fi
+
 if [ "$1" == "formacion" ] ; then
     BASE_DIR=/recovery/map018/app-server
 fi
@@ -57,6 +61,9 @@ elif [[ $1 == 'val06' ]]; then
 	cp -r wsdl/pre/* $BASE_DIR/wsdl/pre
 elif [[ $1 == 'val05' ]]; then
 	BASE_DIR=/recovery/map024/app-server
+	cp -r wsdl/pre/* $BASE_DIR/wsdl/pre
+elif [[ $1 == 'val08' ]]; then
+	BASE_DIR=/recovery/map020/app-server
 	cp -r wsdl/pre/* $BASE_DIR/wsdl/pre
 else
 	cp -r wsdl/pre/* $BASE_DIR/wsdl/pre

@@ -160,8 +160,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 							handler.actualizarVistaMaterializada(registro);
 							Integer contError = 0;
 							Boolean marcarComoEnviado = true;
-
+							int i= 0;
 							do {
+								if(i>0){
+									registro = new RestLlamada();
+								}
 								registro.setIteracion(iteracion);
 								try {
 									if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
@@ -178,6 +181,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 									// pasamos de bloque
 									pasarDeBloque(listPendientes);
 									contError = 0;
+									marcarComoEnviado = true;
 								} catch (ErrorServicioWebcom e) {
 									// si no es reintentable siguiente bloque
 									if (!e.isReintentable()) {
@@ -190,12 +194,9 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 												"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
 												e);
 										contError++;
-										if(contError < MAXIMO_INTENTOS){
-											continue;
-										}else{
+										if(contError >= MAXIMO_INTENTOS){
 											marcarComoEnviado = false;
-										}
-										
+										}										
 									}
 								} finally {
 									if (!Checks.estaVacio(listPendientes) && registroLlamadas != null) {
@@ -206,10 +207,10 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 										llamadas.add(registro);
 									}
 								}
-								registro = new RestLlamada();
 								// en la segunda pagina el tiempo de refresco es
 								// 0
 								registro.setMsRefrescoVista(new Long(0));
+								i++;
 							} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
 									|| (contError > 0 && contError < MAXIMO_INTENTOS));
 

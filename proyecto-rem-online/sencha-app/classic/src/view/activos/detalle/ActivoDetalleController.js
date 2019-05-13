@@ -4136,7 +4136,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var data = JSON.parse(jsonData);
 
 			if (data.success !== null && data.success !== undefined && data.success === "false") {
-				me.getViewModel().getData().situacionPosesoria.reject();
+				if(!Ext.isEmpty(me.getViewModel().getData().situacionPosesoria)){
+					me.getViewModel().getData().situacionPosesoria.reject();
+				}
 				me.getViewModel().getData().activo.reject();
 				scope.fireEvent("errorToast", data.msgError);
 			} else {

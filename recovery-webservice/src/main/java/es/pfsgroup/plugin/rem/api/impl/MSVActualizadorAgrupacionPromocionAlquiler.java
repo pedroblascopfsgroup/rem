@@ -117,6 +117,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		NMBBien bien = new NMBBien();
 		bien.setAuditoria(auditoria);
 		genericDao.save(Bien.class, bien);
+		
+		//Agrupacion
+		ActivoAgrupacionActivo activoAgrupacionActivo = null;
 
 		//-----Se obtiene el activo matriz de la agrupacion indicada en la carga masiva  para generar la plantilla de guardado de unidades alquilables.
 		Activo activoMatriz = null; 
@@ -378,14 +381,45 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				
 			}
 		}
+		
+		//-----Nuevo ActivoAgrupacionActivo
+		if(!Checks.esNulo(exc.dameCelda(fila, 0))){
+			activoAgrupacionActivo= new ActivoAgrupacionActivo();
+			
+			//-----Promocion ALquiler (Agrupacion)
+			Long agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(Long.valueOf(exc.dameCelda(fila, 0)));
+			Filter agrupacionFilter = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
+			ActivoAgrupacion promocionAlquiler = genericDao.get(ActivoAgrupacion.class, agrupacionFilter);
+			activoAgrupacionActivo.setAgrupacion(promocionAlquiler);
+			
+			//-----Unidad Alquilable (Activo)
+			activoAgrupacionActivo.setActivo(unidadAlquilable);
+			activoAgrupacionActivo.setPrincipal(0);
+			activoAgrupacionActivo.setFechaInclusion(new Date());
+			
+			//-----ID Prinex HPM
+			if(!Checks.esNulo(exc.dameCelda(fila, 1))){
+				activoAgrupacionActivo.setIdPrinexHPM(exc.dameCelda(fila, 1));
+			}
+			
+			//-----% Participacion
+			if(!Checks.esNulo(exc.dameCelda(fila, 13))){
+				activoAgrupacionActivo.setParticipacionUA(Double.valueOf(exc.dameCelda(fila, 13)));
+			}
+			
+			activoAgrupacionActivo.setAuditoria(auditoria);
+			genericDao.save(ActivoAgrupacionActivo.class, activoAgrupacionActivo);
+		}
+		
+		
 		//-----Nuevo NMBInformacionRegistralBien (Superficie construida)
 		if(!Checks.esNulo(exc.dameCelda(fila, 11))){
 			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
 			ActivoInfoRegistral infoRegistralActivoMatriz = genericDao.get(ActivoInfoRegistral.class, f1);
 			NMBInformacionRegistralBien bieInfoRegistralActivoMatriz = infoRegistralActivoMatriz.getInfoRegistralBien();
 			NMBInformacionRegistralBien bieInfoRegistral = new NMBInformacionRegistralBien();
-			String numUnidadAlquilable = Integer.toString(fila),
-			numFinca = "-"+StringUtils.leftPad(numUnidadAlquilable, 4, "0");
+			String numUnidadAlquilable = Integer.toString(activoAgrupacionActivo.getAgrupacion().getActivos().size());
+			String numFinca = "-"+StringUtils.leftPad(numUnidadAlquilable, 4, "0");
 			bieInfoRegistral.setNumFinca(bieInfoRegistralActivoMatriz.getNumFinca().concat(numFinca));
 			bieInfoRegistral.setBien(bien);
 			bieInfoRegistral.setSuperficieConstruida(BigDecimal.valueOf(Double.valueOf(exc.dameCelda(fila, 11))));
@@ -581,35 +615,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			unidadAlquilable.getInfoComercial().setTipoActivo(tipoActivo);
 		}
 		
-		//-----Nuevo ActivoAgrupacionActivo
-		if(!Checks.esNulo(exc.dameCelda(fila, 0))){
-			ActivoAgrupacionActivo activoAgrupacionActivo= new ActivoAgrupacionActivo();
-			
-			//-----Promocion ALquiler (Agrupacion)
-			Long agrupacionId = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(Long.valueOf(exc.dameCelda(fila, 0)));
-			Filter agrupacionFilter = genericDao.createFilter(FilterType.EQUALS, "id", agrupacionId);
-			ActivoAgrupacion promocionAlquiler = genericDao.get(ActivoAgrupacion.class, agrupacionFilter);
-			activoAgrupacionActivo.setAgrupacion(promocionAlquiler);
-			
-			//-----Unidad Alquilable (Activo)
-			activoAgrupacionActivo.setActivo(unidadAlquilable);
-			activoAgrupacionActivo.setPrincipal(0);
-			activoAgrupacionActivo.setFechaInclusion(new Date());
-			
-			//-----ID Prinex HPM
-			if(!Checks.esNulo(exc.dameCelda(fila, 1))){
-				activoAgrupacionActivo.setIdPrinexHPM(exc.dameCelda(fila, 1));
-			}
-			
-			//-----% Participacion
-			if(!Checks.esNulo(exc.dameCelda(fila, 13))){
-				activoAgrupacionActivo.setParticipacionUA(Double.valueOf(exc.dameCelda(fila, 13)));
-			}
-			
-			activoAgrupacionActivo.setAuditoria(auditoria);
-			genericDao.save(ActivoAgrupacionActivo.class, activoAgrupacionActivo);
-		}
-		
+
 		//-----Nuevo NMBLocalizacionesBien
 		NMBLocalizacionesBien localizacion = new NMBLocalizacionesBien();
 		localizacion.setBien(bien);

@@ -165,90 +165,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		SEGREN: 			'segurorentasexpediente'
 //		INVISIBLE:		Si creamos un registro-enlace-expediente en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
     },
-
-    CARTERA: {
-    	CAJAMAR: '01',
-    	SAREB: '02',
-    	BANKIA: '03',
-    	TERCEROS: '04',
-    	HYT: '06',
-    	CERBERUS: '07',
-    	LIBERBANK: '08',
-    	TANGO: '10',
-    	GIANTS: '12',
-    	EGEO: '13',
-    	GALEON:'15',
-    	ZEUS: '14'
-    },
-
-    NOMBRE_CARTERA:	{
-    	'01': 'CAJAMAR',
-    	'02': 'SAREB',
-    	'03': 'BANKIA',
-    	'04': 'TERCEROS',
-    	'06': 'HYT',
-    	'07': 'CERBERUS',
-    	'08': 'LIBERBANK',
-    	'10': 'TANGO',
-    	'12': 'GIANTS',
-    	'15': 'GALEON',
-    	'14': 'ZEUS'
-    },
-
-    NOMBRE_CARTERA2: {
-    	CAJAMAR: 'CAJAMAR',
-    	SAREB: 'SAREB',
-    	CERBERUS: 'CERBERUS',
-    	BANKIA: 'BANKIA',
-    	TANGO: 'TANGO',
-    	GIANTS: 'GIANTS',
-    	LIBERBANK:'LIBERBANK',
-    	GALEON:'GALEON',
-    	ZEUS :'ZEUS'
-    },
-    
-    SUBCARTERA: {
-    	BH: '06',
-    	AGORAINMOBILIARIO: '135',
-		AGORAFINANCIERO: '137',
-		APPLEINMOBILIARIO: '138'
-    },
-    
-    NOMBRE_SUBCARTERA: {
-    	BANKIA_HABITAT: 'BANKIA HABITAT',
-    	CERBERUS_AGORA: 'Agora - Inmobiliario'
-    },
-
-    IMAGENES_CARTERA: {
-    	CAJAMAR: 'logo_cajamar.svg',
-    	SAREB: 'logo_sareb.svg',
-    	BANKIA: 'logo_bankia.svg'
-    },
-    
-    PERFILES: {   	
-    	PROVEEDOR: 'HAYAPROV',
-    	GESTOR_ACTIVOS: 'HAYAGESACT',
-    	GESTOR_ADMISION: 'GESTADM',
-    	HAYASUPER: 'HAYASUPER',
-    	GESTOPDV: 'GESTOPDV',
-    	SUPERVISOR_ACTIVO: 'HAYASUPACT',
-    	HAYACAL: 'HAYACAL',
-    	HAYASUPCAL: 'HAYASUPCAL',
-    	HAYAGESTPREC: 'HAYAGESTPREC',
-    	HAYAGESTPUBL: 'HAYAGESTPUBL',
-    	HAYASUPPUBL: 'HAYASUPPUBL',
-		GESTSUE: 'GESTSUE',
-		GESTEDI: 'GESTEDI',
-		HAYAGESTFORMADM: 'HAYAGESTFORMADM',
-		GESTIAFORM:'GESTIAFORM',
-		USUARIO_CONSULTA: 'HAYACONSU',
-		HAYAGESTFORM: 'HAYAGESTFORM'
-    },
-    
-    TIPOS_OFERTA: {
-    	VENTA : '01',
-    	ALQUILER: '02'
-    },
     
     TIPOS_PROVEEDOR_EXPEDIENTE: {
     	CAT : '28',
@@ -357,19 +273,21 @@ Ext.define('HreRem.ux.util.Constants', {
     	FINANCIERO: '01',
     	INMOBILIARIO: '02'
     },
-    
-
+	
 	CARTERA: {
-		CAJAMAR: '01',
-		SAREB: '02',
-		BANKIA: '03',
-		TERCEROS: '04',
-		HYT: '06',
-		CERBERUS: '07',
-		LIBERBANK: '08',
-		TANGO: '10',
-		GIANTS: '12'
-	},
+    	CAJAMAR: '01',
+    	SAREB: '02',
+    	BANKIA: '03',
+    	TERCEROS: '04',
+    	HYT: '06',
+    	CERBERUS: '07',
+    	LIBERBANK: '08',
+    	TANGO: '10',
+    	GIANTS: '12',
+    	EGEO: '13',
+    	GALEON:'15',
+    	ZEUS: '14'
+    },
 
 	SUBCARTERA: {
 		BH: '06',
@@ -377,31 +295,36 @@ Ext.define('HreRem.ux.util.Constants', {
 		AGORAFINANCIERO: '137',
 		APPLEINMOBILIARIO: '138'
 	},
-
+	
 	NOMBRE_CARTERA:	{
-		'01': 'CAJAMAR',
-		'02': 'SAREB',
-		'03': 'BANKIA',
-		'04': 'TERCEROS',
-		'06': 'HYT',
-		'07': 'CERBERUS',
-		'08': 'LIBERBANK',
-		'10': 'TANGO',
-		'12': 'GIANTS'
-	},
-
-	NOMBRE_CARTERA2: {
-		CAJAMAR: 'CAJAMAR',
-		SAREB: 'SAREB',
-		CERBERUS: 'CERBERUS',
-		BANKIA: 'BANKIA',
-		TANGO: 'TANGO',
-		GIANTS: 'GIANTS',
-		LIBERBANK:'LIBERBANK'
-	},
+    	'01': 'CAJAMAR',
+    	'02': 'SAREB',
+    	'03': 'BANKIA',
+    	'04': 'TERCEROS',
+    	'06': 'HYT',
+    	'07': 'CERBERUS',
+    	'08': 'LIBERBANK',
+    	'10': 'TANGO',
+    	'12': 'GIANTS',
+    	'14': 'ZEUS',
+    	'15': 'GALEON'
+    },
+    
+    NOMBRE_CARTERA2: {
+    	CAJAMAR: 'CAJAMAR',
+    	SAREB: 'SAREB',
+    	CERBERUS: 'CERBERUS',
+    	BANKIA: 'BANKIA',
+    	TANGO: 'TANGO',
+    	GIANTS: 'GIANTS',
+    	LIBERBANK:'LIBERBANK',
+    	GALEON:'GALEON',
+    	ZEUS :'ZEUS'
+    },
 
 	NOMBRE_SUBCARTERA: {
-		BANKIA_HABITAT: 'BANKIA HABITAT'
+		BANKIA_HABITAT: 'BANKIA HABITAT',
+		CERBERUS_AGORA: 'Agora - Inmobiliario'
 	},
 
 	IMAGENES_CARTERA: {
@@ -409,24 +332,27 @@ Ext.define('HreRem.ux.util.Constants', {
 		SAREB: 'logo_sareb.svg',
 		BANKIA: 'logo_bankia.svg'
 	},
-
-	PERFILES: {
-		PROVEEDOR: 'HAYAPROV',
-		GESTOR_ACTIVOS: 'HAYAGESACT',
-		GESTOR_ADMISION: 'GESTADM',
-		HAYASUPER: 'HAYASUPER',
-		GESTOPDV: 'GESTOPDV',
-		SUPERVISOR_ACTIVO: 'HAYASUPACT',
-		HAYACAL: 'HAYACAL',
-		HAYASUPCAL: 'HAYASUPCAL',
-		HAYAGESTPREC: 'HAYAGESTPREC',
-		HAYAGESTPUBL: 'HAYAGESTPUBL',
-		HAYASUPPUBL: 'HAYASUPPUBL',
+	
+	PERFILES: {   	
+    	PROVEEDOR: 'HAYAPROV',
+    	GESTOR_ACTIVOS: 'HAYAGESACT',
+    	GESTOR_ADMISION: 'GESTADM',
+    	HAYASUPER: 'HAYASUPER',
+    	GESTOPDV: 'GESTOPDV',
+    	SUPERVISOR_ACTIVO: 'HAYASUPACT',
+    	HAYACAL: 'HAYACAL',
+    	HAYASUPCAL: 'HAYASUPCAL',
+    	HAYAGESTPREC: 'HAYAGESTPREC',
+    	HAYAGESTPUBL: 'HAYAGESTPUBL',
+    	HAYASUPPUBL: 'HAYASUPPUBL',
 		GESTSUE: 'GESTSUE',
 		GESTEDI: 'GESTEDI',
+		HAYAGESTFORMADM: 'HAYAGESTFORMADM',
+		GESTIAFORM:'GESTIAFORM',
 		USUARIO_CONSULTA: 'HAYACONSU',
-		HAYAGESTFORM: 'HAYAGESTFORM'
-	},
+		HAYAGESTFORM: 'HAYAGESTFORM',
+		GESTIAFORMLBK:'GESTIAFORMLBK'
+    },
 
 	TIPOS_OFERTA: {
 		VENTA : '01',

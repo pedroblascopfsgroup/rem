@@ -2898,10 +2898,10 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView bloquearChecksComercializacion(String idActivo, ModelMap model) {
+	public ModelAndView bloquearChecksComercializacion(String idActivo, Integer action, ModelMap model) {
 		Activo activo = activoDao.getActivoById(Long.parseLong(idActivo));
 		try{
-			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo));
+			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo, action));
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

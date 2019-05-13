@@ -6178,7 +6178,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public Boolean bloquearChecksComercializacionActivo(Activo activo) {
+	public Boolean bloquearChecksComercializacionActivo(Activo activo, Integer action) {
 		Boolean sePuedeEditar = true;
 		if(activoDao.isActivoMatriz(activo.getId())) {
 			ActivoAgrupacion agrupacionPa= activoDao.getAgrupacionPAByIdActivo(activo.getId());
@@ -6187,10 +6187,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activosAgrupacion) {
 				Activo activoUa = activoAgrupacionActivo.getActivo();
 				PerimetroActivo perimetroActivoUA = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activoUa.getId()));
-					
-				if(perimetroActivoUA.getTrabajosVivos() || perimetroActivoUA.getOfertasVivas()) {
-					sePuedeEditar = false;
-					break;
+				
+				if(!Checks.esNulo(perimetroActivoUA) && !Checks.esNulo(perimetroActivoUA.getTrabajosVivos()) && !Checks.esNulo(perimetroActivoUA.getOfertasVivas())) {
+					if(perimetroActivoUA.getTrabajosVivos() || perimetroActivoUA.getOfertasVivas()) {
+						sePuedeEditar = false;
+						break;
+					}
 				}
 					
 			}
@@ -6200,19 +6202,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id",idAM));
 			
 			if(!Checks.esNulo(perimetroActivoAM)) {
-			
-				if(!Checks.esNulo(perimetroActivoAM.getAplicaComercializar()) && perimetroActivoAM.getAplicaComercializar() == 1) {
+				
+				switch(action){
+					case 1: 
+						if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 1 ) {
+							sePuedeEditar = false;
+						}
+					break;
+					case 2:
+						if(!Checks.esNulo(perimetroActivoAM.getAplicaPublicar() && perimetroActivoAM.getAplicaPublicar())){
+							sePuedeEditar = false;
+						} 
+					break;
+					case 3:
+						if(!Checks.esNulo(perimetroActivoAM.getAplicaComercializar()) && perimetroActivoAM.getAplicaComercializar() == 1) {
+							sePuedeEditar = false;
+						}
+					break;
+					case 4: 
+						if(!Checks.esNulo(perimetroActivoAM.getAplicaFormalizar()) && perimetroActivoAM.getAplicaFormalizar() == 1) {
+							sePuedeEditar = false;
+						} 
+					break;
 					
 				}
-				if(!Checks.esNulo(perimetroActivoAM.getAplicaFormalizar()) && perimetroActivoAM.getAplicaFormalizar() == 1) {
-					
-				}
-				if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 1 ) {
-					
-				}
-				if(!Checks.esNulo(perimetroActivoAM.getAplicaPublicar() && perimetroActivoAM.getAplicaPublicar())){
-					
-				}
+				
 			}
 
 		}

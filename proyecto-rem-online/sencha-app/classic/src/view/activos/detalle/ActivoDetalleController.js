@@ -5161,29 +5161,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var url = $AC.getRemoteUrl('activo/bloquearChecksComercializacion'),
 		idActivo = me.getViewModel().get('activo.id'),
 		checkBox = me.lookupReference(ref),
-		valorCheck = me.lookupReference(ref).getValue()
-		action = null;
+		valorCheck = me.lookupReference(ref).getValue(),
+		action = null,
+		val = true;
 		
 		
 		switch(ref){
-			case 'chkbxPerimetroComercializar': action = 1; break;
-			case 'chkbxPerimetroGestion': action = 2; break;
-			case 'chkbxPerimetroFormalizar': action = 3; break;
-			case 'chkbxPerimetroPublicar': action = 4; break;
+			case 'chkbxPerimetroGestion': action = 1; break;
+			case 'chkbxPerimetroPublicar': action = 2; break;
+			case 'chkbxPerimetroComercializar': action = 3; break;
+			case 'chkbxPerimetroFormalizar': action = 4; break;
+			
 		}
-
-		//TODO falta id activo
-		if (me.getViewModel().get('activo.activoMatriz') && !valorCheck){
-			var val = null;
+		
+		if ((me.getViewModel().get('activo.activoMatriz') || me.getViewModel().get('activo.unidadAlquilable')) && !valorCheck){
+			
 			Ext.Ajax.request({
 				async: false,
 	    		url: url,
 	    		 method : 'GET',
-	    		params: {idActivo: idActivo},
+	    		params: {
+	    			idActivo: idActivo, 
+	    			action:action
+	    		}, 
 	    		success: function(response, opts){
 	    			var result = Ext.decode(response.responseText);
 	    				if (result.data === 'false'){
-	    					checkBox.reset();
 	    					me.fireEvent("errorToast", HreRem.i18n("msg.no.modificar.los.checks"));
 	    					val = false;
 	    				}else{

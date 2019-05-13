@@ -1182,6 +1182,6 @@ public interface ActivoApi {
 	
 	void actualizarOfertasTrabajosVivos(Activo activo);
 
-	Boolean bloquearChecksComercializacionActivo(Activo activo);
+	Boolean bloquearChecksComercializacionActivo(Activo activo, Integer action);
 
 }

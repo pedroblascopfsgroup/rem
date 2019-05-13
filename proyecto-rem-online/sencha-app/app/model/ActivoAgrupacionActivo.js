@@ -60,7 +60,13 @@ Ext.define('HreRem.model.ActivoAgrupacionActivo', {
     			name:'condPublVenta'
     		},
     		{
-    			name:'condPublAlquiler'
+    			name: 'estadoAlquiler'
+    		},
+    		{
+    			name: 'activoGencat'
+    		},
+    		{
+    			name: 'condPublAlquiler'
     		}
     ],
     

@@ -141,6 +141,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		dto.setTotalDiasPublicadoVenta(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(idActivo));
 		dto.setTotalDiasPublicadoAlquiler(this.obtenerTotalDeDiasEnEstadoPublicadoAlquiler(idActivo));
+		dto.setTotalDiasPublicadoHistoricoVenta(this.obtenerTotalDeDiasEnEstadoPublicadoHistoricoVenta(idActivo));
+		dto.setTotalDiasPublicadoHistoricoAlquiler(this.obtenerTotalDeDiasEnEstadoPublicadoHistoricoAlquiler(idActivo));
 		dto.setDeshabilitarCheckPublicarVenta(this.deshabilitarCheckPublicarVenta(idActivo));
 		dto.setDeshabilitarCheckOcultarVenta(this.deshabilitarCheckOcultarVenta(idActivo));
 		dto.setDeshabilitarCheckPublicarAlquiler(this.deshabilitarCheckPublicarAlquiler(idActivo));
@@ -801,10 +803,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	/**
 	 * Este método suma el total de días que ha estado un activo publicado para el tipo comercial venta.
 	 * Los días obtenidos son referentes a los periodos que ha estado el activo en el estado publicado.
-	 * La suma incluye los días de estados anteriores, histórico, y el estado actual, si éste es publicado.
+	 * La suma incluye los días desde su última publicación.
 	 *
 	 * @param idActivo: ID del activo para obtener los días.
-	 * @return Devuelve el total de días que ha estado el activo publicado.
+	 * @return Devuelve el total de días que ha estado el activo publicado desde la última publicación.
 	 */
 	private Integer obtenerTotalDeDiasEnEstadoPublicadoVenta(Long idActivo) {
 		Integer dias = 0;
@@ -812,10 +814,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionVenta.codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA);
 		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filterFecha = genericDao.createFilter(FilterType.NULL, "fechaFinVenta");
 		Order orden = new Order(OrderType.DESC, "id");
 		
 		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
-				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria);
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria, filterFecha);
 		
 		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
 			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
@@ -828,7 +831,73 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		return dias;
 	}
+	
+	/**
+	 * Este método suma el total de días que ha estado un activo publicado para el tipo comercial venta.
+	 * Los días obtenidos son referentes a los periodos que ha estado el activo en el estado publicado.
+	 * La suma incluye los días de estados anteriores, histórico, y el estado actual, si éste es publicado.
+	 *
+	 * @param idActivo: ID del activo para obtener los días.
+	 * @return Devuelve el total de días que ha estado el activo publicado.
+	 */
+	private Integer obtenerTotalDeDiasEnEstadoPublicadoHistoricoVenta(Long idActivo) {
+		Integer dias = 0;
 
+		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionVenta.codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA);
+		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order orden = new Order(OrderType.DESC, "id");
+		
+		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria);
+		
+		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
+			for(int i=0; i<listaActivoPublicacionesHistoricas.size(); i++) {
+				ActivoPublicacionHistorico primeraPublicacion = listaActivoPublicacionesHistoricas.get(i);
+				try {
+					dias = dias + (int)(long)activoPublicacionHistoricoDao.obtenerDiasPorEstadoPublicacionVentaActivo(primeraPublicacion);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		
+		return dias;
+	}
+
+	/**
+	 * Este método suma el total de días que ha estado un activo publicado para el tipo comercial alquiler.
+	 * Los días obtenidos son referentes a los periodos que ha estado el activo en el estado publicado.
+	 * La suma incluye los días desde su últma publicación.
+	 *
+	 * @param idActivo: ID del activo para obtener los días.
+	 * @return Devuelve el total de días que ha estado el activo publicado.
+	 */
+	private Integer obtenerTotalDeDiasEnEstadoPublicadoAlquiler(Long idActivo) {
+		Integer dias = 0;
+
+		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionAlquiler.codigo", DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER);
+		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filterFecha = genericDao.createFilter(FilterType.NULL, "fechaFinAlquiler");
+		Order orden = new Order(OrderType.DESC, "id");
+		
+		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria, filterFecha);
+		
+		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
+			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
+			try {
+				dias = (int)(long)activoPublicacionHistoricoDao.obtenerDiasPorEstadoPublicacionAlquilerActivo(ultimaPublicacion);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return dias;
+	}
+	
 	/**
 	 * Este método suma el total de días que ha estado un activo publicado para el tipo comercial alquiler.
 	 * Los días obtenidos son referentes a los periodos que ha estado el activo en el estado publicado.
@@ -837,7 +906,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @param idActivo: ID del activo para obtener los días.
 	 * @return Devuelve el total de días que ha estado el activo publicado.
 	 */
-	private Integer obtenerTotalDeDiasEnEstadoPublicadoAlquiler(Long idActivo) {
+	private Integer obtenerTotalDeDiasEnEstadoPublicadoHistoricoAlquiler(Long idActivo) {
 		Integer dias = 0;
 
 		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
@@ -849,11 +918,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria);
 		
 		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
-			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
-			try {
-				dias = (int)(long)activoPublicacionHistoricoDao.obtenerDiasPorEstadoPublicacionAlquilerActivo(ultimaPublicacion);
-			} catch (ParseException e) {
-				e.printStackTrace();
+			for(int i=0; i<listaActivoPublicacionesHistoricas.size(); i++) {
+				ActivoPublicacionHistorico primeraPublicacion = listaActivoPublicacionesHistoricas.get(i);
+				try {
+					dias = dias + (int)(long)activoPublicacionHistoricoDao.obtenerDiasPorEstadoPublicacionAlquilerActivo(primeraPublicacion);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		

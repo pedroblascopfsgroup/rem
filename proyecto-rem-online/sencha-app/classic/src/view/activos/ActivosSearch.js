@@ -602,7 +602,15 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	bind: {
 						            		store: '{comboSiNoRem}'
 						            	}
-							        }
+							        },
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.estado.comunicacion.gencat'),
+							    		name: 'estadoComunicacionGencatCodigo',
+							    		bind: {
+							    			store: '{comboEstadoComunicacionGencat}'
+							    		}
+							    	}
 								]
 			            }
 		            ]}

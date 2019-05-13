@@ -38,7 +38,6 @@ public class DtoOfertasFilter extends WebDto {
 	private String razonSocialCliente;
 	private String numDocumentoCliente;
 	private String tipoDocumento;
-	private Boolean deDerechoTanteo;
 	private String codigoPrescriptor;
 	private String tipoGestor;
 	private Long usuarioGestor;
@@ -74,6 +73,9 @@ public class DtoOfertasFilter extends WebDto {
 	private Boolean comunicacionTerceros;
 	private Boolean transferenciasInternacionales;
 	private Long idDocAdjunto;
+	
+	//REMVIP-4116
+	private String subcarteraCodigo;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -236,12 +238,6 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setTipoDocumento(String tipoDocumento) {
 		this.tipoDocumento = tipoDocumento;
-	}
-	public Boolean getDeDerechoTanteo() {
-		return deDerechoTanteo;
-	}
-	public void setDeDerechoTanteo(Boolean deDerechoTanteo) {
-		this.deDerechoTanteo = deDerechoTanteo;
 	}
 	public String getCodigoPrescriptor() {
 		return codigoPrescriptor;
@@ -442,6 +438,14 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setIdCliente(Long idCliente) {
 		this.idCliente = idCliente;
+	}
+	
+	//REMVIP-4116
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
 	}
 		
 }

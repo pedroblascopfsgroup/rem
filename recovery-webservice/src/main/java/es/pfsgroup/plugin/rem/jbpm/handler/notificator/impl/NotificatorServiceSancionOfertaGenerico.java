@@ -53,6 +53,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.rest.model.DestinatariosRest;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApiImpl;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService
@@ -110,7 +112,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
-
+	
+	@Autowired
+	private UsuarioRemApi usuarioRemApiImpl;
+	
 	@Override
 	public final void notificator(ActivoTramite tramite) {
 
@@ -640,6 +645,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					+ "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
 			Usuario gestorComercial = null;
+			Usuario gestorFormalizacion = null;
 
 			if (!Checks.esNulo(oferta.getAgrupacion())
 					&& !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion() != null)) {
@@ -648,18 +654,39 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						&& oferta.getAgrupacion() instanceof ActivoLoteComercial) {
 					ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
 					gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
+					gestorFormalizacion = activoLoteComercial.getUsuarioGestorFormalizacion();
 				} else {
 					// Lote Restringido
 					gestorComercial = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GCOM");
+					gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GFORM");
 				}
 			} else {
 				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GCOM");
+				gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GFORM");
 			}
-
+			
 			cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",
 					(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
 			cuerpo = cuerpo + String.format("<p>%s</p>",
 					(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
+			
+			if(!Checks.esNulo(gestorFormalizacion)){
+				
+				if (!Checks.estaVacio(usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion))){
+					if(!Checks.esNulo(usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion))) {
+						cuerpo = cuerpo + String.format("<p>Gestor formalización Sustituto: %s </p>",
+								(gestorFormalizacion != null) ? usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion) : STR_MISSING_VALUE);
+						}
+						cuerpo = cuerpo + String.format("<p>%s</p>",
+							(gestorFormalizacion != null) ? usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion) : STR_MISSING_VALUE);
+				}else{
+					cuerpo = cuerpo + String.format("<p>Gestor formalización: %s </p>",
+							(gestorFormalizacion != null) ? gestorFormalizacion.getApellidoNombre() : STR_MISSING_VALUE);
+					cuerpo = cuerpo + String.format("<p>%s</p>",
+							(gestorFormalizacion != null) ? gestorFormalizacion.getEmail() : STR_MISSING_VALUE);
+				}
+			}
+			
 
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
 			dtoSendNotificator.setTitulo(asunto);
@@ -885,6 +912,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
 		Usuario gestorComercial = null;
+		Usuario gestorFormalizacion = null;
 
 		if (!Checks.esNulo(oferta.getAgrupacion())
 				&& !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion() != null)) {
@@ -893,18 +921,38 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					&& oferta.getAgrupacion() instanceof ActivoLoteComercial) {
 				ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
 				gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
+				gestorFormalizacion = activoLoteComercial.getUsuarioGestorFormalizacion();
 			} else {
 				// Lote Restringido
 				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
+				gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GFORM");
 			}
 		} else {
 			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
+			gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GFORM");
 		}
 
 		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",
 				(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
 		cuerpo = cuerpo + String.format("<p>%s</p>",
 				(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
+		
+		if(!Checks.esNulo(gestorFormalizacion)){
+			
+			if (!Checks.estaVacio(usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion))){
+				if(!Checks.esNulo(usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion))) {
+					cuerpo = cuerpo + String.format("<p>Gestor formalización Sustituto: %s </p>",
+							(gestorFormalizacion != null) ? usuarioRemApiImpl.getApellidoNombreSustituto(gestorFormalizacion) : STR_MISSING_VALUE);
+					}
+					cuerpo = cuerpo + String.format("<p>%s</p>",
+						(gestorFormalizacion != null) ? usuarioRemApiImpl.getGestorSustitutoUsuario(gestorFormalizacion) : STR_MISSING_VALUE);
+			}else{
+				cuerpo = cuerpo + String.format("<p>Gestor formalización: %s </p>",
+						(gestorFormalizacion != null) ? gestorFormalizacion.getApellidoNombre() : STR_MISSING_VALUE);
+				cuerpo = cuerpo + String.format("<p>%s</p>",
+						(gestorFormalizacion != null) ? gestorFormalizacion.getEmail() : STR_MISSING_VALUE);
+			}
+		}
 
 		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 		dtoSendNotificator.setTitulo(asunto);

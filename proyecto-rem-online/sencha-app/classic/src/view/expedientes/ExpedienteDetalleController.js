@@ -268,6 +268,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var contador = 0;
 				me.saveMultipleRecords(contador, records);
 			}
+
 		} else {
 		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
@@ -398,6 +399,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onClickBotonEditar: function(btn) {
 		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/getIsExpedienteGencat');
+
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {idExpediente: me.getViewModel().data.expediente.id},
+		     success: function(response, opts) {
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data == "false"){
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').show();
 		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
@@ -409,7 +419,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 								field.fireEvent('edit');});
 								
 		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
-		
+		    	}else{
+		    		 me.fireEvent("errorToast", HreRem.i18n("msg.no.editable.afectado.gencat"));
+		    	}
+		    },
+		    failure: function (a, operation) {
+		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+		});
+
+
 	},
     
 	onClickBotonGuardar: function(btn) {
@@ -713,7 +732,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
-//<<<<<<< Updated upstream
 	onCompradoresListDobleClick: function(gridView, record) {
 		var me = this,
 			codigoEstado = me.getViewModel().get('expediente.codigoEstado'),
@@ -1852,7 +1870,360 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoNumVisita.setDisabled(true);
 		}
 	},
+	comprobarObligatoriedadRte: function(){
+    	
+    	var me = this;
+    	var venta = null;
+    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
+    		if (me.getViewModel().data.esOfertaVentaFicha == true){
+    			venta = true;
+    		}else{
+    			venta = false;
+    		}
+    	}
+    	campoProvinciaRte = me.lookupReference('provinciaComboRte');
+		campoMunicipioRte = me.lookupReference('municipioComboRte');
+		campoDireccion = me.lookupReference('direccion');
+		campoProvincia = me.lookupReference('provinciaCombo');
+		campoMunicipio = me.lookupReference('municipioCombo');
 
+    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01" || venta == true){
+    		if(me.lookupReference('tipoPersona').getValue() === "2" ) {
+    			if(me.lookupReference('pais').getValue() == "28"){
+    				if(!Ext.isEmpty(campoProvincia)){
+						campoProvincia.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = false;
+					}					
+				}else{
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = true;
+					}
+				}
+    			if(me.lookupReference('paisRte').getValue() == "28"){
+					if(!Ext.isEmpty(campoProvinciaRte)){
+						campoProvinciaRte.allowBlank = false;
+					}
+					if(!Ext.isEmpty(campoMunicipioRte)){
+						campoMunicipioRte.allowBlank = false;
+					}
+					
+				}else{
+					if(!Ext.isEmpty(campoProvinciaRte)){
+						campoProvinciaRte.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoMunicipioRte)){
+						campoMunicipioRte.allowBlank = true;
+					}
+				}
+    		}else if (me.lookupReference('tipoPersona').getValue() === "1"){
+    			if(me.lookupReference('pais').getValue() == "28"){
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = false;
+					}
+				}else{
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = true;
+					}
+				}
+    			if(!Ext.isEmpty(campoProvinciaRte)){
+					campoProvinciaRte.allowBlank = true;
+				}
+				if(!Ext.isEmpty(campoMunicipioRte)){
+					campoMunicipioRte.allowBlank = true;
+				}
+    		}
+    	}
+    },
+
+	comprobarObligatoriedadCamposNexos: function(field, newValue, oldValue) {
+
+		try{
+			var me = this;
+			var venta = null;
+	    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
+	    		if (me.getViewModel().data.esOfertaVentaFicha == true){
+	    			venta = true;
+	    		}else{
+	    			venta = false;
+	    		}
+	    	}
+	    	var form = me.getViewModel().getView().down("form");
+	    	
+	    	me.comprobarObligatoriedadRte();
+	    	var comprador;
+	    	if(!Ext.isEmpty(form.getViewModel())){
+	    		comprador = form.getViewModel().get('comprador');
+	    	}else{
+	    		comprador = me.getViewModel().get('comprador');
+	    	}
+			var codTipoPersona = me.lookupReference('tipoPersona'),
+			campoNombre = me.lookupReference('nombreRazonSocial'),
+			campoPorcionCompra = me.lookupReference('porcionCompra'),
+	    	campoEstadoCivil = me.lookupReference('estadoCivil'),
+			campoRegEconomico = me.lookupReference('regimenMatrimonial'),
+			campoNumConyuge = me.lookupReference('numRegConyuge'),
+			campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
+			campoNombreRte = me.lookupReference('nombreRazonSocialRte'),
+			campoTipoRte = me.lookupReference('tipoDocumentoRte'),
+			campoNumRte = me.lookupReference('numeroDocumentoRte'),
+			campoPaisRte = me.lookupReference('paisRte'),
+			campoApellidosRte = me.lookupReference('apellidosRte'),	
+			campoApellidos = me.lookupReference('apellidos'),
+			campoDireccion = me.lookupReference('direccion'),
+			campoProvincia = me.lookupReference('provinciaCombo'),
+			campoMunicipio = me.lookupReference('municipioCombo'),
+			campoPais = me.lookupReference('pais'),
+			campoRelacionHre = me.lookupReference('relacionHre'),
+			campoAntDeudor = me.lookupReference('antiguoDeudor'),
+			campoRelAntDeudor = me.lookupReference('relacionAntDeudor'),
+			campoNombreRazonSocialRte = me.lookupReference('nombreRazonSocialRte'),
+			campoDireccionRte = me.lookupReference('direccionRte'),
+			campoPovinciaRte = me.lookupReference('provinciaComboRte'),
+			campoTelefono1Rte = me.lookupReference('telefono1Rte'),
+			campoTelefono2Rte = me.lookupReference('telefono2Rte'),
+			campoCodigoPostalRte = me.lookupReference('codigoPostalRte'),
+			campoEmailRte = me.lookupReference('emailRte');
+			//Si el expediente es de tipo alquiler
+			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "02" || venta == false){
+				if(!Ext.isEmpty(codTipoPersona.getValue())){
+					// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
+					if(codTipoPersona.getValue() === "1") {
+						if(!Ext.isEmpty(campoApellidos)){
+							campoApellidos.setDisabled(false);
+						}
+						if(!Ext.isEmpty(campoEstadoCivil)){
+							campoEstadoCivil.allowBlank = false;
+							if(!Ext.isEmpty(campoEstadoCivil.getValue())){
+								if(campoEstadoCivil.getValue() === "02") {
+									// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
+									if(!Ext.isEmpty(campoRegEconomico)){
+										campoRegEconomico.allowBlank = false;
+									}
+									if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
+										if(!Ext.isEmpty(campoNumConyuge)){
+											campoNumConyuge.allowBlank = false;
+										}
+										if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
+											if(!!Ext.isEmpty(campoRegEconomico.getValue())){
+												if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
+													campoNumConyuge.allowBlank = false;
+													campoTipoConyuge.allowBlank = false;
+												}else if(campoRegEconomico.getValue() === "02" ){
+													campoNumConyuge.allowBlank = true;
+													campoTipoConyuge.allowBlank = true;
+													if(!Ext.isEmpty(campoNumConyuge.getValue())){
+														campoTipoConyuge.allowBlank = false;
+													}
+												}
+											}
+										}
+									}else{
+										if(!Ext.isEmpty(campoNumConyuge)){
+											campoNumConyuge.allowBlank = true;
+											campoTipoConyuge.allowBlank = true;
+											if(!Ext.isEmpty(campoNumConyuge.getValue())){
+												campoTipoConyuge.allowBlank = false;
+											}
+										}
+									}
+								} else {
+										campoRegEconomico.allowBlank = true;
+										campoNumConyuge.allowBlank = true;
+										campoTipoConyuge.allowBlank = true;
+										campoRegEconomico.setValue();
+										if(campoEstadoCivil.getValue() === "01") {
+											campoTipoConyuge.setValue();
+											campoNumConyuge.setValue();
+										}else{
+											if(!Ext.isEmpty(campoNumConyuge.getValue())){
+												campoTipoConyuge.allowBlank = false;
+											}
+										}
+									
+								}
+							}
+						
+						}
+						campoTipoRte.setValue();						
+						campoNumRte.setValue();
+						campoNombreRazonSocialRte.setValue();
+						campoApellidosRte.setValue();
+						campoDireccionRte.setValue();
+						campoPovinciaRte.setValue();
+						campoTelefono1Rte.setValue();
+						campoTelefono2Rte.setValue();
+						campoMunicipioRte.setValue();
+						campoCodigoPostalRte.setValue();
+						campoEmailRte.setValue();
+						campoPaisRte.setValue();
+					} else {
+						//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
+						if(!Ext.isEmpty(campoEstadoCivil)){
+							campoEstadoCivil.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoRegEconomico)){
+							campoRegEconomico.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoApellidos)){
+							campoApellidos.setDisabled(true);
+						}
+						campoEstadoCivil.setValue();						
+						campoRegEconomico.setValue();
+						campoTipoConyuge.setValue();
+						campoNumConyuge.setValue();
+						campoRelacionHre.setValue();
+						campoAntDeudor.setValue();
+						campoRelAntDeudor.setValue();
+					}
+				}
+			} else {
+				if(!Ext.isEmpty(codTipoPersona.getValue())){
+					//Si el tipo de expediente es de tipo venta
+					if(codTipoPersona.getValue() === "1") {
+						
+						if(!Ext.isEmpty(campoNombreRte)){
+							campoNombreRte.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoApellidosRte)){
+							campoApellidosRte.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoTipoRte)){
+							campoTipoRte.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoNumRte)){
+							campoNumRte.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoPaisRte)){
+							campoPaisRte.allowBlank = true;
+						}
+						
+						if(!Ext.isEmpty(campoApellidos)){
+							campoApellidos.setDisabled(false);
+							campoApellidos.allowBank = false;
+						}
+						if(!Ext.isEmpty(campoEstadoCivil)){
+							campoEstadoCivil.allowBlank = false;
+							if(!Ext.isEmpty(campoEstadoCivil.getValue())){
+								if(campoEstadoCivil.getValue() === "02") {
+									// Si el Estado civil es 'Casado', entonces Reg. economica es obligatorio.
+									if(!Ext.isEmpty(campoRegEconomico)){
+										campoRegEconomico.allowBlank = false;
+										campoRegEconomico.setDisabled(false);
+										if(!Ext.isEmpty(campoRegEconomico.getValue())){
+											if(campoRegEconomico.getValue() === "01"){
+												campoTipoConyuge.allowBlank = false;
+												campoNumConyuge.allowBlank = false;
+											}else{
+												campoTipoConyuge.allowBlank = true;
+												campoNumConyuge.allowBlank = true;
+												if(!Ext.isEmpty(campoNumConyuge.getValue())){
+													campoTipoConyuge.allowBlank = false;
+												}												
+											}
+										}
+									}
+									
+								} else {
+										campoRegEconomico.allowBlank = true;	
+										campoNumConyuge.allowBlank = true;
+										campoTipoConyuge.allowBlank = true;
+										campoRegEconomico.setValue();	
+										if(campoEstadoCivil.getValue() === "01") {
+											campoTipoConyuge.setValue();
+											campoNumConyuge.setValue();
+										}else{
+											if(!Ext.isEmpty(campoNumConyuge.getValue())){
+												campoTipoConyuge.allowBlank = false;
+											}
+										}
+										
+									
+								}						
+							}						
+						}
+
+					} else {
+						//  Si el tipo de persona es 'Jurídica'
+						if(!Ext.isEmpty(campoEstadoCivil)){
+							campoEstadoCivil.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoRegEconomico)){
+							campoRegEconomico.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoTipoConyuge)){
+							campoTipoConyuge.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoNumConyuge)){
+							campoNumConyuge.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoApellidos)){
+							campoApellidos.setDisabled(true);
+						}
+						
+						if(!Ext.isEmpty(campoNombreRte)){
+							campoNombreRte.allowBlank = false;
+						}
+						if(!Ext.isEmpty(campoApellidosRte)){
+							campoApellidosRte.allowBlank = false;
+						}
+						if(!Ext.isEmpty(campoTipoRte)){
+							campoTipoRte.allowBlank = false;
+						}
+						if(!Ext.isEmpty(campoNumRte)){
+							campoNumRte.allowBlank = false;
+						}
+						if(!Ext.isEmpty(campoPaisRte)){
+							campoPaisRte.allowBlank = false;
+						}
+						campoEstadoCivil.setValue();						
+						campoRegEconomico.setValue();
+						campoTipoConyuge.setValue();
+						campoNumConyuge.setValue();
+						campoRelacionHre.setValue();
+						campoAntDeudor.setValue();
+						campoRelAntDeudor.setValue();
+					}
+				}
+				if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){
+					field.setValue();
+				}
+				codTipoPersona.validate();
+				campoPorcionCompra.validate();
+				campoNombre.validate();
+		    	campoEstadoCivil.validate();
+				campoRegEconomico.validate();
+				campoNumConyuge.validate();
+				campoTipoConyuge.validate();
+				campoNombreRte.validate();
+				campoTipoRte.validate();
+				campoNumRte.validate();
+				campoPaisRte.validate();
+				campoApellidosRte.validate();	
+				campoApellidos.validate();
+				campoDireccion.validate();
+				campoProvincia.validate();
+				campoMunicipio.validate();
+				campoPais.validate();
+				form.recordName = "comprador";
+				form.recordClass = "HreRem.model.FichaComprador";
+
+			}
+				
+		}catch(err) {
+			Ext.global.console.log(err);
+		}
+	},
 	validarFechaPosicionamiento: function(value){
 		/*var hoy= new Date();
 		hoy.setHours(0,0,0,0);
@@ -3097,8 +3468,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    			var data = null;
 
 		                try {
-	                        data = Ext.decode(response.responseText).data;
-	                        activosPropagables = data;
+		                		data = Ext.decode(response.responseText).data;
+		                		activosPropagables = data;
 		                } catch (e){ };
 
 		    			var tabData = me.createTabData(form);
@@ -3453,6 +3824,36 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	window.destroy();
     	me.refrescarActivoExpediente(false);
 	},
+
+
+
+	onClickAbrirExpedienteComercial: function() {
+
+    	var me = this;
+    	var expediente = me.getViewModel().data.expediente;
+    	var numOfertaOrigen = expediente.data.idOfertaAnterior;
+    	var data;
+    	var url =  $AC.getRemoteUrl('expedientecomercial/getExpedienteByIdOferta');
+    	Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {numOferta: numOfertaOrigen},
+		     success: function(response, opts) {
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data){
+		    		me.getView().up('activosmain').fireEvent('abrirDetalleExpedienteOferta', data.data);
+		    	}
+		    	else {
+		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	}
+
+		    },
+
+		     failure: function (a, operation) {
+		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+	 });
+  },
 	
 	esObligatorio: function(){
 		
@@ -3854,4 +4255,5 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			
 			
 	}
+
 });

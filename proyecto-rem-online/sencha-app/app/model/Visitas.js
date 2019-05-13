@@ -20,7 +20,7 @@ Ext.define('HreRem.model.Visitas', {
 			name : 'idVisita'
 		},
 		{
-            	name:'numVisita'
+           name:'numVisita'
         },
 		{
 			name : 'fechaSolicitud',

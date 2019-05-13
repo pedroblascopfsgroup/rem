@@ -52,8 +52,8 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_ACT_TBJ_PRESUPUESTO 
 		
 	AS	
-  SELECT
-      ROWNUM as VAT_ID,
+  SELECT /*+ PARALELL*/
+      TBJ.TBJ_ID || ACT.ACT_ID as VAT_ID,
       TBJ.TBJ_ID,
       EST.DD_EST_CODIGO,
       EST.DD_EST_DESCRIPCION,
@@ -119,7 +119,21 @@ BEGIN
       	
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_ACT_TBJ_PRESUPUESTO...Creada OK');
   
+EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
 END;
+
 /
 
-EXIT;
+EXIT

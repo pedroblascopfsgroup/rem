@@ -20,6 +20,7 @@ public class WebcomRESTDevonProperties {
 	public static final String SERVER_API_KEY = "rest.server.rem.api.key";
 	public static final String CLIENT_API_KEY = "rest.client.rem.api.key";
 	public static final String SERVER_PUBLIC_ADDRESS = "rest.client.rem.public.ip";
+	public static final String WEBCOM_SIMULADO = "rest.client.rem.detector.simulado";
 	
 	//Gestor documental
 	//http://gdtest.gestycontrolhaya.es/rest

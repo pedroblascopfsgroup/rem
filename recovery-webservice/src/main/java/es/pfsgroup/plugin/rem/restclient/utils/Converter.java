@@ -25,6 +25,7 @@ public class Converter {
 	 * @param dto
 	 * @return Siempre devuelve un MAP, aunque el DTO sea NULL
 	 */
+	@SuppressWarnings("rawtypes")
 	public static Map<String, Object> dtoToMap(Object dto) {
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -84,6 +85,7 @@ public class Converter {
 	 *            (KEY campo del json - VALUE campo de la clase)
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Object updateObjectFromHashMap(Map<String, Object> values, Object objectToUpdate,
 			Map<String, String> equivalence) {
 
@@ -165,6 +167,7 @@ public class Converter {
 		return objectToUpdate;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static List<Object> createList(Iterable data, Class subDtoClass,
 			Map<String, String> equivalence) throws InstantiationException, IllegalAccessException {
 		ArrayList<Object> list = new ArrayList<Object>();

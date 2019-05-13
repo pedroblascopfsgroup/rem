@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=MARIAM LLISO
---## FECHA_CREACION=20190228
+--## AUTOR=Rasul Akhmeddibirov
+--## FECHA_CREACION=20180213
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5539
+--## INCIDENCIA_LINK=REMVIP-3284
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones.
@@ -12,7 +12,6 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
---##		0.2 Resolución conflictos
 --#########################################
 --*/
 
@@ -20,7 +19,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-create or replace PROCEDURE SP_PERFILADO_FUNCIONES (
+CREATE OR REPLACE PROCEDURE SP_PERFILADO_FUNCIONES (
   V_USUARIO   VARCHAR2 DEFAULT 'SP_PEF_FUN'
 )
 AS
@@ -37,11 +36,8 @@ AS
   TYPE T_VAR is table of VARCHAR2(250);
   TYPE T_ARRAY IS TABLE OF T_VAR;
   V_FUN T_ARRAY := T_ARRAY(
-
-    ------    FUNCION   ---------- 1- -2---3---4---5---6---7---8---9--10--11--12--13--14--15--16--17--18--19--20--21--22--23--24--25--26--27--28--29--30--31--32--33--34--35--36--37--38--39--40--41--42--43--44--45--46--47--48--49--50--51--52--54--55--57--58--59--60--61--62--63--64--65--66
-    
+    ------    FUNCION   --------------------------------------------1- -2---3---4---5---6---7---8---9--10--11--12--13--14--15--16--17--18--19--20--21--22--23--24--25--26--27--28--29--30--31--32--33--34--35--36--37--38--39--40--41--42--43--44--45--46--47--48--49--50--51--52--54--55--57--58--59--60--61--62--63--64--65
 T_VAR( 'TAB_BUSQUEDA_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','S','N','N','N','N','N','N','N','S'),
-
 T_VAR( 'TAB_ACTIVO_DATOS_GENERALES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
 T_VAR( 'TAB_ACTIVO_ACTUACIONES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_ACTIVO_GESTORES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
@@ -88,9 +84,7 @@ T_VAR( 'TAB_HIST_PETICIONES','S','S','S','S','S','S','S','S','S','S','N','S','S'
 T_VAR( 'TAB_PRESUPUESTO_ASIGNADO_ACTIVO','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'EDITAR_TAB_VALORACIONES_PRECIOS','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_VALORACIONES_PRECIOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','S','N','N','N','N','N','N','N','N'),
-
-T_VAR( 'EDITAR_GRID_PRECIOS_VIGENTES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','S','S','N','N','N','N','N','N','N','S'),
-
+T_VAR( 'EDITAR_GRID_PRECIOS_VIGENTES','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N'),
 T_VAR( 'EDITAR_TAB_TASACIONES','N','N','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_TASACIONES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_PROPUESTAS_PRECIO','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
@@ -155,6 +149,7 @@ T_VAR( 'TAB_HISTORICO_PROPUESTA_PRECIOS','S','S','S','S','S','S','S','S','S','S'
 T_VAR( 'TAB_PUBLICACION_ACTIVOS','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_CONFIGURACION_PUBLICACION','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'EDITAR_TAB_CONFIGURACION_PUBLICACION','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
+
 T_VAR( 'TAB_VISITAS_COMERCIAL','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','S','N','N','N','N','N','N','S','S','S','S','N','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_OFERTAS_COMERCIAL','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','S','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
 
@@ -248,6 +243,7 @@ T_VAR( 'ALTA_ACTIVOS_THIRD_PARTY','S','S','S','S','S','S','S','S','S','S','S','S
 T_VAR( 'ASISTIDAPDV_CARGA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_LOTE_COMERCIAL','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 
+
 T_VAR( 'MASIVO_PROYECTO','N','N','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','N','N','N','N','N','S','S','N','S','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'SUBIR_LISTA_ACTIVOS_IBI','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','S','S','S','S','S','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','S'),
 
@@ -272,8 +268,6 @@ T_VAR( 'CARGA_MASIVA_SANCION','N','N','N','N','N','N','N','N','N','N','N','N','N
 T_VAR( 'MASIVO_COMUNICACIONES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'SUBIR_CARGA_GESTORES','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','S','S','S','S','N','N','S',''),
 T_VAR( 'PERIMETRO_ACTUALIZAR','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','N','N','N','S','N','N','N',''),
-T_VAR( 'CARGA_MASIVA_IMPUESTOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','S','N','N','N','S','N','N','S','S','S','S','N','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
-
 T_VAR( 'MENU_DASHBOARD','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MENU_AGENDA','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','S'),
 T_VAR( 'MENU_AGRUPACIONES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
@@ -290,6 +284,7 @@ T_VAR( 'MENU_TOP_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S'
 T_VAR( 'MENU_TOP_AVISOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
 T_VAR( 'OPTIMIZACION_BUZON_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
 T_VAR( '"EN_CODIGO"','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','','','','N','','','S','','','','','','','','','N')
+
 );
 
 V_TMP_VAR T_VAR;
@@ -365,7 +360,7 @@ BEGIN
 			,HAYASUPER
 			,HAYAGESTCOM
 			,HAYASUPCOM
-      ,HAYAGOLDTREE
+            ,HAYAGOLDTREE
 			,FVDNEGOCIO
 			,FVDBACKOFERTA
 			,FVDBACKVENTA
@@ -380,16 +375,15 @@ BEGIN
 			,VALORACIONES
 			,PMSVVC
 			,FTI
-      ,HAYAGESTFORMADM
-	  ,APROBCERB
-      ,SUPERFORM
-      ,SUPERGESTACT
-      ,SUPERADMIN
-      ,SUPERPUBLI
-      ,SUPERMIDDLE
-      ,SUPERFRONT
-      ,SUPERPLANIF
-      ,GTOPOSTV
+      		,HAYAGESTFORMADM
+	  		,APROBCERB
+      		,SUPERFORM
+      		,SUPERGESTACT
+      		,SUPERADMIN
+      		,SUPERPUBLI
+      		,SUPERMIDDLE
+      		,SUPERFRONT
+      		,SUPERPLANIF
             )
             SELECT
             '''||V_TMP_VAR(1)||'''
@@ -456,7 +450,6 @@ BEGIN
             , '''||V_TMP_VAR(62)||'''
             , '''||V_TMP_VAR(63)||'''
             , '''||V_TMP_VAR(64)||'''
-            , '''||V_TMP_VAR(65)||'''
             FROM DUAL
           '
           ;
@@ -547,7 +540,7 @@ BEGIN
                     ,PMSVVC
                     ,FTI
                     ,HAYAGESTFORMADM
-		    ,APROBCERB
+				    ,APROBCERB
                     ,SUPERFORM
                     ,SUPERGESTACT
                     ,SUPERADMIN
@@ -555,7 +548,6 @@ BEGIN
                     ,SUPERMIDDLE
                     ,SUPERFRONT
                     ,SUPERPLANIF
-                    ,GTOPOSTV
                 )
               )
             )
@@ -660,7 +652,7 @@ BEGIN
                 ,PMSVVC
                 ,FTI
                 ,HAYAGESTFORMADM
-		,APROBCERB
+			    ,APROBCERB
                 ,SUPERFORM
                 ,SUPERGESTACT
                 ,SUPERADMIN
@@ -668,7 +660,6 @@ BEGIN
                 ,SUPERMIDDLE
                 ,SUPERFRONT
                 ,SUPERPLANIF
-                ,GTOPOSTV
                )
             )
           )
@@ -707,4 +698,3 @@ END;
 /
 
 EXIT
-

@@ -228,8 +228,14 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     				return CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo;
     			},
     			depends: 'entidadPropietariaCodigo'
-			}
-    		 
+    		},
+    		{
+    			name: 'idOfertaAnterior'
+    		},
+    		{
+    			name:'noEsOfertaFinalGencat',
+    			type: 'boolean'
+    		}
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

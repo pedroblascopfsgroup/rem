@@ -34,8 +34,6 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 			return HibernateQueryUtils.page(this, hql, webDto);
 		}
 
-
-
 	}
 
 	@Override
@@ -122,7 +120,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	
 		return expedienteComercial;
 	}
-
+	
 	@Override
 	public Long hayDocumentoSubtipo(Long idExp, Long idTipo, Long idSubtipo) {
 		try {

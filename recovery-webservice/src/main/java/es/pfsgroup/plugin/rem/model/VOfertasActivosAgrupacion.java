@@ -127,6 +127,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name="CARTERA_CODIGO")
 	private String carteraCodigo;
 	
+	@Column(name="SUBCARTERA_CODIGO")
+	private String subcarteraCodigo;
+	
 	@Column(name="NUM_ACTIVO_UVEM")
 	private Long numActivoUvem;
 	
@@ -151,6 +154,8 @@ public class VOfertasActivosAgrupacion implements Serializable {
     @Column(name="OBSERVACIONES")
 	private String observaciones;	
 	
+    @Column(name="GENCAT")
+	private Boolean gencat;	
 
 	public Date getFechaModificar() {
 		return fechaModificar;
@@ -400,6 +405,14 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	public void setCarteraCodigo(String carteraCodigo) {
 		this.carteraCodigo = carteraCodigo;
 	}
+	
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
+	}
 
 	public String getTipoRechazoCodigo() {
 		return tipoRechazoCodigo;
@@ -457,6 +470,14 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.observaciones = observaciones;
 	}
 
+	public Boolean getGencat() {
+		return gencat;
+	}
+
+	public void setGencat(Boolean gencat) {
+		this.gencat = gencat;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -512,5 +533,5 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	public void setClaseActivoBancario(Long claseActivoBancario) {
 		this.claseActivoBancario = claseActivoBancario;
 	}
-	
+
 }

@@ -103,7 +103,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestiongasto', ocultarBotonesEdicion:!me.editableGestionGasto})}, ['TAB_GESTION_GASTOS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'impugnaciongasto', ocultarBotonesEdicion: true/*, funPermEdition: ['EDITAR_TAB_IMPUGNACION_GASTOS']*/})}, ['TAB_IMPUGNACION_GASTOS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosgasto', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS']);
-
+		
 		me.addPlugin({ptype: 'lazyitems', items: items});
 		me.callParent();
     },
@@ -144,7 +144,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 			}
 		},
 	edicionPestanyaDatosGenerales: function(estadoGasto, autorizado, rechazado, agrupado, gestoria){
-		if($AU.userHasFunction('EDITAR_TAB_DATOS_GENERALES_GASTOS') && (
+		if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && $AU.userHasFunction('EDITAR_TAB_DATOS_GENERALES_GASTOS') && (
 		    	CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
 		    	(CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado)
 		    	|| CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
@@ -154,7 +154,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		
 	},
 	edicionPestanyaDetalleEconomico: function(estadoGasto, autorizado, rechazado, agrupado, gestoria){ 
-		if( $AU.userHasFunction('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS') && ((CONST.ESTADOS_GASTO['PAGADO']==estadoGasto) ||
+		if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && $AU.userHasFunction('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS') && ((CONST.ESTADOS_GASTO['PAGADO']==estadoGasto) ||
 				(CONST.ESTADOS_GASTO['AUTORIZADO']==estadoGasto && gestoria) || /*CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO']==estadoGasto || */
 	    		CONST.ESTADOS_GASTO['CONTABILIZADO']==estadoGasto || CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || 
 	    		CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado) 
@@ -166,7 +166,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		
 	},
 	edicionPestanyaActivosAfectados: function(estadoGasto, autorizado, rechazado, agrupado, gestoria){
-		if($AU.userHasFunction('EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS') && (
+		if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && $AU.userHasFunction('EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS') && (
 		    	CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
 		    	(CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado&& !agrupado) || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado)
 		    	|| CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
@@ -176,7 +176,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		
 	},
 	edicionPestanyaContabilidad: function(estadoGasto, autorizado, rechazado, agrupado, gestoria){
-		if($AU.userHasFunction('EDITAR_TAB_CONTABILIDAD_GASTOS') && (
+		if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && $AU.userHasFunction('EDITAR_TAB_CONTABILIDAD_GASTOS') && (
 		    	CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || 
 		    	(CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado) || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado)
 		    	|| CONST.ESTADOS_GASTO['RETENIDO']==estadoGasto)){
@@ -186,7 +186,7 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		
 	},
 	edicionPestanyaGestion: function(estadoGasto, autorizado, rechazado, agrupado, gestoria){
-		if($AU.userHasFunction('EDITAR_TAB_GESTION_GASTOS') && (CONST.ESTADOS_GASTO['CONTABILIZADO']!=estadoGasto && CONST.ESTADOS_GASTO['CONTABILIZADO']!=estadoGasto && CONST.ESTADOS_GASTO['ANULADO']!=estadoGasto && CONST.ESTADOS_GASTO['AUTORIZADO'] != estadoGasto && CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] != estadoGasto) 
+		if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && $AU.userHasFunction('EDITAR_TAB_GESTION_GASTOS') && (CONST.ESTADOS_GASTO['CONTABILIZADO']!=estadoGasto && CONST.ESTADOS_GASTO['CONTABILIZADO']!=estadoGasto && CONST.ESTADOS_GASTO['ANULADO']!=estadoGasto && CONST.ESTADOS_GASTO['AUTORIZADO'] != estadoGasto && CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] != estadoGasto) 
     			&& (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']!=estadoGasto || (CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO']==estadoGasto && !autorizado && !agrupado)) 
     			&& (CONST.ESTADOS_GASTO['SUBSANADO']!=estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado))){
     			return true;

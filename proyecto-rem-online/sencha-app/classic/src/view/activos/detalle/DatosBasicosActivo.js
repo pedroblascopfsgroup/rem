@@ -219,7 +219,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							xtype: 'comboboxfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
 				        	bind: {
-				        		readOnly : '{esUA}',
 			            		store: '{comboTipoVia}',
 			            		value: '{activo.tipoViaCodigo}'			            		
 			            	},
@@ -253,8 +252,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						{ 
 							fieldLabel:  HreRem.i18n('fieldlabel.nombre.via'),
 		                	bind:{
-		                		value: '{activo.nombreVia}',
-		                		readOnly : '{esUA}'
+		                		value: '{activo.nombreVia}'
 		                	},
 		                	allowBlank: false
 		                },
@@ -284,8 +282,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
 		                	bind:{
-		                		value: '{activo.numeroDomicilio}',
-		                		readOnly : '{esUA}'
+		                		value: '{activo.numeroDomicilio}'
 		                	}
 		                },
 		                {
@@ -325,8 +322,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                {
 							fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
 			                bind:{
-			                	value: '{activo.escalera}',
-			                	readOnly : '{esUA}'
+			                	value: '{activo.escalera}'
 			                }
 						},
 				        { 
@@ -346,8 +342,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
  						{ 
 		                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),
 		                	bind:{
-		                		value: '{activo.piso}',
-		                		readOnly : '{esUA}'
+		                		value: '{activo.piso}'
 		                	}
 		                },	               
 		                {
@@ -367,8 +362,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						 { 
 		                	fieldLabel:  HreRem.i18n('fieldlabel.puerta'),
 		                	bind:{
-		                		value: '{activo.puerta}',
-		                		readOnly : '{esUA}'
+		                		value: '{activo.puerta}'
 		                	}
 		                },
 		                {

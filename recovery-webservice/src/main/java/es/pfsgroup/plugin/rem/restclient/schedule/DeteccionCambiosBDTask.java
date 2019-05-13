@@ -207,7 +207,6 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 										llamadas.add(registro);
 									}
 								}
-								registro = new RestLlamada();
 								// en la segunda pagina el tiempo de refresco es
 								// 0
 								registro.setMsRefrescoVista(new Long(0));

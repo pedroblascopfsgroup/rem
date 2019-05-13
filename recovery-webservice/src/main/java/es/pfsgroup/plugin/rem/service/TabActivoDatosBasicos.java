@@ -952,6 +952,58 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());
 
+				
+				if(activoDao.isActivoMatriz(activo.getId())) {
+					ActivoAgrupacion agrupacionPa = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+					List<ActivoAgrupacionActivo> activosAgrupacionPa = agrupacionPa.getActivos();
+					for (ActivoAgrupacionActivo activoAgrupacionPa : activosAgrupacionPa) {
+						Long idActivoUa = activoAgrupacionPa.getActivo().getId();
+						PerimetroActivo perimetroActivoUA = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivoUa));
+						if(!Checks.esNulo(dto.getAplicaComercializar()) && !dto.getAplicaComercializar()) {
+							perimetroActivoUA.setAplicaComercializar(0);
+							perimetroActivoUA.setFechaAplicaComercializar(new Date());
+							if(Checks.esNulo(dto.getMotivoAplicaComercializarCodigo())) {
+								perimetroActivoUA.setMotivoAplicaComercializar(perimetroActivo.getMotivoAplicaComercializar());
+							}else {
+								DDMotivoComercializacion comercializacion = genericDao.get(DDMotivoComercializacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getMotivoAplicaComercializarCodigo()));
+								perimetroActivoUA.setMotivoAplicaComercializar(comercializacion);
+							}
+						}
+							
+						if(!Checks.esNulo(dto.getAplicaFormalizar()) && !dto.getAplicaFormalizar()) {
+							perimetroActivoUA.setAplicaFormalizar(0);
+							perimetroActivoUA.setFechaAplicaFormalizar(new Date());
+							if(Checks.esNulo(dto.getMotivoAplicaFormalizar())) {
+								perimetroActivoUA.setMotivoAplicaFormalizar(perimetroActivo.getMotivoAplicaFormalizar());
+							}else {
+								perimetroActivoUA.setMotivoAplicaFormalizar(dto.getMotivoAplicaFormalizar());
+							}
+						}
+						
+						if(!Checks.esNulo(dto.getAplicaGestion()) && !dto.getAplicaGestion()) {
+							perimetroActivoUA.setAplicaGestion(0);
+							perimetroActivoUA.setFechaAplicaGestion(new Date());
+							if(Checks.esNulo(dto.getMotivoAplicaGestion())) {
+								perimetroActivoUA.setMotivoAplicaGestion(perimetroActivo.getMotivoAplicaGestion());
+							}else {
+								perimetroActivoUA.setMotivoAplicaGestion(dto.getMotivoAplicaGestion());
+							}
+						}
+						
+						if(!Checks.esNulo(dto.getAplicaPublicar()) && !dto.getAplicaPublicar()) {
+							perimetroActivoUA.setAplicaPublicar(false);
+							perimetroActivoUA.setFechaAplicaFormalizar(new Date());
+							if(Checks.esNulo(dto.getMotivoAplicaGestion())) {
+								perimetroActivoUA.setMotivoAplicaPublicar(perimetroActivo.getMotivoAplicaPublicar());
+							}else {
+								perimetroActivoUA.setMotivoAplicaPublicar(dto.getMotivoAplicaPublicar());
+							}
+						}
+						
+						activoApi.saveOrUpdatePerimetroActivo(perimetroActivoUA);
+					}
+				}
+				
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 			}
 			

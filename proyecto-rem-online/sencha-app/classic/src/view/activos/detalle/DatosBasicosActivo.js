@@ -532,6 +532,12 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									
 									value: '{activo.aplicaPublicar}'
+								},
+								listeners: {
+									change: function (get) {
+										var me = this;
+										me.lookupController('activoDetalle').checkOfertaTrabajoVivo(me.getReference());
+									}
 								}
 							},
 							{

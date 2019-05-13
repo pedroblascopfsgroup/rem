@@ -2211,7 +2211,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onChkbxPerimetroChange: function(chkbx) {
 		var me = this;
 		var ref = chkbx.getReference();
-
+		var val = me.checkOfertaTrabajoVivo(ref);
+		if (!val) return false;
 		// Si se quita comercializar, hay que quitar tambien los datos de formalizacion en perimetro
 		var chkbxPerimetroComercializar = me.lookupReference('chkbxPerimetroComercializar');
 		var textFieldPerimetroComer = me.lookupReference('textFieldPerimetroComer');
@@ -5155,25 +5156,46 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
 
-	checkOfertaTrabajoVivo : function (obj){
-		var me = this,
-		url = 'url a la funcion del controller';
+	checkOfertaTrabajoVivo : function (ref){
+		var me = this;
+		var url = $AC.getRemoteUrl('activo/bloquearChecksComercializacion'),
+		idActivo = me.getViewModel().get('activo.id'),
+		checkBox = me.lookupReference(ref),
+		valorCheck = me.lookupReference(ref).getValue()
+		action = null;
+		
+		
+		switch(ref){
+			case 'chkbxPerimetroComercializar': action = 1; break;
+			case 'chkbxPerimetroGestion': action = 2; break;
+			case 'chkbxPerimetroFormalizar': action = 3; break;
+			case 'chkbxPerimetroPublicar': action = 4; break;
+		}
+
 		//TODO falta id activo
-		if (me.getViewModel().get('activoMatriz')){
+		if (me.getViewModel().get('activo.activoMatriz') && !valorCheck){
+			var val = null;
 			Ext.Ajax.request({
+				async: false,
 	    		url: url,
+	    		 method : 'GET',
 	    		params: {idActivo: idActivo},
 	    		success: function(response, opts){
 	    			var result = Ext.decode(response.responseText);
-	    				if (result.data == 'true'){
-	    					obj.reset();
-	    					me.fireEvent("errorToast", 'aqui el error');
+	    				if (result.data === 'false'){
+	    					checkBox.reset();
+	    					me.fireEvent("errorToast", HreRem.i18n("msg.no.modificar.los.checks"));
+	    					val = false;
+	    				}else{
+	    					val = true;
 	    				}
 	    		},
 			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", "No se ha podido verificar si existe alg&uacute;n tramite activo"); 
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 			    }
 	    	});
+			
+			return val;
 		}
 	}
 });

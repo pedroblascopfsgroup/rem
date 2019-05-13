@@ -2896,4 +2896,18 @@ public class ActivoController extends ParadiseJsonController {
 		return activoApi.getActivoCalificacionNegativaCodigos(id);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView bloquearChecksComercializacion(String idActivo, ModelMap model) {
+		Activo activo = activoDao.getActivoById(Long.parseLong(idActivo));
+		try{
+			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

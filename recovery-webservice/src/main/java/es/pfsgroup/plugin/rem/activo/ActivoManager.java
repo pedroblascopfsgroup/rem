@@ -6180,29 +6180,42 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public Boolean bloquearChecksComercializacionActivo(Activo activo) {
 		Boolean sePuedeEditar = true;
-		
 		if(activoDao.isActivoMatriz(activo.getId())) {
 			ActivoAgrupacion agrupacionPa= activoDao.getAgrupacionPAByIdActivo(activo.getId());
 			List<ActivoAgrupacionActivo> activosAgrupacion = agrupacionPa.getActivos();
-			
+				
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activosAgrupacion) {
 				Activo activoUa = activoAgrupacionActivo.getActivo();
 				PerimetroActivo perimetroActivoUA = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activoUa.getId()));
-				
+					
 				if(perimetroActivoUA.getTrabajosVivos() || perimetroActivoUA.getOfertasVivas()) {
 					sePuedeEditar = false;
 					break;
 				}
-				
+					
 			}
-		}
-		if(sePuedeEditar) {
-			PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
-			if(!perimetroActivo.getTrabajosVivos() && !perimetroActivo.getOfertasVivas()) {
-				sePuedeEditar = false;
+		}else if(activoDao.isUnidadAlquilable(activo.getId())) {
+			Long idAM = activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId());
+			
+			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id",idAM));
+			
+			if(!Checks.esNulo(perimetroActivoAM)) {
+			
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaComercializar()) && perimetroActivoAM.getAplicaComercializar() == 1) {
+					
+				}
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaFormalizar()) && perimetroActivoAM.getAplicaFormalizar() == 1) {
+					
+				}
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 1 ) {
+					
+				}
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaPublicar() && perimetroActivoAM.getAplicaPublicar())){
+					
+				}
 			}
+
 		}
-		
 		
 		return sePuedeEditar;
 	}

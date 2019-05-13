@@ -523,6 +523,19 @@ Ext.define('HreRem.ux.util.Constants', {
  		COD_SUBSANADO: '02'
 	},
 
+	TIPOS_ESTADO_CIVIL:{
+		SOLTERO: '01',
+		CASADO: '02',
+		DIVORCIADO: '03',
+		VIUDO: '04'
+	},
+	
+	TIPOS_REG_ECONOMICO_MATRIMONIAL:{
+		GANANCIALES: '01',
+		SEPARACION_DE_BIENES: '02',
+		PARTICIPACION: '03'
+	},	
+
 	TIPO_PERSONA: {
 		FISICA: '1',
 		JURIDICA: '2'

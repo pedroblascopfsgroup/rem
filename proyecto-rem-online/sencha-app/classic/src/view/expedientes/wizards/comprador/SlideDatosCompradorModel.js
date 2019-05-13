@@ -4,7 +4,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 
 	data: {},
 
-	stores: {
+	stores: {		
 		comboTipoPersona: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -76,6 +76,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 				remoteUrl: 'expedientecomercial/buscarClientesUrsus',
 				extraParams: {
 					numeroDocumento: null,
+					tipoDocumento: null
+				}
+			}
+		},
+		
+		comboClienteUrsusConyuge: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/buscarClientesUrsus',
+				extraParams: {
+					numeroDocumento: null, 
 					tipoDocumento: null
 				}
 			}

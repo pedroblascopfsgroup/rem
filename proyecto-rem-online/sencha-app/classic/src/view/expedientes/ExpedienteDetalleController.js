@@ -606,8 +606,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	refrescarActivoExpediente: function(refrescarTabActiva) {
 		var me = this,
-		refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false: refrescarTabActiva,
-		activeTab = me.getView().getActiveTab();		
+		refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false: refrescarTabActiva;
+		var activeTab = me.getView().getActiveTab();		
   		
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
@@ -775,8 +775,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if (tipoExpedienteCodigo === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.warning.no.se.puede.editar.inquilino'));
 		}
-	},
-
+	}, 
+	
 	esEditableCompradores : function(field){
 		var me = this;
 		var viewModel = me.getViewModel();
@@ -4254,6 +4254,35 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 			
 			
+	},
+	
+	validarCompradores: function() {
+		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		//var gridCompradores = me.lookupReference('listadoCompradores');
+		//var longitudListaCompradores = gridCompradores.getView().getStore().getData().items.length;
+		//var problemasUrsus = gridCompradores.getView().getStore().getData().items[i].data.problemasUrsus;
+			
+		var url =$AC.getRemoteUrl('expedientecomercial/getComprobarCompradores');
+		Ext.Ajax.request({
+		     url: url,
+		     params: {idExpediente : me.getViewModel().get("expediente.id")},
+		     success: function (a, operation, context) {
+		    	 if(data.success == "true"){
+		    		 me.fireEvent("errorToast", HreRem.i18n("msg.algun.comprador.ha.cambiado"));
+		    		
+			     }else{
+			    	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			     }
+		 		me.refrescarExpediente(true);
+		 		me.getView().unmask();
+		 	},
+           failure: function (a, operation, context) {
+           	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+           	me.getView().unmask();
+           }
+	    });
+
 	}
 
 });

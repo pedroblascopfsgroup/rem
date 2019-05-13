@@ -217,8 +217,9 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "ADCOM_ID")
 	private Long idDocAdjunto;
 	
-
-    
+	@Column(name = "COM_PROBLEMAS_URSUS")
+    private String problemasUrsus;
+	
 
 	public String getId() {
 		return id;
@@ -750,5 +751,13 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.idDocAdjunto = idDocAdjunto;
 	}
 
+	public String getProblemasUrsus() {
+		return problemasUrsus;
+	}
+
+	public void setProblemasUrsus(String problemasUrsus) {
+		this.problemasUrsus = problemasUrsus;
+	}
+	
 
 }

@@ -19,7 +19,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 	],
 
 	listeners: {
-		activate: 'onActivate'
+		activate: 'onActivate',
+		boxReady: 'getAvisoProblemasUrsus'
 	},
 
 	controller: 'slidedatoscomprador',
@@ -29,7 +30,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 
 	initComponent: function() {
 		var me = this;
-
+	
 		me.buttons = [{
 				text: HreRem.i18n('btn.cancelBtnText'),
 				handler: 'onClickCancelar'
@@ -352,7 +353,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				xtype: 'fieldsettable',
 				collapsible: false,
 				defaultType: 'textfieldbase',
-				title: HreRem.i18n('title.nexos'),
+				reference: 'cambioTitulo',
+				listeners: {
+					boxready: 'onLoadCambiaTituloRemoNexos'
+				},
 				layout: {
 					type: 'table',
 					columns: 2,
@@ -373,7 +377,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							store: '{comboEstadoCivil}'
 						},
 						listeners: {
-							change: 'comprobarObligatoriedadCamposNexos'
+							change: 'onChangeComboCodEstadoCivil'
 						},
 						allowBlank: true
 					},
@@ -387,9 +391,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							store: '{comboRegimenesMatrimoniales}'
 						},
 						listeners: {
-							change: 'comprobarObligatoriedadCamposNexos'
+							change: 'onChangeComboRegimenMatrimonial'
 						},
-						allowBlank: true
+						allowBlank: true,
+						disabled: true
 					},
 					{
 						xtype: 'comboboxfieldbase',
@@ -402,18 +407,61 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						bind: {
 							store: '{comboTipoDocumento}'
 						},
-		            	listeners: {
-		            		change: 'comprobarObligatoriedadCamposNexos'										         
-		            	}
+						listeners: {
+							change: 'onChangeComboTipoDocConyuge'
+						},
+						disabled: true
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.num.reg.conyuge'),
 						reference: 'numRegConyuge',
 						name: 'documentoConyuge',
 						padding: '5px',
-		            	listeners: {
-		            		change: 'comprobarObligatoriedadCamposNexos'										         
-		            	}
+						listeners: {
+							change: 'onChangeComboNumRegConyuge'
+						},
+						allowBlank:true,
+						disabled: true
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.cliente.ursus.conyuge'),
+						reference: 'seleccionClienteUrsusConyuge',
+						padding: '5px',
+						bind: {
+							store: '{comboClienteUrsusConyuge}',
+							hidden: !this.lookupController().esBankia()
+						},
+						listeners: {
+							change: 'establecerNumClienteURSUSConyuge',
+							expand: 'buscarClientesUrsusConyuge'
+						},
+						valueField: 'numeroClienteUrsus',
+						displayField: 'nombreYApellidosTitularDeOferta',
+						recargarField: false,
+						queryMode: 'local',
+						autoLoadOnValue: false,
+						loadOnBind: false,
+						allowBlank:true,
+						disabled: true
+					},
+					{
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.numero.ursus.conyuge'),
+						reference: 'numeroClienteUrsusRefConyuge',
+						name: 'numeroClienteUrsusConyuge',
+						padding: '5px',
+						hidden: this.lookupController().esBankiaBH()|| !this.lookupController().esBankia(),
+						editable: false
+					},
+					{
+						xtype: 'textfieldbase',
+						fieldLabel:  HreRem.i18n('fieldlabel.numero.ursus.bh.conyuge'),
+						reference: 'numeroClienteUrsusBhRefConyuge',
+						name: 'numeroClienteUrsusBhConyuge',
+						padding: '5px',
+						hidden: !this.lookupController().esBankiaBH()|| !this.lookupController().esBankia(),
+						editable: false
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.relacion.hre'),
@@ -447,7 +495,59 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				xtype: 'fieldsettable',
 				collapsible: false,
 				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.datos.ursus'),
+				layout: {
+					type: 'table',
+					columns: 2,
+					tdAttrs: {
+						width: '50%'
+					}
+				},
+				defaults: {
+					addUxReadOnlyEditFieldPlugin: false
+				},
+				hidden: !this.lookupController().esBankia(),
+				items: [{							
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.estado.civil'),
+							reference: 'estadoCivilUrsus',
+							padding: '5px',
+							editable: false
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
+							reference: 'regimenMatrimonialUrsus',
+							padding: '5px',
+							editable: false
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.numero.ursus.conyuge'),
+							reference: 'numeroClienteUrsusRefConyugeUrsus',
+							padding: '5px',
+							editable: false
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.nombre.conyuge'),
+							reference: 'nombreConyugeUrsus',
+							padding: '5px',
+							editable: false
+						}
+					]
+			},
+			{
+				xtype: 'fieldsettable',
+				collapsible: false,
+				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.datos.representante'),
+				reference: 'datosRepresentante',
+				hidden: false,
+				disabled: false,
+				listeners: {
+					boxready: 'comprobarObligatoriedadCamposNexos'
+				},
 				layout: {
 					type: 'table',
 					columns: 2,

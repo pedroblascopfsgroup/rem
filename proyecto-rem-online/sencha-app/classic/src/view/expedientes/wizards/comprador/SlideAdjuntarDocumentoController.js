@@ -219,30 +219,56 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	onClickBotonGenerarDoc: function(btn) {
 		var me = this,
 			form = me.getView(),
-			wizard = form.up('wizardBase'),
-			tipoPersona = wizard.comprador.get('codTipoPersona'),
-			nombre;
-
-		if (tipoPersona == CONST.TIPO_PERSONA['FISICA']) {
-			nombre = wizard.comprador.get('nombreRazonSocial') + ' ' + wizard.comprador.get('apellidos');
-		} else {
-			nombre = wizard.comprador.get('nombreRazonSocial');
+			wizard = form.up('wizardBase');
+		var tipoPersona = null;
+		var nombre;
+		var direccion = null;
+		var email = null;
+		var idExpediente = null;
+		var telefono = null;
+		var documento = null;
+		var codPrescriptor = null;
+		if(wizard.comprador){
+			tipoPersona = wizard.comprador.get('codTipoPersona');
+			if (tipoPersona == CONST.TIPO_PERSONA['FISICA']) {
+				nombre = wizard.comprador.get('nombreRazonSocial') + ' ' + wizard.comprador.get('apellidos');
+			} else {
+				nombre = wizard.comprador.get('nombreRazonSocial');
+			}
+			direccion = wizard.comprador.get('direccion');
+			email = wizard.comprador.get('email');
+			idExpediente = wizard.comprador.get('idExpedienteComercial');
+			telefono = wizard.comprador.get('telefono1');
+			documento = wizard.comprador.get('numDocumento');
+			codPrescriptor = wizard.comprador.get('codigoPrescriptor');
+		}else{
+			var formOferta = wizard.down('slidedatosoferta').getForm();
+			if (Ext.isEmpty(formOferta.findField('razonSocialCliente').getValue()) || formOferta.findField('razonSocialCliente').getValue() == '') {
+				nombre = formOferta.findField('nombreCliente').getValue() + ' ' + formOferta.findField('apellidosCliente').getValue();
+			}else {
+				nombre = formOferta.findField('razonSocialCliente').getValue();
+			}
+			documento = formOferta.findField('numDocumentoCliente').getValue();
+			codPrescriptor = formOferta.findField('buscadorPrescriptores').getValue();
 		}
+		
+
+		
 
 		config = {
 			url: $AC.getRemoteUrl('activo/generarUrlGDPR'),
 			method: 'POST',
 			params: {
-				codPrescriptor: wizard.comprador.get('codigoPrescriptor'),
+				codPrescriptor: codPrescriptor,
 				cesionDatos: form.getForm().findField('cesionDatos').getValue(),
 				transIntern: form.getForm().findField('transferenciasInternacionales').getValue(),
 				comTerceros: form.getForm().findField('comunicacionTerceros').getValue(),
-				documento: wizard.comprador.get('numDocumento'),
+				documento: documento,
 				nombre: nombre,
-				direccion: wizard.comprador.get('direccion'),
-				email: wizard.comprador.get('email'),
-				idExpediente: wizard.comprador.get('idExpedienteComercial'),
-				telefono: wizard.comprador.get('telefono1')
+				direccion: direccion,
+				email: email,
+				idExpediente: idExpediente,
+				telefono: telefono
 			}
 		};
 

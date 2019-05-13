@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.model;
+	package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -89,11 +89,10 @@ public class VBusquedaCompradoresExpediente implements Serializable {
     
     @Column(name = "ADC_ID_DOCUMENTO_REST")
     private Long idDocRestClient;
+  
+	@Column(name = "COM_PROBLEMAS_URSUS")
+	private String problemasUrsus;
     
-    
-    
-	
-	
 	public String getId() {
 		return id;
 	}
@@ -276,6 +275,14 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 
 	public void setIdDocAdjunto(Long idDocAdjunto) {
 		this.idDocAdjunto = idDocAdjunto;
+	}
+
+	public String getProblemasUrsus() {
+		return problemasUrsus;
+	}
+
+	public void setProblemasUrsus(String problemasUrsus) {
+		this.problemasUrsus = problemasUrsus;
 	}
 	
 }

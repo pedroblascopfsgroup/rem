@@ -10,6 +10,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			idExpediente = wizard.expediente.get('id'),
 			form = me.getView().getForm();
 
+		me.bloquearCampos();
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 
 		model.setId(idComprador);
@@ -71,6 +72,19 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 
 	onClickContinuar: function() {
 		var me = this;
+		
+		var idExpediente = me.getViewModel().get("comprador").data.idExpedienteComercial;
+		
+		if(me.getViewModel().get("comprador").data.esCarteraBankia){
+			Ext.Ajax.request({
+				url: $AC.getRemoteUrl('expedientecomercial/getComprobarCompradores'),
+				params: {
+					idExpediente: idExpediente
+				},
+				method: 'POST'
+			});
+		}
+		
 		if(me.comprobarFormato()){
 			me.comprobarDatosFormularioComprador();
 		}
@@ -92,6 +106,46 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 
 		return false;
 	},
+	
+	bloquearCampos: function() {
+		var me = this,
+		expediente = me.getView().up('wizardBase').expediente,
+		idExpediente = expediente.get('id'),
+		estadoExpediente = expediente.getData().codigoEstado;
+		
+		var campoTipoPersona = me.lookupReference('tipoPersona'),
+		campoPorcionCompra = me.lookupReference('porcionCompra'),
+		campoTipoDocumentoRte = me.lookupReference('tipoDocumento'),
+		campoNumeroDocumentoRte = me.lookupReference('numeroDocumento'),
+		campoSeleccionClienteUrsus = me.lookupReference('seleccionClienteUrsus'),
+		campoEstadoCivil = me.lookupReference('estadoCivil'),
+		campoRegEconomico = me.lookupReference('regimenMatrimonial'),
+		campoTipoDocumentoConyuge = me.lookupReference('tipoDocConyuge'),
+		campoNumeroDocumentoConyugue = me.lookupReference('numRegConyuge'),
+		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef')
+		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
+		
+		campoTipoDocumentoConyuge.setValue()
+		
+		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO']) && me.esBankia()) {			
+			campoTipoPersona.disable();
+			campoPorcionCompra.disable();
+			campoTipoDocumentoRte.disable(); 
+			campoNumeroDocumentoRte.disable();
+			campoSeleccionClienteUrsus.disable();
+			campoEstadoCivil.disable();
+			campoRegEconomico.disable();
+			campoTipoDocumentoConyuge.disable();
+			campoNumeroDocumentoConyugue.disable();
+			campoNumeroUrsus.disable();
+			campoNumeroUrsusBh.disable();
+			
+			if (campoEstadoCivil.getValue() != CONST.TIPOS_ESTADO_CIVIL['CASADO'] && campoRegEconomico.getValue() != CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
+				campoTipoDocumentoConyuge.clearValue;
+				campoNumeroDocumentoConyugue.clearValue;
+			}				
+		}		
+	},
 
 	checkCoe: function() {
 		var me = this,
@@ -111,61 +165,250 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 
 		return false;
 	},
+	
+	esBankia: function() {
+		var me = this,
+			wizard = me.getView().up('wizardBase'),
+			esBankia = wizard.expediente.get('esBankia');
+		
+		if (esBankia){
+			return true;
+		} else {
+			return false;
+		}
+	},
+	
+	esBankiaBH: function() {
+		var me = this,
+			wizard = me.getView().up('wizardBase'),
+			esBankiaBH = CONST.SUBCARTERA['BH'] == wizard.expediente.get('subcarteraCodigo');
+		
+		if (esBankiaBH){
+			return true;
+		} else {
+			return false;
+		}
+	},
+	
+	onChangeComboCodEstadoCivil: function() {
+		var me = this,
+			wizard = me.getView().up('wizardBase'),
+			venta = null,
+			campoEstadoCivil = me.lookupReference('estadoCivil'),
+			campoRegEconomico = me.lookupReference('regimenMatrimonial'),
+			codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
+		
+		// Se comprueba si el expediente es de VENTA a través de la descripcion
+		if(codigoTipoExpediente == null){
+			if (me.getViewModel().data.esOfertaVentaFicha == true){
+				venta = true;
+			} else {
+				venta = false;
+			}
+		}
 
+		// Si el expediente es de tipo VENTA
+		if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] || venta == true){
+			// Si el campo Estado Civil NO esta VACIO.
+			if(!Ext.isEmpty(campoEstadoCivil)){
+				campoEstadoCivil.allowBlank = false;
+				// Si el Estado civil es CASADO
+				if (campoEstadoCivil.getValue() == CONST.TIPOS_ESTADO_CIVIL['CASADO']) {
+					campoRegEconomico.setDisabled(false);
+				} else {
+					campoRegEconomico.reset();
+					campoRegEconomico.setDisabled(true);
+				}
+			}
+		} else if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER']) {
+			me.comprobarObligatoriedadCamposNexos();
+		}
+		
+		campoEstadoCivil.validate();
+		campoRegEconomico.validate();
+	},
+	
+	onChangeComboRegimenMatrimonial: function() {
+		var me = this,
+			wizard = me.getView().up('wizardBase'),
+			venta = null,
+			campoRegEconomico = me.lookupReference('regimenMatrimonial'),
+			campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
+			codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
+		
+		// Se comprueba si el expediente es de VENTA a través de la descripcion
+		if(codigoTipoExpediente == null){
+			if (me.getViewModel().data.esOfertaVentaFicha == true){
+				venta = true;
+			} else {
+				venta = false;
+			}
+		}
+
+		// Si el expediente es de tipo VENTA
+		if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] || venta == true){
+			// Si el campo Reg. Economico matrimonial NO esta VACIO.
+			if(!Ext.isEmpty(campoRegEconomico)){
+				campoRegEconomico.allowBlank = false;
+				// Si el campo Reg. Economico matrimonial es GANANCIALES
+				if (campoRegEconomico.getValue() == CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
+					campoTipoConyuge.setDisabled(false);
+				} else {
+					campoTipoConyuge.reset();
+					campoTipoConyuge.setDisabled(true);
+				}
+			}
+		} else if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER']) {
+			me.comprobarObligatoriedadCamposNexos();
+		}
+		
+		campoRegEconomico.validate();
+		campoTipoConyuge.validate();
+	},
+	
+	onChangeComboTipoDocConyuge: function() {
+		var me = this,
+			wizard = me.getView().up('wizardBase'),
+			venta = null,
+			campoNumConyuge = me.lookupReference('numRegConyuge'),
+			campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
+			codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
+		
+		// Se comprueba si el expediente es de VENTA a través de la descripcion
+		if(codigoTipoExpediente == null){
+			if (me.getViewModel().data.esOfertaVentaFicha == true){
+				venta = true;
+			} else {
+				venta = false;
+			}
+		}
+
+		// Si el expediente es de tipo VENTA
+		if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] || venta == true){
+			// Si el campo Tipo Documento Conyuge NO esta VACIO.
+			if(!Ext.isEmpty(campoTipoConyuge)){
+				campoTipoConyuge.allowBlank = false;
+				// Si campo Tipo de Documento TIENE valor
+				if (!Ext.isEmpty(campoTipoConyuge.getValue())) {
+					campoNumConyuge.setDisabled(false);
+				} else {
+					campoNumConyuge.reset();
+					campoNumConyuge.setDisabled(true);
+				}
+			}
+		} else if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER']) {
+			me.comprobarObligatoriedadCamposNexos();
+		}
+		
+		campoNumConyuge.validate();
+		campoTipoConyuge.validate();
+	},
+	
+	onChangeComboNumRegConyuge: function() {
+		var me = this,
+			wizard = me.getView().up('wizardBase'),
+			venta = null,
+			campoClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge'),
+			campoNumConyuge = me.lookupReference('numRegConyuge'),
+			codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
+		
+		// Se comprueba si el expediente es de VENTA a través de la descripcion
+		if(codigoTipoExpediente == null){
+			if (me.getViewModel().data.esOfertaVentaFicha == true){
+				venta = true;
+			} else {
+				venta = false;
+			}
+		}
+
+		// Si el expediente es de tipo VENTA
+		if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] || venta == true){
+			// Si el campo Numero Documento Conyuge NO esta VACIO.
+			if(!Ext.isEmpty(campoNumConyuge)){
+				campoNumConyuge.allowBlank = false;
+				// Si campo Tipo de Documento TIENE valor
+				if (!Ext.isEmpty(campoNumConyuge.getValue())) {
+					campoClienteUrsusConyuge.setDisabled(false);
+				} else {
+					campoClienteUrsusConyuge.reset();
+					campoClienteUrsusConyuge.setDisabled(true);
+				}
+			}
+		} else if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER']) {
+			me.comprobarObligatoriedadCamposNexos();
+		}
+		
+		campoClienteUrsusConyuge.validate();
+		campoNumConyuge.validate();
+	},
+	
 	comprobarObligatoriedadCamposNexos: function(field, newValue, oldValue) {
 
 		try{
-			var me = this;
-			var wizard = me.getViewModel().getView().up('wizardBase');
-	    	
-	    	var form = me.getViewModel().getView();
-	    	
-	    	me.comprobarObligatoriedadRte();
-	    	var comprador;
-	    	if(!Ext.isEmpty(form.getViewModel())){
-	    		comprador = form.getViewModel().get('comprador');
-	    	}else{
-	    		comprador = me.getViewModel().get('comprador');
-	    	}
-			var codTipoPersona = me.lookupReference('tipoPersona'),
-			campoNombre = me.lookupReference('nombreRazonSocial'),
-			campoPorcionCompra = me.lookupReference('porcionCompra'),
-	    	campoEstadoCivil = me.lookupReference('estadoCivil'),
-			campoRegEconomico = me.lookupReference('regimenMatrimonial'),
-			campoNumConyuge = me.lookupReference('numRegConyuge'),
-			campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
-			campoNombreRte = me.lookupReference('nombreRazonSocialRte'),
-			campoTipoRte = me.lookupReference('tipoDocumentoRte'),
-			campoNumRte = me.lookupReference('numeroDocumentoRte'),
-			campoPaisRte = me.lookupReference('paisRte'),
-			campoApellidosRte = me.lookupReference('apellidosRte'),	
-			campoApellidos = me.lookupReference('apellidos'),
-			campoDireccion = me.lookupReference('direccion'),
-			campoProvincia = me.lookupReference('provinciaCombo'),
-			campoMunicipio = me.lookupReference('municipioCombo'),
-			campoPais = me.lookupReference('pais'),
-			campoRelacionHre = me.lookupReference('relacionHre'),
-			campoAntDeudor = me.lookupReference('antiguoDeudor'),
-			campoRelAntDeudor = me.lookupReference('relacionAntDeudor'),
-			campoNombreRazonSocialRte = me.lookupReference('nombreRazonSocialRte'),
-			campoDireccionRte = me.lookupReference('direccionRte'),
-			campoPovinciaRte = me.lookupReference('provinciaComboRte'),
-			campoTelefono1Rte = me.lookupReference('telefono1Rte'),
-			campoTelefono2Rte = me.lookupReference('telefono2Rte'),
-			campoCodigoPostalRte = me.lookupReference('codigoPostalRte'),
-			campoEmailRte = me.lookupReference('emailRte');
+			var me = this,
+				wizard = me.getViewModel().getView().up('wizardBase'),
+				form = me.getViewModel().getView();
+
+			me.comprobarObligatoriedadRte();
+			var comprador;
+
+			if(!Ext.isEmpty(form.getViewModel())){
+				comprador = form.getViewModel().get('comprador');
+			}else{
+				comprador = me.getViewModel().get('comprador');
+			}
+
+			var bloqueDatosRepresentante = me.lookupReference('datosRepresentante'),
+				campoAntDeudor = me.lookupReference('antiguoDeudor'),
+				campoApellidos = me.lookupReference('apellidos'),
+				campoApellidosRte = me.lookupReference('apellidosRte'),
+				campoCodigoPostalRte = me.lookupReference('codigoPostalRte'),
+				campoDireccion = me.lookupReference('direccion'),
+				campoDireccionRte = me.lookupReference('direccionRte'),
+				campoEmailRte = me.lookupReference('emailRte'),
+				campoEstadoCivil = me.lookupReference('estadoCivil'),
+				campoMunicipio = me.lookupReference('municipioCombo'),
+				campoNombre = me.lookupReference('nombreRazonSocial'),
+				campoNombreRazonSocialRte = me.lookupReference('nombreRazonSocialRte'),
+				campoNombreRte = me.lookupReference('nombreRazonSocialRte'),
+				campoNumConyuge = me.lookupReference('numRegConyuge'),
+				campoNumRte = me.lookupReference('numeroDocumentoRte'),
+				campoPais = me.lookupReference('pais'),
+				campoPaisRte = me.lookupReference('paisRte'),
+				campoPorcionCompra = me.lookupReference('porcionCompra'),
+				campoPovinciaRte = me.lookupReference('provinciaComboRte'),
+				campoProvincia = me.lookupReference('provinciaCombo'),
+				campoRegEconomico = me.lookupReference('regimenMatrimonial'),
+				campoRelacionHre = me.lookupReference('relacionHre'),
+				campoRelAntDeudor = me.lookupReference('relacionAntDeudor'),
+				campoTelefono1Rte = me.lookupReference('telefono1Rte'),
+				campoTelefono2Rte = me.lookupReference('telefono2Rte'),
+				campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
+				campoTipoPersona = me.lookupReference('tipoPersona'),
+				campoTipoRte = me.lookupReference('tipoDocumentoRte'),
+				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
+
+			// Si el tipo de persona es FISICA el bloque Datos Representante se oculta y deshabilita
+			if (campoTipoPersona.getValue() == CONST.TIPO_PERSONA['FISICA']){
+				bloqueDatosRepresentante.setDisabled(true);
+				bloqueDatosRepresentante.setHidden(true);
+			} else {
+				bloqueDatosRepresentante.setDisabled(false);
+				bloqueDatosRepresentante.setHidden(false);
+			}
+
 			//Si el expediente es de tipo alquiler
-			if(wizard.expediente.get('tipoExpedienteCodigo') == "02"){
-				if(!Ext.isEmpty(codTipoPersona.getValue())){
+			if(codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER']){
+				if(!Ext.isEmpty(campoTipoPersona.getValue())){
 					// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
-					if(codTipoPersona.getValue() === "1") {
+					if(campoTipoPersona.getValue() == CONST.TIPO_PERSONA['FISICA']) {
 						if(!Ext.isEmpty(campoApellidos)){
 							campoApellidos.setDisabled(false);
 						}
 						if(!Ext.isEmpty(campoEstadoCivil)){
 							campoEstadoCivil.allowBlank = false;
 							if(!Ext.isEmpty(campoEstadoCivil.getValue())){
-								if(campoEstadoCivil.getValue() === "02") {
+								if(campoEstadoCivil.getValue() == CONST.TIPOS_ESTADO_CIVIL['CASADO']) {
 									// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 									if(!Ext.isEmpty(campoRegEconomico)){
 										campoRegEconomico.allowBlank = false;
@@ -202,7 +445,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 										campoNumConyuge.allowBlank = true;
 										campoTipoConyuge.allowBlank = true;
 										campoRegEconomico.setValue();
-										if(campoEstadoCivil.getValue() === "01") {
+										if(campoEstadoCivil.getValue() == CONST.TIPOS_ESTADO_CIVIL['SOLTERO']) {
 											campoTipoConyuge.setValue();
 											campoNumConyuge.setValue();
 										}else{
@@ -248,9 +491,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 					}
 				}
 			} else {
-				if(!Ext.isEmpty(codTipoPersona.getValue())){
-					//Si el tipo de expediente es de tipo venta
-					if(codTipoPersona.getValue() === "1") {
+				if(!Ext.isEmpty(campoTipoPersona.getValue())){
+					//Si el tipo de persona es de tipo FISICA
+					if(campoTipoPersona.getValue() == CONST.TIPO_PERSONA['FISICA']) {
 						
 						if(!Ext.isEmpty(campoNombreRte)){
 							campoNombreRte.allowBlank = true;
@@ -258,9 +501,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoApellidosRte)){
 							campoApellidosRte.allowBlank = true;
 						}
-						if(!Ext.isEmpty(campoTipoRte)){
-							campoTipoRte.allowBlank = true;
-						}
+//						if(!Ext.isEmpty(campoTipoRte)){
+//							campoTipoRte.allowBlank = true;
+//						}
 						if(!Ext.isEmpty(campoNumRte)){
 							campoNumRte.allowBlank = true;
 						}
@@ -272,47 +515,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 							campoApellidos.setDisabled(false);
 							campoApellidos.allowBank = false;
 						}
-						if(!Ext.isEmpty(campoEstadoCivil)){
-							campoEstadoCivil.allowBlank = false;
-							if(!Ext.isEmpty(campoEstadoCivil.getValue())){
-								if(campoEstadoCivil.getValue() === "02") {
-									// Si el Estado civil es 'Casado', entonces Reg. economica es obligatorio.
-									if(!Ext.isEmpty(campoRegEconomico)){
-										campoRegEconomico.allowBlank = false;
-										campoRegEconomico.setDisabled(false);
-										if(!Ext.isEmpty(campoRegEconomico.getValue())){
-											if(campoRegEconomico.getValue() === "01"){
-												campoTipoConyuge.allowBlank = false;
-												campoNumConyuge.allowBlank = false;
-											}else{
-												campoTipoConyuge.allowBlank = true;
-												campoNumConyuge.allowBlank = true;
-												if(!Ext.isEmpty(campoNumConyuge.getValue())){
-													campoTipoConyuge.allowBlank = false;
-												}												
-											}
-										}
-									}
-									
-								} else {
-										campoRegEconomico.allowBlank = true;	
-										campoNumConyuge.allowBlank = true;
-										campoTipoConyuge.allowBlank = true;
-										campoRegEconomico.setValue();	
-										if(campoEstadoCivil.getValue() === "01") {
-											campoTipoConyuge.setValue();
-											campoNumConyuge.setValue();
-										}else{
-											if(!Ext.isEmpty(campoNumConyuge.getValue())){
-												campoTipoConyuge.allowBlank = false;
-											}
-										}
-										
-									
-								}						
-							}						
-						}
-						campoTipoRte.setValue();					
+						campoTipoRte.setValue();
 						campoNumRte.setValue();
 						campoNombreRazonSocialRte.setValue();
 						campoApellidosRte.setValue();
@@ -348,16 +551,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoApellidosRte)){
 							campoApellidosRte.allowBlank = false;
 						}
-						if(!Ext.isEmpty(campoTipoRte)){
-							campoTipoRte.allowBlank = false;
-						}
+//						if(!Ext.isEmpty(campoTipoRte)){
+//							campoTipoRte.allowBlank = false;
+//						}
 						if(!Ext.isEmpty(campoNumRte)){
 							campoNumRte.allowBlank = false;
 						}
 						if(!Ext.isEmpty(campoPaisRte)){
 							campoPaisRte.allowBlank = false;
 						}
-						campoEstadoCivil.setValue();						
+						campoEstadoCivil.setValue();
 						campoRegEconomico.setValue();
 						campoTipoConyuge.setValue();
 						campoNumConyuge.setValue();
@@ -370,7 +573,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			if(!Ext.isEmpty(field) && Ext.isEmpty(newValue)){
 				field.setValue();
 			}
-			codTipoPersona.validate();
+			campoTipoPersona.validate();
 			campoPorcionCompra.validate();
 			campoNombre.validate();
 	    	campoEstadoCivil.validate();
@@ -437,7 +640,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		}
 	},
 
-comprobarObligatoriedadRte: function(){
+	comprobarObligatoriedadRte: function(){
     	
     	var me = this;
     	var venta = null;
@@ -516,22 +719,105 @@ comprobarObligatoriedadRte: function(){
 	establecerNumClienteURSUS: function(field, e) {
 		var me = this,
 			form = me.getView(),
+			wizard = me.getView().up('wizardBase'),
 			numeroUrsus = form.lookupReference('seleccionClienteUrsus').getValue(),
 			fieldNumeroClienteUrsus = form.lookupReference('numeroClienteUrsusRef'),
 			fieldNumeroClienteUrsusBh = form.lookupReference('numeroClienteUrsusBhRef'),
-			btnDatosClienteUrsus = form.lookupReference('btnVerDatosClienteUrsus');
+			btnDatosClienteUrsus = form.lookupReference('btnVerDatosClienteUrsus'),
+			estadoCivilUrsus = form.lookupReference('estadoCivilUrsus'),
+			regimenMatrimonialUrsus = form.lookupReference('regimenMatrimonialUrsus'),
+			numeroClienteUrsusRefConyugeUrsus = form.lookupReference('numeroClienteUrsusRefConyugeUrsus'),
+			nombreConyugeUrsus = form.lookupReference('nombreConyugeUrsus'),
+			esBankiaBH = CONST.SUBCARTERA['BH'] == me.getView().up('wizardBase').expediente.get('subcarteraCodigo');
+			idExpediente = wizard.expediente.get('id');
 
-		btnDatosClienteUrsus.setDisabled(false);
+		wizard.mask(HreRem.i18n('msg.mask.loading'));
+		
+		// Se hace la llamada Ayax al WEB-SERVICE (servicioGMPAJC93_INS) de BANKIA
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/buscarDatosClienteNumeroUrsus'),
+			params: {
+				numeroUrsus: numeroUrsus,
+				idExpediente: idExpediente
+			},
+			method: 'GET',
+			success: function(response, opts) {
+				var data = {};
+				wizard.unmask();
+				try {
+					data = Ext.decode(response.responseText);
+				} catch(e) {
+					data = {};
+				}
+				if (data.success == 'true' && !Utils.isEmptyJSON(data.data)) {
+					if (data.data.codigoEstadoCivil == '0') {
+						estadoCivilUrsus.setValue("Desconocido");
+					} else if (data.data.codigoEstadoCivil == '1') {
+						estadoCivilUrsus.setValue("Soltero");
+					} else if (data.data.codigoEstadoCivil == '2') {
+						estadoCivilUrsus.setValue("Casado");
+						
+						if (data.data.numeroClienteUrsusConyuge != 0) {
+							regimenMatrimonialUrsus.setValue("Gananciales");
+						} else if (data.data.numeroClienteUrsusConyuge == 0) {
+							regimenMatrimonialUrsus.setValue("Separación de bienes");
+						}
+						
+					} else if (data.data.codigoEstadoCivil == '3') {
+						estadoCivilUrsus.setValue("Viudo");
+					} else if (data.data.codigoEstadoCivil == '4') {
+						estadoCivilUrsus.setValue("Separado Legal");
+					} else if (data.data.codigoEstadoCivil == '5') {
+						estadoCivilUrsus.setValue("Religioso");
+					} else if (data.data.codigoEstadoCivil == '6') {
+						estadoCivilUrsus.setValue("Divorciado");
+					} else if (data.data.codigoEstadoCivil == '7') {
+						estadoCivilUrsus.setValue("Nulidad Matrimonial");
+					}
+					
+					if (data.data.numeroClienteUrsusConyuge != 0) {
+						numeroClienteUrsusRefConyugeUrsus.setValue(data.data.numeroClienteUrsusConyuge);
+					}
+					
+					if (!Utils.isEmptyJSON(data.data.nombreYApellidosConyuge)) {
+						nombreConyugeUrsus.setValue(data.data.nombreYApellidosConyuge);
+					}
+					
+				} else {
+					Utils.defaultRequestFailure(response, opts);
+				}
+			},
+			failure: function(response) {
+				wizard.unmask();
+				Utils.defaultRequestFailure(response, opts);
+			}
+		});
 
-		if (!Ext.isEmpty(fieldNumeroClienteUrsus)) {
+		if (esBankiaBH && !Ext.isEmpty(fieldNumeroClienteUrsusBh)){
+			btnDatosClienteUrsus.setDisabled(false);
 			fieldNumeroClienteUrsusBh.setValue(numeroUrsus);
-		}
-
-		if (!Ext.isEmpty(fieldNumeroClienteUrsus)) {
+		} else if (!esBankiaBH && !Ext.isEmpty(fieldNumeroClienteUrsus)){
+			btnDatosClienteUrsus.setDisabled(false);
 			fieldNumeroClienteUrsus.setValue(numeroUrsus);
 		}
 	},
+	
+	establecerNumClienteURSUSConyuge: function(field, e) {
+		var me = this,
+			form = me.getView(),
+			comboUrsusConyuge = form.lookupReference('seleccionClienteUrsusConyuge'),
+			numeroUrsusConyuge = comboUrsusConyuge.getValue(),
+			fieldNumeroClienteUrsusConyuge = form.lookupReference('numeroClienteUrsusRefConyuge'),
+			fieldNumeroClienteUrsusBhConyuge = form.lookupReference('numeroClienteUrsusBhRefConyuge'),
+			esBankiaBH = CONST.SUBCARTERA['BH'] == me.getView().up('wizardBase').expediente.get('subcarteraCodigo');
 
+		if (esBankiaBH && !Ext.isEmpty(fieldNumeroClienteUrsusBhConyuge)){
+			fieldNumeroClienteUrsusBhConyuge.setValue(numeroUrsusConyuge);
+		} else if (!esBankiaBH && !Ext.isEmpty(fieldNumeroClienteUrsusConyuge)){
+			fieldNumeroClienteUrsusConyuge.setValue(numeroUrsusConyuge);
+		}
+	},
+	
 	buscarClientesUrsus: function(field) {
 		var me = this,
 			wizard = me.getView().up('wizardBase'),
@@ -546,6 +832,41 @@ comprobarObligatoriedadRte: function(){
 		}
 
 		var fieldClientesUrsus = form.lookupReference('seleccionClienteUrsus'),
+			storeClientesUrsus = fieldClientesUrsus.getStore();
+
+		if (Ext.isEmpty(storeClientesUrsus.getData().items) || fieldClientesUrsus.recargarField) {
+			storeClientesUrsus.removeAll();
+			storeClientesUrsus.getProxy().setExtraParams({
+				numeroDocumento: numeroDocumento,
+				tipoDocumento: tipoDocumento,
+				idExpediente: idExpediente
+			});
+			storeClientesUrsus.load({
+				callback: function(records, operation, success) {
+					if (success) {
+						fieldClientesUrsus.recargarField = false;
+					} else {
+						Utils.defaultRequestFailure(operation.getResponse());
+					}
+				}
+			});
+		}
+	},
+
+	buscarClientesUrsusConyuge: function(field) {
+		var me = this,
+			wizard = me.getView().up('wizardBase'),
+			form = me.getView(),
+			tipoDocumento = form.lookupReference('tipoDocConyuge').getValue(),
+			numeroDocumento = form.lookupReference('numRegConyuge').getValue(),
+			idExpediente = wizard.expediente.get('id');
+
+		if (Ext.isEmpty(tipoDocumento) || Ext.isEmpty(numeroDocumento) || Ext.isEmpty(idExpediente)) {
+			me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko.ursus.necesita.tipo.documento'));
+			return;
+		}
+
+		var fieldClientesUrsus = form.lookupReference('seleccionClienteUrsusConyuge'),
 			storeClientesUrsus = fieldClientesUrsus.getStore();
 
 		if (Ext.isEmpty(storeClientesUrsus.getData().items) || fieldClientesUrsus.recargarField) {
@@ -1076,6 +1397,30 @@ comprobarObligatoriedadRte: function(){
 				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
 			}
 		});
+	},
+	
+	/**
+	 * Este metodo cambia el titulo en función de si la cartera es Bankia o no. 
+	 */
+	onLoadCambiaTituloRemoNexos: function (get){
+		var me = this,
+			expediente = me.getView().up('wizardBase').expediente;
+		
+		if (expediente.get('esBankia'))
+			me.lookupReference('cambioTitulo').setTitle(HreRem.i18n('title.datos.rem'));
+		else 
+			me.lookupReference('cambioTitulo').setTitle(HreRem.i18n('title.nexos'));
+	},
+	
+	getAvisoProblemasUrsus: function () {
+		var me = this,
+		expediente = me.getView().up('wizardBase').expediente,
+		problemasUrsus = expediente.get('problemasUrsus');
+		var esBankia = expediente.get('esBankia');
+		
+		if (esBankia && problemasUrsus == "true") {
+			me.fireEvent('errorToast', HreRem.i18n('header.problemas.ursus'));
+			return;
+		}
 	}
-
 });

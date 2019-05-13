@@ -172,6 +172,10 @@ public abstract class WebcomDataType<T> {
 
 	public static Object valueOf(Object o, DecimalDataTypeFormat format) throws WebcomDataTypeParseException {
 		Object val = valueOf(o);
+		if (val == null){
+			val = "null";
+		}
+			
 		if ((val != null) && (val instanceof Number) && (format != null)) {
 			String valString = null;
 			try {

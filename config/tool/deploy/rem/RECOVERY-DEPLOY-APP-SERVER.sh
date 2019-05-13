@@ -35,7 +35,7 @@ if [ "$1" == "val06" ] ; then
 fi
 
 if [ "$1" == "val08" ] ; then
-    BASE_DIR=/home/map020
+    BASE_DIR=/recovery/map020/app-server
 fi
 
 if [ "$1" == "formacion" ] ; then

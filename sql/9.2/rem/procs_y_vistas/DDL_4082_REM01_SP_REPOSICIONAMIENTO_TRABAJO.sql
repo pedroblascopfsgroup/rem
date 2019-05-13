@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190214
+--## FECHA_CREACION=20190513
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1965
@@ -68,7 +68,7 @@ BEGIN
 
       V_MSQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
 
-      DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      --DBMS_OUTPUT.PUT_LINE(V_MSQL);
 
       EXECUTE IMMEDIATE V_MSQL;
         
@@ -91,7 +91,7 @@ BEGIN
                             LEFT JOIN '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR ON STR.DD_STR_ID = TBJ.DD_STR_ID
                         WHERE TBJ.BORRADO = 0 AND TBJ.TBJ_NUM_TRABAJO = '||TRABAJO||'';
             
-          DBMS_OUTPUT.PUT_LINE(V_MSQL);
+          --DBMS_OUTPUT.PUT_LINE(V_MSQL);
     
           EXECUTE IMMEDIATE V_MSQL;
       
@@ -114,7 +114,7 @@ BEGIN
                             LEFT JOIN '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR ON STR.DD_STR_ID = TBJ.DD_STR_ID
                         WHERE TBJ.BORRADO = 0 AND TBJ.TBJ_NUM_TRABAJO = '||TRABAJO||' AND TRA.TRA_ID = '||ID_TRAMITE||'';
             
-          DBMS_OUTPUT.PUT_LINE(V_MSQL);
+          --DBMS_OUTPUT.PUT_LINE(V_MSQL);
     
           EXECUTE IMMEDIATE V_MSQL;
           
@@ -136,17 +136,17 @@ BEGIN
             EXIT WHEN CURSOR_TRABAJOS%NOTFOUND;
 
                     V_MSQL := 'SELECT '||V_ESQUEMA||'.S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL FROM DUAL';
-                    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                    --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                     EXECUTE IMMEDIATE V_MSQL INTO S_TAR;
                     V_MSQL := 'SELECT '||V_ESQUEMA||'.S_TEX_TAREA_EXTERNA.NEXTVAL FROM DUAL';
-                    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                    --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                     EXECUTE IMMEDIATE V_MSQL INTO S_TEX;
 
                     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR TRA
                                 SET     TRA.TAR_ID = '||S_TAR||'
                                     ,   TRA.TEX_ID = '||S_TEX||'
                                 WHERE TBJ_ID = '||V_TBJ_ID||' ';
-                    DBMS_OUTPUT.PUT_LINE(V_MSQL);                                
+                    --DBMS_OUTPUT.PUT_LINE(V_MSQL);                                
                     EXECUTE IMMEDIATE V_MSQL;
 
       END LOOP;
@@ -175,12 +175,12 @@ BEGIN
 							ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 							WHEN MATCHED THEN UPDATE SET
 								T1.USU_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    --DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;                    
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
 
-    V_MSQL := 'MERGE INTO TRABAJOS_REPOSICIONAR T1
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 						USING (SELECT DISTINCT T1.ACT_ID, T1.TBJ_ID, T1.TPO_ID, T1.TAP_ID, T3.USU_ID
 							FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR T1
 							JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO T2 ON T1.ACT_ID = T2.ACT_ID
@@ -192,7 +192,7 @@ BEGIN
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    --DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL; 
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
@@ -209,7 +209,7 @@ BEGIN
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.USU_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+   --DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL; 
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
@@ -226,7 +226,7 @@ BEGIN
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
+    --DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
     EXECUTE IMMEDIATE V_MSQL; 
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
@@ -243,7 +243,7 @@ BEGIN
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.USU_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
+    --DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
     EXECUTE IMMEDIATE V_MSQL; 
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
@@ -260,7 +260,7 @@ BEGIN
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);                       
+    --DBMS_OUTPUT.PUT_LINE(V_MSQL);                       
     EXECUTE IMMEDIATE V_MSQL; 
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
@@ -279,7 +279,7 @@ BEGIN
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.USU_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
+    --DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
     EXECUTE IMMEDIATE V_MSQL; 
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
@@ -298,7 +298,7 @@ BEGIN
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    --DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL; 
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
@@ -317,7 +317,7 @@ BEGIN
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.USU_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);                       
+    --DBMS_OUTPUT.PUT_LINE(V_MSQL);                       
     EXECUTE IMMEDIATE V_MSQL; 
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
@@ -336,7 +336,7 @@ BEGIN
 						ON (T1.TBJ_ID = T2.TBJ_ID AND T1.ACT_ID = T2.ACT_ID)
 						WHEN MATCHED THEN UPDATE SET
 							T1.SUP_ID = T2.USU_ID';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
+    --DBMS_OUTPUT.PUT_LINE(V_MSQL);                        
     EXECUTE IMMEDIATE V_MSQL;                             
 
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR actualizada. '||SQL%ROWCOUNT||' Filas.');
@@ -363,7 +363,7 @@ BEGIN
                                         INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR on tac.tar_id = tar.tar_id
                                         inner join '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex on tex.tar_id = tar.tar_id
                                     )';
-      DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      --DBMS_OUTPUT.PUT_LINE(V_MSQL);
       
       EXECUTE IMMEDIATE V_MSQL;    
       
@@ -380,7 +380,7 @@ BEGIN
                             INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR on tac.tar_id = tar.tar_id
                             inner join '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex on tex.tar_id = tar.tar_id
                         )';  
-      DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      --DBMS_OUTPUT.PUT_LINE(V_MSQL);
       
       EXECUTE IMMEDIATE V_MSQL;                        
                 
@@ -396,14 +396,14 @@ BEGIN
                 EXIT WHEN CURSOR_TRABAJOS%NOTFOUND;
     
                         V_MSQL := 'SELECT '||V_ESQUEMA||'.S_ACT_TRA_TRAMITE.NEXTVAL FROM DUAL';
-                        DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                         EXECUTE IMMEDIATE V_MSQL INTO S_TRA;
                         
     
                         V_MSQL := 'UPDATE '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR TRA
                                     SET     TRA.TRA_ID = '||S_TRA||'
                                     WHERE TBJ_ID = '||V_TBJ_ID||' ';
-                        DBMS_OUTPUT.PUT_LINE(V_MSQL);                                
+                        --DBMS_OUTPUT.PUT_LINE(V_MSQL);                                
                         EXECUTE IMMEDIATE V_MSQL;
     
             END LOOP;
@@ -458,7 +458,7 @@ BEGIN
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
       ';
       
-        DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
         EXECUTE IMMEDIATE V_MSQL;
 
         DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TRA||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -517,7 +517,7 @@ BEGIN
                   INNER JOIN '||V_ESQUEMA_MASTER||'.DD_STA_SUBTIPO_TAREA_BASE STA ON STA.DD_STA_ID = TAP.DD_STA_ID
       '
       ;
-        DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
         EXECUTE IMMEDIATE V_MSQL;
 
         DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAR||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -540,7 +540,7 @@ BEGIN
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
       '
       ;
-      DBMS_OUTPUT.PUT_LINE(V_MSQL); 
+      --DBMS_OUTPUT.PUT_LINE(V_MSQL); 
       EXECUTE IMMEDIATE V_MSQL;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ETN||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -582,7 +582,7 @@ BEGIN
                   INNER JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG2.TAP_ID
       '
       ;
-      DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      --DBMS_OUTPUT.PUT_LINE(V_MSQL);
       EXECUTE IMMEDIATE V_MSQL;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TEX||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -630,7 +630,7 @@ BEGIN
             WHERE UA.ORDEN = 1
       '
       ;
-      DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      --DBMS_OUTPUT.PUT_LINE(V_MSQL);
       EXECUTE IMMEDIATE V_MSQL;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAC||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -693,7 +693,7 @@ BEGIN
                   INNER JOIN '||V_ESQUEMA_MASTER||'.DD_STA_SUBTIPO_TAREA_BASE STA ON STA.DD_STA_ID = TAP.DD_STA_ID
       '
       ;
-        DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
         EXECUTE IMMEDIATE V_MSQL;
 
         DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAR||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -716,7 +716,7 @@ BEGIN
             FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG2
       '
       ;
-      DBMS_OUTPUT.PUT_LINE(V_MSQL); 
+      --DBMS_OUTPUT.PUT_LINE(V_MSQL); 
       EXECUTE IMMEDIATE V_MSQL;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_ETN||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -758,7 +758,7 @@ BEGIN
                   INNER JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = MIG2.TAP_ID
       '
       ;
-      DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      --DBMS_OUTPUT.PUT_LINE(V_MSQL);
       EXECUTE IMMEDIATE V_MSQL;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TEX||' cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -806,7 +806,7 @@ BEGIN
             WHERE UA.ORDEN = 1
       '
       ;
-      DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      --DBMS_OUTPUT.PUT_LINE(V_MSQL);
       EXECUTE IMMEDIATE V_MSQL;
 
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA_TAC||' cargada. '||SQL%ROWCOUNT||' Filas.');

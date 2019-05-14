@@ -1,0 +1,257 @@
+--/*
+--#########################################
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190509
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-4202
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	
+    err_num NUMBER; -- Numero de error.
+    err_msg VARCHAR2(2048); -- Mensaje de error.
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas.
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas.
+    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-4202';
+    V_SQL VARCHAR2(4000 CHAR);
+
+
+BEGIN			
+			
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ACT_CMG_COMUNICACION_GENCAT - Borrado lógico ');
+										
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_CMG_COMUNICACION_GENCAT T1
+        USING (
+
+		SELECT TRA_ID, TAR_ID, TEX_ID, ACT_ID
+		FROM '||V_ESQUEMA||'.AUX_MIGRA_TAR_ADECUA_GENCAT AUX
+		WHERE 1 = 1
+		AND EXISTS ( 
+
+				SELECT 1
+				FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT ,
+				'||V_ESQUEMA||'.VI_ACTIVOS_AFECTOS_GENCAT AFE  ,
+				'||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ,
+				'||V_ESQUEMA||'.ACT_OFR ACT_OFR,
+				'||V_ESQUEMA||'.OFR_OFERTAS OFR,
+				'||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF,
+				'||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO,
+				'||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC,
+				'||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE CEX
+				WHERE 1 = 1
+				AND ACT.ACT_ID = AFE.ACT_ID
+				AND ACT_OFR.ACT_ID = ACT.ACT_ID
+				AND SCM.DD_SCM_ID = ACT.DD_SCM_ID
+				AND ACT_OFR.OFR_ID = OFR.OFR_ID
+				AND EOF.DD_EOF_ID = OFR.DD_EOF_ID
+				AND ECO.OFR_ID = OFR.OFR_ID
+				AND EEC.DD_EEC_ID = ECO.DD_EEC_ID
+				AND ECO.ECO_ID = CEX.ECO_ID
+				AND COM_ID = 150827
+				AND AUX.ACT_ID = ACT.ACT_ID
+
+			)
+
+        ) T2 
+        ON (T1.ACT_ID = T2.ACT_ID )
+	WHEN MATCHED THEN UPDATE
+	SET T1.BORRADO = 1,
+	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
+	    T1.FECHABORRAR   = SYSDATE
+	WHERE USUARIOCREAR = ''MIGRA_GENCAT'' 
+
+	';
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_CMG_COMUNICACION_GENCAT ');  
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza TAR_TAREAS_NOTIFICACIONES - Borrado lógico ');
+										
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES T1
+        USING (
+
+		SELECT TRA_ID, TAR_ID, TEX_ID, ACT_ID
+		FROM '||V_ESQUEMA||'.AUX_MIGRA_TAR_ADECUA_GENCAT AUX
+		WHERE 1 = 1
+		AND EXISTS ( 
+
+				SELECT 1
+				FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT ,
+				'||V_ESQUEMA||'.VI_ACTIVOS_AFECTOS_GENCAT AFE  ,
+				'||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ,
+				'||V_ESQUEMA||'.ACT_OFR ACT_OFR,
+				'||V_ESQUEMA||'.OFR_OFERTAS OFR,
+				'||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF,
+				'||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO,
+				'||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC,
+				'||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE CEX
+				WHERE 1 = 1
+				AND ACT.ACT_ID = AFE.ACT_ID
+				AND ACT_OFR.ACT_ID = ACT.ACT_ID
+				AND SCM.DD_SCM_ID = ACT.DD_SCM_ID
+				AND ACT_OFR.OFR_ID = OFR.OFR_ID
+				AND EOF.DD_EOF_ID = OFR.DD_EOF_ID
+				AND ECO.OFR_ID = OFR.OFR_ID
+				AND EEC.DD_EEC_ID = ECO.DD_EEC_ID
+				AND ECO.ECO_ID = CEX.ECO_ID
+				AND COM_ID = 150827
+				AND AUX.ACT_ID = ACT.ACT_ID
+
+			)
+
+        ) T2 
+        ON (T1.TAR_ID = T2.TAR_ID )
+	WHEN MATCHED THEN UPDATE
+	SET T1.BORRADO = 1,
+	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
+	    T1.FECHABORRAR   = SYSDATE
+	WHERE USUARIOCREAR = ''MIGRA_GENCAT'' 
+
+	';
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en TAR_TAREAS_NOTIFICACIONES ');  
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ACT_TRA_TRAMITE - Borrado lógico ');
+										
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_TRA_TRAMITE T1
+        USING (
+
+		SELECT TRA_ID, TAR_ID, TEX_ID, ACT_ID
+		FROM '||V_ESQUEMA||'.AUX_MIGRA_TAR_ADECUA_GENCAT AUX
+		WHERE 1 = 1
+		AND EXISTS ( 
+
+				SELECT 1
+				FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT ,
+				'||V_ESQUEMA||'.VI_ACTIVOS_AFECTOS_GENCAT AFE  ,
+				'||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ,
+				'||V_ESQUEMA||'.ACT_OFR ACT_OFR,
+				'||V_ESQUEMA||'.OFR_OFERTAS OFR,
+				'||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF,
+				'||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO,
+				'||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC,
+				'||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE CEX
+				WHERE 1 = 1
+				AND ACT.ACT_ID = AFE.ACT_ID
+				AND ACT_OFR.ACT_ID = ACT.ACT_ID
+				AND SCM.DD_SCM_ID = ACT.DD_SCM_ID
+				AND ACT_OFR.OFR_ID = OFR.OFR_ID
+				AND EOF.DD_EOF_ID = OFR.DD_EOF_ID
+				AND ECO.OFR_ID = OFR.OFR_ID
+				AND EEC.DD_EEC_ID = ECO.DD_EEC_ID
+				AND ECO.ECO_ID = CEX.ECO_ID
+				AND COM_ID = 150827
+				AND AUX.ACT_ID = ACT.ACT_ID
+
+			)
+
+        ) T2 
+        ON (T1.TRA_ID = T2.TRA_ID AND T1.ACT_ID = T2.ACT_ID )
+	WHEN MATCHED THEN UPDATE
+	SET T1.BORRADO = 1,
+	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
+	    T1.FECHABORRAR   = SYSDATE
+	WHERE USUARIOCREAR = ''MIGRA_GENCAT'' 
+
+	';
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_TRA_TRAMITE ');  
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza TAC_TAREAS_ACTIVOS - Borrado lógico ');
+										
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS T1
+        USING (
+
+		SELECT TRA_ID, TAR_ID, TEX_ID, ACT_ID
+		FROM '||V_ESQUEMA||'.AUX_MIGRA_TAR_ADECUA_GENCAT AUX
+		WHERE 1 = 1
+		AND EXISTS ( 
+
+				SELECT 1
+				FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT ,
+				'||V_ESQUEMA||'.VI_ACTIVOS_AFECTOS_GENCAT AFE  ,
+				'||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ,
+				'||V_ESQUEMA||'.ACT_OFR ACT_OFR,
+				'||V_ESQUEMA||'.OFR_OFERTAS OFR,
+				'||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF,
+				'||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO,
+				'||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC,
+				'||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE CEX
+				WHERE 1 = 1
+				AND ACT.ACT_ID = AFE.ACT_ID
+				AND ACT_OFR.ACT_ID = ACT.ACT_ID
+				AND SCM.DD_SCM_ID = ACT.DD_SCM_ID
+				AND ACT_OFR.OFR_ID = OFR.OFR_ID
+				AND EOF.DD_EOF_ID = OFR.DD_EOF_ID
+				AND ECO.OFR_ID = OFR.OFR_ID
+				AND EEC.DD_EEC_ID = ECO.DD_EEC_ID
+				AND ECO.ECO_ID = CEX.ECO_ID
+				AND COM_ID = 150827
+				AND AUX.ACT_ID = ACT.ACT_ID
+
+			)
+
+        ) T2 
+        ON (T1.TRA_ID = T2.TRA_ID AND T1.ACT_ID = T2.ACT_ID AND T1.TAR_ID = T2.TAR_ID )
+	WHEN MATCHED THEN UPDATE
+	SET T1.BORRADO = 1,
+	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
+	    T1.FECHABORRAR   = SYSDATE
+	WHERE USUARIOCREAR = ''MIGRA_GENCAT'' 
+
+	';
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en TAC_TAREAS_ACTIVOS ');  
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+	
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT

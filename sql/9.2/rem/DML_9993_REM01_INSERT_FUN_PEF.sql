@@ -1,17 +1,16 @@
 --/*
 --##########################################
---## AUTOR=Alberto Flores
---## FECHA_CREACION=20190507
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20190509
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6305
+--## VERSION_ARTEFACTO=2.5.0
+--## INCIDENCIA_LINK=REMVIP-4196
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade a uno varios perfiles, las funciones añadidas en T_ARRAY_FUNCION
 --## INSTRUCCIONES:
 --## VERSIONES:
---##	0.1 Versión inicial de Pedro Blasco
---##	0.2 HREOS-6305
+--##        0.1 Versión inicial
 --##########################################
 --*/
 
@@ -28,15 +27,13 @@ DECLARE
     ERR_MSG VARCHAR2(2048); -- Mensaje de error
 
     -- EDITAR NÚMERO DE ITEM
-    V_ITEM VARCHAR2(20) := 'HREOS-6305';
+    V_ITEM VARCHAR2(20) := 'REMVIP-4196';
 
     -- EDITAR: FUNCIONES
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-      T_FUNCION('MASIVO_COMUNICACIONES'),
-      T_FUNCION('CARGA_MASIVA_SANCION'),
-      T_FUNCION('MASIVO_RECLAMACIONES')
+      T_FUNCION('MASIVO_OK_TECNICO')
     ); 
     V_TMP_FUNCION T_FUNCION;
 
@@ -47,7 +44,7 @@ DECLARE
     TYPE T_PERFIL IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_PERFIL IS TABLE OF T_PERFIL;
     V_PERFIL T_ARRAY_PERFIL := T_ARRAY_PERFIL(
-      T_PERFIL('HAYASUPER')
+      T_PERFIL('HAYAGESTEXTADM')
     ); 
     V_TMP_PERFIL T_PERFIL;
 

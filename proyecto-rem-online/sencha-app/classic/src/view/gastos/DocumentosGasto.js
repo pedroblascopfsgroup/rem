@@ -8,13 +8,14 @@ Ext.define('HreRem.view.gastos.DocumentosGasto', {
 
     initComponent: function () {
     	
-        var me = this;
+        var me = this
+        var setTopBar = $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS']) && !$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']);
         me.setTitle(HreRem.i18n('title.documentos'));
     	var items= [
     	
     	          {			
 					    xtype		: 'gridBase',
-					    topBar		: $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS']),
+					    topBar		: setTopBar,
 					    features: [{ftype:'grouping'}],
 					    reference: 'listadoDocumentosGasto',
 						cls	: 'panel-base shadow-panel',

@@ -1006,25 +1006,8 @@ END IF;
             REM01.SP_MOTIVO_OCULTACION (nACT_ID, 'V', OutOCULTAR, OutMOTIVO);
 
             IF OutOCULTAR = 1 THEN
-              IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
-                IF vDD_MTO_MANUAL_V = 0 THEN /*MOTIVO AUTOMÁTICO*/
-                  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                                SET APU_CHECK_OCULTAR_V = 0
-                                  , DD_MTO_V_ID = NULL
-                                  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                                  , FECHAMODIFICAR = SYSDATE
-                                WHERE ACT_ID = '||nACT_ID||'
-                                AND BORRADO = 0
-                              ';
-
-                  EXECUTE IMMEDIATE V_MSQL;
-                ELSE
-                  PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
-                END IF;
-              ELSE
-                PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
-                PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
-              END IF;
+           		PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+            	PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
             END IF;
 
             IF OutOCULTAR = 0 THEN

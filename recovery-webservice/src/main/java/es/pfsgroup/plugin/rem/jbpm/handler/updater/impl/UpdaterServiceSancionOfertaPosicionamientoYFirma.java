@@ -164,11 +164,13 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							
 							if(!Checks.esNulo(situacionPosesoria) && !Checks.esNulo(situacionPosesoria.getConTitulo()) && (DDTipoTituloActivoTPA.tipoTituloSi.equals(situacionPosesoria.getConTitulo().getCodigo()) && situacionPosesoria.getOcupado() == 1)){
 								situacionPosesoria.setConTitulo(tipoTitulo);
+								situacionPosesoria.setFechaUltCambioTit(new Date());
 								situacionPosesoria.setOcupado(1);
 							}else if(!Checks.esNulo(situacionPosesoria) && !Checks.esNulo(situacionPosesoria.getConTitulo()) && (DDTipoTituloActivoTPA.tipoTituloNo.equals(situacionPosesoria.getConTitulo().getCodigo()) && situacionPosesoria.getOcupado() == 1)) {
 								//si esta okupado ilegalmente no se modifica la situación posesoria
 							}else{
 								situacionPosesoria.setConTitulo(tipoTitulo);
+								situacionPosesoria.setFechaUltCambioTit(new Date());
 								situacionPosesoria.setOcupado(0);
 							}
 							

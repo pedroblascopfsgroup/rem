@@ -64,6 +64,8 @@ public class WebcomRequestUtils {
 						}
 						data.put(e.getKey(), array);
 					}
+				}else{
+					data.put(e.getKey(),null);
 				}
 			}
 		}

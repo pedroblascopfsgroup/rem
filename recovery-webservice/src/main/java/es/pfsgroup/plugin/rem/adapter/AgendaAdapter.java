@@ -627,7 +627,7 @@ public class AgendaAdapter {
 	}
 	
 
-	@Transactional
+	@Transactional(readOnly = false)
 	public Boolean anularTramiteAlquiler(Long idTramite, String motivo) {
 		
 		if (idTramite != null) {
@@ -648,7 +648,7 @@ public class AgendaAdapter {
 			activo.setSituacionComercial(situacionComercial);
 			genericDao.save(Activo.class, activo);
 			
-			if ((anulado != null) && (tramite.getTrabajo() != null)) {
+			if (!Checks.esNulo(anulado) && !Checks.esNulo(tramite.getTrabajo())) {
 				Trabajo trabajo = tramite.getTrabajo();
 				trabajo.setEstado(anulado);
 				genericDao.save(Trabajo.class, trabajo);

@@ -272,4 +272,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	
 	ActivoAgrupacion getAgrupacionPAByIdActivoConFechaBaja(Long idActivo);
+
+	Boolean checkOfertasVivasAgrupacion(Long idAgrupacion);
+
+	Boolean checkOTrabajosVivosAgrupacion(Long idAgrupacion);
 }

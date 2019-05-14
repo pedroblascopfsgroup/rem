@@ -6155,7 +6155,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		tieneOfertasVivas = particularValidator.existeActivoConOfertaViva(Long.toString(activo.getNumActivo()));
 		
-		
 		for (ActivoTrabajo activoTrabajo : trabajosDelActivo) {	
 			if(DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
 					||DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
@@ -6167,13 +6166,47 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				break;
 			}
 		}
-		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
+		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));	
+			
 		if(!Checks.esNulo(perimetroActivo)) {
 		
 			perimetroActivo.setTrabajosVivos(tieneTrabajosVivos);
 			perimetroActivo.setOfertasVivas(tieneOfertasVivas);
 		
 			genericDao.save(PerimetroActivo.class, perimetroActivo);
+		}
+		
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			ActivoAgrupacion agrupacionPa = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+		
+			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activoDao.getIdActivoMatriz(agrupacionPa.getId())));
+			tieneOfertasVivas = activoDao.checkOfertasVivasAgrupacion(agrupacionPa.getId());
+			tieneTrabajosVivos = activoDao.checkOTrabajosVivosAgrupacion(agrupacionPa.getId());
+			
+			if(!tieneOfertasVivas) {
+				tieneOfertasVivas = particularValidator.existeActivoConOfertaViva(Long.toString(activoDao.getActivoById(activoDao.getIdActivoMatriz(agrupacionPa.getId())).getNumActivo()));
+			}
+			if(!tieneTrabajosVivos) {
+				List<ActivoTrabajo> trabajosDelActivoAM = activo.getActivoTrabajos();
+				for (ActivoTrabajo activoTrabajoAM: trabajosDelActivoAM) {	
+					if(DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
+							||DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
+							|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
+							|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
+					) {
+						
+						tieneTrabajosVivos = true;
+						break;
+					}
+				}
+			}
+			if(!Checks.esNulo(perimetroActivoAM)) {
+				perimetroActivoAM.setOfertasVivas(tieneOfertasVivas);
+				perimetroActivoAM.setTrabajosVivos(tieneTrabajosVivos);
+				
+				genericDao.save(PerimetroActivo.class, perimetroActivoAM);
+			}
+			
 		}
 	}
 	
@@ -6202,25 +6235,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id",idAM));
 			
 			if(!Checks.esNulo(perimetroActivoAM)) {
-				
 				switch(action){
 					case 1: 
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 1 ) {
+						if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 0 ) {
 							sePuedeEditar = false;
 						}
 					break;
 					case 2:
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaPublicar() && perimetroActivoAM.getAplicaPublicar())){
+						if(!Checks.esNulo(perimetroActivoAM.getAplicaPublicar()) && !perimetroActivoAM.getAplicaPublicar()){
 							sePuedeEditar = false;
 						} 
 					break;
 					case 3:
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaComercializar()) && perimetroActivoAM.getAplicaComercializar() == 1) {
+						if(!Checks.esNulo(perimetroActivoAM.getAplicaComercializar()) && perimetroActivoAM.getAplicaComercializar() == 0) {
 							sePuedeEditar = false;
 						}
 					break;
 					case 4: 
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaFormalizar()) && perimetroActivoAM.getAplicaFormalizar() == 1) {
+						if(!Checks.esNulo(perimetroActivoAM.getAplicaFormalizar()) && perimetroActivoAM.getAplicaFormalizar() == 0) {
 							sePuedeEditar = false;
 						} 
 					break;
@@ -6233,4 +6265,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return sePuedeEditar;
 	}
+	
 }

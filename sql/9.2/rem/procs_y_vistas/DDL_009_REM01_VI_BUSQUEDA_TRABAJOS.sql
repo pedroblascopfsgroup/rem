@@ -58,14 +58,14 @@ BEGIN
 		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) */
 			tbj.tbj_id, 
 			act.act_id AS idactivo, 
-			rn.rango, 
+			1 as rango, 
 			tbj.tbj_num_trabajo, 
 			tbj.tbj_webcom_id, 
 			tbj.tbj_cubre_seguro, 
 			tbj.tbj_importe_total, 
 			tbj.tbj_fecha_ejecutado,
           	NVL2 (agr.agr_num_agrup_rem, agr.agr_num_agrup_rem, act.act_num_activo) AS num_activo_agrupacion,
-          	NVL2 (agr.agr_num_agrup_rem, ''agrupaciones'', NVL2 (tbj.act_id, ''activo'', ''listado'')) AS tipo_entidad, 
+          	'''' AS tipo_entidad, 
 			ttr.dd_ttr_codigo, 
 			ttr.dd_ttr_descripcion, 
 			str.dd_str_codigo, 
@@ -76,8 +76,9 @@ BEGIN
 			pve.pve_nombre AS proveedor, 
 			actpro.pro_id AS propietario,
 			pve.pve_id,
-          	NVL2 (solic.usu_nombre, INITCAP (solic.usu_nombre) || NVL2 (solic.usu_apellido1, '' '' || INITCAP (solic.usu_apellido1), '''') || 
-				NVL2 (solic.usu_apellido2, '' '' || INITCAP (solic.usu_apellido2), ''''), INITCAP (pve2.pve_nombre)) AS solicitante,
+          	--solic.usu_username AS solicitante,
+			NVL2 (solic.usu_nombre, INITCAP (solic.usu_nombre) || NVL2 (solic.usu_apellido1, '' '' || INITCAP (solic.usu_apellido1), '''') || 
+			NVL2 (solic.usu_apellido2, '' '' || INITCAP (solic.usu_apellido2), ''''), INITCAP (pve2.pve_nombre)) AS solicitante,
           	ddloc.dd_loc_descripcion AS poblacion, 
 			ddprv.dd_prv_codigo, 
 			ddprv.dd_prv_descripcion AS provincia, 
@@ -112,9 +113,6 @@ BEGIN
           LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve ON pve.pve_id = pvc.pve_id
           LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 ON pve2.pve_id = tbj.mediador_id
           LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios solic ON solic.usu_id = tbj.usu_id
-          LEFT JOIN
-          (SELECT act_id, tbj_id, ROW_NUMBER() OVER(PARTITION BY tbj_id ORDER BY act_id) rango
-             FROM ' || V_ESQUEMA || '.act_tbj) rn ON (rn.act_id = act.act_id AND rn.tbj_id = tbj.tbj_id)
           where tbj.borrado = 0
           ';
 

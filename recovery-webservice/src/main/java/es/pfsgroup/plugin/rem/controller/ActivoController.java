@@ -138,6 +138,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
@@ -390,9 +391,12 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFORMACION_COMERCIAL);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
-
+			
+			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
-			activoApi.calcularRatingActivo(id);
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+				activoApi.calcularRatingActivo(id);
+			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -460,9 +464,12 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFORME_COMERCIAL);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
-
+			
+			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre información comercial, recalculamos el rating del activo.
-			activoApi.calcularRatingActivo(id);
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+				activoApi.calcularRatingActivo(id);
+			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_INFORME_COMERCIAL, ACCION_CODIGO.CODIGO_MODIFICAR);
 
@@ -482,8 +489,11 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
 
+			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
-			activoApi.calcularRatingActivo(id);
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+				activoApi.calcularRatingActivo(id);
+			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_COMUNIDAD_PROPIETARIOS, ACCION_CODIGO.CODIGO_MODIFICAR);
 

@@ -4,7 +4,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
             'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
-            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController','HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion'],
+
+            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController','HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 'HreRem.view.activos.detalle.InformeComercialActivo'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -63,7 +64,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          
          'tituloinformacionregistralactivo calificacionnegativagrid': {
           	onClickPropagation: 'onClickPropagationCalificacionNegativa'
-          }
+          },
+          
+          'informecomercialactivo historicomediadorgrid': {
+           	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+           }
     },
     
 	cargarTabData: function (form) {
@@ -3460,13 +3465,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-  createTabDataHistoricoMediadores : function(list) {
+  createTabDataHistoricoMediadores : function(listadoActivos, records4) {
 	
     var me = this, tabData = {};
     tabData.id = me.getViewModel().get("activo.id");
     tabData.models = [];
 
-    Ext.Array.each(list, function(record, index) {
+    Ext.Array.each(listadoActivos, function(record, index) {
           var model = {};
           model.name = 'mediadoractivo';
           model.type = 'activo';
@@ -4311,12 +4316,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if (!Ext.isEmpty(jsonData)) {
 			var data = JSON.parse(jsonData);
 			if (data.success !== null && data.success !== undefined && data.success === "false") {
+<<<<<<< HEAD
 				var modelData = me.getViewModel().getData();
 				for ( var entry in modelData) {
 					if ((modelData[entry] != null && modelData[entry] != undefined) && modelData[entry].isModel){
 						modelData[entry].reject();
 					}
 				}
+=======
+				if(!Ext.isEmpty(me.getViewModel().getData().situacionPosesoria)){
+					me.getViewModel().getData().situacionPosesoria.reject();
+				}
+				me.getViewModel().getData().activo.reject();
+>>>>>>> 2.8.3-19051301-rem
 				scope.fireEvent("errorToast", data.msgError);
 			} else {
 				scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));

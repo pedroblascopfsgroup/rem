@@ -326,6 +326,19 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		return count;
 		
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> getIdsProveedorByIdUsuario(Long idUsuario) {
+		HQLBuilder hb = new HQLBuilder("select pve.id from ActivoProveedor pve, ActivoProveedorContacto pvc ");
+
+		hb.appendWhere("pve.id = pvc.proveedor.id");
+		hb.appendWhere("pvc.usuario.id = " + idUsuario);
+
+		List<Long> listaProveedores = (List<Long>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+		return listaProveedores;
+	}
 	
 	
 	

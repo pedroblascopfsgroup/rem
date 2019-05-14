@@ -5970,6 +5970,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaInicioFinanciacion(condiciones.getFechaInicioFinanciacion());
 				dto.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
 			}
+			if(!Checks.esNulo(expediente.getFechaPosicionamientoPrevista())) {
+				dto.setFechaPosicionamientoPrevista(expediente.getFechaPosicionamientoPrevista());
+			}
 		}
 
 		return dto;
@@ -6053,6 +6056,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				genericDao.save(Formalizacion.class, formalizacion);
 			}
+			
+			if(!Checks.esNulo(dto.getFechaPosicionamientoPrevista())) {
+				expediente.setFechaPosicionamientoPrevista(dto.getFechaPosicionamientoPrevista());
+			}
+			
+			genericDao.save(ExpedienteComercial.class, expediente);
 		}
 
 		return true;
@@ -8195,7 +8204,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
+		
+		if(esApple(tareaExterna)) {
+			return true;
+		}
+		
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
 		try {
 			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
 			for (DtoAdjunto adjunto : adjuntosExpediente) {
@@ -8231,8 +8246,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@SuppressWarnings("unused")
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
+		
+		if(esApple(tareaExterna)) {
+			return true;
+		}
+		
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		boolean depositoRelleno = false;
+		
 		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
 			//Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 			depositoRelleno = false;

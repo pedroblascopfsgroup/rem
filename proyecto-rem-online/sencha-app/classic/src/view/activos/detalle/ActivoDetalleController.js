@@ -4316,20 +4316,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if (!Ext.isEmpty(jsonData)) {
 			var data = JSON.parse(jsonData);
 			if (data.success !== null && data.success !== undefined && data.success === "false") {
-<<<<<<< HEAD
 				var modelData = me.getViewModel().getData();
 				for ( var entry in modelData) {
 					if ((modelData[entry] != null && modelData[entry] != undefined) && modelData[entry].isModel){
 						modelData[entry].reject();
 					}
 				}
-=======
+				
 				if(!Ext.isEmpty(me.getViewModel().getData().situacionPosesoria)){
 					me.getViewModel().getData().situacionPosesoria.reject();
 				}
+				
 				me.getViewModel().getData().activo.reject();
->>>>>>> 2.8.3-19051301-rem
 				scope.fireEvent("errorToast", data.msgError);
+				
 			} else {
 				scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 			}

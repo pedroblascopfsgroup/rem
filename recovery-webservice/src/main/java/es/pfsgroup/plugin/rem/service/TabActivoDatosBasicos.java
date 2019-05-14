@@ -951,10 +951,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());
+				
+				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 
 			}
-
-			
 			if(activoDao.isActivoMatriz(activo.getId())) {
 				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 				ActivoAgrupacion agrupacionPa = activoDao.getAgrupacionPAByIdActivo(activo.getId());
@@ -1006,6 +1006,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					activoApi.saveOrUpdatePerimetroActivo(perimetroActivoUA);
 				}
 			}
+			
 			
 			// --------- Perimetro --> Bloque Comercializción
 			if (!Checks.esNulo(dto.getTipoComercializarCodigo())) {

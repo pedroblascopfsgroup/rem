@@ -2212,7 +2212,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var ref = chkbx.getReference();
 		var val = me.checkOfertaTrabajoVivo(ref);
-		if (!val) return false;
+		//if (!val) return false;
 		// Si se quita comercializar, hay que quitar tambien los datos de formalizacion en perimetro
 		var chkbxPerimetroComercializar = me.lookupReference('chkbxPerimetroComercializar');
 		var textFieldPerimetroComer = me.lookupReference('textFieldPerimetroComer');

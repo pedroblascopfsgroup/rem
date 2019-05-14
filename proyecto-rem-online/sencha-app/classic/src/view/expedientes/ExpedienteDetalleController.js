@@ -550,6 +550,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 							{ 
 								field.fireEvent('save');
 								field.fireEvent('update');});
+		
+		if (Ext.isDefined(btn.name)
+				&& btn.name === 'firstLevel') {
+			me.getViewModel().set("editingFirstLevel", false);
+		} else {
+			me.getViewModel().set("editing", false);
+		}
 	},
 
     onClickBotonCerrarPestanya: function(btn) {
@@ -3052,29 +3059,6 @@ comprobarObligatoriedadRte: function(){
 						 */
 					}
 				});
-	},
-	onClickBotonCancelar : function(btn) {
-		var me = this, activeTab = btn.up('tabpanel')
-				.getActiveTab();
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]')
-				.hide();
-		btn.up('tabbar').down('button[itemId=botoneditar]')
-				.show();
-
-		Ext.Array.each(
-				activeTab.query('field[isReadOnlyEdit]'),
-				function(field, index) {
-					field.fireEvent('save');
-					field.fireEvent('update');
-				});
-
-		if (Ext.isDefined(btn.name)
-				&& btn.name === 'firstLevel') {
-			me.getViewModel().set("editingFirstLevel", false);
-		} else {
-			me.getViewModel().set("editing", false);
-		}
 	},
 
 	onClickBloquearExpediente : function(btn) {

@@ -68,9 +68,9 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		
 		this.rellenarFiltrosBusquedaTrabajos(dto, hb, gasto);
 
-		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
-		if(!Checks.estaVacio(nombresProveedor)) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.proveedor", nombresProveedor);
+		List<Long> proveedorId = proveedorDao.getIdsProveedorByIdUsuario(idUsuario);
+		if(!Checks.estaVacio(proveedorId)) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.idProveedor", proveedorId);
 		}
 		else {
 			//Si no hay proveedores, no debe mostrar ningún trabajo en el listado

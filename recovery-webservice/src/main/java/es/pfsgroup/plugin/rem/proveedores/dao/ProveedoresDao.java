@@ -43,6 +43,13 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	public List<String> getNombreProveedorByIdUsuario(Long idUsuario);
 	
 	/**
+	 * Obtiene una lista de ids proveedor por idusuario
+	 * @param idUsuario
+	 * @return
+	 */
+	public List<Long> getIdsProveedorByIdUsuario(Long idUsuario);
+	
+	/**
 	 * Devuelve una lista de id de proveedores asociados al idUsuario en proveedor contacto
 	 * @param idUsuario
 	 * @return

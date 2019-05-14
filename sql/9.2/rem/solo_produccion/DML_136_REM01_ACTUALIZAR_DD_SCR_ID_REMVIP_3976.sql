@@ -1,0 +1,103 @@
+--/*
+--#########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20190416
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-3976
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+	V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-4012';
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error
+	V_SQL VARCHAR2(32000 CHAR);
+
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualizamos los ID_WEBCOM_ID a null ');
+
+	V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO SET DD_SCR_ID = 147, 
+                                        USUARIOMODIFICAR = ''REMVIP-3976'',
+                                        FECHAMODIFICAR = SYSDATE 
+                                        WHERE ACT_NUM_ACTIVO IN  
+(6897003,
+6897004,
+6897005,
+6897006,
+6897007,
+6897008,
+6897009,
+6897010,
+6897011,
+6897012,
+6897013,
+6897014,
+6897015,
+6897067,
+6897068,
+6897069,
+6897070,
+6897071,
+6897072,
+6897073,
+6897074,
+6897075,
+6897076,
+6897077,
+6897078,
+6897079,
+6897080,
+6897081,
+6897082,
+6897083,
+6897084,
+6897085,
+6897086,
+6897087,
+6897088,
+6897089,
+6897090,
+6897091,
+6897092,
+6897565,
+6897566,
+6897567,
+6897568,
+6897569,
+6897570,
+6897571,
+6897572)';
+
+	EXECUTE IMMEDIATE V_SQL;
+
+	DBMS_OUTPUT.PUT_LINE('ACTUALIZADOS '||SQL%ROWCOUNT||' REGISTROS EN LA TABLA ACT_ACTIVO');
+
+
+	COMMIT;
+
+EXCEPTION
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+      DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
+      DBMS_OUTPUT.PUT_LINE(SQLERRM);
+      DBMS_OUTPUT.PUT_LINE(V_SQL);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

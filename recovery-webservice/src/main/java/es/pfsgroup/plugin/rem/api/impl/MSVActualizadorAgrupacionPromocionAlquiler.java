@@ -594,7 +594,10 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				//No será necesario, por tanto, un bucle para trasladar el histórico del AM a las UAs, puesto que está vacío.
 				DtoHistoricoMediador dtoAux = new DtoHistoricoMediador();
 				dtoAux.setIdActivo(unidadAlquilable.getId());
-				dtoAux.setCodigo(activoMatriz.getInfoComercial().getMediadorInforme().getCodigoProveedorRem().toString());
+				if(!Checks.esNulo(activoMatriz.getInfoComercial()) && !Checks.esNulo(activoMatriz.getInfoComercial().getMediadorInforme())
+						&& !Checks.esNulo(activoMatriz.getInfoComercial().getMediadorInforme().getCodigoProveedorRem())) {
+					dtoAux.setCodigo(activoMatriz.getInfoComercial().getMediadorInforme().getCodigoProveedorRem().toString());
+				}
 				activoApi.createHistoricoMediador(dtoAux);
 			}else {
 				for (DtoHistoricoMediador dto : dtoHistoricoMediador) {

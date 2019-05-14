@@ -48,7 +48,7 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
                     bind : {
                       store : '{comboSiNoRem}',
                       value : '{cargaTab.conCargas}',
-                      readOnly: '{cargaTab.unidadAlquilable}'
+                      readOnly: true
                     },
                     readOnly : true
                   }, {

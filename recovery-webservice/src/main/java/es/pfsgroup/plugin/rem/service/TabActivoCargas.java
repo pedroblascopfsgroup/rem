@@ -52,8 +52,9 @@ public class TabActivoCargas implements TabActivoService {
 
 		// Establecemos el estado de las cargas manualmente.
 		// if(activoCargasApi.esActivoConCargasNoCanceladasRegistral(activo.getId()) || activoCargasApi.esActivoConCargasNoCanceladasEconomica(activo.getId())) {
-			
+		BeanUtils.copyProperties(activoDto, activo);	
 		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			activoDto.setUnidadAlquilable(true);
 			ActivoAgrupacion actgagru = activoDao.getAgrupacionPAByIdActivo(activo.getId());
 			Activo activoM = activoApi.get(activoDao.getIdActivoMatriz(actgagru.getId()));
 			if(activoCargasApi.esActivoConCargasNoCanceladas(activoM.getId())) {
@@ -63,6 +64,7 @@ public class TabActivoCargas implements TabActivoService {
 			}
 		}
 		else {
+			activoDto.setUnidadAlquilable(false);
 			if(activoCargasApi.esActivoConCargasNoCanceladas(activo.getId())) {
 				activoDto.setConCargas(1);
 			} else {
@@ -70,11 +72,6 @@ public class TabActivoCargas implements TabActivoService {
 			}
 			
 		}
-			if(activoDao.isUnidadAlquilable(activo.getId())) {
-				activoDto.setUnidadAlquilable(true);
-			}else {
-				activoDto.setUnidadAlquilable(false);
-			}
 		
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	

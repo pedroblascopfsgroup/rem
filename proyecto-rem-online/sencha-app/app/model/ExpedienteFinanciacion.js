@@ -64,6 +64,11 @@ Ext.define('HreRem.model.ExpedienteFinanciacion', {
 	    },
 	    {
 	    	name: 'entidadFinancieraCodigo'
+	    },
+	    {
+	    	name: 'fechaPosicionamientoPrevista',
+	    	type:'date',
+			dateFormat: 'c'
 	    }
     ],
 

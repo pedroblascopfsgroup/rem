@@ -27,7 +27,7 @@ public class DtoAgrupacionFilter extends WebDto {
 	private Long agrId;
 	private Long actId;
 	private String codCartera;
-	private Long subcarteraCodigo;
+	private String subcarteraCodigo;
 	private String codProvincia;
 	private String localidadDescripcion;
 	private Long numActHaya;
@@ -227,11 +227,11 @@ public class DtoAgrupacionFilter extends WebDto {
 		this.numActReco = numActReco;
 	}
 
-	public Long getSubcarteraCodigo() {
+	public String getSubcarteraCodigo() {
 		return subcarteraCodigo;
 	}
 
-	public void setSubcarteraCodigo(Long subcarteraCodigo) {
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
 		this.subcarteraCodigo = subcarteraCodigo;
 	}
 

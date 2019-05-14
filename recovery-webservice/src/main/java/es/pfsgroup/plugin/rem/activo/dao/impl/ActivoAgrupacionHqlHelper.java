@@ -30,8 +30,8 @@ public class ActivoAgrupacionHqlHelper {
 		return " ac.idRecovery = " + id;
 	}
 	
-	public static String getWhereAndSubcarteraCodigo(Long id){
-		return " ac.subcartera.id = " + id;
+	public static String getWhereAndSubcarteraCodigo(String codigo){
+		return " ac.subcartera.codigo = " + codigo;
 	}
 	
 	public static String getWhereAndNif(String id){

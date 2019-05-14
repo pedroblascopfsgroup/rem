@@ -315,18 +315,22 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 				}
 			} else if (validacion.contains(MSVExcelValidator.CODIFICACION_FECHA)) {
 				try {
-					if (contenidoCelda.length() > 10) {
-						contenidoCelda = contenidoCelda.substring(0, 10);
-					}
-					contenidoCelda = contenidoCelda.replaceAll(" ", "").replaceAll("-", "").replaceAll("/", "");
-					if (contenidoCelda.length() < 6 || contenidoCelda.length() > 8) {
-						resultado.setValido(false);
-						resultado.setErroresFila(errFecha);						
-					} else { 
-						
-						SimpleDateFormat df = new SimpleDateFormat("ddMMyyyy");
-						df.setLenient(false);
-						df.parse(contenidoCelda);
+					//petición para borrar el campo del registro que lleve una @
+					if(!contenidoCelda.trim().equals("@")) {						
+					
+						if (contenidoCelda.length() > 10) {
+							contenidoCelda = contenidoCelda.substring(0, 10);
+						}
+						contenidoCelda = contenidoCelda.replaceAll(" ", "").replaceAll("-", "").replaceAll("/", "");
+						if (contenidoCelda.length() < 6 || contenidoCelda.length() > 8) {
+							resultado.setValido(false);
+							resultado.setErroresFila(errFecha);						
+						} else { 
+							
+							SimpleDateFormat df = new SimpleDateFormat("ddMMyyyy");
+							df.setLenient(false);
+							df.parse(contenidoCelda);
+						}
 					}
 				} catch (Exception e) {
 					resultado.setValido(false);

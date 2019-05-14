@@ -45,18 +45,17 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 	private static final String ERR_SUPERFICIE_CONSTRUIDA = "msg.error.masivo.superficies.err.superficie.construida";
 	private static final String ERR_SUPERFICIE_UTIL = "msg.error.masivo.superficies.err.superficie.util";
 	private static final String ERR_REPERCUSION_EECC = "msg.error.masivo.superficies.err.repercusion.eecc";
-	private static final String ERR_PARCELA = "msg.error.masivo.superficies.err.parcela";
+	private static final String ERR_PARCELA = "msg.error.masivo.superficies.err.parcela";	
 	
-	public static final class COL_NUM {
-		static final int FILA_CABECERA = 0;
-		static final int DATOS_PRIMERA_FILA = 1;
+	private	static final int FILA_CABECERA = 0;
+	private	static final int DATOS_PRIMERA_FILA = 1;
 		
-		static final int COL_NUM_ID_ACTIVO_HAYA = 0;
-		static final int COL_NUM_SUP_CONSTRUIDA = 1;
-		static final int COL_NUM_SUP_UTIL = 2;
-		static final int COL_NUM_REPERCUSION_EECC = 3;
-		static final int COL_NUM_PARCELA = 4;		
-	}
+	private	static final int COL_NUM_ID_ACTIVO_HAYA = 0;
+	private	static final int COL_NUM_SUP_CONSTRUIDA = 1;
+	private	static final int COL_NUM_SUP_UTIL = 2;
+	private	static final int COL_NUM_REPERCUSION_EECC = 3;
+	private	static final int COL_NUM_PARCELA = 4;		
+	
 
 
 	@Resource
@@ -113,10 +112,10 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), isActiveNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CARTERA_ERR), isActivoNotBankiaLiberbank(exc));
-			mapaErrores.put(messageServices.getMessage(ERR_SUPERFICIE_CONSTRUIDA), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM.COL_NUM_SUP_CONSTRUIDA));
-			mapaErrores.put(messageServices.getMessage(ERR_SUPERFICIE_UTIL), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM.COL_NUM_SUP_UTIL));
-			mapaErrores.put(messageServices.getMessage(ERR_REPERCUSION_EECC), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM.COL_NUM_REPERCUSION_EECC));
-			mapaErrores.put(messageServices.getMessage(ERR_PARCELA), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM.COL_NUM_REPERCUSION_EECC));
+			mapaErrores.put(messageServices.getMessage(ERR_SUPERFICIE_CONSTRUIDA), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM_SUP_CONSTRUIDA));
+			mapaErrores.put(messageServices.getMessage(ERR_SUPERFICIE_UTIL), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM_SUP_UTIL));
+			mapaErrores.put(messageServices.getMessage(ERR_REPERCUSION_EECC), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM_REPERCUSION_EECC));
+			mapaErrores.put(messageServices.getMessage(ERR_PARCELA), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM_REPERCUSION_EECC));
 			
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CARTERA_ERR)).isEmpty()
@@ -180,25 +179,20 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 	 * @param exc
 	 * @return listado fillas erroneas
 	 */
-	private List<Integer> isActiveNotExistsRows(MSVHojaExcel exc){
+	private List<Integer> isActiveNotExistsRows(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=COL_NUM.DATOS_PRIMERA_FILA; i<this.numFilasHoja;i++){
-				try {
-					if(!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.COL_NUM_ID_ACTIVO_HAYA)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
+
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM_ID_ACTIVO_HAYA)))
 					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (ParseException e) {
+				listaFilas.add(i);
+			} catch (Exception e) {
 				listaFilas.add(0);
 				e.printStackTrace();
 			}
+		}
 		return listaFilas;
 	}
 
@@ -207,25 +201,20 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 	 * @param exc
 	 * @return listado fillas erroneas
 	 */
-	private List<Integer> isActivoNotBankiaLiberbank(MSVHojaExcel exc){
+	private List<Integer> isActivoNotBankiaLiberbank(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=COL_NUM.DATOS_PRIMERA_FILA; i<this.numFilasHoja;i++){
-				try {
-					if(!particularValidator.isActivoNotBankiaLiberbank(exc.dameCelda(i, COL_NUM.COL_NUM_ID_ACTIVO_HAYA)))
-						listaFilas.add(i);
-				} catch (ParseException e) {
+
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				if (!particularValidator.isActivoNotBankiaLiberbank(exc.dameCelda(i, COL_NUM_ID_ACTIVO_HAYA)))
 					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (ParseException e) {
+				listaFilas.add(i);
+			} catch (Exception e) {
 				listaFilas.add(0);
 				e.printStackTrace();
 			}
+		}
 		return listaFilas;
 	}
 	
@@ -233,22 +222,20 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		Double superficie = null;
 
-		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+		for (int i = DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				
 				String value = exc.dameCelda(i, columnNumber);
-				if(value != null && !value.isEmpty()){
-					if(value.contains(",")){
+				if (!Checks.esNulo(value) && !esArroba(value)) {
+					if (value.contains(",")) {
 						value = value.replace(",", ".");
 					}
-				}
-				
-				superficie = !Checks.esNulo(value)
-						? Double.parseDouble(value) : null;
+					superficie = !Checks.esNulo(value) ? Double.parseDouble(value) : null;
 
-				// Si el superficie no es un número válido.
-				if ((!Checks.esNulo(superficie) && superficie.isNaN()))
-					listaFilas.add(i);
+					// Si el superficie no es un número válido.
+					if (!Checks.esNulo(superficie) && superficie.isNaN()) {
+						listaFilas.add(i);
+					}
+				}
 			} catch (NumberFormatException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -266,7 +253,7 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 
 		return listaFilas;
 	}
-	
+		
 	private File recuperarPlantilla(Long idTipoOperacion)  {
 		try {
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
@@ -275,6 +262,10 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	private boolean esArroba(String cadena) {
+		return cadena.trim().equals("@");
 	}
 }
 

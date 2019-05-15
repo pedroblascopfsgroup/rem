@@ -23,7 +23,6 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 		},
 
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {
-        	debugger;
 			tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null)

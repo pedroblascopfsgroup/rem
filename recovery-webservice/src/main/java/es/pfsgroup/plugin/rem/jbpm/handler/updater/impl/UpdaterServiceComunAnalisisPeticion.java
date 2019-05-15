@@ -12,6 +12,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -22,6 +23,9 @@ public class UpdaterServiceComunAnalisisPeticion implements UpdaterService {
 	
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+    private ActivoApi activoApi;
     
 	private static final String CODIGO_T002_ANALISIS_PETICION = "T002_AnalisisPeticion";
 	private static final String CODIGO_T003_ANALISIS_PETICION = "T003_AnalisisPeticion";
@@ -62,6 +66,7 @@ public class UpdaterServiceComunAnalisisPeticion implements UpdaterService {
 			
 		}
 		genericDao.save(Trabajo.class, trabajo);
+		activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
 
 	}
 

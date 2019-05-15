@@ -373,8 +373,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				
 				if (!Checks.esNulo(perimetroActivoMatriz.getMotivoAplicaPublicar()))
 					perimetroActivoUnidadAlquilable.setMotivoAplicaPublicar(perimetroActivoMatriz.getMotivoAplicaPublicar());
-				
-				
+				perimetroActivoUnidadAlquilable.setTrabajosVivos(false);
+				perimetroActivoUnidadAlquilable.setOfertasVivas(false);
 				
 				genericDao.save(PerimetroActivo.class,perimetroActivoUnidadAlquilable);
 				

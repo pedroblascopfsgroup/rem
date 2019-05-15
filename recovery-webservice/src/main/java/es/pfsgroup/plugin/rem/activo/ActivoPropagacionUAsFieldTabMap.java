@@ -56,24 +56,6 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		// perimetro
     	    		"incluidoEnPerimetro",	//PerimetroHaya
     	    		
-    	    		
-    	    		//Checks perimetros
-    	    		"aplicaGestion",
-    	    		"fechaAplicaGestion",
-    	    		"motivoAplicaGestion",
-    	    		
-    	    		"aplicaPublicar",
-    	    		"fechaAplicaPublicar",
-    	    		"motivoAplicaPublicar",
-    	    		
-    				"aplicaComercializar",
-    				"fechaAplicaComercializar",
-    				"motivoAplicaComercializarDescripcion",
-    				"motivoNoAplicaComercializarDescripcion",
-    				
-    				"aplicaFormalizar",
-    				"fechaAplicaFormalizar",
-    				"motivoAplicaFormalizar",
     				
 	    			// comercializacion
     				"tipoComercializarCodigo",

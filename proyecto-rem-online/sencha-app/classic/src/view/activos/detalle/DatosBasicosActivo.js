@@ -403,6 +403,22 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						bind:		'{activo.fechaAltaActivoRem}',
 						readOnly	: true
 					},
+					{
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.ofertas.vivas'),
+						bind:{
+								value:'{activo.ofertasVivas}'
+									
+						},
+						readOnly	: true
+					},
+					{
+						xtype: 'textfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.trabajos.vivos'),
+						colspan: 2,
+						bind:		'{activo.trabajosVivos}',
+						readOnly	: true
+					},
 					
 		            {    
 		                
@@ -510,6 +526,12 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									
 									value: '{activo.aplicaPublicar}'
+								},
+								listeners: {
+									change: function (get) {
+										var me = this;
+										me.lookupController('activoDetalle').checkOfertaTrabajoVivo(me.getReference());
+									}
 								}
 							},
 							{

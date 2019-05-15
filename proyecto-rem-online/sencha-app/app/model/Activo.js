@@ -512,6 +512,12 @@ Ext.define('HreRem.model.Activo', {
     			dateFormat: 'c'
 			},
 			{
+				name: 'ofertasVivas'
+			},
+			{
+				name: 'trabajosVivos'	
+			},
+			{
 				name: 'aplicaTramiteAdmision',
 				type: 'boolean'
 			},

@@ -1179,5 +1179,9 @@ public interface ActivoApi {
 	boolean esSubcarteraApple(Long idActivo);
 
 	void actualizarMotivoOcultacionUAs(DtoActivoPatrimonio patrimonioDto, Long id);
+	
+	void actualizarOfertasTrabajosVivos(Activo activo);
+
+	Boolean bloquearChecksComercializacionActivo(Activo activo, Integer action);
 
 }

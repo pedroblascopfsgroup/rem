@@ -1475,5 +1475,29 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
 
 	}
+	@Override
+	public Boolean checkOfertasVivasAgrupacion(Long idAgrupacion) {
+		String sql = "SELECT Count(1) FROM ACT_PAC_PERIMETRO_ACTIVO pac " + 
+				" JOIN ACT_AGA_AGRUPACION_ACTIVO aga on pac.act_id = aga.act_id and aga.agr_id =" + idAgrupacion +
+				" WHERE pac.PAC_OFERTAS_VIVAS = 1 AND AGA.AGA_PRINCIPAL = 0";
+				
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
+	@Override
+	public Boolean checkOTrabajosVivosAgrupacion(Long idAgrupacion) {
+		String sql = "SELECT Count(1) FROM ACT_PAC_PERIMETRO_ACTIVO pac " + 
+				" JOIN ACT_AGA_AGRUPACION_ACTIVO aga on pac.act_id = aga.act_id and aga.agr_id = " + idAgrupacion +
+				" WHERE pac.PAC_TRABAJOS_VIVOS = 1 AND AGA.AGA_PRINCIPAL = 0";
+				
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
 
 }

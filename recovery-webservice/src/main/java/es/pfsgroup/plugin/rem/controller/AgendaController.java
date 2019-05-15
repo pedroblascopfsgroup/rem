@@ -27,6 +27,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -66,6 +67,8 @@ public class AgendaController extends TareaController {
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	
 	private final Log logger = LogFactory.getLog(getClass());
@@ -594,6 +597,8 @@ public class AgendaController extends TareaController {
 			} else {
 				anulado = adapter.anularTramiteAlquiler(idTramite, motivo);
 			}
+			ActivoTramite tramite = activoTramiteApi.get(idTramite);
+			activoApi.actualizarOfertasTrabajosVivos(tramite.getActivo());
 			model.put("success", anulado);
 			
 		} catch (JsonViewerException jve) {

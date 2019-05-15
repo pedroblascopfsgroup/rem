@@ -2230,7 +2230,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onChkbxPerimetroChange: function(chkbx) {
 		var me = this;
 		var ref = chkbx.getReference();
-
+		var val = me.checkOfertaTrabajoVivo(ref);
 		// Si se quita comercializar, hay que quitar tambien los datos de formalizacion en perimetro
 		var chkbxPerimetroComercializar = me.lookupReference('chkbxPerimetroComercializar');
 		var textFieldPerimetroComer = me.lookupReference('textFieldPerimetroComer');
@@ -2238,34 +2238,51 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var chkbxFormalizar = me.lookupReference('chkbxPerimetroFormalizar');
 		var textFieldFormalizar = me.lookupReference('textFieldPerimetroFormalizar');
 		var textFieldPerimetroGestion = me.lookupReference('textFieldPerimetroGestion');
-		
-		switch(ref){
-		case 'chkbxPerimetroComercializar':
-			if(!Ext.isEmpty(chkbxPerimetroComercializar.getValue()) && chkbxPerimetroComercializar.getValue()) {
-				comboMotivoPerimetroComer.reset();
-				textFieldPerimetroComer.reset();
-			} else {
-				textFieldPerimetroComer.reset();
-				chkbxFormalizar.setValue(false);
-				textFieldFormalizar.reset();
+		if(!val){
+			switch(ref){
+			case 'chkbxPerimetroComercializar':
+				if(!Ext.isEmpty(chkbxPerimetroComercializar.getValue()) && chkbxPerimetroComercializar.getValue()) {
+					comboMotivoPerimetroComer.reset();
+					textFieldPerimetroComer.reset();
+				} else {
+					textFieldPerimetroComer.reset();
+					chkbxFormalizar.setValue(false);
+					textFieldFormalizar.reset();
+				}
+				break;
+	
+			case 'chkbxPerimetroGestion':
+				textFieldPerimetroGestion.reset();
+				break;
+				
+			case 'chkbxPerimetroFormalizar':
+				if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()) {
+					chkbxFormalizar.setValue(false);
+					me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
+				}
+				else {
+					textFieldFormalizar.reset();
+				}
+				break;
+			default:
+				break;
 			}
-			break;
-
-		case 'chkbxPerimetroGestion':
-			textFieldPerimetroGestion.reset();
-			break;
-			
-		case 'chkbxPerimetroFormalizar':
-			if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()) {
-				chkbxFormalizar.setValue(false);
-				me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
+		}
+		else{
+			switch(ref){
+				case 'chkbxPerimetroFormalizar':
+					if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()) {
+						chkbxFormalizar.setValue(false);
+						me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
+					}
+					else {
+						textFieldFormalizar.reset();
+					}
+					break;
+				default:
+					break;
 			}
-			else {
-				textFieldFormalizar.reset();
-			}
-			break;
-		default:
-			break;
+					
 		}
 	},
 
@@ -5178,5 +5195,58 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
        
         return str;
 
-    }
+    },
+    
+
+	checkOfertaTrabajoVivo : function (ref){
+		var me = this;
+		var url = $AC.getRemoteUrl('activo/bloquearChecksComercializacion');
+		idActivo = me.getViewModel().get('activo.id'),
+		checkBox = me.lookupReference(ref),
+		valorCheck = me.lookupReference(ref).getValue(),
+		action = null,
+		finalVal = false;
+		isOk = true;
+		
+		if (!valorCheck) {
+			finalVal = true;
+		}else{
+			finalVal = false;
+		}
+		switch(ref){
+			case 'chkbxPerimetroGestion': action = 1; break;
+			case 'chkbxPerimetroPublicar': action = 2; break;
+			case 'chkbxPerimetroComercializar': action = 3; break;
+			case 'chkbxPerimetroFormalizar': action = 4; break;
+			
+		}
+		
+		if ((me.getViewModel().get('activo.activoMatriz')  || me.getViewModel().get('activo.unidadAlquilable'))){
+			
+			Ext.Ajax.request({
+				async: false,
+	    		url: url,
+	    		 method : 'GET',
+	    		params: {
+	    			idActivo: idActivo, 
+	    			action:action
+	    		}, 
+	    		success: function(response, opts){
+	    			var result = Ext.decode(response.responseText);
+	    				if (result.data === 'false'){ 
+	    					checkBox.setRawValue(finalVal);
+	    					me.fireEvent("errorToast", HreRem.i18n("msg.no.modificar.los.checks"));
+	    					isOk = false;
+	    				}else{
+	    					isOk = true;
+	    				}
+	    		},
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			    }
+	    	});
+			
+			return isOk;
+		}
+	}
 });

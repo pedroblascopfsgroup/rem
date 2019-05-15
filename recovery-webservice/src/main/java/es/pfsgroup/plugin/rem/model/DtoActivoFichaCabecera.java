@@ -236,6 +236,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean agrupacionDadaDeBaja;
 	
+	private String ofertasVivas;
+	private String trabajosVivos;
+	
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -1829,5 +1832,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setTieneRegistroContrato(Boolean tieneRegistroContrato) {
 		this.tieneRegistroContrato = tieneRegistroContrato;
 	}
+
+	public String getOfertasVivas() {
+		return ofertasVivas;
+	}
+
+	public void setOfertasVivas(String ofertasVivas) {
+		this.ofertasVivas = ofertasVivas;
+	}
+
+	public String getTrabajosVivos() {
+		return trabajosVivos;
+	}
+
+	public void setTrabajosVivos(String trabajosVivos) {
+		this.trabajosVivos = trabajosVivos;
+	}
+	
 	
 }

@@ -282,12 +282,20 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var codPromo;
 		//Si no se ha seleccionado ning�n activo
 		if(Ext.isEmpty(arraySelection)){
-			
 			var storeListaActivosTrabajo = me.lookupReference('listaActivosSubidaRef').getStore();
-			if(!Ext.isEmpty(storeListaActivosTrabajo) && !Ext.isEmpty(storeListaActivosTrabajo.data)){
+			if(!Ext.isEmpty(storeListaActivosTrabajo) && storeListaActivosTrabajo.data.length != 0){
 				codPromo = me.lookupReference('codigoPromocionPrinex').getValue();
 				var actuacionTecnica = (me.lookupReference('tipoTrabajo').getValue() == CONST.TIPOS_TRABAJO.ACTUACION_TECNICA ? true : false);
+				var propietario = storeListaActivosTrabajo.data.items[0].data.propietarioId;
 				for (var i=0; i < storeListaActivosTrabajo.data.length; i++) {
+					var propietarioAux = storeListaActivosTrabajo.data.items[i].data.propietarioId;
+					if(propietarioAux != propietario && me.lookupReference('checkEnglobaTodosActivosRef').checked != false){
+						Ext.MessageBox.alert(
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.mensaje")
+						);
+						return false;
+					}
 					if (storeListaActivosTrabajo.data.items[i].data.tienePerimetroGestion != "1"){
 						Ext.MessageBox.alert(
 								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),

@@ -4684,9 +4684,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
 					usuarioGestorComercial = genericDao.get(GestorActivo.class, f2, f3).getUsuario();
 
-				} else {
+				} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)){
 					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
 							.getUsuarioGestorFormalizacion(activo.getId());
+				} else {
+					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
+							.getUsuarioGestorFormalizacionBasico(activo.getId());
 				}
 
 				if (!Checks.esNulo(idUsuarioGestorFormalizacion))

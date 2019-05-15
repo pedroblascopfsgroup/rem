@@ -400,6 +400,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		    	}
 		    	
 		    },
+
 		 esEntidadFinancieraBankia: function(get) {
 			 var entidadFinancieraCod = get('financiacion.entidadFinancieraCodigo') == "01";
 			 var esBankia = get("expediente.esBankia");
@@ -412,7 +413,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 					 return true; // Se esconde el boque bankia
 				 }
 			}
-		 }
+		 },
+
+			
+			isGestorFormalizacion: function(){
+				if($AU.userIsRol(CONST.PERFILES['HAYAGESTFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+					return false;
+				}else{
+					return true;
+				}
+			}
+
 	 },
 
 

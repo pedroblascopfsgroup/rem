@@ -95,8 +95,7 @@ public class DtoTramite extends WebDto {
 	
 	private Boolean esTareaSolicitudOAutorizacion;
 	
-	private Boolean subtipoTrabajoEnElHistoricoDeTarifaPlana;
-
+	
 	public Long getIdTramite() {
 		return idTramite;
 	}
@@ -431,13 +430,5 @@ public class DtoTramite extends WebDto {
 
 	public void setEsTareaSolicitudOAutorizacion(Boolean esTareaSolicitudOAutorizacion) {
 		this.esTareaSolicitudOAutorizacion = esTareaSolicitudOAutorizacion;
-	}
-
-	public Boolean getSubtipoTrabajoEnElHistoricoDeTarifaPlana() {
-		return subtipoTrabajoEnElHistoricoDeTarifaPlana;
-	}
-
-	public void setSubtipoTrabajoEnElHistoricoDeTarifaPlana(Boolean subtipoTrabajoEnElHistoricoDeTarifaPlana) {
-		this.subtipoTrabajoEnElHistoricoDeTarifaPlana = subtipoTrabajoEnElHistoricoDeTarifaPlana;
 	}
 }

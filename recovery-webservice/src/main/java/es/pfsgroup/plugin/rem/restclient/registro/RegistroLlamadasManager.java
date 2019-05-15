@@ -33,7 +33,12 @@ public class RegistroLlamadasManager {
 
 	@Transactional(readOnly = false, noRollbackFor = ErrorServicioWebcom.class, propagation = Propagation.NEVER)
 	public void guardaRegistroLlamada(RestLlamada llamada, @SuppressWarnings("rawtypes") DetectorCambiosBD handler) {
-		llamadaDao.guardaRegistro(llamada);
+		try{
+			llamadaDao.guardaRegistro(llamada);
+		}catch(Exception e){
+			logger.error("error al guardar traza sobre objeto rechazado: ".concat(e.getMessage()));
+		}
+		
 		trustMe.registrarLlamadaServicioWeb(llamada);	
 	}
 
@@ -43,7 +48,11 @@ public class RegistroLlamadasManager {
 		logger.trace("Guardando traza de la llamada en BD");
 
 		for (RestLlamada llamada : llamadas) {
-			llamadaDao.guardaRegistro(llamada);
+			try{
+				llamadaDao.guardaRegistro(llamada);
+			}catch(Exception e){
+				logger.error("error al guardar traza sobre objeto rechazado: ".concat(e.getMessage()));
+			}
 			trustMe.registrarLlamadaServicioWeb(llamada);
 		}
 

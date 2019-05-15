@@ -21,7 +21,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 	    	var rechazado = me.lookupController().getViewModel().get('gasto').get('rechazado');
 	    	var agrupado = me.lookupController().getViewModel().get('gasto').get('esGastoAgrupado');
 	    	var gestoria = me.lookupController().getViewModel().get('gasto').get('nombreGestoria')!=null;
-			if(this.lookupController().botonesEdicionGasto(estadoGasto,autorizado,rechazado,agrupado, gestoria, this)){
+			if(!$AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK']) && this.lookupController().botonesEdicionGasto(estadoGasto,autorizado,rechazado,agrupado, gestoria, this)){
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(true);
 			}
 			else{

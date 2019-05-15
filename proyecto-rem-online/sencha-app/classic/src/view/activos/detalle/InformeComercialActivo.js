@@ -143,6 +143,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									{
 										xtype: "historicomediadorgrid", 
 										secFunToEdit: 'EDITAR_GRID_PUBLICACION_HISTORICO_MEDIADORES',
+										idPrincipal : 'activo.id',
+										propagationButton: true,
+										targetGrid	: 'mediadoractivo',
+										bind: {
+									        store: '{storeHistoricoMediador}'
+									    },
 										reference: "historicomediadorgrid", 
 										colspan: 3
 									}

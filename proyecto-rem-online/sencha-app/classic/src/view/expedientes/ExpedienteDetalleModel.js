@@ -390,15 +390,23 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 
 		 },
 		 esObligatorio: function(){
-		    	var me = this;
-		    	if(!Ext.isEmpty(me.getView().expediente)){
-		    		if(me.getView().expediente.data.tipoExpedienteCodigo == "01"){
-			    		return false;
-			    	}else{
-			    		return true;
-			    	}
-		    	}
-		 }
+		 	var me = this;
+		    if(!Ext.isEmpty(me.getView().expediente)){
+		    	if(me.getView().expediente.data.tipoExpedienteCodigo == "01"){
+			    	return false;
+			    }else{
+			    	return true;
+			    }
+		    }
+		    	
+		 },			
+		isGestorFormalizacion: function(){
+			if($AU.userIsRol(CONST.PERFILES['HAYAGESTFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+				return false;
+			}else{
+				return true;
+			}
+		}
 	 },
 
 

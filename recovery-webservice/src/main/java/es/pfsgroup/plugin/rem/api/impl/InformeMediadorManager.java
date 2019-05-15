@@ -1528,8 +1528,10 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
 				}
 
-				// Actualizamos el rating del activo
-				activoApi.calcularRatingActivo(activo.getId());
+				// Actualizamos el rating si es un activo de tipo vivienda
+				if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+					activoApi.calcularRatingActivo(activo.getId());
+				}
 				// Actualizamos la situacion comercial del activo
 				updaterState.updaterStateDisponibilidadComercialAndSave(activo);
 				

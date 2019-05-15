@@ -1092,6 +1092,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView createPosicionamiento(DtoPosicionamiento dto, @RequestParam Long idEntidad, ModelMap model) {
 		try {
 			boolean success = expedienteComercialApi.createPosicionamiento(dto, idEntidad);
+			if(!success){
+				model.put("msgError","Ya existe un posicionamiento vigente");
+			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {

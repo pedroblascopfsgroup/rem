@@ -3979,8 +3979,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Boolean resultado = false;
 		Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
 		if(!Checks.esNulo(gestorProveedorTecnico) && !Checks.esNulo(activo.getCartera())){
-			if (historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(activo.getCartera().getId(), subtipoTrabajo.getId(), fechaSolicitud)) {
-				resultado = true;
+			if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) 
+					&& DDSubcartera.CODIGO_SAR_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+					resultado = true;
+			}
+			else {
+				if (historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(activo.getCartera().getId(), subtipoTrabajo.getId(), fechaSolicitud)) {
+					resultado = true;
+				}
 			}
 		}
 		return resultado;

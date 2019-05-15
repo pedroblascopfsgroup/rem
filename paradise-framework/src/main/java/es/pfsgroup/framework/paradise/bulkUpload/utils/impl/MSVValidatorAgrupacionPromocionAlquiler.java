@@ -41,12 +41,13 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAbstract{
 	
-	public static final String PROMOCION_NO_EXISTE = "Promoción alquiler inexistente";
+	public static final String PROMOCION_NO_EXISTE = "Promoción alquiler no existe";
 	public static final String PROMOCION_DADA_DE_BAJA = "Promoción alquiler dada de baja";
-	public static final String SIN_MA = "Promoción de alquiler no existe";
+	public static final String SIN_MA = "Promoción de alquiler sin activo matriz asociado";
 	public static final String GESTOR_DIFIERE = "Promoción de alquiler no gestionada por usted";
 	public static final String TIPOLOGIA_SUBTIPOLOGIA_ERRONEA = "Tipología/Subtipología del activo errónea";
 	public static final String VIA_ERRONEA = "Tipo de vía erróneo";
+	public static final String DIRECCION_INCOMPLETA = "Dirección incompleta";
 	public static final String SUPERFICIES_CONSTRUIDA = "Sumatorio de las superficies construidas superior a la del activo matriz";
 	public static final String SUPERFICIES_UTIL = "Sumatorio de las superficies útiles superior a la del activo matriz";
 	public static final String PORCENTAJE_PARTICIPACION = "% de participación erróneo";
@@ -111,6 +112,7 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 			mapaErrores.put(GESTOR_DIFIERE, esGestorSupervisorComercialAlquilerDelAM(exc));
 			mapaErrores.put(TIPOLOGIA_SUBTIPOLOGIA_ERRONEA, esTipologiaSubtipologiaCorrecta(exc));
 			mapaErrores.put(VIA_ERRONEA, esTipoViaCorrecto(exc));
+			mapaErrores.put(DIRECCION_INCOMPLETA, esDireccionCompleta(exc));
 			mapaErrores.put(SUPERFICIES_CONSTRUIDA, esSuperficieConstruidaCorrecta(exc));
 			mapaErrores.put(SUPERFICIES_UTIL, esSuperficieUtilCorrecta(exc));
 			mapaErrores.put(PORCENTAJE_PARTICIPACION, esPorcentajeCorrecto(exc));
@@ -123,6 +125,7 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 				|| !mapaErrores.get(GESTOR_DIFIERE).isEmpty()
 				|| !mapaErrores.get(TIPOLOGIA_SUBTIPOLOGIA_ERRONEA).isEmpty()
 				|| !mapaErrores.get(VIA_ERRONEA).isEmpty()
+				|| !mapaErrores.get(DIRECCION_INCOMPLETA).isEmpty()
 				|| !mapaErrores.get(SUPERFICIES_CONSTRUIDA).isEmpty()
 				|| !mapaErrores.get(SUPERFICIES_UTIL).isEmpty()
 				|| !mapaErrores.get(PORCENTAJE_PARTICIPACION).isEmpty()
@@ -327,6 +330,31 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 		return listaFilas;
 	}
 	
+	private List<Integer> esDireccionCompleta(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja; i++){
+				try{
+					String tipoViaActual = exc.dameCelda(i, 5);
+					String nombreViaActual = exc.dameCelda(i, 6);
+					if((Checks.esNulo(tipoViaActual) && !Checks.esNulo(nombreViaActual)) 
+							|| (!Checks.esNulo(tipoViaActual) && Checks.esNulo(nombreViaActual))){
+						listaFilas.add(i);
+					}
+				}catch(Exception e){
+					listaFilas.add(i);
+				}
+			}
+		}catch(Exception e){
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
 
 	
 	private List<Integer> esSuperficieConstruidaCorrecta(MSVHojaExcel exc){

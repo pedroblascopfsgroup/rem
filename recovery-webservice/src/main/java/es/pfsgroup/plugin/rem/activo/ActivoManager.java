@@ -193,6 +193,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String KEY_GDPR="gdpr.data.key";
 	private static final String URL_GDPR="gdpr.data.url";
 	private static final String AVISO_MENSAJE_MOTIVO_CALIFICACION = "activo.aviso.motivo.calificacion.duplicado";
+	private static final String AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE = "activo.aviso.precio.aprobado.apple";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -514,6 +515,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
 
 		}
+		
+		// Si el activo pertenece a la subcartera Apple y tiene precio aprobado de venta
+		if (oferta.getActivoPrincipal().getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)) {		
+			if (!Checks.estaVacio(oferta.getActivoPrincipal().getValoracion())) {
+				List<ActivoValoraciones> valoraciones = oferta.getActivoPrincipal().getValoracion();
+				
+				boolean existe = false;
+				for (ActivoValoraciones valoracion : valoraciones) {		
+					if (valoracion != null &&  valoracion.getTipoPrecio() != null && valoracion.getTipoPrecio().getCodigo().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA)) {
+						existe = true;
+					}		
+				}	 
+				if (!existe) {
+					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE));
+				}
+			} else {
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE));
+			}				
+		}
 
 		// Si el activo esta marcado como ocupado sin titulo no permitiremos
 		// tramitar ofertas de alquiler
@@ -549,7 +569,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								.equals(acivoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
 
 					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA));
-
 				}
 			}
 
@@ -619,9 +638,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
+		
 
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());	
 
 		validateSaveOferta(dto, oferta, estadoOferta);
 		
@@ -641,12 +661,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			resultado = doRechazaOferta(dto, oferta);
 		}
 		
-		
 		if(!resultado){
 			resultado = this.persistOferta(oferta);
 		}
-		
-		
+				
 
 		return resultado;
 	}

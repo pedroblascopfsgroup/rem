@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=David Gonzalez
---## FECHA_CREACION=20190424
+--## FECHA_CREACION=20190509
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.11.0
 --## INCIDENCIA_LINK=HREOS-6184

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190214
+--## AUTOR=DAP
+--## FECHA_CREACION=20190509
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-3306
+--## VERSION_ARTEFACTO=2.11.0
+--## INCIDENCIA_LINK=HREOS-6184
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -19,6 +19,7 @@
 --##		0.7 Oscar Diestre HREOS-5358 - Tratamiento agrupaciones asisitidas vencidas
 --##		0.8 Sergio H . Deshacemos temporalmente las modificaciones de la 0.7
 --##		0.9 REMVIP-3306 Cambios en el funcionamiento del historico
+--##    0.10 HREOS-6184 Cambio en vista y cambio es_condicionado
 --##########################################
 --*/
 

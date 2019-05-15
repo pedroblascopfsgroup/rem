@@ -1,13 +1,13 @@
---/*
+  --/*
 --##########################################
 --## AUTOR=David Gonzalez
---## FECHA_CREACION=20190424
+--## FECHA_CREACION=20190510
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.11.0
 --## INCIDENCIA_LINK=HREOS-6184
 --## PRODUCTO=NO
 --##
---## Finalidad: Borrar duplicados en ACT_ABA_ACTIVO_BANCARIO
+--## Finalidad: Borrar duplicados en ACT_ABA_ACTIVO_BANCARIO y crear clave unica en ACT_ID para ACT_ABA_ACTIVO_BANCARIO
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -56,6 +56,17 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' registros eliminados fisicamente en ACT_ABA_ACTIVO_BANCARIO');
     
   COMMIT;
+
+  DBMS_OUTPUT.PUT_LINE('[INFO] Crear clave unica en ACT_ID para ACT_ABA_ACTIVO_BANCARIO');
+
+  EXECUTE IMMEDIATE 'select count(1) from ALL_CONSTRAINTS where constraint_name = ''ACT_ID'' and table_name = ''ACT_ABA_ACTIVO_BANCARIO''' INTO TABLE_COUNT;
+
+  IF TABLE_COUNT < 1 THEN 
+    EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.ACT_ABA_ACTIVO_BANCARIO ADD CONSTRAINT ACT_ID UNIQUE (ACT_ID)'; 
+    DBMS_OUTPUT.PUT_LINE('[INFO] Clave creada en ACT_ABA_ACTIVO_BANCARIO');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('[INFO] Clave ya existente en ACT_ABA_ACTIVO_BANCARIO');
+  END IF;
 
 EXCEPTION
      WHEN OTHERS THEN

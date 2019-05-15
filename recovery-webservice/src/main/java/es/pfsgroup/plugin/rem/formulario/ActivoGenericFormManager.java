@@ -409,7 +409,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	            					}
 	            				}
             				}else {
-            					item.setValue(ofertaAceptada.getImporteContraOferta().toString());
+            					if(!Checks.esNulo(ofertaAceptada.getImporteContraOferta())) {
+                					item.setValue(ofertaAceptada.getImporteContraOferta().toString());
+            					}
             				}
             			}
             		}

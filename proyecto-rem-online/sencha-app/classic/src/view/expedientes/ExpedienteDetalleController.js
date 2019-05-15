@@ -215,7 +215,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
-		if(form.isFormValid() && form.disableValidation) {
+		if(form.isFormValid() || form.disableValidation) {
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -550,6 +550,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 							{ 
 								field.fireEvent('save');
 								field.fireEvent('update');});
+		
+		if (Ext.isDefined(btn.name)
+				&& btn.name === 'firstLevel') {
+			me.getViewModel().set("editingFirstLevel", false);
+		} else {
+			me.getViewModel().set("editing", false);
+		}
 	},
 
     onClickBotonCerrarPestanya: function(btn) {
@@ -775,12 +782,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	var esBankia = me.getViewModel().get("expediente.esBankia");
     	
 		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');
+		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
+
     	    	
     	comboEntidadFinancieraCodigo.setDisabled(disabled);
     	comboEntidadFinancieraCodigo.allowBlank = disabled; 	
 
     	if(disabled) {
     		comboEntidadFinancieraCodigo.setValue("");
+    		labelCapitalConcedido.bodyEl.hide();
     	}
 	},
 	
@@ -1305,10 +1315,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			   	data = Ext.decode(response.responseText);
 			   }  catch (e){
 			   	data = {};
-			   };			   
+			   };
 			   if(data.success === "true") {
-				   	me.lookupReference('formalizacionExpediente').funcionRecargar();
-				   	me.getView().unmask();
+				   me.lookupReference('cncyCapitalConcedidoBnk').setValue(data.data);
+				   me.getView().unmask();
 			   }else {
 			   		Utils.defaultRequestFailure(response, opts);
 			   }
@@ -1742,7 +1752,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	    	  	
 		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
 		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');  
-		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk');	
+		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk');
+		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
  
     	if(nValue == valorComboEsBankia) {
     		numExpedienteRiesgo.allowBlank = false;
@@ -1755,6 +1766,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		numExpedienteRiesgo.setValue("");
     		comboTipoFinanciacion.setValue("");
     		comboEntidadFinancieraCodigo.setValue("");
+    		labelCapitalConcedido.bodyEl.hide();
+    	} else {
+    		labelCapitalConcedido.bodyEl.show();
     	}
 	},
 
@@ -3052,29 +3066,6 @@ comprobarObligatoriedadRte: function(){
 						 */
 					}
 				});
-	},
-	onClickBotonCancelar : function(btn) {
-		var me = this, activeTab = btn.up('tabpanel')
-				.getActiveTab();
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]')
-				.hide();
-		btn.up('tabbar').down('button[itemId=botoneditar]')
-				.show();
-
-		Ext.Array.each(
-				activeTab.query('field[isReadOnlyEdit]'),
-				function(field, index) {
-					field.fireEvent('save');
-					field.fireEvent('update');
-				});
-
-		if (Ext.isDefined(btn.name)
-				&& btn.name === 'firstLevel') {
-			me.getViewModel().set("editingFirstLevel", false);
-		} else {
-			me.getViewModel().set("editing", false);
-		}
 	},
 
 	onClickBloquearExpediente : function(btn) {

@@ -189,6 +189,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		if (!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado()) && dto.getOcupado() == 0) {
 			activoSituacionPosesoria.setConTitulo(null);
+			activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 		} else  if (!Checks.esNulo(dto.getConTitulo())) {
 			Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTitulo());
 			DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);

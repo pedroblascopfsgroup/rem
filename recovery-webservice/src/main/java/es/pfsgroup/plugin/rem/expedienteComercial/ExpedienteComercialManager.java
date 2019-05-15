@@ -5886,7 +5886,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception {
+	public Double obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception {
 		try {
 			ExpedienteComercial expediente = this.findOne(Long.parseLong(dto.getIdExpediente()));
 
@@ -5903,13 +5903,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							Integer.parseInt(tipoRiesgo.getCodigo()));
 
 					if (!Checks.esNulo(capitalConcedido)) {
-						formalizacion.setCapitalConcedido(capitalConcedido.doubleValue() / 100);
-						formalizacion.setNumExpediente(numExpedienteRiesgo);
-						formalizacion.setTipoRiesgoClase(tipoRiesgo);
 
-						genericDao.save(Formalizacion.class, formalizacion);
 
-						return true;
+						return capitalConcedido.doubleValue() / 100;
 					}
 				} else {
 					throw new Exception("En número del expediente y el tipo de riesgo han de estar informados");
@@ -5923,7 +5919,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			throw new JsonViewerException(e.getMessage());
 		}
 
-		return false;
+		return null;
 	}
 
 	@Override
@@ -5984,6 +5980,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
 				
 				
+			}
+			if(!Checks.esNulo(expediente.getFechaPosicionamientoPrevista())) {
+				dto.setFechaPosicionamientoPrevista(expediente.getFechaPosicionamientoPrevista());
 			}
 		}
 
@@ -6085,8 +6084,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 
+				if (!Checks.esNulo(dto.getCapitalConcedido())) {
+					formalizacion.setCapitalConcedido(dto.getCapitalConcedido());
+				}
+
+				if (!Checks.esNulo(dto.getSolicitaFinanciacion()) && dto.getSolicitaFinanciacion() == 0) {
+
+					formalizacion.setCapitalConcedido(null);
+
+				}						
+
 				genericDao.save(Formalizacion.class, formalizacion);
 			}
+			
+			if(!Checks.esNulo(dto.getFechaPosicionamientoPrevista())) {
+				expediente.setFechaPosicionamientoPrevista(dto.getFechaPosicionamientoPrevista());
+			}
+			
+			genericDao.save(ExpedienteComercial.class, expediente);
 		}
 
 		return true;
@@ -8250,7 +8265,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
+		
+		if(esApple(tareaExterna)) {
+			return true;
+		}
+		
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
 		try {
 			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
 			for (DtoAdjunto adjunto : adjuntosExpediente) {
@@ -8286,8 +8307,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@SuppressWarnings("unused")
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
+		
+		if(esApple(tareaExterna)) {
+			return true;
+		}
+		
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		boolean depositoRelleno = false;
+		
 		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
 			//Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 			depositoRelleno = false;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=David Gonzalez
---## FECHA_CREACION=20190425
+--## FECHA_CREACION=20190509
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-3306
+--## VERSION_ARTEFACTO=2.11.0
+--## INCIDENCIA_LINK=HREOS-6184
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           

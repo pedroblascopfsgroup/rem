@@ -167,10 +167,6 @@ Ext.define('HreRem.model.Tramite', {
     		type: 'boolean'
     	},
     	{
-    		name: 'subtipoTrabajoEnElHistoricoDeTarifaPlana',
-    		type: 'boolean'
-    	},
-    	{
     		name: 'evaluarBtnReasignar',
     		calculate: function(data) {
     			return data.esTareaAutorizacionBankia == true || data.esTareaSolicitudOAutorizacion == true;

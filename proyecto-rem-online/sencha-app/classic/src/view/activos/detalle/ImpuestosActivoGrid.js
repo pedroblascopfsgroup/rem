@@ -17,8 +17,7 @@ Ext.define('HreRem.view.activos.detalle.ImpuestosActivoGrid', {
     listeners: {
     	boxready: function() {
     		var me = this;
-    		//me.evaluarEdicion();
-    		//grid.up().disableRemoveButton(true);
+    		me.evaluarEdicion();
     	},
     	rowclick: 'onGridImpuestosActivoRowClick',
     	rowdblclick: 'onImpuestosActivoDobleClick'
@@ -214,6 +213,15 @@ Ext.define('HreRem.view.activos.detalle.ImpuestosActivoGrid', {
        		editor.isNew = false;
 			}
        
-  }
+   },
+  
+   evaluarEdicion: function() {
+		var me = this;
+
+		if($AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK'])) {
+			me.setTopBar(false);
+			me.rowEditing.clearListeners();
+		}
+   }
 
 });

@@ -305,6 +305,11 @@ public class AgrupacionAdapter {
 	private static final String ACTIVO_SIN_SITUACION_COMERCIAL = "El activo no tiene situación comercial";
 	private static final String ACTIVO_FUERA_PERIMETRO_HAYA = "El activo fuera del perímetro HAYA";
 	private static final String ACTIVO_INEXISTENTE = "Activo inexistente";
+	private static final String ACTIVO_ALQUILADO = "Activo alquilado";
+	private static final String ACTIVO_SIN_ESTADO_ALQUILER = "El activo no tiene estado de alquiler";
+	private static final String ACTIVO_SIN_GESTORES = "El activo NO tiene gestores";
+	private static final String ACTIVO_SIN_GESTION = "Este activo NO está bajo su gestión";
+	private static final String ACTIVO_SIN_GESTORES_ADECUADOS = "Este activo NO tiene los gestores adecuados para añadirlo a matriz de alquiler";
 
 
 	public static final String SPLIT_VALUE = ";s;";
@@ -2550,7 +2555,8 @@ public class AgrupacionAdapter {
 										if(!particularValidator.existeActivoConOfertaVivaEstadoExpediente(Long.toString(activo.getNumActivo()))){
 											Filter patrimonioFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 											ActivoPatrimonio patrimonioActivo = genericDao.get(ActivoPatrimonio.class, patrimonioFilter);
-											if(!Checks.esNulo(patrimonioActivo) && !DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(patrimonioActivo.getTipoEstadoAlquiler().getCodigo())) {
+											if(!Checks.esNulo(patrimonioActivo) && !Checks.esNulo(patrimonioActivo.getTipoEstadoAlquiler())){
+											if(!DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(patrimonioActivo.getTipoEstadoAlquiler().getCodigo())) {
 												if (!Checks.estaVacio(activo.getAgrupaciones())) {
 													List<ActivoAgrupacionActivo> listaAgrupaciones = activo.getAgrupaciones();
 													
@@ -2598,16 +2604,21 @@ public class AgrupacionAdapter {
 														return Boolean.TRUE;
 													}
 													else if(!tieneGestores) {
-														throw new JsonViewerException("Este activo NO tiene los gestores adecuados para añadirlo a matriz de alquiler");
+														throw new JsonViewerException(ACTIVO_SIN_GESTORES_ADECUADOS);
 													}
 													else {
-														throw new JsonViewerException("Este activo NO está bajo su gestión");
+														throw new JsonViewerException(ACTIVO_SIN_GESTION);
 													}
 												}
-												throw new JsonViewerException("El activo NO tiene gestores");									
-											}else {
-												throw new JsonViewerException("Activo alquilado");
+												throw new JsonViewerException(ACTIVO_SIN_GESTORES);									
 											}
+											else {
+												throw new JsonViewerException(ACTIVO_ALQUILADO);
+												}
+											}else {
+												throw new JsonViewerException(ACTIVO_SIN_ESTADO_ALQUILER);
+												}
+										
 										}else {
 												throw new JsonViewerException(ACTIVO_OFERTAS_VIVAS);
 										}

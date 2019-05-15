@@ -8,13 +8,14 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
 
 public class MaestroDeActivos {
 	@Autowired
-	private GestorDocumentalMaestroManager gestorDocumentalMaestroManager;
+	private GestorDocumentalMaestroApi gestorDocumentalMaestroManager;
 	
 	@Autowired
 	private MSVRawSQLDao rawDao;
@@ -23,6 +24,7 @@ public class MaestroDeActivos {
 	private static final String ORIGEN ="REM";
 	private static final String FLAGMULTIPLICIDAD ="1";
 	private static final String MOTIVO_OPERACION ="14";
+	private static final String SIMULACRO ="simulacion";
 	private Long idActivoAM = null;
 	private Long numActivoAM = null;
 	private Long idUnidadAlquilable = null;
@@ -51,16 +53,17 @@ public class MaestroDeActivos {
 				dto.setFlagMultiplicidad(FLAGMULTIPLICIDAD);
 				dto.setMotivoOperacion(MOTIVO_OPERACION);
 				dto.setEvent(dto.EVENTO_ALTA_ACTIVOS);
-				ActivoOutputDto activoOutput = gestorDocumentalMaestroManager.ejecutarActivo(dto);
+				ActivoOutputDto activoOutput =  (ActivoOutputDto) gestorDocumentalMaestroManager.ejecutar(dto);
 				
-				if ( Checks.esNulo(activoOutput)) {
+				if (!Checks.esNulo(activoOutput) && SIMULACRO.equals(activoOutput.getResultDescription())) {
 					activoOutput = new ActivoOutputDto();
 					activoOutput.setResultCode("simulacion");
-					activoOutput.setResultDescription("simulacion");
 					activoOutput.setNumActivoUnidadAlquilable(String.valueOf(getNewNumActivo()));
 					return activoOutput;
-				}else {
+				}else if (!Checks.esNulo(activoOutput) && !SIMULACRO.equals(activoOutput.getResultDescription())){
 					return activoOutput;
+				}else {
+					return null;
 				}
 			}
 		}catch( Exception e) {

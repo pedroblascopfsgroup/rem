@@ -1,5 +1,5 @@
 
-package es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS;
+package es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES;
 
 import java.net.MalformedURLException;
 import java.net.URL;

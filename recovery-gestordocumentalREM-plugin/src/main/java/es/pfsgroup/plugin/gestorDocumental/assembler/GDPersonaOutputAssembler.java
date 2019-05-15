@@ -7,8 +7,8 @@ import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.KeyValuePair;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.KeyValuePair;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.ProcessEventResponseType;
 
 
 

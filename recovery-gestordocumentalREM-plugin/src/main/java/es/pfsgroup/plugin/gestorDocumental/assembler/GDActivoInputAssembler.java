@@ -1,24 +1,29 @@
 package es.pfsgroup.plugin.gestorDocumental.assembler;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.KeyValuePair;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventRequestType;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventRequestType.Parameters;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.KeyValuePair;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.ProcessEventRequestType;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.ProcessEventRequestType.Parameters;
 
 
 public class GDActivoInputAssembler {
-	public static ProcessEventRequestType dtoToInputActivo (ActivoInputDto inputDto) {
+	
+	protected final static Log logger = LogFactory.getLog(GDActivoInputAssembler.class);
+	
+	public static es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.ProcessEventRequestType dtoToInputActivo (ActivoInputDto inputDto) {
 		if (inputDto == null) {
 			return null;
 		}
 
 		ProcessEventRequestType input = new ProcessEventRequestType();
 		input.setEventName(inputDto.getEvent());
-		input.setParameters(getParameters(inputDto));
+		input.setParameters(getParametersActivo(inputDto));
 		
 		return input;
 	}
-	private static Parameters getParameters(ActivoInputDto inputDto) {
+	private static Parameters getParametersActivo(ActivoInputDto inputDto) {
 		ProcessEventRequestType.Parameters parameters = new Parameters();
 		if(ActivoInputDto.EVENTO_ALTA_ACTIVOS.equals(inputDto.getEvent())) {
 			parameters.getParameter().add(getIdHayaActivoMatriz(inputDto.getIdActivoMatriz()));

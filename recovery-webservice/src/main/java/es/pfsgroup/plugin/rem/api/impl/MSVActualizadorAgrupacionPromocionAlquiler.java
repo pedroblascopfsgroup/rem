@@ -16,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -32,6 +34,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
@@ -42,31 +45,51 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBanyo;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
+import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaExterior;
+import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaInterior;
+import es.pfsgroup.plugin.rem.model.ActivoCocina;
+import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
+import es.pfsgroup.plugin.rem.model.ActivoEdificio;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
+import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
+import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
+import es.pfsgroup.plugin.rem.model.ActivoParamentoVertical;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
+import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
+import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 
 @Component
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
@@ -91,10 +114,16 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	
 	@Autowired
 	private AgrupacionAdapter agrupacionAdapter;
+	
 	@Autowired 
 	ActivoApi activoApi;
+	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private GestorActivoManager gestorActivoManager;
+	
 	
 	@Override
 	public String getValidOperation() {
@@ -588,18 +617,38 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}
 		//------Insercion del api (Mediador)
 		if ( !Checks.esNulo(activoMatriz)) {
+			
+			
+			ActivoInfoComercial infoComercialMatriz =(ActivoInfoComercial) activoMatriz.getInfoComercial();
+			ActivoInfoComercial infoComercialUA = new ActivoInfoComercial();
+			
+			infoComercialUA.setActivo(unidadAlquilable);
+			
+			if(!Checks.esNulo(infoComercialMatriz.getMediadorInforme())) {
+				infoComercialUA.setMediadorInforme(infoComercialMatriz.getMediadorInforme());
+			}
+			
+			if(!Checks.esNulo(infoComercialMatriz.getFechaRecepcionLlaves())) {
+				infoComercialUA.setFechaRecepcionLlaves(infoComercialMatriz.getFechaRecepcionLlaves());
+			}
+			
+			if(!Checks.esNulo(infoComercialMatriz.getFechaUltimaVisita())) {
+				infoComercialUA.setFechaUltimaVisita(infoComercialMatriz.getFechaUltimaVisita());
+			}
+			
+			if(!Checks.esNulo(infoComercialMatriz.getAutorizacionWeb())){
+				infoComercialUA.setAutorizacionWeb(infoComercialMatriz.getAutorizacionWeb());
+				
+			}
+			
+			if(!Checks.esNulo(infoComercialMatriz.getFechaAutorizacionHasta())){
+				infoComercialUA.setFechaAutorizacionHasta(infoComercialMatriz.getFechaAutorizacionHasta());
+			}
+			unidadAlquilable.setInfoComercial(infoComercialUA);
+			genericDao.save(ActivoInfoComercial.class,infoComercialUA);
+			
 			List<DtoHistoricoMediador> dtoHistoricoMediador = activoApi.getHistoricoMediadorByActivo(activoMatriz.getId());
-			if(dtoHistoricoMediador.isEmpty()) {
-				//Si está vacío significa que el AM no tiene histórico pero puede tener un mediador asignado, así que lo introducimos en el dto para crearle un registo a la nueva UA correctamente
-				//No será necesario, por tanto, un bucle para trasladar el histórico del AM a las UAs, puesto que está vacío.
-				DtoHistoricoMediador dtoAux = new DtoHistoricoMediador();
-				dtoAux.setIdActivo(unidadAlquilable.getId());
-				if(!Checks.esNulo(activoMatriz.getInfoComercial()) && !Checks.esNulo(activoMatriz.getInfoComercial().getMediadorInforme())
-						&& !Checks.esNulo(activoMatriz.getInfoComercial().getMediadorInforme().getCodigoProveedorRem())) {
-					dtoAux.setCodigo(activoMatriz.getInfoComercial().getMediadorInforme().getCodigoProveedorRem().toString());
-				}
-				activoApi.createHistoricoMediador(dtoAux);
-			}else {
+			if(Checks.esNulo(dtoHistoricoMediador)) {
 				for (DtoHistoricoMediador dto : dtoHistoricoMediador) {
 					dto.setIdActivo(unidadAlquilable.getId());
 					activoApi.createHistoricoMediador(dto);

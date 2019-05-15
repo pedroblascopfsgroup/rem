@@ -1471,9 +1471,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		 FROM ACT_AGR_AGRUPACION WHERE"
-				+ "		 	AGR_NUM_AGRUP_REM ="+numAgrupacion+" "
-				+ "		 	AND BORRADO = 0");
+				+ "		 FROM ACT_AGR_AGRUPACION AGR"
+				+ "		 JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
+				+ "		 WHERE	AGR_NUM_AGRUP_REM =" + numAgrupacion
+				+ "      AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
 		return !"0".equals(resultado);
 	}
 	

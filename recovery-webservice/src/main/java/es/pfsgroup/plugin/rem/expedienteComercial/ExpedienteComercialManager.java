@@ -5903,13 +5903,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							Integer.parseInt(tipoRiesgo.getCodigo()));
 
 					if (!Checks.esNulo(capitalConcedido)) {
-						formalizacion.setCapitalConcedido(capitalConcedido.doubleValue() / 100);
-						formalizacion.setNumExpediente(numExpedienteRiesgo);
-						formalizacion.setTipoRiesgoClase(tipoRiesgo);
 
-						genericDao.save(Formalizacion.class, formalizacion);
 
-						return formalizacion.getCapitalConcedido();
+						return capitalConcedido.doubleValue() / 100;
 					}
 				} else {
 					throw new Exception("En número del expediente y el tipo de riesgo han de estar informados");
@@ -6087,6 +6083,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						formalizacion.setTipoRiesgoClase(tipoFinanciacionBankia);
 					}
 				}
+
+				if (!Checks.esNulo(dto.getCapitalConcedido())) {
+					formalizacion.setCapitalConcedido(dto.getCapitalConcedido());
+				}
+
+				if (!Checks.esNulo(dto.getSolicitaFinanciacion()) && dto.getSolicitaFinanciacion() == 0) {
+
+					formalizacion.setCapitalConcedido(null);
+
+				}						
 
 				genericDao.save(Formalizacion.class, formalizacion);
 			}

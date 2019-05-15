@@ -782,12 +782,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	var esBankia = me.getViewModel().get("expediente.esBankia");
     	
 		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');
+		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
+
     	    	
     	comboEntidadFinancieraCodigo.setDisabled(disabled);
     	comboEntidadFinancieraCodigo.allowBlank = disabled; 	
 
     	if(disabled) {
     		comboEntidadFinancieraCodigo.setValue("");
+    		labelCapitalConcedido.bodyEl.hide();
     	}
 	},
 	
@@ -1749,7 +1752,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	    	  	
 		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
 		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');  
-		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk');	
+		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk');
+		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
  
     	if(nValue == valorComboEsBankia) {
     		numExpedienteRiesgo.allowBlank = false;
@@ -1762,6 +1766,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		numExpedienteRiesgo.setValue("");
     		comboTipoFinanciacion.setValue("");
     		comboEntidadFinancieraCodigo.setValue("");
+    		labelCapitalConcedido.bodyEl.hide();
+    	} else {
+    		labelCapitalConcedido.bodyEl.show();
     	}
 	},
 

@@ -1978,7 +1978,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         		me.down('[name=motivoAnulacion]').noObligatorio=true;
     			me.down('[name=fechaElevacion]').noObligatorio=false;
-    			me.down('[name=comite]').noObligatorio=true;
+    			me.down('[name=comite]').allowBlank = false;
     			
     			me.deshabilitarCampo(me.down('[name=motivoAnulacion]'));
     			me.habilitarCampo(me.down('[name=comite]'));

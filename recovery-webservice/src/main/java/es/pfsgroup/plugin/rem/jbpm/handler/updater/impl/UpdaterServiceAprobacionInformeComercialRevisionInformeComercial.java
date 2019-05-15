@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 
 @Component
 public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial implements UpdaterService {
@@ -172,8 +173,8 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 		
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 		
-		if(checkAcepta){
-			activoApi.calcularRatingActivo(tramite.getActivo().getId());
+		if(checkAcepta && !Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+			activoApi.calcularRatingActivo(activo.getId());
 		}
 	}
 

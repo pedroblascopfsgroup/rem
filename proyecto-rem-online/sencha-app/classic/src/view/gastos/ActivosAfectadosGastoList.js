@@ -37,8 +37,12 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			}else{
 				return false;
 			}
-		}
+		},
 		
+		boxready: function() {
+			var me = this;
+			me.evaluarEdicion();
+		}
 	},
 	
 	initComponent : function() {
@@ -216,6 +220,14 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		var me = this;
 		me.up('form').funcionRecargar();
 		return true;
-	}
+	},
+	
+	evaluarEdicion: function() {
+		var me = this;
+
+		if($AU.userIsRol(CONST.PERFILES['GESTIAFORMLBK'])) {
+			me.rowEditing.clearListeners();
+		}
+    }
 
 });

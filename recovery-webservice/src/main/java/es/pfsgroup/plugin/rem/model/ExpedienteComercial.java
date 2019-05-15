@@ -258,6 +258,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_ASISTENCIA_PBC_DESCRIPCION")
     private String obsAsisPbc;
+    
+    @Column(name="ECO_FECHA_POSICIONAMIENTO_PREVISTA")
+    private Date fechaPosicionamientoPrevista;  
 
     @Version   
 	private Long version;
@@ -775,5 +778,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setObsAsisPbc(String obsAsisPbc) {
 		this.obsAsisPbc = obsAsisPbc;
+	}
+	
+	public Date getFechaPosicionamientoPrevista() {
+		return fechaPosicionamientoPrevista;
+	}
+
+	public void setFechaPosicionamientoPrevista(Date fechaPosicionamientoPrevista) {
+		this.fechaPosicionamientoPrevista = fechaPosicionamientoPrevista;
 	}
 }

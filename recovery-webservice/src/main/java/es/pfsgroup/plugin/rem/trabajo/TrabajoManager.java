@@ -124,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;

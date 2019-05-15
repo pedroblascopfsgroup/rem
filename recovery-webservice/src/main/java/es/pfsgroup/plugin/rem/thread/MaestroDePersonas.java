@@ -103,8 +103,8 @@ public class MaestroDePersonas implements Runnable {
 
 							logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 							logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
-							PersonaOutputDto personaOutputDto = gestorDocumentalMaestroManager
-									.ejecutarPersona(personaDto);
+							PersonaOutputDto personaOutputDto = (PersonaOutputDto) gestorDocumentalMaestroManager
+									.ejecutar(personaDto);
 							logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
 							logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: "
 									.concat(personaOutputDto.toString()));
@@ -128,7 +128,7 @@ public class MaestroDePersonas implements Runnable {
 								personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
 								personaDto.setIdRol(ID_ROL_16);
 
-								personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+								personaOutputDto = (PersonaOutputDto) gestorDocumentalMaestroManager.ejecutar(personaDto);
 
 								logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
 										+ personaOutputDto.getIdIntervinienteHaya());
@@ -197,7 +197,7 @@ public class MaestroDePersonas implements Runnable {
 					logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 					logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
 					
-					PersonaOutputDto personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+					PersonaOutputDto personaOutputDto = (PersonaOutputDto) gestorDocumentalMaestroManager.ejecutar(personaDto);
 					//PersonaOutputDto personaOutputDto = new PersonaOutputDto();
 					
 					logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
@@ -221,7 +221,7 @@ public class MaestroDePersonas implements Runnable {
 						personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
 						personaDto.setIdRol(ID_ROL_16);
 
-						personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+						personaOutputDto = (PersonaOutputDto) gestorDocumentalMaestroManager.ejecutar(personaDto);
 						//personaOutputDto.setIdIntervinienteHaya("123456789");
 
 						logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());

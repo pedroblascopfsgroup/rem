@@ -139,7 +139,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if (!esUA) {
 				BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
 			}else {
-				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId());
 				Activo activoMatriz = null;
 				if (!Checks.esNulo(agr)) {
 					activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
@@ -157,7 +157,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if (!esUA) {
 				BeanUtils.copyProperties(activoDto, activo.getAdjNoJudicial());
 			}else {
-				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId());
 				Activo activoMatriz = null;
 				if (!Checks.esNulo(agr)) {
 					activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
@@ -908,7 +908,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	public void comprobacionSuperficieUAs(DtoActivoDatosRegistrales activoDto, Long id) {
 		Activo activoActual = activoApi.get(id);
-		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(id);
+		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(id);
 		Activo activoMatriz = null;
 		if (!Checks.esNulo(agr)) {
 			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());

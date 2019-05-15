@@ -2,10 +2,8 @@ package es.pfsgroup.plugin.gestorDocumental.assembler;
 
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.KeyValuePair;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventResponseType;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.KeyValuePair;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.ProcessEventResponseType;
 
 
 public class GDActivoOutputAssembler {

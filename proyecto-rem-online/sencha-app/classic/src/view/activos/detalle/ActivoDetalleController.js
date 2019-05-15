@@ -5196,7 +5196,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         return str;
 
     },
-    
 
 	checkOfertaTrabajoVivo : function (ref){
 		var me = this;
@@ -5205,7 +5204,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		checkBox = me.lookupReference(ref),
 		valorCheck = me.lookupReference(ref).getValue(),
 		action = null,
-		finalVal = false;
+		finalVal = false,
 		isOk = true;
 		
 		if (!valorCheck) {

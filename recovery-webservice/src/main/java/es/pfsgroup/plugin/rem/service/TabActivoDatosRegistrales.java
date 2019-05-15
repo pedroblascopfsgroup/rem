@@ -144,7 +144,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				if (!Checks.esNulo(agr)) {
 					activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
 				}
-				if (!Checks.esNulo(activoMatriz)) {
+				if (!Checks.esNulo(activoMatriz) && !Checks.esNulo(activoMatriz.getAdjJudicial())) {
 					BeanUtils.copyProperty(activoDto,"tipoTituloActivoMatriz", DDTipoTituloActivo.tipoTituloJudicial);
 					BeanUtils.copyProperties(activoDto, activoMatriz.getInfoRegistral());
 				}
@@ -162,7 +162,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				if (!Checks.esNulo(agr)) {
 					activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
 				}
-				if (!Checks.esNulo(activoMatriz)) {
+				if (!Checks.esNulo(activoMatriz) && !Checks.esNulo(activoMatriz.getAdjNoJudicial())) {
 					BeanUtils.copyProperty(activoDto,"tipoTituloActivoMatriz", DDTipoTituloActivo.tipoTituloNoJudicial);
 					BeanUtils.copyProperties(activoDto, activoMatriz.getAdjNoJudicial());
 				}

@@ -54,8 +54,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		if(!Checks.esNulo(dto.getIdProveedor()) && Checks.esNulo(gasto.getPropietario())){
 			return new PageHibernate();
 		}
-   		return HibernateQueryUtils.page(this, hb, dto);
-
+		
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
 	@Override
@@ -108,7 +108,12 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idProveedor", dto.getIdProveedor());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+   		
+   		if(!Checks.esNulo(dto.getNumActivo())){
+   			hb.appendWhere("(tbj.numActivo = :numActnumActUA OR tbj.numActivoUa = :numActnumActUA)");
+   			hb.getParameters().put("numActnumActUA", dto.getNumActivo());
+   		}
+   		
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idActivoUa", dto.getIdActivoUa());
    		if(!Checks.esNulo(dto.getIdProveedor())) {
    			hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);

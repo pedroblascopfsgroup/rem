@@ -536,8 +536,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		INMATRICULADOS: "05",
 		SUBSANAR: "06",
 		NULO: "07"
- 	}
-
 	},
 
 	TIPOS_ESTADO_CIVIL:{

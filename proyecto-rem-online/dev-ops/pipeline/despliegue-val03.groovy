@@ -147,7 +147,7 @@ pipeline {
 
             }
         }
-		/*stage('Build') {
+		stage('Build') {
 		    steps {
 		        withMaven(
 		            mavenSettingsConfig: 'pfs-recovery-settings.xml'
@@ -165,7 +165,7 @@ pipeline {
 		             sh "mvn clean package -Prem,java7,ora12 -Dmaven.test.skip=true -Dversion=${version} surefire-report:report -Daggregate=true"
 		            }
 		    }
-		}*/
+		}
 
         stage('Package') {
             steps {

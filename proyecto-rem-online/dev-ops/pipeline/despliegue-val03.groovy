@@ -90,12 +90,9 @@ def deployPitertul(String host, int port) {
                 sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -cliente:rem -componente:pitertul -custom-dir:${entorno}"
 
                 withCredentials([string(credentialsId: 'password-BBDD-val03', variable: 'PASSWORD')]) {
-
-			withCredentials([string(credentialsId: 'password-BBDD-val03-grants', variable: 'PASSGRANTS')]) {
-                    		echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
-                    		sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xgrants:si -Pmaster:${PASSWORD} -Pentity01:${PASSWORD} -Pdwh:${PASSWORD} -Psystempfs:${PASSGRANTS}\""
-			}                
-		}
+                    echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
+                    sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xbi:si -Xgrants:si -Pmaster:${PASSWORD} -Pentity01:${PASSWORD} -Pdwh:${PASSWORD} -Psystempfs:${PASSWORD}\""
+                }
 
             }
             
@@ -121,7 +118,6 @@ pipeline {
     stages {
         stage("Setup") {
             steps {
-
                 echo """PARAMETROS: tagReferencia: ${env.tagReferencia}
                     tag/version/rama: ${env.version}
                     hito Link: ${env.hito}
@@ -131,7 +127,7 @@ pipeline {
 		    web: ${WEB}
 		    etl: ${ETL}
                     """
-
+		
                 // Esto es necesario porque sino no descarga bien los módulos
                 // no se el porqué.
                 sh script: "git rm fwk"
@@ -141,7 +137,6 @@ pipeline {
                 
                 echo "Comprueba formato y codificación ficheros"
                 sh script: "bash ./proyecto-rem-online/dev-ops/common-check-file-format.sh ${GIT_USER}"
-                
                 /*script {
                     env.GIT_COMMIT = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%H'").trim()
                     echo "Posicionados en commit: ${GIT_COMMIT}"
@@ -152,8 +147,6 @@ pipeline {
 
             }
         }
-
-	if(${MAVEN}){
 		stage('Build') {
 		    steps {
 		        withMaven(
@@ -173,7 +166,6 @@ pipeline {
 		            }
 		    }
 		}
-	}
 
         stage('Package') {
             steps {
@@ -181,12 +173,12 @@ pipeline {
                     "package-config" : { 
                         sh script: "bash ./proyecto-rem-online/dev-ops/package-config.sh -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-pitertul" : {
-                        sh script: "if [[ ${SCRIPTS} ]] ; then bash ./proyecto-rem-online/dev-ops/package-pitertul.sh -tagAnterior:${tagReferencia} -out-dir:${DIR_SALIDA} -entornos:${entorno} ; fi"
+                        sh script: "bash ./proyecto-rem-online/dev-ops/package-pitertul.sh -tagAnterior:${tagReferencia} -out-dir:${DIR_SALIDA} -entornos:${entorno}"
                     }, "package-online" : {
-                        sh script: "if [[ ${WEB} ]] ; then bash ./proyecto-rem-online/dev-ops/package-online.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno} ; fi"
+                        sh script: "bash ./proyecto-rem-online/dev-ops/package-online.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-procesos" : {
                         withCredentials([usernameColonPassword(credentialsId: 'jenkins@pfsgroup.es', variable: 'USERPASS')]) {
-                            sh script: "if [[ ${ETL} ]] ; then bash ./proyecto-rem-online/dev-ops/package-procesos.sh -UPnexus:${env.USERPASS} -out-dir:${DIR_SALIDA} -entorno:${entorno} ; fi"
+                            sh script: "bash ./proyecto-rem-online/dev-ops/package-procesos.sh -UPnexus:${env.USERPASS} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                         }
                     }
                 );
@@ -195,19 +187,16 @@ pipeline {
 
         stage('Update-DB') {
             steps {
-                deployPitertul("ops-bd@iap03", 22)
-                //build job: 'rem-bd-auxiliares', wait: false
+                deployPitertul("map017@192.168.49.33", 22)
             }
         }
 
         stage('Deploy') {
             steps {
-
                 timeout (time:20, unit:'MINUTES') {
                     deployFrontal("map017@192.168.49.33", 22)
                 }
                 timeout (time:15, unit:'MINUTES') {
-
                     deployProcesos("map017@192.168.49.33", 22)
                 }
             }

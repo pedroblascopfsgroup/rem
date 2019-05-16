@@ -186,7 +186,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 		}
 		
-			if (activo.getInfoRegistral() != null) {
+			if (!Checks.esNulo(activo.getInfoRegistral())) {
 				BeanUtils.copyProperties(activoDto, activo.getInfoRegistral().getInfoRegistralBien());
 				
 				if (!Checks.esNulo(activo.getInfoRegistral().getEstadoDivHorizontal())) {
@@ -211,6 +211,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				
 				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getLocalidadAnterior())) {
 					BeanUtils.copyProperty(activoDto, "localidadAnteriorCodigo", activo.getInfoRegistral().getLocalidadAnterior().getCodigo());
+				}
+				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activo.getInfoRegistral().getSuperficieUtil())) {
+					BeanUtils.copyProperty(activoDto, "superficieUtil", activo.getInfoRegistral().getSuperficieUtil());
 				}
 				
 				if (!Checks.esNulo(activo.getTipoTitulo())) {

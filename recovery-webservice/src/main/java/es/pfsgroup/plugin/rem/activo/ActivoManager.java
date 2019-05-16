@@ -2959,7 +2959,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					|| DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(activo.getSubcartera().getCodigo())
-					|| (activoBancario != null && DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo()));
+					|| (activoBancario != null && activoBancario.getClaseActivo() != null && DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo()));
 		return false;
 	}
 

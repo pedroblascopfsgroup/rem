@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.activo;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,8 @@ public class MaestroDeActivos {
 				dto.setEvent(dto.EVENTO_ALTA_ACTIVOS);
 				
 				logger.info("[MAESTRO_ACTIVOS] VARIABLES DE ENTRADA = \n idActivoAM ->" +idActivoAM+"\n numActivoAM _->" + numActivoAM + "\n idUnidadAlquilable ->" + idUnidadAlquilable);
-				ActivoOutputDto activoOutput =  (ActivoOutputDto) gestorDocumentalMaestroManager.ejecutar(dto);
+				ActivoOutputDto activoOutput =  new ActivoOutputDto();
+				BeanUtils.copyProperties(activoOutput,  gestorDocumentalMaestroManager.ejecutar(dto));
 			
 				if (!Checks.esNulo(activoOutput) && SIMULACRO.equals(activoOutput.getResultDescription())) {
 					activoOutput = new ActivoOutputDto();

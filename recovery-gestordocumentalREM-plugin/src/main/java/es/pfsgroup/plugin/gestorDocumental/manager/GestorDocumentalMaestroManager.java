@@ -74,14 +74,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 				&& !Checks.esNulo(output.getParameters().getParameter().get(0).getCode())
 				&& output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
 					logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
-					
-					if (dto instanceof PersonaInputDto)
-						return (PersonaOutputDto) GDPersonaOutputAssembler.outputToDtoPersona(output);
-					
-					else if (dto instanceof ActivoInputDto)
-						
-						return GDActivoOutputAssembler.outputToDtoActivo(output);
-					
+
 				} else {
 					logger.error("RESULTADO_COD_MAESTRO: " + output.getResultCode());
 					logger.error("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
@@ -107,6 +100,13 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 		}catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
 		}
+		
+		if (dto instanceof PersonaInputDto)
+			return GDPersonaOutputAssembler.outputToDtoPersona(output);
+		
+		else if (dto instanceof ActivoInputDto)
+			
+			return GDActivoOutputAssembler.outputToDtoActivo(output);
 	
 		return output;
 	}

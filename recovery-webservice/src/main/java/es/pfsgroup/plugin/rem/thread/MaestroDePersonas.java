@@ -225,8 +225,8 @@ public class MaestroDePersonas implements Runnable {
 						personaDto.setFechaOperacion(today);
 						personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
 						personaDto.setIdRol(ID_ROL_16);
-
-						personaOutputDto = (PersonaOutputDto) gestorDocumentalMaestroManager.ejecutar(personaDto);
+						BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
+								.ejecutar(personaDto));
 						//personaOutputDto.setIdIntervinienteHaya("123456789");
 
 						logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());

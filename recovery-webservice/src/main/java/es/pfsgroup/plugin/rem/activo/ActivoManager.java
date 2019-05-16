@@ -1653,7 +1653,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				logger.debug("Foto procesada para el activo " + activo.getNumActivo());
 
 			} else {
-				throw new Exception("La foto esta asociada a un activo inexistente");
+				logger.debug("No existe la unidad organizativa");
 			}
 
 		} catch (Exception e) {

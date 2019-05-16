@@ -905,6 +905,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					titAdi.setRegimenMatrimonial((DDRegimenesMatrimoniales) genericDao.get(
 							DDRegimenesMatrimoniales.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodRegimenMatrimonial())));
+
 				}
 				if(titDto.getCesionDatos() != null){
 					titAdi.setRechazarCesionDatosPropietario(!titDto.getCesionDatos());

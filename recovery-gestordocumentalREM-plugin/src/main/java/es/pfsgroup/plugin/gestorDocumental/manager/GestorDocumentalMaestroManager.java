@@ -49,15 +49,21 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			logger.error("[ERROR]--[GestorDocumentalMaestroManager] Instancia de entrada desconocida");
 		}
 		try {
+			logger.info("Linea urlWSDL");
 			String urlWSDL = getWSURL(WEB_SERVICE_UNIDADES);
+			logger.info("Linea targetNamespace");
 			String targetNamespace = getWSNamespace();
+			logger.info("Linea name");
 			String name = getWSName();
 			//si es nulo no avanzar para no estropear los codigos en local
 			if(!Checks.esNulo(urlWSDL)) {
 				URL wsdlLocation = new URL(urlWSDL);
 				QName qName = new QName(targetNamespace, name);
+				logger.info(".MAESTRO_UNIDADES.WsWS");
 				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.WsWS(wsdlLocation, qName);
+				logger.info(".MAESTRO_UNIDADES.WsPort");
 				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.WsPort servicePort = service.getWs();
+				logger.info("servicePort");
 				output = servicePort.processEvent(input);
 				
 				logger.info("WS invocado! Valores de respuesta del MAESTRO: ");					
@@ -70,7 +76,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 					logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
 					
 					if (dto instanceof PersonaInputDto)
-						return GDPersonaOutputAssembler.outputToDtoPersona(output);
+						return (PersonaOutputDto) GDPersonaOutputAssembler.outputToDtoPersona(output);
 					
 					else if (dto instanceof ActivoInputDto)
 						

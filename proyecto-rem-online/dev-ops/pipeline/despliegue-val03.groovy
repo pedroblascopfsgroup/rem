@@ -90,6 +90,7 @@ def deployPitertul(String host, int port) {
                 sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -cliente:rem -componente:pitertul -custom-dir:${entorno}"
 
                 withCredentials([string(credentialsId: 'password-BBDD-val03', variable: 'PASSWORD')]) {
+
 			withCredentials([string(credentialsId: 'password-BBDD-val03-grants', variable: 'PASSGRANTS')]) {
                     		echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
                     		sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xgrants:si -Pmaster:${PASSWORD} -Pentity01:${PASSWORD} -Pdwh:${PASSWORD} -Psystempfs:${PASSGRANTS}\""
@@ -118,7 +119,6 @@ pipeline {
      }
 
     stages {
-
         stage("Setup") {
             steps {
 
@@ -126,6 +126,10 @@ pipeline {
                     tag/version/rama: ${env.version}
                     hito Link: ${env.hito}
                     entorno: ${entorno}
+		    maven: ${MAVEN}
+		    scripts: ${SCRIPTS}
+		    web: ${WEB}
+		    etl: ${ETL}
                     """
 
                 // Esto es necesario porque sino no descarga bien los módulos
@@ -137,10 +141,11 @@ pipeline {
                 
                 echo "Comprueba formato y codificación ficheros"
                 sh script: "bash ./proyecto-rem-online/dev-ops/common-check-file-format.sh ${GIT_USER}"
-                script {
+                
+                /*script {
                     env.GIT_COMMIT = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%H'").trim()
                     echo "Posicionados en commit: ${GIT_COMMIT}"
-                }
+                }*/
 
                 echo "Fusiona versiones de BPMS"
                 sh script: "if [[ -f dev-ops/bpms/fusionar-properties-xmls.sh ]] && [[ -f dev-ops/bpms/versiones-bpms.txt ]] ; then bash ./dev-ops/bpms/fusionar-properties-xmls.sh ./dev-ops/bpms/versiones-bpms.txt ; fi"
@@ -148,27 +153,27 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
+	if(${MAVEN}){
+		stage('Build') {
+		    steps {
+		        withMaven(
+		            mavenSettingsConfig: 'pfs-recovery-settings.xml'
+		            , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
+		            ) {
+		             sh "mvn install:install-file -Dpackaging=pom -Dfile=pom.xml -DpomFile=pom.xml"
+		             sh "mvn org.codehaus.mojo:versions-maven-plugin:2.4:set -DnewVersion=${version}"
+		            }
 
-                withMaven(
-                    mavenSettingsConfig: 'pfs-recovery-settings.xml'
-                    , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
-                    ) {
-                     sh "mvn install:install-file -Dpackaging=pom -Dfile=pom.xml -DpomFile=pom.xml"
-                     sh "mvn org.codehaus.mojo:versions-maven-plugin:2.4:set -DnewVersion=${version}"
-                    }
-
-                sh "bash ./proyecto-rem-online/dev-ops/common-sencha6-build.sh"
-                withMaven(
-                    mavenSettingsConfig: 'pfs-recovery-settings.xml'
-                    , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
-                    ) {
-                     sh "mvn clean package -Prem,java7 -Dmaven.test.skip=true -Dversion=\"${entorno} - ${version} (${GIT_COMMIT})\" surefire-report:report -Daggregate=true"
-                    }
-
-            }
-        }
+		        sh "bash ./proyecto-rem-online/dev-ops/common-sencha6-build.sh"
+		        withMaven(
+		            mavenSettingsConfig: 'pfs-recovery-settings.xml'
+		            , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
+		            ) {
+		             sh "mvn clean package -Prem,java7 -Dmaven.test.skip=true -Dversion=${version} surefire-report:report -Daggregate=true"
+		            }
+		    }
+		}
+	}
 
         stage('Package') {
             steps {
@@ -176,14 +181,12 @@ pipeline {
                     "package-config" : { 
                         sh script: "bash ./proyecto-rem-online/dev-ops/package-config.sh -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-pitertul" : {
-                        sh script: "bash ./proyecto-rem-online/dev-ops/package-pitertul.sh -tagAnterior:${tagReferencia} -out-dir:${DIR_SALIDA} -entornos:${entorno}"
-//                    }, "package-springBatch" : {
-//                        sh script: "bash ./proyecto-rem-online/dev-ops/package-spring-batch.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
+                        sh script: "if [[ ${SCRIPTS} ]] ; then bash ./proyecto-rem-online/dev-ops/package-pitertul.sh -tagAnterior:${tagReferencia} -out-dir:${DIR_SALIDA} -entornos:${entorno} ; fi"
                     }, "package-online" : {
-                        sh script: "bash ./proyecto-rem-online/dev-ops/package-online.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
+                        sh script: "if [[ ${WEB} ]] ; then bash ./proyecto-rem-online/dev-ops/package-online.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno} ; fi"
                     }, "package-procesos" : {
                         withCredentials([usernameColonPassword(credentialsId: 'jenkins@pfsgroup.es', variable: 'USERPASS')]) {
-                            sh script: "bash ./proyecto-rem-online/dev-ops/package-procesos.sh -UPnexus:${env.USERPASS} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
+                            sh script: "if [[ ${ETL} ]] ; then bash ./proyecto-rem-online/dev-ops/package-procesos.sh -UPnexus:${env.USERPASS} -out-dir:${DIR_SALIDA} -entorno:${entorno} ; fi"
                         }
                     }
                 );
@@ -199,10 +202,12 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                timeout (time:10, unit:'MINUTES') {
+
+                timeout (time:20, unit:'MINUTES') {
                     deployFrontal("map017@192.168.49.33", 22)
                 }
-                timeout (time:5, unit:'MINUTES') {
+                timeout (time:15, unit:'MINUTES') {
+
                     deployProcesos("map017@192.168.49.33", 22)
                 }
             }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20190514
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190516
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-4227
+--## VERSION_ARTEFACTO=2.8.4
+--## INCIDENCIA_LINK=REMVIP-3995
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -1253,12 +1253,8 @@ ELSE
                     , ACT.AHP_CHECK_OCULTAR_V, ACT.AHP_CHECK_OCULTAR_A
                     , ROW_NUMBER() OVER(
                         PARTITION BY ACT.ACT_ID
-                        ORDER BY (CASE
-                            WHEN TCO.DD_TCO_CODIGO IN (''01'',''02'')
-                            THEN ACT.AHP_FECHA_FIN_VENTA
-                            ELSE ACT.AHP_FECHA_FIN_ALQUILER
-                            END)
-                            DESC NULLS FIRST) RN
+                        ORDER BY AHP.AHP_ID
+                            DESC) RN
                 FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
                 JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT.DD_TCO_ID
                 JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = ACT.DD_EPV_ID

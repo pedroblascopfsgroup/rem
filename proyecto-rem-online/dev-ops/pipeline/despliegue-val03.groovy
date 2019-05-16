@@ -91,7 +91,7 @@ def deployPitertul(String host, int port) {
 
                 withCredentials([string(credentialsId: 'password-BBDD-val03', variable: 'PASSWORD')]) {
                     echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
-                    sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xbi:si -Xgrants:si -Pmaster:$AOk\$M{~2 -Pentity01:$AOk\$M{~2 -Pdwh:$AOk\$M{~2 -Psystempfs:admin\""
+                    sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xbi:si -Xgrants:si -Pmaster:AOk\$M{~2 -Pentity01:AOk\$M{~2 -Pdwh:AOk\$M{~2 -Psystempfs:admin\""
                 }
 
             }
@@ -147,7 +147,7 @@ pipeline {
 
             }
         }
-		stage('Build') {
+		/*stage('Build') {
 		    steps {
 		        withMaven(
 		            mavenSettingsConfig: 'pfs-recovery-settings.xml'
@@ -165,7 +165,7 @@ pipeline {
 		             sh "mvn clean package -Prem,java7,ora12 -Dmaven.test.skip=true -Dversion=${version} surefire-report:report -Daggregate=true"
 		            }
 		    }
-		}
+		}*/
 
         stage('Package') {
             steps {

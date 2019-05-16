@@ -427,7 +427,6 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
                                            FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
                                           WHERE BORRADO = 0
                                             AND DD_TPU_CODIGO = ''01'')
-						  , APU_FECHA_INI_VENTA = SYSDATE
                           , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                           , FECHAMODIFICAR = SYSDATE
                       WHERE ACT_ID = '||nACT_ID||'
@@ -449,7 +448,6 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
                                            FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
                                           WHERE BORRADO = 0
                                             AND DD_TPU_CODIGO = ''02'')
-						  , APU_FECHA_INI_VENTA = SYSDATE
                           , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                           , FECHAMODIFICAR = SYSDATE
                       WHERE ACT_ID = '||nACT_ID||'
@@ -472,7 +470,6 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
                                          FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
                                         WHERE BORRADO = 0
                                           AND DD_TPU_CODIGO = ''01'')
-						, APU_FECHA_INI_VENTA = SYSDATE
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
                     WHERE ACT_ID = '||nACT_ID||'
@@ -496,7 +493,6 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
                                          FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
                                         WHERE BORRADO = 0
                                           AND DD_TPU_CODIGO = ''02'')
-						, APU_FECHA_INI_VENTA = SYSDATE
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
                     WHERE ACT_ID = '||nACT_ID||'
@@ -533,7 +529,6 @@ IF pINFORME_COMERCIAL = 1 THEN
 											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
 											WHERE BORRADO = 0
 												AND DD_TPU_CODIGO = ''01'')
-							, APU_FECHA_INI_ALQUILER = SYSDATE
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 						WHERE ACT_ID = '||nACT_ID||'
@@ -555,7 +550,6 @@ IF pINFORME_COMERCIAL = 1 THEN
 											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
 											WHERE BORRADO = 0
 												AND DD_TPU_CODIGO = ''02'')
-							, APU_FECHA_INI_ALQUILER = SYSDATE
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 						WHERE ACT_ID = '||nACT_ID||'
@@ -578,7 +572,6 @@ IF pINFORME_COMERCIAL = 1 THEN
 											 FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
 											WHERE BORRADO = 0
 											  AND DD_TPU_CODIGO = ''01'')
-							, APU_FECHA_INI_ALQUILER = SYSDATE
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 						WHERE ACT_ID = '||nACT_ID||'
@@ -600,7 +593,6 @@ IF pINFORME_COMERCIAL = 1 THEN
 												FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
 												WHERE BORRADO = 0
 												AND DD_TPU_CODIGO = ''02'')
-							    , APU_FECHA_INI_ALQUILER = SYSDATE
 								, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 								, FECHAMODIFICAR = SYSDATE
 							WHERE ACT_ID = '||nACT_ID||'
@@ -624,7 +616,6 @@ IF pINFORME_COMERCIAL = 1 THEN
                                          FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
                                         WHERE BORRADO = 0
                                           AND DD_TPU_CODIGO = ''01'')
-					    , APU_FECHA_INI_ALQUILER = SYSDATE
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
                     WHERE ACT_ID = '||nACT_ID||'
@@ -649,7 +640,6 @@ ELSE
 											 FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
 											WHERE BORRADO = 0
 											  AND DD_TPU_CODIGO = ''01'')
-							, APU_FECHA_INI_ALQUILER = SYSDATE
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 						WHERE ACT_ID = '||nACT_ID||'
@@ -672,7 +662,6 @@ ELSE
 											 FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
 											WHERE BORRADO = 0
 											  AND DD_TPU_CODIGO = ''02'')
-							, APU_FECHA_INI_ALQUILER = SYSDATE
 							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 							, FECHAMODIFICAR = SYSDATE
 						WHERE ACT_ID = '||nACT_ID||'

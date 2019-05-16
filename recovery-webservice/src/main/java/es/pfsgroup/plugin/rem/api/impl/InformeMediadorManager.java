@@ -1527,16 +1527,18 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 					genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
 				}
-
-				// Actualizamos el rating si es un activo de tipo vivienda
-				if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-					activoApi.calcularRatingActivo(activo.getId());
-				}
+				
 				// Actualizamos la situacion comercial del activo
 				updaterState.updaterStateDisponibilidadComercialAndSave(activo);
 				
 				activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 
+				// Actualizamos el rating si es un activo de tipo vivienda y tiene el informe comercial aprobado
+				if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
+						&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+					activoApi.calcularRatingActivo(activo.getId());
+				}
+				
 				map.put("idInformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 				if (!Checks.esNulo(informeEntity)) {
 					map.put("idInformeMediadorRem", informeEntity.getId());

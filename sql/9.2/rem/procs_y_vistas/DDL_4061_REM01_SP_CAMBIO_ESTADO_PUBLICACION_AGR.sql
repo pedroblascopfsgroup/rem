@@ -19,7 +19,7 @@
 --##		0.7 Oscar Diestre HREOS-5358 - Tratamiento agrupaciones asisitidas vencidas
 --##		0.8 Sergio H . Deshacemos temporalmente las modificaciones de la 0.7
 --##		0.9 REMVIP-3306 Cambios en el funcionamiento del historico
---##    0.10 HREOS-6184 Cambio en vista y cambio es_condicionado
+--##    	0.10 HREOS-6184 Cambio en vista y cambio es_condicionado
 --##########################################
 --*/
 
@@ -1275,12 +1275,8 @@ ELSE
                     , ACT.AHP_CHECK_OCULTAR_V, ACT.AHP_CHECK_OCULTAR_A
                     , ROW_NUMBER() OVER(
                         PARTITION BY ACT.ACT_ID
-                        ORDER BY (CASE
-                            WHEN TCO.DD_TCO_CODIGO IN (''01'',''02'')
-                            THEN ACT.AHP_FECHA_FIN_VENTA
-                            ELSE ACT.AHP_FECHA_FIN_ALQUILER
-                            END)
-                            DESC NULLS FIRST) RN
+                        ORDER BY AHP.AHP_ID
+                            DESC) RN
                 FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
                 JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT.DD_TCO_ID
                 JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = ACT.DD_EPV_ID

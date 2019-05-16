@@ -162,7 +162,7 @@ pipeline {
 		            mavenSettingsConfig: 'pfs-recovery-settings.xml'
 		            , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
 		            ) {
-		             sh "mvn clean package -Prem,java7 -Dmaven.test.skip=true -Dversion=${version} surefire-report:report -Daggregate=true"
+		             sh "mvn clean package -Prem,java7,ora12 -Dmaven.test.skip=true -Dversion=${version} surefire-report:report -Daggregate=true"
 		            }
 		    }
 		}

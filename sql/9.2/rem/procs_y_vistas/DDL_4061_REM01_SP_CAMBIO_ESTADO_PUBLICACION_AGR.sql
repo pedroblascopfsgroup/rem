@@ -1253,7 +1253,7 @@ ELSE
                     , ACT.AHP_CHECK_OCULTAR_V, ACT.AHP_CHECK_OCULTAR_A
                     , ROW_NUMBER() OVER(
                         PARTITION BY ACT.ACT_ID
-                        ORDER BY AHP.AHP_ID
+                        ORDER BY ACT.AHP_ID
                             DESC) RN
                 FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
                 JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT.DD_TCO_ID

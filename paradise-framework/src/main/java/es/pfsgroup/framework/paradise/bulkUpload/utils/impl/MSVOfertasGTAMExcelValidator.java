@@ -413,7 +413,7 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 					String tipoResolucion = exc.dameCelda(i, 9);
 					String estadoResolucion = exc.dameCelda(i, 6);
 					
-					if("1".equals(tipoResolucion) && "2".equals(estadoResolucion) && Checks.esNulo(tipoCancelacion)){
+					if(("1".equals(tipoResolucion) || "01".equals(tipoResolucion)) && ("2".equals(estadoResolucion) || "02".equals(estadoResolucion)) && Checks.esNulo(tipoCancelacion)){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -440,7 +440,7 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 					String importeContraOferta = exc.dameCelda(i, 8);
 					String tipoResolucion = exc.dameCelda(i, 9);
 					
-					if("3".equals(tipoResolucion) && Checks.esNulo(importeContraOferta)){
+					if(("3".equals(tipoResolucion) || "03".equals(tipoResolucion)) && Checks.esNulo(importeContraOferta)){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {

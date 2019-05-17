@@ -411,7 +411,7 @@ public class OfertasController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET, value="getOfertasVivasActGestoria")
+	@RequestMapping(method = RequestMethod.GET, value="ofertas/getOfertasVivasActGestoria")
 	public void getOfertasVivasActGestoria(Long numActivo, String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		DtoOfertasFilter filtro = new DtoOfertasFilter();
 		filtro.setGestoria(codGestoria);

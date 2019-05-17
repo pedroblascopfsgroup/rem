@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20190514
+--## AUTOR=Ramon Llinares
+--## FECHA_CREACION=20190516
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-4227
@@ -166,8 +166,8 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                     JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE APU.BORRADO = 0.
-                                     AND ((APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO = 0)
-                                        OR (APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO = 1
+                                     AND ((APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO_PUBLI = 0)
+                                        OR (APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO_PUBLI = 1
                                             AND (MTO.DD_MTO_ID = (SELECT DD_MTO_V_ID FROM REM01.ACT_APU_ACTIVO_PUBLICACION WHERE ACT_ID = '||pACT_ID||')
                                                 OR MTO.DD_MTO_ID = (SELECT DD_MTO_A_ID FROM REM01.ACT_APU_ACTIVO_PUBLICACION WHERE ACT_ID = '||pACT_ID||'))))
                                      AND APU.ACT_ID= '||pACT_ID||

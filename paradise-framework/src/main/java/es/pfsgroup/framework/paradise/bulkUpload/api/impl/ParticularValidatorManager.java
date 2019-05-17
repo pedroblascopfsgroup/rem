@@ -3026,4 +3026,54 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"1".equals(resultado);
 	}
 
+	@Override
+	public Boolean perteneceDDEstadoActivo(String codigoEstadoActivo) {
+		if(!Checks.esNulo(codigoEstadoActivo)) {
+			String resultado = rawDao.getExecuteSQL("SELECT Count(*) "
+					+ "FROM DD_EAC_ESTADO_ACTIVO "
+					+ "WHERE DD_EAC_CODIGO =" + codigoEstadoActivo );
+		
+			return  !"1".equals(resultado);
+		}
+		return false;
+	}
+	
+	@Override
+	public Boolean perteneceDDTipoTituloTPA(String codigoTituloTPA) {
+		if(!Checks.esNulo(codigoTituloTPA)) {
+			String resultado = rawDao.getExecuteSQL("SELECT Count(*) "
+					+ "FROM DD_TPA_TIPO_TITULO_ACT "
+					+ "WHERE DD_TPA_CODIGO =" + codigoTituloTPA );
+		
+			return  !"1".equals(resultado);
+		}
+		return false;
+	}
+	
+	@Override
+	public Boolean conTituloOcupadoSi(String codigoTituloTPA) {
+			if(!Checks.esNulo(codigoTituloTPA)) {
+				String resultado = rawDao.getExecuteSQL("SELECT Count(*) "
+						+ "FROM DD_TPA_TIPO_TITULO_ACT "
+						+ "WHERE DD_TPA_CODIGO IN ('01','02') "
+						+ "AND DD_EAC_CODIGO =" + codigoTituloTPA );
+			
+				return  !"1".equals(resultado);
+			}
+			return false;
+	}
+	
+	@Override
+	public Boolean conTituloOcupadoNo(String codigoTituloTPA) {
+			if(!Checks.esNulo(codigoTituloTPA)) {
+				String resultado = rawDao.getExecuteSQL("SELECT Count(*) "
+						+ "FROM DD_TPA_TIPO_TITULO_ACT "
+						+ "WHERE DD_TPA_CODIGO IN ('01','03') "
+						+ "AND DD_EAC_CODIGO =" + codigoTituloTPA );
+			
+				return  !"1".equals(resultado);
+			}
+			return false;
+	}
+
 }

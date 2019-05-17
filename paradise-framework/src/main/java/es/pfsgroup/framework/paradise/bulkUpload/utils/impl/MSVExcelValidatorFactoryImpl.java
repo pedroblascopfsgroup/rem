@@ -152,6 +152,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVActualizadorFechaIngresoChequeExcelValidator fechaIngresoCheque;
+	
+	@Autowired 
+	private MSVSuperDiscPublicacionesExcelValidator disclamerPublicaciones;
 
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -297,6 +300,9 @@ public class MSVExcelValidatorFactoryImpl {
 		}
 		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS.equals(codTipoOperacion)) {
 			return cargaMasivaEcoTrabajos;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_PUBLICACION.equals(codTipoOperacion)) {
+			return disclamerPublicaciones;
 		}
 
 		return null;

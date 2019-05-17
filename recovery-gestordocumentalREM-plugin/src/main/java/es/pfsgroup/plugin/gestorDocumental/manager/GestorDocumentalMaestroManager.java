@@ -77,6 +77,12 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 					logger.error("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
 				}
 				
+				if (dto instanceof PersonaInputDto)
+					return GDPersonaOutputAssembler.outputToDtoPersona(output);
+				
+				else if (dto instanceof ActivoInputDto)
+					
+					return GDActivoOutputAssembler.outputToDtoActivo(output);
 			}else {
 				
 				logger.info("Se generan valores de prueba");
@@ -97,13 +103,6 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 		}catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
 		}
-		
-		if (dto instanceof PersonaInputDto)
-			return GDPersonaOutputAssembler.outputToDtoPersona(output);
-		
-		else if (dto instanceof ActivoInputDto)
-			
-			return GDActivoOutputAssembler.outputToDtoActivo(output);
 	
 		return output;
 	}

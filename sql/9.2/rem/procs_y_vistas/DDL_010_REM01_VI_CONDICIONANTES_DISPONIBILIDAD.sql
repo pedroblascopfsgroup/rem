@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190307
+--## AUTOR=Ramon Llinares
+--## FECHA_CREACION=20190516
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-3503
@@ -80,12 +80,13 @@ BEGIN
                                                           estado_portal_externo,
                                                           es_condicionado,
                                                           est_disp_com_codigo,
+														  es_condicionado_publi,
                                                           borrado
                                                          )
 AS
    SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro,
           sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado,
-          est_disp_com_codigo, borrado
+          est_disp_com_codigo,es_condicionado_publi,borrado
 
      FROM (SELECT act.act_id, 
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) 
@@ -136,7 +137,15 @@ AS
 					THEN ''01''
                     ELSE ''02''
                   END AS est_disp_com_codigo,
+
+			      CASE 
+					WHEN (sps1.sps_ocupado = 1 OR sps1.sps_acc_tapiado = 1) THEN 1 
+						ELSE 0 
+					END as es_condicionado_publi,	
+
                   0 AS borrado
+
+
              FROM '||V_ESQUEMA||'.act_activo act LEFT JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba2 ON aba2.act_id = act.act_id 
 				  
 				  LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra ON cra.dd_cra_id = act.dd_cra_id 	

@@ -114,6 +114,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -1196,6 +1197,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				if (Checks.esNulo(activo)) {
 					throw new JsonViewerException("Este activo no existe");
+				} else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.UNIDAD_ALQUILABLE)) {
+					throw new JsonViewerException("No es posible incluir una UA en un gasto");
 				} else {
 
 					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) && Checks.esNulo(activo.getNumInmovilizadoBnk())) {

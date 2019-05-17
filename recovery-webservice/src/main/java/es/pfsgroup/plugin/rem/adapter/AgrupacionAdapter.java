@@ -1443,7 +1443,9 @@ public class AgrupacionAdapter {
 							}
 						}
 					}
+					
 					activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
+					
 				} else {
 					throw new JsonViewerException(
 							"No se puede alterar el listado de activos cuando la agrupación tiene ofertas");
@@ -1459,6 +1461,30 @@ public class AgrupacionAdapter {
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
 			} else if(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
 					.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
+				
+				Long idActivoUA = activoAgrupacionActivo.getActivo().getId();
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivoUA);
+				Activo activoActual = activoAgrupacionActivo.getActivo();
+				PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
+				ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+				
+				if(!Checks.esNulo(activoPatrimonio)) {
+					activoPatrimonio.setCheckHPM(false);
+					
+				}
+				
+				if (!Checks.esNulo(perimetroActivo)) {
+					perimetroActivo.setActivo(activoActual);
+					perimetroActivo.setIncluidoEnPerimetro(0);
+					perimetroActivo.setAplicaTramiteAdmision(0);
+					perimetroActivo.setAplicaGestion(0);
+					perimetroActivo.setAplicaAsignarMediador(0);
+					perimetroActivo.setAplicaComercializar(0);
+					perimetroActivo.setAplicaFormalizar(0);
+					perimetroActivo.setAplicaPublicar(false);
+					
+					genericDao.save(PerimetroActivo.class, perimetroActivo);
+				}
 
 					activoAgrupacionActivo.getAuditoria().setBorrado(true);
 					activoAgrupacionActivo.getAuditoria().setFechaBorrar(new Date());
@@ -2784,6 +2810,7 @@ public class AgrupacionAdapter {
 								
 								if(!Checks.esNulo(activoPatrimonio)) {
 									activoPatrimonio.setCheckHPM(false);
+									
 								}
 								
 								if (!Checks.esNulo(perimetroActivo)) {

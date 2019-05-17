@@ -6059,6 +6059,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				expediente.setCondicionante(new CondicionanteExpediente());
 			CondicionanteExpediente condiciones = expediente.getCondicionante();
 			
+			DDEntidadFinanciera entidadFinancieraPrevia = condiciones.getEntidadFinanciera();
+			
 			if (!Checks.esNulo(condiciones)) {
 
 					Integer solicitaFinanciacion = null;
@@ -6149,8 +6151,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 					formalizacion.setCapitalConcedido(null);
 
-				}						
-
+				} else if (!Checks.esNulo(entidadFinancieraPrevia) && !Checks.esNulo(dto.getEntidadFinancieraCodigo())
+						&& !entidadFinancieraPrevia.getCodigo().equals(dto.getEntidadFinancieraCodigo())
+						&& !dto.getEntidadFinancieraCodigo().equals(DDEntidadFinanciera.ENTIDAD_FINANCIERA_BANKIA)) {
+					formalizacion.setCapitalConcedido(null);
+				}
+				
 				genericDao.save(Formalizacion.class, formalizacion);
 			}
 			

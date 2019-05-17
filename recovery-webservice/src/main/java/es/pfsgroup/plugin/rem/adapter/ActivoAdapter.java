@@ -1342,8 +1342,10 @@ public class ActivoAdapter {
 					BeanUtils.copyProperties(catastroDto, activo.getAdmisionDocumento().get(i));
 
 					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento())) {
+						if(!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo())){
 						BeanUtils.copyProperty(catastroDto, "descripcionTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getDescripcion());
 						BeanUtils.copyProperty(catastroDto, "codigoTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getCodigo());
+						}
 					}
 
 					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica())) {

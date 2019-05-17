@@ -310,7 +310,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		HQLBuilder hb = null;
 		
 		String from = "SELECT voferta FROM VOfertasActivosAgrupacion voferta, GestorActivo ga INNER JOIN ga.activo INNER JOIN ga.tipoGestor";
-		String where ="voferta.idActivo = ga.activo.id AND ga.usuario.id = " + usuarioGestoria.getId() + " AND voferta.numActivoAgrupacion = "
+		String where ="voferta.idActivo = ga.activo.id AND ga.usuario.username = '" + usuarioGestoria.getUsername() + "' AND voferta.numActivoAgrupacion = "
 				+ dtoOfertasFilter.getNumActivo();
 					
 		hb = new HQLBuilder(from);

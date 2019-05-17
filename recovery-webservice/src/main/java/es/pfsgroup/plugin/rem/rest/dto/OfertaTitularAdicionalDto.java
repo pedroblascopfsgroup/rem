@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Size;
 
-import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -48,6 +47,7 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	@Diccionary(clase = DDRegimenesMatrimoniales.class, message = "El regimen matrimonial no existe", groups = { Insert.class,
 			Update.class })
 	private String codRegimenMatrimonial;
+
 	
 	private Boolean transferenciasInternacionales = Boolean.FALSE;
 	private Boolean cesionDatos = Boolean.FALSE;
@@ -125,7 +125,60 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	private String codPaisRepresentante;
 	@Size(max=5,groups = { Insert.class, Update.class })
 	private String codigoPostalRepresentante;
-	
+	public String getCodTipoDocumento() {
+		return codTipoDocumento;
+	}
+	public void setCodTipoDocumento(String codTipoDocumento) {
+		this.codTipoDocumento = codTipoDocumento;
+	}
+	public String getDocumento() {
+		return documento;
+	}
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getApellidos() {
+		return apellidos;
+	}
+	public void setApellidos(String apellidos) {
+		this.apellidos = apellidos;
+	}
+	public String getCodMunicipio() {
+		return codMunicipio;
+	}
+	public void setCodMunicipio(String codMunicipio) {
+		this.codMunicipio = codMunicipio;
+	}
+	public String getCodProvincia() {
+		return codProvincia;
+	}
+	public void setCodProvincia(String codProvincia) {
+		this.codProvincia = codProvincia;
+	}
+	public String getCodigoPostal() {
+		return codigoPostal;
+	}
+	public void setCodigoPostal(String codigoPostal) {
+		this.codigoPostal = codigoPostal;
+	}
+	public String getCodEstadoCivil() {
+		return codEstadoCivil;
+	}
+	public void setCodEstadoCivil(String codEstadoCivil) {
+		this.codEstadoCivil = codEstadoCivil;
+	}
+	public String getCodRegimenMatrimonial() {
+		return codRegimenMatrimonial;
+	}
+	public void setCodRegimenMatrimonial(String codRegimenMatrimonial) {
+		this.codRegimenMatrimonial = codRegimenMatrimonial;
+	}
 	public Boolean getTransferenciasInternacionales() {
 		return transferenciasInternacionales;
 	}
@@ -143,60 +196,6 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	}
 	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
 		this.comunicacionTerceros = comunicacionTerceros;
-	}
-	public String getNombre() {
-		return nombre;
-	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-	public String getCodTipoDocumento() {
-		return codTipoDocumento;
-	}
-	public void setCodTipoDocumento(String codTipoDocumento) {
-		this.codTipoDocumento = codTipoDocumento;
-	}
-	public String getDocumento() {
-		return documento;
-	}
-	public void setDocumento(String documento) {
-		this.documento = documento;
-	}
-	public String getApellidos() {
-		return apellidos;
-	}
-	public void setApellidos(String apellidos) {
-		this.apellidos = apellidos;
-	}
-	public String getCodMunicipio() {
-		return codMunicipio;
-	}
-	public void setCodMunicipio(String codigoMunicipio) {
-		this.codMunicipio = codigoMunicipio;
-	}
-	public String getCodProvincia() {
-		return codProvincia;
-	}
-	public void setCodProvincia(String codigoProvincia) {
-		this.codProvincia = codigoProvincia;
-	}
-	public String getCodigoPostal() {
-		return codigoPostal;
-	}
-	public void setCodigoPostal(String codPostal) {
-		this.codigoPostal = codPostal;
-	}
-	public String getCodEstadoCivil() {
-		return codEstadoCivil;
-	}
-	public void setCodEstadoCivil(String codigoEstadoCivil) {
-		this.codEstadoCivil = codigoEstadoCivil;
-	}
-	public String getCodRegimenMatrimonial() {
-		return codRegimenMatrimonial;
-	}
-	public void setCodRegimenMatrimonial(String codRegimenMatrimonial) {
-		this.codRegimenMatrimonial = codRegimenMatrimonial;
 	}
 	public String getRazonSocial() {
 		return razonSocial;
@@ -270,7 +269,6 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setPuerta(String puerta) {
 		this.puerta = puerta;
 	}
-
 	public String getCodPedania() {
 		return codPedania;
 	}
@@ -283,7 +281,6 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	
 	public String getConyugeNombre() {
 		return conyugeNombre;
 	}
@@ -362,4 +359,7 @@ public class OfertaTitularAdicionalDto implements Serializable {
 	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
 		this.codigoPostalRepresentante = codigoPostalRepresentante;
 	}
+	
+	
+	
 }

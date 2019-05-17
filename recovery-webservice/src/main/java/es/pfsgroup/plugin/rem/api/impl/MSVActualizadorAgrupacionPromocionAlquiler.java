@@ -250,7 +250,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		genericDao.save(Activo.class, unidadAlquilable);
 
 		//--Seteo mediante maestro de activos
-		MaestroDeActivos maestroActivos = new MaestroDeActivos(activoMatriz.getId(), activoMatriz.getNumActivo(), unidadAlquilable.getId());
+		MaestroDeActivos maestroActivos = new MaestroDeActivos(unidadAlquilable.getId(), activoMatriz.getId(), activoMatriz.getNumActivo());
 		ActivoOutputDto activoOutput = maestroActivos.altaActivo();
 		if (!Checks.esNulo(activoOutput)) {
 			Long numActivoUnidadAlquilable = Long.valueOf(activoOutput.getNumActivoUnidadAlquilable());

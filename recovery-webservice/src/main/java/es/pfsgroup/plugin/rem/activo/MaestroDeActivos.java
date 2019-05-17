@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.activo;
 
+import java.util.Date;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,7 +14,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
-import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
 
 public class MaestroDeActivos {
 	@Autowired
@@ -30,7 +31,7 @@ public class MaestroDeActivos {
 	private Long numActivoAM = null;
 	private Long idUnidadAlquilable = null;
 	
-	public MaestroDeActivos(Long idActivoAM, Long numActivoAM, Long idUnidadAlquilable) {
+	public MaestroDeActivos(Long idUnidadAlquilable, Long idActivoAM, Long numActivoAM) {
 		logger.info("Ejecucion del constructor de maestro de activos");
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
@@ -41,9 +42,11 @@ public class MaestroDeActivos {
 	
 	@Transactional
 	public ActivoOutputDto altaActivo() {
+		
+		String idUnidadAlquilable = Long.toString(this.idUnidadAlquilable);
 		String idActivoAM = Long.toString(this.idActivoAM);
 		String numActivoAM = Long.toString(this.numActivoAM);
-		String idUnidadAlquilable = Long.toString(this.idUnidadAlquilable);
+		
 		try {
 			if (!Checks.esNulo(idActivoAM) && !Checks.esNulo(numActivoAM) && !Checks.esNulo(idUnidadAlquilable)) {
 				
@@ -51,15 +54,18 @@ public class MaestroDeActivos {
 				dto.setIdActivoMatriz(idActivoAM);
 				dto.setNumRemActivoMatriz(numActivoAM);
 				dto.setIdUnidadAlquilable(idUnidadAlquilable);
+				dto.setFechaOperacion(new Date().toString());
 				dto.setTipoActivo(UNIDAD_ALQUILABLE);
 				dto.setOrigen(ORIGEN);
 				dto.setFlagMultiplicidad(FLAGMULTIPLICIDAD);
 				dto.setMotivoOperacion(MOTIVO_OPERACION);
+			
 				dto.setEvent(dto.EVENTO_ALTA_ACTIVOS);
 				
 				logger.info("[MAESTRO_ACTIVOS] VARIABLES DE ENTRADA = \n idActivoAM ->" +idActivoAM+"\n numActivoAM _->" + numActivoAM + "\n idUnidadAlquilable ->" + idUnidadAlquilable);
 				ActivoOutputDto activoOutput =  new ActivoOutputDto();
-				BeanUtils.copyProperties(activoOutput,  gestorDocumentalMaestroManager.ejecutar(dto));
+				BeanUtils.copyProperties(gestorDocumentalMaestroManager
+						.ejecutar(dto), activoOutput);
 			
 				if (!Checks.esNulo(activoOutput) && SIMULACRO.equals(activoOutput.getResultDescription())) {
 					activoOutput = new ActivoOutputDto();

@@ -105,8 +105,8 @@ public class MaestroDePersonas implements Runnable {
 							logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 							logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
 							PersonaOutputDto personaOutputDto = new PersonaOutputDto();
-							BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
-									.ejecutar(personaDto));
+							BeanUtils.copyProperties(gestorDocumentalMaestroManager
+									.ejecutar(personaDto), personaOutputDto);
 
 							logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
 							logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: "
@@ -131,8 +131,8 @@ public class MaestroDePersonas implements Runnable {
 								personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
 								personaDto.setIdRol(ID_ROL_16);
 
-								BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
-										.ejecutar(personaDto));
+								BeanUtils.copyProperties(gestorDocumentalMaestroManager
+										.ejecutar(personaDto), personaOutputDto);
 
 								logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
 										+ personaOutputDto.getIdIntervinienteHaya());
@@ -225,8 +225,8 @@ public class MaestroDePersonas implements Runnable {
 						personaDto.setFechaOperacion(today);
 						personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
 						personaDto.setIdRol(ID_ROL_16);
-						BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
-								.ejecutar(personaDto));
+						BeanUtils.copyProperties(gestorDocumentalMaestroManager
+								.ejecutar(personaDto), personaOutputDto);
 						//personaOutputDto.setIdIntervinienteHaya("123456789");
 
 						logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());

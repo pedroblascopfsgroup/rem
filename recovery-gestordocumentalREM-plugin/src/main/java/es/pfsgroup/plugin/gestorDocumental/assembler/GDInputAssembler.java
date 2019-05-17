@@ -163,7 +163,7 @@ public class GDInputAssembler {
 		if(ActivoInputDto.EVENTO_ALTA_ACTIVOS.equals(inputDto.getEvent())) {
 			parameters.getParameter().add(getIdHayaActivoMatriz(inputDto.getIdActivoMatriz()));
 			parameters.getParameter().add(getnumRemActivoMatriz(inputDto.getNumRemActivoMatriz()));
-			parameters.getParameter().add(getIdCliente(inputDto.getIdCliente()));
+			parameters.getParameter().add(getIdCliente("SAREB"));
 			parameters.getParameter().add(getIdUnidadAlquilable(inputDto.getIdUnidadAlquilable()));
 			parameters.getParameter().add(getFechaOperacion(inputDto.getFechaOperacion()));
 			parameters.getParameter().add(getTipoActivo(inputDto.getTipoActivo()));
@@ -174,6 +174,7 @@ public class GDInputAssembler {
 			parameters.getParameter().add(getIdActivoCliente(null));
 			parameters.getParameter().add(getIdActivoOrigenReds(null));
 			parameters.getParameter().add(getIdActivoOrigenCols(null));
+			parameters.getParameter().add(getEntidadCedente(null));
 		}
 		return parameters;
 	}	
@@ -234,7 +235,13 @@ public class GDInputAssembler {
 		origen.setValue(idOrigen);
 		return origen;
 	}
-	
+	private static KeyValuePair getEntidadCedente(String entidadCedente) {
+		KeyValuePair entidad = new KeyValuePair();
+		entidad.setCode(ActivoInputDto.ENTIDAD_CEDENTE);
+		entidad.setFormat(ActivoInputDto.FORMATO_STRING);
+		entidad.setValue(entidadCedente);
+		return entidad;
+	}
 	private static KeyValuePair getFlagMultiplicidad(String flag) {
 		KeyValuePair multiplicidad = new KeyValuePair();
 		multiplicidad.setCode(ActivoInputDto.FLAGMULTIPLICIDAD);

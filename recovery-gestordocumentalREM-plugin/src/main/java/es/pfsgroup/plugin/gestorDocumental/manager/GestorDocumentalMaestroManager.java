@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -13,10 +12,8 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.BaseWS;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
-import es.pfsgroup.plugin.gestorDocumental.assembler.GDActivoInputAssembler;
 import es.pfsgroup.plugin.gestorDocumental.assembler.GDActivoOutputAssembler;
 import es.pfsgroup.plugin.gestorDocumental.assembler.GDInputAssembler;
-import es.pfsgroup.plugin.gestorDocumental.assembler.GDPersonaInputAssembler;
 import es.pfsgroup.plugin.gestorDocumental.assembler.GDPersonaOutputAssembler;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;

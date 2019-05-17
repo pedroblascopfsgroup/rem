@@ -19,7 +19,7 @@ public class GDActivoOutputAssembler {
 		dto.setResultDescription(output.getResultDescription());
 		if(output.getParameters() != null) {
 			for(KeyValuePair param : output.getParameters().getParameter()) {
-				if(ActivoInputDto.ID_ACTIVO_HAYA.equals(param.getCode())) {
+				if(ActivoOutputDto.ID_ACTIVO_HAYA.equals(param.getCode())) {
 					dto.setNumActivoUnidadAlquilable(String.valueOf(param.getValue()));
 				}
 			}

@@ -7,30 +7,32 @@ public class ActivoInputDto implements Serializable, GDInputDto{
 	 * 
 	 */
 	private static final long serialVersionUID = -2487916137157826445L;
-	public static final String ID_ACTIVO_HAYA			= 	"ID_ACTIVO_HAYA";
-	public static final String ID_HAYA_ACTIVO_MATRIZ  	= 	"id_activo_haya";
+	public static final String ID_REM_UNIDAD_ALQUILABLE = 	"id_activo_origen_nuevo";
 	public static final String ID_REM_ACTIVO_MATRIZ 	= 	"id_activo_origen_padre";
 	public static final String ID_CLIENTE_ACTIVO_MATRIZ =	"id_cliente";
-	public static final String ID_REM_UNIDAD_ALQUILABLE = 	"id_activo_origen_nuevo";
-	public static final String FC_ALTA 					= 	"fecha_operacion";
 	public static final String UNIDAD_ALQUILABLE 		= 	"id_tipo_activo";
 	public static final String REM 						= 	"id_origen";
+	public static final String ENTIDAD_CEDENTE			= 	"id_entidad_cedente";
 	public static final String FLAGMULTIPLICIDAD		= 	"flagMultiplicidad";
 	public static final String MOTIVO_OPERACION			= 	"id_motivo_operacion";
+	public static final String FC_ALTA 					= 	"fecha_operacion";
 	public static final String CLASE_ACTIVO 			= 	"clase_activo";
 	public static final String ACTIVO_CLIENTE 			= 	"id_activo_cliente";
 	public static final String ACTIVO_ORIGEN_REDS		= 	"id_activo_origen_reds";
 	public static final String ACTIVO_ORIGEN_COLS		= 	"id_activo_origen_cols";
+	public static final String ID_HAYA_ACTIVO_MATRIZ  	= 	"id_activo_haya";
 	public static final String EVENTO_ALTA_ACTIVOS		= 	"ALTA_ACTIVO";
 	public static final String FORMATO_STRING 			= 	"String";
+	
 	//--AM
 	private String idActivoMatriz;
 	private String numRemActivoMatriz;
-	private String idCliente;
+	private String idCliente; //Query de otro sistema según el funcional ¿?
 	
 	//--UA
 	private String idUnidadAlquilable;
 	private String fechaOperacion;
+	
 	//--Informacion estatica
 	private String tipoActivo; //UNIDAD ALQUILABLE
 	private String origen; //REM
@@ -40,6 +42,7 @@ public class ActivoInputDto implements Serializable, GDInputDto{
 	private String idActivoCliente;//NULL
 	private String idActivoOrigenReds;//NULL
 	private String idActivoOrigenCols;//NULL
+	private String enditadCedente;//NULL
 	
 	
 	//--Evento
@@ -129,5 +132,11 @@ public class ActivoInputDto implements Serializable, GDInputDto{
 	}
 	public void setEvent(String event) {
 		this.event = event;
+	}
+	public String getEnditadCedente() {
+		return enditadCedente;
+	}
+	public void setEnditadCedente(String enditadCedente) {
+		this.enditadCedente = enditadCedente;
 	}
 }

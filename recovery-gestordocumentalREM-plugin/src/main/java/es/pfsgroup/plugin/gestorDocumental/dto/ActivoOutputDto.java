@@ -7,6 +7,7 @@ public class ActivoOutputDto implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public static final String ID_ACTIVO_HAYA = "ID_ACTIVO_HAYA";
 	private String resultCode;
 	private String resultDescription;
 	private String numActivoUnidadAlquilable;

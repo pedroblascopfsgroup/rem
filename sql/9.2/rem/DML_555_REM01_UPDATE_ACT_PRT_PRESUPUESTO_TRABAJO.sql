@@ -28,6 +28,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USUARIO VARCHAR2(100 CHAR) := 'REMVIP-4234';
+    V_COUNT NUMBER(16);
 
 BEGIN	
 	

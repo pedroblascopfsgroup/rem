@@ -405,16 +405,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		    }
 		},
 
-		getSiNoFromOtro: function(get) {
-			var condicion = get('datospublicacionagrupacion.otro');
-
-		   	if(Ext.isEmpty(condicion)) {
-		   		return '0';
-		   	} else {
-		   		return '1';
-		   	}
-		},
-
 		filtrarComboMotivosOcultacionVenta: function(get) {
 			var bloqueoCheckOcultar = get('datospublicacionagrupacion.deshabilitarCheckOcultarVenta');
 

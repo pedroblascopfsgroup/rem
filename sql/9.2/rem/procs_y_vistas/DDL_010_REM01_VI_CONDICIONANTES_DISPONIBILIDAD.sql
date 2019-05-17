@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190307
+--## AUTOR=Guillermo Llidó Parra
+--## FECHA_CREACION=20190517
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3503
+--## INCIDENCIA_LINK=REMVIP-4233
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -27,6 +27,7 @@
 --##    	0.14 HREOS-5003 - Añadimos Obra nueva (Vandalizado) a VANDALIZADO
 --##		0.15 HREOS-5562 - Ocultación Automática, motivo "Revisión publicación", comentar la linea "OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1"
 --##		0.16 REMVIP-3503 - Correcciones cálculo ocupado_sin_titulo y ocupado_con_titulo (nueva columna DD_TPA_ID)
+--##		0.17 REMVIP-4233 - Se corrige el join con la ACT_ABA ya que hay activos que no aparecen en esta.
 --##########################################
 --*/
 
@@ -147,7 +148,8 @@ AS
 
 				  LEFT JOIN
                   (SELECT act_tit.act_id
-                     FROM '||V_ESQUEMA||'.act_reg_info_registral act_reg JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba ON aba.act_id = act_reg.act_id
+                     FROM '||V_ESQUEMA||'.act_reg_info_registral act_reg 
+                     LEFT JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba ON aba.act_id = act_reg.act_id
                      JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO act_tit ON act_tit.act_id = act_reg.act_id 
                      JOIN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_DREG_ID = act_REG.BIE_DREG_ID
                     WHERE aba.dd_cla_id = 1 OR act_tit.TIT_FECHA_INSC_REG IS NOT NULL) tit ON tit.act_id = act.act_id                                                            -- PENDIENTE DE INSCRIPCIÓN

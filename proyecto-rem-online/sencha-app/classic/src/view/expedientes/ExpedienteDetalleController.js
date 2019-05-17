@@ -784,6 +784,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	
 		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');
 		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
+		labelNumeroExpediente = me.lookupReference('numeroExpedienteRef');
+		comboTipoFinanciacion = me.lookupReference('tipoFinanciacionRef');
 
     	    	
     	comboEntidadFinancieraCodigo.setDisabled(disabled);
@@ -792,6 +794,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	if(disabled) {
     		comboEntidadFinancieraCodigo.setValue("");
     		labelCapitalConcedido.setValue("");
+    		labelNumeroExpediente.setValue("");
+    		comboTipoFinanciacion.reset();
     	}
 	},
 	
@@ -1755,11 +1759,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');  
 		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk');
 		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
-		
-		if (nValue == me.getViewModel().data.financiacion.data.entidadFinancieraCodigo){
-			labelCapitalConcedido.setValue(me.getViewModel().data.financiacion.data.capitalConcedido);
-		}else {
+		labelNumeroExpediente = me.lookupReference('numeroExpedienteRef');
+		comboTipoFinanciacionRef = me.lookupReference('tipoFinanciacionRef');
+
+		if (!(nValue == me.getViewModel().data.financiacion.data.entidadFinancieraCodigo)){
 			labelCapitalConcedido.setValue("");
+    		labelNumeroExpediente.setValue("");
+    		comboTipoFinanciacionRef.reset();
+    		numExpedienteRiesgo.setValue("");
+    		comboTipoFinanciacion.reset();
 		}
 		
  
@@ -1773,6 +1781,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		numExpedienteRiesgo.setValue("");
     		comboTipoFinanciacion.setValue("");
     		comboEntidadFinancieraCodigo.setValue("");
+    		labelNumeroExpediente.setValue("");
+    		comboTipoFinanciacion.reset();
     	}
 	},
 

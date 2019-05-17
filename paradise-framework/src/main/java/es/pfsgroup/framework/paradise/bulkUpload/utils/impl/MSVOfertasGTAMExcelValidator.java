@@ -356,9 +356,7 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 			for(int i=1; i<this.numFilasHoja; i++){
 				try {
 					String respuestaOferta = exc.dameCelda(i, 6);
-					if(!("1".equals(respuestaOferta) || "01".equals(respuestaOferta)) 
-							&& !("2".equals(respuestaOferta) || "02".equals(respuestaOferta))
-							&& !("3".equals(respuestaOferta) || "03".equals(respuestaOferta))){
+					if(!("01".equals(respuestaOferta)) && !("02".equals(respuestaOferta)) && !("03".equals(respuestaOferta))){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -384,8 +382,8 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 				try {
 					String tipoResolucion = exc.dameCelda(i, 9);
 					
-					if(!("1".equals(tipoResolucion) || "01".equals(tipoResolucion))
-							&& !("3".equals(tipoResolucion) || "03".equals(tipoResolucion))){
+					if(!("01".equals(tipoResolucion))
+							&& !("03".equals(tipoResolucion))){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -413,7 +411,7 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 					String tipoResolucion = exc.dameCelda(i, 9);
 					String estadoResolucion = exc.dameCelda(i, 6);
 					
-					if(("1".equals(tipoResolucion) || "01".equals(tipoResolucion)) && ("2".equals(estadoResolucion) || "02".equals(estadoResolucion)) && Checks.esNulo(tipoCancelacion)){
+					if(("01".equals(tipoResolucion)) && ("02".equals(estadoResolucion)) && Checks.esNulo(tipoCancelacion)){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -438,9 +436,9 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 			for(int i=1; i<this.numFilasHoja; i++){
 				try {
 					String importeContraOferta = exc.dameCelda(i, 8);
-					String tipoResolucion = exc.dameCelda(i, 9);
+					String tipoResolucion = exc.dameCelda(i, 6);
 					
-					if(("3".equals(tipoResolucion) || "03".equals(tipoResolucion)) && Checks.esNulo(importeContraOferta)){
+					if(("03".equals(tipoResolucion)) && Checks.esNulo(importeContraOferta)){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {

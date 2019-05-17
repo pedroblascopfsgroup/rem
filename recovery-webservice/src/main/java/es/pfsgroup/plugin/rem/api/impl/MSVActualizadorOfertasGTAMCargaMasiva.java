@@ -89,16 +89,7 @@ public class MSVActualizadorOfertasGTAMCargaMasiva extends AbstractMSVActualizad
 			campoUno = sdf2.format(date1);
 		}
 		
-		  String estadoResolucion = exc.dameCelda(fila, 6);
-		  if(!Checks.esNulo(estadoResolucion)){
-			  if(estadoResolucion == "1" || estadoResolucion == "2" || estadoResolucion == "3") {
-				  	HashMap<String, String> estadosResolucion = new HashMap<String, String>();
-				  	estadosResolucion.put("1", "01");
-				  	estadosResolucion.put("2", "02");
-				  	estadosResolucion.put("3", "03");
-				  	estadoResolucion = estadosResolucion.get(estadoResolucion);
-			  }
-		}
+		String estadoResolucion = exc.dameCelda(fila, 6);
 		
 		String campoTres = exc.dameCelda(fila, 8);
 		

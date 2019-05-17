@@ -217,7 +217,18 @@ Ext.define('HreRem.model.DatosPublicacionAgrupacion', {
             },
             {
             	name: 'motivoPublicacion'
-            }
+            },
+    		{
+    			name: 'comboOtro',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.otro)) {
+    			        return '0';
+    			    } else {
+    			        return '1';
+    			    }
+    			},
+    			critical: true
+    		}
 	 	],
     
 	proxy: {

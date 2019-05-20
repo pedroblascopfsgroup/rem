@@ -731,10 +731,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
         me.deshabilitarCampo(me.down('[name=comboTarifaPlana]'));
-        if (esTarifaPlana) {
+        if (esTarifaPlana && CONST.CARTERA['SAREB'] != codigoCartera) {
             me.bloquearCampo(me.down('[name=comboTarifa]'));
         }
-
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {
             if (combo.value == '01') {

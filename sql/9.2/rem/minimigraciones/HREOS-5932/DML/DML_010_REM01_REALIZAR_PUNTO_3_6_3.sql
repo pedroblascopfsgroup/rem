@@ -155,7 +155,7 @@ BEGIN
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 		
-		
+		/*
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
@@ -232,6 +232,8 @@ BEGIN
 		END LOOP;
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.'); 
+		
+		*/
 
 /**	3.6.3. C. Si el activo está publicado en venta y el tipo de alquiler NO es “Ordinario” ocultarlo de venta con motivo “Alquilado” y actualizar su histórico de publicaciones de venta	**/
 
@@ -262,7 +264,7 @@ BEGIN
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 		
-		
+		/*
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
@@ -340,7 +342,8 @@ BEGIN
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.'); 
 
-
+		*/
+		
 /**	3.6.4. REM “Ocupado SI”, “Con título SI”, Excel “Libre”	**/
 /** MARCAR PERIMETRO OCUPADO SI Y CON TITULO SI **/
 		
@@ -431,7 +434,7 @@ BEGIN
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 		
-		
+		/*
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
@@ -512,7 +515,7 @@ BEGIN
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.'); 
 		
-
+		*/
 
 /**	3.6.4. C. Si el activo está oculto en alquiler por motivo “Alquiler” y el campo “Adecuado” del Excel es “NO”” ocultar el activo 
 				por motivo “Revisión adecuación” y actualizar su histórico de publicaciones de alquiler									**/
@@ -543,6 +546,8 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+		
+		/*
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
@@ -620,6 +625,7 @@ BEGIN
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.'); 
 		
+		*/
 		
 /**	3.6.4. D. Si el activo está oculto en venta por motivo “Alquiler” publicar el activo en venta y actualizar su histórico de 
 				publicaciones de venta																							**/
@@ -648,6 +654,8 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+		
+		/*
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
@@ -725,7 +733,7 @@ BEGIN
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.'); 
 		
-
+		*/
 
 COMMIT;
   

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190306
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20190514
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3532
+--## INCIDENCIA_LINK=REMVIP-4227
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -153,6 +153,8 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
                                     JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID AND SPS.BORRADO = 0
+                                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO AUX ON AUX.ACT_ID = ACT.ACT_ID
+									LEFT JOIN '|| V_ESQUEMA ||'.DD_TAL_TIPO_ALQUILER TAL ON TAL.DD_TAL_ID = AUX.DD_TAL_ID
                                     JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION DDTCO ON DDTCO.DD_TCO_ID = ACT.DD_TCO_ID 
                                           AND DDTCO.DD_TCO_CODIGO IN (''02'',''03'',''04'') 
                                           AND DDTCO.BORRADO = 0
@@ -161,6 +163,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                      AND SPS.SPS_OCUPADO = 1 
                                      AND SPS.DD_TPA_ID = (SELECT DD_TPA_ID FROM DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO = ''01'')
                                      AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
+									 AND (''A'' = '''||pTIPO||''' OR (''V'' = '''||pTIPO||''' AND TAL.DD_TAL_CODIGO <> ''01''))
                                      AND EXISTS '||vQUERY||                                                  
                          ' UNION
                           SELECT ACT.ACT_ID

@@ -1,21 +1,33 @@
 package es.pfsgroup.plugin.rem.gestor.dao.impl;
 
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.dao.SessionFactoryFacade;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorExpedienteComercial;
+import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 
 @Repository("GestorExpedienteComercialDao")
 public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorExpedienteComercial, Long> implements GestorExpedienteComercialDao {
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -37,7 +49,7 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 	}
 	
 	@Override
-	public Long getUsuarioGestorFormalizacion(Long idActivo){
+	public Long getUsuarioGestorFormalizacionBasico(Long idActivo){
 		
 		StringBuilder functionHQL = new StringBuilder("SELECT CALCULAR_USUARIO_GFORM(:ACT_ID) FROM DUAL");
 		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(functionHQL.toString());
@@ -47,6 +59,23 @@ public class GestorExpedienteComercialDaoImpl extends AbstractEntityDao<GestorEx
 		if(!Checks.esNulo(resultado))
 			return resultado.longValue();
 		else return null;
+	}	
+	
+	@Override
+	public Long getUsuarioGestorFormalizacion(Long idActivo){		
+		
+		String procedureHQL = "BEGIN SP_CALCULAR_USUARIO_GFORM(:P_ACT_ID);  END;";
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("P_ACT_ID", idActivo);
+		callProcedureSql.executeUpdate();
+
+		String resultado = rawDao.getExecuteSQL("SELECT USUARIO FROM TMP_ASIGNACION_USU_GFORM WHERE ACT_ID = "+ idActivo);
+		Long id_usuario_gform = Long.valueOf(resultado);
+		if(!Checks.esNulo(id_usuario_gform)) {
+			return id_usuario_gform;
+		} else {
+			return null;		
+		}		
 	}
 	
 	@Override

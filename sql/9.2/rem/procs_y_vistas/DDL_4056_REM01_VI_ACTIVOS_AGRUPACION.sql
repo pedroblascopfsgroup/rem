@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Lara Pablo
---## FECHA_CREACION=20190329
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=20190411
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5864
+--## INCIDENCIA_LINK=HREOS-6047
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -18,11 +18,9 @@
 --##		0.6 Se modifica la vista para que tenga en cuenta el borrado lógico de las distribuciones
 --##		0.7 Se añaden las nuevas columnas de publicaciones
 --##		0.8 Se realiza un Join con la vista V_COND_PUBLICACION para sacar los campos COND_PUBL_VENTA, COND_PUBL_ALQUILER (HREOS-4907)
---##		0.9 Habilitamos el campo AGR.AGA_PRINCIPAL para usarlo para identificar el activo matriz en una agrupación de tipo Promoción Alquiler,
---## 			añadimos la columna borrado para colorear aquellos activos dados de baja en el listado de activos. Tambien añadimos la columna ACT_AGA_ID_PRINEX_HPM (HREOS-5586)
---##		1.0 Añadimos las superficies útiles, de parcela y de elemento común.
---##        1.1 Se cambia la query de GENCAT para actualizarla a los nuevos requerimientos
---##        1.2 Cambiamos la vista para que calcule desde la vista gencat.
+--##        0.9 Se cambia la query de GENCAT para actualizarla a los nuevos requerimientos
+--##        0.10 Cambiamos la vista para que calcule desde la vista gencat.
+--##	    0.11 Se añade una columna más para calcular el estado del titulo
 --##########################################
 --*/
 
@@ -115,7 +113,8 @@ BEGIN
         CASE WHEN GEN.ACT_ID IS NOT NULL THEN 1
         ELSE 0 END AS GENCAT,
         V_PUBL.COND_PUBL_VENTA,
-        V_PUBL.COND_PUBL_ALQUILER
+        V_PUBL.COND_PUBL_ALQUILER,
+	ETI.DD_ETI_CODIGO AS ESTADO_TITULO
 		FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO 			AGR
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION 			AGRU 	ON AGRU.AGR_ID = AGR.AGR_ID 		 AND AGRU.BORRADO = 0
     	INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO 					ACT  	ON ACT.ACT_ID = AGR.ACT_ID 			 AND ACT.BORRADO = 0
@@ -133,7 +132,9 @@ BEGIN
         LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER 		EPA 	ON ACT_APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
         LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA 		EPV 	ON ACT_APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
         LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION 	TCO 	ON TCO.DD_TCO_ID= ACT_APU.DD_TCO_ID  AND TCO.BORRADO = 0
-		INNER JOIN '|| V_ESQUEMA ||'.V_COND_PUBLICACION             V_PUBL  ON V_PUBL.ACT_ID = ACT.ACT_ID
+        LEFT JOIN REM01.ACT_TIT_TITULO                  TIT     ON TIT.ACT_ID = ACT.ACT_ID           AND TIT.BORRADO = 0
+        LEFT JOIN REM01.DD_ETI_ESTADO_TITULO            ETI     ON ETI.DD_ETI_ID = TIT.DD_ETI_ID     AND ETI.BORRADO = 0
+	INNER JOIN '|| V_ESQUEMA ||'.V_COND_PUBLICACION             V_PUBL  ON V_PUBL.ACT_ID = ACT.ACT_ID	
         LEFT JOIN (
             SELECT DISTINCT T1.ACT_ID, SUM(T4.DIS_CANTIDAD) OVER (PARTITION BY T1.ACT_ID,T5.DD_TPH_DESCRIPCION) AS SUMA
 				FROM '|| V_ESQUEMA ||'.ACT_ACTIVO T1

@@ -50,6 +50,10 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private String motivoPublicacionAlquiler;
 	private String estadoPublicacionAlquilerCodigo;
 	private Boolean isMatriz;
+	private Integer diasCambioPublicacionVenta;
+	private Integer diasCambioPublicacionAlquiler;
+	private Integer diasCambioPrecioVentaWeb;
+	private Integer diasCambioPrecioAlqWeb;
 
 
 	public String getTipoPublicacionVentaDescripcion() {
@@ -347,6 +351,39 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	public void setMotivoPublicacionAlquiler(String motivoPublicacionAlquiler) {
 		this.motivoPublicacionAlquiler = motivoPublicacionAlquiler;
 	}
+
+	public Integer getDiasCambioPublicacionVenta() {
+		return diasCambioPublicacionVenta;
+	}
+
+	public void setDiasCambioPublicacionVenta(Integer diasCambioPublicacionVenta) {
+		this.diasCambioPublicacionVenta = diasCambioPublicacionVenta;
+	}
+
+	public Integer getDiasCambioPublicacionAlquiler() {
+		return diasCambioPublicacionAlquiler;
+	}
+
+	public void setDiasCambioPublicacionAlquiler(Integer diasCambioPublicacionAlquiler) {
+		this.diasCambioPublicacionAlquiler = diasCambioPublicacionAlquiler;
+	}
+
+	public Integer getDiasCambioPrecioVentaWeb() {
+		return diasCambioPrecioVentaWeb;
+	}
+
+	public void setDiasCambioPrecioVentaWeb(Integer diasCambioPrecioVentaWeb) {
+		this.diasCambioPrecioVentaWeb = diasCambioPrecioVentaWeb;
+	}
+
+	public Integer getDiasCambioPrecioAlqWeb() {
+		return diasCambioPrecioAlqWeb;
+	}
+
+	public void setDiasCambioPrecioAlqWeb(Integer diasCambioPrecioAlqWeb) {
+		this.diasCambioPrecioAlqWeb = diasCambioPrecioAlqWeb;
+	}
+
 	public Integer getTotalDiasPublicadoHistoricoVenta() {
 		return totalDiasPublicadoHistoricoVenta;
 	}

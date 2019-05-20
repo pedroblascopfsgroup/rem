@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -100,8 +102,21 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "tipoTituloPosesorioCodigo", activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo());
 			}
 			
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
+				
+				if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTapiado())) {
+					activoDto.setDiasTapiado(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTapiado()));
+				}
+			}
+			
 			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
+				
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())){
+					if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTit())) {
+						activoDto.setDiasCambioTitulo(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTit()));
+					}
+				}
 			}
 			
 			if(!Checks.esNulo(activo.getCartera())) {
@@ -109,6 +124,10 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 					if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
 						BeanUtils.copyProperty(activoDto, "situacionJuridica", activo.getSituacionPosesoria().getSitaucionJuridica().getDescripcion());
 						BeanUtils.copyProperty(activoDto, "indicaPosesion", activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion());
+						
+						if(!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos())) {
+							activoDto.setDiasCambioPosesion(calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()));
+						}
 					}					
 				} else {
 					if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
@@ -178,14 +197,17 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 		if (!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado()) && dto.getOcupado() == 0) {
 			activoSituacionPosesoria.setConTitulo(null);
+			activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 		} else  if (!Checks.esNulo(dto.getConTitulo())) {
 			Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTitulo());
 			DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 			activoSituacionPosesoria.setConTitulo(tituloActivoTPA);
+			activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 		}
 
 		if(!Checks.esNulo(dto.getFechaTomaPosesion())){
 			activoSituacionPosesoria.setEditadoFechaTomaPosesion(true);
+			activoSituacionPosesoria.setFechaUltCambioPos(new Date());
 		}
 //		if(!Checks.esNulo(dto.getIndicaPosesion())){
 //			activo.getSituacionPosesoria().getSitaucionJuridica().setIndicaPosesion(dto.getIndicaPosesion());
@@ -227,6 +249,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if(dto.getAccesoTapiado() == 0){
 				activoSituacionPosesoria.setFechaAccesoTapiado(null);
 			}
+			activoSituacionPosesoria.setFechaUltCambioTapiado(new Date());
 		}
 		
 		if(dto.getAccesoAntiocupa() != null){
@@ -300,6 +323,14 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 	}
 	
+	public Integer calculodiasCambiosActivo(Date fechaIni){
+		
+		Boolean cumpleCond = Boolean.FALSE;
+		Date fechaInicial=fechaIni;
+		Date fechaFinal=new Date();
+		return (int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+
+	} 
 	
 
 }

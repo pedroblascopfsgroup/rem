@@ -673,8 +673,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			if (!Checks.esNulo(activo.getEnTramite()) && activo.getEnTramite()==1) {
 				Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
 				if (!Checks.esNulo(gestorProveedorTecnico)) {
-
-					lista = ddSubtipoTrabajoDao.getSubtipoTrabajoconTarifaPlana(tipoTrabajo.getId(), new Date());
+					if (!Checks.esNulo(activo.getCartera())) { 
+						lista = ddSubtipoTrabajoDao.getSubtipoTrabajoconTarifaPlana(activo.getCartera().getId(), tipoTrabajo.getId(), new Date());
+					}
 				} else {
 					Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 					Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
@@ -689,6 +690,21 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
 			lista = genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
+		}
+
+		if (!Checks.esNulo(idActivo)) {
+			Activo activo2 = activoApi.get(idActivo);
+			List<DDSubtipoTrabajo> lista2 = new ArrayList<DDSubtipoTrabajo>();
+			if (!Checks.esNulo(activo2.getCartera()) && !Checks.esNulo(activo2.getSubcartera())) {
+				if(!DDCartera.CODIGO_CARTERA_SAREB.equals(activo2.getCartera().getCodigo()) && !DDSubcartera.CODIGO_SAR_INMOBILIARIO.equals(activo2.getSubcartera().getCodigo())) {				
+					for (DDSubtipoTrabajo s:lista) {
+						if (!DDSubtipoTrabajo.CODIGO_OTROS_TARIFA_PLANA.equals(s.getCodigo())) {
+							lista2.add(s);
+						}			
+					}
+					return lista2;
+				}
+			}
 		}
 
 		return lista;

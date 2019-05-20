@@ -1,10 +1,10 @@
 --/* 
 --##########################################
---## AUTOR=Sergio Salt
---## FECHA_CREACION=20190321
+--## AUTOR=David Gonzalez
+--## FECHA_CREACION=20190509
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.3
---## INCIDENCIA_LINK=HREOS-5599
+--## VERSION_ARTEFACTO=2.11.0
+--## INCIDENCIA_LINK=HREOS-6184
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -17,8 +17,8 @@
 --##		0.5 Añade insert en la tabla AHP del estado actual (APU) Carles Molins HREOS-4683
 --##		0.6 Sergio B HREOS-4931 - Optmización de tiempos
 --##		0.7 Sergio B HREOS-5358 - Tratamiento de activos asociados a agrupaciones asistidas vencidas
---##        0.8 Sergio S HREOS-5599 - Ocultacion de unidades alquilables con activo matriz alquilado
---##		0.9 REMVIP-3306 Cambios en el funcionamiento del historico
+--##		0.8 REMVIP-3306 Cambios en el funcionamiento del historico
+--##    	0.9 David Gonzalez -HREOS-6184- Ajustes joins
 --##########################################
 --*/
 
@@ -63,7 +63,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
     nPRECIO_V         REM01.V_CAMBIO_ESTADO_PUBLI.PRECIO_V%TYPE;
     nCEE_VIGENTE      REM01.V_CAMBIO_ESTADO_PUBLI.CEE_VIGENTE%TYPE;
     nADECUADO         REM01.V_CAMBIO_ESTADO_PUBLI.ADECUADO%TYPE;
-    nES_CONDICONADO   REM01.V_CAMBIO_ESTADO_PUBLI.ES_CONDICONADO%TYPE;
+    nES_CONDICIONADO  REM01.V_CAMBIO_ESTADO_PUBLI.ES_CONDICIONADO%TYPE;
 
     hDD_TCO_CODIGO    REM01.V_CAMBIO_ESTADO_PUBLI.DD_TCO_CODIGO%TYPE;  
     hCODIGO_ESTADO_A  REM01.V_CAMBIO_ESTADO_PUBLI.CODIGO_ESTADO_A%TYPE;
@@ -886,7 +886,7 @@ END IF;
              , V.DD_TPU_CODIGO_A, V.DD_TPU_CODIGO_V, V.DD_TAL_CODIGO
              , V.ADMISION, V.GESTION
              , V.INFORME_COMERCIAL, V.PRECIO_A, V.PRECIO_V
-             , V.CEE_VIGENTE, V.ADECUADO, V.ES_CONDICONADO
+             , V.CEE_VIGENTE, V.ADECUADO, V.ES_CONDICIONADO
           FROM '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI V'
           ||vWHERE
        ;
@@ -900,7 +900,7 @@ END IF;
                               , nADMISION, nGESTION
                               , nINFORME_COMERCIAL, nPRECIO_A, nPRECIO_V
                               , nCEE_VIGENTE, nADECUADO
-                              , nES_CONDICONADO;
+                              , nES_CONDICIONADO;
         EXIT WHEN v_cursor%NOTFOUND;
 
         vACTUALIZADO_V := 'N';
@@ -1012,25 +1012,8 @@ END IF;
             REM01.SP_MOTIVO_OCULTACION (nACT_ID, 'V', OutOCULTAR, OutMOTIVO);
 
             IF OutOCULTAR = 1 THEN
-              IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
-                IF vDD_MTO_MANUAL_V = 0 THEN /*MOTIVO AUTOMÁTICO*/
-                  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                                SET APU_CHECK_OCULTAR_V = 0
-                                  , DD_MTO_V_ID = NULL
-                                  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                                  , FECHAMODIFICAR = SYSDATE
-                                WHERE ACT_ID = '||nACT_ID||'
-                                AND BORRADO = 0
-                              ';
-
-                  EXECUTE IMMEDIATE V_MSQL;
-                ELSE
-                  PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
-                END IF;
-              ELSE
-                PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
-                PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
-              END IF;
+           		PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+            	PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
             END IF;
 
             IF OutOCULTAR = 0 THEN
@@ -1109,7 +1092,7 @@ END IF;
 
         IF vACTUALIZAR_COND = 'S' THEN
 		    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-						SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICONADO||'
+						SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICIONADO||'
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE ACT_ID = '||nACT_ID||'
@@ -1131,12 +1114,8 @@ END IF;
                     , AHP.AHP_CHECK_OCULTAR_V, AHP.AHP_CHECK_OCULTAR_A
                     , ROW_NUMBER() OVER(
                         PARTITION BY AHP.ACT_ID
-                        ORDER BY (CASE
-                            WHEN TCO.DD_TCO_CODIGO IN (''01'',''02'')
-                            THEN AHP.AHP_FECHA_FIN_VENTA
-                            ELSE AHP.AHP_FECHA_FIN_ALQUILER
-                            END)
-                            DESC NULLS FIRST) RN
+                        ORDER BY AHP.AHP_ID
+                            DESC) RN
                 FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION AHP
                 JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = AHP.DD_TCO_ID
                 JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = AHP.DD_EPV_ID

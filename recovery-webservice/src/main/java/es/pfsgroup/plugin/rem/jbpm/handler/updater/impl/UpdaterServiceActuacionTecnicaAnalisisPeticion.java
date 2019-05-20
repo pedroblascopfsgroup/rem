@@ -45,6 +45,7 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 	private static final String COMBO_ASEGURADORAS = "comboAseguradoras";
 	private static final String COMBO_CUBIERTO = "comboCubierto";
 	private static final String COMBO_TARIFA = "comboTarifa";
+	private static final String COMBO_TARIFA_PLANA = "comboTarifaPlana";
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
@@ -94,7 +95,14 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 			}
 			if(COMBO_ASEGURADORAS.equals(valor.getNombre())){
 				trabajo.setCiaAseguradora(valor.getValor());
-			}				
+			}
+			if(COMBO_TARIFA_PLANA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){				
+				if(valor.getValor().equals(DDSiNo.SI)){
+					trabajo.setEsTarifaPlana(true);
+				} else {
+					trabajo.setEsTarifaPlana(false);
+				}
+			}
 		}
 		genericDao.save(Trabajo.class, trabajo);
 		activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());

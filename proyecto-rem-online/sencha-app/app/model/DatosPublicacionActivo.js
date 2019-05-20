@@ -147,8 +147,19 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 	    {
 	    	name: 'isMatriz',
 	    	type:'boolean'
+		},
+		{
+	    	name:'diasCambioPublicacionVenta'
+	    },
+	    {
+	    	name:'diasCambioPublicacionAlquiler'
+	    },
+	    {
+	    	name:'diasCambioPrecioVentaWeb'
+	    },
+	    {
+	    	name:'diasCambioPrecioAlqWeb'
 	    }
-
 	],
 
 	proxy: {

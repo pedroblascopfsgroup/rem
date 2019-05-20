@@ -119,6 +119,9 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name = "REG_SUPERFICIE_PARCELA")
 	private Float superficieParcela;
 
+	@Column(name = "ESTADO_TITULO")
+	private String estadoTitulo;
+
 	public Long getId() {
 		return id;
 	}
@@ -383,4 +386,11 @@ public class VActivosAgrupacion implements Serializable {
 		this.superficieParcela = superficieParcela;
 	}
 	
+	public String getEstadoTitulo() {
+		return estadoTitulo;
+	}
+
+	public void setEstadoTitulo(String estadoTitulo) {
+		this.estadoTitulo = estadoTitulo;
+	}
 }

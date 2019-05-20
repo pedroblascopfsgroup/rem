@@ -21,12 +21,13 @@ public class DDSubtipoTrabajoDaoImpl extends AbstractEntityDao<DDSubtipoTrabajo,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<DDSubtipoTrabajo> getSubtipoTrabajoconTarifaPlana(Long idTipoTrabajo, Date fechaSolicitud) {
+	public List<DDSubtipoTrabajo> getSubtipoTrabajoconTarifaPlana(Long idCarteraActivo, Long idTipoTrabajo, Date fechaSolicitud) {
 
  		String hql= "select sbtr from DDSubtipoTrabajo sbtr,HistoricoTarifaPlana htp " + 
 				"where sbtr.id = htp.subtipoTrabajo.id and htp.esTarifaPlana = 1 " + 
 				"and htp.fechaInicioTarifaPlana <= TO_DATE(SYSDATE,'DD/MM/YY')  and (htp.fechaFinTarifaPlana >=TO_DATE(SYSDATE,'DD/MM/YY') or htp.fechaFinTarifaPlana is null) " + 
-				"and sbtr.tipoTrabajo.id = "+idTipoTrabajo+" ";
+				"and sbtr.tipoTrabajo.id = "+idTipoTrabajo+ " " +
+				"and htp.carteraTP = "+idCarteraActivo+ " ";
 		
 		HQLBuilder hb = new HQLBuilder(hql);
 		

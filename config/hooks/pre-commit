@@ -209,12 +209,100 @@ function PROPERTIES_rules() {
 	done
 }
 
+function check_conflictos() {
+	file=$1
+	declare -A rule=(	[name]="Conflictos git no resueltos"
+						[file]=$file 
+						[problem]="El fichero contiene trazas de conflictos git no resueltos."
+						[solution]="Revise que no contenga cadenas '>>>>>>', '<<<<<<<' o '======='." )
+
+	hay_conflictos=`cat $file | grep -E '^[+]?(>>>>>>|<<<<<<<|=======)' | wc -l`
+	if [ $hay_conflictos -gt 0 ]; then
+		paint_error rule
+	    exit 1
+	fi
+
+}
+
+function ficheros_rules() {
+	for f in `eval $modified_files`; do
+		check_conflictos $f
+	done
+}
+
+function check_esquema_hardcodeado() {
+	file=$1
+	declare -A rule=(	[name]="Esquema hardcodeado en fichero sql"
+						[file]=$file 
+						[problem]="Se ha detectado un nombre de esquema hardcodeado en un fichero sql."
+						[solution]="Revise que no (contenga BANK01|HAYA0[0-9]|REM01|CM01|ALI01|HAYAMASTER|REMMASTER|ALIMASTER|BANKMASTER|CMMASTER)" )
+
+	existe=`sed "s/--.*$//" $f | grep -iE '(BANK01|HAYA0[0-9]|REM01|CM01|ALI01|HAYAMASTER|REMMASTER|ALIMASTER|BANKMASTER|CMMASTER)' | grep -v WHEN | grep -v THEN | wc -l`
+	if [ $existe -gt 0 ]; then
+		paint_error rule
+	    exit 1
+	fi
+
+}
+
+function SQL_hardcode_rules() {
+	for f in `eval $modified_files | grep -E \/D.*\.sql$ | grep 'producto/' `; do
+		check_esquema_hardcodeado $f
+	done
+}
+
+function check_ddl() {
+	file=$1
+	declare -A rule=(	[name]="Fichero DDL en una ubicación incorrecta"
+						[file]=$file 
+						[problem]="Se ha detectado un fichero DDL.sql fuera de la carpeta producto."
+						[solution]="Mueva este fichero a la carpeta producto. Sólo se permiten scripts de creación de tablas TMP o AUX fuera de la carpeta de producto" )
+	creates_totales=`cat $file | grep -iE "create" | wc -l`
+	creates_ok=`cat $file | grep -iE "create .*(aux|tmp)" | wc -l`
+	echo $creates_totales $creates_ok
+	if [ $creates_totales -gt $creates_ok ]; then
+		paint_error rule
+	    exit 1
+	fi
+}
+
+function SQL_ddl_rules() {
+	for f in `eval $modified_files | grep -E \/DD.*\.sql$ | grep -v producto | grep -v ^procs_y_vistas/ | grep -v ^reports/ | grep -v migracion | grep -v scripts | grep -v templates | grep -v rutinas | grep -v produccion | grep -v incidencias | grep -v rem_fase1 | grep -v informacional | grep -v convivencia | grep -v tmp | grep -v 9\.2 | grep -v 9\.3 | grep -v 9\.4 |  grep -v no_protocolo | grep -v sincro_f2 `; do
+		check_ddl $f
+	done
+}
+
+function check_dml() {
+	file=$1
+	declare -A rule=(	[name]="Fichero DML con contenido incorrecto"
+						[file]=$file 
+						[problem]="Se han detectado sentencias DDL dentro de un fichero DML."
+						[solution]="Revise que no contenga sentencias (CREATE TABLE|ALTER TABLE|DROP TABLE)" )
+
+	existe=`cat $file | grep -iE "(create table|alter table|drop table)" | wc -l`
+	if [ $existe -gt 0 ]; then
+		paint_error rule
+	    exit 1
+	fi
+
+}
+
+function SQL_dml_rules() {
+	for f in `eval $modified_files | grep -E \/DM.*\.sql$ | grep -v ^reports/ | grep -v migracion | grep -v scripts | grep -v templates | grep -v rutinas | grep -v produccion | grep -v incidencias | grep -v rem_fase1 | grep -v informacional | grep -v convivencia | grep -v tmp | grep -v 9\.2 | grep -v 9\.3 | grep -v 9\.4 |  grep -v no_protocolo | grep -v sincro_f2 `; do
+		check_dml $f
+	done
+}
+
 ########################################################
 ##### MAIN
 ########################################################
 
+SQL_ddl_rules
+SQL_dml_rules
+SQL_hardcode_rules
+ficheros_rules
 JSP_rules
 JS_rules
 SQL_rules
 
-exit 0;
+exit 0

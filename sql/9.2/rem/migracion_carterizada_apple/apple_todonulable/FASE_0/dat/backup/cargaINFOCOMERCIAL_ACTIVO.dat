@@ -1,0 +1,109 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;INFOCOMERCIAL_ACTIVO;ACT_NUMERO_ACTIVO;NUMBER(16,0);NO;;Código identificador único del activo.
+2;INFOCOMERCIAL_ACTIVO;UBICACION_ACTIVO;VARCHAR2(20 CHAR);NO;;Tipo de ubicación del activo.
+3;INFOCOMERCIAL_ACTIVO;ESTADO_CONSTRUCCION;VARCHAR2(20 CHAR);NO;;Estado de construcción del activo
+4;INFOCOMERCIAL_ACTIVO;ESTADO_CONSERVACION;VARCHAR2(20 CHAR);NO;;Estado de conservación del activo
+5;INFOCOMERCIAL_ACTIVO;ICO_DESCRIPCION;VARCHAR2(512 CHAR);NO;;Descripción comercial del activo.
+6;INFOCOMERCIAL_ACTIVO;TIPO_INFO_COMERCIAL;VARCHAR2(20 CHAR);NO;;Tipo Información Comercial
+7;INFOCOMERCIAL_ACTIVO;ICO_ANO_CONSTRUCCION;NUMBER(8,0);NO;;Año de construcción del activo.
+8;INFOCOMERCIAL_ACTIVO;ICO_ANO_REHABILITACION;NUMBER(8,0);NO;;Año de rehabilitación del activo.
+9;INFOCOMERCIAL_ACTIVO;ICO_APTO_PUBLICIDAD;NUMBER(1,0);NO;;Indicador de si es apto para valla publicitaria o no.
+10;INFOCOMERCIAL_ACTIVO;ICO_ACTIVOS_VINC;VARCHAR2(250 CHAR);NO;;Descripción de los números de activos vinculados al activo.
+11;INFOCOMERCIAL_ACTIVO;ICO_FECHA_EMISION_INFORME;DATE;NO;;Fecha emisión del informe comercial.
+12;INFOCOMERCIAL_ACTIVO;ICO_FECHA_ULTIMA_VISITA;DATE;NO;;Fecha última visita al activo.
+13;INFOCOMERCIAL_ACTIVO;ICO_FECHA_ACEPTACION;DATE;NO;;Fecha aceptación del informe del mediador.
+14;INFOCOMERCIAL_ACTIVO;ICO_FECHA_RECHAZO;DATE;NO;;Fecha rechazo del informe del mediador
+15;INFOCOMERCIAL_ACTIVO;PVE_CODIGO;VARCHAR2(50 CHAR);NO;;Código mediador (proveedor de tipo mediador) único.
+16;INFOCOMERCIAL_ACTIVO;ICO_CONDICIONES_LEGALES;VARCHAR2(3000 CHAR);NO;;Descipción de las condiciones legales del activo
+17;INFOCOMERCIAL_ACTIVO;ESTADO_CONSERVACION_EDIFICIO;VARCHAR2(20 CHAR);NO;;Estado de conservación del edificio del activo. (Código según Dic. Datos).
+18;INFOCOMERCIAL_ACTIVO;TIPO_FACHADA_EDIFICIO;VARCHAR2(20 CHAR);NO;;Tipo de fachada del edificio del activo
+19;INFOCOMERCIAL_ACTIVO;EDI_ANO_REHABILITACION;NUMBER(8,0);NO;;Año de rehabilitación del edificio del activo.
+20;INFOCOMERCIAL_ACTIVO;EDI_NUM_PLANTAS;NUMBER(8,0);NO;;Número de plantas del edificio del activo.
+21;INFOCOMERCIAL_ACTIVO;EDI_ASCENSOR;NUMBER(1,0);NO;;Indicador de si el edificio tiene ascensor o no.
+22;INFOCOMERCIAL_ACTIVO;EDI_NUM_ASCENSORES;NUMBER(8,0);NO;;Número de ascensores del edificio del activo.
+23;INFOCOMERCIAL_ACTIVO;EDI_REFORMA_FACHADA;NUMBER(1,0);NO;;Indicador de si el edificio requiere reforma en  la fachada o no.
+24;INFOCOMERCIAL_ACTIVO;EDI_REFORMA_ESCALERA;NUMBER(1,0);NO;;Indicador de si el edificio requiere reforma en  la escalera o no.
+25;INFOCOMERCIAL_ACTIVO;EDI_REFORMA_PORTAL;NUMBER(1,0);NO;;Indicador de si el edificio requiere reforma en el portal o no.
+26;INFOCOMERCIAL_ACTIVO;EDI_REFORMA_ASCENSOR;NUMBER(1,0);NO;;Indicador de si el edificio requiere reforma del ascensor o no.
+27;INFOCOMERCIAL_ACTIVO;EDI_REFORMA_CUBIERTA;NUMBER(1,0);NO;;Indicador de si el edificio requiere reforma en  la cubierta o no.
+28;INFOCOMERCIAL_ACTIVO;EDI_REFORMA_OTRA_ZONA;NUMBER(1,0);NO;;Indicador de si el edificio requiere reforma en otras zonas comunes o no.
+29;INFOCOMERCIAL_ACTIVO;EDI_REFORMA_OTRO;NUMBER(1,0);NO;;Indicador de si el edificio requiere otro tipo de reforma o no.
+30;INFOCOMERCIAL_ACTIVO;EDI_REFORMA_OTRO_DESC;VARCHAR2(250 CHAR);NO;;Descripción de otro tipo de reforma que requiera el edificio del  activo.
+31;INFOCOMERCIAL_ACTIVO;EDI_DESCRIPCION;VARCHAR2(3000 CHAR);NO;;Descripción del edificio.
+32;INFOCOMERCIAL_ACTIVO;EDI_ENTORNO_INFRAESTRUCTURA;VARCHAR2(1024 CHAR);NO;;Descripción del entorno de infraestructuras
+33;INFOCOMERCIAL_ACTIVO;EDI_ENTORNO_COMUNICACION;VARCHAR2(1024 CHAR);NO;;Descripción del entorno de comunicación
+34;INFOCOMERCIAL_ACTIVO;TIPO_VIVIENDA;VARCHAR2(20 CHAR);NO;;Catalogación del tipo de vivienda del activo
+35;INFOCOMERCIAL_ACTIVO;TIPO_ORIENTACION;VARCHAR2(20 CHAR);NO;;Catalogación del tipo de orientación del activo
+36;INFOCOMERCIAL_ACTIVO;TIPO_RENTA;VARCHAR2(20 CHAR);NO;;Catalogación del tipo de renta del activo
+37;INFOCOMERCIAL_ACTIVO;VIV_ULTIMA_PLANTA;NUMBER(1,0);NO;;Indicador de si la vivienda está en la última planta o no.
+38;INFOCOMERCIAL_ACTIVO;VIV_NUM_PLANTAS_INTERIOR;NUMBER(8,0);NO;;Número de plantas interiores de la vivienda.
+39;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_CARP_INT;NUMBER(1,0);NO;;Indicador de si la vivienda requiere reforma de carpintería interior o no.
+40;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_CARP_EXT;NUMBER(1,0);NO;;Indicador de si la vivienda requiere reforma de carpintería exterior o no.
+41;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_COCINA;NUMBER(1,0);NO;;Indicador de si la vivienda requiere reforma de la cocina o no.
+42;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_BANYO;NUMBER(1,0);NO;;Indicador de si la vivienda requiere reforma de la cocina o no.
+43;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_SUELO;NUMBER(1,0);NO;;Indicador de si la vivienda requiere reforma del suelo o no.
+44;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_PINTURA;NUMBER(1,0);NO;;Indicador de si la vivienda requiere reforma de pintura o no.
+45;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_INTEGRAL;NUMBER(1,0);NO;;Indicador de si la vivienda requiere reforma integral o no.
+46;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_OTRO;NUMBER(1,0);NO;;Indicador de si la vivienda requiere otro tipo de reforma o no.
+47;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_OTRO_DESC;VARCHAR2(250 CHAR);NO;;Descripción de otro tipo de reforma que requiera el activo.
+48;INFOCOMERCIAL_ACTIVO;VIV_REFORMA_PRESUPUESTO;NUMBER(16,2);NO;;Presupuesto total estimado de las reformas de la vivienda.
+49;INFOCOMERCIAL_ACTIVO;VIV_DISTRIBUCION_TXT;VARCHAR2(1500 CHAR);NO;;Descripción para la web de la distribución interior de la vivienda.
+50;INFOCOMERCIAL_ACTIVO;LCO_MTS_FACHADA_PPAL;NUMBER(16,2);NO;;Longitud en metros de la fachada a calle principal del local comercial.
+51;INFOCOMERCIAL_ACTIVO;LCO_MTS_FACHADA_LAT;NUMBER(16,2);NO;;Longitud en metros de la fachada a calles laterales del local comercial.
+52;INFOCOMERCIAL_ACTIVO;LCO_MTS_LUZ_LIBRE;NUMBER(16,2);NO;;Longitud en metros de la luz libre entre pilares del local comercial.
+53;INFOCOMERCIAL_ACTIVO;LCO_MTS_ALTURA_LIBRE;NUMBER(16,2);NO;;Longitud en metros de altura libre del local comercial.
+54;INFOCOMERCIAL_ACTIVO;LCO_MTS_LINEALES_PROF;NUMBER(16,2);NO;;Longitud en metros de profundidad del local comercial.
+55;INFOCOMERCIAL_ACTIVO;LCO_DIAFANO;NUMBER(1,0);NO;;Indicador de si el local comercial es diáfano o no.
+56;INFOCOMERCIAL_ACTIVO;LCO_USO_IDONEO;VARCHAR2(250 CHAR);NO;;Descripción del uso idóneo del local comercial.
+57;INFOCOMERCIAL_ACTIVO;LCO_USO_ANTERIOR;VARCHAR2(250 CHAR);NO;;Descripción del uso anterior del local comercial.
+58;INFOCOMERCIAL_ACTIVO;LCO_OBSERVACIONES;VARCHAR2(1500 CHAR);NO;;Descripción del local comercial.
+59;INFOCOMERCIAL_ACTIVO;APR_DESTINO_COCHE;NUMBER(1,0);NO;;Indicador de si se trata de una plaza de aparcamiento para coche o no.
+60;INFOCOMERCIAL_ACTIVO;APR_DESTINO_MOTO;NUMBER(1,0);NO;;Indicador de si se trata de una plaza de aparcamiento para motos o no.
+61;INFOCOMERCIAL_ACTIVO;APR_DESTINO_DOBLE;NUMBER(1,0);NO;;Indicador de si se trata de una plaza de aparcamiento doble o no.
+62;INFOCOMERCIAL_ACTIVO;DD_TUA_ID;VARCHAR2(20 CHAR);NO;;Catalogación del tipo de ubicación del aparcamiento
+63;INFOCOMERCIAL_ACTIVO;DD_TCA_ID;VARCHAR2(20 CHAR);NO;;Catalogación del tipo de calidad del aparcamiento
+64;INFOCOMERCIAL_ACTIVO;APR_ANCHURA;NUMBER(16,2);NO;;Longitud en metros de la anchura del aparcamiento.
+65;INFOCOMERCIAL_ACTIVO;APR_PROFUNDIDAD;NUMBER(16,2);NO;;Longitud en metros de la profundidad del aparcamiento.
+66;INFOCOMERCIAL_ACTIVO;APR_FORMA_IRREGULAR;NUMBER(16,2);NO;;Indicador de si el aparcamiento tiene forma irregular o no.
+67;INFOCOMERCIAL_ACTIVO;ICO_FECHA_RECEPCION_LLAVES;DATE;NO;;Fecha recepción llaves por el API
+68;INFOCOMERCIAL_ACTIVO;ICO_JUSTIF_IMPORTE_VENTA;VARCHAR2(3000 CHAR);NO;;Texto justificante importe venta
+69;INFOCOMERCIAL_ACTIVO;ICO_JUSTIF_IMPORTE_ALQUILER;VARCHAR2(3000 CHAR);NO;;Texto justificante importe renta
+70;INFOCOMERCIAL_ACTIVO;ICO_ANO_REHAB_EDIFICIO;NUMBER(8,0);NO;;Año rehabilitación edificio donde está el activo
+71;INFOCOMERCIAL_ACTIVO;ICO_DISTRITO;VARCHAR2(20 CHAR);NO;;Distrito donde está ubicado el activo
+72;INFOCOMERCIAL_ACTIVO;ICO_DERRAMACP_ORIENTATIVA;NUMBER(16,2);NO;;Derrama orientativa de la comunidad de propietarios
+73;INFOCOMERCIAL_ACTIVO;ICO_FECHA_ESTIMACION_VENTA;DATE;NO;;Fecha de estimación para la venta.
+74;INFOCOMERCIAL_ACTIVO;ICO_FECHA_ESTIMACION_RENTA;DATE;NO;;Fecha de estimación para el alquiler.
+75;INFOCOMERCIAL_ACTIVO;ICO_INFO_DESCRIPCION;VARCHAR2(500 CHAR);NO;;Descripción del informe del activo.
+76;INFOCOMERCIAL_ACTIVO;ICO_INFO_DISTRIBUCION_INTERIOR;VARCHAR2(500 CHAR);NO;;Distribución interior del informe del activo.
+77;INFOCOMERCIAL_ACTIVO;DD_DIS_ID;VARCHAR2(20 CHAR);NO;;Distrito del Activo.
+78;INFOCOMERCIAL_ACTIVO;ICO_POSIBLE_HACER_INF;NUMBER(1,0);NO;;Es posible hacer el informe.
+79;INFOCOMERCIAL_ACTIVO;ICO_FECHA_ENVIO_LLAVES_API;DATE;NO;;Fecha recepción de envío llaves a Api.
+80;INFOCOMERCIAL_ACTIVO;ICO_RECIBIO_IMPORTE_ADM;NUMBER(16,2);NO;;Importe recibido datos administración.
+81;INFOCOMERCIAL_ACTIVO;ICO_IBI_IMPORTE_ADM;NUMBER(16,2);NO;;Importe Ibi datos administración.
+82;INFOCOMERCIAL_ACTIVO;ICO_DERRAMA_IMPORTE_ADM;NUMBER(16,2);NO;;Importe derrama datos administración.
+83;INFOCOMERCIAL_ACTIVO;ICO_DET_DERRAMA_IMPORTE_ADM;VARCHAR2(500 CHAR);NO;;Detalle derrama datos administración.
+84;INFOCOMERCIAL_ACTIVO;DD_TVP_ID;VARCHAR2(20 CHAR);NO;;Tipo de vpo.
+85;INFOCOMERCIAL_ACTIVO;ICO_VALOR_MAX_VPO;NUMBER(16,2);NO;;Valor máximo vpo.
+86;INFOCOMERCIAL_ACTIVO;ICO_PRESIDENTE_NOMBRE;VARCHAR2(100 CHAR);NO;;Nombre del presidente comunidad propietarios.
+87;INFOCOMERCIAL_ACTIVO;ICO_PRESIDENTE_TELF;VARCHAR2(20 CHAR);NO;;Teléfono del presidente comunidad propietarios.
+88;INFOCOMERCIAL_ACTIVO;ICO_ADMINISTRADOR_NOMBRE;VARCHAR2(100 CHAR);NO;;Nombre del administrador comunidad propietarios.
+89;INFOCOMERCIAL_ACTIVO;ICO_ADMINISTRADOR_TELF;VARCHAR2(20 CHAR);NO;;Teléfono del administrador comunidad propietarios.
+90;INFOCOMERCIAL_ACTIVO;ICO_EXIS_COM_PROP;NUMBER(1,0);NO;;Indica si existe la comunidad de propietarios
+91;INFOCOMERCIAL_ACTIVO;EDI_DIVISIBLE;NUMBER(1,0);NO;;Indica si es divisible.
+92;INFOCOMERCIAL_ACTIVO;EDI_DESC_PLANTAS;VARCHAR2(150 CHAR);NO;;Descripción de las plantas del edificio.
+93;INFOCOMERCIAL_ACTIVO;EDI_OTRAS_CARACTERISTICAS;VARCHAR2(3000 CHAR);NO;;Descripción otras características del edificio.
+94;INFOCOMERCIAL_ACTIVO;LCO_NUMERO_ESTANCIAS;NUMBER(16,0);NO;;Numero de estancias del local comercial.
+95;INFOCOMERCIAL_ACTIVO;LCO_NUMERO_BANYOS;NUMBER(16,0);NO;;Numero de banyos del local comercial.
+96;INFOCOMERCIAL_ACTIVO;LCO_NUMERO_ASEOS;NUMBER(16,0);NO;;Numero de aseos del local comercial.
+97;INFOCOMERCIAL_ACTIVO;LCO_SALIDA_HUMOS;NUMBER(1,0);NO;;Indicador de si tiene salida de humos.
+98;INFOCOMERCIAL_ACTIVO;LCO_SALIDA_EMERGENCIA;NUMBER(1,0);NO;;Indicador de si tiene salida de emergencia.
+99;INFOCOMERCIAL_ACTIVO;LCO_ACCESO_MINUSVALIDOS;NUMBER(1,0);NO;;Indicador de si tiene acceso para minusvalidos.
+100;INFOCOMERCIAL_ACTIVO;LCO_OTROS_OTRAS_CARACT;VARCHAR2(150 CHAR);NO;;Descripcion otras características.
+101;INFOCOMERCIAL_ACTIVO;DD_TPV_ID;VARCHAR2(20 CHAR);NO;;Catalogación del tipo vario.
+102;INFOCOMERCIAL_ACTIVO;APR_ALTURA;NUMBER(16,2);NO;;Longitud en metros de la altura del aparcamiento.
+103;INFOCOMERCIAL_ACTIVO;DD_SPG_ID;VARCHAR2(20 CHAR);NO;;Tipo de uso.
+104;INFOCOMERCIAL_ACTIVO;APR_LICENCIA;NUMBER(1,0);NO;;Indicador de si tiene licencia
+105;INFOCOMERCIAL_ACTIVO;APR_SERVIDUMBRE;NUMBER(1,0);NO;;Indicador de si tiene servidumbre.
+106;INFOCOMERCIAL_ACTIVO;APR_ASCENSOR_MONTACARGA;NUMBER(1,0);NO;;Indicador de si tiene ascensor o montacarga.
+107;INFOCOMERCIAL_ACTIVO;APR_COLUMNAS;NUMBER(1,0);NO;;Indicador de si tiene columnas .
+108;INFOCOMERCIAL_ACTIVO;APR_SEGURIDAD;NUMBER(1,0);NO;;Indicador de si tiene seguridad.

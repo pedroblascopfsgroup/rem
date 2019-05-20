@@ -831,6 +831,8 @@ public interface TrabajoApi {
 	 */
 	public boolean checkReservaNecesariaNotNull(ExpedienteComercial expediente);
 
+	
+	
 	public Boolean trabajoTieneTarifaPlana(TareaExterna tareaExterna);
 
 	boolean checkLiberbank(TareaExterna tareaExterna);

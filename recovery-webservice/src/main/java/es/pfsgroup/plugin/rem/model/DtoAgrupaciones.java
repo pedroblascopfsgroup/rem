@@ -67,6 +67,9 @@ public class DtoAgrupaciones extends WebDto {
 	private String numAgrupPrinexHPM;
 	private Integer activosGencat;
 	private String codSubcartera;
+	private Boolean cambioEstadoPublicacion;
+	private Boolean cambioEstadoPrecio;
+	private Boolean cambioEstadoActivo; 
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -407,4 +410,22 @@ public class DtoAgrupaciones extends WebDto {
 		this.codSubcartera = codSubcartera;
 	}
 
+	public Boolean getCambioEstadoPublicacion() {
+		return cambioEstadoPublicacion;
+	}
+	public void setCambioEstadoPublicacion(Boolean cambioEstadoPublicacion) {
+		this.cambioEstadoPublicacion = cambioEstadoPublicacion;
+	}
+	public Boolean getCambioEstadoPrecio() {
+		return cambioEstadoPrecio;
+	}
+	public void setCambioEstadoPrecio(Boolean cambioEstadoPrecio) {
+		this.cambioEstadoPrecio = cambioEstadoPrecio;
+	}
+	public Boolean getCambioEstadoActivo() {
+		return cambioEstadoActivo;
+	}
+	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
+		this.cambioEstadoActivo = cambioEstadoActivo;
+	}
 }

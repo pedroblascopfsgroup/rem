@@ -135,7 +135,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				        		if(!Ext.isEmpty(record)) {								        			
 				        			return record.get("descripcion");								        		
 				        		} else {
-				        			comboEditor.setValue(value);								        			
+				        			comboEditor.setValue(value);	
 				        		}
 			        		}
 			        },
@@ -271,6 +271,21 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
+		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
+			var activo = me.lookupController().getViewModel().get('activo');
+			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
+				if(activo.get('cambioEstadoActivo')){
+					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
+				}
+				if(activo.get('cambioEstadoPrecio')){
+					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
+				}
+				if(activo.get('cambioEstadoPublicacion')){
+					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+				}
+				
+			} 
+		}
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
 			if (gencat == "true") {
@@ -381,7 +396,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	},
     saveSuccessFn: function () {
    		var me = this;
-        me.unmask();			                        
+        me.unmask();	
         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
         me.up('activosdetalle').lookupController().refrescarActivo(true);
 		return true;

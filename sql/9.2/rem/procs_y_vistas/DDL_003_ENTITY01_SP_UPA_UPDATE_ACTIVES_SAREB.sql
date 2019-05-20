@@ -1,6 +1,6 @@
 --###############################################################################################################################################################################--
---## AUTOR=SERGIO GARCIA
---## FECHA_CREACION=20161212
+--## AUTOR=DAP
+--## FECHA_CREACION=20190509
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HREOS-1503
@@ -26,6 +26,7 @@
 --##        0.10 [Hito: ] [HREOS-1106] Se actualiza ACT_TIT_TITULO con la informaci&oacute;n de DE BIE_ADJ_ADJUDICACION.                                                        	   ##--																									   ##--
 --##        0.11 [Hito: ] [HREOS-1503] Se actualizan los borrados de las cargas que vienen por sincronización en las tablas ACT_CRG_CARGAS y BIE_CAR_CARGAS.  
 --##        0.12 [HREOS-2255] DGA Borrado logico division carteras
+--##        0.13 DAP - Modificado ultimo cambio posesión
 --###############################################################################################################################################################################--
 --*/
 
@@ -48,6 +49,7 @@ V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
 V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
 V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
+V_QUERY VARCHAR2(400 CHAR);
 
 	--TABLA BIE_BIEN
 	TYPE T_TIPO_TABLA1 IS TABLE OF VARCHAR2(150);
@@ -146,8 +148,8 @@ V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
 	TYPE T_TIPO_TABLA7 IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_TABLA7 IS TABLE OF T_TIPO_TABLA7;
     V_TIPO_TABLA7 T_ARRAY_TABLA7 := T_ARRAY_TABLA7(
-      T_TIPO_TABLA7('FECHA_CONTRATO_ARRENDAMIENTO','SPS_FECHA_TITULO'),
-      T_TIPO_TABLA7('FECHA_REALIZACION_POSESION','SPS_FECHA_TOMA_POSESION')
+      T_TIPO_TABLA7('FECHA_CONTRATO_ARRENDAMIENTO','SPS_FECHA_TITULO','NO ACTUALIZAR'),
+      T_TIPO_TABLA7('FECHA_REALIZACION_POSESION','SPS_FECHA_TOMA_POSESION','SPS_FECHA_ULT_CAMBIO_POS')
     );
     V_TMP_TIPO_TABLA7 T_TIPO_TABLA7;
 
@@ -988,6 +990,12 @@ BEGIN
 
 	V_TMP_TIPO_TABLA7 := V_TIPO_TABLA7(I);
 
+	V_QUERY := NULL;
+
+	IF V_TMP_TIPO_TABLA7(3) != 'NO ACTUALIZAR' THEN
+		V_QUERY := 'AJD.'||V_TMP_TIPO_TABLA7(3)||' = SYSDATE,';
+	END IF;
+
 	V_SQL := '
 	MERGE INTO '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA AJD USING
 	(
@@ -1009,6 +1017,7 @@ BEGIN
 	ON (AJD.ACT_ID = TMP.ACT_ID)
 	WHEN MATCHED THEN UPDATE SET
 	AJD.'||V_TMP_TIPO_TABLA7(2)||' = TMP.'||V_TMP_TIPO_TABLA7(1)||',
+	'||V_QUERY||'
 	AJD.USUARIOMODIFICAR = '''||V_USUARIO||''',
 	AJD.FECHAMODIFICAR = SYSDATE
 	WHERE AJD.'||V_TMP_TIPO_TABLA7(2)||' IS NULL

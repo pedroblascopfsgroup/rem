@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
@@ -91,6 +92,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			if(!Checks.esNulo(tipoTituloActivoTPA)) {
 				activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
 			}
+			activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
 		}
 		
 		expedienteComercial.setEstado(estadoExpedienteComercial);

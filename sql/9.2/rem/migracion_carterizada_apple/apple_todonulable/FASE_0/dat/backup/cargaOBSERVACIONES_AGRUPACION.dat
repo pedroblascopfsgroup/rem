@@ -1,0 +1,5 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;OBSERVACIONES_AGRUPACION;AGR_EXTERNO;NUMBER(16,0);NO;;Código identificador único de la agrupación
+2;OBSERVACIONES_AGRUPACION;USU_ID;VARCHAR2(20 CHAR);NO;;Identificador único del usuario de que será gestor del activo.
+3;OBSERVACIONES_AGRUPACION;AGO_OBSERVACION;VARCHAR2(1024 CHAR);NO;;Descripción de la observación de la agrupación.
+4;OBSERVACIONES_AGRUPACION;AGO_FECHA;DATE;NO;;Fecha de creación de la observación.

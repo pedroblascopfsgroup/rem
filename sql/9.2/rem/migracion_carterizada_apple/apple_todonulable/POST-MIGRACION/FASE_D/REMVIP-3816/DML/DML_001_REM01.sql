@@ -1,0 +1,97 @@
+--/*
+--#########################################
+--## AUTOR=Marco Munoz
+--## FECHA_CREACION=20190326
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.20
+--## INCIDENCIA_LINK=REMVIP-3816
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	V_SQL VARCHAR2(20000 CHAR);
+    TABLE_COUNT NUMBER(1,0) := 0;
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+
+BEGIN			
+			
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Comienza el proceso...'); 
+    
+    V_SQL :=   'MERGE INTO '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL T1
+				USING (
+					SELECT ACT.ACT_ID,
+						   ICO.ICO_ID,
+						   TPA.DD_TPA_ID,
+						   SAC.DD_SAC_ID
+					FROM '||V_ESQUEMA||'.AUX_MMC_REMVIP_3816              AUX
+					JOIN '||V_ESQUEMA||'.ACT_ACTIVO                       ACT ON AUX.ID_ACTIVO_HAYA = ACT.ACT_NUM_ACTIVO
+					JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL           ICO ON ICO.ACT_ID = ACT.ACT_ID
+					JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO               TPA ON AUX.DD_TPA_CODIGO = TPA.DD_TPA_CODIGO
+					JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO            SAC ON AUX.DD_SAC_CODIGO = SAC.DD_SAC_CODIGO
+					WHERE ACT.USUARIOCREAR = ''MIG_APPLE''
+					  AND AUX.STATUS = ''CAMBIAR''
+				) T2 
+				ON (T1.ICO_ID = T2.ICO_ID)
+				WHEN MATCHED THEN UPDATE SET
+				 T1.DD_TPA_ID = T2.DD_TPA_ID,
+				 T1.DD_SAC_ID = T2.DD_SAC_ID,
+				 T1.USUARIOMODIFICAR = ''MIG_APPLE_POST'',
+				 T1.FECHAMODIFICAR = SYSDATE
+	';
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('	[INFO_MIGRA] '||SQL%ROWCOUNT||' registros modificados. En la ACT_ICO_INFO_COMERCIAL.'); 
+	
+	V_SQL :=   'MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO T1
+				USING (
+					SELECT ACT.ACT_ID,
+						   ICO.ICO_ID,
+						   TPA.DD_TPA_ID,
+						   SAC.DD_SAC_ID
+					FROM '||V_ESQUEMA||'.AUX_MMC_REMVIP_3816              AUX
+					JOIN '||V_ESQUEMA||'.ACT_ACTIVO                       ACT ON AUX.ID_ACTIVO_HAYA = ACT.ACT_NUM_ACTIVO
+					JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL           ICO ON ICO.ACT_ID = ACT.ACT_ID
+					JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO               TPA ON AUX.DD_TPA_CODIGO = TPA.DD_TPA_CODIGO
+					JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO            SAC ON AUX.DD_SAC_CODIGO = SAC.DD_SAC_CODIGO
+					WHERE ACT.USUARIOCREAR = ''MIG_APPLE''
+					  AND AUX.STATUS = ''CAMBIAR''
+				) T2 
+				ON (T1.ACT_ID = T2.ACT_ID)
+				WHEN MATCHED THEN UPDATE SET
+				 T1.DD_TPA_ID = T2.DD_TPA_ID,
+				 T1.DD_SAC_ID = T2.DD_SAC_ID,
+				 T1.USUARIOMODIFICAR = ''MIG_APPLE_POST'',
+				 T1.FECHAMODIFICAR = SYSDATE
+	';
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('	[INFO_MIGRA] '||SQL%ROWCOUNT||' registros modificados. En la ACT_ICO_INFO_COMERCIAL.'); 
+	
+	
+	COMMIT;
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT

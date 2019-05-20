@@ -46,9 +46,11 @@ import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -187,9 +189,12 @@ public class TabActivoInformeComercial implements TabActivoService {
 				ActivoProveedor pve = gestorActivoManager.obtenerProveedorTecnico(activo.getId());
 				
 				if (!Checks.esNulo(pve)) {
-					beanUtilNotNull.copyProperty(informeComercial, "codigoProveedor", pve.getCodigoProveedorRem());
-					beanUtilNotNull.copyProperty(informeComercial, "nombreProveedor", pve.getNombre());
 					beanUtilNotNull.copyProperty(informeComercial, "tieneProveedorTecnico", true);
+					if  (!activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB) && !activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_SAR_INMOBILIARIO)) 
+					{
+						beanUtilNotNull.copyProperty(informeComercial, "codigoProveedor", pve.getCodigoProveedorRem());
+						beanUtilNotNull.copyProperty(informeComercial, "nombreProveedor", pve.getNombre());
+					}
 				}else{
 					beanUtilNotNull.copyProperty(informeComercial, "tieneProveedorTecnico", false);
 				}

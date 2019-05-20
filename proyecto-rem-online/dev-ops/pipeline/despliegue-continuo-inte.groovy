@@ -161,7 +161,7 @@ pipeline {
                     mavenSettingsConfig: 'pfs-recovery-settings.xml'
                     , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
                     ) {
-                     sh "mvn clean package -Prem,java7 -Dmaven.test.skip=true -Dversion=\"${entorno} - ${version} (${GIT_COMMIT})\" surefire-report:report -Daggregate=true"
+                     sh "mvn clean package -Prem,java7,ora11 -Dmaven.test.skip=true -Dversion=\"${entorno} - ${version} (${GIT_COMMIT})\" surefire-report:report -Daggregate=true"
                     }
 
             }
@@ -187,7 +187,7 @@ pipeline {
 
         stage('Update-DB') {
             steps {
-                timeout (time:2, unit:'HOURS') {
+                timeout (time:10, unit:'HOURS') {
                     deployPitertul("ops-bd@iap03", 22)
                 }
             }
@@ -196,10 +196,10 @@ pipeline {
         stage('Deploy') {
             steps {
 
-                timeout (time:6, unit:'MINUTES') {
+                timeout (time:20, unit:'MINUTES') {
                     deployFrontal("recovecp@iap04", 2228)
                 }
-                timeout (time:2, unit:'MINUTES') {
+                timeout (time:10, unit:'MINUTES') {
                     deployProcesos("recovecb@iap04", 2228)
                 }
             }

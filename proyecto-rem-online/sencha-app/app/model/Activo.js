@@ -223,6 +223,9 @@ Ext.define('HreRem.model.Activo', {
     			name:'estadoActivoCodigo'
     		},
     		{
+    			name: 'diasCambioEstadoActivo'
+    		},
+    		{
     			name:'divHorizontal'
     		},
     		
@@ -797,7 +800,19 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
-    			name: 'isPANoDadaDeBaja',
+    			name: 'isPANoDadaDeBaja'
+    			type: 'boolean'
+    		}
+    		{
+    			name: 'cambioEstadoActivo',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'cambioEstadoPrecio',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'cambioEstadoPublicacion',
     			type: 'boolean'
     		}
     ],

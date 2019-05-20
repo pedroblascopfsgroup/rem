@@ -54,6 +54,8 @@ Ext.define('HreRem.view.common.WindowBase', {
     		                	 if(o.result.success == "false") {    		                 		    		                 		                 		
      		                 		if(o.result.errorMessage.includes("documento no permitida")){
      		                 			me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.extension.documento.no.permitida"));
+     		                 		}else if(o.result.errorMessage.includes("Control duplicado")){
+     		                 			me.fireEvent("errorToast",HreRem.i18n("Ya se ha subido un fichero con el mismo contenido").split("undefined")[0]);     		                 		
      		                 		}else if(o.result.errorMessage.includes("]")){
      		                 			me.fireEvent("errorToast", o.result.errorMessage.split("]")[1]);
      		                 		}else{

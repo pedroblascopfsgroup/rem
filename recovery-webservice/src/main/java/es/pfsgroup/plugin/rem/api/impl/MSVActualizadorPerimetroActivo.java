@@ -296,7 +296,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 				idList.add(activo.getId());
 			}
-			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
+			activoAdapter.actualizarEstadoPublicacionActivo(idList, true);
 			transactionManager.commit(transaction);
 		}catch(Exception e){
 			transactionManager.rollback(transaction);

@@ -90,11 +90,9 @@ def deployPitertul(String host, int port) {
                 sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -cliente:rem -componente:pitertul -custom-dir:${entorno}"
 
                 withCredentials([string(credentialsId: 'password-BBDD-val03', variable: 'PASSWORD')]) {
-			withCredentials([string(credentialsId: 'password-BBDD-val03-grants', variable: 'PASSGRANTS')]) {
-                    		echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
-                    		sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xgrants:si -Pmaster:${PASSWORD} -Pentity01:${PASSWORD} -Pdwh:${PASSWORD} -Psystempfs:${PASSGRANTS}\""
-			}                
-		}
+                    echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
+                    sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xbi:si -Xgrants:si -Pmaster:"AOk$M{~2" -Pentity01:"AOk$M{~2" -Pdwh:"AOk$M{~2" -Psystempfs:admin\""
+                }
 
             }
             
@@ -118,16 +116,18 @@ pipeline {
      }
 
     stages {
-
         stage("Setup") {
             steps {
-
                 echo """PARAMETROS: tagReferencia: ${env.tagReferencia}
                     tag/version/rama: ${env.version}
                     hito Link: ${env.hito}
                     entorno: ${entorno}
+		    maven: ${MAVEN}
+		    scripts: ${SCRIPTS}
+		    web: ${WEB}
+		    etl: ${ETL}
                     """
-
+		
                 // Esto es necesario porque sino no descarga bien los módulos
                 // no se el porqué.
                 sh script: "git rm fwk"
@@ -137,38 +137,35 @@ pipeline {
                 
                 echo "Comprueba formato y codificación ficheros"
                 sh script: "bash ./proyecto-rem-online/dev-ops/common-check-file-format.sh ${GIT_USER}"
-                script {
+                /*script {
                     env.GIT_COMMIT = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%H'").trim()
                     echo "Posicionados en commit: ${GIT_COMMIT}"
-                }
+                }*/
 
                 echo "Fusiona versiones de BPMS"
                 sh script: "if [[ -f dev-ops/bpms/fusionar-properties-xmls.sh ]] && [[ -f dev-ops/bpms/versiones-bpms.txt ]] ; then bash ./dev-ops/bpms/fusionar-properties-xmls.sh ./dev-ops/bpms/versiones-bpms.txt ; fi"
 
             }
         }
+		stage('Build') {
+		    steps {
+		        withMaven(
+		            mavenSettingsConfig: 'pfs-recovery-settings.xml'
+		            , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
+		            ) {
+		             sh "mvn install:install-file -Dpackaging=pom -Dfile=pom.xml -DpomFile=pom.xml"
+		             sh "mvn org.codehaus.mojo:versions-maven-plugin:2.4:set -DnewVersion=${version}"
+		            }
 
-        stage('Build') {
-            steps {
-
-                withMaven(
-                    mavenSettingsConfig: 'pfs-recovery-settings.xml'
-                    , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
-                    ) {
-                     sh "mvn install:install-file -Dpackaging=pom -Dfile=pom.xml -DpomFile=pom.xml"
-                     sh "mvn org.codehaus.mojo:versions-maven-plugin:2.4:set -DnewVersion=${version}"
-                    }
-
-                sh "bash ./proyecto-rem-online/dev-ops/common-sencha6-build.sh"
-                withMaven(
-                    mavenSettingsConfig: 'pfs-recovery-settings.xml'
-                    , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
-                    ) {
-                     sh "mvn clean package -Prem,java7 -Dmaven.test.skip=true -Dversion=\"${entorno} - ${version} (${GIT_COMMIT})\" surefire-report:report -Daggregate=true"
-                    }
-
-            }
-        }
+		        sh "bash ./proyecto-rem-online/dev-ops/common-sencha6-build.sh"
+		        withMaven(
+		            mavenSettingsConfig: 'pfs-recovery-settings.xml'
+		            , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
+		            ) {
+		             sh "mvn clean package -Prem,java7,ora12 -Dmaven.test.skip=true -Dversion=${version} surefire-report:report -Daggregate=true"
+		            }
+		    }
+		}
 
         stage('Package') {
             steps {
@@ -177,8 +174,6 @@ pipeline {
                         sh script: "bash ./proyecto-rem-online/dev-ops/package-config.sh -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-pitertul" : {
                         sh script: "bash ./proyecto-rem-online/dev-ops/package-pitertul.sh -tagAnterior:${tagReferencia} -out-dir:${DIR_SALIDA} -entornos:${entorno}"
-//                    }, "package-springBatch" : {
-//                        sh script: "bash ./proyecto-rem-online/dev-ops/package-spring-batch.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-online" : {
                         sh script: "bash ./proyecto-rem-online/dev-ops/package-online.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-procesos" : {
@@ -192,17 +187,16 @@ pipeline {
 
         stage('Update-DB') {
             steps {
-                deployPitertul("ops-bd@iap03", 22)
-                //build job: 'rem-bd-auxiliares', wait: false
+                deployPitertul("map017@192.168.49.33", 22)
             }
         }
 
         stage('Deploy') {
             steps {
-                timeout (time:10, unit:'MINUTES') {
+                timeout (time:20, unit:'MINUTES') {
                     deployFrontal("map017@192.168.49.33", 22)
                 }
-                timeout (time:5, unit:'MINUTES') {
+                timeout (time:15, unit:'MINUTES') {
                     deployProcesos("map017@192.168.49.33", 22)
                 }
             }

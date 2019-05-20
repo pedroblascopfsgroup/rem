@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20190509
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190516
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.11.0
---## INCIDENCIA_LINK=HREOS-6184
+--## VERSION_ARTEFACTO=2.8.4
+--## INCIDENCIA_LINK=REMVIP-3995
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           

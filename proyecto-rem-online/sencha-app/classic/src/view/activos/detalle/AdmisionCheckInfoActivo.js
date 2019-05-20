@@ -98,9 +98,12 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 	                	bind:		'{activoAdmision.descripcion}'
 	                },
 					{
-						xtype: 'textfieldbase',
+						xtype: 'displayfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.id.activo.prinex'),
-						bind:		'{activoAdmision.idProp}'
+						bind:{		
+							value: '{activoAdmision.idProp}',
+							disabled: '{activo.unidadAlquilable}'
+						}
 					},
 					{ 
 			        	xtype: 'comboboxfieldbase',

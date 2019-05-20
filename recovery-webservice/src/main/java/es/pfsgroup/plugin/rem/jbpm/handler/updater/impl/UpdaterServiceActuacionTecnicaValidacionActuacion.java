@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,7 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 						ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
 						situacionPosesoria.setFechaAccesoTapiado(trabajo.getFechaFin());
 						situacionPosesoria.setAccesoTapiado(1);
+						situacionPosesoria.setFechaUltCambioTapiado(new Date());
 						genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
 					}
 					

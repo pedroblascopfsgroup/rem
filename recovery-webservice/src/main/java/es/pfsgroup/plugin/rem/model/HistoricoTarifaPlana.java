@@ -20,6 +20,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 
 @Entity
@@ -56,6 +57,10 @@ public class HistoricoTarifaPlana implements Serializable, Auditable{
 
 	@Embedded
 	private Auditoria auditoria;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CRA_ID")
+	DDCartera carteraTP;
 	
 	public Long getId() {
 		return id;
@@ -113,5 +118,13 @@ public class HistoricoTarifaPlana implements Serializable, Auditable{
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	
+	public DDCartera getCarteraTP() {
+		return carteraTP;
+	}
+
+	public void setCarteraTP(DDCartera carteraTP) {
+		this.carteraTP = carteraTP;
 	}
 }

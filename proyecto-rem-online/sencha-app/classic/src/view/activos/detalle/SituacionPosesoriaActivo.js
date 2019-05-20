@@ -561,7 +561,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    		fechaRevisionEstadoPosesorio = me.down('[reference=fechaRevisionEstadoPosesorio]'),
    		fechaSolDesahucio = me.down('[reference=fechaSolDesahucio]'),
    		fechaLanzamiento = me.down('[reference=fechaLanzamiento]'),
-   		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]'),
+   		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]');
 //   	datefieldFechaTitulo = me.down('[reference=datefieldFechaTitulo]'),
 //   	datefieldFechaVencTitulo = me.down('[reference=datefieldFechaVencTitulo]');
 

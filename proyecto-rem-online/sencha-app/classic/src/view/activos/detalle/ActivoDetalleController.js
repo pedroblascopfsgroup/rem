@@ -3658,8 +3658,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		textArea.setDisabled(false);
     	} else {
     		textArea.setValue('');
-    		textArea.setDisabled(true);
-    		
+    		textArea.setDisabled(true);   		
     	}
     },
 

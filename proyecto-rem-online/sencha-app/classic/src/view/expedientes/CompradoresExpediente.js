@@ -65,10 +65,22 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						xtype: 'button',
 						text: HreRem.i18n('btn.enviar.compradores'),
 						handler: 'enviarTitularesUvem',
-						margin: '10 40 5 10',
+						margin: '10 5 5 10',
 						bind: {
 							hidden: '{!esEditableCompradores}'
 						}
+					},
+					{
+						xtype: 'button',
+						text: HreRem.i18n('btn.validar.compradores'),
+						handler: 'validarCompradores',
+						margin: '10 5 5 10',
+						visible:true,
+						hidden: cartera(),
+				        hideable: !cartera()
+						/*bind: {
+							hidden: '{!esEditableCompradores}'
+						}*/
 					},
                 	{
 					    xtype		: 'gridBase',
@@ -220,7 +232,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					           renderer: coloredRender,
 					           hidden: cartera(),
 					           hideable: !cartera()
-
 						   },{
 							   xtype: 'actioncolumn',
 							      width: 30,
@@ -239,10 +250,15 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							          					                
 					            		}
 							        }]
-						   }  
-							  
+						   } , {
 
-						   
+							   text: HreRem.i18n('header.problemas.ursus'),
+							   dataIndex: 'problemasUrsus',
+							   flex: 1,
+					           renderer: coloredRender,
+					           hidden: cartera(),
+					           hideable: !cartera()
+						   }   
 						  ],
 					    dockedItems : [
 					        {

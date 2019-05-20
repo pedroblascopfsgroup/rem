@@ -211,7 +211,6 @@ import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
-import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -1343,8 +1342,10 @@ public class ActivoAdapter {
 					BeanUtils.copyProperties(catastroDto, activo.getAdmisionDocumento().get(i));
 
 					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento())) {
+						if(!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo())){
 						BeanUtils.copyProperty(catastroDto, "descripcionTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getDescripcion());
 						BeanUtils.copyProperty(catastroDto, "codigoTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getCodigo());
+						}
 					}
 
 					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica())) {
@@ -2079,8 +2080,6 @@ public class ActivoAdapter {
 				}
 				
 				beanUtilNotNull.copyProperty(dtoTramite, "esTarifaPlana", tramite.getTrabajo().getEsTarifaPlana());
-				beanUtilNotNull.copyProperty(dtoTramite, "subtipoTrabajoEnElHistoricoDeTarifaPlana", 
-						trabajoApi.esTrabajoTarifaPlana(tramite.getTrabajo().getActivo(), tramite.getTrabajo().getSubtipoTrabajo(), tramite.getTrabajo().getFechaSolicitud()));
 			}
 
 			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaDevolucion", false);

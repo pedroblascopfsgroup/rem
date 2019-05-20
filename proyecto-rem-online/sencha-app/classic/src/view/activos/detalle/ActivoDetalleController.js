@@ -3,7 +3,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     alias: 'controller.activodetalle',
     requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
             'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
-            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController'],
+            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.activos.detalle.InformeComercialActivo'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -62,7 +62,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          
          'tituloinformacionregistralactivo calificacionnegativagrid': {
           	onClickPropagation: 'onClickPropagationCalificacionNegativa'
-          }
+          },
+          
+          'informecomercialactivo historicomediadorgrid': {
+           	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+           }
     },
     
 	cargarTabData: function (form) {
@@ -1090,7 +1094,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         });	
 	},
 
-	borrarDocumentoAdjuntoOferta : function(grid, record) {
+	borrarDocumentoAdjuntoOferta : function(grid, record) { // FIXME: cuando se reubique dentro de un slide en el wizard eliminar de aqui.
 		var me = this, docCliente = null;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		if (grid.handler == "borrarDocumentoAdjuntoOferta") {
@@ -3453,13 +3457,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-  createTabDataHistoricoMediadores : function(list) {
+  createTabDataHistoricoMediadores : function(listadoActivos, records4) {
 	
     var me = this, tabData = {};
     tabData.id = me.getViewModel().get("activo.id");
     tabData.models = [];
 
-    Ext.Array.each(list, function(record, index) {
+    Ext.Array.each(listadoActivos, function(record, index) {
           var model = {};
           model.name = 'mediadoractivo';
           model.type = 'activo';
@@ -4147,7 +4151,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var data = JSON.parse(jsonData);
 
 			if (data.success !== null && data.success !== undefined && data.success === "false") {
-				me.getViewModel().getData().situacionPosesoria.reject();
+				if(!Ext.isEmpty(me.getViewModel().getData().situacionPosesoria)){
+					me.getViewModel().getData().situacionPosesoria.reject();
+				}
 				me.getViewModel().getData().activo.reject();
 				scope.fireEvent("errorToast", data.msgError);
 			} else {
@@ -4724,64 +4730,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             }
         }
     },
-
-    onClickBotonGenerarDoc: function(btn){
-        var me =this;
-        var window= btn.up('window'),
-        ventana3= window.down('anyadirnuevaofertaactivoadjuntardocumento');
-        ventana2= window.down('anyadirnuevaofertadetalle');
-        var idExpediente;
-        var codPrescriptor;
-        var numDoc = "";
-        var nombre = "";
-        var direccion = ""
-        var email = "";
-        var telefono= "";
-        var tipoPersona = "";
-        if(!Ext.isEmpty(ventana2)){
-        	tipoPersona = ventana2.getForm().findField('comboTipoPersona').value;
-            codPrescriptor = ventana2.getForm().findField('buscadorPrescriptores').value;
-            numDoc = ventana2.getForm().findField('numDocumentoCliente').value;
-            if(tipoPersona == '1'){
-            	nombre= ventana2.getForm().findField('nombreCliente').value + " " + ventana2.getForm().findField('apellidosCliente').value;
-            }else{
-            	nombre= ventana2.getForm().findField('razonSocialCliente').value;
-            }
-            
-            direccion = ventana2.getForm().getValues().direccion;
-            email = ventana2.getForm().getValues().email;
-            telefono = ventana2.getForm().getValues().telefono;
-        }else{
-            ventana2=window.down('datoscompradorwizard');
-            idExpediente= ventana2.getRecord().data.idExpedienteComercial;
-            tipoPersona = ventana2.getRecord().data.codTipoPersona;
-            numDoc = ventana2.getRecord().data.numDocumento;
-            if(tipoPersona == '1'){
-            	nombre=ventana2.getRecord().data.nombreRazonSocial + " " + ventana2.getRecord().data.apellidos;
-            }else{
-            	nombre=ventana2.getRecord().data.nombreRazonSocial;
-            }
-            
-            direccion = ventana2.getRecord().data.direccion;
-            email = ventana2.getRecord().data.email;
-            telefono = ventana2.getRecord().data.telefono1;
-        }
-        var cesionDatos = ventana3.getForm().findField('cesionDatos').value;
-        var transIntern = ventana3.getForm().findField('transferenciasInternacionales').value;
-        var comTerceros = ventana3.getForm().findField('comunicacionTerceros').value;
-        var url =  $AC.getRemoteUrl('activo/generarUrlGDPR');
-        config = {};
-        config.url=url;
-        config.method='POST';
-        config.params = {codPrescriptor:codPrescriptor,cesionDatos:cesionDatos,transIntern:transIntern,comTerceros:comTerceros,
-               documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono};
-        Ext.global.console.log("Generando documento para "+ nombre);
-        me.fireEvent("downloadFile", config);
-
-        //ventana3.down('button[itemId=btnSubirDoc]').enable();
-    },
 	
-	comprobarFormato: function() {
+	comprobarFormato: function() { // FIXME: cuando se reubique dentro de un slide en el wizard eliminar de aqui.
 		
 		var me = this;
 		value = me.lookupReference('nuevoCompradorNumDoc');

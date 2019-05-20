@@ -853,6 +853,4 @@ public interface TrabajoApi {
 
 	boolean checkGaleon(Trabajo trabajo);
 
-	Boolean esTrabajoTarifaPlana(Activo activo, DDSubtipoTrabajo subtipoTrabajo, Date fechaSolicitud);
-
 }

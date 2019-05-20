@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -26,7 +25,6 @@ import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -146,51 +144,9 @@ public class ClienteWebcomGenerico {
 		} catch (NoSuchAlgorithmException e) {
 			throw new HttpClientFacadeInternalError("No se ha podido calcular el signature", e);
 		} finally {
-			try {
-				JSONArray data = obtenerDataResponse(response);
-				if (data != null) {
-					trazarObjetosRechazados(registroLlamada, data, false);
-				} else {
-					data = obtenerDataResponse(requestBody);
-					if (data != null) {
-						trazarObjetosRechazados(registroLlamada, data, true);
-					}
-				}
-			} catch (Exception e) {
-				logger.error("Error trazando datos rechazados", e);
-			}
 			registroLlamada.logTiempoPeticionRest();
 
 		}
-	}
-
-	/**
-	 * Método tentativo para obtener la data de la petición o la respuest
-	 * @param object
-	 * @return
-	 */
-	private JSONArray obtenerDataResponse(JSONObject object) {
-		JSONArray data = null;
-		try {
-			data = object.getJSONArray("data");
-		} catch (Exception e) {
-			//no cambiar esto a error, es un metodo tentativo
-			logger.info("Error al obtener la respuesta, usamos la peticion");
-		}
-		return data;
-
-	}
-
-	private void trazarObjetosRechazados(RestLlamada registroLlamada, JSONArray data, boolean trazandoRequest) {
-		ArrayList<JSONObject> datosErroneos = new ArrayList<JSONObject>();
-		for (int i = 0; i < data.size(); i++) {
-			JSONObject jsonObject = data.getJSONObject(i);
-			if (trazandoRequest || (jsonObject.containsKey("success") && !jsonObject.getBoolean("success"))) {
-				datosErroneos.add(jsonObject);
-			}
-
-		}
-		registroLlamada.setDatosErroneos(datosErroneos);
 	}
 
 	private void debugJsonFile(String jsonString) {

@@ -280,6 +280,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 				DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
 				activoSituacionPosesoria.setConTitulo(tipoTituloActivoTPA);
+				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
 			} else if(activoPatrimonioDto.getEstadoAlquiler().equals(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE)) {
@@ -291,6 +292,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 				activoSituacionPosesoria.setOcupado(0);
 				activoSituacionPosesoria.setConTitulo(null);
+				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
 				activoPatrimonio.setTipoInquilino(null);
 
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);

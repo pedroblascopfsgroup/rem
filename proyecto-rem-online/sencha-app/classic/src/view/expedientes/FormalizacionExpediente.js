@@ -3,7 +3,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	xtype : 'formalizacionexpediente',
 	cls : 'panel-base shadow-panel',
 	collapsed : false,
-	disableValidation : true,
+	disableValidation : false,
 	reference : 'formalizacionExpediente',
 	scrollable : 'y',
 	saveMultiple : true,
@@ -212,7 +212,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									fieldLabel : HreRem
 											.i18n('fieldlabel.capital.concedido'),
 									reference: 'cncyCapitalConcedidoBnk',
-									readOnly : true,
+									readOnly: true,
 									bind : {
 										value: '{financiacion.capitalConcedido}'
 									},
@@ -334,6 +334,16 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					cls : 'panel-base shadow-panel',
 					title : HreRem.i18n('title.posicionamiento.firma'),
 					items : [{
+                        xtype: 'datefieldbase',
+                        fieldLabel: HreRem.i18n('fieldlabel.fecha.posicionamiento.prevista'),
+                        bind:		{
+                        	value: '{financiacion.fechaPosicionamientoPrevista}',
+                        	readOnly	: '{isGestorFormalizacion}'
+                        },
+						maxValue : null
+                        
+                    },
+					{
 						xtype : 'gridBaseEditableRow',
 						title : HreRem.i18n('title.posicionamiento'),
 						secFunToEdit: 'EDITAR_GRID_POS_FIRMA_FORMALIZACION_EXPEDIENTE',

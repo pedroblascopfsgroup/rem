@@ -89,6 +89,9 @@ import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
+import es.pfsgroup.recovery.api.ExpedienteApi;
+
 
 
 @Controller
@@ -1089,6 +1092,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView createPosicionamiento(DtoPosicionamiento dto, @RequestParam Long idEntidad, ModelMap model) {
 		try {
 			boolean success = expedienteComercialApi.createPosicionamiento(dto, idEntidad);
+			if(!success){
+				model.put("msgError","Ya existe un posicionamiento vigente");
+			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -1181,6 +1187,27 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			model.put(RESPONSE_DATA_KEY,
 					expedienteComercialApi.buscarClientesUrsus(numeroDocumento, tipoDocumento, idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", e.getMessage());
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarProblemasVentaClienteUrsus(@RequestParam String numeroUrsus, @RequestParam String idExpediente, ModelMap model) {
+		try {
+			List<DatosClienteProblemasVentaDto> list = expedienteComercialApi.buscarProblemasVentaClienteUrsus(numeroUrsus, idExpediente);
+			model.put("data", list);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (JsonViewerException e) {
@@ -1378,8 +1405,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView obtencionDatosPrestamo(ModelMap model, DtoObtencionDatosFinanciacion dto) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.obtencionDatosPrestamo(dto));
-
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.obtencionDatosPrestamo(dto));
+			
 		} catch (JsonViewerException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("msgError", e.getMessage());
@@ -1414,8 +1442,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveFormalizacionFinanciacion(ModelMap model, DtoFormalizacionFinanciacion dto, HttpServletRequest request) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveFormalizacionFinanciacion(dto));
-			trustMe.registrarSuceso(request, Long.parseLong(dto.getId()), ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "formalizacion", ACCION_CODIGO.CODIGO_MODIFICAR);
+		
+				model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveFormalizacionFinanciacion(dto));
+				trustMe.registrarSuceso(request, Long.parseLong(dto.getId()), ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "formalizacion", ACCION_CODIGO.CODIGO_MODIFICAR);
+		
+			
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
@@ -1979,6 +2010,22 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getActivosPropagables(ModelMap model, @RequestParam(value = "idExpediente") Long idExpediente){
 		try{
 			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getActivosPropagables(Long.valueOf(idExpediente)));
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getComprobarCompradores(ModelMap model, @RequestParam(value = "idExpediente") Long idExpediente){
+		Boolean hayProblemasUrsus = expedienteComercialApi.hayDiscrepanciasClientesURSUS(Long.valueOf(idExpediente));
+		
+		try{
+			model.put(RESPONSE_DATA_KEY, hayProblemasUrsus);
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

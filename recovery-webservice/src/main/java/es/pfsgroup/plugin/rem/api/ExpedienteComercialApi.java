@@ -657,7 +657,7 @@ public interface ExpedienteComercialApi {
 	 *
 	 * @param dto
 	 */
-	boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception;
+	Double obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception;
 
 	/**
 	 * Este método obtiene los datos del apartado 'Financiación' de la tab 'Formalización' del expediente.
@@ -764,6 +764,16 @@ public interface ExpedienteComercialApi {
 	 */
 	DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus, String idExpediente) throws Exception;
 
+	/*
+	 * Este método permite insertar una lista con los 'Problemas con la venta' en el grid de Cliente Ursus
+	 * 
+	 * @param numeroDocumento : número de documento del cliente.
+	 * @param tipoDocumento : tipo de documento del cliente.
+	 * @param idExpediente : idExpediente
+	 * @return Devuelve una lista con los 'Problemas on la venta'
+	 */
+	public List<DatosClienteProblemasVentaDto> buscarProblemasVentaClienteUrsus(String numeroDocumento, String idExpediente) throws Exception;
+	
 	/**
 	 * Este método calcula el importe de reserva para un expediente si se dan las condiciones: El expediente tiene reserva. La reserva tiene el cálculo de tipo porcentaje. Entonces mira si la oferta
 	 * tiene importe contraoferta y utiliza éste importe, si no utiliza el importe de la oferta.
@@ -1165,5 +1175,9 @@ public interface ExpedienteComercialApi {
 	boolean checkCamposComprador(TareaExterna tareaExterna);
 
 	boolean checkInquilinos(TareaExterna tareaExterna);
+
+	boolean hayDiscrepanciasClientesURSUS(Long idExpediente);
+	
+	boolean hayProblemasURSUS(Long idExpediente);
 
 }

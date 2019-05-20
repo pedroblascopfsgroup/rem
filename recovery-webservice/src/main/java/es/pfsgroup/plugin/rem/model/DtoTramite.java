@@ -94,7 +94,8 @@ public class DtoTramite extends WebDto {
 	private Boolean tramiteAlquilerAnulado;
 	
 	private Boolean esTareaSolicitudOAutorizacion;
-
+	
+	
 	public Long getIdTramite() {
 		return idTramite;
 	}

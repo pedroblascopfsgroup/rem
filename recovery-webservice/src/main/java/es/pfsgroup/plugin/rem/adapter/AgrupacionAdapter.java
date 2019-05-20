@@ -115,6 +115,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -614,8 +616,61 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo());
 					}
 				}
+				
+				//HREOS-5779
+				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA) 
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER)
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)) {
+					if (!Checks.esNulo(agrupacion.getActivos()) && !agrupacion.getActivos().isEmpty()) {
+						Boolean cambioEstadoPublicacion = Boolean.FALSE;
+						Boolean cambioEstadoPrecio = Boolean.FALSE;
+						Boolean cambioEstadoActivo = Boolean.FALSE; 
+						for(ActivoAgrupacionActivo activoAgrup:agrupacion.getActivos()) {
+							
+							
+							if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activoAgrup.getActivo().getCartera().getCodigo())) {
 
+								if((!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioPos()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioPos()))
+										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTit()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTit()))
+										|| (!Checks.esNulo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTapiado()) && calculodiasCambiosActivo(activoAgrup.getActivo().getSituacionPosesoria().getFechaUltCambioTapiado()))
+										|| (!Checks.esNulo(activoAgrup.getActivo().getFechaUltCambioTipoActivo()) && calculodiasCambiosActivo(activoAgrup.getActivo().getFechaUltCambioTipoActivo()))	
+									) {
+									cambioEstadoActivo = Boolean.TRUE;
+						
+								}
 
+								
+								if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubAlq())&& calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubAlq()))) {
+									if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionAlquiler()) && (!activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo().equals(DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER)))	
+											){
+										cambioEstadoPublicacion = Boolean.TRUE;
+									}
+								}
+								
+								
+								if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubVenta()) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioPubVenta()))) {
+									if((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionVenta()) && (!activoAgrup.getActivo().getActivoPublicacion().getEstadoPublicacionVenta().getCodigo().equals(DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA)))	
+											){
+										cambioEstadoPublicacion = Boolean.TRUE;
+									}
+								}
+								
+
+								if(((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorVenta())) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorVenta()))
+									||	((!Checks.esNulo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorAlq())) && calculodiasCambiosActivo(activoAgrup.getActivo().getActivoPublicacion().getFechaCambioValorAlq()))
+										) {
+											cambioEstadoPrecio = Boolean.TRUE;
+								}	
+								
+								dtoAgrupacion.setCambioEstadoActivo(cambioEstadoActivo);
+								dtoAgrupacion.setCambioEstadoPrecio(cambioEstadoPrecio);
+								dtoAgrupacion.setCambioEstadoPublicacion(cambioEstadoPublicacion);
+
+							}
+							
+						}
+					}
+				}
 
 				// Resolvemos si la agrupación será editable
 				dtoAgrupacion.setEsEditable(true);
@@ -3412,4 +3467,17 @@ public class AgrupacionAdapter {
 
 		return dto;
 	}
+	
+	public Boolean calculodiasCambiosActivo(Date fechaIni){
+		
+		Boolean cumpleCond = Boolean.FALSE;
+		Date fechaInicial=fechaIni;
+		Date fechaFinal=new Date();
+		Integer dias=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/86400000);
+		if (dias<7) {
+			cumpleCond=Boolean.TRUE; 
+		}
+		
+		return cumpleCond;
+	} 
 }

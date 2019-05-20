@@ -163,7 +163,7 @@ public class GDInputAssembler {
 		if(ActivoInputDto.EVENTO_ALTA_ACTIVOS.equals(inputDto.getEvent())) {
 			parameters.getParameter().add(getIdHayaActivoMatriz(inputDto.getIdActivoMatriz()));
 			parameters.getParameter().add(getnumRemActivoMatriz(inputDto.getNumRemActivoMatriz()));
-			parameters.getParameter().add(getIdCliente("SAREB"));
+			parameters.getParameter().add(getIdCliente(inputDto.getIdCliente()));
 			parameters.getParameter().add(getIdUnidadAlquilable(inputDto.getIdUnidadAlquilable()));
 			parameters.getParameter().add(getFechaOperacion(inputDto.getFechaOperacion()));
 			parameters.getParameter().add(getTipoActivo(inputDto.getTipoActivo()));

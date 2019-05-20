@@ -1,9 +1,9 @@
 --/*
 --######################################### 
 --## AUTOR=DAP
---## FECHA_CREACION=20180909
+--## FECHA_CREACION=20180510
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.0.17
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-783
 --## PRODUCTO=NO
 --## 
@@ -63,8 +63,9 @@ BEGIN
           , SUBTIPO_ERROR_GASTO VARCHAR2(3 CHAR)
           , OTROS VARCHAR2(20 CHAR)
           , NKNM28 VARCHAR2(8 CHAR)
+		  , ID_UA NUMBER(16)
     )';
-
+    EXECUTE IMMEDIATE  'comment on column '|| V_ESQUEMA ||'.APR_AUX_I_UR_LIN_FACT_SIN_PROV.ID_UA is ''Campo que sólo está relleno cuando el activo es una Unidad Alquilable y por lo tanto no tiene número UVEM. '' ' ;
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA'); 
 
     /***** H_AUX_I_UR_LIN_FACT_SIN_PROV *****/
@@ -101,6 +102,7 @@ BEGIN
           , OTROS VARCHAR2(20 CHAR)
           , NKNM28 VARCHAR2(8 CHAR)
           , FECHA_CARGA DATE
+		  
     )';
 
   DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');  
@@ -146,8 +148,10 @@ BEGIN
       , SUBTIPO_ERROR_GASTO VARCHAR2(250 CHAR)
       , SUB_ERR_GASTO_NKNM28 VARCHAR2(250 CHAR)
       , FECHA_GENERACION DATE
+	  , ID_UA NUMBER(16)
     )';
 
+  EXECUTE IMMEDIATE  'comment on column '|| V_ESQUEMA ||'.AUX_I_UR_FILE_LFACT_SIN_PROV.ID_UA is ''Campo que sólo está relleno cuando el activo es una Unidad Alquilable y por lo tanto no tiene número UVEM. '' ' ;
   DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');
 
   /***** DD_MRF_MAIL_REJ_FACTURAS *****/

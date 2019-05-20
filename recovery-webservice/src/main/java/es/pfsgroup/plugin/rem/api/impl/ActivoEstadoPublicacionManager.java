@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
@@ -129,12 +130,29 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 
+
 	@Override
 	public DtoDatosPublicacionActivo getDatosPublicacionActivo(Long idActivo) {
     	ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
     	DtoDatosPublicacionActivo dto = activoPublicacionDao.convertirEntidadTipoToDto(activoPublicacion);
 		dto.setPrecioWebVenta(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(idActivo));
+
+		if(!Checks.esNulo(activoPublicacion.getFechaCambioValorVenta())) {
+			
+			Date fechaInicial=activoPublicacion.getFechaCambioValorVenta();
+			Date fechaFinal=new Date();
+			Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
+			
+			dto.setDiasCambioPrecioVentaWeb(dias);
+		}
 		dto.setPrecioWebAlquiler(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo));
+		
+		if(!Checks.esNulo(activoPublicacion.getFechaCambioValorAlq())) {
+			Date fechaInicial=activoPublicacion.getFechaCambioValorAlq();
+			Date fechaFinal=new Date();
+			Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
+			dto.setDiasCambioPrecioAlqWeb(dias);
+		}
 		DDAdecuacionAlquiler adecuacionAlquiler = activoPatrimonioDao.getAdecuacionAlquilerFromPatrimonioByIdActivo(idActivo);
 		if(!Checks.esNulo(adecuacionAlquiler)) {
 			dto.setAdecuacionAlquilerCodigo(adecuacionAlquiler.getCodigo());
@@ -530,8 +548,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Transactional
 	public Boolean setDatosPublicacionActivo(DtoDatosPublicacionActivo dto) throws JsonViewerException{
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(dto.getIdActivo());
-
-		if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {
+		
+		List <ActivoPublicacion> activosPublicacion = new ArrayList <ActivoPublicacion>();
+		activosPublicacion.add(activoPublicacion);
+		
+		if(this.actualizarDatosEstadoActualPublicaciones(dto, activosPublicacion)) {
 			this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
 		}
 
@@ -585,7 +606,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						
 			// Registrar los cambios en la publicación.
 			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
-			this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);
+			List <ActivoPublicacion> activosPublicacion = new ArrayList <ActivoPublicacion>();
+			activosPublicacion.add(activoPublicacion);
+			
+			this.actualizarDatosEstadoActualPublicaciones(dto, activosPublicacion);
 		}
 		
 		return true;
@@ -606,91 +630,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * que se recibe.
 	 *
 	 * @param dto : dto con los datos a guardar en el estado actual de publicación.
-	 * @param activoPublicacion : entidad del estado actual de publicación en la que persistir los datos nuevos.
+	 * @param lista activoPublicacion : entidad del estado actual de publicación en la que persistir los datos nuevos.
 	 * @return Devuelve True si el proceso ha sido satisfactorio, False si no lo ha sido.
 	 */
-	@Transactional
-	private Boolean actualizarDatosEstadoActualPublicacion(DtoDatosPublicacionActivo dto, ActivoPublicacion activoPublicacion) {
-		try {
-			if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
-				beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionVenta", utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivosOcultacion.class,
-						dto.getMotivoOcultacionVentaCodigo()));
-			}
-			if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
-				beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionAlquiler", utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivosOcultacion.class,
-						dto.getMotivoOcultacionAlquilerCodigo()));
-			}
-			beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualVenta", dto.getMotivoOcultacionManualVenta());
-			beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualAlquiler", dto.getMotivoOcultacionManualAlquiler());
-			beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarVenta", dto.getPublicarVenta());
-			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarVenta", dto.getOcultarVenta());
-			if(!Checks.esNulo(dto.getOcultarVenta()) && !dto.getOcultarVenta()) {
-				// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
-				activoPublicacion.setMotivoOcultacionVenta(null);
-				activoPublicacion.setMotivoOcultacionManualVenta(null);
-			}
-			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", dto.getNoMostrarPrecioVenta());
-			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioVenta", dto.getPublicarSinPrecioVenta());
-			beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarAlquiler", dto.getPublicarAlquiler());
-			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarAlquiler", dto.getOcultarAlquiler());
-			if(!Checks.esNulo(dto.getOcultarAlquiler()) && !dto.getOcultarAlquiler()) {
-				// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
-				activoPublicacion.setMotivoOcultacionAlquiler(null);
-				activoPublicacion.setMotivoOcultacionManualAlquiler(null);
-			}
-			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", dto.getNoMostrarPrecioAlquiler());
-			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", dto.getPublicarSinPrecioAlquiler());
-			activoPublicacion.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
 
-
-			if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
-					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) 
-							&& ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
-				activoPublicacion.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
-			}
-
-			if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
-					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) 
-							&& ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
-				activoPublicacion.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
-			}
-			
-			activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
-			activoPublicacion.setMotivoPublicacionAlquiler(dto.getMotivoPublicacionAlquiler());
-			
-			activoPublicacionDao.save(activoPublicacion);
-			
-			if(Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
-				ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
-				BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
-				activoPublicacionHistorico.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
-				activoPublicacionHistorico.setFechaInicioAlquiler(null);
-				activoPublicacionHistorico.setAuditoria(null);
-				activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
-			}
-			
-			if(Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
-				ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
-				BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
-				activoPublicacionHistorico.setFechaInicioVenta(null);
-				activoPublicacionHistorico.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
-				activoPublicacionHistorico.setAuditoria(null);
-				activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
-			}
-
-		} catch (IllegalAccessException e) {
-			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
-			return false;
-		} catch (InvocationTargetException e) {
-			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
-			return false;
-		}
-
-		return true;
-	}
 	
 	@Transactional
-	private Boolean actualizarDatosEstadoActualPublicaciones(DtoDatosPublicacionActivo dto, List<ActivoPublicacion> activosPublicacion) {
+	private Boolean actualizarDatosEstadoActualPublicaciones(DtoDatosPublicacionActivo dto, List<ActivoPublicacion> activosPublicacion) { //
 		try {
 			for(ActivoPublicacion activoPublicacion : activosPublicacion) {
 				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
@@ -724,19 +670,66 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				activoPublicacion.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
 	
 	
-				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
-						!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
+				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) 
+						|| !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) 
+						|| !Checks.esNulo(dto.getPublicarVenta()) 
+						|| !Checks.esNulo(dto.getOcultarVenta()) 
+						|| (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo()))) {
 					activoPublicacion.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
 				}
-	
-				if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
-						!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
+				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) 
+						|| !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) 
+						|| !Checks.esNulo(dto.getPublicarVenta()) 
+						|| !Checks.esNulo(dto.getOcultarVenta())) {
+					activoPublicacion.setFechaCambioPubVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+				}
+				if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) 
+						|| !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) 
+						|| !Checks.esNulo(dto.getPublicarAlquiler()) 
+						|| !Checks.esNulo(dto.getOcultarAlquiler()) 
+						|| (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo()))) {
 					activoPublicacion.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
 				}
 				
-				activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
-				activoPublicacion.setMotivoPublicacionAlquiler(dto.getMotivoPublicacionAlquiler());
-	
+				if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) 
+						|| !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) 
+						|| !Checks.esNulo(dto.getPublicarAlquiler()) 
+						|| !Checks.esNulo(dto.getOcultarAlquiler())) {
+					activoPublicacion.setFechaCambioPubAlq(new Date(System.currentTimeMillis() + 3600 * 1000));
+				}
+				
+				if(!Checks.esNulo(dto.getNoMostrarPrecioVenta())){
+					activoPublicacion.setFechaCambioValorVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+				}
+				
+				if(!Checks.esNulo(dto.getNoMostrarPrecioAlquiler())){
+					activoPublicacion.setFechaCambioValorAlq(new Date(System.currentTimeMillis() + 3600 * 1000));
+						
+				}
+				
+				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())
+						&& (!DDMotivosOcultacion.CODIGO_OTROS.equals(dto.getMotivoOcultacionVentaCodigo()))) {
+						activoPublicacion.setMotivoOcultacionManualVenta(null);
+				}
+				
+				if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())
+					&& (!DDMotivosOcultacion.CODIGO_OTROS.equals(dto.getMotivoOcultacionAlquilerCodigo()))) {
+					activoPublicacion.setMotivoOcultacionManualAlquiler(null);
+				}
+				
+				if(!Checks.esNulo(dto.getPublicarVenta()) && !dto.getPublicarVenta()) {
+					activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
+				}else {
+					beanUtilNotNull.copyProperty(activoPublicacion, "motivoPublicacion", dto.getMotivoPublicacion());
+				}
+				
+				
+				if(!Checks.esNulo(dto.getPublicarAlquiler()) && !dto.getPublicarAlquiler()) {
+					activoPublicacion.setMotivoPublicacionAlquiler(dto.getMotivoPublicacionAlquiler());
+				}else {
+					beanUtilNotNull.copyProperty(activoPublicacion, "motivoPublicacionAlquiler", dto.getMotivoPublicacionAlquiler());
+				}
+				
 				activoPublicacionDao.save(activoPublicacion);
 				
 				if(Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {

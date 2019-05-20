@@ -100,6 +100,9 @@ public class VActivosAgrupacion implements Serializable {
 
 	@Column(name = "COND_PUBL_ALQUILER")
 	private String condPublAlquiler;
+	
+	@Column(name = "ESTADO_TITULO")
+	private String estadoTitulo;
 
 
 	public Long getId() {
@@ -316,5 +319,12 @@ public class VActivosAgrupacion implements Serializable {
 
 	public void setCondPublAlquiler(String condPublAlquiler) {
 		this.condPublAlquiler = condPublAlquiler;
+	}
+	public String getEstadoTitulo() {
+		return estadoTitulo;
+	}
+
+	public void setEstadoTitulo(String estadoTitulo) {
+		this.estadoTitulo = estadoTitulo;
 	}
 }

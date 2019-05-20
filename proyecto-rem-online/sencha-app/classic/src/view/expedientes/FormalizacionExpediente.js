@@ -3,7 +3,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 	xtype : 'formalizacionexpediente',
 	cls : 'panel-base shadow-panel',
 	collapsed : false,
-	disableValidation : true,
+	disableValidation : false,
 	reference : 'formalizacionExpediente',
 	scrollable : 'y',
 	saveMultiple : true,
@@ -92,12 +92,30 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						}
 					},
 					{
+						xtype : 'comboboxfieldbase',
+						fieldLabel : HreRem
+								.i18n('fieldlabel.new.entidad.financiera'),
+						bind : {
+							store : '{comboEntidadFinanciera}',
+							value : '{financiacion.entidadFinancieraCodigo}'
+						},
+						listeners: {
+							change: 'onChangeComboEntidadFinanciera'
+						},
+						reference : 'comboEntidadFinancieraCodigo',
+						displayField : 'descripcion',
+						valueField : 'codigo',
+						allowblank: false,
+						disabled : true
+					},
+					{
 						xtype : 'textfieldbase',
 						fieldLabel : HreRem
 								.i18n('fieldlabel.entidad.financiera'),
 						bind : '{financiacion.entidadFinanciacion}',
 						reference : 'entidadFinanciacion',
-						disabled : true
+						readOnly : true,
+						allowblank: true
 					},
 					{
 						xtype : 'datefieldbase',
@@ -110,15 +128,28 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					},
 					// Subapartado de Bankia.
 					{
+						xtype: 'displayfield',
+						name: 'objetoDummy',
+						reference: 'dummyBloqueBankia',
+						bind: {
+							hidden:'{esEntidadFinancieraBankia}',
+							disabled: '{esEntidadFinancieraBankia}'
+						},
+						colspan: 2
+					},
+					{
 						xtype : 'fieldsettable',
 						collapsible : false,
-						bind : {
-							hidden : '{!expediente.esBankia}'
-						},
 						defaultType : 'displayfieldbase',
+						reference: 'bloqueBankia',
+						bind: {
+							hidden:'{esEntidadFinancieraBankia}',
+							disabled: '{esEntidadFinancieraBankia}'
+						},
 						title : HreRem
 								.i18n('title.formalizacion.financiacion.bankia'),
-						colspan : 3,
+						colspan : 5,
+						
 						//rowspan : 3,
 						items : [
 								// Subapartado consulta.
@@ -137,11 +168,11 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 								fieldLabel : HreRem
 										.i18n('fieldlabel.num.expediente'),
 								bind : {
-									value:'{financiacion.numExpedienteRiesgo}',
-									hidden : '{!expediente.esBankia}'
+									value:'{financiacion.numExpedienteRiesgo}'
 								},
 								maxLength : 250,
-								colspan : 3
+								colspan : 3,
+								allowblank: false
 							},
 
 							{
@@ -151,17 +182,16 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 								reference : 'comboTipoFinanciacion',
 								bind : {
 									store : '{comboTiposFinanciacion}',
-									value : '{financiacion.tiposFinanciacionCodigoBankia}',
-									hidden : '{!expediente.esBankia}'
+									value : '{financiacion.tiposFinanciacionCodigoBankia}'
 								},
-								colspan : 3
+								colspan : 3,
+								allowblank: false
 							}, {
 								xtype : 'button',
 								reference : 'botonConsultaFormalizacionBankia',
 								disabled : true,
 								bind : {
-									disabled : '{!editing}',
-									hidden : '{!expediente.esBankia}'
+									disabled : '{!editing}'
 								},
 								text : 'Consultar',
 								handler : 'onClickConsultaFormalizacionBankia',
@@ -175,20 +205,18 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 											.i18n('fieldlabel.estado.expediente'),
 									bind : {
 										store : '{comboEstadosFinanciacion}',
-										value : '{financiacion.estadosFinanciacionBankia}',
-										hidden : '{!expediente.esBankia}'
+										value : '{financiacion.estadosFinanciacionBankia}'
 									}
-									// hidden: true
 								}, {
 									xtype : 'currencyfieldbase',
 									fieldLabel : HreRem
 											.i18n('fieldlabel.capital.concedido'),
-									reference : 'cncyCapitalConcedido',
-									readOnly : true,
+									reference: 'cncyCapitalConcedidoBnk',
+									readOnly: true,
 									bind : {
-										value: '{financiacion.capitalConcedido}',
-										hidden : '{!expediente.esBankia}'
-									}
+										value: '{financiacion.capitalConcedido}'
+									},
+									allowblank: false
 								}, {
 									xtype : 'datefieldbase',
 									formatter : 'date("d/m/Y")',
@@ -196,47 +224,46 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									fieldLabel : HreRem
 											.i18n('fieldlabel.inicio.financiacion'),
 									bind : {
-										value:'{financiacion.fechaInicioFinanciacion}',
-										hidden : '{!expediente.esBankia}'
+										value:'{financiacion.fechaInicioFinanciacion}'
 									},
 									maxValue : null,
 									listeners : {
 										change : 'onHaCambiadoFechaInicioFinanciacionBankia'
 									}
-									// hidden: true
 								}, {
 									xtype : 'datefieldbase',
 									formatter : 'date("d/m/Y")',
 									reference : 'fechaFinFinanciacionBankia',
 									fieldLabel : HreRem.i18n('fieldlabel.fin.financiacion'),
 									bind : {
-										value: '{financiacion.fechaFinFinanciacion}',
-										hidden : '{!expediente.esBankia}'
+										value: '{financiacion.fechaFinFinanciacion}'
 									},
 									maxValue : null,
 									listeners : {
 										change : 'onHaCambiadoFechaFinFinanciacionBankia'
 									}
-									// hidden: true
 								}]
 					}, {
 						xtype : 'textfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.num.expediente'),
+						reference: 'numeroExpedienteRef',
 						bind : {
 							value : '{financiacion.numExpedienteRiesgo}',
-							hidden : '{expediente.esBankia}'
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						},
 						maxLength : 250
 						// colspan: 3
 
 				}	, {
 						xtype : 'comboboxfieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.tipo.financiacion'),
+						fieldLabel : HreRem.i18n('fieldlabel.tipo.financiacion'),
+						reference: 'tipoFinanciacionRef',
 						bind : {
 							store : '{comboTiposFinanciacion}',
 							value : '{financiacion.tiposFinanciacionCodigo}',
-							hidden : '{expediente.esBankia}'
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						}
 						// colspan: 3
 
@@ -250,7 +277,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 								.i18n('fieldlabel.inicio.financiacion'),
 						bind : {
 							value : '{financiacion.fechaInicioFinanciacion}',
-							hidden : '{expediente.esBankia}'
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						},
 						maxValue : null,
 						listeners : {
@@ -264,7 +292,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						fieldLabel : HreRem.i18n('fieldlabel.fin.financiacion'),
 						bind : {
 							value : '{financiacion.fechaFinFinanciacion}',
-							hidden : '{expediente.esBankia}'
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						},
 						maxValue : null,
 						listeners : {
@@ -276,19 +305,22 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					{
 						xtype : 'comboboxfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.estado.expediente'),
+						reference: 'estadoExpedienteRef',
 						bind : {
 							store : '{comboEstadosFinanciacion}',
 							value : '{financiacion.estadosFinanciacion}',
-							hidden : '{expediente.esBankia}'
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						}
 					}, {
 						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.capital.concedido'),
+						fieldLabel : HreRem.i18n('fieldlabel.capital.concedido'),
+						reference: 'capitalCondedidoRef',
 						readOnly : true,
 						bind : {
 							value : '{financiacion.capitalConcedido}',
-							hidden : '{expediente.esBankia}'
+							hidden:'{!esEntidadFinancieraBankia}',
+							disabled: '{!esEntidadFinancieraBankia}'
 						}
 					}
 

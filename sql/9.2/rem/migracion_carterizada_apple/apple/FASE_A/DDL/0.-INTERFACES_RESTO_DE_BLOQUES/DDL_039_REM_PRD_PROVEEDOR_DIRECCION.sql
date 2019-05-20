@@ -1,0 +1,107 @@
+--/*
+--######################################### 
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20160920
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-855
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Creación de tabla de migración 'MIG2_PRD_PROVEEDOR_DIRECCION'
+--##                    
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+TABLE_COUNT NUMBER(1,0) := 0;
+V_ESQUEMA_1 VARCHAR2(20 CHAR) := 'REM01';
+V_ESQUEMA_2 VARCHAR2(20 CHAR) := 'REM01'; --SE CREA UNA SEGUNDA VARIABLE DE ESQUEMA POR SI EN ALGÚN MOMENTO QUEREMOS CREAR LA TABLA EN UN ESQUEMA DIFERENTE AL DEL USUARIO QUE LA ACCEDE O VICEVERSA
+V_TABLESPACE_IDX VARCHAR2(30 CHAR) := '#TABLESPACE_INDEX#';
+V_TABLA VARCHAR2(40 CHAR) := 'MIG2_PRD_PROVEEDOR_DIRECCION';
+
+BEGIN
+
+SELECT COUNT(1) INTO TABLE_COUNT FROM ALL_TABLES WHERE TABLE_NAME = ''||V_TABLA||'' AND OWNER= ''||V_ESQUEMA_1||'';
+
+IF TABLE_COUNT > 0 THEN
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] TABLA '||V_ESQUEMA_1||'.'||V_TABLA||' YA EXISTENTE. SE PROCEDE A BORRAR Y CREAR DE NUEVO.');
+    EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'';
+    
+END IF;
+
+EXECUTE IMMEDIATE '
+CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'
+(
+    PVD_COD_DIRECCION                       NUMBER(16,0)                                    NOT NULL,
+    PVE_COD_ORIGEN                          NUMBER(16,0)                                    NOT NULL,
+    PRD_COD_TIPO_DIRECCION                  VARCHAR2(2O)                                    NOT NULL,
+    PRD_COD_TIPO_VIA                        VARCHAR2(2O),
+    PRD_NOMBRE                              VARCHAR2(100)                                   NOT NULL,
+    PRD_NUMERO                              NUMBER(5,0),
+    PRD_PUERTA                              NUMBER(5,0),
+    PRD_COD_LOCALIDAD                       VARCHAR2(20),
+    PRD_CODIGO_POSTAL                       NUMBER(5,0),
+    PRD_COD_UNIDADPOBLACIONAL               VARCHAR2(20),
+    PRD_COD_PROVINCIA                       VARCHAR2(20),
+    PRP_OBSERVACIONES                       VARCHAR2(256),
+    PRD_TELEFONO                            VARCHAR2(20),
+    PRD_EMAIL                               VARCHAR2(50),
+    PRD_LOCAL_ABIERTO_PUBLICO               NUMBER(1,0),
+    PRD_ESCALERA                            VARCHAR2(10 CHAR),
+    PRD_PLANTA                              VARCHAR2(11 CHAR),
+    PRD_TELEFONO2                           VARCHAR2(20 CHAR)         
+, VALIDACION NUMBER(1) DEFAULT 0 NOT NULL )'
+;
+
+DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA_1||'.'||V_TABLA||' CREADA');  
+
+IF V_ESQUEMA_2 != V_ESQUEMA_1 THEN
+
+	EXECUTE IMMEDIATE 'GRANT ALL ON "'||V_ESQUEMA_1||'"."'||V_TABLA||'" TO "'||V_ESQUEMA_2||'" WITH GRANT OPTION';
+	DBMS_OUTPUT.PUT_LINE('[INFO] PERMISOS SOBRE LA TABLA '||V_ESQUEMA_1||'.'||V_TABLA||' OTORGADOS A '||V_ESQUEMA_2||''); 
+
+END IF;
+
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PVD_COD_DIRECCION IS ''Código identificador de la Dirección del Contacto del Proveedor.''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PVE_COD_ORIGEN IS ''Código identificador único del Proveedor en ORIGEN''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_COD_TIPO_DIRECCION IS ''Código del Tipo de Dirección (Código según Dic. Datos).''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_COD_TIPO_VIA IS ''Código del Tipo de Via (Código según Dic. Datos).''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_NOMBRE IS ''Nombre de la calle de la dirección.''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_NUMERO IS ''Número de la calle de la dirección.''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_PUERTA IS ''Puerta de la dirección.''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_COD_LOCALIDAD IS ''Código del Municipio de la Dirección del Proveedor (Código según Dic. Datos).''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_CODIGO_POSTAL IS ''Código Postal de la Dirección''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_COD_UNIDADPOBLACIONAL IS ''Código de la Unidad Poblacional de la Dirección (Código según Dic. Datos).''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_COD_PROVINCIA IS ''Código de la Provincia de la Dirección (Código según Dic. Datos).''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRP_OBSERVACIONES IS ''Motivo de la Resolución de la Oferta Formalizada.''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_TELEFONO IS ''Teléfono''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_EMAIL IS ''Email''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_LOCAL_ABIERTO_PUBLICO IS ''Indica si el local esta abierto al público.''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_ESCALERA IS ''Escalera de la delegación.''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_PLANTA IS ''Planta de la delegación.''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA_1 || '.MIG2_PRD_PROVEEDOR_DIRECCION.PRD_TELEFONO2 IS ''Teléfono2 de la delegación.''';
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+EXIT;

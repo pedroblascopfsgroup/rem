@@ -10,9 +10,10 @@ public interface DDSubtipoTrabajoDao extends AbstractDao<DDSubtipoTrabajo, Long>
 	
 	/**
 	 * Devuelve una lista de subtipos de trabajo de un trabajo que tengan tarifa plana vigente.
+	 * @param idCarteraActivo
 	 * @param idTipoTrabajo
 	 * @param fechaSolicitud
 	 * @return
 	 */
-	public List<DDSubtipoTrabajo> getSubtipoTrabajoconTarifaPlana(Long idTipoTrabajo, Date fechaSolicitud);
+	public List<DDSubtipoTrabajo> getSubtipoTrabajoconTarifaPlana(Long idCarteraActivo, Long idTipoTrabajo, Date fechaSolicitud);
 }

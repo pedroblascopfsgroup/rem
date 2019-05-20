@@ -1,8 +1,11 @@
 package es.pfsgroup.plugin.rem.activo.valoracion.dao.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -11,6 +14,8 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 
@@ -164,4 +169,6 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		}
 		return resultadoPrecioWeb;
 	}
+	
+	
 }

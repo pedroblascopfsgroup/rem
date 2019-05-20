@@ -1,0 +1,105 @@
+--/*
+--#########################################
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20170608
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-2209
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Proceso de migración 'MIG_APC_PRECIO' -> 'ACT_VAL_VALORACIONES'
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01'; --REM01
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER'; --REMMASTER
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
+V_TABLA VARCHAR2(40 CHAR) := 'ACT_VAL_VALORACIONES';
+V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_APC_PRECIO';
+V_SENTENCIA VARCHAR2(2000 CHAR);
+
+BEGIN
+  
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Comienza la migración de ACTIVOS PRECIOS');
+
+    -------------------------------------------------
+    --INSERCION EN ACT_VAL_VALORACIONES--
+    -------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('  [INFO] INSERCION EN ACT_VAL_VALORACIONES'); 
+	
+	  
+	EXECUTE IMMEDIATE ('
+	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+		VAL_ID,
+		ACT_ID,
+		DD_TPC_ID,
+		VAL_IMPORTE,
+		VAL_FECHA_INICIO,
+		VAL_FECHA_FIN,
+		VAL_FECHA_APROBACION, 
+		VAL_FECHA_CARGA, 
+		USU_ID, 
+		VAL_OBSERVACIONES,
+		VERSION,
+		USUARIOCREAR,
+		FECHACREAR,
+		BORRADO
+	)
+	SELECT
+		'||V_ESQUEMA||'.S_ACT_VAL_VALORACIONES.NEXTVAL			VAL_ID,
+		ACT.ACT_ID												ACT_ID,
+		(SELECT DD_TPC_ID 
+			FROM '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO DD 
+			WHERE DD.DD_TPC_CODIGO = MIG.TIPO_PRECIO)			DD_TPC_ID,
+		MIG.VAL_IMPORTE											VAL_IMPORTE,
+		MIG.VAL_FECHA_INICIO									VAL_FECHA_INICIO,
+		MIG.VAL_FECHA_FIN										VAL_FECHA_FIN,
+		MIG.VAL_FECHA_APROBACION								VAL_FECHA_APROBACION,
+		MIG.VAL_FECHA_CARGA										VAL_FECHA_CARGA,
+		(SELECT USU_ID 
+			FROM '||V_ESQUEMA_MASTER||'.USU_USUARIOS USU 
+			WHERE USU.USU_USERNAME = MIG.USUARIO)				USU_ID,
+		MIG.VAL_OBSERVACIONES									VAL_OBSERVACIONES,		
+		''0''													VERSION,
+		'''||V_USUARIO||'''										USUARIOCREAR,
+		SYSDATE													FECHACREAR,
+		0														BORRADO
+	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+	JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+	WHERE MIG.VALIDACION = 0
+  ');
+
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+  
+  COMMIT;
+  
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''STATS'','''||V_TABLA||''',''10''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+  
+  DBMS_OUTPUT.PUT_LINE('[FIN] Acaba la migración de ACTIVOS PRECIOS');
+  
+  
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT;

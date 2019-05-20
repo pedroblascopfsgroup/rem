@@ -100,6 +100,7 @@ public class UpdaterServiceComunValidacionActuacion implements UpdaterService {
 						ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
 						situacionPosesoria.setFechaAccesoTapiado(trabajo.getFechaFin());
 						situacionPosesoria.setAccesoTapiado(1);
+						situacionPosesoria.setFechaUltCambioTapiado(new Date());
 						genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
 					}
 					

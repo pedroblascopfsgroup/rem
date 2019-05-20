@@ -1,0 +1,5 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;AGRUPACIONES_ACTIVO;ACT_NUMERO_ACTIVO;NUMBER(16,0);NO;;Código identificador único del activo.
+2;AGRUPACIONES_ACTIVO;AGR_EXTERNO;NUMBER(16,0);NO;;Código identificador único de la agrupación en ORIGEN
+3;AGRUPACIONES_ACTIVO;AGA_PRINCIPAL;NUMBER(1,0);NO;;Indicador del activo principal dentro de la agrupación.
+4;AGRUPACIONES_ACTIVO;AGA_FECHA_INCLUSION;DATE;NO;;Fecha inclusión en la agrupación del activo

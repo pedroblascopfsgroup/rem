@@ -407,12 +407,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
 
 			// Si el tipo de persona es FISICA el bloque Datos Representante se oculta y deshabilita
-			if (campoTipoPersona.getValue() == CONST.TIPO_PERSONA['FISICA']){
-				bloqueDatosRepresentante.setDisabled(true);
-				bloqueDatosRepresentante.setHidden(true);
-			} else {
-				bloqueDatosRepresentante.setDisabled(false);
-				bloqueDatosRepresentante.setHidden(false);
+			if(!Ext.isEmpty(bloqueDatosRepresentante)){
+				if (campoTipoPersona.getValue() == CONST.TIPO_PERSONA['FISICA']){
+					bloqueDatosRepresentante.setDisabled(true);
+					bloqueDatosRepresentante.setHidden(true);
+				} else {
+					bloqueDatosRepresentante.setDisabled(false);
+					bloqueDatosRepresentante.setHidden(false);
+				}
 			}
 
 			//Si el expediente es de tipo alquiler
@@ -476,18 +478,20 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 							}
 						
 						}
-						campoTipoRte.setValue();						
-						campoNumRte.setValue();
-						campoNombreRazonSocialRte.setValue();
-						campoApellidosRte.setValue();
-						campoDireccionRte.setValue();
-						campoPovinciaRte.setValue();
-						campoTelefono1Rte.setValue();
-						campoTelefono2Rte.setValue();
-						campoMunicipioRte.setValue();
-						campoCodigoPostalRte.setValue();
-						campoEmailRte.setValue();
-						campoPaisRte.setValue();
+						if(!Ext.isEmpty(bloqueDatosRepresentante) && bloqueDatosRepresentante.isVisible()){
+							campoTipoRte.setValue();						
+							campoNumRte.setValue();
+							campoNombreRazonSocialRte.setValue();
+							campoApellidosRte.setValue();
+							campoDireccionRte.setValue();
+							campoPovinciaRte.setValue();
+							campoTelefono1Rte.setValue();
+							campoTelefono2Rte.setValue();
+							campoMunicipioRte.setValue();
+							campoCodigoPostalRte.setValue();
+							campoEmailRte.setValue();
+							campoPaisRte.setValue();
+						}
 					} else {
 						//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
 						if(!Ext.isEmpty(campoEstadoCivil)){
@@ -512,38 +516,41 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				if(!Ext.isEmpty(campoTipoPersona.getValue())){
 					//Si el tipo de persona es de tipo FISICA
 					if(campoTipoPersona.getValue() == CONST.TIPO_PERSONA['FISICA']) {
-						if(!Ext.isEmpty(campoNombreRte)){
-							campoNombreRte.allowBlank = true;
+						if(!Ext.isEmpty(bloqueDatosRepresentante) && bloqueDatosRepresentante.isVisible()){
+							if(!Ext.isEmpty(campoNombreRte)){
+								campoNombreRte.allowBlank = true;
+							}
+							if(!Ext.isEmpty(campoApellidosRte)){
+								campoApellidosRte.allowBlank = true;
+							}
+							if(!Ext.isEmpty(campoTipoRte)){
+								campoTipoRte.allowBlank = true;
+							}
+							if(!Ext.isEmpty(campoNumRte)){
+								campoNumRte.allowBlank = true;
+							}
+							if(!Ext.isEmpty(campoPaisRte)){
+								campoPaisRte.allowBlank = true;
+							}
 						}
-						if(!Ext.isEmpty(campoApellidosRte)){
-							campoApellidosRte.allowBlank = true;
-						}
-//						if(!Ext.isEmpty(campoTipoRte)){
-//							campoTipoRte.allowBlank = true;
-//						}
-						if(!Ext.isEmpty(campoNumRte)){
-							campoNumRte.allowBlank = true;
-						}
-						if(!Ext.isEmpty(campoPaisRte)){
-							campoPaisRte.allowBlank = true;
-						}
-						
 						if(!Ext.isEmpty(campoApellidos)){
 							campoApellidos.setDisabled(false);
 							campoApellidos.allowBank = false;
 						}
-						campoTipoRte.setValue();
-						campoNumRte.setValue();
-						campoNombreRazonSocialRte.setValue();
-						campoApellidosRte.setValue();
-						campoDireccionRte.setValue();
-						campoPovinciaRte.setValue();
-						campoTelefono1Rte.setValue();
-						campoTelefono2Rte.setValue();
-						campoMunicipioRte.setValue();
-						campoCodigoPostalRte.setValue();
-						campoEmailRte.setValue();
-						campoPaisRte.setValue();
+						if(!Ext.isEmpty(bloqueDatosRepresentante) && bloqueDatosRepresentante.isVisible()){
+							campoTipoRte.setValue();
+							campoNumRte.setValue();
+							campoNombreRazonSocialRte.setValue();
+							campoApellidosRte.setValue();
+							campoDireccionRte.setValue();
+							campoPovinciaRte.setValue();
+							campoTelefono1Rte.setValue();
+							campoTelefono2Rte.setValue();
+							campoMunicipioRte.setValue();
+							campoCodigoPostalRte.setValue();
+							campoEmailRte.setValue();
+							campoPaisRte.setValue();
+						}
 					} else {
 						//  Si el tipo de persona es 'Jurídica'
 						if(!Ext.isEmpty(campoEstadoCivil)){
@@ -561,21 +568,22 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoApellidos)){
 							campoApellidos.setDisabled(true);
 						}
-						
-						if(!Ext.isEmpty(campoNombreRte)){
-							campoNombreRte.allowBlank = false;
-						}
-						if(!Ext.isEmpty(campoApellidosRte)){
-							campoApellidosRte.allowBlank = false;
-						}
-//						if(!Ext.isEmpty(campoTipoRte)){
-//							campoTipoRte.allowBlank = false;
-//						}
-						if(!Ext.isEmpty(campoNumRte)){
-							campoNumRte.allowBlank = false;
-						}
-						if(!Ext.isEmpty(campoPaisRte)){
-							campoPaisRte.allowBlank = false;
+						if(!Ext.isEmpty(bloqueDatosRepresentante) && bloqueDatosRepresentante.isVisible()){
+							if(!Ext.isEmpty(campoNombreRte)){
+								campoNombreRte.allowBlank = false;
+							}						
+							if(!Ext.isEmpty(campoApellidosRte)){
+								campoApellidosRte.allowBlank = false;
+							}
+							if(!Ext.isEmpty(campoTipoRte)){
+								campoTipoRte.allowBlank = false;
+							}
+							if(!Ext.isEmpty(campoNumRte)){
+								campoNumRte.allowBlank = false;
+							}
+							if(!Ext.isEmpty(campoPaisRte)){
+								campoPaisRte.allowBlank = false;
+							}
 						}
 						campoEstadoCivil.setValue();
 						campoRegEconomico.setValue();
@@ -597,11 +605,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			campoRegEconomico.validate();
 			campoNumConyuge.validate();
 			campoTipoConyuge.validate();
-			campoNombreRte.validate();
-			campoTipoRte.validate();
-			campoNumRte.validate();
-			campoPaisRte.validate();
-			campoApellidosRte.validate();	
+			if(!Ext.isEmpty(bloqueDatosRepresentante) && bloqueDatosRepresentante.isVisible()){
+				campoNombreRte.validate();
+				campoTipoRte.validate();
+				campoNumRte.validate();
+				campoPaisRte.validate();
+				campoApellidosRte.validate();	
+			}
 			campoApellidos.validate();
 			campoDireccion.validate();
 			campoProvincia.validate();

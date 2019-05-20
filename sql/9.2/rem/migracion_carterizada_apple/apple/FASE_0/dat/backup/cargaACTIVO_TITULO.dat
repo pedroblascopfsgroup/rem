@@ -1,0 +1,11 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;ACTIVO_TITULO;ACT_NUMERO_ACTIVO;NUMBER(16,0);SI;;Código identificador único del activo.
+2;ACTIVO_TITULO;ESTADO_TITULO;VARCHAR2(20 CHAR);SI;;Estado del título de activo
+3;ACTIVO_TITULO;TIT_FECHA_ENTREGA_GESTORIA;DATE;NO;;Fecha de entrega del título en gestoría.
+4;ACTIVO_TITULO;TIT_FECHA_PRESENT_HACIENDA;DATE;NO;;Fecha presentación del título en hacienda.
+5;ACTIVO_TITULO;TIT_FECHA_ENVIO_AUTO;DATE;NO;;Fecha de envío del auto
+6;ACTIVO_TITULO;TIT_FECHA_PRESENT1_REG;DATE;NO;;Fecha primera presentación del título en registro.
+7;ACTIVO_TITULO;TIT_FECHA_PRESENT2_REG;DATE;NO;;Fecha segunda presentación del título en registro.
+8;ACTIVO_TITULO;TIT_FECHA_INSC_REG;DATE;SI;;Fecha inscripción del título en registro.
+9;ACTIVO_TITULO;TIT_FECHA_RETIRADA_REG;DATE;NO;;Fecha retirada del título en registro.
+10;ACTIVO_TITULO;TIT_FECHA_NOTA_SIMPLE;DATE;SI;;Fecha de nota simple.

@@ -1,0 +1,23 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;ACT_AHP_HIST_PUBLICACION;AHP_CODIGO_ACTIVO;NUMBER(16,0);NO;;Código identificador único del activo.
+2;ACT_AHP_HIST_PUBLICACION;DD_EPV_COD;VARCHAR2(20 CHAR);NO;;Estado de la venta. Diccionario DD_EPV_ESTADO_PUB_VENTA
+3;ACT_AHP_HIST_PUBLICACION;DD_EPA_COD;VARCHAR2(20 CHAR);NO;;Estado del alquiler. Diccionario DD_EPA_ESTADO_PUB_ALQUILER
+4;ACT_AHP_HIST_PUBLICACION;DD_TCO_COD;VARCHAR2(20 CHAR);NO;;Código identificador único de la comercialización.DD_TCO_TIPO_COMERCIALIZACION
+5;ACT_AHP_HIST_PUBLICACION;DD_MTO_V_CODIGO;VARCHAR2(20 CHAR);NO;;Código identificador único del motivo de la ocultación(venta).DD_MTO_MOTIVOS_OCULTACION
+6;ACT_AHP_HIST_PUBLICACION;AHP_MOT_OCULTACION_MANUAL_V;VARCHAR2(250 CHAR);NO;;Descripción del motivo de la ocultación. Sólo para ocultaciones de tipo manual (12)
+7;ACT_AHP_HIST_PUBLICACION;AHP_CHECK_PUBLICAR_V;NUMBER(1,0);NO;;Check manual de publicar la venta.(0:no 1:si)
+8;ACT_AHP_HIST_PUBLICACION;AHP_CHECK_OCULTAR_V;NUMBER(1,0);NO;;Check manual de ocultar la venta.(0:no 1:si)
+9;ACT_AHP_HIST_PUBLICACION;AHP_CHECK_OCULTAR_PRECIO_V;NUMBER(1,0);NO;;Check manual de publicar precio de la venta.(0:no 1:si)
+10;ACT_AHP_HIST_PUBLICACION;AHP_CHECK_PUB_SIN_PRECIO_V;NUMBER(1,0);NO;;Check manual de publicación sin precio de la venta.(0:no 1:si)
+11;ACT_AHP_HIST_PUBLICACION;DD_MTO_A_CODIGO;VARCHAR2(20 CHAR);NO;;Código identificador único del motivo de la ocultación(alquiler).DD_MTO_MOTIVOS_OCULTACION
+12;ACT_AHP_HIST_PUBLICACION;AHP_MOT_OCULTACION_MANUAL_A;VARCHAR2(250 CHAR);NO;;Descripción del motivo de la ocultación. Sólo para ocultaciones de tipo manual (12)
+13;ACT_AHP_HIST_PUBLICACION;AHP_CHECK_PUBLICAR_A;NUMBER(1,0);NO;;Check manual de publicar el alquiler.(0:no 1:si)
+14;ACT_AHP_HIST_PUBLICACION;AHP_CHECK_OCULTAR_A;NUMBER(1,0);NO;;Check manual de ocultar el alquiler.(0:no 1:si)
+15;ACT_AHP_HIST_PUBLICACION;AHP_CHECK_OCULTAR_PRECIO_A;NUMBER(1,0);NO;;Check manual de publicar precio del alquilera.(0:no 1:si)
+16;ACT_AHP_HIST_PUBLICACION;AHP_CHECK_PUB_SIN_PRECIO_A;NUMBER(1,0);NO;;Check manual de publicación sin precio del alquiler.(0:no 1:si)
+17;ACT_AHP_HIST_PUBLICACION;AHP_FECHA_INI_VENTA;DATE;NO;;Indica la fecha de inicio del estado de publicación venta.
+18;ACT_AHP_HIST_PUBLICACION;AHP_FECHA_FIN_VENTA;DATE;NO;;Indica la fecha de finalización del estado de publicación venta.
+19;ACT_AHP_HIST_PUBLICACION;AHP_FECHA_INI_ALQUILER;DATE;NO;;Indica la fecha de inicio del estado de publicación alquiler.
+20;ACT_AHP_HIST_PUBLICACION;AHP_FECHA_FIN_ALQUILER;DATE;NO;;Indica la fecha de finalización del estado de publicación alquiler.
+21;ACT_AHP_HIST_PUBLICACION;DD_TPU_V_CODIGO;VARCHAR2(20 CHAR);NO;;Indica el tipo de publicación realizada para venta.DD_TPU_TIPO_PUBLICACION
+22;ACT_AHP_HIST_PUBLICACION;DD_TPU_A_CODIGO;VARCHAR2(20 CHAR);NO;;Indica el tipo de publicación realizada para alquiler.DD_TPU_TIPO_PUBLICACION

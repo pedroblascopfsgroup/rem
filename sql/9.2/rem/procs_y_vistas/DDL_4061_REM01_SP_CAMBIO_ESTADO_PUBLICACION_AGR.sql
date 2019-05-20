@@ -19,6 +19,7 @@
 --##		0.7 Oscar Diestre HREOS-5358 - Tratamiento agrupaciones asisitidas vencidas
 --##		0.8 Sergio H . Deshacemos temporalmente las modificaciones de la 0.7
 --##		0.9 REMVIP-3306 Cambios en el funcionamiento del historico
+--##    	0.10 HREOS-6184 Cambio en vista y cambio es_condicionado
 --##########################################
 --*/
 
@@ -64,7 +65,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
     nPRECIO_V         #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI_AGR.PRECIO_V%TYPE;
     nCEE_VIGENTE      #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI_AGR.CEE_VIGENTE%TYPE;
     nADECUADO         #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI_AGR.ADECUADO%TYPE;
-    nES_CONDICONADO   #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI.ES_CONDICONADO%TYPE;
+    nES_CONDICIONADO  #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI.ES_CONDICIONADO%TYPE;
     
     hDD_TCO_CODIGO    REM01.V_CAMBIO_ESTADO_PUBLI.DD_TCO_CODIGO%TYPE;  
     hCODIGO_ESTADO_A  REM01.V_CAMBIO_ESTADO_PUBLI.CODIGO_ESTADO_A%TYPE;
@@ -986,7 +987,7 @@ ELSE
                               , nADMISION, nGESTION
                               , nINFORME_COMERCIAL, nPRECIO_A, nPRECIO_V
                               , nCEE_VIGENTE, nADECUADO
-                              , nES_CONDICONADO;
+                              , nES_CONDICIONADO;
         EXIT WHEN v_cursor%NOTFOUND;
         
         vACTUALIZADO_V := 'N';
@@ -1223,7 +1224,7 @@ ELSE
 				  ON (ACT.ACT_ID = AUX.ACT_ID)
 				WHEN MATCHED THEN
 				  UPDATE
-					 SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICONADO||'
+					 SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICIONADO||'
 					   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 					   , FECHAMODIFICAR = SYSDATE
 				  WHERE BORRADO = 0

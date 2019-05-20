@@ -1,0 +1,96 @@
+--/*
+--#########################################
+--## AUTOR=Marco Munoz
+--## FECHA_CREACION=20190402
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.20
+--## INCIDENCIA_LINK=REMVIP-3861
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	V_SQL VARCHAR2(20000 CHAR);
+    TABLE_COUNT NUMBER(1,0) := 0;
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+
+BEGIN			
+			
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Borramos hitos de inscripcion de los activos marcados de APPLE.'); 
+    
+    V_SQL :=   'MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO T1
+				USING (
+					SELECT ACT.ACT_NUM_ACTIVO,
+						   ACT.ACT_ID,
+						   TIT.TIT_ID
+					FROM '||V_ESQUEMA||'.AUX_MMC_REMVIP_3861  AUX
+					JOIN '||V_ESQUEMA||'.ACT_ACTIVO           ACT ON AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
+					JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO       TIT ON TIT.ACT_ID = ACT.ACT_ID
+					WHERE ACT.USUARIOCREAR = ''MIG_APPLE''
+					  AND UPPER(AUX.OBSERVACIONES_2) LIKE ''%ELIMINAR FECHAS HITOS%''
+				) T2
+				ON (T1.TIT_ID = T2.TIT_ID AND T1.ACT_ID = T2.ACT_ID)
+				WHEN MATCHED THEN UPDATE SET
+					T1.TIT_FECHA_ENTREGA_GESTORIA = NULL,
+					T1.TIT_FECHA_PRESENT_HACIENDA = NULL,
+					T1.TIT_FECHA_ENVIO_AUTO = NULL,
+					T1.TIT_FECHA_PRESENT1_REG = NULL,
+					T1.TIT_FECHA_PRESENT2_REG = NULL,
+					T1.TIT_FECHA_INSC_REG = NULL,
+					T1.TIT_FECHA_RETIRADA_REG = NULL,
+					T1.USUARIOMODIFICAR = ''MIG_APPLE_POST'',
+					T1.FECHAMODIFICAR = SYSDATE
+    ';
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('	[INFO_MIGRA] '||SQL%ROWCOUNT||' registros modificados. En la ACT_TIT_TITULO.'); 
+	
+	
+	V_SQL :=   'MERGE INTO '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES T1
+				USING (
+					SELECT ACT.ACT_NUM_ACTIVO,
+						   ACT.ACT_ID,
+						   BIE.BIE_ID,
+						   REG.BIE_DREG_ID
+					FROM '||V_ESQUEMA||'.AUX_MMC_REMVIP_3861      AUX
+					JOIN '||V_ESQUEMA||'.ACT_ACTIVO               ACT ON AUX.ID_HAYA = ACT.ACT_NUM_ACTIVO
+					JOIN '||V_ESQUEMA||'.BIE_BIEN                 BIE ON BIE.BIE_ID = ACT.BIE_ID
+					JOIN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES    REG ON REG.BIE_ID = BIE.BIE_ID
+					WHERE ACT.USUARIOCREAR = ''MIG_APPLE''
+					  AND UPPER(AUX.OBSERVACIONES_2) LIKE ''%ELIMINAR FECHAS HITOS%''
+				) T2
+				ON (T1.BIE_DREG_ID = T2.BIE_DREG_ID AND T1.BIE_ID = T2.BIE_ID)
+				WHEN MATCHED THEN UPDATE SET
+					T1.BIE_DREG_FECHA_INSCRIPCION = NULL,
+					T1.USUARIOMODIFICAR = ''MIG_APPLE_POST'',
+					T1.FECHAMODIFICAR = SYSDATE
+    ';
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('	[INFO_MIGRA] '||SQL%ROWCOUNT||' registros modificados. En la BIE_DATOS_REGISTRALES.'); 
+	
+	COMMIT;
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT

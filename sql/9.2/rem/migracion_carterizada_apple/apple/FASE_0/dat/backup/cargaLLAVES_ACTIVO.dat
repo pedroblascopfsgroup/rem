@@ -1,0 +1,10 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;LLAVES_ACTIVO;ACT_NUMERO_ACTIVO;NUMBER(16,0);SI;;Código identificador único del activo.
+2;LLAVES_ACTIVO;LLV_CODIGO;NUMBER(16,0);SI;;Código identificador del manojo de  llaves
+3;LLAVES_ACTIVO;MLV_COD_CENTRO;VARCHAR2(20 CHAR);NO;;Código del centro de llaves donde se ubica el manojo de llaves del activo.
+4;LLAVES_ACTIVO;MLV_NOMBRE_CENTRO;VARCHAR2(100 CHAR);NO;;Nombre del centro de llaves donde se ubica el manojo de llaves del activo.
+5;LLAVES_ACTIVO;MLV_ARCHIVO1;VARCHAR2(50 CHAR);NO;;Código o número de la posición1 en la que se encuentra el manojo de las llaves del activo.
+6;LLAVES_ACTIVO;MLV_ARCHIVO2;VARCHAR2(50 CHAR);NO;;Código o número de la posición2 en la que se encuentra el manojo de las llaves del activo.
+7;LLAVES_ACTIVO;MLV_ARCHIVO3;VARCHAR2(50 CHAR);NO;;Código o número de la posición3 en la que se encuentra el manojo de las llaves del activo.
+8;LLAVES_ACTIVO;MLV_COMPLETO;NUMBER(1,0);SI;;Indicador si tiene llaves
+9;LLAVES_ACTIVO;MLV_MOTIVO_INCOMPLETO;VARCHAR2(100 CHAR);NO;;Indicar motivo por el que el manojo no está completo.

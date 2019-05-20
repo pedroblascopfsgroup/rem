@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Maria Presencia Herrero
---## FECHA_CREACION=20190212
+--## AUTOR=DAP
+--## FECHA_CREACION=20190509
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=bau_jaus
 --## INCIDENCIA_LINK=REMVIP-3283
@@ -16,6 +16,7 @@
 --##		0.4 Pablo Meseguer - Añadir filtro para ACT_EN_TRAMITE
 --##		0.5 Pablo Meseguer - actualizamos el tipo de activo junto con el subtipo a traves del COTSIN
 --##		0.6 Maria Presencia - Modificado fallo en PROD
+--##    0.7 DAP - Modificado ultimo cambio posesión
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -1166,6 +1167,9 @@ BEGIN
               FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
             )
             SELECT TEMP.*, ACT.SPS_FECHA_TITULO, LINK.ACT_ID
+              , CASE WHEN NVL(TEMP.FEC_REALIZADA_POSESION,TO_DATE(''31/12/2099'',''DD/MM/YYYY'')) = NVL(ACT.SPS_FECHA_TOMA_POSESION,TO_DATE(''31/12/2099'',''DD/MM/YYYY'')) THEN ACT.SPS_FECHA_ULT_CAMBIO_POS
+                ELSE SYSDATE
+                END ULT_CAMBIO
             FROM TEMP
             INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO LINK ON LINK.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM
             INNER JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA ACT ON ACT.ACT_ID = LINK.ACT_ID
@@ -1182,6 +1186,7 @@ BEGIN
           WHEN MATCHED THEN UPDATE SET
           ACT.SPS_FECHA_TITULO = TMP.FEC_INICIO_CONTRATO,
           ACT.SPS_FECHA_TOMA_POSESION=TMP.FEC_REALIZADA_POSESION,
+          ACT.SPS_FECHA_ULT_CAMBIO_POS=TMP.ULT_CAMBIO,
           ACT.SPS_FECHA_VENC_TITULO=TMP.FEC_ALTA_FASE_DEFINITIVA,
           ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
           ACT.FECHAMODIFICAR = SYSDATE

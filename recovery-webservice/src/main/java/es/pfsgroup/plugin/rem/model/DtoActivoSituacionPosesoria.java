@@ -40,6 +40,11 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Integer indicaPosesion;
 	private Boolean tieneOkTecnico;
 	private String tipoEstadoAlquiler;
+	private Integer diasCambioPosesion;
+	private Integer diasCambioTitulo;
+	private Date diaCambioPosesion;
+	private Date diaCambioTitulo;
+	private Integer diasTapiado;
 		
 	public String getTipoEstadoAlquiler() {
 		return tipoEstadoAlquiler;
@@ -190,6 +195,36 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	}
 	public void setTieneOkTecnico(Boolean tieneOkTecnico) {
 		this.tieneOkTecnico = tieneOkTecnico;
+	}
+	public Integer getDiasCambioTitulo() {
+		return diasCambioTitulo;
+	}
+	public void setDiasCambioTitulo(Integer diasCambioTitulo) {
+		this.diasCambioTitulo = diasCambioTitulo;
+	}
+	public Integer getDiasCambioPosesion() {
+		return diasCambioPosesion;
+	}
+	public void setDiasCambioPosesion(Integer diasCambioPosesion) {
+		this.diasCambioPosesion = diasCambioPosesion;
+	}
+	public Date getDiaCambioPosesion() {
+		return diaCambioPosesion;
+	}
+	public void setDiaCambioPosesion(Date diaCambioPosesion) {
+		this.diaCambioPosesion = diaCambioPosesion;
+	}
+	public Date getDiaCambioTitulo() {
+		return diaCambioTitulo;
+	}
+	public void setDiaCambioTitulo(Date diaCambioTitulo) {
+		this.diaCambioTitulo = diaCambioTitulo;
+	}
+	public Integer getDiasTapiado() {
+		return diasTapiado;
+	}
+	public void setDiasTapiado(Integer diasTapiado) {
+		this.diasTapiado = diasTapiado;
 	}
 
 	

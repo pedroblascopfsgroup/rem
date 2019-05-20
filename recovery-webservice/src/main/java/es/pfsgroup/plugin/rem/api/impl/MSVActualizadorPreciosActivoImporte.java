@@ -57,7 +57,6 @@ public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador
 	}
 	
 	@Override
-	@Transactional(readOnly = false)	
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		

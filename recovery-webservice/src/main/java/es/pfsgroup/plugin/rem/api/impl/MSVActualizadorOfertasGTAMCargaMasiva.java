@@ -56,7 +56,6 @@ public class MSVActualizadorOfertasGTAMCargaMasiva extends AbstractMSVActualizad
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
 		

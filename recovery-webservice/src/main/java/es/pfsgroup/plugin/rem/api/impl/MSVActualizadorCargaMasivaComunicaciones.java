@@ -24,6 +24,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -91,9 +92,7 @@ public class MSVActualizadorCargaMasivaComunicaciones extends AbstractMSVActuali
 				genericDao.update(ComunicacionGencat.class, cmg);
 			}
 		} catch (Exception e) {
-			resultado.setCorrecto(false);
-			resultado.setErrorDesc(e.getMessage());
-			logger.error("Error proceso masivo", e);
+			throw new JsonViewerException(e.getMessage());
 		}
 		return resultado;
 	}

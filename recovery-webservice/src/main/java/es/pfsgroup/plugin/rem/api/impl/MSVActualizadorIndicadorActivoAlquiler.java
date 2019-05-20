@@ -99,9 +99,7 @@ public class MSVActualizadorIndicadorActivoAlquiler extends AbstractMSVActualiza
 			}
 
 		} catch (Exception e) {
-			resultado.setCorrecto(false);
-			resultado.setErrorDesc(e.getMessage());
-			logger.error("Error proceso masivo", e);
+			throw new JsonViewerException(e.getMessage());
 		}
 		return resultado;
 

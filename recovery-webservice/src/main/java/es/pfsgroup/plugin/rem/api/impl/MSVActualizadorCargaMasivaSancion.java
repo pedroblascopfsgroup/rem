@@ -193,9 +193,7 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 				comunicacionGencatApi.saveOrUpdate(tmp);
 			}
 		} catch (Exception e) {
-			resultado.setCorrecto(false);
-			resultado.setErrorDesc(e.getMessage());
-			logger.error("Error proceso masivo", e);
+			throw new JsonViewerException(e.getMessage());
 		}
 		return resultado;
 	}

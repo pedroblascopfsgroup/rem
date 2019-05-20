@@ -246,9 +246,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					                }
 								]
 							}
->>>>>>> 2.10.0-19051313-rem
 						]
-					},{ // Columna 3 
+					},
+					{ // Columna 3 
 						defaultType: 'textfieldbase',
 						flex: 1,
 						items:[
@@ -265,8 +265,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                }
 						]
 					}]
-           },
-           
+            },
             {    
                 
 				xtype:'fieldsettable',

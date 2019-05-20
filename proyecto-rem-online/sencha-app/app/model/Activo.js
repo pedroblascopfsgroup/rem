@@ -800,9 +800,9 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
-    			name: 'isPANoDadaDeBaja'
+    			name: 'isPANoDadaDeBaja',
     			type: 'boolean'
-    		}
+    		},
     		{
     			name: 'cambioEstadoActivo',
     			type: 'boolean'

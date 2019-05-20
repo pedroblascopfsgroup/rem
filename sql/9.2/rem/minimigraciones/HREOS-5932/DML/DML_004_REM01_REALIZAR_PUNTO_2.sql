@@ -134,6 +134,8 @@ BEGIN
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 		
+		/*
+		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
 		OPEN ACTIVOS_HISTORICO_APU;
@@ -209,7 +211,9 @@ BEGIN
 		END LOOP;
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.'); 
-
+		
+		*/
+		
 DBMS_OUTPUT.PUT_LINE('[FIN] Fin PUNTO 2');
 
 COMMIT;

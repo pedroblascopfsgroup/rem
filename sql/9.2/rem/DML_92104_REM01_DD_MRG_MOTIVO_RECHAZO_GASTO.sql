@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20190515
+--## FECHA_CREACION=20190521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6474
@@ -37,7 +37,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(5012);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    T_TIPO_DATA('F46' ,'No es posible dar de alta un gasto para una unidad alquilable' ,'No es posible dar de alta un gasto para una unidad alquilable' ,0, ' ' )
+    T_TIPO_DATA('F46' ,'No es posible dar de alta un gasto para una unidad alquilable' ,'No es posible dar de alta un gasto para una unidad alquilable' ,1, 'INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = AUX.COD_ACTIVO LEFT JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON ACT.DD_TTA_ID = TTA.DD_TTA_ID WHERE TTA.DD_TTA_CODIGO = ''''05'''' AND ACT.BORRADO = 0' )
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

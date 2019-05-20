@@ -3199,7 +3199,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		successFn = successFn || Ext.emptyFn
 
-
+        
 		if(Ext.isEmpty(jsonData)) {
 			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
 		} else {
@@ -3727,8 +3727,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
     onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {
-        var me = this;
-        if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
+		var me = this;
+		var chkbxpublicarControlPrimeravez = checkbox.up('activosdetallemain').lookupReference('chkbxpublicarControlPrimeravez');
+		if(chkbxpublicarControlPrimeravez.getValue()){
+			chkbxpublicarControlPrimeravez.setValue(false);
+			
+		}
+        if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler') && !chkbxpublicarControlPrimeravez.getValue()) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
         
@@ -3760,11 +3765,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         } else {
 		    if(!estadoPubVentaPublicado && checkbox.getValue() && checkboxPublicarVentaDeshabilitado) {
 			
-				checkboxPublicarVenta.setValue(true);
+				   checkboxPublicarVenta.setValue(true);
+				   me.getViewModel().get('datospublicacionactivo').set('publicarVenta',true);
+				  									
 				
 		    } else if (!estadoPubVentaPublicado && !checkbox.getValue() && checkboxPublicarVentaDeshabilitado) {
 		        
 				checkboxPublicarVenta.setValue(false);
+				me.getViewModel().get('datospublicacionactivo').set('publicarVenta',false);
 				
 		    } 
 		}        
@@ -3774,6 +3782,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var me = this;
         var estadoCheckPublicarFicha = me.getViewModel().get('activo.aplicaPublicar');
 		var checkboxPublicarAlquiler = checkbox.up('activosdetallemain').lookupReference('chkbxpublicaralquiler');
+		var chkbxpublicarControlPrimeravez = checkbox.up('activosdetallemain').lookupReference('chkbxpublicarControlPrimeravez');
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
@@ -3785,12 +3794,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             checkbox.setValue(false);
         } else {
 			if(isDirty && !estadoPubAlquilerPublicado && checkboxPublicarAlquilerDeshabilitado) {
-	            checkboxPublicarAlquiler.setValue(true);
+				checkboxPublicarAlquiler.setValue(true);
+				me.getViewModel().get('datospublicacionactivo').set('publicarAlquiler',true);
+				
+				if(chkbxpublicarControlPrimeravez.getValue()){
+
+					this.onChangeCheckboxPublicarAlquiler(checkboxPublicarAlquiler);
+					
+				}
+			
 			} else if (!isDirty && !estadoPubAlquilerPublicado && !checkbox.getValue() && checkboxPublicarAlquilerDeshabilitado) {
 				
 				
 				checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
 				checkboxPublicarAlquiler.setValue(false);
+				me.getViewModel().get('datospublicacionactivo').set('publicarAlquiler',false);
 						}
 						 else {
 				var readOnly = Ext

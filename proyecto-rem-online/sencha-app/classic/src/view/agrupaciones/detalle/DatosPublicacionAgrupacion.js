@@ -118,7 +118,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 								reference: 'chkbxpublicarventa',
 								textareaRefChained: 'textareaMotivoPublicacionVenta',
 								bind: {
-									readOnly: '{datospublicacionagrupacion.deshabilitarCheckPublicarVenta}',
+									disabled: '{!datospublicacionactivo.publicarVenta}',
 									value: '{datospublicacionagrupacion.publicarVenta}'
 								},
 								listeners: {
@@ -165,8 +165,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 								fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 								reference: 'comboMotivoOcultacionVenta',
 								textareaRefChained: 'textareaMotivoOcultacionManualVenta',
+								disabled: true,
 								bind: {
-									readOnly: '{datospublicacionagrupacion.deshabilitarCheckOcultarVenta}',
 									store: '{comboMotivosOcultacionVenta}',
 									value: '{datospublicacionagrupacion.motivoOcultacionVentaCodigo}'
 								},
@@ -196,8 +196,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 							{
 								xtype: 'textareafieldbase',
 								reference: 'textareaMotivoOcultacionManualVenta', 
+								disabled: true,
 								bind: {
-									readOnly: '{datospublicacionagrupacion.deshabilitarCheckOcultarVenta}',
 									value: '{datospublicacionagrupacion.motivoOcultacionManualVenta}'
 								},
 								maxLength: 200,
@@ -337,8 +337,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 					        	fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 								reference: 'comboMotivoOcultacionAlquiler',
 								textareaRefChained: 'textareaMotivoOcultacionManualAlquiler',
+								disabled: true,
 					        	bind: {
-				            		readOnly: '{datospublicacionagrupacion.deshabilitarCheckOcultarAlquiler}',
 				            		store: '{comboMotivosOcultacionAlquiler}',
 				            		value: '{datospublicacionagrupacion.motivoOcultacionAlquilerCodigo}'
 				            	},
@@ -357,6 +357,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 							{
 								xtype: 'textareafieldbase',
 								reference: 'textareaMotivoOcultacionManualAlquiler',
+								disabled: true,
 								bind: {
 									readOnly: '{datospublicacionagrupacion.deshabilitarCheckOcultarAlquiler}',
 									value: '{datospublicacionagrupacion.motivoOcultacionManualAlquiler}'

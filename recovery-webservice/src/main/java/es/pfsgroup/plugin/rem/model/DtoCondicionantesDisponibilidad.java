@@ -29,7 +29,6 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 	private Boolean conCargas;
 	private Boolean isCondicionado;
 	private List<?> activosPropagables;
-	private String comboOtro;
 
 	public String getIdActivo() {
 		return idActivo;
@@ -189,14 +188,6 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 
 	public void setIsCondicionado(Boolean isCondicionado) {
 		this.isCondicionado = isCondicionado;
-	}
-
-	public String getComboOtro() {
-		return comboOtro;
-	}
-
-	public void setComboOtro(String comboOtro) {
-		this.comboOtro = comboOtro;
 	}
 	
 	

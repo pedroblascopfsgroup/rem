@@ -516,8 +516,7 @@ public class ActivoPropagacionFieldTabMap {
     					"tapiado",
     					"otro",
     					"ocupadoSinTitulo",
-    					"divHorizontalNoInscrita",
-    					"comboOtro"
+    					"divHorizontalNoInscrita"
 			    ));
 
     	pmap.put(TAB_COMERCIAL,

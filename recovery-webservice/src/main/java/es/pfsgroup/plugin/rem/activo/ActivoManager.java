@@ -2021,12 +2021,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 
-		if("1".equalsIgnoreCase(dtoCondicionanteDisponibilidad.getComboOtro()) && !Checks.esNulo(dtoCondicionanteDisponibilidad.getOtro())) {
-			condicionantesDisponibilidad.setOtro(dtoCondicionanteDisponibilidad.getOtro());
-
-		} else if("0".equalsIgnoreCase(dtoCondicionanteDisponibilidad.getComboOtro())) {
-			condicionantesDisponibilidad.setOtro(null);
-		}
+		condicionantesDisponibilidad.setOtro(dtoCondicionanteDisponibilidad.getOtro());
 
 		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
 

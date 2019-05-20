@@ -561,9 +561,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    		fechaRevisionEstadoPosesorio = me.down('[reference=fechaRevisionEstadoPosesorio]'),
    		fechaSolDesahucio = me.down('[reference=fechaSolDesahucio]'),
    		fechaLanzamiento = me.down('[reference=fechaLanzamiento]'),
-   		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]'),
-   		datefieldFechaTitulo = me.down('[reference=datefieldFechaTitulo]'),
-   		datefieldFechaVencTitulo = me.down('[reference=datefieldFechaVencTitulo]');
+   		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]');
+//   	datefieldFechaTitulo = me.down('[reference=datefieldFechaTitulo]'),
+//   	datefieldFechaVencTitulo = me.down('[reference=datefieldFechaVencTitulo]');
 
    		if(!Ext.isEmpty(fechaTomaPosesion.getValue()) && fechaTomaPosesion.getValue() > fechaRevisionEstadoPosesorio.getValue()) {
 		    error = HreRem.i18n("txt.validacion.fechaTomaPosesion.mayor.fechaRevisionEstadoPosesorio");
@@ -583,12 +583,12 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    			fechaLanzamientoEfectivo.markInvalid(error);   			
    		}  	
 
-   		//La fecha de t�tulo posesorio debe ser anterior a la fecha de vencimiento
-   		if(!Ext.isEmpty(datefieldFechaTitulo.getValue()) && datefieldFechaTitulo.getValue() >= datefieldFechaVencTitulo.getValue()) {
-		    error = HreRem.i18n("txt.validacion.datefieldFechaTitulo.mayor.datefieldFechaVencTitulo");
-   			errores.push(error);
-   			datefieldFechaTitulo.markInvalid(error);   			
-   		}  	
+//   		//La fecha de t�tulo posesorio debe ser anterior a la fecha de vencimiento
+//   		if(!Ext.isEmpty(datefieldFechaTitulo.getValue()) && datefieldFechaTitulo.getValue() >= datefieldFechaVencTitulo.getValue()) {
+//		    error = HreRem.i18n("txt.validacion.datefieldFechaTitulo.mayor.datefieldFechaVencTitulo");
+//   			errores.push(error);
+//   			datefieldFechaTitulo.markInvalid(error);   			
+//   		}  	
 
    		me.addExternalErrors(errores);
    },

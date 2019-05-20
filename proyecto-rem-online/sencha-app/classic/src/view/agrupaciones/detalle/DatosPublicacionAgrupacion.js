@@ -515,7 +515,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 								reference: 'comboCondicionanteOtro',
 								bind: {
 									store: '{comboSiNoRem}',
-									value: '{datospublicacionagrupacion.comboOtro}'
+									value: '{getSiNoFromOtro}'
 								},
 								listeners: {
 									change: 'onChangeComboOtro'

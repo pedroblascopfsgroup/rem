@@ -73,7 +73,6 @@ public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 	private Boolean sinInformeAprobado;
 	private Boolean vandalizado;
 	private Boolean conCargas;
-	private String comboOtro;
 
 	public Long getId() {
 		return id;
@@ -257,14 +256,6 @@ public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 
 	public void setCodigoEstadoPublicacionAlquiler(String codigoEstadoPublicacionAlquiler) {
 		this.codigoEstadoPublicacionAlquiler = codigoEstadoPublicacionAlquiler;
-	}
-
-	public String getComboOtro() {
-		return comboOtro;
-	}
-
-	public void setComboOtro(String comboOtro) {
-		this.comboOtro = comboOtro;
 	}
 
 }

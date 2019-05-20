@@ -202,5 +202,4 @@ public class ActivoValoraciones implements Serializable, Auditable {
 	public void setLiquidez(String liquidez) {
 		this.liquidez = liquidez;
 	}
-
 }

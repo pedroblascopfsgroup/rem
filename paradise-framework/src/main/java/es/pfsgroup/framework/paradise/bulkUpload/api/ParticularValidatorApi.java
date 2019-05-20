@@ -595,6 +595,85 @@ public interface ParticularValidatorApi {
 	 * @return true si existe, false si no existe o es nulo
 	 */
 	public Boolean existeCalculo(String codCalculo);
+	
+	/**
+	 *  Valida que el activo no pertenezca a las carteras Bankia y Liberbank
+	 * @param numActivo
+	 * @return 1 - FALSE si no hay error, 0 - TRUE si hay error y pertenece a estas carteras 
+	 */
+	public Boolean isActivoNotBankiaLiberbank(String numActivo);
+	
+	/**
+	 * 
+	 * @param numExpediente
+	 * @return true si es de tipo Venta, false si es de tipo Alquiler
+	 */
+	public Boolean validadorTipoOferta(Long numExpediente);	
+	
+	/**
+	 * 
+	 * @param numExpediente
+	 * @return true si pertenece a Bankia o Liberbank, 
+	 * false si esta entre las otras carteras (incluyendo Bankia Habitat)  
+	 */
+	public Boolean validadorTipoCartera(Long numExpediente);
+	
+	/**
+	 * 
+	 * @param numExpediente
+	 * @return true si es diferente a Tramitado, false si es Tramitado  
+	 */
+	public Boolean validadorEstadoOfertaTramitada(Long numExpediente);
+	
+	/**
+	 * 
+	 * @param numExpediente
+	 * @return true si el estado no es de los de la lista, 
+	 * false si el estado si es de los que se pueden modificar  
+	 */
+	public Boolean validadorEstadoExpedienteSolicitado(Long numExpediente);
+	
+	/**
+	 * @param numExpediente
+	 * @param valorDate
+	 * @return true si la fecha de ingreso no es mayor a la fecha alta oferta,
+	 * false si lo es
+	 */	
+	public Boolean validadorFechaMayorIgualFechaAltaOferta(Long numExpediente, String valorDate);
+	
+	/**
+	 * @param numExpediente
+	 * @param fecha
+	 * @return true si la fecha de ingreso no es mayor a la fecha sancion,
+	 * false si lo es
+	 */
+	public Boolean validadorFechaMayorIgualFechaSancion(Long numExpediente, String fecha);
+	
+	/**
+	 * Para obtener la fecha de la aceptacion, en REM se muestra ese dato, pero en BDA es ECO_FECHA_ALTA
+	 * @param numExpediente
+	 * @param fecha
+	 * @return true si la fecha de ingreso no es mayor a la fecha aceptacion,
+	 * false si lo es
+	 */
+	public Boolean validadorFechaMayorIgualFechaAceptacion(Long numExpediente, String fecha);
+	
+	/**
+	 * Para obtener la fecha de la reserva, en REM se usa la fecha de la firma
+	 * @param numExpediente
+	 * @param fecha
+	 * @return true si la fecha de ingreso no es mayor a la fecha reserva,
+	 * false si lo es
+	 */
+	public Boolean validadorFechaMayorIgualFechaReserva(Long numExpediente, String fecha);
+	
+	/**
+	 * @param numExpediente
+	 * @param fecha
+	 * @return true si la fecha de ingreso no es mayor a la fecha venta,
+	 * false si lo es
+	 */
+	public Boolean validadorFechaMayorIgualFechaVenta(Long numExpediente, String fecha);
 
 	Boolean isOfferOfGiants(String numOferta);
 

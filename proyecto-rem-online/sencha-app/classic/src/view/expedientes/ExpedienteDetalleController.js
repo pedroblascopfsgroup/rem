@@ -215,7 +215,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
 
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
-		if(form.isFormValid() && form.disableValidation) {
+		if(form.isFormValid() || form.disableValidation) {
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -266,6 +266,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var contador = 0;
 				me.saveMultipleRecords(contador, records);
 			}
+			me.onClickBotonRefrescar();
 
 		} else {
 		
@@ -550,6 +551,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 							{ 
 								field.fireEvent('save');
 								field.fireEvent('update');});
+		
+		if (Ext.isDefined(btn.name)
+				&& btn.name === 'firstLevel') {
+			me.getViewModel().set("editingFirstLevel", false);
+		} else {
+			me.getViewModel().set("editing", false);
+		}
 	},
 
     onClickBotonCerrarPestanya: function(btn) {
@@ -774,27 +782,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	var disabled = value == 0;
     	var esBankia = me.getViewModel().get("expediente.esBankia");
     	
-    	  	
-		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
-		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');
-		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');  
-		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk')
-    	
+		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');
+		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
+		labelNumeroExpediente = me.lookupReference('numeroExpedienteRef');
+		comboTipoFinanciacion = me.lookupReference('tipoFinanciacionRef');
+
     	    	
     	comboEntidadFinancieraCodigo.setDisabled(disabled);
-    	comboEntidadFinancieraCodigo.allowBlank = disabled;
-    	
-    	if(esBankia) {
-    		numExpedienteRiesgo.allowBlank = false;
-    		comboTipoFinanciacion.allowBlank = false;
-    		cncyCapitalConcedidoBnk.allowBlank = false;
-    	}
-    	
-    	
+    	comboEntidadFinancieraCodigo.allowBlank = disabled; 	
+
     	if(disabled) {
-    		numExpedienteRiesgo.setValue("");
-    		comboTipoFinanciacion.setValue("");
     		comboEntidadFinancieraCodigo.setValue("");
+    		labelCapitalConcedido.setValue("");
+    		labelNumeroExpediente.setValue("");
+    		comboTipoFinanciacion.reset();
     	}
 	},
 	
@@ -1319,10 +1320,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			   	data = Ext.decode(response.responseText);
 			   }  catch (e){
 			   	data = {};
-			   };			   
+			   };
 			   if(data.success === "true") {
-				   	me.lookupReference('formalizacionExpediente').funcionRecargar();
-				   	me.getView().unmask();
+				   me.lookupReference('cncyCapitalConcedidoBnk').setValue(data.data);
+				   me.getView().unmask();
 			   }else {
 			   		Utils.defaultRequestFailure(response, opts);
 			   }
@@ -1748,47 +1749,41 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
     },
-    
 	onChangeComboEntidadFinanciera: function(combo, nValue, oValue, eOps) {
-	
-		var me =this;
+		var me = this;
 		var esBankia = me.getViewModel().get("expediente.esBankia");
 		var valorComboEsBankia = CONST.COMBO_ENTIDAD_FINANCIERA['BANKIA'];			
+		var disabled = nValue == 0;
+    	    	  	
+		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
+		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');  
+		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk');
+		labelCapitalConcedido = me.lookupReference('capitalCondedidoRef');
+		labelNumeroExpediente = me.lookupReference('numeroExpedienteRef');
+		comboTipoFinanciacionRef = me.lookupReference('tipoFinanciacionRef');
+
+		if (!(nValue == me.getViewModel().data.financiacion.data.entidadFinancieraCodigo)){
+			labelCapitalConcedido.setValue("");
+    		labelNumeroExpediente.setValue("");
+    		comboTipoFinanciacionRef.reset();
+    		numExpedienteRiesgo.setValue("");
+    		comboTipoFinanciacion.reset();
+		}
 		
-		bloqueBankia = me.lookupReference("bloqueBankia");
-		dummyBloqueBankia = me.lookupReference("dummyBloqueBankia");
-		numeroExpedienteRef = me.lookupReference("numeroExpedienteRef");
-		tipoFinanciacionRef = me.lookupReference("tipoFinanciacionRef");
-		fechaInicioFinanciacion = me.lookupReference("fechaInicioFinanciacion"); 
-		fechaFinFinanciacion = me.lookupReference("fechaFinFinanciacion");
-		estadoExpedienteRef = me.lookupReference("estadoExpedienteRef"); 
-		capitalCondedidoRef = me.lookupReference("capitalCondedidoRef");
-		
-		
-		if(!Ext.isEmpty(nValue)) {
-			if (esBankia && nValue == valorComboEsBankia) { 
-				bloqueBankia.setHidden(false);
-				dummyBloqueBankia.setHidden(false);
-				
-				numeroExpedienteRef.setHidden(true);
-				tipoFinanciacionRef.setHidden(true);
-				fechaInicioFinanciacion.setHidden(true);
-				fechaFinFinanciacion.setHidden(true);
-				estadoExpedienteRef.setHidden(true);
-				capitalCondedidoRef.setHidden(true);
-				
-			} else if ((esBankia && nValue != valorComboEsBankia) || (!esBankia && nValue == valorComboEsBankia) || (!esBankia && nValue != valorComboEsBankia)){
-				bloqueBankia.setHidden(true);
-				dummyBloqueBankia.setHidden(true);
-				
-				numeroExpedienteRef.setHidden(false);
-				tipoFinanciacionRef.setHidden(false);
-				fechaInicioFinanciacion.setHidden(false);
-				fechaFinFinanciacion.setHidden(false);
-				estadoExpedienteRef.setHidden(false);
-				capitalCondedidoRef.setHidden(false);
-			}
-    	} 
+ 
+    	if(nValue == valorComboEsBankia) {
+    		numExpedienteRiesgo.allowBlank = false;
+    		comboTipoFinanciacion.allowBlank = false;
+    		cncyCapitalConcedidoBnk.allowBlank = false;
+    	}
+    	
+    	if(disabled) {
+    		numExpedienteRiesgo.setValue("");
+    		comboTipoFinanciacion.setValue("");
+    		comboEntidadFinancieraCodigo.setValue("");
+    		labelNumeroExpediente.setValue("");
+    		comboTipoFinanciacion.reset();
+    	}
 	},
 
 	onChangeComboProvincia: function(combo) {
@@ -3085,29 +3080,6 @@ comprobarObligatoriedadRte: function(){
 						 */
 					}
 				});
-	},
-	onClickBotonCancelar : function(btn) {
-		var me = this, activeTab = btn.up('tabpanel')
-				.getActiveTab();
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]')
-				.hide();
-		btn.up('tabbar').down('button[itemId=botoneditar]')
-				.show();
-
-		Ext.Array.each(
-				activeTab.query('field[isReadOnlyEdit]'),
-				function(field, index) {
-					field.fireEvent('save');
-					field.fireEvent('update');
-				});
-
-		if (Ext.isDefined(btn.name)
-				&& btn.name === 'firstLevel') {
-			me.getViewModel().set("editingFirstLevel", false);
-		} else {
-			me.getViewModel().set("editing", false);
-		}
 	},
 
 	onClickBloquearExpediente : function(btn) {

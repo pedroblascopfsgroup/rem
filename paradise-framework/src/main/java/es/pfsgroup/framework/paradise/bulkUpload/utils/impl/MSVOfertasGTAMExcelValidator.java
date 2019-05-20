@@ -39,17 +39,17 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 	
-	public static final String OFERTA_NO_EXISTE = "The offer does not exist.";
-	public static final String OFERTA_NO_ES_DE_GIANTS = "The offer does not belong to GIANTS.";
-	public static final String OFERTA_NO_PENDIENTE_SANCION = "The offer is not pending sanction.";
-	public static final String AGRUPACION_NO_EXISTE = "The group does not exists.";
-	public static final String AGRUPACION_NO_ES_DE_GIANTS = "The group does not belong to GIANTS.";
-	public static final String ACTIVO_NO_EXISTE = "The asset does not exist.";
-	public static final String ACTIVO_NO_ES_DE_GIANT = "The asset does not belong to GIANTS.";
-	public static final String RESPUESTA_OFERTA_INCORRECTA = "The status of the resolution is incorrect. (Must be 1, 2 or 3)";
-	public static final String IMPORTE_CONTRAOFERTA_REQUERIDO = "The count offer amount must be filled.";
-	public static final String TIPO_RESOLUCION_INCORRECTO = "The type of commitee's resolution is incorrect. (Must be 1 or 3)";
-	public static final String TIPO_DE_CANCELACION_REQUERIDO = "The type of cancellation must be filled.";
+	public static final String OFERTA_NO_EXISTE					= "La oferta no existe.";
+	public static final String OFERTA_NO_ES_DE_GIANTS			= "La oferta no es de la cartera Giants.";
+	public static final String OFERTA_NO_PENDIENTE_SANCION		= "La oferta no es pendiente de sanción.";
+	public static final String AGRUPACION_NO_EXISTE				= "La agrupación no existe.";
+	public static final String AGRUPACION_NO_ES_DE_GIANTS		= "La agrupación no es de la cartera Giants.";
+	public static final String ACTIVO_NO_EXISTE					= "El activo no existe.";
+	public static final String ACTIVO_NO_ES_DE_GIANT			= "El activo no es de GIANTS.";
+	public static final String RESPUESTA_OFERTA_INCORRECTA		= "El estado de la resolución ('status of the resolucion') debe ser 01, 02 o 03.";
+	public static final String IMPORTE_CONTRAOFERTA_REQUERIDO	= "El importe de contraoferta ('count offer amount') debe estar relleno.";
+	public static final String TIPO_RESOLUCION_INCORRECTO		= "El tipo de resolución comité ('type of comitee's resolution') debe ser 01, 02 o 03.";
+	public static final String TIPO_DE_CANCELACION_REQUERIDO	= "El tipo de cancelacion ('type of cancellation') debe estar relleno.";
 	
 	@Autowired
 	private MSVBusinessValidationRunner validationRunner;
@@ -356,9 +356,7 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 			for(int i=1; i<this.numFilasHoja; i++){
 				try {
 					String respuestaOferta = exc.dameCelda(i, 6);
-					if(!"1".equals(respuestaOferta) 
-							&& !"2".equals(respuestaOferta)
-							&& !"3".equals(respuestaOferta)){
+					if(!("01".equals(respuestaOferta)) && !("02".equals(respuestaOferta)) && !("03".equals(respuestaOferta))){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -384,8 +382,8 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 				try {
 					String tipoResolucion = exc.dameCelda(i, 9);
 					
-					if(!"1".equals(tipoResolucion)
-							&& !"3".equals(tipoResolucion)){
+					if(!("01".equals(tipoResolucion))
+							&& !("03".equals(tipoResolucion))){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -413,7 +411,7 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 					String tipoResolucion = exc.dameCelda(i, 9);
 					String estadoResolucion = exc.dameCelda(i, 6);
 					
-					if("1".equals(tipoResolucion) && "2".equals(estadoResolucion) && Checks.esNulo(tipoCancelacion)){
+					if(("01".equals(tipoResolucion)) && ("02".equals(estadoResolucion)) && Checks.esNulo(tipoCancelacion)){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -438,9 +436,9 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 			for(int i=1; i<this.numFilasHoja; i++){
 				try {
 					String importeContraOferta = exc.dameCelda(i, 8);
-					String tipoResolucion = exc.dameCelda(i, 9);
+					String tipoResolucion = exc.dameCelda(i, 6);
 					
-					if("3".equals(tipoResolucion) && Checks.esNulo(importeContraOferta)){
+					if(("03".equals(tipoResolucion)) && Checks.esNulo(importeContraOferta)){
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {

@@ -685,6 +685,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onAgregarGestoresClick: function(btn){
 		
 		var me = this;
+		
+		btn.setDisabled(true);
 
     	var url =  $AC.getRemoteUrl('activo/insertarGestorAdicional');
     	var parametros = btn.up("combogestores").getValues();
@@ -2925,10 +2927,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						}
 					}
 				}
-		
 				var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
 		              return activo.activoId == me.getViewModel().get("activo.id");
 		            }), 1)[0];
+		            
+		        var algunActivoEstaInscrito = false;
+		        for (var i = 0; i < activosPropagables.length; i ++){
+		        		if ( CONST.DD_ETI_ESTADO_TITULO["INSCRITO"] == activosPropagables[i].estadoTitulo)	{
+		        			//activosPropagables.shift(activosPropagables[i]);
+		        			activosPropagables.splice(i,1);
+		        			algunActivoEstaInscrito = true;
+		        		}
+		        }
 				
 		        // Abrimos la ventana de selección de activos
 			    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
@@ -2941,8 +2951,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			        }).show();
 		
 		    	me.getView().add(ventanaOpcionesPropagacionCambios);
+		    	
+		    	
+		    	//En caso de que algun activo este incrito, se le alertara al usuario.
+		    	if ( algunActivoEstaInscrito ) {
+		    		me.fireEvent("warnToast", "No se podr&aacute; propagar a todos los activos debido a que alguno est&aacute; inscrito");
+		    	}
+		    	  
 			},
-		
 		    failure: function(record, operation) {
 		        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		  	}
@@ -4099,27 +4115,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
-    onSaveFormularioCompletoTabPatrimonio: function(btn, form){
-    	var me = this;
-    	var chkPerimetroAlquiler = me.getViewModel().get('patrimonio.chkPerimetroAlquiler');
-    	var isRestringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
-    	var activoChkPerimetroAlquiler = me.getViewModel().get('activo.activoChkPerimetroAlquiler');
-
-    	if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
-    		Ext.Msg.confirm(
-				HreRem.i18n("title.agrupacion.restringida"),
-				HreRem.i18n("msg.confirm.agrupacion.restringida"),
-				function(btnConfirm){
-					if (btnConfirm == "yes"){
-						me.onSaveFormularioCompleto(btn, form, true);
-					}
-				}
-			);
-    	} else {
-    		me.onSaveFormularioCompleto(btn, form, false);
-    	}
-    },
-
 	manageToastJsonResponse : function(scope,jsonData) {
 		var me= this;
 
@@ -4175,7 +4170,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var chkPerimetroAlquiler = me.getViewModel().get('patrimonio.chkPerimetroAlquiler');
         var destinoComercialAlquiler = me.getViewModel().get('activo.isDestinoComercialAlquiler');
         var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
-
+        var isRestringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
+    	var activoChkPerimetroAlquiler = me.getViewModel().get('activo.activoChkPerimetroAlquiler');
         if(comboEstadoAlquiler != null && comboTipoInquilino != null && comboOcupado != null){
             if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && comboOcupado.value == CONST.COMBO_OCUPACION["SI"]){
                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -4185,9 +4181,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.alquiler"));
             }else if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['LIBRE']){
                 comboTipoInquilino.setValue(null);
-                me.onSaveFormularioCompleto(btn, form);
+                if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
+            		Ext.Msg.confirm(
+        				HreRem.i18n("title.agrupacion.restringida"),
+        				HreRem.i18n("msg.confirm.agrupacion.restringida"),
+        				function(btnConfirm){
+        					if (btnConfirm == "yes"){
+        						me.onSaveFormularioCompleto(btn, form, true);
+        					}
+        				}
+        			);
+            	} else {
+            		me.onSaveFormularioCompleto(btn, form, false);
+            	}
             } else {
-                me.onSaveFormularioCompleto(btn, form);
+            	if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
+            		Ext.Msg.confirm(
+        				HreRem.i18n("title.agrupacion.restringida"),
+        				HreRem.i18n("msg.confirm.agrupacion.restringida"),
+        				function(btnConfirm){
+        					if (btnConfirm == "yes"){
+        						me.onSaveFormularioCompleto(btn, form, true);
+        					}
+        				}
+        			);
+            	} else {
+            		me.onSaveFormularioCompleto(btn, form, false);
+            	}
             }
         }
 

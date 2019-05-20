@@ -657,7 +657,7 @@ public interface ExpedienteComercialApi {
 	 *
 	 * @param dto
 	 */
-	boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception;
+	Double obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception;
 
 	/**
 	 * Este método obtiene los datos del apartado 'Financiación' de la tab 'Formalización' del expediente.
@@ -1165,5 +1165,6 @@ public interface ExpedienteComercialApi {
 	boolean checkCamposComprador(TareaExterna tareaExterna);
 
 	boolean checkInquilinos(TareaExterna tareaExterna);
+
 
 }

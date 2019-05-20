@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.gestorDocumental.manager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
@@ -23,6 +25,9 @@ import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 
 @Component
 public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocumentalMaestroApi {
+	
+	@Resource
+	private Properties appProperties;
 
 	private static final String WEB_SERVICE_ACTIVOS = "MAESTRO_ACTIVOS";
 	private static final String WEB_SERVICE_PERSONAS = "MAESTRO_PERSONAS";
@@ -71,8 +76,10 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			String urlWSDL = getWSURL(WEB_SERVICE_PERSONAS);
 			String targetNamespace = getWSNamespace();
 			String name = getWSName();
-			//si es nulo no avanzar para no estropear los codigos en local
-			if(!Checks.esNulo(urlWSDL)) {
+			//si es nulo o no está activo no avanzar para no estropear los codigos en local
+			
+			Boolean activo = !Checks.esNulo(appProperties.getProperty("ws.MAESTRO_PERSONAS.active")) ? Boolean.valueOf(appProperties.getProperty("ws.MAESTRO_PERSONAS.active")) : false;
+			if(activo) {
 				URL wsdlLocation = new URL(urlWSDL);
 				QName qName = new QName(targetNamespace, name);
 				

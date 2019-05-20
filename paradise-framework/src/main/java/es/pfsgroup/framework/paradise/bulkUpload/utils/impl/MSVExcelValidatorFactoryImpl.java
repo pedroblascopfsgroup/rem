@@ -143,8 +143,12 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVOfertasGTAMExcelValidator ofertasGtam;
-
 	
+	@Autowired
+	private MSVActualizacionSuperficieExcelValidator actualizadorSuperficie;
+
+	@Autowired
+	private MSVActualizadorFechaIngresoChequeExcelValidator fechaIngresoCheque;
 
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -275,14 +279,15 @@ public class MSVExcelValidatorFactoryImpl {
 			return envioBurofax;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALIDADOR_CARGA_MASIVA_IMPUESTOS.equals(codTipoOperacion)) {
 			return cargaMasivaImpuestos;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES.equals(codTipoOperacion)) {
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALIDADOR_ACTUALIZACION_SUPERFICIE.equals(codTipoOperacion)) {
+			return actualizadorSuperficie;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALIDADOR_ACTUALIZADOR_FECHA_INGRESO_CHEQUE.equals(codTipoOperacion)) {
+			return fechaIngresoCheque;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES.equals(codTipoOperacion)) {
 			return cargaMasivaSancionValidator;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES.equals(codTipoOperacion)) {
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES.equals(codTipoOperacion)) {
 			return ValidatorNombreCargaMasiva;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_COMUNICACIONES.equals(codTipoOperacion) ) {
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_COMUNICACIONES.equals(codTipoOperacion) ) {
 			return validatorCargaMasivaComunicaciones;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_OFERTAS_GTAM.equals(codTipoOperacion)){
 			return ofertasGtam;

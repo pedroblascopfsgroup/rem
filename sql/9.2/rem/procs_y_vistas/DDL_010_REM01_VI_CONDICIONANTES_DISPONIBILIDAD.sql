@@ -45,8 +45,8 @@ DECLARE
     err_num NUMBER; -- Vble. número de errores
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
-    V_MSQL VARCHAR2(4000 CHAR);
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEM_MASTER#'; -- Configuracion Esquemas
+    V_MSQL VARCHAR2(32000 CHAR);
 
     CUENTA NUMBER;
     
@@ -60,7 +60,7 @@ BEGIN
   END IF;
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD...');
-  EXECUTE IMMEDIATE 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.v_cond_disponibilidad (act_id,
+  V_MSQL := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.v_cond_disponibilidad (act_id,
                                                           sin_toma_posesion_inicial,
                                                           ocupado_contitulo,
                                                           pendiente_inscripcion,
@@ -87,8 +87,8 @@ BEGIN
                                                          )
 AS
    SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro,
-          sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado,
-          est_disp_com_codigo,es_condicionado_publi,borrado
+          sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo1, ''01'', 1, 0) AS es_condicionado,
+          est_disp_com_codigo2,es_condicionado_publi,borrado
 
      FROM (SELECT act.act_id, 
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) 
@@ -138,13 +138,13 @@ AS
 						   OR NVL2 (vcg.con_cargas, vcg.con_cargas, 0) = 1
 					THEN ''01''
                     ELSE ''02''
-                  END AS est_disp_com_codigo,
+                  END AS est_disp_com_codigo1,
 
 			      CASE 
 					WHEN (sps1.sps_ocupado = 1 OR sps1.sps_acc_tapiado = 1) THEN 1 
 						ELSE 0 
 					END as es_condicionado_publi,	
-                  vact.est_disp_com_codigo as est_disp_com_codigo,
+                  vact.est_disp_com_codigo as est_disp_com_codigo2,
                   0 AS borrado
 
 
@@ -174,7 +174,8 @@ AS
             WHERE act.borrado = 0)
           ';
 
-
+  EXECUTE IMMEDIATE V_MSQL;
+  
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD...Creada OK');
 
   	/*EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO PFSREM';

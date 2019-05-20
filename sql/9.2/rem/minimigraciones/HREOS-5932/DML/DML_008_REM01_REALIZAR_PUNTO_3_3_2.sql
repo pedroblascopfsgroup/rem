@@ -126,7 +126,7 @@ BEGIN
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 		
-		
+		/*
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
@@ -203,6 +203,8 @@ BEGIN
 		END LOOP;
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.'); 
+		
+		*/
 		
 /** 3.3.4 Marcamos el perímetro **/
 
@@ -496,7 +498,7 @@ BEGIN
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 		
-		
+		/*
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
@@ -573,6 +575,8 @@ BEGIN
 		END LOOP;
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.');  
+
+		*/
 
 COMMIT;
   

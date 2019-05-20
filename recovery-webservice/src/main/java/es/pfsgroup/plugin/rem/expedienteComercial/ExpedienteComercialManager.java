@@ -6058,7 +6058,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (Checks.esNulo(expediente.getCondicionante()))
 				expediente.setCondicionante(new CondicionanteExpediente());
 			CondicionanteExpediente condiciones = expediente.getCondicionante();
-			
+			Formalizacion formalizacion = expediente.getFormalizacion();
 			DDEntidadFinanciera entidadFinancieraPrevia = condiciones.getEntidadFinanciera();
 			
 			if (!Checks.esNulo(condiciones)) {
@@ -6078,9 +6078,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							DDEntidadFinanciera entidadFinanciera = (DDEntidadFinanciera) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDEntidadFinanciera.class, dto.getEntidadFinancieraCodigo());
 							condiciones.setEntidadFinanciera(entidadFinanciera);
+							if(Checks.esNulo(dto.getNumExpedienteRiesgo())) {
+								formalizacion.setNumExpediente(null);
+							}
+							if(Checks.esNulo(dto.getTiposFinanciacionCodigo()) && Checks.esNulo(dto.getTiposFinanciacionCodigoBankia())) {
+								formalizacion.setTipoRiesgoClase(null);
+							}
 						}
 					} else if (solicitaFinanciacion == 0) {
 						condiciones.setEntidadFinanciera(null);
+						formalizacion.setNumExpediente(null);
+						formalizacion.setTipoRiesgoClase(null);
 					}
 				
 
@@ -6120,7 +6128,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.save(CondicionanteExpediente.class, condiciones);
 			}
 
-			Formalizacion formalizacion = expediente.getFormalizacion();
+			//Formalizacion
 
 			if (!Checks.esNulo(formalizacion)) {
 				if (!Checks.esNulo(dto.getNumExpedienteRiesgo())) {

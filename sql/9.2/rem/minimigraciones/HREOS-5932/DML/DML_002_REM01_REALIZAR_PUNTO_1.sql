@@ -230,7 +230,7 @@ BEGIN
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 		
-		
+		/*
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
@@ -308,6 +308,8 @@ BEGIN
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.'); 
 
+		*/
+		
 /**
 1.5. Quitarles el gestor/supervisor comercial de alquiler y reasignar el doble gestor de activo eliminando el de alquiler y viendo si hay que poner el de suelo, edificación o ninguno.
 **/    

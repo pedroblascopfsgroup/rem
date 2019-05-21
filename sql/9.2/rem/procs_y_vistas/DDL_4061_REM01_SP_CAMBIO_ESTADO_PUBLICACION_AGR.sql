@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20190509
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190516
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.11.0
---## INCIDENCIA_LINK=HREOS-6184
+--## VERSION_ARTEFACTO=2.8.4
+--## INCIDENCIA_LINK=REMVIP-3995
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -973,7 +973,7 @@ ELSE
              , V.DD_TPU_CODIGO_A, V.DD_TPU_CODIGO_V, V.DD_TAL_CODIGO
              , V.ADMISION, V.GESTION
              , V.INFORME_COMERCIAL, V.PRECIO_A, V.PRECIO_V
-             , V.CEE_VIGENTE, V.ADECUADO, V.ES_CONDICONADO
+             , V.CEE_VIGENTE, V.ADECUADO, V.ES_CONDICIONADO
           FROM '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI_AGR V'
           ||vWHERE
        ;

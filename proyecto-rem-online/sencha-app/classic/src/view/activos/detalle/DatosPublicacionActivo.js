@@ -213,7 +213,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											{   
 												reference: 'chkbxpublicarControlPrimeravez',
 												value:true,
-												hidden:true,
+												hidden:true
 												
 												
 											},

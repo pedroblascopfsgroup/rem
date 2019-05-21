@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=CARLOS AUGUSTO
---## FECHA_CREACION=20192504
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6182
+--## INCIDENCIA_LINK=HREOS-6453
 --## PRODUCTO=NO
 --##
 --## Finalidad: Inserción nueva función de carga masiva para adecuación.
@@ -33,7 +33,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-      T_FUNCION('Carga masiva actualización pestaña formalización', 'CARGA_MASIVA_ACTUALIZACION_FORMALIZACION')
+      T_FUNCION('SuperUsuario (Área Formalización): Actualización Pestaña Formalización', 'CARGA_MASIVA_ACTUALIZACION_FORMALIZACION')
     ); 
     V_TMP_FUNCION T_FUNCION;
 
@@ -42,17 +42,24 @@ BEGIN
     
     FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST
       LOOP
+	V_TMP_FUNCION := V_FUNCION(I);
       
       V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(2))||'''';
       EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
       -- Si existe la FUNCION
       IF V_NUM_TABLAS > 0 THEN        
-        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_M || '.FUN_FUNCIONES... Ya existe la funcion '''|| TRIM(V_TMP_FUNCION(2))||'''');
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_M || '.FUN_FUNCIONES... Ya existe la funcion '''|| TRIM(V_TMP_FUNCION(2))||''' actualizamos la descripción');
+	V_MSQL := 'UPDATE '|| V_ESQUEMA_M ||'.FUN_FUNCIONES SET 
+	FUN_DESCRIPCION_LARGA = '''||V_TMP_FUNCION(1)||'''
+	, USUARIOMODIFICAR = ''HREOS-6453''
+	, FECHAMODIFICAR = SYSDATE';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('ACTUALIZADO: '''||V_TMP_FUNCION(1)||''','''||TRIM(V_TMP_FUNCION(2))||'''');
       ELSE    
         V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.FUN_FUNCIONES (' ||
             'FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
             'SELECT '|| V_ESQUEMA_M ||'.S_FUN_FUNCIONES.NEXTVAL,'''||V_TMP_FUNCION(1)||''','''||TRIM(V_TMP_FUNCION(2))||''','||
-            '0, ''HREOS-6182'',SYSDATE,0 FROM DUAL';
+            '0, ''HREOS-6453'',SYSDATE,0 FROM DUAL';
         DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_FUNCION(1)||''','''||TRIM(V_TMP_FUNCION(2))||'''');
         EXECUTE IMMEDIATE V_MSQL;
       END IF;

@@ -258,7 +258,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			 idUnidadAlquilable = unidadAlquilable.getId();
 		}
 		if (!Checks.esNulo(activoMatriz)) {
-			 idActivoMatriz = activoMatriz.getId();
+			 idActivoMatriz = activoMatriz.getNumActivo();
 			 numRemActivoMatriz = activoMatriz.getNumActivoRem();
 			if (!Checks.esNulo(activoMatriz.getCartera())) {
 				if (!Checks.esNulo(activoMatriz.getCartera().getDescripcion())) {

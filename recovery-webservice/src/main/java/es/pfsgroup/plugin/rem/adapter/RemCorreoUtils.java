@@ -60,55 +60,54 @@ public class RemCorreoUtils {
 
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
 	@Resource(name = "entityTransactionManager")
-    private PlatformTransactionManager transactionManager;
+	private PlatformTransactionManager transactionManager;
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
-			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list){
-		
+			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) {
+
 		CorreoSaliente traza = obtenerTrazaCorreoSaliente(emailFrom, mailsPara, direccionesMailCc, asuntoMail,
 				cuerpoEmail, list);
 
 		try {
-			
-				emailFrom = emailFrom(emailFrom);
-				for (int i = 0; i < mailsPara.size(); i++) {
-					if (Checks.esNulo(mailsPara.get(i)) || "null".equals(mailsPara.get(i).toLowerCase())) {
-						mailsPara.remove(i);
-					}
+
+			emailFrom = emailFrom(emailFrom);
+			for (int i = 0; i < mailsPara.size(); i++) {
+				if (Checks.esNulo(mailsPara.get(i)) || "null".equals(mailsPara.get(i).toLowerCase())) {
+					mailsPara.remove(i);
 				}
-				if (mailsPara == null || mailsPara.isEmpty()) {
-					throw new Exception("La lista de destinatorios no puede ser null");
+			}
+			if (mailsPara == null || mailsPara.isEmpty()) {
+				throw new Exception("La lista de destinatorios no puede ser null");
+			}
+
+			// Propiedades de la conexion
+			Properties props = getPropiedades();
+
+			// Preparamos la sesion
+			Session session = Session.getDefaultInstance(props);
+			session.setDebugOut(System.out);
+			session.setDebug(false);
+
+			MimeMessage message = new MimeMessage(session);
+
+			prepararDestinatarios(message, mailsPara, direccionesMailCc);
+
+			message.setSubject(asuntoMail);
+
+			prepararBodyMensaje(message, list, cuerpoEmail);
+
+			// Lo enviamos.
+			if (esCorreoActivado()) {
+				if (emailFrom != null) {
+					message.setFrom(new InternetAddress(emailFrom));
 				}
-
-				// Propiedades de la conexion
-				Properties props = getPropiedades();
-
-				// Preparamos la sesion
-				Session session = Session.getDefaultInstance(props);
-				session.setDebugOut(System.out);
-				session.setDebug(false);
-
-				MimeMessage message = new MimeMessage(session);
-
-				prepararDestinatarios(message, mailsPara, direccionesMailCc);
-
-				message.setSubject(asuntoMail);
-
-				prepararBodyMensaje(message, list, cuerpoEmail);
-
-				
-				// Lo enviamos.
-				if (esCorreoActivado()) {
-					if(emailFrom != null){
-						message.setFrom(new InternetAddress(emailFrom));
-					}
-					doSend(message, session, props);
-				}				
-				traza.setResultado(true);
+				doSend(message, session, props);
+			}
+			traza.setResultado(true);
 		} catch (Exception e) {
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
@@ -116,19 +115,19 @@ public class RemCorreoUtils {
 			traza.setError(errors.toString());
 			logger.error("Error enviando correo", e);
 		} finally {
-			if(list != null && list.size() > 0){
-				for(int i = 0; i < list.size(); i++){
-					if(list.get(i) != null && list.get(i).getAdjunto() != null){
+			if (list != null && list.size() > 0) {
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i) != null && list.get(i).getAdjunto() != null) {
 						deleteFile(list.get(i).getAdjunto().getFileItem());
 					}
-					
+
 				}
 			}
 			persistirTrazaCorreoSaliente(traza);
 		}
 
 	}
-	
+
 	private void deleteFile(FileItem fileitem) {
 		if ((fileitem != null) && (fileitem.getFile() != null)) {
 			boolean deleted = fileitem.getFile().delete();
@@ -157,7 +156,7 @@ public class RemCorreoUtils {
 					i++;
 				}
 			}
-			if (!Checks.estaVacio(direccionesMailCc)){
+			if (!Checks.estaVacio(direccionesMailCc)) {
 				for (String para : direccionesMailCc) {
 					if (para != null && para.length() > 0) {
 						if (i > 0) {
@@ -182,7 +181,7 @@ public class RemCorreoUtils {
 			traza.setFechaEnvio(new Date());
 			genericDao.save(CorreoSaliente.class, traza);
 			transactionManager.commit(transaction);
-			
+
 		} catch (Exception e) {
 			logger.error("Error persistiendo traza de correo", e);
 			transactionManager.rollback(transaction);
@@ -195,8 +194,10 @@ public class RemCorreoUtils {
 		Transport t = session.getTransport(TRANSPORT_SMTP);
 
 		// validacion de usuario que envia
-		String usuario = props.getProperty(MAIL_SMTP_USER);;
-		String pass = obtenerPass();;
+		String usuario = props.getProperty(MAIL_SMTP_USER);
+		;
+		String pass = obtenerPass();
+		;
 
 		envioCorreoGenerico(message, t, usuario, pass);
 	}
@@ -204,7 +205,7 @@ public class RemCorreoUtils {
 	private void prepararDestinatarios(MimeMessage message, List<String> mailsPara, List<String> direccionesMailCc)
 			throws AddressException, MessagingException {
 		for (String emailPara : mailsPara) {
-			if(emailPara != null && !emailPara.isEmpty()){
+			if (emailPara != null && !emailPara.isEmpty()) {
 				emailPara = emailPara.trim();
 				if (validarCorreo(emailPara)) {
 					message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
@@ -215,15 +216,17 @@ public class RemCorreoUtils {
 
 		if (direccionesMailCc != null && direccionesMailCc.size() > 0) {
 			for (String emailCC : direccionesMailCc) {
-				emailCC = emailCC.trim();
-				if (validarCorreo(emailCC)) {
-					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
+				if (!Checks.esNulo(emailCC)) {
+					emailCC = emailCC.trim();
+					if (validarCorreo(emailCC)) {
+						message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
+					}
 				}
 
 			}
 		}
 	}
-	
+
 	private boolean validarCorreo(String email) {
 		boolean resultado = false;
 
@@ -314,12 +317,10 @@ public class RemCorreoUtils {
 		if (appProperties.getProperty(SERVIDOR_CORREO) != null) {
 			props.setProperty(MAIL_SMTP_HOST, appProperties.getProperty(SERVIDOR_CORREO));
 		}
-		
+
 		if (appProperties.getProperty(MAIL_SMTP_PORT) != null) {
 			props.setProperty(MAIL_SMTP_PORT, appProperties.getProperty(MAIL_SMTP_PORT));
 		}
-		
-		
 
 		if (appProperties.getProperty(STARTTLS_ENABLE) != null) {
 			props.setProperty(MAIL_SMTP_STARTTLS_ENABLE, appProperties.getProperty(STARTTLS_ENABLE));
@@ -336,7 +337,6 @@ public class RemCorreoUtils {
 		if (appProperties.getProperty(USUARIO_CORREO) != null) {
 			props.setProperty(MAIL_SMTP_USER, appProperties.getProperty(USUARIO_CORREO));
 		}
-		
 
 		props.setProperty(MAIL_SMTP_DEBUG, "false");
 

@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
@@ -22,21 +23,22 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 
-
 @Component
 public class MSVActualizadorCargaActivoGastoPorcentaje extends AbstractMSVActualizador implements MSVLiberator {
-	
+
 	@Autowired
 	ProcessAdapter processAdapter;
-	
+
 	@Autowired
 	private ActivoApi activoApi;
-	
+
 	@Autowired
 	private GastoApi gastoApi;
-	
+
 	@Autowired
 	private GastoProveedorApi gastoProveedorApi;
+
+	protected static final Log logger = LogFactory.getLog(MSVActualizadorCargaActivoGastoPorcentaje.class);
 
 	@Override
 	public String getValidOperation() {
@@ -44,30 +46,38 @@ public class MSVActualizadorCargaActivoGastoPorcentaje extends AbstractMSVActual
 	}
 
 	@Override
-	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
-		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-		GastoProveedor gasto= gastoApi.getByNumGasto(Long.parseLong(exc.dameCelda(fila, 1)));
-		GastoProveedorActivo relacion = gastoProveedorApi.buscarRelacionPorActivoYGasto(activo, gasto);
-		Float porcentajeParticipacion = this.obtenerFloatExcel(exc.dameCelda(fila, 2));
-		relacion.getGastoProveedor();
-		
-		if(!Checks.esNulo(activo) && !Checks.esNulo(gasto) && !Checks.esNulo(relacion) && !Checks.esNulo(porcentajeParticipacion)){
-			if(exc.getNumeroFilas().equals(fila+1)){
-				gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(), gasto.getId(), porcentajeParticipacion);
-				List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
-				gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(), gasto.getId(), gastoProveedorApi.regulaPorcentajeUltimoGasto(gastosActivosList, porcentajeParticipacion));
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
+			throws IOException, ParseException {
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		try {
+			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
+			GastoProveedor gasto = gastoApi.getByNumGasto(Long.parseLong(exc.dameCelda(fila, 1)));
+			GastoProveedorActivo relacion = gastoProveedorApi.buscarRelacionPorActivoYGasto(activo, gasto);
+			Float porcentajeParticipacion = this.obtenerFloatExcel(exc.dameCelda(fila, 2));
+			relacion.getGastoProveedor();
+
+			if (!Checks.esNulo(activo) && !Checks.esNulo(gasto) && !Checks.esNulo(relacion)
+					&& !Checks.esNulo(porcentajeParticipacion)) {
+				if (exc.getNumeroFilas().equals(fila + 1)) {
+					gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(),
+							gasto.getId(), porcentajeParticipacion);
+					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
+					gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(),
+							gasto.getId(),
+							gastoProveedorApi.regulaPorcentajeUltimoGasto(gastosActivosList, porcentajeParticipacion));
+				} else {
+					gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(),
+							gasto.getId(), porcentajeParticipacion);
+				}
+			} else {
+				throw new JsonViewerException("Gasto, Activo o la relacion entre ambos no existe");
 			}
-			else{
-				gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(), gasto.getId(), porcentajeParticipacion);
-			}
+		} catch (Exception e) {
+			throw new JsonViewerException(e.getMessage());
 		}
-		else{
-			throw new JsonViewerException("Gasto, Activo o la relacion entre ambos no existe");
-		}
-		return new ResultadoProcesarFila();
+		return resultado;
 	}
-	
+
 	private Float obtenerFloatExcel(String celdaExcel) {
 		if (Checks.esNulo(celdaExcel)) {
 			return null;

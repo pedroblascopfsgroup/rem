@@ -116,7 +116,6 @@ public class MSVAltaActivosProcesar extends AbstractMSVActualizador implements M
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws Exception {
 		
 		// Carga los datos de activo de la Fila excel al DTO

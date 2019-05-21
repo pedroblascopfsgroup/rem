@@ -62,7 +62,6 @@ public class MSVImpuestosProcesar extends AbstractMSVActualizador implements MSV
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 		
 		ImpuestosActivo impuestosActivo = new ImpuestosActivo();

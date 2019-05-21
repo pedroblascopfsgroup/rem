@@ -12,6 +12,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -74,9 +75,7 @@ public class MSVActualizadorAdecuacionCargaMasiva extends AbstractMSVActualizado
 
 			this.actualizarEstadoPublicacion(activo);
 		} catch (Exception e) {
-			resultado.setCorrecto(false);
-			resultado.setErrorDesc(e.getMessage());
-			logger.error("Error en MSVActualizadorAdecuacionCargaMasiva", e);
+			throw new JsonViewerException(e.getMessage());
 		}
 		return resultado;
 

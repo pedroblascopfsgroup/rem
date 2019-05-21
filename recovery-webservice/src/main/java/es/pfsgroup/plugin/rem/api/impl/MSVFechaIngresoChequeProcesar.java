@@ -50,7 +50,6 @@ public class MSVFechaIngresoChequeProcesar extends AbstractMSVActualizador imple
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		ExpedienteComercial expedienteComercial = null;

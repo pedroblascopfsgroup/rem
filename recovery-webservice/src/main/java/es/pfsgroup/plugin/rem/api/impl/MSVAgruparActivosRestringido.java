@@ -67,11 +67,9 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 			agrupacionAdapter.createActivoAgrupacionMasivo(new Long(exc.dameCelda(fila, 1)), agrupationId,
 					new Integer(exc.dameCelda(fila, 2)), false);
 		} catch (Exception e) {
-			resultado.setCorrecto(false);
-			resultado.setErrorDesc(e.getMessage());
-			logger.error("Error proceso masivo", e);
+			throw new JsonViewerException(e.getMessage());
 		}
-		return new ResultadoProcesarFila();
+		return resultado;
 	}
 	
 	@Override

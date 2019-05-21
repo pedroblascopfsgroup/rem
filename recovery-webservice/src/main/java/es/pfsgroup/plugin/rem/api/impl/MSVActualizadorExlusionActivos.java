@@ -73,9 +73,7 @@ public class MSVActualizadorExlusionActivos extends AbstractMSVActualizador impl
 			genericDao.save(Activo.class, activo);
 
 		} catch (Exception e) {
-			resultado.setCorrecto(false);
-			resultado.setErrorDesc(e.getMessage());
-			logger.error("Error proceso masivo", e);
+			throw new JsonViewerException(e.getMessage());
 		}
 		return resultado;
 	}

@@ -52,9 +52,7 @@ public class MSVActualizadorAutorizarEdicion extends AbstractMSVActualizador imp
 			 * dtoCambioEstadoPublicacion);
 			 */
 		} catch (Exception e) {
-			resultado.setCorrecto(false);
-			resultado.setErrorDesc(e.getMessage());
-			logger.error("Error proceso masivo", e);
+			throw new JsonViewerException(e.getMessage());
 		}
 		return resultado;
 	}

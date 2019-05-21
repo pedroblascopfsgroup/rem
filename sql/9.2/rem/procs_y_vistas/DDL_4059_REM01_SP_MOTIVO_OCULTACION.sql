@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ramon Llinares
---## FECHA_CREACION=20190516
+--## FECHA_CREACION=20190520
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-4227
@@ -162,7 +162,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
-                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0 and V.BORRADO=0
+                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID and V.BORRADO=0
                                     JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE APU.BORRADO = 0.

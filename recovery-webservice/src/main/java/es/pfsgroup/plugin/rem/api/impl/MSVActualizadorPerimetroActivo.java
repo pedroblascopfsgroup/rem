@@ -77,13 +77,11 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	}
 	
 
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws JsonViewerException, IOException, ParseException, SQLException, Exception {
 		return procesaFila(exc, fila, prmToken, new Object[0]);
 	}
 
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, Object[] extraArgs) throws IOException, ParseException, JsonViewerException, SQLException {
 		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		try {

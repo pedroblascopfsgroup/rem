@@ -1,0 +1,73 @@
+{
+    // VS Code common configuration file for REM Project.
+
+
+    /**
+     ** Extension: Sonarlint
+     **/
+    "sonarlint.connectedMode.project": {
+        "serverId": "sonar.pfsgroup.es",
+        "projectKey": "REM"
+    },
+
+    /**
+     ** Extension: TODO Highlight
+     **/
+    "todohighlight.isEnable": true,
+    "todohighlight.isCaseSensitive": true,
+    "todohighlight.keywords": [
+        {
+            "text": "TODO:",
+            "color": "green",
+            "isWholeLine": true,
+            "border": "1px dashed green",
+            "borderRadius": "4px",
+            "backgroundColor": "transparent",
+        },
+        {
+            "text": "FIXME:",
+            "color": "red",
+            "isWholeLine": true,
+            "border": "1px dashed red",
+            "borderRadius": "4px",
+            "backgroundColor": "transparent",
+        },
+        {
+            "text": "debugger",
+            "color": "yellow",
+            "isWholeLine": false,
+            "border": "1px dashed yellow",
+            "borderRadius": "4px",
+            "backgroundColor": "transparent",
+        }
+    ],
+    "todohighlight.include": [
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.jsp",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.html",
+        "**/*.php",
+        "**/*.css",
+        "**/*.scss"
+    ],
+    "todohighlight.exclude": [
+        "**/node_modules/**",
+        "**/bower_components/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/.sencha/**",
+        "**/.sonarlint/**",
+        "**/.vscode/**",
+        "**/resources/**",
+        "**/_output/**",
+        "**/*.min.*",
+        "**/*.map",
+        "**/.gitignore",
+        "**/.jsbeatufyrc",
+        "**/.next/**"
+    ],
+    "todohighlight.maxFilesForSearch": 5120,
+    "todohighlight.toggleURI": false
+}

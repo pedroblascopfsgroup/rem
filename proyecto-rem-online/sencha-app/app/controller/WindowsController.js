@@ -4,10 +4,11 @@
 Ext.define('HreRem.controller.WindowsController', {
     extend: 'HreRem.ux.controller.ControllerBase',   
     
-    requires: ['HreRem.view.trabajos.detalle.CrearTrabajo', 'HreRem.view.common.adjuntos.AdjuntarDocumento', 'HreRem.view.common.adjuntos.AdjuntarFoto',
-    'HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', 'HreRem.ux.window.geolocalizacion.ValidarGeoLocalizacion',
-    'Ext.form.action.StandardSubmit', 'HreRem.view.activos.detalle.EditarPropietario', 'HreRem.ux.window.MessageBox', 'HreRem.view.expedientes.DatosComprador',
-    'HreRem.view.expedientes.WizardAltaComprador'],
+    requires: [
+		'HreRem.view.trabajos.detalle.CrearTrabajo', 'HreRem.view.common.adjuntos.AdjuntarDocumento', 'HreRem.view.common.adjuntos.AdjuntarFoto',
+		'HreRem.view.common.adjuntos.AdjuntarFotoSubdivision', 'HreRem.ux.window.geolocalizacion.ValidarGeoLocalizacion',
+		'Ext.form.action.StandardSubmit', 'HreRem.view.activos.detalle.EditarPropietario', 'HreRem.ux.window.MessageBox'
+	],
 
     modalWindows: [],
     
@@ -53,33 +54,16 @@ Ext.define('HreRem.controller.WindowsController', {
     
     openModalWindow: function (windowClassName, conf) {
     	var me = this,    	
-    	window = me.findWindow(windowClassName);
+			window = me.findWindow(windowClassName);
+
     	if(Ext.isEmpty(window)) {
     		window = Ext.create(windowClassName, conf); 
-    		me.modalWindows.push(window);
+			me.modalWindows.push(window);
     	} else {
-    		
-    		if(windowClassName == 'HreRem.view.expedientes.WizardAltaComprador'){
-        		var array = [];
-        		var j = 0;
-        		for(var i = 0; i<me.modalWindows; i++){        			
-        			if(me.modalWindows[i].$className != 'HreRem.view.expedientes.WizardAltaComprador'){
-        				array[j] = me.modalWindows[i];
-        				j++;
-        			}
-        		}
-        		me.modalWindows = array;
-        		window.destroy();
-        		window = Ext.create(windowClassName, conf);
-        		me.modalWindows.push(window);
-        	}else{
-        		Ext.apply(window, conf);
-        	}
+        	Ext.apply(window, conf);
     	}
-    	
+
     	window.show();
-
-
     },
     
     findWindow:function(windowClassName) {

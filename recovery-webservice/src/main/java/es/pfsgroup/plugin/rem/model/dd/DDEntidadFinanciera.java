@@ -35,6 +35,7 @@ import es.pfsgroup.commons.utils.Checks;
 public class DDEntidadFinanciera implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	public static final String ENTIDAD_FINANCIERA_BANKIA = "01";
 
 	@Id
 	@Column(name = "DD_ETF_ID")

@@ -1222,7 +1222,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorBusqueda.setClienteComercial(cliente);
 				compradorBusqueda.setDocumento(cliente.getDocumento());
 			}
-
 			if (!Checks.esNulo(cliente.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
 					.equals(cliente.getTipoPersona().getCodigo())) {
 				compradorBusqueda.setNombre(cliente.getRazonSocial());

@@ -109,7 +109,10 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name = "COM_ENVIADO")
     private Date compradorEnviado;    
-
+    
+    @Column(name = "COM_PROBLEMAS_URSUS")
+    private Boolean problemasUrsus;
+    
 	@Version   
 	private Long version;
 
@@ -339,4 +342,13 @@ public class Comprador implements Serializable, Auditable {
 	public void setAdjunto(AdjuntoComprador adjunto) {
 		this.adjunto = adjunto;
 	}
+
+	public Boolean getProblemasUrsus() {
+		return problemasUrsus;
+	}
+
+	public void setProblemasUrsus(Boolean problemasUrsus) {
+		this.problemasUrsus = problemasUrsus;
+	}
+	
 }

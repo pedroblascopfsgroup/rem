@@ -3980,15 +3980,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Boolean resultado = false;
 		Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
 		if(!Checks.esNulo(gestorProveedorTecnico) && !Checks.esNulo(activo.getCartera())){
-			if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) 
-					&& DDSubcartera.CODIGO_SAR_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
-					resultado = true;
-			}
-			else {
 				if (historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(activo.getCartera().getId(), subtipoTrabajo.getId(), fechaSolicitud)) {
 					resultado = true;
 				}
-			}
 		}
 		return resultado;
 	}
@@ -3997,8 +3991,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public Boolean trabajoTieneTarifaPlana(TareaExterna tareaExterna){
 		Boolean esTarifaPlana = false;
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
-		if (!Checks.esNulo(trabajo)) {
-			esTarifaPlana = esTrabajoTarifaPlana(trabajo.getActivo(), trabajo.getSubtipoTrabajo(), trabajo.getFechaSolicitud());
+		Activo activo = trabajo.getActivo();
+		if (!Checks.esNulo(activo) && !Checks.esNulo(trabajo)) {
+			Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
+			if(!Checks.esNulo(gestorProveedorTecnico) && !Checks.esNulo(activo.getCartera())){
+				if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) 
+						&& DDSubcartera.CODIGO_SAR_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+					esTarifaPlana = true;
+				}
+				else {
+					if (historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(activo.getCartera().getId(), trabajo.getSubtipoTrabajo().getId(), trabajo.getFechaSolicitud())) {
+						esTarifaPlana = true;
+					}
+				}
+			}
 		}
 		return esTarifaPlana;
 	}

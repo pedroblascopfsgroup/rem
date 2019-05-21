@@ -2817,6 +2817,7 @@ public class AgrupacionAdapter {
 							if(!Checks.esNulo(act.getDireccionCompleta())) {
 								pa.setDireccion(act.getDireccionCompleta());
 							}
+							activoApi.actualizarOfertasTrabajosVivos(act);
 							aga.setActivo(act);
 							aga.setAgrupacion(pa);
 							aga.setFechaInclusion(new Date());

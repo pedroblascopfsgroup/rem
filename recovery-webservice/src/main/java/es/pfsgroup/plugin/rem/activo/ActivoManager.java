@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesMa
 import es.pfsgroup.plugin.gestorDocumental.manager.RestClientManager;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.KeyValuePair;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
@@ -6200,6 +6201,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// TODO Auto-generated method stub
 		Boolean tieneOfertasVivas = false;
 		Boolean tieneTrabajosVivos = false;
+		Long id = activo.getId();
 		List<ActivoTrabajo> trabajosDelActivo = activo.getActivoTrabajos();
 		
 		tieneOfertasVivas = particularValidator.existeActivoConOfertaVivaEstadoExpediente(Long.toString(activo.getNumActivo()));
@@ -6213,6 +6215,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			) {
 				
 				tieneTrabajosVivos = true;
+				
 				break;
 			}
 		}
@@ -6227,8 +6230,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			Boolean uaConTrabajosVivos = false;
 			ActivoAgrupacion agrupacionPa = activoDao.getAgrupacionPAByIdActivo(activo.getId());
 		
+			Long idAM = activoDao.getIdActivoMatriz(agrupacionPa.getId());
+			
+			List<Object[]>  listaTrabajosUA = activoDao.getTrabajosUa(idAM, activo.getId());
+			if(!Checks.estaVacio(listaTrabajosUA)) {
+				for (Object[] trabajoObjeto: listaTrabajosUA) {	
+					Trabajo trabajoUA = (Trabajo) trabajoObjeto[0];
+					if(!Checks.esNulo(trabajoUA)) {
+						if(DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(trabajoUA.getEstado().getCodigo())
+								|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(trabajoUA.getEstado().getCodigo())
+								|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(trabajoUA.getEstado().getCodigo())
+								|| DDEstadoTrabajo.ESTADO_PAGADO.equals(trabajoUA.getEstado().getCodigo())
+						) {
+							uaConTrabajosVivos = true;
+							break;
+						}
+					}
+				}
+				
+				if(!Checks.esNulo(perimetroActivo)) {
+					perimetroActivo.setTrabajosVivos(uaConTrabajosVivos);
+				}
+				genericDao.save(PerimetroActivo.class, perimetroActivo);
+			}
+			
 			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activoDao.getIdActivoMatriz(agrupacionPa.getId())));
 			tieneOfertasVivas = activoDao.checkOfertasVivasAgrupacion(agrupacionPa.getId());
 			tieneTrabajosVivos = activoDao.checkOTrabajosVivosAgrupacion(agrupacionPa.getId());

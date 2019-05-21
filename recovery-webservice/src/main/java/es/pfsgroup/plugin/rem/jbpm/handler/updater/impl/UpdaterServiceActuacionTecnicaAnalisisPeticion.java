@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -13,11 +14,14 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -38,6 +42,9 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
     @Autowired
     private ActivoApi activoApi;
     
+    @Autowired
+    private ActivoDao activoDao;
+    
 	private static final String CODIGO_T004_ANALISIS_PETICION = "T004_AnalisisPeticion";
 	
 	private static final String COMBO_TRAMITAR = "comboTramitar";
@@ -47,6 +54,7 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 	private static final String COMBO_TARIFA = "comboTarifa";
 	private static final String COMBO_TARIFA_PLANA = "comboTarifaPlana";
 	
+	@Transactional(readOnly = false)
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 		Trabajo trabajo = tramite.getTrabajo();
@@ -104,7 +112,9 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 				}
 			}
 		}
+		
 		genericDao.save(Trabajo.class, trabajo);
+		
 		activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
 
 	}

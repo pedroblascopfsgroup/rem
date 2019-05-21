@@ -104,7 +104,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_VENTA = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
-
+	private static final Integer CHECK_GESTION = 1;
+	private static final Integer CHECK_PUBLICACION = 2;
+	private static final Integer CHECK_COMERCIALIZAR = 3;
+	private static final Integer CHECK_FORMALIZAR = 4;
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -466,20 +469,20 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		// Si no exite perimetro en BBDD, se crea una nueva instancia PerimetroActivo, con todas las condiciones marcadas
 		// y por tanto, por defecto se marcan los checkbox.
-		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", new Integer(1).equals(perimetroActivo.getAplicaTramiteAdmision()));
-		BeanUtils.copyProperty(activoDto,"aplicaGestion", new Integer(1).equals(perimetroActivo.getAplicaGestion()));
-		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador()));
-		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar()));
-		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar()));
-		if(!Checks.esNulo(perimetroActivo.getAplicaPublicar()))
-			BeanUtils.copyProperty(activoDto,"aplicaPublicar", new Integer(1).equals(perimetroActivo.getAplicaPublicar() ? 1 : 0));
-		BeanUtils.copyProperty(activoDto,"enTramite", activo.getEnTramite());
+		
 		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", new Integer(1).equals( perimetroActivo.getAplicaTramiteAdmision())? true: false);
+		
 		BeanUtils.copyProperty(activoDto,"aplicaGestion", new Integer(1).equals( perimetroActivo.getAplicaGestion())? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador())? true: false);
-		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar())? true: false);
+
+		if(!Checks.esNulo(perimetroActivo.getAplicaComercializar())) {
+			BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar())? true: false);
+		}
+		
 		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar())? true: false);
 		BeanUtils.copyProperty(activoDto,"enTramite", activo.getEnTramite());
+		
+		
 		if(!Checks.esNulo(perimetroActivo.getAplicaPublicar()))
 			BeanUtils.copyProperty(activoDto,"aplicaPublicar", new Integer(1).equals(perimetroActivo.getAplicaPublicar() ? 1 : 0));
 
@@ -487,6 +490,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		DDSiNo si = genericDao.get(DDSiNo.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDSiNo.SI));
 		DDSiNo no = genericDao.get(DDSiNo.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDSiNo.NO));
+		
 		if(!Checks.esNulo(perimetroActivo.getOfertasVivas())) {
 			
 			if( perimetroActivo.getOfertasVivas()) {
@@ -987,8 +991,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setFechaAplicaAsignarMediador(new Date());
 				}
 				if(!Checks.esNulo(dto.getAplicaComercializar())) {
-					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
-					perimetroActivo.setFechaAplicaComercializar(new Date());
+					if(activoDao.isUnidadAlquilable(activo.getId())) {
+						Boolean marcarComercializar = activoApi.bloquearChecksComercializacionActivo(activo, CHECK_COMERCIALIZAR);
+						if(marcarComercializar) {
+							perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
+							perimetroActivo.setFechaAplicaComercializar(new Date());
+						}
+					}else {
+						perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
+						perimetroActivo.setFechaAplicaComercializar(new Date());
+					}
+						
+					
 					
 					//Acciones al desmarcar check comercializar
 					if(!dto.getAplicaComercializar()) {
@@ -996,8 +1010,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
-					perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
-					perimetroActivo.setFechaAplicaFormalizar(new Date());
+					if(activoDao.isUnidadAlquilable(activo.getId())) {
+						Boolean marcarFormalizar = activoApi.bloquearChecksComercializacionActivo(activo, CHECK_FORMALIZAR);
+						if(marcarFormalizar) {
+							perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
+							perimetroActivo.setFechaAplicaFormalizar(new Date());
+						}
+					}else {
+						perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
+						perimetroActivo.setFechaAplicaFormalizar(new Date());
+					}
 					
 					//Validacion al desmarcar check formalizar
 					if(!dto.getAplicaFormalizar()) {
@@ -1006,9 +1028,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 
 				if(!Checks.esNulo(dto.getAplicaGestion())) {
-					perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
-					perimetroActivo.setFechaAplicaGestion(new Date());
+					if(activoDao.isUnidadAlquilable(activo.getId())) {
+						Boolean marcarGestionar = activoApi.bloquearChecksComercializacionActivo(activo, CHECK_GESTION);
+						if(marcarGestionar) {
+							perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
+							perimetroActivo.setFechaAplicaGestion(new Date());
+						}
+					}else {
+						perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
+						perimetroActivo.setFechaAplicaGestion(new Date());
+					}
 				}
+			
 
 				if(!Checks.esNulo(dto.getAplicaTramiteAdmision())) {
 					perimetroActivo.setAplicaTramiteAdmision(dto.getAplicaTramiteAdmision() ? 1 : 0);
@@ -1021,8 +1052,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 
 				if(!Checks.esNulo(dto.getAplicaPublicar())) {
-					perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar());
-					perimetroActivo.setFechaAplicaPublicar(new Date());
+					if(activoDao.isUnidadAlquilable(activo.getId())) {
+						Boolean marcarPublicar = activoApi.bloquearChecksComercializacionActivo(activo, CHECK_PUBLICACION);
+						if(marcarPublicar) {
+							perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar());
+							perimetroActivo.setFechaAplicaPublicar(new Date());
+						}
+					}else {
+						perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar());
+						perimetroActivo.setFechaAplicaPublicar(new Date());
+					}
 				}
 
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());

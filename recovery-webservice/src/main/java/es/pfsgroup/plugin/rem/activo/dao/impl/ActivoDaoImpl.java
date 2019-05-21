@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -56,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -1499,5 +1501,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		return false;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getTrabajosUa (Long idAM, Long idUA){
+				
+		HQLBuilder hb = new HQLBuilder(" from Trabajo tbj, ActivoTrabajo atj, Activo act, Activo actUA");
+		hb.appendWhere(" atj.trabajo.id = tbj.id ");
+		hb.appendWhere(" act.id = atj.activo.id ");
+		hb.appendWhere(" actUA.id = tbj.activo.id ");
+		hb.appendWhere(" act.id = " + idAM);
+		hb.appendWhere(" actUA.id = " + idUA);
+			
+		List<Object[]> trabajoList = (List<Object[]>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+		return trabajoList;
+		
+	}
 }

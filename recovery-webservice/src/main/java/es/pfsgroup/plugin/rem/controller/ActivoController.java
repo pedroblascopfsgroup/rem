@@ -1526,6 +1526,25 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView refreshCacheFotos(@RequestParam Long id, ModelMap model) {
+		try {
+			boolean success = adapter.deleteCacheFotosActivo(id);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (UserException e) {
+			model.put("success", false);
+			model.put("error", ERROR_CONEXION_FOTOS);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", ERROR_GENERICO);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

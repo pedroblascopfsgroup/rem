@@ -248,17 +248,34 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}
 		 
 		genericDao.save(Activo.class, unidadAlquilable);
-
+		
+		Long idUnidadAlquilable = null;
+		Long idActivoMatriz = null;
+		Long numRemActivoMatriz = null;
+		String cartera = null;
 		//--Seteo mediante maestro de activos
-		MaestroDeActivos maestroActivos = new MaestroDeActivos(unidadAlquilable.getId(), activoMatriz.getId(), activoMatriz.getNumActivoRem(), activoMatriz.getCartera().getDescripcion());
-		ActivoOutputDto activoOutput = maestroActivos.altaActivo();
-		if (!Checks.esNulo(activoOutput)) {
-			Long numActivoUnidadAlquilable = Long.valueOf(activoOutput.getNumActivoUnidadAlquilable());
-			unidadAlquilable.setNumActivo(numActivoUnidadAlquilable);
-			genericDao.save(Activo.class, unidadAlquilable);
-		} 
+		if (!Checks.esNulo(unidadAlquilable)) {
+			 idUnidadAlquilable = unidadAlquilable.getId();
+		}
+		if (!Checks.esNulo(activoMatriz)) {
+			 idActivoMatriz = activoMatriz.getId();
+			 numRemActivoMatriz = activoMatriz.getNumActivoRem();
+			if (!Checks.esNulo(activoMatriz.getCartera())) {
+				if (!Checks.esNulo(activoMatriz.getCartera().getDescripcion())) {
+					 cartera = activoMatriz.getCartera().getDescripcion().toUpperCase();
+				}
+			}
+		}
 		
-		
+		if (!Checks.esNulo(idActivoMatriz) && !Checks.esNulo(numRemActivoMatriz) && !Checks.esNulo(cartera)) {
+			MaestroDeActivos maestroActivos = new MaestroDeActivos(idUnidadAlquilable, idActivoMatriz, numRemActivoMatriz, cartera);
+			ActivoOutputDto activoOutput = maestroActivos.altaActivo();
+			if (!Checks.esNulo(activoOutput)) {
+				Long numActivoUnidadAlquilable = Long.valueOf(activoOutput.getNumActivoUnidadAlquilable());
+				unidadAlquilable.setNumActivo(numActivoUnidadAlquilable);
+				genericDao.save(Activo.class, unidadAlquilable);
+			} 
+		}
 		 //-- Lista propietarios 
 		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){    
 			List<ActivoPropietarioActivo> propietariosUA = new ArrayList<ActivoPropietarioActivo>();

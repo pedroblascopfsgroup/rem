@@ -33,7 +33,11 @@ public class MaestroDeActivos {
 	private String cartera = null;
 	
 	public MaestroDeActivos(Long idUnidadAlquilable, Long idActivoAM, Long numREMActivoAM, String cartera) {
-		logger.info("Ejecucion del constructor de maestro de activos");
+		logger.error("Ejecucion del constructor de maestro de activos");
+		logger.error("[ID UNIDAD ALQUILABLE] => "+ idUnidadAlquilable);
+		logger.error("[ID ACTIVO MATRIZ] => "+ idActivoAM);
+		logger.error("[NUMERO REM ACTIVO MATRIZ] => "+ numREMActivoAM);
+		logger.error("[CARTERA] => "+ cartera);
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.idActivoAM = idActivoAM;
@@ -65,17 +69,21 @@ public class MaestroDeActivos {
 			
 				dto.setEvent(dto.EVENTO_ALTA_ACTIVOS);
 				
-				logger.error("[MAESTRO_ACTIVOS] VARIABLES DE ENTRADA = \n idActivoAM ->" +idActivoAM+"\n numREMActivoAM _->" + numREMActivoAM + "\n idUnidadAlquilable ->" + idUnidadAlquilable);
+
 				ActivoOutputDto activoOutput =  new ActivoOutputDto();
+				logger.error("[SE EJECUTA EL MAESTRO DE ACTIVOS]");
+				logger.error(dto.toString());
 				BeanUtils.copyProperties(gestorDocumentalMaestroManager
 						.ejecutar(dto), activoOutput);
-			
+				
 				if (!Checks.esNulo(activoOutput) && SIMULACRO.equals(activoOutput.getResultDescription())) {
+					logger.error("[MAESTRO DE ACTIVOS] SIMULACION DE VALORES DE PRUEBA");
 					activoOutput = new ActivoOutputDto();
 					activoOutput.setResultCode("simulacion");
 					activoOutput.setNumActivoUnidadAlquilable(String.valueOf(getNewNumActivo()));
 					return activoOutput;
 				}else if (!Checks.esNulo(activoOutput) && !SIMULACRO.equals(activoOutput.getResultDescription())){
+					logger.error("[RESPUESTA MAESTRO DE ACTIVOS ]: \n "+ activoOutput.getNumActivoUnidadAlquilable() );
 					return activoOutput;
 				}else {
 					return null;

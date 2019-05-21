@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.gestorDocumental.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class ActivoInputDto implements Serializable, GDInputDto{
 	/**
@@ -47,7 +48,22 @@ public class ActivoInputDto implements Serializable, GDInputDto{
 	
 	//--Evento
 	private String event;
-	
+
+	public String toString() {
+		String info = "Valores de entrada MAESTRO DE ACTIVOS :"
+						+"\n [ID ACTIVO MATRIZ] => "+ this.idActivoMatriz 
+						+"\n [NUMERO REM ACTIVO MATRIZ] => "+ this.numRemActivoMatriz
+						+"\n [ID ACTIVO UNIDAD ALQUILABLE] => "+ this.idUnidadAlquilable
+						+"\n [FECHA OPERACION] =>" + this.fechaOperacion
+						+"\n [ID CLIENTE] => "+ this.idCliente
+						+"\n [ORIGEN] => REM "
+						+"\n [FLAGMULTIPLICIDAD] => 1"
+						+"\n [MOTIVO OPERACION] => 14"
+						+"\n [EVENTO] => ALTA_ACTIVO";
+						
+		return info;
+		
+	}
 	
 	public String getIdActivoMatriz() {
 		return idActivoMatriz;

@@ -405,14 +405,17 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPresupuestosTrabajo(DtoGestionEconomicaTrabajo dto, @RequestParam Long idTrabajo, HttpServletRequest request){
-
-		DtoPage page = trabajoApi.getPresupuestosTrabajo(dto, idTrabajo);
-		
 		ModelMap model = new ModelMap();
-		model.put("data", page.getResults());
-		model.put("totalCount", page.getTotalCount());
-		trustMe.registrarSuceso(request, idTrabajo, ENTIDAD_CODIGO.CODIGO_TRABAJO, "presupuestos", ACCION_CODIGO.CODIGO_VER);
-
+		try{
+			DtoPage page = trabajoApi.getPresupuestosTrabajo(dto, idTrabajo);
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+			trustMe.registrarSuceso(request, idTrabajo, ENTIDAD_CODIGO.CODIGO_TRABAJO, "presupuestos", ACCION_CODIGO.CODIGO_VER);
+		}catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);
+		}
 		
 		return createModelAndViewJson(model);
 	}	

@@ -2618,7 +2618,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	me.getView().mask(HreRem.i18n("msg.mask.loading"));
 
 		Ext.Ajax.request({
-    		url: $AC.getRemoteUrl('visitas/getVisitaById'),
+    		url: $AC.getRemoteUrl('visitas/getVisitaDetalleById'),
     		params: {numVisitaRem: numVisita},
     		
     		success: function(response, opts){
@@ -3658,8 +3658,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		textArea.setDisabled(false);
     	} else {
     		textArea.setValue('');
-    		textArea.setDisabled(true);
-    		
+    		textArea.setDisabled(true);   		
     	}
     },
 

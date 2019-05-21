@@ -246,7 +246,9 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		File fileSalidaTemporal = null;
 		FileItem resultado = new FileItem();
 		InputStream stream =  new ByteArrayInputStream(contenido);
-		
+		if(ext == null || ext.isEmpty() || ext.length() < 3){
+			ext = "tmp";
+		}
 
 		fileSalidaTemporal = File.createTempFile(nomFichero, ext);
 		fileSalidaTemporal.deleteOnExit();

@@ -13,11 +13,13 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 	    	  	tabPanel.setActiveTab(tab);
 	    	}
 			// Si la pestaña necesita botones de edicion
-			if(tab.ocultarBotonesEdicion) {
-				tabPanel.down("[itemId=botoneditar]").setVisible(false);
-			} else {
-				tabPanel.evaluarBotonesEdicion(tab);
-			}
+    		if(Ext.isDefined(tab)){
+				if(tab.ocultarBotonesEdicion) {
+					tabPanel.down("[itemId=botoneditar]").setVisible(false);
+				} else {
+					tabPanel.evaluarBotonesEdicion(tab);
+				}
+    		}
 		},
 
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {

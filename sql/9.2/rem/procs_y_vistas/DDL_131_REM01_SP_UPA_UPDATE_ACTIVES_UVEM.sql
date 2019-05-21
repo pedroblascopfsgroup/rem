@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20190205
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190516
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=bau_jaus
---## INCIDENCIA_LINK=REMVIP-3283
+--## INCIDENCIA_LINK=REMVIP-4223
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -15,6 +15,8 @@
 --##	    0.3 Sergio Beleña - correción ACT_EN_TRAMITE
 --##		0.4 Pablo Meseguer - Dejamos de actualizar los campos de UVEM CASUTR, CASUTG y CASUTC
 --##		0.5 Pablo Meseguer - actualizamos el tipo de activo junto con el subtipo a traves del COTSIN
+--##		0.6 Actualizar DD_SCR_ID en caso que sea COD_ENTRADA_ACTIVO = '02'
+--##		0.7 Viorel Remus Ovidiu - actualizamos siempre el PAC_PORC_PROPIEDAD en REM con lo que hay en la APR_AUX_STOCK_UVEM_TO_REM
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -63,6 +65,7 @@ V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
                       --AJD_PROCURADOR
                       --DD_PLA_ID
   --[6]TABLA ACT_ADN_AJDNOJUDICIAL
+		      --Insertar registro cuando DD_STA_CODIGO = 04 	
                       --ADN_FECHA_FIRMA_TITULO
                       --ADN_TRAMITADOR_TITULO
                       --ADN_NUM_REFERENCIA
@@ -1106,6 +1109,31 @@ BEGIN
 
 */
 
+--[4.11] DD_STA_ID -> ACTUALIZAR SUBTIPO TITULO ACTIVO
+--       DD_TTA_ID -> ACTUALIZAR TIPO TITULO ACTIVO
+
+ 	V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO T1
+		USING(
+                SELECT APR.ACT_NUMERO_UVEM,
+                STA.DD_STA_ID, STA.DD_TTA_ID
+                FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+                INNER JOIN '||V_ESQUEMA||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA 
+                    ON CASE WHEN APR.COD_ENTRADA_ACTIVO = ''02'' THEN ''04''
+                                                                 ELSE APR.COD_ENTRADA_ACTIVO END = STA.DD_STA_CODIGO   
+                WHERE 1 = 1
+
+		) T2 ON (T2.ACT_NUMERO_UVEM = T1.ACT_NUM_ACTIVO_UVEM )
+		WHEN MATCHED THEN UPDATE SET
+		T1.DD_STA_ID = T2.DD_STA_ID,
+        T1.DD_TTA_ID = T2.DD_TTA_ID,		T1.USUARIOMODIFICAR = '''||V_USUARIO||''',
+		T1.FECHAMODIFICAR = SYSDATE
+          '
+          ;       
+
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;    
+
 
           IF V_NUM_TABLAS != 0 THEN
 
@@ -1245,6 +1273,43 @@ BEGIN
 -----------------------------------
 ---- [6] ACT_ADN_ADJNOJUDICIAL ----
 -----------------------------------
+
+--[6.0]-- Crear registro si no existe cuando DD_STA_CODIGO = '04' :
+
+          V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL ACT USING
+          (
+          
+            SELECT ACT.ACT_ID
+            FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+            INNER JOIN '||V_ESQUEMA||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA 
+                ON ACT.DD_STA_ID = STA.DD_STA_ID                       
+            WHERE 1 = 1          
+            AND STA.DD_STA_CODIGO = ''04'' 
+            AND ACT.BORRADO = 0
+                    
+          ) TMP
+          ON (TMP.ACT_ID = ACT.ACT_ID)
+          WHEN NOT MATCHED THEN INSERT
+          (
+           ADN_ID,
+           ACT_ID,
+           USUARIOCREAR,
+           FECHACREAR
+          )
+          VALUES
+          (
+           '||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL,
+           TMP.ACT_ID,
+           '''||V_USUARIO||''',
+           SYSDATE
+          )          
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := SQL%ROWCOUNT;
+
+
 --[6.1]--ADN_FECHA_FIRMA_TITULO
           V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL ACT USING
@@ -1935,8 +2000,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
 		    INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM
 		    INNER JOIN '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID
 		    JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
-		    WHERE PAC.PAC_PORC_PROPIEDAD IS NULL
-		    AND APR.REM = 1
+		    WHERE APR.REM = 1
 		    AND CRA.DD_CRA_CODIGO = ''03''
 		    AND ACT.BORRADO = 0           
     		   ) T2 ON (T1.ACT_ID = T2.ACT_ID)

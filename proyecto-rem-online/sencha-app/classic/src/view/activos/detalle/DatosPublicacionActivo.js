@@ -283,7 +283,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												reference: 'textareaMotivoPublicacionVenta',
 												textareaRefChained: 'chkbxpublicarventa',
 												flex:1,
-												disabled: true,
 												bind: {
 													value: '{datospublicacionactivo.motivoPublicacion}',
 													disabled: '{!datospublicacionactivo.publicarVenta}'

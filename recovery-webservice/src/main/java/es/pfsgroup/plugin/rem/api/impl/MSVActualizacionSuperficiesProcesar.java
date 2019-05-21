@@ -56,7 +56,6 @@ public class MSVActualizacionSuperficiesProcesar extends AbstractMSVActualizador
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 		
 		Activo activo = null;

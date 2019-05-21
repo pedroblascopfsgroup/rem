@@ -55,6 +55,9 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 
 	@Column(name = "OTRO")
 	private String otro;
+	
+	@Column(name = "COMBO_OTRO")
+	private Integer comboOtro;
 
 	@Column(name = "ESTADO_PORTAL_EXTERNO")
 	private Boolean portalesExternos;
@@ -165,6 +168,14 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 
 	public void setOtro(String otro) {
 		this.otro = otro;
+	}
+	
+	public Integer getComboOtro() {
+		return comboOtro;
+	}
+
+	public void setComboOtro(Integer comboOtro) {
+		this.comboOtro = comboOtro;
 	}
 
 	public Boolean getOcupadoSinTitulo() {

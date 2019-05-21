@@ -38,7 +38,7 @@ public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		Activo activo = tramite.getActivo();
 		Trabajo trabajo = tramite.getTrabajo();
-		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE_ETIQUETA_ACTIVO);
+		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE_ETIQUETA_TRABAJO);
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 		ActivoAdmisionDocumento documentoCEE = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
 		

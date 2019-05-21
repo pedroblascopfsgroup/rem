@@ -375,6 +375,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
 				
 			case "3":	
 				checkColumn.setVisible(false);
+				grid.getSelectionModel().deselectAll();
 				grid.getStore().filter('subdivision', me.activoActual.subdivision);
 				grid.getSelectionModel().selectAll();
 				break;

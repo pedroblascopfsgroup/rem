@@ -35,7 +35,6 @@ public class MSVAgruparActivosLoteComercial extends AbstractMSVActualizador impl
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
@@ -45,9 +44,7 @@ public class MSVAgruparActivosLoteComercial extends AbstractMSVActualizador impl
 			agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null,false);
 			resultado.setCorrecto(true);
 		} catch (Exception e) {
-			resultado.setCorrecto(false);
-			resultado.setErrorDesc(e.getMessage());
-			logger.error("Error en MSVAgruparActivosLoteComercialAlquiler",e);
+			throw new JsonViewerException(e.getMessage());
 		}	
 		return resultado;
 	}

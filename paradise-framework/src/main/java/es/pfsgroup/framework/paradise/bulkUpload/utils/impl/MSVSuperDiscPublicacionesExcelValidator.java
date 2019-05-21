@@ -48,6 +48,9 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	private static final String VALORES_NO_VALIDOS_OTROS = "msg.error.masivo.superficies.err.parcela";
 	private static final String VALORES_NO_VALIDOS_OTROS_MOTIVOS = "msg.error.masivo.superficies.err.parcela";
 	private static final String VALORES_ACTIVO_INTEGRADO_NO_VALIDO = "msg.error.masivo.superficies.err.parcela";
+	private static final String VALOR_CAMPO_ESTADO_NO_VALIDO = "msg.error.masivo.superficies.err.parcela";
+	private static final String VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO = "msg.error.masivo.superficies.err.parcela";
+	
 	
 	private	static final int FILA_CABECERA = 0;
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -60,6 +63,8 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	private static final int COL_OTROS = 5;
 	private static final int COL_OTROS_MOTIVOS = 6;
 	private static final int COL_ACTIVO_INTEGRADO = 7;
+	private static final int COL_DIVISION_HORIZONTAL_INTEGRADO = 8;
+	private static final int COL_ESTADO_DIVISION_HORIZONTAL = 9;
 	
 
 	
@@ -124,6 +129,9 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 			mapaErrores.put(messageServices.getMessage(VALORES_NO_VALIDOS_OTROS), valorOtros(exc));
 			mapaErrores.put(messageServices.getMessage(VALORES_NO_VALIDOS_OTROS_MOTIVOS), valorOtrosMotivos(exc));
 			mapaErrores.put(messageServices.getMessage(VALORES_ACTIVO_INTEGRADO_NO_VALIDO), valorActivoInscrito(exc));
+			mapaErrores.put(messageServices.getMessage(VALOR_CAMPO_ESTADO_NO_VALIDO), campoEstado(exc));
+			mapaErrores.put(messageServices.getMessage(VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO), campoEstadoNoIntegrado(exc));
+			
 			
 			
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
@@ -133,7 +141,9 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 					|| !mapaErrores.get(messageServices.getMessage(VALORES_NO_VALIDOS_TAPIADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(VALORES_NO_VALIDOS_OTROS)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(VALORES_NO_VALIDOS_OTROS_MOTIVOS)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALORES_ACTIVO_INTEGRADO_NO_VALIDO)).isEmpty())
+					|| !mapaErrores.get(messageServices.getMessage(VALORES_ACTIVO_INTEGRADO_NO_VALIDO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALOR_CAMPO_ESTADO_NO_VALIDO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO)).isEmpty())
 
 			{
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -282,7 +292,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
 				if(esArroba(exc.dameCelda(i, COL_OCUPADO))) {
-					if(!esArroba(exc.dameCelda(i, COL_CON_TITULO))) {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_CON_TITULO)) && !esArroba(exc.dameCelda(i, COL_CON_TITULO))) {
 						listaFilas.add(i);
 					}
 				}
@@ -367,10 +377,10 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				if(esArroba(exc.dameCelda(i, COL_OTROS)) && !esArroba(exc.dameCelda(i, COL_OTROS_MOTIVOS))) {
+				if(esArroba(exc.dameCelda(i, COL_OTROS)) && (!Checks.esNulo(exc.dameCelda(i, COL_OTROS_MOTIVOS)) && !esArroba(exc.dameCelda(i, COL_OTROS_MOTIVOS)))) {
 					listaFilas.add(i);
 				}
-				if(!listaStringValidos.contains((exc.dameCelda(i, COL_OTROS)).toUpperCase()) && !Checks.esNulo(exc.dameCelda(i, COL_OTROS_MOTIVOS))) {
+				if(!listaStringValidos.contains((exc.dameCelda(i, COL_OTROS)).toUpperCase()) && (!Checks.esNulo(exc.dameCelda(i, COL_OTROS_MOTIVOS)) && !esArroba(exc.dameCelda(i, COL_OTROS_MOTIVOS)))) {
 					listaFilas.add(i);
 				}
 			} catch (ParseException e) {
@@ -388,14 +398,65 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		List<String> listaStringValidos = new ArrayList<String>();
 		
 		listaStringValidos.add("SI");
-		listaStringValidos.add("NO");
 		listaStringValidos.add("S");
-		listaStringValidos.add("N");
+		
 		
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
 				if(!listaStringValidos.contains((exc.dameCelda(i, COL_ACTIVO_INTEGRADO)).toUpperCase())) {
 					listaFilas.add(i);
+				}
+				//
+			} catch (ParseException e) {
+				listaFilas.add(i);
+			} catch (Exception e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> campoEstado(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		List<String> listaStringValidos = new ArrayList<String>();
+		
+		listaStringValidos.add("SI");
+		listaStringValidos.add("S");
+		
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				
+				if(!listaStringValidos.contains((exc.dameCelda(i, COL_ACTIVO_INTEGRADO )).toUpperCase())
+					&& (!Checks.esNulo(exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO )) && !esArroba(exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO)))) {
+					
+					listaFilas.add(i);
+				}
+				//
+			} catch (ParseException e) {
+				listaFilas.add(i);
+			} catch (Exception e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		}
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> campoEstadoNoIntegrado(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		List<String> listaStringValidos = new ArrayList<String>();
+		
+		listaStringValidos.add("NO");
+		listaStringValidos.add("N");
+		
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				if(!listaStringValidos.contains((exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO)).toUpperCase()) && !esArroba(exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO))) {
+					if(!Checks.esNulo((exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO))) && !esArroba(exc.dameCelda(i, COL_ESTADO_DIVISION_HORIZONTAL))) {
+						listaFilas.add(i);
+					}
 				}
 				//
 			} catch (ParseException e) {

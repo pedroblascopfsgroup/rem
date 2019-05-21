@@ -104,17 +104,20 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 			situacionPosesoria.setOcupado(ocupado);
 			
 			//ConTitulo
-			Filter filtroTipoTitulo = genericDao.createFilter(FilterType.EQUALS,"codigo", exc.dameCelda(fila, COL_NUM.CON_TITULO));
-			DDTipoTituloActivoTPA tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, filtroTipoTitulo);
-			
-			if(!Checks.esNulo(tipoTitulo)) {
-				situacionPosesoria.setConTitulo(tipoTitulo);
+			if(ocupado != 0) {
+				Filter filtroTipoTitulo = genericDao.createFilter(FilterType.EQUALS,"codigo", exc.dameCelda(fila, COL_NUM.CON_TITULO));
+				DDTipoTituloActivoTPA tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, filtroTipoTitulo);
+				
+				if(!Checks.esNulo(tipoTitulo)) {
+					situacionPosesoria.setConTitulo(tipoTitulo);
+				}
 			}
-			
 			//Tapiado
 			if(S.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.TAPIADO))) || SI.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.TAPIADO)))) {
 				accesoTapiado = 1;
 				situacionPosesoria.setFechaAccesoTapiado(fechaHoy);
+			}else {
+				situacionPosesoria.setFechaAccesoTapiado(null);									////?? preguntar producto
 			}
 			situacionPosesoria.setAccesoTapiado(accesoTapiado);
 			
@@ -144,7 +147,7 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 					}
 					activoInfoRegistral.setDivHorInscrito(inscritoDivisionHorizontal);
 					
-					if(!Checks.esNulo(estadoDivisionHorizontal))
+					if(!Checks.esNulo(estadoDivisionHorizontal) && inscritoDivisionHorizontal != 0)
 						activoInfoRegistral.setEstadoDivHorizontal(estadoDivisionHorizontal);
 				}
 			}else {

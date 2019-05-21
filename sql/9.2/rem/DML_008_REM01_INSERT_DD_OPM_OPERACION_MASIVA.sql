@@ -34,7 +34,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-   T_FUNCION('FORM','Actualiza pestaña formalizacion','Carga masiva actualización pestaña formalización','CARGA_MASIVA_ACTUALIZACION_FORMALIZACION','n*,s,s,s,s')
+   T_FUNCION('FORM','SuperUsuario: Actualiza Pestaña Formalización','Carga masiva actualización pestaña formalización','CARGA_MASIVA_ACTUALIZACION_FORMALIZACION','n*,s,s,s,s')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.activo;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
@@ -60,7 +61,8 @@ public class MaestroDeActivos {
 				dto.setIdActivoMatriz(idActivoAM);
 				dto.setNumRemActivoMatriz(numREMActivoAM);
 				dto.setIdUnidadAlquilable(idUnidadAlquilable);
-				dto.setFechaOperacion(new Date().toString());
+				SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-YYYY HH:MM:ss");
+				dto.setFechaOperacion(DATE_FORMAT.format(new Date()));
 				dto.setTipoActivo(UNIDAD_ALQUILABLE);
 				dto.setOrigen(ORIGEN);
 				dto.setFlagMultiplicidad(FLAGMULTIPLICIDAD);

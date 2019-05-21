@@ -157,7 +157,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 						}
 				    }
 			    	else if(agrupacionPromocionAlquiler){
-				    	if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ACTIVO'])){
+				    	
+			    		if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_COMERCIAL'])){
 					    	$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 				    	}
 				    	else{

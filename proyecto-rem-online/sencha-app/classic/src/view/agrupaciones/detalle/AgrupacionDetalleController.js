@@ -981,16 +981,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
-        var textarea = me.lookupReference(combobox.textareaRefChained);
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
-            textarea.setReadOnly(false);
         } else {
             combobox.setDisabled(true);
             combobox.clearValue();
-            textarea.setReadOnly(true);
-            textarea.reset();
         }
 
 		if (isDirty) {
@@ -1110,6 +1106,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	if(combo && combo.value === CONST.MOTIVO_OCULTACION['OTROS']) {
     		textArea.setDisabled(false);
     	} else {
+    		textArea.setValue('');
     		textArea.setDisabled(true);
     	}
     },
@@ -1121,6 +1118,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	if(combo && combo.value === CONST.MOTIVO_OCULTACION['OTROS']) {
     		textArea.setDisabled(false);
     	} else {
+    		textArea.setValue('');
     		textArea.setDisabled(true);
     	}
     }

@@ -1,4 +1,4 @@
-export DB_PRODUCTO=192.168.49.34:1521/MBD031
+export DB_PRODUCTO=192.168.49.30:1522/MBD011
 export DB_BI=***
 export BASE_DIR_APP=/home/map017
 export BASE_DIR_BATCH=/recovery/rem/batch-server-val03

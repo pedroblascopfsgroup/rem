@@ -7082,7 +7082,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
 										codigoError = "imposible.bloquear.financiacion.no.informada";
 									} else {
-										if (Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
+										if (financiacion.getSolicitaFinanciacion() == 1 && Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
 											codigoError = "imposible.bloquear.entidad.financiera.no.informada";
 										}
 									}

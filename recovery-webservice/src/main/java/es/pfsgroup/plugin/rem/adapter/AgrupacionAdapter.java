@@ -3137,7 +3137,10 @@ public class AgrupacionAdapter {
 			{
 				// Si el destino comercial = Alquiler y venta, no permitirá cambiar el destino comercial = venta
 				Activo activoPrincipal = agrupacion.getActivoPrincipal();
-				String codigoDestinoComercial = activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo();
+				String codigoDestinoComercial = "";
+				if(activoPrincipal != null && activoPrincipal.getActivoPublicacion() != null && activoPrincipal.getActivoPublicacion().getTipoComercializacion() != null){
+					codigoDestinoComercial = activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo();
+				}
 
 				if (DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercial)
 						&& DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {

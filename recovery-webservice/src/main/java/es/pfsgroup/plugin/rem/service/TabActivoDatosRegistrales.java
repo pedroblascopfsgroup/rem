@@ -479,9 +479,12 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPoblacionRegistro());
 				Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
 				activo.getInfoRegistral().getInfoRegistralBien().setLocalidad(municipioNuevo);
-				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaRegistro());
-				DDProvincia provincia = genericDao.get(DDProvincia.class, filtro2);
-				activo.getInfoRegistral().getInfoRegistralBien().setProvincia(provincia);
+				
+				if(!Checks.esNulo(dto.getProvinciaRegistro())){
+					Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaRegistro());
+					DDProvincia provincia = genericDao.get(DDProvincia.class, filtro2);
+					activo.getInfoRegistral().getInfoRegistralBien().setProvincia(provincia);
+				}
 				
 			}
 			

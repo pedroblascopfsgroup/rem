@@ -705,13 +705,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 	
 	public Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto) {
-		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dto.getIdAgrupacion());
-		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
-		
-		for(ActivoAgrupacionActivo aga : activos) {
-			dto.setIdActivo(aga.getActivo().getId());
-			if(!activoApi.darDeBajaCondicionEspecifica(dto)) return false;			
-		}
+			if(!activoApi.darDeBajaCondicionEspecifica(dto)) {
+				return false;			
+			}
 		
 		return true;
 	

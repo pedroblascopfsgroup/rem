@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=David Gonzalez
---## FECHA_CREACION=20190509
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190516
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.11.0
---## INCIDENCIA_LINK=HREOS-6184
+--## VERSION_ARTEFACTO=2.8.4
+--## INCIDENCIA_LINK=REMVIP-3995
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -1006,25 +1006,8 @@ END IF;
             REM01.SP_MOTIVO_OCULTACION (nACT_ID, 'V', OutOCULTAR, OutMOTIVO);
 
             IF OutOCULTAR = 1 THEN
-              IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
-                IF vDD_MTO_MANUAL_V = 0 THEN /*MOTIVO AUTOMÁTICO*/
-                  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                                SET APU_CHECK_OCULTAR_V = 0
-                                  , DD_MTO_V_ID = NULL
-                                  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                                  , FECHAMODIFICAR = SYSDATE
-                                WHERE ACT_ID = '||nACT_ID||'
-                                AND BORRADO = 0
-                              ';
-
-                  EXECUTE IMMEDIATE V_MSQL;
-                ELSE
-                  PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
-                END IF;
-              ELSE
-                PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
-                PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
-              END IF;
+           		PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
+            	PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
             END IF;
 
             IF OutOCULTAR = 0 THEN
@@ -1127,12 +1110,8 @@ END IF;
                     , AHP.AHP_CHECK_OCULTAR_V, AHP.AHP_CHECK_OCULTAR_A
                     , ROW_NUMBER() OVER(
                         PARTITION BY AHP.ACT_ID
-                        ORDER BY (CASE
-                            WHEN TCO.DD_TCO_CODIGO IN (''01'',''02'')
-                            THEN AHP.AHP_FECHA_FIN_VENTA
-                            ELSE AHP.AHP_FECHA_FIN_ALQUILER
-                            END)
-                            DESC NULLS FIRST) RN
+                        ORDER BY AHP.AHP_ID
+                            DESC) RN
                 FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION AHP
                 JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = AHP.DD_TCO_ID
                 JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = AHP.DD_EPV_ID

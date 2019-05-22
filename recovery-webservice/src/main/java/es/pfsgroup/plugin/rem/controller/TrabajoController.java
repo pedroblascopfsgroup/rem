@@ -405,14 +405,17 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPresupuestosTrabajo(DtoGestionEconomicaTrabajo dto, @RequestParam Long idTrabajo, HttpServletRequest request){
-
-		DtoPage page = trabajoApi.getPresupuestosTrabajo(dto, idTrabajo);
-		
 		ModelMap model = new ModelMap();
-		model.put("data", page.getResults());
-		model.put("totalCount", page.getTotalCount());
-		trustMe.registrarSuceso(request, idTrabajo, ENTIDAD_CODIGO.CODIGO_TRABAJO, "presupuestos", ACCION_CODIGO.CODIGO_VER);
-
+		try{
+			DtoPage page = trabajoApi.getPresupuestosTrabajo(dto, idTrabajo);
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+			trustMe.registrarSuceso(request, idTrabajo, ENTIDAD_CODIGO.CODIGO_TRABAJO, "presupuestos", ACCION_CODIGO.CODIGO_VER);
+		}catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);
+		}
 		
 		return createModelAndViewJson(model);
 	}	
@@ -1317,7 +1320,7 @@ public class TrabajoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET, value = "/trabajo/getActuacionesTecnicas")
-	public void getActuacionesTecnicas(Long numActivo, Long idProveedorRem, ModelMap model, RestRequestWrapper request,
+	public void getActuacionesTecnicas(Long numActivo, String idProveedorRem, ModelMap model, RestRequestWrapper request,
 			HttpServletResponse response) {
 
 		DtoTrabajoFilter filtro = new DtoTrabajoFilter();
@@ -1338,8 +1341,8 @@ public class TrabajoController extends ParadiseJsonController {
 			// Comprobación de criterios y generar listado
 			try {
 				
-				if (trabajo.getProveedorContacto().getId().equals(idProveedorRem)
-						&& trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)) {
+				if (trabajo.getProveedorContacto().getUsuario().getUsername().equals(idProveedorRem)
+						&& DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
 
 					List<ActivoTrabajo> activosTrabajo = trabajo.getActivosTrabajo();
 

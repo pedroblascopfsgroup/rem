@@ -45,9 +45,7 @@ public class MSVAgruparActivosProyecto extends AbstractMSVActualizador implement
 			agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupacionId, null,false);	
 			resultado.setCorrecto(true);
 		} catch (Exception e) {
-			resultado.setCorrecto(false);
-			resultado.setErrorDesc(e.getMessage());
-			logger.error("Error en MSVAgruparActivosLoteComercialAlquiler",e);
+			throw new JsonViewerException(e.getMessage());
 		}	
 		return new ResultadoProcesarFila();
 	}

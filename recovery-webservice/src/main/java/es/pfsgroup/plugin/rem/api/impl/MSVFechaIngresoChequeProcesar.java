@@ -27,13 +27,11 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 @Component
 public class MSVFechaIngresoChequeProcesar extends AbstractMSVActualizador implements MSVLiberator {
 	
-	public static final class COL_NUM {
-		static final int FILA_CABECERA = 0;
-		static final int DATOS_PRIMERA_FILA = 1;
+	public static final int FILA_CABECERA = 0;
+	public static final int DATOS_PRIMERA_FILA = 1;
 		
-		static final int COL_NUM_EXPDTE_COMERCIAL = 0;
-		static final int COL_NUM_FECHA_INGRESO_CHEQUE = 1;
-	}
+	public static final int COL_NUM_EXPDTE_COMERCIAL = 0;
+	public static final int COL_NUM_FECHA_INGRESO_CHEQUE = 1;	
 
 	@Autowired
 	ProcessAdapter processAdapter;
@@ -51,23 +49,32 @@ public class MSVFechaIngresoChequeProcesar extends AbstractMSVActualizador imple
 
 	@Override
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
-		
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
+			throws IOException, ParseException, SQLException {
+
 		ExpedienteComercial expedienteComercial = null;
+		String valorCeldaNumExpCom = exc.dameCelda(fila, COL_NUM_EXPDTE_COMERCIAL);
+		String valorCeldaFechaIngCheque = exc.dameCelda(fila, COL_NUM_FECHA_INGRESO_CHEQUE);
 		
-		if (!Checks.esNulo(exc.dameCelda(fila, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
-			expedienteComercial = expedienteComercialApi.findOneByNumExpediente(this.obtenerLongExcel(exc.dameCelda(fila, COL_NUM.COL_NUM_EXPDTE_COMERCIAL)));
-		
-			if (!Checks.esNulo(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE))) {
-				expedienteComercial.setFechaContabilizacionPropietario(this.obtenerDateExcel(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE)));
-			}		
-	
+		if (!Checks.esNulo(valorCeldaNumExpCom)) {
+			expedienteComercial = expedienteComercialApi.findOneByNumExpediente(
+					this.obtenerLongExcel(valorCeldaNumExpCom));			
+			
+			if (!Checks.esNulo(valorCeldaFechaIngCheque)) {
+				if (valorCeldaFechaIngCheque.trim().equals("@")) {
+					expedienteComercial.setFechaContabilizacionPropietario(null);
+				} else {
+					expedienteComercial.setFechaContabilizacionPropietario(
+							this.obtenerDateExcel(valorCeldaFechaIngCheque));
+				}
+			}
+
 			genericDao.update(ExpedienteComercial.class, expedienteComercial);
-		
-		} else{
-			throw new ParseException("Error al procesar la fila " + fila, COL_NUM.COL_NUM_EXPDTE_COMERCIAL);
+
+		} else {
+			throw new ParseException("Error al procesar la fila " + fila, COL_NUM_EXPDTE_COMERCIAL);
 		}
-		
+
 		return new ResultadoProcesarFila();
 	}
 

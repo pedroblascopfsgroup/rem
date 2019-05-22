@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20190509
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190516
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.11.0
---## INCIDENCIA_LINK=HREOS-6184
+--## VERSION_ARTEFACTO=2.8.4
+--## INCIDENCIA_LINK=REMVIP-3995
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -19,7 +19,7 @@
 --##		0.7 Oscar Diestre HREOS-5358 - Tratamiento agrupaciones asisitidas vencidas
 --##		0.8 Sergio H . Deshacemos temporalmente las modificaciones de la 0.7
 --##		0.9 REMVIP-3306 Cambios en el funcionamiento del historico
---##    0.10 HREOS-6184 Cambio en vista y cambio es_condicionado
+--##    	0.10 HREOS-6184 Cambio en vista y cambio es_condicionado
 --##########################################
 --*/
 
@@ -973,7 +973,7 @@ ELSE
              , V.DD_TPU_CODIGO_A, V.DD_TPU_CODIGO_V, V.DD_TAL_CODIGO
              , V.ADMISION, V.GESTION
              , V.INFORME_COMERCIAL, V.PRECIO_A, V.PRECIO_V
-             , V.CEE_VIGENTE, V.ADECUADO, V.ES_CONDICONADO
+             , V.CEE_VIGENTE, V.ADECUADO, V.ES_CONDICIONADO
           FROM '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI_AGR V'
           ||vWHERE
        ;
@@ -1140,29 +1140,8 @@ ELSE
             REM01.SP_MOTIVO_OCULTACION_AGR (nAGR_ID, 'V', OutOCULTAR, OutMOTIVO);
 
             IF OutOCULTAR = 1 THEN
-              IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
-                IF vDD_MTO_MANUAL_V = 0 THEN /*MOTIVO AUTOMÁTICO*/
-					V_MSQL := '
-					  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-						  USING '||vQUERY_SINACT||'
-						  ON (ACT.ACT_ID = AUX.ACT_ID)
-						WHEN MATCHED THEN
-						  UPDATE
-                                SET APU_CHECK_OCULTAR_V = 0
-                                  , DD_MTO_V_ID = NULL
-                                  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                                  , FECHAMODIFICAR = SYSDATE
-						  WHERE BORRADO = 0
-							  ';
-                  EXECUTE IMMEDIATE V_MSQL;
-
-                ELSE
-                  PLP$CAMBIO_ESTADO_VENTA(nAGR_ID, '04', vUSUARIOMODIFICAR);
-                END IF;
-              ELSE
                 PLP$CAMBIO_OCULTO_MOTIVO(nAGR_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
                 PLP$CAMBIO_ESTADO_VENTA(nAGR_ID, '04', vUSUARIOMODIFICAR);
-              END IF;
             END IF;
 
             IF OutOCULTAR = 0 THEN
@@ -1275,12 +1254,8 @@ ELSE
                     , ACT.AHP_CHECK_OCULTAR_V, ACT.AHP_CHECK_OCULTAR_A
                     , ROW_NUMBER() OVER(
                         PARTITION BY ACT.ACT_ID
-                        ORDER BY (CASE
-                            WHEN TCO.DD_TCO_CODIGO IN (''01'',''02'')
-                            THEN ACT.AHP_FECHA_FIN_VENTA
-                            ELSE ACT.AHP_FECHA_FIN_ALQUILER
-                            END)
-                            DESC NULLS FIRST) RN
+                        ORDER BY ACT.AHP_ID
+                            DESC) RN
                 FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
                 JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT.DD_TCO_ID
                 JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = ACT.DD_EPV_ID

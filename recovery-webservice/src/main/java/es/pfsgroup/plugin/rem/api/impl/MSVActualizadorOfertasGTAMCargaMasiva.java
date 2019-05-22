@@ -56,7 +56,6 @@ public class MSVActualizadorOfertasGTAMCargaMasiva extends AbstractMSVActualizad
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
 		
@@ -90,13 +89,6 @@ public class MSVActualizadorOfertasGTAMCargaMasiva extends AbstractMSVActualizad
 		}
 		
 		String estadoResolucion = exc.dameCelda(fila, 6);
-		if(!Checks.esNulo(estadoResolucion)){
-			HashMap<String, String> estadosResolucion = new HashMap<String, String>();
-			estadosResolucion.put("1", "01");
-			estadosResolucion.put("2", "02");
-			estadosResolucion.put("3", "03");
-			estadoResolucion = estadosResolucion.get(estadoResolucion);
-		}
 		
 		String campoTres = exc.dameCelda(fila, 8);
 		

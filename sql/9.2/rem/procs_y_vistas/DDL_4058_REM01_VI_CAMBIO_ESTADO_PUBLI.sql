@@ -1,19 +1,20 @@
 --/*
 --##########################################
---## AUTOR=David Gonzalez
---## FECHA_CREACION=20190509
---## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.11.0
---## INCIDENCIA_LINK=HREOS-6184
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190516
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=2.8.4
+--## INCIDENCIA_LINK=REMVIP-3995
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        	0.1 Versión inicial
+--##        0.1 Versión inicial
 --##		0.2 Modificado precio_v y precio_a - Maria Presencia Herrero - REMVIP-2638
 --##		0.3 Sergio Beleña -HREOS-4931- Optimización de tiempos 
---##    0.4 David Gonzalez -HREOS-6184- Ajustes joins
+--##		0.4 Carles Molins -REMVIP-3995- Incidencia Precios
+--##    	0.5 David Gonzalez -HREOS-6184- Ajustes joins
 --##########################################
 --*/
 
@@ -121,7 +122,7 @@ BEGIN
                                    ROW_NUMBER () OVER (PARTITION BY APU.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
                               FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
                               LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = APU.act_id AND val.borrado = 0
-                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0 
+                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo = ''03'' AND TPC.BORRADO = 0 
                               JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = APU.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
                              WHERE APU.borrado = 0
                               )
@@ -140,7 +141,7 @@ BEGIN
                                    ROW_NUMBER () OVER (PARTITION BY APU.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
                               FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
                               LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = APU.act_id AND val.borrado = 0
-                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0 
+                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo = ''02'' AND TPC.BORRADO = 0 
                               JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = APU.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
                              WHERE APU.borrado = 0
                               )

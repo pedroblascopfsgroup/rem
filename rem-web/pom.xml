@@ -1367,6 +1367,7 @@
 						</configuration>
 					</execution>
 				</executions>
+				
 			</plugin>
 			<!-- JETTY PLUGIN -->
 			<plugin>

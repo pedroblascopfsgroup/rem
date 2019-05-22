@@ -699,4 +699,34 @@ public interface ParticularValidatorApi {
 
 	Boolean isActivoOfGiants(String numActivo);
 
+	/**
+	 * @param numExpediente
+	 * @return true si el numero de expediente existe FOR_FORMALIZACION
+	 */
+	public Boolean existeExpedienteFormalizacion(String numExpediente);
+	/**
+	 * @param entidadFinanciera
+	 * @return true si existe la entidad Financiera
+	 */
+	public Boolean existeEntidadFinanciera(String entidadFinanciera);
+	/**
+	 * @param tipoFinanciacion
+	 * @return true si el tipo de financiazion existe.
+	 */
+	public Boolean existeTipoDeFinanciacion(String tipoFinanciacion);
+	/**
+	 * @param numExpedienteComercial
+	 * @return true si el activo pertenece a una oferta en venta.
+	 */
+	
+	public Boolean perteneceOfertaVenta(String numExpedienteComercial);
+	/**
+	 * @param numExpedienteComercial
+	 * @return true si el activo pertenece a un activo de venta.
+	 */
+	
+	public Boolean activosVendidos(String numExpedienteComercial);
+
+	Boolean existeExpedienteFormalizacionBankia(String numExpediente);
+
 }

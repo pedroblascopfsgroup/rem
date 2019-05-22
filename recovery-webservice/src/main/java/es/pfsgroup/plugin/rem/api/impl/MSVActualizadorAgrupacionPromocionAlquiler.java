@@ -207,13 +207,12 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		}
 		
 		
-		Long newNumActivoRem = Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO_REM) + 1 FROM ACT_ACTIVO"));
 		Filter tipoTituloFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivo.UNIDAD_ALQUILABLE);
 		DDTipoTituloActivo tituloUnidadAlquilable = genericDao.get(DDTipoTituloActivo.class, tipoTituloFilter);
 		unidadAlquilable.setNumActivo(Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO) + 100 FROM ACT_ACTIVO")));
-		unidadAlquilable.setNumActivoRem(newNumActivoRem);
 		unidadAlquilable.setAuditoria(auditoria);
-		unidadAlquilable.setBien(bien);
+		unidadAlquilable.setBien(bien); 
+		unidadAlquilable.setNumActivoRem(activoApi.getNextNumActivoRem());
 		unidadAlquilable.setTipoTitulo(tituloUnidadAlquilable);
 		Filter scmFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER);
 		DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, scmFilter);
@@ -255,7 +254,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		String cartera = null;
 		//--Seteo mediante maestro de activos
 		if (!Checks.esNulo(unidadAlquilable)) {
-			 idUnidadAlquilable = unidadAlquilable.getId();
+			 idUnidadAlquilable = unidadAlquilable.getNumActivoRem();
 		}
 		if (!Checks.esNulo(activoMatriz)) {
 			 idActivoMatriz = activoMatriz.getNumActivo();

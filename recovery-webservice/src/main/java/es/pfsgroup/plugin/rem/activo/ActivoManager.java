@@ -1704,7 +1704,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				logger.debug("Foto procesada para el activo " + activo.getNumActivo());
 
 			} else {
-				throw new Exception("La foto esta asociada a un activo inexistente");
+				logger.debug("No existe la unidad organizativa");
 			}
 
 		} catch (Exception e) {
@@ -3006,7 +3006,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean isActivoAsistido(Activo activo) {
 		ActivoBancario activoBancario = getActivoBancarioByIdActivo(activo.getId());
 		if (!Checks.esNulo(activo.getSubcartera()))
-			return DDSubcartera.CODIGO_CAJ_ASISTIDA.equals(activo.getSubcartera().getCodigo()) || DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo()) || DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo()) || DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(activo.getSubcartera().getCodigo()) || DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo());
+			return DDSubcartera.CODIGO_CAJ_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(activo.getSubcartera().getCodigo())
+					|| (activoBancario != null && activoBancario.getClaseActivo() != null && DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo()));
 		return false;
 	}
 

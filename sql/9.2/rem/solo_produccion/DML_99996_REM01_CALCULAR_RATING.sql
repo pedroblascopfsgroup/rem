@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20190508
---## ARTEFACTO=batch
+--## FECHA_CREACION=20190516
+--## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3764
+--## INCIDENCIA_LINK=REMVIP-3842
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Calcular rating

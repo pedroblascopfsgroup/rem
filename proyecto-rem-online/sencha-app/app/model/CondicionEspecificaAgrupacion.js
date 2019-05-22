@@ -26,7 +26,10 @@ Ext.define('HreRem.model.CondicionEspecificaAgrupacion', {
     		},
     		{
     			name:'usuarioBaja'
-    		}
+    		},
+    		{
+            	name: 'idAgrupacion' 
+            }
     ],
     
 	proxy: {

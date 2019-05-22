@@ -241,13 +241,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	@Override
 	public Page getPresupuestosTrabajo(DtoGestionEconomicaTrabajo filtro, Usuario usuarioLogado)
 	{
-		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(usuarioLogado.getId());
 		HQLBuilder hb = new HQLBuilder(" from PresupuestoTrabajo preTra");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "preTra.trabajo.id", filtro.getIdTrabajo());
-		if(!Checks.estaVacio(nombresProveedor)) {
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "preTra.proveedor.nombre", nombresProveedor);
-		}
-		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "preTra.proveedorContacto.auditoria.borrado", false);
+			
 		return HibernateQueryUtils.page(this, hb, filtro);
 	}
 

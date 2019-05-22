@@ -571,7 +571,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public HashMap<String, String> saveOferta(OfertaDto ofertaDto) throws Exception {
 		Oferta oferta = null;
 		HashMap<String, String> errorsList = null;
@@ -910,7 +909,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				titAdi.setEmail(titDto.getEmail());
 				if (titDto.getConyugeTipoDocumento() != null) {
 					titAdi.setTipoDocumentoConyuge(genericDao.get(DDTipoDocumento.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getConyugeDocumento())));
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getConyugeTipoDocumento())));
 				}
 				titAdi.setDocumentoConyuge(titDto.getConyugeDocumento());
 				if (titDto.getCodTipoPersona() != null) {
@@ -1709,6 +1708,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto, JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)
 			throws Exception {
 		Map<String, Object> map = null;

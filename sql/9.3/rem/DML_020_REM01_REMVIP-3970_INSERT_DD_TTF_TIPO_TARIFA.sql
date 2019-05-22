@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Marco Munoz
---## FECHA_CREACION=20190415
+--## FECHA_CREACION=20190521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-3970
@@ -449,7 +449,12 @@ DECLARE
 		T_TIPO_DATA('CEE6'  ,'Vivienda suelta sin documentación del activo'),
 		T_TIPO_DATA('CEE7'  ,'Promociones (viviendas integradas en una promoción) con documentación del activo'),
 		T_TIPO_DATA('CEE8'  ,'Promociones (viviendas integradas en una promoción) con documentación del activo'),
-		T_TIPO_DATA('CEE9'  ,'Promociones (viviendas integradas en una promoción) con documentación del activo')
+		T_TIPO_DATA('CEE9'  ,'Promociones (viviendas integradas en una promoción) con documentación del activo'),
+		T_TIPO_DATA('VACI-LIMP-CER1'  ,'INFORME DE ESTADO + REP.FOTOGRAFICO + CAMBIO CERRADURA + LIMPIEZA + PINTURA'),
+		T_TIPO_DATA('VACI-LIMP-CER2'  ,'INFORME DE ESTADO + REP.FOTOGRAFICO + CAMBIO + CERRADURA + LIMPIEZA BÁSICA + VACIADO 5M3'),
+		T_TIPO_DATA('VACI-LIMP-CER3'  ,'INFORME DE ESTADO + REP.FOTOGRAFICO + CAMBIO + CERRADURA + LIMPIEZA BÁSICA'),
+		T_TIPO_DATA('VACI-LIMP-CER4'  ,'COMPROBACIÓN CERRADURA + INFORME DE ESTADO + I. COMERCIAL')
+
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

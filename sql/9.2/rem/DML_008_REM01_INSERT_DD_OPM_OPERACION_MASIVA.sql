@@ -34,7 +34,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-   T_FUNCION('FORM','Carga masiva formalizacion','Carga masiva actualización pestaña formalización','CARGA_MASIVA_ACTUALIZACION_FORMALIZACION','n*,s,s,s,s')
+   T_FUNCION('FORM','SuperUsuario: Actualiza Pestaña Formalización','Carga masiva actualización pestaña formalización','CARGA_MASIVA_ACTUALIZACION_FORMALIZACION','n*,s,s,s,s')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
@@ -58,8 +58,8 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_FUNCION(1)) ||'''');
           V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA' ||
                     ' SET DD_OPM_VALIDACION_FORMATO = '''||TRIM(V_TMP_FUNCION(5))||''''||
-          ', USUARIOMODIFICAR = ''HREOS-6182'' , FECHAMODIFICAR = SYSDATE '||
-          'WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_FUNCION(1))||'''';
+          ', USUARIOMODIFICAR = ''HREOS-6182'' , FECHAMODIFICAR = SYSDATE  , DD_OPM_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(2))||''''||
+          ' WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_FUNCION(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
         

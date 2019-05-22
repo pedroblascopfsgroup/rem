@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 
 @Component
@@ -66,8 +64,10 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 					tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 					tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 					sitpos.setConTitulo(tipoTitulo);
-				} else //En el caso de que no se haya rellenado el campo título lo nuleamos por si tuviese algún valor anteriormente.
+				} else {//En el caso de que no se haya rellenado el campo título lo nuleamos por si tuviese algún valor anteriormente.
 					sitpos.setConTitulo(null);
+				}
+				sitpos.setFechaUltCambioTit(new Date());
 		}
 		genericDao.save(ActivoSituacionPosesoria.class, sitpos);
 	}

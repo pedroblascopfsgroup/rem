@@ -1,0 +1,18 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;CATASTRO_ACTIVO;ACT_NUMERO_ACTIVO;NUMBER(16,0);NO;;Código identificador único del activo.
+2;CATASTRO_ACTIVO;CAT_REF_CATASTRAL;VARCHAR2(50 CHAR);NO;;Referencia catastral del activo.
+3;CATASTRO_ACTIVO;CAT_POLIGONO;VARCHAR2(50 CHAR);NO;;Código del polígono del catastro de rústica antiguo.
+4;CATASTRO_ACTIVO;CAT_PARCELA;VARCHAR2(50 CHAR);NO;;Código de la parcela del catastro de rústica antiguo.
+5;CATASTRO_ACTIVO;CAT_TITULAR_CATASTRAL;VARCHAR2(250 CHAR);NO;;Nombre del titular de la referencia catastral.
+6;CATASTRO_ACTIVO;CAT_SUPERFICIE_CONSTRUIDA;NUMBER(16,2);NO;;Superficie construida en metros cuadrados.
+7;CATASTRO_ACTIVO;CAT_SUPERFICIE_UTIL;NUMBER(16,2);NO;;Superficie útil en metros cuadrados.
+8;CATASTRO_ACTIVO;CAT_SUPERFICIE_REPER_COMUN;NUMBER(16,2);NO;;Superficie con repercusión en elementos comunes en metros cuadrados.
+9;CATASTRO_ACTIVO;CAT_SUPERFICIE_PARCELA;NUMBER(16,2);NO;;Superficie parcela en metros cuadrados.
+10;CATASTRO_ACTIVO;CAT_SUPERFICIE_SUELO;NUMBER(16,2);NO;;Superficie suelo en metros cuadrados.
+11;CATASTRO_ACTIVO;CAT_VALOR_CATASTRAL_CONST;NUMBER(16,2);NO;;Valor catastral de construcción.
+12;CATASTRO_ACTIVO;CAT_VALOR_CATASTRAL_SUELO;NUMBER(16,2);NO;;Valor catastral de suelo.
+13;CATASTRO_ACTIVO;CAT_FECHA_REV_VALOR_CATASTRAL;DATE;NO;;Fecha revisión valor catastral.
+14;CATASTRO_ACTIVO;CAT_REFERENCIA_PRINCIPAL;VARCHAR2(1 CHAR);NO;;Indicador de referencia catastral principal
+15;CATASTRO_ACTIVO;CAT_F_ALTA_CATASTRO;DATE;NO;;Fecha de alta en catastro
+16;CATASTRO_ACTIVO;CAT_F_BAJA_CATASTRO;DATE;NO;;Fecha de baja en catastro
+17;CATASTRO_ACTIVO;CAT_OBSERVACIONES;VARCHAR2(400 CHAR);NO;;Observaciones

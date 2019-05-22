@@ -13,5 +13,5 @@ public interface HistoricoTarifaPlanaDao extends AbstractDao<HistoricoTarifaPlan
 	 * @param date 
 	 * @return 
 	 */
-	public Boolean subtipoTrabajoTieneTarifaPlanaVigente(Long idSubtipoTrabajo, Date date);
+	public Boolean subtipoTrabajoTieneTarifaPlanaVigente(Long idCarteraActivo, Long idSubtipoTrabajo, Date date);
 }

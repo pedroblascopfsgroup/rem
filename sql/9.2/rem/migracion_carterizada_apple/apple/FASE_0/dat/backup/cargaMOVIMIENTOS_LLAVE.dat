@@ -1,0 +1,8 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;MOVIMIENTOS_LLAVE;MLV_CODIGO_MOVI;NUMBER(16,0);SI;;Código de movimiento del manojo.
+2;MOVIMIENTOS_LLAVE;LLV_CODIGO;NUMBER(16,0);SI;;Código identificador del manojo de  llaves
+3;MOVIMIENTOS_LLAVE;MLV_TIPO_TENEDOR;VARCHAR2(20 CHAR);SI;;Tipo Tenedor del manojo (Mediador, Gestor,etc). (Código según Dic. Datos).
+4;MOVIMIENTOS_LLAVE;MLV_COD_TENEDOR;VARCHAR2(20 CHAR);SI;;Código Tenedor del manojo
+5;MOVIMIENTOS_LLAVE;MLV_NOM_TENEDOR;VARCHAR2(100 CHAR);SI;;Nombre del tenedor de la llave del activo
+6;MOVIMIENTOS_LLAVE;MLV_FECHA_ENTREGA;DATE;SI;;Fecha entrega  del manojo de llaves.
+7;MOVIMIENTOS_LLAVE;MLV_FECHA_DEVOLUCION;DATE;NO;;Fecha devolución del manojo de llaves

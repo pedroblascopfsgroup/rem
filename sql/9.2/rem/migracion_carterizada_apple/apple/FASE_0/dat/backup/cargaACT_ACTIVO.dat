@@ -1,0 +1,32 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;ACT_ACTIVO;ACT_NUMERO_ACTIVO;NUMBER(16,0);SI;;Código identificador único del activo.
+2;ACT_ACTIVO;ACT_COD_CARTERA;VARCHAR2(20 CHAR);SI;;Código de la Cartera del Activo (Código según Dic. Datos).
+3;ACT_ACTIVO;ACT_COD_SUBCARTERA;VARCHAR2(20 CHAR);SI;;Código de la SubCartera del Activo (Código según Dic. Datos).
+4;ACT_ACTIVO;ACT_COD_SUBCARTERA_ANTERIOR;VARCHAR2(20 CHAR);SI;;Código de la SubCartera Anterior del Activo (Código según Dic. Datos).
+5;ACT_ACTIVO;ACT_COD_TIPO_COMERCIALIZACION;VARCHAR2(20 CHAR);SI;;Código del Tipo de Comercialización del Activo (Código según Dic. Datos).
+6;ACT_ACTIVO;ACT_COD_TIPO_ALQUILER;VARCHAR2(20 CHAR);SI*;;Código del Tipo de Alquiler del Activo. Sólo para Activos Alquilados. (Código según Dic. Datos).
+7;ACT_ACTIVO;ACT_FECHA_VENTA;DATE;SI*;;Fecha de la Venta del Activo.
+8;ACT_ACTIVO;ACT_IMPORTE_VENTA;NUMBER(16,2);SI*;;Importe de la Venta del Activo
+9;ACT_ACTIVO;ACT_COD_PROPIETARIO_ANTERIOR;NUMBER(16,0);NO;;Código de Propietario Anterior del Activo. Pensado para Sociedades Patrimoniales Anteriores (Código según Dic. Datos).
+10;ACT_ACTIVO;ACT_BLOQUEO_PRECIO_FECHA_INI;DATE;NO;;Fecha Inicio de Activo bloqueado.
+11;ACT_ACTIVO;ACT_BLOQUEO_PRECIO_USU_ID;VARCHAR2(50 CHAR);NO;;USERNAME en REM del Usuario que Bloquea el Activo (Código según Dic. Datos).
+12;ACT_ACTIVO;ACT_COD_TIPO_PUBLICACION;VARCHAR2(20 CHAR);SI*;;Código del Tipo de Publicación del Activo (Código según Dic. Datos).
+13;ACT_ACTIVO;ACT_COD_ESTADO_PUBLICACION;VARCHAR2(20 CHAR);SI;;Código del Estado de Publicación del Activo (Código según Dic. Datos).
+14;ACT_ACTIVO;ACT_FECHA_IND_PRECIAR;DATE;NO;;Fecha en la que el Activo cumple las Condiciones para ser Preciado.
+15;ACT_ACTIVO;ACT_FECHA_IND_REPRECIAR;DATE;NO;;Fecha en la que el Activo cumple las Condiciones para ser Repreciado.
+16;ACT_ACTIVO;ACT_FECHA_IND_DESCUENTO;DATE;NO;;Fecha en la que el Activo cumple las Condiciones para aplicar Precio Descuento.
+17;ACT_ACTIVO;ACT_NUMERO_INMOVILIZADO;NUMBER(16,0);SI;;Ficha inmovilizado
+18;ACT_ACTIVO;ACT_CODIGO_ENTRADA;VARCHAR2(20 CHAR);NO;;Código entrada activo
+19;ACT_ACTIVO;SELLO_CALIDAD;NUMBER(1,0);NO;;Indicador estado calidad (sello calidad).
+20;ACT_ACTIVO;GESTOR_CALIDAD;VARCHAR2(50 CHAR);NO;;Usuario relacionado con el check de calidad.
+21;ACT_ACTIVO;FECHA_CALIDAD;DATE;NO;;Fecha de estado de calidad.
+22;ACT_ACTIVO;DD_TCR_ID;VARCHAR2(20 CHAR);NO;;Código identificador único deL tipo de comercializacion
+23;ACT_ACTIVO;DD_TAL_ID;VARCHAR2(20 CHAR);SI*;;Código identificador único del tipo de alquiler
+24;ACT_ACTIVO;ACT_VENTA_EXTERNA_FECHA;DATE;NO;;Indica la fecha de venta para una venta externa a REM.
+25;ACT_ACTIVO;ACT_VENTA_EXTERNA_OBSERVACION;VARCHAR2(255 CHAR);NO;;Observaciones de una venta externa a REM.
+26;ACT_ACTIVO;ACT_VENTA_EXTERNA_IMPORTE;NUMBER(16,2);NO;;Indica el importe de venta de una venta externa a REM.
+27;ACT_ACTIVO;ACT_FECHA_IND_PUBLICABLE;DATE;NO;;Es un indicador de activo disponible para publicar. Indicara al proceso offline que publique el activo
+28;ACT_ACTIVO;ACT_BLOQUEO_TIPO_COMERCIALIZAR;NUMBER(1,0);NO;;Indicador No Bloqueado(0)/Bloqueado(1) el proceso automático para cambiar el Tipo de Comercialización
+29;ACT_ACTIVO;ACT_IBI_EXENTO;NUMBER(1,0);SI;;Indicador de activo exento de IBI
+30;ACT_ACTIVO;OK_TECNICO;NUMBER(1,0);NO;;Indicador de si el activo tiene el OK de Gestión
+31;ACT_ACTIVO;ACT_PUJA;NUMBER(1,0);NO;;Indicador de si el activo está en puja(1) o no está en puja(0)

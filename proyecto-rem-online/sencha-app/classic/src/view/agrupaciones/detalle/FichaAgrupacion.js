@@ -276,7 +276,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							bind : {
 								hidden: '{!esAgrupacionAsistida}',
 								disabled: '{!agrupacionficha.existeFechaBaja}'
-								
 							}
 						},
 						{
@@ -285,8 +284,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
                             bind: {
                                 store: '{comboTipoDestinoComercialCreaFiltered}',
                                 value: '{agrupacionficha.tipoComercializacionCodigo}',
-                                disabled: '{agrupacionficha.isComercial}'
-                            }
+                                readOnly: '{!esAgrupacionRestringida}'
+                            }	
 						}
 
 				]

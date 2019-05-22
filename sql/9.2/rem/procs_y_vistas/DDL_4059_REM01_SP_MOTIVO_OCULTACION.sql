@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190306
+--## AUTOR=Ramon Llinares
+--## FECHA_CREACION=20190520
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3532
+--## INCIDENCIA_LINK=REMVIP-4227
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -139,32 +139,35 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                      AND ACT.ACT_ID= '||pACT_ID||
                          ' UNION
                           SELECT APU.ACT_ID
-                               , 1 OCULTO
-                               , MTO.DD_MTO_CODIGO
-                               , MTO.DD_MTO_ORDEN ORDEN
-                                    FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
-                                    JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = APU.ACT_ID AND SPS.BORRADO = 0
-                                    JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION DDTCO ON DDTCO.DD_TCO_ID = APU.DD_TCO_ID 
-                                          AND DDTCO.DD_TCO_CODIGO IN (''02'',''03'',''04'') 
-                                          AND DDTCO.BORRADO = 0
-                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''03'' AND MTO.BORRADO = 0 /*Alquilado*/
-                                   WHERE APU.BORRADO = 0.
-                                     AND SPS.SPS_OCUPADO = 1 
-                                     AND SPS.DD_TPA_ID = (SELECT DD_TPA_ID FROM DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO = ''01'')
-                                     AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
-                                     AND SPS.ACT_ID= '||pACT_ID||            
+                              , 1 OCULTO
+                              , MTO.DD_MTO_CODIGO
+                              , MTO.DD_MTO_ORDEN ORDEN
+                                   FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
+                                   JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = APU.ACT_ID AND SPS.BORRADO = 0
+                                   JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = APU.ACT_ID
+                                   LEFT JOIN '|| V_ESQUEMA ||'.DD_TAL_TIPO_ALQUILER TAL ON TAL.DD_TAL_ID = ACT.DD_TAL_ID
+                                   JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION DDTCO ON DDTCO.DD_TCO_ID = APU.DD_TCO_ID
+                                         AND DDTCO.DD_TCO_CODIGO IN (''02'',''03'',''04'')
+                                         AND DDTCO.BORRADO = 0
+                                   LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''03'' AND MTO.BORRADO = 0 /*Alquilado*/
+                                  WHERE APU.BORRADO = 0.
+                                    AND SPS.SPS_OCUPADO = 1
+                                    AND SPS.DD_TPA_ID = (SELECT DD_TPA_ID FROM DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO = ''01'')
+                                    AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
+                                    AND (''A'' = '''||pTIPO||''' OR (''V'' = '''||pTIPO||''' AND TAL.DD_TAL_CODIGO <> ''01''))
+                                    AND SPS.ACT_ID= '||pACT_ID||         
                          ' UNION
                           SELECT APU.ACT_ID
                                , 1 OCULTO
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
-                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0 and V.BORRADO=0
+                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID and V.BORRADO=0
                                     JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE APU.BORRADO = 0.
-                                     AND ((APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO = 0)
-                                        OR (APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO = 1
+                                     AND ((APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO_PUBLI = 0)
+                                        OR (APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO_PUBLI = 1
                                             AND (MTO.DD_MTO_ID = (SELECT DD_MTO_V_ID FROM REM01.ACT_APU_ACTIVO_PUBLICACION WHERE ACT_ID = '||pACT_ID||')
                                                 OR MTO.DD_MTO_ID = (SELECT DD_MTO_A_ID FROM REM01.ACT_APU_ACTIVO_PUBLICACION WHERE ACT_ID = '||pACT_ID||'))))
                                      AND APU.ACT_ID= '||pACT_ID||

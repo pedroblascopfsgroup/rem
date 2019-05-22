@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.valoracion.dao;
 
+import java.util.Date;
+
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;

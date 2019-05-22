@@ -53,7 +53,6 @@ public class MSVEnvioBurofaxProcesar extends AbstractMSVActualizador implements 
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo= null;

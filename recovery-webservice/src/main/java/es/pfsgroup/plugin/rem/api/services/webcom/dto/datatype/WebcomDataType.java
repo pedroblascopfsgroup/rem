@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 
@@ -117,7 +119,7 @@ public abstract class WebcomDataType<T> {
 		try {
 
 			if (LongDataType.class.equals(type)) {
-				return (E) longDataType(data != null ? Long.parseLong(data.toString()) : null);
+				return (E) longDataType(data != null && StringUtils.isNumeric(data.toString())  ? Long.parseLong(data.toString()) : null);
 
 			} else if (BooleanDataType.class.equals(type)) {
 				Boolean parseBoolean = null;

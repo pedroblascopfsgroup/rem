@@ -28,6 +28,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
@@ -319,6 +320,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	
     @Column(name="ALQ_RENTA_MERCADO_CADA")
     private Integer revisionMercadoMeses;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ETF_ID")
+	private DDEntidadFinanciera entidadFinanciera;
     
     @OneToMany(mappedBy = "condicionante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "COE_ID")
@@ -1018,5 +1023,12 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	}
 	
 	
-	  
+	public DDEntidadFinanciera getEntidadFinanciera() {
+		return entidadFinanciera;
+	}
+
+	public void setEntidadFinanciera(DDEntidadFinanciera entidadFinanciera) {
+		this.entidadFinanciera = entidadFinanciera;
+	}
+
 }

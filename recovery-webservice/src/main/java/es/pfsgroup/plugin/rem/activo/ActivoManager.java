@@ -480,7 +480,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 
 			}
-
+			
 			activoPublicacionDao.save(actPubli);
 		}
 	}
@@ -1403,8 +1403,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				// quitar las escritas para el precio o valoracion anterior
 
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
+				
+				
+				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoValoracion.getActivo().getId());
+				ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class,filtro);
+				
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA) 
+						|| dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)){
+					activoPublicacion.setFechaCambioValorVenta(new Date());
+					
+				}
+				
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)){
+					activoPublicacion.setFechaCambioValorAlq(new Date());
+				}
 
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
+				genericDao.update(ActivoPublicacion.class,activoPublicacion);
 
 			} else {
 				// Si no existia una valoracion del tipo indicado, crea una
@@ -1419,8 +1437,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoValoracion.setActivo(activo);
 				activoValoracion.setTipoPrecio(tipoPrecio);
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoValoracion.getActivo().getId());
+				ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class,filtro);
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA) 
+						|| dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO) 
+						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)){
+					activoPublicacion.setFechaCambioValorVenta(new Date());
+					
+				}
+				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)){
+					activoPublicacion.setFechaCambioValorAlq(new Date());
+				}
 
 				genericDao.save(ActivoValoraciones.class, activoValoracion);
+				genericDao.update(ActivoPublicacion.class,activoPublicacion);
 			}
 
 			if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(dto.getCodigoTipoPrecio())) {
@@ -1455,7 +1486,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return true;
 	}
+	@Transactional(readOnly = false)
+	private boolean saveActValFechaUltCambioPrecio(ActivoValoraciones actVal) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", actVal.getActivo().getId());
+		ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class, filtro);
+		
+		if(actVal.getTipoPrecio().getCodigo().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA) 
+				|| actVal.getTipoPrecio().getCodigo().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO) 
+				||actVal.getTipoPrecio().getCodigo().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO) 
+				||actVal.getTipoPrecio().getCodigo().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)){
+			activoPublicacion.setFechaCambioValorVenta(new Date());
+			
+		}
+		if(actVal.getTipoPrecio().getCodigo().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)){
+			activoPublicacion.setFechaCambioValorAlq(new Date());
+		}
 
+		return true;
+	}
+	
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteValoracionPrecio(Long id) {
@@ -1480,6 +1529,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (guardadoEnHistorico && activoDao.deleteValoracionSinDuplicarById(id)) {
 			saveActivoValoracionHistorico(activoValoracion);
+			saveActValFechaUltCambioPrecio(activoValoracion);
 
 		} else if (!Checks.esNulo(activoValoracion.getGestor())
 				&& !adapter.getUsuarioLogado().getUsername().equals(activoValoracion.getGestor().getUsername())
@@ -1492,6 +1542,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// Al anular el precio vigente, se hace un borrado lógico, y no se
 			// inserta en el histórico.
 			genericDao.deleteById(ActivoValoraciones.class, id);
+			saveActValFechaUltCambioPrecio(activoValoracion);
 		}
 
 		if (activoValoracion != null && activoValoracion.getActivo() != null) {
@@ -1653,7 +1704,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				logger.debug("Foto procesada para el activo " + activo.getNumActivo());
 
 			} else {
-				throw new Exception("La foto esta asociada a un activo inexistente");
+				logger.debug("No existe la unidad organizativa");
 			}
 
 		} catch (Exception e) {
@@ -2955,7 +3006,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean isActivoAsistido(Activo activo) {
 		ActivoBancario activoBancario = getActivoBancarioByIdActivo(activo.getId());
 		if (!Checks.esNulo(activo.getSubcartera()))
-			return DDSubcartera.CODIGO_CAJ_ASISTIDA.equals(activo.getSubcartera().getCodigo()) || DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo()) || DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo()) || DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(activo.getSubcartera().getCodigo()) || DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo());
+			return DDSubcartera.CODIGO_CAJ_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(activo.getSubcartera().getCodigo())
+					|| (activoBancario != null && activoBancario.getClaseActivo() != null && DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo()));
 		return false;
 	}
 
@@ -4535,9 +4590,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
 					usuarioGestorComercial = genericDao.get(GestorActivo.class, f2, f3).getUsuario();
 
-				} else {
+				} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)){
 					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
 							.getUsuarioGestorFormalizacion(activo.getId());
+				} else {
+					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
+							.getUsuarioGestorFormalizacionBasico(activo.getId());
 				}
 
 				if (!Checks.esNulo(idUsuarioGestorFormalizacion))

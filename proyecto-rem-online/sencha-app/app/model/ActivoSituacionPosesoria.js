@@ -108,7 +108,17 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
         },
         {
             name: 'tipoEstadoAlquiler'
+        },
+        {
+        	name: 'diasCambioPosesion'
+        },
+        {
+        	name:  'diasCambioTitulo'
+        },
+        {
+        	name:  'diasTapiado'
         }
+        
     ],
 
 	proxy: {

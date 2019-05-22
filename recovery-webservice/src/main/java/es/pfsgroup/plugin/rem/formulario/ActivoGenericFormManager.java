@@ -398,7 +398,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	            					}
 	            				}
             				}else {
-            					item.setValue(ofertaAceptada.getImporteContraOferta().toString());
+            					if(!Checks.esNulo(ofertaAceptada.getImporteContraOferta())) {
+                					item.setValue(ofertaAceptada.getImporteContraOferta().toString());
+            					}
             				}
             			}
             		}
@@ -533,12 +535,12 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			trabajo.getActivo().getCartera();
             			Filter filtroSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo", trabajo.getSubtipoTrabajo());
             			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera", trabajo.getActivo().getCartera());
-            			if(!genericDao.getList(ConfiguracionTarifa.class, filtroSubtipoTrabajo, filtroCartera).isEmpty() || trabajo.getEsTarifaPlana()){
+            			if(!genericDao.getList(ConfiguracionTarifa.class, filtroSubtipoTrabajo, filtroCartera).isEmpty() || (trabajo.getEsTarifaPlana() 
+            					&& !DDCartera.CODIGO_CARTERA_SAREB.equals(trabajo.getActivo().getCartera().getCodigo()))){
             				item.setValue(DDSiNo.SI);
-            			}else {
+            			} else {
             				item.setValue(DDSiNo.NO);
-            			}  
-            			
+            			}
             			
             		}
             		
@@ -574,8 +576,22 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					}
             				}
             			}
-            		}            		
+            		}   
             		
+            		if(item.getNombre().equals("comboTarifaPlana"))
+            		{
+            			Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+            			if (!Checks.esNulo(trabajo)) {
+            					if(!Checks.esNulo(trabajo.getEsTarifaPlana())) {            						
+            						if(BooleanUtils.toBoolean(trabajo.getEsTarifaPlana())) {
+            							item.setValue(DDSiNo.SI);
+            						} else {
+            							item.setValue(DDSiNo.NO);
+            						}
+            					}
+            				
+            			}
+            		}           		
             			
             	}
             	if(item.getType().equals(TIPO_COMBOBOX_INICIAL_ED))

@@ -38,7 +38,6 @@ public class MSVActualizadorPreciosActivoBloqueo extends AbstractMSVActualizador
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Usuario gestorBloqueoPrecio = adapter.getUsuarioLogado();

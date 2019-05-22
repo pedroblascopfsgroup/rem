@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190307
+--## AUTOR=Guillermo Llidó Parra
+--## FECHA_CREACION=20190517
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3503
+--## INCIDENCIA_LINK=REMVIP-4233
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -27,6 +27,8 @@
 --##    	0.14 HREOS-5003 - Añadimos Obra nueva (Vandalizado) a VANDALIZADO
 --##		0.15 HREOS-5562 - Ocultación Automática, motivo "Revisión publicación", comentar la linea "OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1"
 --##		0.16 REMVIP-3503 - Correcciones cálculo ocupado_sin_titulo y ocupado_con_titulo (nueva columna DD_TPA_ID)
+--##		0.17 REMVIP-4233 - Se corrige el join con la ACT_ABA ya que hay activos que no aparecen en esta.
+--##        0.18 David Gonzalez - HREOS-6184 - Ajustes joins
 --##########################################
 --*/
 
@@ -43,8 +45,8 @@ DECLARE
     err_num NUMBER; -- Vble. número de errores
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
-    V_MSQL VARCHAR2(4000 CHAR);
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEM_MASTER#'; -- Configuracion Esquemas
+    V_MSQL VARCHAR2(32000 CHAR);
 
     CUENTA NUMBER;
     
@@ -58,7 +60,7 @@ BEGIN
   END IF;
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD...');
-  EXECUTE IMMEDIATE 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.v_cond_disponibilidad (act_id,
+  V_MSQL := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.v_cond_disponibilidad (act_id,
                                                           sin_toma_posesion_inicial,
                                                           ocupado_contitulo,
                                                           pendiente_inscripcion,
@@ -80,12 +82,13 @@ BEGIN
                                                           estado_portal_externo,
                                                           es_condicionado,
                                                           est_disp_com_codigo,
+														  es_condicionado_publi,
                                                           borrado
                                                          )
 AS
    SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro,
-          sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado,
-          est_disp_com_codigo, borrado
+          sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo1, ''01'', 1, 0) AS es_condicionado,
+          est_disp_com_codigo2,es_condicionado_publi,borrado
 
      FROM (SELECT act.act_id, 
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) 
@@ -135,8 +138,16 @@ AS
 						   OR NVL2 (vcg.con_cargas, vcg.con_cargas, 0) = 1
 					THEN ''01''
                     ELSE ''02''
-                  END AS est_disp_com_codigo,
+                  END AS est_disp_com_codigo1,
+
+			      CASE 
+					WHEN (sps1.sps_ocupado = 1 OR sps1.sps_acc_tapiado = 1) THEN 1 
+						ELSE 0 
+					END as es_condicionado_publi,	
+                  vact.est_disp_com_codigo as est_disp_com_codigo2,
                   0 AS borrado
+
+
              FROM '||V_ESQUEMA||'.act_activo act LEFT JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba2 ON aba2.act_id = act.act_id 
 				  
 				  LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra ON cra.dd_cra_id = act.dd_cra_id 	
@@ -147,7 +158,8 @@ AS
 
 				  LEFT JOIN
                   (SELECT act_tit.act_id
-                     FROM '||V_ESQUEMA||'.act_reg_info_registral act_reg JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba ON aba.act_id = act_reg.act_id
+                     FROM '||V_ESQUEMA||'.act_reg_info_registral act_reg 
+                     LEFT JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba ON aba.act_id = act_reg.act_id
                      JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO act_tit ON act_tit.act_id = act_reg.act_id 
                      JOIN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BDR ON BDR.BIE_DREG_ID = act_REG.BIE_DREG_ID
                     WHERE aba.dd_cla_id = 1 OR act_tit.TIT_FECHA_INSC_REG IS NOT NULL) tit ON tit.act_id = act.act_id                                                            -- PENDIENTE DE INSCRIPCIÓN
@@ -158,9 +170,12 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.vi_activos_con_cargas vcg ON vcg.act_id = act.act_id
                   LEFT JOIN '||V_ESQUEMA||'.act_ico_info_comercial ico ON ico.act_id = act.act_id
                   LEFT JOIN '||V_ESQUEMA||'.vi_estado_actual_infmed vei ON vei.ico_id = ico.ico_id                                                                                          --SIN_INFORME_APROBADO
-            WHERE act.borrado = 0)';
+            LEFT JOIN '||V_ESQUEMA||'.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id
+            WHERE act.borrado = 0)
+          ';
 
-
+  EXECUTE IMMEDIATE V_MSQL;
+  
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD...Creada OK');
 
   	/*EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO PFSREM';

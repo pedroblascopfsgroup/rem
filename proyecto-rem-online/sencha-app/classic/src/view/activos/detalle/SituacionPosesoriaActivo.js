@@ -29,32 +29,69 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.situacion.posesoria'),
 				defaultType: 'textfieldbase',
+				border: false,
 				items :
 					[
 						
+						{
+				        	xtype:'fieldset',
+				        	height: '80%',
+				        	border: false,
+							layout: {
+							        type: 'table',
+							        // The total column count must be specified here
+							        columns: 2,
+							        trAttrs: {height: '30px', width: '100%'},
+							        tdAttrs: {width: '50%'},
+							        tableAttrs: {
+							            style: {
+							                width: '100%'
+											}
+							        }
+							},
+				        	defaultType: 'textfieldbase',
+							rowspan: 1,
+							items: [
+								{
+					            	hidden: true
+								},
+								
+						        {
+									xtype: 'comboboxfieldbase',
+									reference: 'conPosesion',
+									fieldLabel: HreRem.i18n('fieldlabel.con.posesion'),
+									readOnly: true,
+						        	bind: {				        		
+						        		store: '{comboSiNoRem}',
+					            		value: '{situacionPosesoria.indicaPosesion}'
+					            	},
+					            	labelWidth: 80,
+					            	width: 200
+						        },
+						        {
+						        	xtype:'textfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
+						        	readOnly: true,
+						        	bind: {
+						        		value: '{situacionPosesoria.diasCambioPosesion}',
+						        		hidden: '{!activo.isCarteraBankia}'
+						        	},
+					            	labelWidth: 120,
+					            	width: 60
+						        }
 
-					
-						{ 	// Este campo es necesario para corregir lo que parece un BUG. 
-							// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
-			            	hidden: true
+
+							]
 						},
-				        {
-							xtype: 'comboboxfieldbase',
-							reference: 'conPosesion',
-							fieldLabel: HreRem.i18n('fieldlabel.con.posesion'),
-							readOnly: true,
-				        	bind: {				        		
-				        		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.indicaPosesion}'
-			            	}
-				        },
-		                { 
+				
+						{ 
 							xtype:'datefieldbase',
 							reference: 'fechaRevisionEstadoPosesorio',
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.revision.estado.posesorio'),
 			            	bind:		'{situacionPosesoria.fechaRevisionEstado}',
                             readOnly: true
 						},
+		        
 						{
 				        	xtype:'fieldset',
 				        	height: '100%',
@@ -83,7 +120,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		value: '{situacionPosesoria.accesoTapiado}'
 					            	},
 					            	labelWidth: 80,
-					            	width: 150,
+					            	width: 200,
 					            	listeners: {
 					            		change: function(combo, value) {
 					            			var me = this;
@@ -101,13 +138,24 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            	}
 						        },
 						        {
+						        	xtype:'textfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
+						        	readOnly: true,
+						        	bind: {
+						        		value: '{situacionPosesoria.diasTapiado}',
+						        		hidden: '{!activo.isCarteraBankia}'
+						        	},
+					            	labelWidth: 120,
+					            	width: 60
+						        },
+						        {
 						        	xtype:'datefieldbase',
 						        	reference: 'datefieldTapiado',
 						        	fieldLabel: 'Fecha tapiado',
 						        	bind: {
 						        		value: '{situacionPosesoria.fechaAccesoTapiado}'
 						        	},
-					            	labelWidth: 80,
+					            	labelWidth: 100,
 					            	width: 200
 						        },
 						        {
@@ -118,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		value: '{situacionPosesoria.accesoAntiocupa}'
 					            	},
 					            	labelWidth: 80,
-					            	width: 150,
+					            	width: 180,
 					            	listeners: {
 					            		change: function(combo, value) {
 					            			var me = this;
@@ -153,7 +201,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		                	bind:	{
 		                		value: '{situacionPosesoria.fechaTomaPosesion}',
 		                		readOnly: '{esSituacionJudicial}'
-		                	}
+		                	},
+		                	style:'margin-left:10px'
 		                },
 		                {
 							xtype: 'checkboxfieldbase',
@@ -177,7 +226,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            	},
 			            	listeners: {
 			            		change: 'onChangeComboOcupado'
-			            	}
+			            	},
+			            	style:'margin-left:10px'
 				        },				      
 				        { 
 				        	xtype: 'comboboxfieldbase',
@@ -196,18 +246,65 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            	},
                             readOnly: true
 				        },
-				        { 
-				        	xtype: 'comboboxfieldbase',
-				        	reference: 'comboSituacionPosesoriaConTitulo',
-							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
-							allowBlank: false,
-				        	bind: {
-				        		store : '{comboDDTipoTituloActivoTPA}',
-			            		value: '{situacionPosesoria.conTitulo}',
-                                disabled: '{disabledComboConTituloTPA}',
-                                readOnly: '{esTipoEstadoAlquilerAlquilado}'
-			            	}
-				        },
+				        
+						{
+				        	xtype:'fieldset',
+				        	height: '80%',
+				        	border: false,
+							layout: {
+							        type: 'table',
+							        // The total column count must be specified here
+							        columns: 2,
+							        trAttrs: {height: '30px', width: '100%'},
+							        tdAttrs: {width: '50%'},
+							        tableAttrs: {
+							            style: {
+							                width: '100%'
+											}
+							        }
+							},
+				        	defaultType: 'textfieldbase',
+							rowspan: 1,
+							items: [
+								{ 	  
+					            	hidden: true
+								},
+								
+						        {
+							        xtype: 'comboboxfieldbase',
+							        reference: 'comboSituacionPosesoriaConTitulo',
+									fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
+									allowBlank: false,
+							        bind: {
+							        	store : '{comboDDTipoTituloActivoTPA}',
+						            	value: '{situacionPosesoria.conTitulo}',
+			                            disabled: '{disabledComboConTituloTPA}',
+			                            readOnly: '{esTipoEstadoAlquilerAlquilado}'
+						            },
+							        
+					            	labelWidth: 80,
+					            	width: 200
+						        },
+						        {
+						        	xtype:'textfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
+						        	readOnly: true,
+						        	bind: {
+						        		value: '{situacionPosesoria.diasCambioTitulo}',
+						        		hidden: '{!activo.isCarteraBankia}'
+						        	},
+					            	labelWidth: 120,
+					            	width: 60
+						        }
+
+
+							]
+						},
+				        
+				        
+				        
+				        
+
 				        {
 							xtype: 'textfieldbase',
 							reference: 'disponibilidadJuridicaRef',
@@ -222,102 +319,102 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
                 
             }, 
             
-            {    
-                
-				xtype:'fieldsettable',
-				title:HreRem.i18n('title.ocupante.legal'),
-				bind: {
-					hidden:'{!esOcupacionLegal}',
-					disabled: '{!esOcupacionLegal}'
-				},
-				defaultType: 'textfieldbase',
-				items :
-					[
-						{ 
-				        	xtype: 'comboboxfieldbase',
-				        	allowBlank: false,
-							fieldLabel: HreRem.i18n('fieldlabel.titulo.posesorio'),
-				        	bind: {
-			            		store: '{comboTipoPosesorio}',
-			            		value: '{situacionPosesoria.tipoTituloPosesorioCodigo}'
-			            	}
-				        },
-						{ 
-							xtype:'datefieldbase',
-							reference: 'datefieldFechaTitulo',
-							maxValue: null,
-							fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.posesorio'),
-							bind: '{situacionPosesoria.fechaTitulo}'
-		                },
-		                { 
-		                	xtype:'datefieldbase',
-		                	reference: 'datefieldFechaVencTitulo',
-		                	allowBlank: false,
-							maxValue: null,
-		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.titulo.posesorio'),
-		                	bind:		'{situacionPosesoria.fechaVencTitulo}'
-		                },
-		                { 
-		                	xtype:'currencyfieldbase',
-		                	allowBlank: false,
-		                	fieldLabel: HreRem.i18n('fieldlabel.renta.mensual'),
-		                	colspan:	3,
-		                	bind:		'{situacionPosesoria.rentaMensual}'
-		                },
-		                {
-		                	xtype: 'gridBaseEditableRow',
-		                	title: 'Lista de ocupantes legales',
-		    			    topBar: true,
-		    			    idPrincipal: 'activo.id',
-		    				cls	: 'panel-base shadow-panel',
-		    				colspan: 3,
-		    				layout:'fit',
-		    				minHeight: 240,
-		    				bind: {
-		    					store: '{storeOcupantesLegales}'
-		    				},
-
-		    				columns: [
-		    				    {   text: 'Nombre',
-		    			        	dataIndex: 'nombreOcupante',
-		    			        	editor: {xtype:'textfield', allowBlank: false},
-		    			        	flex: 1
-		    			        },
-		    			        {   text: 'NIF',
-		    			        	dataIndex: 'nifOcupante',
-		    			        	editor: {xtype:'textfield', allowBlank: false},
-		    			        	flex: 1
-		    			        },	
-		    			        {   text: 'Tel&eacute;fono',
-		    			        	dataIndex: 'telefonoOcupante',
-		    			        	editor: {xtype:'textfield'},
-		    			        	flex: 1
-		    			        },	
-		    			        {   text: 'Email',
-		    			        	dataIndex: 'emailOcupante',
-		    			        	editor: {xtype:'textfield'},
-		    			        	flex: 1
-		    			        },	
-		    					{
-		    			            text: 'Observaciones',
-		    			            dataIndex: 'observacionesOcupante',
-		    			            editor: {xtype:'textfield'},
-		    			            flex: 1
-		    			        }		    			       	        
-		    			    ],
-		    			    dockedItems : [
-		    			        {
-		    			            xtype: 'pagingtoolbar',
-		    			            dock: 'bottom',
-		    			            displayInfo: true,
-		    			            bind: {
-		    			                store: '{storeOcupantesLegales}'
-		    			            }
-		    			        }
-		    			    ]
-		    			}
-					]
-            },
+//            {    
+//                
+//				xtype:'fieldsettable',
+//				title:HreRem.i18n('title.ocupante.legal'),
+//				bind: {
+//					hidden:'{!esOcupacionLegal}',
+//					disabled: '{!esOcupacionLegal}'
+//				},
+//				defaultType: 'textfieldbase',
+//				items :
+//					[
+//						{ 
+//				        	xtype: 'comboboxfieldbase',
+//				        	allowBlank: false,
+//							fieldLabel: HreRem.i18n('fieldlabel.titulo.posesorio'),
+//				        	bind: {
+//			            		store: '{comboTipoPosesorio}',
+//			            		value: '{situacionPosesoria.tipoTituloPosesorioCodigo}'
+//			            	}
+//				        },
+//						{ 
+//							xtype:'datefieldbase',
+//							reference: 'datefieldFechaTitulo',
+//							maxValue: null,
+//							fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.posesorio'),
+//							bind: '{situacionPosesoria.fechaTitulo}'
+//		                },
+//		                { 
+//		                	xtype:'datefieldbase',
+//		                	reference: 'datefieldFechaVencTitulo',
+//		                	allowBlank: false,
+//							maxValue: null,
+//		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.titulo.posesorio'),
+//		                	bind:		'{situacionPosesoria.fechaVencTitulo}'
+//		                },
+//		                { 
+//		                	xtype:'currencyfieldbase',
+//		                	allowBlank: false,
+//		                	fieldLabel: HreRem.i18n('fieldlabel.renta.mensual'),
+//		                	colspan:	3,
+//		                	bind:		'{situacionPosesoria.rentaMensual}'
+//		                },
+//		                {
+//		                	xtype: 'gridBaseEditableRow',
+//		                	title: 'Lista de ocupantes legales',
+//		    			    topBar: true,
+//		    			    idPrincipal: 'activo.id',
+//		    				cls	: 'panel-base shadow-panel',
+//		    				colspan: 3,
+//		    				layout:'fit',
+//		    				minHeight: 240,
+//		    				bind: {
+//		    					store: '{storeOcupantesLegales}'
+//		    				},
+//
+//		    				columns: [
+//		    				    {   text: 'Nombre',
+//		    			        	dataIndex: 'nombreOcupante',
+//		    			        	editor: {xtype:'textfield', allowBlank: false},
+//		    			        	flex: 1
+//		    			        },
+//		    			        {   text: 'NIF',
+//		    			        	dataIndex: 'nifOcupante',
+//		    			        	editor: {xtype:'textfield', allowBlank: false},
+//		    			        	flex: 1
+//		    			        },	
+//		    			        {   text: 'Tel&eacute;fono',
+//		    			        	dataIndex: 'telefonoOcupante',
+//		    			        	editor: {xtype:'textfield'},
+//		    			        	flex: 1
+//		    			        },	
+//		    			        {   text: 'Email',
+//		    			        	dataIndex: 'emailOcupante',
+//		    			        	editor: {xtype:'textfield'},
+//		    			        	flex: 1
+//		    			        },	
+//		    					{
+//		    			            text: 'Observaciones',
+//		    			            dataIndex: 'observacionesOcupante',
+//		    			            editor: {xtype:'textfield'},
+//		    			            flex: 1
+//		    			        }		    			       	        
+//		    			    ],
+//		    			    dockedItems : [
+//		    			        {
+//		    			            xtype: 'pagingtoolbar',
+//		    			            dock: 'bottom',
+//		    			            displayInfo: true,
+//		    			            bind: {
+//		    			                store: '{storeOcupantesLegales}'
+//		    			            }
+//		    			        }
+//		    			    ]
+//		    			}
+//					]
+//            },
             {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.ocupante.ilegal'),
@@ -464,9 +561,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    		fechaRevisionEstadoPosesorio = me.down('[reference=fechaRevisionEstadoPosesorio]'),
    		fechaSolDesahucio = me.down('[reference=fechaSolDesahucio]'),
    		fechaLanzamiento = me.down('[reference=fechaLanzamiento]'),
-   		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]'),
-   		datefieldFechaTitulo = me.down('[reference=datefieldFechaTitulo]'),
-   		datefieldFechaVencTitulo = me.down('[reference=datefieldFechaVencTitulo]');
+   		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]');
+//   	datefieldFechaTitulo = me.down('[reference=datefieldFechaTitulo]'),
+//   	datefieldFechaVencTitulo = me.down('[reference=datefieldFechaVencTitulo]');
 
    		if(!Ext.isEmpty(fechaTomaPosesion.getValue()) && fechaTomaPosesion.getValue() > fechaRevisionEstadoPosesorio.getValue()) {
 		    error = HreRem.i18n("txt.validacion.fechaTomaPosesion.mayor.fechaRevisionEstadoPosesorio");
@@ -486,12 +583,12 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    			fechaLanzamientoEfectivo.markInvalid(error);   			
    		}  	
 
-   		//La fecha de t�tulo posesorio debe ser anterior a la fecha de vencimiento
-   		if(!Ext.isEmpty(datefieldFechaTitulo.getValue()) && datefieldFechaTitulo.getValue() >= datefieldFechaVencTitulo.getValue()) {
-		    error = HreRem.i18n("txt.validacion.datefieldFechaTitulo.mayor.datefieldFechaVencTitulo");
-   			errores.push(error);
-   			datefieldFechaTitulo.markInvalid(error);   			
-   		}  	
+//   		//La fecha de t�tulo posesorio debe ser anterior a la fecha de vencimiento
+//   		if(!Ext.isEmpty(datefieldFechaTitulo.getValue()) && datefieldFechaTitulo.getValue() >= datefieldFechaVencTitulo.getValue()) {
+//		    error = HreRem.i18n("txt.validacion.datefieldFechaTitulo.mayor.datefieldFechaVencTitulo");
+//   			errores.push(error);
+//   			datefieldFechaTitulo.markInvalid(error);   			
+//   		}  	
 
    		me.addExternalErrors(errores);
    },

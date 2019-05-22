@@ -24,6 +24,7 @@ public class DtoPrecioVigente extends WebDto {
 	private String observaciones;
 	private Date fechaVentaHaya;
 	private String liquidez;
+	private Date fechaUltCambioPrecio;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -84,6 +85,12 @@ public class DtoPrecioVigente extends WebDto {
 	}
 	public void setLiquidez(String liquidez) {
 		this.liquidez = liquidez;
+	}
+	public Date getFechaUltCambioPrecio() {
+		return fechaUltCambioPrecio;
+	}
+	public void setFechaUltCambioPrecio(Date fechaUltCambioPrecio) {
+		this.fechaUltCambioPrecio = fechaUltCambioPrecio;
 	}
 	
 }

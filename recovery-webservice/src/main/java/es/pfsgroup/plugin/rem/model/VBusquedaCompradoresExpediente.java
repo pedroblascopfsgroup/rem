@@ -90,7 +90,7 @@ public class VBusquedaCompradoresExpediente implements Serializable {
     @Column(name = "ADC_ID_DOCUMENTO_REST")
     private Long idDocRestClient;
   
-	@Column(name = "COM_PROBLEMAS_URSUS")
+	@Column(name = "PROBLEMAS_URSUS")
 	private String problemasUrsus;
     
 	public String getId() {

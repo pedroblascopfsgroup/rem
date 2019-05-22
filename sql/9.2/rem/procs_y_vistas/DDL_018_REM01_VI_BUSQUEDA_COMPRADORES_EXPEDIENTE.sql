@@ -13,7 +13,7 @@
 --##        0.1 Versión inicial
 --##        0.2 HREOS-4933  ADC.ADC_NAME Nombre de la descarga del documento GDPR en la tabla ADC_ADJUNTO_COMPRADOR ADC
 --##        0.3 HREOS-5217  CEX.CEX_ID_PERSONA_HAYA,CEX.ADCOM_ID  para el documento GDPR en la tabla ADC_ADJUNTO_COMPRADOR ADC
---##		0.4 HREOS-5927  COM.COM_PROBLEMAS_URSUS añadida
+--##		0.4 HREOS-5927  COM.PROBLEMAS_URSUS añadida
 --##########################################
 --*/
 		
@@ -86,7 +86,7 @@ BEGIN
 			CEX.CEX_ID_PERSONA_HAYA,
 			CEX.ADCOM_ID,
 			ADC.ADC_ID_DOCUMENTO_REST,
-			CASE COM.COM_PROBLEMAS_URSUS WHEN 1 THEN ''Si''  WHEN 0 THEN ''No'' ELSE NULL END AS COM_PROBLEMAS_URSUS
+			CASE COM.PROBLEMAS_URSUS WHEN 1 THEN ''Si''  WHEN 0 THEN ''No'' ELSE NULL END AS PROBLEMAS_URSUS
 			
 
 		FROM '|| V_ESQUEMA ||'.COM_COMPRADOR COM

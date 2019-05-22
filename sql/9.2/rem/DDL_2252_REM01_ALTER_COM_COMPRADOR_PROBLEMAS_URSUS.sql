@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo Flores
---## FECHA_CREACION=20180425
+--## FECHA_CREACION=20180522
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HREOS-5927
@@ -44,7 +44,7 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'COM_PROBLEMAS_URSUS',		 	'NUMBER(1,0)',						'Discrepancias entre datos de REM y URSUS.'	)
+    	T_ALTER(  'PROBLEMAS_URSUS',		 	'NUMBER(1,0)',						'Discrepancias entre datos de REM y URSUS.'	)
 		);
     V_T_ALTER T_ALTER;
 

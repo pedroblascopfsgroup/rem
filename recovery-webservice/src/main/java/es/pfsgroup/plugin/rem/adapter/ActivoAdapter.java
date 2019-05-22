@@ -268,7 +268,6 @@ public class ActivoAdapter {
 	@Autowired
 	private ActivoAvisadorApi activoAvisadorApi;
 
-
 	@Resource
 	private Properties appProperties;
 

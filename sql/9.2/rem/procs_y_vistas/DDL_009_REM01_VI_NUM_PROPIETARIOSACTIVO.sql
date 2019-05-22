@@ -1,18 +1,20 @@
 --/*
 --##########################################
---## AUTOR=JOSEVI
+--## AUTOR=Guillermo Llidó Parra
 --## FECHA_CREACION=20170227
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1591
+--## INCIDENCIA_LINK=REMVIP-4233
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial DANIEL GUTIERREZ
---## 0.2 JOSEVI: Vista usada para mostrar PROINDIVISO en vista V_COND_DISPONIBILIDAD.
+--## 		0.2 JOSEVI: Vista usada para mostrar PROINDIVISO en vista V_COND_DISPONIBILIDAD.
 --##             Nuevas condiciones: Varios propietarios activo o 1 propietario con menos de 100%
+--##		0.3 Guillermo : Se añade el campo de borrado sobre la tabla act_pac para que no saque 
+--##						campos borrados 
 --##########################################
 --*/
 
@@ -51,6 +53,7 @@ BEGIN
             PAC1.ACT_ID idactivo,
           COUNT(*) num_propietarios
           FROM '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC1
+          WHERE PAC1.BORRADO = 0
           GROUP BY PAC1.ACT_ID
     ) nprop
     INNER JOIN '|| V_ESQUEMA ||'.ACT_PAC_PROPIETARIO_ACTIVO PAC ON NPROP.idactivo = PAC.ACT_ID

@@ -51,11 +51,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     esOcupacionLegal: function(get) {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
 	     	var conTitulo = get('situacionPosesoria.conTitulo') == "01";
-	     	var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
-			if(CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] != estadoAlquilerCodigo){
-				return ocupado && conTitulo;
-			}
-	     	return false;
+
+			return ocupado && conTitulo;
 	     },
 
 	     esSituacionJudicial: function(get){

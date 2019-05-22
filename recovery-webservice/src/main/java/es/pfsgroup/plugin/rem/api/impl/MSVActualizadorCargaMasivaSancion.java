@@ -15,7 +15,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.diccionarios.DictionaryDao;
 import es.pfsgroup.commons.utils.Checks;
@@ -72,7 +71,7 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
 	@Autowired
 	private NotificacionesGencatManager notificacionesGencat;
 
@@ -97,106 +96,106 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 	private SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException {
-
-		Activo activo = null;
-		activo = activoApi.getByNumActivo(Long.valueOf(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO)));
-		List<ComunicacionGencat> list = new ArrayList<ComunicacionGencat>();
-		Date fechaSanc;
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		try {
+			Activo activo = null;
+			activo = activoApi.getByNumActivo(Long.valueOf(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO)));
+			List<ComunicacionGencat> list = new ArrayList<ComunicacionGencat>();
 		
-		if (COD_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
-			
-			if (!Checks.esNulo(activo)) {
-				Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-
-				Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
-
-				// Datos comunicación
-				List<ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class,
-						orderByFechaCrear, filtroIdActivo, filtroBorrado);
-
-				if (!Checks.esNulo(resultComunicacion) && !resultComunicacion.isEmpty()) {
-					list.add(resultComunicacion.get(0));
-				}
-			}
-			if (Checks.esNulo(list) || list.isEmpty()) {
-				return getNotFound(fila, true);
-			}
-		} else if (COD_NO_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
-
-			ComunicacionGencat comunicacionGencat = comunicacionGencatApi
-					.getByNumActivoHaya(Long.valueOf(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO)));
-
-			list.add(comunicacionGencat);
-
-			if (Checks.esNulo(list) || list.isEmpty()) {
-				return getNotFound(fila, false);
-			}
-		}
-
-		for (int i = 0; i < list.size(); i++) {
-
-			ComunicacionGencat tmp = list.get(i);
-			tmp.setFechaSancion(new SimpleDateFormat(DateFormat.DATE_FORMAT)
-					.parse(exc.dameCelda(fila, POSICION_COLUMNA_FECHA_SANCION)));
 			if (COD_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
 
-				if (!Checks.esNulo(exc.dameCelda(fila, POSICION_COLUMNA_NIF))
-						&& !Checks.esNulo(exc.dameCelda(fila, POSICION_COLUMNA_NOMBRE))) {
-					tmp.setNuevoCompradorNif(exc.dameCelda(fila, POSICION_COLUMNA_NIF));
-					tmp.setNuevoCompradorNombre(exc.dameCelda(fila, POSICION_COLUMNA_NOMBRE));
-					tmp.setSancion((DDSancionGencat) dictionaryDao.getByCode(DDSancionGencat.class,
-							DDSancionGencat.COD_EJERCE));
-					tmp.setEstadoComunicacion((DDEstadoComunicacionGencat) dictionaryDao
-							.getByCode(DDEstadoComunicacionGencat.class, DDEstadoComunicacionGencat.COD_SANCIONADO));
+				if (!Checks.esNulo(activo)) {
+					Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 
-					OfertaGencat ofertaGencat = ofertaGencatApi.getOfertaByIdComunicacionGencat(tmp.getId());
+					Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
 
-					if (!Checks.esNulo(ofertaGencat)) {
-						ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofertaGencat.getOferta());
-						if (!Checks.esNulo(exp)) {
-							try {
-								gencatApi.crearNuevaOfertaGENCAT(exp, tmp);
-							} catch (Exception e) {
-								logger.error("Error en MSVActualizadorCargaMasivaSancion", e);
-								getNotCreateOfertaGENCAT(fila, true);
+					// Datos comunicación
+					List<ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class,
+							orderByFechaCrear, filtroIdActivo, filtroBorrado);
+
+					if (!Checks.esNulo(resultComunicacion) && !resultComunicacion.isEmpty()) {
+						list.add(resultComunicacion.get(0));
+					}
+				}
+				if (Checks.esNulo(list) || list.isEmpty()) {
+					return getNotFound(fila, true);
+				}
+			} else if (COD_NO_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
+
+				ComunicacionGencat comunicacionGencat = comunicacionGencatApi
+						.getByNumActivoHaya(Long.valueOf(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO)));
+
+				list.add(comunicacionGencat);
+
+				if (Checks.esNulo(list) || list.isEmpty()) {
+					return getNotFound(fila, false);
+				}
+			}
+
+			for (int i = 0; i < list.size(); i++) {
+
+				ComunicacionGencat tmp = list.get(i);
+				tmp.setFechaSancion(new SimpleDateFormat(DateFormat.DATE_FORMAT)
+						.parse(exc.dameCelda(fila, POSICION_COLUMNA_FECHA_SANCION)));
+				if (COD_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
+
+					if (!Checks.esNulo(exc.dameCelda(fila, POSICION_COLUMNA_NIF))
+							&& !Checks.esNulo(exc.dameCelda(fila, POSICION_COLUMNA_NOMBRE))) {
+						tmp.setNuevoCompradorNif(exc.dameCelda(fila, POSICION_COLUMNA_NIF));
+						tmp.setNuevoCompradorNombre(exc.dameCelda(fila, POSICION_COLUMNA_NOMBRE));
+						tmp.setSancion((DDSancionGencat) dictionaryDao.getByCode(DDSancionGencat.class,
+								DDSancionGencat.COD_EJERCE));
+						tmp.setEstadoComunicacion((DDEstadoComunicacionGencat) dictionaryDao.getByCode(
+								DDEstadoComunicacionGencat.class, DDEstadoComunicacionGencat.COD_SANCIONADO));
+
+						OfertaGencat ofertaGencat = ofertaGencatApi.getOfertaByIdComunicacionGencat(tmp.getId());
+
+						if (!Checks.esNulo(ofertaGencat)) {
+							ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofertaGencat.getOferta());
+							if (!Checks.esNulo(exp)) {
+								try {
+									gencatApi.crearNuevaOfertaGENCAT(exp, tmp);
+								} catch (Exception e) {
+									logger.error("Error en MSVActualizadorCargaMasivaSancion", e);
+									getNotCreateOfertaGENCAT(fila, true);
+								}
+
+							} else {
+								getOfertaExpedienteNull(fila, false);
 							}
-
 						} else {
-							getOfertaExpedienteNull(fila, false);
+							getOfertaExpedienteNull(fila, true);
 						}
+
 					} else {
-						getOfertaExpedienteNull(fila, true);
+						Boolean posicionNif = Checks.esNulo(exc.dameCelda(fila, POSICION_COLUMNA_NIF));
+						Boolean posicionNombre = Checks.esNulo(exc.dameCelda(fila, POSICION_COLUMNA_NOMBRE));
+						getIsNullNameOrNifValues(fila, posicionNombre, posicionNif);
 					}
 
-				} else {
-					Boolean posicionNif = Checks.esNulo(exc.dameCelda(fila, POSICION_COLUMNA_NIF));
-					Boolean posicionNombre = Checks.esNulo(exc.dameCelda(fila, POSICION_COLUMNA_NOMBRE));
-					getIsNullNameOrNifValues(fila, posicionNombre, posicionNif);
+				} else if (COD_NO_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
+					tmp.setSancion((DDSancionGencat) dictionaryDao.getByCode(DDSancionGencat.class,
+							DDSancionGencat.COD_NO_EJERCE));
+					tmp.setEstadoComunicacion((DDEstadoComunicacionGencat) dictionaryDao
+							.getByCode(DDEstadoComunicacionGencat.class, DDEstadoComunicacionGencat.COD_SANCIONADO));
 				}
 
-			} else if (COD_NO_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
-				tmp.setSancion((DDSancionGencat) dictionaryDao.getByCode(DDSancionGencat.class,
-						DDSancionGencat.COD_NO_EJERCE));
-				tmp.setEstadoComunicacion((DDEstadoComunicacionGencat) dictionaryDao
-						.getByCode(DDEstadoComunicacionGencat.class, DDEstadoComunicacionGencat.COD_SANCIONADO));
+				if (!Checks.esNulo(activo)) {
+					DtoGencatSave gencatDto = new DtoGencatSave();
+					gencatDto.setFechaSancion(dateformat.format(tmp.getFechaSancion()));
+					gencatDto.setSancion(tmp.getSancion().getDescripcion());
+					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, tmp.getSancion());
+					darDeBajaAgrupacionRestringida(activo);
+				}
+				comunicacionGencatApi.saveOrUpdate(tmp);
 			}
-			
-			
-			if (!Checks.esNulo(activo)) {
-				DtoGencatSave gencatDto = new DtoGencatSave();
-				gencatDto.setFechaSancion(dateformat.format(tmp.getFechaSancion()));
-				gencatDto.setSancion(tmp.getSancion().getDescripcion());
-				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, tmp.getSancion());
-				darDeBajaAgrupacionRestringida(activo);
-			}
-			comunicacionGencatApi.saveOrUpdate(tmp);
+		} catch (Exception e) {
+			throw new JsonViewerException(e.getMessage());
 		}
-
-		return new ResultadoProcesarFila();
+		return resultado;
 	}
 
 	private ResultadoProcesarFila getNotFound(int fila, boolean nif) {
@@ -275,7 +274,7 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 				DDTipoAgrupacion tipoAgrupacion = agrupacion.getAgrupacion().getTipoAgrupacion();
 				String codigo = tipoAgrupacion.getCodigo();
 
-				if (codigo.equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {					
+				if (codigo.equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 					try {
 						ActivoAgrupacion activoAgrupacion = agrupacion.getAgrupacion();

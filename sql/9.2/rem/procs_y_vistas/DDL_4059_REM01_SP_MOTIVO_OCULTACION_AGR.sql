@@ -171,12 +171,15 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = ACT.ACT_ID AND V.ES_CONDICIONADO = 0 AND V.BORRADO=0
+                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = ACT.ACT_ID AND V.BORRADO=0
                                     JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO agr on act.act_id = agr.act_id and agr.borrado = 0
                                     JOIN '|| V_ESQUEMA ||'.TMP_PUBL_AGR EST ON EST.agr_id = agr.agr_id AND EST.INFORME_COMERCIAL = 0 AND EST.AGR_ID = '||nAGR_ID||'
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE ACT.BORRADO = 0.
-                                     AND ACT.ES_CONDICONADO_ANTERIOR = 1 
+                                     AND ((ACT.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO_PUBLI = 0)
+                                        OR (ACT.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO_PUBLI = 1
+                                            AND (MTO.DD_MTO_ID = (SELECT DD_MTO_V_ID FROM REM01.ACT_APU_ACTIVO_PUBLICACION WHERE ACT_ID = '||pACT_ID||')
+                                                OR MTO.DD_MTO_ID = (SELECT DD_MTO_A_ID FROM REM01.ACT_APU_ACTIVO_PUBLICACION WHERE ACT_ID = '||pACT_ID||'))))
                                      AND EXISTS '||vQUERY||                                        
                          ' UNION                                     
                           SELECT ACT.ACT_ID

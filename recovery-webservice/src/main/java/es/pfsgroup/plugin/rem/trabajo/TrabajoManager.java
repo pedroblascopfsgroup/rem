@@ -2539,20 +2539,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getPresupuestosTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo) {
-
+		List<DtoPresupuestosTrabajo> presupuestos = new ArrayList<DtoPresupuestosTrabajo>();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		filtro.setIdTrabajo(idTrabajo);
 		Page page = trabajoDao.getPresupuestosTrabajo(filtro, usuarioLogado);
-
-		List<PresupuestoTrabajo> lista = (List<PresupuestoTrabajo>) page.getResults();
-		List<DtoPresupuestosTrabajo> presupuestos = new ArrayList<DtoPresupuestosTrabajo>();
-
-		for (PresupuestoTrabajo presupuesto : lista) {
-
-			DtoPresupuestosTrabajo presupuestoDto = presupuestoTrabajoToDto(presupuesto);
-			presupuestos.add(presupuestoDto);
+		
+		if(!Checks.esNulo(page)){
+			List<PresupuestoTrabajo> lista = (List<PresupuestoTrabajo>) page.getResults();
+			
+			for (PresupuestoTrabajo presupuesto : lista) {
+	
+				DtoPresupuestosTrabajo presupuestoDto = presupuestoTrabajoToDto(presupuesto);
+				presupuestos.add(presupuestoDto);
+			}
 		}
-
 		return new DtoPage(presupuestos, page.getTotalCount());
 	}
 

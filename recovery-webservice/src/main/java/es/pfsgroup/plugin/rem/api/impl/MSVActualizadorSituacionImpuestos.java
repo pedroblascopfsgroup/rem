@@ -47,7 +47,6 @@ public class MSVActualizadorSituacionImpuestos extends AbstractMSVActualizador i
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 
 		impuestosAdapter.updateImpuesto(new Long(exc.dameCelda(fila, 0)),  new String(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)),new String(exc.dameCelda(fila, 3)),new String(exc.dameCelda(fila, 4)));	

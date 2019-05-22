@@ -165,7 +165,11 @@ public class PromocionAdapter {
 	public FileItem download(Long id,String nombreDocumento) throws UserException,Exception {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
-		return dl.getFileItemPromocion(id,nombreDocumento);
+		FileItem result = dl.getFileItemPromocion(id,nombreDocumento);
+		if(result == null){
+			throw new UserException("El fichero no existe");
+		}
+		return result;
 	}
 
 }

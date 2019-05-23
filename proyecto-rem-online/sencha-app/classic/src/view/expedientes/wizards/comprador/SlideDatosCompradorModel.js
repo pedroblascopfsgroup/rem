@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel', {
-	extend: 'Ext.app.ViewModel',
+	extend: 'HreRem.view.common.DDViewModel',
 	alias: 'viewmodel.slidedatoscomprador',
 
 	data: {},
@@ -54,7 +54,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getComboMunicipio'
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaCodigo}'} 
 			}
 		},
 
@@ -119,7 +120,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getComboMunicipio'
+				remoteUrl: 'generic/getComboMunicipioSinFiltro'
 			}
 		}
 	}

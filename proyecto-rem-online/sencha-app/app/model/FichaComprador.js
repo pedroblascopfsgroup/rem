@@ -240,6 +240,9 @@ Ext.define('HreRem.model.FichaComprador', {
         {
         	name: 'pedirDoc',
         	type : 'boolean'
+        },
+        {
+        	name: 'relacionHre'
         }
 		
     ],

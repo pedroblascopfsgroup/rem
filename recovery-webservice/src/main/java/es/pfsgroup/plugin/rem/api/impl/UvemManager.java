@@ -1386,7 +1386,7 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPTOE83_INS.setCodigoDeOfertaHayacoofhx(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
 			// BINDRE
 			if (INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)) {
-				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('s');
+				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('S');
 			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)) {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
 			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_APLICA.equals(indicadorDevolucionReserva)) {

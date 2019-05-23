@@ -2864,6 +2864,35 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean isActivoMatriz(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_AGR_AGRUPACION AGR "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID "
+				+ "WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "AND AGR.BORRADO = 0 "
+				+ "AND AGR.AGR_FECHA_BAJA IS NULL "
+				+ "AND AGA.AGA_PRINCIPAL = 1"
+				+ "AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isUA(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_AGR_AGRUPACION AGR "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID "
+				+ "WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "AND AGR.BORRADO = 0"
+				+ "AND AGR.AGR_FECHA_BAJA IS NULL "
+				+ "AND AGA.AGA_PRINCIPAL = 0"
+				+ "AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
+		return !"0".equals(resultado);
+	}
+	
+	
+	@Override
 	public String getGestorComercialAlquilerByAgrupacion(String numAgrupacion){
 		String username = rawDao.getExecuteSQL("SELECT USU.USU_USERNAME "
 				+ "FROM GAC_GESTOR_ADD_ACTIVO GAC "

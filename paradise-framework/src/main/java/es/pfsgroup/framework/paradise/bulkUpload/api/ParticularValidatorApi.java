@@ -704,5 +704,19 @@ public interface ParticularValidatorApi {
 	Boolean isAgrupacionOfGiants(String numAgrupacion);
 
 	Boolean isActivoOfGiants(String numActivo);
+	
+	/**
+	 * @param numActivo
+	 * @return true si el activo es un activo Matriz de una PA
+	 * false si no lo es
+	 */
+	Boolean isActivoMatriz(String numActivo);
+	
+	/**
+	 * @param numActivo
+	 * @return true si el activo es una unidad alquilable de una PA
+	 * false si no lo es
+	 */
+	Boolean isUA(String numActivo);
 
 }

@@ -1518,11 +1518,9 @@ public class AgrupacionAdapter {
 					.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
 				
 				Long idActivoUA = activoAgrupacionActivo.getActivo().getId();
-				//TODO
 				String error = validarBajaActivosPA(activoAgrupacionActivo.getActivo());
 				if (Checks.esNulo(error)) {
 
-				
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivoUA);
 					Activo activoActual = activoAgrupacionActivo.getActivo();
 					PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
@@ -3514,7 +3512,7 @@ public class AgrupacionAdapter {
 
 		return error;
 	}
-	//TODO
+	
 	private String validarBajaActivosPA(Activo activo) {
 
 		String error = null;

@@ -3458,6 +3458,11 @@ public class AgrupacionAdapter {
 		dto.setOcupadoConTitulo(vCondicionantesAgrDisponibilidad.getOcupadoConTitulo());
 		dto.setTapiado(vCondicionantesAgrDisponibilidad.getTapiado());
 		dto.setOtro(vCondicionantesAgrDisponibilidad.getOtro());
+		if(!Checks.esNulo(vCondicionantesAgrDisponibilidad.getOtro())) {
+			dto.setComboOtro(1);
+		} else {
+			dto.setComboOtro(0);
+		}
 		dto.setEstadoCondicionadoCodigo(vCondicionantesAgrDisponibilidad.getEstadoCondicionadoCodigo());
 		dto.setPortalesExternos(vCondicionantesAgrDisponibilidad.getPortalesExternos());
 		dto.setOcupadoSinTitulo(vCondicionantesAgrDisponibilidad.getOcupadoSinTitulo());

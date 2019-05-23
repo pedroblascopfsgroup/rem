@@ -79,18 +79,17 @@ BEGIN
                                                           revision,
                                                           procedimiento_judicial,
                                                           con_cargas,
-							                                sin_acceso,
+							                              sin_acceso,
                                                           ocupado_sintitulo,
                                                           estado_portal_externo,
                                                           es_condicionado,
                                                           est_disp_com_codigo,
-														  es_condicionado_publi,
                                                           borrado
                                                          )
 AS
    SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro, combo_otro,
           sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo1, ''01'', 1, 0) AS es_condicionado,
-          est_disp_com_codigo2,es_condicionado_publi,borrado
+          est_disp_com_codigo2,borrado
 
      FROM (SELECT act.act_id, 
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) 
@@ -141,12 +140,7 @@ AS
 						   OR NVL2 (vcg.con_cargas, vcg.con_cargas, 0) = 1
 					THEN ''01''
                     ELSE ''02''
-                  END AS est_disp_com_codigo1,
-
-			      CASE 
-					WHEN (sps1.sps_ocupado = 1 OR sps1.sps_acc_tapiado = 1) THEN 1 
-						ELSE 0 
-					END as es_condicionado_publi,	
+                  END AS est_disp_com_codigo1,	
                   vact.est_disp_com_codigo as est_disp_com_codigo2,
                   0 AS borrado
 
@@ -173,7 +167,7 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.vi_activos_con_cargas vcg ON vcg.act_id = act.act_id
                   LEFT JOIN '||V_ESQUEMA||'.act_ico_info_comercial ico ON ico.act_id = act.act_id
                   LEFT JOIN '||V_ESQUEMA||'.vi_estado_actual_infmed vei ON vei.ico_id = ico.ico_id                                                                                          --SIN_INFORME_APROBADO
-            LEFT JOIN '||V_ESQUEMA||'.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id
+            	  LEFT JOIN '||V_ESQUEMA||'.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id
             WHERE act.borrado = 0)
           ';
 

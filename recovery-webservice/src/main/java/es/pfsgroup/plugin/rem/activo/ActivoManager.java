@@ -1505,15 +1505,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return true;
 	}
 	
+	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean deleteValoracionPrecio(Long id) {
-		return deleteValoracionPrecioConGuardadoEnHistorico(id, true);
-	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico) {
+	public boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico,  Boolean comprobarGestor) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		ActivoValoraciones activoValoracion = genericDao.get(ActivoValoraciones.class, filtro);
 

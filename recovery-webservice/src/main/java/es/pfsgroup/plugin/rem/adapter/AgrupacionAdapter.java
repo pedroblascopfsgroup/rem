@@ -1518,33 +1518,42 @@ public class AgrupacionAdapter {
 					.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
 				
 				Long idActivoUA = activoAgrupacionActivo.getActivo().getId();
-				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivoUA);
-				Activo activoActual = activoAgrupacionActivo.getActivo();
-				PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
-				ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
-				
-				if(!Checks.esNulo(activoPatrimonio)) {
-					activoPatrimonio.setCheckHPM(false);
-					
-				}
-				
-				if (!Checks.esNulo(perimetroActivo)) {
-					perimetroActivo.setActivo(activoActual);
-					perimetroActivo.setIncluidoEnPerimetro(0);
-					perimetroActivo.setAplicaTramiteAdmision(0);
-					perimetroActivo.setAplicaGestion(0);
-					perimetroActivo.setAplicaAsignarMediador(0);
-					perimetroActivo.setAplicaComercializar(0);
-					perimetroActivo.setAplicaFormalizar(0);
-					perimetroActivo.setAplicaPublicar(false);
-					
-					genericDao.save(PerimetroActivo.class, perimetroActivo);
-				}
+				//TODO
+				String error = validarBajaActivosPA(activoAgrupacionActivo.getActivo());
+				if (Checks.esNulo(error)) {
 
-					activoAgrupacionActivo.getAuditoria().setBorrado(true);
-					activoAgrupacionActivo.getAuditoria().setFechaBorrar(new Date());
-					activoAgrupacionActivo.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
-					activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+				
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivoUA);
+					Activo activoActual = activoAgrupacionActivo.getActivo();
+					PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
+					ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+					
+					if(!Checks.esNulo(activoPatrimonio)) {
+						activoPatrimonio.setCheckHPM(false);
+						
+					}
+					
+					if (!Checks.esNulo(perimetroActivo)) {
+						perimetroActivo.setActivo(activoActual);
+						perimetroActivo.setIncluidoEnPerimetro(0);
+						perimetroActivo.setAplicaTramiteAdmision(0);
+						perimetroActivo.setAplicaGestion(0);
+						perimetroActivo.setAplicaAsignarMediador(0);
+						perimetroActivo.setAplicaComercializar(0);
+						perimetroActivo.setAplicaFormalizar(0);
+						perimetroActivo.setAplicaPublicar(false);
+						
+						genericDao.save(PerimetroActivo.class, perimetroActivo);
+					}
+	
+						activoAgrupacionActivo.getAuditoria().setBorrado(true);
+						activoAgrupacionActivo.getAuditoria().setFechaBorrar(new Date());
+						activoAgrupacionActivo.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+						activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+				}
+				else {
+					throw new JsonViewerException(error);
+				}
 			}
 			else {
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
@@ -3505,6 +3514,20 @@ public class AgrupacionAdapter {
 
 		return error;
 	}
+	//TODO
+	private String validarBajaActivosPA(Activo activo) {
+
+		String error = null;
+
+			if (activoDao.activoUAsconOfertasVivas(activo.getId())) {
+				error = EXISTEN_UAS_CON_OFERTAS_VIVAS;
+			}else if (activoDao.activoUAsconTrabajos(activo.getId())) {
+				error = EXISTEN_UAS_CON_TRABAJOS_NO_FINALIZADOS;
+			}
+				
+		return error;
+	}
+	
 
 	public List<ActivoFoto> getFotosActivosAgrupacionById(Long id) {
 

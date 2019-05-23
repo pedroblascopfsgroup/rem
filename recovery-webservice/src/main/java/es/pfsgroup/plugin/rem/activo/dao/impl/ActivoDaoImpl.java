@@ -1399,6 +1399,40 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				"				INNER JOIN REM01.V_BUSQUEDA_TRAMITES_ACTIVO VBTA ON aga.ACT_ID = VBTA.ACT_ID  " + 
 				"				WHERE aga.AGR_ID = "+ idAgrupacion 
 				+"				AND VBTA.ESTADO_CODIGO NOT IN ('04','05','11')";
+
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+		
+	}
+	
+	@Override
+	public boolean activoUAsconOfertasVivas(Long idActivo) {   
+		String sql = " SELECT count(1)      " 
+	+			"				 FROM ACT_OFR  actOfr      " 
+	+			"				 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID      " 
+	+			"				 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID      " 
+	+			"				 INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID      " 
+	+			"				 WHERE  act.ACT_ID =    "	+idActivo
+	+			"                AND eco.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN ('02','03','08')) " 
+	+			"				 AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')      " 
+	+			"				 AND act.DD_TTA_ID  = ( SELECT DD_TTA_ID FROM DD_TTA_TIPO_TITULO_ACTIVO WHERE DD_TTA_CODIGO = '05') ";
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;  
+		}
+		return false;
+		
+	}
+	
+	@Override
+	public boolean activoUAsconTrabajos(Long idActivo) {
+		String sql = "          SELECT count(*)  " + 
+				"				FROM REM01.V_BUSQUEDA_TRAMITES_ACTIVO VBTA   " + 
+				"				WHERE VBTA.ACT_ID = "+ idActivo +
+				"				AND VBTA.ESTADO_CODIGO NOT IN ('04','05','11')";
 		
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;

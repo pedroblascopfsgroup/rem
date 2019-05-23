@@ -280,4 +280,16 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Boolean checkOTrabajosVivosAgrupacion(Long idAgrupacion);
 
 	List<Object[]> getTrabajosUa(Long idAM, Long idUA);
+	/**
+	 * Comprueba en un activo si tiene trabajos vivos.
+	 * @param idActivo
+	 * @return boolean true or false
+	 */
+	boolean activoUAsconTrabajos(Long idActivo);
+	/**
+	 * Comprueba en un activo si tiene ofertas vivas.
+	 * @param idActivo
+	 * @return boolean true or false
+	 */
+	boolean activoUAsconOfertasVivas(Long idActivo);
 }

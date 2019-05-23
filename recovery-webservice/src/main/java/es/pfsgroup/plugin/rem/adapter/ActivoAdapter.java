@@ -3440,10 +3440,16 @@ public class ActivoAdapter {
 			clienteComercial.setTipoDocumento(tipoDocumento);
 			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
 			clienteComercial.setIdClienteRem(clcremid);
-
+ 
 			if (!Checks.esNulo(dto.getTipoPersona())) {
-				DDTiposPersona tipoPersona = (DDTiposPersona) genericDao.get(DDTiposPersona.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoPersona()));
+				//Fleco malformación en envio de datos. 
+				String tipo = "";
+				if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(dto.getTipoPersona()) || ("01").equals(dto.getTipoPersona()))
+						tipo = DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA;
+				else if (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(dto.getTipoPersona()) || ("02").equals(dto.getTipoPersona()))
+						tipo = DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA;
+				DDTiposPersona tipoPersona = genericDao.get(DDTiposPersona.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", tipo));
 				if (!Checks.esNulo(tipoPersona)) {
 					clienteComercial.setTipoPersona(tipoPersona);
 				}

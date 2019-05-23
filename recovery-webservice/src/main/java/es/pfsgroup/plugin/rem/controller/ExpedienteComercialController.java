@@ -608,13 +608,15 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		try {
 			
-			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
-
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
-			String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
-			model.put("errores", errores);
-			model.put(RESPONSE_SUCCESS_KEY, errores == null);
+			if(!Checks.esNulo(docCliente)) {
+				String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
+	
+				WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+	
+				String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
+				model.put("errores", errores);
+				model.put(RESPONSE_SUCCESS_KEY, errores == null);
+			}
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errores", e.getMessage());

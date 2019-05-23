@@ -72,6 +72,15 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeGastoTrabajo(String numTrabajo);
 	
+	Boolean existeSubtrabajo(String codSubtrabajo);
+	
+	Boolean compararNumeroFilasTrabajo(String numTrabajo, int numeroFilas);
+		
+	Boolean existeTipoTarifa(String tipoTarifa);
+	
+	Boolean tipoTarifaValido(String tipoTarifa, String numTrabajo);
+	
+	
 
 	/**
 	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja

@@ -2848,9 +2848,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		WHERE TBJ_NUM_TRABAJO = "+numTrabajo+""
 				+"		AND BORRADO= 0");
 		
-		return !"0".equals(resultado);
+		return !"1".equals(resultado);
+		
 	}
-
+	
+	@Override
+	public Boolean existeSubtrabajo(String codSubtrabajo) {
+		if(Checks.esNulo(codSubtrabajo))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM DD_STR_SUBTIPO_TRABAJO"
+				+"		WHERE DD_STR_ID = "+codSubtrabajo+""
+				+"		AND BORRADO= 0");
+		
+		return "0".equals(resultado);
+	}
+	
 	@Override
 	public Boolean existeGastoTrabajo(String numTrabajo) {
 		if(Checks.esNulo(numTrabajo))
@@ -2860,7 +2874,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " CASE WHEN ( "
 				+ "		SELECT COUNT(*)	"
 				+ "		FROM ACT_TBJ_TRABAJO TBJ "
-				+ "		INNER JOIN GPV_TBJ GPTB ON GPTB.TBJ_ID=TBJ.TBJ_ID"
+				+ "		INNER JOIN GPV_TBJ GPTB ON GPTB.TBJ_ID=TBJ.TBJ_ID AND GPTB.BORRADO=0"
 				+ " 	WHERE TBJ.TBJ_NUM_TRABAJO = " + numTrabajo + " 	AND TBJ.BORRADO=0 "
 				+ "		GROUP BY TBJ.TBJ_NUM_TRABAJO"
 				+ "	) is null THEN 0"
@@ -3027,6 +3041,57 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
+	public Boolean compararNumeroFilasTrabajo(String numTrabajo, int numeroFilas) {
+		if(Checks.esNulo(numTrabajo))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT CASE WHEN numeroTarifas = " + numeroFilas + " THEN 1"
+				+"		ELSE 0 END"		
+				+"		FROM("
+				+"		SELECT COUNT(*) numeroTarifas "
+				+"		FROM REM01.ACT_TCT_TRABAJO_CFGTARIFA  TCT"
+				+"		INNER JOIN REM01.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID=TCT.TBJ_ID AND TBJ.BORRADO=0 AND TBJ.TBJ_NUM_TRABAJO=  "+ numTrabajo
+				+"		WHERE TCT.BORRADO=0"
+				+"		GROUP BY TBJ.TBJ_NUM_TRABAJO)");
+		
+		return !"1".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeTipoTarifa(String tipoTarifa) {
+		if(Checks.esNulo(tipoTarifa))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+"		FROM DD_TTF_TIPO_TARIFA"		
+				+"		WHERE BORRADO=0"
+				+"		AND DD_TTF_CODIGO = "+ "'"+ tipoTarifa +"'"
+				+"		GROUP BY DD_TTF_CODIGO");
+		
+		return !"1".equals(resultado);
+	}
+
+	@Override
+	public Boolean tipoTarifaValido(String tipoTarifa, String numTrabajo) {
+		if(Checks.esNulo(tipoTarifa))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT"
+				+"		CASE WHEN("		
+				+"		SELECT COUNT(*) cuentaTipos"
+				+"		FROM ACT_TBJ_TRABAJO TBJ"
+				+"		INNER JOIN ACT_TCT_TRABAJO_CFGTARIFA TCT ON TCT.TBJ_ID=TBJ.TBJ_ID AND TCT.BORRADO=0"
+				+"		INNER JOIN ACT_CFT_CONFIG_TARIFA CFT ON CFT.CFT_ID=TCT.CFT_ID AND CFT.BORRADO=0"
+				+"		INNER JOIN REM01.DD_TTF_TIPO_TARIFA TTF ON TTF.DD_TTF_ID=CFT.DD_TTF_ID AND TTF.BORRADO=0 AND TTF.DD_TTF_CODIGO = "+ "'"+ tipoTarifa +"'"
+				+"		WHERE TBJ.TBJ_NUM_TRABAJO="+numTrabajo+""
+				+"		GROUP BY TTF.DD_TTF_CODIGO)  IS NULL THEN 0"
+				+"		ELSE 1"
+				+"		END"
+				+"		FROM dual");
+		
+		return !"1".equals(resultado);
+	}
+
 	public Boolean existeExpedienteFormalizacion(String numExpediente){
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
@@ -3099,6 +3164,5 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" WHERE ECO.ECO_NUM_EXPEDIENTE = '" +numExpedienteComercial +"' AND SCM.DD_SCM_CODIGO = '05' AND ECO.BORRADO = 0");
 		return "0".equals(resultado);
 	}
-	
 }
 

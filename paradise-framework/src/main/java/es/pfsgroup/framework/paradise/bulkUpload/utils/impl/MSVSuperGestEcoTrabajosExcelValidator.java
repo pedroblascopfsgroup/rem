@@ -8,8 +8,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -45,9 +47,19 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 	
 	private static final String TRABAJO_NO_EXISTE = "msg.error.masivo.trabajo.no.existe";
 	private static final String TRABAJO_TIENE_GASTOS = "msg.error.masivo.trabajo.tiene.gastos";
-	private static final String IMPORTE_TOTAL_VALOR_INVALIDO= "msg.error.masivo.importe.total.valor.invalido"; 
+	private static final String SUBTIPO_TRABAJO_NO_EXISTE = "msg.error.masivo.subtipo.trabajo.no.existe";
+	private static final String SUBTIPO_TRABAJO_NO_INDICADO = "msg.error.masivo.subtipo.trabajo.no.indicado";
 	private static final String PRECIO_UNITARIO_VALOR_INVALIDO = "msg.error.masivo.precio.unitario.valor.invalido";
+	private static final String IMPORTE_TOTAL_VALOR_INVALIDO= "msg.error.masivo.importe.total.valor.invalido"; 
+	private static final String IMPORTE_TOTAL_INCORRECTO = "msg.error.masivo.importe.total.incorrecto";
+	private static final String SUMATORIO_IMPORTE_TOTAL_INCORRECTO = "msg.error.masivo.sumatorio.importe.total.incorrecto";
 	private static final String SUMATORIO_IMPORTE_TOTAL_VALOR_INVALIDO = "msg.error.masivo.sumatorio.importe.total.valor.invalido";
+	private static final String ORDEN_TRABAJOS_INCORRECTO = "msg.error.masivo.orden.trabajos.incorrecto";
+	private static final String TIPO_TARIFA_NO_EXISTE = "msg.error.masivo.tipo.tarifa.no.existe";
+	private static final String TIPO_TARIFA_INVALIDO = "msg.error.masivo.tipo.tarifa.invalido";
+	private static final String TRABAJO_TARIFADO = "msg.error.masivo.orden.trabajo.tarifado";
+
+
 	
 	
 	
@@ -56,9 +68,12 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		static final int DATOS_PRIMERA_FILA = 1;
 		
 		static final int COL_NUM_TRABAJO = 0;
-		static final int COL_PRECIO_UNITARIO = 1;
-		static final int COL_IMPORTE_TOTAL = 2;
-		static final int COL_SUMATORIO_IMPORTE_TOTAL = 3;	
+		static final int COL_SUBTIPO_TRABAJO = 1;
+		static final int COL_TIPO_TARIFA = 2;
+		static final int COL_PRECIO_UNITARIO = 3;
+		static final int COL_MEDICION = 4;
+		static final int COL_IMPORTE_TOTAL = 5;
+		static final int COL_SUMATORIO_IMPORTE_TOTAL = 6;	
 	}
 
 
@@ -84,6 +99,10 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 	private MSVBusinessValidationFactory validationFactory;
 	
 	private Integer numFilasHoja;
+	
+	private double sumImporteTotal=0;
+	
+	private int contadorFilas=0;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -114,17 +133,34 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 
+			mapaErrores.put(messageServices.getMessage(ORDEN_TRABAJOS_INCORRECTO), isInvalidOrder(exc));
 			mapaErrores.put(messageServices.getMessage(TRABAJO_NO_EXISTE), isWorkNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(TRABAJO_TIENE_GASTOS), isWorkHaveExpensesRows(exc));
+			mapaErrores.put(messageServices.getMessage(TRABAJO_TARIFADO), incorrectNumberOfRate(exc));
+			mapaErrores.put(messageServices.getMessage(SUBTIPO_TRABAJO_NO_EXISTE), isSubWorkNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(SUBTIPO_TRABAJO_NO_INDICADO), isSubWorkNullRows(exc));
 			mapaErrores.put(messageServices.getMessage(PRECIO_UNITARIO_VALOR_INVALIDO), isNumberRows(exc,COL_NUM.COL_PRECIO_UNITARIO));
+			mapaErrores.put(messageServices.getMessage(IMPORTE_TOTAL_INCORRECTO), importeTotalisValidRow(exc));
 			mapaErrores.put(messageServices.getMessage(IMPORTE_TOTAL_VALOR_INVALIDO), isNumberRows(exc,COL_NUM.COL_IMPORTE_TOTAL));
 			mapaErrores.put(messageServices.getMessage(SUMATORIO_IMPORTE_TOTAL_VALOR_INVALIDO), isNumberRows(exc,COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL));
+			mapaErrores.put(messageServices.getMessage(SUMATORIO_IMPORTE_TOTAL_INCORRECTO), summationIncorrect(exc));
+			mapaErrores.put(messageServices.getMessage(TIPO_TARIFA_INVALIDO), tipeOfRateValid(exc));
+			mapaErrores.put(messageServices.getMessage(TIPO_TARIFA_NO_EXISTE), tipeOfRateExists(exc));
 			
 			if (!mapaErrores.get(messageServices.getMessage(TRABAJO_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(TRABAJO_TIENE_GASTOS)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(SUBTIPO_TRABAJO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(SUBTIPO_TRABAJO_NO_INDICADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(IMPORTE_TOTAL_VALOR_INVALIDO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(TRABAJO_TARIFADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(PRECIO_UNITARIO_VALOR_INVALIDO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(SUMATORIO_IMPORTE_TOTAL_VALOR_INVALIDO)).isEmpty())
+					|| !mapaErrores.get(messageServices.getMessage(SUMATORIO_IMPORTE_TOTAL_VALOR_INVALIDO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ORDEN_TRABAJOS_INCORRECTO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(SUMATORIO_IMPORTE_TOTAL_INCORRECTO)).isEmpty()
+				    || !mapaErrores.get(messageServices.getMessage(TIPO_TARIFA_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(IMPORTE_TOTAL_INCORRECTO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(TIPO_TARIFA_INVALIDO)).isEmpty())
+
 			{
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());	
@@ -177,6 +213,38 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 	}
 		
 	
+	private List<Integer> isInvalidOrder(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		List<Long> trabajos = new ArrayList<Long>();
+
+		try{
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				
+				try {
+					if(trabajos.size()!=0) {
+						if(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)) != trabajos.get(trabajos.size()- 1) && trabajos.contains(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)))) {
+							listaFilas.add(i);
+						}else {
+							trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
+						}
+							
+					 }else {
+						 trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
+						}
+					
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
 	
 	private List<Integer> isWorkNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
@@ -184,7 +252,7 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!particularValidator.existeTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)))
+					if(particularValidator.existeTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -200,6 +268,7 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		return listaFilas;
 	}
 	
+	
 	private List<Integer> isWorkHaveExpensesRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
@@ -208,6 +277,151 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 				try {
 					if(particularValidator.existeGastoTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)))
 						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> incorrectNumberOfRate(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		List<Long> trabajos = new ArrayList<Long>();
+
+		try{
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				
+				try {
+					if(trabajos.size()!=0) {
+						if(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)) == trabajos.get(trabajos.size() - 1)) {
+							contadorFilas ++;
+							if(i == (this.numFilasHoja -1)) {
+								if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),contadorFilas)) {
+									listaFilas.add(i);
+							}	
+								
+							}
+						}else {
+							contadorFilas =1;
+							trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
+							if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
+								if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i-1, COL_NUM.COL_NUM_TRABAJO),contadorFilas)) {
+								listaFilas.add(i);
+								}
+							}
+						}	
+					}else {
+						contadorFilas =1;
+						trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
+						if(i == this.numFilasHoja) {
+							if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),contadorFilas)) {
+								listaFilas.add(i);
+							}	
+						}
+					}
+					
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> isSubWorkNotExistsRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
+						if(particularValidator.existeSubtrabajo(exc.dameCelda(i, COL_NUM.COL_SUBTIPO_TRABAJO)))
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> tipeOfRateValid(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(particularValidator.tipoTarifaValido(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA),exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> tipeOfRateExists(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(particularValidator.existeTipoTarifa(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	
+	
+	private List<Integer> isSubWorkNullRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();				
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
+						if(exc.dameCelda(i, COL_NUM.COL_SUBTIPO_TRABAJO)== null) {
+								listaFilas.add(i);
+							}
+					}	
+		
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
@@ -240,7 +454,7 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 						? Double.parseDouble(value) : null;
 
 				// Si el precio no es un número válido.
-				if ((!Checks.esNulo(precio) && precio.isNaN()))
+				if ((!Checks.esNulo(precio) && precio.isNaN()) || precio < 0)
 					listaFilas.add(i);
 			} catch (NumberFormatException e) {
 				logger.error(e.getMessage(),e);
@@ -259,16 +473,66 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 
 		return listaFilas;
 	}
-			
 	
-/*	private List<Integer> isNumberRows(MSVHojaExcel exc,int columna){
+	private List<Integer> summationIncorrect(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
+		List<Long> trabajos = new ArrayList<Long>();
+		List<Integer> filasSumatorio = new ArrayList<Integer>();
 		
 		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {					
-					if(!StringUtils.isNumeric(exc.dameCelda(i,columna)) ||  Double.parseDouble(exc.dameCelda(i,columna)) < 0 || getLegnthDecimal(exc.dameCelda(i,columna)) == 3)
-						listaFilas.add(i);
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				
+				try {
+					if(trabajos.size()!=0) {
+						if(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)) == trabajos.get(trabajos.size()-1)) {
+							sumImporteTotal = Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) + sumImporteTotal;
+							filasSumatorio.add(i);							
+						}else {		
+							
+							trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
+							
+							  for (int x = 0; x < filasSumatorio.size(); x++) {
+								  
+								  if(Double.parseDouble(exc.dameCelda(filasSumatorio.get(x), COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != sumImporteTotal){
+										listaFilas.add(x+1);
+									}
+								  
+							  }
+						      
+							  sumImporteTotal = Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL));
+							  filasSumatorio.clear();
+							  
+							  if(this.numFilasHoja == i+1) {
+								  if(Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) ) {
+										listaFilas.add(i);
+									}
+							  }else {
+								  if(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)) != trabajos.get(trabajos.size()+1)) {
+									  if(Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) ) {
+											listaFilas.add(i);
+										}
+								  }else {
+									  filasSumatorio.add(i);
+								  }
+							  }
+								
+						}
+					
+					}else {
+						
+						trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
+						sumImporteTotal = Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL));
+						
+						if(this.numFilasHoja <= 2) {
+							if(Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) ) {
+								listaFilas.add(i);
+							}
+						}else {
+							filasSumatorio.add(i);
+						}
+
+					}
+					
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
@@ -281,8 +545,31 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 				e.printStackTrace();
 			}
 		return listaFilas;
+	}
+	
+	
+	private List<Integer> importeTotalisValidRow(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
 		
-	}*/
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) != Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_PRECIO_UNITARIO)) * Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_MEDICION))) {
+						listaFilas.add(i);
+						}						
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
 		
 	private File recuperarPlantilla(Long idTipoOperacion)  {
 		try {

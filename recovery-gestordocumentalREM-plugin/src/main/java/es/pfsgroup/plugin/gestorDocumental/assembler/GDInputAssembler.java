@@ -71,11 +71,11 @@ public class GDInputAssembler {
 	private static Parameters getParametersCrearPersona(PersonaInputDto inputDto) {
 		ProcessEventRequestType.Parameters parameters = new Parameters();
 		if(PersonaInputDto.EVENTO_ALTA_PERSONA.equals(inputDto.getEvent())) {
-			parameters.getParameter().add(getCliente(inputDto.getIdCliente()));
+			parameters.getParameter().add(getIdClientePersona(inputDto.getIdCliente()));
 			parameters.getParameter().add(getIdPersonaOrigen(inputDto.getIdPersonaOrigen()));
-			parameters.getParameter().add(getMotivoOperation(inputDto.getIdMotivoOperacion()));
-			parameters.getParameter().add(getOrigen(inputDto.getIdOrigen()));
-			parameters.getParameter().add(getFechaOperation(inputDto.getFechaOperacion()));
+			parameters.getParameter().add(getMotivoOperacionPersona(inputDto.getIdMotivoOperacion()));
+			parameters.getParameter().add(getIdOrigenPersona(inputDto.getIdOrigen()));
+			parameters.getParameter().add(getFechaOperacionPersona(inputDto.getFechaOperacion()));
 			parameters.getParameter().add(getTipoIdentificador(inputDto.getIdTipoIdentificador()));
 			parameters.getParameter().add(getRol(inputDto.getIdRol()));
 		}
@@ -98,7 +98,7 @@ public class GDInputAssembler {
 		return intervinienteHaya;
 	}
 	
-	private static KeyValuePair getIdCliente(String idCliente) {
+	private static KeyValuePair getIdClientePersona(String idCliente) {
 		KeyValuePair cliente = new KeyValuePair();
 		cliente.setCode(PersonaInputDto.ID_CLIENTE);
 		cliente.setFormat(PersonaInputDto.FORMATO_STRING);
@@ -114,7 +114,7 @@ public class GDInputAssembler {
 		return personaOrigen;
 	}
 	
-	private static KeyValuePair getMotivoOperacion(String idMotivoOperacion) {
+	private static KeyValuePair getMotivoOperacionPersona(String idMotivoOperacion) {
 		KeyValuePair motivoOperacion = new KeyValuePair();
 		motivoOperacion.setCode(PersonaInputDto.ID_MOTIVO_OPERACION);
 		motivoOperacion.setFormat(PersonaInputDto.FORMATO_STRING);
@@ -122,7 +122,7 @@ public class GDInputAssembler {
 		return motivoOperacion;
 	}
 	
-	private static KeyValuePair getIdOrigen(String idOrigen) {
+	private static KeyValuePair getIdOrigenPersona(String idOrigen) {
 		KeyValuePair origen = new KeyValuePair();
 		origen.setCode(PersonaInputDto.ID_ORIGEN_PERSONA);
 		origen.setFormat(PersonaInputDto.FORMATO_STRING);
@@ -130,7 +130,7 @@ public class GDInputAssembler {
 		return origen;
 	}
 	
-	private static KeyValuePair getFechaOperacion(String idFechaOperacion) {
+	private static KeyValuePair getFechaOperacionPersona(String idFechaOperacion) {
 		KeyValuePair fechaOperacion = new KeyValuePair();
 		fechaOperacion.setCode(PersonaInputDto.FECHA_OPERACION);
 		fechaOperacion.setFormat(PersonaInputDto.FORMATO_STRING);
@@ -163,13 +163,13 @@ public class GDInputAssembler {
 		if(ActivoInputDto.EVENTO_ALTA_ACTIVOS.equals(inputDto.getEvent())) {
 			parameters.getParameter().add(getIdHayaActivoMatriz(inputDto.getIdActivoMatriz()));
 			parameters.getParameter().add(getnumRemActivoMatriz(inputDto.getNumRemActivoMatriz()));
-			parameters.getParameter().add(getIdCliente(inputDto.getIdCliente()));
+			parameters.getParameter().add(getClienteActivo(inputDto.getIdCliente()));
 			parameters.getParameter().add(getIdUnidadAlquilable(inputDto.getIdUnidadAlquilable()));
-			parameters.getParameter().add(getFechaOperacion(inputDto.getFechaOperacion()));
+			parameters.getParameter().add(getFechaOperationActivo(inputDto.getFechaOperacion()));
 			parameters.getParameter().add(getTipoActivo(inputDto.getTipoActivo()));
-			parameters.getParameter().add(getIdOrigen(inputDto.getOrigen()));
+			parameters.getParameter().add(getOrigenActivo(inputDto.getOrigen()));
 			parameters.getParameter().add(getFlagMultiplicidad(inputDto.getFlagMultiplicidad()));
-			parameters.getParameter().add(getMotivoOperacion(inputDto.getMotivoOperacion()));
+			parameters.getParameter().add(getMotivoOperationActivo(inputDto.getMotivoOperacion()));
 			parameters.getParameter().add(getClaseActivo(null));
 			parameters.getParameter().add(getIdActivoCliente(null));
 			parameters.getParameter().add(getIdActivoOrigenReds(null));
@@ -195,7 +195,7 @@ public class GDInputAssembler {
 		return numActivoMatriz;
 	}
 	
-	private static KeyValuePair getCliente(String idCliente) {
+	private static KeyValuePair getClienteActivo(String idCliente) {
 		KeyValuePair cliente = new KeyValuePair();
 		cliente.setCode(ActivoInputDto.ID_CLIENTE_ACTIVO_MATRIZ);
 		cliente.setFormat(ActivoInputDto.FORMATO_STRING);
@@ -211,7 +211,7 @@ public class GDInputAssembler {
 		return numUnidadAlquilable;
 	}
 	
-	private static KeyValuePair getFechaOperation(String fecha) {
+	private static KeyValuePair getFechaOperationActivo(String fecha) {
 		KeyValuePair fechaOperacion = new KeyValuePair();
 		fechaOperacion.setCode(ActivoInputDto.FC_ALTA);
 		fechaOperacion.setFormat(ActivoInputDto.FORMATO_STRING);
@@ -228,7 +228,7 @@ public class GDInputAssembler {
 	}
 	
 	
-	private static KeyValuePair getOrigen(String idOrigen) {
+	private static KeyValuePair getOrigenActivo(String idOrigen) {
 		KeyValuePair origen = new KeyValuePair();
 		origen.setCode(ActivoInputDto.REM);
 		origen.setFormat(ActivoInputDto.FORMATO_STRING);
@@ -250,7 +250,7 @@ public class GDInputAssembler {
 		return multiplicidad;
 	}
 	
-	private static KeyValuePair getMotivoOperation(String motivo) {
+	private static KeyValuePair getMotivoOperationActivo(String motivo) {
 		KeyValuePair operacion = new KeyValuePair();
 		operacion.setCode(ActivoInputDto.MOTIVO_OPERACION);
 		operacion.setFormat(ActivoInputDto.FORMATO_STRING);

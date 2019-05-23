@@ -32,6 +32,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 	private static final String WEB_SERVICE_UNIDADES = "MAESTRO_UNIDADES";
 	private static final String WEB_SERVICE_NAME = "wsWS";
 	private static final String SIMULACRO = "simulacion";
+	private static final String ERROR_ALTA_ACTIVO = "Error procesando el alta";
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Override
@@ -70,7 +71,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 				logger.info("servicePort");
 				output = servicePort.processEvent(input);
 				
-				logger.info("WS invocado! Valores de respuesta del MAESTRO: ");					
+				logger.error("WS invocado! Valores de respuesta del MAESTRO: ");					
 				if (!Checks.esNulo(output) 
 				&& !Checks.esNulo(output.getParameters()) 
 				&& !Checks.estaVacio(output.getParameters().getParameter()) 
@@ -88,8 +89,13 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 					return GDPersonaOutputAssembler.outputToDtoPersona(output);
 				
 				else if (dto instanceof ActivoInputDto)
+					if (ERROR_ALTA_ACTIVO.equals(output.getResultDescription())) {
+						logger.error(ERROR_ALTA_ACTIVO);
+						return null;
+					}else {
+						return GDActivoOutputAssembler.outputToDtoActivo(output);	
+					}
 					
-					return GDActivoOutputAssembler.outputToDtoActivo(output);
 			}else {
 				
 				logger.info("Se generan valores de prueba");

@@ -681,7 +681,7 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deletePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 		try {
-			boolean success = activoApi.deleteValoracionPrecio(precioVigenteDto.getIdPrecioVigente());
+			boolean success = activoApi.deleteValoracionPrecioConGuardadoEnHistorico(precioVigenteDto.getIdPrecioVigente(), true,true);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -696,7 +696,7 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deletePrecioVigenteSinGuardadoHistorico(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 		try {
-			boolean success = activoApi.deleteValoracionPrecioConGuardadoEnHistorico(precioVigenteDto.getIdPrecioVigente(), false);
+			boolean success = activoApi.deleteValoracionPrecioConGuardadoEnHistorico(precioVigenteDto.getIdPrecioVigente(), false,true);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {

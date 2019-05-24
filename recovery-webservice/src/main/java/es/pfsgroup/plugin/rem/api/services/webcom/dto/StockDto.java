@@ -322,28 +322,25 @@ public class StockDto implements WebcomRESTDto{
 	
 	//HREOS-6082
 	@WebcomRequired
-	private BooleanDataType esActivoMatrizPA;
+	private BooleanDataType esActivoMatrizPa;
 	
 	@WebcomRequired
-	private LongDataType idActivoHayaPA;
+	private LongDataType idActivoHayaPa;
 	
 	@WebcomRequired
-	private LongDataType codigoAgrupacionPA;
+	private LongDataType codigoAgrupacionPa;
 	
 	@WebcomRequired
-	private LongDataType codigoCabeceraPA;
+	private LongDataType codigoCabeceraPa;
 	
 	@WebcomRequired
-	@MappedColumn("NOMBRE_GMO")
-	private StringDataType nombreGMO;
+	private StringDataType nombreGmo;
 	
 	@WebcomRequired
-	@MappedColumn("TELEFONO_GMO")
-	private StringDataType telefonoGMO;
+	private StringDataType telefonoGmo;
 	
 	@WebcomRequired
-	@MappedColumn("EMAIL_GMO")
-	private StringDataType emailGMO;
+	private StringDataType emailGmo;
 
 	@WebcomRequired
 	private StringDataType codTipoAlquiler;
@@ -937,28 +934,46 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodigoAgrupacionComercialRem(LongDataType codigoAgrupacionComercialRem) {
 		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
 	}
-	public BooleanDataType getEsActivoMatrizPA() {
-		return esActivoMatrizPA;
+	public BooleanDataType getEsActivoMatrizPa() {
+		return esActivoMatrizPa;
 	}
-	public void setEsActivoMatrizPA(BooleanDataType esActivoMatrizPA) {
-		this.esActivoMatrizPA = esActivoMatrizPA;
+	public void setEsActivoMatrizPa(BooleanDataType esActivoMatrizPa) {
+		this.esActivoMatrizPa = esActivoMatrizPa;
 	}
-	public LongDataType getIdActivoHayaPA() {
-		return idActivoHayaPA;
+	public LongDataType getIdActivoHayaPa() {
+		return idActivoHayaPa;
 	}
-	public void setIdActivoHayaPA(LongDataType idActivoHayaPA) {
-		this.idActivoHayaPA = idActivoHayaPA;
+	public void setIdActivoHayaPa(LongDataType idActivoHayaPa) {
+		this.idActivoHayaPa = idActivoHayaPa;
 	}
-	public LongDataType getCodigoAgrupacionPA() {
-		return codigoAgrupacionPA;
+	public LongDataType getCodigoAgrupacionPa() {
+		return codigoAgrupacionPa;
 	}
-	public void setCodigoAgrupacionPA(LongDataType codigoAgrupacionPA) {
-		this.codigoAgrupacionPA = codigoAgrupacionPA;
+	public void setCodigoAgrupacionPa(LongDataType codigoAgrupacionPa) {
+		this.codigoAgrupacionPa = codigoAgrupacionPa;
 	}
-	public LongDataType getCodigoCabeceraPA() {
-		return codigoCabeceraPA;
+	public LongDataType getCodigoCabeceraPa() {
+		return codigoCabeceraPa;
 	}
-	public void setCodigoCabeceraPA(LongDataType codigoCabeceraPA) {
-		this.codigoCabeceraPA = codigoCabeceraPA;
+	public void setCodigoCabeceraPa(LongDataType codigoCabeceraPa) {
+		this.codigoCabeceraPa = codigoCabeceraPa;
 	}
+	public StringDataType getNombreGmo() {
+		return nombreGmo;
+	}
+	public void setNombreGmo(StringDataType nombreGmo) {
+		this.nombreGmo = nombreGmo;
+	}
+	public StringDataType getTelefonoGmo() {
+		return telefonoGmo;
+	}
+	public void setTelefonoGmo(StringDataType telefonoGmo) {
+		this.telefonoGmo = telefonoGmo;
+	}
+	public StringDataType getEmailGmo() {
+		return emailGmo;
+	}
+	public void setEmailGmo(StringDataType emailGmo) {
+		this.emailGmo = emailGmo;
+	}	
 }

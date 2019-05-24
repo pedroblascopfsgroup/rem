@@ -1412,15 +1412,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			me.lookupReference('cambioTitulo').setTitle(HreRem.i18n('title.nexos'));
 	},
 	
-	getAvisoProblemasUrsus: function () {
-		var me = this,
-		expediente = me.getView().up('wizardBase').expediente,
-		problemasUrsus = expediente.get('problemasUrsus');
-		var esBankia = expediente.get('esBankia');
-		
+	getAdvertenciaProblemasUrsus : function() {
+		var me = this, expediente = me.getView().up('wizardBase').expediente
+		, form = me.getViewModel().getView()
+		, problemasUrsus = expediente.get('problemasUrsus')
+		, esBankia = expediente.get('esBankia');
+
 		if (esBankia && problemasUrsus == "true") {
-			me.fireEvent('errorToast', HreRem.i18n('header.problemas.ursus'));
-			return;
+			me.getViewModel().set('textoAdvertenciaProblemasUrsus','Problemas URSUS');
 		}
 	}
 });

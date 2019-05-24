@@ -20,7 +20,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 
 	listeners: {
 		activate: 'onActivate',
-		boxReady: 'getAvisoProblemasUrsus'
+		boxReady: 'getAdvertenciaProblemasUrsus'
 	},
 
 	controller: 'slidedatoscomprador',
@@ -43,6 +43,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 		];
 
 		me.items = [
+			{
+				xtype: 'label',
+				cls: '.texto-alerta',
+				bind: {
+					html: '{textoAdvertenciaProblemasUrsus}'
+				},
+				style: 'color: red'
+	        },
 			{
 				xtype: 'checkboxfieldbase',
 				name: 'cesionDatos',

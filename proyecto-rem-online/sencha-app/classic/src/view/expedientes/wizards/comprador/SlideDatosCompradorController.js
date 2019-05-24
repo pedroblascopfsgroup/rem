@@ -114,6 +114,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		estadoExpediente = expediente.getData().codigoEstado;
 		
 		var campoTipoPersona = me.lookupReference('tipoPersona'),
+		numeroDocumentoConyuge = me.lookupReference('documentoConyuge'),
 		campoPorcionCompra = me.lookupReference('porcionCompra'),
 		campoTipoDocumentoRte = me.lookupReference('tipoDocumento'),
 		campoNumeroDocumentoRte = me.lookupReference('numeroDocumento'),
@@ -139,6 +140,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			campoNumeroDocumentoConyugue.disable();
 			campoNumeroUrsus.disable();
 			campoNumeroUrsusBh.disable();
+			numeroDocumentoConyuge.disable();
 			
 			if (campoEstadoCivil.getValue() != CONST.TIPOS_ESTADO_CIVIL['CASADO'] && campoRegEconomico.getValue() != CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
 				campoTipoDocumentoConyuge.clearValue;

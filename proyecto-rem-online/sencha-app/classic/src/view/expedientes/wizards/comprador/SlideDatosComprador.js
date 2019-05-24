@@ -340,7 +340,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'numeroClienteUrsus',
 						padding: '5px',
 						bind: {
-							hidden: '{!comprador.mostrarUrsus}'
+							hidden: '{!comprador.mostrarUrsus}',
+							readOnly: true
 						},
 						editable: true
 					},
@@ -351,7 +352,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'numeroClienteUrsusBh',
 						padding: '5px',
 						bind: {
-							hidden: '{!comprador.mostrarUrsusBh}'
+							hidden: '{!comprador.mostrarUrsusBh}',
+							readOnly: true
 						},
 						editable: true
 					}

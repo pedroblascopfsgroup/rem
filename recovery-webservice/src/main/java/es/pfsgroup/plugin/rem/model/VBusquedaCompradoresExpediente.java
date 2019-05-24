@@ -92,6 +92,19 @@ public class VBusquedaCompradoresExpediente implements Serializable {
   
 	@Column(name = "PROBLEMAS_URSUS")
 	private String problemasUrsus;
+	
+	@Column(name = "DD_ECV_ID_URSUS")
+	private String estadoCivilURSUS;
+	
+	@Column(name = "DD_REM_ID_URSUS")
+	private String regimenMatrimonialUrsus;
+	
+	@Column(name = "N_URSUS_CONYUGE")
+	private String numeroConyugeUrsus;
+	
+	@Column(name = "NOMBRE_CONYUGE_URSUS")
+	private String nombreConyugeURSUS;
+	
     
 	public String getId() {
 		return id;
@@ -284,5 +297,38 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	public void setProblemasUrsus(String problemasUrsus) {
 		this.problemasUrsus = problemasUrsus;
 	}
+
+	public String getEstadoCivilURSUS() {
+		return estadoCivilURSUS;
+	}
+
+	public void setEstadoCivilURSUS(String estadoCivilURSUS) {
+		this.estadoCivilURSUS = estadoCivilURSUS;
+	}
+
+	public String getRegimenMatrimonialUrsus() {
+		return regimenMatrimonialUrsus;
+	}
+
+	public void setRegimenMatrimonialUrsus(String regimenMatrimonialUrsus) {
+		this.regimenMatrimonialUrsus = regimenMatrimonialUrsus;
+	}
+
+	public String getNumeroConyugeUrsus() {
+		return numeroConyugeUrsus;
+	}
+
+	public void setNumeroConyugeUrsus(String numeroConyugeUrsus) {
+		this.numeroConyugeUrsus = numeroConyugeUrsus;
+	}
+
+	public String getNombreConyugeURSUS() {
+		return nombreConyugeURSUS;
+	}
+
+	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
+		this.nombreConyugeURSUS = nombreConyugeURSUS;
+	}
+	
 	
 }

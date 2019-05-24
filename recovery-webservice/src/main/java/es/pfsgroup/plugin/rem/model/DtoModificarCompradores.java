@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+
 public class DtoModificarCompradores {
 	
 	
@@ -144,6 +146,17 @@ public class DtoModificarCompradores {
 	private Boolean mostrarUrsusBh;
 	
 	private String descripcionTipoDocumentoConyuge;
+	
+	private String estadoCivilURSUS;
+	
+	private String regimenMatrimonialUrsus;
+	
+	private String numeroConyugeUrsus;
+	
+	private String problemasUrsus;
+	
+	private String nombreConyugeURSUS;
+	
 
 	public String getId() {
 		return id;
@@ -702,6 +715,46 @@ public class DtoModificarCompradores {
 
 	public void setDescripcionTipoDocumentoConyuge(String descripcionTipoDocumentoConyuge) {
 		this.descripcionTipoDocumentoConyuge = descripcionTipoDocumentoConyuge;
+	}
+
+	public String getEstadoCivilURSUS() {
+		return estadoCivilURSUS;
+	}
+
+	public void setEstadoCivilURSUS(String estadoCivilURSUS) {
+		this.estadoCivilURSUS = estadoCivilURSUS;
+	}
+
+	public String getRegimenMatrimonialUrsus() {
+		return regimenMatrimonialUrsus;
+	}
+
+	public void setRegimenMatrimonialUrsus(String regimenMatrimonialUrsus) {
+		this.regimenMatrimonialUrsus = regimenMatrimonialUrsus;
+	}
+
+	public String getNumeroConyugeUrsus() {
+		return numeroConyugeUrsus;
+	}
+
+	public void setNumeroConyugeUrsus(String numeroConyugeUrsus) {
+		this.numeroConyugeUrsus = numeroConyugeUrsus;
+	}
+
+	public String getProblemasUrsus() {
+		return problemasUrsus;
+	}
+
+	public void setProblemasUrsus(String problemasUrsus) {
+		this.problemasUrsus = problemasUrsus;
+	}
+
+	public String getNombreConyugeURSUS() {
+		return nombreConyugeURSUS;
+	}
+
+	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
+		this.nombreConyugeURSUS = nombreConyugeURSUS;
 	}	
 	
 	

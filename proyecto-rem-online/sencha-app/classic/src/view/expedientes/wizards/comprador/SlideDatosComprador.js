@@ -518,29 +518,41 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				},
 				hidden: !this.lookupController().esBankia() || this.lookupController().esBankiaAlquiler(),
 				items: [{							
-							xtype: 'textfieldbase',
+							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.estado.civil'),
 							reference: 'estadoCivilUrsus',
+							valueField: 'id',
+							name: 'estadoCivilURSUS',
 							padding: '5px',
-							editable: false
+							editable: false,
+							bind: {
+								store: '{comboEstadoCivil}'
+							}
 						},
 						{
-							xtype: 'textfieldbase',
+							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
 							reference: 'regimenMatrimonialUrsus',
+							valueField: 'id',
+							name: 'regimenMatrimonialUrsus',
 							padding: '5px',
-							editable: false
+							editable: false,
+							bind: {
+								store: '{comboRegimenesMatrimoniales}'
+							}
 						},
 						{
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.numero.ursus.conyuge'),
 							reference: 'numeroClienteUrsusRefConyugeUrsus',
+							name: 'numeroConyugeUrsus',
 							padding: '5px',
 							editable: false
 						},
 						{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.nombre.conyuge'),
+							name: 'nombreConyugeURSUS',
 							reference: 'nombreConyugeUrsus',
 							padding: '5px',
 							editable: false

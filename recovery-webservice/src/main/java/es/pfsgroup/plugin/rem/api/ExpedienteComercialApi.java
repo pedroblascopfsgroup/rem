@@ -1181,5 +1181,8 @@ public interface ExpedienteComercialApi {
 	boolean hayDiscrepanciasClientesURSUS(Long idExpediente);
 	
 	boolean hayProblemasURSUS(Long idExpediente);
+	
+	Boolean modificarDatosUnCompradorProblemasURSUS( DtoSlideDatosCompradores dto) throws Exception;
+
 
 }

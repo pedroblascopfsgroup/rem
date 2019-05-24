@@ -229,6 +229,9 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "N_URSUS_CONYUGE")
 	private String numeroConyugeUrsus;
 	
+	@Column(name = "NOMBRE_CONYUGE_URSUS")
+	private String nombreConyugeURSUS;
+	
 	
 
 	public String getId() {
@@ -791,6 +794,14 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setNumeroConyugeUrsus(String numeroConyugeUrsus) {
 		this.numeroConyugeUrsus = numeroConyugeUrsus;
+	}
+
+	public String getNombreConyugeURSUS() {
+		return nombreConyugeURSUS;
+	}
+
+	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
+		this.nombreConyugeURSUS = nombreConyugeURSUS;
 	}
 	
 

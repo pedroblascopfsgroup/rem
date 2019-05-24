@@ -71,19 +71,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	},
 
 	onClickContinuar: function() {
-		var me = this;
-		
-		var idExpediente = me.getViewModel().get("comprador").data.idExpedienteComercial;
-		
-		if(me.getViewModel().get("comprador").data.esCarteraBankia){
-			Ext.Ajax.request({
-				url: $AC.getRemoteUrl('expedientecomercial/getComprobarCompradores'),
-				params: {
-					idExpediente: idExpediente
-				},
-				method: 'POST'
-			});
-		}
+		var me = this,
+			idExpediente = me.getViewModel().get("comprador").data.idExpedienteComercial;
 		
 		if(me.comprobarFormato()){
 			me.comprobarDatosFormularioComprador();
@@ -269,7 +258,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				if (campoRegEconomico.getValue() == CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
 					campoTipoConyuge.setDisabled(false);
 				} else {
-					campoTipoConyuge.reset();
+					if(campoTipoConyuge.getStore() != undefined){
+						campoTipoConyuge.reset();
+					}
 					campoTipoConyuge.setDisabled(true);
 				}
 			}
@@ -1350,10 +1341,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 					return true;
 				}
 			}
-			
 		}
-			
-			
 	},
 
 	/**
@@ -1364,17 +1352,29 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	comprobarDatosFormularioComprador: function() {
 		var me = this,
 			form = me.getView();
+
 		me.comprobarObligatoriedadCamposNexos();
-		var wizard = form.up('wizardBase'),
-			pedirDocValor = form.getForm().findField('pedirDoc').getValue(),
-			modelComprador = form.getRecord();
 
 		if (!form.isValid()) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.form.invalido'));
 			return;
 		}
 
-		form.updateRecord();
+		if(me.getViewModel().get("comprador").data.esCarteraBankia){
+			me.discrepanciasVeracidadDatosComprador();
+		} else {
+			me.continuarSiguienteSlide();
+		}
+	},
+	
+	continuarSiguienteSlide: function() {
+	    var me = this,
+			form = me.getView(),
+			modelComprador = form.getRecord(),
+			pedirDocValor = form.getForm().findField('pedirDoc').getValue(),
+			wizard = form.up('wizardBase');
+	    
+	    form.updateRecord();
 		
 		if (pedirDocValor === 'false') {
 			wizard.comprador = modelComprador;
@@ -1383,7 +1383,37 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		} else {
 			me.guardarModeloComprador();
 		}
+    },
+
+    discrepanciasVeracidadDatosComprador: function() {
+		var me = this,
+			form = me.getView(),
+			wizard = form.up('wizardBase'),
+			modelComprador = form.getRecord();
 		
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/discrepanciasVeracidadDatosComprador'),
+			params: {
+				idExpedienteComercial: modelComprador.get('idExpedienteComercial'),
+				id: modelComprador.get('id'),
+				codEstadoCivil:modelComprador.get('codEstadoCivil'),
+				documentoConyuge: modelComprador.get('documentoConyuge'),
+				codigoRegimenMatrimonial:modelComprador.get('codigoRegimenMatrimonial'),
+				codTipoDocumento:modelComprador.get('codTipoDocumento')
+			},
+			success: function(response, opts) {
+				var data = Ext.decode(response.responseText);
+
+				if(data.data === 'true') {
+					me.continuarSiguienteSlide();
+				} else {
+					me.fireEvent('errorToast', HreRem.i18n('datos comprador diferentes en ursus'));
+				}
+			},
+			failure: function(response) {
+				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
+			}
+		});
 	},
 
 	/**

@@ -444,7 +444,7 @@ public class OfertasController {
 								ActivoTramite activoTramite = tramites.get(0);
 								List<TareaExterna> tareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(activoTramite.getId());
 								if(!Checks.estaVacio(tareas)) {
-									ofr.setIdTarea(tareas.get(0).getId());// Id tarea [fin]
+									ofr.setIdTarea(tareas.get(0).getTareaPadre().getId());// Id tarea [fin]
 								}
 							}	
 						}

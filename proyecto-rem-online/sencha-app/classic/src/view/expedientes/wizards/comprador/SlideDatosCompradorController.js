@@ -178,6 +178,19 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		}
 	},
 	
+	esBankiaAlquiler: function() {
+		var me = this,
+			wizard = me.getView().up('wizardBase'),
+			esBankia = wizard.expediente.get('esBankia'),
+			esAlquiler = wizard.expediente.get('tipoExpedienteCodigo') === CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+			
+		if (esBankia && esAlquiler){
+			return true;
+		} else {
+			return false;
+		}
+	},
+	
 	esBankiaBH: function() {
 		var me = this,
 			wizard = me.getView().up('wizardBase'),

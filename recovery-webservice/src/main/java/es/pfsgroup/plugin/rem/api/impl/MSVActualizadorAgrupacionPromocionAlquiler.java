@@ -19,6 +19,7 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -90,6 +91,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
@@ -117,6 +119,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	
 	@Autowired 
 	ActivoApi activoApi;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -204,6 +209,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			}
 			if (!Checks.esNulo(activoMatriz.getTipoAlquiler()))
 				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
+			if (!Checks.esNulo(activoMatriz.getBloqueoTipoComercializacionAutomatico()))
+				unidadAlquilable.setBloqueoTipoComercializacionAutomatico(activoMatriz.getBloqueoTipoComercializacionAutomatico());
+			
 		}
 		
 		
@@ -850,6 +858,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		unidadAlquilable.setAdmision(activoMatriz.getAdmision());
 		genericDao.save(Activo.class, unidadAlquilable);
+		
 		return new ResultadoProcesarFila();
 	}
 	//HREOS-5902. Los registros de la fila son correctos. Se lanza el SP_CAMBIO_ESTADO_PUBLICACION.

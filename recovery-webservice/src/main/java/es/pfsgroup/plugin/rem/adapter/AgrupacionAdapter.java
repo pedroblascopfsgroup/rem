@@ -773,7 +773,18 @@ public class AgrupacionAdapter {
 
 		filtro.setAgrupacionId(String.valueOf(id));
 		
-
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
+			if(!Checks.esNulo(agrupacion.getActivos())) {
+				for(ActivoAgrupacionActivo activo : agrupacion.getActivos()) {
+					// Actualizar el tipoComercialización del activo
+					if(activoDao.isUnidadAlquilable(activo.getActivo().getId()) && Checks.esNulo(activo.getActivo().getTipoComercializar())) {
+						updaterState.updaterStateTipoComercializacion(activo.getActivo());
+					}
+				}
+			}
+		}
+		
 		try {
 			Page listaActivos = activoAgrupacionApi.getListActivosAgrupacionById(filtro, usuarioLogado);
 			

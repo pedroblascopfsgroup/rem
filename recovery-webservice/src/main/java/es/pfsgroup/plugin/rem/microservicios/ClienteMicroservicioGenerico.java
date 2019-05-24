@@ -21,16 +21,21 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.restclient.salesforce.clients.ClienteSalesforceGenerico;
+import es.pfsgroup.plugin.rem.restclient.salesforce.clients.SalesforceEndpoint;
 import net.sf.json.JSONObject;
 
 @Component
 public class ClienteMicroservicioGenerico {
 
 	private String URL = "";
-	private String DEFAULT_TIMEOUT = "10000";
+	private String DEFAULT_TIMEOUT = "1000000";
 	
 	@Autowired
 	private HttpClientFacade httpClient;
+	
+	@Autowired
+	private ClienteSalesforceGenerico httpsClient;
 	
 	@Resource
 	private Properties appProperties;
@@ -70,9 +75,15 @@ public class ClienteMicroservicioGenerico {
 		}
 		
 		String timeout = this.DEFAULT_TIMEOUT;
+		JSONObject result = null;
 		
-		JSONObject result = httpClient.processRequest(serviceUrl, method, headers, jsonString,
-				Integer.parseInt(timeout), "UTF-8");
+		if (serviceUrl.contains("https:")) {
+			result = httpsClient.processRequest(serviceUrl, new SalesforceEndpoint("POST", 0, null, null, null, null, null, null, null, null), 
+					headers, jsonString, Integer.parseInt(timeout), "UTF-8");
+		} else {
+			result = httpClient.processRequest(serviceUrl, method, headers, jsonString,
+					Integer.parseInt(timeout), "UTF-8");
+		}
 		
 		return result;
 	}	

@@ -29,26 +29,36 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.api.impl.ParticularValidatorManager;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaVivaRespuestaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import net.sf.json.JSONObject;
@@ -85,6 +95,12 @@ public class OfertasController {
 	
 	@Autowired
 	private ActivoTareaExternaApi activoTareaExternaApi;
+
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+
+	@Autowired
+	private ActivoApi activoApi;
 	
 	private final static String CLIENTE_HAYA = "HAYA";
 	
@@ -392,6 +408,82 @@ public class OfertasController {
 		}
 
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET, value="ofertas/getOfertasVivasActGestoria")
+	public void getOfertasVivasActGestoria(Long numActivo, String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		DtoOfertasFilter filtro = new DtoOfertasFilter();
+		filtro.setGestoria(codGestoria);
+		filtro.setNumActivo(numActivo);
+		filtro.setLimit(100);
+		
+		DtoPage page = ofertaApi.getListOfertasGestoria(filtro);
+		
+		VOfertasActivosAgrupacion voaa;
+		
+		List<OfertaVivaRespuestaDto> ofertasList = new ArrayList<OfertaVivaRespuestaDto>();
+		
+		Oferta oferta;
+		OfertaVivaRespuestaDto ofr;
+		if(!Checks.esNulo(page) && !Checks.esNulo(page.getResults())) {
+			for (Object obj : page.getResults()) {
+				try {
+					voaa = (VOfertasActivosAgrupacion) obj;
+					oferta = ofertaApi.getOfertaById(voaa.getId());
+					ExpedienteComercial eco = expedienteComercialApi.findOneByOferta(oferta);
+					if(ofertaApi.estaViva(oferta)) {			
+					
+						ofr = new OfertaVivaRespuestaDto();
+						ofr.setNumOferta(oferta.getNumOferta()); //Número oferta
+						// Id tarea [ini]
+						Trabajo trabajo = eco.getTrabajo();
+						if(!Checks.esNulo(trabajo)) {
+							List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+							if(!Checks.estaVacio(tramites)) {
+								ActivoTramite activoTramite = tramites.get(0);
+								List<TareaExterna> tareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(activoTramite.getId());
+								if(!Checks.estaVacio(tareas)) {
+									ofr.setIdTarea(tareas.get(0).getTareaPadre().getId());// Id tarea [fin]
+								}
+							}	
+						}
+						
+						ofr.setCodEstadoEco(voaa.getCodigoEstadoExpediente()); //Estado expediente
+						// Activos [ini]
+						List<Long> listaIds = new ArrayList<Long>();
+						for (ActivoOferta activoOfr : oferta.getActivosOferta()) {
+							Long activoId = activoOfr.getActivoId();
+							listaIds.add(activoId);
+						}
+						List<Activo> activosLista = activoApi.getListActivosPorID(listaIds);
+						List<Long> activoNumLista = new ArrayList<Long>();
+						for (Activo activo : activosLista) {
+							activoNumLista.add(activo.getNumActivo());
+						}
+						ofr.setResultado(activoNumLista); //Activos [fin]
+						ofertasList.add(ofr);
+						
+					}
+				}catch (NullPointerException e) {
+					logger.error("Error ofertas NULLPOINTER", e);
+				}
+			}
+		}
+		
+		
+		try {
+			model.put("id", 0);
+			model.put("data", ofertasList);
+			model.put("error", "null");
+		}catch(Exception e) {
+			logger.error("Error ofertas", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", 0);
+			model.put("data", null);
+			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+		}
+		restApi.sendResponse(response, model, request);
 	}
 
 }

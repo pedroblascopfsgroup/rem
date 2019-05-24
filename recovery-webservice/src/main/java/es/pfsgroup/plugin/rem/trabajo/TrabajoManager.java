@@ -4086,7 +4086,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Activo activo = activoApi.get(idActivo);
 		return activo.getEnTramite() == 1;
 	}
-	
+
+	@Override
+	public Trabajo getTrabajoByNumeroTrabajo(Long numTrabajo) {
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numTrabajo", numTrabajo);
+		return genericDao.get(Trabajo.class, filter);
+	}
 
 
 }

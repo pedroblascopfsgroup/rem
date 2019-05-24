@@ -427,7 +427,7 @@
      */
     
     "output": {
-        "base": "${workspace.build.dir}/${build.environment}/${app.name}",
+        "base": "${workspace.build.dir}/${build.environment}/App",
         "page": "index.jsp",
         "manifest": "${build.id}.json",
         "js": "${build.id}/${app.name}_all.js",

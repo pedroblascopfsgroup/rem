@@ -89,6 +89,9 @@ import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
+import es.pfsgroup.recovery.api.ExpedienteApi;
+
 
 
 @Controller
@@ -605,13 +608,15 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		try {
 			
-			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
-
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
-			String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
-			model.put("errores", errores);
-			model.put(RESPONSE_SUCCESS_KEY, errores == null);
+			if(!Checks.esNulo(docCliente)) {
+				String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
+	
+				WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+	
+				String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
+				model.put("errores", errores);
+				model.put(RESPONSE_SUCCESS_KEY, errores == null);
+			}
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errores", e.getMessage());
@@ -1184,6 +1189,27 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			model.put(RESPONSE_DATA_KEY,
 					expedienteComercialApi.buscarClientesUrsus(numeroDocumento, tipoDocumento, idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", e.getMessage());
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarProblemasVentaClienteUrsus(@RequestParam String numeroUrsus, @RequestParam String idExpediente, ModelMap model) {
+		try {
+			List<DatosClienteProblemasVentaDto> list = expedienteComercialApi.buscarProblemasVentaClienteUrsus(numeroUrsus, idExpediente);
+			model.put("data", list);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (JsonViewerException e) {
@@ -1986,6 +2012,22 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getActivosPropagables(ModelMap model, @RequestParam(value = "idExpediente") Long idExpediente){
 		try{
 			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getActivosPropagables(Long.valueOf(idExpediente)));
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getComprobarCompradores(ModelMap model, @RequestParam(value = "idExpediente") Long idExpediente){
+		Boolean hayProblemasUrsus = expedienteComercialApi.hayDiscrepanciasClientesURSUS(Long.valueOf(idExpediente));
+		
+		try{
+			model.put(RESPONSE_DATA_KEY, hayProblemasUrsus);
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

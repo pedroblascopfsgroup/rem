@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=JORGE ROS
+--## AUTOR=Lara Pablo Flores
 --## FECHA_CREACION=20160832
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##        0.2 HREOS-4933  ADC.ADC_NAME Nombre de la descarga del documento GDPR en la tabla ADC_ADJUNTO_COMPRADOR ADC
 --##        0.3 HREOS-5217  CEX.CEX_ID_PERSONA_HAYA,CEX.ADCOM_ID  para el documento GDPR en la tabla ADC_ADJUNTO_COMPRADOR ADC
+--##		0.4 HREOS-5927  COM.PROBLEMAS_URSUS añadida
 --##########################################
 --*/
 		
@@ -84,7 +85,13 @@ BEGIN
 			ADC.ADC_NAME,
 			CEX.CEX_ID_PERSONA_HAYA,
 			CEX.ADCOM_ID,
-			ADC.ADC_ID_DOCUMENTO_REST
+			ADC.ADC_ID_DOCUMENTO_REST,
+			CASE COM.PROBLEMAS_URSUS WHEN 1 THEN ''Si''  WHEN 0 THEN ''No'' ELSE NULL END AS PROBLEMAS_URSUS,
+			COM.DD_ECV_ID_URSUS,
+			COM.DD_REM_ID_URSUS,
+			COM.N_URSUS_CONYUGE,
+			COM.NOMBRE_CONYUGUE_URSUS
+			
 
 		FROM '|| V_ESQUEMA ||'.COM_COMPRADOR COM
       		LEFT JOIN '|| V_ESQUEMA ||'.CEX_COMPRADOR_EXPEDIENTE CEX ON CEX.COM_ID = COM.COM_ID
@@ -95,6 +102,19 @@ BEGIN
 		
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_COMPRADORES_EXP...Creada OK');
+  
+  EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.PUT_LINE('KO no modificada');
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;     
   
 END;
 /

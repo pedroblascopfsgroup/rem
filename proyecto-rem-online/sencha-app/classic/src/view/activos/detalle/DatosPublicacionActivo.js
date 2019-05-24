@@ -210,6 +210,14 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											   },
 											   style:'margin-left:10px'
 											},
+											{   
+												reference: 'chkbxpublicarControlPrimeravez',
+												value:true,
+												hidden:true
+												
+												
+											},
+											   
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),
 												reference: 'chkbxocultarventa',

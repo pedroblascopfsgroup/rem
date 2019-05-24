@@ -29,6 +29,8 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
@@ -109,7 +111,10 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name = "COM_ENVIADO")
     private Date compradorEnviado;    
-
+    
+    @Column(name = "PROBLEMAS_URSUS")
+    private Boolean problemasUrsus;
+    
 	@Version   
 	private Long version;
 
@@ -132,7 +137,15 @@ public class Comprador implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ADCOM_ID")
     private AdjuntoComprador adjunto;
+    
+    @Column(name = "DD_ECV_ID_URSUS")
+    private Long estadoCivilURSUS;
 	
+    @Column (name = "N_URSUS_CONYUGE")
+    private Integer numeroConyugeUrsus;
+    
+    @Column(name="DD_REM_ID_URSUS")
+    private Long regimenMatrimonialUrsus;
 
 	public Long getId() {
 		return id;
@@ -339,4 +352,39 @@ public class Comprador implements Serializable, Auditable {
 	public void setAdjunto(AdjuntoComprador adjunto) {
 		this.adjunto = adjunto;
 	}
+
+	public Boolean getProblemasUrsus() {
+		return problemasUrsus;
+	}
+
+	public void setProblemasUrsus(Boolean problemasUrsus) {
+		this.problemasUrsus = problemasUrsus;
+	}
+
+	public Integer getNumeroConyugeUrsus() {
+		return numeroConyugeUrsus;
+	}
+
+	public void setNumeroConyugeUrsus(Integer numeroConyugeUrsus) {
+		this.numeroConyugeUrsus = numeroConyugeUrsus;
+	}
+
+	public Long getRegimenMatrimonialUrsus() {
+		return regimenMatrimonialUrsus;
+	}
+
+	public void setRegimenMatrimonialUrsus(Long regimenMatrimonialUrsus) {
+		this.regimenMatrimonialUrsus = regimenMatrimonialUrsus;
+	}
+
+	public Long getEstadoCivilURSUS() {
+		return estadoCivilURSUS;
+	}
+
+	public void setEstadoCivilURSUS(Long estadoCivilURSUS) {
+		this.estadoCivilURSUS = estadoCivilURSUS;
+	}
+	
+	
+	
 }

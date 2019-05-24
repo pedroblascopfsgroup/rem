@@ -2834,6 +2834,52 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		FROM DD_CAI_CALCULO_IMPUESTO"
 				+"		WHERE DD_CAI_CODIGO = "+codCalculo+""
 				+"		AND BORRADO= 0");
+		
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeTrabajo(String numTrabajo) {
+		if(Checks.esNulo(numTrabajo))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ACT_TBJ_TRABAJO"
+				+"		WHERE TBJ_NUM_TRABAJO = "+numTrabajo+""
+				+"		AND BORRADO= 0");
+		
+		return !"1".equals(resultado);
+		
+	}
+	
+	@Override
+	public Boolean existeSubtrabajo(String codSubtrabajo) {
+		if(Checks.esNulo(codSubtrabajo))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM DD_STR_SUBTIPO_TRABAJO"
+				+"		WHERE DD_STR_ID = "+codSubtrabajo+""
+				+"		AND BORRADO= 0");
+		
+		return "0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeGastoTrabajo(String numTrabajo) {
+		if(Checks.esNulo(numTrabajo))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT"
+				+ " CASE WHEN ( "
+				+ "		SELECT COUNT(*)	"
+				+ "		FROM ACT_TBJ_TRABAJO TBJ "
+				+ "		INNER JOIN GPV_TBJ GPTB ON GPTB.TBJ_ID=TBJ.TBJ_ID AND GPTB.BORRADO=0"
+				+ " 	WHERE TBJ.TBJ_NUM_TRABAJO = " + numTrabajo + " 	AND TBJ.BORRADO=0 "
+				+ "		GROUP BY TBJ.TBJ_NUM_TRABAJO"
+				+ "	) is null THEN 0"
+				+ "	 ELSE 1 END AS RESULTADO "
+				+ "	FROM DUAL");
 		return !"0".equals(resultado);
 	}
 	
@@ -2994,4 +3040,129 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"1".equals(resultado);
 	}
 
+	@Override
+	public Boolean compararNumeroFilasTrabajo(String numTrabajo, int numeroFilas) {
+		if(Checks.esNulo(numTrabajo))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT CASE WHEN numeroTarifas = " + numeroFilas + " THEN 1"
+				+"		ELSE 0 END"		
+				+"		FROM("
+				+"		SELECT COUNT(*) numeroTarifas "
+				+"		FROM REM01.ACT_TCT_TRABAJO_CFGTARIFA  TCT"
+				+"		INNER JOIN REM01.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_ID=TCT.TBJ_ID AND TBJ.BORRADO=0 AND TBJ.TBJ_NUM_TRABAJO=  "+ numTrabajo
+				+"		WHERE TCT.BORRADO=0"
+				+"		GROUP BY TBJ.TBJ_NUM_TRABAJO)");
+		
+		return !"1".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeTipoTarifa(String tipoTarifa) {
+		if(Checks.esNulo(tipoTarifa))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*)"
+				+"		FROM DD_TTF_TIPO_TARIFA"		
+				+"		WHERE BORRADO=0"
+				+"		AND DD_TTF_CODIGO = "+ "'"+ tipoTarifa +"'"
+				+"		GROUP BY DD_TTF_CODIGO");
+		
+		return !"1".equals(resultado);
+	}
+
+	@Override
+	public Boolean tipoTarifaValido(String tipoTarifa, String numTrabajo) {
+		if(Checks.esNulo(tipoTarifa))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT"
+				+"		CASE WHEN("		
+				+"		SELECT COUNT(*) cuentaTipos"
+				+"		FROM ACT_TBJ_TRABAJO TBJ"
+				+"		INNER JOIN ACT_TCT_TRABAJO_CFGTARIFA TCT ON TCT.TBJ_ID=TBJ.TBJ_ID AND TCT.BORRADO=0"
+				+"		INNER JOIN ACT_CFT_CONFIG_TARIFA CFT ON CFT.CFT_ID=TCT.CFT_ID AND CFT.BORRADO=0"
+				+"		INNER JOIN REM01.DD_TTF_TIPO_TARIFA TTF ON TTF.DD_TTF_ID=CFT.DD_TTF_ID AND TTF.BORRADO=0 AND TTF.DD_TTF_CODIGO = "+ "'"+ tipoTarifa +"'"
+				+"		WHERE TBJ.TBJ_NUM_TRABAJO="+numTrabajo+""
+				+"		GROUP BY TTF.DD_TTF_CODIGO)  IS NULL THEN 0"
+				+"		ELSE 1"
+				+"		END"
+				+"		FROM dual");
+		
+		return !"1".equals(resultado);
+	}
+
+	public Boolean existeExpedienteFormalizacion(String numExpediente){
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM FOR_FORMALIZACION FORM WHERE"
+				+ "		 	FORM.FOR_NUMEXPEDIENTE ='"+numExpediente+"' "
+				+ "		 	AND FORM.BORRADO = 0 AND FORM.FOR_NUMEXPEDIENTE IS NOT NULL");
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeExpedienteFormalizacionBankia(String numExpediente){
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_ETF_ENTIDAD_FINANCIERA DDETF" 
+				+"                JOIN COE_CONDICIONANTES_EXPEDIENTE ON DDETF.DD_ETF_ID = COE_CONDICIONANTES_EXPEDIENTE.DD_ETF_ID" 
+				+"                JOIN ECO_EXPEDIENTE_COMERCIAL ON ECO_EXPEDIENTE_COMERCIAL.ECO_ID = COE_CONDICIONANTES_EXPEDIENTE.ECO_ID" 
+				+"                JOIN FOR_FORMALIZACION ON FOR_FORMALIZACION.ECO_ID = ECO_EXPEDIENTE_COMERCIAL.ECO_ID" 
+				+"                WHERE DDETF.DD_ETF_CODIGO = '01'" 
+				+"				  AND FOR_NUMEXPEDIENTE ='"+numExpediente+"' "
+				+"                AND FOR_FORMALIZACION.FOR_NUMEXPEDIENTE IS NOT null"
+				+"		AND DDETF.BORRADO = 0");
+		return "1".equals(resultado);
+	}
+	
+
+	@Override
+	public Boolean existeEntidadFinanciera(String entidadFinanciera){
+		if(Checks.esNulo(entidadFinanciera) || !StringUtils.isNumeric(entidadFinanciera))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) "
+				+ "FROM DD_ETF_ENTIDAD_FINANCIERA DDETF WHERE "
+				+ "DDETF.DD_ETF_CODIGO = '"+entidadFinanciera+"' "
+				+" AND DDETF.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeTipoDeFinanciacion(String tipoFinanciacion){
+		if(Checks.esNulo(tipoFinanciacion) || !StringUtils.isNumeric(tipoFinanciacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) "
+				+ "FROM DD_ESF_ESTADOS_FINANCIACION DDESF WHERE "
+				+ "DDESF.DD_ESF_CODIGO = '"+tipoFinanciacion+"' "
+				+" AND DDESF.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	
+	@Override
+	public Boolean perteneceOfertaVenta(String numExpedienteComercial){
+		if(Checks.esNulo(numExpedienteComercial) || !StringUtils.isNumeric(numExpedienteComercial))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
+				"	JOIN OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID AND OFR.BORRADO = 0" + 
+				"	LEFT JOIN DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID = TOF.DD_TOF_ID AND TOF.BORRADO = 0" + 
+				"	WHERE ECO.ECO_NUM_EXPEDIENTE = '" +numExpedienteComercial +"' AND TOF.DD_TOF_CODIGO != '01' AND ECO.BORRADO = 0");
+		return "0".equals(resultado);
+	}
+	
+
+	@Override
+	public Boolean activosVendidos(String numExpedienteComercial){
+		if(Checks.esNulo(numExpedienteComercial) || !StringUtils.isNumeric(numExpedienteComercial))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ECO_EXPEDIENTE_COMERCIAL ECO " +
+				" JOIN ACT_OFR ACT_OFR ON ECO.OFR_ID = ACT_OFR.OFR_ID " +
+				" JOIN ACT_ACTIVO ACT ON ACT_OFR.ACT_ID = ACT.ACT_ID AND ACT.BORRADO = 0" +
+				" LEFT JOIN DD_SCM_SITUACION_COMERCIAL SCM ON ACT.DD_SCM_ID = SCM.DD_SCM_ID AND SCM.BORRADO = 0" +
+				" WHERE ECO.ECO_NUM_EXPEDIENTE = '" +numExpedienteComercial +"' AND SCM.DD_SCM_CODIGO = '05' AND ECO.BORRADO = 0");
+		return "0".equals(resultado);
+	}
 }
+

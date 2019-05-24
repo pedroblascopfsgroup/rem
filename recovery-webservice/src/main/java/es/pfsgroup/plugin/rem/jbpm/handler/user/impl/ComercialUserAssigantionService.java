@@ -59,6 +59,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION = "T013_RespuestaBankiaDevolucion";
 	public static final String CODIGO_T013_PENDIENTE_DEVOLUCION = "T013_PendienteDevolucion";
 	public static final String CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION = "T013_RespuestaBankiaAnulacionDevolucion";
+	public static final String CODIGO_T013_VALIDACION_CLIENTES = "T013_ValidacionClientes";
 
 	@Autowired
 	private ActivoApi activoApi;

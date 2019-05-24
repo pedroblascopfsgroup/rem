@@ -146,13 +146,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setDiasCambioPrecioVentaWeb(dias);
 		}
 		dto.setPrecioWebAlquiler(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo));
-		
-		if(!Checks.esNulo(activoPublicacion.getFechaCambioValorAlq())) {
-			Date fechaInicial=activoPublicacion.getFechaCambioValorAlq();
+
+		if(!Checks.esNulo(activoPublicacion.getFechaCambioValorVenta())) {
+			Date fechaInicial=activoPublicacion.getFechaCambioValorVenta();
 			Date fechaFinal=new Date();
 			Integer dias=(int) (((long)fechaFinal.getTime()-(long)fechaInicial.getTime())/86400000);
 			dto.setDiasCambioPrecioAlqWeb(dias);
 		}
+
 		DDAdecuacionAlquiler adecuacionAlquiler = activoPatrimonioDao.getAdecuacionAlquilerFromPatrimonioByIdActivo(idActivo);
 		if(!Checks.esNulo(adecuacionAlquiler)) {
 			dto.setAdecuacionAlquilerCodigo(adecuacionAlquiler.getCodigo());

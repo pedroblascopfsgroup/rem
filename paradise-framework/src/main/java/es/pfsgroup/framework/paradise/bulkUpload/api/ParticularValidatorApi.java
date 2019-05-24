@@ -67,6 +67,20 @@ public interface ParticularValidatorApi {
 	Boolean esActivoAsistido(String numActivo);
 
 	Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto);
+	
+	Boolean existeTrabajo(String numTrabajo);
+	
+	Boolean existeGastoTrabajo(String numTrabajo);
+	
+	Boolean existeSubtrabajo(String codSubtrabajo);
+	
+	Boolean compararNumeroFilasTrabajo(String numTrabajo, int numeroFilas);
+		
+	Boolean existeTipoTarifa(String tipoTarifa);
+	
+	Boolean tipoTarifaValido(String tipoTarifa, String numTrabajo);
+	
+	
 
 	/**
 	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja
@@ -684,5 +698,35 @@ public interface ParticularValidatorApi {
 	Boolean isAgrupacionOfGiants(String numAgrupacion);
 
 	Boolean isActivoOfGiants(String numActivo);
+
+	/**
+	 * @param numExpediente
+	 * @return true si el numero de expediente existe FOR_FORMALIZACION
+	 */
+	public Boolean existeExpedienteFormalizacion(String numExpediente);
+	/**
+	 * @param entidadFinanciera
+	 * @return true si existe la entidad Financiera
+	 */
+	public Boolean existeEntidadFinanciera(String entidadFinanciera);
+	/**
+	 * @param tipoFinanciacion
+	 * @return true si el tipo de financiazion existe.
+	 */
+	public Boolean existeTipoDeFinanciacion(String tipoFinanciacion);
+	/**
+	 * @param numExpedienteComercial
+	 * @return true si el activo pertenece a una oferta en venta.
+	 */
+	
+	public Boolean perteneceOfertaVenta(String numExpedienteComercial);
+	/**
+	 * @param numExpedienteComercial
+	 * @return true si el activo pertenece a un activo de venta.
+	 */
+	
+	public Boolean activosVendidos(String numExpedienteComercial);
+
+	Boolean existeExpedienteFormalizacionBankia(String numExpediente);
 
 }

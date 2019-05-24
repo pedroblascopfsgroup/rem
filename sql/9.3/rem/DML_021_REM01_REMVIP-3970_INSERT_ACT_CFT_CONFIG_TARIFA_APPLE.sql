@@ -451,10 +451,10 @@ DECLARE
 		T_TIPO_DATA('CEE7',  '02',  '18', '07',  '138',  '450'  ,'(4-30) €/promoción'),
 		T_TIPO_DATA('CEE8',  '02',  '18', '07',  '138',  '550'  ,'(31-60) €/promoción'),
 		T_TIPO_DATA('CEE9',  '02',  '18', '07',  '138',  '590'  ,'(61-120) €/promoción'),
-		T_TIPO_DATA('VACI-LIMP-CER1',  '03',  '31', '07',  '138',  '1038'  ,'€/unidad'),
-		T_TIPO_DATA('VACI-LIMP-CER2',  '03',  '31', '07',  '138',  '336'  ,'€/unidad'),
-		T_TIPO_DATA('VACI-LIMP-CER3',  '03',  '31', '07',  '138',  '222'  ,'€/unidad'),
-		T_TIPO_DATA('VACI-LIMP-CER4',  '03',  '31', '07',  '138',  '60'  ,'€/unidad')
+		T_TIPO_DATA('AP-VACI-LIMP-CER1',  '03',  '31', '07',  '138',  '1038'  ,'€/unidad'),
+		T_TIPO_DATA('AP-VACI-LIMP-CER2',  '03',  '31', '07',  '138',  '336'  ,'€/unidad'),
+		T_TIPO_DATA('AP-VACI-LIMP-CER3',  '03',  '31', '07',  '138',  '222'  ,'€/unidad'),
+		T_TIPO_DATA('AP-VACI-LIMP-CER4',  '03',  '31', '07',  '138',  '60'  ,'€/unidad')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -462,7 +462,7 @@ DECLARE
 BEGIN	
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
-
+	/*
 	--BORRAMOS TODO EL TARIFARIO PREVIO QUE HUBIERA PARA APPLE:
 	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.ACT_CFT_CONFIG_TARIFA T1 
 			   WHERE EXISTS (
@@ -476,6 +476,7 @@ BEGIN
 	)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO]: '||sql%rowcount||' Tarifas de APPLE borradas.');
+	*/
 
 	-- LOOP para insertar los valores --
 	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);

@@ -9352,7 +9352,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 				if(!problemasPorComprador) {
-					if(!Checks.esNulo(ejecutarDatosCliente) && !Checks.esNulo(comprador.getClienteComercial())) {
+					if(!Checks.esNulo(ejecutarDatosCliente)) {
 						if(!Checks.esNulo(ejecutarDatosCliente.getCodigoEstadoCivil()) && !Checks.esNulo(dto.getCodEstadoCivil())) {
 							String codigoEstadoCivilUrsus = getCodigoEstadoCivilUrsusRem(String.valueOf(ejecutarDatosCliente.getCodigoEstadoCivil()));
 							if(!codigoEstadoCivilUrsus.equals(dto.getCodEstadoCivil()) 
@@ -9363,8 +9363,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								return true;
 							}
 						}else{
-							
-							
 							String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
 							if( !Checks.esNulo(dto.getCodigoRegimenMatrimonial()) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
 								if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(dto.getCodigoRegimenMatrimonial()) && dto.getCodigoRegimenMatrimonial().equals(codigoRegistroEconomicoUrsus))

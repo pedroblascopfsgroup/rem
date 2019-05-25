@@ -525,6 +525,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							name: 'estadoCivilURSUS',
 							padding: '5px',
 							editable: false,
+							readOnly:true,
 							bind: {
 								store: '{comboEstadoCivil}'
 							}
@@ -537,6 +538,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							name: 'regimenMatrimonialUrsus',
 							padding: '5px',
 							editable: false,
+							readOnly:true,
 							bind: {
 								store: '{comboRegimenesMatrimoniales}'
 							}

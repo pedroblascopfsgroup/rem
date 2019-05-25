@@ -756,29 +756,15 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 					data = {};
 				}
 				if (data.success == 'true' && !Utils.isEmptyJSON(data.data)) {
-					if (data.data.codigoEstadoCivil == '0') {
-						estadoCivilUrsus.setValue("Desconocido");
-					} else if (data.data.codigoEstadoCivil == '1') {
-						estadoCivilUrsus.setValue("Soltero");
-					} else if (data.data.codigoEstadoCivil == '2') {
-						estadoCivilUrsus.setValue("Casado");
+					
+					estadoCivilUrsus.setValue(data.data.codigoEstadoCivil);
 						
+					if(data.data.codigoEstadoCivil == '0'){
 						if (data.data.numeroClienteUrsusConyuge != 0) {
-							regimenMatrimonialUrsus.setValue("Gananciales");
+							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_GANANCIALES"]);
 						} else if (data.data.numeroClienteUrsusConyuge == 0) {
-							regimenMatrimonialUrsus.setValue("Separación de bienes");
+							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_SEPARACION_BIENES"]);
 						}
-						
-					} else if (data.data.codigoEstadoCivil == '3') {
-						estadoCivilUrsus.setValue("Viudo");
-					} else if (data.data.codigoEstadoCivil == '4') {
-						estadoCivilUrsus.setValue("Separado Legal");
-					} else if (data.data.codigoEstadoCivil == '5') {
-						estadoCivilUrsus.setValue("Religioso");
-					} else if (data.data.codigoEstadoCivil == '6') {
-						estadoCivilUrsus.setValue("Divorciado");
-					} else if (data.data.codigoEstadoCivil == '7') {
-						estadoCivilUrsus.setValue("Nulidad Matrimonial");
 					}
 					
 					if (data.data.numeroClienteUrsusConyuge != 0) {

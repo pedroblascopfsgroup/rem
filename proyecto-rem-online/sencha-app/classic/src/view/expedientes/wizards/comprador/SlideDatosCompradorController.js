@@ -1401,11 +1401,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			success: function(response, opts) {
 				var data = Ext.decode(response.responseText);
 
-				if(data.data === 'true') {
+				//if(data.data === 'true') {
 					me.continuarSiguienteSlide();
-				} else {
+				/*} else {
 					me.fireEvent('errorToast', HreRem.i18n('datos comprador diferentes en ursus'));
-				}
+				}*/
 			},
 			failure: function(response) {
 				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));

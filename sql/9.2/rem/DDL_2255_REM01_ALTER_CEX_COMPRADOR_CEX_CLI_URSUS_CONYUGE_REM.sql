@@ -45,8 +45,8 @@ DECLARE
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO								TIPO CAMPO							DESCRIPCION
     	T_ALTER(  'CEX_CLI_URSUS_CONYUGE_REM',		 	'VARCHAR2(256 CHAR)',				'Cliente URSUS REM.'	),
-    	T_ALTER(  'CEX_NUM_URSUS_CONYUGE_REM',		 	'NUMBER(0,16)',						'Numero conyugue URSUS REM.'	),
-    	T_ALTER(  'CEX_NUM_URSUS_CONYUGE_BH_REM',		'NUMBER(0,16)',						'Numero conyugue URSUS bgh REM.'	)
+    	T_ALTER(  'CEX_NUM_URSUS_CONYUGE_REM',		 	'NUMBER(16,0)',						'Numero conyugue URSUS REM.'	),
+    	T_ALTER(  'CEX_NUM_URSUS_CONYUGE_BH_REM',		'NUMBER(16,0)',						'Numero conyugue URSUS bgh REM.'	)
 		);
     V_T_ALTER T_ALTER;
 

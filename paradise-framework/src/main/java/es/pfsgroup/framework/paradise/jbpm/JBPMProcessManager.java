@@ -190,7 +190,7 @@ public class JBPMProcessManager implements BPMContants, JBPMProcessManagerApi {
             @Override
             public Object doInJbpm(JbpmContext context) {
                 // Obtener la última instancia conocida
-            	if(context != null && context.getGraphSession() != null){
+            	if(context != null && context.getGraphSession() != null && idToken != null){
             		Token token = context.getGraphSession().getToken(idToken);
 
                     //Si el token estÃ¡ terminado

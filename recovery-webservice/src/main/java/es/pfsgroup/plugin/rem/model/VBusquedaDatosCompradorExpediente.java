@@ -232,6 +232,15 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "NOMBRE_CONYUGE_URSUS")
 	private String nombreConyugeURSUS;
 	
+	@Column(name = "CEX_CLI_URSUS_CONYUGE_REM")
+	private String cexClienteUrsusConyuge;
+	
+	@Column(name = "CEX_NUM_URSUS_CONYUGE_REM")
+	private String numeroClienteUrsusConyuge;
+	
+	@Column(name = "CEX_NUM_URSUS_CONYUGE_BH_REM")
+	private String numeroClienteUrsusBhConyuge;
+	
 	
 
 	public String getId() {
@@ -802,6 +811,30 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
 		this.nombreConyugeURSUS = nombreConyugeURSUS;
+	}
+
+	public String getCexClienteUrsusConyuge() {
+		return cexClienteUrsusConyuge;
+	}
+
+	public void setCexClienteUrsusConyuge(String cexClienteUrsusConyuge) {
+		this.cexClienteUrsusConyuge = cexClienteUrsusConyuge;
+	}
+
+	public String getCexNumeroUrsusConyuge() {
+		return numeroClienteUrsusConyuge;
+	}
+
+	public void setCexNumeroUrsusConyuge(String cexNumeroUrsusConyuge) {
+		this.numeroClienteUrsusConyuge = cexNumeroUrsusConyuge;
+	}
+
+	public String getCexNumeroUrsusConyugeBh() {
+		return numeroClienteUrsusBhConyuge;
+	}
+
+	public void setCexNumeroUrsusConyugeBh(String cexNumeroUrsusConyugeBh) {
+		this.numeroClienteUrsusBhConyuge= cexNumeroUrsusConyugeBh;
 	}
 	
 

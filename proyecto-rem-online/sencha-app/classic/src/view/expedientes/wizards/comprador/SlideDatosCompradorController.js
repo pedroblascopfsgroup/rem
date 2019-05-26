@@ -758,17 +758,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				if (data.success == 'true' && !Utils.isEmptyJSON(data.data)) {
 					
 					estadoCivilUrsus.setValue(data.data.codigoEstadoCivil);
-					
-					/* 
-					 *	DD_REGIMEN_MATRIMONIAL:{
-					 *		COD_GANANCIALES:'1',
-					 *		COD_SEPARACION_BIENES:'2'
-					 *	},
-					 *
-					 *	D_ESTADOS_CIVILES:{
-					 *		COD_CASADO	:'2';
-					 *	}
-					 * */
 			
 					if(data.data.codigoEstadoCivil ===  CONST.D_ESTADOS_CIVILES["COD_CASADO"]){
 						if (data.data.numeroClienteUrsusConyuge != 0) {
@@ -1387,7 +1376,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			form = me.getView(),
 			wizard = form.up('wizardBase'),
 			modelComprador = form.getRecord();
-		
+			wizard.mask(HreRem.i18n('msg.mask.espere'));
 		Ext.Ajax.request({
 			url: $AC.getRemoteUrl('expedientecomercial/discrepanciasVeracidadDatosComprador'),
 			params: {
@@ -1397,17 +1386,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				documentoConyuge: modelComprador.get('documentoConyuge'),
 				codigoRegimenMatrimonial:modelComprador.get('codigoRegimenMatrimonial'),
 				codTipoDocumento:modelComprador.get('codTipoDocumento')
+				//numeroClienteUrsusConyuge:modelComprador.get('numeroClienteUrsusConyuge')
 			},
 			success: function(response, opts) {
 				var data = Ext.decode(response.responseText);
-
-				//if(data.data === 'true') {
+					
+					wizard.mask(HreRem.i18n('msg.mask.espere'));
+			
 					me.continuarSiguienteSlide();
-				/*} else {
-					me.fireEvent('errorToast', HreRem.i18n('datos comprador diferentes en ursus'));
-				}*/
 			},
 			failure: function(response) {
+				wizard.mask(HreRem.i18n('msg.mask.espere'));
 				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
 			}
 		});

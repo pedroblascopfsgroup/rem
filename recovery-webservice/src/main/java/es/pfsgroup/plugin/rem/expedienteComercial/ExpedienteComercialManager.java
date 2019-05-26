@@ -9159,8 +9159,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && codigoRegistroEconomicoUrsus.equals(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()))) {
 									return true;
 								}
-							}else if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(comprador.getClienteComercial().getDocumentoConyuge())) {
-								return true;
+							}else { 
+								Filter filterCOmpradorExpediente = genericDao.createFilter(FilterType.EQUALS, "id", comprador.getId());
+								CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCOmpradorExpediente);
+								if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) 
+										&& !Checks.esNulo(compradorExpediente) 
+										&& !Checks.esNulo(compradorExpediente.getNumUrsusConyuge())
+										&& !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(String.valueOf(compradorExpediente.getNumUrsusConyuge()))
+								) {
+									return true;
+								}
 							}
 						}
 					}else {
@@ -9304,6 +9312,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Boolean problemasPorComprador = false;
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getIdExpedienteComercial()));
 		Comprador comprador = genericDao.get(Comprador.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getId()));
+		Filter filterCOmpradorExpediente = genericDao.createFilter(FilterType.EQUALS, "id", comprador.getId());
+		CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCOmpradorExpediente);
 		
 		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
 				Integer numURSUS = comprador.getIdCompradorUrsus().intValue();						
@@ -9330,6 +9340,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				if(!Checks.esNulo(ejecutarDatosCliente.getNombreYApellidosConyuge())) {
 					comprador.setNombreConyugeURSUS(ejecutarDatosCliente.getNombreYApellidosConyuge());
+				}
+				
+				if(!Checks.esNulo(dto.getNumeroClienteUrsusConyuge())) {
+					compradorExpediente.setNumUrsusConyuge(Integer.parseInt(dto.getNumeroClienteUrsusConyuge()));
+				}
+				if(!Checks.esNulo(dto.getNumeroClienteUrsusBhConyuge())) {
+					compradorExpediente.setNumUrsusConyugeBh(Integer.parseInt(dto.getNumeroClienteUrsusBhConyuge()));
 				}
 				
 				genericDao.update(Comprador.class, comprador);

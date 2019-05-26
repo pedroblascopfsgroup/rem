@@ -37,6 +37,9 @@ public class DtoSlideDatosCompradores extends WebDto  {
 	private String numeroClienteUrsus; 
 	private String numeroConyugeUrsus; 	
 	private String regimenMatrimonialUrsus;
+	
+	private String numeroClienteUrsusConyuge;
+	private String numeroClienteUrsusBhConyuge;
 
 	
 	public String getCodEstadoCivil() {
@@ -197,6 +200,21 @@ public class DtoSlideDatosCompradores extends WebDto  {
 
 	public void setRegimenMatrimonialUrsus(String regimenMatrimonialUrsus) {
 		this.regimenMatrimonialUrsus = regimenMatrimonialUrsus;
+	}
+
+	public String getNumeroClienteUrsusConyuge() {
+		return numeroClienteUrsusConyuge;
+	}
+
+	public void setNumeroClienteUrsusConyuge(String numeroClienteUrsusConyuge) {
+		this.numeroClienteUrsusConyuge = numeroClienteUrsusConyuge;
+	}
+	public String getNumeroClienteUrsusBhConyuge() {
+		return numeroClienteUrsusBhConyuge;
+	}
+
+	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
+		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
 	}
 
 	public static long getSerialversionuid() {

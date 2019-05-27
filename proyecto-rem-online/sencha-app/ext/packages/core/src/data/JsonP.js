@@ -64,7 +64,7 @@ Ext.define('Ext.data.JsonP', {
      * A default timeout for any JsonP requests. If the request has not completed in this time the
      * failure callback will be fired. The timeout is in ms. Defaults to <tt>30000</tt>.
      */
-    timeout: 30000,
+    timeout: 30000000,
 
     /**
      * @property disableCaching

@@ -1372,17 +1372,6 @@ public class TrabajoController extends ParadiseJsonController {
 						actuacion.setRiesgoPrioridadReq(trabajo.getRiesgoInminenteTerceros());
 						actuacion.setFechaPrioridadReq(trabajo.getFechaCompromisoEjecucion());// ACT_TBJ_TRABAJO.TBJ_FECHA_FIN_COMPROMISO
 
-						// Devuelve el id de la tarea que no está finalizada.
-						List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-						if (!Checks.estaVacio(tramites)) {
-							List<TareaExterna> tareas = activoTramiteApi
-									.getListaTareaExternaActivasByIdTramite(tramites.get(0).getId());
-
-							if (!Checks.estaVacio(tareas)) {
-								actuacion.setIdTarea(tareas.get(0).getId());
-							}
-						}
-
 						// En la ficha HREOS-6228 indican que mediador se corresponde a contacto
 						ActivoProveedorContacto mediador = trabajo.getProveedorContacto();
 						if (mediador != null) {

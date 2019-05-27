@@ -431,24 +431,9 @@ public class OfertasController {
 				try {
 					voaa = (VOfertasActivosAgrupacion) obj;
 					oferta = ofertaApi.getOfertaById(voaa.getId());
-					ExpedienteComercial eco = expedienteComercialApi.findOneByOferta(oferta);
 					if(ofertaApi.estaViva(oferta)) {			
-					
 						ofr = new OfertaVivaRespuestaDto();
 						ofr.setNumOferta(oferta.getNumOferta()); //Número oferta
-						// Id tarea [ini]
-						Trabajo trabajo = eco.getTrabajo();
-						if(!Checks.esNulo(trabajo)) {
-							List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-							if(!Checks.estaVacio(tramites)) {
-								ActivoTramite activoTramite = tramites.get(0);
-								List<TareaExterna> tareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(activoTramite.getId());
-								if(!Checks.estaVacio(tareas)) {
-									ofr.setIdTarea(tareas.get(0).getTareaPadre().getId());// Id tarea [fin]
-								}
-							}	
-						}
-						
 						ofr.setCodEstadoEco(voaa.getCodigoEstadoExpediente()); //Estado expediente
 						// Activos [ini]
 						List<Long> listaIds = new ArrayList<Long>();
@@ -469,8 +454,7 @@ public class OfertasController {
 					logger.error("Error ofertas NULLPOINTER", e);
 				}
 			}
-		}
-		
+		}		
 		
 		try {
 			model.put("id", 0);

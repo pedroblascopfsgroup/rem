@@ -156,6 +156,13 @@ public class DtoModificarCompradores {
 	private String problemasUrsus;
 	
 	private String nombreConyugeURSUS;
+
+	private String cexClienteUrsusConyuge;
+	
+	private String numeroClienteUrsusConyuge;
+	
+	private String numeroClienteUrsusBhConyuge;
+	
 	
 
 	public String getId() {
@@ -755,8 +762,32 @@ public class DtoModificarCompradores {
 
 	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
 		this.nombreConyugeURSUS = nombreConyugeURSUS;
-	}	
-	
+	}
+
+	public String getCexClienteUrsusConyuge() {
+		return cexClienteUrsusConyuge;
+	}
+
+	public void setCexClienteUrsusConyuge(String cexClienteUrsusConyuge) {
+		this.cexClienteUrsusConyuge = cexClienteUrsusConyuge;
+	}
+
+	public String getNumeroClienteUrsusConyuge() {
+		return numeroClienteUrsusConyuge;
+	}
+
+	public void setNumeroClienteUrsusConyuge(String numeroClienteUrsusConyuge) {
+		this.numeroClienteUrsusConyuge = numeroClienteUrsusConyuge;
+	}
+
+	public String getNumeroClienteUrsusBhConyuge() {
+		return numeroClienteUrsusBhConyuge;
+	}
+
+	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
+		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
+	}
+
 	
 
 }

@@ -9,7 +9,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			idComprador = wizard.idComprador,
 			idExpediente = wizard.expediente.get('id'),
 			form = me.getView().getForm();
-
+		
 		me.bloquearCampos();
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 
@@ -116,7 +116,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
 		
 		campoTipoDocumentoConyuge.setValue()
-		
+
+
 		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO']) && me.esBankia()) {			
 			campoTipoPersona.disable();
 			campoPorcionCompra.disable();
@@ -736,7 +737,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			nombreConyugeUrsus = form.lookupReference('nombreConyugeUrsus'),
 			esBankiaBH = CONST.SUBCARTERA['BH'] == me.getView().up('wizardBase').expediente.get('subcarteraCodigo');
 			idExpediente = wizard.expediente.get('id');
-
+			
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 		
 		// Se hace la llamada Ayax al WEB-SERVICE (servicioGMPAJC93_INS) de BANKIA
@@ -1372,10 +1373,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
     },
 
     discrepanciasVeracidadDatosComprador: function() {
+
 		var me = this,
 			form = me.getView(),
 			wizard = form.up('wizardBase'),
-			modelComprador = form.getRecord();
+			modelComprador = form.getRecord(),
+			numeroClienteUrsusConyuge = me.lookupReference('numeroClienteUrsusRefConyuge').value;
 			wizard.mask(HreRem.i18n('msg.mask.espere'));
 		Ext.Ajax.request({
 			url: $AC.getRemoteUrl('expedientecomercial/discrepanciasVeracidadDatosComprador'),
@@ -1385,18 +1388,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				codEstadoCivil:modelComprador.get('codEstadoCivil'),
 				documentoConyuge: modelComprador.get('documentoConyuge'),
 				codigoRegimenMatrimonial:modelComprador.get('codigoRegimenMatrimonial'),
-				codTipoDocumento:modelComprador.get('codTipoDocumento')
-				//numeroClienteUrsusConyuge:modelComprador.get('numeroClienteUrsusConyuge')
+				codTipoDocumento:modelComprador.get('codTipoDocumento'),
+				numeroClienteUrsusConyuge:numeroClienteUrsusConyuge
 			},
 			success: function(response, opts) {
-				var data = Ext.decode(response.responseText);
-					
-					wizard.mask(HreRem.i18n('msg.mask.espere'));
+				wizard.unmask();
 			
-					me.continuarSiguienteSlide();
+				me.continuarSiguienteSlide();
 			},
 			failure: function(response) {
-				wizard.mask(HreRem.i18n('msg.mask.espere'));
+				wizard.unmask();
 				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
 			}
 		});

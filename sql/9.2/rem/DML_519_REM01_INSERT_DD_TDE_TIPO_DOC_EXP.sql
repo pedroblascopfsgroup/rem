@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=IVAN SERRANO
---## FECHA_CREACION=20190513
+--## FECHA_CREACION=20190527
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6444
+--## INCIDENCIA_LINK=HREOS-6520
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_SDE_SUBTIPO_DOC_EXP los datos añadidos en T_ARRAY_DATA.
+--## Finalidad: Script que añade en DD_TDE_SUBTIPO_DOC_EXP los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -24,22 +24,21 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de un registro.
-    V_TDE_ID_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que obtiene el DD_TDE_ID que se debe insertar
-    V_TDE_ID NUMBER(16); -- Vble. para almacenar el DD_TDE_ID
+    V_TOF_ID_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que obtiene el DD_TDE_ID que se debe insertar
+    V_TOF_ID NUMBER(16); -- Vble. para almacenar el DD_TOF_ID
     V_NUM_REGISTROS NUMBER(16); -- Vble. para validar la existencia de un registro.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_SDE_SUBTIPO_DOC_EXP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'SDE'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-    V_USUARIO_CREAR VARCHAR2(20 CHAR) := 'HREOS-6444'; -- Vble. auxiliar para almacenar el usuario crear
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TDE_TIPO_DOC_EXP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'TDE'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
+    V_USUARIO_CREAR VARCHAR2(20 CHAR) := 'HREOS-6520'; -- Vble. auxiliar para almacenar el usuario crear
     V_USUARIO_MODIFICAR VARCHAR2(20 CHAR) := 'HREOS-6520'; -- Vble. auxiliar para almacenar el usuario modificar
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('57'	,'Advisory Note'								,'Advisory Note'           ,'OP-09-ACUE-25'),
-        T_TIPO_DATA('58'	,'Advisory Note CES'							,'Advisory Note CES'     ,'OP-09-ACUE-26')
+        T_TIPO_DATA('07'	,'7.- Advisory Note'								,'Advisory Note'           ,null)
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -47,8 +46,8 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-	V_TDE_ID_SQL := 'SELECT DD_TDE_ID FROM DD_TDE_TIPO_DOC_EXP WHERE DD_TDE_CODIGO = ''07''';
-  EXECUTE IMMEDIATE V_TDE_ID_SQL INTO V_TDE_ID;
+	V_TOF_ID_SQL := 'SELECT DD_TOF_ID FROM DD_TOF_TIPOS_OFERTA WHERE DD_TOF_CODIGO = ''01''';
+  EXECUTE IMMEDIATE V_TOF_ID_SQL INTO V_TOF_ID;
     -- LOOP para insertar los valores --
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
@@ -64,12 +63,11 @@ BEGIN
           -- Si existe se modifica.
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
           V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-                    'SET DD_TDE_ID = '''|| V_TDE_ID ||''''||
-		  ', DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+                    'SET DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
           ', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
           ', USUARIOMODIFICAR = '''|| V_USUARIO_MODIFICAR ||''' , FECHAMODIFICAR = SYSDATE '||
-          ', DD_SDE_MATRICULA_GD = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
-          'WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+          ', DD_TOF_ID = '''||V_TOF_ID||''''||
+          ' WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
 
@@ -80,8 +78,8 @@ BEGIN
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;
           
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
-                      'DD_'||V_TEXT_CHARS||'_ID, DD_TDE_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, DD_'||V_TEXT_CHARS||'_MATRICULA_GD, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ', '''||V_TDE_ID||''', '''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''', 0, '''|| V_USUARIO_CREAR ||''',SYSDATE,0 FROM DUAL';
+                      'DD_'||V_TEXT_CHARS||'_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, DD_TOF_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      'SELECT '|| V_ID || ', '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''', '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''','''|| TRIM(V_TMP_TIPO_DATA(3)) ||''','''|| V_TOF_ID ||''',0, '''|| V_USUARIO_CREAR ||''',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
        END IF;

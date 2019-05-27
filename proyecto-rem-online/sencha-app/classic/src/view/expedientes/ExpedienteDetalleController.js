@@ -4312,6 +4312,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	validarCompradores: function() {
+	
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		//var gridCompradores = me.lookupReference('listadoCompradores');
@@ -4322,8 +4323,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		Ext.Ajax.request({
 		     url: url,
 		     params: {idExpediente : me.getViewModel().get("expediente.id")},
-		     success: function (a, operation, context) {
-		    	 if(data.success == "true"){
+		     success: function (response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 if(data.data == "true"){
 		    		 me.fireEvent("errorToast", HreRem.i18n("msg.algun.comprador.ha.cambiado"));
 		    		
 			     }else{

@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
@@ -1383,7 +1384,7 @@ public class TrabajoController extends ParadiseJsonController {
 						}
 
 						// En la ficha HREOS-6228 indican que mediador se corresponde a contacto
-						ActivoProveedor mediador = trabajo.getMediador();
+						ActivoProveedorContacto mediador = trabajo.getProveedorContacto();
 						if (mediador != null) {
 							actuacion.setNombreContacto(mediador.getNombre());
 							actuacion.setTelefonoContacto(mediador.getTelefono1());

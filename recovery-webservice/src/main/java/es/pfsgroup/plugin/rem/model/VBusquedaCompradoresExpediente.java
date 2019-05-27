@@ -92,6 +92,28 @@ public class VBusquedaCompradoresExpediente implements Serializable {
   
 	@Column(name = "PROBLEMAS_URSUS")
 	private String problemasUrsus;
+	
+	@Column(name = "DD_ECV_ID_URSUS")
+	private String estadoCivilURSUS;
+	
+	@Column(name = "DD_REM_ID_URSUS")
+	private String regimenMatrimonialUrsus;
+	
+	@Column(name = "N_URSUS_CONYUGE")
+	private String numeroConyugeUrsus;
+	
+	@Column(name = "NOMBRE_CONYUGE_URSUS")
+	private String nombreConyugeURSUS;
+	
+	@Column(name = "CEX_CLI_URSUS_CONYUGE_REM")
+	private String cexClienteUrsusConyuge;
+	
+	@Column(name = "CEX_NUM_URSUS_CONYUGE_REM")
+	private String numeroClienteUrsusConyuge;
+	
+	@Column(name = "CEX_NUM_URSUS_CONYUGE_BH_REM")
+	private String numeroClienteUrsusBhConyuge;
+	
     
 	public String getId() {
 		return id;
@@ -284,5 +306,63 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	public void setProblemasUrsus(String problemasUrsus) {
 		this.problemasUrsus = problemasUrsus;
 	}
+
+	public String getEstadoCivilURSUS() {
+		return estadoCivilURSUS;
+	}
+
+	public void setEstadoCivilURSUS(String estadoCivilURSUS) {
+		this.estadoCivilURSUS = estadoCivilURSUS;
+	}
+
+	public String getRegimenMatrimonialUrsus() {
+		return regimenMatrimonialUrsus;
+	}
+
+	public void setRegimenMatrimonialUrsus(String regimenMatrimonialUrsus) {
+		this.regimenMatrimonialUrsus = regimenMatrimonialUrsus;
+	}
+
+	public String getNumeroConyugeUrsus() {
+		return numeroConyugeUrsus;
+	}
+
+	public void setNumeroConyugeUrsus(String numeroConyugeUrsus) {
+		this.numeroConyugeUrsus = numeroConyugeUrsus;
+	}
+
+	public String getNombreConyugeURSUS() {
+		return nombreConyugeURSUS;
+	}
+
+	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
+		this.nombreConyugeURSUS = nombreConyugeURSUS;
+	}
+
+	public String getCexClienteUrsusConyuge() {
+		return cexClienteUrsusConyuge;
+	}
+
+	public void setCexClienteUrsusConyuge(String cexClienteUrsusConyuge) {
+		this.cexClienteUrsusConyuge = cexClienteUrsusConyuge;
+	}
+
+	public String getNumeroClienteUrsusConyuge() {
+		return numeroClienteUrsusConyuge;
+	}
+
+	public void setNumeroClienteUrsusConyuge(String numeroClienteUrsusConyuge) {
+		this.numeroClienteUrsusConyuge = numeroClienteUrsusConyuge;
+	}
+
+	public String getNumeroClienteUrsusBhConyuge() {
+		return numeroClienteUrsusBhConyuge;
+	}
+
+	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
+		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
+	}
+	
+	
 	
 }

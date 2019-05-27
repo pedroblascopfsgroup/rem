@@ -71,19 +71,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	},
 
 	onClickContinuar: function() {
-		var me = this;
-		
-		var idExpediente = me.getViewModel().get("comprador").data.idExpedienteComercial;
-		
-		if(me.getViewModel().get("comprador").data.esCarteraBankia){
-			Ext.Ajax.request({
-				url: $AC.getRemoteUrl('expedientecomercial/getComprobarCompradores'),
-				params: {
-					idExpediente: idExpediente
-				},
-				method: 'POST'
-			});
-		}
+		var me = this,
+			idExpediente = me.getViewModel().get("comprador").data.idExpedienteComercial;
 		
 		if(me.comprobarFormato()){
 			me.comprobarDatosFormularioComprador();
@@ -114,6 +103,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		estadoExpediente = expediente.getData().codigoEstado;
 		
 		var campoTipoPersona = me.lookupReference('tipoPersona'),
+		numeroDocumentoConyuge = me.lookupReference('documentoConyuge'),
 		campoPorcionCompra = me.lookupReference('porcionCompra'),
 		campoTipoDocumentoRte = me.lookupReference('tipoDocumento'),
 		campoNumeroDocumentoRte = me.lookupReference('numeroDocumento'),
@@ -139,6 +129,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			campoNumeroDocumentoConyugue.disable();
 			campoNumeroUrsus.disable();
 			campoNumeroUrsusBh.disable();
+			numeroDocumentoConyuge.disable();
 			
 			if (campoEstadoCivil.getValue() != CONST.TIPOS_ESTADO_CIVIL['CASADO'] && campoRegEconomico.getValue() != CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
 				campoTipoDocumentoConyuge.clearValue;
@@ -172,6 +163,19 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			esBankia = wizard.expediente.get('esBankia');
 		
 		if (esBankia){
+			return true;
+		} else {
+			return false;
+		}
+	},
+	
+	esBankiaAlquiler: function() {
+		var me = this,
+			wizard = me.getView().up('wizardBase'),
+			esBankia = wizard.expediente.get('esBankia'),
+			esAlquiler = wizard.expediente.get('tipoExpedienteCodigo') === CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+			
+		if (esBankia && esAlquiler){
 			return true;
 		} else {
 			return false;
@@ -254,7 +258,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				if (campoRegEconomico.getValue() == CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
 					campoTipoConyuge.setDisabled(false);
 				} else {
-					campoTipoConyuge.reset();
+					if(campoTipoConyuge.getStore() != undefined){
+						campoTipoConyuge.reset();
+					}
 					campoTipoConyuge.setDisabled(true);
 				}
 			}
@@ -750,29 +756,15 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 					data = {};
 				}
 				if (data.success == 'true' && !Utils.isEmptyJSON(data.data)) {
-					if (data.data.codigoEstadoCivil == '0') {
-						estadoCivilUrsus.setValue("Desconocido");
-					} else if (data.data.codigoEstadoCivil == '1') {
-						estadoCivilUrsus.setValue("Soltero");
-					} else if (data.data.codigoEstadoCivil == '2') {
-						estadoCivilUrsus.setValue("Casado");
-						
+					
+					estadoCivilUrsus.setValue(data.data.codigoEstadoCivil);
+			
+					if(data.data.codigoEstadoCivil ===  CONST.D_ESTADOS_CIVILES["COD_CASADO"]){
 						if (data.data.numeroClienteUrsusConyuge != 0) {
-							regimenMatrimonialUrsus.setValue("Gananciales");
-						} else if (data.data.numeroClienteUrsusConyuge == 0) {
-							regimenMatrimonialUrsus.setValue("Separación de bienes");
+							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_GANANCIALES"]);
+						} else if (data.data.numeroClienteUrsusConyuge === 0) {
+							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_SEPARACION_BIENES"]);
 						}
-						
-					} else if (data.data.codigoEstadoCivil == '3') {
-						estadoCivilUrsus.setValue("Viudo");
-					} else if (data.data.codigoEstadoCivil == '4') {
-						estadoCivilUrsus.setValue("Separado Legal");
-					} else if (data.data.codigoEstadoCivil == '5') {
-						estadoCivilUrsus.setValue("Religioso");
-					} else if (data.data.codigoEstadoCivil == '6') {
-						estadoCivilUrsus.setValue("Divorciado");
-					} else if (data.data.codigoEstadoCivil == '7') {
-						estadoCivilUrsus.setValue("Nulidad Matrimonial");
 					}
 					
 					if (data.data.numeroClienteUrsusConyuge != 0) {
@@ -1335,10 +1327,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 					return true;
 				}
 			}
-			
 		}
-			
-			
 	},
 
 	/**
@@ -1349,17 +1338,29 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	comprobarDatosFormularioComprador: function() {
 		var me = this,
 			form = me.getView();
+
 		me.comprobarObligatoriedadCamposNexos();
-		var wizard = form.up('wizardBase'),
-			pedirDocValor = form.getForm().findField('pedirDoc').getValue(),
-			modelComprador = form.getRecord();
 
 		if (!form.isValid()) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.form.invalido'));
 			return;
 		}
 
-		form.updateRecord();
+		if(me.getViewModel().get("comprador").data.esCarteraBankia){
+			me.discrepanciasVeracidadDatosComprador();
+		} else {
+			me.continuarSiguienteSlide();
+		}
+	},
+	
+	continuarSiguienteSlide: function() {
+	    var me = this,
+			form = me.getView(),
+			modelComprador = form.getRecord(),
+			pedirDocValor = form.getForm().findField('pedirDoc').getValue(),
+			wizard = form.up('wizardBase');
+	    
+	    form.updateRecord();
 		
 		if (pedirDocValor === 'false') {
 			wizard.comprador = modelComprador;
@@ -1368,7 +1369,37 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		} else {
 			me.guardarModeloComprador();
 		}
-		
+    },
+
+    discrepanciasVeracidadDatosComprador: function() {
+		var me = this,
+			form = me.getView(),
+			wizard = form.up('wizardBase'),
+			modelComprador = form.getRecord();
+			wizard.mask(HreRem.i18n('msg.mask.espere'));
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('expedientecomercial/discrepanciasVeracidadDatosComprador'),
+			params: {
+				idExpedienteComercial: modelComprador.get('idExpedienteComercial'),
+				id: modelComprador.get('id'),
+				codEstadoCivil:modelComprador.get('codEstadoCivil'),
+				documentoConyuge: modelComprador.get('documentoConyuge'),
+				codigoRegimenMatrimonial:modelComprador.get('codigoRegimenMatrimonial'),
+				codTipoDocumento:modelComprador.get('codTipoDocumento')
+				//numeroClienteUrsusConyuge:modelComprador.get('numeroClienteUrsusConyuge')
+			},
+			success: function(response, opts) {
+				var data = Ext.decode(response.responseText);
+					
+					wizard.mask(HreRem.i18n('msg.mask.espere'));
+			
+					me.continuarSiguienteSlide();
+			},
+			failure: function(response) {
+				wizard.mask(HreRem.i18n('msg.mask.espere'));
+				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
+			}
+		});
 	},
 
 	/**
@@ -1412,15 +1443,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			me.lookupReference('cambioTitulo').setTitle(HreRem.i18n('title.nexos'));
 	},
 	
-	getAvisoProblemasUrsus: function () {
-		var me = this,
-		expediente = me.getView().up('wizardBase').expediente,
-		problemasUrsus = expediente.get('problemasUrsus');
-		var esBankia = expediente.get('esBankia');
-		
+	getAdvertenciaProblemasUrsus : function() {
+		var me = this, expediente = me.getView().up('wizardBase').expediente
+		, form = me.getViewModel().getView()
+		, problemasUrsus = expediente.get('problemasUrsus')
+		, esBankia = expediente.get('esBankia');
+
 		if (esBankia && problemasUrsus == "true") {
-			me.fireEvent('errorToast', HreRem.i18n('header.problemas.ursus'));
-			return;
+			me.getViewModel().set('textoAdvertenciaProblemasUrsus','Problemas URSUS');
 		}
 	}
 });

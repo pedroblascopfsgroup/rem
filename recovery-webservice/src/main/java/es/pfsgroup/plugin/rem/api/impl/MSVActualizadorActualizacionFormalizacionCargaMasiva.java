@@ -20,7 +20,7 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
 
 @Component
 public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends AbstractMSVActualizador implements MSVLiberator {
@@ -50,7 +50,7 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
 
-		ExpedienteComercial expediente= expedienteComercialApi.findOneByNumExpediente(Long.parseLong(exc.dameCelda(fila, 0)));
+		ExpedienteComercial expediente= expedienteComercialApi.findOneByNumExpediente(Long.parseLong(exc.dameCelda(fila, COL_NUM_EXPEDIENTE_COMERCIAL)));
 		CondicionanteExpediente coe = genericDao.get(CondicionanteExpediente.class,
 				genericDao.createFilter(FilterType.EQUALS, "expediente.id",expediente.getId()));
 
@@ -89,11 +89,11 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 		if (!Checks.esNulo(exc.dameCelda(fila, COL_TIPO_DE_FINANCIACION))) {
 
 			if (exc.dameCelda(fila, COL_TIPO_DE_FINANCIACION).trim().equals("@")) {
-				coe.setEstadoFinanciacion(null);
+				form.setTipoRiesgoClase(null);
 			} else {
-				DDEstadoFinanciacion estadoFinanciacion = genericDao.get(DDEstadoFinanciacion.class, genericDao
+				DDTipoRiesgoClase tipoRiesgoClase = genericDao.get(DDTipoRiesgoClase.class, genericDao
 						.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, COL_TIPO_DE_FINANCIACION)));
-				coe.setEstadoFinanciacion(estadoFinanciacion);
+				form.setTipoRiesgoClase(tipoRiesgoClase);
 			}
 
 		}

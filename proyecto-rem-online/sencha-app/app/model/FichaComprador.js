@@ -243,7 +243,20 @@ Ext.define('HreRem.model.FichaComprador', {
         },
         {
         	name: 'relacionHre'
-        }
+        },
+		{
+			name:'numeroConyugeUrsus'
+		},
+		{
+			name:'estadoCivilURSUS'
+		},
+		{
+			name:'regimenMatrimonialUrsus'
+		},
+		{
+			name:'nombreConyugeURSUS'
+		}
+		
 		
     ],
     

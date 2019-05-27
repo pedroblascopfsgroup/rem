@@ -20,7 +20,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 
 	listeners: {
 		activate: 'onActivate',
-		boxReady: 'getAvisoProblemasUrsus'
+		boxReady: 'getAdvertenciaProblemasUrsus'
 	},
 
 	controller: 'slidedatoscomprador',
@@ -43,6 +43,14 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 		];
 
 		me.items = [
+			{
+				xtype: 'label',
+				cls: '.texto-alerta',
+				bind: {
+					html: '{textoAdvertenciaProblemasUrsus}'
+				},
+				style: 'color: red'
+	        },
 			{
 				xtype: 'checkboxfieldbase',
 				name: 'cesionDatos',
@@ -332,7 +340,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'numeroClienteUrsus',
 						padding: '5px',
 						bind: {
-							hidden: '{!comprador.mostrarUrsus}'
+							hidden: '{!comprador.mostrarUrsus}',
+							readOnly: true
 						},
 						editable: true
 					},
@@ -343,7 +352,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'numeroClienteUrsusBh',
 						padding: '5px',
 						bind: {
-							hidden: '{!comprador.mostrarUrsusBh}'
+							hidden: '{!comprador.mostrarUrsusBh}',
+							readOnly: true
 						},
 						editable: true
 					}
@@ -506,31 +516,45 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				defaults: {
 					addUxReadOnlyEditFieldPlugin: false
 				},
-				hidden: !this.lookupController().esBankia(),
+				hidden: !this.lookupController().esBankia() || this.lookupController().esBankiaAlquiler(),
 				items: [{							
-							xtype: 'textfieldbase',
+							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.estado.civil'),
 							reference: 'estadoCivilUrsus',
+							valueField: 'id',
+							name: 'estadoCivilURSUS',
 							padding: '5px',
-							editable: false
+							editable: false,
+							readOnly:true,
+							bind: {
+								store: '{comboEstadoCivil}'
+							}
 						},
 						{
-							xtype: 'textfieldbase',
+							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
 							reference: 'regimenMatrimonialUrsus',
+							valueField: 'id',
+							name: 'regimenMatrimonialUrsus',
 							padding: '5px',
-							editable: false
+							editable: false,
+							readOnly:true,
+							bind: {
+								store: '{comboRegimenesMatrimoniales}'
+							}
 						},
 						{
 							xtype: 'textfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.numero.ursus.conyuge'),
 							reference: 'numeroClienteUrsusRefConyugeUrsus',
+							name: 'numeroConyugeUrsus',
 							padding: '5px',
 							editable: false
 						},
 						{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.nombre.conyuge'),
+							name: 'nombreConyugeURSUS',
 							reference: 'nombreConyugeUrsus',
 							padding: '5px',
 							editable: false

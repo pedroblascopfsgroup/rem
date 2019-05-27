@@ -255,8 +255,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							        type: 'table',
 							        // The total column count must be specified here
 							        columns: 2,
-							        trAttrs: {height: '25px', width: '100%'},
-							        tdAttrs: {width: '50%'},
+							        trAttrs: {height: '30px', width: '100%'},
 							        tableAttrs: {
 							            style: {
 							                width: '100%'

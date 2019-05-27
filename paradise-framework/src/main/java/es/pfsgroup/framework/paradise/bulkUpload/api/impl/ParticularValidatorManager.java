@@ -3091,9 +3091,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeEntidadFinanciera(String entidadFinanciera){
-		if(Checks.esNulo(entidadFinanciera) || !StringUtils.isNumeric(entidadFinanciera))
+		if(Checks.esNulo(entidadFinanciera))
+			return true;
+		if(!Checks.esNulo(entidadFinanciera) && !StringUtils.isNumeric(entidadFinanciera))
 			return false;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) "
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT (*) "
 				+ "FROM DD_ETF_ENTIDAD_FINANCIERA DDETF WHERE "
 				+ "DDETF.DD_ETF_CODIGO = '"+entidadFinanciera+"' "
 				+" AND DDETF.BORRADO = 0");
@@ -3102,9 +3104,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeTipoDeFinanciacion(String tipoFinanciacion){
-		if(Checks.esNulo(tipoFinanciacion) || !StringUtils.isNumeric(tipoFinanciacion))
+		if(Checks.esNulo(tipoFinanciacion))
+			return true;
+		if(!Checks.esNulo(tipoFinanciacion) && !StringUtils.isNumeric(tipoFinanciacion))
 			return false;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) "
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT (*) "
 				+ "FROM DD_TRC_TIPO_RIESGO_CLASE DDTRC WHERE "
 				+ "DDTRC.DD_TRC_CODIGO = '"+tipoFinanciacion+"' "
 				+" AND DDTRC.BORRADO = 0");

@@ -221,7 +221,7 @@ describe("Ext.form.action.DirectSubmit", function() {
                 action.run();
                 
                 expect(submitSpy.mostRecentCall.args[3]).toEqual({
-                    timeout: 30000,
+                    timeout: 30000000,
                     metadata: { foo: -1, bar: true }
                 });
             });
@@ -230,7 +230,7 @@ describe("Ext.form.action.DirectSubmit", function() {
                 action.run();
                 
                 expect(submitSpy.mostRecentCall.args[3]).toEqual({
-                    timeout: 30000,
+                    timeout: 30000000,
                     metadata: { foo: 42, bar: false }
                 });
             });

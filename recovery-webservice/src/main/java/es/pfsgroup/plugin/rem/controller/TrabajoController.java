@@ -1369,7 +1369,7 @@ public class TrabajoController extends ParadiseJsonController {
 						actuacion.setTelefonoRequiriente(trabajo.getTerceroTel1());
 						actuacion.setEmailRequiriente(trabajo.getTerceroEmail());
 						actuacion.setDescripcionRequiriente(trabajo.getTerceroContacto()); 
-						actuacion.setRiesgoPrioridadReq(trabajo.getRiesgoInminenteTerceros());
+						actuacion.setRiesgoPrioridadReq(trabajo.getRequerimiento());
 						actuacion.setFechaPrioridadReq(trabajo.getFechaCompromisoEjecucion());// ACT_TBJ_TRABAJO.TBJ_FECHA_FIN_COMPROMISO
 
 						// Devuelve el id de la tarea que no está finalizada.

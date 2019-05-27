@@ -700,11 +700,6 @@ public interface ParticularValidatorApi {
 	Boolean isActivoOfGiants(String numActivo);
 
 	/**
-	 * @param numExpediente
-	 * @return true si el numero de expediente existe FOR_FORMALIZACION
-	 */
-	public Boolean existeExpedienteFormalizacion(String numExpediente);
-	/**
 	 * @param entidadFinanciera
 	 * @return true si existe la entidad Financiera
 	 */
@@ -726,7 +721,5 @@ public interface ParticularValidatorApi {
 	 */
 	
 	public Boolean activosVendidos(String numExpedienteComercial);
-
-	Boolean existeExpedienteFormalizacionBankia(String numExpediente);
 
 }

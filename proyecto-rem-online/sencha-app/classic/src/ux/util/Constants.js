@@ -582,6 +582,15 @@ Ext.define('HreRem.ux.util.Constants', {
 		NIF_PAIS_ORIGEN: '13',
 		OTRO: '14',
 		NIF: '15'
-	}
+	},
+	DD_REGIMEN_MATRIMONIAL:{
+		COD_GANANCIALES:'1',
+	 	COD_SEPARACION_BIENES:'2'
+	},
+	 
+	D_ESTADOS_CIVILES:{
+	 	COD_CASADO	:'2'
+	 }
+	
 
 });

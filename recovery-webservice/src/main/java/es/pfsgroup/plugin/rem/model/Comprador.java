@@ -146,6 +146,9 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name="DD_REM_ID_URSUS")
     private Long regimenMatrimonialUrsus;
+    
+    @Column(name="NOMBRE_CONYUGE_URSUS")
+    private String nombreConyugeURSUS;
 
 	public Long getId() {
 		return id;
@@ -383,6 +386,14 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setEstadoCivilURSUS(Long estadoCivilURSUS) {
 		this.estadoCivilURSUS = estadoCivilURSUS;
+	}
+
+	public String getNombreConyugeURSUS() {
+		return nombreConyugeURSUS;
+	}
+
+	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
+		this.nombreConyugeURSUS = nombreConyugeURSUS;
 	}
 	
 	

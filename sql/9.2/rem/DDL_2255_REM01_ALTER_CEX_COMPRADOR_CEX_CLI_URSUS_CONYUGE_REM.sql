@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo Flores
---## FECHA_CREACION=20190523
+--## FECHA_CREACION=20190526
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=HREOS-6547
+--## INCIDENCIA_LINK=HREOS-6418
 --## PRODUCTO=NO
---## Finalidad: Añadir una columna para problemas URSUS
+--## Finalidad: Añadir una columna para CEX_CLI_URSUS_CONYUGE_REM,CEX_NUM_URSUS_CONYUGE_REM, CEX_NUM_URSUS_CONYUGE_BH_REM
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,7 +35,7 @@ DECLARE
 
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'COM_COMPRADOR'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'CEX_COMPRADOR_EXPEDIENTE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 	V_CREAR_FK VARCHAR2(2 CHAR) := 'NO'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     
@@ -43,8 +43,10 @@ DECLARE
     TYPE T_ALTER IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
-    			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'NOMBRE_CONYUGE_URSUS',		 	'VARCHAR2(256 CHAR)',				'Nombre conyugue URSUS.'	)
+    			-- NOMBRE CAMPO								TIPO CAMPO							DESCRIPCION
+    	T_ALTER(  'CEX_CLI_URSUS_CONYUGE_REM',		 	'VARCHAR2(256 CHAR)',				'Cliente URSUS REM.'	),
+    	T_ALTER(  'CEX_NUM_URSUS_CONYUGE_REM',		 	'NUMBER(16,0)',						'Numero conyugue URSUS REM.'	),
+    	T_ALTER(  'CEX_NUM_URSUS_CONYUGE_BH_REM',		'NUMBER(16,0)',						'Numero conyugue URSUS bgh REM.'	)
 		);
     V_T_ALTER T_ALTER;
 

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160810
+--## AUTOR=Lara Pablo Flores
+--## FECHA_CREACION=20190524
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-6418
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_ECV_ESTADOS_CIVILES los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.1 Añadidos estados civiles URSUS
 --##########################################
 --*/
 
@@ -41,7 +42,12 @@ DECLARE
         T_TIPO_DATA('01'	,'Soltero'					,'Soltero'),
         T_TIPO_DATA('02'	,'Casado'					,'Casado'),
         T_TIPO_DATA('03'	,'Divorciado'				,'Divorciado'),
-        T_TIPO_DATA('04'	,'Viudo'					,'Viudo')
+        T_TIPO_DATA('04'	,'Viudo'					,'Viudo'),
+        
+        T_TIPO_DATA('05'	,'Desconocido'				,'Desconocido'),
+        T_TIPO_DATA('06'	,'Separado legal'			,'Separado legal'),
+        T_TIPO_DATA('07'	,'Religioso'				,'Religioso'),
+        T_TIPO_DATA('08'	,'Nulidad Matrimonial'		,'Nulidad Matrimonial')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

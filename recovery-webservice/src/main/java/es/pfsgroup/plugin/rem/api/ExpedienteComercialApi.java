@@ -1173,11 +1173,16 @@ public interface ExpedienteComercialApi {
 	 * Comprobación de los campos de los compradores en una oferta de venta para poder avanzar la tarea.
 	 */
 	boolean checkCamposComprador(TareaExterna tareaExterna);
+	
+	public Boolean checkPaseDirectoPendDevol(TareaExterna tareaExterna);
 
 	boolean checkInquilinos(TareaExterna tareaExterna);
 
 	boolean hayDiscrepanciasClientesURSUS(Long idExpediente);
 	
 	boolean hayProblemasURSUS(Long idExpediente);
+	
+	Boolean modificarDatosUnCompradorProblemasURSUS( DtoSlideDatosCompradores dto) throws Exception;
+
 
 }

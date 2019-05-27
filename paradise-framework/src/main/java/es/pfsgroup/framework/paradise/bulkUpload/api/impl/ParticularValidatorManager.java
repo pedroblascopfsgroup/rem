@@ -1,8 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.syntax.Numbers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -3090,39 +3087,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		FROM dual");
 		
 		return !"1".equals(resultado);
-	}
-
-	public Boolean existeExpedienteFormalizacion(String numExpediente){
-		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
-			return false;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		 FROM FOR_FORMALIZACION FORM WHERE"
-				+ "		 	FORM.FOR_NUMEXPEDIENTE ='"+numExpediente+"' "
-				+ "		 	AND FORM.BORRADO = 0 AND FORM.FOR_NUMEXPEDIENTE IS NOT NULL");
-		return "1".equals(resultado);
-	}
-	
-	@Override
-	public Boolean existeExpedienteFormalizacionBankia(String numExpediente){
-		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
-			return false;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_ETF_ENTIDAD_FINANCIERA DDETF" 
-				+"                JOIN COE_CONDICIONANTES_EXPEDIENTE ON DDETF.DD_ETF_ID = COE_CONDICIONANTES_EXPEDIENTE.DD_ETF_ID" 
-				+"                JOIN ECO_EXPEDIENTE_COMERCIAL ON ECO_EXPEDIENTE_COMERCIAL.ECO_ID = COE_CONDICIONANTES_EXPEDIENTE.ECO_ID" 
-				+"                JOIN FOR_FORMALIZACION ON FOR_FORMALIZACION.ECO_ID = ECO_EXPEDIENTE_COMERCIAL.ECO_ID" 
-				+"                WHERE DDETF.DD_ETF_CODIGO = '01'" 
-				+"				  AND FOR_NUMEXPEDIENTE ='"+numExpediente+"' "
-				+"                AND FOR_FORMALIZACION.FOR_NUMEXPEDIENTE IS NOT null"
-				+"		AND DDETF.BORRADO = 0");
-		return "1".equals(resultado);
-	}
-	
+	}	
 
 	@Override
 	public Boolean existeEntidadFinanciera(String entidadFinanciera){
-		if(Checks.esNulo(entidadFinanciera) || !StringUtils.isNumeric(entidadFinanciera))
+		if(Checks.esNulo(entidadFinanciera))
+			return true;
+		if(!Checks.esNulo(entidadFinanciera) && !StringUtils.isNumeric(entidadFinanciera))
 			return false;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) "
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT (*) "
 				+ "FROM DD_ETF_ENTIDAD_FINANCIERA DDETF WHERE "
 				+ "DDETF.DD_ETF_CODIGO = '"+entidadFinanciera+"' "
 				+" AND DDETF.BORRADO = 0");
@@ -3131,12 +3104,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeTipoDeFinanciacion(String tipoFinanciacion){
-		if(Checks.esNulo(tipoFinanciacion) || !StringUtils.isNumeric(tipoFinanciacion))
+		if(Checks.esNulo(tipoFinanciacion))
+			return true;
+		if(!Checks.esNulo(tipoFinanciacion) && !StringUtils.isNumeric(tipoFinanciacion))
 			return false;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT (1) "
-				+ "FROM DD_ESF_ESTADOS_FINANCIACION DDESF WHERE "
-				+ "DDESF.DD_ESF_CODIGO = '"+tipoFinanciacion+"' "
-				+" AND DDESF.BORRADO = 0");
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT (*) "
+				+ "FROM DD_TRC_TIPO_RIESGO_CLASE DDTRC WHERE "
+				+ "DDTRC.DD_TRC_CODIGO = '"+tipoFinanciacion+"' "
+				+" AND DDTRC.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 	

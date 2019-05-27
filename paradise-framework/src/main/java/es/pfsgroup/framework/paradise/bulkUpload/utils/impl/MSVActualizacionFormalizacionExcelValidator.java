@@ -48,12 +48,9 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 	private static final String FINANCIACION_COMPROBACION = "msg.error.masivo.formalizacion.no.existe.financiacion";
 	private static final String FINANCIACION_ES_SI = "msg.error.masivo.formalizacion.no.existe.si.financiacion";
 	private static final String ENTIDAD_FINANCIERA = "msg.error.masivo.formalizacion.no.existe.entidad.financiero";
-	private static final String NUM_EXPEDIENTE_NO_EXISTE = "msg.error.masivo.formalizacion.no.existe.expediente.financiacion";
-	private static final String NUM_EXPEDIENTE_NO_EXISTE_BANKIA = "msg.error.masivo.formalizacion.no.existe.expediente.financiacion.bankia";
 	private static final String NUM_EXPEDIENTE_NO_PERTENECE_A_ACTIVO_VENTA = "msg.error.masivo.formalizacion.no.existe.expediente.venta";
 	private static final String NUM_EXPEDIENTE_NO_VENDIDO = "msg.error.masivo.formalizacion.no.existe.expediente.vendido";
 	private static final String TIPO_FINANCIACION = "msg.error.masivo.formalizacion.no.existe.expediente.tipo.financiacion";
-	private static final String NO_SE_PUEDE_BORRAR = "msg.error.masivo.formalizcion.no.se.puede.borrar";
 	
 
 	private String CHECK_VALOR_SI = "SI";

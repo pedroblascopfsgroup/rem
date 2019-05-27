@@ -125,7 +125,7 @@ Ext.define('Ext.data.Connection', {
         /**
         * @cfg {Number} [timeout=30000] The timeout in milliseconds to be used for requests.
         */
-        timeout: 30000000,
+        timeout: 30000,
 
         /**
          * @cfg {Object} [extraParams] Any parameters to be appended to the request.

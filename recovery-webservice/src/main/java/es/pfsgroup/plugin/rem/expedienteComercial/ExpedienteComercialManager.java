@@ -9280,6 +9280,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 	}
 	
+	@Transactional(readOnly = false)
 	private void crearTareaValidacionClientes (ExpedienteComercial expedienteComercial){
 		Boolean existeTareaValidacion = false;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -9296,6 +9297,50 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (!existeTareaValidacion){
 			tramiteDao.creaTareaValidacion(usuarioLogado.getUsername(), expedienteComercial.getNumExpediente().toString());
+			Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(tramite.getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			TareaNotificacion tarNot = new TareaNotificacion();
+			List<TareaExterna> tareasActivas2 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+			for (TareaExterna tarea : tareasActivas2){
+				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
+					tarNot = tarea.getTareaPadre();
+					if (!Checks.esNulo(tarNot)){
+						TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS,"id", tarNot.getId()));
+						Auditoria au = new Auditoria();
+						
+						if(!Checks.esNulo(tac)) {
+							au.setFechaModificar(new Date());
+							au.setUsuarioModificar(usuarioLogado.getUsername());
+							if(!Checks.esNulo(gestor)) {
+								tac.setUsuario(gestor);
+							}else {
+								tac.setUsuario(usuarioLogado);
+							}
+							tac.setAuditoria(au);
+							tarNot.getAuditoria().setFechaCrear(new Date());
+							tarNot.getAuditoria().setUsuarioCrear(usuarioLogado.getUsername());
+							genericDao.update(TareaActivo.class, tac);
+							genericDao.update(TareaNotificacion.class, tarNot);
+						}
+						else {
+							au.setFechaCrear(new Date());
+							au.setUsuarioCrear(usuarioLogado.getUsername());
+							TareaActivo tacNuevo = new TareaActivo();
+							tacNuevo.setActivo(tramite.getActivo());
+							tacNuevo.setId(tarNot.getId());
+							tacNuevo.setTramite(tramite);
+							
+							if(!Checks.esNulo(gestor)) {
+								tacNuevo.setUsuario(gestor);
+							}else {
+								tacNuevo.setUsuario(usuarioLogado);
+							}
+							tacNuevo.setAuditoria(au);
+							genericDao.save(TareaActivo.class, tacNuevo);
+						}
+					}
+					
+				}
+			}
 		}
 	}
 	

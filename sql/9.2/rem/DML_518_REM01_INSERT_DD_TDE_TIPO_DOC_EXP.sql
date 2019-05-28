@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN SERRANO
---## FECHA_CREACION=20190527
+--## FECHA_CREACION=20190528
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6520

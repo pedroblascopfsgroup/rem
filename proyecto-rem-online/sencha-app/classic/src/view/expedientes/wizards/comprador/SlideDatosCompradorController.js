@@ -9,8 +9,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			idComprador = wizard.idComprador,
 			idExpediente = wizard.expediente.get('id'),
 			form = me.getView().getForm();
-		
-		me.bloquearCampos();
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 
 		model.setId(idComprador);
@@ -43,6 +41,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		Ext.Array.each(me.getView().query('field[isReadOnlyEdit]'), function(field) {
 			field.setReadOnly(!wizard.modoEdicion);
 		});
+		me.bloquearCampos();
 	},
 
 	onClickCancelar: function() {
@@ -350,7 +349,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	},
 	
 	comprobarObligatoriedadCamposNexos: function(field, newValue, oldValue) {
-
 		try{
 			var me = this,
 				wizard = me.getViewModel().getView().up('wizardBase'),
@@ -501,7 +499,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				if(!Ext.isEmpty(campoTipoPersona.getValue())){
 					//Si el tipo de persona es de tipo FISICA
 					if(campoTipoPersona.getValue() == CONST.TIPO_PERSONA['FISICA']) {
-						
 						if(!Ext.isEmpty(campoNombreRte)){
 							campoNombreRte.allowBlank = true;
 						}
@@ -599,6 +596,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			campoPais.validate();
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";	
+			console.log(form);
 		}catch(err) {
 			Ext.global.console.log(err);
 		}

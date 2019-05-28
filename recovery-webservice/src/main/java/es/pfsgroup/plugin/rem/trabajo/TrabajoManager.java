@@ -1320,11 +1320,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)) { // Obtención
 																										// documental
 			if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEE)) {// CEE
-				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE); // Trámite
-																			// de
-																			// obtención
-																			// documental
-																			// CEE
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE); 
+				// Trámite de obtención documental CEE
 				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
 				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
 					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_BANKIA_SAREB_TINSA));
@@ -1340,22 +1337,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 				//Si el trabajo es de JAIPUR/GIANTS/GALEON
 				}else if(this.checkGiants(trabajo) || this.checkGaleon(trabajo) || this.checkJaipur(trabajo)){
-					Filter filtroPVE = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_HOMESERVE));
-					Filter filtroPVE2 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
-					ActivoProveedor pve = genericDao.get(ActivoProveedor.class, filtroPVE, filtroPVE2);
-					if(!Checks.esNulo(pve)) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "proveedor", pve);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_HOMESERVE));
-						ActivoProveedorContacto pvc = genericDao.get(ActivoProveedorContacto.class,filtro, filtro2);
-						if(!Checks.esNulo(pvc)){
-							trabajo.setProveedorContacto(pvc);
+					Filter filtroUsuProveedor = genericDao.createFilter(FilterType.EQUALS ,"username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_HOMESERVE));
+					Usuario usuProveedor = genericDao.get(Usuario.class, filtroUsuProveedor);
+					if (!Checks.esNulo(usuProveedor)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuProveedor);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
+								DDTipoProveedor.COD_CERTIFICADORA);
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+								filtro, filtro2);
+						if (!Checks.estaVacio(listaPVC)) {
+							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
 				}
 
 			} else if (this.checkLiberbank(trabajo)) {
-
 					Filter filtroUsuProveedor = genericDao.createFilter(FilterType.EQUALS ,"username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_AESCTECTONICA));
 					Usuario usuProveedor = genericDao.get(Usuario.class, filtroUsuProveedor);
 					if (!Checks.esNulo(usuProveedor)) {
@@ -1365,7 +1362,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
 								filtro, filtro2);
 						if (!Checks.estaVacio(listaPVC)) {
-
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
@@ -1376,7 +1372,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA); 
 				
 				// Trámite de obtención de cédula				
-				// Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
+				// Si el trabajo es Sareb/Tango/Giants asignamos proveedorContacto
 				if ( this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
 							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
@@ -1391,6 +1387,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
+				// Si el trabajo es Bankia asignamos proveedorContacto	
 				}else if(this.checkBankia(trabajo)){ 
 					
 					String username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO);

@@ -6348,4 +6348,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return sePuedeEditar;
 	}
 	
+	@Override
+	public boolean isActivoMatriz(Long idActivo){
+		return activoDao.isActivoMatriz(idActivo);
+	}
+	
 }

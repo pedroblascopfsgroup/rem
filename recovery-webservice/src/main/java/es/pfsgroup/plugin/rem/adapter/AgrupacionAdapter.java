@@ -1753,6 +1753,108 @@ public class AgrupacionAdapter {
 		return true;
 
 	}
+	
+	@Transactional(readOnly = false)
+	public void deleteActivosUA(Long idActivoMatriz) {
+		
+		Filter filtroActivoMatriz = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivoMatriz);
+		Filter filtroTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.tipoAgrupacion.codigo", DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+		ActivoAgrupacionActivo agrupacion = genericDao.get(ActivoAgrupacionActivo.class, filtroActivoMatriz, filtroTipoAgrupacion);
+		
+		List<ActivoAgrupacionActivo> activoAgrupacionPA = new ArrayList<ActivoAgrupacionActivo>();
+		Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getAgrupacion().getId());
+		Filter filtroActivosAgrupacion = genericDao.createFilter(FilterType.EQUALS, "principal", 0);
+		activoAgrupacionPA = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion, filtroActivosAgrupacion);
+		
+		if(!Checks.esNulo(idActivoMatriz)) {
+			Filter filterIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivoMatriz);
+			Filter filterIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+			ActivoAgrupacionActivo aga = genericDao.get(ActivoAgrupacionActivo.class, filterIdActivo, filterIdAgrupacion);
+		
+			if(!Checks.esNulo(aga)) {
+				aga.setPrincipal(0);
+			}
+			activoAdapter.actualizarEstadoPublicacionActivo(idActivoMatriz);
+		}
+		if (!Checks.estaVacio(activoAgrupacionPA)) {
+			
+			for (ActivoAgrupacionActivo activo : activoAgrupacionPA) {
+				Long idActivo = activo.getActivo().getId();
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+					Activo activoActual = activo.getActivo();
+					PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
+					ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+					
+					if(!Checks.esNulo(activoPatrimonio)) {
+						activoPatrimonio.setCheckHPM(false);
+						
+					}
+					
+					if (!Checks.esNulo(perimetroActivo)) {
+						perimetroActivo.setActivo(activoActual);
+						perimetroActivo.setIncluidoEnPerimetro(0);
+						perimetroActivo.setAplicaTramiteAdmision(0);
+						perimetroActivo.setAplicaGestion(0);
+						perimetroActivo.setAplicaAsignarMediador(0);
+						perimetroActivo.setAplicaComercializar(0);
+						perimetroActivo.setAplicaFormalizar(0);
+						perimetroActivo.setAplicaPublicar(false);
+						
+						genericDao.save(PerimetroActivo.class, perimetroActivo);
+				}
+			}
+		}
+
+		/*try {
+			
+			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idActivoMatriz);
+			int tamano = agrupacion.getActivos().size();
+
+			for (int i = 0; i < tamano; i++) {
+				ActivoAgrupacionActivo activoAgrupacionActivo = activoAgrupacionActivoApi.get(agrupacion.getActivos().get(i).getId());
+
+				if (activoAgrupacionActivo.getActivo().equals(activoAgrupacionActivo.getAgrupacion().getActivoPrincipal())) {
+					activoAgrupacionActivo.getAgrupacion().setActivoPrincipal(null);
+					genericDao.update(ActivoAgrupacion.class, activoAgrupacionActivo.getAgrupacion());
+				}else{
+					
+					activoAgrupacionActivo.getAuditoria().setBorrado(true);
+					activoAgrupacionActivo.getAuditoria().setFechaBorrar(new Date());
+					activoAgrupacionActivo.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+					activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+					
+					Long idActivoUA = activoAgrupacionActivo.getActivo().getId();
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivoUA);
+					Activo activoActual = activoAgrupacionActivo.getActivo();
+					PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
+					
+					if (!Checks.esNulo(perimetroActivo)) {
+						perimetroActivo.setActivo(activoActual);
+						perimetroActivo.setIncluidoEnPerimetro(0);
+						perimetroActivo.setAplicaTramiteAdmision(0);
+						perimetroActivo.setAplicaGestion(0);
+						perimetroActivo.setAplicaAsignarMediador(0);
+						perimetroActivo.setAplicaComercializar(0);
+						perimetroActivo.setAplicaFormalizar(0);
+						perimetroActivo.setAplicaPublicar(false);
+						
+						genericDao.save(PerimetroActivo.class, perimetroActivo);
+					}
+
+				}
+			}
+
+			agrupacion.getActivos().clear();
+			agrupacion.setActivoPrincipal(null);
+			activoAgrupacionApi.saveOrUpdate(agrupacion);
+
+		} catch (Exception e) {
+			logger.error("error en agrupacionAdapter", e);
+		}
+
+		return true;*/
+
+	}
 
 	@Transactional(readOnly = false)
 	public boolean deleteAllActivosAgrupacion(Long id) {

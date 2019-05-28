@@ -133,6 +133,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
 import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -252,6 +253,9 @@ public class AgrupacionAdapter {
 
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	private GestorDocumentalFotosApi gestorDocumentalFotos;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -3454,6 +3458,11 @@ public class AgrupacionAdapter {
 		dto.setOcupadoConTitulo(vCondicionantesAgrDisponibilidad.getOcupadoConTitulo());
 		dto.setTapiado(vCondicionantesAgrDisponibilidad.getTapiado());
 		dto.setOtro(vCondicionantesAgrDisponibilidad.getOtro());
+		if(!Checks.esNulo(vCondicionantesAgrDisponibilidad.getOtro())) {
+			dto.setComboOtro(1);
+		} else {
+			dto.setComboOtro(0);
+		}
 		dto.setEstadoCondicionadoCodigo(vCondicionantesAgrDisponibilidad.getEstadoCondicionadoCodigo());
 		dto.setPortalesExternos(vCondicionantesAgrDisponibilidad.getPortalesExternos());
 		dto.setOcupadoSinTitulo(vCondicionantesAgrDisponibilidad.getOcupadoSinTitulo());
@@ -3483,4 +3492,16 @@ public class AgrupacionAdapter {
 		
 		return cumpleCond;
 	} 
+	
+	@Transactional(readOnly = false)
+	public boolean deleteCacheFotosAgr(Long idAgrupacion){
+		if (gestorDocumentalFotos.isActive()) {
+			List<ActivoFoto> listaFotos = activoAgrupacionApi.getFotosAgrupacionById(idAgrupacion);
+			for(ActivoFoto foto : listaFotos){
+				foto.getAuditoria().setBorrado(true);
+				genericDao.save(ActivoFoto.class, foto);
+			}		
+		}
+		return true;
+	}
 }

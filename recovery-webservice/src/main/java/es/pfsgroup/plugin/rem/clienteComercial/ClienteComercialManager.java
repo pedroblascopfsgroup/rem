@@ -283,6 +283,26 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				cliente.setDireccion(clienteDto.getNombreCalle());
 			}
 			
+			if (!Checks.esNulo(clienteDto.getNumeroCalle())) {
+				cliente.setNumeroCalle(clienteDto.getNumeroCalle());
+			}
+			
+			if (!Checks.esNulo(clienteDto.getEscalera())) {
+				cliente.setEscalera(clienteDto.getEscalera());
+			}
+			
+			if (!Checks.esNulo(clienteDto.getPlanta())) {
+				cliente.setPlanta(clienteDto.getPlanta());
+			}
+			
+			if (!Checks.esNulo(clienteDto.getPuerta())) {
+				cliente.setPuerta(clienteDto.getPuerta());
+			}
+			
+			if (!Checks.esNulo(clienteDto.getCodigoPostal())) {
+				cliente.setCodigoPostal(clienteDto.getCodigoPostal());
+			}
+			
 			if (!Checks.esNulo(clienteDto.getConyugeTipoDocumento())) {
 				DDTipoDocumento doc = genericDao.get(DDTipoDocumento.class, 
 						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getConyugeTipoDocumento()));

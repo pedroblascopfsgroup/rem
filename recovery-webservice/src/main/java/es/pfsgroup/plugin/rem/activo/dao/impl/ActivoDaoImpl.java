@@ -769,16 +769,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	private Boolean publicarAgrupacion(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
 		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLI_AGR(:idAgrupacionParam, :eleccionUsusarioParam, :usernameParam); END;";
+		int resultado = 0;
+		try {
+			Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+			callProcedureSql.setParameter("idAgrupacionParam", idAgrupacion);
+			callProcedureSql.setParameter("eleccionUsusarioParam", eleccionUsuarioTipoPublicacionAlquiler);
+			callProcedureSql.setParameter("usernameParam", username);
 
-
-		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
-		callProcedureSql.setParameter("idAgrupacionParam", idAgrupacion);
-		callProcedureSql.setParameter("eleccionUsusarioParam", eleccionUsuarioTipoPublicacionAlquiler);
-		callProcedureSql.setParameter("usernameParam", username);
-
-		int resultado = callProcedureSql.executeUpdate();
-
-		return resultado == 1;
+			resultado = callProcedureSql.executeUpdate();
+			
+			return resultado == 1;
+		} catch (Exception e) {
+			logger.error("Error en el SP_CAMBIO_ESTADO_PUBLI_AGR para el AGR_ID "+idAgrupacion.toString(), e);
+			return resultado == 0;
+		}
+		
 	}
 
 	public Long getNextNumExpedienteComercial() {

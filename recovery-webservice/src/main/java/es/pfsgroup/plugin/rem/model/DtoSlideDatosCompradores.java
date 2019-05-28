@@ -40,6 +40,7 @@ public class DtoSlideDatosCompradores extends WebDto  {
 	
 	private String numeroClienteUrsusConyuge;
 	private String numeroClienteUrsusBhConyuge;
+	
 
 	
 	public String getCodEstadoCivil() {

@@ -1369,7 +1369,7 @@ public class TrabajoController extends ParadiseJsonController {
 						actuacion.setTelefonoRequiriente(trabajo.getTerceroTel1());
 						actuacion.setEmailRequiriente(trabajo.getTerceroEmail());
 						actuacion.setDescripcionRequiriente(trabajo.getTerceroContacto()); 
-						actuacion.setRiesgoPrioridadReq(trabajo.getRiesgoInminenteTerceros());
+						actuacion.setRiesgoPrioridadReq(trabajo.getRequerimiento());
 						actuacion.setFechaPrioridadReq(trabajo.getFechaCompromisoEjecucion());// ACT_TBJ_TRABAJO.TBJ_FECHA_FIN_COMPROMISO
 
 						// En la ficha HREOS-6228 indican que mediador se corresponde a contacto

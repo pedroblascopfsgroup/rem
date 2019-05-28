@@ -821,21 +821,23 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.cexClienteUrsusConyuge = cexClienteUrsusConyuge;
 	}
 
-	public String getCexNumeroUrsusConyuge() {
+	public String getNumeroClienteUrsusConyuge() {
 		return numeroClienteUrsusConyuge;
 	}
 
-	public void setCexNumeroUrsusConyuge(String cexNumeroUrsusConyuge) {
-		this.numeroClienteUrsusConyuge = cexNumeroUrsusConyuge;
+	public void setNumeroClienteUrsusConyuge(String numeroClienteUrsusConyuge) {
+		this.numeroClienteUrsusConyuge = numeroClienteUrsusConyuge;
 	}
 
-	public String getCexNumeroUrsusConyugeBh() {
+	public String getNumeroClienteUrsusBhConyuge() {
 		return numeroClienteUrsusBhConyuge;
 	}
 
-	public void setCexNumeroUrsusConyugeBh(String cexNumeroUrsusConyugeBh) {
-		this.numeroClienteUrsusBhConyuge= cexNumeroUrsusConyugeBh;
+	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
+		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
 	}
+
+	
 	
 
 }

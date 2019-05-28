@@ -34,7 +34,7 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 	private static final String SI = "SI";
 	private static final String NO = "NO";
 	
-
+	
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -57,37 +57,33 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 		if (!Checks.esNulo(exc.dameCelda(fila, COL_FINANCIACION))) {
 			if (exc.dameCelda(fila, COL_FINANCIACION).trim().equals("@")) {
 				coe.setSolicitaFinanciacion(null);
-			} else if (SI.equals(exc.dameCelda(fila, COL_FINANCIACION))) {
-				coe.setSolicitaFinanciacion(1);
-
-				if (!Checks.esNulo(exc.dameCelda(fila, COL_ENTIDAD_FINANCIERA))) {
-					if (exc.dameCelda(fila, COL_ENTIDAD_FINANCIERA).trim().equals("@")) {
-						coe.setEntidadFinanciera(null);
-					} else {
-						DDEntidadFinanciera entidadFinanciera = genericDao.get(DDEntidadFinanciera.class,
-								genericDao.createFilter(FilterType.EQUALS, "codigo",
-										exc.dameCelda(fila, COL_ENTIDAD_FINANCIERA)));
-						coe.setEntidadFinanciera(entidadFinanciera);
-					}
-
-				}
-
+				coe.setEntidadFinanciera(null);
 			} else if (NO.equals(exc.dameCelda(fila, COL_FINANCIACION))) {
 				coe.setSolicitaFinanciacion(0);
+				coe.setEntidadFinanciera(null);
+			} else {
+				coe.setSolicitaFinanciacion(1);
+				if (!Checks.esNulo(exc.dameCelda(fila, COL_ENTIDAD_FINANCIERA))) {
+					DDEntidadFinanciera entidadFinanciera = genericDao.get(DDEntidadFinanciera.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo",
+									exc.dameCelda(fila, COL_ENTIDAD_FINANCIERA)));
+					coe.setEntidadFinanciera(entidadFinanciera);
+				}
 			}
 		}
 
 		// Numero de expediente
 		Formalizacion form = genericDao.get(Formalizacion.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id",expediente.getId()));
 
-		if (exc.dameCelda(fila, COL_NUM_EXPEDIENTE).trim().equals("@")) {
-			form.setNumExpediente(null);
-		} else {
-			form.setNumExpediente(exc.dameCelda(fila, COL_NUM_EXPEDIENTE));
+		if (!Checks.esNulo(exc.dameCelda(fila, COL_NUM_EXPEDIENTE))) {
+			if (exc.dameCelda(fila, COL_NUM_EXPEDIENTE).trim().equals("@")) {
+				form.setNumExpediente(null);
+			} else {
+				form.setNumExpediente(exc.dameCelda(fila, COL_NUM_EXPEDIENTE));
+			}
 		}
 
 		if (!Checks.esNulo(exc.dameCelda(fila, COL_TIPO_DE_FINANCIACION))) {
-
 			if (exc.dameCelda(fila, COL_TIPO_DE_FINANCIACION).trim().equals("@")) {
 				form.setTipoRiesgoClase(null);
 			} else {
@@ -95,7 +91,6 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 						.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, COL_TIPO_DE_FINANCIACION)));
 				form.setTipoRiesgoClase(tipoRiesgoClase);
 			}
-
 		}
 
 		genericDao.update(CondicionanteExpediente.class, coe);

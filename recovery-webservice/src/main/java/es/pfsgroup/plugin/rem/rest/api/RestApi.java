@@ -68,6 +68,7 @@ public interface RestApi {
 	public static final String REST_API_ENVIAR_CAMBIOS = "CAMBIOS";
 	public static final String REST_MSG_TAREA_INVALIDA = "INVALID";
 	public static final String REST_MSG_VALIDACION_TAREA = "VALIDACION_TAREA_ERROR";
+	public static final String REST_MSG_INVALID_ENTITY_TYPE = "ENTIDAD INCORRECTA";
 
 	/**
 	 * Valida la firma

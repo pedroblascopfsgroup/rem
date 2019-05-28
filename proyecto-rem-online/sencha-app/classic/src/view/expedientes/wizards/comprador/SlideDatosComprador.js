@@ -381,11 +381,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.estado.civil'),
 						name: 'codEstadoCivil',
+						valueField: 'codigo',
 						reference: 'estadoCivil',
 						padding: '5px',
 						bind: {
 							store: '{comboEstadoCivil}'
 						},
+						autoLoadOnValue: true,
 						listeners: {
 							change: 'onChangeComboCodEstadoCivil'
 						},
@@ -395,6 +397,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
 						name: 'codigoRegimenMatrimonial',
+						valueField: 'codigo',
 						reference: 'regimenMatrimonial',
 						padding: '5px',
 						bind: {
@@ -690,7 +693,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				]
 			}
 		];
-
 		me.callParent();
 	}
 

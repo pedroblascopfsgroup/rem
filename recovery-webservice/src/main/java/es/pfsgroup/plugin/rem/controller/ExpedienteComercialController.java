@@ -53,9 +53,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -90,9 +88,7 @@ import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
-import es.pfsgroup.recovery.api.ExpedienteApi;
 
 
 
@@ -925,6 +921,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//La vista hace de webdto del modelo de sencha
 	public ModelAndView saveFichaComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador, @RequestParam Long id) {
 		try {
 			boolean success = false;
@@ -2044,7 +2041,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView discrepanciasVeracidadDatosComprador(ModelMap model, DtoSlideDatosCompradores dto) throws Exception{
 		Boolean hayProblemasUrsus = expedienteComercialApi.modificarDatosUnCompradorProblemasURSUS(dto);
-		
 		try{
 			model.put(RESPONSE_DATA_KEY, hayProblemasUrsus);
 			model.put(RESPONSE_SUCCESS_KEY, true);

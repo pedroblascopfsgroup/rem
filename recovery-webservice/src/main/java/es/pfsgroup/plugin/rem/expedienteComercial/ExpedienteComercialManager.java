@@ -25,7 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -44,7 +43,6 @@ import es.capgemini.devon.pagination.PageImpl;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.config.Config;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -3522,14 +3520,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
 			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
-			if(!Checks.esNulo(dto.getProblemasUrsus())) {
-				
-			}
-			if(!Checks.esNulo(dto.getProblemasUrsus()) && SI.equals(dto.getProblemasUrsus())) {
-				comprador.setProblemasUrsus(true);
-			}else{
-				comprador.setProblemasUrsus(false);
-			}
+			
 			if (!Checks.esNulo(dto.getCodTipoPersona())) {
 				DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());
@@ -3697,16 +3688,39 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 			}
 			// Nexos
+			
+			Boolean estaCasado = false;
+			Boolean esGananciales = false;
+			
 			if (!Checks.esNulo(dto.getCodEstadoCivil())) {
-				DDEstadosCiviles estadoCivil = (DDEstadosCiviles) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
+				
+				Filter estadoCivilFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getCodEstadoCivil());
+				DDEstadosCiviles estadoCivil =  genericDao.get(DDEstadosCiviles.class, estadoCivilFilter);
+				
 				compradorExpediente.setEstadoCivil(estadoCivil);
 				reiniciarPBC = true;
+				if(!Checks.esNulo(estadoCivil) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(estadoCivil.getCodigo())) {
+					estaCasado = true;
+				}
 			}else {
 				compradorExpediente.setEstadoCivil(null);
 			}
+			
+			if (!Checks.esNulo(dto.getCodigoRegimenMatrimonial())&& estaCasado) {
+				
+				Filter regimenMatrimonialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getCodigoRegimenMatrimonial());
+				DDRegimenesMatrimoniales regimenMatrimonial =  genericDao.get(DDRegimenesMatrimoniales.class, regimenMatrimonialFilter);
+				
+				compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
+				reiniciarPBC = true;
+				if(!Checks.esNulo(regimenMatrimonial) && DDRegimenesMatrimoniales.COD_GANANCIALES.equals(regimenMatrimonial.getCodigo())) {
+					esGananciales = true;
+				}
+			}else {
+				compradorExpediente.setRegimenMatrimonial(null);
+			}
 
-			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge()) && esGananciales) {
 				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge());
 				compradorExpediente.setTipoDocumentoConyuge(tipoDocumento);
@@ -3715,13 +3729,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setTipoDocumentoConyuge(null);
 			}
 
-			if (!Checks.esNulo(dto.getDocumentoConyuge())) {
+			if (!Checks.esNulo(dto.getDocumentoConyuge()) && esGananciales) {
 				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
 			}else {
 				compradorExpediente.setDocumentoConyuge(null);
 			}
 
-			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge()) && esGananciales) {
 				compradorExpediente.setTipoDocumentoConyuge((DDTipoDocumento) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge()));
 			}else {
@@ -3731,16 +3745,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
 
 			compradorExpediente.setRelacionHre(dto.getRelacionHre());
-
-			if (!Checks.esNulo(dto.getCodigoRegimenMatrimonial())) {
-				DDRegimenesMatrimoniales regimenMatrimonial = (DDRegimenesMatrimoniales) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDRegimenesMatrimoniales.class, dto.getCodigoRegimenMatrimonial());
-				compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
-				reiniciarPBC = true;
-			}else {
-				compradorExpediente.setRegimenMatrimonial(null);
-			}
-
+			
 			compradorExpediente.setAntiguoDeudor(dto.getAntiguoDeudor());
 			// Datos representante
 			if (!Checks.esNulo(dto.getCodTipoDocumentoRte())) {
@@ -7669,7 +7674,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		try {
 			beanUtilNotNull.copyProperties(comprador, vista);
-
+		
 			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
 			comprador.setCesionDatos(vista.getCesionDatos());
 			comprador.setComunicacionTerceros(vista.getComunicacionTerceros());
@@ -9132,6 +9137,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public Boolean comprobarDatosComprador(Comprador comprador, Long idExpediente) throws Exception {
 		Boolean problemasPorComprador = false;
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"id", idExpediente));
 		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
 			Integer numURSUS = comprador.getIdCompradorUrsus().intValue();						
 			DatosClienteDto ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
@@ -9162,12 +9168,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							}else { 
 								Filter filterCOmpradorExpediente = genericDao.createFilter(FilterType.EQUALS, "id", comprador.getId());
 								CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCOmpradorExpediente);
-								if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) 
-										&& !Checks.esNulo(compradorExpediente) 
-										&& !Checks.esNulo(compradorExpediente.getNumUrsusConyuge())
-										&& !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(String.valueOf(compradorExpediente.getNumUrsusConyuge()))
-								) {
-									return true;
+						
+								if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
+										&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+										&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
+								{
+									if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) 
+											&& !Checks.esNulo(compradorExpediente) 
+											&& !Checks.esNulo(compradorExpediente.getNumUrsusConyuge())
+											&& !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(String.valueOf(compradorExpediente.getNumUrsusConyugeBh()))
+									) {
+										return true;
+									}
+								}else {
+									if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) 
+											&& !Checks.esNulo(compradorExpediente) 
+											&& !Checks.esNulo(compradorExpediente.getNumUrsusConyuge())
+											&& !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(String.valueOf(compradorExpediente.getNumUrsusConyuge()))
+									) {
+										return true;
+									}
 								}
 							}
 						}
@@ -9260,6 +9280,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 	}
 	
+	@Transactional(readOnly = false)
 	private void crearTareaValidacionClientes (ExpedienteComercial expedienteComercial){
 		Boolean existeTareaValidacion = false;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -9276,6 +9297,50 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (!existeTareaValidacion){
 			tramiteDao.creaTareaValidacion(usuarioLogado.getUsername(), expedienteComercial.getNumExpediente().toString());
+			Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(tramite.getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			TareaNotificacion tarNot = new TareaNotificacion();
+			List<TareaExterna> tareasActivas2 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+			for (TareaExterna tarea : tareasActivas2){
+				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
+					tarNot = tarea.getTareaPadre();
+					if (!Checks.esNulo(tarNot)){
+						TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS,"id", tarNot.getId()));
+						Auditoria au = new Auditoria();
+						
+						if(!Checks.esNulo(tac)) {
+							au.setFechaModificar(new Date());
+							au.setUsuarioModificar(usuarioLogado.getUsername());
+							if(!Checks.esNulo(gestor)) {
+								tac.setUsuario(gestor);
+							}else {
+								tac.setUsuario(usuarioLogado);
+							}
+							tac.setAuditoria(au);
+							tarNot.getAuditoria().setFechaCrear(new Date());
+							tarNot.getAuditoria().setUsuarioCrear(usuarioLogado.getUsername());
+							genericDao.update(TareaActivo.class, tac);
+							genericDao.update(TareaNotificacion.class, tarNot);
+						}
+						else {
+							au.setFechaCrear(new Date());
+							au.setUsuarioCrear(usuarioLogado.getUsername());
+							TareaActivo tacNuevo = new TareaActivo();
+							tacNuevo.setActivo(tramite.getActivo());
+							tacNuevo.setId(tarNot.getId());
+							tacNuevo.setTramite(tramite);
+							
+							if(!Checks.esNulo(gestor)) {
+								tacNuevo.setUsuario(gestor);
+							}else {
+								tacNuevo.setUsuario(usuarioLogado);
+							}
+							tacNuevo.setAuditoria(au);
+							genericDao.save(TareaActivo.class, tacNuevo);
+						}
+					}
+					
+				}
+			}
 		}
 	}
 	
@@ -9312,11 +9377,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Boolean problemasPorComprador = false;
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getIdExpedienteComercial()));
 		Comprador comprador = genericDao.get(Comprador.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getId()));
-		Filter filterCOmpradorExpediente = genericDao.createFilter(FilterType.EQUALS, "id", comprador.getId());
-		CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCOmpradorExpediente);
-		
+		Filter filterCompradorExpedientePorComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", comprador.getId());
+		Filter filterCompradorExpedientePorExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente.getId());
+		CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCompradorExpedientePorComprador, filterCompradorExpedientePorExpediente);
+		Integer numURSUS = null;
 		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
-				Integer numURSUS = comprador.getIdCompradorUrsus().intValue();						
+			numURSUS = comprador.getIdCompradorUrsus().intValue();		
+		}else {
+			numURSUS =Integer.parseInt(dto.getNumeroClienteUrsus());
+		}
+		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
+									
 				DatosClienteDto ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
 			//GuardarEstadoCivilURSUS
 			if(!Checks.esNulo(ejecutarDatosCliente)) {
@@ -9353,10 +9424,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
-		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
-			Integer numURSUS = comprador.getIdCompradorUrsus().intValue();						
+		if(!Checks.esNulo(numURSUS)) {
+							
 			DatosClienteDto ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
-			
+	
 			//Comprobación de discrepancias
 			List<DatosClienteProblemasVentaDto> problemasClienteUrsus = buscarProblemasVentaClienteUrsus(String.valueOf(comprador.getIdCompradorUrsus()),String.valueOf(dto.getIdExpedienteComercial())); 
 				for (DatosClienteProblemasVentaDto datosClienteProblemasVentaDto : problemasClienteUrsus) {
@@ -9389,17 +9460,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									genericDao.update(Comprador.class, comprador);
 									return true;
 									
-								}else if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getDocumentoConyuge())) {
-									comprador.setProblemasUrsus(true);
-									crearTareaValidacionClientes (expediente);
-									genericDao.update(Comprador.class, comprador);
-									return true;
+								}else {
+									if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
+											&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+											&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
+									{
+										if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getNumeroClienteUrsusBhConyuge())) {
+											comprador.setProblemasUrsus(true);
+											crearTareaValidacionClientes (expediente);	
+											genericDao.update(Comprador.class, comprador);
+											return true;
+										}
+									}else {
+										if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getNumeroClienteUrsusConyuge())) {
+											comprador.setProblemasUrsus(true);
+											crearTareaValidacionClientes (expediente);
+											genericDao.update(Comprador.class, comprador);
+											return true;
+										}
+									}
 								}
 							}
 						}
 					}else {
 						comprador.setProblemasUrsus(true);
 						crearTareaValidacionClientes (expediente);
+						comprador.setProblemasUrsus(true);
 						genericDao.update(Comprador.class, comprador);
 						return true;
 					}	

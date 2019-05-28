@@ -3,7 +3,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 	alias: 'viewmodel.slidedatoscomprador',
 
 	data: {},
-
 	stores: {		
 		comboTipoPersona: {
 			model: 'HreRem.model.ComboBase',

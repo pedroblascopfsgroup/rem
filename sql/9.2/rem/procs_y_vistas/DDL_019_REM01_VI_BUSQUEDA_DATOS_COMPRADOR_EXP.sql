@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20190305
+--## AUTOR=Lara Pablo 
+--## FECHA_CREACION=20190528
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-6547
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           

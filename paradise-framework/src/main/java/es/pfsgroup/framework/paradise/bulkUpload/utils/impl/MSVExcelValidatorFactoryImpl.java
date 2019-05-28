@@ -297,12 +297,11 @@ public class MSVExcelValidatorFactoryImpl {
 			return validatorCargaMasivaComunicaciones;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_OFERTAS_GTAM.equals(codTipoOperacion)){
 			return ofertasGtam;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS.equals(codTipoOperacion)) {
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS.equals(codTipoOperacion)) {
 			return cargaMasivaEcoTrabajos;
-		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FORMALIZACION.equals(codTipoOperacion)) {
-		return cargaMasivaFormalizacion;
-	}
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FORMALIZACION.equals(codTipoOperacion)) {
+			return cargaMasivaFormalizacion;
+		}	
 
 		return null;
 	}

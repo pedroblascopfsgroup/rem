@@ -986,6 +986,8 @@ public class AgrupacionController extends ParadiseJsonController {
 			e.printStackTrace();
 			model.put("success", false);
 		}
+		
+		return createModelAndViewJson(model);
 	}
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView refreshCacheFotos(@RequestParam Long id, ModelMap model) {

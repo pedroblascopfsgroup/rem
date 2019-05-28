@@ -10,6 +10,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -29,7 +30,10 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 	@Autowired
 	private GenericABMDao genericDao;
 	
-	@Override
+	@Autowired
+	private RemUtils remUtils;
+	
+	@Override	
 	public String[] getKeys() {
 		return this.getCodigoTarea();
 	}
@@ -58,7 +62,8 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 			|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera.getCodigo())
 			){
 				//Usuario del Proveedor Tinsa para asignar a tareas (encontrado por CIF)
-				Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
+				
+				Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_BANKIA_SAREB_TINSA));
 				Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
 				
 				if(!Checks.esNulo(usuProveedorBankiaSareb))

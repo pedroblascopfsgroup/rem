@@ -3688,6 +3688,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 			}
 			// Nexos
+			
+			Boolean estaCasado = false;
+			Boolean esGananciales = false;
+			
 			if (!Checks.esNulo(dto.getCodEstadoCivil())) {
 				
 				Filter estadoCivilFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getCodEstadoCivil());
@@ -3695,11 +3699,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				compradorExpediente.setEstadoCivil(estadoCivil);
 				reiniciarPBC = true;
+				if(!Checks.esNulo(estadoCivil) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(estadoCivil.getCodigo())) {
+					estaCasado = true;
+				}
 			}else {
 				compradorExpediente.setEstadoCivil(null);
 			}
+			
+			if (!Checks.esNulo(dto.getCodigoRegimenMatrimonial())&& estaCasado) {
+				
+				Filter regimenMatrimonialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getCodigoRegimenMatrimonial());
+				DDRegimenesMatrimoniales regimenMatrimonial =  genericDao.get(DDRegimenesMatrimoniales.class, regimenMatrimonialFilter);
+				
+				compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
+				reiniciarPBC = true;
+				if(!Checks.esNulo(regimenMatrimonial) && DDRegimenesMatrimoniales.COD_GANANCIALES.equals(regimenMatrimonial.getCodigo())) {
+					esGananciales = true;
+				}
+			}else {
+				compradorExpediente.setRegimenMatrimonial(null);
+			}
 
-			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge()) && esGananciales) {
 				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge());
 				compradorExpediente.setTipoDocumentoConyuge(tipoDocumento);
@@ -3708,13 +3729,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setTipoDocumentoConyuge(null);
 			}
 
-			if (!Checks.esNulo(dto.getDocumentoConyuge())) {
+			if (!Checks.esNulo(dto.getDocumentoConyuge()) && esGananciales) {
 				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
 			}else {
 				compradorExpediente.setDocumentoConyuge(null);
 			}
 
-			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge()) && esGananciales) {
 				compradorExpediente.setTipoDocumentoConyuge((DDTipoDocumento) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge()));
 			}else {
@@ -3724,18 +3745,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
 
 			compradorExpediente.setRelacionHre(dto.getRelacionHre());
-
-			if (!Checks.esNulo(dto.getCodigoRegimenMatrimonial())) {
-				
-				Filter regimenMatrimonialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo",dto.getCodigoRegimenMatrimonial());
-				DDRegimenesMatrimoniales regimenMatrimonial =  genericDao.get(DDRegimenesMatrimoniales.class, regimenMatrimonialFilter);
-				
-				compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
-				reiniciarPBC = true;
-			}else {
-				compradorExpediente.setRegimenMatrimonial(null);
-			}
-
+			
 			compradorExpediente.setAntiguoDeudor(dto.getAntiguoDeudor());
 			// Datos representante
 			if (!Checks.esNulo(dto.getCodTipoDocumentoRte())) {

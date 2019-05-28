@@ -1387,7 +1387,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				documentoConyuge: modelComprador.get('documentoConyuge'),
 				codigoRegimenMatrimonial:modelComprador.get('codigoRegimenMatrimonial'),
 				codTipoDocumento:modelComprador.get('codTipoDocumento'),
-				numeroClienteUrsusConyuge:numeroClienteUrsusConyuge
+				numeroClienteUrsusConyuge:numeroClienteUrsusConyuge,
+				numeroClienteUrsus:modelComprador.get('numeroClienteUrsus')
 			},
 			success: function(response, opts) {
 				wizard.unmask();

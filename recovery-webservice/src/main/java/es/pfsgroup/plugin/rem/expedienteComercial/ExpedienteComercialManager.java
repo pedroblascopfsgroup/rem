@@ -9335,9 +9335,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filterCompradorExpedientePorComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", comprador.getId());
 		Filter filterCompradorExpedientePorExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente.getId());
 		CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCompradorExpedientePorComprador, filterCompradorExpedientePorExpediente);
-		 
+		Integer numURSUS = null;
 		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
-				Integer numURSUS = comprador.getIdCompradorUrsus().intValue();						
+			numURSUS = comprador.getIdCompradorUrsus().intValue();		
+		}else {
+			numURSUS =Integer.parseInt(dto.getNumeroClienteUrsus());
+		}
+		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
+									
 				DatosClienteDto ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
 			//GuardarEstadoCivilURSUS
 			if(!Checks.esNulo(ejecutarDatosCliente)) {
@@ -9374,10 +9379,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
-		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
-			Integer numURSUS = comprador.getIdCompradorUrsus().intValue();						
+		if(!Checks.esNulo(numURSUS)) {
+							
 			DatosClienteDto ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
-			
+	
 			//Comprobación de discrepancias
 			List<DatosClienteProblemasVentaDto> problemasClienteUrsus = buscarProblemasVentaClienteUrsus(String.valueOf(comprador.getIdCompradorUrsus()),String.valueOf(dto.getIdExpedienteComercial())); 
 				for (DatosClienteProblemasVentaDto datosClienteProblemasVentaDto : problemasClienteUrsus) {
@@ -9422,7 +9427,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 											return true;
 										}
 									}else {
-										if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getNumeroClienteUrsus())) {
+										if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getNumeroClienteUrsusConyuge())) {
 											comprador.setProblemasUrsus(true);
 											crearTareaValidacionClientes (expediente);
 											genericDao.update(Comprador.class, comprador);

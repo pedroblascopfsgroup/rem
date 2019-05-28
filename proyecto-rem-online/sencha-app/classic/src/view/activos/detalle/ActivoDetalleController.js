@@ -1238,6 +1238,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 	},
 	
+	onReloadFotoClick: function(btn) {
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+		var storeTemp = btn.up('form').down('dataview').getStore();
+		var url =  $AC.getRemoteUrl('activo/refreshCacheFotos');
+		Ext.Ajax.request({
+			url: url,
+			params: {id : idActivo},
+				 success: function (a, operation, context) {
+               		storeTemp.load();
+               	 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                 },
+                 failure: function (a, operation, context) {
+	               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    	         }		     
+		});
+	},
+	
 	onDeleteFotoClick: function(btn) {
 		
 		var me = this;

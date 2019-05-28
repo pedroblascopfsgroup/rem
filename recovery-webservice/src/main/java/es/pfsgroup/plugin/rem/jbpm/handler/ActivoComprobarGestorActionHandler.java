@@ -117,8 +117,9 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler 
 
 					// Logica del BPM emsision CEE
 					if (!Checks.esNulo(carteraActivos)) {
-						if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(carteraActivos.getCodigo())) {
-							// Cartera Cajamar - Analisis peticion
+						if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(carteraActivos.getCodigo()) || 
+								DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraActivos.getCodigo())) {
+							// Cartera Cajamar o Liberbank- Analisis peticion
 							getExecutionContext().getToken().signal("ConAnalisisPeticion");
 						} else {
 							// Resto carteras - Se evalua por si es gestor

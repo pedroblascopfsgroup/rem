@@ -303,15 +303,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
                 return 'app-tbfiedset-ico icono-ko';
             }
          },
-		getSiNoFromOtro: function(get) {
-			var condicion = get('activoCondicionantesDisponibilidad.otro');
-
-		    if(Ext.isEmpty(condicion)) {
-		        return '0';
-		    } else {
-		        return '1';
-		    }
-		 },
 		 //FinCondicionantes
 	     
 	     getSrcSelloCalidad: function(get) {

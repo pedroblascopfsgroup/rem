@@ -41,8 +41,8 @@ import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 
 
 
@@ -72,6 +72,9 @@ public class TrabajoAdapter {
     
     @Autowired
     private ActivoDao activoDao;
+    
+    @Autowired
+	private GestorDocumentalFotosApi gestorDocumentalFotos;
     
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -214,6 +217,20 @@ public class TrabajoAdapter {
 		
 		return true;
 		
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean deleteCacheFotosTrabajo(Long idTrabajo){
+		if (gestorDocumentalFotos.isActive()) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
+			
+			List<TrabajoFoto> listaTrabajoFoto = genericDao.getList(TrabajoFoto.class, filtro);
+			for(TrabajoFoto foto : listaTrabajoFoto){
+				foto.getAuditoria().setBorrado(true);
+				genericDao.save(TrabajoFoto.class, foto);
+			}		
+		}
+		return true;
 	}
 	
 	public String getAdvertenciaCrearTrabajo(Long idActivo, String codigoSubtipoTrabajo, List<ActivoTrabajo> listaActivoTrabajo ){

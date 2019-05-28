@@ -58,7 +58,6 @@ import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
@@ -762,7 +761,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			Boolean cambioEstadoPrecio = Boolean.FALSE;
 			Boolean cambioEstadoActivo = Boolean.FALSE; 
 
-			if((!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()))
+			if((activo.getSituacionPosesoria() != null && !Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioPos()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioPos()))
 					|| (!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTit()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTit()))
 					|| (!Checks.esNulo(activo.getSituacionPosesoria().getFechaUltCambioTapiado()) && calculodiasCambiosActivo(activo.getSituacionPosesoria().getFechaUltCambioTapiado()))
 					|| (!Checks.esNulo(activo.getFechaUltCambioTipoActivo()) && calculodiasCambiosActivo(activo.getFechaUltCambioTipoActivo()))	
@@ -772,7 +771,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 
 			
-			if((!Checks.esNulo(activo.getActivoPublicacion().getFechaCambioPubAlq())&& calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioPubAlq()))) {
+			if((activo.getActivoPublicacion() != null && !Checks.esNulo(activo.getActivoPublicacion().getFechaCambioPubAlq())&& calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioPubAlq()))) {
 				if((!Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionAlquiler()) && (!activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo().equals(DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER)))	
 						){
 					cambioEstadoPublicacion = Boolean.TRUE;
@@ -780,7 +779,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 			
-			if((!Checks.esNulo(activo.getActivoPublicacion().getFechaCambioPubVenta()) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioPubVenta()))) {
+			if((activo.getActivoPublicacion() != null && !Checks.esNulo(activo.getActivoPublicacion().getFechaCambioPubVenta()) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioPubVenta()))) {
 				if((!Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionVenta()) && (!activo.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo().equals(DDEstadoPublicacionVenta.CODIGO_PRE_PUBLICADO_VENTA)))	
 						){
 					cambioEstadoPublicacion = Boolean.TRUE;
@@ -788,8 +787,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 
-			if(((!Checks.esNulo(activo.getActivoPublicacion().getFechaCambioValorVenta())) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioValorVenta()))
-				||	((!Checks.esNulo(activo.getActivoPublicacion().getFechaCambioValorAlq())) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioValorAlq()))
+			if(((activo.getActivoPublicacion() != null &&  !Checks.esNulo(activo.getActivoPublicacion().getFechaCambioValorVenta())) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioValorVenta()))
+				||	((activo.getActivoPublicacion() != null && !Checks.esNulo(activo.getActivoPublicacion().getFechaCambioValorAlq())) && calculodiasCambiosActivo(activo.getActivoPublicacion().getFechaCambioValorAlq()))
 					) {
 						cambioEstadoPrecio = Boolean.TRUE;
 			}	

@@ -2717,6 +2717,18 @@ public class ActivoAdapter {
 		}
 
 	}
+	
+	@Transactional(readOnly = false)
+	public boolean deleteCacheFotosActivo(Long idActivo){
+		if (gestorDocumentalFotos.isActive()) {
+			List<ActivoFoto> listaActivoFoto = this.getListFotosActivoById(idActivo);
+			for(ActivoFoto foto : listaActivoFoto){
+				foto.getAuditoria().setBorrado(true);
+				genericDao.save(ActivoFoto.class, foto);
+			}		
+		}
+		return true;
+	}
 
 	public DtoPage findAllHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dtoPresupuestoFiltro) {
 

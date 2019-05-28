@@ -49,7 +49,6 @@ import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
@@ -290,20 +289,13 @@ public interface ActivoApi {
 	DtoPage getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto);
 
 	/**
-	 * Borrado fisico de una valoración y paso al historico
-	 *
-	 * @return
-	 */
-	boolean deleteValoracionPrecio(Long id);
-
-	/**
 	 * Borrado físico de una valoración, indicando si se ha de guardar en el histórico o no
 	 *
 	 * @param id
 	 * @param guardadoEnHistorico
 	 * @return
 	 */
-	boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico);
+	boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico, Boolean comprobarGestor);
 
 	/**
 	 * Este método obtiene un objeto con los condicionantes del activo.

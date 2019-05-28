@@ -986,8 +986,19 @@ public class AgrupacionController extends ParadiseJsonController {
 			e.printStackTrace();
 			model.put("success", false);
 		}
+	}
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView refreshCacheFotos(@RequestParam Long id, ModelMap model) {
+		try {
+			boolean success = adapter.deleteCacheFotosAgr(id);
+			model.put(success, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+			model.put("error",e.getMessage());
+		}
 
 		return createModelAndViewJson(model);
 	}
-
 }

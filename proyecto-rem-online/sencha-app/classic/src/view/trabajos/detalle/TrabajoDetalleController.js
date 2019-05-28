@@ -590,6 +590,24 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 	},
 	
+	onReloadFotoClick: function(btn) {
+		var me = this,
+		idTrabajo = me.getViewModel().get("trabajo.id");
+		var storeTemp = btn.up('form').down('dataview').getStore();
+		var url =  $AC.getRemoteUrl('trabajo/refreshCacheFotos');
+		Ext.Ajax.request({
+			url: url,
+			params: {id : idTrabajo},
+				 success: function (a, operation, context) {
+               		storeTemp.load();
+               	 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                 },
+                 failure: function (a, operation, context) {
+	               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    	         }		     
+		});
+	},
+	
 	onDeleteFotoClick: function(btn) {
 		
 		var me = this;

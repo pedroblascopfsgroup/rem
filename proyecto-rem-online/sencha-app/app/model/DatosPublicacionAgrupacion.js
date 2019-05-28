@@ -217,7 +217,10 @@ Ext.define('HreRem.model.DatosPublicacionAgrupacion', {
             },
             {
             	name: 'motivoPublicacion'
-            }
+            },
+    		{
+    			name: 'comboOtro'
+    		}
 	 	],
     
 	proxy: {

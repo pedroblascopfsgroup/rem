@@ -84,7 +84,7 @@ BEGIN
                  WHEN PTA.ACT_ID IS NOT NULL THEN 1
                  ELSE 0
                END AS ADECUADO  
-             , DECODE (V.est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado        
+             , V.ES_CONDICIONADO_PUBLI ES_CONDICIONADO_PUBLI
           FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
           JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID AND TCO.BORRADO = 0
@@ -249,7 +249,7 @@ BEGIN
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.ADECUADO IS ''Adecuado 0/1'' ';      
     EXECUTE IMMEDIATE V_MSQL;                         
 
-    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.es_condicionado IS ''Campo calculado en la vista V_ACT_ESTADO_DISP'' ';      
+    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI.es_condicionado_publi IS ''Campo calculado en la vista V_ACT_ESTADO_DISP'' ';      
     EXECUTE IMMEDIATE V_MSQL;         
 END;
 /

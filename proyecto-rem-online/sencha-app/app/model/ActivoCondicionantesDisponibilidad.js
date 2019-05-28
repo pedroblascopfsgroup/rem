@@ -84,6 +84,9 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     		{
     			name: 'sinAcceso',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'comboOtro'
     		}
 
     ],

@@ -9160,8 +9160,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							}else{
 								String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
 								if( !Checks.esNulo(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
-									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()) && comprador.getClienteComercial().getRegimenMatrimonial().getCodigo().equals(codigoRegistroEconomicoUrsus))
-											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && codigoRegistroEconomicoUrsus.equals(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()))) {
+									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()) && !comprador.getClienteComercial().getRegimenMatrimonial().getCodigo().equals(codigoRegistroEconomicoUrsus))
+											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && !codigoRegistroEconomicoUrsus.equals(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()))) {
 										return true;
 									}else {
 										Filter filterCOmpradorExpediente = genericDao.createFilter(FilterType.EQUALS, "id", comprador.getId());
@@ -9456,8 +9456,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							}else {
 								String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
 								if( !Checks.esNulo(dto.getCodigoRegimenMatrimonial()) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
-									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(dto.getCodigoRegimenMatrimonial()) && dto.getCodigoRegimenMatrimonial().equals(codigoRegistroEconomicoUrsus))
-											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && codigoRegistroEconomicoUrsus.equals(dto.getCodigoRegimenMatrimonial()))) {
+									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(dto.getCodigoRegimenMatrimonial()) && !dto.getCodigoRegimenMatrimonial().equals(codigoRegistroEconomicoUrsus))
+											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && !codigoRegistroEconomicoUrsus.equals(dto.getCodigoRegimenMatrimonial()))) {
 										comprador.setProblemasUrsus(true);
 										crearTareaValidacionClientes (expediente);
 										genericDao.update(Comprador.class, comprador);

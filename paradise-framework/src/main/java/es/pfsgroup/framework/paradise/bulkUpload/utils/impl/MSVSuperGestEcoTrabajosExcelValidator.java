@@ -47,8 +47,6 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 	
 	private static final String TRABAJO_NO_EXISTE = "msg.error.masivo.trabajo.no.existe";
 	private static final String TRABAJO_TIENE_GASTOS = "msg.error.masivo.trabajo.tiene.gastos";
-	private static final String SUBTIPO_TRABAJO_NO_EXISTE = "msg.error.masivo.subtipo.trabajo.no.existe";
-	private static final String SUBTIPO_TRABAJO_NO_INDICADO = "msg.error.masivo.subtipo.trabajo.no.indicado";
 	private static final String PRECIO_UNITARIO_VALOR_INVALIDO = "msg.error.masivo.precio.unitario.valor.invalido";
 	private static final String IMPORTE_TOTAL_VALOR_INVALIDO= "msg.error.masivo.importe.total.valor.invalido"; 
 	private static final String IMPORTE_TOTAL_INCORRECTO = "msg.error.masivo.importe.total.incorrecto";
@@ -57,25 +55,21 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 	private static final String ORDEN_TRABAJOS_INCORRECTO = "msg.error.masivo.orden.trabajos.incorrecto";
 	private static final String TIPO_TARIFA_NO_EXISTE = "msg.error.masivo.tipo.tarifa.no.existe";
 	private static final String TIPO_TARIFA_INVALIDO = "msg.error.masivo.tipo.tarifa.invalido";
+	private static final String TIPO_TARIFA_NO_INDICADA = "msg.error.masivo.tipo.tarifa.no.indicada";
 	private static final String TRABAJO_TARIFADO = "msg.error.masivo.orden.trabajo.tarifado";
 
-
-	
-	
 	
 	public static final class COL_NUM {
 		static final int FILA_CABECERA = 0;
 		static final int DATOS_PRIMERA_FILA = 1;
 		
 		static final int COL_NUM_TRABAJO = 0;
-		static final int COL_SUBTIPO_TRABAJO = 1;
-		static final int COL_TIPO_TARIFA = 2;
-		static final int COL_PRECIO_UNITARIO = 3;
-		static final int COL_MEDICION = 4;
-		static final int COL_IMPORTE_TOTAL = 5;
-		static final int COL_SUMATORIO_IMPORTE_TOTAL = 6;	
+		static final int COL_TIPO_TARIFA = 1;
+		static final int COL_PRECIO_UNITARIO = 2;
+		static final int COL_MEDICION = 3;
+		static final int COL_IMPORTE_TOTAL = 4;
+		static final int COL_SUMATORIO_IMPORTE_TOTAL = 5;	
 	}
-
 
 	@Resource
     private MessageService messageServices;
@@ -137,8 +131,6 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 			mapaErrores.put(messageServices.getMessage(TRABAJO_NO_EXISTE), isWorkNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(TRABAJO_TIENE_GASTOS), isWorkHaveExpensesRows(exc));
 			mapaErrores.put(messageServices.getMessage(TRABAJO_TARIFADO), incorrectNumberOfRate(exc));
-			mapaErrores.put(messageServices.getMessage(SUBTIPO_TRABAJO_NO_EXISTE), isSubWorkNotExistsRows(exc));
-			mapaErrores.put(messageServices.getMessage(SUBTIPO_TRABAJO_NO_INDICADO), isSubWorkNullRows(exc));
 			mapaErrores.put(messageServices.getMessage(PRECIO_UNITARIO_VALOR_INVALIDO), isNumberRows(exc,COL_NUM.COL_PRECIO_UNITARIO));
 			mapaErrores.put(messageServices.getMessage(IMPORTE_TOTAL_INCORRECTO), importeTotalisValidRow(exc));
 			mapaErrores.put(messageServices.getMessage(IMPORTE_TOTAL_VALOR_INVALIDO), isNumberRows(exc,COL_NUM.COL_IMPORTE_TOTAL));
@@ -146,11 +138,10 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 			mapaErrores.put(messageServices.getMessage(SUMATORIO_IMPORTE_TOTAL_INCORRECTO), summationIncorrect(exc));
 			mapaErrores.put(messageServices.getMessage(TIPO_TARIFA_INVALIDO), tipeOfRateValid(exc));
 			mapaErrores.put(messageServices.getMessage(TIPO_TARIFA_NO_EXISTE), tipeOfRateExists(exc));
+			mapaErrores.put(messageServices.getMessage(TIPO_TARIFA_NO_INDICADA), isTipeOfRateNullRows(exc));
 			
 			if (!mapaErrores.get(messageServices.getMessage(TRABAJO_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(TRABAJO_TIENE_GASTOS)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(SUBTIPO_TRABAJO_NO_EXISTE)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(SUBTIPO_TRABAJO_NO_INDICADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(IMPORTE_TOTAL_VALOR_INVALIDO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(TRABAJO_TARIFADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(PRECIO_UNITARIO_VALOR_INVALIDO)).isEmpty()
@@ -159,14 +150,14 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 					|| !mapaErrores.get(messageServices.getMessage(SUMATORIO_IMPORTE_TOTAL_INCORRECTO)).isEmpty()
 				    || !mapaErrores.get(messageServices.getMessage(TIPO_TARIFA_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(IMPORTE_TOTAL_INCORRECTO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(TIPO_TARIFA_INVALIDO)).isEmpty())
-
+					|| !mapaErrores.get(messageServices.getMessage(TIPO_TARIFA_INVALIDO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(TIPO_TARIFA_NO_INDICADA)).isEmpty()) 
 			{
-					dtoValidacionContenido.setFicheroTieneErrores(true);
-					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());	
-					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+						dtoValidacionContenido.setFicheroTieneErrores(true);
+						exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());	
+						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 			}
 		}
 		exc.cerrar();
@@ -210,8 +201,7 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 			}
 		}
 		return resultado;
-	}
-		
+	}		
 	
 	private List<Integer> isInvalidOrder(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
@@ -266,8 +256,7 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 				e.printStackTrace();
 			}
 		return listaFilas;
-	}
-	
+	}	
 	
 	private List<Integer> isWorkHaveExpensesRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
@@ -305,19 +294,18 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 							if(i == (this.numFilasHoja -1)) {
 								if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),contadorFilas)) {
 									listaFilas.add(i);
-							}	
-								
+								}								
 							}
-						}else {
+						} else {
 							contadorFilas =1;
 							trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
 							if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
 								if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i-1, COL_NUM.COL_NUM_TRABAJO),contadorFilas)) {
-								listaFilas.add(i);
+									listaFilas.add(i);
 								}
 							}
 						}	
-					}else {
+					} else {
 						contadorFilas =1;
 						trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
 						if(i == this.numFilasHoja) {
@@ -325,43 +313,18 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 								listaFilas.add(i);
 							}	
 						}
-					}
-					
+					}					
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
 			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	private List<Integer> isSubWorkNotExistsRows(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
-						if(particularValidator.existeSubtrabajo(exc.dameCelda(i, COL_NUM.COL_SUBTIPO_TRABAJO)))
-							listaFilas.add(i);
-					}
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -371,19 +334,22 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(particularValidator.tipoTarifaValido(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA),exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)))
-						listaFilas.add(i);
+					if(!particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
+						if(particularValidator.tipoTarifaValido(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA),exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO))) {
+							listaFilas.add(i);
+						}
+					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
 			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -393,46 +359,22 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(particularValidator.existeTipoTarifa(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA)))
-						listaFilas.add(i);
+					if(!particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
+						if(particularValidator.existeTipoTarifa(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA))) {
+							listaFilas.add(i);
+						}
+					}					
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
 			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	
-	
-	
-	private List<Integer> isSubWorkNullRows(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();				
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
-						if(exc.dameCelda(i, COL_NUM.COL_SUBTIPO_TRABAJO)== null) {
-								listaFilas.add(i);
-							}
-					}	
-		
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -470,7 +412,6 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 				listaFilas.add(i);
 			}
 		}
-
 		return listaFilas;
 	}
 	
@@ -487,39 +428,33 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 						if(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)) == trabajos.get(trabajos.size()-1)) {
 							sumImporteTotal = Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) + sumImporteTotal;
 							filasSumatorio.add(i);							
-						}else {		
-							
+						} else {							
 							trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
 							
-							  for (int x = 0; x < filasSumatorio.size(); x++) {
-								  
-								  if(Double.parseDouble(exc.dameCelda(filasSumatorio.get(x), COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != sumImporteTotal){
-										listaFilas.add(x+1);
-									}
-								  
-							  }
+							for (int x = 0; x < filasSumatorio.size(); x++) {
+								if(Double.parseDouble(exc.dameCelda(filasSumatorio.get(x), COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != sumImporteTotal){
+									listaFilas.add(x+1);
+								}  
+							}
 						      
-							  sumImporteTotal = Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL));
-							  filasSumatorio.clear();
+							sumImporteTotal = Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL));
+							filasSumatorio.clear();
 							  
-							  if(this.numFilasHoja == i+1) {
-								  if(Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) ) {
+							if(this.numFilasHoja == i+1) {
+								if(Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) ) {
+									listaFilas.add(i);
+								}
+							} else {
+								if(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)) != Long.parseLong(exc.dameCelda(i+1, COL_NUM.COL_NUM_TRABAJO))) {
+									if(Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) ) {
 										listaFilas.add(i);
 									}
-							  }else {
-								  if(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)) != trabajos.get(trabajos.size()+1)) {
-									  if(Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) ) {
-											listaFilas.add(i);
-										}
-								  }else {
-									  filasSumatorio.add(i);
-								  }
-							  }
-								
+								} else {
+									filasSumatorio.add(i);
+								}
+							}	
 						}
-					
-					}else {
-						
+					} else {
 						trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
 						sumImporteTotal = Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL));
 						
@@ -527,23 +462,21 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 							if(Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) ) {
 								listaFilas.add(i);
 							}
-						}else {
+						} else {
 							filasSumatorio.add(i);
 						}
-
-					}
-					
+					}					
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
 			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 	
@@ -581,7 +514,31 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		return null;
 	}
 	
-	private int getLegnthDecimal(String value) {
+	private List<Integer> isTipeOfRateNullRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();				
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
+						if(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA).trim()==null || exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA).trim().equals("")){
+							listaFilas.add(i);
+						}
+					}		
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private int getLengthDecimal(String value) {
 		if(value != null && !value.isEmpty()){
 			if(value.contains(",")){
 				value = value.replace(",", ".");

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=ALVARO GARCIA
---## FECHA_CREACION=20190515
+--## AUTOR=IKER ADOT
+--## FECHA_CREACION=20190528
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6376
+--## INCIDENCIA_LINK=HREOS-6580
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_OPM_OPERACION_MASIVA los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial ALVARO GARCIA
+--##		0.2 Version modificada IKER ADOT
 --##########################################
 --*/
 
@@ -18,7 +19,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-
+--v0.2
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
@@ -35,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('CMGET', 'Carga masiva gestión económica trabajos', 'Función carga masiva de gestión económica de trabajos', 'CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS','n*,s,s*,d*,d*,d*,d*')
+	  T_FUNCION('CMGET', 'Carga masiva gestión económica trabajos', 'Función carga masiva de gestión económica de trabajos', 'CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS','n*,s,d*,d*,d*,d*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
@@ -60,7 +61,7 @@ BEGIN
 
 				V_SQL := 'UPDATE DD_OPM_OPERACION_MASIVA SET
 						DD_OPM_VALIDACION_FORMATO = '''||V_TMP_FUNCION(5)||''',
-						USUARIOMODIFICAR = ''HREOS-6376'',
+						USUARIOMODIFICAR = ''HREOS-6580'',
 						FECHAMODIFICAR = SYSDATE
 					WHERE DD_OPM_CODIGO='''||V_TMP_FUNCION(1)||'''';
 		    	
@@ -75,7 +76,7 @@ BEGIN
 							' SELECT '||V_ESQUEMA||'.S_DD_OPM_OPERACION_MASIVA.NEXTVAL,' ||
 							' '''||V_TMP_FUNCION(1)||''','''||V_TMP_FUNCION(2)||''','''||V_TMP_FUNCION(3)||''','||
 							' (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||V_TMP_FUNCION(4)||'''), '||
-							' 0, ''HREOS-6376'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
+							' 0, ''HREOS-6580'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
 		    	
 				EXECUTE IMMEDIATE V_SQL;
 				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA insertados correctamente.');
@@ -95,12 +96,12 @@ EXCEPTION
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(err_msg);
           DBMS_OUTPUT.put_line('---------------------------QUERY---------------------------'); 
-	  DBMS_OUTPUT.put_line(V_SQL);
+		  DBMS_OUTPUT.put_line(V_SQL);
           DBMS_OUTPUT.put_line('-----------------------------------------------------------');
 
           ROLLBACK;
-          RAISE;          
-
+          RAISE;  
 END;
 /
+
 EXIT;

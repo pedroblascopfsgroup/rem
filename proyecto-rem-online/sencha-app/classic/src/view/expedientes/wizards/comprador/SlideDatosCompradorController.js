@@ -1356,7 +1356,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			me.fireEvent('errorToast', HreRem.i18n('msg.form.invalido'));
 			return;
 		}
-
+		
+		form.updateRecord();
+		
 		if(me.getViewModel().get("comprador").data.esCarteraBankia){
 			me.discrepanciasVeracidadDatosComprador();
 		} else {
@@ -1370,8 +1372,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			modelComprador = form.getRecord(),
 			pedirDocValor = form.getForm().findField('pedirDoc').getValue(),
 			wizard = form.up('wizardBase');
-	    
-	    form.updateRecord();
 		
 		if (pedirDocValor === 'false') {
 			wizard.comprador = modelComprador;

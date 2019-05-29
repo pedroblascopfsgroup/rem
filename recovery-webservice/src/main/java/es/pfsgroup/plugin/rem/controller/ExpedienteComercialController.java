@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -89,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 
 @Controller
@@ -151,6 +153,10 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private GdprApi gdprManager;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteManager;
+
 
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
@@ -1704,6 +1710,36 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		} catch (IOException e) {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void getAdvisoryNoteExpediente(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ServletOutputStream salida = null;
+		try {
+			FileItem fileItem = expedienteManager.getAdvisoryNote();
+			salida = response.getOutputStream();
+			if (fileItem != null) {
+				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+				response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+				response.setHeader("Cache-Control", "max-age=0");
+				response.setHeader("Expires", "0");
+				response.setHeader("Pragma", "public");
+				response.setDateHeader("Expires", 0);
+				response.setContentType(fileItem.getContentType());
+				// Write
+				FileUtils.copy(fileItem.getInputStream(), salida);	
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				salida.flush();			
+				salida.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")

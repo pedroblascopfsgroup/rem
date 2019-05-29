@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -61,6 +62,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -251,6 +253,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager extends BusinessOperationOverrider<ExpedienteComercialApi>
@@ -400,6 +403,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public ExpedienteComercial findOneByNumExpediente(Long numExpediente) {
 		return expedienteComercialDao.getExpedienteComercialByNumeroExpediente(numExpediente);
+	}
+	
+	@Override
+	public FileItem getAdvisoryNote() {
+		FileItem advisoryNote = FileItemUtils.fromResource("docs/AN_Template_Modificada_MO.xlsx");
+		advisoryNote.setFileName("AN_Template_Modificada_MO.xlsx");
+		advisoryNote.setContentType(ExcelRepoApi.TIPO_EXCEL);
+
+		return advisoryNote;
 	}
 
 	@Override

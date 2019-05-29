@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +47,11 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVEnvioBurofaxExcel
 public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValidatorAbstract{
 	private static final String NUM_EXPEDIENTE_COMERCIAL_NO_EXISTE = "msg.error.masivo.formalizacion.no.existe.expediente";
 	private static final String FINANCIACION_COMPROBACION = "msg.error.masivo.formalizacion.no.existe.financiacion";
-	private static final String FINANCIACION_ES_SI = "msg.error.masivo.formalizacion.no.existe.si.financiacion";
 	private static final String ENTIDAD_FINANCIERA = "msg.error.masivo.formalizacion.no.existe.entidad.financiero";
 	private static final String NUM_EXPEDIENTE_NO_PERTENECE_A_ACTIVO_VENTA = "msg.error.masivo.formalizacion.no.existe.expediente.venta";
 	private static final String NUM_EXPEDIENTE_NO_VENDIDO = "msg.error.masivo.formalizacion.no.existe.expediente.vendido";
 	private static final String TIPO_FINANCIACION = "msg.error.masivo.formalizacion.no.existe.expediente.tipo.financiacion";
+	private static final String NUM_EXPEDIENTE_NUMERICO = "msg.error.masivo.formalizacion.numero.expediente.numerico";
 	
 
 	private String CHECK_VALOR_SI = "SI";
@@ -116,21 +117,19 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 			//CAMPOS OBLIGATORIOS FALTAN
 			mapaErrores.put(messageServices.getMessage(NUM_EXPEDIENTE_COMERCIAL_NO_EXISTE), existeNumExpedienteComercial(exc));
 			mapaErrores.put(messageServices.getMessage(FINANCIACION_COMPROBACION), isSioNo(exc,COL_FINANCIACION));
-			mapaErrores.put(messageServices.getMessage(FINANCIACION_ES_SI), obligatoriedadSiFinanciacion(exc));
 			mapaErrores.put(messageServices.getMessage(ENTIDAD_FINANCIERA), existeEntidadFinanciera(exc));		
 			mapaErrores.put(messageServices.getMessage(NUM_EXPEDIENTE_NO_PERTENECE_A_ACTIVO_VENTA), perteneceOfertaVenta(exc));
 			mapaErrores.put(messageServices.getMessage(NUM_EXPEDIENTE_NO_VENDIDO), existenActivosVendidos(exc));
-			mapaErrores.put(messageServices.getMessage(TIPO_FINANCIACION), existeTipoDeFinanciacion(exc));
-			
-			
+			mapaErrores.put(messageServices.getMessage(TIPO_FINANCIACION), existeTipoDeFinanciacion(exc));	
+			mapaErrores.put(messageServices.getMessage(NUM_EXPEDIENTE_NUMERICO), numExpedienteNumerico(exc));
 				
 			if (!mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_COMERCIAL_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(FINANCIACION_COMPROBACION)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(FINANCIACION_ES_SI)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ENTIDAD_FINANCIERA)).isEmpty()				
 					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NO_PERTENECE_A_ACTIVO_VENTA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NO_VENDIDO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(TIPO_FINANCIACION)).isEmpty())
+					|| !mapaErrores.get(messageServices.getMessage(TIPO_FINANCIACION)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NUMERICO)).isEmpty())
 			
 			{				
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -215,33 +214,6 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 		
 		return listaFilas;
 	}
-	
-	
-	
-	private List<Integer> obligatoriedadSiFinanciacion(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		int i = 0;
-		try {
-			for (i = 1; i < this.numFilasHoja; i++) {
-				
-				if(exc.dameCelda(i, COL_FINANCIACION).equals(CHECK_VALOR_SI) && exc.dameCelda(i, COL_NUM_EXPEDIENTE).isEmpty()  &&  !exc.dameCelda(i, COL_NUM_EXPEDIENTE).trim().equals("@")) {				
-					listaFilas.add(i);
-				}
-			}
-		} catch (ParseException e) {
-			listaFilas.add(i);
-
-		} catch (Exception e) {
-			listaFilas.add(0);
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		return listaFilas;
-	}
-	
-
-	
 
 	private List<Integer> perteneceOfertaVenta(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
@@ -333,7 +305,6 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 			for(i=1; i<this.numFilasHoja;i++){				
 				if(!particularValidator.existeTipoDeFinanciacion(exc.dameCelda(i, COL_TIPO_DE_FINANCIACION))   &&  !exc.dameCelda(i, COL_TIPO_DE_FINANCIACION).trim().equals("@"))
 					listaFilas.add(i);
-					
 			}
 		}catch (ParseException e) {
 			listaFilas.add(i);
@@ -346,5 +317,22 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 		return listaFilas;
 	}
 	
-	
+	private List<Integer> numExpedienteNumerico(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		int i=0;		
+		try{
+			for(i=1; i<this.numFilasHoja;i++){				
+				if(!StringUtils.isNumeric((exc.dameCelda(i, COL_NUM_EXPEDIENTE))) && !exc.dameCelda(i, COL_NUM_EXPEDIENTE).trim().equals("@"))
+					listaFilas.add(i);
+			}
+		}catch (ParseException e) {
+			listaFilas.add(i);
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
 }

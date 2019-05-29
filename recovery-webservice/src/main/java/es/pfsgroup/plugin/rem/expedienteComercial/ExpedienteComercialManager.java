@@ -9157,39 +9157,43 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							if(!codigoEstadoCivilUrsus.equals(comprador.getClienteComercial().getEstadoCivil().getCodigo()) 
 									&& (DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(codigoEstadoCivilUrsus) || DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getClienteComercial().getEstadoCivil().getCodigo()))) {
 								return true;
-							}
-						}else{
-							String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
-							if( !Checks.esNulo(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
-								if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()) && comprador.getClienteComercial().getRegimenMatrimonial().getCodigo().equals(codigoRegistroEconomicoUrsus))
-										|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && codigoRegistroEconomicoUrsus.equals(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()))) {
+							}else{
+								String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
+								if( !Checks.esNulo(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
+									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()) && !comprador.getClienteComercial().getRegimenMatrimonial().getCodigo().equals(codigoRegistroEconomicoUrsus))
+											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && !codigoRegistroEconomicoUrsus.equals(comprador.getClienteComercial().getRegimenMatrimonial().getCodigo()))) {
+										return true;
+									}else {
+										Filter filterCOmpradorExpediente = genericDao.createFilter(FilterType.EQUALS, "id", comprador.getId());
+										CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCOmpradorExpediente);
+								
+										if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
+												&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+												&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
+										{
+											if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) 
+													&& !Checks.esNulo(compradorExpediente) 
+													&& !Checks.esNulo(compradorExpediente.getNumUrsusConyuge())
+													&& !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(String.valueOf(compradorExpediente.getNumUrsusConyugeBh()))
+											) {
+												return true;
+											}
+										}else {
+											if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) 
+													&& !Checks.esNulo(compradorExpediente) 
+													&& !Checks.esNulo(compradorExpediente.getNumUrsusConyuge())
+													&& !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(String.valueOf(compradorExpediente.getNumUrsusConyuge()))
+											) {
+												return true;
+											}
+										}
+									}
+								}else { 
 									return true;
 								}
-							}else { 
-								Filter filterCOmpradorExpediente = genericDao.createFilter(FilterType.EQUALS, "id", comprador.getId());
-								CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCOmpradorExpediente);
-						
-								if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
-										&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
-										&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
-								{
-									if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) 
-											&& !Checks.esNulo(compradorExpediente) 
-											&& !Checks.esNulo(compradorExpediente.getNumUrsusConyuge())
-											&& !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(String.valueOf(compradorExpediente.getNumUrsusConyugeBh()))
-									) {
-										return true;
-									}
-								}else {
-									if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) 
-											&& !Checks.esNulo(compradorExpediente) 
-											&& !Checks.esNulo(compradorExpediente.getNumUrsusConyuge())
-											&& !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(String.valueOf(compradorExpediente.getNumUrsusConyuge()))
-									) {
-										return true;
-									}
-								}
 							}
+						}else{
+							return true;
 						}
 					}else {
 						return true;
@@ -9449,38 +9453,40 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								crearTareaValidacionClientes (expediente);
 								genericDao.update(Comprador.class, comprador);
 								return true;
-							}
-						}else{
-							String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
-							if( !Checks.esNulo(dto.getCodigoRegimenMatrimonial()) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
-								if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(dto.getCodigoRegimenMatrimonial()) && dto.getCodigoRegimenMatrimonial().equals(codigoRegistroEconomicoUrsus))
-										|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && codigoRegistroEconomicoUrsus.equals(dto.getCodigoRegimenMatrimonial()))) {
-									comprador.setProblemasUrsus(true);
-									crearTareaValidacionClientes (expediente);
-									genericDao.update(Comprador.class, comprador);
-									return true;
-									
-								}else {
-									if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
-											&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
-											&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
-									{
-										if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getNumeroClienteUrsusBhConyuge())) {
-											comprador.setProblemasUrsus(true);
-											crearTareaValidacionClientes (expediente);	
-											genericDao.update(Comprador.class, comprador);
-											return true;
-										}
-									}else {
-										if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getNumeroClienteUrsusConyuge())) {
-											comprador.setProblemasUrsus(true);
-											crearTareaValidacionClientes (expediente);
-											genericDao.update(Comprador.class, comprador);
-											return true;
+							}else {
+								String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
+								if( !Checks.esNulo(dto.getCodigoRegimenMatrimonial()) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
+									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(dto.getCodigoRegimenMatrimonial()) && !dto.getCodigoRegimenMatrimonial().equals(codigoRegistroEconomicoUrsus))
+											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && !codigoRegistroEconomicoUrsus.equals(dto.getCodigoRegimenMatrimonial()))) {
+										comprador.setProblemasUrsus(true);
+										crearTareaValidacionClientes (expediente);
+										genericDao.update(Comprador.class, comprador);
+										return true;
+									}
+									else {
+										if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
+												&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+												&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
+										{
+											if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getNumeroClienteUrsusBhConyuge())) {
+												comprador.setProblemasUrsus(true);
+												crearTareaValidacionClientes (expediente);	
+												genericDao.update(Comprador.class, comprador);
+												return true;
+											}
+										}else {
+											if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getNumeroClienteUrsusConyuge())) {
+												comprador.setProblemasUrsus(true);
+												crearTareaValidacionClientes (expediente);
+												genericDao.update(Comprador.class, comprador);
+												return true;
+											}
 										}
 									}
 								}
 							}
+						}else{
+							return true;
 						}
 					}else {
 						comprador.setProblemasUrsus(true);

@@ -52,6 +52,7 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 	private static final String NUM_EXPEDIENTE_NO_VENDIDO = "msg.error.masivo.formalizacion.no.existe.expediente.vendido";
 	private static final String TIPO_FINANCIACION = "msg.error.masivo.formalizacion.no.existe.expediente.tipo.financiacion";
 	private static final String NUM_EXPEDIENTE_NUMERICO = "msg.error.masivo.formalizacion.numero.expediente.numerico";
+	private static final String ENTIDAD_FINANCIERA_OBLIGATORIA = "msg.error.masivo.formalizacion.financiacion.si.obligatorio.entidad.financiera";
 	
 
 	private String CHECK_VALOR_SI = "SI";
@@ -122,6 +123,7 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 			mapaErrores.put(messageServices.getMessage(NUM_EXPEDIENTE_NO_VENDIDO), existenActivosVendidos(exc));
 			mapaErrores.put(messageServices.getMessage(TIPO_FINANCIACION), existeTipoDeFinanciacion(exc));	
 			mapaErrores.put(messageServices.getMessage(NUM_EXPEDIENTE_NUMERICO), numExpedienteNumerico(exc));
+			mapaErrores.put(messageServices.getMessage(ENTIDAD_FINANCIERA_OBLIGATORIA), obligatoriedadSiFinanciacion(exc));
 				
 			if (!mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_COMERCIAL_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(FINANCIACION_COMPROBACION)).isEmpty()
@@ -129,7 +131,8 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NO_PERTENECE_A_ACTIVO_VENTA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NO_VENDIDO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(TIPO_FINANCIACION)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NUMERICO)).isEmpty())
+					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NUMERICO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ENTIDAD_FINANCIERA_OBLIGATORIA)).isEmpty())
 			
 			{				
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -334,5 +337,27 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 		}
 		
 		return listaFilas;
+	}
+	
+	private List<Integer> obligatoriedadSiFinanciacion(MSVHojaExcel exc){
+			List<Integer> listaFilas = new ArrayList<Integer>();
+			int i = 0;
+			try {
+				for (i = 1; i < this.numFilasHoja; i++) {
+					
+					if(exc.dameCelda(i, COL_FINANCIACION).equals(CHECK_VALOR_SI) && exc.dameCelda(i, COL_ENTIDAD_FINANCIERA).isEmpty()) {				
+						listaFilas.add(i);
+					}
+				}
+			} catch (ParseException e) {
+				listaFilas.add(i);
+	
+			} catch (Exception e) {
+				listaFilas.add(0);
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return listaFilas;
 	}
 }

@@ -308,7 +308,7 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 					} else {
 						contadorFilas =1;
 						trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
-						if(i == this.numFilasHoja) {
+						if(i+1 == this.numFilasHoja) {
 							if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),contadorFilas)) {
 								listaFilas.add(i);
 							}	
@@ -427,13 +427,19 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 					if(trabajos.size()!=0) {
 						if(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)) == trabajos.get(trabajos.size()-1)) {
 							sumImporteTotal = Double.parseDouble(exc.dameCelda(i, COL_NUM.COL_IMPORTE_TOTAL)) + sumImporteTotal;
-							filasSumatorio.add(i);							
+							filasSumatorio.add(i);			
+							if(i+1 == this.numFilasHoja) {
+								for (int x = 0; x < filasSumatorio.size(); x++) {
+									if(Double.parseDouble(exc.dameCelda(filasSumatorio.get(x), COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != sumImporteTotal){
+										listaFilas.add(filasSumatorio.get(x));
+									}  
+								}
+							}
 						} else {							
 							trabajos.add(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)));
-							
 							for (int x = 0; x < filasSumatorio.size(); x++) {
 								if(Double.parseDouble(exc.dameCelda(filasSumatorio.get(x), COL_NUM.COL_SUMATORIO_IMPORTE_TOTAL)) != sumImporteTotal){
-									listaFilas.add(x+1);
+									listaFilas.add(filasSumatorio.get(x));
 								}  
 							}
 						      

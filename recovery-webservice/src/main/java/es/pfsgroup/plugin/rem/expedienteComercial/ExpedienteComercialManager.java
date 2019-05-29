@@ -2343,7 +2343,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getCodigoEntidad())) {
 				condiciones.setEntidadBancariaFiador(entidadAvalista);
 			}
-			if (condiciones.getSolicitaReserva() == 0) {
+			if (condiciones != null && condiciones.getSolicitaReserva() == 0) {
 				Reserva reserva = expedienteComercial.getReserva();
 				if (!Checks.esNulo(reserva)) {
 					reserva.getAuditoria().setBorrado(true);

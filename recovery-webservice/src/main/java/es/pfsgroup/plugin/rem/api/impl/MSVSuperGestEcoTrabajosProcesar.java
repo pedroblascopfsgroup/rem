@@ -59,13 +59,13 @@ public class MSVSuperGestEcoTrabajosProcesar extends AbstractMSVActualizador imp
 		Trabajo trabajo = trabajoApi.getTrabajoByNumeroTrabajo(Long.parseLong(exc.dameCelda(fila, 0)));
 //		ConfiguracionTarifa condiguracionTarifa = genericDao.get(ConfiguracionTarifa.class,genericDao.createFilter(FilterType.EQUALS,"trabajo", trabajo),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		trabajosConfiguracionTarifa = genericDao.getList(TrabajoConfiguracionTarifa.class,genericDao.createFilter(FilterType.EQUALS,"trabajo", trabajo),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		trabajo.setImporteTotal(Double.parseDouble(exc.dameCelda(fila, 3)));
+		trabajo.setImporteTotal(Double.parseDouble(exc.dameCelda(fila, 5)));
 		
 		 for (int i = 0; i < trabajosConfiguracionTarifa.size(); i++) {
-			 if(trabajosConfiguracionTarifa.get(i).getConfigTarifa().getTipoTarifa().getCodigo().equals(exc.dameCelda(fila, 2))) {
+			 if(trabajosConfiguracionTarifa.get(i).getConfigTarifa().getTipoTarifa().getCodigo().equals(exc.dameCelda(fila, 1))) {
 					if(!Checks.esNulo(trabajo)){
-						 trabajosConfiguracionTarifa.get(i).setMedicion(Float.parseFloat(exc.dameCelda(fila, 4)));
-						 trabajosConfiguracionTarifa.get(i).setPrecioUnitario(Float.parseFloat(exc.dameCelda(fila, 3)));
+						 trabajosConfiguracionTarifa.get(i).setMedicion(Float.parseFloat(exc.dameCelda(fila, 3)));
+						 trabajosConfiguracionTarifa.get(i).setPrecioUnitario(Float.parseFloat(exc.dameCelda(fila, 2)));
 						 genericDao.update(TrabajoConfiguracionTarifa.class, trabajosConfiguracionTarifa.get(i));
 					}
 			 }

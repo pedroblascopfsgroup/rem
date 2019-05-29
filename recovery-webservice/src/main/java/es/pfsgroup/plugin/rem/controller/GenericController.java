@@ -1,13 +1,20 @@
 package es.pfsgroup.plugin.rem.controller;
 
-
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,17 +28,39 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
+import es.pfsgroup.plugin.rem.rest.dto.DocumentoDto;
+import es.pfsgroup.plugin.rem.rest.dto.DocumentoRequestDto;
+import es.pfsgroup.plugin.rem.rest.dto.File;
+import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
+import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import net.sf.json.JSONObject;
+import java.util.Properties;
 
 
 @Controller
@@ -46,9 +75,35 @@ public class GenericController extends ParadiseJsonController{
 	@Autowired
 	private LogTrustAcceso trustMe;
 	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
+	private RestApi restApi;
+	
+	
+	@Resource
+	Properties appProperties;
+	
+	@Autowired
+	private ActivoAdapter adapterActivo;
+
+	@Autowired
+	private TrabajoApi trabajoApi;
+
+	@Autowired
+	private ExpedienteComercialAdapter expedienteComercialAdapter;
+	
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
+	
+	
+
+	
 	private static final String DICCIONARIO_TIPO_DOCUMENTO = "tiposDocumento";
 	
 	private static final String DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO = "activo";
+	private final Log logger = LogFactory.getLog(getClass());
 
 
 	/**
@@ -400,4 +455,141 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoTituloActivoTPA(numActivo)));	
 	}
 
-}
+		/**
+	 * Inserta una lista de documentos a la entidad correspondiente  Ejem: IP:8080/pfs/rest/generic/altaDocumento
+	 * HEADERS:
+	 * Content-Type - application/json
+	 * signature - 
+	 * 
+	 * BODY:
+	 * {  
+   "id":"112",
+   "data":[  
+      {  "tipoEntidad":"T",
+    	 "numEntidad":"161197",
+    	 "tipoDocumento":"03",
+    	 "subTipoDocumento":"26",
+    	 "nombreDocumento":"prueba10.pdf",
+    	 "descripcionDocumento":"prueba del post",
+    	 "documento":"YnVlbm9zIGRpYXMgdGVuZ28gbGliZXJ0YWQgcGFyYSBoYWNlciBlbiBlbCB3ZWIgc2VydmljZSBjb21vIHlvIHZlYS4="
+      
+      }
+   ]
+} *  
+	 *
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	
+	@RequestMapping(method = RequestMethod.POST , value = "/generic/altaDocumento")
+	public void altaDocumento (ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
+		DocumentoRequestDto jsonData = null;
+		JSONObject jsonFields = null;
+		List<DocumentoDto> listaDocumentoDto = null;
+		String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/";
+		WebFileItem webFileItem;
+		FileItem fileItem;
+		String tipoEntidad;
+		String errores="";
+		java.io.File file;
+		try {
+			
+			jsonFields = request.getJsonObject();
+			jsonData = (DocumentoRequestDto) request.getRequestData(DocumentoRequestDto.class);
+			listaDocumentoDto = jsonData.getData();
+						
+			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+				
+			}else{
+				for (DocumentoDto documentoDto : listaDocumentoDto) {
+					
+					tipoEntidad = documentoDto.getTipoEntidad().trim().toUpperCase();
+					byte [] fichero = DatatypeConverter.parseBase64Binary(documentoDto.getDocumento());
+					file = new java.io.File(rutaFichero+documentoDto.getNombreDocumento()); 
+					file.createNewFile(); 
+					FileOutputStream fop = new FileOutputStream(file); 
+					fop.write(fichero); 
+					fop.flush(); 
+					fop.close(); 
+					fileItem = new FileItem(file);
+					fileItem.setFileName(documentoDto.getNombreDocumento());
+					fileItem.setLength(fichero.length);
+					webFileItem = new WebFileItem();
+					webFileItem.setFileItem(fileItem);
+					webFileItem.putParameter("tipo", documentoDto.getTipoDocumento());
+					webFileItem.putParameter("subtipo", documentoDto.getSubTipoDocumento());
+					webFileItem.putParameter("descripcion", documentoDto.getDescripcionDocumento());
+					
+					if(tipoEntidad.equals("A")) {
+					
+						Activo activo = genericDao.get(Activo.class , genericDao.createFilter(FilterType.EQUALS,"numActivo", Long.parseLong(documentoDto.getNumEntidad().trim())));
+												
+						if(activo == null){
+							errores = "No existe la entidad Activo";
+						}else{
+						webFileItem.putParameter("idEntidad", String.valueOf(activo.getId()));
+						errores = adapterActivo.upload(webFileItem);}
+											
+					}else if(tipoEntidad.equals("P")){
+				
+					}else if(tipoEntidad.equals("T")) {
+						Trabajo trabajo = genericDao.get(Trabajo.class , genericDao.createFilter(FilterType.EQUALS,"numTrabajo",  Long.parseLong(documentoDto.getNumEntidad().trim())));
+						if(trabajo == null){
+							errores = "No existe la entidad Trabajo";
+						}
+						else{
+							webFileItem.putParameter("idEntidad", String.valueOf(trabajo.getId()));
+							errores = trabajoApi.upload(webFileItem);	
+							
+						}
+						
+						
+						
+					}else if(tipoEntidad.equals("O")){
+						ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "numExpediente", Long.parseLong(documentoDto.getNumEntidad().trim())));
+						if(expedienteComercial == null){
+							errores = "No existe la entidad Oferta";
+						}else{
+							webFileItem.putParameter("idEntidad", String.valueOf(expedienteComercial.getId()));
+							errores = expedienteComercialAdapter.uploadDocumento(webFileItem, null, null);
+
+						}
+					}else if(tipoEntidad.equals("G")){
+						GastoProveedor gastoPorveedor = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(documentoDto.getNumEntidad().trim())));
+						if(gastoPorveedor == null){
+							errores = "No existe la entidad Oferta";
+						}else{
+						webFileItem.putParameter("idEntidad", String.valueOf(gastoPorveedor.getId()));
+						errores = gastoProveedorApi.upload(webFileItem);}
+						
+
+					}else{
+						throw new Exception(RestApi.REST_MSG_INVALID_ENTITY_TYPE);
+					}
+					
+					if(errores==null){
+						model.put("data", listaDocumentoDto);
+						model.put("succes", true);
+
+					}else
+					{
+						throw new Exception(errores);
+					}
+			    }
+			}
+
+		} catch (Exception e) {
+			logger.error("Error alta documento en genericController", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			errores = e.getMessage();
+			model.put("data", listaDocumentoDto);
+			model.put("succes", false);
+			model.put("error", errores);
+			
+		}
+	
+		restApi.sendResponse(response, model,request);
+	}
+ }

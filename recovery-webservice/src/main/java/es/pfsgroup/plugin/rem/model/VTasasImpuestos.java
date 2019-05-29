@@ -16,7 +16,7 @@ public class VTasasImpuestos implements Serializable{
 	
 	@Id
 	@Column(name = "ID_VISTA")  
-	private Long id;
+	private String id;
 	
 	@Column(name = "SOCIEDAD")
 	private String sociedad;
@@ -1051,6 +1051,14 @@ public class VTasasImpuestos implements Serializable{
 
 	public void setCuota5(Double cuota5) {
 		this.cuota5 = cuota5;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }
 

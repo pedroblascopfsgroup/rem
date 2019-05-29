@@ -142,6 +142,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Persona
 		            flex: 1,
 		            editor: {
 		            	xtype: 'textfield',
+		            	vtype: 'email',
 		            	maxLength: 300
 		            }
 		        },

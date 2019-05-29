@@ -19,8 +19,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 	],
 
 	listeners: {
-		activate: 'onActivate',
-		boxReady: 'getAdvertenciaProblemasUrsus'
+		boxReady: 'onActivate'
 	},
 
 	controller: 'slidedatoscomprador',

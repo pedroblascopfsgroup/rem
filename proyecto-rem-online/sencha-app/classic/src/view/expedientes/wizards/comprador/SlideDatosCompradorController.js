@@ -41,7 +41,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		Ext.Array.each(me.getView().query('field[isReadOnlyEdit]'), function(field) {
 			field.setReadOnly(!wizard.modoEdicion);
 		});
+		
 		me.bloquearCampos();
+		me.getAdvertenciaProblemasUrsus();
 	},
 
 	onClickCancelar: function() {

@@ -1170,14 +1170,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	public ActivoTrabajo createActivoTrabajo(Activo activo, Trabajo trabajo, String participacion) {
 
-		if(activoDao.isUnidadAlquilable(activo.getId())) {
-			ActivoAgrupacion actagr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
-			activo = activoApi.get(activoDao.getIdActivoMatriz(actagr.getId()));
-		}
-
 		if (trabajo.getId() == null) {
 			trabajo = genericDao.save(Trabajo.class, trabajo);
 		}
+		
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			ActivoAgrupacion actagr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			Activo activoMatriz =new Activo();
+			activoMatriz = activoApi.get(activoDao.getIdActivoMatriz(actagr.getId()));
+			trabajo.setActivo(activoMatriz);
+			trabajo = genericDao.save(Trabajo.class, trabajo);
+		}
+		
 		ActivoTrabajo activoTrabajo = new ActivoTrabajo();
 		activoTrabajo.setActivo(activo);
 		activoTrabajo.setTrabajo(trabajo);

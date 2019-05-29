@@ -108,13 +108,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idProveedor", dto.getIdProveedor());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
-   		
-   		if(!Checks.esNulo(dto.getNumActivo())){
-   			hb.appendWhere("(tbj.numActivo = :numActnumActUA OR tbj.numActivoUa = :numActnumActUA)");
-   			hb.getParameters().put("numActnumActUA", dto.getNumActivo());
-   		}
-   		
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idActivoUa", dto.getIdActivoUa());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+
    		if(!Checks.esNulo(dto.getIdProveedor())) {
    			hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);
    	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);

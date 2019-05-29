@@ -1,16 +1,17 @@
   --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190331
+--## AUTOR=Juan Angel Sánchez
+--## FECHA_CREACION=20190529
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5992
+--## INCIDENCIA_LINK=HREOS-6597
 --## PRODUCTO=NO
 --## Finalidad: Creación de vista para calcular el presupuesto de una Activo Matriz incluyendo la suma de los trabajos de el y sus UAs
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Corrección AM en tabla ACT_TRABAJO
 --##########################################
 --*/
 
@@ -87,7 +88,7 @@ BEGIN
 	, PTO.EJE_ANYO
 	FROM '|| V_ESQUEMA ||'.ACT_TBJ ACTTBJ
 	INNER JOIN '|| V_ESQUEMA ||'.ACT_TBJ_TRABAJO TBJ ON ACTTBJ.TBJ_ID = TBJ.TBJ_ID AND TBJ.BORRADO = 0
-	INNER JOIN PRESUPESTO PTO ON ACTTBJ.ACT_ID = PTO.ACTIVO_MATRIZ
+	INNER JOIN PRESUPESTO PTO ON TBJ.ACT_ID = PTO.ACTIVO_MATRIZ
 	GROUP BY
 	PTO.ACTIVO_MATRIZ
 	, PTO.INICIAL

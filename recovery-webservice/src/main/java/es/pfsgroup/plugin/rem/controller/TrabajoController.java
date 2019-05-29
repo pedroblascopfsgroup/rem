@@ -162,7 +162,7 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView findAll(DtoTrabajoFilter dtoTrabajoFilter, ModelMap model){
-		if(activoDao.isUnidadAlquilable(dtoTrabajoFilter.getIdActivo())) {
+		if(activoDao.isActivoMatriz(dtoTrabajoFilter.getIdActivo())) {
 			ActivoAgrupacion actgagru = activoDao.getAgrupacionPAByIdActivo(dtoTrabajoFilter.getIdActivo());
 			Activo activoM = activoApi.get(activoDao.getIdActivoMatriz(actgagru.getId()));
 			dtoTrabajoFilter.setIdActivo(activoM.getId());

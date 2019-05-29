@@ -1547,8 +1547,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				
 		HQLBuilder hb = new HQLBuilder(" from Trabajo tbj, ActivoTrabajo atj, Activo act, Activo actUA");
 		hb.appendWhere(" atj.trabajo.id = tbj.id ");
-		hb.appendWhere(" act.id = atj.activo.id ");
-		hb.appendWhere(" actUA.id = tbj.activo.id ");
+		hb.appendWhere(" act.id = tbj.activo.id ");
+		hb.appendWhere(" actUA.id = atj.activo.id ");
 		hb.appendWhere(" act.id = " + idAM);
 		hb.appendWhere(" actUA.id = " + idUA);
 			

@@ -34,8 +34,6 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.config.ConfigManager;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -2608,7 +2606,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if (PRESUPUESTO_AUTORIZADO.equals(presupuestoTrabajo.getEstadoPresupuesto().getCodigo())) {
 
 					// Si el presupuesto del trabajo supera limite de delegacion- Supera delegacion - a Capa Control
-					if (presupuestoTrabajo.getImporte() > limiteDelegacion)
+					if (presupuestoTrabajo.getImporte() != null && presupuestoTrabajo.getImporte() > limiteDelegacion)
 
 						return true;
 				}

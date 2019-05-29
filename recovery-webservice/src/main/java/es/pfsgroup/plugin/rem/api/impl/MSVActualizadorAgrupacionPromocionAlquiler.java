@@ -804,12 +804,18 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		genericDao.save(ActivoLocalizacion.class, actLocUA);
 		actualizarEstadoPublicacion(activoMatriz);
 		
+		//Situacion posesoria
 		ActivoSituacionPosesoria actSitPosAM = activoMatriz.getSituacionPosesoria();
 		ActivoSituacionPosesoria actSitPosUA = new ActivoSituacionPosesoria();
 		
 		if(!Checks.esNulo(actSitPosAM)) {
 /*d*/		if (!Checks.esNulo(actSitPosAM.getTipoTituloPosesorio())) {
 				actSitPosUA.setTipoTituloPosesorio(actSitPosAM.getTipoTituloPosesorio());
+			}
+			if (!Checks.esNulo(actSitPosAM.getComboOtro())) {
+				actSitPosUA.setComboOtro(actSitPosAM.getComboOtro());
+			}else {
+				actSitPosUA.setComboOtro(0);
 			}
 			if (!Checks.estaVacio(actSitPosAM.getActivoOcupanteLegal())) {
 					List<ActivoOcupanteLegal> ocupantesIlegalesAM = actSitPosAM.getActivoOcupanteLegal();

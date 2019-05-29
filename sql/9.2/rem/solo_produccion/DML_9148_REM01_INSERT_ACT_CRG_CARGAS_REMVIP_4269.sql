@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20190524
+--## FECHA_CREACION=20190529
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.20
 --## INCIDENCIA_LINK=REMVIP_4269

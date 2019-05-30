@@ -34,9 +34,12 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.config.ConfigManager;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -64,6 +67,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -74,7 +78,6 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.dao.FlashDao;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
@@ -119,12 +122,10 @@ import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.TrabajoRecargosProveedor;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -258,14 +259,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	FlashDao flashDao;
-
+	
 	@Autowired
-	private GencatManager gencatManager;
+	private RemUtils remUtils;
+	
+	@Autowired
+	private UsuarioDao usuarioDao;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
-	
-
 	@Override
 	public String managerName() {
 		return "trabajoManager";
@@ -581,7 +583,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.create")
 	@Transactional(readOnly = false)
-	public Long create(DtoFichaTrabajo dtoTrabajo) {
+	public Long create(DtoFichaTrabajo dtoTrabajo){
 		/*
 		 * Crear trabajo desde la pantalla de crear trabajos: - Crea un trabajo
 		 * desde el activo o desde la agrupación de activos (Nuevos trabajos
@@ -1316,7 +1318,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	// TODO Este método hay que cambiarlo.
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.createTramiteTrabajo")
-	public ActivoTramite createTramiteTrabajo(Trabajo trabajo) {
+	public ActivoTramite createTramiteTrabajo(Trabajo trabajo){
 		TipoProcedimiento tipoTramite = new TipoProcedimiento();
 
 		if (trabajo.getEsTarifaPlana() == null) {
@@ -1327,19 +1329,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)) { // Obtención
 																										// documental
 			if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEE)) {// CEE
-				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE); // Trámite
-																			// de
-																			// obtención
-																			// documental
-																			// CEE
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE); 
+				// Trámite de obtención documental CEE
 				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
 				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
-					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
+					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_BANKIA_SAREB_TINSA));
 					Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
 					if(!Checks.esNulo(usuProveedorBankiaSareb)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuProveedorBankiaSareb);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_CERTIFICADORA);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro,filtro2);
+						Filter filtro2 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+								filtro,filtro2);
 						if(!Checks.estaVacio(listaPVC)){
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
@@ -1347,51 +1347,58 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 				//Si el trabajo es de JAIPUR/GIANTS/GALEON
 				}else if(this.checkGiants(trabajo) || this.checkGaleon(trabajo) || this.checkJaipur(trabajo)){
-					Filter filtroPVE = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", GestorActivoApi.CIF_PROVEEDOR_HOMESERVE);
-					Filter filtroPVE2 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
-					ActivoProveedor pve = genericDao.get(ActivoProveedor.class, filtroPVE, filtroPVE2);
-					if(!Checks.esNulo(pve)) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "proveedor", pve);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", GestorActivoApi.CIF_PROVEEDOR_HOMESERVE);
-						ActivoProveedorContacto pvc = genericDao.get(ActivoProveedorContacto.class,filtro, filtro2);
-						if(!Checks.esNulo(pvc)){
-							trabajo.setProveedorContacto(pvc);
-							trabajo = genericDao.save(Trabajo.class, trabajo);
-						}
-					}
-				}
-
-			} else if (this.checkLiberbank(trabajo)) {
-
-					Filter filtroUsuProveedor = genericDao.createFilter(FilterType.EQUALS, "username",
-							GestorActivoApi.CIF_PROVEEDOR_AESCTECTONICA);
+					Filter filtroUsuProveedor = genericDao.createFilter(FilterType.EQUALS ,"username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_HOMESERVE));
 					Usuario usuProveedor = genericDao.get(Usuario.class, filtroUsuProveedor);
 					if (!Checks.esNulo(usuProveedor)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuProveedor);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
-								DDTipoProveedor.COD_CERTIFICADORA);
+						Filter filtro2 = genericDao.createFilter(FilterType.NULL, "proveedor.fechaBaja");
 						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
 								filtro, filtro2);
 						if (!Checks.estaVacio(listaPVC)) {
-
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
+				} else if (this.checkLiberbank(trabajo)) {
+					Filter filtroUsuProveedor = genericDao.createFilter(FilterType.EQUALS ,"username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_AESCTECTONICA));
+					Usuario usuProveedor = genericDao.get(Usuario.class, filtroUsuProveedor);
+					if (!Checks.esNulo(usuProveedor)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuProveedor);
+						Filter filtro2 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+								filtro, filtro2);
+						if (!Checks.estaVacio(listaPVC)) {
+							trabajo.setProveedorContacto(listaPVC.get(0));
+							trabajo = genericDao.save(Trabajo.class, trabajo);
+						}
+					}
+				}
 				
 			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
 				tipoTramite = tipoProcedimientoManager
-						.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA); // Trámite
-				// de
-				// obtención
-				// de
-				// cédula
-				// Si el trabajo es Bankia/Sareb/Tango/Giants asignamos
-				// proveedorContacto
-				if (this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)
-						|| this.checkGiants(trabajo)) {
+						.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA); 
+				
+				// Trámite de obtención de cédula				
+				// Si el trabajo es Sareb/Tango/Giants asignamos proveedorContacto
+				if ( this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
 							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
+					if (!Checks.esNulo(usuario)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
+								DDTipoProveedor.COD_GESTORIA);
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+								filtro, filtro2);
+						if (!Checks.estaVacio(listaPVC)) {
+							trabajo.setProveedorContacto(listaPVC.get(0));
+							trabajo = genericDao.save(Trabajo.class, trabajo);
+						}
+					}
+				// Si el trabajo es Bankia asignamos proveedorContacto	
+				}else if(this.checkBankia(trabajo)){ 
+					
+					String username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO);
+					Usuario usuario = usuarioDao.getByUsername(username);
 					if (!Checks.esNulo(usuario)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
 						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",

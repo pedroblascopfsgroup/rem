@@ -43,8 +43,8 @@ BEGIN
             ,(SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO LIKE ''%T013%'') 
             ,''T013_ValidacionClientes'' 
             ,null 
-            ,null  
-            ,''checkDiscrepanciasUrsus() ? ''''Hay discrepancias'''' : null '' 
+            ,''checkDiscrepanciasUrsus() ? ''''Hay discrepancias'''' : null ''  
+            ,null
             ,null
             ,null  
             ,''0''  

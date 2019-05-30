@@ -46,7 +46,7 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 		Trabajo trabajo = tramite.getTrabajo();
-		ActivoProveedorContacto proveedorTecnicoContacto = new ActivoProveedorContacto();
+		ActivoProveedorContacto proveedorTecnicoContacto = null;
 		
 		// Asignacion del Proveedor Tecnico si aplica
 		if(trabajo.getEsTarifaPlana()){

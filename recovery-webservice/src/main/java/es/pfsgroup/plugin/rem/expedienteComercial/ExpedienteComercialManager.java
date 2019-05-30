@@ -9468,7 +9468,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								return true;
 							}else {
 								String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
-								if( !Checks.esNulo(dto.getCodigoRegimenMatrimonial()) && NO_EXISTE_CODIGO_REM.equals(codigoRegistroEconomicoUrsus)) {
+								if( !Checks.esNulo(dto.getCodigoRegimenMatrimonial()) && !NO_EXISTE_CODIGO_REM.equals(codigoRegistroEconomicoUrsus)) {
 									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(dto.getCodigoRegimenMatrimonial()) && !dto.getCodigoRegimenMatrimonial().equals(codigoRegistroEconomicoUrsus))
 											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && !codigoRegistroEconomicoUrsus.equals(dto.getCodigoRegimenMatrimonial()))) {
 										comprador.setProblemasUrsus(true);

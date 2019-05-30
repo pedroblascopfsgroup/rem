@@ -145,6 +145,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
@@ -2584,6 +2585,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				e.printStackTrace();
 			} catch (HttpClientException e) {
 				e.printStackTrace();
+			} catch (HttpsClientException e) {
+				e.printStackTrace();
 			}
 			
 			dto.setImporteCalculo(0.00);
@@ -2614,6 +2617,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (HttpClientException e) {
+				e.printStackTrace();
+			} catch (HttpsClientException e) {
 				e.printStackTrace();
 			}
 			

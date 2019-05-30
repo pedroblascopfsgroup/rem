@@ -11,10 +11,11 @@ import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 
 public interface ComisionamientoApi {
 
 	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
-			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException;
+			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException, HttpsClientException;
 
 }

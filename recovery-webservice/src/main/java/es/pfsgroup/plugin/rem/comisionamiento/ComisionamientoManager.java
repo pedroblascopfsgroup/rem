@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
 import es.pfsgroup.plugin.rem.microservicios.ClienteMicroservicioGenerico;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
+import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import net.sf.json.JSONObject;
 
 @Service("comisionamientoManager")
@@ -38,7 +39,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	
 	@Override
 	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
-			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException {
+			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException, HttpsClientException {
 		
 		BigDecimal respuesta = null;
 		RespuestaComisionResultDto respuestaDto = null;

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
@@ -14,15 +13,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.gfi.webIntegrator.WIException;
-import com.gfi.webIntegrator.WIService;
-
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClient;
+import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.restclient.salesforce.clients.ClienteSalesforceGenerico;
-import es.pfsgroup.plugin.rem.restclient.salesforce.clients.SalesforceEndpoint;
 import net.sf.json.JSONObject;
 
 @Component
@@ -35,7 +32,10 @@ public class ClienteMicroservicioGenerico {
 	private HttpClientFacade httpClient;
 	
 	@Autowired
-	private ClienteSalesforceGenerico httpsClient;
+	private ClienteSalesforceGenerico httpsCli;
+	
+	@Autowired
+	private HttpsClient httpsClient;
 	
 	@Resource
 	private Properties appProperties;
@@ -43,7 +43,7 @@ public class ClienteMicroservicioGenerico {
 	ObjectMapper mapper = new ObjectMapper();
 	
 	public JSONObject send(String method, String endpoint, String jsonString)
-			throws NumberFormatException, HttpClientException, RestConfigurationException {
+			throws NumberFormatException, HttpClientException, RestConfigurationException, HttpsClientException {
 	
 		Map<String, String> headers = new HashMap<String, String>();
 		headers = null;
@@ -75,11 +75,11 @@ public class ClienteMicroservicioGenerico {
 		}
 		
 		String timeout = this.DEFAULT_TIMEOUT;
-		JSONObject result = null;
+		JSONObject result = null;	
 		
 		if (serviceUrl.contains("https:")) {
-			result = httpsClient.processRequest(serviceUrl, new SalesforceEndpoint("POST", 0, null, null, null, null, null, null, null, null), 
-					headers, jsonString, Integer.parseInt(timeout), "UTF-8");
+			result = httpsClient.processRequest(serviceUrl, method, headers, jsonString,
+					Integer.parseInt(timeout), "UTF-8");
 		} else {
 			result = httpClient.processRequest(serviceUrl, method, headers, jsonString,
 					Integer.parseInt(timeout), "UTF-8");

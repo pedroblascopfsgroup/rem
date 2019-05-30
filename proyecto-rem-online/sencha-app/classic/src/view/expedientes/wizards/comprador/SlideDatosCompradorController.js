@@ -625,12 +625,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		}
 	},
 
-	onNumeroDocumentoChange: function(field) {
+	onNumeroDocumentoChange: function(field, newValue, oldValue) {		
 		var me = this,
 			form = me.getView(),
 			fieldClientesUrsus = form.lookupReference('seleccionClienteUrsus'),
 			btnDatosClienteUrsus = form.lookupReference('btnVerDatosClienteUrsus');
-
+		
 		fieldClientesUrsus.setValue();
 		btnDatosClienteUrsus.setDisabled(true);
 		fieldClientesUrsus.recargarField = true;
@@ -744,9 +744,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
     	}
     },
 
-	establecerNumClienteURSUS: function(field, e) {
-		var me = this,
-			form = me.getView(),
+	establecerNumClienteURSUS: function(field, e) {		
+		var me = this;
+
+		var form = me.getView(),
 			wizard = me.getView().up('wizardBase'),
 			numeroUrsus = form.lookupReference('seleccionClienteUrsus').getValue(),
 			fieldNumeroClienteUrsus = form.lookupReference('numeroClienteUrsusRef'),

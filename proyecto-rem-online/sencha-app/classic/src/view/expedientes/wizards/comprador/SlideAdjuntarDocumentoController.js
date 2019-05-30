@@ -483,6 +483,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			}
 
 		} else {
+			if(!Ext.isEmpty(wizard.down('slidedatoscomprador').getForm().findField('seleccionClienteUrsus'))){
+				wizard.down('slidedatoscomprador').getForm().findField('seleccionClienteUrsus').suspendEvents();
+			}			
+			wizard.down('slidedatoscomprador').getForm().findField('numDocumento').suspendEvents();
 			me.guardarModeloComprador();
 		}
 	},

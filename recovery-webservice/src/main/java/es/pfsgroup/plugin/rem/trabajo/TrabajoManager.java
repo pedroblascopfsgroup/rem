@@ -1385,7 +1385,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 				// Si el trabajo es Bankia asignamos proveedorContacto	
 				}else if(this.checkBankia(trabajo)){ 
-					// Usuario por defecto -> Grupo BC
 					String username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO);
 					Usuario usuario = usuarioDao.getByUsername(username);
 					if (!Checks.esNulo(usuario)) {

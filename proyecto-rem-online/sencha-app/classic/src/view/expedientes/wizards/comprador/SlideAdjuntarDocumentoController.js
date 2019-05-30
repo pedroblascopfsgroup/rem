@@ -11,7 +11,25 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			form = me.getView(),
 			wizard = form.up('wizardBase');
 		if(wizard.expediente){
-			wizard.mask(HreRem.i18n('msg.mask.espere'));		
+			wizard.mask(HreRem.i18n('msg.mask.espere'));
+			Ext.Ajax.request({
+				url: $AC.getRemoteUrl('ofertas/esCarteraInternacional'),
+				method: 'POST',
+				params: {
+					idActivo: null,
+					idAgrupacion: null,
+					idExpediente: wizard.expediente.get('id')
+				},
+				success: function(response, opts) {
+					var data = Ext.decode(response.responseText);
+					if (!Ext.isEmpty(data)) {
+						form.getForm().findField('carteraInternacional').setValue(data.carteraInternacional);
+					}
+				},
+				failure: function(record, operation) {
+					me.fireEvent('errorToast', HreRem.i18n('msg.comprobacion.cartera.internacional.ko'));
+				}
+			});
 			Ext.Ajax.request({
 				url: $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador'),
 				method: 'GET',
@@ -28,7 +46,24 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 						if (wizard.comprador.get('cesionDatos')) {
 							form.lookupReference('btnGenerarDocumento').disable();
 							form.lookupReference('btnSubirDocumento').disable();
-							form.lookupReference('btnFinalizar').enable();
+							var checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
+							checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
+							esInternacional = form.getForm().findField('carteraInternacional').getValue(),
+							docOfertaComercial = form.getForm().findField('docOfertaComercial'),
+							btnFinalizar = form.lookupReference('btnFinalizar');
+						if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
+							if(esInternacional){
+								if(checkTransInternacionales){
+									btnFinalizar.enable();
+								}else{
+									btnFinalizar.disable();
+								}
+							}else{
+								btnFinalizar.enable();
+							}
+						}else{
+							btnFinalizar.disable();
+						}
 						}
 					}
 				},
@@ -116,8 +151,17 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnGenerarDoc.disable();
 			btnSubirDoc.disable();
 		}
-		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != ''){
-			btnFinalizar.enable();
+		
+		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkbox.getValue()){
+			if(esInternacional){
+				if(checkTransInternacionales){
+					btnFinalizar.enable();
+				}else{
+					btnFinalizar.disable();
+				}
+			}else{
+				btnFinalizar.enable();
+			}
 		}else{
 			btnFinalizar.disable();
 		}
@@ -154,8 +198,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnGenerarDoc.disable();
 			btnSubirDoc.disable();
 		}
-		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != ''){
-			btnFinalizar.enable();
+		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
+			if(esInternacional){
+				if(checkTransInternacionales){
+					btnFinalizar.enable();
+				}else{
+					btnFinalizar.disable();
+				}
+			}else{
+				btnFinalizar.enable();
+			}
 		}else{
 			btnFinalizar.disable();
 		}
@@ -209,8 +261,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnSubirDoc.disable();
 		}
 
-		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != ''){
-			btnFinalizar.enable();
+		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
+			if(esInternacional){
+				if(checkbox.getValue()){
+					btnFinalizar.enable();
+				}else{
+					btnFinalizar.disable();
+				}
+			}else{
+				btnFinalizar.enable();
+			}
 		}else{
 			btnFinalizar.disable();
 		}

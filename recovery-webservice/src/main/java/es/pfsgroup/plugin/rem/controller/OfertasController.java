@@ -396,6 +396,21 @@ public class OfertasController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente, ModelMap model) {
+
+		try {
+			model.put("carteraInternacional", ofertaApi.esCarteraInternacional(idActivo, idAgrupacion, idExpediente));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
 	@SuppressWarnings("unchecked") 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getOfertaOrigenByIdExpediente(Long numExpediente, ModelMap model){

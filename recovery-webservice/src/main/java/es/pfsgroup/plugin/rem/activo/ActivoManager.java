@@ -1248,9 +1248,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(cliente.getEmail())) {
 				compradorBusqueda.setEmail(cliente.getEmail());
 			}
-			if (!Checks.esNulo(cliente.getDireccion())) {
-				compradorBusqueda.setDireccion(cliente.getDireccion());
-			}
+			
+			String dir = "";
+			if (!Checks.esNulo(cliente.getTipoVia()))
+				dir = cliente.getTipoVia().getCodigo()+" ";
+			if (!Checks.esNulo(cliente.getDireccion()))
+				dir = dir.concat(cliente.getDireccion());
+			if (!Checks.esNulo(cliente.getNumeroCalle()))
+				dir = dir.concat(" "+cliente.getNumeroCalle());
+			if (!Checks.esNulo(cliente.getPuerta()))
+				dir = dir.concat(", pta "+cliente.getPuerta());
+			if (!Checks.esNulo(cliente.getPlanta()))
+				dir = dir.concat(", plta "+cliente.getPlanta());
+			if (!Checks.esNulo(cliente.getEscalera()))
+				dir = dir.concat(", esc "+cliente.getEscalera());
+			compradorBusqueda.setDireccion(dir);
 
 			if (!Checks.esNulo(cliente.getMunicipio())) {
 				compradorBusqueda.setLocalidad(cliente.getMunicipio());
@@ -1602,15 +1614,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return true;
 	}
 	
+	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean deleteValoracionPrecio(Long id) {
-		return deleteValoracionPrecioConGuardadoEnHistorico(id, true);
-	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico) {
+	public boolean deleteValoracionPrecioConGuardadoEnHistorico(Long id, Boolean guardadoEnHistorico,  Boolean comprobarGestor) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		ActivoValoraciones activoValoracion = genericDao.get(ActivoValoraciones.class, filtro);
 
@@ -2119,7 +2126,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 
 		condicionantesDisponibilidad.setOtro(dtoCondicionanteDisponibilidad.getOtro());
-
+		condicionantesDisponibilidad.setComboOtro(dtoCondicionanteDisponibilidad.getComboOtro());
+		
 		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
 
 		return true;

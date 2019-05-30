@@ -74,7 +74,9 @@ BEGIN
   		
   		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
 						(SELECT 
-							ACT_NUM_ACTIVO 
+							ACT_NUM_ACTIVO
+							,'''||V_USUARIOMODIFICAR||''' 
+							,0 
 							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
 							WHERE USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||''' AND BORRADO = 0
 						)';

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190517
+--## AUTOR=Adrián Molina Garrido
+--## FECHA_CREACION=20190521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4233
+--## INCIDENCIA_LINK=REMVIP-4259
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -29,6 +29,7 @@
 --##		0.16 REMVIP-3503 - Correcciones cálculo ocupado_sin_titulo y ocupado_con_titulo (nueva columna DD_TPA_ID)
 --##		0.17 REMVIP-4233 - Se corrige el join con la ACT_ABA ya que hay activos que no aparecen en esta.
 --##        0.18 David Gonzalez - HREOS-6184 - Ajustes joins
+--##        0.19 Adrián Molina - REMVIP-4259 - Se añade la columna del combo otros
 --##########################################
 --*/
 
@@ -72,23 +73,23 @@ BEGIN
                                                           ruina,
                                                           vandalizado,
                                                           otro,
+														  combo_otro,
                                                           sin_informe_aprobado,
 														  sin_informe_aprobado_REM,
                                                           revision,
                                                           procedimiento_judicial,
                                                           con_cargas,
-							                                sin_acceso,
+							                              sin_acceso,
                                                           ocupado_sintitulo,
                                                           estado_portal_externo,
                                                           es_condicionado,
                                                           est_disp_com_codigo,
-														  es_condicionado_publi,
                                                           borrado
                                                          )
 AS
-   SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro,
+   SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro, combo_otro,
           sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo1, ''01'', 1, 0) AS es_condicionado,
-          est_disp_com_codigo2,es_condicionado_publi,borrado
+          est_disp_com_codigo2,borrado
 
      FROM (SELECT act.act_id, 
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) 
@@ -109,6 +110,7 @@ AS
                 CASE WHEN eac1.dd_eac_codigo = ''05'' THEN 1 ELSE 0 END as ruina,
 				CASE WHEN (eac1.dd_eac_codigo IN (''08'',''07'')) THEN 1 ELSE 0 END as VANDALIZADO,
                 sps1.sps_otro AS otro,
+				sps1.sps_combo_otro AS combo_otro,
 				CASE WHEN (cra.dd_cra_codigo in (''01'', ''08'', ''02'' )) 
                     THEN DECODE (vei.dd_aic_codigo, ''02'', 0, 1)
                     ELSE 0	
@@ -138,12 +140,7 @@ AS
 						   OR NVL2 (vcg.con_cargas, vcg.con_cargas, 0) = 1
 					THEN ''01''
                     ELSE ''02''
-                  END AS est_disp_com_codigo1,
-
-			      CASE 
-					WHEN (sps1.sps_ocupado = 1 OR sps1.sps_acc_tapiado = 1) THEN 1 
-						ELSE 0 
-					END as es_condicionado_publi,	
+                  END AS est_disp_com_codigo1,	
                   vact.est_disp_com_codigo as est_disp_com_codigo2,
                   0 AS borrado
 
@@ -170,7 +167,7 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.vi_activos_con_cargas vcg ON vcg.act_id = act.act_id
                   LEFT JOIN '||V_ESQUEMA||'.act_ico_info_comercial ico ON ico.act_id = act.act_id
                   LEFT JOIN '||V_ESQUEMA||'.vi_estado_actual_infmed vei ON vei.ico_id = ico.ico_id                                                                                          --SIN_INFORME_APROBADO
-            LEFT JOIN '||V_ESQUEMA||'.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id
+            	  LEFT JOIN '||V_ESQUEMA||'.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id
             WHERE act.borrado = 0)
           ';
 

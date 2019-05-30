@@ -573,11 +573,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 			
 			// Registrar el condicionante de disponibilidad 'otros' si se ha modificado.
-			if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
-					|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))
-					|| (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
+			if(!Checks.esNulo(dto.getComboOtro()) || (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
 				DtoCondicionantesDisponibilidad dtoCondicionateDisponibilidad = new DtoCondicionantesDisponibilidad();
 				dtoCondicionateDisponibilidad.setOtro(dto.getOtro());
+				dtoCondicionateDisponibilidad.setComboOtro(dto.getComboOtro());
 				activoApi.saveCondicionantesDisponibilidad(aga.getActivo().getId(), dtoCondicionateDisponibilidad);
 			}
 

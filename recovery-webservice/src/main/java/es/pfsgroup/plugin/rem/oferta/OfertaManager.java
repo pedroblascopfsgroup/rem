@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
-import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -46,7 +45,6 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -923,7 +921,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				titAdi.setEmail(titDto.getEmail());
 				if (titDto.getConyugeTipoDocumento() != null) {
 					titAdi.setTipoDocumentoConyuge(genericDao.get(DDTipoDocumento.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getConyugeDocumento())));
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getConyugeTipoDocumento())));
 				}
 				titAdi.setDocumentoConyuge(titDto.getConyugeDocumento());
 				if (titDto.getCodTipoPersona() != null) {

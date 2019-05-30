@@ -73,7 +73,7 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 					ActivoValoraciones val = activo.getValoracion().get(i);
 					
 					if(!Checks.esNulo(val.getFechaFin()) && val.getFechaFin().before(new Date())) {
-						activoApi.deleteValoracionPrecio(val.getId());
+						activoApi.deleteValoracionPrecioConGuardadoEnHistorico(val.getId(),true,false);
 					} else {		
 						
 						

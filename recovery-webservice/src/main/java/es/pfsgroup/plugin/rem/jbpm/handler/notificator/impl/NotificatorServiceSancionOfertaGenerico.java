@@ -832,6 +832,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
 				}
 
+			} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)
+					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+				f1 = FileItemUtils.fromResource("docs/Vfinal_instrucciones_reserva_y_formalizacion_APPLE.pdf");
+				if (f1 != null) {
+					adjuntos.add(createAdjunto(f1, "Vfinal_instrucciones_reserva_y_formalizacion_APPLE.pdf"));
+				}
+
 			}
 		}
 		List<String> mailsPara = new ArrayList<String>();

@@ -1,0 +1,110 @@
+--/*
+--##########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20190524
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-4348
+--## PRODUCTO=NO
+--##
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-4348'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_ECO_ID NUMBER(16); 
+    
+    ACT_NUM_ACTIVO NUMBER(16);
+    ACT_NUM_ACTIVO_CORRECTO NUMBER(16);
+    V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
+    
+    TYPE T_JBV IS TABLE OF VARCHAR2(32000);
+    TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
+	
+	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
+						T_JBV(71827,1000000000324960),
+						T_JBV(73980,1000000000229830),
+						T_JBV(78733,1000000000141650),
+						T_JBV(80644,1000000000234330),
+						T_JBV(82459,1000000000238800),
+						T_JBV(104870,1000000000290640),
+						T_JBV(117350,1000000000295450),
+						T_JBV(122859,1000000000287590),
+						T_JBV(124920,1000000000335250),
+						T_JBV(126153,1000000000255920),
+						T_JBV(131105,1000000000231470),
+						T_JBV(132318,1000000000306550),
+						T_JBV(143999,1000000000267950),
+						T_JBV(186756,1000000000328170),
+						T_JBV(189536,1000000000238980),
+						T_JBV(189838,1000000000175320)); 
+	V_TMP_JBV T_JBV;
+    
+BEGIN	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZACION COLUMNA ACT_RECOVERY_ID');
+	
+	FOR I IN V_JBV.FIRST .. V_JBV.LAST
+	
+	LOOP
+ 
+	V_TMP_JBV := V_JBV(I);
+	
+  	ACT_NUM_ACTIVO := TRIM(V_TMP_JBV(1));
+  	
+  	ACT_NUM_ACTIVO_CORRECTO := TRIM(V_TMP_JBV(2));
+	
+	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO;
+	
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
+	
+	IF V_NUM_FILAS = 1 THEN
+	
+		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO 
+				   SET ACT_RECOVERY_ID = '||ACT_NUM_ACTIVO_CORRECTO||',
+				   USUARIOMODIFICAR = '''||V_USR||''',
+				   FECHAMODIFICAR = SYSDATE 
+				   WHERE ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO;
+	
+		EXECUTE IMMEDIATE V_MSQL;
+    
+		DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO CON ACT_NUM_ACTIVO: '||ACT_NUM_ACTIVO||' ACTUALIZADO');
+		
+		V_COUNT_UPDATE := V_COUNT_UPDATE + 1;
+		
+	ELSE
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO NO EXISTE');
+		
+	END IF;
+	
+	END LOOP;
+		
+	COMMIT;
+	
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE||' registros');
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

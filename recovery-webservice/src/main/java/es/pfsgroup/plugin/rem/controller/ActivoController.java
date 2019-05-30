@@ -681,7 +681,7 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deletePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 		try {
-			boolean success = activoApi.deleteValoracionPrecio(precioVigenteDto.getIdPrecioVigente());
+			boolean success = activoApi.deleteValoracionPrecioConGuardadoEnHistorico(precioVigenteDto.getIdPrecioVigente(), true,true);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -696,7 +696,7 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deletePrecioVigenteSinGuardadoHistorico(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 		try {
-			boolean success = activoApi.deleteValoracionPrecioConGuardadoEnHistorico(precioVigenteDto.getIdPrecioVigente(), false);
+			boolean success = activoApi.deleteValoracionPrecioConGuardadoEnHistorico(precioVigenteDto.getIdPrecioVigente(), false,true);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -1513,6 +1513,25 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView deleteFotosActivoById(@RequestParam Long[] id, ModelMap model) {
 		try {
 			boolean success = adapter.deleteFotosActivoById(id);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (UserException e) {
+			model.put("success", false);
+			model.put("error", ERROR_CONEXION_FOTOS);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", ERROR_GENERICO);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView refreshCacheFotos(@RequestParam Long id, ModelMap model) {
+		try {
+			boolean success = adapter.deleteCacheFotosActivo(id);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (UserException e) {

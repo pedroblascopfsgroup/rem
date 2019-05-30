@@ -266,7 +266,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var contador = 0;
 				me.saveMultipleRecords(contador, records);
 			}
-			me.onClickBotonRefrescar();
+			//me.onClickBotonRefrescar();
 
 		} else {
 		

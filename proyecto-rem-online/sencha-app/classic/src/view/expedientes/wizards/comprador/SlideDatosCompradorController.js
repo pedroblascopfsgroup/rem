@@ -782,7 +782,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 					estadoCivilUrsus.setValue(data.data.codigoEstadoCivil);
 			
 					if(data.data.codigoEstadoCivil ===  CONST.D_ESTADOS_CIVILES["COD_CASADO"]){
-						if (data.data.numeroClienteUrsusConyuge != 0) {
+						if (data.data.numeroClienteUrsusConyuge != 0 && data.data.numeroClienteUrsusConyuge != undefined && !data.data.numeroClienteUrsusConyuge) {
 							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_GANANCIALES"]);
 						} else if (data.data.numeroClienteUrsusConyuge === 0) {
 							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_SEPARACION_BIENES"]);

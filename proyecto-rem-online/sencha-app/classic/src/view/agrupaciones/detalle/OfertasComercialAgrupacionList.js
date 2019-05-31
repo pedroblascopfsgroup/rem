@@ -169,8 +169,10 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     onAddClick: function (btn) {
 		var me = this;
 		var items= me.up('agrupacionesdetalle').getRefItems();
-		var numActivos;
-		
+		var numActivos,
+		viewPortWidth = Ext.Element.getViewportWidth(),
+		viewPortHeight = Ext.Element.getViewportHeight();
+
 		for(var i=0;i<=items.length;i++){
 			if(items[i].getXType()=='fichaagrupacion'){
 				var record= items[i].getBindRecord(),
@@ -186,7 +188,23 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		}else {
 			var parent= me.up('ofertascomercialagrupacion');
 			oferta = Ext.create('HreRem.model.OfertaComercial', {idAgrupacion: idAgrupacion, numAgrupacionRem: numAgrupacionRem});
-			Ext.create('HreRem.view.activos.detalle.WizardAltaOferta',{oferta: oferta, parent: parent, idAgrupacion:idAgrupacion}).show();  
+			Ext.create('HreRem.view.common.WizardBase',
+					{
+						slides: [
+							'slidedocumentoidentidadcliente',
+							'slidedatosoferta',
+							'slideadjuntardocumento'
+						],
+						title: HreRem.i18n('title.nueva.oferta'),
+						oferta: oferta,
+						parent: parent,
+						modoEdicion: true,
+						width: viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth / 1.5,
+						height: viewPortHeight > 500 ? 500 : viewPortHeight - 100,
+						x: viewPortWidth / 2 - ((viewPortWidth > 1370 ? viewPortWidth / 2 : viewPortWidth /1.5) / 2),
+						y: viewPortHeight / 2 - ((viewPortHeight > 500 ? 500 : viewPortHeight - 100) / 2)
+					}
+				).show();
 		}    	
 		
 	},

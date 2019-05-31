@@ -773,31 +773,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Oferta oferta = expedienteComercial.getOferta();
 		DDTiposArras tipoArras = null;
 		if(!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())){
-			if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-					&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+				tipoArras = (DDTiposArras) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
+			}
+			if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				|| (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())  && 
+						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+	            tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
+			}
 
-				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-					tipoArras = (DDTiposArras) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
-				}
-				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-					tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
-				}
-				if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-		            tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
-				}
+			if(tipoArras != null){
+				if (Checks.esNulo(expedienteComercial.getReserva()) ) {
+					Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
+					reservaExpediente.setTipoArras(tipoArras);
 
-				if(tipoArras != null){
-					if (Checks.esNulo(expedienteComercial.getReserva()) ) {
-						Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
-						reservaExpediente.setTipoArras(tipoArras);
+					genericDao.save(Reserva.class, reservaExpediente);
 
-						genericDao.save(Reserva.class, reservaExpediente);
-
-					} else {
-						expedienteComercial.getReserva().setTipoArras(tipoArras);
-					}
+				} else {
+					expedienteComercial.getReserva().setTipoArras(tipoArras);
 				}
 			}
 		}
@@ -887,10 +882,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				&& (DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ||
 					(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
 			&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ||
-			DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-			&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
-					){
+					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))){
 
 				nuevoCondicionante.setSolicitaReserva(1);
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
@@ -899,6 +891,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setPorcentajeReserva(new Double(10));
 				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(10) / 100));
 			}
+			
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())  && 
+					DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+
+					nuevoCondicionante.setSolicitaReserva(1);
+					DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
+					nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+					
+					if (oferta.getImporteOferta() <= 50000) {
+						nuevoCondicionante.setImporteReserva((new Double(1000)));
+					} else {
+						nuevoCondicionante.setImporteReserva((new Double(3000)));
+					}
+				}
 		}
 
 		Activo activo = oferta.getActivoPrincipal();

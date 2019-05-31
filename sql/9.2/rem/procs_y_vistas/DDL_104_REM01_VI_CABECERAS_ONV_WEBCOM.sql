@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Miguel Sanchez
---## FECHA_CREACION=20190327
+--## AUTOR=RLB
+--## FECHA_CREACION=20190531
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1551/HREOS-5221

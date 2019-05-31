@@ -22,8 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.rest.salesforce.api.impl.CustomInsecureX509TrustManager;
 import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientInternalError;
+import es.pfsgroup.plugin.rem.rest.salesforce.api.impl.CustomInsecureX509TrustManager;
 import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.restclient.salesforce.clients.SFHostnameVerifier;
 import net.sf.json.JSONObject;
@@ -37,6 +37,7 @@ public class HttpsClient {
 	private static String ERROR_SERVICE_URL_REQUIRED = "Service URL is required.";
 	private static String ERROR_JSON_REQUIRED = "JSON request is required";
 	
+
 	public JSONObject processRequest(String serviceUrl, String sendMethod, Map<String, String> headers, String jsonString,int responseTimeOut, String charSet) 
 			throws HttpsClientException {
 		
@@ -71,24 +72,21 @@ public class HttpsClient {
 			httpsURLConnection.setSSLSocketFactory(sslContext.getSocketFactory());
 			
 			httpsURLConnection.setRequestMethod(sendMethod);
-			httpsURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			httpsURLConnection.setConnectTimeout(responseTimeOut);
+			
+			
 			
 			if (!Checks.esNulo(headers)){
 				Iterator<Map.Entry<String, String>> it = headers.entrySet().iterator();
 				
 				while (it.hasNext()) {
 					Map.Entry<String, String> headerPair = it.next();
-					//System.out.println("H : " +headerPair.getKey() + " V : " + headerPair.getValue());
 					httpsURLConnection.setRequestProperty(headerPair.getKey(),headerPair.getValue());
 				}
 			}
 			
 			// Body
-			if (jsonString != null && !jsonString.isEmpty()) {
-				
-				httpsURLConnection.setRequestProperty("Content-Type", "application/json");
-				
+			if (jsonString != null && !jsonString.isEmpty()) {				
 				httpsURLConnection.setDoOutput(true);
 				OutputStream body = httpsURLConnection.getOutputStream();
 

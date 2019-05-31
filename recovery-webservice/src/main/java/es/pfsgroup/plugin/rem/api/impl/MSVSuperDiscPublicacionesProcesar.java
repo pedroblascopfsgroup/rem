@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -28,16 +28,19 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
+/***
+ * 
+ * Clase que procesa el fichero de carga masiva disclaimer de publicaciones
+ *
+ */
 
 @Component
 public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador implements MSVLiberator {
-	
-	private static final String ARROBA = "@";
-	private static final String SI = "SI";
-	private static final String S = "S";
-	
+
+	private final String VALID_OPERATION = MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION;
+
 	public static final class COL_NUM {
-		
+
 		static final int NUM_ACTIVO = 0;
 		static final int ESTADO_FISICO_ACTIVO = 1;
 		static final int OCUPADO = 2;
@@ -49,124 +52,145 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 		static final int DIVISION_HORIZONTAL_INTEGRADO = 8;
 		static final int ESTADO_DIVISION_HORIZONTAL = 9;
 
-	};
-	
+	}
+
 	@Autowired
 	ProcessAdapter processAdapter;
-	
+
 	@Autowired
 	private ActivoApi activoApi;
-	
+
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
 	@Autowired
 	private ActivoAdapter activoAdapter;
-	
+
 	@Autowired
 	private ActivoDao activoDao;
 
 	@Override
 	public String getValidOperation() {
-		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_PUBLICACION;
+		return VALID_OPERATION;
 	}
 
 	@Override
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
-		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO)));
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
+			throws IOException, ParseException {
 
-		Filter filtroEstadoActivo = genericDao.createFilter(FilterType.EQUALS,"codigo", exc.dameCelda(fila, COL_NUM.ESTADO_FISICO_ACTIVO));
-		DDEstadoActivo estadoActivo = genericDao.get(DDEstadoActivo.class, filtroEstadoActivo);
-		if(!Checks.esNulo(estadoActivo)) {
-			activo.setEstadoActivo(estadoActivo);
-		}		
-		
-		//Situacion Posesoria
-		
+		final String FILTRO_CODIGO = "codigo";
+		final String ARROBA = "@";
+		final String[] LISTA_SI = { "SI", "S" };
+
+		final String celdaActivo = exc.dameCelda(fila, COL_NUM.NUM_ACTIVO);
+		final String celdaEstadoFisicoActivo = exc.dameCelda(fila, COL_NUM.ESTADO_FISICO_ACTIVO);
+		final String celdaOcupado = exc.dameCelda(fila, COL_NUM.OCUPADO);
+		final String celdaTitulo = exc.dameCelda(fila, COL_NUM.CON_TITULO);
+		final String celdaTapiado = exc.dameCelda(fila, COL_NUM.TAPIADO);
+		final String celdaOtros = exc.dameCelda(fila, COL_NUM.OTROS);
+		final String celdaOtrosMotivos = exc.dameCelda(fila, COL_NUM.MOTIVO_OTROS);
+		final String celdaIntegrado = exc.dameCelda(fila, COL_NUM.ACTIVO_INTEGRADO);
+		final String celdaEstadoIntegrado = exc.dameCelda(fila, COL_NUM.DIVISION_HORIZONTAL_INTEGRADO);
+		final String celdaSiNoInscrito = exc.dameCelda(fila, COL_NUM.ESTADO_DIVISION_HORIZONTAL);
+
+		Activo activo = activoApi.getByNumActivo(Long.parseLong(celdaActivo));
+
+		// Estado físico
+		Filter filtroEstadoActivo = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaEstadoFisicoActivo);
+		activo.setEstadoActivo(genericDao.get(DDEstadoActivo.class, filtroEstadoActivo));
+
+		// Situacion Posesoria
 		ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
-		if(Checks.esNulo(situacionPosesoria)){
-			Integer ocupado = 0;
-			Integer accesoTapiado = 0;
-			Integer divisionHorizontal = 0;
-			Integer inscritoDivisionHorizontal = 0;
-			Date fechaHoy = new Date();
+		Integer ocupado = 0;
+		Integer accesoTapiado = 0;
+		Integer divisionHorizontal = 0;
+		Integer inscritoDivisionHorizontal = 0;
+		Date fechaHoy = new Date();
+
+		// Ocupado
+		if (Arrays.asList(LISTA_SI).contains(celdaOcupado.toUpperCase())) {
+			ocupado = 1;
+		}
+
+		situacionPosesoria.setOcupado(ocupado);
+
+		// ConTitulo
+		if (ARROBA.equals(celdaOcupado)) {
+			situacionPosesoria.setConTitulo(null);
+		} else if (ARROBA.equals(celdaTitulo)) {
+			situacionPosesoria.setConTitulo(null);
+		} else {
+			Filter filtroTipoTitulo = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaTitulo);
+			DDTipoTituloActivoTPA tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, filtroTipoTitulo);
+			situacionPosesoria.setConTitulo(tipoTitulo);
+		}
+
+		// Tapiado
+		if (Arrays.asList(LISTA_SI).contains(celdaTapiado.toUpperCase())) {
+			accesoTapiado = 1;
+			situacionPosesoria.setFechaAccesoTapiado(fechaHoy);
+		}
+
+		situacionPosesoria.setAccesoTapiado(accesoTapiado);
+
+		// Otros => No hay que persistirlo
+
+		// Motivo Otros Publicacion
+		if (Checks.esNulo(celdaOtrosMotivos) || ARROBA.equals(celdaOtrosMotivos) || ARROBA.equals(celdaOtros)) {
+			situacionPosesoria.setOtro(null);
+		} else {
+			situacionPosesoria.setOtro(celdaOtrosMotivos);
+		}
+
+		genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+
+		// DivisionHorizontal-Activo Ingegrado
+
+		ActivoInfoRegistral activoInfoRegistral  = activo.getInfoRegistral();
+		
+		if (ARROBA.equals(celdaSiNoInscrito) || ARROBA.equals(celdaEstadoIntegrado) || ARROBA.equals(celdaIntegrado)) {
+			activoInfoRegistral.setDivHorInscrito(null);
+			activoInfoRegistral.setEstadoDivHorizontal(null);
 			
-			//Ocupado
-			
-			if(S.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.OCUPADO))) || SI.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.OCUPADO)))) {	
-				ocupado = 1;
-			}else if(!Checks.esNulo(exc.dameCelda(fila, COL_NUM.OCUPADO)) || ARROBA.equals(exc.dameCelda(fila, COL_NUM.OCUPADO))) {
-				situacionPosesoria.setOcupado(ocupado);
-				situacionPosesoria.setConTitulo(null);
-				
-			}
-			situacionPosesoria.setOcupado(ocupado);
-			
-			//ConTitulo
-			if(ocupado != 0) {
-				Filter filtroTipoTitulo = genericDao.createFilter(FilterType.EQUALS,"codigo", exc.dameCelda(fila, COL_NUM.CON_TITULO));
-				DDTipoTituloActivoTPA tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, filtroTipoTitulo);
-				
-				if(!Checks.esNulo(tipoTitulo)) {
-					situacionPosesoria.setConTitulo(tipoTitulo);
-				}
-			}
-			//Tapiado
-			if(S.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.TAPIADO))) || SI.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.TAPIADO)))) {
-				accesoTapiado = 1;
-				situacionPosesoria.setFechaAccesoTapiado(fechaHoy);
-			}else {
-				situacionPosesoria.setFechaAccesoTapiado(null);									////?? preguntar producto
-			}
-			situacionPosesoria.setAccesoTapiado(accesoTapiado);
-			
-			//Otros => No hay que persistirlo
-			
-			//Motivo Otros Publicacion
-			if(Checks.esNulo(exc.dameCelda(fila, COL_NUM.OTROS)) || ARROBA.equals(exc.dameCelda(fila, COL_NUM.OTROS))) {
-				situacionPosesoria.setOtro(null);
-			}else {
-				situacionPosesoria.setOtro(exc.dameCelda(fila, COL_NUM.MOTIVO_OTROS));
-			}
-			
-			genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
-			
-			//DivisionHorizontal-Activo	Ingegrado
-			
-			Filter filtroEstadoDivisionHorizontal = genericDao.createFilter(FilterType.EQUALS,"codigo", exc.dameCelda(fila, COL_NUM.ESTADO_DIVISION_HORIZONTAL));
-			DDEstadoDivHorizontal estadoDivisionHorizontal = genericDao.get(DDEstadoDivHorizontal.class, filtroEstadoDivisionHorizontal);
-			
-			ActivoInfoRegistral activoInfoRegistral= activo.getInfoRegistral();
-			if(SI.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.ACTIVO_INTEGRADO))) || S.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.ACTIVO_INTEGRADO)))){
+		} else {
+			Filter filtroEstadoDivisionHorizontal = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO,
+					celdaSiNoInscrito);
+			DDEstadoDivHorizontal estadoDivisionHorizontal = genericDao.get(DDEstadoDivHorizontal.class,
+					filtroEstadoDivisionHorizontal);			
+
+			if (Arrays.asList(LISTA_SI).contains(celdaIntegrado.toUpperCase())) {
 				divisionHorizontal = 1;
-				
-				if(!Checks.esNulo(activoInfoRegistral)) {
-					if(SI.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.DIVISION_HORIZONTAL_INTEGRADO))) || S.equalsIgnoreCase((exc.dameCelda(fila, COL_NUM.DIVISION_HORIZONTAL_INTEGRADO)))) {
+
+				if (!Checks.esNulo(activoInfoRegistral)) {
+
+					if (Arrays.asList(LISTA_SI).contains(celdaEstadoIntegrado.toUpperCase())) {
 						inscritoDivisionHorizontal = 1;
 					}
+
 					activoInfoRegistral.setDivHorInscrito(inscritoDivisionHorizontal);
-					
-					if(!Checks.esNulo(estadoDivisionHorizontal) && inscritoDivisionHorizontal != 0)
+
+					if (!Checks.esNulo(estadoDivisionHorizontal) && inscritoDivisionHorizontal != 0)
 						activoInfoRegistral.setEstadoDivHorizontal(estadoDivisionHorizontal);
 				}
-			}else {
-				
-				if(!Checks.esNulo(activoInfoRegistral)) {
+
+			} else {
+
+				if (!Checks.esNulo(activoInfoRegistral)) {
 					activoInfoRegistral.setDivHorInscrito(null);
 					activoInfoRegistral.setEstadoDivHorizontal(null);
 				}
-				
+
 			}
-			activo.setDivHorizontal(divisionHorizontal);
-			
-			activoDao.saveOrUpdate(activo);
-			genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
-			
-			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 		}
 		
+		activo.setDivHorizontal(divisionHorizontal);
+		activoDao.saveOrUpdate(activo);
+		genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
+		//lanzar el SP de publicaciones para el activo
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());	
+		 
 		return new ResultadoProcesarFila();
 	}
-	
+
 }

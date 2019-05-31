@@ -5,14 +5,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,17 +43,16 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAbstract {
 	
-	private static final String ACTIVO_NO_EXISTE = "msg.error.masivo.listado.validator.activos.deben.existir";
-	private static final String ESTADO_ACTIVO_INVALIDO = "msg.error.masivo.err.cartera.activo";
-	private static final String VALORES_NO_VALIDOS_OCUPADO = "msg.error.masivo.superficies.err.superficie.construida";
-	private static final String VALORES_NO_VALIDOS_CON_TITULO = "msg.error.masivo.superficies.err.superficie.util";
-	private static final String VALORES_NO_VALIDOS_TAPIADO = "msg.error.masivo.superficies.err.repercusion.eecc";
-	private static final String VALORES_NO_VALIDOS_OTROS = "msg.error.masivo.superficies.err.parcela";
-	private static final String VALORES_NO_VALIDOS_OTROS_MOTIVOS = "msg.error.masivo.superficies.err.parcela";
-	private static final String VALORES_ACTIVO_INTEGRADO_NO_VALIDO = "msg.error.masivo.superficies.err.parcela";
-	private static final String VALOR_CAMPO_ESTADO_NO_VALIDO = "msg.error.masivo.superficies.err.parcela";
-	private static final String VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO = "msg.error.masivo.superficies.err.parcela";
-	
+	private static final String ACTIVO_NO_EXISTE = "msg.error.masivo.disclaimer.activo";
+	private static final String ESTADO_ACTIVO_INVALIDO = "msg.error.masivo.disclaimer.estado.fisico";
+	private static final String VALORES_NO_VALIDOS_OCUPADO = "msg.error.masivo.disclaimer.ocupado";
+	private static final String VALORES_NO_VALIDOS_CON_TITULO = "msg.error.masivo.disclaimer.titulo";
+	private static final String VALORES_NO_VALIDOS_TAPIADO = "msg.error.masivo.disclaimer.tapiado";
+	private static final String VALORES_NO_VALIDOS_OTROS = "msg.error.masivo.disclaimer.otros";
+	private static final String VALORES_NO_VALIDOS_OTROS_MOTIVOS = "msg.error.masivo.disclaimer.motivo.otros";
+	private static final String VALORES_ACTIVO_INTEGRADO_NO_VALIDO = "msg.error.masivo.disclaimer.activo.integrado";
+	private static final String VALOR_CAMPO_ESTADO_NO_VALIDO = "msg.error.masivo.disclaimer.estado";
+	private static final String VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO = "msg.error.masivo.disclaimer.estado.sino.inscrito";	
 	
 	private	static final int FILA_CABECERA = 0;
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -63,8 +65,8 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	private static final int COL_OTROS = 5;
 	private static final int COL_OTROS_MOTIVOS = 6;
 	private static final int COL_ACTIVO_INTEGRADO = 7;
-	private static final int COL_DIVISION_HORIZONTAL_INTEGRADO = 8;
-	private static final int COL_ESTADO_DIVISION_HORIZONTAL = 9;
+	private static final int COL_DIVISION_HORIZONTAL_INTEGRADO = 8; //Col. Estado
+	private static final int COL_ESTADO_DIVISION_HORIZONTAL = 9; //Col. Estado si no está inscrita
 	
 
 	
@@ -103,7 +105,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		
 		List<String> lista = recuperarFormato(dtoFile.getIdTipoOperacion());
 		MSVHojaExcel exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(dtoFile.getIdTipoOperacion()));
+		MSVHojaExcel excPlantilla = excelParser.getExcel(recogerPlantilla(dtoFile.getIdTipoOperacion()));
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
@@ -132,26 +134,13 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 			mapaErrores.put(messageServices.getMessage(VALOR_CAMPO_ESTADO_NO_VALIDO), campoEstado(exc));
 			mapaErrores.put(messageServices.getMessage(VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO), campoEstadoNoIntegrado(exc));
 			
-			
-			
-			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ESTADO_ACTIVO_INVALIDO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALORES_NO_VALIDOS_OCUPADO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALORES_NO_VALIDOS_CON_TITULO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALORES_NO_VALIDOS_TAPIADO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALORES_NO_VALIDOS_OTROS)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALORES_NO_VALIDOS_OTROS_MOTIVOS)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALORES_ACTIVO_INTEGRADO_NO_VALIDO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALOR_CAMPO_ESTADO_NO_VALIDO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALOR_CAMPO_ESTADO_NO_INTEGRADO_NO_VALIDO)).isEmpty())
-
-			{
+			Set<String> keySet = mapaErrores.keySet();			
+			for (String key : keySet) {				
+				if(!Checks.estaVacio(mapaErrores.get(key))) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
-					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());	
-					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-			}
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+				}
+			}		
 		}
 		exc.cerrar();
 		
@@ -203,10 +192,12 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	 */
 	private List<Integer> isActiveNotExistsRows(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
+		String celdaActivo;
 
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_ACTIVO)))
+				celdaActivo = exc.dameCelda(i, COL_ACTIVO);
+				if (!particularValidator.existeActivo(celdaActivo))
 					listaFilas.add(i);
 			} catch (ParseException e) {
 				listaFilas.add(i);
@@ -222,14 +213,15 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	 * Comprueba el estado pertenece al diccionario DD_EAC_ESTADO_ACTIVO
 	 * @param exc
 	 * @return listado filas erroneas
-	 */
-	
+	 */	
 	private List<Integer> perteneceDDEstadoActivo(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
+		String celdaEstadoActivo;
+
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
-		
 			try {
-				if (!particularValidator.perteneceDDEstadoActivo(exc.dameCelda(i, COL_ESTADO_FISICO_ACTIVO)))
+				celdaEstadoActivo = exc.dameCelda(i, COL_ESTADO_FISICO_ACTIVO);
+				if (!particularValidator.perteneceDDEstadoActivo(celdaEstadoActivo))
 					listaFilas.add(i);
 			} catch (ParseException e) {
 				listaFilas.add(i);
@@ -241,22 +233,19 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		return listaFilas;
 	}
 	/**
-	 * Comprueba el campo ocupado tiene valor de SI/NO S/N 
+	 * Comprueba el campo ocupado
 	 * @param exc
 	 * @return listado filas erroneas
 	 */
 	private List<Integer> isOcupadoValorSiNo(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		List<String> listaStringValidos = new ArrayList<String>();
-		
-		listaStringValidos.add("SI");
-		listaStringValidos.add("NO");
-		listaStringValidos.add("S");
-		listaStringValidos.add("N");
-		
+		String[] listaValidos = { "SI", "S", "NO", "N", "@" };
+		String celda;
+
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				if(!esArroba(exc.dameCelda(i, COL_OCUPADO)) && !listaStringValidos.contains((exc.dameCelda(i, COL_OCUPADO)).toUpperCase())) {
+				celda = exc.dameCelda(i, COL_OCUPADO);
+				if (!Arrays.asList(listaValidos).contains(celda.toUpperCase())) {
 					listaFilas.add(i);
 				}
 			} catch (ParseException e) {
@@ -274,41 +263,45 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	 * @param exc
 	 * @return listado filas erroneas
 	 */
-
 	private List<Integer> isConTitulo(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		List<String> listaStringValidosSi = new ArrayList<String>();
-		List<String> listaStringValidosNo = new ArrayList<String>();
-		
-		listaStringValidosSi.add("SI");
-		listaStringValidosSi.add("S");
-		
-		listaStringValidosNo.add("NO");
-		listaStringValidosNo.add("N");
-		
-		
-		
+		String[] listaSi = { "SI", "S" };
+		String[] listaNo = { "NO", "N" };
+		String celdaOcupado;
+		String celdaConTitulo;
+		boolean celdaMal;
+
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+
+			celdaMal = false;
+
 			try {
-				if(esArroba(exc.dameCelda(i, COL_OCUPADO))) {
-					if(!Checks.esNulo(exc.dameCelda(i, COL_CON_TITULO)) && !esArroba(exc.dameCelda(i, COL_CON_TITULO))) {
-						listaFilas.add(i);
-					}
+
+				celdaOcupado = exc.dameCelda(i, COL_OCUPADO);
+				celdaConTitulo = exc.dameCelda(i, COL_CON_TITULO);			
+
+				if (!esArroba(celdaOcupado) && (esArroba(celdaConTitulo) || celdaConTitulo.isEmpty())) {
+					celdaMal = true;
 				}
-				else if(!particularValidator.perteneceDDTipoTituloTPA(exc.dameCelda(i, COL_CON_TITULO))){
+
+				if (!particularValidator.perteneceDDTipoTituloTPA(celdaConTitulo)) {
+					celdaMal = true;
+				}
+				
+				if (Arrays.asList(listaSi).contains(celdaOcupado.toUpperCase())
+						&& !particularValidator.conTituloOcupadoSi(celdaConTitulo)) {
+					celdaMal = true;
+				}
+				
+				if (Arrays.asList(listaNo).contains(celdaOcupado.toUpperCase())
+						&& !particularValidator.conTituloOcupadoNo(celdaConTitulo)) {
+					celdaMal = true;
+				}
+
+				if (celdaMal) {
 					listaFilas.add(i);
-				}else{
-					 if(listaStringValidosSi.contains((exc.dameCelda(i, COL_OCUPADO)).toUpperCase())) {
-						if(!particularValidator.conTituloOcupadoSi(exc.dameCelda(i, COL_CON_TITULO))) {
-							listaFilas.add(i);
-						}
-					}else if(listaStringValidosNo.contains((exc.dameCelda(i, COL_OCUPADO)).toUpperCase())) {
-						if(!particularValidator.conTituloOcupadoNo(exc.dameCelda(i, COL_CON_TITULO))) {
-							listaFilas.add(i);
-						}
 				}
-			}
+
 			} catch (ParseException e) {
 				listaFilas.add(i);
 			} catch (Exception e) {
@@ -319,21 +312,24 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		return listaFilas;
 	}
 	
+	/**
+	 * Comprueba el campo Tapiado
+	 * 
+	 * @param exc
+	 * @return listado filas erroneas
+	 */
 	private List<Integer> isTapiado(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		List<String> listaStringValidos = new ArrayList<String>();
-		
-		listaStringValidos.add("SI");
-		listaStringValidos.add("NO");
-		listaStringValidos.add("S");
-		listaStringValidos.add("N");
-		
+		String[] listaValidos = { "SI", "S", "NO", "N" };
+		String celdaTapiado;
+
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				if(!listaStringValidos.contains((exc.dameCelda(i, COL_ESTADO_TAPIADO)).toUpperCase())) {
+				celdaTapiado = exc.dameCelda(i, COL_ESTADO_TAPIADO);
+				if (!Arrays.asList(listaValidos).contains(celdaTapiado.toUpperCase())) {
 					listaFilas.add(i);
 				}
-				//
+
 			} catch (ParseException e) {
 				listaFilas.add(i);
 			} catch (Exception e) {
@@ -343,21 +339,25 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		}
 		return listaFilas;
 	}
+	
+	/**
+	 * Comprueba el campo Otros
+	 * 
+	 * @param exc
+	 * @return listado filas erroneas
+	 */
 	private List<Integer> valorOtros(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		List<String> listaStringValidos = new ArrayList<String>();
-		
-		listaStringValidos.add("SI");
-		listaStringValidos.add("NO");
-		listaStringValidos.add("S");
-		listaStringValidos.add("N");
-		
+		String[] listaValidos = { "SI", "S", "NO", "N" ,"@"};
+		String celdaOtros;
+
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				if(!listaStringValidos.contains((exc.dameCelda(i, COL_OTROS)).toUpperCase())) {
+				celdaOtros = exc.dameCelda(i, COL_OTROS);
+				if (!Arrays.asList(listaValidos).contains(celdaOtros.toUpperCase())) {
 					listaFilas.add(i);
 				}
-				//
+
 			} catch (ParseException e) {
 				listaFilas.add(i);
 			} catch (Exception e) {
@@ -368,21 +368,29 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		return listaFilas;
 	}
 	
+	/**
+	 * Comprueba el campo Motivo Otros
+	 * 
+	 * @param exc
+	 * @return listado filas erroneas
+	 */
 	private List<Integer> valorOtrosMotivos(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		List<String> listaStringValidos = new ArrayList<String>();
-		
-		listaStringValidos.add("SI");
-		listaStringValidos.add("S");
-		
+		String[] listaValidos = { "SI", "S" };
+		String celdaOtrosMotivos;
+		String celdaOtros;
+
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				if(esArroba(exc.dameCelda(i, COL_OTROS)) && (!Checks.esNulo(exc.dameCelda(i, COL_OTROS_MOTIVOS)) && !esArroba(exc.dameCelda(i, COL_OTROS_MOTIVOS)))) {
+				celdaOtrosMotivos = exc.dameCelda(i, COL_OTROS_MOTIVOS);
+				celdaOtros = exc.dameCelda(i, COL_OTROS);
+
+				
+				if (Arrays.asList(listaValidos).contains(celdaOtros.toUpperCase()) && (celdaOtrosMotivos.isEmpty() ||
+						esArroba(celdaOtros) && (!Checks.esNulo(celdaOtrosMotivos) && !esArroba(celdaOtrosMotivos)))) {
 					listaFilas.add(i);
 				}
-				if(!listaStringValidos.contains((exc.dameCelda(i, COL_OTROS)).toUpperCase()) && (!Checks.esNulo(exc.dameCelda(i, COL_OTROS_MOTIVOS)) && !esArroba(exc.dameCelda(i, COL_OTROS_MOTIVOS)))) {
-					listaFilas.add(i);
-				}
+				
 			} catch (ParseException e) {
 				listaFilas.add(i);
 			} catch (Exception e) {
@@ -393,20 +401,24 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		return listaFilas;
 	}
 	
+	/**
+	 * Comprueba el campo Activo Integrado
+	 * 
+	 * @param exc
+	 * @return listado filas erroneas
+	 */
 	private List<Integer> valorActivoInscrito(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		List<String> listaStringValidos = new ArrayList<String>();
-		
-		listaStringValidos.add("SI");
-		listaStringValidos.add("S");
-		
-		
+		String[] listaValidos = { "SI", "S", "NO", "N", "@" };
+		String celdaActivoIntegrado;
+
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				if(!listaStringValidos.contains((exc.dameCelda(i, COL_ACTIVO_INTEGRADO)).toUpperCase())) {
+				celdaActivoIntegrado = exc.dameCelda(i, COL_ACTIVO_INTEGRADO);
+				if (!Arrays.asList(listaValidos).contains(celdaActivoIntegrado.toUpperCase())) {
 					listaFilas.add(i);
 				}
-				//
+
 			} catch (ParseException e) {
 				listaFilas.add(i);
 			} catch (Exception e) {
@@ -417,22 +429,46 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		return listaFilas;
 	}
 	
+	/**
+	 * Comprueba el campo Estado
+	 * 
+	 * @param exc
+	 * @return listado filas erroneas
+	 */
 	private List<Integer> campoEstado(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		List<String> listaStringValidos = new ArrayList<String>();
-		
-		listaStringValidos.add("SI");
-		listaStringValidos.add("S");
-		
+		String[] listaValidos = { "INSCRITA", "NO INSCRITA"};
+		String[] listaValidosActivoSI = { "SI", "S" };
+		String[] listaValidosActivoNO = { "NO", "N", "@" };
+		String celdaEstado;
+		String celdaActivoIntegrado;
+		boolean celdaMal;
+
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				
-				if(!listaStringValidos.contains((exc.dameCelda(i, COL_ACTIVO_INTEGRADO )).toUpperCase())
-					&& (!Checks.esNulo(exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO )) && !esArroba(exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO)))) {
-					
+				celdaMal = false;
+				celdaEstado = exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO);
+				celdaActivoIntegrado = exc.dameCelda(i, COL_ACTIVO_INTEGRADO);
+
+				if(Arrays.asList(listaValidosActivoSI).contains(celdaActivoIntegrado.toUpperCase())
+						&& !Arrays.asList(listaValidos).contains(celdaEstado.toUpperCase())){
+					celdaMal = true;
+				}
+				if((Arrays.asList(listaValidosActivoNO).contains(celdaActivoIntegrado.toUpperCase())
+						|| Checks.esNulo(celdaActivoIntegrado))
+						&& (!Checks.esNulo(celdaEstado) && !esArroba(celdaEstado))){
+					celdaMal = true;
+				}
+				if(!Arrays.asList(listaValidosActivoSI).contains(celdaActivoIntegrado.toUpperCase())
+						&& !Arrays.asList(listaValidosActivoNO).contains(celdaActivoIntegrado.toUpperCase())
+						&& !Checks.esNulo(celdaActivoIntegrado)) {
+					celdaMal = true;
+				}
+
+				if (celdaMal) {
 					listaFilas.add(i);
 				}
-				//
+
 			} catch (ParseException e) {
 				listaFilas.add(i);
 			} catch (Exception e) {
@@ -443,22 +479,42 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		return listaFilas;
 	}
 	
-	
+	/**
+	 * Comprueba el campo Estado No Integrado
+	 * 
+	 * @param exc
+	 * @return listado filas erroneas
+	 */
 	private List<Integer> campoEstadoNoIntegrado(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		List<String> listaStringValidos = new ArrayList<String>();
-		
-		listaStringValidos.add("NO");
-		listaStringValidos.add("N");
-		
+		String[] listaValidos = { "NO INSCRITA" };
+		String celdaEstado;
+		String celdaEstadoNoIntegrado;
+
+		boolean celdaMal;
+
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				if(!listaStringValidos.contains((exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO)).toUpperCase()) && !esArroba(exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO))) {
-					if(!Checks.esNulo((exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO))) && !esArroba(exc.dameCelda(i, COL_ESTADO_DIVISION_HORIZONTAL))) {
-						listaFilas.add(i);
-					}
+				celdaMal = false;
+				celdaEstado = exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO);
+				celdaEstadoNoIntegrado = exc.dameCelda(i, COL_ESTADO_DIVISION_HORIZONTAL);
+
+				if (Arrays.asList(listaValidos).contains(celdaEstado.toUpperCase())
+						&& (!particularValidator.perteneceDDEstadoDivHorizontal(celdaEstadoNoIntegrado))) {
+					celdaMal = true;
 				}
-				//
+				if (esArroba(celdaEstado)
+						&& (!Checks.esNulo(celdaEstadoNoIntegrado) && !esArroba(celdaEstadoNoIntegrado))) {
+					celdaMal = true;
+				}
+				if (Checks.esNulo(celdaEstado) && !Checks.esNulo(celdaEstadoNoIntegrado)
+						&& !esArroba(celdaEstadoNoIntegrado)) {
+					celdaMal = true;
+				}
+				if (celdaMal) {
+					listaFilas.add(i);
+				}
+
 			} catch (ParseException e) {
 				listaFilas.add(i);
 			} catch (Exception e) {
@@ -469,7 +525,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		return listaFilas;
 	}
 	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
+	private File recogerPlantilla(Long idTipoOperacion)  {
 		try {
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
 			return fileItem.getFile();

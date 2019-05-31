@@ -697,5 +697,7 @@ public interface ParticularValidatorApi {
 	Boolean conTituloOcupadoSi(String codigoTituloTPA);
 
 	Boolean conTituloOcupadoNo(String codigoTituloTPA);
+	
+	Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal);
 
 }

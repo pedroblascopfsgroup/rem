@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
@@ -235,6 +236,10 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_REF_CIRCUITO_CLIENTE")
 	private String refCircuitoCliente;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ORC_ID")
+	private DDOrigenComprador origenComprador;
     
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -692,6 +697,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setRefCircuitoCliente(String refCircuitoCliente) {
 		this.refCircuitoCliente = refCircuitoCliente;
+	}
+
+	public DDOrigenComprador getOrigenComprador() {
+		return origenComprador;
+	}
+
+	public void setOrigenComprador(DDOrigenComprador origenComprador) {
+		this.origenComprador = origenComprador;
 	}
 
 }

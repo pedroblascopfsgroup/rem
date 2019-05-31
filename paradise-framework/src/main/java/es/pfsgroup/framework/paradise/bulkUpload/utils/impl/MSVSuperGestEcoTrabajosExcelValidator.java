@@ -334,8 +334,10 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(particularValidator.tipoTarifaValido(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA),exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO))) {
+					if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
+						if(particularValidator.tipoTarifaValido(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA),exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO))) {
 							listaFilas.add(i);
+						}
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -357,11 +359,11 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
+					if(particularValidator.compararNumeroFilasTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO),1)) {
 						if(particularValidator.existeTipoTarifa(exc.dameCelda(i, COL_NUM.COL_TIPO_TARIFA))) {
 							listaFilas.add(i);
-						}
-					}					
+						}	
+					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}

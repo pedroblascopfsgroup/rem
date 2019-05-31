@@ -34,19 +34,19 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 
 @Component
 public class MSVSuperGestEcoTrabajosProcesar extends AbstractMSVActualizador implements MSVLiberator {
-	
+
 	@Autowired
 	ProcessAdapter processAdapter;
-	
+
 	@Autowired
 	private TrabajoApi trabajoApi;
-	
+
 	@Autowired
 	private TrabajoDaoImpl trabajoDaoImpl;
-	
-    @Autowired
-    private GenericABMDao genericDao;
-	
+
+	@Autowired
+	private GenericABMDao genericDao;
+
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS;
@@ -54,26 +54,36 @@ public class MSVSuperGestEcoTrabajosProcesar extends AbstractMSVActualizador imp
 
 	@Override
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
+			throws IOException, ParseException {
 		List<TrabajoConfiguracionTarifa> trabajosConfiguracionTarifa = new ArrayList<TrabajoConfiguracionTarifa>();
 		Trabajo trabajo = trabajoApi.getTrabajoByNumeroTrabajo(Long.parseLong(exc.dameCelda(fila, 0)));
-//		ConfiguracionTarifa condiguracionTarifa = genericDao.get(ConfiguracionTarifa.class,genericDao.createFilter(FilterType.EQUALS,"trabajo", trabajo),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		trabajosConfiguracionTarifa = genericDao.getList(TrabajoConfiguracionTarifa.class,genericDao.createFilter(FilterType.EQUALS,"trabajo", trabajo),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		trabajosConfiguracionTarifa = genericDao.getList(TrabajoConfiguracionTarifa.class,
+				genericDao.createFilter(FilterType.EQUALS, "trabajo", trabajo),
+				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		trabajo.setImporteTotal(Double.parseDouble(exc.dameCelda(fila, 5)));
-		
-		 for (int i = 0; i < trabajosConfiguracionTarifa.size(); i++) {
-			 if(trabajosConfiguracionTarifa.get(i).getConfigTarifa().getTipoTarifa().getCodigo().equals(exc.dameCelda(fila, 1))) {
-					if(!Checks.esNulo(trabajo)){
-						 trabajosConfiguracionTarifa.get(i).setMedicion(Float.parseFloat(exc.dameCelda(fila, 3)));
-						 trabajosConfiguracionTarifa.get(i).setPrecioUnitario(Float.parseFloat(exc.dameCelda(fila, 2)));
-						 genericDao.update(TrabajoConfiguracionTarifa.class, trabajosConfiguracionTarifa.get(i));
+
+		for (int i = 0; i < trabajosConfiguracionTarifa.size(); i++) {
+			if (exc.dameCelda(fila, 1) == null || exc.dameCelda(fila, 1).trim().equals("") ) {
+				if (!Checks.esNulo(trabajo)) {
+					trabajosConfiguracionTarifa.get(i).setMedicion(Float.parseFloat(exc.dameCelda(fila, 3)));
+					trabajosConfiguracionTarifa.get(i).setPrecioUnitario(Float.parseFloat(exc.dameCelda(fila, 2)));
+					genericDao.update(TrabajoConfiguracionTarifa.class, trabajosConfiguracionTarifa.get(i));
+				}
+			} else {
+				if (trabajosConfiguracionTarifa.get(i).getConfigTarifa().getTipoTarifa().getCodigo()
+						.equals(exc.dameCelda(fila, 1))) {
+					if (!Checks.esNulo(trabajo)) {
+						trabajosConfiguracionTarifa.get(i).setMedicion(Float.parseFloat(exc.dameCelda(fila, 3)));
+						trabajosConfiguracionTarifa.get(i).setPrecioUnitario(Float.parseFloat(exc.dameCelda(fila, 2)));
+						genericDao.update(TrabajoConfiguracionTarifa.class, trabajosConfiguracionTarifa.get(i));
 					}
-			 }
+				}
+			}
+
 		}
-		 genericDao.update(Trabajo.class, trabajo);
-		 
+		genericDao.update(Trabajo.class, trabajo);
+
 		return new ResultadoProcesarFila();
 	}
 }
-	
-

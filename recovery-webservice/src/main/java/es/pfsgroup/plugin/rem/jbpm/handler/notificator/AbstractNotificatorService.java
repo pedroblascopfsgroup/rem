@@ -333,6 +333,7 @@ public abstract class AbstractNotificatorService {
 			dtoSendNotificator.setTipoContrato(tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
 			dtoSendNotificator.setNumTrabajo(tramite.getTrabajo().getNumTrabajo());
 			dtoSendNotificator.setFechaFinalizacion(this.generateFechaTrabajo(tramite.getTrabajo()));
+			dtoSendNotificator.setNumActivo(tramite.getActivo().getNumActivo());
 		}
 
 		

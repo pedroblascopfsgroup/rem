@@ -9156,14 +9156,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCompradorExpedientePorComprador, filterCompradorExpedientePorExpediente);
 					
 					if(!Checks.esNulo(ejecutarDatosCliente) && !Checks.esNulo(compradorExpediente)) {
-						if(!Checks.esNulo(ejecutarDatosCliente.getCodigoEstadoCivil()) && !Checks.esNulo(compradorExpediente.getEstadoCivil())) {
+						if((!Checks.esNulo(ejecutarDatosCliente.getCodigoEstadoCivil()) && !Character.isWhitespace(ejecutarDatosCliente.getCodigoEstadoCivil())) && !Checks.esNulo(compradorExpediente.getEstadoCivil())) {
 							String codigoEstadoCivilUrsus = getCodigoEstadoCivilUrsusRem(String.valueOf(ejecutarDatosCliente.getCodigoEstadoCivil()));
 							if(!codigoEstadoCivilUrsus.equals(compradorExpediente.getEstadoCivil().getCodigo()) 
 									&& (DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(codigoEstadoCivilUrsus) || DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(compradorExpediente.getEstadoCivil().getCodigo()))) {
 								return true;
 							}else{
 								String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
-								if( !Checks.esNulo(compradorExpediente.getRegimenMatrimonial()) && !Checks.esNulo(compradorExpediente.getRegimenMatrimonial().getCodigo()) && !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
+								if( (!Checks.esNulo(compradorExpediente.getRegimenMatrimonial()) && !Checks.esNulo(compradorExpediente.getRegimenMatrimonial().getCodigo())) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
 									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(compradorExpediente.getRegimenMatrimonial().getCodigo()) && !compradorExpediente.getRegimenMatrimonial().getCodigo().equals(codigoRegistroEconomicoUrsus))
 											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && !codigoRegistroEconomicoUrsus.equals(compradorExpediente.getRegimenMatrimonial().getCodigo()))) {
 										return true;
@@ -9193,7 +9193,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										}
 									}
 								}else { 
-									return true;
+									//comprobamos si alguno esta casado devolvemos error porque no coinciden los regimenes o estan vacios
+									if(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(codigoEstadoCivilUrsus) || DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(compradorExpediente.getEstadoCivil().getCodigo())){
+										if(DDRegimenesMatrimoniales.COD_GANANCIALES.equals(compradorExpediente.getRegimenMatrimonial().getCodigo())) {
+											return true;
+										}
+									}
+									return false;
 								}
 							}
 						}else{
@@ -9238,7 +9244,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		String codigoRegistroEconomico = NO_EXISTE_CODIGO_REM;
 		if(!Checks.esNulo(ejecutarDatosCliente.getCodigoEstadoCivil())) {
 			if(CASADO.equals(String.valueOf(ejecutarDatosCliente.getCodigoEstadoCivil()))) {
-				if(SEPARACION_BIENES.equals(ejecutarDatosCliente.getNumeroClienteUrsusConyuge())){
+				if(Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) || "0".equals(ejecutarDatosCliente.getNumeroClienteUrsusConyuge())){
 					codigoRegistroEconomico = DDRegimenesMatrimoniales.COD_SEPARACION_BIENES;
 				}else {
 					codigoRegistroEconomico = DDRegimenesMatrimoniales.COD_GANANCIALES;
@@ -9382,7 +9388,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean modificarDatosUnCompradorProblemasURSUS( DtoSlideDatosCompradores dto) throws Exception {
-		Boolean problemasPorComprador = false;
+		if(!DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(dto.getCodEstadoCivil())){
+			dto.setCodigoRegimenMatrimonial(null);
+		}
+		Boolean problemasPorComprador = false; 
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getIdExpedienteComercial()));
 		Comprador comprador = genericDao.get(Comprador.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getId()));
 		Filter filterCompradorExpedientePorComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", comprador.getId());
@@ -9449,7 +9458,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				if(!problemasPorComprador) {
 					if(!Checks.esNulo(ejecutarDatosCliente)) {
-						if(!Checks.esNulo(ejecutarDatosCliente.getCodigoEstadoCivil()) && !Checks.esNulo(dto.getCodEstadoCivil())) {
+						if((!Checks.esNulo(ejecutarDatosCliente.getCodigoEstadoCivil()) && !Character.isWhitespace(ejecutarDatosCliente.getCodigoEstadoCivil())) && !Checks.esNulo(dto.getCodEstadoCivil())) {
 							String codigoEstadoCivilUrsus = getCodigoEstadoCivilUrsusRem(String.valueOf(ejecutarDatosCliente.getCodigoEstadoCivil()));
 							if(!codigoEstadoCivilUrsus.equals(dto.getCodEstadoCivil()) 
 									&& (DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(codigoEstadoCivilUrsus) || DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(dto.getCodEstadoCivil()))) {
@@ -9459,7 +9468,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								return true;
 							}else {
 								String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
-								if( !Checks.esNulo(dto.getCodigoRegimenMatrimonial()) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
+								if( !Checks.esNulo(dto.getCodigoRegimenMatrimonial()) && !NO_EXISTE_CODIGO_REM.equals(codigoRegistroEconomicoUrsus)) {
 									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(dto.getCodigoRegimenMatrimonial()) && !dto.getCodigoRegimenMatrimonial().equals(codigoRegistroEconomicoUrsus))
 											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && !codigoRegistroEconomicoUrsus.equals(dto.getCodigoRegimenMatrimonial()))) {
 										comprador.setProblemasUrsus(true);
@@ -9487,9 +9496,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 											}
 										}
 									}
+								}else {
+									//comprobamos si alguno esta casado devolvemos error porque no coinciden los regimenes o estan vacios
+									if(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(codigoEstadoCivilUrsus) || DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(dto.getCodEstadoCivil())){
+										if(DDRegimenesMatrimoniales.COD_GANANCIALES.equals(dto.getCodigoRegimenMatrimonial())) {
+											comprador.setProblemasUrsus(true);
+											crearTareaValidacionClientes (expediente);
+											comprador.setProblemasUrsus(true);
+											genericDao.update(Comprador.class, comprador);
+											return true;
+										}
+									}
+									comprador.setProblemasUrsus(false);
+									finalizarTareaValidacionClientes(expediente);
+									genericDao.update(Comprador.class, comprador);
+									return false;
 								}
 							}
 						}else{
+							comprador.setProblemasUrsus(true);
+							crearTareaValidacionClientes (expediente);
+							comprador.setProblemasUrsus(true);
+							genericDao.update(Comprador.class, comprador);
 							return true;
 						}
 					}else {

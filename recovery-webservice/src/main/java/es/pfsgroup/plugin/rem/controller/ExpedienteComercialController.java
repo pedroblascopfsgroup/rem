@@ -887,6 +887,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 						.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
 				if (!Checks.esNulo(vistaConExp)) {
 					DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
+					if("0".equals(comprador.getNumeroConyugeUrsus())) {
+						comprador.setNumeroConyugeUrsus(null);
+					}
 					model.put(RESPONSE_DATA_KEY, comprador);
 					model.put(RESPONSE_SUCCESS_KEY, true);
 				} else {

@@ -303,6 +303,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 								xtype: 'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('title.windows.datos.cliente.ursus'),
 								reference: 'seleccionClienteUrsus',
+								name: 'seleccionClienteUrsus',
 								bind: {
 									store: '{comboClienteUrsus}',
 									hidden: '{!comprador.esCarteraBankia}'

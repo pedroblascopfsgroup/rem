@@ -130,19 +130,21 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
     	var me = this,
 			form = me.down("form"),
 			params = {},
-			url;
+			url,
+			docCliente;
 
 		if(!Ext.isEmpty(me.parent.oferta)) {
 			url = $AC.getRemoteUrl("activooferta/saveDocumentoAdjuntoOferta");
+			docCliente = me.parent.numDocumento;
 		} else {
 			url = $AC.getRemoteUrl("expedientecomercial/saveDocumentoComprador");
+			docCliente = me.parent.comprador.data.numDocumento;
 		}
-
 		if(form.isValid()){
 			form.submit({
 				url: url,
 				waitMsg: HreRem.i18n('msg.mask.loading'),
-				params: {docCliente : me.parent.numDocumento, idEntidad: me.idEntidad},
+				params: {docCliente : docCliente, idEntidad: me.idEntidad},
 				success: function(fp, o) {
 					if(o.result.success == "false") {
 						me.fireEvent("errorToast", o.result.errores);
@@ -153,13 +155,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 
 						if(!Ext.isEmpty(me.parent.oferta)) {
 							url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
-							params.docCliente = me.parent.numDocumento;
+							params.docCliente = me.docCliente;
 							params.idActivo = me.parent.oferta.data.idActivo;
 							params.idAgrupacion = me.parent.oferta.data.idAgrupacion;
 
 						} else {
 							url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-							params.docCliente = me.parent.numDocumento;
+							params.docCliente = me.docCliente;
 							params.idExpediente = me.parent.expediente.get('id');
 						}
 

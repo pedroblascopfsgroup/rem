@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE LUIS BARBA
---## FECHA_CREACION=20190530
+--## FECHA_CREACION=20190531
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6461
@@ -42,7 +42,7 @@ BEGIN
   	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
   -- Si existe la tabla seguimos con el INSERT
   IF V_NUM_TABLAS = 1 THEN 
-		V_SQL_TAP_ID_T004:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_REL||' WHERE TAP_CODIGO = ''T004_ResultadoTarificada''';
+		V_SQL_TAP_ID_T004:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_REL||' WHERE TAP_CODIGO = ''T004_ResultadoNoTarificada''';
 		EXECUTE IMMEDIATE V_SQL_TAP_ID_T004 INTO V_NUM_T004;
 	-- Si existe el TAP_CODIGO en la tabla hacemos el INSERT	
 			IF V_NUM_T004 = 1 THEN  
@@ -52,7 +52,7 @@ BEGIN
 						USUARIOCREAR, 
 						FECHACREAR) 
 						VALUES ('||V_ESQUEMA||'.S_TCP_TAREA_CONFIG_PETICION.NEXTVAL, 
-						(SELECT TAP_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_REL||' WHERE  TAP_CODIGO = ''T004_ResultadoTarificada''), 
+						(SELECT TAP_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_REL||' WHERE  TAP_CODIGO = ''T004_ResultadoNoTarificada''), 
 						''HREOS-6461'', 
 						SYSDATE 
 						) '; 

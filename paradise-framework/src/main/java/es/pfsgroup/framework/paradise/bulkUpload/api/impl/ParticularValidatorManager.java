@@ -3038,6 +3038,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
+
 	public Boolean compararNumeroFilasTrabajo(String numTrabajo, int numeroFilas) {
 		if(Checks.esNulo(numTrabajo))
 			return true;
@@ -3138,6 +3139,67 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" LEFT JOIN DD_SCM_SITUACION_COMERCIAL SCM ON ACT.DD_SCM_ID = SCM.DD_SCM_ID AND SCM.BORRADO = 0" +
 				" WHERE ECO.ECO_NUM_EXPEDIENTE = '" +numExpedienteComercial +"' AND SCM.DD_SCM_CODIGO = '05' AND ECO.BORRADO = 0");
 		return "0".equals(resultado);
+	}
+	
+	public Boolean perteneceDDEstadoActivo(String codigoEstadoActivo) {
+		if(!Checks.esNulo(codigoEstadoActivo)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+ "FROM DD_EAC_ESTADO_ACTIVO "
+					+ "WHERE DD_EAC_CODIGO =" + codigoEstadoActivo );
+		
+			return  !"0".equals(resultado);
+		}
+		return false;
+	}
+	
+	@Override
+	public Boolean perteneceDDTipoTituloTPA(String codigoTituloTPA) {
+		if (!Checks.esNulo(codigoTituloTPA)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) " 
+					+ "FROM DD_TPA_TIPO_TITULO_ACT "
+					+ "WHERE DD_TPA_CODIGO ='" + codigoTituloTPA + "'");
+
+			return !"0".equals(resultado);
+		}
+		return false;
+	}
+
+	@Override
+	public Boolean conTituloOcupadoSi(String codigoTituloTPA) {
+		if (!Checks.esNulo(codigoTituloTPA)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) " 
+					+ "FROM DD_TPA_TIPO_TITULO_ACT "
+					+ "WHERE DD_TPA_CODIGO IN ('01','02') " 
+					+ "AND DD_TPA_CODIGO ='" + codigoTituloTPA + "'");
+
+			return !"0".equals(resultado);
+		}
+		return false;
+	}
+
+	@Override
+	public Boolean conTituloOcupadoNo(String codigoTituloTPA) {
+		if (!Checks.esNulo(codigoTituloTPA)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) " 
+					+ "FROM DD_TPA_TIPO_TITULO_ACT "
+					+ "WHERE DD_TPA_CODIGO IN ('01','03') " 
+					+ "AND DD_TPA_CODIGO ='" + codigoTituloTPA + "'");
+
+			return !"0".equals(resultado);
+		}
+		return false;
+	}
+
+	@Override
+	public Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal) {
+		if (!Checks.esNulo(codigoEstadoDivHorizontal)) {
+			String resultado = rawDao.getExecuteSQL("SELECT Count(*) " 
+					+ "FROM DD_EDH_ESTADO_DIV_HORIZONTAL "
+					+ "WHERE DD_EDH_CODIGO ='" + codigoEstadoDivHorizontal + "'");
+
+			return !"0".equals(resultado);
+		}
+		return false;
 	}
 }
 

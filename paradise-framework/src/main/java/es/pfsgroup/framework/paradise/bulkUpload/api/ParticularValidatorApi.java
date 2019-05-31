@@ -698,6 +698,16 @@ public interface ParticularValidatorApi {
 	Boolean isAgrupacionOfGiants(String numAgrupacion);
 
 	Boolean isActivoOfGiants(String numActivo);
+	
+	Boolean perteneceDDEstadoActivo(String codigoEstadoActivo);
+
+	Boolean perteneceDDTipoTituloTPA(String codigoTituloTPA);
+
+	Boolean conTituloOcupadoSi(String codigoTituloTPA);
+
+	Boolean conTituloOcupadoNo(String codigoTituloTPA);
+	
+	Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal);
 
 	/**
 	 * @param entidadFinanciera

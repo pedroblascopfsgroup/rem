@@ -9138,12 +9138,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public Boolean comprobarDatosComprador(Comprador comprador, Long idExpediente) throws Exception {
 		Boolean problemasPorComprador = false;
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"id", idExpediente));
-		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
-			Integer numURSUS = comprador.getIdCompradorUrsus().intValue();						
-			DatosClienteDto ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+		if(!Checks.esNulo(comprador.getIdCompradorUrsus()) || !Checks.esNulo(comprador.getIdCompradorUrsusBh())) {
+			Integer numURSUS = null;			
+			DatosClienteDto ejecutarDatosCliente = null;
+		
+			if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
+					&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+					&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
+			{
+				if(!Checks.esNulo(comprador.getIdCompradorUrsusBh())) {
+					numURSUS = comprador.getIdCompradorUrsusBh().intValue();	
+					if(!Checks.esNulo(numURSUS)) {
+						ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA_HABITAT);
+					}
+				}
+			}else {
+				if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
+					numURSUS = comprador.getIdCompradorUrsus().intValue();	
+					if(!Checks.esNulo(numURSUS)) {
+						ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+					}
+				}
+			}
+		
 			
 			//Comprobación de discrepancias
-			List<DatosClienteProblemasVentaDto> problemasClienteUrsus = buscarProblemasVentaClienteUrsus(String.valueOf(comprador.getIdCompradorUrsus()),String.valueOf(idExpediente)); 
+			List<DatosClienteProblemasVentaDto> problemasClienteUrsus = buscarProblemasVentaClienteUrsus(String.valueOf(numURSUS),String.valueOf(idExpediente)); 
 				for (DatosClienteProblemasVentaDto datosClienteProblemasVentaDto : problemasClienteUrsus) {
 					if(PROBLEMA.equals(datosClienteProblemasVentaDto.getTipoMensaje())){
 						problemasPorComprador = true;
@@ -9398,14 +9418,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filterCompradorExpedientePorExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente.getId());
 		CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCompradorExpedientePorComprador, filterCompradorExpedientePorExpediente);
 		Integer numURSUS = null;
-		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
-			numURSUS = comprador.getIdCompradorUrsus().intValue();		
+		DatosClienteDto ejecutarDatosCliente = null;
+		if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
+				&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+				&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
+		{
+			if(!Checks.esNulo(comprador.getIdCompradorUrsusBh())) {
+				numURSUS = comprador.getIdCompradorUrsusBh().intValue();	
+				if(!Checks.esNulo(numURSUS)) {
+					ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA_HABITAT);
+				}
+			}
 		}else {
-			numURSUS =Integer.parseInt(dto.getNumeroClienteUrsus());
+			if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
+				numURSUS = comprador.getIdCompradorUrsus().intValue();	
+				if(!Checks.esNulo(numURSUS)) {
+					ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+				}
+			}
 		}
-		if(!Checks.esNulo(comprador.getIdCompradorUrsus())) {
+		
+		if(!Checks.esNulo(numURSUS)) {
 									
-				DatosClienteDto ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
+		
 			//GuardarEstadoCivilURSUS
 			if(!Checks.esNulo(ejecutarDatosCliente)) {
 				String codigoParaGuardarEstadoCivilURSUS = getCodigoEstadoCivilUrsusRem(String.valueOf(ejecutarDatosCliente.getCodigoEstadoCivil())) ;
@@ -9443,10 +9478,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(!Checks.esNulo(numURSUS)) {
 							
-			DatosClienteDto ejecutarDatosCliente = uvemManagerApi.ejecutarDatosCliente(numURSUS,  DtoClienteUrsus.ENTIDAD_REPRESENTADA_BANKIA);
-	
 			//Comprobación de discrepancias
-			List<DatosClienteProblemasVentaDto> problemasClienteUrsus = buscarProblemasVentaClienteUrsus(String.valueOf(comprador.getIdCompradorUrsus()),String.valueOf(dto.getIdExpedienteComercial())); 
+			List<DatosClienteProblemasVentaDto> problemasClienteUrsus = buscarProblemasVentaClienteUrsus(String.valueOf(numURSUS),String.valueOf(dto.getIdExpedienteComercial())); 
 				for (DatosClienteProblemasVentaDto datosClienteProblemasVentaDto : problemasClienteUrsus) {
 					if(PROBLEMA.equals(datosClienteProblemasVentaDto.getTipoMensaje())){
 						problemasPorComprador = true;

@@ -517,7 +517,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		// Si el activo pertenece a la subcartera Apple y tiene precio aprobado de venta
-		if (oferta.getActivoPrincipal().getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)) {		
+		if (oferta.getActivoPrincipal().getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)) {	
+			String[] numActivo = {String.valueOf(oferta.getActivoPrincipal().getNumActivo())};
+			
 			if (!Checks.estaVacio(oferta.getActivoPrincipal().getValoracion())) {
 				List<ActivoValoraciones> valoraciones = oferta.getActivoPrincipal().getValoracion();
 				
@@ -528,10 +530,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}		
 				}	 
 				if (!existe) {
-					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE));
+					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE, numActivo));
 				}
 			} else {
-				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE));
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE, numActivo));
 			}				
 		}
 

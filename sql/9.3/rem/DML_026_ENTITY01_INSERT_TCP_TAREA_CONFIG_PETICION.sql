@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE LUIS BARBA
---## FECHA_CREACION=20190529
+--## FECHA_CREACION=20190530
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6461
@@ -60,7 +60,7 @@ BEGIN
 				DBMS_OUTPUT.PUT_LINE('EL TAP_CODIGO T004_ResultadoTarificada YA EXISTE EN LA TABLA ');
 			END IF;
 
-			V_SQL_TAP_ID_T013:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_REL||' WHERE TAP_CODIGO = ''T013_ResolucionComite''';
+			V_SQL_TAP_ID_T013:= 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_REL||' WHERE TAP_CODIGO = ''T013_PosicionamientoYFirma''';
 			EXECUTE IMMEDIATE V_SQL_TAP_ID_T013 INTO V_NUM_T013;
 			-- Si existe el TAP_CODIGO en la tabla hacemos el INSERT
 			IF V_NUM_T013 = 1 THEN  
@@ -70,7 +70,7 @@ BEGIN
 						USUARIOCREAR, 
 						FECHACREAR) 
 						VALUES ('||V_ESQUEMA||'.S_TCP_TAREA_CONFIG_PETICION.NEXTVAL, 
-						(SELECT TAP_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_REL||' WHERE  TAP_CODIGO = ''T013_ResolucionComite''), 
+						(SELECT TAP_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_REL||' WHERE  TAP_CODIGO = ''T013_PosicionamientoYFirma''), 
 						''HREOS-6461'', 
 						SYSDATE 
 						) '; 

@@ -9143,7 +9143,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DatosClienteDto ejecutarDatosCliente = null;
 		
 			if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
-					&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+					&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
 					&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
 			{
 				if(!Checks.esNulo(comprador.getIdCompradorUrsusBh())) {
@@ -9192,7 +9192,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										//CompradorExpediente compradorExpediente  = genericDao.get(CompradorExpediente.class, filterCOmpradorExpediente);
 								
 										if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
-												&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+												&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
 												&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
 										{
 											if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) 
@@ -9420,7 +9420,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Integer numURSUS = null;
 		DatosClienteDto ejecutarDatosCliente = null;
 		if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
-				&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+				&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
 				&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
 		{
 			if(!Checks.esNulo(comprador.getIdCompradorUrsusBh())) {
@@ -9511,7 +9511,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									}
 									else {
 										if(!Checks.esNulo(expediente.getOferta())&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal())
-												&&Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
+												&& !Checks.esNulo(expediente.getOferta().getActivoPrincipal().getSubcartera()) 
 												&& DDSubcartera.CODIGO_BAN_BH.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) 
 										{
 											if(!Checks.esNulo(ejecutarDatosCliente.getNumeroClienteUrsusConyuge()) && !ejecutarDatosCliente.getNumeroClienteUrsusConyuge().equals(dto.getNumeroClienteUrsusBhConyuge())) {

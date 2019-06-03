@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
+import com.tc.backport175.bytecode.AnnotationElement.Array;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -504,7 +506,9 @@ public class GenericController extends ParadiseJsonController{
 				
 			}else{
 				for (DocumentoDto documentoDto : listaDocumentoDto) {
-					
+					if(documentoDto.getNombreDocumento().trim().length()<=4){
+						throw new Exception ("Error nombre incorrecto de documento ejemplo: nombre.extension");
+					}
 					tipoEntidad = documentoDto.getTipoEntidad().trim().toUpperCase();
 					byte [] fichero = DatatypeConverter.parseBase64Binary(documentoDto.getDocumento());
 					file = new java.io.File(rutaFichero+documentoDto.getNombreDocumento()); 

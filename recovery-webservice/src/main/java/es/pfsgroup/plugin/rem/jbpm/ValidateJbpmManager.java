@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 
 @Service("validateJbpmManager")
@@ -57,7 +58,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 		if (trabajoApi.checkBankia(tareaExterna) || trabajoApi.checkLiberbank(tareaExterna)
 				|| trabajoApi.checkGiants(tareaExterna))
 			return null;
-		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDTipoDocumentoActivo.CODIGO_PROPUESTA_PRECIOS_SANCIONADA,"E");
+		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDSubtipoDocumentoExpediente.CODIGO_APROBACION,"E");
 
 	}	
 	

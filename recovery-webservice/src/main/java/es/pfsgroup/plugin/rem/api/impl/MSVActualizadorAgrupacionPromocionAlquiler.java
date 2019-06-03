@@ -277,11 +277,22 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		if (!Checks.esNulo(idActivoMatriz) && !Checks.esNulo(numRemActivoMatriz) && !Checks.esNulo(cartera)) {
 			MaestroDeActivos maestroActivos = new MaestroDeActivos(idUnidadAlquilable, idActivoMatriz, numRemActivoMatriz, cartera);
 			ActivoOutputDto activoOutput = maestroActivos.altaActivo();
-			if (!Checks.esNulo(activoOutput)) {
+			if(!Checks.esNulo(activoOutput) && "1001".equals(activoOutput.getResultCode())) {
+				return activoNoValido(fila);
+			}
+			else if (!Checks.esNulo(activoOutput) && !"1001".equals(activoOutput.getResultCode())) {
 				Long numActivoUnidadAlquilable = Long.valueOf(activoOutput.getNumActivoUnidadAlquilable());
+				if(Checks.esNulo(numActivoUnidadAlquilable)) {
+					return activoNoValido(fila);
+				}
+				if(activoDao.existeActivo(numActivoUnidadAlquilable)){
+					return activoExistente(fila);
+					
+				}
 				unidadAlquilable.setNumActivo(numActivoUnidadAlquilable);
 				genericDao.save(Activo.class, unidadAlquilable);
 			} 
+
 		}
 		 //-- Lista propietarios 
 		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){    
@@ -867,6 +878,30 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		return new ResultadoProcesarFila();
 	}
+	
+	private ResultadoProcesarFila activoNoValido(int fila) {
+
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		resultado.setFila(fila);
+		resultado.setErrorDesc("No se ha conseguido conectar con el maestro de activos. Por favor intentelo de nuevo.");
+		resultado.setCorrecto(false);
+
+		return resultado;
+
+	}
+	
+	private ResultadoProcesarFila activoExistente(int fila) {
+
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		resultado.setFila(fila);
+		resultado.setErrorDesc("El servidor ha devuelto un número de activo existente");
+		resultado.setCorrecto(false);
+
+		return resultado;
+
+	}
+	
+	
 	//HREOS-5902. Los registros de la fila son correctos. Se lanza el SP_CAMBIO_ESTADO_PUBLICACION.
 	private void actualizarEstadoPublicacion(Activo unidadAlquilable) {
 		@SuppressWarnings("unused")

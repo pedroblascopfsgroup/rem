@@ -1541,6 +1541,18 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return false;
 	}
 	
+	@Override
+	public Boolean existeActivo(Long numActivo) {
+		String sql = "SELECT Count(1) FROM ACT_ACTIVO " + 
+				" WHERE act_num_activo = "  + numActivo;
+				
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object[]> getTrabajosUa (Long idAM, Long idUA){

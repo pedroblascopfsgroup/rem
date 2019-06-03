@@ -292,4 +292,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return boolean true or false
 	 */
 	boolean activoUAsconOfertasVivas(Long idActivo);
+	
+	/**
+	 * Comprueba si existe un numActivo.
+	 * @param numActivo
+	 * @return boolean true or false
+	 */
+	Boolean existeActivo(Long numActivo);
 }

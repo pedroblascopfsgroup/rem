@@ -131,6 +131,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "           AND ACT.BORRADO  = 0");
 		return !"0".equals(resultado);
 	}
+	@Override
+	public Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr) {
+		String resultado = rawDao.getExecuteSQL("SELECT " + 
+				"Case " + 
+				"WHEN AGR.AGR_FECHA_BAJA is nuLL then (select COUNT(AGR.AGR_ID) FROM ACT_ACTIVO ACT " + 
+				"                                        INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " + 
+				"                                        INNER JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID and AGR.BORRADO  = 0 " + 
+				"                                        INNER join DD_TAG_TIPO_AGRUPACION TAG ON AGR.DD_TAG_ID = TAG.DD_TAG_ID " + 
+				"                                        WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " aND AGA.AGA_PRINCIPAL = 1) " + 
+				"ELSE 1 " + 
+				"END as validacion " + 
+				"FROM ACT_ACTIVO ACT " + 
+				"INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " + 
+				"INNER JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID and AGR.BORRADO  = 0 " + 
+				"INNER join DD_TAG_TIPO_AGRUPACION TAG ON AGR.DD_TAG_ID = TAG.DD_TAG_ID " + 
+				"WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " " + 
+				"AND ACT.BORRADO = 0 " + 
+				"AND TAG.DD_TAG_CODIGO = " + tipoAgr);
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean activoEnAgrupacionRestringida(Long idActivo) {

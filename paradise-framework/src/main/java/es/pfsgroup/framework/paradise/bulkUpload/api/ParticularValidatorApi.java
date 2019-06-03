@@ -24,7 +24,7 @@ public interface ParticularValidatorApi {
 
 	Boolean esActivoEnAgrupacionPorTipo(Long numActivo, String codTipoAgrupacion);
 
-	Boolean esActivoPrincipalEnAgrupacion(Long numActivo);
+	Boolean esActivoPrincipalEnAgrupacion(Long numActivo);	
 
 	Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion);
 
@@ -686,5 +686,7 @@ public interface ParticularValidatorApi {
 	Boolean isActivoOfGiants(String numActivo);
 	
 	List<BigDecimal> activosEnAgrupacion(String numOferta);
+
+	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 }

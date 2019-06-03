@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,14 +67,15 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	public ModelAndView saveDocumentoAdjuntoOferta(String docCliente, String idEntidad, HttpServletRequest request) {
 		
 		ModelMap model = new ModelMap();
+		WebFileItem fileItem = null;
 		
 		try {
 			
 			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			fileItem = uploadAdapter.getWebFileItem(request);
 			String errores = null;
 			if(idPersonaHaya != null && !idPersonaHaya.isEmpty()){
-				errores =activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya, docCliente);
+				errores = activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya, docCliente);
 				model.put("errores", errores);
 				model.put(RESPONSE_SUCCESS_KEY, errores==null);
 				FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());
@@ -85,6 +87,16 @@ public class ActivoOfertaController extends ParadiseJsonController {
 			logger.error(e.getMessage(),e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}finally{
+			try {
+				FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());			
+			} catch (IOException e) 
+			{
+				logger.error(e.getMessage(),e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			    model.put("errorMessage", e.getMessage());
+				
+			}
 		}
 		
 		return createModelAndViewJson(model);

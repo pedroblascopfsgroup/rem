@@ -1024,11 +1024,12 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getFotoActivoById(Long idFoto, HttpServletRequest request, HttpServletResponse response) {
 		ActivoFoto actvFoto = adapter.getFotoActivoById(idFoto);
+		FileItem fileItem = null;
 		if (actvFoto.getRemoteId() != null) {
 			return new ModelAndView("redirect:" + actvFoto.getUrl());
 
 		} else {
-			FileItem fileItem = adapter.getFotoActivoById(idFoto).getAdjunto().getFileItem();
+					fileItem = adapter.getFotoActivoById(idFoto).getAdjunto().getFileItem();
 
 			try {
 				ServletOutputStream salida = response.getOutputStream();
@@ -1051,10 +1052,18 @@ public class ActivoController extends ParadiseJsonController {
 				FileUtils.copy(fileItem.getInputStream(), salida);
 				salida.flush();
 				salida.close();
-				FileUtils.deleteFile(fileItem.getFile().getPath());
+				
 
 			} catch (Exception e) {
 				logger.error("error en activoController", e);
+			}finally{
+				try {
+					FileUtils.deleteFile(fileItem.getFile().getPath());			
+				} catch (IOException e) 
+				{
+					logger.error("errorMessage", e);
+					
+				}
 			}
 
 			return null;
@@ -1372,12 +1381,12 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView upload(HttpServletRequest request) {
 		ModelMap model = new ModelMap();
+		WebFileItem webFileItem = null;
 
 		try {
-			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			webFileItem = uploadAdapter.getWebFileItem(request);
 			adapter.upload(webFileItem);
-			model.put(RESPONSE_SUCCESS_KEY, true);		
-			FileUtils.deleteFile(webFileItem.getFileItem().getFile().getPath());	
+			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
@@ -1386,6 +1395,16 @@ public class ActivoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero.");
+		}finally{
+			try {
+				FileUtils.deleteFile(webFileItem.getFileItem().getFile().getPath());			
+			} catch (IOException e) 
+			{
+				logger.error(e.getMessage(),e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			    model.put("errorMessage", e.getMessage());
+				
+			}
 		}
 
 		return createModelAndViewJson(model);
@@ -1404,12 +1423,12 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoActivo(HttpServletRequest request, HttpServletResponse response) {
 		ServletOutputStream salida = null;
-		
+		FileItem fileItem = null;
 		try {
 			Long id = Long.parseLong(request.getParameter("id"));
 			String nombreDocumento = request.getParameter("nombreDocumento");
 			salida = response.getOutputStream();
-			FileItem fileItem = adapter.download(id, nombreDocumento);
+			fileItem = adapter.download(id, nombreDocumento);
 			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
 			response.setHeader("Cache-Control", "max-age=0");
@@ -1422,7 +1441,6 @@ public class ActivoController extends ParadiseJsonController {
 
 			// Write
 			FileUtils.copy(fileItem.getInputStream(), salida);
-			FileUtils.deleteFile(fileItem.getFile().getPath());
 
 		} catch(UserException ex) {
 			try {
@@ -1439,6 +1457,7 @@ public class ActivoController extends ParadiseJsonController {
 			try {
 				salida.flush();			
 				salida.close();
+				FileUtils.deleteFile(fileItem.getFile().getPath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -1493,10 +1512,10 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView uploadFoto(HttpServletRequest request, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
+		WebFileItem fileItem = null;
 
 		try {
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
+			fileItem = uploadAdapter.getWebFileItem(request);
 			String errores = activoApi.uploadFoto(fileItem);
             FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());
 			model.put("errores", errores);
@@ -1506,6 +1525,17 @@ public class ActivoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errores", e.getCause());
+			
+		}finally{
+			try {
+				FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());			
+			} catch (IOException e) 
+			{
+				logger.error(e.getMessage(),e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			    model.put("errorMessage", e.getMessage());
+				
+			}
 		}
 
 		return createModelAndViewJson(model);

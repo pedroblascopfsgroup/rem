@@ -149,7 +149,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 			UsuarioCartera uca = genericDao.get(UsuarioCartera.class, filtroUca);
 			Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-			List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
+		//	List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
 
 			
 			if (usuario != null) {
@@ -174,7 +174,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					roles.add(perfil.getCodigo());
 				}
 				
-				for(GrupoUsuario usuarioGrupo : gruUsu) {
+				/*for(GrupoUsuario usuarioGrupo : gruUsu) {
 					for (Perfil perfil : usuarioGrupo.getGrupo().getPerfiles()) {
 						for (Funcion funcion : perfil.getFunciones()) {
 							if(!authorities.contains(funcion.getDescripcion())) {
@@ -182,7 +182,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 							}
 						}
 					}
-				}
+				}*/
 				
 				authData.setUserName(usuario.getApellidoNombre());
 				authData.setAuthorities(authorities);

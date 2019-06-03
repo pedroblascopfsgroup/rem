@@ -47,7 +47,11 @@ Ext.define('HreRem.view.activos.detalle.OfertantesOfertaDetalleList', {
 		        	flex:1,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maxLength: 50
+		            	maxLength: 50,
+		            	validator: function(value){
+		            		var me = this;
+		            		return me.lookupController().validateDocOfertante(value);
+		            	}
 		            }
 		        },
 		        {

@@ -36,6 +36,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVImpuestosExcelValidator.COL_NUM;
 
 @Component
 public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelValidatorAbstract {
@@ -117,10 +118,11 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_NO_EXISTE), isExpedienteNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_TIPO_VENTA), isExpedienteNotTipoVenta(exc));
+			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA), isExpedienteCarteraError(exc));
 			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_VENTA_ESTADO_CORRECTO), isExpedienteVentaEstadoOK(exc));
 			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_OFERTA_NO_TRAMITADA), isExpedienteOfertaNOTramitada(exc));
-			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_BANKIA), isExpedienteCarteraBankia(exc));
-			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_LIBERBANK), isExpedienteCarteraLiberbank(exc));
+			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_BANKIA), isExpedienteCarteraError(exc));
+			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_LIBERBANK), isExpedienteCarteraError(exc));
 			
 			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE), isColumnNotDateByRows(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
 			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_ALTA_OFERTA), isFechaAltaOfertaMenorFechaIngreso(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
@@ -247,7 +249,7 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 	 * @param exc
 	 * return
 	 */
-	private List<Integer> isExpedienteCarteraBankia(MSVHojaExcel exc){
+	private List<Integer> isExpedienteCarteraError(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
@@ -255,33 +257,7 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 				try {
 					if(particularValidator.existeExpedienteComercial(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
 						if(!Checks.esNulo(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
-							if(particularValidator.validadorCarteraBankia(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL)))) {
-								listaFilas.add(i);							
-							}
-						}
-					}
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-			} catch (IllegalArgumentException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			} catch (IOException e) {
-				listaFilas.add(0);
-				e.printStackTrace();
-			}
-		return listaFilas;
-	}
-	private List<Integer> isExpedienteCarteraLiberbank(MSVHojaExcel exc){
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					if(particularValidator.existeExpedienteComercial(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
-						if(!Checks.esNulo(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
-							if(particularValidator.validadorCarteraLiberbank(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL)))) {
+							if(particularValidator.validadorTipoCartera(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL)))) {
 								listaFilas.add(i);							
 							}
 						}

@@ -1,6 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.syntax.Numbers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -2885,48 +2888,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean validadorCarteraBankia(Long numExpediente) {
-		if(Checks.esNulo(numExpediente))
-			return true;
-		
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
-				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
-				+"		JOIN ACT_OFR AFR ON AFR.OFR_ID = OFR.OFR_ID"
-				+"		JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AFR.ACT_ID"
-				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0"
-				+"		AND EXISTS (SELECT 1 FROM ACT_ACTIVO ACT1"
-				+"		JOIN DD_CRA_CARTERA DD ON ACT1.DD_CRA_ID = DD.DD_CRA_ID"
-				+"		WHERE DD.DD_CRA_CODIGO ='08'"
-				+"		AND ACT.ACT_ID = ACT1.ACT_ID)");
-		
-		return !"0".equals(resultado);
-	}
-
-	@Override
-	public Boolean validadorCarteraLiberbank(Long numExpediente) {
-		if(Checks.esNulo(numExpediente))
-			return true;
-		
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
-				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
-				+"		JOIN ACT_OFR AFR ON AFR.OFR_ID = OFR.OFR_ID"
-				+"		JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AFR.ACT_ID"
-				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0"
-				+"		AND EXISTS (SELECT 1 FROM ACT_ACTIVO ACT1"
-				+"		JOIN DD_CRA_CARTERA DD ON ACT1.DD_CRA_ID = DD.DD_CRA_ID"
-				+"		WHERE DD.DD_CRA_CODIGO ='56'"
-				+"		AND ACT.ACT_ID = ACT1.ACT_ID)");
-		
-		return !"0".equals(resultado);
-	}
-	
-	
-	
-	@Override
 	public Boolean validadorEstadoOfertaTramitada(Long numExpediente) {
 		if(Checks.esNulo(numExpediente))
 			return true;
@@ -2966,7 +2927,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0 AND OFR.BORRADO = 0"
-				+"		AND nvl(OFR.OFR_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
+				+"		AND nvl(OFR.OFR_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
 		
 		return !"1".equals(resultado);
 	}
@@ -2979,7 +2940,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND nvl(ECO.ECO_FECHA_SANCION, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
+				+"		AND nvl(ECO.ECO_FECHA_SANCION, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
 		
 		return !"1".equals(resultado);
 	}
@@ -2992,7 +2953,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND nvl(ECO.ECO_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
+				+"		AND nvl(ECO.ECO_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
 	
 		return !"1".equals(resultado);
 	}
@@ -3012,7 +2973,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 					+"		JOIN RES_RESERVAS RES ON RES.ECO_ID = ECO.ECO_ID"
 					+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0 AND RES.BORRADO = 0"
-					+"		AND nvl(RES.RES_FECHA_FIRMA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
+					+"		AND nvl(RES.RES_FECHA_FIRMA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
 			
 			return !"1".equals(resultado);
 		} else {
@@ -3028,7 +2989,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND nvl(ECO.ECO_FECHA_VENTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
+				+"		AND nvl(ECO.ECO_FECHA_VENTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
 		
 		return !"1".equals(resultado);
 	}
@@ -3048,7 +3009,5 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		return numActius;
 	}
-
-	
 
 }

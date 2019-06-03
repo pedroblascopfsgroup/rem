@@ -619,20 +619,6 @@ public interface ParticularValidatorApi {
 	public Boolean validadorTipoCartera(Long numExpediente);
 	
 	/**
-	 * true si pertenece a Bankia
-	 * @param numExpediente
-	 * @return
-	 */
-	public Boolean validadorCarteraBankia(Long numExpediente);
-	
-	/**
-	 * true si pertenece a liberbank
-	 * @param numExpediente
-	 * @return
-	 */
-	public Boolean validadorCarteraLiberbank(Long numExpediente);
-	
-	/**
 	 * 
 	 * @param numExpediente
 	 * @return true si es diferente a Tramitado, false si es Tramitado  

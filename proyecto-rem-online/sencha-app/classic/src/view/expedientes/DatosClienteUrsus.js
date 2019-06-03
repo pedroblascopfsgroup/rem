@@ -15,7 +15,8 @@ Ext.define('HreRem.view.expedientes.DatosClienteUrsus', {
     collapsed: false,
     modal	: false,
     idComprador: null,
-    requires: ['HreRem.view.expedientes.ProblemasVentaClienteUrsus', 'HreRem.model.DatosClienteUrsus', 'HreRem.view.expedientes.ExpedienteDetalleModel'],
+    requires: ['HreRem.view.expedientes.ProblemasVentaClienteUrsus', 'HreRem.model.DatosClienteUrsus', 'HreRem.view.expedientes.ExpedienteDetalleModel',
+'HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorController'],
     
     clienteUrsus: null,
     storeProblemasVenta: null,
@@ -228,7 +229,7 @@ Ext.define('HreRem.view.expedientes.DatosClienteUrsus', {
 											displayInfo : true,
 											store: me.storeProblemasVenta
 									}],
-									hidden: !clienteUrsus.hayOcurrencias
+									hidden: !clienteUrsus.hayOcurrencias || '{esBankiaAlquiler}'
 								}
 							]
 					}

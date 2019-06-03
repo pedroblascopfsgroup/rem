@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160510
+--## AUTOR=Guillermo Llidó Parra
+--## FECHA_CREACION=20190603
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=REMVIP-3502
 --## PRODUCTO=NO
 --## Finalidad: DDL VISTA PARA LAS SUBDIVISIONES DE AGRUPACION
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Se actualiza para nivelar los ID's de esta vista y V_ACTIVOS_SUBDIVISION
 --##########################################
 --*/
 
@@ -71,14 +72,24 @@ BEGIN
               SUBD.BANYOS,
               SUBD.PLANTAS
 							FROM (
-									SELECT ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0) PLANTAS, SUM (DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)) DORMITORIOS, 
-									SUM (DECODE (DIS.DD_TPH_ID, 2, DIS.DIS_CANTIDAD, NULL)) BANYOS,
-									ORA_HASH(ACT.DD_TPA_ID||ACT.DD_SAC_ID||NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0)||NVL(SUM(DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)),0) || NVL (SUM (DECODE (DIS.DD_TPH_ID, 2, DIS.DIS_CANTIDAD, NULL)), 0)) ID
-									FROM ' || V_ESQUEMA || '.ACT_ICO_INFO_COMERCIAL ICO 
-									JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT ON ACT.ACT_ID = ICO.ACT_ID
-									LEFT JOIN ' || V_ESQUEMA || '.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID
-									LEFT JOIN ' || V_ESQUEMA || '.ACT_DIS_DISTRIBUCION DIS ON DIS.ICO_ID = VIV.ICO_ID AND DIS.BORRADO = 0
-									where act.borrado = 0
+									SELECT ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0) PLANTAS, NVL(SUM (DECODE (DIS.DD_TPH_ID, 1, DIS.DIS_CANTIDAD, NULL)),0) DORMITORIOS, 
+									NVL(SUM (DECODE (DIS.DD_TPH_ID, 2, DIS.DIS_CANTIDAD, NULL)),0) BANYOS,
+									ORA_HASH(
+												  act.dd_tpa_id
+			                                   || act.dd_sac_id
+			                                   || NVL (viv.viv_num_plantas_interior, 0)
+			                                   || NVL (SUM (DECODE (dis.dd_tph_id, 1, dis.dis_cantidad, NULL)), 0)
+			                                   || NVL (SUM (DECODE (dis.dd_tph_id, 2, dis.dis_cantidad, NULL)), 0)
+											) ID
+                                    FROM ' || V_ESQUEMA || '.act_activo act
+                                    JOIN ' || V_ESQUEMA || '.ACT_ICO_INFO_COMERCIAL ICO ON ACT.ACT_ID = ICO.ACT_ID AND ICO.BORRADO = 0
+                                     LEFT JOIN ' || V_ESQUEMA || '.V_MAX_ACT_HIC_EST_INF_COM MAXHIC ON (MAXHIC.ACT_ID = ACT.ACT_ID AND MAXHIC.POS = 1) 
+                                     LEFT JOIN ' || V_ESQUEMA || '.DD_AIC_ACCION_INF_COMERCIAL AIC ON AIC.DD_AIC_ID = MAXHIC.DD_AIC_ID AND AIC.BORRADO = 0
+                                     LEFT JOIN ' || V_ESQUEMA || '.BIE_DATOS_REGISTRALES BIEDREG ON ACT.BIE_ID = BIEDREG.BIE_ID AND BIEDREG.BORRADO = 0
+                                     LEFT JOIN ' || V_ESQUEMA || '.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID 
+                                     LEFT JOIN ' || V_ESQUEMA || '.ACT_DIS_DISTRIBUCION DIS ON DIS.ICO_ID = VIV.ICO_ID AND DIS.BORRADO = 0
+                                    WHERE ACT.BORRADO = 0
+									GROUP BY ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0)
 									GROUP BY ACT.ACT_ID, ACT.DD_TPA_ID, ACT.DD_SAC_ID, NVL(VIV.VIV_NUM_PLANTAS_INTERIOR,0)
 							) SUBD
 							JOIN ' || V_ESQUEMA || '.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = SUBD.DD_TPA_ID

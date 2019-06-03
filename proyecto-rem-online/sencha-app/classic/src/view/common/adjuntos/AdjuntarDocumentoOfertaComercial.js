@@ -155,13 +155,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 
 						if(!Ext.isEmpty(me.parent.oferta)) {
 							url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
-							params.docCliente = me.docCliente;
+							params.docCliente = docCliente;
 							params.idActivo = me.parent.oferta.data.idActivo;
 							params.idAgrupacion = me.parent.oferta.data.idAgrupacion;
 
 						} else {
 							url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-							params.docCliente = me.docCliente;
+							params.docCliente = docCliente;
 							params.idExpediente = me.parent.expediente.get('id');
 						}
 

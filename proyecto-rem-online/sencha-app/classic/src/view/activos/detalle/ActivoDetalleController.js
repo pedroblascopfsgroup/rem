@@ -5049,7 +5049,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			
 		    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
 
-		    value.value = value.value.toLowerCase();
+		    value = value.toLowerCase();
 
 		    if(!expr.test (value)){
 		    	return 'Error! Número de identificación incorrecto';

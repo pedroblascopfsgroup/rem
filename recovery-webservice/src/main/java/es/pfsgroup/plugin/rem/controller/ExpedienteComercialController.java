@@ -478,7 +478,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				response.setContentType(fileItem.getContentType());
 	
 				// Write
-				FileUtils.copy(fileItem.getInputStream(), salida);				
+				FileUtils.copy(fileItem.getInputStream(), salida);	
+				FileUtils.deleteFile(fileItem.getFile().getPath());			
 			}
 
 		} catch(UserException ex) {
@@ -523,7 +524,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
            		// Write
            		FileUtils.copy(fileItem.getInputStream(), salida);
            		salida.flush();
-        
+				FileUtils.deleteFile(fileItem.getFile().getPath());
     		}catch(Exception e) {
     			logger.error("Error en ExpedienteComercialController", e);
 		    }	
@@ -666,6 +667,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 
 			String errores = expedienteComercialAdapter.uploadDocumento(fileItem, null, null);
+			FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 

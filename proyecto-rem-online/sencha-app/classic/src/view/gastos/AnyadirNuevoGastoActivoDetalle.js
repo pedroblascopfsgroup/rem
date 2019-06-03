@@ -50,11 +50,15 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivoDetalle', {
 				            	    	fieldLabel: HreRem.i18n('fieldlabel.nuevo.agrupacion.gasto'),
 				            	    	name:		'numAgrupacion',
 										bind:		'{gastoActivo.numAgrupacion}'
-				            	    }
+				            	    },
+				            	    {
+						            	xtype:		'checkboxfieldbase',
+						            	name:		'checkGastoRecalcular',
+						            	reference:	'checkboxGastoRecalcular',
+										fieldLabel: HreRem.i18n('fieldlabel.nuevo.agrupacion.gasto.checkbox')
+										}
 
 				            	]
-		    			   
-		    		
 				}
     	];
     	

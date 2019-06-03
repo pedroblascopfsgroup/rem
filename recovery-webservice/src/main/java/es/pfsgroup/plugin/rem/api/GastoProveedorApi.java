@@ -113,7 +113,7 @@ public interface GastoProveedorApi {
 		 * Método que crea la relación entre un gasto y un activo o activos de una agrupación
 		 * @return
 		 */
-		boolean createGastoActivo(Long idGasto, Long numActivo, Long numAgrupacion);
+		boolean createGastoActivo(Long idGasto, Long numActivo, Long numAgrupacion, Boolean recalcular);
 		
 		/**
 		 * Método que actualiza la relación entre un gasto y un activo

@@ -1179,7 +1179,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean createGastoActivo(Long idGasto, Long numActivo, Long numAgrupacion) {
+	public boolean createGastoActivo(Long idGasto, Long numActivo, Long numAgrupacion, Boolean recalcular) {
 
 		GastoProveedor gasto = null;
 
@@ -1244,7 +1244,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
 						gastosActivosList.add(gastoProveedorActivo);
 
-						this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
+						if(recalcular) {
+							this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);	
+						}						
 
 						genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);										
 					}				
@@ -1330,8 +1332,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 									List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
 									gastosActivosList.add(gastoProveedorActivo);
 
-									this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
-
+									if(recalcular) {
+										this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
+									}
 									genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
 								
 							

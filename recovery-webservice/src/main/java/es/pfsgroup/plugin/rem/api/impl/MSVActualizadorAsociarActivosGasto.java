@@ -52,7 +52,7 @@ public class MSVActualizadorAsociarActivosGasto extends AbstractMSVActualizador 
 			GastoProveedor gasto = gastoApi.getByNumGasto(Long.parseLong(exc.dameCelda(fila, 1)));
 
 			if (!Checks.esNulo(activo) && !Checks.esNulo(gasto)) {
-				gastoProveedorManager.createGastoActivo(gasto.getId(), activo.getNumActivo(), null);
+				gastoProveedorManager.createGastoActivo(gasto.getId(), activo.getNumActivo(), null, true);
 			} else {
 				throw new JsonViewerException("Gasto o Activo no existe");
 			}

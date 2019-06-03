@@ -40,7 +40,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		T_TIPO_DATA('10','tinsa_certify' ,'Tinsa Certify' ,'Tinsa Certify', 'TINSACERTIFY','10009567','9990000000918','18','tinsacer02','tinsacer07','tinsacer06'),
-		T_TIPO_DATA('17','gestinova99' ,'Gestinova 99' ,'Gestinova 99', 'GESTINOVA99','10005751',NULL,NULL,'gestinov02','gestinov07','gestinov06')
+		T_TIPO_DATA('17','gestinova99' ,'Gestinova 99' ,'Gestinova 99', 'GESTINOVA99','10005751','null','null','gestinov02','gestinov07','gestinov06')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

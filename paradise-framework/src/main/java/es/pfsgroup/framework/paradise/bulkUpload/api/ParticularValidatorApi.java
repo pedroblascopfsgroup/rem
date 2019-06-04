@@ -719,4 +719,6 @@ public interface ParticularValidatorApi {
 	 */
 	Boolean isUA(String numActivo);
 
+	List<BigDecimal> activosEnAgrupacion(String numOferta);
+
 }

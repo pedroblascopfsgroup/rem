@@ -3170,5 +3170,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"1".equals(resultado);
 	}
+	
+	@Override
+	public List<BigDecimal> activosEnAgrupacion(String numOferta){
+		if(Checks.esNulo(numOferta))
+			return null;
+		List<BigDecimal> numActius = new ArrayList<BigDecimal>();
+		List<Object> resultat = rawDao.getExecuteSQLList("SELECT ACT.ACT_NUM_ACTIVO FROM OFR_OFERTAS OFR " + 
+				"INNER JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID " + 
+				"INNER JOIN ACT_ACTIVO ACT ON AO.ACT_ID = ACT.ACT_ID " + 
+				"WHERE OFR.OFR_NUM_OFERTA = '" + numOferta + "'");
+		
+		for(int i = 0; i < resultat.size(); i++) {
+			numActius.add((BigDecimal) resultat.get(i));
+		}
+		return numActius;
+	}
 
 }

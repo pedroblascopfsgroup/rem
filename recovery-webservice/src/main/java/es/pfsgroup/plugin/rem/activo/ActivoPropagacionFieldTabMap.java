@@ -82,7 +82,7 @@ public class ActivoPropagacionFieldTabMap {
 			    	"fechaRevisionEstado",
 			    	"ocupado",
 			    	"riesgoOcupacion",
-			    	"conTituloTPA",
+			    	"conTitulo",
 			    	"accesoTapiado",
 			    	"fechaAccesoTapiado",
 			    	"accesoAntiocupa",

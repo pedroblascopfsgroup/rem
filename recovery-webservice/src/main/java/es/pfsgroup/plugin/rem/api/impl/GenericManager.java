@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
+import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
@@ -147,6 +148,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Usuario usuario = adapter.getUsuarioLogado();
 			Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 			UsuarioCartera uca = genericDao.get(UsuarioCartera.class, filtroUca);
+			Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
+		//	List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
+
 			
 			if (usuario != null) {
 				List<String> authorities = new ArrayList<String>();
@@ -162,13 +166,24 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					usuario = usuarioApi.get(usuario.getId());
 				}
 				
-	
+				
 				for (Perfil perfil : usuario.getPerfiles()) {
 					for (Funcion funcion : perfil.getFunciones()) {
 						authorities.add(funcion.getDescripcion());
 					}
 					roles.add(perfil.getCodigo());
 				}
+				
+				/*for(GrupoUsuario usuarioGrupo : gruUsu) {
+					for (Perfil perfil : usuarioGrupo.getGrupo().getPerfiles()) {
+						for (Funcion funcion : perfil.getFunciones()) {
+							if(!authorities.contains(funcion.getDescripcion())) {
+								authorities.add(funcion.getDescripcion());
+							}
+						}
+					}
+				}*/
+				
 				authData.setUserName(usuario.getApellidoNombre());
 				authData.setAuthorities(authorities);
 				

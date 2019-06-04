@@ -52,9 +52,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	defaultType: 'textfieldbase',
 							rowspan: 1,
 							items: [
-								{
-					            	hidden: true
-								},
+//								{
+//					            	hidden: true
+//								},
 								
 						        {
 									xtype: 'comboboxfieldbase',
@@ -64,9 +64,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	bind: {				        		
 						        		store: '{comboSiNoRem}',
 					            		value: '{situacionPosesoria.indicaPosesion}'
-					            	},
-					            	labelWidth: 80,
-					            	width: 200
+					            	}//,
+//					            	labelWidth: 80,
+//					            	width: 200
 						        },
 						        {
 						        	xtype:'textfieldbase',
@@ -75,9 +75,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	bind: {
 						        		value: '{situacionPosesoria.diasCambioPosesion}',
 						        		hidden: '{!activo.isCarteraBankia}'
-						        	},
-					            	labelWidth: 120,
-					            	width: 60
+						        	}//,
+//					            	labelWidth: 120,
+//					            	width: 60
 						        }
 
 
@@ -266,9 +266,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	defaultType: 'textfieldbase',
 							rowspan: 1,
 							items: [
-								{ 	  
-					            	hidden: true
-								},
+//								{ 	  
+//					            	hidden: true
+//								},
 								
 						        {
 							        xtype: 'comboboxfieldbase',
@@ -280,21 +280,22 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						            	value: '{situacionPosesoria.conTitulo}',
 			                            disabled: '{disabledComboConTituloTPA}',
 			                            readOnly: '{esTipoEstadoAlquilerAlquilado}'
-						            },
+						            }//,
 							        
-					            	labelWidth: 80,
-					            	width: 200
+//					            	labelWidth: 80,
+//					            	width: 200
 						        },
 						        {
 						        	xtype:'textfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
 						        	readOnly: true,
+						        	//hidden: true,
 						        	bind: {
 						        		value: '{situacionPosesoria.diasCambioTitulo}',
 						        		hidden: '{!activo.isCarteraBankia}'
-						        	},
-					            	labelWidth: 120,
-					            	width: 60
+						        	}//,
+//					            	labelWidth: 120,
+//					            	width: 60
 						        }
 
 

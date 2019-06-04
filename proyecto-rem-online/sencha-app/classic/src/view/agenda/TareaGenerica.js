@@ -96,7 +96,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         // - Visibilidad Enlace Expediente
         me.listeners = {
             afterrender: function() {
-                me.lookupController().getValidacionPrevia(me);
+            	me.lookupController().getValidacionPrevia(me);
                 me.lookupController().getAdvertenciaTarea(me);
                 me.lookupController().getAdvertenciaTareaComercial(me);
                 me.lookupController().verBotonEnlaceTrabajo(me, esInvisibleEcTrabajo);

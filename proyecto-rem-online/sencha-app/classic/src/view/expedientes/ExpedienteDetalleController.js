@@ -266,7 +266,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var contador = 0;
 				me.saveMultipleRecords(contador, records);
 			}
-			me.onClickBotonRefrescar();
+			//me.onClickBotonRefrescar();
 
 		} else {
 		
@@ -4676,17 +4676,16 @@ comprobarObligatoriedadRte: function(){
 	},
 	
 comprobarFormatoModificar: function() {
-    	
 		var me = this;
-		valueComprador = me.lookupReference('nuevoCompradorNumDoc');
+		valueComprador = me.lookupReference('numeroDocumento');
 		valueConyuge = me.lookupReference('numRegConyuge');
 		valueRte = me.lookupReference('numeroDocumentoRte');
 		validaciones = 0;
 		
 		if(me.lookupReference('tipoPersona').getValue() === "1"){
 			if(valueComprador != null){
-				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
-					|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
+				if(me.lookupReference('tipoDocumento').value == "01" || me.lookupReference('tipoDocumento').value == "15"
+					|| me.lookupReference('tipoDocumento').value == "03"){
 
 					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
 					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
@@ -4713,7 +4712,7 @@ comprobarFormatoModificar: function() {
 						 return false;
 					 }
 
-				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "02"){
+				}else if(me.lookupReference('tipoDocumento').value == "02"){
 
 					var texto=valueComprador.value;
 			        var pares = 0; 
@@ -4756,7 +4755,7 @@ comprobarFormatoModificar: function() {
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
+				}else if(me.lookupReference('tipoDocumento').value == "04"){
 					
 				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
 
@@ -4869,8 +4868,8 @@ comprobarFormatoModificar: function() {
 		}else{
 			
 			if(valueComprador != null){
-				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
-					|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
+				if(me.lookupReference('tipoDocumento').value == "01" || me.lookupReference('tipoDocumento').value == "15"
+					|| me.lookupReference('tipoDocumento').value == "03"){
 
 					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
 					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
@@ -4897,7 +4896,7 @@ comprobarFormatoModificar: function() {
 						 return false;
 					 }
 
-				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "02"){
+				}else if(me.lookupReference('tipoDocumento').value == "02"){
 
 					var texto=valueComprador.value;
 			        var pares = 0; 
@@ -4940,7 +4939,7 @@ comprobarFormatoModificar: function() {
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
+				}else if(me.lookupReference('tipoDocumento').value == "04"){
 					
 				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
 

@@ -1340,8 +1340,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
 						idProveedorParche =  parcheEspecificacionTablas(informeEntity, informe);
-						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
-								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
 						((ActivoLocalComercial)informeEntity).setMtsAlturaLibre(informe.getAltura());
 						entitys.add(informeEntity);
 

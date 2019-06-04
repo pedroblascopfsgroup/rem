@@ -3,6 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +51,11 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String IMPORTE_CONTRAOFERTA_REQUERIDO	= "El importe de contraoferta ('count offer amount') debe estar relleno.";
 	public static final String TIPO_RESOLUCION_INCORRECTO		= "El tipo de resolución comité ('type of comitee's resolution') debe ser 01, 02 o 03.";
 	public static final String TIPO_DE_CANCELACION_REQUERIDO	= "El tipo de cancelacion ('type of cancellation') debe estar relleno.";
+	public static final String TODOS_ACTIVOS_INFORMADOS			= "El fichero excel debe contener todos los activos de la agrupación informados.";
+	public static final String SUMA_IMPORTES_NO_CONICIDE		= "La suma de los importes de los activos de la agrupación NO es igual al importe de la Oferta.";
+	public static final String FECHA_CANCELACION_RESOLUCION		= "Si el tipo de Resolución es '01', no puede haber Fecha Cancelación";
+	public static final String FECHA_CANCELACION_RESOLUCION3	= "Si el tipo de Resolución es '03', debe informarse Fecha Cancelación y Motivo Denegación";
+
 	
 	@Autowired
 	private MSVBusinessValidationRunner validationRunner;
@@ -112,6 +118,11 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(TIPO_RESOLUCION_INCORRECTO, validarTipoResolucion(exc));
 			mapaErrores.put(TIPO_DE_CANCELACION_REQUERIDO, validarTipoCancelacion(exc));
 			mapaErrores.put(IMPORTE_CONTRAOFERTA_REQUERIDO, validarImporteContraOferta(exc));
+			mapaErrores.put(TODOS_ACTIVOS_INFORMADOS, validarTodosActivosInformados(exc));
+			mapaErrores.put(SUMA_IMPORTES_NO_CONICIDE, validarImporteOferta(exc));
+			mapaErrores.put(FECHA_CANCELACION_RESOLUCION, validarResolucionAprueba(exc));
+			mapaErrores.put(FECHA_CANCELACION_RESOLUCION3, validarResolucionDeniega(exc));
+			
 
 			if (!mapaErrores.get(OFERTA_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(OFERTA_NO_ES_DE_GIANTS).isEmpty()
@@ -124,6 +135,10 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(TIPO_RESOLUCION_INCORRECTO).isEmpty()
 					|| !mapaErrores.get(TIPO_DE_CANCELACION_REQUERIDO).isEmpty()
 					|| !mapaErrores.get(IMPORTE_CONTRAOFERTA_REQUERIDO).isEmpty()
+					|| !mapaErrores.get(TODOS_ACTIVOS_INFORMADOS).isEmpty()
+					|| !mapaErrores.get(SUMA_IMPORTES_NO_CONICIDE).isEmpty()
+					|| !mapaErrores.get(FECHA_CANCELACION_RESOLUCION).isEmpty()
+					|| !mapaErrores.get(FECHA_CANCELACION_RESOLUCION3).isEmpty()
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -453,6 +468,130 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 				e.printStackTrace();
 		}
 		
+		return listaFilas;
+	}
+	
+	private List<Integer> validarTodosActivosInformados(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, List<BigDecimal>> listaActivosOferta = new HashMap<String, List<BigDecimal>>();
+		List<BigDecimal> listaActivos = new ArrayList<BigDecimal>();
+		try {
+			for(int i = 1; i < this.numFilasHoja; i++) {
+				try {
+					String numOferta = exc.dameCelda(i, 0);
+					if(!listaActivosOferta.containsKey(numOferta)) {						
+						listaActivosOferta.put(numOferta, particularValidator.activosEnAgrupacion(numOferta));						
+						for(int j = 1; j < this.numFilasHoja; j++) {
+							if(exc.dameCelda(i, 0).equals(numOferta)) {
+								BigDecimal numActivo = new BigDecimal(exc.dameCelda(j, 4));
+								if(!listaActivos.contains(numActivo))
+									listaActivos.add(numActivo);							
+							}
+						}
+						if(!listaActivos.containsAll(listaActivosOferta.get(numOferta))) {
+							listaFilas.add(i);
+						}
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					e.printStackTrace();
+				}
+			}						
+		}catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> validarImporteOferta(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		HashMap<String, Float> importesOfertas = new HashMap<String, Float>();
+		try {						
+			for(int i = 1; i < this.numFilasHoja; i++) {
+				if(importesOfertas.containsKey(exc.dameCelda(i, 0))) {
+					importesOfertas.put(exc.dameCelda(i, 0), Float.valueOf(importesOfertas.get(exc.dameCelda(i, 0))) + Float.valueOf(exc.dameCelda(i, 5)));
+				}else {
+					importesOfertas.put(exc.dameCelda(i, 0), Float.valueOf(exc.dameCelda(i, 5)));
+				}				
+			}
+			for(int i = 1; i < this.numFilasHoja; i++) {
+				if(importesOfertas.containsKey(exc.dameCelda(i, 0))) {
+					if(!importesOfertas.get(exc.dameCelda(i, 0)).equals(Float.valueOf(exc.dameCelda(i, 2)))) {
+						listaFilas.add(i);
+					}
+				}
+			}			
+			
+		}catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> validarResolucionAprueba(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		for(int i = 1; i < this.numFilasHoja; i++) {
+			try {
+				String tipoResolucion = exc.dameCelda(i, 6);
+				String fechaCancelacion = exc.dameCelda(i, 10);
+				if(!Checks.esNulo(tipoResolucion) && !tipoResolucion.equals("")) {
+					if(!Checks.esNulo(fechaCancelacion) && !fechaCancelacion.equals("")) {
+						if(tipoResolucion.equals("01")) {
+							listaFilas.add(i);
+						}
+					}
+				}
+			}catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (ParseException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		}
+		return listaFilas;
+	}
+	private List<Integer> validarResolucionDeniega(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		for(int i = 1; i < this.numFilasHoja; i++) {
+			try {
+				String tipoResolucion = exc.dameCelda(i, 6);
+				String fechaCancelacion = exc.dameCelda(i, 10);
+				String motivoDenegacion = exc.dameCelda(i, 7);
+				if(!Checks.esNulo(tipoResolucion) && !tipoResolucion.equals("")) {
+					if((Checks.esNulo(fechaCancelacion) || fechaCancelacion.equals("")) || (Checks.esNulo(motivoDenegacion) || motivoDenegacion.equals(""))) {
+						if(tipoResolucion.equals("02")) {
+							listaFilas.add(i);
+						}
+					}
+					
+				}
+			}catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (ParseException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		}
 		return listaFilas;
 	}
 }

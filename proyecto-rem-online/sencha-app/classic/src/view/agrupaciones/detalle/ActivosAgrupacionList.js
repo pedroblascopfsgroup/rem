@@ -105,7 +105,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				});	
 				
 		};
-
+		
 		// Aplicar plugins segun permisos.
 		if(Ext.isEmpty(me.rowPluginSecurity) && Ext.isEmpty(me.secFunToEdit)) {		
 			addRowPluginFunction();
@@ -118,6 +118,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         // Botones genéricos de la barra del grid.
         var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionPromocionAlquiler}'}, handler: 'onAddClick', scope: this};
 		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton',  handler: 'onDeleteClick', scope: this, disabled: true};
+		
 
 		// Se configura manualmente la Top-Bar mostrándola si se dispone de alguno de los siguientes permisos.
 		if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION', 'EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION'])) {
@@ -125,14 +126,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	    		xtype: 'toolbar',
 	    		dock: 'top'
 			};
-			
+					
 			// Insertar elementos a la Top-Bar según permisos y tipos de agrupación.
 			me.tbar.items = [];
 			
+			var agrupacionPromocionAlquiler = false;
+			var tipoAgrupacion =  this.lookupController().getViewModel().get('agrupacionficha.tipoAgrupacionCodigo');
+			
+			if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
+	     		agrupacionPromocionAlquiler = true;
+	     	}
+			
 			if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION'])) {
-				me.tbar.items.push(configAddBtn);
-				me.tbar.items.push(configRemoveBtn);
-			}
+				if(agrupacionPromocionAlquiler){
+					if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_COMERCIAL'])){
+						me.tbar.items.push(configAddBtn);
+						me.tbar.items.push(configRemoveBtn);
+					}
+				}else{
+					me.tbar.items.push(configAddBtn);
+					me.tbar.items.push(configRemoveBtn);
+				}	
+		    }
 			
 			/*var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
 			if($AU.userHasFunction(['EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION']) &&

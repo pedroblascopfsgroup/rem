@@ -116,7 +116,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 				                	xtype: 'textfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.proveedores.nif'),
 									bind: '{proveedor.nifProveedor}',
-									maxLength: 20
+									maxLength: 20,
+					            	validator: function(value){
+					            		var me = this;
+					            		return me.lookupController().validateDocProveedor(value);
+					            	}
 				                },
 				             // Fila 3
 				                	{

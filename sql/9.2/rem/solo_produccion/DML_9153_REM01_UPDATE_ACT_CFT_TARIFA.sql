@@ -3932,7 +3932,7 @@ BEGIN
 		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_CFT_CONFIG_TARIFA  
                               SET DD_TTF_ID = '||V_TMP_JBV(2)||', 
 			      USUARIOMODIFICAR = ''REMVIP-4353'',
-			      FECHAMODIFICAR = SYSDATE, 
+			      FECHAMODIFICAR = SYSDATE  
                               WHERE CFT_ID = '||V_TMP_JBV(1)||'';
 	
 		EXECUTE IMMEDIATE V_MSQL;

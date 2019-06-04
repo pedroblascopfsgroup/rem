@@ -1517,7 +1517,6 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			fileItem = uploadAdapter.getWebFileItem(request);
 			String errores = activoApi.uploadFoto(fileItem);
-            FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 

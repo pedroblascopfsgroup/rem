@@ -122,9 +122,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef')
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
 		
-		campoTipoDocumentoConyuge.setValue()
-
-		
 		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO']) && me.esBankia()) {
 			campoTipoPersona.setDisabled(true);
 			campoPorcionCompra.setDisabled(true);
@@ -337,7 +334,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			campoClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge'),
 			campoNumConyuge = me.lookupReference('numRegConyuge'),
 			codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
-		
 		// Se comprueba si el expediente es de VENTA a través de la descripcion
 		if(codigoTipoExpediente == null){
 			if (me.getViewModel().data.esOfertaVentaFicha == true){
@@ -358,6 +354,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				} else {
 					campoClienteUrsusConyuge.reset();
 					campoClienteUrsusConyuge.setDisabled(true);
+					me.establecerNumClienteURSUSConyuge();
 				}
 			}
 		} else if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER']) {
@@ -837,6 +834,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			fieldNumeroClienteUrsusBhConyuge.setValue(numeroUrsusConyuge);
 		} else if (!esBankiaBH && !Ext.isEmpty(fieldNumeroClienteUrsusConyuge)){
 			fieldNumeroClienteUrsusConyuge.setValue(numeroUrsusConyuge);
+		} else if(esBankiaBH && Ext.isEmpty(fieldNumeroClienteUrsusBhConyuge) ){
+			fieldNumeroClienteUrsusBhConyuge.reset();
+		} else if (!esBankiaBH && Ext.isEmpty(fieldNumeroClienteUrsusConyuge)){
+			fieldNumeroClienteUrsusConyuge.reset();
 		}
 	},
 	

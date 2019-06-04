@@ -3721,15 +3721,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setRegimenMatrimonial(null);
 			}
 
-			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge()) && esGananciales) {
-				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge());
-				compradorExpediente.setTipoDocumentoConyuge(tipoDocumento);
-
-			}else {
-				compradorExpediente.setTipoDocumentoConyuge(null);
-			}
-
 			if (!Checks.esNulo(dto.getDocumentoConyuge()) && esGananciales) {
 				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
 			}else {
@@ -3741,6 +3732,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge()));
 			}else {
 				compradorExpediente.setTipoDocumentoConyuge(null);
+			}
+			
+			if ((Checks.esNulo(dto.getNumeroClienteUrsusConyuge()) || Checks.esNulo(dto.getNumeroClienteUrsusBhConyuge())) && !estaCasado) {
+				compradorExpediente.setNumUrsusConyuge(null);
+				compradorExpediente.setNumUrsusConyugeBh(null);
 			}
 
 			compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());

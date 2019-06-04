@@ -42,7 +42,6 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 	
 	private static final String EXPEDIENTE_COMERCIAL_NO_EXISTE = "msg.error.masivo.ecomercial.no.existe";
 	private static final String EXPEDIENTE_COMERCIAL_TIPO_VENTA = "msg.error.masivo.ecomercial.tipo.venta";
-	private static final String EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA = "msg.error.masivo.ecomercial.cartera.erronea";
 	private static final String EXPEDIENTE_COMERCIAL_VENTA_ESTADO_CORRECTO = "msg.error.masivo.ecomercial.estado.no.correcto";
 	private static final String EXPEDIENTE_COMERCIAL_OFERTA_NO_TRAMITADA = "msg.error.masivo.ecomercial.oferta.no.tramitada";
 	private static final String EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_BANKIA = "msg.error.masivo.ecomercial.cartera.erronea.bankia";
@@ -131,7 +130,7 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 			
 			
 			if (!mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_NO_EXISTE)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_TIPO_VENTA)).isEmpty() || !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_TIPO_VENTA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_VENTA_ESTADO_CORRECTO)).isEmpty() || !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_OFERTA_NO_TRAMITADA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_BANKIA)).isEmpty() || !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_LIBERBANK)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(FECHA_INGRESO_CHEQUE)).isEmpty() || !mapaErrores.get(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_ALTA_OFERTA)).isEmpty()

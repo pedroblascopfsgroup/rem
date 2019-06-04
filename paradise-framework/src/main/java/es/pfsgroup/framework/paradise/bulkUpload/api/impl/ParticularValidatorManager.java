@@ -2914,14 +2914,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
 				+"		JOIN ACT_OFR AFR ON AFR.OFR_ID = OFR.OFR_ID"
 				+"		JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AFR.ACT_ID"
+				+"		JOIN DD_CRA_CARTERA DD ON ACT.DD_CRA_ID = DD.DD_CRA_ID"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0"
-				+"		AND EXISTS (SELECT 1 FROM ACT_ACTIVO ACT1"
-				+"		JOIN DD_CRA_CARTERA DD ON ACT1.DD_CRA_ID = DD.DD_CRA_ID"
-				+"		WHERE DD.DD_CRA_CODIGO ='08'"
-				+"		AND ACT.ACT_ID = ACT1.ACT_ID)");
-		
-		return !"0".equals(resultado);
+				+"		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0 AND DD.DD_CRA_CODIGO ='03'");
+		if(!Checks.esNulo(resultado) && Integer.valueOf(resultado) > 0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	@Override
@@ -2934,14 +2934,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
 				+"		JOIN ACT_OFR AFR ON AFR.OFR_ID = OFR.OFR_ID"
 				+"		JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AFR.ACT_ID"
+				+"		JOIN DD_CRA_CARTERA DD ON ACT.DD_CRA_ID = DD.DD_CRA_ID"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0"
-				+"		AND EXISTS (SELECT 1 FROM ACT_ACTIVO ACT1"
-				+"		JOIN DD_CRA_CARTERA DD ON ACT1.DD_CRA_ID = DD.DD_CRA_ID"
-				+"		WHERE DD.DD_CRA_CODIGO ='56'"
-				+"		AND ACT.ACT_ID = ACT1.ACT_ID)");
+				+"		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0 AND DD.DD_CRA_CODIGO ='08'");
 		
-		return !"0".equals(resultado);
+		if(!Checks.esNulo(resultado) && Integer.valueOf(resultado) > 0){
+			return true;
+		}else{
+			return false;
+		}
+	
 	}
 	
 	

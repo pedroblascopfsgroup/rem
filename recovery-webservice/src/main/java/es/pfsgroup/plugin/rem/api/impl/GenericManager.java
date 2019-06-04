@@ -147,6 +147,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Usuario usuario = adapter.getUsuarioLogado();
 			Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 			UsuarioCartera uca = genericDao.get(UsuarioCartera.class, filtroUca);
+
 			//Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 			//List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
 

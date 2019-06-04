@@ -107,11 +107,10 @@ Ext.define('HreRem.view.common.TareaController', {
       },
        
        getValidacionPrevia: function(window) {
-       	
-	       	var me = this;
-	       	
-	    	var url = $AC.getRemoteUrl('agenda/getValidacionPrevia');
-	    	Ext.Ajax.request({
+       		window.mask("Validando...");
+       		var me = this;
+	       	var url = $AC.getRemoteUrl('agenda/getValidacionPrevia');
+	        Ext.Ajax.request({
 	    			url:url,
 	    			params: {idTarea : window.idTarea},
 	    			success: function(response,opts){
@@ -122,8 +121,8 @@ Ext.define('HreRem.view.common.TareaController', {
 	    				
 						me.json = Ext.decode(me.errorValidacion);
 						me.errorMensaje = me.json.data;				
-						
-	    				me.getViewModel().set("errorValidacion", me.errorMensaje);
+						me.getViewModel().set("errorValidacion", me.errorMensaje);
+	    				window.unmask();
 	    			}
 	    	});       	
 	       	
@@ -152,7 +151,6 @@ Ext.define('HreRem.view.common.TareaController', {
        },
        
        getAdvertenciaTarea: function(window) {
-			 	
 			var me = this;
 			var codigoProcedimientoAdvertencia = [
 				'T002_AnalisisPeticion', 'T002_SolicitudDocumentoGestoria', // 1as tareas T. Obtenci�n documental
@@ -166,6 +164,7 @@ Ext.define('HreRem.view.common.TareaController', {
 				
 			//Advertencia de que existen otros trabajos del mismo Tipo/Subtipo
 			var url = $AC.getRemoteUrl('agenda/getAdvertenciaTarea');
+			
 			Ext.Ajax.request({
 			  url:url,
 			  params:  {idTarea : window.idTarea},
@@ -187,8 +186,7 @@ Ext.define('HreRem.view.common.TareaController', {
        },
        
        getAdvertenciaTareaComercial: function(window) {
-			var me = this;
-				
+       		var me = this;				
 			//Advertencia de que existen otros trabajos del mismo Tipo/Subtipo
 			var url = $AC.getRemoteUrl('agenda/getAdvertenciaTareaComercial');
 			Ext.Ajax.request({

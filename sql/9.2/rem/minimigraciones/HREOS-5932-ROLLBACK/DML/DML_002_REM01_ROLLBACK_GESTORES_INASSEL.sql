@@ -86,8 +86,6 @@ BEGIN
   		EXECUTE IMMEDIATE V_MSQL;
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se ha hecho rollback de  '||SQL%ROWCOUNT||' GEE_GESTOR_ENTIDAD.');
-				
-  		
   		
   		DBMS_OUTPUT.put_line('	[INFO] Se realiza rollback sobre tabla GAH_GESTOR_ACTIVO_HISTORICO ');
 		

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20190603
+--## FECHA_CREACION=20190604
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-4353
@@ -471,9 +471,10 @@ BEGIN
 	
 		V_MSQL :=  'UPDATE '||V_ESQUEMA||'.ACT_CFT_CONFIG_TARIFA 
                     SET DD_TTF_ID =  (SELECT DD_TTF_ID FROM '||V_ESQUEMA||'.DD_TTF_TIPO_TARIFA WHERE DD_TTF_CODIGO = '''||V_TMP_JBV(1)||'''),
-                    USUARIOMODIFICAR = ''REMVIP-4353'',
+                    USUARIOMODIFICAR = ''REMVIP-4353_2'',
                     FECHAMODIFICAR = SYSDATE 
-                    WHERE DD_TTF_ID =   (SELECT CFG.DD_TTF_ID FROM '||V_ESQUEMA||'.ACT_CFT_CONFIG_TARIFA CFG
+                    WHERE DD_SCR_ID = 323 
+		    AND DD_TTF_ID =   (SELECT CFG.DD_TTF_ID FROM '||V_ESQUEMA||'.ACT_CFT_CONFIG_TARIFA CFG
                                         JOIN '||V_ESQUEMA||'.DD_TTF_TIPO_TARIFA TTF ON TTF.DD_TTF_ID = CFG.DD_TTF_ID 
                                         WHERE TTF.DD_TTF_CODIGO = '''||V_TMP_JBV(2)||''' 
                                         AND DD_SCR_ID = 323)';

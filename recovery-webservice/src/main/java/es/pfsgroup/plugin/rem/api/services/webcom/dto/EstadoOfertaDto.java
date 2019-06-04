@@ -26,6 +26,7 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private StringDataType motivoRechazo;
 	private LongDataType importeContraoferta;
 	private LongDataType idExpedienteRem;
+	private DateDataType fechaVenta;
 	
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
@@ -99,5 +100,12 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setIdExpedienteRem(LongDataType idExpedienteRem) {
 		this.idExpedienteRem = idExpedienteRem;
 	}
+	public DateDataType getFechaVenta() {
+		return fechaVenta;
+	}
+	public void setFechaVenta(DateDataType fechaVenta) {
+		this.fechaVenta = fechaVenta;
+	}
+	
 
 }

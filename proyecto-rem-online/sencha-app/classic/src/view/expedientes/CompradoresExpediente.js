@@ -51,8 +51,12 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     	var cartera= function(){
     		if(me.lookupViewModel().get('expediente.entidadPropietariaDescripcion') == 'Bankia' && me.lookupViewModel().get('expediente.tipoExpedienteCodigo') != tipoExpedienteAlquiler){
     			return false;
-    		}else return true;
+    		}else{
+    			return true;
+    		}
     	};
+    	
+
 		
 		
         var items= [

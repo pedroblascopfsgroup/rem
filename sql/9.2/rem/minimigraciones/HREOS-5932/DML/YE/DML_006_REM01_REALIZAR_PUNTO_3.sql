@@ -70,8 +70,8 @@ BEGIN
   		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
 						(SELECT 
 							ACT_NUM_ACTIVO
-							,''HREOS-5932-PUNTO3''
-							,0 
+-							,''HREOS-5932-PUNTO3''
+-							,0  
 							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
 							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3'' AND BORRADO = 0
 						)';
@@ -261,8 +261,8 @@ BEGIN
   		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
 						(SELECT 
 							ACT_NUM_ACTIVO
-							,''HREOS-5932-PUNTO3-VA''
-							,0  
+-							,''HREOS-5932-PUNTO3-VA''
+-							,0   
 							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
 							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3-VA'' AND BORRADO = 0
 						)';
@@ -374,7 +374,7 @@ BEGIN
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 		
-		
+		/*
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] SE ACTUALIZA EL HISTORICO DE PUBLICACIONES'); 
 		
@@ -452,6 +452,7 @@ BEGIN
 		
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||V_COUNT||' registros.'); 
 
+		*/
 
 COMMIT;
   

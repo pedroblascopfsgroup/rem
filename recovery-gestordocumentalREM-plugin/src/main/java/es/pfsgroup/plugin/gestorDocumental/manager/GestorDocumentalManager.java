@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonGenerationException;
@@ -249,8 +249,9 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		if(ext == null || ext.isEmpty() || ext.length() < 3){
 			ext = "tmp";
 		}
-
-		fileSalidaTemporal = File.createTempFile(nomFichero, ext);
+		
+		
+		fileSalidaTemporal = File.createTempFile(generateRandomString(), ext);
 		fileSalidaTemporal.deleteOnExit();
 		
 		resultado.setFileName(nomFichero + ext);
@@ -264,6 +265,13 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		respuesta.setFileItem(resultado);
 		return respuesta;
 		
+	}
+	
+	public String generateRandomString(){
+		int length = 10;
+	    boolean useLetters = true;
+	    boolean useNumbers = false;
+	    return RandomStringUtils.random(length, useLetters, useNumbers);
 	}
 	
 	private String getPathDescargarDoc(Long idDocumento, BajaDocumentoDto login) {

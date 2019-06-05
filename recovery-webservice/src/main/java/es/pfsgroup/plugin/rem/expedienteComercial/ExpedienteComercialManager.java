@@ -9288,6 +9288,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if(!Checks.esNulo(comprador)) {
 						if(!Checks.esNulo(comprador.getProblemasUrsus())) {
 							hayProblemasUrsus = comprador.getProblemasUrsus();
+							if(hayProblemasUrsus) break;
 						} else {
 							hayProblemasUrsus = false;
 						}

@@ -137,6 +137,7 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
@@ -238,6 +239,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private GencatApi gencatApi;
+	
+	@Autowired
+	private ActivoTareaExternaDao activoTareaExternaDao;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -3832,5 +3836,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 	return esCarteraInternacional;
 		
+	}
+	
+	public Long getIdTareaByNumOfertaAndCodTarea(Long ofrNumOferta, String codTarea) {
+		Long idTarea =null;
+		List<Long> tareasTramite = activoTareaExternaDao.getTareasByIdOfertaCodigoTarea(ofrNumOferta,codTarea);
+        if(!Checks.esNulo(tareasTramite) && !tareasTramite.isEmpty()) {
+        	idTarea = tareasTramite.get(0);
+        }
+		return idTarea;
 	}
 }

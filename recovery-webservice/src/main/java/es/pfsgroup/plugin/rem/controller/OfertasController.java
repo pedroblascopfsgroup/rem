@@ -108,6 +108,7 @@ public class OfertasController {
 	private AgendaAdapter agendaAdapter;
 	
 	private final static String CLIENTE_HAYA = "HAYA";
+	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -518,40 +519,49 @@ public class OfertasController {
 		Map<String, String[]> datosTarea = new HashMap<String, String[]>();
 		JSONObject jsonFields = null;
 		Long tareaId = null;
-
+		String[] idTarea = new String[1];
 		boolean resultado = false;
-		
+		String ofrNumOferta = "";
+		String codTarea = "";
 		try {
-			
 
 			jsonFields = request.getJsonObject();
 			jsonData = (TareaRequestDto) request.getRequestData(TareaRequestDto.class);
 			datosTarea = jsonData.getData();
-
-
 			
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 
 			} else {
-				tareaId = ofertaApi.getIdTareaByNumOfertaAndCodTarea(Long.parseLong(jsonFields.get("ofrNumOferta").toString()), jsonFields.get("codTarea").toString());
-				String[] idTarea = new String[1];
-				idTarea[0] = tareaId.toString();
-				datosTarea.put("idTarea",idTarea);
-
-				resultado = agendaAdapter.validationAndSave(datosTarea);
-
-				model.put("id", jsonFields.get("id"));
-				model.put("data", resultado);
-				model.put("error", "null");
+				
+				ofrNumOferta = jsonFields.get("ofrNumOferta").toString();
+				codTarea = jsonFields.get("codTarea").toString();
+				tareaId = ofertaApi.getIdTareaByNumOfertaAndCodTarea(Long.parseLong(ofrNumOferta.toString()), codTarea);
+				if(Checks.esNulo(tareaId)) {
+					model.put("ofrNumOferta", ofrNumOferta);
+					model.put("codTarea", codTarea);
+					model.put("data", resultado);
+					model.put("error",RestApi.REST_MSG_VALIDACION_TAREA + ": " + ERROR_NO_EXISTE_OFERTA_O_TAREA);
+				}
+				else {
+				
+					idTarea[0] = tareaId.toString();
+					datosTarea.put("idTarea",idTarea);
+					resultado = agendaAdapter.validationAndSave(datosTarea);
+					model.put("ofrNumOferta", ofrNumOferta);
+					model.put("codTarea", codTarea);
+					model.put("data", resultado);
+					model.put("error", "null");
+				}
 			}
 
 		} catch (Exception e) {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("id", jsonFields.get("id"));
+			model.put("ofrNumOferta", ofrNumOferta);
+			model.put("codTarea", codTarea);
 			model.put("data", resultado);
-			model.put("error", RestApi.REST_MSG_VALIDACION_TAREA+": "+e.getMessage());
+			model.put("error", RestApi.REST_MSG_VALIDACION_TAREA + ": " + e.getMessage());
 		}
 
 		restApi.sendResponse(response, model, request);

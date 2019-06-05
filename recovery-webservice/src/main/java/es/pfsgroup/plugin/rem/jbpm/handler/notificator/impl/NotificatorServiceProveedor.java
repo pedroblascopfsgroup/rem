@@ -55,7 +55,10 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 		
 		
 	    String correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-	    Collections.addAll(mailsPara, correos.split(";"));
+	    if(correos != null && !correos.isEmpty()){
+	    	 Collections.addAll(mailsPara, correos.split(";"));
+	    }
+	   
 		mailsCC.add(this.getCorreoFrom());
 		
 		String contenido = "";

@@ -4321,7 +4321,387 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
            	me.getView().unmask();
            }
 	    });
+	},
 
+comprobarFormatoModificar: function() {
+		var me = this;
+		valueComprador = me.lookupReference('numeroDocumento');
+		valueConyuge = me.lookupReference('numRegConyuge');
+		valueRte = me.lookupReference('numeroDocumentoRte');
+		validaciones = 0;
+		
+		if(me.lookupReference('tipoPersona').getValue() === "1"){
+			if(valueComprador != null){
+				if(me.lookupReference('tipoDocumento').value == "01" || me.lookupReference('tipoDocumento').value == "15"
+					|| me.lookupReference('tipoDocumento').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueComprador.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 validaciones = validaciones + 1;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocumento').value == "02"){
+
+					var texto=valueComprador.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			        	 validaciones = validaciones + 1; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocumento').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueComprador.value = valueComprador.value.toLowerCase();
+
+				    if(!expr.test (valueComprador.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+				    	validaciones = validaciones + 1;
+				    }else{
+				    	return true;
+				    }
+
+				}else{
+					validaciones = validaciones + 1;
+				}
+			}
+			
+			if(valueConyuge != null){
+				if(me.lookupReference('tipoDocConyuge').value == "01" || me.lookupReference('tipoDocConyuge').value == "15"
+					|| me.lookupReference('tipoDocConyuge').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueConyuge.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 validaciones = validaciones + 1;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocConyuge').value == "02"){
+					var texto=valueConyuge.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			        	 validaciones = validaciones + 1; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocConyuge').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueConyuge.value = valueConyuge.value.toLowerCase();
+
+				    if(!expr.test (valueConyuge.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+				    	return false;
+				    }else{
+				    	validaciones = validaciones + 1;
+				    }
+
+				}else{
+					validaciones = validaciones + 1;
+				}
+			}
+			
+			if(validaciones == 2){
+				return true;
+			}
+		}else{
+			
+			if(valueComprador != null){
+				if(me.lookupReference('tipoDocumento').value == "01" || me.lookupReference('tipoDocumento').value == "15"
+					|| me.lookupReference('tipoDocumento').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueComprador.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 validaciones = validaciones + 1;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocumento').value == "02"){
+
+					var texto=valueComprador.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			        	 validaciones = validaciones + 1; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocumento').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueComprador.value = valueComprador.value.toLowerCase();
+
+				    if(!expr.test (valueComprador.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+				    	return false;
+				    }else{
+				    	validaciones = validaciones + 1;
+				    }
+
+				}else{
+					return true;
+				}
+			}
+			
+			if(valueRte != null){
+				
+				if(me.lookupReference('tipoDocumentoRte').value == "01" || me.lookupReference('tipoDocumentoRte').value == "15"
+					|| me.lookupReference('tipoDocumentoRte').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueRte.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 validaciones = validaciones + 1;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocumentoRte').value == "02"){
+					
+					var texto=valueRte.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			        	 validaciones = validaciones + 1; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocumentoRte').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueRte.value = valueRte.value.toLowerCase();
+
+				    if(!expr.test (valueRte.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+				    	return false;
+				    }else{
+				    	validaciones = validaciones + 1;
+				    }
+
+				}else{
+					validaciones = validaciones + 1;
+				}
+			}
+			
+			if(validaciones == 2){
+				return true;
+			}
+			
+		}
+			
 	}
 
 });

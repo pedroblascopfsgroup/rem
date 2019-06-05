@@ -1,16 +1,17 @@
 --/*
 --######################################### 
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181217
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190530
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2837
+--## INCIDENCIA_LINK=REMVIP-3299
 --## PRODUCTO=NO
 --## Finalidad:
 --##      
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 ODP Modificado para que actualice PAC_CHECK_COMERCIALIZAR y ejecute SP_ASC_ACTUALIZA_SIT_COMERCIAL
 --#########################################
 --*/
 
@@ -39,6 +40,7 @@ IS
 	V_TABLA_HLD VARCHAR2(30 CHAR) := 'HLD_HISTORICO_LANZA_PER_DETA';
     V_TABLA_PAC VARCHAR2(30 CHAR) := 'ACT_PAC_PERIMETRO_ACTIVO';
     V_TABLA_ACT VARCHAR2(30 CHAR) := 'ACT_ACTIVO';
+	
 
     BEGIN
         
@@ -96,6 +98,7 @@ IS
         --Si no ha habido errores y existen las tablas HLP y HLD
         IF COD_RETORNO = 0 AND V_NOTABLES = 0 THEN
         
+        --Inserta por el cambio en PAC_INCLUIDO
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_HLD||' (
                 HLD_SP_CARGA,
                 HLD_FECHA_EJEC,
@@ -124,9 +127,41 @@ IS
                 )
              ';
              EXECUTE IMMEDIATE V_MSQL;
+
+        --Inserta por el cambio en PAC_CHECK_COMERCIALIZAR
+            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_HLD||' (
+                HLD_SP_CARGA,
+                HLD_FECHA_EJEC,
+                HLD_CODIGO_REG,
+                HLD_TABLA_MODIFICAR,
+                HLD_TABLA_MODIFICAR_CLAVE,
+                HLD_TABLA_MODIFICAR_CLAVE_ID,
+                HLD_CAMPO_MODIFICAR,
+                HLD_VALOR_ORIGINAL,
+                HLD_VALOR_ACTUALIZADO
+             )
+             SELECT
+                 ''SP_EXT_ACTUALIZA_PERIMETRO'',
+                 SYSDATE,
+                 '||ACT_NUM_ACTIVO||',
+                 '''||V_TABLA_PAC||''',
+                 ''ACT_ID'',
+                 PAC.ACT_ID,
+                 ''PAC_CHECK_COMERCIALIZAR'',
+                 PAC.PAC_CHECK_COMERCIALIZAR,
+                 '''||PAC_INCLUIDO||'''
+             FROM '||V_ESQUEMA||'.'||V_TABLA_PAC||' PAC WHERE PAC.ACT_ID = (
+                SELECT ACT_ID
+                FROM '|| V_ESQUEMA ||'.'|| V_TABLA_ACT ||'
+                WHERE ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO||'
+                )
+             ';
+             EXECUTE IMMEDIATE V_MSQL;
+            
             
              V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'|| V_TABLA_PAC ||'
                     SET PAC_INCLUIDO  = '||PAC_INCLUIDO||'
+			,PAC_CHECK_COMERCIALIZAR = '||PAC_INCLUIDO||'
                         ,USUARIOMODIFICAR = ''SP_EXT_ACTUALIZA_PERIMETRO''
                         ,FECHAMODIFICAR = SYSDATE
                     WHERE ACT_ID = (
@@ -155,7 +190,14 @@ IS
              EXECUTE IMMEDIATE V_MSQL;
             
              COD_RETORNO := 0;
-    
+
+	     --	Ejecuta el SP_ASC_ACTUALIZA_SIT_COMERCIAL
+	     -- Antes busca el ID del activo
+            V_MSQL := 'SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' WHERE ACT_NUM_ACTIVO = '''||ACT_NUM_ACTIVO||''' ';
+            EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+
+    	     REM01.SP_ASC_ACTUALIZA_SIT_COMERCIAL( V_COUNT, 1, 0 );
+
         END IF;
     
         /*****************************************************************

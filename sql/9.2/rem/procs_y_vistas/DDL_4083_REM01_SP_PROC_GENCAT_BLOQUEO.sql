@@ -1,10 +1,10 @@
 ﻿--/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190522
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190528
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4272
+--## INCIDENCIA_LINK=REMVIP-4373
 --## PRODUCTO=no
 --## Finalidad: Creación SP
 --##           
@@ -15,6 +15,7 @@
 --## 		0.3 [HREOS-6290] Cambiado el where por un join con la tabla AUX_GENCAT_REN_COM
 --##        0.4 [REMVIP-4254] Cambio de tabla y condiciones del join
 --##		0.5 [REMVIP-4272] Se añaden al envio el Gestor comercial y al Middle Office además de todos los sustitutos de todos los gestores del correo
+--##		0.6 [REMVIP-4373] Comentado el UPDATE de la tabla temporal con el LISTAGG de todos los correos
 --##########################################
 --*/
 
@@ -223,13 +224,14 @@ DBMS_OUTPUT.PUT_LINE(' TRUNCATE de las tablas auxiliares ');
         DBMS_OUTPUT.PUT_LINE('[INFO] OFERTAS PARA BLOQUEAR '||sql%rowcount||'');
 	SP_OUTPUT := SP_OUTPUT || ' [INFO] OFERTAS PARA BLOQUEAR : '||sql%rowcount||''|| CHR(10);
 	
-
+/*
 	V_MSQL:= '
 		UPDATE '|| V_ESQUEMA ||'.GENCAT_BLOQ_TMP 
 		SET 
 		CC_MAIL = (SELECT LISTAGG(CC_MAIL,'';'') WITHIN GROUP (ORDER BY CC_MAIL) CC_MAIL FROM  '|| V_ESQUEMA ||'.GENCAT_BLOQ_TMP)';
 	
 	EXECUTE IMMEDIATE V_MSQL;
+*/
 
 
     V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ECO_EXPEDIENTE_COMERCIAL ECO

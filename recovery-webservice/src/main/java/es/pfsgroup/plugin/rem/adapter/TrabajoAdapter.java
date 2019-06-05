@@ -335,8 +335,9 @@ public class TrabajoAdapter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return activoDao.getActivosFromCrearTrabajo(listIdActivos, webDto);
+		if(!Checks.estaVacio(listIdActivos))
+			return activoDao.getActivosFromCrearTrabajo(listIdActivos, webDto);
+		return null;
 	}
 
 }

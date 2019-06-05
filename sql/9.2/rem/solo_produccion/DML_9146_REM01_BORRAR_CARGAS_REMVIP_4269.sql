@@ -1,0 +1,97 @@
+--/*
+--#########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20190524
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.20
+--## INCIDENCIA_LINK=REMVIP_4269
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Merge de cargas
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+--ALTER SESSION SET NLS_NUMERIC_CHARACTERS = ',.';
+
+DECLARE
+V_SQL VARCHAR2(10000 CHAR);
+V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+V_TABLA VARCHAR2(40 CHAR) := 'AUX_REMVIP_4269_1';
+
+BEGIN			
+			
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+									
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_CRG_CARGAS T1 
+		USING (
+		SELECT CAR.CRG_ID 
+		FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CAR
+		JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = CAR.ACT_ID 
+		JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BIE ON CAR.BIE_CAR_ID = BIE.BIE_CAR_ID 
+		WHERE CAR.DD_STC_ID IN (5,8,25) 
+		AND BIE.DD_SIC_ID2 IS NULL 
+		AND BIE.DD_SIC_ID IS NULL 
+		AND CAR.BORRADO = 0
+		AND ACT.ACT_NUM_ACTIVO IN (SELECT ACT_NUM_ACTIVO FROM '||V_ESQUEMA||'.'||V_TABLA||')
+			) T2
+			ON (T1.CRG_ID = T2.CRG_ID)
+			WHEN MATCHED THEN UPDATE
+		       		SET T1.BORRADO = 1, 
+		                T1.USUARIOBORRAR = ''REMVIP_4269'', 
+		                T1.FECHABORRAR = SYSDATE ';
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' registros con borrado logico en la tabla ACT_CRG_CARGAS.');  
+                        
+
+	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.BIE_CAR_CARGAS T1 
+		USING (
+		SELECT BIE.BIE_CAR_ID 
+		FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CAR
+		JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = CAR.ACT_ID 
+		JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BIE ON CAR.BIE_CAR_ID = BIE.BIE_CAR_ID 
+		WHERE CAR.DD_STC_ID IN (5,8,25) 
+		AND BIE.DD_SIC_ID2 IS NULL 
+		AND BIE.DD_SIC_ID IS NULL 
+		AND BIE.BORRADO = 0
+		AND ACT.ACT_NUM_ACTIVO IN (SELECT ACT_NUM_ACTIVO FROM '||V_ESQUEMA||'.AUX_REMVIP_4269_1)
+			) T2
+			ON (T1.BIE_CAR_ID = T2.BIE_CAR_ID)
+			WHEN MATCHED THEN UPDATE
+		       		SET T1.BORRADO = 1, 
+		                T1.USUARIOBORRAR = ''REMVIP_4269'', 
+		                T1.FECHABORRAR = SYSDATE ';
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' registros con borrado logico en la tabla BIE_CAR_CARGAS.');  
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+		DBMS_OUTPUT.PUT_LINE(V_SQL);
+        ROLLBACK;
+        RAISE;
+END;
+
+/
+
+EXIT

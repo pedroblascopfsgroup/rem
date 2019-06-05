@@ -709,6 +709,8 @@ public interface ParticularValidatorApi {
 	
 	Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal);
 
+	List<BigDecimal> activosEnAgrupacion(String numOferta);
+
 	/**
 	 * @param entidadFinanciera
 	 * @return true si existe la entidad Financiera

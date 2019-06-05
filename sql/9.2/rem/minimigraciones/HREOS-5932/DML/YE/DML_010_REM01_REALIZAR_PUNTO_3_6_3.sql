@@ -100,8 +100,8 @@ BEGIN
   		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
 						(SELECT 
 							ACT_NUM_ACTIVO
-							,''HREOS-5932-PUNTO3-6''
-							,0  
+-							,''HREOS-5932-PUNTO3-6''
+-							,0  
 							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
 							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3-6'' AND BORRADO = 0
 						)';
@@ -377,8 +377,8 @@ BEGIN
   		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
 						(SELECT 
 							ACT_NUM_ACTIVO
-							,''HREOS-5932-PUNTO3-6-4''
-							,0   
+-							,''HREOS-5932-PUNTO3-6-4''
+-							,0    
 							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
 							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3-6-4'' AND BORRADO = 0
 						)';

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=CARLOS AUGUSTO
---## FECHA_CREACION=20192504
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190605
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6182
+--## INCIDENCIA_LINK=HREOS-6657
 --## PRODUCTO=NO
 --##
 --## Finalidad: Inserción nueva función de carga masiva para actualizar pestaña Formalización
@@ -58,7 +58,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_FUNCION(1)) ||'''');
           V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA' ||
                     ' SET DD_OPM_VALIDACION_FORMATO = '''||TRIM(V_TMP_FUNCION(5))||''''||
-          ', USUARIOMODIFICAR = ''HREOS-6182'' , FECHAMODIFICAR = SYSDATE  , DD_OPM_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(2))||''''||
+          ', USUARIOMODIFICAR = ''HREOS-6657'' , FECHAMODIFICAR = SYSDATE  , DD_OPM_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(2))||''''||
           ' WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_FUNCION(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
@@ -69,7 +69,7 @@ BEGIN
               ' SELECT '||V_ESQUEMA||'.S_DD_OPM_OPERACION_MASIVA.NEXTVAL,' ||
               ' '''||V_TMP_FUNCION(1)||''','''||V_TMP_FUNCION(2)||''','''||V_TMP_FUNCION(3)||''','||
               ' (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||V_TMP_FUNCION(4)||'''), '||
-              ' 0, ''HREOS-6182'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
+              ' 0, ''HREOS-6657'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
           
         EXECUTE IMMEDIATE V_MSQL_1;
         DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA insertados correctamente.');

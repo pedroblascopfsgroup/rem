@@ -1216,8 +1216,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 				if (Checks.esNulo(activo)) {
 					throw new JsonViewerException("Este activo no existe");
-				} else if (activo.getTipoTitulo().getCodigo().equals(DDTipoTituloActivo.UNIDAD_ALQUILABLE)) {
-					throw new JsonViewerException("No es posible incluir una UA en un gasto");
 				} else {
 
 					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) && Checks.esNulo(activo.getNumInmovilizadoBnk())) {

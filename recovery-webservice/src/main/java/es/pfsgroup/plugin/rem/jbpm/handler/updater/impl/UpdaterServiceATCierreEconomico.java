@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -36,6 +37,9 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 	
 	@Autowired
     private GenericABMDao genericDao;
+	
+	@Autowired
+	ActivoDao activoDao;
     
 	private static final String FECHA_CIERRE = "fechaCierre";
 	private static final String TIENE_OK_TECNICO = "tieneOkTecnico";
@@ -157,7 +161,14 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 	
 		genericDao.save(Trabajo.class, trabajo);
 		
-		activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
+		if(activoDao.isActivoMatriz(trabajo.getActivo().getId())){
+			ActivoTrabajo actTrabajo = genericDao.get(ActivoTrabajo.class,genericDao.createFilter(FilterType.EQUALS,"trabajo.id", trabajo.getId()));
+			activoApi.actualizarOfertasTrabajosVivos(actTrabajo.getActivo());
+		}
+		else {
+			activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
+		}
+		
 	}
 
 	public String[] getCodigoTarea() {

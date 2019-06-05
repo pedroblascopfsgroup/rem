@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -44,6 +45,9 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
     
     @Autowired
     private ActivoDao activoDao;
+    
+    @Autowired
+    private ActivoTrabajoDao activoTrabajoDao;
     
 	private static final String CODIGO_T004_ANALISIS_PETICION = "T004_AnalisisPeticion";
 	
@@ -115,8 +119,13 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 		
 		genericDao.save(Trabajo.class, trabajo);
 		
-		activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
-
+		if(activoDao.isActivoMatriz(trabajo.getActivo().getId())){
+			ActivoTrabajo actTrabajo = genericDao.get(ActivoTrabajo.class,genericDao.createFilter(FilterType.EQUALS,"trabajo.id", trabajo.getId()));
+			activoApi.actualizarOfertasTrabajosVivos(actTrabajo.getActivo());
+		}
+		else {
+			activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
+		}
 	}
 
 	public String[] getCodigoTarea() {

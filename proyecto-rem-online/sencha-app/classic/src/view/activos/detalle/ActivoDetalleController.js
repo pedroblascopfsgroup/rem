@@ -57,7 +57,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          },
          
          'datospublicacionactivo historicocondicioneslist': {
-          	onClickPropagation :  'onClickPropagationCalificacionNegativa'
+          	onClickPropagation :  'onClickPropagationHistoricoCondiciones'
          },
          
          'tituloinformacionregistralactivo calificacionnegativagrid': {
@@ -2975,6 +2975,55 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    	if ( algunActivoEstaInscrito ) {
 		    		me.fireEvent("warnToast", "No se podr&aacute; propagar a todos los activos debido a que alguno est&aacute; inscrito");
 		    	}
+		    	  
+			},
+		    failure: function(record, operation) {
+		        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		  	}
+		});
+	},
+	
+	onClickPropagationHistoricoCondiciones : function(grid){
+		var me = this,
+	    idActivo = me.getViewModel().get('activo').id,
+	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
+	    form = grid.up('form');
+	
+	  form.mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {idActivo: idActivo},
+		
+			success: function(response, opts){
+		
+				form.unmask();
+				var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+				var tabPropagableData = null;
+				if(me.getViewModel() != null){
+					if(me.getViewModel().get('activo') != null){
+						if(me.getViewModel().get('activo').data != null){
+							me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
+						}
+					}
+				}
+				var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
+		              return activo.activoId == me.getViewModel().get("activo.id");
+		            }), 1)[0];
+		            
+				
+		        // Abrimos la ventana de selección de activos
+			    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
+			          form : null,
+			          activoActual : activo,
+			          activos : activosPropagables,
+			          tabData : grid.getSelection(),
+			          propagableData : null,
+			          targetGrid: grid.targetGrid
+			        }).show();
+		
+		    	me.getView().add(ventanaOpcionesPropagacionCambios);
 		    	  
 			},
 		    failure: function(record, operation) {

@@ -70,8 +70,8 @@ BEGIN
   		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
 						(SELECT 
 							ACT_NUM_ACTIVO
--							,''HREOS-5932-PUNTO3''
--							,0  
+							,''HREOS-5932-PUNTO3''
+							,0  
 							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
 							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3'' AND BORRADO = 0
 						)';
@@ -256,13 +256,14 @@ BEGIN
 
 		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.');
 		
+		
 		DBMS_OUTPUT.put_line('	[INFO] SE INSERTA EL PERIMETRO EN LA TABLA AUX_HREOS_5932_PERIM ');
   		
   		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_HREOS_5932_PERIM  
 						(SELECT 
 							ACT_NUM_ACTIVO
--							,''HREOS-5932-PUNTO3-VA''
--							,0   
+							,''HREOS-5932-PUNTO3-VA''
+							,0   
 							FROM '||V_ESQUEMA||'.ACT_ACTIVO 
 							WHERE USUARIOMODIFICAR = ''HREOS-5932-PUNTO3-VA'' AND BORRADO = 0
 						)';
@@ -288,6 +289,25 @@ BEGIN
   		EXECUTE IMMEDIATE V_MSQL;
   		
   		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+  		
+  		
+  		DBMS_OUTPUT.PUT_LINE('	[INFO] ACTUALIZAMOS LA ACT_SPS');
+		
+		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SET 
+						SPS_OCUPADO = 1
+					WHERE ACT_ID IN (
+						SELECT ACT.ACT_ID
+						FROM '||V_ESQUEMA||'.AUX_HREOS_5932 AUX
+						INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = AUX.ID_HAYA
+                        INNER JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID	
+                        INNER JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON ACT.ACT_ID = SPS.ACT_ID			
+                        INNER JOIN '||V_ESQUEMA||'.DD_EAL_ESTADO_ALQUILER EAL ON EAL.DD_EAL_ID = PTA.DD_EAL_ID
+						WHERE ACT.USUARIOMODIFICAR LIKE ''HREOS-5932-PUNTO3%'' AND EAL.DD_EAL_CODIGO = ''02''
+					)';
+				
+		EXECUTE IMMEDIATE V_MSQL;
+
+		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.');
 
 /** 3.3.1 B Quitar el gestor/supervisor comercial de venta. **/    
 

@@ -25,6 +25,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadHistoricoDa
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.manager.GestorEntidadManager;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -73,6 +74,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	
  	@Autowired
  	private GestorActivoDao gestorActivoDao;
+ 	
+ 	@Autowired
+ 	private ActivoAdapter activoAdapter;
  	
  	@Autowired
  	private GestorActivoHistoricoDao gestorActivoHistoricoDao;
@@ -131,6 +135,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  						
  						//Actualizamos usuarios de las tareas
  						actualizarTareas(dto.getIdEntidad());
+ 						
+ 						//Actualizar Responsable Trabajo de los trabajos
+ 						activoAdapter.cambiarResponsableTrabajosActivos(act);
  					}
  				}
  			}

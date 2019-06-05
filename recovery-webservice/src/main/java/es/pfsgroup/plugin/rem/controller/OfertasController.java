@@ -31,6 +31,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.ParticularValidatorManager;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -59,6 +60,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaVivaRespuestaDto;
+import es.pfsgroup.plugin.rem.rest.dto.TareaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import net.sf.json.JSONObject;
@@ -101,6 +103,9 @@ public class OfertasController {
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private AgendaAdapter agendaAdapter;
 	
 	private final static String CLIENTE_HAYA = "HAYA";
 	
@@ -482,6 +487,68 @@ public class OfertasController {
 			model.put("data", null);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
+		restApi.sendResponse(response, model, request);
+	}
+	
+	/**
+	 * Avanza tareas Ejem: IP:8080/pfs/rest/ofertas/avanzaOferta
+	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
+	 * 
+	 * BODY: {"id":"4271073","data": {"observaciones":["asdasdasd"], 
+	 * "comboFirma": ["01"], 
+	 * "motivoNoFirma":["01"], 
+	 * "tieneReserva":["0"],
+	 * "fechaFirma":["2019-05-09"],
+	 * "asistenciaPBC":["0"], 
+	 * "obsAsisPBC":["sin asistencia"]}}
+	 * 
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/ofertas/avanzaOferta")
+	public void avanzaOferta( ModelMap model, RestRequestWrapper request, HttpServletResponse response){
+		TareaRequestDto jsonData = null;
+		Map<String, String[]> datosTarea = new HashMap<String, String[]>();
+		JSONObject jsonFields = null;
+		Long tareaId = null;
+
+		boolean resultado = false;
+		
+		try {
+			
+
+			jsonFields = request.getJsonObject();
+			jsonData = (TareaRequestDto) request.getRequestData(TareaRequestDto.class);
+			datosTarea = jsonData.getData();
+
+
+			
+			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+
+			} else {
+				tareaId = ofertaApi.getIdTareaByNumOfertaAndCodTarea(Long.parseLong(jsonFields.get("ofrNumOferta").toString()), jsonFields.get("codTarea").toString());
+				String[] idTarea = new String[1];
+				idTarea[0] = tareaId.toString();
+				datosTarea.put("idTarea",idTarea);
+
+				resultado = agendaAdapter.validationAndSave(datosTarea);
+
+				model.put("id", jsonFields.get("id"));
+				model.put("data", resultado);
+				model.put("error", "null");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error avance tarea ", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", jsonFields.get("id"));
+			model.put("data", resultado);
+			model.put("error", RestApi.REST_MSG_VALIDACION_TAREA+": "+e.getMessage());
+		}
+
 		restApi.sendResponse(response, model, request);
 	}
 

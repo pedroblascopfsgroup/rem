@@ -130,7 +130,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								    }
 								},
 								{ 
-				                	xtype: 'textfieldbase',
+									xtype: 'textfieldbase',
+									vtype: 'email',
 									fieldLabel: HreRem.i18n('fieldlabel.proveedor.email'),
 									bind: '{proveedor.email}',
 									maxLength: 50

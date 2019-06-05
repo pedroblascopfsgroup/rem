@@ -15,16 +15,14 @@
 --*/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON;
-SET DEFINE ON;
-
+SET SERVEROUTPUT ON; 
 
 DECLARE
     err_num NUMBER; -- Numero de error.
     err_msg VARCHAR2(2048); -- Mensaje de error.
     V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas.
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas.
-    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'HREOS-5932-PUNTO2';
+    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'HREOS-5932-PUNTO1';
     V_MSQL VARCHAR2(4000 CHAR);
     V_MAX_PTO_ID NUMBER(16,0);
     V_EJE_ID NUMBER(16,0);
@@ -40,7 +38,6 @@ DECLARE
 												, TRA.TRA_ID
 												, TEX.TAR_ID
 										FROM REM01.ACT_ACTIVO ACT 
-											INNER JOIN REM01.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO <> '05'
 											INNER JOIN REM01.ACT_OFR AFR ON ACT.ACT_ID = AFR.ACT_ID
 											INNER JOIN REM01.OFR_OFERTAS OFR ON OFR.OFR_ID = AFR.OFR_ID AND OFR.BORRADO = 0
 											INNER JOIN REM01.DD_TOF_TIPOS_OFERTA tof on tof.dd_tof_id = ofr.dd_tof_id 
@@ -52,20 +49,20 @@ DECLARE
 											INNER JOIN REM01.TEX_TAREA_EXTERNA TEX on TAC.TAR_ID = TEX.TAR_ID AND TEX.BORRADO = 0
 											INNER JOIN REM01.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID
 											INNER JOIN REM01.DD_TPO_TIPO_PROCEDIMIENTO TPO ON TPO.DD_TPO_ID = TAP.DD_TPO_ID AND TPO.DD_TPO_CODIGO in ('T014','T015')
-										WHERE ACT.USUARIOMODIFICAR = 'HREOS-5932-PUNTO2' and TOF.DD_TOF_CODIGO = '02';
+										WHERE ACT.USUARIOMODIFICAR = 'HREOS-5932-PUNTO1' and TOF.DD_TOF_CODIGO = '02';
     									
     						
     FILA OFERTAS_A_ELIMINAR%ROWTYPE;
     
 BEGIN
 	
-  DBMS_OUTPUT.put_line('[INICIO] Ejecutando borrado de tareas y ofertas ...........');
+  DBMS_OUTPUT.put_line('[INICIO] Ejecutando inserción de presupuestos...........');
 	      	
 	OPEN OFERTAS_A_ELIMINAR;
 	
 	V_COUNT := 0;
 	V_COUNT2 := 0;
-		
+	
 	LOOP
   		FETCH OFERTAS_A_ELIMINAR INTO FILA;
   		EXIT WHEN OFERTAS_A_ELIMINAR%NOTFOUND;
@@ -90,7 +87,7 @@ BEGIN
   		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE SET 
 						TRA_FECHA_FIN = SYSDATE
 					  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
-					  , FECHAMODIFICAR = SYSDATE
+					  , FECHABORRAR = SYSDATE
 					  , BORRADO = 1
 					WHERE TRA_ID = '||FILA.TRA_ID||'';
 		
@@ -115,25 +112,25 @@ BEGIN
 					WHERE TAR_ID = '||FILA.TAR_ID||'';
   		
   		EXECUTE IMMEDIATE V_MSQL;
-  		 		
+ 		
   		  		
   		V_COUNT := V_COUNT + 1 ;
         V_COUNT2 := V_COUNT2 +1 ;
         
-        IF V_COUNT2 = 5000 THEN
+        IF V_COUNT2 = 100 THEN
             
             COMMIT;
             
-            DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
+            DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
             V_COUNT2 := 0;
             
         END IF;
   		
 	END LOOP;
 	
-    DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
     
-    DBMS_OUTPUT.PUT_LINE('	[INFO] Se han DADO DE BAJA '||V_COUNT||' OFERTAS y TRAMITES ASOCIADOS ');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Se han DADO DE BAJA '||V_COUNT||' OFERTAS y TRAMITES ASOCIADOS ');
     
 	CLOSE OFERTAS_A_ELIMINAR;
 	

@@ -209,6 +209,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCivilesURSUS;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
@@ -3720,15 +3721,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setRegimenMatrimonial(null);
 			}
 
-			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge()) && esGananciales) {
-				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge());
-				compradorExpediente.setTipoDocumentoConyuge(tipoDocumento);
-
-			}else {
-				compradorExpediente.setTipoDocumentoConyuge(null);
-			}
-
 			if (!Checks.esNulo(dto.getDocumentoConyuge()) && esGananciales) {
 				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
 			}else {
@@ -3740,6 +3732,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge()));
 			}else {
 				compradorExpediente.setTipoDocumentoConyuge(null);
+			}
+			
+			if ((Checks.esNulo(dto.getNumeroClienteUrsusConyuge()) || Checks.esNulo(dto.getNumeroClienteUrsusBhConyuge())) && !estaCasado) {
+				compradorExpediente.setNumUrsusConyuge(null);
+				compradorExpediente.setNumUrsusConyugeBh(null);
 			}
 
 			compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
@@ -9445,7 +9442,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(!Checks.esNulo(ejecutarDatosCliente)) {
 				String codigoParaGuardarEstadoCivilURSUS = getCodigoEstadoCivilUrsusRem(String.valueOf(ejecutarDatosCliente.getCodigoEstadoCivil())) ;
 				if(codigoParaGuardarEstadoCivilURSUS != NO_EXISTE_CODIGO_REM) {
-					DDEstadosCiviles estadoCivilURSUS = genericDao.get(DDEstadosCiviles.class,genericDao.createFilter(FilterType.EQUALS,"codigo", codigoParaGuardarEstadoCivilURSUS));
+					DDEstadosCivilesURSUS estadoCivilURSUS = genericDao.get(DDEstadosCivilesURSUS.class,genericDao.createFilter(FilterType.EQUALS,"codigo", codigoParaGuardarEstadoCivilURSUS));
 					comprador.setEstadoCivilURSUS(estadoCivilURSUS.getId());
 				}else {
 					comprador.setEstadoCivilURSUS(null);

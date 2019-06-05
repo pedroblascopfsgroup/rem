@@ -617,5 +617,12 @@ public interface OfertaApi {
 	public boolean existeClienteOComprador(Long idActivo, Long idAgrupacion, Long idExpediente, String docCliente, String codtipoDoc);
 	
 	public boolean esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente);
+	
+	/**
+	 * @param ofrNumOferta
+	 * @param codTarea
+	 * @return devuelve el id de la tarea activa.
+	 */
+	public Long getIdTareaByNumOfertaAndCodTarea(Long ofrNumOferta, String codTarea);
 }
 

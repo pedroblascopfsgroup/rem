@@ -103,6 +103,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 				}
 			}
 		},
+		
+	   comboEstadoCivilURSUS: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosCivilesURSUS'}
+			},
+			autoLoad: true   	
+	    },
 
 		comboRegimenesMatrimoniales: {
 			model: 'HreRem.model.ComboBase',

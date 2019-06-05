@@ -134,49 +134,46 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
 				
 		BeanUtils.copyProperties(activoDto, activo);
+		
+		if (activo.getInfoRegistral() != null && !esUA) {
+			BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
+		}	
+		
+		if(esUA){
+		
+			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId());
+			Activo activoMatriz = null;
+			if (!Checks.esNulo(agr)) {
+				activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
+			}
 
-		if (activo.getInfoRegistral() != null || esUA) {
-			if (!esUA) {
-				BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
-			}else {
-				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId());
-				Activo activoMatriz = null;
-				if (!Checks.esNulo(agr)) {
-					activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
-				}
-				if (!Checks.esNulo(activoMatriz) && !Checks.esNulo(activoMatriz.getAdjJudicial())) {
-					BeanUtils.copyProperty(activoDto,"tipoTituloActivoMatriz", DDTipoTituloActivo.tipoTituloJudicial);
-					BeanUtils.copyProperties(activoDto, activoMatriz.getInfoRegistral());
-				}
+			if (!Checks.esNulo(activoMatriz.getInfoRegistral())) {
+				BeanUtils.copyProperties(activoDto, activoMatriz.getInfoRegistral());
+			}
+			if (!Checks.esNulo(activoMatriz.getTipoTitulo())) {
+				BeanUtils.copyProperty(activoDto,"tipoTituloActivoMatriz", activoMatriz.getTipoTitulo().getCodigo());
+			}
+			if(!Checks.esNulo(activoMatriz.getAdjJudicial())){
+				BeanUtils.copyProperties(activoDto, activoMatriz.getAdjJudicial());
 			}
 			
+			if(!Checks.esNulo(activoMatriz.getAdjNoJudicial())){
+				BeanUtils.copyProperties(activoDto, activoMatriz.getAdjNoJudicial());
+			}
+
 		}
-		
-		if (activo.getAdjNoJudicial() != null || esUA) {
+		else{
 			
-			if (!esUA) {
+			if(activo.getAdjJudicial() != null) {
+				BeanUtils.copyProperties(activoDto, activo.getAdjJudicial());
+			}
+			
+			if (activo.getAdjNoJudicial() != null) {
 				BeanUtils.copyProperties(activoDto, activo.getAdjNoJudicial());
-			}else {
-				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId());
-				Activo activoMatriz = null;
-				if (!Checks.esNulo(agr)) {
-					activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
-				}
-				if (!Checks.esNulo(activoMatriz) && !Checks.esNulo(activoMatriz.getAdjNoJudicial())) {
-					BeanUtils.copyProperty(activoDto,"tipoTituloActivoMatriz", DDTipoTituloActivo.tipoTituloNoJudicial);
-					BeanUtils.copyProperties(activoDto, activoMatriz.getAdjNoJudicial());
-				}
 			}
 		}
-		
-		if (!Checks.estaVacio(activo.getPdvs())) {
-				BeanUtils.copyProperties(activoDto, activo.getPdvs().get(0));
-		}
-		
-		
-		
-		
-		
+
+
 		if (activo.getTitulo() != null) {
 			BeanUtils.copyProperties(activoDto, activo.getTitulo());
 			if (activo.getTitulo().getEstado() != null) {

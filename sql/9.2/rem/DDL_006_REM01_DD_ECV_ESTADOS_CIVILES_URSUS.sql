@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190604
+--## FECHA_CREACION=20190605
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6440
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar el diccionario de estados civiles.
+--## Finalidad: Tabla para gestionar el diccionario de estados civiles URSUS.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -32,8 +32,22 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_TEXT_TABLA VARCHAR2(30 CHAR) := 'DD_ECV_ESTADOS_CIVILES_URSUS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'ECV'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
+    V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de estatos civiles URSUS'; -- Vble. para los comentarios de las tablas
 
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+    	T_TIPO_DATA('01','Soltero','Soltero'),
+    	T_TIPO_DATA('02','Casado','Casado'),
+    	T_TIPO_DATA('03','Divorciado','Divorciado'),
+    	T_TIPO_DATA('04','Viudo','Viudo'),
+    	T_TIPO_DATA('05','Desconocido','Desconocido'),
+    	T_TIPO_DATA('06','Separado legal','Separado legal'),
+    	T_TIPO_DATA('07','Religioso','Religioso'),
+    	T_TIPO_DATA('08','Nulidad Matrimonial','Nulidad Matrimonial')
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
     
 BEGIN
 	
@@ -104,6 +118,35 @@ BEGIN
 	
 
 	COMMIT;
+
+	 -- LOOP para insertar los valores --
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+        --Comprobar el dato a insertar.
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS > 0 THEN				
+          DBMS_OUTPUT.PUT_LINE('[INFO]: YA EXISTE EL CÓDIGO '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
+       ELSE
+       	-- Si no existe se inserta.
+          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
+          V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
+          EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
+          V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
+                      'DD_'||V_TEXT_CHARS||'_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''HREOS-6640'',SYSDATE,0 FROM DUAL';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+
+       END IF;
+      END LOOP;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO '||V_TEXT_TABLA||' ACTUALIZADO CORRECTAMENTE ');
 
 EXCEPTION
      WHEN OTHERS THEN 

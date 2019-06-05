@@ -530,7 +530,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							editable: false,
 							readOnly:true,
 							bind: {
-								store: '{comboEstadoCivil}'
+								store: '{comboEstadoCivilURSUS}'
 							}
 						},
 						{

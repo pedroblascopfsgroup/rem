@@ -698,6 +698,8 @@ public interface ParticularValidatorApi {
 	Boolean isAgrupacionOfGiants(String numAgrupacion);
 
 	Boolean isActivoOfGiants(String numActivo);
+	
+	List<BigDecimal> activosEnAgrupacion(String numOferta);
 
 	/**
 	 * @param entidadFinanciera

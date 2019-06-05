@@ -71,12 +71,19 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	},
 
 	onClickContinuar: function() {
-		var me = this,
-			idExpediente = me.getViewModel().get("comprador").data.idExpedienteComercial;
+		
+		var me = this;
 		
 		if(me.comprobarFormato()){
-			me.comprobarDatosFormularioComprador();
+			
+			var	idExpediente = me.getViewModel().get("comprador").data.idExpedienteComercial;
+			
+			if(me.comprobarFormato()){
+				me.comprobarDatosFormularioComprador();
+			}
 		}
+		
+		
 	},
 
 	permitirEdicionDatos: function() {
@@ -114,9 +121,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoNumeroDocumentoConyugue = me.lookupReference('numRegConyuge'),
 		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef')
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
-		
-		campoTipoDocumentoConyuge.setValue()
-
 		
 		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO']) && me.esBankia()) {
 			campoTipoPersona.setDisabled(true);
@@ -330,7 +334,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			campoClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge'),
 			campoNumConyuge = me.lookupReference('numRegConyuge'),
 			codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
-		
 		// Se comprueba si el expediente es de VENTA a través de la descripcion
 		if(codigoTipoExpediente == null){
 			if (me.getViewModel().data.esOfertaVentaFicha == true){
@@ -351,6 +354,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				} else {
 					campoClienteUrsusConyuge.reset();
 					campoClienteUrsusConyuge.setDisabled(true);
+					me.establecerNumClienteURSUSConyuge();
 				}
 			}
 		} else if (codigoTipoExpediente == CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER']) {
@@ -830,6 +834,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			fieldNumeroClienteUrsusBhConyuge.setValue(numeroUrsusConyuge);
 		} else if (!esBankiaBH && !Ext.isEmpty(fieldNumeroClienteUrsusConyuge)){
 			fieldNumeroClienteUrsusConyuge.setValue(numeroUrsusConyuge);
+		} else if(esBankiaBH && Ext.isEmpty(fieldNumeroClienteUrsusBhConyuge) ){
+			fieldNumeroClienteUrsusBhConyuge.reset();
+		} else if (!esBankiaBH && Ext.isEmpty(fieldNumeroClienteUrsusConyuge)){
+			fieldNumeroClienteUrsusConyuge.reset();
 		}
 	},
 	
@@ -987,16 +995,15 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	 * @returns True si el documento cumple con los criterios de formato, False si no los cumple.
 	 */
 	comprobarFormato: function() {
-    	
 		var me = this;
-		valueComprador = me.lookupReference('nuevoCompradorNumDoc');
+		valueComprador = me.lookupReference('numeroDocumento');
 		valueConyuge = me.lookupReference('numRegConyuge');
 		valueRte = me.lookupReference('numeroDocumentoRte');
 		
 		if(me.lookupReference('tipoPersona').getValue() === "1"){
 			if(valueComprador != null){
-				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
-					|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
+				if(me.lookupReference('tipoDocumento').value == "01" || me.lookupReference('tipoDocumento').value == "15"
+					|| me.lookupReference('tipoDocumento').value == "03"){
 
 					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
 					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
@@ -1023,7 +1030,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						 return false;
 					 }
 
-				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "02"){
+				}else if(me.lookupReference('tipoDocumento').value == "02"){
 
 					var texto=valueComprador.value;
 			        var pares = 0; 
@@ -1066,7 +1073,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
+				}else if(me.lookupReference('tipoDocumento').value == "04"){
 					
 				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
 
@@ -1173,8 +1180,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		}else{
 			
 			if(valueComprador != null){
-				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
-					|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
+				if(me.lookupReference('tipoDocumento').value == "01" || me.lookupReference('tipoDocumento').value == "15"
+					|| me.lookupReference('tipoDocumento').value == "03"){
 
 					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
 					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
@@ -1201,7 +1208,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						 return false;
 					 }
 
-				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "02"){
+				}else if(me.lookupReference('tipoDocumento').value == "02"){
 
 					var texto=valueComprador.value;
 			        var pares = 0; 
@@ -1244,7 +1251,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
+				}else if(me.lookupReference('tipoDocumento').value == "04"){
 					
 				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
 

@@ -116,7 +116,7 @@ public class ExcelManager implements ExcelManagerApi {
 		try {
 			document = upload(excelFileItemDto);
 			process = validateFormat(document);
-			if (process.getEstadoProceso().equals(MSVDDEstadoProceso.CODIGO_ERROR)) return false;
+			if (MSVDDEstadoProceso.CODIGO_ERROR.equals(process.getEstadoProceso().getCodigo())) return false;
 			process = validateContent(document);
 		} catch (Exception e) {
 			return false;
@@ -124,7 +124,6 @@ public class ExcelManager implements ExcelManagerApi {
 		return true;
 	}
 	
-	@SuppressWarnings("unused")
 	@Override
 	public Boolean uploadOnly(MSVExcelFileItemDto excelFileItemDto) throws Exception {
 		Boolean resultado = false;
@@ -140,7 +139,6 @@ public class ExcelManager implements ExcelManagerApi {
 		return resultado;
 	}
 	
-	@SuppressWarnings("unused")
 	@Override
 	public Boolean validateContentOnly(Long idProcess) throws Exception{
 		

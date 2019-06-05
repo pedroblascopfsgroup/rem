@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5932
 --## PRODUCTO=NO
---## Finalidad: PUNTO 3.3.5 - D
+--## Finalidad: PUNTO 3.3.1 - D
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -24,7 +24,7 @@ DECLARE
     err_msg VARCHAR2(2048); -- Mensaje de error.
     V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas.
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas.
-    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'HREOS-5932-PUNTO3-A-VA';
+    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'HREOS-5932-PUNTO3-VA';
     V_MSQL VARCHAR2(4000 CHAR);
     V_MAX_PTO_ID NUMBER(16,0);
     V_EJE_ID NUMBER(16,0);
@@ -55,7 +55,6 @@ DECLARE
 											INNER JOIN REM01.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID
 											INNER JOIN REM01.DD_TPO_TIPO_PROCEDIMIENTO TPO ON TPO.DD_TPO_ID = TAP.DD_TPO_ID AND TPO.DD_TPO_CODIGO in ('T013')
 										WHERE ACT.USUARIOMODIFICAR like 'HREOS-5932-PUNTO3%' and TOF.DD_TOF_CODIGO = '01' and tco.dd_tco_codigo in ('03');
-
     									
     						
     FILA OFERTAS_A_ELIMINAR%ROWTYPE;
@@ -93,7 +92,7 @@ BEGIN
   		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE SET 
 						TRA_FECHA_FIN = SYSDATE
 					  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
-					  , FECHAMODIFICAR = SYSDATE
+					  , FECHABORRAR = SYSDATE
 					  , BORRADO = 1
 					WHERE TRA_ID = '||FILA.TRA_ID||'';
 		
@@ -103,7 +102,7 @@ BEGIN
 						TAR_FECHA_FIN = SYSDATE
 					  , TAR_TAREA_FINALIZADA = 1
 					  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
-					  , FECHAMODIFICAR = SYSDATE
+					  , FECHABORRAR = SYSDATE
 					  , BORRADO = 1
 					WHERE TAR_ID = '||FILA.TAR_ID||'';
 		
@@ -118,7 +117,7 @@ BEGIN
 					WHERE TAR_ID = '||FILA.TAR_ID||'';
   		
   		EXECUTE IMMEDIATE V_MSQL;
-  		 		
+  		  		
   		  		
   		V_COUNT := V_COUNT + 1 ;
         V_COUNT2 := V_COUNT2 +1 ;

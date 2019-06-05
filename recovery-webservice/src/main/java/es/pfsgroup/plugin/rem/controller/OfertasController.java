@@ -491,20 +491,25 @@ public class OfertasController {
 	}
 	
 	/**
-	 * Avanza tareas Ejem: IP:8080/pfs/rest/ofertas/avanzaOferta
+	 * Avanza Ofertas Ejem: http://172.17.0.2:8080/pfs/rest/ofertas/avanzaOferta
 	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
 	 * 
-	 * BODY: {"id":"4271073","data": {"observaciones":["asdasdasd"], 
-	 * "comboFirma": ["01"], 
-	 * "motivoNoFirma":["01"], 
-	 * "tieneReserva":["0"],
-	 * "fechaFirma":["2019-05-09"],
-	 * "asistenciaPBC":["0"], 
-	 * "obsAsisPBC":["sin asistencia"]}}
+	 * BODY: {
+	 *			"ofrNumOferta" :"90185574",
+	 *			"codTarea"	: "T013_DefinicionOferta",
+	 *			"data": {"observaciones":["asdasdasd"],
+	 *			"comboConflicto":["02"],
+	 *			"comboRiesgo":["02"],
+	 *			"comite":["29"],
+	 *			"fechaEnvio":["05/06/2019"],
+	 *			"numExpediente":["164698"],
+	 *			"comiteSuperior":["02"]
+	 *			}
+	 *	}
 	 * 
 	 * @param model
 	 * @param request
-	 * @return
+	 * @return model
 	 */
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/ofertas/avanzaOferta")

@@ -169,7 +169,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		var me = this,
 			wizard = me.getView().up('wizardBase'),
 			esBankia = wizard.expediente.get('esBankia');
-		
 		if (esBankia){
 			return true;
 		} else {
@@ -182,7 +181,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			wizard = me.getView().up('wizardBase'),
 			esBankia = wizard.expediente.get('esBankia'),
 			esAlquiler = wizard.expediente.get('tipoExpedienteCodigo') === CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
-			
 		if (esBankia && esAlquiler){
 			return true;
 		} else {
@@ -982,9 +980,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			wizard = me.getView().up('wizardBase'),
 			datosClienteUrsusWindow = Ext.create('HreRem.view.expedientes.DatosClienteUrsus', {
 				clienteUrsus: datosClienteUrsus,
-				storeProblemasVenta: wizard.storeProblemasVenta
+				storeProblemasVenta: wizard.storeProblemasVenta,
+				alquiler: me.esBankiaAlquiler()
 			});
-
 		wizard.setX(Ext.Element.getViewportWidth() / 30);
 		wizard.add(datosClienteUrsusWindow);
 		datosClienteUrsusWindow.show();

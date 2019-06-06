@@ -83,6 +83,7 @@ public class ClienteMicroservicioGenerico {
 		
 		if (serviceUrl.contains("https:")) {
 			headers.put(HTTPS_HEADER_KEY,HTTPS_HEADER_VALUE);
+			headers.put("Accept", "text/html,application/xhtml+xml,application/xml, application/json");
 			result = httpsClient.processRequest(serviceUrl, method, headers, jsonString,
 					Integer.parseInt(timeout), "UTF-8");
 		} else {

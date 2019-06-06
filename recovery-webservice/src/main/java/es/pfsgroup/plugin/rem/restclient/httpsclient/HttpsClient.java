@@ -86,7 +86,8 @@ public class HttpsClient {
 			}
 			
 			// Body
-			if (jsonString != null && !jsonString.isEmpty()) {				
+			if (jsonString != null && !jsonString.isEmpty()) {
+				httpsURLConnection.setRequestProperty("Content-Type", "application/json");
 				httpsURLConnection.setDoOutput(true);
 				OutputStream body = httpsURLConnection.getOutputStream();
 

@@ -67,11 +67,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 		            flex: 0.6,
 		            editor: {
 		            	xtype: 'textfield',
-		            	maxLength: 20,
-		            	validator: function(value){
-		            		var me = this;
-		            		return me.lookupController().validateDocProveedor(value);
-		            	}
+		            	maxLength: 20
 		            }
 		        },
 		        {

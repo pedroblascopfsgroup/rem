@@ -9,6 +9,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			idComprador = wizard.idComprador,
 			idExpediente = wizard.expediente.get('id'),
 			form = me.getView().getForm();
+
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 
 		model.setId(idComprador);
@@ -30,6 +31,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				me.getViewModel().set('comprador', record);
 				wizard.unmask();
 				me.bloquearCampos();
+				me.getAdvertenciaProblemasUrsus(me.getViewModel().get('comprador').data.problemasUrsus)
 			},
 			failure: function(record, operation) {
 				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
@@ -42,7 +44,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		Ext.Array.each(me.getView().query('field[isReadOnlyEdit]'), function(field) {
 			field.setReadOnly(!wizard.modoEdicion);
 		});
-		me.getAdvertenciaProblemasUrsus();
+		
 	},
 
 	onClickCancelar: function() {
@@ -1474,13 +1476,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			me.lookupReference('cambioTitulo').setTitle(HreRem.i18n('title.nexos'));
 	},
 	
-	getAdvertenciaProblemasUrsus : function() {
+	getAdvertenciaProblemasUrsus : function(problemasUrsusComprador) {
 		var me = this, expediente = me.getView().up('wizardBase').expediente
 		, form = me.getViewModel().getView()
 		, problemasUrsus = expediente.get('problemasUrsus')
 		, esBankia = expediente.get('esBankia');
 
-		if (esBankia && problemasUrsus == "true") {
+		if (esBankia && problemasUrsus == "true" && problemasUrsusComprador.toUpperCase()=="SI") {
 			me.getViewModel().set('textoAdvertenciaProblemasUrsus','Problemas URSUS');
 		}
 	}

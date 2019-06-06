@@ -149,10 +149,10 @@ bye
 EOF
 echo "Fichero movido satisfactoriamente"
 
-cd $INSTALL_DIR/control/etl/gestinova/output
+cd $INSTALL_DIR/control/etl/gestinova99/output
 
 echo "Gestoria GESTINOVA99 - GESTINOVA99_STOCK_GASTOS_RG_${1}.dat"
-lftp -u sftp_gestinova9,"u2K#Plqv" sftp://192.168.49.14 <<EOF
+lftp -u sftp_gestinova99,"u2K#Plqv" sftp://192.168.49.14 <<EOF
 cd /output/
 mput $INSTALL_DIR/control/etl/gestinova99/output/GESTINOVA99_STOCK_GASTOS_RG_${1}.dat
 bye

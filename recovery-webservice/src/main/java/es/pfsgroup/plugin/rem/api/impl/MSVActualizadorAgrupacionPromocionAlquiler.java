@@ -152,7 +152,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		bien.setAuditoria(auditoria);
 		genericDao.save(Bien.class, bien);
 		
-		//Agrupacion
+		//Agrupacion 
 		ActivoAgrupacionActivo activoAgrupacionActivo = null;
 
 		//-----Se obtiene el activo matriz de la agrupacion indicada en la carga masiva  para generar la plantilla de guardado de unidades alquilables.
@@ -210,8 +210,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			if (!Checks.esNulo(activoMatriz.getTipoAlquiler()))
 				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
 			if (!Checks.esNulo(activoMatriz.getBloqueoTipoComercializacionAutomatico()))
-				unidadAlquilable.setBloqueoTipoComercializacionAutomatico(activoMatriz.getBloqueoTipoComercializacionAutomatico());
-			
+				unidadAlquilable.setBloqueoTipoComercializacionAutomatico(activoMatriz.getBloqueoTipoComercializacionAutomatico());			
 		}
 		
 		
@@ -225,7 +224,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		Filter scmFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER);
 		DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, scmFilter);
 		unidadAlquilable.setSituacionComercial(situacionComercial);
-		
+		if (!Checks.esNulo(activoMatriz.getNumInmovilizadoBnk())) {
+			unidadAlquilable.setNumInmovilizadoBnk(activoMatriz.getNumInmovilizadoBnk());
+		}
 		//-----Tipo del activo
 		if(!Checks.esNulo(exc.dameCelda(fila, 2))){
 			String codTipo = exc.dameCelda(fila, 2);

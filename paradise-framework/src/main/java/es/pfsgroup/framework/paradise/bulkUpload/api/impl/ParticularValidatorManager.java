@@ -1533,6 +1533,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_AGR_AGRUPACION "
 				+ "		 WHERE AGR_NUM_AGRUP_REM =" + numAgrupacion
+				+ "      AND BORRADO = 0");
+				//+ "      AND DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeAgrupacionPA(String numAgrupacion){
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_AGR_AGRUPACION "
+				+ "		 WHERE AGR_NUM_AGRUP_REM =" + numAgrupacion
 				+ "      AND DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
 		return !"0".equals(resultado);
 	}

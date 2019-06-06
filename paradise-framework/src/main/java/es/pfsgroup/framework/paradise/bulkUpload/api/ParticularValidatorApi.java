@@ -306,6 +306,8 @@ public interface ParticularValidatorApi {
 	Boolean existeExpedienteComercial(String numExpediente);
 
 	Boolean existeAgrupacion(String numAgrupacion);
+	
+	Boolean existeAgrupacionPA(String numAgrupacion);
 
 	Boolean existeTipoGestor(String tipoGestor);
 

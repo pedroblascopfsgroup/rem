@@ -504,7 +504,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						defaultType: 'textfieldbase',
 						colspan: 4,
 						reference:'judicial',
-						hidden: false,
+						bind:{
+							hidden: '{!datosRegistrales.isJudicial}',
+							disabled: '{!datosRegistrales.isJudicial}'
+						},
 						title: HreRem.i18n('title.adjudicacion.judicial'),
 						items :
 						
@@ -708,7 +711,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						xtype:'fieldsettable',
 						reference:'noJudicial',
 						colspan: 4,
-		            	hidden: false,
+						bind:{
+							hidden: '{!datosRegistrales.isNotJudicial}',
+							disabled: '{!datosRegistrales.isNotJudicial}'
+						},
 						defaultType: 'textfieldbase',
 						title: HreRem.i18n('title.adjudicacion.no.judicial'),
 						items : [

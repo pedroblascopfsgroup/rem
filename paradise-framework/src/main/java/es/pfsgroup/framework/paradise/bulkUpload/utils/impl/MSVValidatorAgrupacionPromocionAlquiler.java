@@ -189,7 +189,7 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
-			if(!particularValidator.existeAgrupacion(exc.dameCelda(1, 0))){
+			if(!particularValidator.existeAgrupacionPA(exc.dameCelda(1, 0))){
 				listaFilas.add(1);
 			}
 		}catch(Exception e){

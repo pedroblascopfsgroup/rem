@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 ODP 05/06/19 Añadido borrado duplicados
 --#########################################
 --*/
 
@@ -133,7 +134,22 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Se actualizan los activos que no esten en la excel y que compartan agrupacion restringida con un activo que si este en la excel '||V_COUNT||'');
+
+
+
+--##        0.2 ODP 05/06/19 Añadido borrado duplicados
+	-- BORRADO DUPLICADOS 
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.AUX_HREOS_5932 
+				WHERE ROWID IN  (select ROWID from ( 
+						    select ID_HAYA , row_number() over (partition by ID_HAYA order by ID_HAYA desc) AS ORDEN 
+						    from '||V_ESQUEMA||'.AUX_HREOS_5932 AUX )
+						where ORDEN > 1
+						)';
+						
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han borrado '||SQL%ROWCOUNT||' registros. Motivo -> NUEVOS DUPLICADOS'); 
 	
+
+
 	-- BORRADO VENDIDOS
 	
 	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.AUX_HREOS_5932 

@@ -221,5 +221,36 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
     	
 		return tareasExternasId;
     }
+    
+    /**
+	 * Devuelve las tareas activas asociadas a un trabajo de un tipo de trámite
+	 * @param tbjNumTrabajo el número de trabajo (TBJ_NUM_TRABAJO)
+	 * @param codigoTareaProcedimiento el codigo del tipo de procedimiento
+	 * @return la lista de tareas activas
+	 */
+    @Override
+    public List<Long> getTareasBytbjNumTrabajoCodigoTarea(Long tbjNumTrabajo,String codigoTareaProcedimiento) {
+    	
+    	String idTrabajoStr = String.valueOf(tbjNumTrabajo);
+    	
+    	List<Object> objetosLista = rawDao.getExecuteSQLList("SELECT TEX.TAR_ID "
+    			+ "FROM TEX_TAREA_EXTERNA TEX "
+    			+ "JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TAR_ID = TEX.TAR_ID "
+    			+ "JOIN ACT_TBJ_TRABAJO TBJ ON TBJ.ACT_ID = TAC.ACT_ID "
+    			+ "JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID "
+    			+ "WHERE TBJ.TBJ_NUM_TRABAJO = "+ idTrabajoStr+" "
+    			+ "AND TBJ.BORRADO = 0 "
+    			+ "AND TAP.BORRADO = 0 "
+    			+ "AND UPPER(TAP.TAP_CODIGO) = UPPER ('"+ codigoTareaProcedimiento +"')");
+    	
+    	List<Long> tareasExternasId = new ArrayList<Long>();
+    	
+    	for(Object o:objetosLista){
+    		String objetoString = o.toString();
+    		tareasExternasId.add(Long.valueOf(objetoString));
+    	}
+    	
+		return tareasExternasId;
+    }
 
 }

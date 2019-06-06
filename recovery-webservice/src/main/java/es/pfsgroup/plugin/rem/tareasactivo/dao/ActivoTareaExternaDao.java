@@ -43,4 +43,6 @@ public interface ActivoTareaExternaDao extends AbstractDao<TareaExterna, Long>{
 	List<Long> getTareasExternasIdByOfertaId(Long idOferta);
 
 	List<Long> getTareasByIdOfertaCodigoTarea(Long idOferta, String codigoTareaProcedimiento);
+	
+	List<Long> getTareasBytbjNumTrabajoCodigoTarea(Long tbjNumTrabajo, String codigoTareaProcedimiento);
 }

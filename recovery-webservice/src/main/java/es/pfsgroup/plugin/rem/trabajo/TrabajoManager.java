@@ -141,6 +141,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
@@ -265,6 +266,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private UsuarioDao usuarioDao;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	@Autowired
+	private ActivoTareaExternaDao activoTareaExternaDao;
 	
 	@Override
 	public String managerName() {
@@ -4097,5 +4101,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return genericDao.get(Trabajo.class, filter);
 	}
 
-
+	public Long getIdTareaBytbjNumTrabajoAndCodTarea(Long tbjNumTrabajo, String codTarea) {
+		Long idTarea =null;
+		List<Long> tareasTramite = activoTareaExternaDao.getTareasBytbjNumTrabajoCodigoTarea(tbjNumTrabajo,codTarea);
+        if(!Checks.esNulo(tareasTramite) && !tareasTramite.isEmpty()) {
+        	idTarea = tareasTramite.get(0);
+        }
+		return idTarea;
+	}
 }

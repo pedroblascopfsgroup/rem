@@ -43,6 +43,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
@@ -89,6 +90,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRespuestaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.rest.dto.TareaRequestDto;
 import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -107,6 +109,8 @@ public class TrabajoController extends ParadiseJsonController {
 	@Autowired
 	private TrabajoApi trabajoApi;
 	
+	@Autowired
+	private AgendaAdapter agendaAdapter;
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -1420,6 +1424,66 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
 		restApi.sendResponse(response, model, request);
+	}
+	
+	/**
+	 * Avanza trabajos Ejem: IP:8080/pfs/rest/trabajo/avanzaTrabajo
+	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
+	 * 
+	 * BODY: {"tbjNumTrabajo":"4271073","codTarea":"T013_PosicionamientoYFirma","data": {"observaciones":["asdasdasd"], 
+	 *  "comboConflicto": ["02"], 
+	 *	"comboRiesgo":["02"], 
+	 *	"comite":["29"],
+	 *	"fechaEnvio":["2019-05-09"],
+	 *	"numExpediente":["164698"], 
+	 *	"comiteSuperior":["02"]}}
+	 * 
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/trabajo/avanzaTrabajo")
+	public void avanzaTrabajo( ModelMap model, RestRequestWrapper request, HttpServletResponse response){
+		TareaRequestDto jsonData = null;
+		Map<String, String[]> datosTarea = new HashMap<String, String[]>();
+		JSONObject jsonFields = null;
+		Long tareaId = null;
+		
+		boolean resultado = false;
+		
+		try {
+			
+			jsonFields = request.getJsonObject();
+			jsonData = (TareaRequestDto) request.getRequestData(TareaRequestDto.class);
+			datosTarea = jsonData.getData();
+			
+			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+
+			} else {
+				tareaId = trabajoApi.getIdTareaBytbjNumTrabajoAndCodTarea(Long.parseLong(jsonFields.get("tbjNumTrabajo").toString()), jsonFields.get("codTarea").toString());
+				String[] idTarea = new String[1];
+				idTarea[0] = tareaId.toString();
+				datosTarea.put("idTarea",idTarea);
+
+				resultado = agendaAdapter.validationAndSave(datosTarea);
+
+				model.put("id", jsonFields.get("id"));
+				model.put("data", resultado);
+				model.put("error", "null");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error avance tarea ", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", jsonFields.get("id"));
+			model.put("data", resultado);
+			model.put("error", RestApi.REST_MSG_VALIDACION_TAREA+": "+e.getMessage());
+		}
+
+		restApi.sendResponse(response, model, request);
+		
 	}
 	
 }

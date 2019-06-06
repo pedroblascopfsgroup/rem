@@ -131,6 +131,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboMunicipioSinFiltro'
 			}
+		},
+		storeProblemasVenta: {
+			model: 'HreRem.model.DatosClienteUrsus',
+			autoLoad: true,
+			autoSync: true,
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus',
+				extraParams: {numeroUrsus: '', idExpediente: '{comprador.idExpedienteComercial}'}
+			}
 		}
 	}
 });

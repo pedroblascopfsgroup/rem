@@ -294,14 +294,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PROBLEMA = "Problema";
 	
 	//Codigo Estdo Civil URSUS
-	private static final String DESCONOCIDO = "0" ;
+	private static final String DESCONOCIDO = "5" ;
 	private static final String SOLTERO = "1";
 	private static final String CASADO = "2";
-	private static final String VIUDO = "3";
-	private static final String SEPARADO_LEGAL = "4";
-	private static final String RELIGIOSO = "5";
-	private static final String DIVORCIADO = "6";
-	private static final String NULIDAD_MATRIMONIAL = "7";
+	private static final String VIUDO = "4";
+	private static final String SEPARADO_LEGAL = "6";
+	private static final String RELIGIOSO = "7";
+	private static final String DIVORCIADO = "3";
+	private static final String NULIDAD_MATRIMONIAL = "8";
 	
 	
 	private static final String SEPARACION_BIENES = "0";
@@ -9234,23 +9234,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	
 	public String getCodigoEstadoCivilUrsusRem(String codigoUrsusEstadoCivil) {
-		String codigo = NO_EXISTE_CODIGO_REM;
+		String codigo = NO_EXISTE_CODIGO_REM; 
 			if(SOLTERO.equals(codigoUrsusEstadoCivil)) {
-				codigo = DDEstadosCiviles.CODIGO_ESTADO_CIVIL_SOLTERO;
+				codigo = DDEstadosCivilesURSUS.CODIGO_ESTADO_CIVIL_SOLTERO;
 			}else if(CASADO.equals(codigoUrsusEstadoCivil)) {
-				codigo = DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO;
+				codigo = DDEstadosCivilesURSUS.CODIGO_ESTADO_CIVIL_CASADO;
 			}else if(VIUDO.equals(codigoUrsusEstadoCivil)){
-				codigo = DDEstadosCiviles.CODIGO_ESTADO_CIVIL_VIUDO;
+				codigo = DDEstadosCivilesURSUS.CODIGO_ESTADO_CIVIL_VIUDO;
 			}else if(DIVORCIADO.equals(codigoUrsusEstadoCivil)) {
-				codigo = DDEstadosCiviles.CODIGO_ESTADO_CIVIL_DIVORCIADO;
-			}else if(DESCONOCIDO.equals(codigo)) {
-				codigo = DDEstadosCiviles.CODIGO_ESTADO_DESCONOCIDO;
-			}else if(SEPARADO_LEGAL.equals(codigo)) {
-				codigo = DDEstadosCiviles.CODIGO_ESTADO_SEPARADO_LEGAL;
-			}else if(RELIGIOSO.equals(codigo)) {
-				codigo = DDEstadosCiviles.CODIGO_ESTADO_RELIGIOSO;
-			}else if(NULIDAD_MATRIMONIAL.equals(codigo)) {
-				codigo = DDEstadosCiviles.CODIGO_ESTADO_NULIDAD_MATRIMONIAL;
+				codigo = DDEstadosCivilesURSUS.CODIGO_ESTADO_CIVIL_DIVORCIADO;
+			}else if(DESCONOCIDO.equals(codigoUrsusEstadoCivil)) {
+				codigo = DDEstadosCivilesURSUS.CODIGO_ESTADO_DESCONOCIDO;
+			}else if(SEPARADO_LEGAL.equals(codigoUrsusEstadoCivil)) {
+				codigo = DDEstadosCivilesURSUS.CODIGO_ESTADO_SEPARADO_LEGAL;
+			}else if(RELIGIOSO.equals(codigoUrsusEstadoCivil)) {
+				codigo = DDEstadosCivilesURSUS.CODIGO_ESTADO_RELIGIOSO;
+			}else if(NULIDAD_MATRIMONIAL.equals(codigoUrsusEstadoCivil)) {
+				codigo = DDEstadosCivilesURSUS.CODIGO_ESTADO_NULIDAD_MATRIMONIAL;
 			}
 			
 			 
@@ -9288,6 +9288,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if(!Checks.esNulo(comprador)) {
 						if(!Checks.esNulo(comprador.getProblemasUrsus())) {
 							hayProblemasUrsus = comprador.getProblemasUrsus();
+							if(hayProblemasUrsus) break;
 						} else {
 							hayProblemasUrsus = false;
 						}

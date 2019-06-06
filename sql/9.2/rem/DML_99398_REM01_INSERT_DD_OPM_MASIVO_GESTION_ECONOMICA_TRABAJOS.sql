@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IKER ADOT
---## FECHA_CREACION=20190528
+--## FECHA_CREACION=20190605
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6580
@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('CMGET', 'Carga masiva gestión económica trabajos', 'Función carga masiva de gestión económica de trabajos', 'CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS','n*,s,d*,d*,d*,d*')
+	  T_FUNCION('CMGET', 'Superusuario: Gestión económica de trabajos', 'Función carga masiva de gestión económica de trabajos', 'CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS','n*,s,d*,d*,d*,d*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
@@ -59,8 +59,10 @@ BEGIN
 			IF V_NUM_TABLAS > 0 THEN	  
 				DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA... se modifica el registro.');
 
-				V_SQL := 'UPDATE DD_OPM_OPERACION_MASIVA SET
+				V_SQL := 'UPDATE '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA SET
 						DD_OPM_VALIDACION_FORMATO = '''||V_TMP_FUNCION(5)||''',
+						DD_OPM_DESCRIPCION = '''||V_TMP_FUNCION(2)||''',
+						DD_OPM_DESCRIPCION_LARGA = '''||V_TMP_FUNCION(3)||''',
 						USUARIOMODIFICAR = ''HREOS-6580'',
 						FECHAMODIFICAR = SYSDATE
 					WHERE DD_OPM_CODIGO='''||V_TMP_FUNCION(1)||'''';

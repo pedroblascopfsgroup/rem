@@ -3055,9 +3055,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
-		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-				&& !DDSubcartera.CODIGO_BAN_BH
-						.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())) {
+		if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+			&& !DDSubcartera.CODIGO_BAN_BH
+			.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())) 
+		||(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+			&& !DDSubcartera.CODIGO_APPLE_INMOBILIARIO
+				.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())) ) {
 
 			if (!DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo())) {
 				result = false;

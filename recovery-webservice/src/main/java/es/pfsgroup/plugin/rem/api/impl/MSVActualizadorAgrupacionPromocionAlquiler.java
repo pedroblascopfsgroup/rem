@@ -757,12 +757,16 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			Filter tipoViaFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", codTipoVia);
 			DDTipoVia tipoVia = genericDao.get(DDTipoVia.class, tipoViaFilter);
 			localizacion.setTipoVia(tipoVia);
+		} else {
+			localizacion.setTipoVia(activoMatriz.getBien().getLocalizacionActual().getTipoVia());
 		}
 		
 		//-----Nombre de la via
 		if(!Checks.esNulo(exc.dameCelda(fila, 6))){
 			String nombreVia = exc.dameCelda(fila, 6);
 			localizacion.setNombreVia(nombreVia);
+		} else {
+			localizacion.setNombreVia(activoMatriz.getBien().getLocalizacionActual().getNombreVia());
 		}
 		
 		//-----Numero

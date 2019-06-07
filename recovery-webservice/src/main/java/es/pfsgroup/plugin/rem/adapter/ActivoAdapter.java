@@ -181,6 +181,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -3536,6 +3537,11 @@ public class ActivoAdapter {
 					oferta.setSucursal((ActivoProveedor) proveedoresApi.searchProveedorCodigoUvem(codigoOficina+dto.getCodigoSucursal()));
 			}
 			oferta.setOfertaExpress(false);
+			
+			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
+					"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
+			oferta.setOrigenComprador(origenComprador);
+			
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);

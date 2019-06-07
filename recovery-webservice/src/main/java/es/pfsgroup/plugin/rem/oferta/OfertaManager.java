@@ -833,6 +833,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(origenComprador)) {
 					oferta.setOrigenComprador(origenComprador);
 				}
+			} else {
+				DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
+				oferta.setOrigenComprador(origenComprador);
 			}
 
 			Long idOferta = this.saveOferta(oferta);

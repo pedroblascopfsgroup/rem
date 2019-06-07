@@ -73,7 +73,7 @@
 		</event>
 		<transition to="T017_RespuestaOfertantePMDecision" name="avanzaBPM"></transition>
 	</state> <!-- Transicion a Decision  3 caminos-->
-    <decision name ="T017_RespuestaOfertantePMDecision" expression="#{T017_AnalisisPMDecision}">
+    <decision name ="T017_RespuestaOfertantePMDecision" expression="#{T017_RespuestaOfertantePMDecision}">
 		<transition to="T017_ResolucionCES" name="Aprueba"></transition>
 		<transition to="Fin" name="Deniega"></transition>
 	</decision> <!-- Decision de AnalisisPM : "ResolucionCES / Respuesta Ofertante PM-->
@@ -125,7 +125,7 @@
 		</event>
 		<transition to="T017_RespuestaOfertanteCESDecision" name="avanzaBPM"></transition>
 	</state> <!--Transicion a Decision 3 caminos-->
-    <decision name ="T017_RespuestaOfertanteCESDecision" expression="#{T017_ResolucionCESDecision}">
+    <decision name ="T017_RespuestaOfertanteCESDecision" expression="#{T017_RespuestaOfertanteCESDecision}">
         <transition to="forkReservaSi" name="AceptaConReserva"></transition> 
         <transition to="forkReservaNo" name="AceptaSinReserva"></transition> 
 		<transition to="Fin" name="Deniega"></transition>
@@ -278,7 +278,7 @@
 		<transition to="T017_PBCReservaDecision" name="avanzaBPM"></transition>
 	</state> <!--Transicion a decision T017_RecomendCESDecision -->
 	<decision name ="T017_PBCReservaDecision" expression="#{T017_PBCReservaDecision}">
-        <transition to="T017_InstruccionesReserva" name="Acepta"></transition>
+        <transition to="T017_InstruccionesReserva" name="Aprueba"></transition>
 		<transition to="Fin" name="Deniega"></transition>
 	</decision> <!--Decision PBCReserva : Fin / InstruccionesReserva -->
 	<state name="T017_InstruccionesReserva">

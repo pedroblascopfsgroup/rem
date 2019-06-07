@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20190609
+--## FECHA_CREACION=20190613
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6516
@@ -321,7 +321,7 @@ begin
   TPO('DD_TPO_DESCRIPCION')       := 'Trámite comercial de venta Apple';
   TPO('DD_TPO_DESCRIPCION_LARGA') := 'Trámite comercial de venta Apple';
   TPO('DD_TPO_HTML')              :=  NULL;
-  TPO('DD_TPO_XML_JBPM')          := 'activo_tramiteSancionOfertaApple.xml';
+  TPO('DD_TPO_XML_JBPM')          := 'activo_tramiteSancionOfertaApple';
   TPO('VERSION')                  := 1;
   TPO('USUARIOCREAR')             := USUARIOCREAR;
   TPO('FECHACREAR')               :=  SYSDATE;
@@ -402,7 +402,7 @@ begin
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-  TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '"<p style="margin-bottom: 10px">
+  TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">
   Ha aceptado una oferta y se ha creado un expediente comercial asociado a la misma. 
   A continuación  debería rellenar todos los campos necesarios para definir la oferta, pudiendo darse la siguiente casuística para finalizar la tarea 
   </p> 
@@ -418,7 +418,7 @@ begin
   </p> 
   <p style="margin-bottom: 10px"> 
   En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite 
-  </p>"';
+  </p>';
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -585,7 +585,7 @@ begin
     TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
     TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
     TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-    TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '"<p style="margin-bottom: 10px">
+    TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">
     Ha elevado un expediente comercial al comité sancionador de la cartera. 
     Para completar esta tarea es necesario esperar a la respuesta del comité, subiendo el documento de respuesta por parte del comité en la pestaña "documentos".
     Además:
@@ -600,7 +600,7 @@ begin
     <p style="margin-bottom: 10px"> 
     C) Si el comité ha aprobado la oferta, seleccione la opción "aprobado" en el campo "Resolución PM". La siguiente tarea se le lanzará a “resolucion de CES
     En el campo "observaciones PM" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.
-    </p> "';
+    </p>';
     TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
     TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -733,7 +733,7 @@ begin
     TFI_MAP(2).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
     TFI_MAP(2).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
     TFI_MAP(2).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-    TFI_MAP(2).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '"<p style="margin-bottom: 10px">
+    TFI_MAP(2).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">
         Ha elevado un expediente comercial al comité sancionador de la cartera.
         Para completar esta tarea es necesario esperar a la respuesta del comité, subiendo el documento de respuesta por parte del comité en la pestaña "documentos".
         Además:
@@ -751,7 +751,7 @@ begin
     </p> 
     <p style="margin-bottom: 10px"> 
     En el campo "observaciones CES" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.
-    </p> "';
+    </p>';
     TFI_MAP(2).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(2).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
     TFI_MAP(2).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -884,7 +884,7 @@ begin
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-  TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '"<p style="margin-bottom: 10px">  Ídem que la tarea actual "Respuesta ofertante"  </p> "';
+  TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">  Ídem que la tarea actual "Respuesta ofertante"  </p>';
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -1000,7 +1000,7 @@ begin
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-  TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '"<p style="margin-bottom: 10px">  Ídem que la tarea actual "Respuesta ofertante"  </p> "';
+  TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">  Ídem que la tarea actual "Respuesta ofertante"  </p>';
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -1071,7 +1071,7 @@ begin
   TAP(5).tap_field('TAP_CODIGO') := 'T017_InformeJuridico';
   TAP(5).tap_field('TAP_VIEW') := NULL;
   TAP(5).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente''''';
-  TAP(5).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkFechaEmisionInformeJuridico() ? mismoNumeroAdjuntosComoActivosExpedienteUGValidacion("93", "E") : "No todos los activos tienen fecha de emisión de informe en el listado de activos del expediente comercial." ';
+  TAP(5).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkFechaEmisionInformeJuridico() ? mismoNumeroAdjuntosComoActivosExpedienteUGValidacion("10", "E") : "No todos los activos tienen fecha de emisión de informe en el listado de activos del expediente comercial"';
   TAP(5).tap_field('TAP_SCRIPT_DECISION') := null;
   TAP(5).tap_field('DD_TPO_ID_BPM') := null;
   TAP(5).tap_field('TAP_SUPERVISOR') := 0;
@@ -1205,10 +1205,10 @@ begin
   TFI_MAP(6).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
   TFI_MAP(6).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
   TFI_MAP(6).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-  TFI_MAP(6).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '"<p style="margin-bottom: 10px">  
+  TFI_MAP(6).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">  
   Para dar por completada esta tarea deberá subir una copia del Advisory Note a la pestaña "documentos" del expediente comercial.
   La generación del advisory Note semi automática puede realizarla desde el botón Generar Advisory Note dentro de la pestaña de formalizacion.  
-  </p> "';
+  </p>';
   TFI_MAP(6).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(6).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(6).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -2007,7 +2007,7 @@ begin
     TAP(13).tap_field('TAP_CODIGO') := 'T017_ObtencionContratoReserva';
     TAP(13).tap_field('TAP_VIEW') := NULL;
     TAP(13).tap_field('TAP_SCRIPT_VALIDACION') := 'checkReservaFirmada() ? (checkImporteParticipacion() ?  (checkCompradores() ?  (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''') : ''''La reserva debe estar en estado firmado'''' ';
-    TAP(13).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := '!esLiberBank() ? existeAdjuntoUGValidacion("97,E;91,E") : null';
+    TAP(13).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := '!esLiberBank() ? existeAdjuntoUGValidacion("06,E;12,E") : null';
     TAP(13).tap_field('TAP_SCRIPT_DECISION') := NULL;
     TAP(13).tap_field('DD_TPO_ID_BPM') := null;
     TAP(13).tap_field('TAP_SUPERVISOR') := 0;
@@ -2436,7 +2436,7 @@ begin
     TFI_MAP(15).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
     TFI_MAP(15).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
     TFI_MAP(15).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-    TFI_MAP(15).tfi_field_row(0).tfi_field('TFI_LABEL') := '"<p style="margin-bottom: 10px">Se ha otorgado la escritura del expediente asociado. Para finalizar esta tarea, se requiere que suba los documentos:</p>
+    TFI_MAP(15).tfi_field_row(0).tfi_field('TFI_LABEL') := '<p style="margin-bottom: 10px">Se ha otorgado la escritura del expediente asociado. Para finalizar esta tarea, se requiere que suba los documentos:</p>
     <ul class="alternate" type="square">
     <li>Copia simple.</li>
     <li>Justificante ingreso importe compraventa.</li>
@@ -2447,7 +2447,7 @@ begin
     <li>Recibí entrega de llaves</li>
     <li>Comunicación a la Comunidad de Propietarios</li>
     </ul>
-    <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>"';
+    <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
     TFI_MAP(15).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(15).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
     TFI_MAP(15).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;

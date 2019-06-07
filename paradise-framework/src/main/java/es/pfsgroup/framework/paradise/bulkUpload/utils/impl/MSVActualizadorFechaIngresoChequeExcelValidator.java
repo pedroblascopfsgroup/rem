@@ -56,10 +56,13 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 	
 	private static final String FORMATO_FECHA = "dd/MM/yy";
 		
-	private	static final int COL_NUM_FILA_CABECERA = 0;
-	private	static final int COL_NUM_DATOS_PRIMERA_FILA = 1;		
-	private static final int COL_NUM_EXPDTE_COMERCIAL = 0;
-	private static final int COL_NUM_FECHA_INGRESO_CHEQUE = 1;		
+	public static final class COL_NUM {
+		static final int FILA_CABECERA = 0;
+		static final int DATOS_PRIMERA_FILA = 1;
+		
+		static final int COL_NUM_EXPDTE_COMERCIAL = 0;
+		static final int COL_NUM_FECHA_INGRESO_CHEQUE = 1;		
+	}
 	
 
 	

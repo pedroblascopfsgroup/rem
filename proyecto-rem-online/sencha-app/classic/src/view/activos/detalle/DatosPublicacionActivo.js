@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	extend		: 'HreRem.view.common.FormBase',
 	xtype		: 'datospublicacionactivo',
+	reference	: 'datospublicacionactivoref',
 	cls			: 'panel-base shadow-panel',
 	collapsed	: false,
 	scrollable	: 'y',

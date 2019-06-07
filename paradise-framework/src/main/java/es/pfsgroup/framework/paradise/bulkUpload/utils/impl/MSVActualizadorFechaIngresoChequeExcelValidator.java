@@ -124,12 +124,12 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_BANKIA), isExpedienteCarteraBankia(exc));
 			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_LIBERBANK), isExpedienteCarteraLiberbank(exc));
 			
-			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE), isColumnNotDateByRows(exc, COL_NUM_FECHA_INGRESO_CHEQUE));
-			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_ALTA_OFERTA), isFechaAltaOfertaMenorFechaIngreso(exc, COL_NUM_FECHA_INGRESO_CHEQUE));
-			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_SANCION), isFechaSancionMenorFechaIngreso(exc, COL_NUM_FECHA_INGRESO_CHEQUE));
-			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_ACEPTACION), isFechaAltaMenorFechaIngreso(exc, COL_NUM_FECHA_INGRESO_CHEQUE));
-			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_RESERVA), isFechaFirmaMenorFechaIngreso(exc, COL_NUM_FECHA_INGRESO_CHEQUE));
-			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_VENTA), isFechaVentaMenorFechaIngreso(exc, COL_NUM_FECHA_INGRESO_CHEQUE));
+			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE), isColumnNotDateByRows(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
+			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_ALTA_OFERTA), isFechaAltaOfertaMenorFechaIngreso(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
+			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_SANCION), isFechaSancionMenorFechaIngreso(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
+			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_ACEPTACION), isFechaAltaMenorFechaIngreso(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
+			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_RESERVA), isFechaFirmaMenorFechaIngreso(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
+			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_VENTA), isFechaVentaMenorFechaIngreso(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
 			
 			
 			if (!mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_NO_EXISTE)).isEmpty()
@@ -197,8 +197,8 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 
 		for (int i = 1; i < this.numFilasHoja; i++) {
 			try {
-				if (!Checks.esNulo(exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL))
-						&& !particularValidator.existeExpedienteComercial(exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL)))
+				if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))
+						&& !particularValidator.existeExpedienteComercial(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL)))
 					listaFilas.add(i);
 			} catch (ParseException e) {
 				listaFilas.add(i);
@@ -221,10 +221,10 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 
 		for (int i = 1; i < this.numFilasHoja; i++) {
 			try {
-				if (particularValidator.existeExpedienteComercial(exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL))) {
-					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL))) {
+				if (particularValidator.existeExpedienteComercial(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
+					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
 						if (particularValidator
-								.validadorTipoOferta(Long.parseLong(exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL)))) {
+								.validadorTipoOferta(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL)))) {
 							listaFilas.add(i);
 						}
 					}
@@ -249,10 +249,10 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 
 		for (int i = 1; i < this.numFilasHoja; i++) {
 			try {
-				if (particularValidator.existeExpedienteComercial(exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL))) {
-					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL))) {
+				if (particularValidator.existeExpedienteComercial(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
+					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
 						if (particularValidator
-								.validadorTipoCartera(Long.parseLong(exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL)))) {
+								.validadorTipoCartera(Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL)))) {
 							listaFilas.add(i);
 						}
 					}
@@ -335,7 +335,7 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 
 		for (int i = 1; i < this.numFilasHoja; i++) {
 			try {
-				String valorCelda = exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL);
+				String valorCelda = exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL);
 				if (!Checks.esNulo(valorCelda) 
 						&& particularValidator.existeExpedienteComercial(valorCelda)
 						&& particularValidator.validadorEstadoExpedienteSolicitado(Long.parseLong(valorCelda))) {
@@ -360,7 +360,7 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 
 		for (int i = 1; i < this.numFilasHoja; i++) {
 			try {
-				String valorCelda = exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL);
+				String valorCelda = exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL);
 				if (particularValidator.existeExpedienteComercial(valorCelda) 
 						&& !Checks.esNulo(valorCelda)
 						&& particularValidator.validadorEstadoOfertaTramitada(Long.parseLong(valorCelda))) {
@@ -387,7 +387,7 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 		SimpleDateFormat ft = new SimpleDateFormat(FORMATO_FECHA);
 		String valorDate = null;
 
-		for (int i = COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
 			try {
 				valorDate = exc.dameCelda(i, columnNumber);
 				if (!Checks.esNulo(valorDate) && !esArroba(valorDate)) {
@@ -426,11 +426,11 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 		SimpleDateFormat ft = new SimpleDateFormat(FORMATO_FECHA);
 		String valorDate = null;
 
-		for (int i = COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
 			try {
 				valorDate = exc.dameCelda(i, columnNumber);
 				if(!Checks.esNulo(valorDate) && !esArroba(valorDate)) {
-					String valorCelda = exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL);
+					String valorCelda = exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL);
 					if(particularValidator.existeExpedienteComercial(valorCelda)) {
 						if(!Checks.esNulo(valorCelda) 
 								&& particularValidator.validadorFechaMayorIgualFechaAltaOferta(Long.parseLong(valorCelda), valorDate)) {
@@ -466,12 +466,12 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 		SimpleDateFormat ft = new SimpleDateFormat(FORMATO_FECHA);
 		String valorDate = null;
 
-		for (int i = COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
 			try {
 				valorDate = exc.dameCelda(i, columnNumber);
 				
 				if(!Checks.esNulo(valorDate) && !esArroba(valorDate)) {
-					String valorCelda = exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL);
+					String valorCelda = exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL);
 					if(particularValidator.existeExpedienteComercial(valorCelda)) {
 						if(!Checks.esNulo(valorCelda) 
 								&& particularValidator.validadorFechaMayorIgualFechaSancion(Long.parseLong(valorCelda), valorDate)) {
@@ -505,11 +505,11 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 		SimpleDateFormat ft = new SimpleDateFormat(FORMATO_FECHA);
 		String valorDate = null;
 
-		for (int i = COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
 			try {
 				valorDate = exc.dameCelda(i, columnNumber);
 				if(!Checks.esNulo(valorDate) && !esArroba(valorDate)) {
-					String valorCelda = exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL);
+					String valorCelda = exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL);
 					if(particularValidator.existeExpedienteComercial(valorCelda)) {
 						if(!Checks.esNulo(valorCelda)
 								&& particularValidator.validadorFechaMayorIgualFechaAceptacion(Long.parseLong(valorCelda), valorDate)) {
@@ -543,12 +543,12 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 		SimpleDateFormat ft = new SimpleDateFormat(FORMATO_FECHA);
 		String valorDate = null;
 
-		for (int i = COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
 			try {
 				valorDate = exc.dameCelda(i, columnNumber);
 
 				if (!Checks.esNulo(valorDate) && !esArroba(valorDate)) {
-					String valorCelda = exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL);
+					String valorCelda = exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL);
 					if (particularValidator.existeExpedienteComercial(valorCelda)) {
 						if (!Checks.esNulo(valorCelda) && particularValidator
 								.validadorFechaMayorIgualFechaReserva(Long.parseLong(valorCelda), valorDate)) {
@@ -583,11 +583,11 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 		SimpleDateFormat ft = new SimpleDateFormat(FORMATO_FECHA);
 		String valorDate = null;
 
-		for (int i = COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
+		for (int i = COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE; i < numFilasHoja; i++) {
 			try {
 				valorDate = exc.dameCelda(i, columnNumber);
 				if (!Checks.esNulo(valorDate) && !esArroba(valorDate)) {
-					String valorCelda = exc.dameCelda(i, COL_NUM_EXPDTE_COMERCIAL);
+					String valorCelda = exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL);
 					if (particularValidator.existeExpedienteComercial(valorCelda)) {
 						if (!Checks.esNulo(valorCelda) && particularValidator
 								.validadorFechaMayorIgualFechaVenta(Long.parseLong(valorCelda), valorDate)) {

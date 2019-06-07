@@ -276,28 +276,34 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 			celdaMal = false;
 
 			try {
-
 				celdaOcupado = exc.dameCelda(i, COL_OCUPADO);
-				celdaConTitulo = exc.dameCelda(i, COL_CON_TITULO);			
+				celdaConTitulo = exc.dameCelda(i, COL_CON_TITULO);
 
-				if (!esArroba(celdaOcupado) && (esArroba(celdaConTitulo) || celdaConTitulo.isEmpty())) {
-					celdaMal = true;
-				}
-
-				if (!particularValidator.perteneceDDTipoTituloTPA(celdaConTitulo)) {
-					celdaMal = true;
-				}
+				// Comprobar '@' en campo Ocupado
+				if (esArroba(celdaOcupado)) {
+					if(!esArroba(celdaConTitulo) && !celdaConTitulo.isEmpty()) {
+						celdaMal = true;
+					}
+					
+				} else {
+					if(Checks.esNulo(celdaOcupado)) {
+						celdaMal = true;
+					}else if (!particularValidator.perteneceDDTipoTituloTPA(celdaConTitulo)) { // Comprobar si el valor del campo Con título pertenece al DD
+							celdaMal = true;
+						} else {
+							// Comprobar si el valor es posible
+							if (Arrays.asList(listaSi).contains(celdaOcupado.toUpperCase())
+									&& !particularValidator.conTituloOcupadoSi(celdaConTitulo)) {
+								celdaMal = true;
+							}
+							if (Arrays.asList(listaNo).contains(celdaOcupado.toUpperCase())
+									&& !particularValidator.conTituloOcupadoNo(celdaConTitulo)) {
+								celdaMal = true;
+							}					
+						}
+					
+					}
 				
-				if (Arrays.asList(listaSi).contains(celdaOcupado.toUpperCase())
-						&& !particularValidator.conTituloOcupadoSi(celdaConTitulo)) {
-					celdaMal = true;
-				}
-				
-				if (Arrays.asList(listaNo).contains(celdaOcupado.toUpperCase())
-						&& !particularValidator.conTituloOcupadoNo(celdaConTitulo)) {
-					celdaMal = true;
-				}
-
 				if (celdaMal) {
 					listaFilas.add(i);
 				}

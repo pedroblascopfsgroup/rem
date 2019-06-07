@@ -169,7 +169,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		var me = this,
 			wizard = me.getView().up('wizardBase'),
 			esBankia = wizard.expediente.get('esBankia');
-		
 		if (esBankia){
 			return true;
 		} else {
@@ -182,7 +181,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			wizard = me.getView().up('wizardBase'),
 			esBankia = wizard.expediente.get('esBankia'),
 			esAlquiler = wizard.expediente.get('tipoExpedienteCodigo') === CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
-			
 		if (esBankia && esAlquiler){
 			return true;
 		} else {
@@ -982,9 +980,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			wizard = me.getView().up('wizardBase'),
 			datosClienteUrsusWindow = Ext.create('HreRem.view.expedientes.DatosClienteUrsus', {
 				clienteUrsus: datosClienteUrsus,
-				storeProblemasVenta: wizard.storeProblemasVenta
+				storeProblemasVenta: me.getViewModel().get('storeProblemasVenta'),
+				alquiler: me.esBankiaAlquiler()
 			});
-
 		wizard.setX(Ext.Element.getViewportWidth() / 30);
 		wizard.add(datosClienteUrsusWindow);
 		datosClienteUrsusWindow.show();
@@ -1481,8 +1479,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		, form = me.getViewModel().getView()
 		, problemasUrsus = expediente.get('problemasUrsus')
 		, esBankia = expediente.get('esBankia');
-
-		if (esBankia && problemasUrsus == "true" && problemasUrsusComprador.toUpperCase()=="SI") {
+		
+		if (esBankia && problemasUrsus == "true" && !Ext.isEmpty(problemasUrsusComprador) && problemasUrsusComprador.toUpperCase()=="SI") {
 			me.getViewModel().set('textoAdvertenciaProblemasUrsus','Problemas URSUS');
 		}
 	}

@@ -146,6 +146,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	readOnly: true
 		                },
 		                {
+		                	xtype:'currencyfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.pm'),
 		                	bind:		'{datosbasicosoferta.importeContraofertaPM}',
 		                	readOnly: true

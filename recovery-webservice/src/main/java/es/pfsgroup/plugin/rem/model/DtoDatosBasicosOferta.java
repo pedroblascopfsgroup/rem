@@ -83,6 +83,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String refCircuitoCliente;
 	
 	private Boolean permiteProponer;
+	
+	private Double importeContraofertaPM;
+	
+	private Date fechaRespuestaPM;
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -331,6 +335,22 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setIdEco(Long idEco) {
 		this.idEco = idEco;
+	}
+
+	public Double getImporteContraofertaPM() {
+		return importeContraofertaPM;
+	}
+
+	public void setImporteContraofertaPM(Double importeContraofertaPM) {
+		this.importeContraofertaPM = importeContraofertaPM;
+	}
+
+	public Date getFechaRespuestaPM() {
+		return fechaRespuestaPM;
+	}
+
+	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
+		this.fechaRespuestaPM = fechaRespuestaPM;
 	}
 
 }

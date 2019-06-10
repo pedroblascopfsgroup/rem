@@ -235,6 +235,12 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_REF_CIRCUITO_CLIENTE")
 	private String refCircuitoCliente;
+	
+	@Column(name="OFR_IMP_CONTRAOFERTA_PM")
+	private Double importeContraofertaPM;
+	
+	@Column(name="OFR_FECHA_REPSUESTA_PM")
+	private Date fechaRespuestaPM;
     
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -692,6 +698,22 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setRefCircuitoCliente(String refCircuitoCliente) {
 		this.refCircuitoCliente = refCircuitoCliente;
+	}
+
+	public Double getImporteContraofertaPM() {
+		return importeContraofertaPM;
+	}
+
+	public void setImporteContraofertaPM(Double importeContraofertaPM) {
+		this.importeContraofertaPM = importeContraofertaPM;
+	}
+
+	public Date getFechaRespuestaPM() {
+		return fechaRespuestaPM;
+	}
+
+	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
+		this.fechaRespuestaPM = fechaRespuestaPM;
 	}
 
 }

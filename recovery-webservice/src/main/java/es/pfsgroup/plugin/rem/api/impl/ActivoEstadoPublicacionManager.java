@@ -253,7 +253,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		boolean resultado = false;
 
 		try{
-			resultado = !isPublicable(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
+			resultado = !isPublicable(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo) || isFueraDePerimetro(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" , e);
 		}

@@ -128,6 +128,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "           AND ACT.BORRADO  = 0");
 		return !"0".equals(resultado);
 	}
+	@Override
+	public Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr) {
+		String resultado = rawDao.getExecuteSQL("SELECT " + 
+				"Case " + 
+				"WHEN AGR.AGR_FECHA_BAJA is nuLL then (select COUNT(AGR.AGR_ID) FROM ACT_ACTIVO ACT " + 
+				"                                        INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " + 
+				"                                        INNER JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID and AGR.BORRADO  = 0 " + 
+				"                                        INNER join DD_TAG_TIPO_AGRUPACION TAG ON AGR.DD_TAG_ID = TAG.DD_TAG_ID " + 
+				"                                        WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " aND AGA.AGA_PRINCIPAL = 1) " + 
+				"ELSE 1 " + 
+				"END as validacion " + 
+				"FROM ACT_ACTIVO ACT " + 
+				"INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " + 
+				"INNER JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID and AGR.BORRADO  = 0 " + 
+				"INNER join DD_TAG_TIPO_AGRUPACION TAG ON AGR.DD_TAG_ID = TAG.DD_TAG_ID " + 
+				"WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " " + 
+				"AND ACT.BORRADO = 0 " + 
+				"AND TAG.DD_TAG_CODIGO = " + tipoAgr);
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean activoEnAgrupacionRestringida(Long idActivo) {
@@ -2931,6 +2951,50 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean validadorCarteraBankia(Long numExpediente) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
+				+"		JOIN ACT_OFR AFR ON AFR.OFR_ID = OFR.OFR_ID"
+				+"		JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AFR.ACT_ID"
+				+"		JOIN DD_CRA_CARTERA DD ON ACT.DD_CRA_ID = DD.DD_CRA_ID"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0 AND DD.DD_CRA_CODIGO ='03'");
+		if(!Checks.esNulo(resultado) && Integer.valueOf(resultado) > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	@Override
+	public Boolean validadorCarteraLiberbank(Long numExpediente) {
+		if(Checks.esNulo(numExpediente))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
+				+"		JOIN ACT_OFR AFR ON AFR.OFR_ID = OFR.OFR_ID"
+				+"		JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AFR.ACT_ID"
+				+"		JOIN DD_CRA_CARTERA DD ON ACT.DD_CRA_ID = DD.DD_CRA_ID"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ACT.BORRADO = 0 AND OFR.BORRADO = 0 AND DD.DD_CRA_CODIGO ='08'");
+		
+		if(!Checks.esNulo(resultado) && Integer.valueOf(resultado) > 0){
+			return true;
+		}else{
+			return false;
+		}
+	
+	}
+	
+	
+	
+	@Override
 	public Boolean validadorEstadoOfertaTramitada(Long numExpediente) {
 		if(Checks.esNulo(numExpediente))
 			return true;
@@ -2970,7 +3034,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0 AND OFR.BORRADO = 0"
-				+"		AND nvl(OFR.OFR_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+				+"		AND nvl(OFR.OFR_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
 		
 		return !"1".equals(resultado);
 	}
@@ -2983,7 +3047,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND nvl(ECO.ECO_FECHA_SANCION, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+				+"		AND nvl(ECO.ECO_FECHA_SANCION, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
 		
 		return !"1".equals(resultado);
 	}
@@ -2996,7 +3060,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND nvl(ECO.ECO_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+				+"		AND nvl(ECO.ECO_FECHA_ALTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
 	
 		return !"1".equals(resultado);
 	}
@@ -3016,7 +3080,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 					+"		JOIN RES_RESERVAS RES ON RES.ECO_ID = ECO.ECO_ID"
 					+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0 AND RES.BORRADO = 0"
-					+"		AND nvl(RES.RES_FECHA_FIRMA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+					+"		AND nvl(RES.RES_FECHA_FIRMA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
 			
 			return !"1".equals(resultado);
 		} else {
@@ -3032,7 +3096,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND nvl(ECO.ECO_FECHA_VENTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')");
+				+"		AND nvl(ECO.ECO_FECHA_VENTA, TO_DATE('01/01/1500','dd/MM/yy')) < TO_DATE('"+ fecha +"','dd/MM/yy')+1");
 		
 		return !"1".equals(resultado);
 	}
@@ -3052,6 +3116,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		return numActius;
 	}
+
 
 	@Override
 

@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=ALVARO GARCIA
---## FECHA_CREACION=20190424
+--## FECHA_CREACION=20190423
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-6199

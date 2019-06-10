@@ -99,7 +99,6 @@
 	</state>
 	
 	<decision name="T004_EleccionPresupuestoDecision" expression="#{T004_EleccionPresupuestoDecision}">
-		<transition to="T004_SolicitudExtraordinaria" name="SinSaldo"></transition>
 		<transition to="T004_SolicitudExtraordinaria" name="ComprobarAdvisoryNote"></transition>
 		<transition to="T004_SolicitudPresupuestos" name="PresupuestoInvalido"></transition>
 		<transition to="T004_AutorizacionBankia" name="ValidoSuperaLimiteBankia"></transition>

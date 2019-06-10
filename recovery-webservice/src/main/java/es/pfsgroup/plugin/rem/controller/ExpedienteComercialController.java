@@ -38,10 +38,10 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GdprApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -157,7 +157,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private ActivoTramiteApi activoTramiteApi;
 
 	@Autowired
-	private ActivoApi activoApi;
+	private OfertaApi ofertaApi;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -921,6 +921,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 					}
 					model.put(RESPONSE_DATA_KEY, comprador);
 					model.put(RESPONSE_SUCCESS_KEY, true);
+					if(vistaConExp.getIdExpedienteComercial() != null && !vistaConExp.getIdExpedienteComercial().isEmpty()){
+						ofertaApi.llamadaMaestroPersonas(Long.valueOf(vistaConExp.getIdExpedienteComercial()), OfertaApi.CLIENTE_HAYA);
+					}					
 				} else {
 					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi
 							.getDatCompradorById(dto.getId());

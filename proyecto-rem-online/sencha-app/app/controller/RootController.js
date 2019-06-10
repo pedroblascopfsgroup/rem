@@ -74,9 +74,6 @@ Ext.define('HreRem.controller.RootController', {
         		
         		me.fireEvent("usuarioIdentificado", me.session);   
         		
-        		/*
-        		 * Buscamos las opciones del menú principal y superior por usuario.
-        		 */
         		var menuPrincipal = Ext.create("HreRem.store.MenuPrincipalStore");    	
 		    	menuPrincipal.on({load: function(store,records,op) {
 		    		
@@ -87,17 +84,8 @@ Ext.define('HreRem.controller.RootController', {
 		            		}
 		            });
 		    	}
-		    	});
+		    	});	
 		    	
-		    	/*
-		    	 * Llamada al servicio que gestiona el registro de acceso.
-		    	 */
-		    	Ext.Ajax.request({			
-				     url: $AC.getRemoteUrl('generic/registerUser'),				
-				     success: function(response, opts) {
-				     	me.log("Control de acceso terminado");
-				     }
-		    	});
 		     }
 		 });
        

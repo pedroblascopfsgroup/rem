@@ -703,9 +703,9 @@ public interface ParticularValidatorApi {
 
 	Boolean perteneceDDTipoTituloTPA(String codigoTituloTPA);
 
-	Boolean conTituloOcupadoSi(String codigoTituloTPA);
-
-	Boolean conTituloOcupadoNo(String codigoTituloTPA);
+	Boolean conTituloOcupadoSi(String codigoTituloTPA);	
+	
+	Boolean conPosesion(String numActivo);
 	
 	Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal);
 
@@ -732,6 +732,6 @@ public interface ParticularValidatorApi {
 	 * @return true si el activo pertenece a un activo de venta.
 	 */
 	
-	public Boolean activosVendidos(String numExpedienteComercial);
+	public Boolean activosVendidos(String numExpedienteComercial);	
 
 }

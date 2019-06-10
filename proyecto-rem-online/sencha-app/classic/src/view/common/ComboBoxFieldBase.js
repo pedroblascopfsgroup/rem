@@ -38,8 +38,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 		 * @param {} binding
 		 */
 		onBindNotify: function(value, oldValue, binding) {
-			
-			var me = this;
+			var me = this;			
 			if (me.value == null || (me.value != binding.lastValue)) {
 				if (me.loadOnBind && me.getStore() != null && me.getStore().type!="chained") {
 					me.loadPage();
@@ -67,7 +66,9 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 //				Ext.global.console.log('Label: ' + binding.scope.fieldLabel + ' Ref.: ' + binding.scope.reference + ' Name: ' + binding.scope.name + ' / Metodo: ' + binding._config.names.set + ' / Value: ' + value);
 //			}
 
-
+			if(!Ext.isEmpty(me.up('slidedatoscomprador'))){
+				me.mask("Cargando...");
+			}
 			this[binding._config.names.set](value);
 			--binding.syncing;
 	    	this.fireEvent("afterbind", this, value);

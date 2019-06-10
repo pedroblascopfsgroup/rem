@@ -426,39 +426,35 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 										campoRegEconomico.enable();
 										campoRegEconomico.allowBlank = false;
 									}
-									campoTipoConyuge.enable();
-									campoNumConyuge.enable();
+									
 										
 										if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
 											if(!Ext.isEmpty(campoRegEconomico.getValue())){
-												if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
+												if(campoRegEconomico.getValue() === "01"){
+													campoTipoConyuge.enable();
+													campoNumConyuge.enable();
 													campoNumConyuge.allowBlank = false;
 													campoTipoConyuge.allowBlank = false;
-												}else if(campoRegEconomico.getValue() === "02" ){
+												}else{
+													if(!Ext.isEmpty(campoTipoConyuge) && !Ext.isEmpty(campoTipoConyuge.getStore())) campoTipoConyuge.setValue();
+													if(!Ext.isEmpty(campoNumConyuge)) campoNumConyuge.setValue();
 													campoNumConyuge.allowBlank = true;
 													campoTipoConyuge.allowBlank = true;
-													if(!Ext.isEmpty(campoNumConyuge.getValue())){
-														campoTipoConyuge.allowBlank = false;
-													}
+													campoTipoConyuge.disable();
+													campoNumConyuge.disable();
 												}
 											}
 										}								
 								} else {
+									if(!Ext.isEmpty(campoTipoConyuge) && !Ext.isEmpty(campoTipoConyuge.getStore())) campoTipoConyuge.setValue();
+									if(!Ext.isEmpty(campoNumConyuge)) campoNumConyuge.setValue();
+									if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoRegEconomico.getStore())) campoRegEconomico.setValue();
 									campoRegEconomico.allowBlank = true;
 									campoNumConyuge.allowBlank = true;
 									campoTipoConyuge.allowBlank = true;
 									campoRegEconomico.disable();
 									campoNumConyuge.disable();
-									campoTipoConyuge.disable();
-									if(!Ext.isEmpty(campoRegEconomico)) campoRegEconomico.setValue();
-									if(campoEstadoCivil.getValue() == CONST.TIPOS_ESTADO_CIVIL['SOLTERO']) {
-										if(!Ext.isEmpty(campoTipoConyuge) && !Ext.isEmpty(campoTipoConyuge.getStore())) campoTipoConyuge.setValue();
-										if(!Ext.isEmpty(campoNumConyuge)) campoNumConyuge.setValue();
-									}else{
-										if(!Ext.isEmpty(campoNumConyuge.getValue())){
-											campoTipoConyuge.allowBlank = false;
-										}
-									}									
+									campoTipoConyuge.disable();		
 								}
 							}
 						

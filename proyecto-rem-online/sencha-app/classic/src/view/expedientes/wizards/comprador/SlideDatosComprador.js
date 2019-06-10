@@ -228,7 +228,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						chainedStore: 'comboMunicipio',
 						chainedReference: 'municipioCombo',
 						bind: {
-							store: '{comboProvincia}'
+							store: '{comboProvincia}',
+							value: '{comprador.provinciaCodigo}'
 						},
 						displayField: 'descripcion',
 						valueField: 'codigo',
@@ -251,7 +252,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px',
 						bind: {
 							store: '{comboMunicipio}',
-							disabled: '{!comprador.provinciaCodigo}'
+							disabled: '{!comprador.provinciaCodigo}',
+							value: '{comprador.municipioCodigo}'
 						}
 					},
 					{
@@ -389,7 +391,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						},
 						autoLoadOnValue: true,
 						listeners: {
-							change: 'onChangeComboCodEstadoCivil'
+							change: 'comprobarObligatoriedadCamposNexos'
 						},
 						allowBlank: true
 					},
@@ -404,7 +406,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							store: '{comboRegimenesMatrimoniales}'
 						},
 						listeners: {
-							change: 'onChangeComboRegimenMatrimonial'
+							change: 'comprobarObligatoriedadCamposNexos'
 						},
 						allowBlank: true,
 						disabled: true
@@ -421,7 +423,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							store: '{comboTipoDocumento}'
 						},
 						listeners: {
-							change: 'onChangeComboTipoDocConyuge'
+							change: 'comprobarObligatoriedadCamposNexos'
 						},
 						disabled: true
 					},
@@ -431,7 +433,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'documentoConyuge',
 						padding: '5px',
 						listeners: {
-							change: 'onChangeComboNumRegConyuge'
+							change: 'comprobarObligatoriedadCamposNexos'
 						},
 						allowBlank:true,
 						disabled: true
@@ -595,7 +597,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							store: '{comboTipoDocumento}'
 						},
 		            	listeners: {
-		            		change: 'comprobarObligatoriedadCamposNexos'										         
+		            		change: 'comprobarObligatoriedadCamposNexos'
 		            	}
 					},
 					{
@@ -604,7 +606,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'numDocumentoRte',
 						padding: '5px',
 		            	listeners: {
-		            		change: 'comprobarObligatoriedadCamposNexos'										         
+		            		change: 'comprobarObligatoriedadCamposNexos'
 		            	}
 					},
 					{

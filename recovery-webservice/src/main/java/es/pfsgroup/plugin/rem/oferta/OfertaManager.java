@@ -3732,6 +3732,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
+	public void llamadaMaestroPersonas(Long idExpediente, String cartera) {
+
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		Thread maestroPersona = new Thread( new MaestroDePersonas(idExpediente,usuarioLogado.getUsername(),cartera ));
+	   	maestroPersona.start();
+	}
+	
+	@Override
 	public void llamadaMaestroPersonas(String numDocCliente, String cartera) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();

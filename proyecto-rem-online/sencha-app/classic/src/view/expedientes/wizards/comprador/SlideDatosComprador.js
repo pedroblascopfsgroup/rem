@@ -95,11 +95,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				},
 				defaults: {
 					addUxReadOnlyEditFieldPlugin: false
-					,listeners:{
-						afterbind: function(field){
-							field.unmask();
-						}
-					}
 				},
 				items: [{
 						xtype: 'comboboxfieldbase',
@@ -114,9 +109,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						allowBlank: false,
 						listeners: {
 							change: 'comprobarObligatoriedadCamposNexos'
-							,afterbind: function(field){
-								field.unmask();
-							}
 						}
 					},
 					{
@@ -178,11 +170,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				},
 				defaults: {
 					addUxReadOnlyEditFieldPlugin: false
-					,listeners:{
-						afterbind: function(field){
-							field.unmask();
-						}
-					}
 				},
 				items: [{
 						xtype: 'comboboxfieldbase',
@@ -203,10 +190,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						reference: 'numeroDocumento',
 						padding: '5px',
 						listeners: {
-							change: 'onNumeroDocumentoChange',
-							afterbind: function(field){
-								field.unmask();
-							}
+							change: 'onNumeroDocumentoChange'
 						},
 						allowBlank: false
 					},
@@ -244,15 +228,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						chainedStore: 'comboMunicipio',
 						chainedReference: 'municipioCombo',
 						bind: {
-							store: '{comboProvincia}'
+							store: '{comboProvincia}',
+							value: '{comprador.provinciaCodigo}'
 						},
 						displayField: 'descripcion',
 						valueField: 'codigo',
 						listeners: {
 							change: 'onChangeComboProvincia'
-							,afterbind: function(field){
-								field.unmask();
-							}
 						}
 					},
 					{
@@ -270,7 +252,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px',
 						bind: {
 							store: '{comboMunicipio}',
-							disabled: '{!comprador.provinciaCodigo}'
+							disabled: '{!comprador.provinciaCodigo}',
+							value: '{comprador.municipioCodigo}'
 						}
 					},
 					{
@@ -306,9 +289,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						},
 						listeners: {
 							change: 'comprobarObligatoriedadRte'
-							,afterbind: function(field){
-								field.unmask();
-							}
 						}
 					},
 					{
@@ -320,11 +300,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px',
 						defaults: {
 							addUxReadOnlyEditFieldPlugin: false
-							,listeners:{
-								afterbind: function(field){
-									field.unmask();
-								}
-							}
 						},
 						items: [{
 								xtype: 'comboboxfieldbase',
@@ -337,10 +312,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 								},
 								listeners: {
 									change: 'establecerNumClienteURSUS',
-									expand: 'buscarClientesUrsus',
-									afterbind: function(field){
-										field.unmask();
-									}
+									expand: 'buscarClientesUrsus'
 								},
 								valueField: 'numeroClienteUrsus',
 								displayField: 'nombreYApellidosTitularDeOferta',
@@ -406,11 +378,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				},
 				defaults: {
 					addUxReadOnlyEditFieldPlugin: false
-					,listeners:{
-						afterbind: function(field){
-							field.unmask();
-						}
-					}
 				},
 				items: [{
 						xtype: 'comboboxfieldbase',
@@ -425,9 +392,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						autoLoadOnValue: true,
 						listeners: {
 							change: 'comprobarObligatoriedadCamposNexos'
-							,afterbind: function(field){
-								field.unmask();
-							}
 						},
 						allowBlank: true
 					},
@@ -443,9 +407,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						},
 						listeners: {
 							change: 'comprobarObligatoriedadCamposNexos'
-							,afterbind: function(field){
-								field.unmask();
-							}
 						},
 						allowBlank: true,
 						disabled: true
@@ -463,9 +424,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						},
 						listeners: {
 							change: 'comprobarObligatoriedadCamposNexos'
-							,afterbind: function(field){
-								field.unmask();
-							}
 						},
 						disabled: true
 					},
@@ -491,10 +449,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						},
 						listeners: {
 							change: 'establecerNumClienteURSUSConyuge',
-							expand: 'buscarClientesUrsusConyuge',
-							afterbind: function(field){
-								field.unmask();
-							}
+							expand: 'buscarClientesUrsusConyuge'
 						},
 						valueField: 'numeroClienteUrsus',
 						displayField: 'nombreYApellidosTitularDeOferta',
@@ -565,11 +520,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				},
 				defaults: {
 					addUxReadOnlyEditFieldPlugin: false
-					,listeners:{
-						afterbind: function(field){
-							field.unmask();
-						}
-					}
 				},
 				hidden: !this.lookupController().esBankia() || this.lookupController().esBankiaAlquiler(),
 				items: [{							
@@ -636,11 +586,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 				},
 				defaults: {
 					addUxReadOnlyEditFieldPlugin: false
-					,listeners:{
-						afterbind: function(field){
-							field.unmask();
-						}
-					}
 				},
 				items: [{
 						xtype: 'comboboxfieldbase',
@@ -652,10 +597,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							store: '{comboTipoDocumento}'
 						},
 		            	listeners: {
-		            		change: 'comprobarObligatoriedadCamposNexos'	
-	            			,afterbind: function(field){
-								field.unmask();
-							}
+		            		change: 'comprobarObligatoriedadCamposNexos'
 		            	}
 					},
 					{
@@ -664,10 +606,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'numDocumentoRte',
 						padding: '5px',
 		            	listeners: {
-		            		change: 'comprobarObligatoriedadCamposNexos'	
-	            			,afterbind: function(field){
-								field.unmask();
-							}
+		            		change: 'comprobarObligatoriedadCamposNexos'
 		            	}
 					},
 					{
@@ -701,9 +640,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						},
 						listeners: {
 							change: 'onChangeComboProvincia'
-							,afterbind: function(field){
-								field.unmask();
-							}
 						}
 					},
 					{
@@ -753,10 +689,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 							store: '{comboPaises}'
 						},
 						listeners: {
-							change: 'comprobarObligatoriedadRte',
-							afterbind: function(field){
-								field.unmask();
-							}
+							change: 'comprobarObligatoriedadRte'
 						}
 					}
 				]

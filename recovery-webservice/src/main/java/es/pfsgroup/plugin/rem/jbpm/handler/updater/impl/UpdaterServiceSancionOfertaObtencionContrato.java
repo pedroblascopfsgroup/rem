@@ -20,7 +20,6 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -53,9 +52,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-
-	@Autowired
-	private GestorActivoApi gestorActivoApi;
 	
 	@Autowired
     private GencatApi gencatApi;
@@ -67,6 +63,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	private ComunicacionGencatApi comunicacionGencatApi;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
+	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
 	private static final String FECHA_FIRMA = "fechaFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -190,7 +187,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[] { CODIGO_T013_OBTENCION_CONTRATO_RESERVA };
+		return new String[] {CODIGO_T013_OBTENCION_CONTRATO_RESERVA, CODIGO_T017_OBTENCION_CONTRATO_RESERVA};
 	}
 
 	public String[] getKeys() {

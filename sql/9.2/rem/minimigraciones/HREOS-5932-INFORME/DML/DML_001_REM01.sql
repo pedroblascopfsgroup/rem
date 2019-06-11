@@ -66,7 +66,7 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Numero activos que no esten en la excel y que compartan agrupacion restringida con un activo que si este en la excel '||V_COUNT||'');
 	
-	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_INF_HREOS_5932 
+	/*V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.AUX_INF_HREOS_5932 
 		   (ID_HAYA)
 		   SELECT ACT_NUM_ACTIVO 
 			FROM (
@@ -186,7 +186,7 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Se actualizan los activos que no esten en la excel y que compartan agrupacion restringida con un activo que si este en la excel '||V_COUNT||'');
-
+*/
 
 --##        0.2 ODP 05/06/19 
 	--DD_TCO_TIPO_COMERCIALIZACION

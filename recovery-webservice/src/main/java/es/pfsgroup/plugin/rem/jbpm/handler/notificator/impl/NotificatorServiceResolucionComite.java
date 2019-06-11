@@ -40,6 +40,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 
 	public static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
     public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+    public static final String CODIGO_T017_ANALISIS_PM = "T017_AnalisisPM";
 
 	
 	@Resource
@@ -81,7 +82,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T013_RESOLUCION_COMITE};
+		return new String[]{CODIGO_T013_RESOLUCION_COMITE, CODIGO_T017_ANALISIS_PM};
 	}
 	
 	@Override
@@ -166,8 +167,17 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			dtoSendNotificator.setTitulo("Notificación REM");
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		} else {
+			Boolean permiteNotificarAprobacion = true;
+			
+			for (TareaActivo tareaActivo : tramite.getTareas()) {				
+				if (CODIGO_T017_ANALISIS_PM.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()) && 
+						!tareaActivo.getTareaFinalizada()) {
+					permiteNotificarAprobacion = false;
+				}
+			}
+			
 			// Para los otros estados posibles, genero una notificacion de aceptacion o rechazo segun corresponda.
-			notificatorServiceSancionOfertaAceptacionYRechazo.generaNotificacion(tramite, true, true);
+			notificatorServiceSancionOfertaAceptacionYRechazo.generaNotificacion(tramite, true, permiteNotificarAprobacion);
 		}
 	}
 	

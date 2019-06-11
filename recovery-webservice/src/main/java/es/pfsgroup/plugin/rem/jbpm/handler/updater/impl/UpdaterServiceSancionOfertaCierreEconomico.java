@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterService {
 
    	private static final String CODIGO_T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
+   	private static final String CODIGO_T017_CIERRE_ECONOMICO = "T017_CierreEconomico";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	
 	@Autowired
@@ -30,7 +31,7 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_CIERRE_ECONOMICO};
+		return new String[]{CODIGO_T013_CIERRE_ECONOMICO, CODIGO_T017_CIERRE_ECONOMICO};
 	}
 
 	public String[] getKeys() {

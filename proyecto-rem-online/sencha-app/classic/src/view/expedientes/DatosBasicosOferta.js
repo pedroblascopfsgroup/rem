@@ -139,6 +139,22 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	}		                	
 		                },
 		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.contraoferta.pm'),
+		                	bind:		'{datosbasicosoferta.fechaRespuestaPM}',
+		                	readOnly: true
+		                },
+		                {
+		                	xtype:'currencyfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.pm'),
+		                	bind:		'{datosbasicosoferta.importeContraofertaPM}',
+		                	readOnly: true
+		                },
+		                {
+		                	//Meto este campo para cuadrar la vista, cuando se añada el que debe ir aqui, añadidlo sobre este
+		                },
+		                {
 		                	xtype: 'fieldset',
 		                	title:  HreRem.i18n('title.comite.sancionador'),
 		                	colspan: 2,

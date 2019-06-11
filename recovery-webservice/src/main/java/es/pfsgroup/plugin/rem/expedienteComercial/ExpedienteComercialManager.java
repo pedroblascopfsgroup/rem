@@ -9414,6 +9414,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		Boolean problemasPorComprador = false; 
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getIdExpedienteComercial()));
+		if(!Checks.esNulo(dto.getId())){
 		Comprador comprador = genericDao.get(Comprador.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getId()));
 		Filter filterCompradorExpedientePorComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", comprador.getId());
 		Filter filterCompradorExpedientePorExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente.getId());
@@ -9548,11 +9549,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								}
 							}
 						}else{
-							comprador.setProblemasUrsus(true);
-							crearTareaValidacionClientes (expediente);
-							comprador.setProblemasUrsus(true);
-							genericDao.update(Comprador.class, comprador);
-							return true;
+							if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getTipoPersona().getCodigo())) {
+								return false;	
+							}else {
+								comprador.setProblemasUrsus(true);
+								crearTareaValidacionClientes (expediente);
+								comprador.setProblemasUrsus(true);
+								genericDao.update(Comprador.class, comprador);
+								return true;
+							}
 						}
 					}else {
 						comprador.setProblemasUrsus(true);
@@ -9568,9 +9573,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.update(Comprador.class, comprador);
 				return false;
 			}
-		comprador.setProblemasUrsus(false);
-		finalizarTareaValidacionClientes(expediente);
-		genericDao.update(Comprador.class, comprador);
-		return false;
+			comprador.setProblemasUrsus(false);
+			finalizarTareaValidacionClientes(expediente);
+			genericDao.update(Comprador.class, comprador);
+			return false;
+		}
+		return null;
 	}
 }

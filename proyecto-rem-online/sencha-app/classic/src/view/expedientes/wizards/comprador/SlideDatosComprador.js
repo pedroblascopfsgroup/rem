@@ -228,8 +228,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						chainedStore: 'comboMunicipio',
 						chainedReference: 'municipioCombo',
 						bind: {
-							store: '{comboProvincia}',
-							value: '{comprador.provinciaCodigo}'
+							store: '{comboProvincia}'//,
+							//value: '{comprador.provinciaCodigo}'
 						},
 						displayField: 'descripcion',
 						valueField: 'codigo',
@@ -252,8 +252,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						padding: '5px',
 						bind: {
 							store: '{comboMunicipio}',
-							disabled: '{!comprador.provinciaCodigo}',
-							value: '{comprador.municipioCodigo}'
+							disabled: '{!comprador.provinciaCodigo}'//,
+							//value: '{comprador.municipioCodigo}'
 						}
 					},
 					{

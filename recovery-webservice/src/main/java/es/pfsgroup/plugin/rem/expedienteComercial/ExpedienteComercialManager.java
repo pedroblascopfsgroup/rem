@@ -48,6 +48,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -9219,7 +9220,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								}
 							}
 						}else{
-							return true;
+							if(DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getTipoPersona().getCodigo())){
+								return true;
+							}
+							
 						}
 					}else {
 						return true;

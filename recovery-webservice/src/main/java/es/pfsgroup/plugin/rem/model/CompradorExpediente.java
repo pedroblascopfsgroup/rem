@@ -184,6 +184,14 @@ public class CompradorExpediente implements Serializable {
     @JoinColumn(name = "ADCOM_ID")
     private AdjuntoComprador documentoAdjunto;
     
+    @Column(name="CEX_CLI_URSUS_CONYUGE_REM")
+    private String clienteUrsusConyuge;
+    
+    @Column(name="CEX_NUM_URSUS_CONYUGE_REM")
+    private Integer numUrsusConyuge;
+    
+    @Column(name="CEX_NUM_URSUS_CONYUGE_BH_REM	")
+    private Integer numUrsusConyugeBh;
     
 
     
@@ -616,6 +624,31 @@ public class CompradorExpediente implements Serializable {
 	public void setVersion(Long version) {
 		this.version = version;
 	}
+
+	public String getClienteUrsusConyuge() {
+		return clienteUrsusConyuge;
+	}
+
+	public void setClienteUrsusConyuge(String clienteUrsusConyuge) {
+		this.clienteUrsusConyuge = clienteUrsusConyuge;
+	}
+
+	public Integer getNumUrsusConyuge() {
+		return numUrsusConyuge;
+	}
+
+	public void setNumUrsusConyuge(Integer numUrsusConyuge) {
+		this.numUrsusConyuge = numUrsusConyuge;
+	}
+
+	public Integer getNumUrsusConyugeBh() {
+		return numUrsusConyugeBh;
+	}
+
+	public void setNumUrsusConyugeBh(Integer numUrsusConyugeBh) {
+		this.numUrsusConyugeBh = numUrsusConyugeBh;
+	}
     
+	
    
 }

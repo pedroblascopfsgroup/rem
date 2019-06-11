@@ -57,7 +57,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          },
          
          'datospublicacionactivo historicocondicioneslist': {
-          	onClickPropagation :  'onClickPropagationCalificacionNegativa'
+          	onClickPropagation :  'onClickPropagationHistoricoCondiciones'
          },
          
          'tituloinformacionregistralactivo calificacionnegativagrid': {
@@ -1094,7 +1094,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         });	
 	},
 
-	borrarDocumentoAdjuntoOferta : function(grid, record) {
+	borrarDocumentoAdjuntoOferta : function(grid, record) { // FIXME: cuando se reubique dentro de un slide en el wizard eliminar de aqui.
 		var me = this, docCliente = null;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		if (grid.handler == "borrarDocumentoAdjuntoOferta") {
@@ -2982,6 +2982,55 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		  	}
 		});
 	},
+	
+	onClickPropagationHistoricoCondiciones : function(grid){
+		var me = this,
+	    idActivo = me.getViewModel().get('activo').id,
+	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
+	    form = grid.up('form');
+	
+	  form.mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {idActivo: idActivo},
+		
+			success: function(response, opts){
+		
+				form.unmask();
+				var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+				var tabPropagableData = null;
+				if(me.getViewModel() != null){
+					if(me.getViewModel().get('activo') != null){
+						if(me.getViewModel().get('activo').data != null){
+							me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
+						}
+					}
+				}
+				var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
+		              return activo.activoId == me.getViewModel().get("activo.id");
+		            }), 1)[0];
+		            
+				
+		        // Abrimos la ventana de selección de activos
+			    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
+			          form : null,
+			          activoActual : activo,
+			          activos : activosPropagables,
+			          tabData : grid.getSelection(),
+			          propagableData : null,
+			          targetGrid: grid.targetGrid
+			        }).show();
+		
+		    	me.getView().add(ventanaOpcionesPropagacionCambios);
+		    	  
+			},
+		    failure: function(record, operation) {
+		        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		  	}
+		});
+	},
 
 	onClickBotonCancelarCarga: function(btn) { 
 		var me = this;
@@ -3217,7 +3266,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		successFn = successFn || Ext.emptyFn
 
-
+        
 		if(Ext.isEmpty(jsonData)) {
 			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
 		} else {
@@ -3729,7 +3778,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var textarea = me.lookupReference(checkbox.textareaRefChained);
         
         if(!isDirty && estadoPubVentaPublicado) {
-    		var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData());
+			
             checkbox.setReadOnly(readOnly);
             checkbox.setValue(false);
     	}
@@ -3743,8 +3793,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
     onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {
-        var me = this;
-        if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
+		var me = this;
+		var chkbxpublicarControlPrimeravez = checkbox.up('activosdetallemain').lookupReference('chkbxpublicarControlPrimeravez');
+		if(chkbxpublicarControlPrimeravez.getValue()){
+			chkbxpublicarControlPrimeravez.setValue(false);
+			
+		}
+        if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler') && !chkbxpublicarControlPrimeravez.getValue()) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
         
@@ -3766,37 +3821,68 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    var checkboxPublicarVenta = checkbox.up('activosdetallemain').lookupReference('chkbxpublicarventa');
 	    var estadoPubVentaPublicado = me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
-	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+			me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+			var checkboxPublicarVentaDeshabilitado = me.getViewModel().get('datospublicacionactivo').getData().deshabilitarCheckPublicarVenta;
 
+	
 	    if (!estadoCheckPublicarFicha){
 	    	checkboxPublicarAlquiler.setReadOnly(true);
             checkbox.setValue(false);
-        } else if (!estadoPubVentaPublicado) {
-	        var readOnly = !(Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) || checkbox.getValue());
-	        checkboxPublicarVenta.setReadOnly(readOnly);
-	        if(!checkbox.getValue()) {
-	        	checkboxPublicarVenta.setValue(false);
-	        }
-        }
+        } else {
+		    if(!estadoPubVentaPublicado && checkbox.getValue() && checkboxPublicarVentaDeshabilitado) {
+			
+				   checkboxPublicarVenta.setValue(true);
+				   me.getViewModel().get('datospublicacionactivo').set('publicarVenta',true);
+				  									
+				
+		    } else if (!estadoPubVentaPublicado && !checkbox.getValue() && checkboxPublicarVentaDeshabilitado) {
+		        
+				checkboxPublicarVenta.setValue(false);
+				me.getViewModel().get('datospublicacionactivo').set('publicarVenta',false);
+				
+		    } 
+		}        
 	},
 
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
         var me = this;
         var estadoCheckPublicarFicha = me.getViewModel().get('activo.aplicaPublicar');
 		var checkboxPublicarAlquiler = checkbox.up('activosdetallemain').lookupReference('chkbxpublicaralquiler');
+		var chkbxpublicarControlPrimeravez = checkbox.up('activosdetallemain').lookupReference('chkbxpublicarControlPrimeravez');
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
+			var checkboxPublicarAlquilerDeshabilitado = me.getViewModel().get('datospublicacionactivo').getData().deshabilitarCheckPublicarAlquiler;
 
+		
 		if(!estadoCheckPublicarFicha){
 			checkboxPublicarAlquiler.setReadOnly(true);
             checkbox.setValue(false);
-        } else if (!estadoPubAlquilerPublicado) {
-			var readOnly = !(Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) || checkbox.getValue());
-            checkboxPublicarAlquiler.setReadOnly(readOnly);
-			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
-			if(!checkbox.getValue()) {
+        } else {
+			if(isDirty && !estadoPubAlquilerPublicado && checkboxPublicarAlquilerDeshabilitado) {
+				checkboxPublicarAlquiler.setValue(true);
+				me.getViewModel().get('datospublicacionactivo').set('publicarAlquiler',true);
+				
+				if(chkbxpublicarControlPrimeravez.getValue()){
+
+					this.onChangeCheckboxPublicarAlquiler(checkboxPublicarAlquiler);
+					
+				}
+			
+			} else if (!isDirty && !estadoPubAlquilerPublicado && !checkbox.getValue() && checkboxPublicarAlquilerDeshabilitado) {
+				
+				
+				checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
 				checkboxPublicarAlquiler.setValue(false);
+				me.getViewModel().get('datospublicacionactivo').set('publicarAlquiler',false);
+						}
+						 else {
+				var readOnly = Ext
+						.isEmpty(me.getViewModel().get(
+								'datospublicacionactivo').getData().precioWebAlquiler)
+						&& !checkbox.getValue();
+				checkboxPublicarAlquiler.setReadOnly(readOnly);
+
 			}
 		}
     },
@@ -3815,7 +3901,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var me = this;
         var list = Ext.ComponentQuery.query('activosdetallemain');
         for(var i=0; i < list.length; i++) {
-        	if(list[i].tab.active) list[i].lookupReference('chkbxpublicaralquiler').setValue(false);
+			if(list[i].tab.active) list[i].lookupReference('chkbxpublicaralquiler').setValue(false);
+			if(list[i].tab.active) list[i].lookupReference('chkbxpublicarsinprecioalquiler').setValue(false);
         }
         btn.up('window').destroy();
     },
@@ -4727,64 +4814,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             }
         }
     },
-
-    onClickBotonGenerarDoc: function(btn){
-        var me =this;
-        var window= btn.up('window'),
-        ventana3= window.down('anyadirnuevaofertaactivoadjuntardocumento');
-        ventana2= window.down('anyadirnuevaofertadetalle');
-        var idExpediente;
-        var codPrescriptor;
-        var numDoc = "";
-        var nombre = "";
-        var direccion = ""
-        var email = "";
-        var telefono= "";
-        var tipoPersona = "";
-        if(!Ext.isEmpty(ventana2)){
-        	tipoPersona = ventana2.getForm().findField('comboTipoPersona').value;
-            codPrescriptor = ventana2.getForm().findField('buscadorPrescriptores').value;
-            numDoc = ventana2.getForm().findField('numDocumentoCliente').value;
-            if(tipoPersona == '1'){
-            	nombre= ventana2.getForm().findField('nombreCliente').value + " " + ventana2.getForm().findField('apellidosCliente').value;
-            }else{
-            	nombre= ventana2.getForm().findField('razonSocialCliente').value;
-            }
-            
-            direccion = ventana2.getForm().getValues().direccion;
-            email = ventana2.getForm().getValues().email;
-            telefono = ventana2.getForm().getValues().telefono;
-        }else{
-            ventana2=window.down('datoscompradorwizard');
-            idExpediente= ventana2.getRecord().data.idExpedienteComercial;
-            tipoPersona = ventana2.getRecord().data.codTipoPersona;
-            numDoc = ventana2.getRecord().data.numDocumento;
-            if(tipoPersona == '1'){
-            	nombre=ventana2.getRecord().data.nombreRazonSocial + " " + ventana2.getRecord().data.apellidos;
-            }else{
-            	nombre=ventana2.getRecord().data.nombreRazonSocial;
-            }
-            
-            direccion = ventana2.getRecord().data.direccion;
-            email = ventana2.getRecord().data.email;
-            telefono = ventana2.getRecord().data.telefono1;
-        }
-        var cesionDatos = ventana3.getForm().findField('cesionDatos').value;
-        var transIntern = ventana3.getForm().findField('transferenciasInternacionales').value;
-        var comTerceros = ventana3.getForm().findField('comunicacionTerceros').value;
-        var url =  $AC.getRemoteUrl('activo/generarUrlGDPR');
-        config = {};
-        config.url=url;
-        config.method='POST';
-        config.params = {codPrescriptor:codPrescriptor,cesionDatos:cesionDatos,transIntern:transIntern,comTerceros:comTerceros,
-               documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono};
-        Ext.global.console.log("Generando documento para "+ nombre);
-        me.fireEvent("downloadFile", config);
-
-        //ventana3.down('button[itemId=btnSubirDoc]').enable();
-    },
 	
-	comprobarFormato: function() {
+	comprobarFormato: function() { // FIXME: cuando se reubique dentro de un slide en el wizard eliminar de aqui.
 		
 		var me = this;
 		value = me.lookupReference('nuevoCompradorNumDoc');

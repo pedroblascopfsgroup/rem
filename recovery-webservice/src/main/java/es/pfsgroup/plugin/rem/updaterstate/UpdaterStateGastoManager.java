@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
 
-import java.util.Date;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -11,12 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.devon.message.MessageService;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
@@ -24,7 +21,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
@@ -33,8 +29,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	@Autowired
 	private GenericABMDao genericDao;	
 	
-	@Autowired
-	private GenericAdapter genericAdapter;
+//	@Autowired
+//	private GenericAdapter genericAdapter;
 	
 	@Resource
     MessageService messageServices;
@@ -100,7 +96,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 			if(!Checks.esNulo(gasto.getDestinatarioGasto()) && !Checks.esNulo(gasto.getDestinatarioGasto().getCodigo())) {
-				if(!COD_DESTINATARIO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo()) &&  Checks.esNulo(gasto.getPropietario())) {
+				if(!COD_DESTINATARIO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo()) && Checks.esNulo(gasto.getPropietario())) {
 					error = messageServices.getMessage(VALIDACION_PROPIETARIO);
 					return error;
 				}
@@ -131,33 +127,43 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 			
-			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera())){
-				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())){
-					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
-							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
-									(!DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
+//			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera())){
+//				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())){
+//					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
+//							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
+//									(!DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
+//						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+//						return error;
+//					}
+//				}
+//			}else{
+//				if(!Checks.esNulo(gasto.getPropietario().getCartera())) {
+//					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
+//							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
+//									(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
+//						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+//						return error;
+//					}
+//				}
+//			}
+			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
+				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())){
+					if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable())) {
 						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
 						return error;
 					}
 				}
-			}else{
-				if(!Checks.esNulo(gasto.getPropietario().getCartera())) {
-					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
-							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
-									(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
-						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-						return error;
-					}
-				}
-			}
-			if(!Checks.esNulo(gasto.getPropietario().getCartera()) && (!Checks.esNulo(gasto.getSubtipoGasto().getCodigo()))) {
-				if(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getSubtipoGasto().getCodigo())){
+				if(!Checks.esNulo(gasto.getSubtipoGasto().getCodigo()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getSubtipoGasto().getCodigo())) {
 					if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
 						error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
 						return error;
 					}
 				}
+			}else {
+				error = messageServices.getMessage(VALIDACION_PROPIETARIO);
+				return error;
 			}
+
 			if(Checks.estaVacio(gasto.getGastoProveedorActivos()) && !gasto.esAutorizadoSinActivos()) {
 				error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
 				return error;
@@ -182,7 +188,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	 */
 	private boolean updaterStateGastoProveedor(GastoProveedor gasto, String codigo) {
 		
-		Usuario usuario = genericAdapter.getUsuarioLogado();	
+		//Usuario usuario = genericAdapter.getUsuarioLogado();	
 		
 		// Si no recibimos un estado
 		if(Checks.esNulo(codigo)) {

@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+
 public class DtoModificarCompradores {
 	
 	
@@ -144,6 +146,24 @@ public class DtoModificarCompradores {
 	private Boolean mostrarUrsusBh;
 	
 	private String descripcionTipoDocumentoConyuge;
+	
+	private String estadoCivilURSUS;
+	
+	private String regimenMatrimonialUrsus;
+	
+	private String numeroConyugeUrsus;
+	
+	private String problemasUrsus;
+	
+	private String nombreConyugeURSUS;
+
+	private String cexClienteUrsusConyuge;
+	
+	private String numeroClienteUrsusConyuge;
+	
+	private String numeroClienteUrsusBhConyuge;
+	
+	
 
 	public String getId() {
 		return id;
@@ -702,8 +722,72 @@ public class DtoModificarCompradores {
 
 	public void setDescripcionTipoDocumentoConyuge(String descripcionTipoDocumentoConyuge) {
 		this.descripcionTipoDocumentoConyuge = descripcionTipoDocumentoConyuge;
-	}	
-	
+	}
+
+	public String getEstadoCivilURSUS() {
+		return estadoCivilURSUS;
+	}
+
+	public void setEstadoCivilURSUS(String estadoCivilURSUS) {
+		this.estadoCivilURSUS = estadoCivilURSUS;
+	}
+
+	public String getRegimenMatrimonialUrsus() {
+		return regimenMatrimonialUrsus;
+	}
+
+	public void setRegimenMatrimonialUrsus(String regimenMatrimonialUrsus) {
+		this.regimenMatrimonialUrsus = regimenMatrimonialUrsus;
+	}
+
+	public String getNumeroConyugeUrsus() {
+		return numeroConyugeUrsus;
+	}
+
+	public void setNumeroConyugeUrsus(String numeroConyugeUrsus) {
+		this.numeroConyugeUrsus = numeroConyugeUrsus;
+	}
+
+	public String getProblemasUrsus() {
+		return problemasUrsus;
+	}
+
+	public void setProblemasUrsus(String problemasUrsus) {
+		this.problemasUrsus = problemasUrsus;
+	}
+
+	public String getNombreConyugeURSUS() {
+		return nombreConyugeURSUS;
+	}
+
+	public void setNombreConyugeURSUS(String nombreConyugeURSUS) {
+		this.nombreConyugeURSUS = nombreConyugeURSUS;
+	}
+
+	public String getCexClienteUrsusConyuge() {
+		return cexClienteUrsusConyuge;
+	}
+
+	public void setCexClienteUrsusConyuge(String cexClienteUrsusConyuge) {
+		this.cexClienteUrsusConyuge = cexClienteUrsusConyuge;
+	}
+
+	public String getNumeroClienteUrsusConyuge() {
+		return numeroClienteUrsusConyuge;
+	}
+
+	public void setNumeroClienteUrsusConyuge(String numeroClienteUrsusConyuge) {
+		this.numeroClienteUrsusConyuge = numeroClienteUrsusConyuge;
+	}
+
+	public String getNumeroClienteUrsusBhConyuge() {
+		return numeroClienteUrsusBhConyuge;
+	}
+
+	public void setNumeroClienteUrsusBhConyuge(String numeroClienteUrsusBhConyuge) {
+		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
+	}
+
 	
 
 }

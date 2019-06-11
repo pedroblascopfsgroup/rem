@@ -111,9 +111,6 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="TBJ_FECHA_CIERRE_ECONOMICO")
 	private Date fechaCierreEconomico;
 	
-	@Column(name="RANGO")
-	private Integer rango;
-	
 	@Column(name="DD_TTR_FILTRAR")
 	private Integer filtrar;
 	
@@ -351,14 +348,6 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setFechaCierreEconomico(Date fechaCierreEconomico) {
 		this.fechaCierreEconomico = fechaCierreEconomico;
-	}
-
-	public Integer getRango() {
-		return rango;
-	}
-
-	public void setRango(Integer rango) {
-		this.rango = rango;
 	}
 
 	public Integer getFiltrar() {

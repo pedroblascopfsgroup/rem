@@ -451,3 +451,33 @@ do
 done
 
 echo "Fin de la transferecia de los ficheros de la gestoria GrupoBC"
+
+#############
+### GESTINOVA99
+#############
+echo "Se inicia la transferecia de los ficheros de la gestoria GESTINOVA9"
+fichero=GESTINOVA99_DOCUMENTOS_GR
+
+if [[ -z ${INSTALL_DIR/control/etl/gestinova99/input} ]] || [[ ! -d ${INSTALL_DIR/control/etl/gestinova99/input} ]]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+#rm -f ${INSTALL_DIR/control/etl/uniges/input}$fichero_$1
+
+extensionTxt=".dat"
+
+OIFS=$IFS
+IFS=','
+arrayfichero=${fichero}
+
+for fichero in $arrayfichero
+do
+    ficheroTxt=$INSTALL_DIR/control/etl/gestinova99/input/${fichero}_$1$extensionTxt
+    echo "fichero .dat: $ficheroTxt"
+    if [[ "$#" -eq 1 ]]; then
+        ./ftp/ftp_get_gestoria_gestinova99_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/gestinova99/input/
+        echo "Fichero movido al destino $INSTALL_DIR/control/etl/gestinova99/input/"
+    fi
+done
+
+echo "Fin de la transferecia de los ficheros de la gestoria GESTINOVA99"

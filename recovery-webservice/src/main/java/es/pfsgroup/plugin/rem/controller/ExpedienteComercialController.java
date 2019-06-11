@@ -39,10 +39,10 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GdprApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -54,9 +54,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -84,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
+import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -91,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 
 
 @Controller
@@ -162,7 +162,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private ActivoTramiteApi activoTramiteApi;
 
 	@Autowired
-	private ActivoApi activoApi;
+	private OfertaApi ofertaApi;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -611,13 +611,15 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		try {
 			
-			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
-
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
-
-			String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
-			model.put("errores", errores);
-			model.put(RESPONSE_SUCCESS_KEY, errores == null);
+			if(!Checks.esNulo(docCliente)) {
+				String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
+	
+				WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+	
+				String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
+				model.put("errores", errores);
+				model.put(RESPONSE_SUCCESS_KEY, errores == null);
+			}
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errores", e.getMessage());
@@ -890,8 +892,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 						.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
 				if (!Checks.esNulo(vistaConExp)) {
 					DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
+					if("0".equals(comprador.getNumeroConyugeUrsus())) {
+						comprador.setNumeroConyugeUrsus(null);
+					}
 					model.put(RESPONSE_DATA_KEY, comprador);
 					model.put(RESPONSE_SUCCESS_KEY, true);
+					if(vistaConExp.getIdExpedienteComercial() != null && !vistaConExp.getIdExpedienteComercial().isEmpty()){
+						ofertaApi.llamadaMaestroPersonas(Long.valueOf(vistaConExp.getIdExpedienteComercial()), OfertaApi.CLIENTE_HAYA);
+					}					
 				} else {
 					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi
 							.getDatCompradorById(dto.getId());
@@ -924,6 +932,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	//La vista hace de webdto del modelo de sencha
 	public ModelAndView saveFichaComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador, @RequestParam Long id) {
 		try {
 			boolean success = false;
@@ -1190,6 +1199,27 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			model.put(RESPONSE_DATA_KEY,
 					expedienteComercialApi.buscarClientesUrsus(numeroDocumento, tipoDocumento, idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", e.getMessage());
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView buscarProblemasVentaClienteUrsus(@RequestParam String numeroUrsus, @RequestParam String idExpediente, ModelMap model) {
+		try {
+			List<DatosClienteProblemasVentaDto> list = expedienteComercialApi.buscarProblemasVentaClienteUrsus(numeroUrsus, idExpediente);
+			model.put("data", list);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (JsonViewerException e) {
@@ -2022,6 +2052,39 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getActivosPropagables(ModelMap model, @RequestParam(value = "idExpediente") Long idExpediente){
 		try{
 			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getActivosPropagables(Long.valueOf(idExpediente)));
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getComprobarCompradores(ModelMap model, @RequestParam(value = "idExpediente") Long idExpediente){
+		Boolean hayProblemasUrsus = expedienteComercialApi.hayDiscrepanciasClientesURSUS(Long.valueOf(idExpediente));
+		
+		try{
+			model.put(RESPONSE_DATA_KEY, hayProblemasUrsus);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView discrepanciasVeracidadDatosComprador(ModelMap model, DtoSlideDatosCompradores dto) throws Exception{
+		Boolean hayProblemasUrsus = expedienteComercialApi.modificarDatosUnCompradorProblemasURSUS(dto);
+		try{
+			model.put(RESPONSE_DATA_KEY, hayProblemasUrsus);
+			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			logger.error("error en expedienteComercialController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

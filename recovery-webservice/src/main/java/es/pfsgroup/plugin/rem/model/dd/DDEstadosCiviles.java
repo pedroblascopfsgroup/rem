@@ -37,6 +37,12 @@ public class DDEstadosCiviles implements Auditable, Dictionary {
 	public static final String CODIGO_ESTADO_CIVIL_CASADO = "02";
 	public static final String CODIGO_ESTADO_CIVIL_DIVORCIADO = "03";
 	public static final String CODIGO_ESTADO_CIVIL_VIUDO = "04";
+	
+	public static final String CODIGO_ESTADO_DESCONOCIDO = "05";
+	public static final String CODIGO_ESTADO_SEPARADO_LEGAL = "06";
+	public static final String CODIGO_ESTADO_RELIGIOSO = "07";
+	public static final String CODIGO_ESTADO_NULIDAD_MATRIMONIAL = "08";
+
 
 	@Id
 	@Column(name = "DD_ECV_ID")

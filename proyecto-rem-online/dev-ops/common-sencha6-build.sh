@@ -1,4 +1,5 @@
 #!/bin/bash +x
 echo "Generando Sencha..."
 cd proyecto-rem-online
-./sencha-build.sh dev
+
+. jenkins-build-extjs-601-app.sh production

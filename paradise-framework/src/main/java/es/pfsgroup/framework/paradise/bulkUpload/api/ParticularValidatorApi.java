@@ -24,7 +24,7 @@ public interface ParticularValidatorApi {
 
 	Boolean esActivoEnAgrupacionPorTipo(Long numActivo, String codTipoAgrupacion);
 
-	Boolean esActivoPrincipalEnAgrupacion(Long numActivo);
+	Boolean esActivoPrincipalEnAgrupacion(Long numActivo);	
 
 	Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion);
 
@@ -67,6 +67,20 @@ public interface ParticularValidatorApi {
 	Boolean esActivoAsistido(String numActivo);
 
 	Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto);
+	
+	Boolean existeTrabajo(String numTrabajo);
+	
+	Boolean existeGastoTrabajo(String numTrabajo);
+	
+	Boolean existeSubtrabajo(String codSubtrabajo);
+	
+	Boolean compararNumeroFilasTrabajo(String numTrabajo, int numeroFilas);
+		
+	Boolean existeTipoTarifa(String tipoTarifa);
+	
+	Boolean tipoTarifaValido(String tipoTarifa, String numTrabajo);
+	
+	
 
 	/**
 	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja
@@ -619,6 +633,20 @@ public interface ParticularValidatorApi {
 	public Boolean validadorTipoCartera(Long numExpediente);
 	
 	/**
+	 * true si pertenece a Bankia
+	 * @param numExpediente
+	 * @return
+	 */
+	public Boolean validadorCarteraBankia(Long numExpediente);
+	
+	/**
+	 * true si pertenece a liberbank
+	 * @param numExpediente
+	 * @return
+	 */
+	public Boolean validadorCarteraLiberbank(Long numExpediente);
+	
+	/**
 	 * 
 	 * @param numExpediente
 	 * @return true si es diferente a Tramitado, false si es Tramitado  
@@ -686,5 +714,30 @@ public interface ParticularValidatorApi {
 	Boolean isActivoOfGiants(String numActivo);
 	
 	List<BigDecimal> activosEnAgrupacion(String numOferta);
+
+	/**
+	 * @param entidadFinanciera
+	 * @return true si existe la entidad Financiera
+	 */
+	public Boolean existeEntidadFinanciera(String entidadFinanciera);
+	/**
+	 * @param tipoFinanciacion
+	 * @return true si el tipo de financiazion existe.
+	 */
+	public Boolean existeTipoDeFinanciacion(String tipoFinanciacion);
+	/**
+	 * @param numExpedienteComercial
+	 * @return true si el activo pertenece a una oferta en venta.
+	 */
+	
+	public Boolean perteneceOfertaVenta(String numExpedienteComercial);
+	/**
+	 * @param numExpedienteComercial
+	 * @return true si el activo pertenece a un activo de venta.
+	 */
+	
+	public Boolean activosVendidos(String numExpedienteComercial);
+
+	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 }

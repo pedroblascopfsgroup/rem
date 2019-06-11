@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -25,9 +26,10 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import net.sf.json.JSONException;
 
 @Component
-public class UpdaterServiceSancionOfertaDevolucionLlaves implements UpdaterService {
+public class UpdaterServiceSancionOfertaDevolucionLlaves implements UpdaterService  {
 
     @Autowired
     private GenericABMDao genericDao;
@@ -37,7 +39,7 @@ public class UpdaterServiceSancionOfertaDevolucionLlaves implements UpdaterServi
 
     @Autowired
     private UvemManagerApi uvemManagerApi;
-
+ 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
 
@@ -45,6 +47,7 @@ public class UpdaterServiceSancionOfertaDevolucionLlaves implements UpdaterServi
 
     private static final String CODIGO_T013_DEVOLUCIONLLAVES = "T013_DevolucionLlaves";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
+    
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -55,7 +58,6 @@ public class UpdaterServiceSancionOfertaDevolucionLlaves implements UpdaterServi
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			if(!Checks.esNulo(expediente)){
-
 				if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())){
 
 					if(!Integer.valueOf(1).equals(expediente.getCondicionante().getSolicitaReserva())){

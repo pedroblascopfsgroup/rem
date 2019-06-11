@@ -23,7 +23,7 @@ public class DatosClienteDto {
 	 private String DatosComplementariosDelDomicilio;
 	 private String BarrioColoniaOApartado;
 	 private String EdadDelCliente;
-	 private String CodigoEstadoCivil;
+	 private char CodigoEstadoCivil;
 	 private String EstadoCivilActual;
 	 private String NumeroDeHijos;
 	 private String SEXO;
@@ -41,6 +41,8 @@ public class DatosClienteDto {
 	 private String SubsectorDeActividadEconomica;
 	 private String numeroClienteUrsus;
 	 private String numeroClienteUrsusConyuge;
+	 private Boolean hayOcurrencias;
+	 private String nombreYApellidosConyuge;
 	 
 	public String getClaseDeDocumentoIdentificador() {
 		return ClaseDeDocumentoIdentificador;
@@ -168,10 +170,10 @@ public class DatosClienteDto {
 	public void setEdadDelCliente(String edadDelCliente) {
 		EdadDelCliente = edadDelCliente;
 	}
-	public String getCodigoEstadoCivil() {
+	public char getCodigoEstadoCivil() {
 		return CodigoEstadoCivil;
 	}
-	public void setCodigoEstadoCivil(String codigoEstadoCivil) {
+	public void setCodigoEstadoCivil(char codigoEstadoCivil) {
 		CodigoEstadoCivil = codigoEstadoCivil;
 	}
 	public String getEstadoCivilActual() {
@@ -294,7 +296,7 @@ public class DatosClienteDto {
 		setDatosComplementariosDelDomicilio("Datos complementarios");
 		setBarrioColoniaOApartado("Barrio colonia o apartado");
 		setEdadDelCliente("Edad");
-		setCodigoEstadoCivil("Cod estado civil");
+		setCodigoEstadoCivil('2');
 		setEstadoCivilActual("Estado civil actual");
 		setNumeroDeHijos("Numero hijos");
 		setSEXO("Sexo");
@@ -311,12 +313,25 @@ public class DatosClienteDto {
 		setNombreDePaisResidencia("Pais residencia");
 		setSubsectorDeActividadEconomica("Subsector actividad");
 		setNumeroClienteUrsus("20401");
+		setNombreYApellidosConyuge("Nom y Ape Conyuge");
 	}
 	public String getNumeroClienteUrsusConyuge() {
 		return numeroClienteUrsusConyuge;
 	}
 	public void setNumeroClienteUrsusConyuge(String numeroClienteUrsusConyuge) {
 		this.numeroClienteUrsusConyuge = numeroClienteUrsusConyuge;
+	}
+	public Boolean getHayOcurrencias() {
+		return hayOcurrencias;
+	}
+	public void setHayOcurrencias(Boolean hayOcurrencias) {
+		this.hayOcurrencias = hayOcurrencias;
+	}
+	public String getNombreYApellidosConyuge() {
+		return nombreYApellidosConyuge;
+	}
+	public void setNombreYApellidosConyuge(String nombreYApellidosConyuge) {
+		this.nombreYApellidosConyuge = nombreYApellidosConyuge;
 	}
 
 }

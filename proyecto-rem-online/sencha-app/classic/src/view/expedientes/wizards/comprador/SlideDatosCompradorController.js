@@ -124,9 +124,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoNumeroDocumentoConyugue = me.lookupReference('numRegConyuge'),
 		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef')
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
-		
 		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO'] && !tieneReserva)) 
-				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh))) {
+				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh.getValue())) ) {
 			campoTipoPersona.setDisabled(true);
 			campoPorcionCompra.setDisabled(true);
 			campoTipoDocumentoRte.setDisabled(true); 
@@ -885,52 +884,61 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			idExpediente = wizard.expediente.get('id');
 			
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
+		
+		if(esBankiaBH){
+			numeroUrsus = fieldNumeroClienteUrsusBh.getValue();
+		}
 
-		Ext.Ajax.request({
-			url: $AC.getRemoteUrl('expedientecomercial/buscarDatosClienteNumeroUrsus'),
-			params: {
-				numeroUrsus: numeroUrsus,
-				idExpediente: idExpediente
-			},
-			method: 'GET',
-			success: function(response, opts) {
-				var data = {};
-				wizard.unmask();
-				try {
-					data = Ext.decode(response.responseText);
-				} catch (e) {
-					data = {};
-				}
-				if (data.success == 'true' && !Utils.isEmptyJSON(data.data)) {
-					me.abrirDatosClienteUrsus(data.data);
-					estadoCivilUrsus.setValue(data.data.codigoEstadoCivil);
-			
-					if(data.data.codigoEstadoCivil ===  CONST.D_ESTADOS_CIVILES["COD_CASADO"]){
-						if (data.data.numeroClienteUrsusConyuge != 0 && data.data.numeroClienteUrsusConyuge != undefined && !data.data.numeroClienteUrsusConyuge) {
-							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_GANANCIALES"]);
-						} else if (data.data.numeroClienteUrsusConyuge === 0) {
-							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_SEPARACION_BIENES"]);
+		if(!Ext.isEmpty(numeroUrsus)){
+			Ext.Ajax.request({
+				url: $AC.getRemoteUrl('expedientecomercial/buscarDatosClienteNumeroUrsus'),
+				params: {
+					numeroUrsus: numeroUrsus,
+					idExpediente: idExpediente
+				},
+				method: 'GET',
+				success: function(response, opts) {
+					var data = {};
+					wizard.unmask();
+					try {
+						data = Ext.decode(response.responseText);
+					} catch (e) {
+						data = {};
+					}
+					if (data.success == 'true' && !Utils.isEmptyJSON(data.data)) {
+						me.abrirDatosClienteUrsus(data.data);
+						estadoCivilUrsus.setValue(data.data.codigoEstadoCivil);
+				
+						if(data.data.codigoEstadoCivil ===  CONST.D_ESTADOS_CIVILES["COD_CASADO"]){
+							if (data.data.numeroClienteUrsusConyuge != 0 && data.data.numeroClienteUrsusConyuge != undefined && !data.data.numeroClienteUrsusConyuge) {
+								regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_GANANCIALES"]);
+							} else if (data.data.numeroClienteUrsusConyuge === 0) {
+								regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_SEPARACION_BIENES"]);
+							}
 						}
+						
+						if (data.data.numeroClienteUrsusConyuge != 0) {
+							numeroClienteUrsusRefConyugeUrsus.setValue(data.data.numeroClienteUrsusConyuge);
+						}
+						
+						if (!Utils.isEmptyJSON(data.data.nombreYApellidosConyuge)) {
+							nombreConyugeUrsus.setValue(data.data.nombreYApellidosConyuge);
+						}
+						
+					} else {
+						Utils.defaultRequestFailure(response, opts);
 					}
 					
-					if (data.data.numeroClienteUrsusConyuge != 0) {
-						numeroClienteUrsusRefConyugeUrsus.setValue(data.data.numeroClienteUrsusConyuge);
-					}
-					
-					if (!Utils.isEmptyJSON(data.data.nombreYApellidosConyuge)) {
-						nombreConyugeUrsus.setValue(data.data.nombreYApellidosConyuge);
-					}
-					
-				} else {
+				},
+				failure: function(response) {
+					wizard.unmask();
 					Utils.defaultRequestFailure(response, opts);
 				}
-				
-			},
-			failure: function(response) {
-				wizard.unmask();
-				Utils.defaultRequestFailure(response, opts);
-			}
-		});
+			});
+		}else{
+			wizard.unmask();
+			me.fireEvent("errorToast", "Seleccione un cliente ursus");
+		}
 	},
 
 	/**

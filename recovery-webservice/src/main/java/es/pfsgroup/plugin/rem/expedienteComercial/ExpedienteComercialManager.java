@@ -9550,6 +9550,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							}
 						}else{
 							if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getTipoPersona().getCodigo())) {
+								comprador.setProblemasUrsus(false);
+								crearTareaValidacionClientes (expediente);
+								comprador.setProblemasUrsus(false);
+								genericDao.update(Comprador.class, comprador);
 								return false;	
 							}else {
 								comprador.setProblemasUrsus(true);

@@ -10,7 +10,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.Checks;
@@ -78,7 +77,6 @@ public class MaestroDePersonas implements Runnable {
 		this.cartera = cartera;
 	}
 
-	@Transactional
 	public void run() {
 		Session sessionObj = null;
 		List<CompradorExpediente> listaPersonas = null;

@@ -5296,7 +5296,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
 			}
 
-			if (!Checks.esNulo(idExpediente)) {
+			if (!Checks.esNulo(idExpediente) && !Checks.esNulo(tipoDoc)) {
 				DDSubcartera subcarteraExpediente = getCodigoSubCarteraExpediente(Long.parseLong(idExpediente));
 				if (!Checks.esNulo(subcarteraExpediente)
 						&& DDSubcartera.CODIGO_BAN_BH.equals(subcarteraExpediente.getCodigo())) {

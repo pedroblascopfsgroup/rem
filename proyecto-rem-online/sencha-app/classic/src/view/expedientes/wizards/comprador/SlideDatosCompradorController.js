@@ -409,6 +409,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				campoTipoPersona = me.lookupReference('tipoPersona'),
 				campoTipoRte = me.lookupReference('tipoDocumentoRte'),
 				codigoTipoExpediente = wizard.expediente.get('tipoExpedienteCodigo');
+				seleccionClienteUrsusConyuge = me.lookupReference('seleccionClienteUrsusConyuge');
 
 
 				if(!Ext.isEmpty(campoTipoPersona.getValue())){
@@ -433,6 +434,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 												if(campoRegEconomico.getValue() === "01"){
 													campoTipoConyuge.enable();
 													campoNumConyuge.enable();
+													seleccionClienteUrsusConyuge.enable();
 													campoNumConyuge.allowBlank = false;
 													campoTipoConyuge.allowBlank = false;
 												}else{
@@ -442,6 +444,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 													campoTipoConyuge.allowBlank = true;
 													campoTipoConyuge.disable();
 													campoNumConyuge.disable();
+													seleccionClienteUrsusConyuge.disable();
 												}
 											}
 										}								
@@ -454,7 +457,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 									campoTipoConyuge.allowBlank = true;
 									campoRegEconomico.disable();
 									campoNumConyuge.disable();
-									campoTipoConyuge.disable();		
+									campoTipoConyuge.disable();
+									seleccionClienteUrsusConyuge.disable();
 								}
 							}
 						
@@ -554,6 +558,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";	
 			console.log(form);
+			me.bloquearCampos();
 		}catch(err) {
 			Ext.global.console.log(err);
 		}

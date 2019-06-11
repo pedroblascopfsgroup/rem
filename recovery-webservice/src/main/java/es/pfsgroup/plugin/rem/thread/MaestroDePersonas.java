@@ -10,11 +10,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
@@ -77,6 +77,7 @@ public class MaestroDePersonas implements Runnable {
 		this.cartera = cartera;
 	}
 
+	@Transactional
 	public void run() {
 		Session sessionObj = null;
 		List<CompradorExpediente> listaPersonas = null;
@@ -131,17 +132,11 @@ public class MaestroDePersonas implements Runnable {
 								logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
 										+ personaOutputDto.getIdIntervinienteHaya());
 								if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
-									TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-											genericDao.createFilter(FilterType.EQUALS, "numDocumento", Long.parseLong(personaOutputDto.getIdIntervinienteHaya())));
-									if(tmpClienteGDPR == null){
-										tmpClienteGDPR = new TmpClienteGDPR();
-										tmpClienteGDPR.setIdPersonaHaya(
-												Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
-										tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
-										genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
-									}
-									
-									
+									TmpClienteGDPR tmpClienteGDPR = new TmpClienteGDPR();
+									tmpClienteGDPR.setIdPersonaHaya(
+											Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
+									tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+									genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
 								} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
 									Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
 									criteria.add(Restrictions.eq("numDocumento",

@@ -274,10 +274,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 					activoSituacionPosesoria.setActivo(activo);
 				}
 
-				if(activoSituacionPosesoria.getOcupado() != null && activoSituacionPosesoria.getOcupado() == 0) {
-					activoSituacionPosesoria.setOcupado(1);
-				}
-
+				activoSituacionPosesoria.setOcupado(1);
 				DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
 				activoSituacionPosesoria.setConTitulo(tipoTituloActivoTPA);
 				activoSituacionPosesoria.setFechaUltCambioTit(new Date());

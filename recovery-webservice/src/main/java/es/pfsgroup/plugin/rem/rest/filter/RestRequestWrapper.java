@@ -65,7 +65,7 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 		} else if (request.getParameter("data") != null && !request.getParameter("data").isEmpty()){
 			body = request.getParameter("data");
 		}else{
-			body = "";
+			body = request.getQueryString();			
 		}
 	}
 
@@ -96,13 +96,9 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 
 			json = JSONObject.fromObject(body);
 
-			if (Checks.esNulo(json)) {
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-
-			}
 
 		} catch (Exception e) {
-			throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			json = null;
 		}
 		return json;
 	}
@@ -113,7 +109,12 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.generateJsonSchema(clase);
-		Object dataJson = mapper.readValue(this.body, clase);
+		Object dataJson = null;
+		try {
+			dataJson = mapper.readValue(this.body, clase);
+		}catch(Exception e) {
+			dataJson = null;
+		}
 		return dataJson;
 	}
 

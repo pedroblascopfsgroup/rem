@@ -53,7 +53,6 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Integer diasCambioPrecioVentaWeb;
 	private Integer diasCambioPrecioAlqWeb;
 
-
 	public String getTipoPublicacionVentaDescripcion() {
 		return tipoPublicacionVentaDescripcion;
 	}

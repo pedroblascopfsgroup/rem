@@ -64,16 +64,18 @@ public class RestSecurityFilter implements Filter {
 			peticion = restApi.crearPeticionObj(restRequest);
 			RequestDto datajson = (RequestDto) restRequest.getRequestData(RequestDto.class);
 			nombreServicio = restApi.obtenerNombreServicio(request);
-			logger.debug("[REST API] Ejecutando request servicio=".concat(nombreServicio)
-					.concat(" id=[").concat(datajson.getId()).concat("]. Datos:"));
-			logger.debug(restRequest.getBody());
-
+			
 			jsonFields = restRequest.getJsonObject();
 			restApi.doSessionConfig();
 
 			String signature = ((HttpServletRequest) request).getHeader("signature");
 			peticion.setSignature(signature);
-			String id = datajson.getId();
+			String id = null;
+			if(datajson != null) {
+				id = datajson.getId();
+			}else if( ((HttpServletRequest) request).getHeader("idPeticion") != null) {
+				id = ((HttpServletRequest) request).getHeader("idPeticion");
+			}
 			peticion.setToken(id);
 			String ipClient = restApi.getClientIpAddr(request);
 
@@ -112,21 +114,14 @@ public class RestSecurityFilter implements Filter {
 					restApi.throwRestException(response, RestApi.REST_MSG_INVALID_SIGNATURE, jsonFields, restRequest);
 
 				} else {
-					if (!restApi.validateId(broker, id)) {
+					if (id != null && !restApi.validateId(broker, id)) {
 						logger.error("REST: El id de la petición ya se ha ejecutado previamente");
 						peticion.setResult(RestApi.CODE_ERROR);
 						peticion.setErrorDesc(RestApi.REST_MSG_REPEATED_REQUEST);
 						restApi.throwRestException(response, RestApi.REST_MSG_REPEATED_REQUEST, jsonFields,
 								restRequest);
 
-					} else if (!restRequest.getBody().contains("data")) {
-						logger.error("REST: Petición no contiene información en el campo data.");
-						peticion.setResult(RestApi.CODE_ERROR);
-						peticion.setErrorDesc(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-						restApi.throwRestException(response, RestApi.REST_MSG_MISSING_REQUIRED_FIELDS, jsonFields,
-								restRequest);
-
-					} else {
+					}else {
 						chain.doFilter(restRequest, response);
 					}
 				}

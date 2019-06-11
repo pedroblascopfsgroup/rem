@@ -60,6 +60,7 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public static final String PTE_POSICIONAMIENTO = "25";
 	public static final String PTE_FIRMA = "27";
 	public static final String PTE_CIERRE = "28";
+	public static final String CONTRAOFERTA_DENEGADA = "29";
 
 	@Id
 	@Column(name = "DD_EEC_ID")

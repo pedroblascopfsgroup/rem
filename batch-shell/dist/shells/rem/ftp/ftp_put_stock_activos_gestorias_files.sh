@@ -149,4 +149,14 @@ bye
 EOF
 echo "Fichero movido satisfactoriamente"
 
+cd $INSTALL_DIR/control/etl/gestinova99/output
+
+echo "Gestoria GESTINOVA99 - GESTINOVA99_STOCK_RG_${1}.dat"
+lftp -u sftp_gestinova99,"u2K#Plqv" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/gestinova99/output/GESTINOVA99_STOCK_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
 echo "Fin del proceso de volcado de los ficheros de stock de activos a las gestorias"

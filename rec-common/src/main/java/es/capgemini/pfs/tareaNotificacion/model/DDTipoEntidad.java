@@ -34,6 +34,7 @@ public class DDTipoEntidad implements Dictionary, Auditable {
     public static final String CODIGO_ENTIDAD_OBJETIVO = "7";
     public static final String CODIGO_ENTIDAD_NOTIFICACION = "10";
     public static final String CODIGO_ENTIDAD_PERSONA = "9";
+    public static final String CODIGO_ENTIDAD_ACTIVO = "61";
 
     /**
      * serial.

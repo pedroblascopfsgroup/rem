@@ -12,7 +12,7 @@ Ext
 					saveMultiple: false,
 					disableValidation: true,
 					recordClass : "HreRem.model.ActivoExpedienteCondicionesModel",
-
+					refreshAfterSave: true, 
 					requires : [ 'HreRem.model.ActivoExpedienteCondicionesModel' ],
 
 					listeners : {},

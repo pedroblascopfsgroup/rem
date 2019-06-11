@@ -109,6 +109,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		var me = this,
 		expediente = me.getView().up('wizardBase').expediente,
 		idExpediente = expediente.get('id'),
+		tieneReserva = expediente.get('tieneReserva'),
 		estadoExpediente = expediente.getData().codigoEstado;
 		
 		var campoTipoPersona = me.lookupReference('tipoPersona'),
@@ -124,7 +125,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef')
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
 		
-		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO']) && me.esBankia()) {
+		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO'] && !tieneReserva)) 
+				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh))) {
 			campoTipoPersona.setDisabled(true);
 			campoPorcionCompra.setDisabled(true);
 			campoTipoDocumentoRte.setDisabled(true); 
@@ -566,7 +568,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			btnDatosClienteUrsus = form.lookupReference('btnVerDatosClienteUrsus');
 		
 		fieldClientesUrsus.setValue();
-		btnDatosClienteUrsus.setDisabled(true);
+		//btnDatosClienteUrsus.setDisabled(true);
 		fieldClientesUrsus.recargarField = true;
 	},
 
@@ -865,10 +867,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 	onClickVerDetalleClienteUrsus: function() {
 		var me = this,
 			form = this.getView(),
-			numeroUrsus = form.lookupReference('seleccionClienteUrsus').getValue(),
+			numeroUrsus = form.lookupReference('numeroClienteUrsusRef').getValue(),
 			wizard = form.up('wizardBase'),
+			fieldNumeroClienteUrsus = form.lookupReference('numeroClienteUrsusRef'),
+			fieldNumeroClienteUrsusBh = form.lookupReference('numeroClienteUrsusBhRef'),
+			btnDatosClienteUrsus = form.lookupReference('btnVerDatosClienteUrsus'),
+			estadoCivilUrsus = form.lookupReference('estadoCivilUrsus'),
+			regimenMatrimonialUrsus = form.lookupReference('regimenMatrimonialUrsus'),
+			numeroClienteUrsusRefConyugeUrsus = form.lookupReference('numeroClienteUrsusRefConyugeUrsus'),
+			nombreConyugeUrsus = form.lookupReference('nombreConyugeUrsus'),
+			esBankiaBH = CONST.SUBCARTERA['BH'] == me.getView().up('wizardBase').expediente.get('subcarteraCodigo');
 			idExpediente = wizard.expediente.get('id');
-
+			
 		wizard.mask(HreRem.i18n('msg.mask.loading'));
 
 		Ext.Ajax.request({
@@ -888,9 +898,28 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				}
 				if (data.success == 'true' && !Utils.isEmptyJSON(data.data)) {
 					me.abrirDatosClienteUrsus(data.data);
+					estadoCivilUrsus.setValue(data.data.codigoEstadoCivil);
+			
+					if(data.data.codigoEstadoCivil ===  CONST.D_ESTADOS_CIVILES["COD_CASADO"]){
+						if (data.data.numeroClienteUrsusConyuge != 0 && data.data.numeroClienteUrsusConyuge != undefined && !data.data.numeroClienteUrsusConyuge) {
+							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_GANANCIALES"]);
+						} else if (data.data.numeroClienteUrsusConyuge === 0) {
+							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_SEPARACION_BIENES"]);
+						}
+					}
+					
+					if (data.data.numeroClienteUrsusConyuge != 0) {
+						numeroClienteUrsusRefConyugeUrsus.setValue(data.data.numeroClienteUrsusConyuge);
+					}
+					
+					if (!Utils.isEmptyJSON(data.data.nombreYApellidosConyuge)) {
+						nombreConyugeUrsus.setValue(data.data.nombreYApellidosConyuge);
+					}
+					
 				} else {
 					Utils.defaultRequestFailure(response, opts);
 				}
+				
 			},
 			failure: function(response) {
 				wizard.unmask();

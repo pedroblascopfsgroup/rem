@@ -329,7 +329,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 									hidden: '{!comprador.esCarteraBankia}'
 								},
 								reference: 'btnVerDatosClienteUrsus',
-								disabled: true,
+								disabled: false,
 								cls: 'search-button-buscador',
 								iconCls: 'app-buscador-ico ico-search'
 							}

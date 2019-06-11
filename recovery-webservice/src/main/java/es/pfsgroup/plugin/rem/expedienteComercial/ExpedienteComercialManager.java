@@ -304,8 +304,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String NULIDAD_MATRIMONIAL = "8";
 	
 	
-	private static final String SEPARACION_BIENES = "0";
-	private static final String SI = "Si";
 	
 	//No existe ese código en REM
 	private static final String NO_EXISTE_CODIGO_REM = "NoExisteEseCodigoEnRem";
@@ -397,6 +395,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private List<ExpedienteAvisadorApi> avisadores;
 
+	@Autowired
 	private ClienteComercialDao clienteComercialDao;
 	
 	@Autowired

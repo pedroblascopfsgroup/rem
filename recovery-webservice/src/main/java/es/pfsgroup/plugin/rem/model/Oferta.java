@@ -241,6 +241,12 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_FECHA_REPSUESTA_PM")
 	private Date fechaRespuestaPM;
+	
+	@Column(name="OFR_IMP_CONTRAOFERTA_CES")
+	private Double importeContraofertaCES;
+	
+	@Column(name="OFR_FECHA_RESOLUCIÓN_CES")
+	private Date fechaResolucionCES;
     
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -714,6 +720,22 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
 		this.fechaRespuestaPM = fechaRespuestaPM;
+	}
+
+	public Double getImporteContraofertaCES() {
+		return importeContraofertaCES;
+	}
+
+	public void setImporteContraofertaCES(Double importeContraofertaCES) {
+		this.importeContraofertaCES = importeContraofertaCES;
+	}
+
+	public Date getFechaResolucionCES() {
+		return fechaResolucionCES;
+	}
+
+	public void setFechaResolucionCES(Date fechaResolucionCES) {
+		this.fechaResolucionCES = fechaResolucionCES;
 	}
 
 }

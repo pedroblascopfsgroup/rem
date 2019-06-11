@@ -2134,6 +2134,46 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         fecha.setReadOnly(true);
         fechaComunicacion.allowBlank = false;
     },
+    
+    T017_AnalisisPMValidacion: function(){
+    	var me = this;
+    	var comboResolucion = me.down('[name=comboResolucion]');
+    	var comboContraoferta = me.down('[name=numImporteContra]');
+    	me.deshabilitarCampo(comboContraoferta);
+		
+    	comboResolucion.addListener('change', function(){
+	        if(comboResolucion.value == '03'){
+	        	me.habilitarCampo(comboContraoferta);
+	        	comboContraoferta.allowBlank = false;
+	        	comboContraoferta.validate();
+	        }else{
+	        	me.deshabilitarCampo(comboContraoferta);
+	        	comboContraoferta.reset();
+	        	comboContraoferta.allowBlank = true;
+	        	comboContraoferta.validate();
+	        }
+        });
+    },
+    
+    T017_ResolucionCESValidacion: function(){
+    	var me = this;
+    	var comboResolucion = me.down('[name=comboResolucion]');
+    	var comboContraoferta = me.down('[name=numImporteContra]');
+    	me.deshabilitarCampo(comboContraoferta);
+		
+    	comboResolucion.addListener('change', function(){
+	        if(comboResolucion.value == '03'){
+	        	me.habilitarCampo(comboContraoferta);
+	        	comboContraoferta.allowBlank = false;
+	        	comboContraoferta.validate();
+	        }else{
+	        	me.deshabilitarCampo(comboContraoferta);
+	        	comboContraoferta.reset();
+	        	comboContraoferta.allowBlank = true;
+	        	comboContraoferta.validate();
+	        }
+        });
+    },
 
     habilitarCampo: function(campo) {
         var me = this;

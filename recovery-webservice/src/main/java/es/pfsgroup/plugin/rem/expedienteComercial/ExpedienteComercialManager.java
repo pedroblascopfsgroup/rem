@@ -1338,6 +1338,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaRespuestaPM(oferta.getFechaRespuestaPM());
 		}
 		
+		if(!Checks.esNulo(oferta.getImporteContraofertaCES())) {
+			dto.setImporteContraofertaCES(oferta.getImporteContraofertaCES());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaResolucionCES())) {
+			dto.setFechaResolucionCES(oferta.getFechaResolucionCES());
+		}
+		
 
 		if(oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			///Comprobamos si la tarea Elevar a Sanción está activa

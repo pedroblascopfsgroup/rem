@@ -41,6 +41,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	public static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
     public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
     public static final String CODIGO_T017_ANALISIS_PM = "T017_AnalisisPM";
+	public static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
 
 	
 	@Resource
@@ -82,7 +83,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T013_RESOLUCION_COMITE, CODIGO_T017_ANALISIS_PM};
+		return new String[]{CODIGO_T013_RESOLUCION_COMITE, CODIGO_T017_ANALISIS_PM, CODIGO_T017_RESOLUCION_CES};
 	}
 	
 	@Override
@@ -169,11 +170,8 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 		} else {
 			Boolean permiteNotificarAprobacion = true;
 			
-			for (TareaActivo tareaActivo : tramite.getTareas()) {				
-				if (CODIGO_T017_ANALISIS_PM.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()) && 
-						!tareaActivo.getTareaFinalizada()) {
-					permiteNotificarAprobacion = false;
-				}
+			if(CODIGO_T017_ANALISIS_PM.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo())) {
+				permiteNotificarAprobacion = false;
 			}
 			
 			// Para los otros estados posibles, genero una notificacion de aceptacion o rechazo segun corresponda.

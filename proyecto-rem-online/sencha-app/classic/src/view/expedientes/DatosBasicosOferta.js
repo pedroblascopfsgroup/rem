@@ -153,6 +153,26 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                },
 		                {
 		                	//Meto este campo para cuadrar la vista, cuando se añada el que debe ir aqui, añadidlo sobre este
+							hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.resolucion.ces'),
+		                	bind:		'{datosbasicosoferta.fechaResolucionCES}',
+		                	readOnly: true,
+		                	hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                },
+		                {
+		                	xtype:'currencyfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.ces'),
+		                	bind:		'{datosbasicosoferta.importeContraofertaCES}',
+		                	readOnly: true,
+		                	hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                },
+		                {
+		                	//Meto este campo para cuadrar la vista, cuando se añada el que debe ir aqui, añadidlo sobre este
+		                	hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
 		                },
 		                {
 		                	xtype: 'fieldset',

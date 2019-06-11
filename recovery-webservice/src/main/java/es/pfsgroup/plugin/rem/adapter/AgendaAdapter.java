@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.avanza.tareas.generic.dao.AvanzaTareasGenericDao;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -93,6 +94,7 @@ public class AgendaAdapter {
 
 	private static final String CODIGO_DEFINICION_OFERTA = "T013_DefinicionOferta";
 	private static final String TEXTO_ADVERTENCIA_T013_DO = "ATENCIÓN: Va a aprobar un expediente con importe inferior al precio mínimo. Confirme que tiene la autorización de su supervisor.";
+	private static final String ERROR_CAMPOS_VALIDACION ="Los campos requeridos y no requeridos no son correctos, revise las instrucciones de la tarea: ";
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	private SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 	protected static final Log logger = LogFactory.getLog(AgendaAdapter.class);
@@ -144,6 +146,9 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private AvanzaTareasGenericDao avanzaTareasGenericDao;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
 		DtoTarea dto = new DtoTarea();
@@ -346,17 +351,29 @@ public class AgendaAdapter {
 		}
 
 		dto = this.rellenaDTO(idTarea,camposFormulario);
+		String codigoTarea = dto.getForm().getTareaExterna().getTareaProcedimiento().getCodigo();
 		
 		if(!Checks.esNulo(dto.getForm().getErrorValidacion())){
 			throw new UserException(dto.getForm().getErrorValidacion());
 		}
 		
-		//validaciones campos requeridos
+		//Rellenamos los valores que no nos pasan como vacios
 		List<GenericFormItem> campos = dto.getForm().getItems();
+		String instrucciones = "";
 		for(GenericFormItem campo : campos){
-			if(!Checks.esNulo(campo.getValidation()) && Checks.esNulo(valores.get(campo.getNombre()))){
-				  throw new UserException(campo.getValidationError());
+			if(campo.getNombre().equals("titulo")){
+				instrucciones = campo.getLabel();
 			}
+			if(Checks.esNulo(valores.get(campo.getNombre()))){
+				String[] valorvacio = new String[]{""};
+				valores.put(campo.getNombre(), valorvacio);
+			}
+		}
+		
+		//validaciones campos requeridos
+		boolean camposValidos = avanzaTareasGenericDao.validaCamposTarea(codigoTarea, valores);
+		if(!camposValidos){
+			throw new UserException(ERROR_CAMPOS_VALIDACION+instrucciones.replaceAll("\\<.*?>","") );
 		}
 
 		actGenericFormManager.validateAndSaveValues(dto);

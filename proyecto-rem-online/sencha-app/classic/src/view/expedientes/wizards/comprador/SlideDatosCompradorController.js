@@ -427,28 +427,26 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 									if(!Ext.isEmpty(campoRegEconomico)){
 										campoRegEconomico.enable();
 										campoRegEconomico.allowBlank = false;
-									}
-									
-										
-										if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
-											if(!Ext.isEmpty(campoRegEconomico.getValue())){
-												if(campoRegEconomico.getValue() === "01"){
-													campoTipoConyuge.enable();
-													campoNumConyuge.enable();
-													seleccionClienteUrsusConyuge.enable();
-													campoNumConyuge.allowBlank = false;
-													campoTipoConyuge.allowBlank = false;
-												}else{
-													if(!Ext.isEmpty(campoTipoConyuge) && !Ext.isEmpty(campoTipoConyuge.getStore())) campoTipoConyuge.setValue();
-													if(!Ext.isEmpty(campoNumConyuge)) campoNumConyuge.setValue();
-													campoNumConyuge.allowBlank = true;
-													campoTipoConyuge.allowBlank = true;
-													campoTipoConyuge.disable();
-													campoNumConyuge.disable();
-													seleccionClienteUrsusConyuge.disable();
-												}
+									}						
+									if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
+										if(!Ext.isEmpty(campoRegEconomico.getValue())){
+											if(campoRegEconomico.getValue() === "01"){
+												campoTipoConyuge.enable();
+												campoNumConyuge.enable();
+												seleccionClienteUrsusConyuge.enable();
+												campoNumConyuge.allowBlank = false;
+												campoTipoConyuge.allowBlank = false;
+											}else{
+												if(!Ext.isEmpty(campoTipoConyuge) && !Ext.isEmpty(campoTipoConyuge.getStore())) campoTipoConyuge.setValue();
+												if(!Ext.isEmpty(campoNumConyuge)) campoNumConyuge.setValue();
+												campoNumConyuge.allowBlank = true;
+												campoTipoConyuge.allowBlank = true;
+												campoTipoConyuge.disable();
+												campoNumConyuge.disable();
+												seleccionClienteUrsusConyuge.disable();
 											}
-										}								
+										}
+									}								
 								} else {
 									if(!Ext.isEmpty(campoTipoConyuge) && !Ext.isEmpty(campoTipoConyuge.getStore())) campoTipoConyuge.setValue();
 									if(!Ext.isEmpty(campoNumConyuge)) campoNumConyuge.setValue();

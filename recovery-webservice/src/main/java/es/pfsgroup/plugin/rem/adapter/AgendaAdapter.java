@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
@@ -330,6 +331,39 @@ public class AgendaAdapter {
 		return infoRegistro;
 	}
 
+	public Boolean validationAndSave(Map<String,String[]> valores) throws Exception{
+		DtoGenericForm dto = new DtoGenericForm();
+		Long idTarea = 0L;
+		
+		Map<String, String> camposFormulario = new HashMap<String,String>();
+		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+			String key = entry.getKey();
+			if (!key.equals("idTarea")){
+				camposFormulario.put(key, (String)entry.getValue()[0]);
+			}else{
+				idTarea = Long.parseLong((String)entry.getValue()[0]);
+			}
+		}
+
+		dto = this.rellenaDTO(idTarea,camposFormulario);
+		
+		if(!Checks.esNulo(dto.getForm().getErrorValidacion())){
+			throw new UserException(dto.getForm().getErrorValidacion());
+		}
+		
+		//validaciones campos requeridos
+		List<GenericFormItem> campos = dto.getForm().getItems();
+		for(GenericFormItem campo : campos){
+			if(!Checks.esNulo(campo.getValidation()) && Checks.esNulo(valores.get(campo.getNombre()))){
+				  throw new UserException(campo.getValidationError());
+			}
+		}
+
+		actGenericFormManager.validateAndSaveValues(dto);
+
+		return true;
+	}
+	
 	public Boolean save(Map<String,String[]> valores) throws Exception{
 		DtoGenericForm dto = new DtoGenericForm();
 		Long idTarea = 0L;

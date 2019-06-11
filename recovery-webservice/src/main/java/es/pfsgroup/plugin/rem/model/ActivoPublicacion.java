@@ -106,6 +106,7 @@ public class ActivoPublicacion implements Serializable, Auditable {
 	@Column(name = "APU_MOTIVO_PUBLICACION_ALQ")
 	private String motivoPublicacionAlquiler;
 	
+
 	@Column(name = "APU_FECHA_CAMB_PUBL_VENTA")
 	private Date fechaCambioPubVenta;
 	

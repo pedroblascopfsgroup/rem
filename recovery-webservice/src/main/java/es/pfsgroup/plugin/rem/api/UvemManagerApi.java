@@ -7,8 +7,10 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 
 /**
  * Interface operaciones UVEM
@@ -106,6 +108,14 @@ public interface UvemManagerApi {
 	 */
 	public DatosClienteDto ejecutarDatosCliente(Integer numcliente, String qcenre) throws Exception;
 
+	/**
+	 * Servicio GMPAJC93_INS que a partir del nº cliente URSUS se devuelvan los datos de 'Problemas con la venta'.
+	 * 
+	 * @param numcliente: numero cliente Ursus (idclow)
+	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
+	 */
+	public List<DatosClienteProblemasVentaDto> ejecutarDatosClienteProblemasVenta(Integer numcliente, String qcenre) throws Exception;
+	
 	
 	/*******************************************
 	 * INSTANCIA DECISION
@@ -162,10 +172,11 @@ public interface UvemManagerApi {
 	 * Invoca al servicio O-RB-DEVOL para generar la propuesta de anulación de
 	 * reserva firmada o la anulación de la propuesta de anulación reserva
 	 * firmada
+	 * @return 
 	 * 
 	 * @throws Exception
 	 */
-	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
+	public WSDevolBankiaDto notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception;
 
 	/**

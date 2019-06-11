@@ -34,6 +34,7 @@ public interface OfertaApi {
 	
 	public static String ORIGEN_REM ="REM";
 	public static String ORIGEN_WEBCOM ="WCOM";
+	public final static String CLIENTE_HAYA = "HAYA";
 
 	/**
 	 * Devuelve una Oferta por id.
@@ -89,6 +90,13 @@ public interface OfertaApi {
 	 * @return
 	 */
 	public DtoPage getListOfertasUsuario(DtoOfertasFilter dtoOfertasFilter);
+	
+	/**
+	 * Devuelve un Page de Ofertas aplicando el filtro que recibe teniendo en cuenta si se filtra por gestoria.
+	 * @param dtoOfertasFilter
+	 * @return
+	 */
+	public DtoPage getListOfertasGestoria(DtoOfertasFilter dtoOfertasFilter);
 
 
 	/**
@@ -589,6 +597,8 @@ public interface OfertaApi {
 	DtoClienteComercial getClienteComercialByTipoDoc(String dniComprador, String codtipoDoc);
 
 	DtoClienteComercial getClienteGDPRByTipoDoc(String dniComprador, String codtipoDoc);
+	
+	public void llamadaMaestroPersonas(Long idExpediente, String cartera);
 
 	public void llamadaMaestroPersonas(String numDocCliente, String cartera);
 	

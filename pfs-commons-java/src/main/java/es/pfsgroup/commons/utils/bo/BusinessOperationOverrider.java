@@ -78,5 +78,10 @@ public abstract class BusinessOperationOverrider<T> implements
 		
 		return (T) Enhancer.create(clazz, new APIInterceptor(bean));
 	}
+
+	public boolean checkDiscrepanciasUrsus(Long idTramite) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

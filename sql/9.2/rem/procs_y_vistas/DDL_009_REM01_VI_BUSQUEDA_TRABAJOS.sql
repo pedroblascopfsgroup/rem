@@ -58,7 +58,7 @@ BEGIN
 		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) */
 			tbj.tbj_id, 
 			act.act_id AS idactivo, 
-			1 as rango, 
+			1 as rango,
 			tbj.tbj_num_trabajo, 
 			tbj.tbj_webcom_id, 
 			tbj.tbj_cubre_seguro, 

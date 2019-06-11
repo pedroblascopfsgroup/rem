@@ -18,9 +18,11 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -45,8 +47,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
-	@Autowired
-	private GestorDocumentalMaestroManager gestorDocumentalMaestroManager;
 	
     @Autowired
 	private ApiProxyFactory proxyFactory;

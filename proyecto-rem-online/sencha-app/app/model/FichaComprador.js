@@ -182,6 +182,12 @@ Ext.define('HreRem.model.FichaComprador', {
 			name: 'numeroClienteUrsusBh'
 		},
 		{
+			name: 'numeroClienteUrsusConyuge'
+		},
+		{
+			name: 'numeroClienteUrsusBhConyuge'
+		},
+		{
 			name: 'codigoGradoPropiedad'
 		},
 		{
@@ -234,7 +240,23 @@ Ext.define('HreRem.model.FichaComprador', {
         {
         	name: 'pedirDoc',
         	type : 'boolean'
-        }
+        },
+        {
+        	name: 'relacionHre'
+        },
+		{
+			name:'numeroConyugeUrsus'
+		},
+		{
+			name:'estadoCivilURSUS'
+		},
+		{
+			name:'regimenMatrimonialUrsus'
+		},
+		{
+			name:'nombreConyugeURSUS'
+		}
+		
 		
     ],
     

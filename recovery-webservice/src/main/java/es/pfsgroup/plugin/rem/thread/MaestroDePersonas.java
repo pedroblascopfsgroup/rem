@@ -85,7 +85,6 @@ public class MaestroDePersonas implements Runnable {
 		Integer idPersonaSimulado = (int) (Math.random() * 1000000) + 1;
 		try {
 			restApi.doSessionConfig(this.userName);
-			Thread.sleep(5000);
 			sessionObj = hibernateUtils.getSessionFactory().openSession();
 			if (!Checks.esNulo(expedienteComercial)) {
 				ExpedienteComercial expedienteCom = llamadaExpedienteComercial(sessionObj);
@@ -162,14 +161,31 @@ public class MaestroDePersonas implements Runnable {
 							}
 
 							if (!Checks.esNulo(personaOutputDto)) {
+								Long personaHaya = null;
 								if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
 									compradorExpediente.setIdPersonaHaya(personaOutputDto.getIdIntervinienteHaya());
+									personaHaya = Long.valueOf(personaOutputDto.getIdIntervinienteHaya());
 								} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
 									compradorExpediente.setIdPersonaHaya(idPersonaSimulado.toString());
+									personaHaya = Long.valueOf(idPersonaSimulado);
 								} else {
 									compradorExpediente.setIdPersonaHaya(idPersonaHayaNoExiste);
+									personaHaya = Long.valueOf(idPersonaHayaNoExiste);
 								}
+								Comprador comprador =compradorExpediente.getPrimaryKey().getComprador();
+								comprador.setIdPersonaHaya(Long.valueOf(personaHaya));
+								genericDao.update(Comprador.class, comprador);
 								genericDao.update(CompradorExpediente.class, compradorExpediente);
+							}
+						}else{
+							Comprador comprador =compradorExpediente.getPrimaryKey().getComprador();
+							Long compradorIdhaya = null;
+							if(comprador.getIdPersonaHaya() != null){
+								compradorIdhaya = comprador.getIdPersonaHaya();
+							}
+							if(!Checks.esNulo(compradorExpediente.getIdPersonaHaya()) && !compradorExpediente.getIdPersonaHaya().equals(compradorIdhaya)){
+								comprador.setIdPersonaHaya(Long.valueOf(compradorExpediente.getIdPersonaHaya()));
+								genericDao.update(Comprador.class, comprador);								
 							}
 						}
 					}

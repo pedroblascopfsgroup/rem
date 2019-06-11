@@ -62,19 +62,19 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 		Trabajo trabajo = tramite.getTrabajo();
+		ActivoProveedorContacto proveedorTecnicoContacto = new ActivoProveedorContacto();
 		
 		// Asignacion del Proveedor Tecnico si aplica
-		if(trabajo.getEsTarifaPlana()){
+
 			Activo activo = tramite.getActivo();
+			if(!Checks.esNulo(activo)) {
 			Usuario proveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_TIPO_PROVEEDOR_TECNICO);
-			if(!Checks.esNulo(proveedorTecnico)){
-				ActivoProveedorContacto proveedorTecnicoContacto = proveedoresDao.getActivoProveedorContactoPorIdsUsuario(proveedorTecnico.getId());
-				if(!Checks.esNulo(proveedorTecnicoContacto)){
-					trabajo.setProveedorContacto(proveedorTecnicoContacto);
+				if(!Checks.esNulo(proveedorTecnico)){
+					proveedorTecnicoContacto = proveedoresDao.getActivoProveedorContactoPorIdsUsuario(proveedorTecnico.getId());
+				}else {
+					proveedorTecnicoContacto = null;
 				}
-			}
-			
-		}
+			}	
 		
 		for(TareaExternaValor valor :  valores){
 
@@ -111,6 +111,9 @@ public class UpdaterServiceActuacionTecnicaAnalisisPeticion implements UpdaterSe
 			if(COMBO_TARIFA_PLANA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){				
 				if(valor.getValor().equals(DDSiNo.SI)){
 					trabajo.setEsTarifaPlana(true);
+					if(!Checks.esNulo(proveedorTecnicoContacto)) {
+						trabajo.setProveedorContacto(proveedorTecnicoContacto);
+					}
 				} else {
 					trabajo.setEsTarifaPlana(false);
 				}

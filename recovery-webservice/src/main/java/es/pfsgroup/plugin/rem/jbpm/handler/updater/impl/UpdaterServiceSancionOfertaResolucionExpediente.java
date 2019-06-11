@@ -21,6 +21,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -37,6 +38,12 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -55,6 +62,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
@@ -82,6 +91,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	
 	@Autowired
 	private UpdaterStateOfertaApi updaterStateOfertaApi;
+	
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Autowired
 	private ComunicacionGencatApi comunicacionGencatApi;
@@ -106,7 +117,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
     private static final String COMBO_PROCEDE = "comboProcede";
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
-    private static final String MOTIVO_ANULACION_RESERVA = "comboMotivoAnulacionReserva";
+    public static final String MOTIVO_ANULACION_RESERVA = "comboMotivoAnulacionReserva";
     private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -196,10 +207,12 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					}
 				}
 				
+				WSDevolBankiaDto dto = null;
+				
 				if(DDDevolucionReserva.CODIGO_NO.equals(valorComboProcede)){
-					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())){
+					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())){
 						try {
-							uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
+							 dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
 						} catch (Exception e) {
 							logger.error("Error al invocar el servicio de devolucion de reserva de Uvem.", e);
@@ -208,9 +221,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					}
 				}
 				else{
-					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())){
+					if(tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && Checks.esNulo(expediente.getCorrecw())){
 						try {
-							uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
+							dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
 									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
 						} catch (Exception e) {
 							logger.error("Error al invocar el servicio de devolucion de reserva de Uvem.", e);
@@ -218,6 +231,14 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						}
 					}
 
+				}
+				
+				if(!Checks.esNulo(dto)) {
+					try {
+						beanUtilNotNull.copyProperties(expediente, dto);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 
 				if(valores != null && !valores.isEmpty()) {

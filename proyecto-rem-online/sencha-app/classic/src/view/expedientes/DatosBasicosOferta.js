@@ -11,7 +11,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 	
 	recordClass: "HreRem.model.DatosBasicosOferta",
     
-    requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel'],
+    requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel','HreRem.view.expedientes.ExpedienteDetalleModel'],
     
     listeners: {
 			boxready:'cargarTabData',
@@ -103,6 +103,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                		hidden: '{esTipoAlquiler}'
 		                	}		                	
 		                },
+		               	{
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.CES'),
+		                	bind:{
+		                		value: '{datosbasicosoferta.fechaRespuestaCES}',
+		                		readOnly: true,
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	}
+		                	
+		                },
 		                {	
 		                	xtype: 'comboboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.alquiler'),
@@ -142,13 +152,19 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.contraoferta.pm'),
-		                	bind:		'{datosbasicosoferta.fechaRespuestaPM}',
+		                	bind:{
+		                		value:'{datosbasicosoferta.fechaRespuestaPM}',
+		                		hidden: '!datosbasicosoferta.isCarteraCerberusApple'
+		                	},		
 		                	readOnly: true
 		                },
 		                {
 		                	xtype:'currencyfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.pm'),
-		                	bind:		'{datosbasicosoferta.importeContraofertaPM}',
+		                	bind:{
+		                		value:	'{datosbasicosoferta.importeContraofertaPM}',
+		                		hidden: '!datosbasicosoferta.isCarteraCerberusApple'
+		                	},	
 		                	readOnly: true
 		                },
 		                {

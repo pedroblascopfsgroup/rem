@@ -147,6 +147,9 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "OFR_ID")
     private List<ActivoOferta> activosOferta;
     
+   	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_CES")
+   	private Date fechaRespuestaCES;	
+    
     @Column(name = "OFR_ORIGEN")
     private String origen;
    
@@ -170,7 +173,7 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "DD_CAP_ID")
 	private DDCanalPrescripcion canalPrescripcion;
     
-    // Datos de Tanteo y Retracto +-+-+-+-+-+ TR
+    // Datos de Tanteo y Retracto ----- TR
 	@Column(name="OFR_DESDE_TANTEO")
 	private Boolean desdeTanteo;
 
@@ -201,7 +204,7 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_FECHA_MAX_FORMALIZACION")
 	private Date plazoMaxFormalizacion;	
-	//+-+-+-+-+-+ TR
+	//----- TR
 	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_SUCURSAL")
@@ -736,6 +739,13 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setFechaResolucionCES(Date fechaResolucionCES) {
 		this.fechaResolucionCES = fechaResolucionCES;
+	}
+	
+	public Date getFechaRespuestaCES() {
+			return fechaRespuestaCES;
+	}
+	public void setFechaRespuestaCES(Date fechaRespuestaCES) {
+		this.fechaRespuestaCES = fechaRespuestaCES;
 	}
 
 }

@@ -1359,20 +1359,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else {
 			dto.setRefCircuitoCliente(null);
 		}
+		Boolean isCarteraCerberusApple = false;
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
+		&& (!Checks.esNulo(oferta.getActivoPrincipal().getCartera()) 
+		&& !Checks.esNulo(oferta.getActivoPrincipal().getSubcartera()))
+		&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
+		DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+			isCarteraCerberusApple = true;
+		}
+		dto.setIsCarteraCerberusApple(isCarteraCerberusApple);
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getFechaRespuestaCES()) && isCarteraCerberusApple) {
+			dto.setFechaRespuestaCES(oferta.getFechaRespuestaCES());
+		}
 		
-		if(!Checks.esNulo(oferta.getImporteContraofertaPM())) {
+		if(!Checks.esNulo(oferta.getImporteContraofertaPM()) && isCarteraCerberusApple) {
 			dto.setImporteContraofertaPM(oferta.getImporteContraofertaPM());
 		}
 		
-		if(!Checks.esNulo(oferta.getFechaRespuestaPM())) {
+		if(!Checks.esNulo(oferta.getFechaRespuestaPM()) && isCarteraCerberusApple) {
 			dto.setFechaRespuestaPM(oferta.getFechaRespuestaPM());
 		}
 		
-		if(!Checks.esNulo(oferta.getImporteContraofertaCES())) {
+		if(!Checks.esNulo(oferta.getImporteContraofertaCES()) && isCarteraCerberusApple) {
 			dto.setImporteContraofertaCES(oferta.getImporteContraofertaCES());
 		}
 		
-		if(!Checks.esNulo(oferta.getFechaResolucionCES())) {
+		if(!Checks.esNulo(oferta.getFechaResolucionCES()) && isCarteraCerberusApple) {
 			dto.setFechaResolucionCES(oferta.getFechaResolucionCES());
 		}
 		

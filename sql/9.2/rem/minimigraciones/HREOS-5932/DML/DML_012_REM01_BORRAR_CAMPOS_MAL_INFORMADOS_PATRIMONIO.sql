@@ -127,6 +127,37 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 	
+
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.act_sps_sit_posesoria SET 
+			dd_tpa_id = (select dd_tpa_id from '||V_ESQUEMA||'.dd_tpa_tipo_titulo_act where dd_tpa_codigo = ''02'')
+			,sps_ocupado = 0
+			where act_id in (
+	           select act.act_id
+        	   from REM01.act_activo act
+        	   inner join '||V_ESQUEMA||'.act_pta_patrimonio_activo pta on act.act_id = pta.act_id
+        	   inner join '||V_ESQUEMA||'.dd_eal_estado_alquiler eal on pta.dd_eal_id = eal.dd_eal_id
+        	   inner join '||V_ESQUEMA||'.act_sps_sit_posesoria sps on sps.act_id = act.act_id
+        	   left  join '||V_ESQUEMA||'.dd_tpa_tipo_titulo_act tpa on tpa.dd_tpa_id = sps.dd_tpa_id
+        	   WHERE eal.dd_eal_codigo = ''01'' and act.usuarioborrar like ''HREOS-5932%'')' ;
+
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.act_sps_sit_posesoria SET 
+			dd_tpa_id = (select dd_tpa_id from '||V_ESQUEMA||'.dd_tpa_tipo_titulo_act where dd_tpa_codigo = ''01'')
+			,sps_ocupado = 1
+		where act_id in (
+		select act.act_id
+	           from '||V_ESQUEMA||'.act_activo act
+	           inner join '||V_ESQUEMA||'.act_pta_patrimonio_activo pta on act.act_id = pta.act_id
+	           inner join '||V_ESQUEMA||'.dd_eal_estado_alquiler eal on pta.dd_eal_id = eal.dd_eal_id
+	           inner join '||V_ESQUEMA||'.act_sps_sit_posesoria sps on sps.act_id = act.act_id
+	           left  join '||V_ESQUEMA||'.dd_tpa_tipo_titulo_act tpa on tpa.dd_tpa_id = sps.dd_tpa_id
+	           WHERE eal.dd_eal_codigo = ''02'' and act.usuarioborrar like ''HREOS-5932%'' )' ;
+
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+
 	
 	COMMIT;
 	

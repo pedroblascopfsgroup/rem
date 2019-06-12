@@ -3555,7 +3555,14 @@ public class ActivoAdapter {
 			
 			oferta.setNumOferta(numOferta);
 			if (!Checks.esNulo(dto.getImporteOferta())) {
-			   oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+				try{
+					oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+				}catch(NumberFormatException ne){
+					logger.warn("Formato numero incorrecto");
+					oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta().replace(",", ".")));
+				}
+				
+			   
 			}
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);

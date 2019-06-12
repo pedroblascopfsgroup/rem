@@ -103,6 +103,34 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                		hidden: '{esTipoAlquiler}'
 		                	}		                	
 		                },
+		               	{
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.CES'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuestaCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},		                	
+		                	readOnly: true              	
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuesta}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true  
+		                	
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.aprobacion.pro.manzana'),
+		                	bind:{
+		                		value: '{datosbasicosoferta.fechaAprobacionProManzana}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true   
+		                },
 		                {	
 		                	xtype: 'comboboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.alquiler'),
@@ -141,14 +169,20 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                {
 		                	xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.contraoferta.pm'),
-		                	bind:		'{datosbasicosoferta.fechaRespuestaPM}',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.respuesta.pm'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuestaPM}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
 		                	readOnly: true
 		                },
 		                {
 		                	xtype:'currencyfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.pm'),
-		                	bind:		'{datosbasicosoferta.importeContraofertaPM}',
+		                	bind: {
+		                		value: '{datosbasicosoferta.importeContraofertaPM}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
 		                	readOnly: true
 		                },
 		                {
@@ -159,22 +193,26 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                		value: '{datosbasicosoferta.fechaRespuestaPM}',
 								hidden: '{!datosbasicosoferta.isCarteraCerberusApple}'
 							},
-							readOnly: true,
+							readOnly: true
 		                },
 		                {
 		                	xtype:'datefieldbase',
 							formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.resolucion.ces'),
-		                	bind:		'{datosbasicosoferta.fechaResolucionCES}',
-		                	readOnly: true,
-		                	hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaResolucionCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true
 		                },
 		                {
 		                	xtype:'currencyfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.ces'),
-		                	bind:		'{datosbasicosoferta.importeContraofertaCES}',
-		                	readOnly: true,
-		                	hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	bind: {
+		                		value: '{datosbasicosoferta.importeContraofertaCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}',
+		                	},
+		                	readOnly: true
 		                },
 		                {
 		                	//Meto este campo para cuadrar la vista, cuando se a�ada el que debe ir aqui, a�adidlo sobre este

@@ -93,6 +93,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Boolean isCarteraCerberusApple;
 	
 	private Date fechaResolucionCES;
+	private Date fechaRespuesta;
+	private Date fechaAprobacionProManzana;
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -389,6 +391,22 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setIsCarteraCerberusApple(Boolean isCarteraCerberusApple) {
 		this.isCarteraCerberusApple = isCarteraCerberusApple;
+	}
+
+	public Date getFechaRespuesta() {
+		return fechaRespuesta;
+	}
+
+	public void setFechaRespuesta(Date fechaRespuesta) {
+		this.fechaRespuesta = fechaRespuesta;
+	}
+
+	public Date getFechaAprobacionProManzana() {
+		return fechaAprobacionProManzana;
+	}
+
+	public void setFechaAprobacionProManzana(Date fechaAprobacionProManzana) {
+		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
 	}
 
 }

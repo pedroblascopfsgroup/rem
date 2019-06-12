@@ -18,6 +18,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 
 DECLARE
+
     err_num NUMBER; -- Numero de error.
     err_msg VARCHAR2(2048); -- Mensaje de error.
     V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas.
@@ -56,7 +57,7 @@ DECLARE
     
 BEGIN
 	
-  DBMS_OUTPUT.put_line('[INICIO] Ejecutando inserción de presupuestos...........');
+  DBMS_OUTPUT.put_line('[INICIO] Ejecutando borrado de tareas y ofertas ...........');	      	
 	      	
 	OPEN OFERTAS_A_ELIMINAR;
 	
@@ -72,7 +73,8 @@ BEGIN
 					  , USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||'''
 					  , FECHAMODIFICAR = SYSDATE
 					WHERE OFR_ID = '||FILA.OFR_ID||'';
-					
+    
+        					
   		EXECUTE IMMEDIATE V_MSQL;
   		
   		IF FILA.ECO_NUM_EXPEDIENTE IS NOT NULL THEN
@@ -84,17 +86,22 @@ BEGIN
 						  , FECHAMODIFICAR = SYSDATE
 						WHERE ECO_NUM_EXPEDIENTE = '||FILA.ECO_NUM_EXPEDIENTE||'';
 			
-			EXECUTE IMMEDIATE V_MSQL;
-			
+			 	
+            EXECUTE IMMEDIATE V_MSQL;
+            
+		IF FILA.TRA_ID IS NOT NULL THEN	
 			V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE SET 
 							TRA_FECHA_FIN = SYSDATE
 						  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
 						  , FECHABORRAR = SYSDATE
 						  , BORRADO = 1
 						WHERE TRA_ID = '||FILA.TRA_ID||'';
-			
+			 	
 			EXECUTE IMMEDIATE V_MSQL;
-			
+        END IF;    
+        
+		IF FILA.TAR_ID IS NOT NULL THEN	
+            
 			V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES SET 
 							TAR_FECHA_FIN = SYSDATE
 						  , TAR_TAREA_FINALIZADA = 1
@@ -102,7 +109,7 @@ BEGIN
 						  , FECHAMODIFICAR = SYSDATE
 						  , BORRADO = 1
 						WHERE TAR_ID = '||FILA.TAR_ID||'';
-			
+			 	
 			EXECUTE IMMEDIATE V_MSQL;
 			
 			V_MSQL := 'UPDATE '||V_ESQUEMA||'.TEX_TAREA_EXTERNA SET 
@@ -112,8 +119,10 @@ BEGIN
 						  , FECHABORRAR = SYSDATE
 						  , BORRADO = 1
 						WHERE TAR_ID = '||FILA.TAR_ID||'';
-			
+			 	
 			EXECUTE IMMEDIATE V_MSQL;
+        
+        END IF;    
 			
 		END IF;
  		
@@ -155,3 +164,4 @@ EXCEPTION
 END;
 /
 EXIT;
+

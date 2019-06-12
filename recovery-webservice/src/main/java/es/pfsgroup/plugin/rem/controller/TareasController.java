@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import es.capgemini.devon.exception.UserException;
+import es.capgemini.pfs.procesosJudiciales.EXTTareaExternaManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -32,6 +33,9 @@ public class TareasController {
 
 	@Autowired
 	private AgendaAdapter agendaAdapter;
+	
+	@Autowired
+	private EXTTareaExternaManager tareaManager;
 
 	@Autowired
 	private RestApi restApi;

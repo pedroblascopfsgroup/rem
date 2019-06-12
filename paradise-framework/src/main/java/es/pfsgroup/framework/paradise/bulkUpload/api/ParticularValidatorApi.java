@@ -24,7 +24,7 @@ public interface ParticularValidatorApi {
 
 	Boolean esActivoEnAgrupacionPorTipo(Long numActivo, String codTipoAgrupacion);
 
-	Boolean esActivoPrincipalEnAgrupacion(Long numActivo);
+	Boolean esActivoPrincipalEnAgrupacion(Long numActivo);	
 
 	Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion);
 
@@ -633,6 +633,20 @@ public interface ParticularValidatorApi {
 	public Boolean validadorTipoCartera(Long numExpediente);
 	
 	/**
+	 * true si pertenece a Bankia
+	 * @param numExpediente
+	 * @return
+	 */
+	public Boolean validadorCarteraBankia(Long numExpediente);
+	
+	/**
+	 * true si pertenece a liberbank
+	 * @param numExpediente
+	 * @return
+	 */
+	public Boolean validadorCarteraLiberbank(Long numExpediente);
+	
+	/**
 	 * 
 	 * @param numExpediente
 	 * @return true si es diferente a Tramitado, false si es Tramitado  
@@ -703,9 +717,9 @@ public interface ParticularValidatorApi {
 
 	Boolean perteneceDDTipoTituloTPA(String codigoTituloTPA);
 
-	Boolean conTituloOcupadoSi(String codigoTituloTPA);
-
-	Boolean conTituloOcupadoNo(String codigoTituloTPA);
+	Boolean conTituloOcupadoSi(String codigoTituloTPA);	
+	
+	Boolean conPosesion(String numActivo);
 	
 	Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal);
 
@@ -732,6 +746,8 @@ public interface ParticularValidatorApi {
 	 * @return true si el activo pertenece a un activo de venta.
 	 */
 	
-	public Boolean activosVendidos(String numExpedienteComercial);
+	public Boolean activosVendidos(String numExpedienteComercial);	
+
+	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 }

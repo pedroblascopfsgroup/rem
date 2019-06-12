@@ -2,7 +2,6 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +14,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -68,7 +66,6 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	private static final int COL_DIVISION_HORIZONTAL_INTEGRADO = 8; //Col. Estado
 	private static final int COL_ESTADO_DIVISION_HORIZONTAL = 9; //Col. Estado si no está inscrita
 	
-
 	
 
 	@Resource
@@ -92,8 +89,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	@Autowired
 	private MSVBusinessValidationFactory validationFactory;
 	
-	private Integer numFilasHoja;
-	
+	private Integer numFilasHoja;	
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -257,18 +253,24 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		}
 		return listaFilas;
 	}
-	
+
 	/**
 	 * Comprueba el campo conTitulo tiene valor dependiendo del campo ocupado
+	 * 
 	 * @param exc
 	 * @return listado filas erroneas
 	 */
 	private List<Integer> isConTitulo(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
+		final String DD_TPA_SI ="01";
+		final String DD_TPA_NO ="02";
+		final String DD_TPA_NO_CON_INDICIOS ="03";		
+		
 		String[] listaSi = { "SI", "S" };
 		String[] listaNo = { "NO", "N" };
 		String celdaOcupado;
 		String celdaConTitulo;
+		String celdaActivo;
 		boolean celdaMal;
 
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
@@ -276,26 +278,53 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 			celdaMal = false;
 
 			try {
-
 				celdaOcupado = exc.dameCelda(i, COL_OCUPADO);
-				celdaConTitulo = exc.dameCelda(i, COL_CON_TITULO);			
+				celdaConTitulo = exc.dameCelda(i, COL_CON_TITULO);
 
-				if (!esArroba(celdaOcupado) && (esArroba(celdaConTitulo) || celdaConTitulo.isEmpty())) {
-					celdaMal = true;
-				}
+				// Comprobar '@' en campo Ocupado
+				if (esArroba(celdaOcupado)) {
 
-				if (!particularValidator.perteneceDDTipoTituloTPA(celdaConTitulo)) {
-					celdaMal = true;
-				}
-				
-				if (Arrays.asList(listaSi).contains(celdaOcupado.toUpperCase())
-						&& !particularValidator.conTituloOcupadoSi(celdaConTitulo)) {
-					celdaMal = true;
-				}
-				
-				if (Arrays.asList(listaNo).contains(celdaOcupado.toUpperCase())
-						&& !particularValidator.conTituloOcupadoNo(celdaConTitulo)) {
-					celdaMal = true;
+					if (!esArroba(celdaConTitulo) && !celdaConTitulo.isEmpty()) {
+						celdaMal = true;
+					}
+
+				} else {
+					// Comprobar si el valor es posible
+					// Ocupado SI
+					if (Arrays.asList(listaSi).contains(celdaOcupado.toUpperCase())) {
+
+						if (Checks.esNulo(celdaConTitulo)
+								|| !particularValidator.perteneceDDTipoTituloTPA(celdaConTitulo)
+								|| !particularValidator.conTituloOcupadoSi(celdaConTitulo)) {
+							celdaMal = true;
+						} else {
+
+							// Con titulo es diferente a SI
+							if (!celdaConTitulo.equals(DD_TPA_SI)) {
+
+								// comprobar estado de posesion del activo
+								celdaActivo = exc.dameCelda(i, COL_ACTIVO);
+
+								if (particularValidator.conPosesion(celdaActivo) && !celdaConTitulo.equals(DD_TPA_NO)) {
+									celdaMal = true;
+								}
+
+								if (!particularValidator.conPosesion(celdaActivo) && !celdaConTitulo.equals(DD_TPA_NO_CON_INDICIOS)) {
+									celdaMal = true;
+								}
+
+							}
+
+						}
+
+						// Ocupado NO
+					} else if (Arrays.asList(listaNo).contains(celdaOcupado.toUpperCase())) {
+
+						if (!esArroba(celdaConTitulo) && !celdaConTitulo.isEmpty()) {
+							celdaMal = true;
+						}
+
+					}
 				}
 
 				if (celdaMal) {

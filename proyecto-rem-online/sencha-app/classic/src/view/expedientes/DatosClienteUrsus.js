@@ -15,7 +15,8 @@ Ext.define('HreRem.view.expedientes.DatosClienteUrsus', {
     collapsed: false,
     modal	: false,
     idComprador: null,
-    requires: ['HreRem.view.expedientes.ProblemasVentaClienteUrsus', 'HreRem.model.DatosClienteUrsus', 'HreRem.view.expedientes.ExpedienteDetalleModel',
+    alquiler: false,
+    requires: ['HreRem.view.expedientes.ProblemasVentaClienteUrsus', 'HreRem.model.DatosClienteUrsus', 'HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 'HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorController'],
     
     clienteUrsus: null,
@@ -27,7 +28,6 @@ Ext.define('HreRem.view.expedientes.DatosClienteUrsus', {
 		me.storeProblemasVenta.proxy.extraParams.numeroUrsus = me.clienteUrsus.numeroClienteUrsus;
 		me.storeProblemasVenta.load();
     	me.setTitle(HreRem.i18n("title.windows.datos.cliente.ursus"));
-    	
     	me.buttonAlign = 'right'; 
    		me.buttons = [ { itemId: 'btnCerrar', text: HreRem.i18n('btn.cerrarBtnText'), handler: 'onClickBotonCerrarClienteUrsus'}];
 
@@ -227,9 +227,9 @@ Ext.define('HreRem.view.expedientes.DatosClienteUrsus', {
 											xtype: 'pagingtoolbar',
 											dock: 'bottom',
 											displayInfo : true,
-											store: me.storeProblemasVenta
+											store: me.storeProblemasVenta										
 									}],
-									hidden: !clienteUrsus.hayOcurrencias || '{esBankiaAlquiler}'
+									hidden: me.alquiler
 								}
 							]
 					}

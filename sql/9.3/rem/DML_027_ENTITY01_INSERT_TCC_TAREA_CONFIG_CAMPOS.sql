@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE LUIS BARBA
---## FECHA_CREACION=20190604
+--## FECHA_CREACION=20190608
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6586
@@ -48,7 +48,7 @@ DECLARE
 
 		V_TIPO_TAREA T_ARRAY_TAREA := T_ARRAY_TAREA
     (
-			T_TIPO_TAREA('T013_PosicionamientoYFirma', 'T004_ResultadoNoTarificada')
+			T_TIPO_TAREA('T013_PosicionamientoYFirma', 'T004_ResultadoNoTarificada','T004_ResultadoTarificada')
 		);
 
 		V_TMP_TIPO_TAREA T_TIPO_TAREA;
@@ -61,110 +61,112 @@ DECLARE
 																				-- **** T013_PosicionamientoYFirma ****
 		-- ComboFirma = 01 y asistenciaPBC = 01
 		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'comboFirma',				'DD_SIN_SINO', 			'IN'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'comboFirma',				'01', 							'='),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'fechaFirma',				 '', 								'NOT NULL'),			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'numProtocolo',			 '', 								'NOT NULL'),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'comboCondiciones',	 '',	 							'NOT NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'condiciones',			 '', 								'NOT NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'motivoNoFirma',		 '',	 							'NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'fechaFirma',				 '', 								'IS NOT NULL'),			
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'numProtocolo',			 '', 								'IS NOT NULL'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'comboCondiciones',	 '',	 							'IS NOT NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'condiciones',			 '', 								'IS NOT NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'motivoNoFirma',		 '',	 							'IS NULL'),
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'asistenciaPBC',		 'DD_SIN_SINO',	 		'IN'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'asistenciaPBC',		 'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO',	 		'IN'),
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'asistenciaPBC',		 '01',					 		'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'obsAsisPBC',		 		 '',	 							'NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'obsAsisPBC',		 		 '',	 							'IS NULL'),
 		
 		-- ComboFirma = 01 y asistenciaPBC = 02
 		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'comboFirma',				'DD_SIN_SINO', 			'IN'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'comboFirma',				'01', 							'='),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'fechaFirma',				 '', 								'NOT NULL'),			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'numProtocolo',			 '', 								'NOT NULL'),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'comboCondiciones',	 '',	 							'NOT NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'condiciones',			 '', 								'NOT NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'motivoNoFirma',		 '',	 							'NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'fechaFirma',				 '', 								'IS NOT NULL'),			
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'numProtocolo',			 '', 								'IS NOT NULL'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'comboCondiciones',	 '',	 							'IS NOT NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'condiciones',			 '', 								'IS NOT NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'motivoNoFirma',		 '',	 							'IS NULL'),
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'asistenciaPBC',		 'DD_SIN_SINO',	 		'IN'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'asistenciaPBC',		 'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO',	 		'IN'),
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'asistenciaPBC',		 '02',					 		'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'obsAsisPBC',		 		 '',	 							'NOT NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'obsAsisPBC',		 		 '',	 							'IS NOT NULL'),
 		
 		-- ComboFirma = 02   tieneReserva = 01   y   asistenciaPBC = 01
 		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'comboFirma',				'DD_SIN_SINO', 			'IN'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'comboFirma',				'02', 							'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'tieneReserva',			'DD_SIN_SINO', 			'IN'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'tieneReserva',			'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),		
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'tieneReserva',			'01',	 							'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'motivoNoFirma',		 '',		 						'NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'motivoNoFirma',		 '',		 						'IS NULL'),
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'fechaFirma',				 '', 								'NULL'),			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'numProtocolo',			 '', 								'NULL'),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'comboCondiciones',	 '',	 							'NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'condiciones',			 '', 								'NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'fechaFirma',				 '', 								'IS NULL'),			
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'numProtocolo',			 '', 								'IS NULL'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'comboCondiciones',	 '',	 							'IS NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'condiciones',			 '', 								'IS NULL'),		
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'asistenciaPBC',		 'DD_SIN_SINO',	 		'IN'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'asistenciaPBC',		 'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO',	 		'IN'),
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'asistenciaPBC',		 '01',					 		'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'obsAsisPBC',		 		 '',	 							'NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'3'	,				'obsAsisPBC',		 		 '',	 							'IS NULL'),
 
 		-- ComboFirma = 02   tieneReserva = 01   y   asistenciaPBC = 02
 		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'comboFirma',				'DD_SIN_SINO', 			'IN'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'comboFirma',				'02', 							'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'tieneReserva',			'DD_SIN_SINO', 			'IN'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'tieneReserva',			'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),		
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'tieneReserva',			'01',	 							'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'motivoNoFirma',		 '',		 						'NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'motivoNoFirma',		 '',		 						'IS NULL'),
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'fechaFirma',				 '', 								'NULL'),			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'numProtocolo',			 '', 								'NULL'),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'comboCondiciones',	 '',	 							'NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'condiciones',			 '', 								'NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'fechaFirma',				 '', 								'IS NULL'),			
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'numProtocolo',			 '', 								'IS NULL'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'comboCondiciones',	 '',	 							'IS NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'condiciones',			 '', 								'IS NULL'),
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'asistenciaPBC',		 'DD_SIN_SINO',	 		'IN'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'asistenciaPBC',		 'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO',	 		'IN'),
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'asistenciaPBC',		 '02',					 		'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'obsAsisPBC',		 		 '',	 							'NOT NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'4'	,				'obsAsisPBC',		 		 '',	 							'IS NOT NULL'),
 
 		-- ComboFirma = 02   tieneReserva = 02   y   asistenciaPBC = 01
 		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'comboFirma',				'DD_SIN_SINO', 			'IN'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'comboFirma',				'02', 							'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'tieneReserva',			'DD_SIN_SINO', 			'IN'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'tieneReserva',			'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),		
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'tieneReserva',			'02',	 							'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'motivoNoFirma',		 '',		 						'NOT NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'motivoNoFirma',		 '',		 						'IS NOT NULL'),
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'fechaFirma',				 '', 								'NULL'),			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'numProtocolo',			 '', 								'NULL'),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'comboCondiciones',	 '',	 							'NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'condiciones',			 '', 								'NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'fechaFirma',				 '', 								'IS NULL'),			
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'numProtocolo',			 '', 								'IS NULL'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'comboCondiciones',	 '',	 							'IS NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'condiciones',			 '', 								'IS NULL'),
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'asistenciaPBC',		 'DD_SIN_SINO',	 		'IN'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'asistenciaPBC',		 'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO',	 		'IN'),
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'asistenciaPBC',		 '01',					 		'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'obsAsisPBC',		 		 '',	 							'NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'5'	,				'obsAsisPBC',		 		 '',	 							'IS NULL'),
 
 		-- ComboFirma = 02   tieneReserva = 02   y   asistenciaPBC = 02
 		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'comboFirma',				'DD_SIN_SINO', 			'IN'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'comboFirma',				'02', 							'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'tieneReserva',			'DD_SIN_SINO', 			'IN'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'tieneReserva',			'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 			'IN'),		
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'tieneReserva',			'02',	 							'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'motivoNoFirma',		 '',	 							'NOT NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'motivoNoFirma',		 '',	 							'IS NOT NULL'),
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'fechaFirma',				 '', 								'NULL'),			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'numProtocolo',			 '', 								'NULL'),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'comboCondiciones',	 '',	 							'NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'condiciones',			 '', 								'NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'fechaFirma',				 '', 								'IS NULL'),			
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'numProtocolo',			 '', 								'IS NULL'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'comboCondiciones',	 '',	 							'IS NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'condiciones',			 '', 								'IS NULL'),		
 
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'asistenciaPBC',		 'DD_SIN_SINO',	 		'IN'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'asistenciaPBC',		 'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO',	 		'IN'),
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'asistenciaPBC',		 '02',					 		'='),
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'obsAsisPBC',		 		 '',	 							'NOT NULL'),
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'6'	,				'obsAsisPBC',		 		 '',	 							'IS NOT NULL'),
 
 																		-- ****  T004_ResultadoNoTarificada ****
 	-- comboModificacion = 01
 		--			 					TAREA												INSTANCIA					CAMPO											VALOR	 					ACCION
-		T_TIPO_DATA('T004_ResultadoNoTarificada',					'7'	,				'comboModificacion',				'DD_SIN_SINO', 	'IN'),					
-		T_TIPO_DATA('T004_ResultadoNoTarificada',					'7'	,				'comboModificacion',				'01',		 				'='),					
-		T_TIPO_DATA('T004_ResultadoNoTarificada',					'7'	,				'fechaFinalizacion',				'', 						'NULL'),			
+		T_TIPO_DATA('T004_ResultadoNoTarificada',					'1'	,				'comboModificacion',				'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO', 	'IN'),					
+		T_TIPO_DATA('T004_ResultadoNoTarificada',					'1'	,				'comboModificacion',				'01',		 				'='),					
+		T_TIPO_DATA('T004_ResultadoNoTarificada',					'1'	,				'fechaFinalizacion',				'', 						'IS NULL'),			
 	-- comboModificacion = 02
-		T_TIPO_DATA('T004_ResultadoNoTarificada',					'8'	,				'comboModificacion',				'DD_SIN_SINO',	'IN'),		
-		T_TIPO_DATA('T004_ResultadoNoTarificada',					'8'	,				'comboModificacion',				'02',	 					'='),
-		T_TIPO_DATA('T004_ResultadoNoTarificada',					'8'	,				'fechaFinalizacion',				'',  						'NOT NULL')
+		T_TIPO_DATA('T004_ResultadoNoTarificada',					'2'	,				'comboModificacion',				'SELECT DD_SIN_CODIGO FROM REMMASTER.DD_SIN_SINO',	'IN'),		
+		T_TIPO_DATA('T004_ResultadoNoTarificada',					'2'	,				'comboModificacion',				'02',	 					'='),
+		T_TIPO_DATA('T004_ResultadoNoTarificada',					'2'	,				'fechaFinalizacion',				'',  						'IS NOT NULL'),
+		
+		T_TIPO_DATA('T004_ResultadoTarificada',					'1'	,				'fechaFinalizacion',				'',  						'IS NOT NULL')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

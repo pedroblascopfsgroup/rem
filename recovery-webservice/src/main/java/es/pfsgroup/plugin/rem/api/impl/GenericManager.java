@@ -61,7 +61,6 @@ import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
-import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
@@ -148,8 +147,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Usuario usuario = adapter.getUsuarioLogado();
 			Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 			UsuarioCartera uca = genericDao.get(UsuarioCartera.class, filtroUca);
-			Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-		//	List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
+
+			//Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
+			//List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
 
 			
 			if (usuario != null) {

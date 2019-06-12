@@ -173,7 +173,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
 									JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO AUX ON AUX.ACT_ID = ACT.ACT_ID
-                                    JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = AUX.DD_CRA_ID AND DD_CRA_CODIGO <> ''02''
+                                    JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = AUX.DD_CRA_ID AND DD_CRA_CODIGO <> ''02'' AND DD_CRA_CODIGO <> ''08''
                                     JOIN '|| V_ESQUEMA ||'.V_ACT_ESTADO_DISP V ON V.ACT_ID = ACT.ACT_ID
                                     JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO agr on act.act_id = agr.act_id and agr.borrado = 0
                                     JOIN '|| V_ESQUEMA ||'.TMP_PUBL_AGR EST ON EST.agr_id = agr.agr_id AND EST.INFORME_COMERCIAL = 0 AND EST.AGR_ID = '||nAGR_ID||'

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -1446,12 +1447,13 @@ public class ActivoController extends ParadiseJsonController {
 			try {
 				salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("error en activoController", e);
 			}
 	
 		}
-		catch (Exception e) {
+		catch (SocketException e) {
+			logger.warn("error en activoController", e);
+		}catch (Exception e) {
 			logger.error("error en activoController", e);
 		}finally {
 			try {
@@ -1459,7 +1461,7 @@ public class ActivoController extends ParadiseJsonController {
 				salida.close();
 				FileUtils.deleteFile(fileItem.getFile().getPath());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("error en activoController", e);
 			}
 		}		
 	}

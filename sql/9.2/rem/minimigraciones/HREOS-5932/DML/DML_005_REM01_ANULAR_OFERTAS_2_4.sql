@@ -90,7 +90,8 @@ BEGIN
 			
 			 	
             EXECUTE IMMEDIATE V_MSQL;
-			
+            
+		IF FILA.TRA_ID IS NOT NULL THEN	
 			V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE SET 
 							TRA_FECHA_FIN = SYSDATE
 						  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
@@ -99,6 +100,8 @@ BEGIN
 						WHERE TRA_ID = '||FILA.TRA_ID||'';
 			 	
 			EXECUTE IMMEDIATE V_MSQL;
+        END IF;    
+        
 		IF FILA.TAR_ID IS NOT NULL THEN	
             
 			V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES SET 
@@ -163,3 +166,4 @@ EXCEPTION
 END;
 /
 EXIT;
+

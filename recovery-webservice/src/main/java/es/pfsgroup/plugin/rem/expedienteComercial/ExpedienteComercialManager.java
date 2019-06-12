@@ -49,6 +49,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -307,8 +308,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String NULIDAD_MATRIMONIAL = "8";
 	
 	
-	private static final String SEPARACION_BIENES = "0";
-	private static final String SI = "Si";
 	
 	//No existe ese código en REM
 	private static final String NO_EXISTE_CODIGO_REM = "NoExisteEseCodigoEnRem";
@@ -400,6 +399,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private List<ExpedienteAvisadorApi> avisadores;
 
+	@Autowired
 	private ClienteComercialDao clienteComercialDao;
 	
 	@Autowired
@@ -5336,7 +5336,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
 			}
 
-			if (!Checks.esNulo(idExpediente)) {
+			if (!Checks.esNulo(idExpediente) && !Checks.esNulo(tipoDoc)) {
 				DDSubcartera subcarteraExpediente = getCodigoSubCarteraExpediente(Long.parseLong(idExpediente));
 				if (!Checks.esNulo(subcarteraExpediente)
 						&& DDSubcartera.CODIGO_BAN_BH.equals(subcarteraExpediente.getCodigo())) {
@@ -9260,7 +9260,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								}
 							}
 						}else{
-							return true;
+							if(DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getTipoPersona().getCodigo())){
+								return true;
+							}
+							
 						}
 					}else {
 						return true;
@@ -9451,6 +9454,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		Boolean problemasPorComprador = false; 
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getIdExpedienteComercial()));
+		if(!Checks.esNulo(dto.getId())){
 		Comprador comprador = genericDao.get(Comprador.class,genericDao.createFilter(FilterType.EQUALS,"id", dto.getId()));
 		Filter filterCompradorExpedientePorComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", comprador.getId());
 		Filter filterCompradorExpedientePorExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente.getId());
@@ -9585,11 +9589,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								}
 							}
 						}else{
-							comprador.setProblemasUrsus(true);
-							crearTareaValidacionClientes (expediente);
-							comprador.setProblemasUrsus(true);
-							genericDao.update(Comprador.class, comprador);
-							return true;
+							if(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getTipoPersona().getCodigo())) {
+								comprador.setProblemasUrsus(false);
+								crearTareaValidacionClientes (expediente);
+								comprador.setProblemasUrsus(false);
+								genericDao.update(Comprador.class, comprador);
+								return false;	
+							}else {
+								comprador.setProblemasUrsus(true);
+								crearTareaValidacionClientes (expediente);
+								comprador.setProblemasUrsus(true);
+								genericDao.update(Comprador.class, comprador);
+								return true;
+							}
 						}
 					}else {
 						comprador.setProblemasUrsus(true);
@@ -9605,9 +9617,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.update(Comprador.class, comprador);
 				return false;
 			}
-		comprador.setProblemasUrsus(false);
-		finalizarTareaValidacionClientes(expediente);
-		genericDao.update(Comprador.class, comprador);
-		return false;
+			comprador.setProblemasUrsus(false);
+			finalizarTareaValidacionClientes(expediente);
+			genericDao.update(Comprador.class, comprador);
+			return false;
+		}
+		return null;
 	}
 }

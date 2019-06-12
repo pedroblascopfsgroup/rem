@@ -16,6 +16,7 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 	private static final String CODIGO_T013_RES_EXPEDIENTE = "T013_ResolucionExpediente";
 	private static final String CODIGO_T013_RES_PBC = "T013_ResultadoPBC";
 	private static final String CODIGO_T013_DEV_LLAVES = "T013_DevolucionLlaves";
+	private static final String CODIGO_T017_RESPUESTA_OFERTANTE_PM = "T017_RespuestaOfertantePM";
 
 	@Override
 	public String[] getKeys() {
@@ -29,7 +30,8 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 				CODIGO_T013_RES_TANTEO, 
 				CODIGO_T013_RES_EXPEDIENTE, 
 				CODIGO_T013_RES_PBC, 
-				CODIGO_T013_DEV_LLAVES };
+				CODIGO_T013_DEV_LLAVES,
+				CODIGO_T017_RESPUESTA_OFERTANTE_PM };
 	}
 
 

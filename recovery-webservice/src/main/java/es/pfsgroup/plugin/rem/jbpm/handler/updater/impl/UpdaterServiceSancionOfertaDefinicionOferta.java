@@ -69,7 +69,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
+	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		/*
 		 * Si tiene atribuciones guardamos la fecha de aceptación de la tarea
 		 * como fecha de sanción, en caso contrario, la fecha de sanción será la

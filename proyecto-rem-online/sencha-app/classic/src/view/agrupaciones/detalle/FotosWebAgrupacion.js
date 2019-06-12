@@ -143,7 +143,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 		        { iconCls:'x-fa fa-plus', itemId:'addButton', bind : {hidden: '{hideBotoneraFotosWebAgrupacion}'}, handler: 'onAddFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_AGRUPACION'},
 		        { iconCls:'x-fa fa-minus', itemId:'removeButton',bind : {hidden: '{hideBotoneraFotosWebAgrupacion}'}, handler: 'onDeleteFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_AGRUPACION'},
 		        { iconCls:'x-fa fa-download', itemId:'downloadButton', handler: 'onDownloadFotoClick'},
-		        { iconCls:'x-tbar-loading', itemId:'removeButton', handler: 'onReloadFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_AGRUPACION'}
+		        { iconCls:'x-tbar-loading', itemId:'reloadButton', handler: 'onReloadFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_AGRUPACION'}
 		    ]
 		}
 		];

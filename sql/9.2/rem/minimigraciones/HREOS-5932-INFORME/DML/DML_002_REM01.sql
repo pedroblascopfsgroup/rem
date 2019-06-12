@@ -46,7 +46,8 @@ DECLARE
 												,'ECO_EXPEDIENTE_COMERCIAL'
 												,'ACT_TRA_TRAMITE'
 												,'TAR_TAREAS_NOTIFICACIONES'
-												,'TEX_TAREA_EXTERNA') 
+												,'TEX_TAREA_EXTERNA'
+												,'ACT_ACTIVO') 
 												AND OWNER IN ('REM01','REMMASTER');
 
     									
@@ -115,7 +116,8 @@ BEGIN
 					,''ECO_EXPEDIENTE_COMERCIAL''
 					,''ACT_TRA_TRAMITE''
 					,''TAR_TAREAS_NOTIFICACIONES''
-					,''TEX_TAREA_EXTERNA'') 
+					,''TEX_TAREA_EXTERNA''
+					,''ACT_ACTIVO'') 
 					AND OWNER IN (''REM01'',''REMMASTER'')
 					)';
 	

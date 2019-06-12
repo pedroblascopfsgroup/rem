@@ -84,14 +84,29 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoGasto', {
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	name: 'tipo',
-						        	editable: false,
+						        	editable: true,
 						        	msgTarget: 'side',
 					            	store: comboTipoDocumento,
 					            	displayField	: 'descripcion',
 								    							
 								    valueField		: 'codigo',
 									allowBlank: false,
-									width: '100%'
+									width: '100%',
+									enableKeyEvents:true,
+								    listeners: {
+								    	'keyup': function() {
+								    		this.getStore().clearFilter();
+								    	   	this.getStore().filter({
+								        	    property: 'descripcion',
+								        	    value: this.getRawValue(),
+								        	    anyMatch: true,
+								        	    caseSensitive: false
+								        	})
+								    	},
+								    	'beforequery': function(queryEvent) {
+								         	queryEvent.combo.onLoad();
+								    	}
+								    }
 						        },
 						        {
 				                	xtype: 'textarea',

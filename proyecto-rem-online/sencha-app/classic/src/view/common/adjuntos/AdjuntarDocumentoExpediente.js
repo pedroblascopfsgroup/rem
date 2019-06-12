@@ -118,13 +118,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
 						        	reference: 'comboSubtipoDocumentoExpediente',
 						        	name: 'subtipo',
-						        	editable: false,
-						        	forceSelection: true,
+						        	editable: true,
+						        	forceSelection: false,
 						        	bind: {			        					
 						        		store: '{comboSubtipoDoc}',
 					                    disabled: '{!filtroComboTipoDocumentoExpediente.value}'
 					            	},
 									allowBlank: false,
+									enableKeyEvents:true,
 									listeners: {
 										select: function(combo, record) {
 											if (record.getData().vinculable == 1) {
@@ -153,7 +154,19 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 												me.down("gridBase").setDisabled(true);
 												me.down("gridBase").getSelectionModel().deselectAll();
 											}
-										}
+										},
+										'keyup': function() {
+								    		this.getStore().clearFilter();
+								    	   	this.getStore().filter({
+								        	    property: 'descripcion',
+								        	    value: this.getRawValue(),
+								        	    anyMatch: true,
+								        	    caseSensitive: false
+								        	})
+								    	},
+								    	'beforequery': function(queryEvent) {
+								         	queryEvent.combo.onLoad();
+								    	}
 									}
 						        }
     					]

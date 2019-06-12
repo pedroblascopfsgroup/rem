@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -39,6 +40,8 @@ import es.cajamadrid.servicios.GM.GMPAJC34_INS.GMPAJC34_INS;
 import es.cajamadrid.servicios.GM.GMPAJC34_INS.StructCabeceraAplicacionGMPAJC34_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraAplicacionGMPAJC93_INS;
+import es.cajamadrid.servicios.GM.GMPAJC93_INS.StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu;
+import es.cajamadrid.servicios.GM.GMPAJC93_INS.VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu;
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.GMPDJB13_INS;
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.StructCabeceraAplicacionGMPDJB13_INS;
 import es.cajamadrid.servicios.GM.GMPDJB13_INS.StructGMPDJB13_INS_NumeroDeOcurrenciasnumocu;
@@ -77,10 +80,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteUrsusRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
+import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 
@@ -100,6 +105,42 @@ public class UvemManager implements UvemManagerApi {
 	private String URL = "";
 	private String ALIAS = "";
 
+	//Códigos COTLAV - 8 caracteres
+	private final String COTLAV_CLVAAPCO = "CLVAAPCO";
+	private final String COTLAV_CLCDD4   = "CLCDD4  ";
+	private final String COTLAV_CLCDB4   = "CLCDB4  ";
+	
+	//Códigos COMEAV - 8 caracteres
+	private final String COMEAV_0413 = "0413    ";
+	private final String COMEAV_0414 = "0414    ";
+	private final String COMEAV_80   = "80      ";
+	
+	//Códigos LIAVI1 para construir ejemplos - 80 caracteres
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLVAAPCO_CL00024E = "Cliente en situación de bloqueo.                                                ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLVAAPCO_CL00025E = "Cliente en situación de no cliente.                                             ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLVAAPCO_CL00026E = "Cliente sin documento fiscal válido y/o no escaneado.                           ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLVAAPCO_CL00027E = "Cliente carece de documento fiscal válido y producto.                           ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLVAAPCO_CL00035E = "Cliente en situación de absorbido.                                              ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLVAAPCO_CL00050E = "Cliente sin documento identificativo digitalizado.                              ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLVAAPCO_CL00107E = "Cliente bloqueado política de aceptación de clientes.                           ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLVAAPCO_CL00108E = "Cliente bloqueado debe justificar actividad.                                    ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_ERROR			  = "No se ha podido encontrar el código COMEAV.                                     ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLCDD4_0413 	  = "Cliente precaución operativa blanqueo capitales (Seguimiento).                  ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLCDD4_0414 	  = "Cliente precaución operativa blanqueo capitales (Cancelar).                     ";
+	@SuppressWarnings("unused")
+	private final String LIAVI1_CLCDB4_80		  = "Cliente bloqueado                                                               ";
+	
 	private GMPETS07_INS servicioGMPETS07_INS;
 
 	private GMPAJC93_INS servicioGMPAJC93_INS;
@@ -231,6 +272,31 @@ public class UvemManager implements UvemManagerApi {
 				((GMPAJC93_INS) servicio).setCodigoTipoDeViacotivw((short) 1);
 				((GMPAJC93_INS) servicio).setDenominacionTipoDeViaTrabajoNotiv1("cl");
 				((GMPAJC93_INS) servicio).setNombreDeLaVianovisa("dummy");
+				//Ejemplo Grid para Problemas con la venta en Cliente Ursus:
+				//Rellenaremos 'iter' ocurrencias (estructuras) de un máximo de 10 para almacenarlas en el vector VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu.
+				Short iter = 2;
+				((GMPAJC93_INS) servicio).setNumeroDeOcurrenciasDeAvisonuocav(Short.valueOf(iter));
+				VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
+				StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu estructura = new StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
+				//Cada estructura llevará un código cotlav, un código comeav y un liavi1 correspondiente con los dos primeros:
+				String[] cod_cotlav = {COTLAV_CLVAAPCO,          COTLAV_CLVAAPCO,          COTLAV_CLVAAPCO,          COTLAV_CLCDD4,      COTLAV_CLCDB4};
+				String[] cod_comeav = {"CL00024E",               "CL00027E",               "CL00108E",               COMEAV_0413,        COMEAV_80};
+				String[] cod_liavi1 = {LIAVI1_CLVAAPCO_CL00024E, LIAVI1_CLVAAPCO_CL00027E, LIAVI1_CLVAAPCO_CL00108E, LIAVI1_CLCDD4_0414, LIAVI1_CLCDB4_80};
+				//Rellenamos el vector de estructuras
+				int i = 0;
+				for(i=0; i<iter; i++) {
+					estructura.setCodigoDeServiciocotlav(cod_cotlav[i]);
+					estructura.setCodigoMensajeDeErrorcomeav(cod_comeav[i]);
+					estructura.setLiteralAvisoEnPantallaliavi1(cod_liavi1[i]);
+//					vector.setStructGMPAJC93_INS_NumeroDeOcurrenciasnumocu(estructura);
+					vector.add(estructura);
+				}
+				
+				//Lo almacenamos en el servicio para hacer pruebas:
+				((GMPAJC93_INS) servicio).setNumeroDeOcurrenciasnumocu(vector);
+				((GMPAJC93_INS) servicio).setCodigoEstadoCivilcoesci('2');
+				((GMPAJC93_INS) servicio).setIdentClienteConyugeOfertaidclww(800830277);
+				((GMPAJC93_INS) servicio).setNombreYApellidosTitularnotio1("Ana Checa Soler");
 
 			} else if (servicio instanceof GMPDJB13_INS) {
 				((GMPDJB13_INS) servicio).setLongitudMensajeDeSalidarcslon(2);
@@ -667,7 +733,7 @@ public class UvemManager implements UvemManagerApi {
 			datos.setDatosComplementariosDelDomicilio(servicioGMPAJC93_INS.getDatosComplementariosDelDomicilioobdom1());
 			datos.setBarrioColoniaOApartado(servicioGMPAJC93_INS.getBarrioColoniaOApartadonobar2());
 			datos.setEdadDelCliente(servicioGMPAJC93_INS.getEdadDelClientenuedaw() + "");
-			datos.setCodigoEstadoCivil(servicioGMPAJC93_INS.getCodigoEstadoCivilcoesci() + "");
+			datos.setCodigoEstadoCivil(servicioGMPAJC93_INS.getCodigoEstadoCivilcoesci());
 			datos.setEstadoCivilActual(servicioGMPAJC93_INS.getEstadoCivilActualcoesc1());
 			datos.setNumeroDeHijos(servicioGMPAJC93_INS.getNumeroDeHijosnuhijw() + "");
 			datos.setSEXO(servicioGMPAJC93_INS.getSEXOCOSEXO() + "");
@@ -694,6 +760,11 @@ public class UvemManager implements UvemManagerApi {
 				datos.setNumeroClienteUrsusConyuge(
 						Integer.valueOf(servicioGMPAJC93_INS.getIdentClienteConyugeOfertaidclww()).toString());
 			}
+			if(!Checks.esNulo(servicioGMPAJC93_INS.getNumeroDeOcurrenciasDeAvisonuocav())){
+				datos.setHayOcurrencias(servicioGMPAJC93_INS.getNumeroDeOcurrenciasDeAvisonuocav() > 0);
+			}
+			if (!Checks.esNulo(servicioGMPAJC93_INS))
+				datos.setNombreYApellidosConyuge(servicioGMPAJC93_INS.getNombreYApellidosTitularnotio1());
 
 		} catch (WIException e) {
 			errorDesc = e.getMessage();
@@ -706,6 +777,116 @@ public class UvemManager implements UvemManagerApi {
 
 	}
 
+	
+	/**
+	 * Servicio GMPAJC93_INS que a partir del nº cliente URSUS se devuelvan los datos de 'Problemas con la venta'.
+	 * 
+	 * @param numcliente: numero cliente Ursus (idclow)
+	 * @param qcenre: Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia habitat 05021
+	 */
+	@Override
+	public List <DatosClienteProblemasVentaDto> ejecutarDatosClienteProblemasVenta(Integer numcliente, String qcenre) throws Exception {
+		List <DatosClienteProblemasVentaDto> datos = new ArrayList<DatosClienteProblemasVentaDto>();
+		DatosClienteProblemasVentaDto dto = new DatosClienteProblemasVentaDto();
+		String errorDesc = null;
+
+		try {
+
+			iniciarServicio();
+
+			// instanciamos el servicio
+			servicioGMPAJC93_INS = new GMPAJC93_INS();
+
+			// Creamos cabeceras
+			es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraFuncionalPeticion();
+			es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPAJC93_INS.StructCabeceraTecnica();
+			StructCabeceraAplicacionGMPAJC93_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPAJC93_INS();
+
+			cabeceraFuncional.setIDDSAQ("CONS");
+			cabeceraFuncional.setCOFRAQ("168");
+			cabeceraFuncional.setCOSFAQ("00");
+			cabeceraFuncional.setCOAQAQ("AQ");
+			cabeceraFuncional.setCORPAQ("WW0071");
+			cabeceraFuncional.setCLCDAQ("0370");
+			cabeceraFuncional.setCOENAQ("0000");
+			cabeceraFuncional.setCOCDAQ("0551");
+			cabeceraFuncional.setCOSBAQ("00");
+			cabeceraFuncional.setNUPUAQ("00");
+			cabeceraTecnica.setCLORAQ("71");
+
+			// Seteamos cabeceras
+			servicioGMPAJC93_INS.setcabeceraAplicacion(cabeceraAplicacion);
+			servicioGMPAJC93_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
+			servicioGMPAJC93_INS.setcabeceraTecnica(cabeceraTecnica);
+
+			// seteamos parametros
+			servicioGMPAJC93_INS.setCodigoObjetoAccesocopace("PAHY0272");
+			// COCGUS
+			cabeceraAplicacion.setCentroGestorUsuarioSsacocgus(COCGUS);
+			servicioGMPAJC93_INS.setIdentificadorClienteOfertaidclow(numcliente);// <--------?????
+			servicioGMPAJC93_INS.setnumeroUsuario("");// <--------????? Nos lo piden obligatorio
+			servicioGMPAJC93_INS.setidSesionWL("");// <--------????? Nos lo piden obligatorio
+			servicioGMPAJC93_INS.setnumeroCliente(0);
+			servicioGMPAJC93_INS.setIdentificadorDiscriminadorFuncioniddsfu("DF01");
+			servicioGMPAJC93_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
+
+			servicioGMPAJC93_INS.setAlias(ALIAS);
+			// servicioGMPAJC93_INS.execute();
+			executeService(servicioGMPAJC93_INS);
+			
+			dto = new DatosClienteProblemasVentaDto();
+			//Datos que mostraremos en el grid de 'Problemas con la venta'
+			Short iter = servicioGMPAJC93_INS.getNumeroDeOcurrenciasDeAvisonuocav();
+			Short i = 0;
+			VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
+			StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu estructura = new StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
+			vector = servicioGMPAJC93_INS.getNumeroDeOcurrenciasnumocu();
+			
+			for(i=0; i<iter; i++) {
+				//Con cada iteración accederemos a las distintas estructuras u ocurrencias almacenadas en el vector de tipo VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu
+				estructura = vector.getStructGMPAJC93_INS_NumeroDeOcurrenciasnumocuAt(i);
+				
+				//Comparamos con el primer código de la ocurrencia: Código de Servicio COTLAV = "CLVAAPCO"
+				if(!Checks.esNulo(COTLAV_CLVAAPCO.equals(estructura.getCodigoDeServiciocotlav()))) {
+					
+					//Comparamos con los distintos códigos de Mensaje de Error COMEAV asociados al COTLAV anterior:
+					if(!Checks.esNulo(estructura.getCodigoMensajeDeErrorcomeav()) && !Checks.esNulo(estructura.getLiteralAvisoEnPantallaliavi1())) {
+						dto.setTipoMensaje("Problema");	//Los mensajes siempre serán del Tipo : Problema
+						dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
+					}
+				}
+				//Comparamos con el segundo código de la ocurrencia: Código de Servicio COTLAV = "CLCDD4"
+				if(!Checks.esNulo(COTLAV_CLCDD4.equals(estructura.getCodigoDeServiciocotlav()))) {
+					//En esta ocasión los errores COMEAV son sólo 2, siendo uno de ellos de Tipo : Aviso y el otro de Tipo : Problema
+					if(!Checks.esNulo(COMEAV_0413.equals(estructura.getCodigoMensajeDeErrorcomeav()))) {
+						dto.setTipoMensaje("Aviso");
+					}
+					if(!Checks.esNulo(COMEAV_0414.equals(estructura.getCodigoMensajeDeErrorcomeav()))) {
+						dto.setTipoMensaje("Problema");
+					}
+					if(!Checks.esNulo(estructura.getLiteralAvisoEnPantallaliavi1())) {
+						dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
+					}
+				}
+				if(!Checks.esNulo(COTLAV_CLCDB4.equals(estructura.getCodigoDeServiciocotlav()))) {
+					if(!Checks.esNulo(COMEAV_80.equals(estructura.getCodigoMensajeDeErrorcomeav()))) {
+						dto.setTipoMensaje("Problema");
+						dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
+					}
+				}
+				//Almacenamos los mensajes de aviso en el listado de dtos que enviaremos al grid de Problemas con la venta
+				datos.add(i, dto);
+			}	//End for
+			
+		} catch (WIException e) {
+			errorDesc = e.getMessage();
+			throw new JsonViewerException("Error consulta URSUS (UVEM): " + e.getMessage());
+		} finally {
+			registrarLlamada(servicioGMPAJC93_INS, errorDesc);
+		}
+		return datos;
+	}
+	
 	/**
 	 * Invoca al servicio GMPDJB13_INS de BANKIA para dar de alta un instancia
 	 * de decisión de una oferta
@@ -1294,7 +1475,7 @@ public class UvemManager implements UvemManagerApi {
 	}
 
 	@Override
-	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
+	public WSDevolBankiaDto notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,
 			CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception {
 
@@ -1385,7 +1566,7 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPTOE83_INS.setCodigoDeOfertaHayacoofhx(StringUtils.leftPad(codigoDeOfertaHaya, 16, "0"));
 			// BINDRE
 			if (INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)) {
-				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('s');
+				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('S');
 			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_DEVOLUCION_RESERVA.equals(indicadorDevolucionReserva)) {
 				servicioGMPTOE83_INS.setIndicadorDevolucionReservabindre('N');
 			} else if (INDICADOR_DEVOLUCION_RESERVA.NO_APLICA.equals(indicadorDevolucionReserva)) {
@@ -1418,6 +1599,13 @@ public class UvemManager implements UvemManagerApi {
 			throw new JsonViewerException("Error notificación reserva (UVEM): " + wie.getMessage());
 		} finally {
 			registrarLlamada(servicioGMPTOE83_INS, errorDesc);
+			
+			WSDevolBankiaDto dto = new WSDevolBankiaDto();
+			
+			dto.setCorrecw((long) servicioGMPTOE83_INS.getCodigoResolucionComitecorecw());
+			dto.setComoa3((long) servicioGMPTOE83_INS.getCodigoMotivoAnulacionPropuestacomoa3());	
+			
+			return dto;
 		}
 
 	}

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo.dao.impl;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,7 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 
 /**
@@ -106,6 +108,31 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
 		
 		return !HibernateQueryUtils.list(this, hb).isEmpty();
+	}
+	
+	public ActivoTramite getTramiteComercialVigenteByTrabajo(Long idTrabajo){
+		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.tipoTramite.codigo", "T013");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.estadoTramite.codigo", JBPMActivoTramiteManager.ESTADO_PROCEDIMIENTO_EN_TRAMITE);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
+		
+		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
+	
+	public Boolean creaTareaValidacion(String username, String numExpediente){
+		String procedureHQL = "BEGIN SP_CREAR_TAREA(:usernameParam, :expedienteParam, :tareaDestinoParam, null, null, :salida);  END;";
+
+
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("usernameParam", username);
+		callProcedureSql.setParameter("expedienteParam", numExpediente);
+		callProcedureSql.setParameter("tareaDestinoParam", ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES);
+		callProcedureSql.setParameter("salida", new String());
+
+		int resultado = callProcedureSql.executeUpdate();
+		
+		return resultado == 1;
 	}
 	
 }

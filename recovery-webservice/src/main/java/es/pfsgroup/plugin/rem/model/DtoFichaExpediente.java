@@ -137,6 +137,7 @@ public class DtoFichaExpediente extends WebDto {
 
 	private String subcarteraCodigo;
 	private Boolean estaFirmado;
+	private Boolean problemasUrsus;
 	private Long idOfertaAnterior;
 	private Boolean noEsOfertaFinalGencat;
 
@@ -694,6 +695,13 @@ public class DtoFichaExpediente extends WebDto {
 		this.descMotivoAnulacionAlq = descMotivoAnulacionAlq;
 	}
 
+	public Boolean getProblemasUrsus() {
+		return problemasUrsus;
+	}
+
+	public void setProblemasUrsus(Boolean problemasUrsus) {
+		this.problemasUrsus = problemasUrsus;
+	}
 	public Long getIdOfertaAnterior() {
 		return idOfertaAnterior;
 	}
@@ -709,6 +717,5 @@ public class DtoFichaExpediente extends WebDto {
 	public void setNoEsOfertaFinalGencat(Boolean noEsOfertaFinalGencat) {
 		this.noEsOfertaFinalGencat = noEsOfertaFinalGencat;
 	}
-	
 	
 }

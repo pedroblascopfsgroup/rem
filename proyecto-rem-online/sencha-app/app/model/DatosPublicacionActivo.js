@@ -147,7 +147,7 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 	    {
 	    	name:'diasCambioPublicacionAlquiler'
 	    },
-	    {
+        {
 	    	name:'diasCambioPrecioVentaWeb'
 	    },
 	    {

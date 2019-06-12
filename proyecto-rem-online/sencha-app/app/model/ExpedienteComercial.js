@@ -232,6 +232,13 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name:'estaFirmado',
     			type: 'boolean'
+			},
+			{
+				name: 'esCarteraLiberbank',
+				calculate: function(data) { 
+    				return CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo;
+    			},
+    			depends: 'entidadPropietariaCodigo'
     		},
     		{
     			name: 'idOfertaAnterior'
@@ -240,8 +247,6 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name:'noEsOfertaFinalGencat',
     			type: 'boolean'
     		}
-    		
-    		 
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

@@ -453,7 +453,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 					if(!Checks.esNulo(activosExpediente) && !Checks.esNulo(listaAdjuntosExpediente)){
 						if(listaAdjuntosExpediente.size() < activosExpediente.size()){
 							Object[] obj = new Object[3];
-							obj[0] = tipoFicheroAdjuntoEC.getDescripcion();
+							obj[0] = (!Checks.esNulo(tipoFicheroAdjuntoEC)) ? tipoFicheroAdjuntoEC.getDescripcion(): "";
 							obj[1] = activosExpediente.size();
 							obj[2] = listaAdjuntosExpediente.size();
 							mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("ecomercial.adjuntos.validacion.advertencia.numDocsInvalido", obj));

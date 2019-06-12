@@ -265,6 +265,15 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_FECHA_POSICIONAMIENTO_PREVISTA")
     private Date fechaPosicionamientoPrevista;  
 
+    @Column(name="ECO_CORRECW")
+    private Long correcw;
+    
+    @Column(name="ECO_COMOA3")
+    private Long comoa3;
+    
+    @Column (name="ECO_DEVOL_AUTO_NUMBER")
+    private Boolean devolAutoNumber;
+
     @Version   
 	private Long version;
 
@@ -796,5 +805,28 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setFechaPosicionamientoPrevista(Date fechaPosicionamientoPrevista) {
 		this.fechaPosicionamientoPrevista = fechaPosicionamientoPrevista;
+	}
+
+	public Long getCorrecw() {
+		return correcw;
+	}
+
+	public void setCorrecw(Long correcw) {
+		this.correcw = correcw;
+	}
+
+	public Long getComoa3() {
+		return comoa3;
+	}
+
+	public void setComoa3(Long comoa3) {
+		this.comoa3 = comoa3;
+	}
+	public Boolean getDevolAutoNumber() {
+		return devolAutoNumber;
+	}
+
+	public void setDevolAutoNumber(Boolean devolAutoNumber) {
+		this.devolAutoNumber = devolAutoNumber;
 	}
 }

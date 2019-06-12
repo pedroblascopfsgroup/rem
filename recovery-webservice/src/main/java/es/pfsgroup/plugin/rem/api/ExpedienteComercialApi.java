@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
+import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -62,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
@@ -809,6 +811,16 @@ public interface ExpedienteComercialApi {
 	 */
 	DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus, String idExpediente) throws Exception;
 
+	/*
+	 * Este método permite insertar una lista con los 'Problemas con la venta' en el grid de Cliente Ursus
+	 * 
+	 * @param numeroDocumento : número de documento del cliente.
+	 * @param tipoDocumento : tipo de documento del cliente.
+	 * @param idExpediente : idExpediente
+	 * @return Devuelve una lista con los 'Problemas on la venta'
+	 */
+	public List<DatosClienteProblemasVentaDto> buscarProblemasVentaClienteUrsus(String numeroDocumento, String idExpediente) throws Exception;
+	
 	/**
 	 * Este método calcula el importe de reserva para un expediente si se dan las condiciones: El expediente tiene reserva. La reserva tiene el cálculo de tipo porcentaje. Entonces mira si la oferta
 	 * tiene importe contraoferta y utiliza éste importe, si no utiliza el importe de la oferta.
@@ -1208,10 +1220,17 @@ public interface ExpedienteComercialApi {
 	 * Comprobación de los campos de los compradores en una oferta de venta para poder avanzar la tarea.
 	 */
 	boolean checkCamposComprador(TareaExterna tareaExterna);
+	
+	public Boolean checkPaseDirectoPendDevol(TareaExterna tareaExterna);
 
 	boolean checkInquilinos(TareaExterna tareaExterna);
 
 	FileItem getAdvisoryNote();
 
+	boolean hayDiscrepanciasClientesURSUS(Long idExpediente);
+	
+	boolean hayProblemasURSUS(Long idExpediente);
+	
+	Boolean modificarDatosUnCompradorProblemasURSUS( DtoSlideDatosCompradores dto) throws Exception;
 
 }

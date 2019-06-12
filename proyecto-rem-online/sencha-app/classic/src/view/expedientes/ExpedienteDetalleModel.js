@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.expedientedetalle',
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 'HreRem.model.DatosClienteUrsus', 
                 'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
@@ -390,15 +390,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 
 		 },
 		 esObligatorio: function(){
-		    	var me = this;
-		    	if(!Ext.isEmpty(me.getView().expediente)){
-		    		if(me.getView().expediente.data.tipoExpedienteCodigo == "01"){
-			    		return false;
-			    	}else{
-			    		return true;
-			    	}
-		    	}
-		    	
+		 	var me = this;
+		    if(!Ext.isEmpty(me.getView().expediente)){
+		    	if(me.getView().expediente.data.tipoExpedienteCodigo == "01"){
+			    	return false;
+			    }else{
+			    	return true;
+			    }
+		    }
+
 		    },
 
 		 esEntidadFinancieraBankia: function(get) {
@@ -414,16 +414,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				 }
 			}
 		 },
-
-			
-			isGestorFormalizacion: function(){
-				if($AU.userIsRol(CONST.PERFILES['HAYAGESTFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
-					return false;
-				}else{
-					return true;
-				}
+		
+		isGestorFormalizacion: function(){
+			if($AU.userIsRol(CONST.PERFILES['HAYAGESTFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+				return false;
+			}else{
+				return true;
 			}
-
+		}
 	 },
 
 
@@ -1102,6 +1100,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getHistoricoCondiciones',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
+		},
+		
+		storeProblemasVenta: {
+			model: 'HreRem.model.DatosClienteUrsus',
+			autoLoad: true,
+			autoSync: true,
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus',
+				extraParams: {numeroUrsus: '', idExpediente: '{expediente.id}'}
+			}
 		}
 		
 		

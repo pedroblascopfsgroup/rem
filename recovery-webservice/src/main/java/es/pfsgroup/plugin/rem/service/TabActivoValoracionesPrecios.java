@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +47,14 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 	
 	
 	public DtoActivoValoraciones getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
+		
+		Calendar fecha = Calendar.getInstance();
+		fecha.set(Calendar.HOUR_OF_DAY, 0);
+		fecha.set(Calendar.MINUTE, 0);
+		fecha.set(Calendar.SECOND, 0);
+		fecha.add(Calendar.SECOND, -1);
+        
+        Date yesterday = fecha.getTime();
 
 		
 		DtoActivoValoraciones valoracionesDto = new DtoActivoValoraciones();
@@ -72,7 +81,7 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 			{
 					ActivoValoraciones val = activo.getValoracion().get(i);
 					
-					if(!Checks.esNulo(val.getFechaFin()) && val.getFechaFin().before(new Date())) {
+					if(!Checks.esNulo(val.getFechaFin()) && val.getFechaFin().before(yesterday)) {
 						activoApi.deleteValoracionPrecioConGuardadoEnHistorico(val.getId(),true,false);
 					} else {		
 						

@@ -140,6 +140,8 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean problemasUrsus;
 	private Long idOfertaAnterior;
 	private Boolean noEsOfertaFinalGencat;
+	
+	private Date fechaEnvioAdvisoryNote;
 
 	public Long getId() {
 		return id;
@@ -716,6 +718,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setNoEsOfertaFinalGencat(Boolean noEsOfertaFinalGencat) {
 		this.noEsOfertaFinalGencat = noEsOfertaFinalGencat;
+	}
+
+	public Date getFechaEnvioAdvisoryNote() {
+		return fechaEnvioAdvisoryNote;
+	}
+
+	public void setFechaEnvioAdvisoryNote(Date fechaEnvioAdvisoryNote) {
+		this.fechaEnvioAdvisoryNote = fechaEnvioAdvisoryNote;
 	}
 	
 }

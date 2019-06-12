@@ -246,6 +246,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name:'noEsOfertaFinalGencat',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'fechaEnvioAdvisoryNote',
+    			type:'date', 
+        		dateFormat: 'c'
     		}
     ],
     formulas: {

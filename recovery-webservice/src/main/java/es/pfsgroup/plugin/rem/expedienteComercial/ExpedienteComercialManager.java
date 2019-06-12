@@ -1026,6 +1026,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaAlta(expediente.getFechaAlta());
 				dto.setFechaAltaOferta(oferta.getFechaAlta());
 				dto.setFechaSancion(expediente.getFechaSancion());
+				dto.setFechaEnvioAdvisoryNote(expediente.getFechaEnvioAdvisoryNote());
 
 				if (!Checks.esNulo(expediente.getReserva())) {
 					dto.setFechaReserva(expediente.getReserva().getFechaFirma());

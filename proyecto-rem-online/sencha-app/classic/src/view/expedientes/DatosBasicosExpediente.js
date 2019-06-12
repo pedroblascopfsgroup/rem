@@ -258,6 +258,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			        		value:'{expediente.numContratoAlquiler}',
 			        		hidden: '{esOfertaVenta}'	
 			        	}
+	            	 },
+				        {
+				        	xtype: 'datefieldbase',
+				        	formatter: 'date("d/m/Y")',
+				        	fieldLabel: HreRem.i18n('fieldlabel.fecha.envio.advisory.note'),
+				        	bind: {
+				        		value: '{expediente.fechaEnvioAdvisoryNote}',
+		                		readOnly: true,
+				        		hidden: '{!esCarteraApple}'
+				        	}
 			        }
 			       
 

@@ -199,7 +199,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	private DDComiteSancion comitePropuesto;
     
     @Column(name="ECO_ESTADO_PBC")
-    private Integer estadoPbc;   
+	private Integer estadoPbc; 
+	
+	@Column(name="ECO_ESTADO_PBC_R")
+    private Integer estadoPbcR; 
     
     @Column(name="ECO_FECHA_VENTA")
     private Date fechaVenta;
@@ -625,6 +628,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setEstadoPbc(Integer estadoPbc) {
 		this.estadoPbc = estadoPbc;
+	}
+	public Integer getEstadoPbcR() {
+		return estadoPbcR;
+	}
+
+	public void setEstadoPbcR(Integer estadoPbcR) {
+		this.estadoPbcR = estadoPbcR;
 	}
 
 	public Date getFechaVenta() {

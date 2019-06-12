@@ -1138,9 +1138,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expediente.getRiesgoReputacional())) {
 					dto.setRiesgoReputacional(expediente.getRiesgoReputacional());
 				}
+				
 
 				if (!Checks.esNulo(expediente.getEstadoPbc())) {
 					dto.setEstadoPbc(expediente.getEstadoPbc());
+				}
+				if (!Checks.esNulo(expediente.getEstadoPbcR())) {
+					dto.setEstadoPbcR(expediente.getEstadoPbcR());
 				}
 
 				if (!Checks.esNulo(expediente.getFechaVenta())) {

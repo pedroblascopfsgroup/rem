@@ -375,6 +375,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			            		store: '{comboSiNoRem}',
 			            		value: '{expediente.riesgoReputacional}'
 			            	}
+						},
+						{
+		                	xtype: 'comboboxfieldbase',
+							reference: 'comboEstadoPBCreserva',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.reserva'),
+				        	bind: {
+			            		store: '{comboSiNoRem}',
+								value: '{expediente.estadoPbcR}',
+								hidden:'{!expediente.isSubcarteraApple}'
+			            	}
 		                },
 		                {
 		                	xtype: 'comboboxfieldbase',
@@ -382,7 +392,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc'),
 				        	bind: {
 			            		store: '{comboAceptadoRechazado}',
-			            		value: '{expediente.estadoPbc}'
+								value: '{expediente.estadoPbc}'
 			            	}
 		                }
 		        ]

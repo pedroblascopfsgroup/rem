@@ -62,13 +62,13 @@ DECLARE
     
 BEGIN
 	
-  DBMS_OUTPUT.put_line('[INICIO] Ejecutando borrado de tareas y ofertas ...........');
+  DBMS_OUTPUT.put_line('[INICIO] Ejecutando borrado de tareas y ofertas ...........');	      	
 	      	
 	OPEN OFERTAS_A_ELIMINAR;
 	
 	V_COUNT := 0;
 	V_COUNT2 := 0;
-		
+	
 	LOOP
   		FETCH OFERTAS_A_ELIMINAR INTO FILA;
   		EXIT WHEN OFERTAS_A_ELIMINAR%NOTFOUND;
@@ -78,69 +78,74 @@ BEGIN
 					  , USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||'''
 					  , FECHAMODIFICAR = SYSDATE
 					WHERE OFR_ID = '||FILA.OFR_ID||'';
-					
+    
+        					
   		EXECUTE IMMEDIATE V_MSQL;
   		
   		IF FILA.ECO_NUM_EXPEDIENTE IS NOT NULL THEN
   		
-				V_MSQL := 'UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL SET 
-								DD_EEC_ID = (SELECT EEC.DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC WHERE EEC.DD_EEC_CODIGO = ''02'')
-							  , ECO_FECHA_ANULACION = SYSDATE
-							  , USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||'''
-							  , FECHAMODIFICAR = SYSDATE
-							WHERE ECO_NUM_EXPEDIENTE = '||FILA.ECO_NUM_EXPEDIENTE||'';
-				
-				EXECUTE IMMEDIATE V_MSQL;
-				
-				V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE SET 
-								TRA_FECHA_FIN = SYSDATE
-							  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
-							  , FECHABORRAR = SYSDATE
-							  , BORRADO = 1
-							WHERE TRA_ID = '||FILA.TRA_ID||'';
-				
-				EXECUTE IMMEDIATE V_MSQL;
-				
-				V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES SET 
-								TAR_FECHA_FIN = SYSDATE
-							  , TAR_TAREA_FINALIZADA = 1
-							  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
-							  , FECHABORRAR = SYSDATE
-							  , BORRADO = 1
-							WHERE TAR_ID = '||FILA.TAR_ID||'';
-				
-				EXECUTE IMMEDIATE V_MSQL;
-				
-				V_MSQL := 'UPDATE '||V_ESQUEMA||'.TEX_TAREA_EXTERNA SET 
-								USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||'''
-							  , FECHAMODIFICAR = SYSDATE
-							  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
-							  , FECHABORRAR = SYSDATE
-							  , BORRADO = 1
-							WHERE TAR_ID = '||FILA.TAR_ID||'';
-				
-				EXECUTE IMMEDIATE V_MSQL;
-						
-  		END IF;
-  		 		
+			V_MSQL := 'UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL SET 
+							DD_EEC_ID = (SELECT EEC.DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC WHERE EEC.DD_EEC_CODIGO = ''02'')
+						  , ECO_FECHA_ANULACION = SYSDATE
+						  , USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||'''
+						  , FECHAMODIFICAR = SYSDATE
+						WHERE ECO_NUM_EXPEDIENTE = '||FILA.ECO_NUM_EXPEDIENTE||'';
+			
+			 	
+            EXECUTE IMMEDIATE V_MSQL;
+			
+			V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE SET 
+							TRA_FECHA_FIN = SYSDATE
+						  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
+						  , FECHABORRAR = SYSDATE
+						  , BORRADO = 1
+						WHERE TRA_ID = '||FILA.TRA_ID||'';
+			 	
+			EXECUTE IMMEDIATE V_MSQL;
+		IF FILA.TAR_ID IS NOT NULL THEN	
+            
+			V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES SET 
+							TAR_FECHA_FIN = SYSDATE
+						  , TAR_TAREA_FINALIZADA = 1
+						  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
+						  , FECHAMODIFICAR = SYSDATE
+						  , BORRADO = 1
+						WHERE TAR_ID = '||FILA.TAR_ID||'';
+			 	
+			EXECUTE IMMEDIATE V_MSQL;
+			
+			V_MSQL := 'UPDATE '||V_ESQUEMA||'.TEX_TAREA_EXTERNA SET 
+							USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||'''
+						  , FECHAMODIFICAR = SYSDATE
+						  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
+						  , FECHABORRAR = SYSDATE
+						  , BORRADO = 1
+						WHERE TAR_ID = '||FILA.TAR_ID||'';
+			 	
+			EXECUTE IMMEDIATE V_MSQL;
+        
+        END IF;    
+			
+		END IF;
+ 		
   		  		
   		V_COUNT := V_COUNT + 1 ;
         V_COUNT2 := V_COUNT2 +1 ;
         
-        IF V_COUNT2 = 5000 THEN
+        IF V_COUNT2 = 100 THEN
             
             COMMIT;
             
-            DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
+            DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
             V_COUNT2 := 0;
             
         END IF;
   		
 	END LOOP;
 	
-    DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
     
-    DBMS_OUTPUT.PUT_LINE('	[INFO] Se han DADO DE BAJA '||V_COUNT||' OFERTAS y TRAMITES ASOCIADOS ');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Se han DADO DE BAJA '||V_COUNT||' OFERTAS y TRAMITES ASOCIADOS ');
     
 	CLOSE OFERTAS_A_ELIMINAR;
 	

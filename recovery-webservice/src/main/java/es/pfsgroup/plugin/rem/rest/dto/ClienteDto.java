@@ -160,7 +160,7 @@ public class ClienteDto implements Serializable{
 	private String codPaisRepresentante;
 	
 	@Size(max=5,groups = { Insert.class, Update.class })
-	@IsNumber(groups = { Insert.class, Update.class })
+	@IsNumber(groups = { Insert.class, Update.class }, message="El cp no es valido")
 	private String codigoPostalRepresentante;
 	
 	

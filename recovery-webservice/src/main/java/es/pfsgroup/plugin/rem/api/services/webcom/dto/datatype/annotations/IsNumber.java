@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
+import javax.validation.Payload;
 
 import es.pfsgroup.plugin.rem.rest.validator.NumberValidator;
 
@@ -14,5 +15,7 @@ import es.pfsgroup.plugin.rem.rest.validator.NumberValidator;
 @Constraint(validatedBy = NumberValidator.class)
 public @interface IsNumber {
 	Class<?>[] groups() default {};
+	String message();
+	Class<? extends Payload>[] payload() default {};
 
 }

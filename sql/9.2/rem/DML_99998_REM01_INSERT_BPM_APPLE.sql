@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR= Sergio Salt
+--## AUTOR=Mariam Lliso
 --## FECHA_CREACION=20190613
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Crear BPM Apple
 --## VERSIONES:
 --##        0.1 Versión inicial 
+--##		0.2 HREOS-6619 HREOS-6620 HREOS-6662 Actualización validaciones T017_InstruccionesReserva, T017_ObtencionContratoReserva, T017_PosicionamientoYFirma, T017_DocsPosVenta
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -32,9 +33,18 @@ declare
   PTP_ID NUMBER(16,0); --Vble. Para extraer el ID de la PTP
   -----------------------------------
   ---------  MAPA DE TAREAS  --------
-  -----------------------------------
+  -----------------------------------  
 SCOPE_TAREA NUMBER(16,0) := 0; --Vble. para seleccionar una tarea o todas
   /**********************************
+  **
+  ** SCOPE_TAREA permite updatear todas las tareas o una en concreto
+  ** solo con indicar dicha tarea por su código.
+  ** 
+  ** IMPORTATNE: commitear los cambios con SCOPE_TAREA = 0 para evitar
+  ** fallos en otros entornos/ramas.
+  **
+  ** El listado de códigos es el siguiente:
+  **
   **  0-    TODO EL BPM
   **  1-    DEFINICION DE OFERTA              
   **  2-    ANALISIS PM
@@ -2104,15 +2114,8 @@ begin
 ----------------------------TAP TAREA PROCEDIMIENTO-------------------------
    TAP(12).tap_field('TAP_CODIGO') := 'T017_InstruccionesReserva';
    TAP(12).tap_field('TAP_VIEW') := NULL;
-   TAP(12).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkCompradores() ? checkProvinciaCompradores() ? checkNifConyugueLBB() ? (checkVendido() ? ''''El activo está vendido'''' 
-        : (checkComercializable() ? (checkPoliticaCorporativa() ? null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') 
-        : ''''El activo debe ser comercializable'''') ) : ''''El NIF del cónyugue debe estar informado si el comprador está casado'''' : ''''Todos los compradores tienen que tener provincia informada'''' 
-        : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''' ';
-   TAP(12).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() 
-        ? (checkPoliticaCorporativa() ? (checkCompradoresTienenNumeroUrsus() ?  (!esCajamar() ? (esLiberBank() ?  (mismoNumeroAdjuntosComoCompradoresExpedienteUGValidacion("37", "E", "01") == "" 
-        ? existeAdjuntoUGValidacion("97,E;91,E") : mismoNumeroAdjuntosComoCompradoresExpedienteUGValidacion("37", "E", "01")) : mismoNumeroAdjuntosComoCompradoresExpedienteUGValidacion("37", "E", "01")) 
-        : null) : ''''No todos los compradores tienen NºURSUS'''') : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) 
-        : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente''''';
+   TAP(12).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkCompradores() ? checkProvinciaCompradores() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ? null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Todos los compradores tienen que tener provincia informada'''' : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente''''';
+   TAP(12).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkImporteParticipacion() ? (checkCompradores() ? ( checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ? : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente''''';
    TAP(12).tap_field('TAP_SCRIPT_DECISION') := NULL;
    TAP(12).tap_field('DD_TPO_ID_BPM') := null;
    TAP(12).tap_field('TAP_SUPERVISOR') := 0;
@@ -2231,7 +2234,7 @@ begin
     TAP(13).tap_field('TAP_CODIGO') := 'T017_ObtencionContratoReserva';
     TAP(13).tap_field('TAP_VIEW') := NULL;
     TAP(13).tap_field('TAP_SCRIPT_VALIDACION') := 'checkReservaFirmada() ? (checkImporteParticipacion() ?  (checkCompradores() ?  (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''') : ''''La reserva debe estar en estado firmado'''' ';
-    TAP(13).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := '!esLiberBank() ? existeAdjuntoUGValidacion("06,E;12,E") : null';
+    TAP(13).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGValidacion("06,E;12,E")';
     TAP(13).tap_field('TAP_SCRIPT_DECISION') := NULL;
     TAP(13).tap_field('DD_TPO_ID_BPM') := null;
     TAP(13).tap_field('TAP_SUPERVISOR') := 0;

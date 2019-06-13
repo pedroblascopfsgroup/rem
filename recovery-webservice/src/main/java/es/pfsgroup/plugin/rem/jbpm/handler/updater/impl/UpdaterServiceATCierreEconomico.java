@@ -161,14 +161,11 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 	
 		genericDao.save(Trabajo.class, trabajo);
 		
-		if(activoDao.isActivoMatriz(trabajo.getActivo().getId())){
-			ActivoTrabajo actTrabajo = genericDao.get(ActivoTrabajo.class,genericDao.createFilter(FilterType.EQUALS,"trabajo.id", trabajo.getId()));
-			activoApi.actualizarOfertasTrabajosVivos(actTrabajo.getActivo());
-		}
-		else {
-			activoApi.actualizarOfertasTrabajosVivos(trabajo.getActivo());
-		}
+		List<ActivoTrabajo> actTrabajo = genericDao.getList(ActivoTrabajo.class,genericDao.createFilter(FilterType.EQUALS,"trabajo.id", trabajo.getId()));
 		
+		for(ActivoTrabajo at: actTrabajo) {
+			activoApi.actualizarOfertasTrabajosVivos(at.getActivo());
+		}
 	}
 
 	public String[] getCodigoTarea() {

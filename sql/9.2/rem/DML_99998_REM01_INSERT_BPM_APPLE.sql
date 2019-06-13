@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Salt
---## FECHA_CREACION=20190613
+--## AUTOR=Ivan Serrano
+--## FECHA_CREACION=20190614
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6516
@@ -435,7 +435,7 @@ begin
   TFI_MAP(0).tfi_field_row(1).tfi_field('TFI_ORDEN') := 1;
   TFI_MAP(0).tfi_field_row(1).tfi_field('TFI_TIPO') := 'comboboxreadonly';
   TFI_MAP(0).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'comite';
-  TFI_MAP(0).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Comit� sancionador';
+  TFI_MAP(0).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Comité sancionador';
   TFI_MAP(0).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(0).tfi_field_row(1).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -486,7 +486,7 @@ begin
   TFI_MAP(0).tfi_field_row(4).tfi_field('TFI_ORDEN') := 4;
   TFI_MAP(0).tfi_field_row(4).tfi_field('TFI_TIPO') := 'datefield';
   TFI_MAP(0).tfi_field_row(4).tfi_field('TFI_NOMBRE') := 'fechaEnvio';
-  TFI_MAP(0).tfi_field_row(4).tfi_field('TFI_LABEL') :=  'Fecha de env�o';
+  TFI_MAP(0).tfi_field_row(4).tfi_field('TFI_LABEL') :=  'Fecha de envío';
   TFI_MAP(0).tfi_field_row(4).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(4).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(4).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -503,7 +503,7 @@ begin
   TFI_MAP(0).tfi_field_row(5).tfi_field('TFI_ORDEN') := 5;
   TFI_MAP(0).tfi_field_row(5).tfi_field('TFI_TIPO') := 'comboboxinicial';
   TFI_MAP(0).tfi_field_row(5).tfi_field('TFI_NOMBRE') := 'comiteSuperior';
-  TFI_MAP(0).tfi_field_row(5).tfi_field('TFI_LABEL') :=  'Aplica comit� superior';
+  TFI_MAP(0).tfi_field_row(5).tfi_field('TFI_LABEL') :=  'Aplica comité superior';
   TFI_MAP(0).tfi_field_row(5).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(5).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(5).tfi_field('TFI_VALOR_INICIAL') := '02';
@@ -837,8 +837,8 @@ begin
 ----------------------------TAP TAREA PROCEDIMIENTO-------------------------
   TAP(3).tap_field('TAP_CODIGO') := 'T017_RespuestaOfertantePM';
   TAP(3).tap_field('TAP_VIEW') := NULL;
-  TAP(3).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(3).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
+  TAP(3).tap_field('TAP_SCRIPT_VALIDACION') := q'[checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ?	''El activo est&aacute; vendido'': (checkComercializable() ? (checkPoliticaCorporativa() ?	null : ''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'') : ''El activo debe ser comercializable'') ) : ''Los compradores deben sumar el 100%'') : ''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'']';
+  TAP(3).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[valores[''T017_RespuestaOfertantePM''][''comboRespuesta''] == DDRespuestaOfertante.CODIGO_RECHAZA ? null : respuestaOfertanteT013(valores[''T017_RespuestaOfertantePM''][''importeOfertante''])]';
   TAP(3).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RespuestaOfertantePM''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Aprueba'''' :  ''''Deniega'''' ';
   TAP(3).tap_field('DD_TPO_ID_BPM') := null;
   TAP(3).tap_field('TAP_SUPERVISOR') := 0;
@@ -953,8 +953,8 @@ begin
 ----------------------------TAP TAREA PROCEDIMIENTO-------------------------
   TAP(4).tap_field('TAP_CODIGO') := 'T017_RespuestaOfertanteCES';
   TAP(4).tap_field('TAP_VIEW') := NULL;
-  TAP(4).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(4).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
+  TAP(4).tap_field('TAP_SCRIPT_VALIDACION') := q'[checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''El activo est&aacute; vendido'' : (checkComercializable() ? (checkPoliticaCorporativa() ? null : ''El estado de la pol%iacute;tica corporativa no es el correcto para poder avanzar.'') : ''El activo debe ser comercializable'') ) : ''Los compradores deben sumar el 100%'') : ''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'']';
+  TAP(4).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[valores[''T017_RespuestaOfertanteCES''][''comboRespuesta''] == DDRespuestaOfertante.CODIGO_RECHAZA ? null : respuestaOfertanteT013(valores[''T017_RespuestaOfertanteCES''][''importeOfertante''])]';
   TAP(4).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RespuestaOfertanteCES''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReserva'''':  ''''AceptaSinReserva'''' : ''''Deniega'''' ';
   TAP(4).tap_field('DD_TPO_ID_BPM') := null;
   TAP(4).tap_field('TAP_SUPERVISOR') := 0;
@@ -1472,7 +1472,7 @@ begin
   TAP(9).tap_field('TAP_CODIGO') := 'T017_RecomendCES';
   TAP(9).tap_field('TAP_VIEW') := NULL;
   TAP(9).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(9).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
+  TAP(9).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGValidacion("58","E")';
   TAP(9).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RecomendCES''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Acepta'''': checkReserva() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReserva'''' ';
   TAP(9).tap_field('DD_TPO_ID_BPM') := null;
   TAP(9).tap_field('TAP_SUPERVISOR') := 0;
@@ -1593,7 +1593,7 @@ begin
   TAP(10).tap_field('TAP_CODIGO') := 'T017_ResolucionPROManzana';
   TAP(10).tap_field('TAP_VIEW') := NULL;
   TAP(10).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(10).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
+  TAP(10).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'valores[''''T017_ResolucionPROManzana''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? existeAdjuntoUGValidacion("23","E") : null';
   TAP(10).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_ResolucionPROManzana''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Acepta'''': checkReservaFirmada() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReservaONoExiste'''' ';
   TAP(10).tap_field('DD_TPO_ID_BPM') := null;
   TAP(10).tap_field('TAP_SUPERVISOR') := 0;

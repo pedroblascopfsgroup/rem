@@ -1,30 +1,17 @@
 --/*
 --##########################################
-<<<<<<< HEAD
---## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20190503
---## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6363
-=======
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190603
+--## FECHA_CREACION=20190613
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=REMVIP-3502
->>>>>>> 2.11.0-19061003-rem
 --## PRODUCTO=NO
 --## Finalidad: DDL VISTA PARA LAS SUBDIVISIONES DE AGRUPACION
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
-<<<<<<< HEAD
---##		0.2 Añadida condición para comprobar que un activo pertenece a una agrupación Promoción Alquiler
---##        0.3 Correccion en el calculo del ID
-=======
 --##		0.2 Se actualiza para nivelar los ID's de esta vista y V_ACTIVOS_SUBDIVISION
->>>>>>> 2.11.0-19061003-rem
 --##########################################
 --*/
 
@@ -104,8 +91,8 @@ BEGIN
 							JOIN ' || V_ESQUEMA || '.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = SUBD.DD_SAC_ID
 			) ACT_SD
 		JOIN ' || V_ESQUEMA || '.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT_SD.ACT_ID
-		JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID' 
-		|| ' WHERE ((AGR.DD_TAG_ID = (SELECT TA.DD_TAG_ID FROM ' || V_ESQUEMA || '.DD_TAG_TIPO_AGRUPACION TA WHERE TA.DD_TAG_CODIGO = ''16'') AND AGA.AGA_PRINCIPAL = 0) OR ( EXISTS  (SELECT 1 FROM ' || V_ESQUEMA || '.DD_TAG_TIPO_AGRUPACION TA WHERE TA.DD_TAG_CODIGO != ''16'' AND TA.DD_TAG_ID = AGR.DD_TAG_ID)))
+		JOIN ' || V_ESQUEMA || '.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID
+		WHERE ((AGR.DD_TAG_ID = (SELECT TA.DD_TAG_ID FROM ' || V_ESQUEMA || '.DD_TAG_TIPO_AGRUPACION TA WHERE TA.DD_TAG_CODIGO = ''16'') AND AGA.AGA_PRINCIPAL = 0) OR ( EXISTS  (SELECT 1 FROM ' || V_ESQUEMA || '.DD_TAG_TIPO_AGRUPACION TA WHERE TA.DD_TAG_CODIGO != ''16'' AND TA.DD_TAG_ID = AGR.DD_TAG_ID)))
 		GROUP BY ACT_SD.ID, AGA.AGR_ID, ACT_SD.DESCRIPCION,ACT_SD.DORMITORIOS,ACT_SD.PLANTAS';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_SUBDIVISIONES_AGRUPACION...Creada OK');

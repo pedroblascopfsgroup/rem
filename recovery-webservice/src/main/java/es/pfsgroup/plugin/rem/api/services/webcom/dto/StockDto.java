@@ -305,7 +305,6 @@ public class StockDto implements WebcomRESTDto{
 	
 
 	@WebcomRequired
-	@MappedColumn("COD_AGRUPACION_COMERCIAL_REM")
 	private LongDataType codigoAgrupacionComercialRem;
 	
 	@WebcomRequired

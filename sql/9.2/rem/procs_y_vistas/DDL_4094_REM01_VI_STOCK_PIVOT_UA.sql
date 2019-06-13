@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=rlb
+--## AUTOR=Ramon LLinares
 --## FECHA_CREACION=20190613
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
@@ -30,7 +30,7 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
-    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_STOCK_PIVOT_AGRUP_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_VISTA VARCHAR2(2400 CHAR) := 'VI_PIVOT_AGRUPACIONES_UA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Vista Materializada exclusiva para Stock que contiene la relación de activos con agrupaciones ObrasNuevas, LotesRestringidos y Asistidas'; -- Vble. para los comentarios de las tablas
     
     
@@ -73,9 +73,9 @@ BEGIN/*versión 0.2*/
 		      DECODE (AGR.AGR_ACT_PRINCIPAL, AGA.ACT_ID, 1, 0) AS PRINCIPAL
 		    FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
 		    JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID
-		    JOIN DD_TAG_TIPO_AGRUPACION TAG ON (TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO IN (''01'',''02'',''13''))
+		    JOIN DD_TAG_TIPO_AGRUPACION TAG ON (TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO IN (''16''))
 		    WHERE AGR.BORRADO = 0 AND AGR.AGR_FECHA_BAJA IS NULL
-		) PIVOT (MAX(AGR_NUM_AGRUP_REM) AS NUM_REM, MAX(PRINCIPAL) AS PRINCIPAL FOR DD_TAG_CODIGO IN (''01'' OBRA_NUEVA,''02'' LOTE,''13'' ASISTIDA, ''16'' PROMOCION_ALQUILER))';
+		) PIVOT (MAX(AGR_NUM_AGRUP_REM) AS NUM_REM, MAX(PRINCIPAL) AS PRINCIPAL FOR DD_TAG_CODIGO IN (''16'' PROMOCION_ALQUILER))';
 				
 
   	DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');

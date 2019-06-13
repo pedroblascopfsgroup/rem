@@ -1831,7 +1831,7 @@ begin
   TAP(10).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_ResolucionPROManzana''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Acepta'''': checkReservaFirmada() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReservaONoExiste'''' ';
   TAP(10).tap_field('DD_TPO_ID_BPM') := null;
   TAP(10).tap_field('TAP_SUPERVISOR') := 0;
-  TAP(10).tap_field('TAP_DESCRIPCION') := 'Resolución Pro. Manzana:';
+  TAP(10).tap_field('TAP_DESCRIPCION') := 'Resolución Pro. Manzana';
   TAP(10).tap_field('VERSION') := 0;
   TAP(10).tap_field('USUARIOCREAR') := USUARIOCREAR;
   TAP(10).tap_field('FECHACREAR') := SYSDATE;

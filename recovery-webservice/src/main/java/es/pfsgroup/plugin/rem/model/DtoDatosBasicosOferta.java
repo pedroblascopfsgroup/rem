@@ -359,7 +359,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 		return fechaRespuestaPM;
 	}
 
-	public void setFechaRespuestaPM(Date fechaRespuestaOfertantePM) {
+	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
 		this.fechaRespuestaPM = fechaRespuestaPM;
 	}
 	

@@ -158,7 +158,14 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
 
-	
+	-- BORRADO DUPLICADOS aux_hreos_5932_perim
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.aux_hreos_5932_perim 
+				WHERE ROWID IN  (select ROWID from ( 
+						    select act_num_activo , row_number() over (partition by act_num_activo order by act_num_activo desc) AS ORDEN 
+						    from '||V_ESQUEMA||'.aux_hreos_5932_perim AUX )
+						where ORDEN > 1
+						)';
+						
 	COMMIT;
 	
 	DBMS_OUTPUT.PUT_LINE('[FIN]');

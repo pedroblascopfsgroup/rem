@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.exception.UserException;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -46,6 +47,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
 	private static final String COMBO_RESPUESTA = "comboRespuesta";
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
+	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -67,6 +69,12 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())){
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO_PRO_MANZANA);
 							if(!DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo())) {
+								// Finaliza el trámite
+								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
+								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+								genericDao.save(ActivoTramite.class, tramite);
+								// Rechaza la oferta y descongela el resto
+								ofertaApi.rechazarOferta(ofertaAceptada);
 								notificatorRechazo.notificatorFinTareaConValores(tramite, valores);
 							}
 						}

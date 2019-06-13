@@ -63,7 +63,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertantePM implements UpdaterS
 					
 					if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						try {
-							ofertaAceptada.setFechaRespuestaPM(ft.parse(valor.getValor()));
+							ofertaAceptada.setFechaRespuestaOfertantePM(ft.parse(valor.getValor()));
 						} catch (ParseException e) {
 							logger.error("Error seteando la fecha de respuesta PM", e);
 						}

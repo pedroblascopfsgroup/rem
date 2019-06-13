@@ -24,6 +24,7 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.pfsgroup.commons.utils.Checks;
@@ -32,6 +33,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 //import es.pfsgroup.plugin.rem.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoGenericFormManagerApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -43,6 +45,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -127,6 +130,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     
     @Autowired
 	private PresupuestoApi presupuestoManager;
+    
+    @Autowired
+	private GenericAdapter genericAdapter;
 
     
     /**
@@ -173,6 +179,17 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
         return form;
     }
+    @Transactional
+    public void validateAndSaveValues(DtoGenericForm dto) {
+    	TareaExterna tarea = dto.getForm().getTareaExterna();
+    	String validacion = validacionPreviaDeLaTarea(tarea);	
+    	if(Checks.esNulo(validacion)){
+    		saveValues(dto);
+    	}else{
+    		throw new UserException(validacion);
+    	}
+    }
+    
     
     /**
      * Guarda los valores obtenidos del formulario genérico de tareas en bbdd y envía la señal de avanzar el trámite asociado a la tarea.
@@ -226,6 +243,16 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
         //Le insertamos los valores del formulario al BPM en una variable de Thread para que pueda recuperarlos
         jbpmManager.signalToken(tarea.getTokenIdBpm(), BPMContants.TRANSICION_AVANZA_BPM);
+        if(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES.equals(tarea.getTareaProcedimiento().getCodigo())) {
+        	Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+        	tarea.getAuditoria().setBorrado(true);
+        	tarea.getAuditoria().setFechaBorrar(new Date());
+        	tarea.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+        	tarea.getTareaPadre().getAuditoria().setBorrado(true);
+        	tarea.getTareaPadre().getAuditoria().setFechaBorrar(new Date());
+        	tarea.getTareaPadre().getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+        	tarea.getTareaPadre().setFechaFin(new Date());
+        }
     }    
     
     /**

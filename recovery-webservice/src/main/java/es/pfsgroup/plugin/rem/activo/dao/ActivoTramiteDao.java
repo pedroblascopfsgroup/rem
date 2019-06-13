@@ -67,5 +67,13 @@ public interface ActivoTramiteDao extends AbstractDao<ActivoTramite, Long>{
 	 */
 	public Boolean tieneTramiteVigenteByActivoYProcedimiento(Long idActivo, String codigoTipoProcedimiento);
 	
+	/**
+	 * Devuelve los tramites comercial venta que tenga un trabajo
+	 * @param idTrabajo
+	 * @return
+	 */
+	public ActivoTramite getTramiteComercialVigenteByTrabajo(Long idTrabajo);
+	
+	public Boolean creaTareaValidacion(String username, String idExpediente);
 
 }

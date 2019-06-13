@@ -9,6 +9,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 	recordName : "condiciones",
 	recordClass : "HreRem.model.CondicionesExpediente",
 	requires : [ 'HreRem.model.CondicionesExpediente' ],
+	refreshAfterSave: true, 
 	listeners : {
 		boxready : 'cargarTabData'
 	},

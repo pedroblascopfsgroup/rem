@@ -30,6 +30,15 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter, Usuario usuarioGestor, Usuario usuarioGestoria);
 	
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
+	
+	/**
+	 * Devuelve un listado de ofertas por usuario gestoría, filtrando por número de activo.
+	 * 
+	 * @param dtoOfertasFilter Este filtro debe incluir el número de activo. 
+	 * @param usuarioGestoria 
+	 * @return
+	 */
+	DtoPage getListOfertasGestoria(DtoOfertasFilter dtoOfertasFilter, Usuario usuarioGestoria);
 
 	public Long getNextNumOfertaRem();
 	

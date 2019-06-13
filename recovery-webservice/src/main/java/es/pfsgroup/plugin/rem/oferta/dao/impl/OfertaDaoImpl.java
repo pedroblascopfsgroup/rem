@@ -302,6 +302,28 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		return new DtoPage(ofertas, pageVisitas.getTotalCount());
 
 	}
+	
+	//HREOS-6229
+	@SuppressWarnings("unchecked")
+	@Override
+	public DtoPage getListOfertasGestoria(DtoOfertasFilter dtoOfertasFilter, Usuario usuarioGestoria) {
+		HQLBuilder hb = null;
+		
+		String from = "SELECT voferta FROM VOfertasActivosAgrupacion voferta, GestorActivo ga INNER JOIN ga.activo INNER JOIN ga.tipoGestor";
+		String where ="voferta.idActivo = ga.activo.id AND ga.usuario.username = '" + usuarioGestoria.getUsername() + "' AND voferta.numActivoAgrupacion = "
+				+ dtoOfertasFilter.getNumActivo();
+					
+		hb = new HQLBuilder(from);
+		hb.appendWhere(where);
+
+		Page page = HibernateQueryUtils.page(this, hb, dtoOfertasFilter);
+		List<VOfertasActivosAgrupacion> ofertas;
+		if(!Checks.estaVacio(page.getResults())) {
+			ofertas = (List<VOfertasActivosAgrupacion>) page.getResults();
+			return new DtoPage(ofertas, page.getTotalCount());
+		}
+		return null;		
+	}
 
 	@Override
 	public Page getListTextosOfertaById(DtoTextosOferta dto, Long id) {

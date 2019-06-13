@@ -84,8 +84,22 @@ Ext.define('HreRem.model.CompradorExpediente', {
     		},
     		{
     			name:'numeroClienteUrsus'
-    		}
-    		
+    		},
+    		{
+    			name:'problemasUrsus'
+    		},
+			{
+				name:'numeroClienteUrsusConyuge'
+			},
+			{
+				name:'numeroConyugeUrsus'
+			},
+			{
+				name:'estadoCivilURSUS'
+			},
+			{
+				name:'regimenMatrimonialUrsus'
+			}
     ],
     
     proxy: {

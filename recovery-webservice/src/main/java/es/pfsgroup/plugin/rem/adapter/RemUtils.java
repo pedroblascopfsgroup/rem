@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.adapter;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,13 @@ public class RemUtils {
 			
 		}
 		return username;	
+	}
+	
+	public static String generateRandomString(){
+		int length = 10;
+	    boolean useLetters = true;
+	    boolean useNumbers = false;
+	    return RandomStringUtils.random(length, useLetters, useNumbers);
 	}
 }
 	

@@ -910,8 +910,8 @@ begin
 ----------------------------TAP TAREA PROCEDIMIENTO-------------------------
     TAP(2).tap_field('TAP_CODIGO') := 'T017_ResolucionCES';
     TAP(2).tap_field('TAP_VIEW') := NULL;
-    TAP(2).tap_field('TAP_SCRIPT_VALIDACION') := q'[checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? "El activo est&aacute; vendido" : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : "El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.") : "El activo debe ser comercializable") ) : "Los compradores deben sumar el 100%") : "El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente"]';
-    TAP(2).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[valores["T017_ResolucionCES"]["comboResolucion"] != DDResolucionComite.CODIGO_APRUEBA ? (valores["T017_ResolucionCES"]["comboResolucion"] == DDResolucionComite.CODIGO_CONTRAOFERTA ? existeAdjuntoUGValidacion("22","E")) : null) : resolucionComiteT013()]';
+    TAP(2).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''';
+    TAP(2).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'valores[''''T017_ResolucionCES''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? existeAdjuntoUGValidacion("22","E") : null : resolucionComiteT013()';
     TAP(2).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReserva'''': ''''AceptaSinReserva'''' :  valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta''''';
     TAP(2).tap_field('DD_TPO_ID_BPM') := null;
     TAP(2).tap_field('TAP_SUPERVISOR') := 0;
@@ -1383,7 +1383,7 @@ begin
   TAP(6).tap_field('TAP_CODIGO') := 'T017_AdvisoryNote';
   TAP(6).tap_field('TAP_VIEW') := NULL;
   TAP(6).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(6).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[existeAdjuntoUGValidacion("23","E") ? null : "No existe un documento del subtipo ''Advisory Note''"]';
+  TAP(6).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[existeAdjuntoUGValidacion("23","E")]';
   TAP(6).tap_field('TAP_SCRIPT_DECISION') := null;
   TAP(6).tap_field('DD_TPO_ID_BPM') := null;
   TAP(6).tap_field('TAP_SUPERVISOR') := 0;

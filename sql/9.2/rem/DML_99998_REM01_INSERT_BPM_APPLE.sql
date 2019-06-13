@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Ivan Serrano
---## FECHA_CREACION=20190614
+--## AUTOR= Sergio Salt
+--## FECHA_CREACION=20190618
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6516
@@ -30,6 +30,30 @@ declare
   TAP_ID NUMBER (16,0); --Vble. Para extraer el ID de la TAP
   TFI_ID NUMBER (16,0); --Vble. Para extraer el ID de la TFI
   PTP_ID NUMBER(16,0); --Vble. Para extraer el ID de la PTP
+  -----------------------------------
+  ---------  MAPA DE TAREAS  --------
+  -----------------------------------
+SCOPE_TAREA NUMBER(16,0) := 17; --Vble. para seleccionar una tarea o todas
+  /**********************************
+  **  0-    TODO EL BPM
+  **  1-    DEFINICION DE OFERTA              
+  **  2-    ANALISIS PM
+  **  3-    RESOLUCION CES
+  **  4-    RESPUESTA OFERTANTE PM
+  **  5-    RESPUESTA OFERTANTE CES
+  **  6-    INFORME JURIDICO
+  **  7-    ADVISORY NOTE
+  **  8-    PBC  RESERVA
+  **  9-    PBC  VENTA
+  **  10-   RECOMEND. CES
+  **  11-   RESOLUCION PRO MANZANA
+  **  12-   RESOLUCION EXPEDIENTE
+  **  13-   INSTRUCCIONES RESERVA
+  **  14-   OBTENCION CONTRATO RESERVA
+  **  15-   POSICIONAMIENTO Y FIRMA
+  **  16-   DOC. POSVENTA
+  **  17-   CIERRE ECONOMICO
+  ************************************/
   USUARIOCREAR VARCHAR(1000) := 'HREOS-6516';
   
 -----------------DECLARACION DE LA TPO--------------------------
@@ -111,8 +135,11 @@ declare
     end;
   --------------------------------------------------------------- 
   --------------------PROCEDIMIENTO PRINCIPAL--------------------
-  procedure create_or_update_bpm is
+  procedure create_or_update_bpm (scopeTarea in number) 
+  IS
   begin
+       IF ScopeTarea < 0 THEN
+      DBMS_OUTPUT.PUT_LINE('SE LANZA TODO EL BPM');
       /*SE CREA O SE ACTUALIZA LA TPO*/
       V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME= '|| is_string('DD_TPO_TIPO_PROCEDIMIENTO') || ' and owner = ' || is_string(V_ESQUEMA);
       DBMS_OUTPUT.PUT_LINE(V_SQL);
@@ -312,6 +339,203 @@ declare
             ROLLBACK;
           END IF;
           ---------------------
+        ELSE
+        DBMS_OUTPUT.PUT_LINE('SE HA SELECCIONADO UNA TAREA');
+              /*SE CREA O SE ACTUALIZA LA TPO*/
+      V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME= '|| is_string('DD_TPO_TIPO_PROCEDIMIENTO') || ' and owner = ' || is_string(V_ESQUEMA);
+      DBMS_OUTPUT.PUT_LINE(V_SQL);
+      EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+      IF V_NUM_TABLAS > 0 THEN
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = '||  is_string(TPO('DD_TPO_CODIGO'));
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTRO; 
+        IF V_NUM_REGISTRO > 0 THEN
+          DBMS_OUTPUT.PUT_LINE('SE ACTUALIZA EL REGISTRO EN LA TABLA TPO');
+          V_SQL := 'UPDATE '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET  DD_TPO_CODIGO = '|| is_string(TPO('DD_TPO_CODIGO'))||', '||
+          ' DD_TPO_DESCRIPCION = '|| is_string(TPO('DD_TPO_DESCRIPCION'))||', '||' DD_TPO_DESCRIPCION_LARGA = '|| is_string(TPO('DD_TPO_DESCRIPCION_LARGA'))||', '||
+          ' DD_TPO_HTML = '|| is_string(TPO('DD_TPO_HTML'))||', '||' DD_TPO_XML_JBPM = '|| is_string(TPO('DD_TPO_XML_JBPM'))||', '||' VERSION = '|| is_number(TPO('VERSION'))||', '||
+          ' USUARIOCREAR = '|| is_string(TPO('USUARIOCREAR'))||', '||' FECHACREAR = '|| is_string(TPO('FECHACREAR'))||', '||' USUARIOMODIFICAR = '|| is_string(TPO('USUARIOMODIFICAR'))||', '||
+          ' FECHAMODIFICAR = '|| is_string(TPO('FECHAMODIFICAR'))||', '||' USUARIOBORRAR = '|| is_string(TPO('USUARIOBORRAR'))||', '||' FECHABORRAR = '|| is_string(TPO('FECHABORRAR'))||', '||
+          ' BORRADO = '|| is_number(TPO('BORRADO'))||', '||' DD_TAC_ID = '|| is_number(TPO('DD_TAC_ID'))||', '||' DD_TPO_SALDO_MIN = '|| is_number(TPO('DD_TPO_SALDO_MIN'))||', '||
+          ' DD_TPO_SALDO_MAX = '|| is_number(TPO('DD_TPO_SALDO_MAX'))||', '||' DTYPE = '|| is_string(TPO('DTYPE'))||', '||' FLAG_DERIVABLE = '|| is_number(TPO('FLAG_DERIVABLE'))||', '||
+          ' FLAG_UNICO_BIEN = '|| is_number(TPO('FLAG_UNICO_BIEN'))||
+          ' WHERE DD_TPO_CODIGO = ' || is_string(TPO('DD_TPO_CODIGO'));
+          DBMS_OUTPUT.PUT_LINE('SE LANZA LA QUERY DE ACTUALIZACION DE LA TPO');
+          DBMS_OUTPUT.PUT_LINE(V_SQL);
+          EXECUTE IMMEDIATE V_SQL;
+        ELSE
+          DBMS_OUTPUT.PUT_LINE('SE CREA EL REGISTRO EN LA TABLA TPO');
+            V_SQL := 'SELECT '||V_ESQUEMA||'.S_DD_TPO_TIPO_PROCEDIMIENTO.NEXTVAL FROM DUAL';
+            EXECUTE IMMEDIATE V_SQL INTO TPO_ID;
+          V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO'||
+          ' ( DD_TPO_ID, DD_TPO_CODIGO, DD_TPO_DESCRIPCION, DD_TPO_DESCRIPCION_LARGA, DD_TPO_HTML, DD_TPO_XML_JBPM, VERSION, USUARIOCREAR, FECHACREAR,'||
+          ' USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO, DD_TAC_ID,'||
+          ' DD_TPO_SALDO_MIN, DD_TPO_SALDO_MAX, FLAG_PRORROGA, DTYPE, FLAG_DERIVABLE, FLAG_UNICO_BIEN ) '||
+          ' VALUES '
+          ||'( '|| 
+                    is_number(TPO_ID) ||', '||is_string(TPO('DD_TPO_CODIGO'))||', '||is_string(TPO('DD_TPO_DESCRIPCION'))||', '||
+                    is_string(TPO('DD_TPO_DESCRIPCION_LARGA'))||', '||is_string(TPO('DD_TPO_HTML'))||', '||is_string(TPO('DD_TPO_XML_JBPM')) ||', '||
+                    is_number(TPO('VERSION')) ||', '||is_string(TPO('USUARIOCREAR')) ||', '||is_string(TPO('FECHACREAR')) ||', '||
+                    is_string(TPO('USUARIOMODIFICAR'))||', '|| is_string(TPO('FECHAMODIFICAR'))||', '||is_string(TPO('USUARIOBORRAR'))||', '||is_string(TPO('FECHABORRAR'))||', '||
+                    is_number(TPO('BORRADO'))||', '||is_number(TPO('DD_TAC_ID'))||', '||is_number(TPO('DD_TPO_SALDO_MIN')) ||', '||
+                    is_number(TPO('DD_TPO_SALDO_MAX'))||', ' || is_number(TPO('FLAG_PRORROGA'))||', '||is_string(TPO('DTYPE')) ||', ' ||
+                    is_number(TPO('FLAG_DERIVABLE'))||', '||is_number(TPO('FLAG_UNICO_BIEN'))
+          ||' )' ;
+          DBMS_OUTPUT.PUT_LINE('SE LANZA LA QUERY DE INSERCION DE LA TPO');
+          DBMS_OUTPUT.PUT_LINE(V_SQL);
+          EXECUTE IMMEDIATE V_SQL;
+        END IF;
+        V_SQL := 'SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ' ||is_string(TPO('DD_TPO_CODIGO'));
+        EXECUTE IMMEDIATE V_SQL INTO TPO_ID;
+        DBMS_OUTPUT.PUT_LINE(V_SQL);
+        EXECUTE IMMEDIATE V_SQL;
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('[ERROR] NO SE HA ENCONTRADO LA TABLA [-DD_TPO_TIPO_PROCEDIMIENTO-]');
+      END IF;
+          DBMS_OUTPUT.PUT_LINE('El id de la TPO es => ');
+          DBMS_OUTPUT.PUT_LINE(TPO_ID);
+          IF TPO_ID IS NOT NULL THEN
+            DBMS_OUTPUT.PUT_LINE('EMPIEZA EL PROCESO DE CREAR O ACTUALIZAR LA TAP'); 
+            V_SQL := 'SELECT count(1) FROM ' ||V_ESQUEMA|| '.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ' || is_string(TAP(scopeTarea).tap_field('TAP_CODIGO'));
+            EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTRO;
+            IF V_NUM_REGISTRO > 0 THEN
+                DBMS_OUTPUT.PUT_LINE('[ACTUALIZAR] TAREA CON CODIGO  = ' || is_string(TAP(scopeTarea).tap_field('TAP_CODIGO')) ); 
+                V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET  TAP_CODIGO = '|| is_string(TAP(scopeTarea).tap_field('TAP_CODIGO'))||', '||
+                ' TAP_VIEW = '|| is_string(TAP(scopeTarea).tap_field('TAP_VIEW'))||', '||' TAP_SCRIPT_VALIDACION = '|| is_string(TAP(scopeTarea).tap_field('TAP_SCRIPT_VALIDACION'))||', '||
+                ' TAP_SCRIPT_VALIDACION_JBPM = '||is_string(TAP(scopeTarea).tap_field('TAP_SCRIPT_VALIDACION_JBPM'))||', '||' TAP_SCRIPT_DECISION = '|| is_string(TAP(scopeTarea).tap_field('TAP_SCRIPT_DECISION'))||', '||
+                ' DD_TPO_ID_BPM = '||is_number(TAP(scopeTarea).tap_field('DD_TPO_ID_BPM'))||', '||
+                ' TAP_SUPERVISOR = '|| is_number(TAP(scopeTarea).tap_field('TAP_SUPERVISOR'))||', '||' TAP_DESCRIPCION = '|| is_string(TAP(scopeTarea).tap_field('TAP_DESCRIPCION'))||', '||' VERSION = '|| is_number(TAP(scopeTarea).tap_field('VERSION'))||', '||
+                ' USUARIOCREAR = '|| is_string(TAP(scopeTarea).tap_field('USUARIOCREAR'))||', '||' FECHACREAR = '|| is_string(TAP(scopeTarea).tap_field('FECHACREAR'))||', '||' USUARIOMODIFICAR = '|| is_string(TAP(scopeTarea).tap_field('USUARIOMODIFICAR'))||', '||
+                ' FECHAMODIFICAR = '|| is_string(TAP(scopeTarea).tap_field('FECHAMODIFICAR'))||', '||' USUARIOBORRAR = '|| is_string(TAP(scopeTarea).tap_field('USUARIOBORRAR'))||', '||' FECHABORRAR = '|| is_string(TAP(scopeTarea).tap_field('FECHABORRAR'))||', '||
+                ' BORRADO = '|| is_number(TAP(scopeTarea).tap_field('BORRADO'))||', '||' TAP_ALERT_NO_RETORNO = '|| is_string(TAP(scopeTarea).tap_field('TAP_ALERT_NO_RETORNO'))||', '||' TAP_ALERT_VUELTA_ATRAS = '|| is_string(TAP(scopeTarea).tap_field('TAP_ALERT_VUELTA_ATRAS'))||', '||
+                ' DD_FAP_ID = '|| is_number(TAP(scopeTarea).tap_field('DD_FAP_ID'))||', '||' TAP_AUTOPRORROGA = '|| is_number(TAP(scopeTarea).tap_field('TAP_AUTOPRORROGA'))||', '||' DTYPE = '|| is_string(TAP(scopeTarea).tap_field('DTYPE'))||', '||
+                ' TAP_MAX_AUTOP = '|| is_number(TAP(scopeTarea).tap_field('TAP_MAX_AUTOP'))||', '||' DD_TGE_ID = '|| is_number(TAP(scopeTarea).tap_field('DD_TGE_ID'))||', '||' DD_STA_ID = '|| is_number(TAP(scopeTarea).tap_field('DD_STA_ID'))||', '||
+                ' TAP_EVITAR_REORG = '|| is_number(TAP(scopeTarea).tap_field('TAP_EVITAR_REORG'))||', '||' DD_TSUP_ID = '|| is_number(TAP(scopeTarea).tap_field('DD_TSUP_ID'))||', '||' TAP_BUCLE_BPM = '|| is_string(TAP(scopeTarea).tap_field('TAP_BUCLE_BPM'))||
+                ' WHERE TAP_CODIGO = ' || is_string(TAP(scopeTarea).tap_field('TAP_CODIGO'));
+                DBMS_OUTPUT.PUT_LINE('SE LANZA LA QUERY DE ACTUALIZACION DE LA TAP');
+                DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL;
+            
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('[CREAR] TAREA CON CODIGO  = ' || is_string(TAP(scopeTarea).tap_field('TAP_CODIGO')) );
+                V_SQL := 'SELECT '||V_ESQUEMA||'.S_TAP_TAREA_PROCEDIMIENTO.NEXTVAL FROM DUAL';
+                EXECUTE IMMEDIATE V_SQL INTO TAP_ID;
+                DBMS_OUTPUT.PUT_LINE('TAP_ID ES = ' ||TAP_ID);
+                V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO'||
+                ' ( TAP_ID, DD_TPO_ID, TAP_CODIGO, TAP_VIEW, TAP_SCRIPT_VALIDACION, TAP_SCRIPT_VALIDACION_JBPM, TAP_SCRIPT_DECISION, DD_TPO_ID_BPM, TAP_SUPERVISOR,'||
+                ' TAP_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR,'||
+                ' USUARIOBORRAR, FECHABORRAR, BORRADO, TAP_ALERT_NO_RETORNO, TAP_ALERT_VUELTA_ATRAS, DD_FAP_ID,  '||
+                ' TAP_AUTOPRORROGA, DTYPE, TAP_MAX_AUTOP, DD_TGE_ID, DD_STA_ID, TAP_EVITAR_REORG,  '||
+                ' DD_TSUP_ID, TAP_BUCLE_BPM ) '||
+                ' VALUES '
+                ||'( '|| 
+                    is_number(TAP_ID)||', '||is_number(TPO_ID)||', '||is_string(TAP(scopeTarea).tap_field('TAP_CODIGO'))||', '||is_string(TAP(scopeTarea).tap_field('TAP_VIEW'))||', '||
+                    is_string(TAP(scopeTarea).tap_field('TAP_SCRIPT_VALIDACION'))||', '||is_string(TAP(scopeTarea).tap_field('TAP_SCRIPT_VALIDACION_JBPM'))||', '||
+                    is_string(TAP(scopeTarea).tap_field('TAP_SCRIPT_DECISION'))||', '||is_number(TAP(scopeTarea).tap_field('DD_TPO_ID_BPM'))||', '||
+                    is_number(TAP(scopeTarea).tap_field('TAP_SUPERVISOR'))||', '||is_string(TAP(scopeTarea).tap_field('TAP_DESCRIPCION'))||', '||is_number(TAP(scopeTarea).tap_field('VERSION'))||', '||
+                    is_string(TAP(scopeTarea).tap_field('USUARIOCREAR'))||', '||is_string(TAP(scopeTarea).tap_field('FECHACREAR'))||', '||is_string(TAP(scopeTarea).tap_field('USUARIOMODIFICAR'))||', '||
+                    is_string(TAP(scopeTarea).tap_field('FECHAMODIFICAR'))||', '||is_string(TAP(scopeTarea).tap_field('USUARIOBORRAR'))||', '||
+                    is_string(TAP(scopeTarea).tap_field('FECHABORRAR'))||', '||
+                    is_number(TAP(scopeTarea).tap_field('BORRADO'))||', '||is_string(TAP(scopeTarea).tap_field('TAP_ALERT_NO_RETORNO'))||', '||is_string(TAP(scopeTarea).tap_field('TAP_ALERT_VUELTA_ATRAS'))||', '||
+                    is_number(TAP(scopeTarea).tap_field('DD_FAP_ID'))||', '||is_number(TAP(scopeTarea).tap_field('TAP_AUTOPRORROGA'))||', '||is_string(TAP(scopeTarea).tap_field('DTYPE'))||', '||
+                    is_number(TAP(scopeTarea).tap_field('TAP_MAX_AUTOP'))||', '||is_number(TAP(scopeTarea).tap_field('DD_TGE_ID'))||', '||is_number(TAP(scopeTarea).tap_field('DD_STA_ID'))||', '||
+                    is_number(TAP(scopeTarea).tap_field('TAP_EVITAR_REORG'))||', '||is_number(TAP(scopeTarea).tap_field('DD_TSUP_ID'))||', '||is_string(TAP(scopeTarea).tap_field('TAP_BUCLE_BPM'))
+                  ||' )' ;
+                DBMS_OUTPUT.PUT_LINE('SE LANZA LA QUERY DE INSERCION DE LA TAP');
+                DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL;
+            END IF;
+            V_SQL := 'SELECT TAP_ID FROM ' ||V_ESQUEMA|| '.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ' || is_string(TAP(scopeTarea).tap_field('TAP_CODIGO'));
+            EXECUTE IMMEDIATE V_SQL INTO TAP_ID;
+            IF TAP_ID IS NOT NULL THEN
+                V_SQL := 'SELECT count(1) FROM DD_PTP_PLAZOS_TAREAS_PLAZAS WHERE TAP_ID = ' || is_number(TAP_ID);
+                DBMS_OUTPUT.PUT_LINE('[INFO] SE CREA O SE ACTUALIZA EL PLAZO DE LA TAREA CON EL ID (TAP_ID) => ' || TAP_ID);
+                EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTRO;
+                IF V_NUM_REGISTRO > 0 THEN
+                    DBMS_OUTPUT.PUT_LINE('[ACTUALIZAR] ACTUALIZACION DEL PLAZO ');
+                     V_SQL := 'UPDATE '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS SET  DD_JUZ_ID = '|| is_number(PTP(scopeTarea).ptp_field('DD_JUZ_ID'))||', '||
+                    ' DD_PLA_ID = '|| is_number(PTP(scopeTarea).ptp_field('DD_PLA_ID'))||', '||' DD_PTP_PLAZO_SCRIPT = '|| is_string(PTP(scopeTarea).ptp_field('DD_PTP_PLAZO_SCRIPT'))||', '||
+                    ' VERSION = '||is_number(PTP(scopeTarea).ptp_field('VERSION'))||', '||' USUARIOCREAR = '||  is_string(PTP(scopeTarea).ptp_field('USUARIOCREAR'))||', '||
+                    ' FECHACREAR = '||is_string(PTP(scopeTarea).ptp_field('FECHACREAR'))||', '||' USUARIOMODIFICAR = '||is_string(PTP(scopeTarea).ptp_field('USUARIOMODIFICAR'))||', '||' FECHAMODIFICAR = '||is_string(PTP(scopeTarea).ptp_field('FECHAMODIFICAR'))||', '||
+                    ' USUARIOBORRAR = '||is_string(PTP(scopeTarea).ptp_field('USUARIOBORRAR'))||', '||' FECHABORRAR = '||is_string(PTP(scopeTarea).ptp_field('FECHABORRAR'))||', '||' BORRADO = '||is_number(PTP(scopeTarea).ptp_field('BORRADO'))||', '||
+                    ' DD_PTP_ABSOLUTO = '||is_number(PTP(scopeTarea).ptp_field('DD_PTP_ABSOLUTO'))||', '||' DD_PTP_OBSERVACIONES = '||is_string(PTP(scopeTarea).ptp_field('DD_PTP_OBSERVACIONES'))||
+                    ' WHERE TAP_ID = ' || is_number(TAP_ID);
+                    DBMS_OUTPUT.PUT_LINE('SE LANZA LA QUERY DE ACTUALIZACION DE LA PTP');
+                    --DBMS_OUTPUT.PUT_LINE(V_SQL);
+                    EXECUTE IMMEDIATE V_SQL;
+                ELSE
+                DBMS_OUTPUT.PUT_LINE('[CREAR] CREACION DEL PLAZO ');
+                V_SQL := 'SELECT '||V_ESQUEMA||'.S_DD_PTP_PLAZOS_TAREAS_PLAZAS.NEXTVAL FROM DUAL';
+                EXECUTE IMMEDIATE V_SQL INTO PTP_ID;
+                V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS'||
+                ' ( DD_PTP_ID, DD_JUZ_ID, DD_PLA_ID, TAP_ID, DD_PTP_PLAZO_SCRIPT, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR,'||
+                ' FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO, DD_PTP_ABSOLUTO, DD_PTP_OBSERVACIONES )'|| 
+                ' VALUES '
+                ||'( '|| 
+                    is_number(PTP_ID)||', '||is_number(PTP(scopeTarea).ptp_field('DD_JUZ_ID'))||', '||is_number(PTP(scopeTarea).ptp_field('DD_PLA_ID'))||', '||is_number(TAP_ID)||', '||
+                    is_string(PTP(scopeTarea).ptp_field('DD_PTP_PLAZO_SCRIPT'))||', '||is_number(PTP(scopeTarea).ptp_field('VERSION'))||', '||is_string(PTP(scopeTarea).ptp_field('USUARIOCREAR'))||', '||is_string(PTP(scopeTarea).ptp_field('FECHACREAR'))||', '||
+                    is_string(PTP(scopeTarea).ptp_field('USUARIOMODIFICAR'))||', '||is_string(PTP(scopeTarea).ptp_field('FECHAMODIFICAR'))||', '||is_string(PTP(scopeTarea).ptp_field('USUARIOBORRAR'))||', '||is_string(PTP(scopeTarea).ptp_field('FECHABORRAR'))||', '||
+                    is_number(PTP(scopeTarea).ptp_field('BORRADO'))||', '||is_number(PTP(scopeTarea).ptp_field('DD_PTP_ABSOLUTO'))||', '||is_string(PTP(scopeTarea).ptp_field('DD_PTP_OBSERVACIONES'))
+                  ||' )' ;
+                DBMS_OUTPUT.PUT_LINE('SE LANZA LA QUERY DE INSERCION DE LA PTP');
+                DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL;
+                END IF;
+                
+              FOR J IN TFI_MAP(scopeTarea).tfi_field_row.FIRST .. TFI_MAP(scopeTarea).tfi_field_row.LAST
+              LOOP
+                DBMS_OUTPUT.PUT_LINE('CREACION O ACTUALIZACION DE LOS TFI');
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS WHERE TAP_ID = ' || is_number(TAP_ID) || ' and TFI_NOMBRE = ' || is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_NOMBRE'));
+                EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTRO;
+                IF V_NUM_REGISTRO > 0 THEN
+                  DBMS_OUTPUT.PUT_LINE('[ACTUALIZAR] ACTUALIZANDO TAREA_FORM_ITEM CON NOMBRE  = ' || is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_NOMBRE')) );
+                 V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET  TFI_ORDEN = '|| is_number(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_ORDEN'))||', '||
+                      ' TFI_TIPO = '|| is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_TIPO'))||', '||' TFI_NOMBRE = '|| is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_NOMBRE'))||', '||
+                      ' TFI_LABEL = '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_LABEL'))||', '||' TFI_ERROR_VALIDACION = '|| is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_ERROR_VALIDACION'))||', '||
+                      ' TFI_VALIDACION = '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_VALIDACION'))||', '||
+                      ' TFI_VALOR_INICIAL = '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_VALOR_INICIAL'))||', '||
+                      ' TFI_BUSINESS_OPERATION = '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_BUSINESS_OPERATION'))||', '||' VERSION = '||is_number(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('VERSION'))||', '||
+                      ' USUARIOCREAR = '|| is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('USUARIOCREAR'))||', '||' FECHACREAR = '|| is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('FECHACREAR'))||', '||
+                      ' USUARIOMODIFICAR = '|| is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('USUARIOMODIFICAR'))||', '||' FECHAMODIFICAR = '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('FECHAMODIFICAR'))||', '||
+                      ' USUARIOBORRAR = '|| is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('USUARIOBORRAR'))||', '||' FECHABORRAR = '||  is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('FECHABORRAR'))||', '||
+                      ' BORRADO = '|| is_number(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('BORRADO'))||
+                      ' WHERE TAP_ID = ' || is_number(TAP_ID) || ' and TFI_NOMBRE = ' || is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_NOMBRE')) ;
+                DBMS_OUTPUT.PUT_LINE('SE LANZA LA QUERY DE ACTUALIZACION DE LA TFI');
+                --DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL;
+                ELSE
+                  DBMS_OUTPUT.PUT_LINE('[CREAR] CREANDO TAREA_FORM_ITEM CON NOMBRE  = ' || is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_NOMBRE')) );
+                  V_SQL := 'SELECT '||V_ESQUEMA||'.S_TFI_TAREAS_FORM_ITEMS.NEXTVAL FROM DUAL';
+                  EXECUTE IMMEDIATE V_SQL INTO TFI_ID;
+                  V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS'||
+                  ' ( TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, TFI_VALOR_INICIAL,'||
+                  ' TFI_BUSINESS_OPERATION, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR,'||
+                  ' USUARIOBORRAR, FECHABORRAR, BORRADO) '||
+                  ' VALUES '
+                  ||'( '|| 
+                      is_number(TFI_ID)||', '||is_number(TAP_ID)||', '||is_number(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_ORDEN'))||', '||
+                      is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_TIPO'))||', '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_NOMBRE'))||', '||
+                      is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_LABEL'))||', '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_ERROR_VALIDACION'))||', '||
+                      is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_VALIDACION'))||', '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_VALOR_INICIAL'))||', '||
+                      is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('TFI_BUSINESS_OPERATION'))||', '||is_number(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('VERSION'))||', '||
+                      is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('USUARIOCREAR'))||', '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('FECHACREAR'))||', '||
+                      is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('USUARIOMODIFICAR'))||', '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('FECHAMODIFICAR'))||', '||
+                      is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('USUARIOBORRAR'))||', '||is_string(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('FECHABORRAR'))||', '||
+                      is_number(TFI_MAP(scopeTarea).tfi_field_row(J).tfi_field('BORRADO'))
+                    ||' )' ;
+                DBMS_OUTPUT.PUT_LINE('SE LANZA LA QUERY DE INSERCION DE LA TFI');
+                DBMS_OUTPUT.PUT_LINE(V_SQL);
+                EXECUTE IMMEDIATE V_SQL;
+                END IF;
+              END LOOP;
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('[ERROR] NO SE HA RECUPERADO EL ID DE LA TAP {TAP_ID} EN LA TAREA ' || is_string(TAP(scopeTarea).tap_field('TAP_CODIGO')));
+                ROLLBACK;
+            END IF;
+          ELSE 
+            DBMS_OUTPUT.PUT_LINE('[ERROR] No se ha recogido ningun valor en la id de la TPO(DD_TPO_ID)');  
+            ROLLBACK;
+          END IF;
+        END IF;
   end;
 
 begin
@@ -2615,8 +2839,8 @@ begin
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
 ---------------------------CREACION DEL BPM---------------------------------
-  create_or_update_bpm;
-  COMMIT;
+  create_or_update_bpm(SCOPE_TAREA -1);
+  rollback;
 EXCEPTION
     when VALUE_ERROR then
         DBMS_OUTPUT.put_line('[ERROR] NO SE HA INTRODUCIDO UN VALOR NUMERICO');

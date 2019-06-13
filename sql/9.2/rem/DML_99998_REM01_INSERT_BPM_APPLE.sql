@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Salt
---## FECHA_CREACION=20190613
+--## AUTOR=Ivan Serrano
+--## FECHA_CREACION=20190614
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6516
@@ -837,8 +837,8 @@ begin
 ----------------------------TAP TAREA PROCEDIMIENTO-------------------------
   TAP(3).tap_field('TAP_CODIGO') := 'T017_RespuestaOfertantePM';
   TAP(3).tap_field('TAP_VIEW') := NULL;
-  TAP(3).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(3).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
+  TAP(3).tap_field('TAP_SCRIPT_VALIDACION') := q'[checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ?	''El activo est&aacute; vendido'': (checkComercializable() ? (checkPoliticaCorporativa() ?	null : ''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'') : ''El activo debe ser comercializable'') ) : ''Los compradores deben sumar el 100%'') : ''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'']';
+  TAP(3).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[valores[''T017_RespuestaOfertantePM''][''comboRespuesta''] == DDRespuestaOfertante.CODIGO_RECHAZA ? null : respuestaOfertanteT013(valores[''T017_RespuestaOfertantePM''][''importeOfertante''])]';
   TAP(3).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RespuestaOfertantePM''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Aprueba'''' :  ''''Deniega'''' ';
   TAP(3).tap_field('DD_TPO_ID_BPM') := null;
   TAP(3).tap_field('TAP_SUPERVISOR') := 0;
@@ -953,8 +953,8 @@ begin
 ----------------------------TAP TAREA PROCEDIMIENTO-------------------------
   TAP(4).tap_field('TAP_CODIGO') := 'T017_RespuestaOfertanteCES';
   TAP(4).tap_field('TAP_VIEW') := NULL;
-  TAP(4).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(4).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
+  TAP(4).tap_field('TAP_SCRIPT_VALIDACION') := q'[checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''El activo est&aacute; vendido'' : (checkComercializable() ? (checkPoliticaCorporativa() ? null : ''El estado de la pol%iacute;tica corporativa no es el correcto para poder avanzar.'') : ''El activo debe ser comercializable'') ) : ''Los compradores deben sumar el 100%'') : ''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'']';
+  TAP(4).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[valores[''T017_RespuestaOfertanteCES''][''comboRespuesta''] == DDRespuestaOfertante.CODIGO_RECHAZA ? null : respuestaOfertanteT013(valores[''T017_RespuestaOfertanteCES''][''importeOfertante''])]';
   TAP(4).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RespuestaOfertanteCES''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReserva'''':  ''''AceptaSinReserva'''' : ''''Deniega'''' ';
   TAP(4).tap_field('DD_TPO_ID_BPM') := null;
   TAP(4).tap_field('TAP_SUPERVISOR') := 0;

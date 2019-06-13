@@ -2756,7 +2756,7 @@ public class AgrupacionAdapter {
 	 * @return Bool cuando es un activo válido para ser activo matriz devuelve true, si no devuelve falso y lanza una excepción.
 	 */
 	
-	public Boolean esActivoMatrizValido(Activo activo) {
+	public Boolean esActivoMatrizValido(Activo activo, ActivoAgrupacion agr) {
 		if(!Checks.esNulo(activo)){
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 			if(!Checks.esNulo(perimetroActivo)) {
@@ -2784,7 +2784,8 @@ public class AgrupacionAdapter {
 																throw new JsonViewerException("El activo pertenece a un lote comercial de venta");
 															} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 																throw new JsonViewerException("El activo pertenece a una agrupación comercial de alquiler");
-															} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+															} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())
+																	&& !agr.equals(activoAgrupacionActivo.getAgrupacion())) {
 																throw new JsonViewerException("El activo ya pertenece a otra agrupación de promoción de alquiler");
 															}
 														}
@@ -2941,7 +2942,7 @@ public class AgrupacionAdapter {
 					if(!Checks.esNulo(dto.getActivoMatriz())) {
 						Activo act = activoDao.getActivoByNumActivo(dto.getActivoMatriz());
 						boolean esActivoMatrizValido = false;
-						esActivoMatrizValido = esActivoMatrizValido(act);
+						esActivoMatrizValido = esActivoMatrizValido(act, agrupacion);
 						if(esActivoMatrizValido) {
 							ActivoAgrupacionActivo aga=activoAgrupacionActivoDao.getAgrupacionPAByIdAgrupacion(id);
 							

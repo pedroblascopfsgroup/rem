@@ -81,7 +81,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                		readOnly: '{existeActivoEnAgrupacion}',
 		                		hidden: '{!esAgrupacionPromocionAlquiler}',
 		                		value: '{agrupacionficha.activoMatriz}'
-		                	}
+		                	},
+		                	name: 'activoMatriz'
 	                	},	
 		                { 
 		                	fieldLabel	: HreRem.i18n('fieldlabel.subtipo'),

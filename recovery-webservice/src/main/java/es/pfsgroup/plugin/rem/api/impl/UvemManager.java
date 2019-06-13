@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -107,22 +106,20 @@ public class UvemManager implements UvemManagerApi {
 
 	//Códigos COTLAV - 8 caracteres
 	private final String COTLAV_CLVAAPCO = "CLVAAPCO";
-	private final String COTLAV_CLCDD4   = "CLCDD4  ";
-	private final String COTLAV_CLCDB4   = "CLCDB4  ";
+	private final String COTLAV_CLCDC4   = "CLCDC4";
+	private final String COTLAV_CLCDB4   = "CLCDB4";
 	
 	//Códigos COMEAV - 8 caracteres
-	private final String COMEAV_0413 = "0413    ";
-	private final String COMEAV_0414 = "0414    ";
-	private final String COMEAV_80   = "80      ";
+	private final String COMEAV_0413 = "0413";
+	private final String COMEAV_0414 = "0414";
+	private final String COMEAV_80   = "80";
 	
 	//Códigos LIAVI1 para construir ejemplos - 80 caracteres
-	@SuppressWarnings("unused")
 	private final String LIAVI1_CLVAAPCO_CL00024E = "Cliente en situación de bloqueo.                                                ";
 	@SuppressWarnings("unused")
 	private final String LIAVI1_CLVAAPCO_CL00025E = "Cliente en situación de no cliente.                                             ";
 	@SuppressWarnings("unused")
 	private final String LIAVI1_CLVAAPCO_CL00026E = "Cliente sin documento fiscal válido y/o no escaneado.                           ";
-	@SuppressWarnings("unused")
 	private final String LIAVI1_CLVAAPCO_CL00027E = "Cliente carece de documento fiscal válido y producto.                           ";
 	@SuppressWarnings("unused")
 	private final String LIAVI1_CLVAAPCO_CL00035E = "Cliente en situación de absorbido.                                              ";
@@ -130,15 +127,12 @@ public class UvemManager implements UvemManagerApi {
 	private final String LIAVI1_CLVAAPCO_CL00050E = "Cliente sin documento identificativo digitalizado.                              ";
 	@SuppressWarnings("unused")
 	private final String LIAVI1_CLVAAPCO_CL00107E = "Cliente bloqueado política de aceptación de clientes.                           ";
-	@SuppressWarnings("unused")
 	private final String LIAVI1_CLVAAPCO_CL00108E = "Cliente bloqueado debe justificar actividad.                                    ";
 	@SuppressWarnings("unused")
 	private final String LIAVI1_ERROR			  = "No se ha podido encontrar el código COMEAV.                                     ";
 	@SuppressWarnings("unused")
-	private final String LIAVI1_CLCDD4_0413 	  = "Cliente precaución operativa blanqueo capitales (Seguimiento).                  ";
-	@SuppressWarnings("unused")
-	private final String LIAVI1_CLCDD4_0414 	  = "Cliente precaución operativa blanqueo capitales (Cancelar).                     ";
-	@SuppressWarnings("unused")
+	private final String LIAVI1_CLCDC4_0413 	  = "Cliente precaución operativa blanqueo capitales (Seguimiento).                  ";
+	private final String LIAVI1_CLCDC4_0414 	  = "Cliente precaución operativa blanqueo capitales (Cancelar).                     ";
 	private final String LIAVI1_CLCDB4_80		  = "Cliente bloqueado                                                               ";
 	
 	private GMPETS07_INS servicioGMPETS07_INS;
@@ -279,9 +273,9 @@ public class UvemManager implements UvemManagerApi {
 				VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
 				StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu estructura = new StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
 				//Cada estructura llevará un código cotlav, un código comeav y un liavi1 correspondiente con los dos primeros:
-				String[] cod_cotlav = {COTLAV_CLVAAPCO,          COTLAV_CLVAAPCO,          COTLAV_CLVAAPCO,          COTLAV_CLCDD4,      COTLAV_CLCDB4};
+				String[] cod_cotlav = {COTLAV_CLVAAPCO,          COTLAV_CLVAAPCO,          COTLAV_CLVAAPCO,          COTLAV_CLCDC4,      COTLAV_CLCDB4};
 				String[] cod_comeav = {"CL00024E",               "CL00027E",               "CL00108E",               COMEAV_0413,        COMEAV_80};
-				String[] cod_liavi1 = {LIAVI1_CLVAAPCO_CL00024E, LIAVI1_CLVAAPCO_CL00027E, LIAVI1_CLVAAPCO_CL00108E, LIAVI1_CLCDD4_0414, LIAVI1_CLCDB4_80};
+				String[] cod_liavi1 = {LIAVI1_CLVAAPCO_CL00024E, LIAVI1_CLVAAPCO_CL00027E, LIAVI1_CLVAAPCO_CL00108E, LIAVI1_CLCDC4_0414, LIAVI1_CLCDB4_80};
 				//Rellenamos el vector de estructuras
 				int i = 0;
 				for(i=0; i<iter; i++) {
@@ -843,40 +837,32 @@ public class UvemManager implements UvemManagerApi {
 			vector = servicioGMPAJC93_INS.getNumeroDeOcurrenciasnumocu();
 			
 			for(i=0; i<iter; i++) {
-				//Con cada iteración accederemos a las distintas estructuras u ocurrencias almacenadas en el vector de tipo VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu
 				estructura = vector.getStructGMPAJC93_INS_NumeroDeOcurrenciasnumocuAt(i);
 				
-				//Comparamos con el primer código de la ocurrencia: Código de Servicio COTLAV = "CLVAAPCO"
-				if(!Checks.esNulo(COTLAV_CLVAAPCO.equals(estructura.getCodigoDeServiciocotlav()))) {
-					
-					//Comparamos con los distintos códigos de Mensaje de Error COMEAV asociados al COTLAV anterior:
-					if(!Checks.esNulo(estructura.getCodigoMensajeDeErrorcomeav()) && !Checks.esNulo(estructura.getLiteralAvisoEnPantallaliavi1())) {
-						dto.setTipoMensaje("Problema");	//Los mensajes siempre serán del Tipo : Problema
-						dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
-					}
-				}
-				//Comparamos con el segundo código de la ocurrencia: Código de Servicio COTLAV = "CLCDD4"
-				if(!Checks.esNulo(COTLAV_CLCDD4.equals(estructura.getCodigoDeServiciocotlav()))) {
-					//En esta ocasión los errores COMEAV son sólo 2, siendo uno de ellos de Tipo : Aviso y el otro de Tipo : Problema
-					if(!Checks.esNulo(COMEAV_0413.equals(estructura.getCodigoMensajeDeErrorcomeav()))) {
+				if(COTLAV_CLVAAPCO.equals(estructura.getCodigoDeServiciocotlav())) {
+					dto.setTipoMensaje("Problema");
+					dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
+				}else if(COTLAV_CLCDC4.equals(estructura.getCodigoDeServiciocotlav())) {
+					if(COMEAV_0414.equals(estructura.getCodigoMensajeDeErrorcomeav())) {
+						dto.setTipoMensaje("Problema");
+					}else{
 						dto.setTipoMensaje("Aviso");
 					}
-					if(!Checks.esNulo(COMEAV_0414.equals(estructura.getCodigoMensajeDeErrorcomeav()))) {
-						dto.setTipoMensaje("Problema");
-					}
-					if(!Checks.esNulo(estructura.getLiteralAvisoEnPantallaliavi1())) {
-						dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
-					}
-				}
-				if(!Checks.esNulo(COTLAV_CLCDB4.equals(estructura.getCodigoDeServiciocotlav()))) {
-					if(!Checks.esNulo(COMEAV_80.equals(estructura.getCodigoMensajeDeErrorcomeav()))) {
+					dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
+				}else if(COTLAV_CLCDB4.equals(estructura.getCodigoDeServiciocotlav())) {
+					if(COMEAV_80.equals(estructura.getCodigoMensajeDeErrorcomeav())) {
 						dto.setTipoMensaje("Problema");
 						dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
+					}else{
+						dto.setTipoMensaje("Aviso");
+						dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
 					}
+				}else{
+					dto.setTipoMensaje("Aviso");
+					dto.setLiavi1(estructura.getLiteralAvisoEnPantallaliavi1());
 				}
-				//Almacenamos los mensajes de aviso en el listado de dtos que enviaremos al grid de Problemas con la venta
 				datos.add(i, dto);
-			}	//End for
+			}
 			
 		} catch (WIException e) {
 			errorDesc = e.getMessage();
@@ -1592,6 +1578,13 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPTOE83_INS.setAlias(ALIAS);
 			// servicioGMPTOE83_INS.execute();
 			executeService(servicioGMPTOE83_INS);
+			
+			WSDevolBankiaDto dto = new WSDevolBankiaDto();
+			
+			dto.setCorrecw((long) servicioGMPTOE83_INS.getCodigoResolucionComitecorecw());
+			dto.setComoa3((long) servicioGMPTOE83_INS.getCodigoMotivoAnulacionPropuestacomoa3());	
+			
+			return dto;
 
 		} catch (WIException wie) {
 			logger.error("error en UvemManager", wie);
@@ -1600,12 +1593,7 @@ public class UvemManager implements UvemManagerApi {
 		} finally {
 			registrarLlamada(servicioGMPTOE83_INS, errorDesc);
 			
-			WSDevolBankiaDto dto = new WSDevolBankiaDto();
 			
-			dto.setCorrecw((long) servicioGMPTOE83_INS.getCodigoResolucionComitecorecw());
-			dto.setComoa3((long) servicioGMPTOE83_INS.getCodigoMotivoAnulacionPropuestacomoa3());	
-			
-			return dto;
 		}
 
 	}

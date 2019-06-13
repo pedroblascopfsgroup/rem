@@ -2468,7 +2468,17 @@ public class AgrupacionAdapter {
 
 			oferta.setNumOferta(numOferta);
 			oferta.setAgrupacion(agrupacion);
-			oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+			
+			if (!Checks.esNulo(dto.getImporteOferta())) {
+				try{
+					oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+				}catch(NumberFormatException ne){
+					logger.warn("Formato numero incorrecto");
+					oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta().replace(",", ".")));
+				}
+				
+			   
+			}
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());

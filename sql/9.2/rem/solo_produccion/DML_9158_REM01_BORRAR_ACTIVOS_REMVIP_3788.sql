@@ -27,7 +27,6 @@ DECLARE
   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
   V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
   V_NUM_ACT NUMBER(16); -- Vble. para validar la existencia de una tabla.   
-  V_NUM_ACT_BAJA NUMBER(16); -- Vble. para validar la existencia de una tabla.
   V_COUNT1 NUMBER(16);
   V_COUNT2 NUMBER(16);
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -60,21 +59,17 @@ BEGIN
         V_SQL:= 'SELECT COUNT(1) FROM REM01.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||TRIM(V_TMP_TIPO_DATA(1))||'';
         
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_ACT;
-        
-        V_SQL:= 'SELECT COUNT(1) FROM REM01.ACT_ACTIVO WHERE ACT_NUM_ACTIVO =  -'||TRIM(V_TMP_TIPO_DATA(1))||'';
-        
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_ACT_BAJA;
                 
         
         --Si existe realizamos otra comprobacion
-        IF V_NUM_ACT = 1 AND V_NUM_ACT_BAJA = 0 THEN		
+        IF V_NUM_ACT = 1 THEN		
         V_COUNT1:= V_COUNT1 + 1;
         V_COUNT2:= V_COUNT2 + 1;
 				-- Por agrupación de activos
             
                 V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO
 								SET
-									ACT_NUM_ACTIVO = -'||TRIM(V_TMP_TIPO_DATA(1))||',
+									ACT_NUM_ACTIVO = -99999'||TRIM(V_TMP_TIPO_DATA(1))||',
 									USUARIOBORRAR = '''||V_USUARIO||''',
 									FECHABORRAR = SYSDATE,
 									BORRADO = 1
@@ -88,11 +83,8 @@ BEGIN
         ELSE
             IF V_NUM_ACT = 0 THEN       
                 DBMS_OUTPUT.PUT_LINE('[ERROR]: EL ACTIVO '''||TRIM(V_TMP_TIPO_DATA(1))||''' NO EXISTE ');
-            ELSE IF V_NUM_ACT_BAJA = 1 THEN
-                DBMS_OUTPUT.PUT_LINE('[ERROR]: EL ACTIVO '''||TRIM(V_TMP_TIPO_DATA(1))||''' SE DIO DE BAJA CON ANTERIORIDAD');
             ELSE 
                 DBMS_OUTPUT.PUT_LINE('[ERROR]: ERROR NO CONTROLADO EN LA QUERY : '||V_MSQL||'');
-            END IF;
             END IF;
         END IF;
         

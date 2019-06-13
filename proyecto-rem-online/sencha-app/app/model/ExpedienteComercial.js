@@ -251,6 +251,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'fechaEnvioAdvisoryNote',
     			type:'date', 
         		dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaRecomendacionCes',
+    			type:'date', 
+        		dateFormat: 'c'
     		}
     ],
     formulas: {

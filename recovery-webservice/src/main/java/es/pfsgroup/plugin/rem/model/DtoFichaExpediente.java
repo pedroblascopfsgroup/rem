@@ -142,6 +142,8 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean noEsOfertaFinalGencat;
 	
 	private Date fechaEnvioAdvisoryNote;
+	
+	private Date fechaRecomendacionCes;
 
 	public Long getId() {
 		return id;
@@ -727,5 +729,14 @@ public class DtoFichaExpediente extends WebDto {
 	public void setFechaEnvioAdvisoryNote(Date fechaEnvioAdvisoryNote) {
 		this.fechaEnvioAdvisoryNote = fechaEnvioAdvisoryNote;
 	}
+
+	public Date getFechaRecomendacionCes() {
+		return fechaRecomendacionCes;
+	}
+
+	public void setFechaRecomendacionCes(Date fechaRecomendacionCes) {
+		this.fechaRecomendacionCes = fechaRecomendacionCes;
+	}
+	
 	
 }

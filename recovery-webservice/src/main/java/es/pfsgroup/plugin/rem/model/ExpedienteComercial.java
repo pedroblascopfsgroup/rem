@@ -267,6 +267,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_FECHA_ENVIO_ADVISORY_NOTE")
     private Date fechaEnvioAdvisoryNote;
+    
+    @Column(name="ECO_FECHA_RECOMENDACION_CES")
+    private Date fechaRecomendacionCes;
 
     @Column(name="ECO_CORRECW")
     private Long correcw;
@@ -816,6 +819,15 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setFechaEnvioAdvisoryNote(Date fechaEnvioAdvisoryNote) {
 		this.fechaEnvioAdvisoryNote = fechaEnvioAdvisoryNote;
+	}
+	
+
+	public Date getFechaRecomendacionCes() {
+		return fechaRecomendacionCes;
+	}
+
+	public void setFechaRecomendacionCes(Date fechaRecomendacionCes) {
+		this.fechaRecomendacionCes = fechaRecomendacionCes;
 	}
 
 	public Long getCorrecw() {

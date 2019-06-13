@@ -210,7 +210,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.ces'),
 		                	bind: {
 		                		value: '{datosbasicosoferta.importeContraofertaCES}',
-		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
 		                	},
 		                	readOnly: true
 		                },

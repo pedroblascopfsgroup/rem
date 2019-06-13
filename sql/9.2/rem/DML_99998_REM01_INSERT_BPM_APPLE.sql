@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Sergio Salt
---## FECHA_CREACION=20190618
+--## FECHA_CREACION=20190613
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6516
@@ -33,7 +33,7 @@ declare
   -----------------------------------
   ---------  MAPA DE TAREAS  --------
   -----------------------------------
-SCOPE_TAREA NUMBER(16,0) := 17; --Vble. para seleccionar una tarea o todas
+SCOPE_TAREA NUMBER(16,0) := 0; --Vble. para seleccionar una tarea o todas
   /**********************************
   **  0-    TODO EL BPM
   **  1-    DEFINICION DE OFERTA              
@@ -2840,7 +2840,7 @@ begin
 ----------------------------------------------------------------------------
 ---------------------------CREACION DEL BPM---------------------------------
   create_or_update_bpm(SCOPE_TAREA -1);
-  rollback;
+  COMMIT;
 EXCEPTION
     when VALUE_ERROR then
         DBMS_OUTPUT.put_line('[ERROR] NO SE HA INTRODUCIDO UN VALOR NUMERICO');

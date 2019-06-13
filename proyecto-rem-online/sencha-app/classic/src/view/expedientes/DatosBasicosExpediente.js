@@ -268,12 +268,18 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                		readOnly: true,
 				        		hidden: '{!esCarteraApple}'
 				        	}
-			        }
-			       
-
-				]
-				
-				
+			        },
+			        {
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.recomendacion.ces'),
+			        	bind: {
+			        		value:'{expediente.fechaRecomendacionCes}',
+			        		hidden: '{!esCarteraApple}'
+			        	},
+			        	readOnly: true
+	            	 }
+				]	
            },
            {    
                 xtype:'fieldsettable',

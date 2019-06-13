@@ -1593,7 +1593,7 @@ begin
   TAP(10).tap_field('TAP_CODIGO') := 'T017_ResolucionPROManzana';
   TAP(10).tap_field('TAP_VIEW') := NULL;
   TAP(10).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(10).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
+  TAP(10).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'valores[''''T017_ResolucionPROManzana''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? existeAdjuntoUGValidacion("23","E") : null';
   TAP(10).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_ResolucionPROManzana''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Acepta'''': checkReservaFirmada() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReservaONoExiste'''' ';
   TAP(10).tap_field('DD_TPO_ID_BPM') := null;
   TAP(10).tap_field('TAP_SUPERVISOR') := 0;

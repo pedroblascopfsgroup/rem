@@ -6212,7 +6212,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// TODO Auto-generated method stub
 		Boolean tieneOfertasVivas = false;
 		Boolean tieneTrabajosVivos = false;
-		Long id = activo.getId();
 		List<ActivoTrabajo> trabajosDelActivo = activo.getActivoTrabajos();
 		
 		tieneOfertasVivas = particularValidator.existeActivoConOfertaVivaEstadoExpediente(Long.toString(activo.getNumActivo()));

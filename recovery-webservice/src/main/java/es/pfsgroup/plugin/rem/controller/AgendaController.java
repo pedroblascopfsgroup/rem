@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
 @Controller
@@ -336,6 +337,8 @@ public class AgendaController extends TareaController {
 		ExpedienteComercial eco = null;
 		List<ActivoTramite> listaTramites = null;
 		Boolean salto = false;
+		final String CODIGO_T013 = "T013";
+		final String CODIGO_T017 = "T017";
 
 		try {
 
@@ -360,7 +363,16 @@ public class AgendaController extends TareaController {
 				for (int i = 0; i < listaTareas.size(); i++) {
 					TareaExterna tarea = listaTareas.get(i);
 					if (!Checks.esNulo(tarea)) {
-						salto = adapter.saltoResolucionExpediente(tarea.getId());
+						String codigo = tarea.getTareaProcedimiento().getTipoProcedimiento().getCodigo();
+						if(codigo.equals(CODIGO_T013)) {
+							salto = adapter.saltoResolucionExpediente(tarea.getId());
+						}else if(codigo.equals(CODIGO_T017)) {
+							if(eco.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.RESERVADO)) {
+								salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
+							}else {
+								salto = adapter.saltoFin(tarea.getId());
+							}
+						}
 						break;
 					}
 				}

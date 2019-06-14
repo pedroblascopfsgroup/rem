@@ -2986,7 +2986,8 @@ public class AgrupacionAdapter {
 						ActivoAgrupacionActivo aga = genericDao.get(ActivoAgrupacionActivo.class, filterIdActivo, filterIdAgrupacion);
 					
 						if(!Checks.esNulo(aga)) {
-							aga.setPrincipal(0);
+							activoAgrupacionActivoDao.deleteById(aga.getId());
+							pa.setDireccion(null);
 						}
 						activoAdapter.actualizarEstadoPublicacionActivo(idAM);
 					}

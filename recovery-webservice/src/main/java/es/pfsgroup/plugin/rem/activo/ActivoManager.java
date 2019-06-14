@@ -1156,7 +1156,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GALEON)));
 		}
-
+		// El combo "Comité seleccionado" vendrá informado para subcartera Zeus
+		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_EGEO) 
+				&& DDSubcartera.CODIGO_ZEUS.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_EGEO)));
+		}
+		
 		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());

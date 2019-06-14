@@ -36,6 +36,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"estadoActivoCodigo",
     	    		"tipoUsoDestinoCodigo",  //TipoUsoDestino    
     	    		"motivoActivo",
+    	    		"usoDominanteCodigo",
     	    		
     	    			// direccion
     	    		"comunidadAutonomaCodigo", 

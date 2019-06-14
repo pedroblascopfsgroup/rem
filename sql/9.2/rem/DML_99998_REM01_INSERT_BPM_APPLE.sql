@@ -2618,7 +2618,7 @@ begin
     TAP(15).tap_field('TAP_CODIGO') := 'T017_DocsPosVenta';
     TAP(15).tap_field('TAP_VIEW') := NULL;
     TAP(15).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente''''';
-    TAP(15).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGValidacion("19,E;17,E")';
+    TAP(15).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGValidacion("19,E;17,E;15,E")';
     TAP(15).tap_field('TAP_SCRIPT_DECISION') := null;
     TAP(15).tap_field('DD_TPO_ID_BPM') := null;
     TAP(15).tap_field('TAP_SUPERVISOR') := 0;

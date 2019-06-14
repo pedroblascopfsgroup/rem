@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Diego Carrasco Parra
---## FECHA_CREACION=20190530
+--## FECHA_CREACION=20190614
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6607

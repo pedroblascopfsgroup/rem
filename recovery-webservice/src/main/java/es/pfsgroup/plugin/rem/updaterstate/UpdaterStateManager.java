@@ -104,7 +104,6 @@ public class UpdaterStateManager implements UpdaterStateApi{
 					List<ActivoAgrupacionActivo> listaActivosUa = agrupacionPa.getActivos();
 					for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosUa) {
 						activoAgrupacionActivo.getActivo().setAdmision(tareasAdmision && fechasAdmision);
-						activoApi.saveOrUpdate(activoAgrupacionActivo.getActivo());
 					}
 				}
 			}

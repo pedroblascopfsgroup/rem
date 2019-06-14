@@ -46,7 +46,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
@@ -132,6 +131,13 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	public DtoActivoDatosRegistrales getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoDatosRegistrales activoDto = new DtoActivoDatosRegistrales();
 		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		Activo activoMatriz = null;
+		if (esUA) {
+			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId());
+			if (!Checks.esNulo(agr)) {
+				activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
+			}
+		}
 				
 		BeanUtils.copyProperties(activoDto, activo);
 		
@@ -140,13 +146,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		}	
 		
 		if(esUA){
-		
-			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId());
-			Activo activoMatriz = null;
-			if (!Checks.esNulo(agr)) {
-				activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
-			}
-
 			if (!Checks.esNulo(activoMatriz.getInfoRegistral())) {
 				BeanUtils.copyProperties(activoDto, activoMatriz.getInfoRegistral());
 			}
@@ -364,6 +363,53 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			activoDto.setUnidadAlquilable(true);
 		}else {
 			activoDto.setUnidadAlquilable(false);
+		}
+		
+		if (esUA && !Checks.esNulo(activoMatriz.getAdjJudicial())) {				
+			BeanUtils.copyProperties(activoDto, activoMatriz.getAdjJudicial());
+			
+			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien())) {
+				BeanUtils.copyProperties(activoDto, activoMatriz.getAdjJudicial().getAdjudicacionBien());
+				
+			if(Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
+				activoDto.setLanzamientoNecesario(null);
+			}else{
+				if(activoMatriz.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()){
+					activoDto.setLanzamientoNecesario(1);
+					activoApi.calcularFechaTomaPosesion(activoMatriz);
+				}
+				else{
+					activoDto.setLanzamientoNecesario(0);
+					activoApi.calcularFechaTomaPosesion(activoMatriz);
+				}
+			}
+			
+			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria())) {
+				BeanUtils.copyProperty(activoDto, "entidadAdjudicatariaCodigo", activoMatriz.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria().getCodigo());
+			}
+				
+			if(!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria())){
+				BeanUtils.copyProperty(activoDto, "resolucionMoratoriaCodigo", activoMatriz.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getCodigo());
+				}
+				
+			}
+			
+			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getEntidadEjecutante())) {
+				BeanUtils.copyProperty(activoDto, "entidadEjecutanteCodigo", activoMatriz.getAdjJudicial().getEntidadEjecutante().getCodigo());
+			}
+			
+			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getJuzgado())) {
+				BeanUtils.copyProperty(activoDto, "tipoJuzgadoCodigo", activoMatriz.getAdjJudicial().getJuzgado().getCodigo());
+			}
+			
+			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getPlazaJuzgado())) {
+				BeanUtils.copyProperty(activoDto, "tipoPlazaCodigo", activoMatriz.getAdjJudicial().getPlazaJuzgado().getCodigo());
+			}
+			
+			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getEstadoAdjudicacion())) {
+				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
+			
+			}
 		}
 		
 		

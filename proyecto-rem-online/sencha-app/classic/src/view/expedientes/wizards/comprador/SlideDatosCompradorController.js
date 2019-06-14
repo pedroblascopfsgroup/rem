@@ -610,7 +610,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
     	
     	var me = this;
     	var venta = null;
-    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
+    	var wizard = me.getViewModel().getView().up('wizardBase');
+    	if(wizard.expediente.get('tipoExpedienteCodigo') == null){
     		if (me.getViewModel().data.esOfertaVentaFicha == true){
     			venta = true;
     		}else{
@@ -623,8 +624,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoProvincia = me.lookupReference('provinciaCombo');
 		campoMunicipio = me.lookupReference('municipioCombo');
 
-    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01" || venta == true){
-    		if(me.lookupReference('tipoPersona').getValue() === "2" ) {
+    	if(wizard.expediente.get('tipoExpedienteCodigo') == "01" || venta == true){
+    		if(me.lookupReference('tipoPersona').getValue() === CONST.TIPO_PERSONA['JURIDICA']) {
     			if(me.lookupReference('pais').getValue() == "28"){
     				if(!Ext.isEmpty(campoProvincia)){
 						campoProvincia.allowBlank = false;
@@ -656,7 +657,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						campoMunicipioRte.allowBlank = true;
 					}
 				}
-    		}else if (me.lookupReference('tipoPersona').getValue() === "1"){
+    		}else if (me.lookupReference('tipoPersona').getValue() === CONST.TIPO_PERSONA['FISICA']){
     			if(me.lookupReference('pais').getValue() == "28"){
     				if(!Ext.isEmpty(campoProvincia)){
     					campoProvincia.allowBlank = false;
@@ -679,6 +680,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 					campoMunicipioRte.allowBlank = true;
 				}
     		}
+    		campoProvinciaRte.validate();
+    		campoMunicipioRte.validate();
+    		campoDireccion.validate();
+    		campoProvincia.validate();
+    		campoMunicipio.validate();
     	}
     },
 

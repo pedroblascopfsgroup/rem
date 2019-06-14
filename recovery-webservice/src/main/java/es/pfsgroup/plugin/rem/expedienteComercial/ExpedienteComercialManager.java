@@ -3941,7 +3941,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										}
 				
 										//Campos dependientes de si el tipo de persona es jurídica
-										if (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {						
+										else if (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {						
 											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Razón social (Titular)
 												if (!Checks.esNulo(comprador.getNombreRazonSocialRte())) {																//Nombre del representante
 													if (!Checks.esNulo(comprador.getApellidosRte())) {																	//Apellidos del representante

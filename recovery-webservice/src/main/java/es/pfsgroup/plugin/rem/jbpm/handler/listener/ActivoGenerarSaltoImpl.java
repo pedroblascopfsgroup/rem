@@ -24,6 +24,7 @@ public class ActivoGenerarSaltoImpl extends ActivoBaseActionHandler implements G
 	public static final String CODIGO_SALTO_CIERRE = "T013_CierreEconomico";
 	public static final String CODIGO_SALTO_CIERRE_TRABAJO = "T004_CierreEconomico";
 	public static final String CODIGO_SALTO_RESOLUCION = "T013_ResolucionExpediente";
+	public static final String CODIGO_SALTO_RESOLUCION_APPLE = "T017_ResolucionExpediente";
 	public static final String CODIGO_SALTO_RESPUESTA_BANKIA_DEVOLUCION = "T013_RespuestaBankiaDevolucion";
 	public static final String CODIGO_SALTO_PENDIENTE_DEVOLUCION = "T013_PendienteDevolucion";
 	public static final String CODIGO_SALTO_RESPUESTA_BANKIA_ANULACION_DEVOLUCION = "T013_RespuestaBankiaAnulacionDevolucion";

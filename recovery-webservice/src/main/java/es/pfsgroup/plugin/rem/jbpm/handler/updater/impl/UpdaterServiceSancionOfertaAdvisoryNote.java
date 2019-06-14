@@ -125,7 +125,7 @@ public class UpdaterServiceSancionOfertaAdvisoryNote implements UpdaterService {
 				DDEstadosExpedienteComercial estado;
 
 				
-				if(perimetro.getAplicaFormalizar() == 0){
+				if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar()) && perimetro.getAplicaFormalizar() == 0){
 					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroSinFormalizacion);	
 				}else{
 					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

@@ -48,6 +48,7 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 				function (field, index) { 						
 					if  (isUnidadAlquilable){
 						field.setReadOnly(true);
+						me.buttons[0].hidden = true;
 					}else{
 						field.fireEvent('edit');
 						if(index == 0) field.focus();	
@@ -67,8 +68,6 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
     	
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Guardar', handler: 'onClickBotonGuardarPropietario'}, { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarPropietario'}];
 
-    	if (isUnidadAlquilable)
-    		me.buttons[0].hidden = true;
     	me.items = [
 				{
 					xtype: 'formBase', 

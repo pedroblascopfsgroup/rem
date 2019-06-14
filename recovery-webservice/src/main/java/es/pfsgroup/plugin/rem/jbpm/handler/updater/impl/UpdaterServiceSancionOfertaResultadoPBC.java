@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 
 @Component
@@ -52,8 +53,10 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
     private static final String COMBO_RESULTADO = "comboResultado";
+    private static final String COMBO_RESPUESTA = "comboRespuesta";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     public static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+    public static final String CODIGO_T017_PBC_VENTA = "T017_PBCVenta";
     private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -68,7 +71,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 
 				for(TareaExternaValor valor :  valores){
 
-					if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if(COMBO_RESULTADO.equals(valor.getNombre())
+							|| COMBO_RESPUESTA.equals(valor.getNombre())
+							&& !Checks.esNulo(valor.getValor())) {
 						//TODO: Rellenar campo PBC del expediente cuando esté creado.
 						if(DDSiNo.NO.equals(valor.getValor())) {
 							if(!ofertaApi.checkReserva(ofertaAceptada)){
@@ -99,6 +104,18 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 										&& !uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T013_RESULTADO_PBC,expediente)) {
 									// Notificar del rechazo de la oferta a
 									// Bankia.
+									try {
+										uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(),
+												UvemManagerApi.MOTIVO_ANULACION_OFERTA.PBC_DENEGADO);
+									} catch (Exception e) {
+										logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
+										throw new UserException(e.getMessage());
+									}
+								}
+								
+								if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+										&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
+										&& !uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T017_PBC_VENTA,expediente)) {
 									try {
 										uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(),
 												UvemManagerApi.MOTIVO_ANULACION_OFERTA.PBC_DENEGADO);
@@ -146,7 +163,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_RESULTADO_PBC};
+		return new String[]{CODIGO_T013_RESULTADO_PBC, CODIGO_T017_PBC_VENTA};
 	}
 
 	public String[] getKeys() {

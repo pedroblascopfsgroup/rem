@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=RAMON LLINARES
---## FECHA_CREACION=20190530
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190614
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4404
+--## INCIDENCIA_LINK=HREOS-6767
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -21,6 +21,7 @@
 --##        0.9 Se cambia la query de GENCAT para actualizarla a los nuevos requerimientos
 --##        0.10 Cambiamos la vista para que calcule desde la vista gencat.
 --##	    0.11 Se añade una columna más para calcular el estado del titulo
+--##        0.12 Se añade una condición para mostrar las UAs borradas. HREOS-6767
 --##########################################
 --*/
 
@@ -154,7 +155,8 @@ BEGIN
             WHERE T5.DD_TPH_CODIGO IN (''02'') AND T1.BORRADO = 0
         ) BANYO ON (BANYO.ACT_ID = ACT.ACT_ID)
         LEFT JOIN '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT GEN ON GEN.ACT_ID = ACT.ACT_ID
-		WHERE AGR.BORRADO = 0';
+        LEFT JOIN REM01.DD_TAG_TIPO_AGRUPACION TAG ON AGRU.DD_TAG_ID = TAG.DD_TAG_ID
+		WHERE AGR.BORRADO = 0 OR (AGR.BORRADO = 1 AND TAG.DD_TAG_CODIGO = ''16'')';
 
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVOS_AGRUPACION...Creada OK');

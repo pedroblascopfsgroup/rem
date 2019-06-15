@@ -2005,13 +2005,16 @@ public class AgrupacionAdapter {
 			}
 		}
 
-		if (!Checks.esNulo(oferta.getCliente())) {
-			if (Checks.esNulo(oferta.getCliente().getDocumento())
-					|| Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
-				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
+		
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
+			if (!Checks.esNulo(oferta.getCliente())) {
+				if (Checks.esNulo(oferta.getCliente().getDocumento())
+						|| Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
+					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
+				}
+			} else {
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
 			}
-		} else {
-			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
 		}
 
 		
@@ -2074,6 +2077,9 @@ public class AgrupacionAdapter {
 
 		// si la oferta ha sido rechazada enviamos un email/notificacion.
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
+			
+			//SI LA OFERTA ES de una agrupacion COMERCIAL/VENTA Y EL ORIGEN ES WEBCOM, DAMOS DE BAJA EL LOTE A LA QUE PERTENECE
+			ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(oferta);
 
 			if (!Checks.esNulo(dto.getMotivoRechazoCodigo())) {
 				DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi

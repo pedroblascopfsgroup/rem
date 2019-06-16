@@ -9,6 +9,8 @@ import javax.annotation.Resource;
 
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -58,7 +61,12 @@ public class TabActivoPatrimonio implements TabActivoService {
 	
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
-
+	
+	@Autowired
+	private ActivoApi activoApi;	
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 
 	@Override
 	public String[] getKeys() {
@@ -282,35 +290,34 @@ public class TabActivoPatrimonio implements TabActivoService {
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
 			activoSituacionPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtroActivoId, filtroBorrado);
 
-			if(activoPatrimonioDto.getEstadoAlquiler().equals(DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO)
-					|| activoPatrimonioDto.getEstadoAlquiler().equals(DDTipoEstadoAlquiler.ESTADO_ALQUILER_CON_DEMANDAS)) {
-
-
-				if (Checks.esNulo(activoSituacionPosesoria)) {
-					activoSituacionPosesoria = new ActivoSituacionPosesoria();
-					activoSituacionPosesoria.setActivo(activo);
+			if (!Checks.esNulo(activoSituacionPosesoria)) {
+				if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonioDto.getEstadoAlquiler())
+						|| DDTipoEstadoAlquiler.ESTADO_ALQUILER_CON_DEMANDAS.equals(activoPatrimonioDto.getEstadoAlquiler())) {
+	
+	
+					if (Checks.esNulo(activoSituacionPosesoria)) {
+						activoSituacionPosesoria = new ActivoSituacionPosesoria();
+						activoSituacionPosesoria.setActivo(activo);
+					}
+	
+					activoSituacionPosesoria.setOcupado(1);
+					DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
+					activoSituacionPosesoria.setConTitulo(tipoTituloActivoTPA);
+					activoSituacionPosesoria.setFechaUltCambioTit(new Date());
+				} else if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(activoPatrimonioDto.getEstadoAlquiler())) {
+	
+					if (Checks.esNulo(activoSituacionPosesoria)) {
+						activoSituacionPosesoria = new ActivoSituacionPosesoria();
+						activoSituacionPosesoria.setActivo(activo);
+					}
+	
+					activoSituacionPosesoria.setOcupado(0);
+					activoSituacionPosesoria.setConTitulo(null);
+					activoSituacionPosesoria.setFechaUltCambioTit(new Date());
+					activoPatrimonio.setTipoInquilino(null);
 				}
-
-				activoSituacionPosesoria.setOcupado(1);
-				DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
-				activoSituacionPosesoria.setConTitulo(tipoTituloActivoTPA);
-				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
-
+				
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
-			} else if(activoPatrimonioDto.getEstadoAlquiler().equals(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE)) {
-
-				if (Checks.esNulo(activoSituacionPosesoria)) {
-					activoSituacionPosesoria = new ActivoSituacionPosesoria();
-					activoSituacionPosesoria.setActivo(activo);
-				}
-
-				activoSituacionPosesoria.setOcupado(0);
-				activoSituacionPosesoria.setConTitulo(null);
-				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
-				activoPatrimonio.setTipoInquilino(null);
-
-				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
-
 			}
 		}
 
@@ -322,6 +329,11 @@ public class TabActivoPatrimonio implements TabActivoService {
 		idActivoActualizarPublicacion.add(activo.getId());
 		//activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 		activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
+		
+		//updaterState.updaterStateDisponibilidadComercialAndSave(activo, false);
+		if (activoDao.isUnidadAlquilable(activo.getId())) {
+			activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
+		}
 
 		return activo;
 	}

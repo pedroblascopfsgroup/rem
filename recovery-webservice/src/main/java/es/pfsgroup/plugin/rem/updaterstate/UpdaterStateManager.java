@@ -166,8 +166,10 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
-		}else if (activoApi.isActivoAlquilado(activo)) {
+		}else if (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo)) {
 			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
+		}else if (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId())) {
+			codigo = DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE;
 		}
 		else if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
 			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;

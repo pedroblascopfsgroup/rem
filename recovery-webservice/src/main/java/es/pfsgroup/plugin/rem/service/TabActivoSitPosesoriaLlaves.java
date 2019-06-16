@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -33,8 +32,10 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class TabActivoSitPosesoriaLlaves implements TabActivoService {
@@ -65,6 +66,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private UpdaterStateApi updaterState;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoSitPosesoriaLlaves.class);
 	
@@ -195,14 +199,28 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			activoSituacionPosesoria.setOcupado(dto.getOcupado());
 		}
 		
+		Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
+		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivoId, filtroBorrado);
+		DDTipoEstadoAlquiler tipoEstadoAlquiler = null;
+		
 		if (!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado()) && dto.getOcupado() == 0) {
 			activoSituacionPosesoria.setConTitulo(null);
 			activoSituacionPosesoria.setFechaUltCambioTit(new Date());
+			tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE));
 		} else  if (!Checks.esNulo(dto.getConTitulo())) {
 			Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTitulo());
 			DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 			activoSituacionPosesoria.setConTitulo(tituloActivoTPA);
 			activoSituacionPosesoria.setFechaUltCambioTit(new Date());
+			if (DDTipoTituloActivoTPA.tipoTituloSi.equals(tituloActivoTPA.getCodigo())) {
+				tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO));
+			}
+		}
+		
+		if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(tipoEstadoAlquiler)) {
+			activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+			genericDao.update(ActivoPatrimonio.class, activoPatrimonio);
 		}
 
 		if(!Checks.esNulo(dto.getFechaTomaPosesion())){
@@ -321,6 +339,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 		}		
 		
+		if (activoDao.isUnidadAlquilable(activo.getId())) {
+			activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
+		}		
 	}
 	
 	public Integer calculodiasCambiosActivo(Date fechaIni){

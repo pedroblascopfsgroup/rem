@@ -1178,4 +1178,22 @@ public interface ActivoApi {
 	
 	boolean isActivoMatriz(Long idActivo);
 
+	/**
+	 * Recalcular la situación comercial del activo matriz mediante una unidad alquilable
+	 * @param UA
+	 */
+	public void cambiarSituacionComercialActivoMatriz(Long UA);
+
+	/**
+	 * Comprueba si existe alguna unidad alquilable alquilada
+	 * @param idActivoMatriz
+	 */
+	public boolean isAlquiladoParcialmente(Long idActivoMatriz);
+
+	/**
+	 * Comprueba un activo está ocupado con título o alquilar en el estado alquiler de la pestaña patrimonio
+	 * @param activo
+	 */
+	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
+
 }

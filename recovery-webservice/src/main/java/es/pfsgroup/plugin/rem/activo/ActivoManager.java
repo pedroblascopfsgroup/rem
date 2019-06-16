@@ -28,7 +28,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
@@ -78,7 +77,6 @@ import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesMa
 import es.pfsgroup.plugin.gestorDocumental.manager.RestClientManager;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.KeyValuePair;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
@@ -2892,6 +2890,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						return true;
 				}
 			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo) {
+		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
+		if ((!Checks.esNulo(activoPatrimonio) && DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo()))
+				|| (!Checks.esNulo(activoSituacionPosesoria) && !Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1
+				&& DDTipoTituloActivoTPA.tipoTituloSi.equals(activoSituacionPosesoria.getConTitulo().getCodigo()))) {
+			return true;
 		}
 		return false;
 	}
@@ -6359,6 +6369,35 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public boolean isActivoMatriz(Long idActivo){
 		return activoDao.isActivoMatriz(idActivo);
+	}
+	
+	@Override
+	public void cambiarSituacionComercialActivoMatriz(Long UA) {
+		Activo activoMatriz = null;
+		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(UA);
+		if (!Checks.esNulo(agr)) {
+			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
+		}
+		
+		updaterState.updaterStateDisponibilidadComercialAndSave(activoMatriz, false);
+	}
+	
+	@Override
+	public boolean isAlquiladoParcialmente(Long idActivoMatriz) {
+		boolean UAsAlquiladas = false;
+		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivoMatriz);
+		
+		List<ActivoAgrupacionActivo> activos = agr.getActivos();
+		
+		if (!Checks.estaVacio(activos)) {
+			for (ActivoAgrupacionActivo activo : activos) {
+				if (!isActivoMatriz(activo.getActivo().getId()) && (isActivoAlquilado(activo.getActivo()) || isOcupadoConTituloOrEstadoAlquilado(activo.getActivo()))) {
+					UAsAlquiladas = true;
+				}
+			}
+		}
+		
+		return UAsAlquiladas;
 	}
 	
 }

@@ -3625,13 +3625,25 @@ public class AgrupacionAdapter {
 	private String validarBajaAgrupacion(ActivoAgrupacion agrupacion) {
 
 		String error = null;
+		
+		ActivoAgrupacionActivo agaAM = genericDao.get(ActivoAgrupacionActivo.class, 
+				genericDao.createFilter(FilterType.EQUALS, "agrupacion", agrupacion),
+				genericDao.createFilter(FilterType.EQUALS, "principal", 1));
+		
+		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class,
+				genericDao.createFilter(FilterType.EQUALS,"activo.id", agaAM.getActivo().getId()));
+		
+		Boolean tieneOfertasVivas = !Checks.esNulo(perimetroActivo.getOfertasVivas()) ? perimetroActivo.getOfertasVivas() : false;
+		
+		Boolean tieneTrabajosVivos = !Checks.esNulo(perimetroActivo.getTrabajosVivos()) ? perimetroActivo.getTrabajosVivos() : false;
 
-		if (existenOfertasActivasEnAgrupacion(agrupacion.getId())) {  
+		if (existenOfertasActivasEnAgrupacion(agrupacion.getId()) 
+				&& !DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {  
 			error = AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS;
 		}else if (activoDao.isAgrupacionPromocionAlquiler(agrupacion.getId()) &&  ( activoDao.countUAsByIdAgrupacionPA(agrupacion.getId())> 0)) {
-			if (activoDao.existenUAsconOfertasVivas(agrupacion.getId())) {
+			if (tieneOfertasVivas) {
 				error = EXISTEN_UAS_CON_OFERTAS_VIVAS;
-			}else if (activoDao.existenUAsconTrabajos(agrupacion.getId())) {
+			}else if (tieneTrabajosVivos) {
 				error = EXISTEN_UAS_CON_TRABAJOS_NO_FINALIZADOS;
 			}
 				

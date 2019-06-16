@@ -6262,10 +6262,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				for (Object[] trabajoObjeto: listaTrabajosUA) {	
 					Trabajo trabajoUA = (Trabajo) trabajoObjeto[0];
 					if(!Checks.esNulo(trabajoUA)) {
-						if(DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(trabajoUA.getEstado().getCodigo())
+						if(!DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA.equals(trabajoUA.getSubtipoTrabajo().getCodigo())
+								&& !DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER.equals(trabajoUA.getSubtipoTrabajo().getCodigo())
+								&& (DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(trabajoUA.getEstado().getCodigo())
 								|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(trabajoUA.getEstado().getCodigo())
 								|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(trabajoUA.getEstado().getCodigo())
-								|| DDEstadoTrabajo.ESTADO_PAGADO.equals(trabajoUA.getEstado().getCodigo())
+								|| DDEstadoTrabajo.ESTADO_PAGADO.equals(trabajoUA.getEstado().getCodigo()))
 						) {
 							uaConTrabajosVivos = true;
 							break;
@@ -6289,10 +6291,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(!tieneTrabajosVivos) {
 				List<ActivoTrabajo> trabajosDelActivoAM = activo.getActivoTrabajos();
 				for (ActivoTrabajo activoTrabajoAM: trabajosDelActivoAM) {	
-					if(DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
+					if(!DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA.equals(activoTrabajoAM.getTrabajo().getSubtipoTrabajo().getCodigo())
+							&& !DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER.equals(activoTrabajoAM.getTrabajo().getSubtipoTrabajo().getCodigo())
+							&& (DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
 							|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
 							|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
-							|| DDEstadoTrabajo.ESTADO_PAGADO.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
+							|| DDEstadoTrabajo.ESTADO_PAGADO.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo()))
 					) {
 						
 						tieneTrabajosVivos = true;

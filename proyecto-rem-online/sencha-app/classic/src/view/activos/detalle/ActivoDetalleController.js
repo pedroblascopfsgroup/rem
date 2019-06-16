@@ -3970,20 +3970,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		success: function(response, opts){
     			
     			var isActivoMatriz = Ext.decode(response.responseText).data;
-				if(isActivoMatriz == "true"){
-					var vistaActual = me.getView();
-					var detalle = vistaActual.items.items[1];
-					var tabActiva = detalle.getActiveTab();
-					var referencia = tabActiva.reference;
-					var subReferencia = "";
-					if(tabActiva.ariaRole == 'tabpanel'){
-						var subTabActiva = tabActiva.getActiveTab(),
-						subReferencia = subTabActiva.reference;
-					}
-					if(referencia == 'publicacionactivoref'
-						&& subReferencia == 'datospublicacionactivoref'){
-							me.getView().unmask(); 
-					}else{
+				var vistaActual = me.getView();
+				var detalle = vistaActual.items.items[1];
+				var tabActiva = detalle.getActiveTab();
+				var referencia = tabActiva.reference;
+				var subReferencia = "";
+				if(tabActiva.ariaRole == 'tabpanel'){
+					var subTabActiva = tabActiva.getActiveTab(),
+					subReferencia = subTabActiva.reference;
+				}
+				if(isActivoMatriz == "true" && !(referencia == 'publicacionactivoref'
+						&& subReferencia == 'datospublicacionactivoref')){
 					url3 =  $AC.getRemoteUrl('activo/propagarActivosMatriz');
 		    		Ext.Ajax.request({
 		        		url: url3,
@@ -4091,7 +4088,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    		    			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	    		    		}
 		    		});
-				}
 				}else{
 					url4 =  $AC.getRemoteUrl('activo/getisActivoUa');
 	    			Ext.Ajax.request({
@@ -4116,7 +4112,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 													}
 												}
 											}
-											if(activosPropagables != null){
+											if(activosPropagables != null && isActivoMatriz != "true"){
 													if(activosPropagables.length > 0) {
 														tabPropagableData = me.createFormPropagableData(form, tabData);
 														if (!Ext.isEmpty(tabPropagableData)) {

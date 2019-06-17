@@ -379,7 +379,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			me.fireEvent('errorToast', HreRem.i18n('msg.form.invalido'));
 			return;
 		}
-
 		if (!Ext.isEmpty(wizard.oferta)) {
 			// TODO: terminar esta parte con respecto al wizard de oferta.
 			if (form.config.xtype.indexOf('slideadjuntardocumento') >= 0) {
@@ -617,7 +616,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		ventanaDetalle = window.down('slidedatosoferta');
 
 		bindRecord = ventanaDetalle.getForm().getValues();
-
 		if(Ext.isDefined(data.idActivo)){
 			model = Ext.create('HreRem.model.OfertaComercialActivo', {
 				idActivo : data.idActivo,
@@ -635,7 +633,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				estadoCivil: bindRecord.estadoCivil,
 				codigoSucursal: bindRecord.buscadorSucursales,
 				intencionFinanciar: bindRecord.intencionfinanciar,
-				tipoPersona: bindRecord.tipoOferta,
+				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
 				deDerechoTanteo: bindRecord.dederechotanteo
 			});
@@ -656,7 +654,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				estadoCivil: bindRecord.estadoCivil,
 				codigoSucursal: bindRecord.buscadorSucursales,
 				intencionFinanciar: bindRecord.intencionfinanciar,
-				tipoPersona: bindRecord.tipoOferta,
+				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
 				deDerechoTanteo: bindRecord.dederechotanteo
 			});

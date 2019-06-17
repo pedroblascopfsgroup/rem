@@ -5042,7 +5042,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else if (codigoTipoDoc.equals("10")) {
 			result = 'J';
 		} else if (codigoTipoDoc.equals("12")) {
-			result = 'J';
+			result = 'W';
 		} else {
 			throw new JsonViewerException("Tipo de documento no soportado");
 		}

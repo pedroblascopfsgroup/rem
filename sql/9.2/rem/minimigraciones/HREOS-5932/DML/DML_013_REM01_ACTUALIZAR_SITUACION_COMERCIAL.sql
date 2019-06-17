@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190411
+--## FECHA_CREACION=20190617
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6164

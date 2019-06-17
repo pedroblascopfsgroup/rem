@@ -282,6 +282,17 @@ public class HQLBuilder {
 		}
 	}
 
+	public static void addFiltroLikeSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor,
+			final boolean ignoreCase, final boolean quiereOr) {
+		final String nombreParametro = nombraParametro(nombreCampo);
+
+		if (!Checks.esNulo(valor)) {
+			final String field = nombreCampo;
+			hqlBuilder.appendWhere(field.concat(" like '%'|| :").concat(nombreParametro).concat(" ||'%'"), quiereOr);
+			hqlBuilder.getParametros().putObject(nombreParametro, valor.toString());
+		}
+	}
+
 	private final StringBuilder stringBuilder;
 	private final StringBuilder order;
 	private final int parentesis;
@@ -309,6 +320,13 @@ public class HQLBuilder {
 	public void appendWhere(final String where) {
 
 		initWhereClause();
+
+		this.stringBuilder.append(where).append(")");
+	}
+
+	public void appendWhere(final String where, boolean quiereOr) {
+
+		initWhereClause(quiereOr);
 
 		this.stringBuilder.append(where).append(")");
 	}
@@ -431,6 +449,15 @@ public class HQLBuilder {
 		if (hasWhere) {
 			this.stringBuilder.append(" and (");
 		} else {
+			this.stringBuilder.append(" where (");
+			this.hasWhere = true;
+		}
+	}
+
+	private void initWhereClause(boolean quiereOr) {
+		if (hasWhere && quiereOr) {
+			this.stringBuilder.append(" or (");
+		} else if(!hasWhere) {
 			this.stringBuilder.append(" where (");
 			this.hasWhere = true;
 		}

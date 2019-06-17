@@ -46,7 +46,7 @@ public class PerfilController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			logger.error("Error en PerfilesController", e);
+			logger.error("Error en Perfil", e);
 			model.put("success", false);
 		}
 

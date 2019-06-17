@@ -11,6 +11,7 @@ public class TareaRequestDto extends RequestDto{
 	private static final long serialVersionUID = 1L;
 	
 	private String id;
+	private Long idLlamada;
 	private Map<String, String[]> data;
 
 	
@@ -20,6 +21,14 @@ public class TareaRequestDto extends RequestDto{
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Long getIdLlamada() {
+		return idLlamada;
+	}
+
+	public void setIdLlamada(Long idLlamada) {
+		this.idLlamada = idLlamada;
 	}
 
 	public Map<String, String[]> getData() {

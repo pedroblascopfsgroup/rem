@@ -432,7 +432,7 @@ public class OfertasController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET, value="ofertas/getOfertasVivasActGestoria")
-	public void getOfertasVivasActGestoria(Long numActivo, String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+	public void getOfertasVivasActGestoria(Long idLlamada, Long numActivo, String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		DtoOfertasFilter filtro = new DtoOfertasFilter();
 		filtro.setGestoria(codGestoria);
 		filtro.setNumActivo(numActivo);
@@ -476,14 +476,17 @@ public class OfertasController {
 			}
 		}		
 		
+		//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
 		try {
 			model.put("id", 0);
+			model.put("idLlamada", idLlamada);
 			model.put("data", ofertasList);
 			model.put("error", "null");
 		}catch(Exception e) {
 			logger.error("Error ofertas", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", 0);
+			model.put("idLlamada", idLlamada);
 			model.put("data", null);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
@@ -522,10 +525,13 @@ public class OfertasController {
 		boolean resultado = false;
 		String ofrNumOferta = "";
 		String codTarea = "";
+		Long idLlamada = null;
+		
 		try {
 
 			jsonFields = request.getJsonObject();
 			jsonData = (TareaRequestDto) request.getRequestData(TareaRequestDto.class);
+			idLlamada = jsonData.getIdLlamada();
 			datosTarea = jsonData.getData();
 			
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
@@ -538,6 +544,7 @@ public class OfertasController {
 				tareaId = ofertaApi.getIdTareaByNumOfertaAndCodTarea(Long.parseLong(ofrNumOferta.toString()), codTarea);
 				if(Checks.esNulo(tareaId)) {
 					model.put("ofrNumOferta", ofrNumOferta);
+					model.put("idLlamada", idLlamada);
 					model.put("codTarea", codTarea);
 					model.put("data", resultado);
 					model.put("error",RestApi.REST_MSG_VALIDACION_TAREA + ": " + ERROR_NO_EXISTE_OFERTA_O_TAREA);
@@ -546,6 +553,7 @@ public class OfertasController {
 				
 					idTarea[0] = tareaId.toString();
 					datosTarea.put("idTarea",idTarea);
+					model.put("idLlamada", idLlamada);
 					resultado = agendaAdapter.validationAndSave(datosTarea);
 					model.put("ofrNumOferta", ofrNumOferta);
 					model.put("codTarea", codTarea);
@@ -554,9 +562,11 @@ public class OfertasController {
 				}
 			}
 
+			//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
 		} catch (Exception e) {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("idLlamada", idLlamada);
 			model.put("ofrNumOferta", ofrNumOferta);
 			model.put("codTarea", codTarea);
 			model.put("data", resultado);

@@ -499,10 +499,13 @@ public class GenericController extends ParadiseJsonController{
 		String tipoEntidad;
 		String errores="";
 		java.io.File file;
+		Long idLlamada = null;
+		
 		try {
 			
 			jsonFields = request.getJsonObject();
 			jsonData = (DocumentoRequestDto) request.getRequestData(DocumentoRequestDto.class);
+			idLlamada = jsonData.getIdLlamada();
 			listaDocumentoDto = jsonData.getData();
 						
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
@@ -576,8 +579,9 @@ public class GenericController extends ParadiseJsonController{
 					}else{
 						throw new Exception(RestApi.REST_MSG_INVALID_ENTITY_TYPE);
 					}
-					
+					//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
 					if(errores==null){
+						model.put("idLlamada", idLlamada);
 						model.put("data", listaDocumentoDto);
 						model.put("succes", true);
 
@@ -592,6 +596,7 @@ public class GenericController extends ParadiseJsonController{
 			logger.error("Error alta documento en genericController", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			errores = e.getMessage();
+			model.put("idLlamada", idLlamada);
 			model.put("data", listaDocumentoDto);
 			model.put("succes", false);
 			model.put("error", errores);

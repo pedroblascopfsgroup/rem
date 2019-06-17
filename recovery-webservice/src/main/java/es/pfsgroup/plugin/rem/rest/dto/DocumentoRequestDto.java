@@ -10,8 +10,17 @@ public class DocumentoRequestDto extends RequestDto{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Long idLlamada;
 	
 	private List<DocumentoDto> data;
+
+	public Long getIdLlamada() {
+		return idLlamada;
+	}
+
+	public void setIdLlamada(Long idLlamada) {
+		this.idLlamada = idLlamada;
+	}
 
 	public List<DocumentoDto> getData() {
 		return data;

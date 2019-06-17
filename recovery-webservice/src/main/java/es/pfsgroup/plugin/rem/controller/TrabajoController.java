@@ -1341,7 +1341,7 @@ public class TrabajoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET, value = "/trabajo/getActuacionesTecnicas")
-	public void getActuacionesTecnicas(Long numActivo, String idProveedorRem, ModelMap model, RestRequestWrapper request,
+	public void getActuacionesTecnicas(Long idLlamada, Long numActivo, String idProveedorRem, ModelMap model, RestRequestWrapper request,
 			HttpServletResponse response) {
 
 		DtoTrabajoFilter filtro = new DtoTrabajoFilter();
@@ -1412,14 +1412,17 @@ public class TrabajoController extends ParadiseJsonController {
 
 		} // fin listado trabajos
 
+		//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
 		try {
 			model.put("id", 0);
+			model.put("idLlamada", idLlamada);
 			model.put("data", actuaciones);
 			model.put("error", "null");
 		} catch (Exception e) {
 			logger.error("Error trabajo", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", 0);
+			model.put("idLlamada", idLlamada);
 			model.put("data", null);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
@@ -1449,6 +1452,7 @@ public class TrabajoController extends ParadiseJsonController {
 		Map<String, String[]> datosTarea = new HashMap<String, String[]>();
 		JSONObject jsonFields = null;
 		Long tareaId = null;
+		Long idLlamada = null;
 		
 		boolean resultado = false;
 		
@@ -1456,6 +1460,7 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			jsonFields = request.getJsonObject();
 			jsonData = (TareaRequestDto) request.getRequestData(TareaRequestDto.class);
+			idLlamada = jsonData.getIdLlamada();
 			datosTarea = jsonData.getData();
 			
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
@@ -1470,14 +1475,17 @@ public class TrabajoController extends ParadiseJsonController {
 				resultado = agendaAdapter.validationAndSave(datosTarea);
 
 				model.put("id", jsonFields.get("id"));
+				model.put("idLlamada", idLlamada);
 				model.put("data", resultado);
 				model.put("error", "null");
 			}
 
+			//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
 		} catch (Exception e) {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", jsonFields.get("id"));
+			model.put("idLlamada", idLlamada);
 			model.put("data", resultado);
 			model.put("error", RestApi.REST_MSG_VALIDACION_TAREA+": "+e.getMessage());
 		}

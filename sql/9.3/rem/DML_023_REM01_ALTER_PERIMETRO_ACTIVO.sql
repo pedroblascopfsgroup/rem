@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=David Benavente
---## FECHA_CREACION=20190509
+--## FECHA_CREACION=20190617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.8
 --## INCIDENCIA_LINK=HREOS-6421

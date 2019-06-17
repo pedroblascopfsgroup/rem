@@ -688,7 +688,12 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            				}
 			            			}else if(trabajoApi.checkCerberusAgoraApple(tareaExterna)){
-			            				codigoComite = DDComiteSancion.CODIGO_CERBERUS;
+										if(expedienteComercialApi.esApple(tareaExterna)){
+											codigoComite = DDComiteSancion.CODIGO_APPLE_CERBERUS;
+										}else{
+
+											codigoComite = DDComiteSancion.CODIGO_CERBERUS;
+										}
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            			}else {

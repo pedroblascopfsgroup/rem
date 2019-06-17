@@ -61,6 +61,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
 	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	private static final String CODIGO_T017_DEFINICION_OFERTA = "T017_DefinicionOferta";
 	//private static final String FECHA_ENVIO_COMITE = "fechaEnvio";
 	private static final String COMBO_CONFLICTO = "comboConflicto";
 	private static final String COMBO_RIESGO = "comboRiesgo";
@@ -116,7 +117,10 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 
 				// Se comprueba si cada activo tiene KO de admisión o de gestión
 				// y se envía una notificación
-				notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
+				if(!expediente.getComiteSancion().getCodigo().equals(DDComiteSancion.CODIGO_APPLE_CERBERUS)){
+
+					notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
+				}
 			} else {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.PTE_SANCION);
@@ -139,7 +143,12 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 			
 			boolean aplicaSuperior = false;
 			DDComiteSancion comite = null;
-			for (TareaExternaValor valor : valores) {			
+			for (TareaExternaValor valor : valores) {		
+				if(expedienteComercialApi.esApple(valor.getTareaExterna())){
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANALISIS_PM);
+					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setEstado(estado);
+				}	
 				if (COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					if (DDSiNo.SI.equals(valor.getValor())) {
 						expediente.setRiesgoReputacional(1);
@@ -187,7 +196,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[] { CODIGO_T013_DEFINICION_OFERTA };
+		return new String[] { CODIGO_T013_DEFINICION_OFERTA , CODIGO_T017_DEFINICION_OFERTA };
 	}
 
 	public String[] getKeys() {

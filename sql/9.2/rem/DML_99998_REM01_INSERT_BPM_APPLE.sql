@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Mariam Lliso
---## FECHA_CREACION=20190614
+--## AUTOR=David García
+--## FECHA_CREACION=20190617
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6516
+--## INCIDENCIA_LINK=HREOS-6663
 --## PRODUCTO=NO
 --## 
 --## Finalidad: DML
@@ -13,6 +13,7 @@
 --##        0.1 Sergio Salt - Versión inicial 
 --##	    0.2 Mariam Lliso - HREOS-6619 HREOS-6620 HREOS-6662 - Actualización validaciones T017_InstruccionesReserva, T017_ObtencionContratoReserva, T017_PosicionamientoYFirma, T017_DocsPosVenta
 --##	    0.3 Alejandro Valverde - HREOS-6605 - Actualización validación T017_DefinicionOferta
+--##	    0.4 David Garcia - HREOS-6663 - Actualización validación T017_AnalisisPM
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -774,7 +775,7 @@ begin
   TAP(1).tap_field('TAP_CODIGO') := 'T017_AnalisisPM';
   TAP(1).tap_field('TAP_VIEW') := NULL;
   TAP(1).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(1).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
+  TAP(1).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[valores["T017_AnalisisPM"]["comboResolucion"] != DDResolucionComite.CODIGO_APRUEBA ? valores["T017_AnalisisPM"]["comboResolucion"] == DDResolucionComite.CODIGO_CONTRAOFERTA ? existeAdjuntoUGValidacion("22","E") : null : resolucionComiteT013()]';
   TAP(1).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_AnalisisPM''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? ''''Aprueba'''': valores[''''T017_AnalisisPM''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta''''';
   TAP(1).tap_field('DD_TPO_ID_BPM') := null;
   TAP(1).tap_field('TAP_SUPERVISOR') := 0;

@@ -170,6 +170,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivoMatrizPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivoMatriz;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
@@ -1702,13 +1703,11 @@ public class ActivoAdapter {
 	}
 
 	public List<DtoListadoTramites> getTramitesActivo(Long idActivo, WebDto webDto) {
-
 		// List<ActivoTramite> tramitesActivo = (List<ActivoTramite>)
 		// activoTramiteApi.getTramitesActivo(idActivo, webDto).getResults();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
-		List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtro);
 		List<DtoListadoTramites> listadoTramitesDto = new ArrayList<DtoListadoTramites>();
-
+		List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtro);
 		for (VBusquedaTramitesActivo tramite : tramitesActivo) {
 			DtoListadoTramites dtoTramite = new DtoListadoTramites();
 			try {
@@ -1721,10 +1720,19 @@ public class ActivoAdapter {
 			}
 			listadoTramitesDto.add(dtoTramite);
 		}
-
+		if (activoDao.isActivoMatriz(idActivo)) {
+			List<DtoListadoTramites> listadoTramitesDtoActivoMatriz = new ArrayList<DtoListadoTramites>();
+			for (DtoListadoTramites tramite : listadoTramitesDto ) {
+				Filter fTramite = genericDao.createFilter(FilterType.EQUALS, "idTramite", tramite.getIdTramite());
+				List<VBusquedaTramitesActivoMatriz> tramiteAM = genericDao.getList(VBusquedaTramitesActivoMatriz.class, fTramite);
+				if (tramiteAM.size() == 1) {
+					listadoTramitesDtoActivoMatriz.add(tramite);
+				}
+			}
+			return listadoTramitesDtoActivoMatriz;
+		}
 		return listadoTramitesDto;
 	}
-
 	public List<DtoPropietario> getListPropietarioById(Long id) {
 
 		Activo activo = activoApi.get(id);

@@ -4816,7 +4816,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 	
 	comprobarFormato: function() { // FIXME: cuando se reubique dentro de un slide en el wizard eliminar de aqui.
-		
 		var me = this;
 		value = me.lookupReference('nuevoCompradorNumDoc');
 		if(Ext.isEmpty(me.getViewModel().get('expediente.tipoExpedienteCodigo'))){
@@ -4891,19 +4890,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
-					
-				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-				    value.value = value.value.toLowerCase();
-
-				    if(!expr.test (value.value)){
-				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.incorrecto"));
-				    	return false;
-				    }else{
-				    	return true;
-				    }
-
 				}else{
 					return true;
 				}
@@ -4981,19 +4967,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.incorrecto"));
 							 return false;	
 				         }
-					}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
-						
-					    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-					    value.value = value.value.toLowerCase();
-
-					    if(!expr.test (value.value)){
-					    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.incorrecto"));
-					    	return false;
-					    }else{
-					    	return true;
-					    }
-
 					}else{
 						return true;
 					}
@@ -5076,18 +5049,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	         }else{
 	        	 return 'Error! Número de identificación incorrecto';	
 	         }
-		}else if(me.lookupReference('cbTipoDocumento').value == "04"){
-			
-		    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-		    value = value.toLowerCase();
-
-		    if(!expr.test (value)){
-		    	return 'Error! Número de identificación incorrecto';
-		    }else{
-		    	return true;
-		    }
-
 		}else{
 			return true;
 		}

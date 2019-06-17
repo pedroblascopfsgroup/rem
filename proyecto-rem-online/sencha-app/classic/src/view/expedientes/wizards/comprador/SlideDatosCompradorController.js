@@ -1043,19 +1043,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumento').value == "04"){
-					
-				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-				    valueComprador.value = valueComprador.value.toLowerCase();
-
-				    if(!expr.test (valueComprador.value)){
-				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
-				    	return false;
-				    }else{
-				    	return true;
-				    }
-
 				}else{
 					return true;
 				}
@@ -1130,19 +1117,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocConyuge').value == "04"){
-					
-				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-				    valueConyuge.value = valueConyuge.value.toLowerCase();
-
-				    if(!expr.test (valueConyuge.value)){
-				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
-				    	return false;
-				    }else{
-				    	return true;
-				    }
-
 				}else{
 					return true;
 				}
@@ -1221,19 +1195,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumento').value == "04"){
-					
-				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-				    valueComprador.value = valueComprador.value.toLowerCase();
-
-				    if(!expr.test (valueComprador.value)){
-				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
-				    	return false;
-				    }else{
-				    	return true;
-				    }
-
 				}else{
 					return true;
 				}
@@ -1310,19 +1271,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumentoRte').value == "04"){
-					
-				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-				    valueRte.value = valueRte.value.toLowerCase();
-
-				    if(!expr.test (valueRte.value)){
-				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
-				    	return false;
-				    }else{
-				    	return true;
-				    }
-
 				}else{
 					return true;
 				}

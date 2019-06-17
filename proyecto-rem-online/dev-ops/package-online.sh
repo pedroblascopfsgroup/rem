@@ -25,7 +25,11 @@ function findInputParam() {
 function empaqueta() {
 	echo "Llamando a... ${FUNCNAME[0]} ($1)"
 
-	cp rem-web/target/pfs-${version}.war $WORKING_DIR/pfs.war
+	if [ "$1" == "val03" ]; then
+		cp rem-web/target/pfs-${version}.war $WORKING_DIR/pfs-rec-web.war
+	else
+		cp rem-web/target/pfs-${version}.war $WORKING_DIR/pfs.war
+	fi
 }
 
 function preparaConfigEntorno() {
@@ -64,7 +68,7 @@ createDirectory $WORKING_DIR
 createDirectory $dir_salida n
 rm -rf $OUPUT_FILE
 
-empaqueta
+empaqueta $entorno
 preparaConfigEntorno
 
 echo "Generando empaquetado... $OUPUT_FILE"

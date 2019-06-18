@@ -2,7 +2,7 @@ package es.pfsgroup.plugin.gestorDocumental.dto;
 
 import java.io.Serializable;
 
-public class PersonaInputDto implements Serializable{
+public class PersonaInputDto implements Serializable, GDInputDto{
 
 	/**
 	 * 

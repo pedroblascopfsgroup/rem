@@ -24,6 +24,10 @@ Ext.define('HreRem.model.ActivoCargasTab', {
 	    				}
     				}
     			}
+    		},
+    		{
+				name: 'unidadAlquilable',
+				type: 'boolean'
     		}
     		
     ],

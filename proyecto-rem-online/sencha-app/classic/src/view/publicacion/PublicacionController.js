@@ -105,4 +105,6 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
     		motivosOcultacionAlquiler.setHidden(true);
 	    }	
     }
+	
+	
 });

@@ -1,11 +1,16 @@
 package es.pfsgroup.plugin.gestorDocumental.dto;
 
-public class ActivoOutputDto {
+import java.io.Serializable;
 
+public class ActivoOutputDto implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public static final String ID_ACTIVO_HAYA = "ID_ACTIVO_HAYA";
 	private String resultCode;
 	private String resultDescription;
-	private String idActivoHaya;
-	private String idActivoOrigen;
+	private String numActivoUnidadAlquilable;
 
 	public String getResultCode() {
 		return resultCode;
@@ -22,21 +27,12 @@ public class ActivoOutputDto {
 	public void setResultDescription(String resultDescription) {
 		this.resultDescription = resultDescription;
 	}
-	
-	public String getIdActivoHaya() {
-		return idActivoHaya;
+	public String getNumActivoUnidadAlquilable() {
+		return numActivoUnidadAlquilable;
 	}
-	
-	public void setIdActivoHaya(String idActivoHaya) {
-		this.idActivoHaya = idActivoHaya;
-	}
-	
-	public String getIdActivoOrigen() {
-		return idActivoOrigen;
-	}
-	
-	public void setIdActivoOrigen(String idActivoOrigen) {
-		this.idActivoOrigen = idActivoOrigen;
+
+	public void setNumActivoUnidadAlquilable(String numActivoUnidadAlquilable) {
+		this.numActivoUnidadAlquilable = numActivoUnidadAlquilable;
 	}
 
 }

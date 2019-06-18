@@ -64,6 +64,7 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 		ArrayList<String> vistasAuxiliares = new ArrayList<String>();
 		vistasAuxiliares.add("REM01.VI_STOCK_PIVOT_AGRUP_ACTIVO");
 		vistasAuxiliares.add("REM01.VI_STOCK_ACTIVOS_SUBDIVISON");
+		vistasAuxiliares.add("REM01.VI_PIVOT_AGRUPACIONES_UA");
 		return vistasAuxiliares;
 	}
 

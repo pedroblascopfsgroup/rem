@@ -23,4 +23,5 @@ public interface GestorEntidadApi {
 	List<EXTDDTipoGestor> getListTipoGestorEditables(Long idTipoGestor);
 	List<Usuario> getListUsuariosGestoresExpedientePorTipo(Long idTipoGestor);
 	String getCodigoGestorPorUsuario(Long idUsuario);
+	List<Usuario> getListUsuariosGestoresPorTipoCodigo(String codigoTipoGestor);
 }

@@ -261,7 +261,6 @@ Ext.define('HreRem.controller.ActivosController', {
     },
     
     abrirDetalleActivoById: function(id, titulo, refLinks) {
-
     	var me = this,   	
     	cfg = {}, 
     	tab = null;

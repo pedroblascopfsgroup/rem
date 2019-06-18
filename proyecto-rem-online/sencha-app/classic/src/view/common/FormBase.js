@@ -246,7 +246,6 @@
     },  
     
     isFormValid: function() {
-    	
     	var me = this;    	
     	me.errors.length = 0;
     	me.externalErrors.length=0;

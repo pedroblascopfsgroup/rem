@@ -21,7 +21,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
     initComponent: function () {
         var me = this;
         
-
         var items= [
         	{
 				xtype:'fieldsettable',
@@ -35,11 +34,11 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							fieldLabel: HreRem.i18n('title.patrimonio.perimetroAlquiler'),
 							reference: 'chkPerimetroAlquilerRef',
 							bind: {
-								readOnly: '{enableChkPerimetroAlquiler}',
 								value: '{patrimonio.chkPerimetroAlquiler}'
 							},
 							listeners: {
-								change:'onChangeCheckPerimetroAlquiler'
+								change:'onChangeCheckPerimetroAlquiler',
+								render: 'onRenderCheckPerimetroAlquiler'
 							}
 						},
 						{

@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=ALVARO GARCIA
---## FECHA_CREACION=20190423
+--## AUTOR=RAMON LLINARES
+--## FECHA_CREACION=20190613
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-6199
@@ -40,7 +40,7 @@ BEGIN
 	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
 				  USUARIOMODIFICAR = '''||V_USUARIO||'''
 				, FECHAMODIFICAR = SYSDATE
-				, DD_OPM_VALIDACION_FORMATO = ''nD*,s,s,s,s,s,s,s,s,s,s,s,s,s,s''
+				, DD_OPM_VALIDACION_FORMATO = ''nD*,s,s,s,s,s,s,s,s,s,s,s,s,s''
 				WHERE DD_OPM_CODIGO = ''ACPA''
 				';
 

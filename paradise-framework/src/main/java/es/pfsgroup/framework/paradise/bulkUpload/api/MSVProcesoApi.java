@@ -89,4 +89,6 @@ public interface MSVProcesoApi {
 	 * @return MSVDDOperacionMasiva
 	 */
 	public MSVDDOperacionMasiva getOperacionMasiva(Long idTipoOperacion);
+
+	String getUsername();
 }

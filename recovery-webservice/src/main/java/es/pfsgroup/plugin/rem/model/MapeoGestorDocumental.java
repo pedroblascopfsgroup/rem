@@ -48,6 +48,9 @@ public class MapeoGestorDocumental implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRO_ID")
 	private ActivoPropietario activoPropietario;
+    
+    @Column(name="CLIENTE_WS")
+    private String clienteMaestroActivos;
 
     @Version   
 	private Long version;
@@ -110,6 +113,14 @@ public class MapeoGestorDocumental implements Serializable, Auditable {
 
 	public void setActivoPropietario(ActivoPropietario activoPropietario) {
 		this.activoPropietario = activoPropietario;
+	}
+
+	public String getClienteMaestroActivos() {
+		return clienteMaestroActivos;
+	}
+
+	public void setClienteMaestroActivos(String clienteMaestroActivos) {
+		this.clienteMaestroActivos = clienteMaestroActivos;
 	}
 	
 }

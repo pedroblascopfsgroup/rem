@@ -278,7 +278,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			 idActivoMatriz = activoMatriz.getNumActivo();
 			 numRemActivoMatriz = activoMatriz.getNumActivoRem();
 			if (!Checks.esNulo(activoMatriz.getCartera()) && !Checks.esNulo(activoMatriz.getSubcartera())) {
-				cartera = gdAdapterManager.getClienteByCarteraySubcarterayPropietario(activoMatriz.getCartera(), activoMatriz.getSubcartera(), activoMatriz.getPropietarioPrincipal());
+				cartera = gdAdapterManager.getClienteWSByCarteraySubcarterayPropietario(activoMatriz.getCartera(), activoMatriz.getSubcartera(), activoMatriz.getPropietarioPrincipal());
 				
 				if(!Checks.esNulo(cartera)) {
 					cartera = cartera.toUpperCase();

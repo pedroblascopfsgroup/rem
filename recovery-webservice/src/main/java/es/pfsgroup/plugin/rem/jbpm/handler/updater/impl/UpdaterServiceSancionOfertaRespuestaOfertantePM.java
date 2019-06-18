@@ -72,7 +72,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertantePM implements UpdaterS
 					
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) 
 							&& !Checks.esNulo(valor.getValor())) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_RESOLUCION_CES);
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							
 							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
@@ -84,7 +84,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertantePM implements UpdaterS
 														
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_PM);
+								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTANTE_PM);
 	
 								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));

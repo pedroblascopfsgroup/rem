@@ -830,6 +830,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			VBusquedaDatosCompradorExpediente vDatosComprador = new VBusquedaDatosCompradorExpediente();
 			vDatosComprador.setIdExpedienteComercial(expedienteComercial.getId().toString());
 			vDatosComprador.setId(expedienteComercial.getCompradorPrincipal().getId().toString());
+			vDatosComprador.setNumDocumento(expedienteComercial.getCompradorPrincipal().getDocumento());
 			vDatosComprador.setPorcentajeCompra(nuevoPorcentaje);
 			if (DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
 				vDatosComprador.setNumeroClienteUrsusBh(numeroUrsus);

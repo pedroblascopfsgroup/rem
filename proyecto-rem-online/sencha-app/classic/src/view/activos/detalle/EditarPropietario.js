@@ -13,6 +13,7 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
     modoEdicion: true,
     
     propietario: null,
+    isUnidadAlquilable: null,
     
     listeners: {
     	
@@ -38,12 +39,20 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 	
 	initWindow: function() {
     	var me = this;
-    	
+    	if (me.up().getViewModel().get('activo.unidadAlquilable') != undefined && me.up().getViewModel().get('activo.unidadAlquilable') != null)
+    		isUnidadAlquilable = me.up().getViewModel().get('activo.unidadAlquilable');
+    	else 
+    		isUnidadAlquilable = false;
     	if(me.modoEdicion) {
 			Ext.Array.each(me.down('form').query('field[isReadOnlyEdit]'),
-				function (field, index) { 								
-					field.fireEvent('edit');
-					if(index == 0) field.focus();
+				function (field, index) { 						
+					if  (isUnidadAlquilable){
+						field.setReadOnly(true);
+					}else{
+						field.fireEvent('edit');
+						if(index == 0) field.focus();	
+					}
+					
 				}
 			);
     	}
@@ -57,7 +66,8 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
     	me.setTitle("Datos del propietario");
     	
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Guardar', handler: 'onClickBotonGuardarPropietario'}, { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarPropietario'}];
-    	
+    	if (me.activo.data.unidadAlquilable)
+    		me.buttons[0].hidden = true;
     	me.items = [
 				{
 					xtype: 'formBase', 

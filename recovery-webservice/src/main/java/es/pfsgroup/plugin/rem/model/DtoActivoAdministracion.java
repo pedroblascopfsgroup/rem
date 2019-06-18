@@ -17,6 +17,7 @@ public class DtoActivoAdministracion extends DtoTabActivo {
 	
     private Long numActivo;
     private Boolean ibiExento;
+    private Boolean isUnidadAlquilable;
     
     
 	public Long getNumActivo() {
@@ -30,6 +31,12 @@ public class DtoActivoAdministracion extends DtoTabActivo {
 	}
 	public void setIbiExento(Boolean ibiExento) {
 		this.ibiExento = ibiExento;
+	}
+	public Boolean getIsUnidadAlquilable() {
+		return isUnidadAlquilable;
+	}
+	public void setIsUnidadAlquilable(Boolean isUnidadAlquilable) {
+		this.isUnidadAlquilable = isUnidadAlquilable;
 	}
     
     

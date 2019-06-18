@@ -62,13 +62,14 @@ public class DtoAgrupaciones extends WebDto {
 	private String subtipoActivoCodigo;
 	private Long idNumActivoPrincipal;
 	private String cartera;
+	private Long activoMatriz;
 	private String tipoActivoPrincipalCodigo;
+	private String numAgrupPrinexHPM;
 	private Integer activosGencat;
 	private String codSubcartera;
 	private Boolean cambioEstadoPublicacion;
 	private Boolean cambioEstadoPrecio;
 	private Boolean cambioEstadoActivo; 
-
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -389,12 +390,26 @@ public class DtoAgrupaciones extends WebDto {
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
 	}
+	public Long getActivoMatriz() {
+		return activoMatriz;
+	}
+	public void setActivoMatriz(Long activoMatriz) {
+		this.activoMatriz = activoMatriz;
+	}
+	public String getNumAgrupPrinexHPM() {
+		return numAgrupPrinexHPM;
+	}
+	public void setNumAgrupPrinexHPM(String numAgrupPrinexHPM) {
+		this.numAgrupPrinexHPM = numAgrupPrinexHPM;
+	}
+
 	public String getCodSubcartera() {
 		return codSubcartera;
 	}
 	public void setCodSubcartera(String codSubcartera) {
 		this.codSubcartera = codSubcartera;
 	}
+
 	public Boolean getCambioEstadoPublicacion() {
 		return cambioEstadoPublicacion;
 	}

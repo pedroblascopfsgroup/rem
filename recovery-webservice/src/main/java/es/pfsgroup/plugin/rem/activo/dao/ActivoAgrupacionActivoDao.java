@@ -24,6 +24,8 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	
 	public ActivoAgrupacionActivo getByIdActivoAndIdAgrupacion(long idActivo, long idAgrupacion);
 	
+	public ActivoAgrupacionActivo getAgrupacionPAByIdAgrupacion(long idAgrupacion);
+	
 	public ActivoAgrupacionActivo primerActivoPorActivoAgrupacion(long idAgrupacion);
 
 	public boolean isUniqueRestrictedActive(Activo activo); 
@@ -64,11 +66,28 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	 */
 	public boolean algunActivoDeAgrRestringidaEnAgrLoteComercial(List<Long> activosID);
 
+	/**
+	 * Este método devuelve el Activo Matriz de una agrupacion de tipo PA por medio de un idAgrupacion
+	 * 
+	 * @param idAgrupacion : idAgrupacion.
+	 * @return Activo
+	 */
+	public Activo getActivoMatrizByIdAgrupacion(Long idAgrupacion);
+
 	public List<ActivoAgrupacionActivo> getListActivoAgrupacionVentaByIdActivo(Long idActivo);
 
 	public void deleteTramiteGencat(ComunicacionGencat comunicacionGencat, List<NotificacionGencat> notificacionesGencat, List<ReclamacionGencat> reclamacionesGencat, VisitaGencat visitaGencat);
-
+	
+	/**
+	 * Este método devuelve el Activo Matriz de una agrupacion de tipo PA por medio de un idAgrupacion
+	 * 
+	 * @param idAgrupacion : idAgrupacion.
+	 * @return Activo
+	 */
+	public List<Activo> getListUAsByIdAgrupacion(Long idAgrupacion);
+	
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion);
 
 	List<ActivoAgrupacionActivo> getListActivoAgrupacionActivoByAgrupacionID(Long idAgrupacion);
+
 }

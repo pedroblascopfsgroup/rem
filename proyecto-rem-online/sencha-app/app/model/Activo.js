@@ -179,7 +179,10 @@ Ext.define('HreRem.model.Activo', {
     		}, 
     		{
     			name:'idUvem'
-    		}, 
+    		},
+    		{
+    			name:'idPrinexHPM'
+    		},
     		{
     			name:'tipoActivoCodigo'
     		}, 
@@ -512,6 +515,12 @@ Ext.define('HreRem.model.Activo', {
     			dateFormat: 'c'
 			},
 			{
+				name: 'ofertasVivas'
+			},
+			{
+				name: 'trabajosVivos'	
+			},
+			{
 				name: 'aplicaTramiteAdmision',
 				type: 'boolean'
 			},
@@ -755,6 +764,10 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
+    			name: 'checkHPM',
+    			type: 'boolean'
+    		},
+    		{
     			name: 'afectoAGencat',
     			type: 'boolean'
     		},
@@ -769,10 +782,25 @@ Ext.define('HreRem.model.Activo', {
     			name: 'motivoActivo'
     		},
     		{
+    			name: 'porcentajeParticipacion'
+    		},
+    		{
     			name: 'tipoAlquilerCodigo'
     		},
     		{
     			name: 'tieneCEE',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'unidadAlquilable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'activoMatriz',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'isPANoDadaDeBaja',
     			type: 'boolean'
     		},
     		{

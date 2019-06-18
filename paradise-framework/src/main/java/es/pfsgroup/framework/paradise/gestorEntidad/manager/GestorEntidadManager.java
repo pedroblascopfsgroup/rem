@@ -232,6 +232,9 @@ public class GestorEntidadManager implements GestorEntidadApi {
 		return gestorEntidadDao.getCodigoGestorPorUsuario(idUsuario);
 	}
 	
+	public List<Usuario> getListUsuariosGestoresPorTipoCodigo(String codigoTipoGestor) {
+		return gestorEntidadDao.getListUsuariosGestoresPorTipoCodigo(codigoTipoGestor);
+	}
 	
 
 }

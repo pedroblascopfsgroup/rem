@@ -1,16 +1,17 @@
   --/*
 --##########################################
---## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170201
+--## AUTOR=Juan Angel Sánchez
+--## FECHA_CREACION=20190604
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1463
+--## INCIDENCIA_LINK=HREOS-6597
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Cambio para UA's (el presupuesto depende delactivo Matriz)
 --##########################################
 --*/
 
@@ -115,7 +116,7 @@ BEGIN
 		  WHERE EST.DD_EST_CODIGO IN(''04'',''05'',''06'',''09'',''10'',''13'')	
           GROUP BY ACTTBJ.ACT_ID, TO_CHAR(TBJ.TBJ_FECHA_SOLICITUD,''YYYY'')
         ) ON ACT.ACT_ID = ACT2 AND ANYO2 = EJE.EJE_ANYO
-        WHERE TO_CHAR(TBJ.TBJ_FECHA_SOLICITUD,''YYYY'') = EJE.EJE_ANYO';
+        WHERE NVL(EJE.EJE_ANYO,TO_CHAR(TBJ.TBJ_FECHA_SOLICITUD,''YYYY'')) = TO_CHAR(TBJ.TBJ_FECHA_SOLICITUD,''YYYY'') ';
       	
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_ACT_TBJ_PRESUPUESTO...Creada OK');
   

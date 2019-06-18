@@ -40,6 +40,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 				flex		: 1,
 				bind		: {
 								store: '{storeAdmisionCheckDocumentos}'
+								,disabled: '{activo.unidadAlquilable}'
 				},
 				secFunToEdit: 'EDITAR_CHECKING_DOC_ADMISION',
 				

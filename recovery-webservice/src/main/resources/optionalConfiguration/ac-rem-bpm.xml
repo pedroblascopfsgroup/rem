@@ -18,6 +18,7 @@
 	<bean id="activoComprobarDatosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarDatosActionHandler"/>
 	<bean id="resultadoPBCEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ResultadoPBCEnterActionHandler"/>
 	<bean id="resolucionExpedienteEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ResolucionExpedienteEnterActionHandler"/>
+	<bean id="posicionamientoYFirmaLeaveActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.PosicionamientoYFirmaLeaveActionHandler"/>
 
 	<bean id="avanzaBPM" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAvanzaBPMActionHandler"/>
 
@@ -39,7 +40,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionEstados.xml" p:version="2037"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAprobacionInformeComercial.xml" p:version="255"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="2042"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="2050"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="2059"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComunicacionGENCAT.xml" p:version="-1"/>
 
@@ -572,6 +573,10 @@
             def checkConOpcionCompra = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkConOpcionCompra(tareaExterna);
+			}
+            def checkAmConUasConOfertasVivas = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkAmConUasConOfertasVivas(tareaExterna);
 			}
             def checkDepositoDespublicacionSubido = {
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");

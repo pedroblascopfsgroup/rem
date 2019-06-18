@@ -156,6 +156,9 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                     name: 'codigoCartera'
                 },
                 {
+                	name: 'activoMatriz'
+                },
+                {
                     name: 'estadoActivoCodigo'
                 },
                 {

@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
+import es.pfsgroup.plugin.rem.gestorDocumental.manager.GestorDocumentalAdapterManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -96,6 +97,8 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 @Component
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
 	
+	private static final String ERROR_ACTIVO_NO_PROC_CORREC = "Activo no procesado correctamente, intentelo de nuevo más tarde";
+	
 	@Autowired
 	ProcessAdapter processAdapter;
 	
@@ -128,6 +131,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
+	
+	@Autowired
+	private GestorDocumentalAdapterManager gdAdapterManager;
 	
 	
 	@Override
@@ -271,10 +277,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		if (!Checks.esNulo(activoMatriz)) {
 			 idActivoMatriz = activoMatriz.getNumActivo();
 			 numRemActivoMatriz = activoMatriz.getNumActivoRem();
-			if (!Checks.esNulo(activoMatriz.getCartera())) {
-				if (!Checks.esNulo(activoMatriz.getCartera().getDescripcion())) {
-					 cartera = activoMatriz.getCartera().getDescripcion().toUpperCase();
-				}
+			if (!Checks.esNulo(activoMatriz.getCartera()) && !Checks.esNulo(activoMatriz.getSubcartera())) {
+				cartera = gdAdapterManager.getClienteByCarteraySubcarterayPropietario(activoMatriz.getCartera(), activoMatriz.getSubcartera(), activoMatriz.getPropietarioPrincipal()).toUpperCase();
 			}
 		}
 		
@@ -301,7 +305,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		//Miramos si se ha generado bien en numActivo y persistimos la UA, o en su defecto devolvemos el error
 		if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
-			return activoNoValido(fila);
+			return falloConexionConMaestro(fila);
 		}
 		//genericDao.save(Activo.class, unidadAlquilable);
 		
@@ -914,6 +918,16 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 
 		return resultado;
 
+	}
+	
+	private ResultadoProcesarFila falloConexionConMaestro(int fila) {
+		
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		resultado.setFila(fila);
+		resultado.setErrorDesc(ERROR_ACTIVO_NO_PROC_CORREC);
+		resultado.setCorrecto(false);
+
+		return resultado;
 	}
 	
 	

@@ -606,7 +606,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return idExpediente;	
 	}
 
-	private String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
+	public String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
 		if(Checks.esNulo(subcartera)) {
 			return "";
 		}
@@ -916,49 +916,5 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	@Override
 	public FileItem getFileItemComunicacionGencat(Long id, String nombreDocumento) {
 	return this.getFileItem(id, nombreDocumento);
-	}
-	
-	public String getClienteWSByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
-		if(Checks.esNulo(subcartera)) {
-			return "";
-		}
-
-		MapeoGestorDocumental mgd = new MapeoGestorDocumental();
-		if(Checks.esNulo(actPro)){
-			if(!Checks.esNulo(cartera)) {
-				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
-						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
-				if(!Checks.esNulo(mgd)){
-					if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
-						return "";
-					}
-				}else{
-					return "";
-				}
-			}
-		} else {
-			if(!Checks.esNulo(cartera)) {
-				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
-						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera),
-						genericDao.createFilter(FilterType.EQUALS, "activoPropietario", actPro));
-				if(!Checks.esNulo(mgd)){
-					if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
-						return "";
-					}
-				}else{
-					mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
-							genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
-					if(!Checks.esNulo(mgd)){
-						if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
-							return "";
-						}
-					}else{
-						return "";
-					}
-				}
-			}
-		}
-		
-		return mgd.getClienteMaestroActivos();
 	}
 }

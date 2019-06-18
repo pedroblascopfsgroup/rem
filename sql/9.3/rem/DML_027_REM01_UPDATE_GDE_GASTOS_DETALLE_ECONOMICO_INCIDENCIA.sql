@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Salvador Puertes
---## FECHA_CREACION=20190607
+--## AUTOR=Salvador Puertes
+--## FECHA_CREACION=20190618
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.13
---## INCIDENCIA_LINK= HREOS-6592
+--## INCIDENCIA_LINK=HREOS-6592
 --## PRODUCTO=NO
 --##
 --## Finalidad: Corregir importe total mal insertado en base de datos
@@ -46,12 +46,15 @@ BEGIN
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
 	--Si existe el código lo updateamos
-	IF V_NUM_TABLAS > 0 THEN				
-	  
+	IF V_NUM_TABLAS > 0 THEN
+  
 		  DBMS_OUTPUT.PUT_LINE('	[INFO]  Existe el Gasto 10291064 . Procedemos a updatear sus importes.');
 		  
-		  V_MSQL :=    'UPDATE '||V_ESQUEMA||'.GDE_GASTOS_DETALLE_ECONOMICO SET GDE_IMPORTE_TOTAL= 
-						(GDE_PRINCIPAL_SUJETO+GDE_PRINCIPAL_NO_SUJETO+GDE_RECARGO+GDE_INTERES_DEMORA+GDE_COSTAS+GDE_OTROS_INCREMENTOS+GDE_PROV_SUPLIDOS)                                            
+		  V_MSQL :=    'UPDATE '||V_ESQUEMA||'.GDE_GASTOS_DETALLE_ECONOMICO SET 
+						GDE_IMPORTE_TOTAL= 
+							(GDE_PRINCIPAL_SUJETO+GDE_PRINCIPAL_NO_SUJETO+GDE_RECARGO+GDE_INTERES_DEMORA+GDE_COSTAS+GDE_OTROS_INCREMENTOS+GDE_PROV_SUPLIDOS),
+							USUARIOMODIFICAR = ''HREOS-6592'',
+							FECHAMODIFICAR = SYSDATE                  
 						WHERE 
 							GPV_ID IN (
 								SELECT GPV.GPV_ID FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 

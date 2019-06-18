@@ -725,12 +725,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if(CONST.CARTERA['SAREB'] == codigoCartera && CONST.SUBCARTERA['SAREBINMOBILIARIO'] == codigoSubcartera) {
 			me.ocultarCampo(me.down('[name=huecoTP]'));
 		}else{
-			me.ocultarCampo(me.down('[name=comboTarifaPlana]'));
+			if(me.down('[name=comboTarifaPlana]') != null){
+				me.ocultarCampo(me.down('[name=comboTarifaPlana]'));
+			}
 		}
 		
-        me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
-        me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-        me.deshabilitarCampo(me.down('[name=comboTarifaPlana]'));
+		if(me.down('[name=comboAseguradoras]') != null){
+			me.deshabilitarCampo(me.down('[name=comboAseguradoras]'));
+		}
+		if(me.down('[name=motivoDenegacion]')){
+			me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+		}
+		if(me.down('[name=comboTarifaPlana]')){
+			me.deshabilitarCampo(me.down('[name=comboTarifaPlana]'));
+		}
         if (esTarifaPlana && CONST.CARTERA['SAREB'] != codigoCartera) {
             me.bloquearCampo(me.down('[name=comboTarifa]'));
         }

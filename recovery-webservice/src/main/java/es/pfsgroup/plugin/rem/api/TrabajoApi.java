@@ -852,5 +852,8 @@ public interface TrabajoApi {
 	boolean checkJaipur(Trabajo trabajo);
 
 	boolean checkGaleon(Trabajo trabajo);
+	
+	@BusinessOperationDefinition("trabajoManager.getListActivoMatrizPresupuesto")
+	Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto);
 
 }

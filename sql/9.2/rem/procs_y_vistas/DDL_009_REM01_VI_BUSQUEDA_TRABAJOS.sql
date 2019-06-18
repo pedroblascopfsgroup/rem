@@ -1,16 +1,19 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190508
+--## AUTOR=Juan Angel Sánchez
+--## FECHA_CREACION=20190529
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6379
+--## INCIDENCIA_LINK=HREOS-6469
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Cambio obtener id-activo de la unidad alquilable
+--##		0.3 Añadimos el numero de activo UA
+--##        0.4 Deshacemos cambios de 0.2 y 0.3
 --##########################################
 --*/
 
@@ -88,10 +91,11 @@ BEGIN
           	tbj.tbj_fecha_cierre_economico, 
 			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, DECODE(tbj.TBJ_IMPORTE_TOTAL, NULL, 1, 0, 1, 0), 1) AS facturado, 
 			ttr.dd_ttr_filtrar
+			
 
-     FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj JOIN ' || V_ESQUEMA || '.act_tbj atj ON atj.tbj_id = tbj.tbj_id
+     	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj JOIN ' || V_ESQUEMA || '.act_tbj atj ON atj.tbj_id = tbj.tbj_id
           LEFT JOIN ' || V_ESQUEMA || '.act_activo act ON act.act_id = atj.act_id and act.borrado = 0
-		LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
+		  LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
           LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr ON agr.agr_id = tbj.agr_id and agr.borrado = 0
           LEFT JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac ON gac.act_id = act.act_id
           LEFT JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee ON gac.gee_id = gee.gee_id

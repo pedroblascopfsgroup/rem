@@ -4414,19 +4414,6 @@ comprobarFormatoModificar: function() {
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumento').value == "04"){
-					
-				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-				    valueComprador.value = valueComprador.value.toLowerCase();
-
-				    if(!expr.test (valueComprador.value)){
-				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
-				    	validaciones = validaciones + 1;
-				    }else{
-				    	return true;
-				    }
-
 				}else{
 					validaciones = validaciones + 1;
 				}
@@ -4598,19 +4585,6 @@ comprobarFormatoModificar: function() {
 			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
 						 return false;	
 			         }
-				}else if(me.lookupReference('tipoDocumento').value == "04"){
-					
-				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-				    valueComprador.value = valueComprador.value.toLowerCase();
-
-				    if(!expr.test (valueComprador.value)){
-				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
-				    	return false;
-				    }else{
-				    	validaciones = validaciones + 1;
-				    }
-
 				}else{
 					return true;
 				}

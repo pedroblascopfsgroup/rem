@@ -50,6 +50,8 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFactory;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -61,6 +63,8 @@ import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
@@ -83,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -143,7 +148,13 @@ public class AgendaAdapter {
 	private ActivoApi activoApi;
 	
 	@Autowired
+	private ActivoDao activoDao;
+	
+	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private ActivoPatrimonioDao patrimonioDao;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
 		DtoTarea dto = new DtoTarea();
@@ -661,7 +672,7 @@ public class AgendaAdapter {
 	}
 	
 
-	@Transactional
+	@Transactional(readOnly = false)
 	public Boolean anularTramiteAlquiler(Long idTramite, String motivo) {
 		
 		if (idTramite != null) {
@@ -678,11 +689,12 @@ public class AgendaAdapter {
 			DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
 			DDMotivoAnulacionExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
 			DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER));
+			ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
+			ActivoPatrimonio activoPatrimonio = patrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
+			DDTipoEstadoAlquiler estadoAlquiler= genericDao.get(DDTipoEstadoAlquiler.class, filtro);
 			
-			activo.setSituacionComercial(situacionComercial);
-			genericDao.save(Activo.class, activo);
-			
-			if ((anulado != null) && (tramite.getTrabajo() != null)) {
+			if (!Checks.esNulo(anulado) && !Checks.esNulo(tramite.getTrabajo())) {
 				Trabajo trabajo = tramite.getTrabajo();
 				trabajo.setEstado(anulado);
 				genericDao.save(Trabajo.class, trabajo);
@@ -693,15 +705,34 @@ public class AgendaAdapter {
 					eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
 					eco.setFechaAnulacion(new Date());
 					eco.setMotivoAnulacion(motivoRechazoAlquiler);
+					if (!Checks.esNulo(eco.getFechaInicioAlquiler())) {
+						eco.setFechaFinAlquiler(new Date());
+					}
 					genericDao.update(ExpedienteComercial.class, eco);
-					
-	                ddEstadoOferta =  genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA));     
+					    
 	                if(!Checks.esNulo(eco.getOferta())) {
 	                    Oferta oferta = eco.getOferta();
 	                    ddEstadoOferta =  genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA));
 	                    oferta.setEstadoOferta(ddEstadoOferta);
 	                    genericDao.update(Oferta.class, oferta);
 	                }
+	    			
+	    			activo.setSituacionComercial(situacionComercial);
+	    			if (!Checks.esNulo(activoSituacionPosesoria)) {
+	    				activoSituacionPosesoria.setOcupado(0);
+	    				activoSituacionPosesoria.setConTitulo(null);
+	    				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
+	    				activo.setSituacionPosesoria(activoSituacionPosesoria);
+	    			}
+	    			if (!Checks.esNulo(activoPatrimonio)) {
+	    				activoPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
+	    				activoPatrimonio.setTipoInquilino(null);
+	    				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
+	    			}
+	    			genericDao.save(Activo.class, activo);
+	    			if (activoDao.isUnidadAlquilable(activo.getId())) {
+	    				activoApi.cambiarSituacionComercialActivoMatriz(activo.getId());
+	    			}
 	                
 					if(!Checks.esNulo(activoOfertas) && !Checks.estaVacio(activoOfertas)) {
 						ActivoOferta activoOferta;

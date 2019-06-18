@@ -106,13 +106,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 									{
 										xtype: 'comboboxfieldbase',
 	    					        	fieldLabel:  HreRem.i18n('header.oferta.tipoOferta'),
-	    					        	itemId: 'comboTipoOferta',
-	    					        	name: 'comboTipoOferta',
+	    					        	itemId: 'tipoOferta',
+	    					        	name: 'tipoOferta',
 	    					        	flex:	1,
 	    					        	allowBlank: false,
 	    					        	bind: {
-	    				            		store: '{comboTipoOferta}',
+	    				            		store: '{getTiposOfertasUAs}',
 	    				            		value: '{oferta.tipoOferta}'
+	    				            	
 	    				            	},
 	    				            	displayField: 'descripcion',
 	    	    						valueField: 'codigo',

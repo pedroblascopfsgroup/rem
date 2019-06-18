@@ -56,7 +56,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     },
 
 	     esSituacionJudicial: function(get){
-	     	return Ext.isEmpty(get('activo.tipoTituloCodigo')) ? false : get('activo.tipoTituloCodigo') === CONST.TIPO_TITULO_ACTIVO['JUDICIAL'];
+	    	 if(get('activo.unidadAlquilable')){
+	    		 return true;
+	    	 }
+	    	 else{
+	    		 return Ext.isEmpty(get('activo.tipoTituloCodigo')) ? false : get('activo.tipoTituloCodigo') === CONST.TIPO_TITULO_ACTIVO['JUDICIAL'];
+	    	 }
 	     },
 
 	     esOcupacionIlegal: function(get) {
@@ -486,9 +491,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		 enableCheckPerimetroAlquiler: function(get){
 		 	var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
-
+		 	
 		 	if(comboEstadoAlquiler != null){
-		 		if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
+		 		if((comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"])){
 			 		return true;
 		 		}
 		 	}
@@ -604,8 +609,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 			var isSareb = get('activo.isCarteraSareb');
 	    	var isCerberus = get('activo.isCarteraCerberus');
+	    	var unidadAlquilable = get('activo.unidadAlquilable');
 
-			if(isSareb || isCerberus){
+			if(isSareb || isCerberus || unidadAlquilable){
 				return true;
 			}
 
@@ -643,8 +649,84 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 return true;
 			 }
 			 return false;
-		 }
-	},
+		 },
+		 getTiposOfertasUAs: function (get) {
+			var unidadAlquilable = get('activo.unidadAlquilable');
+		 	tiposDeOferta = new Ext.data.Store({
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposOfertas'}
+				}
+			});
+            	tiposDeOferta.filter([{
+		    	filterFn: function(rec){
+			    	if (unidadAlquilable) {
+			    		if (rec.getData().codigo == '02') return true; 
+			    		else return false;
+			    	}else {
+			    		return true
+			    	}
+		    	}
+		}]);
+				
+				return tiposDeOferta;
+		},
+		
+		 enableDestinoComercial: function(get) {
+			 var me = this;
+			 if(me.get('activo.activoMatriz') == "true") { //Comprobar si es un AM. 
+				 //Comprobar si la PA está dada de baja.
+				 if(me.get('activo.agrupacionDadaDeBaja') == "true") {
+					   	return false; //Se puede editar.
+					   } else {
+					   	return true; //No se puede editar.
+					   }
+			 }
+			 
+			if(get('esUA') == true) {
+				return true;
+			} else {
+				return false;
+			}
+		 },
+		 
+		 esAM: function(get) {
+			var me = this;
+			var esAM = false;
+			
+			if(me.get('activo.activoMatriz')) {
+				esAM = true;
+			}
+			
+			return esAM;
+		 },
+				
+		esUA: function(){
+			var me = this; 
+			var esUA = false;
+			var vendido = false;
+			if(me.get('activo.unidadAlquilable') != undefined)
+				esUA = me.get('activo.unidadAlquilable');
+			if(me.get('activo.isVendidoOEntramite') != undefined)
+				vendido = me.get('activo.isVendidoOEntramite');
+			return (vendido === true || esUA === true);
+		},
+		
+		editableTipoActivo: function(get){
+			//No se podrán editar las coordenadas de latitud y longitud si se trata de una UA
+			var me = this;
+			var unidadAlquilable = get('activo.unidadAlquilable');
+			var editable = get('editing');
+			
+			if((unidadAlquilable != undefined || unidadAlquilable != null))
+				return (!editable || unidadAlquilable);
+			else
+				return !editable;
+		}
+		
+	 },
 	
     stores: {
     		
@@ -666,7 +748,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
     		},
     		
-    		    		
+    		comboTipoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+				}
+    		},    		    		
     		comboInferiorMunicipio: {
 					model: 'HreRem.model.ComboBase',
 					proxy: {
@@ -988,6 +1077,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   	    }
 			    }
     		},
+    		storeTituloOrigenActivo: {								        		
+    			model: 'HreRem.model.ComboBase',   
+      		     proxy: {
+        		        type: 'uxproxy',
+        		        remoteUrl: 'activo/getOrigenActivo',
+        		        extraParams: {id: '{activo.id}'}
+    	    	},
+    	    	autoLoad: true
+			},
 
     		storeGestores: {
     			pageSize: $AC.getDefaultPageSize(),
@@ -1492,16 +1590,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			autoLoad: true
 
 	    },
-
-	    comboTipoOferta: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposOfertas'}
-			}   	
-	    },
-
 	    comboTipoRechazoOferta: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

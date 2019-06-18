@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
@@ -1226,6 +1227,8 @@ public interface ExpedienteComercialApi {
 	boolean checkInquilinos(TareaExterna tareaExterna);
 
 	FileItem getAdvisoryNote();
+
+	boolean checkAmConUasConOfertasVivas(TareaExterna tareaExterna);
 
 	boolean hayDiscrepanciasClientesURSUS(Long idExpediente);
 	

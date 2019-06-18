@@ -47,6 +47,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -114,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -180,6 +182,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private ProvisionGastosDao provisionGastosDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	@Override
 	public GastoProveedor findOne(Long id) {
@@ -1169,10 +1174,25 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	public List<VBusquedaGastoActivo> getListActivosGastos(Long idGasto) {
 
-		List<VBusquedaGastoActivo> gastosActivos = new ArrayList<VBusquedaGastoActivo>();
+		List<VBusquedaGastoActivo> gastosActivos;
+		List<GastoProveedorTrabajo> gastosTrabajosActivos;
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto);
 		gastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtro);
+		Filter filtroGastosTrabajos = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+		gastosTrabajosActivos = genericDao.getList(GastoProveedorTrabajo.class, filtroGastosTrabajos);
+		for (VBusquedaGastoActivo vBusquedaGastoActivo : gastosActivos) {
+			for (GastoProveedorTrabajo gastoProveedorTrabajo : gastosTrabajosActivos) {
+				Activo activo = gastoProveedorTrabajo.getTrabajo().getActivo();
+				if (!Checks.esNulo(activo) && activoDao.isUnidadAlquilable(activo.getId()) && activoDao.isActivoMatriz(vBusquedaGastoActivo.getIdActivo())) {
+					Long idAM = activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId());
+					if (vBusquedaGastoActivo.getIdActivo().equals(idAM)) {
+						vBusquedaGastoActivo.setIdActivo(activo.getId());
+						vBusquedaGastoActivo.setNumActivo(activo.getNumActivo());
+					}
+				}
+			}
+		}
 
 		return gastosActivos;
 	}

@@ -16,15 +16,20 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterService {
@@ -43,6 +48,12 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     
     @Autowired
     private ActivoAdapter activoAdapter;
+    
+    @Autowired
+    private ActivoApi activoApi;
+    
+    @Autowired
+    private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresFirma.class);
     
@@ -57,12 +68,32 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
 		Activo activo =tramite.getActivo();
+		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
+		for(ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionesActivo){
+			if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())){
+				if((DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER).equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())){
+					Long idAgrupacion = activoAgrupacionActivo.getAgrupacion().getId();
+					Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(idAgrupacion);
+					DDSituacionComercial alquiladoParcialmente = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE));
+					activoMatriz.setSituacionComercial(alquiladoParcialmente);
+					activoDao.saveOrUpdate(activoMatriz);
+				}
+			}
+		}
 		DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_ALQUILADO);
 		DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
-		activo.setSituacionComercial(situacionComercial);
-		activo.getSituacionPosesoria().setOcupado(1);
-		activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
-		activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
+		
+		if (!Checks.esNulo(situacionComercial)) {
+			activo.setSituacionComercial(situacionComercial);
+		}
+		
+		if (!Checks.esNulo(activo.getSituacionPosesoria())) {
+			activo.getSituacionPosesoria().setOcupado(1);
+			if(!Checks.esNulo(tipoTituloActivoTPA)) {
+				activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
+			}
+			activo.getSituacionPosesoria().setFechaUltCambioTit(new Date());
+		}
 		
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		
@@ -78,7 +109,20 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		}
 		activoDao.saveOrUpdate(activo);
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
+		/////////////////////////////////////////////////////////////////////////////
+		if(activoDao.isActivoMatriz(activo.getId())){
+			ActivoAgrupacion activoAgrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			List<ActivoAgrupacionActivo> listaActivosAgrupacion = activoAgrupacion.getActivos();
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosAgrupacion) {	
+				activoAdapter.actualizarEstadoPublicacionActivo(activoAgrupacionActivo.getActivo().getId());
+			}
+		}
+		/////////////////////////////////////////////////////////////////////////////
+		
+		
 		expedienteComercialApi.update(expedienteComercial);
+		
+		
 	}
 
 	public String[] getCodigoTarea() {

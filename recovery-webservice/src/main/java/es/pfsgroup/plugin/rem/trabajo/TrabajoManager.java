@@ -1174,6 +1174,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (trabajo.getId() == null) {
 			trabajo = genericDao.save(Trabajo.class, trabajo);
 		}
+		
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			ActivoAgrupacion actagr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			Activo activoMatriz =new Activo();
+			activoMatriz = activoApi.get(activoDao.getIdActivoMatriz(actagr.getId()));
+			trabajo.setActivo(activoMatriz);
+			trabajo = genericDao.save(Trabajo.class, trabajo);
+		}
+		
 		ActivoTrabajo activoTrabajo = new ActivoTrabajo();
 		activoTrabajo.setActivo(activo);
 		activoTrabajo.setTrabajo(trabajo);
@@ -2222,6 +2231,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
    		
 		//flashDao.getList(VBusquedaActivosTrabajoParticipa.class,filtrosArray);
 		return trabajoDao.getListActivosTrabajo(dto);
+	}
+	
+	@Override
+	public Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto) {
+
+		return trabajoDao.getActivoMatrizPresupuesto(dto);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -4106,7 +4121,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	public Boolean activoEnTramite(Long idActivo) {
-		Activo activo = activoApi.get(idActivo);
+		Activo activo;
+		if(activoDao.isUnidadAlquilable(idActivo)) {
+			ActivoAgrupacion actagr = activoDao.getAgrupacionPAByIdActivo(idActivo);
+			activo = activoApi.get(activoDao.getIdActivoMatriz(actagr.getId()));
+			
+		}else {
+			activo = activoApi.get(idActivo);
+		}
 		return activo.getEnTramite() == 1;
 	}
 

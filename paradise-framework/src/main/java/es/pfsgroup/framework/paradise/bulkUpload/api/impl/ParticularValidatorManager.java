@@ -1134,6 +1134,34 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')");
 		return !"0".equals(resultado);
 	}
+	@Override
+	public Boolean existeActivoConOfertaVivaEstadoExpediente(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL( "SELECT COUNT(*) 	"
+						+	"		        FROM ACT_ACTIVO ACT 	"
+						+	"			  	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID 	"
+						+	"			  	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID 	" 
+						+	"			  	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.DD_EOF_CODIGO = '01' 	"
+						+	"		        JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON OFR.OFR_ID = ECO.OFR_ID 	"
+						+	"		        JOIN DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID AND EEC.DD_EEC_CODIGO NOT IN ('02','08','03') 	"
+						+	"		        WHERE ACT.ACT_NUM_ACTIVO = "+numActivo);
+		
+        		return !"0".equals(resultado);
+		
+		/*String resultado = rawDao.getExecuteSQL( " SELECT count(1)      " 
+				+			"				 FROM ACT_AGA_AGRUPACION_ACTIVO aga      " 
+				+			"				 INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID      " 
+				+			"				 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID      " 
+				+			"				 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID      " 
+				+			"				 INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID      " 
+				+			"				 WHERE actOfr.ACT_ID =   (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO ="	+numActivo+ ")"
+				+			"                AND eco.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN ('02','03','08', '28')) " 
+				+			"				 AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')");
+				
+		return !"0".equals(resultado);*/
+	}
 	
 	@Override
 	public Boolean existeActivoConExpedienteComercialVivo(String numActivo) {
@@ -1520,9 +1548,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		 FROM ACT_AGR_AGRUPACION WHERE"
-				+ "		 	AGR_NUM_AGRUP_REM ="+numAgrupacion+" "
-				+ "		 	AND BORRADO = 0");
+				+ "		 FROM ACT_AGR_AGRUPACION "
+				+ "		 WHERE AGR_NUM_AGRUP_REM =" + numAgrupacion
+				+ "      AND BORRADO = 0");
+				//+ "      AND DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeAgrupacionPA(String numAgrupacion){
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_AGR_AGRUPACION "
+				+ "		 WHERE AGR_NUM_AGRUP_REM =" + numAgrupacion
+				+ "      AND DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
 		return !"0".equals(resultado);
 	}
 	
@@ -2819,6 +2859,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean esAgrupacionVigente(String numAgrupacion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_AGR_AGRUPACION WHERE "
+				+ "		 	AGR_NUM_AGRUP_REM ="+numAgrupacion+" "
+				+ "		 	AND BORRADO = 0 "
+				+ "			AND AGR_FECHA_BAJA IS NULL");
+		return !"0".equals(resultado);
+
+	}
+	@Override
 	public Boolean existeCodImpuesto(String idImpuesto){
 		if(Checks.esNulo(idImpuesto) || !StringUtils.isNumeric(idImpuesto))
 			return false;
@@ -2830,6 +2880,145 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean tieneActivoMatriz(String numAgrupacion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_AGR_AGRUPACION AGR "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
+				+ "WHERE AGR_NUM_AGRUP_REM ="+numAgrupacion+" "
+				+ "AND AGR.BORRADO = 0 "
+				+ "AND AGA.AGA_PRINCIPAL = 1"
+				+ "AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoMatriz(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_AGR_AGRUPACION AGR "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID "
+				+ "WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "AND AGR.BORRADO = 0 "
+				+ "AND AGR.AGR_FECHA_BAJA IS NULL "
+				+ "AND AGA.AGA_PRINCIPAL = 1"
+				+ "AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isUA(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_AGR_AGRUPACION AGR "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID "
+				+ "WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "AND AGR.BORRADO = 0"
+				+ "AND AGR.AGR_FECHA_BAJA IS NULL "
+				+ "AND AGA.AGA_PRINCIPAL = 0"
+				+ "AND AGR.DD_TAG_ID = (SELECT DD_TAG_ID FROM DD_TAG_TIPO_AGRUPACION WHERE DD_TAG_CODIGO = '16')");
+		return !"0".equals(resultado);
+	}
+	
+	
+	@Override
+	public String getGestorComercialAlquilerByAgrupacion(String numAgrupacion){
+		String username = rawDao.getExecuteSQL("SELECT USU.USU_USERNAME "
+				+ "FROM GAC_GESTOR_ADD_ACTIVO GAC "
+				+ "JOIN GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID "
+				+ "JOIN REMMASTER.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID "
+				+ "JOIN REMMASTER.USU_USUARIOS USU ON USU.USU_ID = GEE.USU_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = GAC.ACT_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = GAC.ACT_ID "
+				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID "
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ "AND AGA.AGA_PRINCIPAL = 1 "
+				+ "AND TGE.DD_TGE_CODIGO = 'GESTCOMALQ' "
+				+ "AND ROWNUM <= 1 ");
+		return username;
+	}
+	
+	@Override
+	public String getSupervisorComercialAlquilerByAgrupacion(String numAgrupacion){
+		String username = rawDao.getExecuteSQL("SELECT USU.USU_USERNAME "
+				+ "FROM GAC_GESTOR_ADD_ACTIVO GAC "
+				+ "JOIN GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID "
+				+ "JOIN REMMASTER.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID "
+				+ "JOIN REMMASTER.USU_USUARIOS USU ON USU.USU_ID = GEE.USU_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = GAC.ACT_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = GAC.ACT_ID "
+				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID "
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ "AND AGA.AGA_PRINCIPAL = 1 "
+				+ "AND TGE.DD_TGE_CODIGO = 'SUPCOMALQ' "
+				+ "AND ROWNUM <= 1");
+		return username;
+	}
+	
+	@Override
+	public String getSuperficieConstruidaActivoMatrizByAgrupacion(String numAgrupacion){
+		String superficie =rawDao.getExecuteSQL("SELECT BDR.BIE_DREG_SUPERFICIE_CONSTRUIDA "
+				+ "FROM BIE_DATOS_REGISTRALES BDR "
+				+ "JOIN ACT_ACTIVO ACT ON BDR.BIE_ID = ACT.BIE_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID "
+				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID  "
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ "AND AGA.AGA_PRINCIPAL = 1");
+		
+		return superficie;
+	}
+	
+	@Override
+	public String getSuperficieConstruidaPromocionAlquilerByAgrupacion(String numAgrupacion){
+		String superficie =rawDao.getExecuteSQL("SELECT SUM(BDR.BIE_DREG_SUPERFICIE_CONSTRUIDA) "
+				+ "FROM BIE_DATOS_REGISTRALES BDR "
+				+ "JOIN ACT_ACTIVO ACT ON BDR.BIE_ID = ACT.BIE_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID "
+				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID  "
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ "AND AGA.AGA_PRINCIPAL <> 1");
+		
+		return superficie;
+	}
+	
+	@Override
+	public String getSuperficieUtilActivoMatrizByAgrupacion(String numAgrupacion){
+		String superficie =rawDao.getExecuteSQL("SELECT REG.REG_SUPERFICIE_UTIL "
+				+ "FROM ACT_REG_INFO_REGISTRAL REG "
+				+ "JOIN ACT_ACTIVO ACT ON REG.ACT_ID = ACT.ACT_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID "
+				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID  "
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ "AND AGA.AGA_PRINCIPAL = 1");
+		
+		return superficie;
+	}
+	
+	@Override
+	public String getSuperficieUtilPromocionAlquilerByAgrupacion(String numAgrupacion){
+		String superficie =rawDao.getExecuteSQL("SELECT SUM(REG.REG_SUPERFICIE_UTIL) "
+				+ "FROM ACT_REG_INFO_REGISTRAL REG "
+				+ "JOIN ACT_ACTIVO ACT ON REG.ACT_ID = ACT.ACT_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID "
+				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID  "
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ "AND AGA.AGA_PRINCIPAL <> 1");
+		
+		return superficie;
+	}
+	
+	@Override
+	public String getProcentajeTotalActualPromocionAlquiler(String numAgrupacion){
+		String porcentaje =rawDao.getExecuteSQL("SELECT SUM(ACT_AGA_PARTICIPACION_UA) "
+				+ "FROM ACT_AGA_AGRUPACION_ACTIVO AGA "
+				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID "
+				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ "AND AGA.AGA_PRINCIPAL <> 1");
+		
+		return porcentaje;
+	}
+
 	@Override
 	public Boolean existePeriodicidad(String codPeriodicidad) {
 		if(Checks.esNulo(codPeriodicidad))

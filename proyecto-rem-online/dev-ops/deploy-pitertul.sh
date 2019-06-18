@@ -31,19 +31,36 @@ function header() {
 }
 
 function asignar_grants() {
-	echo "Llamando a... ${FUNCNAME[0]}"
-	echo "begin
-	systempfs.refresh_grants_rem;
-	end;
-	/
-	exit" > grants.sql
-	header "Asignando GRANTS [$ENTORNO - $DB_PRODUCTO]..."
- 	sqlplus SYSTEMPFS/$PW_SYSTEMPFS@${DB_PRODUCTO} @grants.sql
-	header "GRANTS asignados en [$ENTORNO] !!"
+
+	if [ "$ENTORNO" == "val03" ]; then 
+		source ~/.bash_profile
+		
+		echo "Llamando a... ${FUNCNAME[0]}"
+		echo "begin
+		systempfs.refresh_grants_rem;
+		end;
+		/
+		exit" > grants.sql
+		header "Asignando GRANTS [$ENTORNO - $DB_PRODUCTO]..."
+		source ~/PITERTUL-config.sh
+ 		sqlplus SYSTEMPFS/$PW_SYSTEMPFS @grants.sql
+		header "GRANTS asignados en [$ENTORNO] !!"
+	else
+		echo "Llamando a... ${FUNCNAME[0]}"
+		echo "begin
+		systempfs.refresh_grants_rem;
+		end;
+		/
+		exit" > grants.sql
+		header "Asignando GRANTS [$ENTORNO - $DB_PRODUCTO]..."
+ 		sqlplus SYSTEMPFS/$PW_SYSTEMPFS@${DB_PRODUCTO} @grants.sql
+		header "GRANTS asignados en [$ENTORNO] !!"
+	fi
 }
 
 function deployScripts() {
 	TIPO_SCRIPT=$1
+
 	echo "Llamando a... ${FUNCNAME[0]} (${RUN_SCRIPT})"
 
 	if [ "$PW_MASTER" == "" ] || [ "$PW_ENTITY01" == "" ]; then
@@ -52,13 +69,29 @@ function deployScripts() {
 		exit 1
 	fi
 
-	header "Desplegando entorno [$ENTORNO - $DB_PRODUCTO] ..."
-	sed -e "s/| tee output.log//g" -i ${TIPO_SCRIPT}-scripts.sh
-	./${TIPO_SCRIPT}-scripts.sh ${PW_MASTER}@${DB_PRODUCTO} \
+	if [ "$ENTORNO" == "val03" ]; then
+		source ~/.bash_profile
+
+		header "Desplegando entorno [$ENTORNO - $DB_PRODUCTO] ..."
+		sed -e "s/| tee output.log//g" -i ${TIPO_SCRIPT}-scripts.sh
+
+		~/PITERTUL-run.sh ${TIPO_SCRIPT}-scripts.sh
+
+		resultado=$?
+
+		if [ $resultado -ne 0 ]; then exit $resultado; fi
+		header "Entorno [$ENTORNO - $DB_PRODUCTO] desplegado!"
+
+	else
+
+		header "Desplegando entorno [$ENTORNO - $DB_PRODUCTO] ..."
+		sed -e "s/| tee output.log//g" -i ${TIPO_SCRIPT}-scripts.sh
+		./${TIPO_SCRIPT}-scripts.sh ${PW_MASTER}@${DB_PRODUCTO} \
 					${PW_ENTITY01}@${DB_PRODUCTO}
-	resultado=$?
-	if [ $resultado -ne 0 ]; then exit $resultado; fi
-	header "Entorno [$ENTORNO - $DB_PRODUCTO] desplegado!"
+		resultado=$?
+		if [ $resultado -ne 0 ]; then exit $resultado; fi
+		header "Entorno [$ENTORNO - $DB_PRODUCTO] desplegado!"
+	fi
 }
 
 if [ -f ~/.bash_profile ]; then

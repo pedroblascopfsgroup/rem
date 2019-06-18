@@ -216,7 +216,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		Filter tipoTituloFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivo.UNIDAD_ALQUILABLE);
 		DDTipoTituloActivo tituloUnidadAlquilable = genericDao.get(DDTipoTituloActivo.class, tipoTituloFilter);
-		unidadAlquilable.setNumActivo(Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO) + 100 FROM ACT_ACTIVO")));
 		unidadAlquilable.setAuditoria(auditoria);
 		unidadAlquilable.setBien(bien); 
 		unidadAlquilable.setNumActivoRem(activoApi.getNextNumActivoRem());
@@ -291,6 +290,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 					
 				}
 				unidadAlquilable.setNumActivo(numActivoUnidadAlquilable);
+				if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
+					return activoNoValido(fila);
+				}
 				genericDao.save(Activo.class, unidadAlquilable);
 			} 
 

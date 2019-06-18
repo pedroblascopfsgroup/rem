@@ -294,13 +294,17 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 					
 				}
 				unidadAlquilable.setNumActivo(numActivoUnidadAlquilable);
-				if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
-					return activoNoValido(fila);
-				}
-				genericDao.save(Activo.class, unidadAlquilable);
+				
 			} 
 
 		}
+		
+		//Miramos si se ha generado bien en numActivo y persistimos la UA, o en su defecto devolvemos el error
+		if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
+			return activoNoValido(fila);
+		}
+		//genericDao.save(Activo.class, unidadAlquilable);
+		
 		 //-- Lista propietarios 
 		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){    
 			List<ActivoPropietarioActivo> propietariosUA = new ArrayList<ActivoPropietarioActivo>();

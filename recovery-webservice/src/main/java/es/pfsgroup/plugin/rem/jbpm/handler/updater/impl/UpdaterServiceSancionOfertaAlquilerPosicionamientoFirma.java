@@ -16,10 +16,14 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -40,6 +44,13 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired
+	private ActivoDao activoDao;
+    
+    @Autowired
+	private ActivoAdapter activoAdapter;
+
         
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma.class);
     
@@ -136,6 +147,7 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 								ofertaApi.rechazarOferta(oferta);
 							}
 						}
+						
 					}
 				} else {
 					// Actualizacion del estado de expediente comercial: ANULADO

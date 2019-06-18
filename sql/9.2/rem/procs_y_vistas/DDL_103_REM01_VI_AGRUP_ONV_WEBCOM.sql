@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=RLB
---## FECHA_CREACION=20181121
+--## AUTOR=Adrián Molina Garrido
+--## FECHA_CREACION=20190411
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1551
+--## INCIDENCIA_LINK=HREOS-6082
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial RLB
+--##        0.2 Versión Adrián Molina Garrido
 --##########################################
 --*/
 
@@ -38,7 +39,7 @@ DECLARE
 
     CUENTA NUMBER;
     
-BEGIN
+BEGIN/*Versión 0.2*/
 	
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_VISTA|| '********'); 
@@ -154,7 +155,7 @@ BEGIN
 		LEFT JOIN INFO_ACTIVO_AGRUPACION IAG ON IAG.AGR_ID = AGR.AGR_ID
 		LEFT JOIN DIRECCION_AGRUPA DIR ON DIR.AGR_ID = AGR.AGR_ID
 		WHERE agr.borrado = 0
-		and (AGR.AGR_NUM_AGRUP_REM IS NOT NULL AND DDTAG.DD_TAG_CODIGO IS NOT NULL AND (DDTAG.DD_TAG_CODIGO = ''01'' OR  DDTAG.DD_TAG_CODIGO = ''13'' OR DDTAG.DD_TAG_CODIGO = ''14'' OR  DDTAG.DD_TAG_CODIGO = ''15''))';
+		and (AGR.AGR_NUM_AGRUP_REM IS NOT NULL AND DDTAG.DD_TAG_CODIGO IS NOT NULL AND (DDTAG.DD_TAG_CODIGO = ''01'' OR  DDTAG.DD_TAG_CODIGO = ''13'' OR DDTAG.DD_TAG_CODIGO = ''14'' OR  DDTAG.DD_TAG_CODIGO = ''15'' OR  DDTAG.DD_TAG_CODIGO = ''16''))';
 		
 		   
    	 	

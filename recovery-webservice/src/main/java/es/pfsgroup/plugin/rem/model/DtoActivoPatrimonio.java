@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Dto para el tab de patrimonio
@@ -29,6 +30,9 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private String estadoAlquiler;
 	private int ocupacion;
 	private int conTitulo;
+	
+	private List<?> activosPropagables;
+	
 	
 	//Grid historico adecuaciones patrimonio activo
 	private Date fechaInicioAdecuacion;
@@ -144,7 +148,11 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	public void setComboRentaAntigua(String comboRentaAntigua) {
 		this.comboRentaAntigua = comboRentaAntigua;
 	}
-   
-    
+	public List<?> getActivosPropagables() {
+		return activosPropagables;
+	}
+	public void setActivosPropagables(List<?> activosPropagables) {
+		this.activosPropagables = activosPropagables;
+	}
     
 }

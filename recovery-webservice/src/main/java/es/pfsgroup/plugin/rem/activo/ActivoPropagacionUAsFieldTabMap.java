@@ -1,0 +1,273 @@
+package es.pfsgroup.plugin.rem.activo;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ActivoPropagacionUAsFieldTabMap {
+
+    public static final Map<String, List<String>> mapUAs;
+
+    public static final String TAB_DATOS_BASICOS = "datosbasicos";
+    public static final String TAB_SIT_POSESORIA = "sitposesoriallaves";
+    public static final String TAB_INFORME_COMERCIAL = "informecomercial";
+    public static final String TAB_DATOS_REGISTRALES = "datosregistrales";
+    public static final String TAB_INFO_ADMINISTRATIVA = "infoadministrativa";
+    public static final String TAB_CARGAS_ACTIVO = "cargasactivo";
+    public static final String TAB_MEDIADOR_ACTIVO = "mediadoractivo";
+    public static final String TAB_CONDICIONES_ESPECIFICAS = "condicionesespecificas";
+    public static final String TAB_TASACION = "tasacion";
+	public static final String TAB_COMUNIDAD_PROPIETARIOS = "datosComunidad";
+	public static final String TAB_PLUSVALIA_VENTA = "plusvaliaVenta";
+    public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
+    public static final String TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD = "activocondicionantesdisponibilidad";
+    public static final String TAB_COMERCIAL = "comercial";
+    public static final String TAB_ADMINISTRACION = "administracion";
+    public static final String TAB_PATRIMONIO = "patrimonio";
+
+    static {
+    	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
+
+    	pmap.put(TAB_DATOS_BASICOS,
+    			Arrays.asList(
+    					// identificacion	
+    	    		"estadoActivoCodigo",
+    	    		"tipoUsoDestinoCodigo",  //TipoUsoDestino    
+    	    		"motivoActivo",
+    	    		"usoDominanteCodigo",
+    	    		
+    	    			// direccion
+    	    		"comunidadAutonomaCodigo", 
+    	    		"inferiorMunicipioCodigo",
+    	    		"municipioCodigo",
+    	    		"provinciaCodigo",			
+    	    		"codPostalFormateado",
+    	    		"longitud",
+    	    		"latitud",
+    	    		"codPostal",
+    	    		"paisCodigo",
+    	    		
+    	    		"selloCalidad",
+    	    		"nombreGestorSelloCalidad",
+    	    		"fechaRevisionSelloCalidad",
+
+    	    		
+    	    		// perimetro
+    	    		"incluidoEnPerimetro",	
+    	    		"motivoAplicaGestion",
+    	    		"motivoAplicaPublicar",
+    	    		"motivoAplicaComercializarDescripcion",
+    	    		"motivoNoAplicaComercializarDescripcion",
+    	    		"motivoAplicaFormalizar",
+    	    		"motivoAplicaComercializarCodigo",
+    				
+	    			// comercializacion
+    				"tipoComercializarCodigo",
+    				"tipoComercializacionCodigo",
+    				"bloqueoTipoComercializacionAutomatico",
+    				"tipoAlquiler",
+    				
+    				"isDestinoComercialAlquiler",
+    				"incluyeDestinoComercialAlquiler",
+    				"incluyeDestinoComercialVenta",
+
+    				// Activo bancario
+    				"claseActivoCodigo",
+    				"subtipoClaseActivoCodigo",
+    				"numExpRiesgo",
+    				"estadoExpRiesgoCodigo",
+    				"productoDescripcion",
+    				"estadoExpIncorrienteCodigo",
+    				
+    				"admision"
+    			));
+
+
+    	
+    	pmap.put(TAB_DATOS_REGISTRALES,
+    			Arrays.asList(
+   					
+			//DATOS INSCRIPCION
+
+					"numeroActivo",
+					"numRegistro",			
+					"numFinca",				
+					"tomo",					
+					"libro",				
+					"folio",				
+					"poblacionRegistro",	
+					"provinciaRegistro",	
+					"idufir",				
+					"hanCambiado",			
+					"numDepartamento",
+					"numAnterior",
+					"localidadAnteriorCodigo",
+					"numFincaAnterior",
+					
+
+
+					
+					
+			//INFORMACIÓN REGISTRAL
+            	
+					"divHorizontal",
+					"estadoDivHorizontalCodigo",
+					"divHorInscrito",
+					"estadoObraNuevaCodigo",
+					"fechaCfo",
+
+            //LOS DEMÁS
+
+                    "vpo",
+					"gestionHre",
+					"porcPropiedad",
+					"fechaTitulo",
+					"fechaFirmaTitulo",
+					"valorAdquisicion",
+					"tramitadorTitulo",
+					"acreedorId",
+					"acreedorNombre",
+					"acreedorNif",
+					"acreedorDir",
+					"importeDeuda",
+					"rentaLibre",
+					"acreedorNumExp",
+					"numReferencia",
+					"fechaEntregaGestoria",
+					"fechaPresHacienda",
+					"fechaEnvioAuto",
+					"fechaPres1Registro",
+					"fechaPres2Registro",
+					"fechaInscripcion",
+					"fechaRetiradaReg",
+					"fechaNotaSimple",
+					"numAuto",
+					"propiedadActivoDescripcion",
+					"propiedadActivoCodigo",
+					"propiedadActivoNif",
+					"propiedadActivoDireccion",
+					"tipoGradoPropiedadCodigo",
+					"estadoTitulo",
+					"fechaInscripcionReg",
+					"fechaRealizacionPosesion",
+					"fechaAdjudicacion",	
+					"procurador",
+					"letrado",
+					"idAsunto",
+					"numExpRiesgoAdj",
+					"fechaDecretoFirme",
+					"fechaSenalamientoPosesion",
+					"importeAdjudicacion",
+					"tipoJuzgadoCodigo",
+					"estadoAdjudicacionCodigo",
+					"tipoPlazaCodigo",
+					"entidadAdjudicatariaCodigo",
+					"entidadEjecutanteCodigo",
+					"calificacionNegativa",
+					"motivoCalificacionNegativa",
+					"descripcionCalificacionNegativa",
+					"estadoMotivoCalificacionNegativa",
+					"responsableSubsanar",
+					"fechaSubsanacion",
+					"codigoMotivoCalificacionNegativa",
+					"codigoEstadoMotivoCalificacionNegativa"
+    			));
+
+    	pmap.put(TAB_SIT_POSESORIA,
+    			Arrays.asList(
+    					
+    				"fechaTomaPosesion",
+			    	"fechaRevisionEstado" ,
+			    	"ocupado",
+			    	"riesgoOcupacion",
+			    	"conTituloTPA",
+			    	"accesoTapiado",
+			    	"fechaAccesoTapiado",
+			    	"accesoAntiocupa",
+			    	"fechaAccesoAntiocupa",
+			    	"tieneOkTecnico",
+			    	"llavesNecesarias",
+			    	"VllavesHre",
+			    	"fechaRecepcionLlaves",
+			    	"numJuegosLlaves"
+    			));
+
+    	
+
+    	pmap.put(TAB_INFO_ADMINISTRATIVA,
+    			Arrays.asList(
+    				"tipoVpoCodigo",
+    				"numExpediente",
+    				"obligatorioSolDevAyuda",
+    				"obligatorioAutAdmVenta",
+    				"observaciones",
+    				"maxPrecioVenta",
+    				"fechaCalificacion",
+    				"descalificado",
+    				"sujetoAExpediente",
+    				"promocionVpo"
+    			));
+
+    	pmap.put(TAB_CARGAS_ACTIVO,
+    			Arrays.asList(
+    				"fechaRevisionCarga" ,
+    				"conCargas"
+    			));
+
+   
+
+
+    	pmap.put(TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD,
+    			Arrays.asList(
+    					"idActivo" ,
+    					"ruina",
+    					"pendienteInscripcion",
+    					"obraNuevaSinDeclarar",
+    					"sinTomaPosesionInicial",
+    					"proindiviso",
+    					"obraNuevaEnConstruccion",
+    					"ocupadoConTitulo",
+    					"tapiado",
+    					"otro",
+    					"ocupadoSinTitulo",
+    					"divHorizontalNoInscrita",
+    					"sinInformeAprobadoREM"
+			    ));
+
+
+
+    	pmap.put(TAB_COMUNIDAD_PROPIETARIOS,
+    			Arrays.asList(
+    				"fechaComunicacionComunidad" ,
+    				"envioCartas",
+    				"numCartas",
+    				"contactoTel",
+    				"visita",
+    				"burofax",
+    				"situacionCodigo",
+    				"situacionId",
+    				"fechaEnvioCarta",
+    				"situacionDescripcion"
+    			));
+/*
+      	pmap.put(TAB_PLUSVALIA_VENTA,
+    			Arrays.asList(
+    				"exento" /*,
+    				"autoliquidacion",
+    				"fechaEscritoAyt",
+    				"observaciones"
+
+    			));
+    			*/
+    			
+		pmap.put(TAB_PATRIMONIO,
+			Arrays.asList(
+					"chkPerimetroAlquiler"
+		   	));
+
+
+        mapUAs = Collections.unmodifiableMap(pmap);
+    }
+}

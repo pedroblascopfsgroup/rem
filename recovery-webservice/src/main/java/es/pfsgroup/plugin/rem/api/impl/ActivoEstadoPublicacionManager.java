@@ -170,7 +170,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDeshabilitarCheckPublicarSinPrecioAlquiler(this.deshabilitarCheckPublicarSinPrecioAlquiler(idActivo));
 		dto.setDeshabilitarCheckNoMostrarPrecioVenta(this.deshabilitarCheckNoMostrarPrecioVenta(idActivo));
 		dto.setDeshabilitarCheckNoMostrarPrecioAlquiler(this.deshabilitarCheckNoMostrarPrecioAlquiler(idActivo));
-
+		if(activoDao.isActivoMatriz(idActivo)) {
+			if(DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())) {
+				dto.setPublicarAlquiler(false);
+				dto.setDeshabilitarCheckPublicarAlquiler(true);
+				
+			}
+			
+		}
     	return dto;
 	}
 
@@ -340,11 +347,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
 	 * @return Devuelve True si el check de publicar activo para el alquiler debe estar deshabilitado.
 	 */
+	@Transactional(readOnly=false)
 	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
 		Boolean resultado = false;
+		Boolean hagoElRestoComprobaciones = true;
 		try{
-			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
-			!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
+			if(activoDao.isActivoMatriz(idActivo)) {
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+				ActivoPublicacion activoPublicacion  = genericDao.get(ActivoPublicacion.class, filter);
+				
+				if(DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())) {
+					hagoElRestoComprobaciones = false;
+					resultado = true;
+				}
+			}
+			if(hagoElRestoComprobaciones) {
+				resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
+				!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
+			}
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarAlquiler",e);
 		}
@@ -633,7 +653,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @param lista activoPublicacion : entidad del estado actual de publicación en la que persistir los datos nuevos.
 	 * @return Devuelve True si el proceso ha sido satisfactorio, False si no lo ha sido.
 	 */
-
 	
 	@Transactional
 	private Boolean actualizarDatosEstadoActualPublicaciones(DtoDatosPublicacionActivo dto, List<ActivoPublicacion> activosPublicacion) { //

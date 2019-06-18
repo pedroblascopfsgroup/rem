@@ -259,13 +259,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 
 			return (ultima == unumero) || (ultima == uletra[unumero]);
 
-		} else if (tipoDocumento == CONST.TIPO_DOCUMENTO_IDENTIDAD['PASAPORTE']) {
-			var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
-
-			documentoCliente = documentoCliente.toLowerCase();
-
-			return expr.test(documentoCliente);
-
 		} else {
 			return true;
 		}

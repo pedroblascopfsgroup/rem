@@ -180,9 +180,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     					
     				"fechaTomaPosesion",
 			    	"fechaRevisionEstado" ,
-			    	"ocupado",
 			    	"riesgoOcupacion",
-			    	"conTituloTPA",
 			    	"accesoTapiado",
 			    	"fechaAccesoTapiado",
 			    	"accesoAntiocupa",

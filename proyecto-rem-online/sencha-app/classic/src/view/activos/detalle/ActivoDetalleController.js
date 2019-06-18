@@ -307,15 +307,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 
 			var successFn = function(response, eOpts) {
+				var window = me.getView();
 				if(Ext.decode(response.responseText).success == "false") {
 					me.fireEvent("errorToast", HreRem.i18n("msg.error.anyadir.distribucion.vivienda"));
 				}
 				else {
-					storeTemp.load();
 					me.refrescarActivo(true);
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				}
-								
+				window.close();				
 			}
 			me.saveDistribucion(jsonData, successFn);
 
@@ -1012,7 +1012,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	refrescarActivo: function(refrescarPestanyaActiva) {
 		var me = this,
 		refrescarPestanyaActiva = Ext.isEmpty(refrescarPestanyaActiva) ? false: refrescarPestanyaActiva,
-		activeTab = me.getView().down("tabpanel").getActiveTab();
+		activosdetallemain = me.getView().xtype == 'activosdetallemain' ?  me.getView() : me.getView().up('activosdetallemain'),
+		activeTab = activosdetallemain.down("tabpanel").getActiveTab();
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando
 		// conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
@@ -3710,9 +3711,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var me = this,
 		window = btn.up('window');
     	var form = window.down('formBase');
-    	me.onSaveFormularioCompletoDistribuciones(null, form);
-		window.gridDistribuciones.up('informecomercialactivo').funcionRecargar();
-    	window.close();
+    	me.onSaveFormularioCompletoDistribuciones(null, form);    	
     },
 
     onChangeComboMotivoOcultacionVenta: function() {

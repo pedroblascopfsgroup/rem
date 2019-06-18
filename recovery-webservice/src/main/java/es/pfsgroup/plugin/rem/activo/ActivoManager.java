@@ -2904,7 +2904,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo) {
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
-		if ((!Checks.esNulo(activoPatrimonio) && DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo()))
+		if ((!Checks.esNulo(activoPatrimonio) && activoPatrimonio.getTipoEstadoAlquiler() != null && DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo()))
 				|| (!Checks.esNulo(activoSituacionPosesoria) && !Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1
 				&& DDTipoTituloActivoTPA.tipoTituloSi.equals(activoSituacionPosesoria.getConTitulo().getCodigo()))) {
 			return true;

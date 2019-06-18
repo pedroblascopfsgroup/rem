@@ -34,6 +34,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		
 		var tienePosibleInformeMediador = me.lookupViewModel().get('activo.tienePosibleInformeMediador');
 		
+		var esUA = me.lookupViewModel().get('activo.unidadAlquilable');
+		
         me.setTitle(HreRem.i18n('title.informe.comercial.activo'));
 
         me.items = [
@@ -251,6 +253,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										reference: 'provinciaComboAdmisionInforme',
 										chainedStore: 'comboMunicipioAdmisionIC',
 										chainedReference: 'municipioComboAdmisionInforme',
+										readOnly: esUA,
 						            	bind: {
 						            		store: '{comboProvincia}',
 						            	    value: '{activoInforme.provinciaCodigo}'
@@ -264,7 +267,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 										chainedStore: 'comboInferiorMunicipioAdmisionIC',
 										chainedReference: 'poblacionalAdmisionInforme',
-										reference: 'municipioComboAdmisionInforme',													
+										reference: 'municipioComboAdmisionInforme',	
+										readOnly: esUA,
 						            	bind: {
 						            		store: '{comboMunicipioAdmisionIC}',
 						            		value: '{activoInforme.municipioCodigo}',
@@ -288,7 +292,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 										reference: 'codPostalAdmisionInforme',
-										bind:		'{activoInforme.codPostal}',
+										readOnly: esUA,
+										bind:	'{activoInforme.codPostal}',
 										vtype: 'codigoPostal',
 										maskRe: /^\d*$/, 
 					                	maxLength: 5
@@ -441,6 +446,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										reference: 'provinciaComboMediadorInforme',
 										chainedStore: 'comboMunicipioMediadorIC',
 										chainedReference: 'municipioComboMediadorInforme',
+										readOnly: esUA,
 						            	bind: {
 						            		store: '{comboProvincia}',
 						            	    value: '{infoComercial.provinciaCodigo}'
@@ -455,6 +461,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										reference: 'municipioComboMediadorInforme',
 										chainedStore: 'comboInferiorMunicipioMediadorIC',
 										chainedReference: 'poblacionalMediadorInforme',
+										readOnly: esUA,
 						            	bind: {
 						            		store: '{comboMunicipioMediadorIC}',
 						            		value: '{infoComercial.municipioCodigo}',
@@ -479,6 +486,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
 										reference: 'codPostalMediadorInforme',
+										readOnly: esUA,
 										bind:		'{infoComercial.codigoPostal}',
 										vtype: 'codigoPostal',
 										maskRe: /^\d*$/, 
@@ -527,7 +535,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                	reference: 'botonVerificarCoordenadasInforme',
 					                	disabled: true,
 					                	bind:{
-					                		disabled: '{!editing}'
+					                		disabled: '{editableTipoActivo}'
 					                	},
 					                	text: HreRem.i18n('btn.verificar.coordenadas'),
 					                	handler: 'onClickVerificarDireccion'

@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=Rasul Akhmeddibirov
---## FECHA_CREACION=20180213
+--## AUTOR=JINLI HU
+--## FECHA_CREACION=20190311
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3284
+--## INCIDENCIA_LINK=HREOS-5774
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones.
@@ -36,6 +36,7 @@ AS
   TYPE T_VAR is table of VARCHAR2(250);
   TYPE T_ARRAY IS TABLE OF T_VAR;
   V_FUN T_ARRAY := T_ARRAY(
+
     ------    FUNCION   --------------------------------------------1- -2---3---4---5---6---7---8---9--10--11--12--13--14--15--16--17--18--19--20--21--22--23--24--25--26--27--28--29--30--31--32--33--34--35--36--37--38--39--40--41--42--43--44--45--46--47--48--49--50--51--52--54--55--57--58--59--60--61--62--63--64--65
 T_VAR( 'TAB_BUSQUEDA_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','S','N','N','N','N','N','N','N','S'),
 T_VAR( 'TAB_ACTIVO_DATOS_GENERALES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
@@ -268,6 +269,10 @@ T_VAR( 'CARGA_MASIVA_SANCION','N','N','N','N','N','N','N','N','N','N','N','N','N
 T_VAR( 'MASIVO_COMUNICACIONES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'SUBIR_CARGA_GESTORES','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','S','S','S','S','N','N','S',''),
 T_VAR( 'PERIMETRO_ACTUALIZAR','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','N','N','N','S','N','N','N',''),
+T_VAR( 'CARGA_MASIVA_IMPUESTOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','S','N','N','N','S','N','N','S','S','S','S','N','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'CARGA_MASIVA_ENVIO_BUROFAX','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'MASIVO_AGRUPAR_ACTIVOS_PROMOCION_ALQUILER','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
+
 T_VAR( 'MENU_DASHBOARD','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MENU_AGENDA','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','S'),
 T_VAR( 'MENU_AGRUPACIONES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
@@ -450,6 +455,7 @@ BEGIN
             , '''||V_TMP_VAR(62)||'''
             , '''||V_TMP_VAR(63)||'''
             , '''||V_TMP_VAR(64)||'''
+
             FROM DUAL
           '
           ;
@@ -540,7 +546,7 @@ BEGIN
                     ,PMSVVC
                     ,FTI
                     ,HAYAGESTFORMADM
-				    ,APROBCERB
+				            ,APROBCERB
                     ,SUPERFORM
                     ,SUPERGESTACT
                     ,SUPERADMIN
@@ -652,7 +658,7 @@ BEGIN
                 ,PMSVVC
                 ,FTI
                 ,HAYAGESTFORMADM
-			    ,APROBCERB
+      			    ,APROBCERB
                 ,SUPERFORM
                 ,SUPERGESTACT
                 ,SUPERADMIN

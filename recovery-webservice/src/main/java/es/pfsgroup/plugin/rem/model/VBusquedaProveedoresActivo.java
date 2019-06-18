@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -17,13 +19,16 @@ public class VBusquedaProveedoresActivo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "PVE_ID")
+	
+	@EmbeddedId
+	private BPActKey idFalso;
+	
+	/*@Column(name = "PVE_ID")
 	private String id;
 	
 	@Column(name="ACT_ID")
-	private String idActivo;
-	
+	private String idActivo;*/
+
 	@Column(name="ACT_NUM_ACTIVO")
 	private String numActivo;
 	
@@ -54,7 +59,7 @@ public class VBusquedaProveedoresActivo implements Serializable {
 	@Column(name="AIN_FECHA_EXCLUSION")
 	private Date fechaExclusion;
 	
-	public String getId() {
+	/*public String getId() {
 		return id;
 	}
 
@@ -68,7 +73,7 @@ public class VBusquedaProveedoresActivo implements Serializable {
 
 	public void setIdActivo(String idActivo) {
 		this.idActivo = idActivo;
-	}
+	}*/
 
 	public String getNumActivo() {
 		return numActivo;
@@ -149,6 +154,13 @@ public class VBusquedaProveedoresActivo implements Serializable {
 	public void setCodigoProveedorRem(String codigoProveedorRem) {
 		this.codigoProveedorRem = codigoProveedorRem;
 	}
-		
+	
+	public BPActKey getIdFalso() {
+		return idFalso;
+	}
 
+	public void setIdFalso(BPActKey idFalso) {
+		this.idFalso = idFalso;
+	}
+	
 }

@@ -119,10 +119,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	},	
 	    
    	onSaveFormularioCompletoForm: function(btn, form) {
-		
    		var me = this;
-   		if(form.isFormValid()) {
 
+   		if(form.isFormValid()) {
 	   		Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 	   				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
 	   		);
@@ -132,7 +131,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	   		me.getView().mask(HreRem.i18n("msg.mask.loading"));	
 	   		
 	   		form.getBindRecord().save({
-
+				params: {
+					activoMatriz: form.getValues().activoMatriz
+				},
 		   		success: function (a, operation) {		  
 			   		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 			   		me.getView().unmask();

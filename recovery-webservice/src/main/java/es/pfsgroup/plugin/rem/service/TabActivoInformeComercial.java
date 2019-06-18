@@ -29,6 +29,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -82,6 +83,9 @@ public class TabActivoInformeComercial implements TabActivoService {
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Resource
 	private Properties appProperties;
@@ -295,7 +299,13 @@ public class TabActivoInformeComercial implements TabActivoService {
 			
 
 			// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
-			informeComercial.setCamposPropagables(TabActivoService.TAB_INFORME_COMERCIAL);
+			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+				informeComercial.setCamposPropagablesUas(TabActivoService.TAB_INFORME_COMERCIAL);
+			}else {
+				// Buscamos los campos que pueden ser propagados para esta pestaña
+				informeComercial.setCamposPropagables(TabActivoService.TAB_INFORME_COMERCIAL);
+			}
+		
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

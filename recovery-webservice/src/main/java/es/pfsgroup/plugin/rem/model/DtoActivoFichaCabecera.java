@@ -193,6 +193,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String codigoPromocionPrinex;
 
 	private List<?> activosPropagables;
+	private List<Activo> activosPropagablesUas;
 
 	private Boolean tienePosibleInformeMediador;
 
@@ -224,6 +225,20 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	//HREOS-4545
 	private Boolean tieneOfertaAlquilerViva;
 	private Boolean esGestorAlquiler;
+	
+	//HREOS-5573
+	private Boolean unidadAlquilable;
+	private Boolean activoMatriz;
+	private Long numActivoMatriz;
+	private Double porcentajeParticipacion;
+	private Long unidadesAlquilablesEnAgrupacion;
+	private String idPrinexHPM;
+	private Boolean isPANoDadaDeBaja;
+	
+	private Boolean agrupacionDadaDeBaja;
+	
+	private String ofertasVivas;
+	private String trabajosVivos;
 	
 	private Boolean cambioEstadoPublicacion;;
 	private Boolean cambioEstadoPrecio;
@@ -1735,6 +1750,77 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		return tieneCEE;
 	}
 
+	public Boolean getUnidadAlquilable() {
+		return unidadAlquilable;
+	}
+
+	public void setUnidadAlquilable(Boolean unidadAlquilable) {
+		this.unidadAlquilable = unidadAlquilable;
+	}
+
+	public Boolean getActivoMatriz() {
+		return activoMatriz;
+	}
+
+	public void setActivoMatriz(Boolean activoMatriz) {
+		this.activoMatriz = activoMatriz;
+	}
+
+	public Long getNumActivoMatriz() {
+		return numActivoMatriz;
+	}
+
+	public void setNumActivoMatriz(Long numActivoMatriz) {
+		this.numActivoMatriz = numActivoMatriz;
+	}
+
+	public Double getPorcentajeParticipacion() {
+		return porcentajeParticipacion;
+	}
+
+	public void setPorcentajeParticipacion(Double porcentajeParticipacion) {
+		this.porcentajeParticipacion = porcentajeParticipacion;
+	}
+
+	public Long getUnidadesAlquilablesEnAgrupacion() {
+		return unidadesAlquilablesEnAgrupacion;
+	}
+	public void setUnidadesAlquilablesEnAgrupacion(Long unidadesAlquilablesEnAgrupacion) {
+	this.unidadesAlquilablesEnAgrupacion = unidadesAlquilablesEnAgrupacion;
+	}
+
+	public List<Activo> getActivosPropagablesUas() {
+		return activosPropagablesUas;
+	}
+
+	public void setActivosPropagablesUas(List<Activo> activosPropagablesUas) {
+		this.activosPropagablesUas = activosPropagablesUas;
+	}
+
+	public String getIdPrinexHPM() {
+		return idPrinexHPM;
+	}
+
+	public void setIdPrinexHPM(String idPrinexHPM) {
+		this.idPrinexHPM = idPrinexHPM;
+	}
+
+	public Boolean getIsPANoDadaDeBaja() {
+		return isPANoDadaDeBaja;
+	}
+
+	public void setIsPANoDadaDeBaja(Boolean isPANoDadaDeBaja) {
+		this.isPANoDadaDeBaja = isPANoDadaDeBaja;
+	}
+
+	public Boolean getAgrupacionDadaDeBaja() {
+		return agrupacionDadaDeBaja;
+	}
+
+	public void setAgrupacionDadaDeBaja(Boolean agrupacionDadaDeBaja) {
+		this.agrupacionDadaDeBaja = agrupacionDadaDeBaja;
+	}
+
 	public Boolean getTieneComunicacionGencat() {
 		return tieneComunicacionGencat;
 	}
@@ -1751,6 +1837,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.tieneRegistroContrato = tieneRegistroContrato;
 	}
 
+	public String getOfertasVivas() {
+		return ofertasVivas;
+	}
+
+	public void setOfertasVivas(String ofertasVivas) {
+		this.ofertasVivas = ofertasVivas;
+	}
+
+	public String getTrabajosVivos() {
+		return trabajosVivos;
+	}
+
+	public void setTrabajosVivos(String trabajosVivos) {
+		this.trabajosVivos = trabajosVivos;
+	}
+	
 	public Integer getDiasCambioEstadoActivo() {
 		return diasCambioEstadoActivo;
 	}

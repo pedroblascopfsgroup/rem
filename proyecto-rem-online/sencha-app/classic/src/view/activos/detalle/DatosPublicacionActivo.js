@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	extend		: 'HreRem.view.common.FormBase',
 	xtype		: 'datospublicacionactivo',
+	reference	: 'datospublicacionactivoref',
 	cls			: 'panel-base shadow-panel',
 	collapsed	: false,
 	scrollable	: 'y',
@@ -472,7 +473,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												reference: 'chkbxpublicaralquiler',
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckPublicarAlquiler}',
-													value: '{datospublicacionactivo.publicarAlquiler}'
+													value: '{datospublicacionactivo.publicarAlquiler}',
+													disabled : '{bloquearPublicarAlquilerActivosMatrizNoPublicados}'
+													
 												},
                                                 listeners: {
                                                      dirtychange: 'onChangeCheckboxPublicarAlquiler'

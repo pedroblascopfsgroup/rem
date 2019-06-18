@@ -34,6 +34,10 @@ if [[ "$1" == "val06" ]] ; then
 	BASE_DIR=/recovery/map023/batch-server
 fi
 
+if [[ "$1" == "val08" ]] ; then
+	BASE_DIR=/recovery/map020/batch-server
+fi
+
 cp config/$1/config.ini $BASE_DIR/programas/etl/config/
 cd $LOCAL_PATH
 rm -f $BASE_DIR/shells/*.sh

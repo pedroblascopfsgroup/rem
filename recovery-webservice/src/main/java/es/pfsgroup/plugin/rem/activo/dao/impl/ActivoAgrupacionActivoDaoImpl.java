@@ -46,6 +46,21 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 		return HibernateQueryUtils.uniqueResult(this, hb);
 
 	} 
+	@Override
+	public ActivoAgrupacionActivo getAgrupacionPAByIdAgrupacion(long idAgrupacion) {
+		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aa");
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.tipoAgrupacion.codigo", DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.id", idAgrupacion);
+   	    HQLBuilder.addFiltroIgualQue(hb, "aa.auditoria.borrado", false );
+   	    HQLBuilder.addFiltroIgualQue(hb, "aa.agrupacion.auditoria.borrado", false );
+   	    
+   	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
+   	    if(Checks.estaVacio(list)) {
+   	    	return null;
+   	    }
+   	    return list.get(0);
+	}
+	
 
     @Override
 	public void deleteById(Long id) {
@@ -224,16 +239,32 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 	}
 	
 	@Override
+	public Activo getActivoMatrizByIdAgrupacion(Long idAgrupacion){
+		HQLBuilder hb = new HQLBuilder("select aga.activo from ActivoAgrupacionActivo aga where aga.agrupacion.id = "+idAgrupacion+ " and aga.principal = 1");
+		try {
+			return (Activo) getHibernateTemplate().find(hb.toString()).get(0);
+		} catch(Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public List<Activo> getListUAsByIdAgrupacion(Long idAgrupacion) {
+		HQLBuilder hb = new HQLBuilder("select aga.activo from ActivoAgrupacionActivo aga where aga.agrupacion.id = "+idAgrupacion+ " and aga.principal = 0");
+		
+		return (List<Activo>) getHibernateTemplate().find(hb.toString());
+	}
+	
+	@Override
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion) {
 
-		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aaa");
+		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aga");
 		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aaa.agrupacion.id", idAgrupacion);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aaa.principal", 1);
-		HQLBuilder.addFiltroIgualQue(hb, "aaa.auditoria.borrado", false);
-		HQLBuilder.addFiltroIgualQue(hb, "aaa.agrupacion.auditoria.borrado", false);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.agrupacion.id", idAgrupacion);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.principal", 1);
+		HQLBuilder.addFiltroIgualQue(hb, "aga.auditoria.borrado", false);
+		HQLBuilder.addFiltroIgualQue(hb, "aga.agrupacion.auditoria.borrado", false);
 
 		return HibernateQueryUtils.uniqueResult(this, hb);
-
 	}
 }

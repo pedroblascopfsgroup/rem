@@ -59,6 +59,8 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
     public static final String CODIGO_PROPUESTA_PRECIOS_SANCIONADA = "110";
     public static final String CODIGO_INFORME_OCUPACION_DESOCUPACION = "52";
     public static final String CODIGO_CONSENTIMIENTO_PROTECCION_DATOS = "83";
+    public static final String CODIGO_CEE_ETIQUETA_ACTIVO = "84";
+    public static final String CODIGO_CEE_ETIQUETA_TRABAJO = "25";
    
 	/**
 	 * 

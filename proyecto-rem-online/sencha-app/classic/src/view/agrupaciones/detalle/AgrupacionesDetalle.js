@@ -101,9 +101,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'observacionesagrupacion', ocultarBotonesEdicion: true})}, ['TAB_OBSERVACIONES_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionProyecto}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_DOCUMENTOS_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'seguimientoagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionProyecto}'}})}, ['TAB_SEGUIMIENTO_AGRUPACION']),
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistida}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
 		items.push({xtype: 'datospublicacionagrupacion', ocultarBotonesEdicion: false, bind: {disabled:'{!esAgrupacionRestringida}'}});
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{esAgrupacionObraNuevaOrAsistidaOrProyecto}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_COMERCIAL_AGRUPACION'])
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{habilitarComercial}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_COMERCIAL_AGRUPACION'])
 
         me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent(); 
@@ -128,35 +128,48 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		}
 
 		var esEditable = me.lookupController().getViewModel().get('agrupacionficha.esEditable');
-
+		
 		//Si la agrupación es editable
 		if(esEditable) {
 			//Se comprueba si es de tipo proyecto
-			var Agrupacionproyecto = false;
+			var agrupacionProyecto = false;
+			var agrupacionPromocionAlquiler = false;
 			var tipoAgrupacion =  me.lookupController().getViewModel().get('agrupacionficha.tipoAgrupacionCodigo');
 	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
-	     		Agrupacionproyecto= true;
+	     		agrupacionProyecto = true;
+	     	}
+	     	else if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
+	     		agrupacionPromocionAlquiler = true;
 	     	}
 				// Si la pestaña recibida no tiene asignadas funciones de edicion
 				if(Ext.isEmpty(tab.funPermEdition)) {
 		    		editionEnabled();
-		    		} else {
-
-			    		// Si los usuarios son gestores de suelo o edificacion, además de superusuario, podrán editar la pestaña ficha si no se les niega.
-			    		if(Agrupacionproyecto){
-			    			
-			    			if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTSUE']) || $AU.userIsRol(CONST.PERFILES['GESTEDI'])
-			    					|| $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ACTIVO'])){
+		    	} 
+				else {
+			    	// Si los usuarios son gestores de suelo o edificacion, además de superusuario, podrán editar la pestaña ficha si no se les niega.
+					if(agrupacionProyecto){
+			    		if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTSUE']) || $AU.userIsRol(CONST.PERFILES['GESTEDI'])
+			    			|| $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ACTIVO'])){
 				    			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
-				    		}else{
-					    		$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
-							}
-
-			    		}else{
-			    			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 			    		}
-		    		}
+				    	else{
+						    $AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
+						}
+				    }
+			    	else if(agrupacionPromocionAlquiler){
+				    	
+			    		if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_COMERCIAL'])){
+					    	$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+				    	}
+				    	else{
+						    $AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
+						}
+			    	}
+			    	else{
+					    $AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+					}
 
-    	}
+		    	}
+		}
     }
 });

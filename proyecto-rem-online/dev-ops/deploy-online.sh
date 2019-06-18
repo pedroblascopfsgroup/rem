@@ -107,10 +107,8 @@ if [ -f $DIR_SRC/pfs-rec-web.war ]; then
     cp $DIR_SRC/pfs-rec-web.war $BASE_DIR_APP/
 fi
 
-if 
-
 echo "Copiando Maestro de Unidades ..."
-    cp $DIR_SRC/wsdl/pre/* BASE_DIR_PLANTILLAS
+    cp $DIR_SRC/wsdl/pre/* $BASE_DIR_PLANTILLAS
 
 startAppServer
 

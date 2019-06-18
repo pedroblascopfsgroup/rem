@@ -7,7 +7,7 @@
 
 	<wsdl:types>
 		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-			<xsd:import namespace="http://alamo.haya.es/MIntervinientesSOA/schemas" schemaLocation="./MAESTRO_PERSONAS.xsd"/>
+			<xsd:import namespace="http://alamo.haya.es/MIntervinientesSOA/schemas" schemaLocation="./MAESTRO_UNIDADES.xsd"/>
 		</xsd:schema>
 	</wsdl:types>
 

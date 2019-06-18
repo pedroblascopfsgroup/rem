@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.BaseWS;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
-import es.pfsgroup.plugin.gestorDocumental.assembler.GDActivoInputAssembler;
 import es.pfsgroup.plugin.gestorDocumental.assembler.GDActivoOutputAssembler;
-import es.pfsgroup.plugin.gestorDocumental.assembler.GDPersonaInputAssembler;
+import es.pfsgroup.plugin.gestorDocumental.assembler.GDInputAssembler;
 import es.pfsgroup.plugin.gestorDocumental.assembler.GDPersonaOutputAssembler;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.GDInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 
@@ -29,52 +29,34 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 	@Resource
 	private Properties appProperties;
 
-	private static final String WEB_SERVICE_ACTIVOS = "MAESTRO_ACTIVOS";
-	private static final String WEB_SERVICE_PERSONAS = "MAESTRO_PERSONAS";
+	private static final String WEB_SERVICE_UNIDADES = "MAESTRO_UNIDADES";
 	private static final String WEB_SERVICE_NAME = "wsWS";
-
+	private static final String SIMULACRO = "simulacion";
+	private static final String ERROR_ALTA_ACTIVO = "Error procesando el alta";
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	public String getWSName() {
 		return WEB_SERVICE_NAME;
 	}
-
+	
 	@Override
-	public ActivoOutputDto ejecutarActivo(ActivoInputDto dto) {
-		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventResponseType output = null;
-		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventRequestType input = GDActivoInputAssembler.dtoToInputActivo(dto);
-		logger.info("LLamando al WS MAESTRO_ACTIVOS...Parametros de entrada...");
-		logger.info("ID_ACTIVO_ORIGEN: " + dto.getIdActivoOrigen());
-		logger.info("ID_ORIGEN: " + dto.getIdOrigen());
-		logger.info("ID_ACTIVO_HAYA: " + dto.getIdActivoHaya());
-		try {	
-			String urlWSDL = getWSURL(WEB_SERVICE_ACTIVOS);
-			String targetNamespace = getWSNamespace();
-			String name = getWSName();
-			
-			URL wsdlLocation = new URL(urlWSDL);
-			QName qName = new QName(targetNamespace, name);
-			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsWS(wsdlLocation, qName);
-			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsPort servicePort = service.getWs();
-			output = servicePort.processEvent(input);
-			logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
-			logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
-			logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
-		} catch (MalformedURLException e) {
-			logger.error("Error en el método al invocarServicio", e);
+	public <T extends GDInputDto> Object ejecutar(T dto) {
+		
+		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.ProcessEventRequestType input = null;
+		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.ProcessEventResponseType output = null;
+		
+		if (dto instanceof PersonaInputDto || dto instanceof ActivoInputDto) {
+			 input = GDInputAssembler.dtoToInput(dto);
+		}else {
+			logger.error("[ERROR]--[GestorDocumentalMaestroManager] Instancia de entrada desconocida");
 		}
-		return GDActivoOutputAssembler.outputToDtoActivo(output);
-	}
-
-	@Override
-	public PersonaOutputDto ejecutarPersona(PersonaInputDto dto) {
-		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventRequestType input = GDPersonaInputAssembler.dtoToInputPersona(dto);
-		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada... " + dto.getEvent() + ", " + dto.getIdCliente() + ", " + dto.getIdPersonaOrigen());
-		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType output = null;
-		try {	
-			String urlWSDL = getWSURL(WEB_SERVICE_PERSONAS);
+		try {
+			logger.info("Linea urlWSDL");
+			String urlWSDL = getWSURL(WEB_SERVICE_UNIDADES);
+			logger.info("Linea targetNamespace");
 			String targetNamespace = getWSNamespace();
+			logger.info("Linea name");
 			String name = getWSName();
 			//si es nulo o no está activo no avanzar para no estropear los codigos en local
 			
@@ -82,35 +64,59 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			if(activo) {
 				URL wsdlLocation = new URL(urlWSDL);
 				QName qName = new QName(targetNamespace, name);
-				
-				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsWS(wsdlLocation, qName);
-				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsPort servicePort = service.getWs();
+				logger.info(".MAESTRO_UNIDADES.WsWS");
+				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.WsWS(wsdlLocation, qName);
+				logger.info(".MAESTRO_UNIDADES.WsPort");
+				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.WsPort servicePort = service.getWs();
+				logger.info("servicePort");
 				output = servicePort.processEvent(input);
 				
-				logger.info("WS invocado! Valores de respuesta del MAESTRO: ");					
+				logger.error("WS invocado! Valores de respuesta del MAESTRO: ");					
 				if (!Checks.esNulo(output) 
-						&& !Checks.esNulo(output.getParameters()) 
-						&& !Checks.estaVacio(output.getParameters().getParameter()) 
-						&& !Checks.esNulo(output.getParameters().getParameter().get(0)) 
-						&& !Checks.esNulo(output.getParameters().getParameter().get(0).getCode())
-						&& output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
+				&& !Checks.esNulo(output.getParameters()) 
+				&& !Checks.estaVacio(output.getParameters().getParameter()) 
+				&& !Checks.esNulo(output.getParameters().getParameter().get(0)) 
+				&& !Checks.esNulo(output.getParameters().getParameter().get(0).getCode())
+				&& output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
 					logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
+
 				} else {
 					logger.error("RESULTADO_COD_MAESTRO: " + output.getResultCode());
 					logger.error("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
 				}
 				
+				if (dto instanceof PersonaInputDto)
+					return GDPersonaOutputAssembler.outputToDtoPersona(output);
 				
+				else if (dto instanceof ActivoInputDto)
+					if (ERROR_ALTA_ACTIVO.equals(output.getResultDescription())) {
+						logger.error(ERROR_ALTA_ACTIVO);
+						return null;
+					}else {
+						return GDActivoOutputAssembler.outputToDtoActivo(output);	
+					}
+					
 			}else {
-				PersonaOutputDto outputSimulacion = new PersonaOutputDto();
-				outputSimulacion.setResultDescription("simulacion");;
-				return outputSimulacion;
+				
+				logger.info("Se generan valores de prueba");
+				//Valores para entornos previos
+				if (dto instanceof PersonaInputDto) {
+					PersonaOutputDto outputSimulacion = new PersonaOutputDto();
+					outputSimulacion.setResultDescription(SIMULACRO);
+					return outputSimulacion;
+				}else if (dto instanceof ActivoInputDto) {
+					
+					ActivoOutputDto outputSimulacion = new ActivoOutputDto();
+					outputSimulacion.setResultDescription(SIMULACRO);
+					return outputSimulacion;
+				}else {
+					logger.error("[ERROR]--[GestorDocumentalMaestroManager] Instancia de salida desconocida");
+				}
 			}
-		} catch (MalformedURLException e) {
+		}catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
 		}
-		return GDPersonaOutputAssembler.outputToDtoPersona(output);
-		}
-		
-
+	
+		return output;
+	}
 }

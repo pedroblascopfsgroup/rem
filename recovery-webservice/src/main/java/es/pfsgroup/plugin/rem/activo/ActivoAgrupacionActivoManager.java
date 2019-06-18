@@ -181,7 +181,9 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 		List<VOfertasActivosAgrupacion> lista = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 		
 		for(VOfertasActivosAgrupacion oferta : lista) {
-			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta()))
+			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getCodigoEstadoOferta())
+					&& !DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getCodigoEstadoOferta())
+					&& !DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getCodigoEstadoOferta()))
 				return true;
 		}
 		

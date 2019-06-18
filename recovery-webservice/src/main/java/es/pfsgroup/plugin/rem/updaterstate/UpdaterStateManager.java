@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -52,6 +57,9 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private TrabajoApi trabajoApi;
@@ -90,6 +98,14 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				Boolean fechasAdmision = (!Checks.esNulo(activo.getSituacionPosesoria()) && !Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica()) && BooleanUtils.toBoolean(activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion())) 
 										 || (!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getFechaInscripcionReg()) && !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()) && !Checks.esNulo(activo.getFechaRevisionCarga()));
 				activo.setAdmision(tareasAdmision && fechasAdmision);
+				
+				if(activoDao.isActivoMatriz(activo.getId())) {
+					ActivoAgrupacion agrupacionPa = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+					List<ActivoAgrupacionActivo> listaActivosUa = agrupacionPa.getActivos();
+					for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosUa) {
+						activoAgrupacionActivo.getActivo().setAdmision(tareasAdmision && fechasAdmision);
+					}
+				}
 			}
 		}
 	}
@@ -150,8 +166,10 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
-		}else if (activoApi.isActivoAlquilado(activo)) {
+		}else if (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo)) {
 			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
+		}else if (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId())) {
+			codigo = DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE;
 		}
 		else if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
 			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;

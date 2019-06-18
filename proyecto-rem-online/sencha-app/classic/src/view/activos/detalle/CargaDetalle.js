@@ -17,7 +17,6 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
     
     listeners: {
 
-
 		boxready: function(window) {
 			var me = this;
 			me.initWindow();
@@ -26,13 +25,19 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 	},
 	
 	initWindow: function() {
-    	var me = this;
-    	
+    	var me = this,
+		  isUnidadAlquilable = false;
+		if (me.getViewModel().get('cargaTab.unidadAlquilable') != undefined && me.getViewModel().get('cargaTab.unidadAlquilable') != null)
+			isUnidadAlquilable = me.getViewModel().get('cargaTab.unidadAlquilable');
     	if(me.modoEdicion) {
 			Ext.Array.each(me.down('form').query('field[isReadOnlyEdit]'),
 				function (field, index) { 								
-					field.fireEvent('edit');
-					if(index == 0) field.focus();
+					if  (isUnidadAlquilable){
+						field.setReadOnly(true);
+					}else{
+						field.fireEvent('edit');
+						if(index == 0) field.focus();	
+					}
 				}
 			);
     	}
@@ -46,7 +51,8 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
     	var me = this;
     	
     	me.buttons = [ { itemId: 'btnGuardar', text: HreRem.i18n('btn.saveBtnText'), handler: 'onClickBotonGuardarCarga', disabled: !me.modoEdicion},  { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCancelarCarga'}];
-    	
+    	if (me.getViewModel().get('cargaTab.unidadAlquilable') != undefined && me.getViewModel().get('cargaTab.unidadAlquilable') != null && me.getViewModel().get('cargaTab.unidadAlquilable'))
+    	me.buttons[0].hidden = true;
     	me.setTitle(HreRem.i18n('title.detalle.carga'));
     	
     	me.items = [

@@ -1,5 +1,5 @@
 
-package es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS;
+package es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -27,7 +27,7 @@ public interface WsPort {
      * 
      * @param processEventRequest
      * @return
-     *     returns es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType
+     *     returns es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES.ProcessEventResponseType
      */
     @WebMethod(action = "http://alamo.haya.es/processEvent")
     @WebResult(name = "processEventResponse", targetNamespace = "http://alamo.haya.es/IntegracionSOA/schemas", partName = "processEventResponse")

@@ -21,6 +21,7 @@ public class DtoActivoCargasTab extends DtoTabActivo {
     private Integer conCargas;
     private Date fechaRevisionCarga;
     private Long idActivo;
+    private Boolean unidadAlquilable;
     
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -45,6 +46,12 @@ public class DtoActivoCargasTab extends DtoTabActivo {
 	}
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
+	}
+	public Boolean getUnidadAlquilable() {
+		return unidadAlquilable;
+	}
+	public void setUnidadAlquilable(Boolean unidadAlquilable) {
+		this.unidadAlquilable = unidadAlquilable;
 	}
 	
     

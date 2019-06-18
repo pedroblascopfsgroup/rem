@@ -10,6 +10,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 
@@ -22,11 +23,16 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	ActivoManager activoApi;
+	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		// Finaliza el trámite
 		Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 		tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 		genericDao.save(ActivoTramite.class, tramite);
+		
+		activoApi.actualizarOfertasTrabajosVivos(tramite.getActivo());
 	}
 
 	public String[] getCodigoTarea() {

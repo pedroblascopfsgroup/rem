@@ -9,10 +9,12 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -22,9 +24,12 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -192,6 +197,64 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
 
 	void hibernateFlush();
+	
+	/**
+	 * Dado un idActivo devuelve una agrupacion de tipo PA si el idActivo pertenece a alguna
+	 *
+	 * @param idActivo
+	 */
+	ActivoAgrupacion getAgrupacionPAByIdActivo(Long idActivo);
+	
+	/**
+	 * Dado un idActivo devuelve true si forma parte de una agrupacion de tipo Promocion Alquiler(PA) tanto si es AM como UA
+	 *
+	 * @param idActivo
+	 */
+	boolean isIntegradoEnAgrupacionPA(Long idActivo);
+	
+	/**
+	 * Dado un idActivo devuelve true si es un Activo Matriz(AGA_PRINCIPAL = 1) en una agrupacion de tipo Promocion Alquiler(PA)
+	 *
+	 * @param idActivo
+	 */
+	boolean isActivoMatriz(Long idActivo);
+	
+	/**
+	 * Dado un idActivo devuelve true si es un activo con DDTipoTituloActivo.UNIDAD_ALQUILABLE
+	 *
+	 * @param idActivo
+	 */
+	boolean isUnidadAlquilable(Long idActivo);
+	/**
+	 * Dado un id de Agrupacion devuelve el numero de los activos que la componen.
+	 * Nota: El count cuenta tambien el activo matriz.
+	 * @param idAgrupacion
+	 */
+	Long countUAsByIdAgrupacionPA(Long idAgrupacion);
+	/**
+	 * Dado un id de Agrupacion devuelve true si la agrupacion es de tipo de Promocion de alquiler.
+	 * 
+	 * @param idAgrupacion
+	 */
+	boolean isAgrupacionPromocionAlquiler ( Long idAgrupacion );
+	/**
+	 * Dado un id de Agrupacion devuelve el numero de los activos que tienen ofertas Vivas.
+	 * 
+	 * @param idAgrupacion
+	 */
+	boolean existenUAsconOfertasVivas( Long idAgrupacion );
+	
+	boolean existenUAsconTrabajos( Long idAgrupacion );
+	/**
+	 * Dado un id de activo devuelve el si tiene ofertas vivas.
+	 * 
+	 * @param idActivo
+	 */
+	boolean existeAMconOfertasVivas(Long idAgrupacion);
+
+	Long getIdActivoMatriz(Long idAgrupacion);
+	
+	void validateAgrupacion(Long idActivo);
 
 	/**
 	 * Comprueba en un activo si tiene ofertas de venta.
@@ -203,4 +266,37 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Boolean todasLasOfertasEstanAnuladas(Long idActivo);
 
 	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivoBorradoFalse(Long idActivo);
+
+
+	List<VBusquedaProveedoresActivo> getListProveedor(List<String> listaIds);
+
+	Boolean isPANoDadaDeBaja(Long idActivo);
+
+	
+	ActivoAgrupacion getAgrupacionPAByIdActivoConFechaBaja(Long idActivo);
+
+	Boolean checkOfertasVivasAgrupacion(Long idAgrupacion);
+
+	Boolean checkOTrabajosVivosAgrupacion(Long idAgrupacion);
+
+	List<Object[]> getTrabajosUa(Long idAM, Long idUA);
+	/**
+	 * Comprueba en un activo si tiene trabajos vivos.
+	 * @param idActivo
+	 * @return boolean true or false
+	 */
+	boolean activoUAsconTrabajos(Long idActivo);
+	/**
+	 * Comprueba en un activo si tiene ofertas vivas.
+	 * @param idActivo
+	 * @return boolean true or false
+	 */
+	boolean activoUAsconOfertasVivas(Long idActivo);
+	
+	/**
+	 * Comprueba si existe un numActivo.
+	 * @param numActivo
+	 * @return boolean true or false
+	 */
+	Boolean existeActivo(Long numActivo);
 }

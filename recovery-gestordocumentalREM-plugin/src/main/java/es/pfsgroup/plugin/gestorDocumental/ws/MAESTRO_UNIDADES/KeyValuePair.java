@@ -1,5 +1,5 @@
 
-package es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS;
+package es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_UNIDADES;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

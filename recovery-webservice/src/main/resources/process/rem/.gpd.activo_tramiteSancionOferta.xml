@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteSancionOferta" width="1083" height="703">
+<root-container name="activo_tramiteSancionOferta" width="1489" height="911">
   <node name="inicio" x="313" y="23" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -20,6 +20,9 @@
     </edge>
     <edge>
       <label x="-138" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -145,11 +148,6 @@
     </edge>
   </node>
   <node name="T013_InstruccionesReserva" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="T013_InstruccionesReservaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

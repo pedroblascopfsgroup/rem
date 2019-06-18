@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
@@ -51,10 +52,12 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -105,6 +108,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
@@ -337,6 +344,13 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					}
 					
 					genericDao.save(ExpedienteComercial.class, expediente);
+					
+					DDEstadoTrabajo estadoTrabajoAnulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoTrabajo.ESTADO_ANULADO));
+					Trabajo trabajo = tramite.getTrabajo();
+					if(!Checks.esNulo(trabajo)) {
+						trabajo.setEstado(estadoTrabajoAnulado);
+						genericDao.save(Trabajo.class, trabajo);
+					}
 				}
 			}
 
@@ -351,6 +365,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 		}
 		
 		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
+		Activo activo = tramite.getActivo();
+		if(!Checks.esNulo(activo)) {
+			activoApi.actualizarOfertasTrabajosVivos(activo);
+		}
 	}
 
 	public String[] getCodigoTarea() {

@@ -38,11 +38,14 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
     V_MSQL VARCHAR2(20000 CHAR); -- Sentencia a ejecutar 
     vWHERE VARCHAR2(4000 CHAR);
     nORDEN NUMBER;
+    
+    
   BEGIN
 	    /*DBMS_OUTPUT.PUT_LINE('[INICIO]');*/
       
-      pOCULTAR := 0; 
+      pOCULTAR := 0;  
       pMOTIVO  := 0;
+
 
       V_MSQL := '
             SELECT OCULTO, DD_MTO_CODIGO
@@ -266,7 +269,41 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''15'' AND MTO.BORRADO = 0 /*Oferta Express*/
                                    WHERE ACT.BORRADO = 0
                                      AND ACT.ACT_ID= '||pACT_ID||
-                       ')
+                         'UNION
+                         SELECT  ACT.ACT_ID
+							, 1 OCULTO
+							, MTO.DD_MTO_CODIGO
+							, MTO.DD_MTO_ORDEN ORDEN
+									FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 
+									JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID AND AGA.BORRADO = 0 AND AGA.AGA_PRINCIPAL = 1
+									JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.AGR_FECHA_BAJA IS NULL AND AGR.BORRADO = 0 
+									JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON  TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = ''16''
+									LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''17'' AND MTO.BORRADO = 0  /*Division en UAs*/
+								   WHERE ACT.BORRADO = 0
+									AND ''A'' = '''||pTIPO||'''
+									AND ACT.ACT_ID= '||pACT_ID||
+						' UNION
+						SELECT ACT3.ACT_ID	
+							,1 OCULTO
+							, MTO.DD_MTO_CODIGO
+							, MTO.DD_MTO_ORDEN ORDEN		
+								FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT1
+								JOIN  '|| V_ESQUEMA ||'.ACT_ACTIVO ACT3 on ACT3.ACT_ID = '||pACT_ID||'
+								JOIN  '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA1 on ACT1.ACT_ID = AGA1.ACT_ID
+								JOIN  '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACTPTA ON ACTPTA.ACT_ID = ACT1.ACT_ID
+								JOIN  '|| V_ESQUEMA ||'.DD_EAL_ESTADO_ALQUILER EAL ON EAL.DD_EAL_ID = ACTPTA.DD_EAL_ID
+								JOIN  '|| V_ESQUEMA ||'.DD_SCM_SITUACION_COMERCIAL SCM ON ACT1.DD_SCM_ID = SCM.DD_SCM_ID
+								LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''16'' AND MTO.BORRADO = 0  /*ActivoMatrizAlquilado*/
+								WHERE AGA1.AGR_ID IN (
+								    SELECT AGA2.AGR_ID FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA2 
+								    	JOIN  '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA2.AGR_ID  AND AGR.BORRADO = 0
+								    	JOIN  '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON  TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = 16
+								    	WHERE AGA2.ACT_ID = '||pACT_ID||'  AND AGA2.AGA_PRINCIPAL = 0
+								    )
+								AND AGA1.AGA_PRINCIPAL = 1
+								AND ( EAL.DD_EAL_CODIGO <> ''01'' OR SCM.DD_SCM_CODIGO = ''10'')
+								AND ''A'' = '''||pTIPO||'''
+                       )
                     )AUX WHERE AUX.ROWNUMBER = 1
                  '
        ;

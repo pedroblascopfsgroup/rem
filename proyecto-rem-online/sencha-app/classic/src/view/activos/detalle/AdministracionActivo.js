@@ -39,7 +39,8 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					{
 						xtype: 'checkboxfieldbase',
 						bind:		'{administracion.ibiExento}',
-						width: 40
+						width: 40,
+						disabled: '{administracion.isUnidadAlquilable}'
 					},
 					{
 						xtype: 'label',
@@ -74,6 +75,12 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        } 
 				    },
 					columns: [
+						{    text: HreRem.i18n('title.activo.administracion.numActivo'),
+				        	dataIndex: 'numActivo',
+				        	hidden: false,
+				        	hideable: false,
+				        	flex: 1
+				       },
 						{
 				        	xtype: 'actioncolumn',
 				            dataIndex: 'codigoProveedorRem',
@@ -158,7 +165,8 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				    reference: 'listadogastosref',
 					cls	: 'panel-base shadow-panel',
 					bind: {
-						store: '{storeGastosProveedor}'
+						store: '{storeGastosProveedor}',
+						disabled: '{administracion.isUnidadAlquilable}'
 					},
 					listeners: {
 						rowdblclick: 'onClickAbrirGastoProveedor'	
@@ -248,7 +256,12 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 			colspan: 3,
 			items :
 				[
-					{xtype: "impuestosactivogrid", reference: "impuestosactivogrid"}
+					{
+						xtype: "impuestosactivogrid", reference: "impuestosactivogrid",
+						bind:{
+							disabled: '{administracion.isUnidadAlquilable}'
+						}
+					}
 				]
 		}
     ];

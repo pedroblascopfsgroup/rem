@@ -39,6 +39,7 @@ public class UpdaterServiceCEEObtencionEtiqueta implements UpdaterService {
 		Activo activo = tramite.getActivo();
 		Trabajo trabajo = tramite.getTrabajo();
 		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "configDocumento.tipoDocumentoActivo.codigo", DDTipoDocumentoActivo.CODIGO_CEE_TRABAJO);
+		//TODO revisar a ver si se tiene que poner CODIGO_CEE_ETIQUETA_TRABAJO en vez del CODIGO_CEE_TRABAJO, y como solucionar el error de la tabla de configDocumento
 		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 		ActivoAdmisionDocumento documentoCEE = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
 		

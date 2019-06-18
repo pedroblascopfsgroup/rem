@@ -710,7 +710,7 @@ public interface ActivoApi {
 	 * @param dtoActivoIntegrado
 	 * @return
 	 */
-	List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado);
+	List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * @param idActivo
@@ -1169,5 +1169,31 @@ public interface ActivoApi {
 	boolean esSubcarteraPromontoria(Long idActivo);
 
 	boolean esSubcarteraApple(Long idActivo);
+
+	void actualizarMotivoOcultacionUAs(DtoActivoPatrimonio patrimonioDto, Long id);
+	
+	void actualizarOfertasTrabajosVivos(Activo activo);
+
+	Boolean bloquearChecksComercializacionActivo(Activo activo, Integer action);
+	
+	boolean isActivoMatriz(Long idActivo);
+
+	/**
+	 * Recalcular la situación comercial del activo matriz mediante una unidad alquilable
+	 * @param UA
+	 */
+	public void cambiarSituacionComercialActivoMatriz(Long UA);
+
+	/**
+	 * Comprueba si existe alguna unidad alquilable alquilada
+	 * @param idActivoMatriz
+	 */
+	public boolean isAlquiladoParcialmente(Long idActivoMatriz);
+
+	/**
+	 * Comprueba un activo está ocupado con título o alquilar en el estado alquiler de la pestaña patrimonio
+	 * @param activo
+	 */
+	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
 
 }

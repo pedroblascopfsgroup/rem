@@ -42,7 +42,8 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 										cls	: 'panel-base shadow-panel',
 										secFunToEdit: 'EDITAR_GRID_LISTADO_FICHA_COMUNIDAD_ENTIDADES',
 										bind: {
-											store: '{storeEntidades}'
+											store: '{storeEntidades}',
+											topBar: '{!datosComunidad.unidadAlquilable}'
 										},
 										listeners : {
 										    rowdblclick: 'onEntidadesListDobleClick'
@@ -145,14 +146,18 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 							{
 										xtype: 'datefieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.fecha.comunicacion.comunidad'),
-										bind : '{datosComunidad.fechaComunicacionComunidad}'
+										bind : {
+											value :'{datosComunidad.fechaComunicacionComunidad}',
+											readOnly: '{datosComunidad.unidadAlquilable}'
+										}
 									}, 
 									{
 										xtype : 'comboboxfieldbase',
 									    fieldLabel : HreRem.i18n('fieldlabel.envio.cartas'),
 									   bind : {
 									      store : '{comboSiNoRemActivo}',
-									      value : '{datosComunidad.envioCartas}'
+									      value : '{datosComunidad.envioCartas}',
+									      readOnly: '{datosComunidad.unidadAlquilable}'
 									    }
 									},
 									{
@@ -160,7 +165,8 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									    fieldLabel : HreRem.i18n('fieldlabel.num.cartas'),
 									   bind : {
 									      store : '{comboNumCartas}',
-									      value : '{datosComunidad.numCartas}'
+									      value : '{datosComunidad.numCartas}',
+									      readOnly: '{datosComunidad.unidadAlquilable}'
 									    }
 									}, 
 									{
@@ -168,7 +174,8 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									    fieldLabel : HreRem.i18n('fieldlabel.contacto.telefonico'),
 									    bind : {
 									      store : '{comboSiNoRemActivo}',
-									      value : '{datosComunidad.contactoTel}'
+									      value : '{datosComunidad.contactoTel}',
+									      readOnly: '{datosComunidad.unidadAlquilable}'
 									    }
 									},
 									{
@@ -176,7 +183,8 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									    fieldLabel : HreRem.i18n('fieldlabel.visita'),
 									   bind : {
 									      store : '{comboSiNoRemActivo}',
-									      value : '{datosComunidad.visita}'
+									      value : '{datosComunidad.visita}',
+									      readOnly: '{datosComunidad.unidadAlquilable}'
 									    }
 									}, 
 									{
@@ -184,19 +192,24 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									    fieldLabel : HreRem.i18n('fieldlabel.burofax'),
 									    bind : {
 									      store : '{comboSiNoRemActivo}',
-									      value : '{datosComunidad.burofax}'
+									      value : '{datosComunidad.burofax}',
+									      readOnly: '{datosComunidad.unidadAlquilable}'
 									    }
 									}, {xtype : 'comboboxfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.situacion'),
 									    bind : {
 										      store : '{comboSituacionActivo}',
-										      value : '{datosComunidad.situacionCodigo}'
+										      value : '{datosComunidad.situacionCodigo}',
+										      readOnly: '{datosComunidad.unidadAlquilable}'
 										    }	
 									},							
 										{
 										xtype : 'datefieldbase',
 									    fieldLabel : HreRem.i18n('fieldlabel.fechaEnvioCarta'),
-										bind : '{datosComunidad.fechaEnvioCarta}'
+										bind : {
+											value: '{datosComunidad.fechaEnvioCarta}',
+											readOnly: '{datosComunidad.unidadAlquilable}'
+										}
 									  }
 						]
 				}

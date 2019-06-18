@@ -16,7 +16,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
     nifEmisor: null,
     idActivo: null,
     idActivoIntegrado: null,
-    
+    isUnidadAlquilable: null,
     controller: 'activodetalle',
     viewModel: {
         type: 'activodetalle'
@@ -26,14 +26,37 @@ Ext.define('HreRem.view.activos.detalle.AnyadirEntidadActivo', {
     
     listeners: { 
     	
-    	boxready: 'cargarDatosActivoIntegrado'
+    	boxready: function (window){
+    	 var me = this ; 
+    	  me.getController().cargarDatosActivoIntegrado(window);
+    	  me.initWindow();
+    	}
 	},
+	initWindow: function() {
+    	var me = this
+		if (me.getViewModel().get('datosComunidad.unidadAlquilable') != undefined && me.getViewModel().get('datosComunidad.unidadAlquilable') != null)
+			isUnidadAlquilable = me.getViewModel().get('datosComunidad.unidadAlquilable');
+    	if(me.modoEdicion) {
+			Ext.Array.each(me.down('form').query('field'),
+				function (field) { 							
+					if  (isUnidadAlquilable){
+						field.setReadOnly(true);
+					}
+				}
+			
+			);
+    	}
+		
+    	me.getViewModel().set('carga', me.carga);
+    	
+    },
     
 	initComponent: function() {
     	var me = this;
     	me.setTitle(HreRem.i18n('title.integracion.entidad.activo'));
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Guardar', handler: 'onClickBotonGuardarEntidad'},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarEntidad'}];
-    	
+    	if (me.getViewModel().get('datosComunidad.unidadAlquilable') != undefined && me.getViewModel().get('datosComunidad.unidadAlquilable') != null && me.getViewModel().get('datosComunidad.unidadAlquilable'))
+    		me.buttons[0].hidden = true;
     	me.items = [
     	
 			    	{

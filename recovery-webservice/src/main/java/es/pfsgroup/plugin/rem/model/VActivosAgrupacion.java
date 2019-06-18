@@ -73,7 +73,13 @@ public class VActivosAgrupacion implements Serializable {
 	
 	@Column(name = "principal")
    	private Integer activoPrincipal;
-	
+   	
+   	@Column(name = "ACTIVO_MATRIZ") //Para identificar un activo matriz en una agrupación de tipo promoción alquiler. 
+   	private Integer activoMatriz;
+   	
+   	@Column(name = "BORRADO") 
+   	private Integer borrado;
+
 	@Column(name = "SITUACION_COMERCIAL")
 	private String situacionComercial;
 	
@@ -101,9 +107,20 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name = "COND_PUBL_ALQUILER")
 	private String condPublAlquiler;
 	
+	@Column(name = "ID_PRINEX_HPM")
+	private String idPrinexHPM;
+	
+	@Column(name ="REG_SUPERFICIE_UTIL")
+	private Float superficieUtil;
+	
+	@Column(name = "REG_SUPERFICIE_ELEM_COMUN")
+	private Float superficieElementoComun;
+	
+	@Column(name = "REG_SUPERFICIE_PARCELA")
+	private Float superficieParcela;
+
 	@Column(name = "ESTADO_TITULO")
 	private String estadoTitulo;
-
 
 	public Long getId() {
 		return id;
@@ -320,6 +337,55 @@ public class VActivosAgrupacion implements Serializable {
 	public void setCondPublAlquiler(String condPublAlquiler) {
 		this.condPublAlquiler = condPublAlquiler;
 	}
+	
+	public Integer getActivoMatriz() {
+		return activoMatriz;
+	}
+
+	public void setActivoMatriz(Integer activoMatriz) {
+		this.activoMatriz = activoMatriz;
+	}
+
+	public Integer getBorrado() {
+		return borrado;
+	}
+
+	public void setBorrado(Integer borrado) {
+		this.borrado = borrado;
+	}
+
+	public String getIdPrinexHPM() {
+		return idPrinexHPM;
+	}
+
+	public void setIdPrinexHPM(String idPrinexHPM) {
+		this.idPrinexHPM = idPrinexHPM;
+	}
+
+	public Float getSuperficieUtil() {
+		return superficieUtil;
+	}
+
+	public void setSuperficieUtil(Float superficieUtil) {
+		this.superficieUtil = superficieUtil;
+	}
+
+	public Float getSuperficieElementoComun() {
+		return superficieElementoComun;
+	}
+
+	public void setSuperficieElementoComun(Float superficieElementoComun) {
+		this.superficieElementoComun = superficieElementoComun;
+	}
+
+	public Float getSuperficieParcela() {
+		return superficieParcela;
+	}
+
+	public void setSuperficieParcela(Float superficieParcela) {
+		this.superficieParcela = superficieParcela;
+	}
+	
 	public String getEstadoTitulo() {
 		return estadoTitulo;
 	}

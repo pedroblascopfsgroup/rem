@@ -12,9 +12,12 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionActivo;
@@ -32,6 +35,12 @@ public class TabActivoDatosComunidad implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Override
 	public String[] getKeys() {
@@ -82,9 +91,11 @@ public class TabActivoDatosComunidad implements TabActivoService {
 				if (!Checks.esNulo(activo.getComunidadPropietarios().getBurofax())) {
 					beanUtilNotNull.copyProperty(datosComunidad, "burofax", activo.getComunidadPropietarios().getBurofax());
 				}
+				
 				if (!Checks.esNulo(activo.getComunidadPropietarios().getFechaEnvioCarta())) {
 						beanUtilNotNull.copyProperty(datosComunidad, "fechaEnvioCarta", activo.getComunidadPropietarios().getFechaEnvioCarta());
 				}
+				
 				if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion())) {
 					
 					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getId())) {
@@ -94,15 +105,26 @@ public class TabActivoDatosComunidad implements TabActivoService {
 					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getDescripcionLarga())) {
 						beanUtilNotNull.copyProperty(datosComunidad, "situacionDescripcion", activo.getComunidadPropietarios().getSituacion().getDescripcionLarga());
 					}
+					
 					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getCodigo())) {
 						beanUtilNotNull.copyProperty(datosComunidad, "situacionCodigo", activo.getComunidadPropietarios().getSituacion().getCodigo());
 					}
 				}
-				
-				
 			}
-			datosComunidad.setCamposPropagables(TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
-
+			
+			if(activoDao.isUnidadAlquilable(activo.getId())) {    
+				datosComunidad.setUnidadAlquilable(true);
+			}else {
+				datosComunidad.setUnidadAlquilable(false);
+			}
+			
+			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+				datosComunidad.setCamposPropagablesUas(TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
+			}else {
+				// Buscamos los campos que pueden ser propagados para esta pestaña
+				datosComunidad.setCamposPropagables(TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
+			}
+			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

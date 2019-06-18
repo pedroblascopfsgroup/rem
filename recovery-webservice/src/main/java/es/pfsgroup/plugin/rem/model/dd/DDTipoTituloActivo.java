@@ -36,10 +36,10 @@ public class DDTipoTituloActivo implements Auditable, Dictionary {
 	 * 
 	 */
 	private static final long serialVersionUID = -3836191709700209057L;
-	
-	public static final String tipoTituloPDV = "03";
 	public static final String tipoTituloJudicial = "01";
 	public static final String tipoTituloNoJudicial = "02";
+	public static final String tipoTituloPDV = "03";
+	public static final String UNIDAD_ALQUILABLE = "05";
 
 	 @Id
 	 @Column(name = "DD_TTA_ID")

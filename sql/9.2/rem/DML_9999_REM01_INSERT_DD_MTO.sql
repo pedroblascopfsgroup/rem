@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Kevin Fernández
---## FECHA_CREACION=20180413
+--## AUTOR=Lara Pablo Flores
+--## FECHA_CREACION=20190415
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-3995
+--## INCIDENCIA_LINK=HREOS-6045
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -36,9 +36,29 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    --              Código  Descripción     Manual     TCO código   Orden
-        T_TIPO_DATA('14',   'Sin Precio',   0,         '02',        13),
-        T_TIPO_DATA('12',   'Otros',        1,         '02',        14)
+    --              Código  Descripción    			 Manual     TCO código   Orden
+    	
+      	T_TIPO_DATA('13',   'Vendido',     				0,         '02',        1), 
+      	T_TIPO_DATA('08',   'Salida Perímetro',  		0,         '02',        2),
+        T_TIPO_DATA('01',   'No Publicable',       		0,         '02',        3),
+      	T_TIPO_DATA('02',   'No Comercializable',   	0,		   '02',	    4),
+      	T_TIPO_DATA('16',   'Activo matriz alquilado',  0,         '03',        5),
+      	T_TIPO_DATA('17',   'División en UAs',  		0,         '03',        6),
+      	T_TIPO_DATA('15',   'Oferta Express',     		0,         '02',        7), 	
+      	T_TIPO_DATA('06',   'Revisión Publicación', 	0,         '02',        8),
+        T_TIPO_DATA('04',   'Revisión adecuación',  	0,         '03',        9),
+      	T_TIPO_DATA('05',   'No adecuado',   			0,		   '03',	    10),	
+      	T_TIPO_DATA('03',   'Alquilado',     			0,         '02',        11), 
+      	T_TIPO_DATA('07',   'Reservado',  				0,         '02',        12),
+        T_TIPO_DATA('09',   'Revisión Admisión',    	1,         '02',        13),
+      	T_TIPO_DATA('10',   'Revisión Técnica',   		1,		   '02',	    14),
+      	T_TIPO_DATA('11',   'Revisión en curso',    	0,         '02',        15),
+      	T_TIPO_DATA('12',   'Otros',     				1,         '02',        16),
+      	T_TIPO_DATA('14',   'Sin Precio',   			0,		   '02',	    17)
+      	
+      
+        
+        
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=David García
---## FECHA_CREACION=20190617
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20190618
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6663
@@ -14,6 +14,7 @@
 --##	    0.2 Mariam Lliso - HREOS-6619 HREOS-6620 HREOS-6662 - Actualización validaciones T017_InstruccionesReserva, T017_ObtencionContratoReserva, T017_PosicionamientoYFirma, T017_DocsPosVenta
 --##	    0.3 Alejandro Valverde - HREOS-6605 - Actualización validación T017_DefinicionOferta
 --##	    0.4 David Garcia - HREOS-6663 - Actualización validación T017_AnalisisPM
+--##	    0.5 Alejandro Valverde - HREOS-6605 - Corrección validación T017_DefinicionOferta
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -583,7 +584,7 @@ begin
   TAP(0).tap_field('TAP_CODIGO') := 'T017_DefinicionOferta';
   TAP(0).tap_field('TAP_VIEW') := NULL;
   TAP(0).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? checkCamposComprador() ? checkCompradores() ? checkVendido() ? ''''El activo está vendido'''' : checkComercializable() ? null : ''''El activo debe ser comercializable'''' : ''''Los compradores deben sumar el 100%'''' : ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.'''' : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''';
-  TAP(0).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkDepositoDespublicacionSubido() ? checkDepositoRelleno() ? existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T017_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T017_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : comprobarComiteLiberbankPlantillaPropuesta() ? existeAdjuntoUGCarteraValidacion("36", "E", "08") : definicionOfertaT013(valores[''''T017_DefinicionOferta''''][''''comiteSuperior'''']) :  existeAdjuntoUGCarteraValidacion("36", "E", "01") : ''''Es necesario rellenar el campo Dep&oacute;sito en la pesta&ntilde;a Condiciones.'''' : ''''Es necesario adjuntar sobre el Expediente Comercial, el documento Dep&oacute;sito para la despublicaci&oacute;n del activo.''''';
+  TAP(0).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkDepositoDespublicacionSubido() ? checkDepositoRelleno() ? existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T017_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T017_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : definicionOfertaT013(valores[''''T017_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01") : ''''Es necesario rellenar el campo Dep&oacute;sito en la pesta&ntilde;a Condiciones.'''' : ''''Es necesario adjuntar sobre el Expediente Comercial, el documento Dep&oacute;sito para la despublicaci&oacute;n del activo.''''';
   TAP(0).tap_field('TAP_SCRIPT_DECISION') := null;
   TAP(0).tap_field('DD_TPO_ID_BPM') := null;
   TAP(0).tap_field('TAP_SUPERVISOR') := 0;

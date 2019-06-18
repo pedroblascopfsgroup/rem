@@ -30,6 +30,11 @@ function empaqueta() {
 	else
 		cp rem-web/target/pfs-${version}.war $WORKING_DIR/pfs.war
 	fi
+
+	if [ -d recovery-gestordocumentalREM-plugin/resources/pre/ ]; then
+		mkdir -p $WORKING_DIR/wsdl/pre
+    	cp recovery-gestordocumentalREM-plugin/resources/pre/* $WORKING_DIR/wsdl/pre
+	fi
 }
 
 function preparaConfigEntorno() {

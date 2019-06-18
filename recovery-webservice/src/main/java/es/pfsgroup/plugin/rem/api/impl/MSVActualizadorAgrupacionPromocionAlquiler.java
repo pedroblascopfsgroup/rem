@@ -254,8 +254,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			String descripcion = exc.dameCelda(fila, 4);
 			unidadAlquilable.setDescripcion(descripcion);
 		}
-		 
-		genericDao.save(Activo.class, unidadAlquilable);
 		
 		Long idUnidadAlquilable = null;
 		Long idActivoMatriz = null;
@@ -263,7 +261,13 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		String cartera = null;
 		//--Seteo mediante maestro de activos
 		if (!Checks.esNulo(unidadAlquilable)) {
-			 idUnidadAlquilable = unidadAlquilable.getNumActivoRem();
+			if(!Checks.esNulo(unidadAlquilable.getNumActivoRem())) {
+				idUnidadAlquilable = unidadAlquilable.getNumActivoRem();
+			}else {
+				idUnidadAlquilable = activoApi.getNextNumActivoRem();
+				unidadAlquilable.setNumActivoRem(idUnidadAlquilable);
+			}
+			 
 		}
 		if (!Checks.esNulo(activoMatriz)) {
 			 idActivoMatriz = activoMatriz.getNumActivo();
@@ -291,6 +295,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 					
 				}
 				unidadAlquilable.setNumActivo(numActivoUnidadAlquilable);
+				if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
+					return activoNoValido(fila);
+				}
 				genericDao.save(Activo.class, unidadAlquilable);
 			} 
 

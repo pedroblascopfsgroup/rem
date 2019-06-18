@@ -5294,6 +5294,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					tipoDoc = DtoClienteUrsus.OTROS_PERSONA_FISICA;
 				if (DDTiposDocumentos.OTROS_PESONA_JURIDICA.equals(tipoDocumento))
 					tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
+				if (DDTiposDocumentos.NIE.equals(tipoDocumento))
+					tipoDoc = DtoClienteUrsus.NIE;
 			}
 
 			if (!Checks.esNulo(idExpediente) && !Checks.esNulo(tipoDoc)) {

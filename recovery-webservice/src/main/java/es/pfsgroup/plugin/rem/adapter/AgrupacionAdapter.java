@@ -2028,7 +2028,7 @@ public class AgrupacionAdapter {
 				if (ES_FORMALIZABLE.equals(oferta.getAgrupacion().getIsFormalizacion())) {
 					// // Comprobar si la agrupación tiene todos los gestores
 					// // asignados.
-					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
+					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getVentaDirecta()) && !oferta.getVentaDirecta()) {
 						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 					}
 				}
@@ -2050,7 +2050,7 @@ public class AgrupacionAdapter {
 				if (ES_FORMALIZABLE.equals(oferta.getAgrupacion().getIsFormalizacion())) {
 					// Comprobar si la agrupación tiene todos los gestores
 					// asignados.
-					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())) {
+					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getVentaDirecta()) && !oferta.getVentaDirecta()) {
 						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 					}
 				}
@@ -2347,7 +2347,7 @@ public class AgrupacionAdapter {
 				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
 				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 				
-				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
 				}

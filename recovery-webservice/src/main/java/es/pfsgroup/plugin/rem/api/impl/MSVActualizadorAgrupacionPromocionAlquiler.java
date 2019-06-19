@@ -313,7 +313,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
 			return falloConexionConMaestro(fila);
 		}
-		//genericDao.save(Activo.class, unidadAlquilable);
+		genericDao.save(Activo.class, unidadAlquilable);
 		
 		 //-- Lista propietarios 
 		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){    

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -69,12 +70,19 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())){
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO_PRO_MANZANA);
 							if(!DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo())) {
+								expediente.setFechaVenta(null);
+								expediente.setFechaAnulacion(new Date());
 								// Finaliza el trámite
 								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 								genericDao.save(ActivoTramite.class, tramite);
 								// Rechaza la oferta y descongela el resto
 								ofertaApi.rechazarOferta(ofertaAceptada);
+								try {
+									ofertaApi.descongelarOfertas(expediente);
+								} catch (Exception e) {
+									logger.error("Error descongelando ofertas.", e);
+								}
 								notificatorRechazo.notificatorFinTareaConValores(tramite, valores);
 							}
 						}

@@ -113,17 +113,6 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									}
 								}
 								
-								if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-										&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
-										&& !uvemManagerApi.esTramiteOffline(UpdaterServiceSancionOfertaResultadoPBC.CODIGO_T017_PBC_VENTA,expediente)) {
-									try {
-										uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(),
-												UvemManagerApi.MOTIVO_ANULACION_OFERTA.PBC_DENEGADO);
-									} catch (Exception e) {
-										logger.error("Error al invocar el servicio de anular oferta de Uvem.", e);
-										throw new UserException(e.getMessage());
-									}
-								}
 							}
 
 							//Motivo anulación

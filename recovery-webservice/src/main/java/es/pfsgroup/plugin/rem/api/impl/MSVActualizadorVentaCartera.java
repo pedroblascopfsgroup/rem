@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.ValidateJbpmManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -119,7 +120,10 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 	@Autowired
 	private ResolucionComiteApi resolucionComiteApi;
-
+	
+	@Autowired
+	private ValidateJbpmManager validateJbpmManager;
+	
 	@Resource
 	private MessageService messageServices;
 
@@ -640,7 +644,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			valoresTarea.put("comiteSuperior", new String[] { "02" });
 			valoresTarea.put("observaciones", new String[] { "Masivo Venta cartera" });
 			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
-
+			
+			validateJbpmManager.definicionOfertaT013(tareasTramite.get(0), "02");
 			agendaAdapter.save(valoresTarea);
 			transactionManager.commit(transaction);
 

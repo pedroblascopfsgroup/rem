@@ -389,14 +389,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	public DtoPage getListOfertasGestoria(DtoOfertasFilter dto) {
-		Usuario usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", dto.getGestoria()));
-
-		if (usuarioGestoria != null) {			
-			return ofertaDao.getListOfertasGestoria(dto, usuarioGestoria);
-		}
-		
-		return null;
-		
+		return ofertaDao.getListOfertasGestoria(dto);		
 	}
 
 	@Override

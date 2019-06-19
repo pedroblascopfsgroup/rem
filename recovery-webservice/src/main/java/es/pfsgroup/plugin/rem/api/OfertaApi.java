@@ -92,7 +92,7 @@ public interface OfertaApi {
 	public DtoPage getListOfertasUsuario(DtoOfertasFilter dtoOfertasFilter);
 	
 	/**
-	 * Devuelve un Page de Ofertas aplicando el filtro que recibe teniendo en cuenta si se filtra por gestoria.
+	 * Devuelve un Page de Ofertas filtrando por usuario gestoria y número de activo.
 	 * @param dtoOfertasFilter
 	 * @return
 	 */

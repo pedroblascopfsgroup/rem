@@ -306,11 +306,11 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	//HREOS-6229
 	@SuppressWarnings("unchecked")
 	@Override
-	public DtoPage getListOfertasGestoria(DtoOfertasFilter dtoOfertasFilter, Usuario usuarioGestoria) {
+	public DtoPage getListOfertasGestoria(DtoOfertasFilter dtoOfertasFilter) {
 		HQLBuilder hb = null;
 		
 		String from = "SELECT voferta FROM VOfertasActivosAgrupacion voferta, GestorActivo ga INNER JOIN ga.activo INNER JOIN ga.tipoGestor";
-		String where ="voferta.idActivo = ga.activo.id AND ga.usuario.username = '" + usuarioGestoria.getUsername() + "' AND voferta.numActivoAgrupacion = "
+		String where ="voferta.idActivo = ga.activo.id AND ga.usuario.id = '" + dtoOfertasFilter.getGestoria() + "' AND voferta.numActivoAgrupacion = "
 				+ dtoOfertasFilter.getNumActivo();
 					
 		hb = new HQLBuilder(from);

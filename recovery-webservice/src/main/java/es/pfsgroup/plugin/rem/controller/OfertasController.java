@@ -432,9 +432,11 @@ public class OfertasController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET, value="ofertas/getOfertasVivasActGestoria")
-	public void getOfertasVivasActGestoria(Long idLlamada, Long numActivo, Long codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+	public void getOfertasVivasActGestoria(Long idLlamada, Long numActivo, String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+	  try {
+		Usuario usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", codGestoria));
 		DtoOfertasFilter filtro = new DtoOfertasFilter();
-		filtro.setGestoria(codGestoria);
+		filtro.setGestoria(usuarioGestoria.getId());
 		filtro.setNumActivo(numActivo);
 		filtro.setLimit(100);
 		
@@ -448,7 +450,7 @@ public class OfertasController {
 		OfertaVivaRespuestaDto ofr;
 		if(!Checks.esNulo(page) && !Checks.esNulo(page.getResults())) {
 			for (Object obj : page.getResults()) {
-				try {
+				
 					voaa = (VOfertasActivosAgrupacion) obj;
 					oferta = ofertaApi.getOfertaById(voaa.getId());
 					if(ofertaApi.estaViva(oferta)) {			
@@ -470,20 +472,16 @@ public class OfertasController {
 						ofertasList.add(ofr);
 						
 					}
-				}catch (NullPointerException e) {
-					logger.error("Error ofertas NULLPOINTER", e);
 				}
-			}
-		}		
+			}	
 		
 		//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
-		try {
 			model.put("id", 0);
 			model.put("idLlamada", idLlamada);
 			model.put("data", ofertasList);
 			model.put("error", "null");
 		}catch(Exception e) {
-			logger.error("Error ofertas", e);
+			logger.error("Error en OfertasController, metodo getOfertasVivasActGestoria", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("id", 0);
 			model.put("idLlamada", idLlamada);

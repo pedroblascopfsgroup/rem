@@ -278,7 +278,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			 idActivoMatriz = activoMatriz.getNumActivo();
 			 numRemActivoMatriz = activoMatriz.getNumActivoRem();
 			if (!Checks.esNulo(activoMatriz.getCartera()) && !Checks.esNulo(activoMatriz.getSubcartera())) {
-				cartera = gdAdapterManager.getClienteWSByCarteraySubcarterayPropietario(activoMatriz.getCartera(), activoMatriz.getSubcartera(), activoMatriz.getPropietarioPrincipal());
+				cartera = gdAdapterManager.getClienteByCarteraySubcarterayPropietario(activoMatriz.getCartera(), activoMatriz.getSubcartera(), activoMatriz.getPropietarioPrincipal());
 				
 				if(!Checks.esNulo(cartera)) {
 					cartera = cartera.toUpperCase();
@@ -313,7 +313,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
 			return falloConexionConMaestro(fila);
 		}
-		//genericDao.save(Activo.class, unidadAlquilable);
+		genericDao.save(Activo.class, unidadAlquilable);
 		
 		 //-- Lista propietarios 
 		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){    

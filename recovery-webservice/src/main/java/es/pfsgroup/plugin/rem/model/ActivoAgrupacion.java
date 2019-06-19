@@ -138,6 +138,9 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	
 	@Column(name = "AGR_UVEM_COAGIW")
 	private Integer uvemCodigoAgrupacionInmueble;
+	
+	@Column(name = "AGR_NUM_AGRUP_PRINEX_HPM")
+	private String numAgrupPrinexHPM;
 
 	@Version   
 	private Long version;
@@ -365,8 +368,14 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
 		this.tipoAlquiler = tipoAlquiler;
 	}
-	
-	
 
+	public String getNumAgrupPrinexHPM() {
+		return numAgrupPrinexHPM;
+	}
+
+	public void setNumAgrupPrinexHPM(String numAgrupPrinexHPM) {
+		this.numAgrupPrinexHPM = numAgrupPrinexHPM;
+	}
+	
 
 }

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170322
+--## AUTOR=rlb
+--## FECHA_CREACION=20190613
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1787
+--## INCIDENCIA_LINK=HREOS-6082
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con agrupaciones ObrasNuevas, LotesRestringidos y Asistidas.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial ANAHUAC DE VICENTE
+--##		0.2 Versión Adrián Molina Garrido
 --##########################################
 --*/
 
@@ -37,7 +38,7 @@ DECLARE
 
     CUENTA NUMBER;
     
-BEGIN
+BEGIN/*versión 0.2*/
 
   SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = V_TEXT_VISTA AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
   IF CUENTA>0 THEN
@@ -62,7 +63,7 @@ BEGIN
 		LOTE_NUM_REM, 
 		LOTE_PRINCIPAL, 
 		ASISTIDA_NUM_REM, 
-		ASISTIDA_PRINCIPAL 
+		ASISTIDA_PRINCIPAL
 		FROM (
 			SELECT AGR.AGR_NUM_AGRUP_REM,
 		      AGA.ACT_ID,

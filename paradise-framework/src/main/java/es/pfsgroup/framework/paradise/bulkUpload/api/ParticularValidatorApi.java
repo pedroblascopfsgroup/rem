@@ -320,6 +320,8 @@ public interface ParticularValidatorApi {
 	Boolean existeExpedienteComercial(String numExpediente);
 
 	Boolean existeAgrupacion(String numAgrupacion);
+	
+	Boolean existeAgrupacionPA(String numAgrupacion);
 
 	Boolean existeTipoGestor(String tipoGestor);
 
@@ -588,7 +590,24 @@ public interface ParticularValidatorApi {
 
 	public Boolean isActivoFinanciero(String numActivo);
 
+	Boolean esAgrupacionVigente(String numAgrupacion);
 
+	Boolean tieneActivoMatriz(String numAgrupacion);
+
+	String getGestorComercialAlquilerByAgrupacion(String numAgrupacion);
+
+	String getSupervisorComercialAlquilerByAgrupacion(String numAgrupacion);
+
+	String getSuperficieConstruidaActivoMatrizByAgrupacion(String numAgrupacion);
+
+	String getSuperficieConstruidaPromocionAlquilerByAgrupacion(String numAgrupacion);
+
+	String getSuperficieUtilActivoMatrizByAgrupacion(String numAgrupacion);
+
+	String getSuperficieUtilPromocionAlquilerByAgrupacion(String numAgrupacion);
+
+	String getProcentajeTotalActualPromocionAlquiler(String numAgrupacion);
+	
 	/**
 	 * 
 	 * @param idImpuesto
@@ -609,6 +628,9 @@ public interface ParticularValidatorApi {
 	 * @return true si existe, false si no existe o es nulo
 	 */
 	public Boolean existeCalculo(String codCalculo);
+
+	Boolean existeActivoConOfertaVivaEstadoExpediente(String numActivo);
+
 	
 	/**
 	 *  Valida que el activo no pertenezca a las carteras Bankia y Liberbank
@@ -713,6 +735,20 @@ public interface ParticularValidatorApi {
 
 	Boolean isActivoOfGiants(String numActivo);
 	
+	/**
+	 * @param numActivo
+	 * @return true si el activo es un activo Matriz de una PA
+	 * false si no lo es
+	 */
+	Boolean isActivoMatriz(String numActivo);
+	
+	/**
+	 * @param numActivo
+	 * @return true si el activo es una unidad alquilable de una PA
+	 * false si no lo es
+	 */
+	Boolean isUA(String numActivo);
+
 	List<BigDecimal> activosEnAgrupacion(String numOferta);
 
 	/**

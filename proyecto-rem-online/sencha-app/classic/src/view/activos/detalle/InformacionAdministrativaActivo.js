@@ -411,6 +411,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				            labelWidth: '25%',
 				            width: '15%',
 				        	bind: {
+				        		readOnly : '{esUA}',
 				        		store: '{comboSiNoRem}',
 				        		value: '{infoAdministrativa.sujetoAExpediente}'
 				        	},
@@ -430,30 +431,46 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								    {
 								    	xtype: 'textfieldbase',
 								    	fieldLabel: 'Organismo expropiante',
-								    	bind:		'{infoAdministrativa.organismoExpropiante}'
+							        	bind: {
+							        		readOnly : '{esUA}',
+							        		value: '{infoAdministrativa.organismoExpropiante}'
+							        	}		
 								    	
 								    },
 								    {
 								    	xtype: 'textfieldbase',
 								    	fieldLabel: 'Ref. expdte. admvo.',
-								    	bind:		'{infoAdministrativa.refExpedienteAdmin}'
+							        	bind: {
+							        		readOnly : '{esUA}',
+							        		value: '{infoAdministrativa.refExpedienteAdmin}'
+							        	}		
 								    },
 								    {
 								    	xtype: 'textareafieldbase',
 								    	fieldLabel: HreRem.i18n('fieldlabel.observaciones'),
-								    	bind:		'{infoAdministrativa.observacionesExpropiacion}',
+							        	bind: {
+							        		readOnly : '{esUA}',
+							        		value: '{infoAdministrativa.observacionesExpropiacion}'
+							        	},		
 								    	rowspan: 2
 								    },
 								    {
 								    	xtype: 'datefieldbase',
 								    	fieldLabel: 'Fecha inicio expdte.',
 								    	formatter: 'date("d/m/Y")',
-								    	bind:		'{infoAdministrativa.fechaInicioExpediente}'
+							        	bind: {
+							        		readOnly : '{esUA}',
+							        		value: '{infoAdministrativa.fechaInicioExpediente}'
+							        	}			
 								    },
 								    {
 								    	xtype: 'textfieldbase',
 								    	fieldLabel: 'Ref. expdte. interno',
-								    	bind:		'{infoAdministrativa.refExpedienteInterno}'
+							        	bind: {
+							        		readOnly : '{esUA}',
+							        		value: '{infoAdministrativa.refExpedienteInterno}'
+							        	}	
+								    		
 								    }
 							    ]
 						 }
@@ -556,7 +573,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
    evaluarEdicion: function() {    	
 		var me = this;
 		
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false" || me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false" || me.lookupController().getViewModel().get('activo').get('unidadAlquilable')
+				|| me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			me.down('[xtype=gridBaseEditableRow]').setTopBar(false);
 			me.down('[xtype=gridBaseEditableRow]').rowEditing.clearListeners();
 		}

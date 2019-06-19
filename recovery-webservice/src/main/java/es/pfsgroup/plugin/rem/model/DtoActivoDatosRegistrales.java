@@ -129,6 +129,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String idMotivo;
 	private List<String> idsMotivo;
 	
+	private Boolean unidadAlquilable;
+	private String tipoTituloActivoMatriz;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -717,14 +719,24 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setNoEstaInscrito(Boolean noEstaInscrito) {
 		this.noEstaInscrito = noEstaInscrito;
 	}
+	public Boolean getUnidadAlquilable() {
+		return unidadAlquilable;
+	}
+	public void setUnidadAlquilable(Boolean unidadAlquilable) {
+		this.unidadAlquilable = unidadAlquilable;
+	}
 	public List<String> getIdsMotivo() {
 		return idsMotivo;
 	}
 	public void setIdsMotivo(List<String> idsMotivo) {
 		this.idsMotivo = idsMotivo;
+
+	}
+	public String getTipoTituloActivoMatriz() {
+		return tipoTituloActivoMatriz;
+	}
+	public void setTipoTituloActivoMatriz(String tipoTituloActivoMatriz) {
+		this.tipoTituloActivoMatriz = tipoTituloActivoMatriz;
 	}
 
-
-
-	
 }

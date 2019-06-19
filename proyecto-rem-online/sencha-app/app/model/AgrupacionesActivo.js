@@ -27,7 +27,7 @@ Ext.define('HreRem.model.AgrupacionesActivo', {
     	},
     	{
     		name : 'tipoAgrupacionDescripcion'
-    	}, 
+    	},
     	{
     		name : 'idAgrupacion'
     	},

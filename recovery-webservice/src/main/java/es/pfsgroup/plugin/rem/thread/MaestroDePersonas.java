@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -102,8 +103,10 @@ public class MaestroDePersonas implements Runnable {
 
 							logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 							logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
-							PersonaOutputDto personaOutputDto = gestorDocumentalMaestroManager
-									.ejecutarPersona(personaDto);
+							PersonaOutputDto personaOutputDto = new PersonaOutputDto();
+							BeanUtils.copyProperties(gestorDocumentalMaestroManager
+									.ejecutar(personaDto), personaOutputDto);
+
 							logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
 							logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: "
 									.concat(personaOutputDto.toString()));
@@ -127,7 +130,8 @@ public class MaestroDePersonas implements Runnable {
 								personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
 								personaDto.setIdRol(ID_ROL_16);
 
-								personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+								BeanUtils.copyProperties(gestorDocumentalMaestroManager
+										.ejecutar(personaDto), personaOutputDto);
 
 								logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
 										+ personaOutputDto.getIdIntervinienteHaya());
@@ -212,8 +216,9 @@ public class MaestroDePersonas implements Runnable {
 
 					logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 					logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
-					
-					PersonaOutputDto personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+					PersonaOutputDto personaOutputDto = new PersonaOutputDto();
+					BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
+							.ejecutar(personaDto));
 					//PersonaOutputDto personaOutputDto = new PersonaOutputDto();
 					
 					logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
@@ -236,8 +241,8 @@ public class MaestroDePersonas implements Runnable {
 						personaDto.setFechaOperacion(today);
 						personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
 						personaDto.setIdRol(ID_ROL_16);
-
-						personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+						BeanUtils.copyProperties(gestorDocumentalMaestroManager
+								.ejecutar(personaDto), personaOutputDto);
 						//personaOutputDto.setIdIntervinienteHaya("123456789");
 
 						logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());

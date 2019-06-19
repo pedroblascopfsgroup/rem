@@ -54,8 +54,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		if(!Checks.esNulo(dto.getIdProveedor()) && Checks.esNulo(gasto.getPropietario())){
 			return new PageHibernate();
 		}
-   		return HibernateQueryUtils.page(this, hb, dto);
-
+		
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
 	@Override
@@ -109,6 +109,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+
    		if(!Checks.esNulo(dto.getIdProveedor())) {
    			hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);
    	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
@@ -158,6 +159,17 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
+	
+	
+	@Override
+	public Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto) {
+
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivoMatrizPresupuesto acttbj");		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.activoMatriz", dto.getIdActivo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.ejercicioAnyo", dto.getEjercicioPresupuestario());
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+	}
 	
 	@Override
 	public Page getObservaciones(DtoTrabajoFilter dto) {

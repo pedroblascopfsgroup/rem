@@ -126,18 +126,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
 		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO'] && !tieneReserva)) 
 				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh.getValue())) ) {
-			campoTipoPersona.setDisabled(true);
-			campoPorcionCompra.setDisabled(true);
-			campoTipoDocumentoRte.setDisabled(true); 
-			campoNumeroDocumentoRte.setDisabled(true);
-			campoSeleccionClienteUrsus.setDisabled(true);
-			campoEstadoCivil.setDisabled(true);
-			campoRegEconomico.setDisabled(true);
-			campoTipoDocumentoConyuge.setDisabled(true);
-			campoNumeroDocumentoConyugue.setDisabled(true);
-			campoNumeroUrsus.setDisabled(true);
-			campoNumeroUrsusBh.setDisabled(true);
-			numeroDocumentoConyuge.setDisabled(true);
+			campoTipoPersona.setReadOnly();
+			campoPorcionCompra.setReadOnly();
+			campoTipoDocumentoRte.setReadOnly(); 
+			campoNumeroDocumentoRte.setReadOnly();
+			campoSeleccionClienteUrsus.setReadOnly();
+			campoEstadoCivil.setReadOnly();
+			campoRegEconomico.setReadOnly();
+			campoTipoDocumentoConyuge.setReadOnly();
+			campoNumeroDocumentoConyugue.setReadOnly();
+			campoNumeroUrsus.setDisabled.setReadOnly();
+			campoNumeroUrsusBh.setReadOnly();
+			numeroDocumentoConyuge.setReadOnly();
 			
 
 			}

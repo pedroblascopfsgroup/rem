@@ -49,7 +49,7 @@ public class DDComiteSancion implements Auditable, Dictionary {
 	public static final String CODIGO_HAYA_CERBERUS = "26";
 	public static final String CODIGO_EXTERNO_CERBERUS = "27";
 	public static final String CODIGO_CERBERUS = "29";
-	public static final String CODIGO_APPLE_CERBERUS = "30";
+	public static final String CODIGO_APPLE_CERBERUS = "31";
 	
 	public static final String CODIGO_HAYA_LIBERBANK = "22";
 	public static final String CODIGO_LIBERBANK_RESIDENCIAL = "23";

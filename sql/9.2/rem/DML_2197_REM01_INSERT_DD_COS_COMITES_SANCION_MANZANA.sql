@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAVID GARCÍA
---## FECHA_CREACION=20190613
+--## FECHA_CREACION=20190619
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6627
@@ -39,7 +39,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     --        CODIGO    DESCRIPCION         DESCRIPCION_LARGA   CARTERA_CODIGO  SUBCARTERA_CODIGO
-        T_TIPO_DATA('30',   'Manzana'  ,   'Manzana',   '07','138')
+        T_TIPO_DATA('31',   'Manzana'  ,   'Manzana',   '07','138')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

@@ -26,7 +26,9 @@ public class FuncionesDaoImpl extends AbstractEntityDao<Funcion, Long> implement
 	public List<DtoFunciones> getFunciones(DtoFunciones dto) {
 		List<DtoFunciones> listaFunciones = new ArrayList<DtoFunciones>();
 		
-		HQLBuilder hb = new HQLBuilder("select fun.id, fun.descripcionLarga, fun.descripcion from Funcion fun");	
+		HQLBuilder hb = new HQLBuilder("select fun.id, fun.descripcionLarga, fun.descripcion from Funcion fun");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "fun.auditoria.borrado", false);
+
 		Query query = getSession().createQuery(hb.toString());
 		HQLBuilder.parametrizaQuery(query, hb);
 		List<Object[]> listaQuery =  query.list();

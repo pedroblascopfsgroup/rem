@@ -84,7 +84,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Comienza el proceso de recalcular Situacion comercial'); 
 	
-	REM01.SP_ASC_ACT_SIT_COM_VACIOS(0,1);
+	REM01.SP_ASC_ACT_SIT_COM_VACIOS(0);
 	
 	DBMS_OUTPUT.PUT_LINE('[FIN]');
 

@@ -1,0 +1,109 @@
+--/*
+--##########################################
+--## AUTOR=Guillermo Llidó Parra
+--## FECHA_CREACION=20190531
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-5932
+--## PRODUCTO=NO
+--## Finalidad: Rollback publicaciones.
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+
+DECLARE
+    err_num NUMBER; -- Numero de error.
+    err_msg VARCHAR2(2048); -- Mensaje de error.
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas.
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas.
+    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= '';
+    V_MSQL VARCHAR2(4000 CHAR);
+    
+	V_TABLA_BACKUP VARCHAR2(100 CHAR);
+	V_ESQUEMA_BACKUP VARCHAR2(100 CHAR);
+	
+BEGIN   
+
+
+  DBMS_OUTPUT.put_line('[INICIO] Ejecutando [ROLLBACK PUBLICACIONES ]  ...........');
+  		
+/** 	ROLLBACK PUBLICACION		**/
+
+		DBMS_OUTPUT.put_line('	[INFO] Se realiza rollback sobre tabla ACT_APU_ACTIVO_PUBLICACION ');
+		
+		-- OBTENEMOS LA TABLA BACKUP
+		V_MSQL := 'SELECT TABLA_BACKUP FROM '||V_ESQUEMA||'.AUX_MIG_ALQUILERES_TAB_AFEC  WHERE TABLA = ''ACT_APU_ACTIVO_PUBLICACION'' ';
+		EXECUTE IMMEDIATE V_MSQL INTO V_TABLA_BACKUP;
+		-- OBTENEMOS EL ESQUEMA TABLA BACKUP
+		V_MSQL := 'SELECT TABLESPACE_NAME FROM SYS.ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA_BACKUP||''' ';
+		EXECUTE IMMEDIATE V_MSQL INTO V_ESQUEMA_BACKUP;
+		
+		-- BORRAMOS LOS GESTORES PUBLICACION
+		
+		V_MSQL := 'DELETE FROM  '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION';
+							
+		EXECUTE IMMEDIATE V_MSQL;
+  		
+  		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han borado '||SQL%ROWCOUNT||' registros de la ACT_APU_ACTIVO_PUBLICACION.'); 
+  		
+  		-- ACTUALIZAMOS CON EL BACKUP
+		
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION (SELECT * FROM  '||V_ESQUEMA_BACKUP||'.'||V_TABLA_BACKUP||')';
+				
+  		EXECUTE IMMEDIATE V_MSQL;
+  		
+  		DBMS_OUTPUT.PUT_LINE('	[INFO] Se ha hecho rollback de  '||SQL%ROWCOUNT||' ACT_APU_ACTIVO_PUBLICACION.'); 
+		
+		DBMS_OUTPUT.put_line('	[INFO] Se realiza rollback sobre tabla ACT_APU_ACTIVO_PUBLICACION '); 		
+
+/** 	ROLLBACK HISTORICO PUBLICACION		**/
+
+		DBMS_OUTPUT.put_line('	[INFO] Se realiza rollback sobre tabla ACT_AHP_HIST_PUBLICACION ');
+		
+		-- OBTENEMOS LA TABLA BACKUP
+		V_MSQL := 'SELECT TABLA_BACKUP FROM '||V_ESQUEMA||'.AUX_MIG_ALQUILERES_TAB_AFEC  WHERE TABLA = ''ACT_AHP_HIST_PUBLICACION'' ';
+		EXECUTE IMMEDIATE V_MSQL INTO V_TABLA_BACKUP;
+		-- OBTENEMOS EL ESQUEMA TABLA BACKUP
+		V_MSQL := 'SELECT TABLESPACE_NAME FROM SYS.ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA_BACKUP||''' ';
+		EXECUTE IMMEDIATE V_MSQL INTO V_ESQUEMA_BACKUP;
+		
+		-- BORRAMOS LOS GESTORES HISTORICO PUBLICACION
+		
+		V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION';
+							
+		EXECUTE IMMEDIATE V_MSQL;
+  		
+  		DBMS_OUTPUT.PUT_LINE('	[INFO] Se han borado '||SQL%ROWCOUNT||' registros de la ACT_AHP_HIST_PUBLICACION.'); 
+  		
+  		-- ACTUALIZAMOS CON EL BACKUP
+		
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION (SELECT * FROM  '||V_ESQUEMA_BACKUP||'.'||V_TABLA_BACKUP||')';
+				
+  		EXECUTE IMMEDIATE V_MSQL;
+  		
+  		DBMS_OUTPUT.PUT_LINE('	[INFO] Se ha hecho rollback de  '||SQL%ROWCOUNT||' ACT_AHP_HIST_PUBLICACION.'); 
+		
+		DBMS_OUTPUT.put_line('	[INFO] Se realiza rollback sobre tabla ACT_AHP_HIST_PUBLICACION '); 	
+  		
+COMMIT;
+  
+ DBMS_OUTPUT.put_line('[FIN] Ejecutando [ROLLBACK SITUACION_POSESORIA Y PATRIMONIO ]  ...........');
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

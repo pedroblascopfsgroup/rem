@@ -22,7 +22,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -45,9 +44,6 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	@Autowired
 	private OfertaApi ofertaApi;
 
-	@Autowired
-	private TrabajoApi trabajoApi;
-	
 	@Autowired
 	private NotificacionApi notificacionApi;
 

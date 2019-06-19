@@ -50,6 +50,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -243,6 +244,9 @@ public class RestManagerImpl implements RestApi {
 				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
 						.equals(UniqueKey.class)) {
 					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_UNIQUE_VIOLATED);
+				} else if (visitaFailure.getConstraintDescriptor().getAnnotation().annotationType()
+						.equals(IsNumber.class)) {
+					error.put(visitaFailure.getPropertyPath().toString(), RestApi.REST_MSG_UNKNOWN_KEY);
 				} else {
 					error.put(visitaFailure.getPropertyPath().toString(), "DEFAULT");
 				}

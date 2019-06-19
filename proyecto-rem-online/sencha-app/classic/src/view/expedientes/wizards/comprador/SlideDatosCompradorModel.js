@@ -129,7 +129,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getComboMunicipioSinFiltro'
+				remoteUrl: 'generic/getComboMunicipio',
+				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'} 
 			}
 		},
 		storeProblemasVenta: {

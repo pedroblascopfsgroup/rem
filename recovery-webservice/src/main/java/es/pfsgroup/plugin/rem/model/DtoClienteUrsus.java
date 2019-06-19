@@ -17,6 +17,7 @@ public class DtoClienteUrsus {
 	public final static String MENOR= "9";
 	public final static String OTROS_PERSONA_FISICA= "F";
 	public final static String OTROS_PESONA_JURIDICA= "J";
+	public final static String NIE= "W";
 	
 	public final static String ENTIDAD_REPRESENTADA_BANKIA= "00000";
 	public final static String ENTIDAD_REPRESENTADA_BANKIA_HABITAT= "05051";

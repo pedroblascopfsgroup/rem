@@ -645,7 +645,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					+ "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
 			Usuario gestorComercial = null;
-			Usuario gestorFormalizacion = null;
+			Usuario gestorFormalizacion = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
 
 			if (!Checks.esNulo(oferta.getAgrupacion())
 					&& !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion() != null)) {
@@ -654,15 +654,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						&& oferta.getAgrupacion() instanceof ActivoLoteComercial) {
 					ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
 					gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
-					gestorFormalizacion = activoLoteComercial.getUsuarioGestorFormalizacion();
 				} else {
 					// Lote Restringido
 					gestorComercial = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GCOM");
-					gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GFORM");
 				}
 			} else {
 				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GCOM");
-				gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), "GFORM");
 			}
 			
 			cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",
@@ -919,7 +916,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
 		Usuario gestorComercial = null;
-		Usuario gestorFormalizacion = null;
+		Usuario gestorFormalizacion = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GFORM");
 
 		if (!Checks.esNulo(oferta.getAgrupacion())
 				&& !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion() != null)) {
@@ -928,15 +925,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					&& oferta.getAgrupacion() instanceof ActivoLoteComercial) {
 				ActivoLoteComercial activoLoteComercial = (ActivoLoteComercial) oferta.getAgrupacion();
 				gestorComercial = activoLoteComercial.getUsuarioGestorComercial();
-				gestorFormalizacion = activoLoteComercial.getUsuarioGestorFormalizacion();
 			} else {
 				// Lote Restringido
 				gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
-				gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GFORM");
 			}
 		} else {
 			gestorComercial = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GCOM");
-			gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(tramite.getActivo(), "GFORM");
 		}
 
 		cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>",

@@ -73,7 +73,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertantePM implements UpdaterS
 					
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) 
 							&& !Checks.esNulo(valor.getValor())) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_RESOLUCION_CES);
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							
 							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());

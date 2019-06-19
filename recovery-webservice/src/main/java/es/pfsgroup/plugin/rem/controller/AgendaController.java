@@ -27,6 +27,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -35,6 +36,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -49,8 +51,10 @@ import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
 @Controller
@@ -81,7 +85,11 @@ public class AgendaController extends TareaController {
 	@Autowired
 	private ActivoApi activoApi;
 
+	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -337,6 +345,7 @@ public class AgendaController extends TareaController {
 	public ModelAndView saltoResolucionExpedienteByIdExp(Long idExpediente, ModelMap model) {
 
 		ExpedienteComercial eco = null;
+		Oferta oferta;
 		List<ActivoTramite> listaTramites = null;
 		Boolean salto = false;
 		final String CODIGO_T013 = "T013";
@@ -352,7 +361,7 @@ public class AgendaController extends TareaController {
 				if (Checks.esNulo(eco)) {
 					throw new JsonViewerException("No existe el expediente comercial.");
 				}
-
+				
 				listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
 				if (Checks.esNulo(listaTramites)
 						|| (!Checks.esNulo(listaTramites) && listaTramites.size() == 0 || (!Checks.esNulo(listaTramites)
@@ -366,18 +375,22 @@ public class AgendaController extends TareaController {
 					TareaExterna tarea = listaTareas.get(i);
 					if (!Checks.esNulo(tarea)) {
 						String codigo = tarea.getTareaProcedimiento().getTipoProcedimiento().getCodigo();
-						if(codigo.equals(CODIGO_T013)) {
+						if(CODIGO_T013.equals(codigo)) {
 							salto = adapter.saltoResolucionExpediente(tarea.getId());
-						}else if(codigo.equals(CODIGO_T017)) {
-							if(eco.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.RESERVADO)) {
+
+						}else if(CODIGO_T017.equals(codigo)) {
+							if(DDEstadosExpedienteComercial.RESERVADO.equals(eco.getEstado().getCodigo())) {
 								salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
+
 							}else {
 								salto = adapter.saltoFin(tarea.getId());
 							}
 						}
-						break;
 					}
-				}
+				}				
+				oferta = eco.getOferta();
+				ofertaApi.rechazarOferta(oferta);
+				expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);					
 			}
 			model.put("success", salto);
 

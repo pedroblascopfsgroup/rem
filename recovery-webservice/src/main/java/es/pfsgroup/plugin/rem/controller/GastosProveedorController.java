@@ -557,7 +557,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("error desasignando trabajos",e);
 			model.put("success", false);
 		}	
 		

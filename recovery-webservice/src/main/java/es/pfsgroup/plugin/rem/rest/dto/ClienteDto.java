@@ -13,6 +13,7 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
@@ -159,6 +160,7 @@ public class ClienteDto implements Serializable{
 	private String codPaisRepresentante;
 	
 	@Size(max=5,groups = { Insert.class, Update.class })
+	@IsNumber(groups = { Insert.class, Update.class }, message="El cp no es valido")
 	private String codigoPostalRepresentante;
 	
 	

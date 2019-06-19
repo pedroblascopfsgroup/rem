@@ -1345,6 +1345,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			oferta.setUsuarioBaja(usu.getApellidoNombre());
 			updateStateDispComercialActivosByOferta(oferta);
+			darDebajaAgrSiOfertaEsLoteCrm(oferta);
 			genericDao.save(Oferta.class, oferta);
 
 		} catch (Exception e) {
@@ -1354,7 +1355,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return true;
 
 	}
-
+	
 	@Transactional(readOnly = false)
 	@Override
 	public void descongelarOfertas(ExpedienteComercial expediente) throws Exception {
@@ -3925,5 +3926,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 	return esCarteraInternacional;
 		
+	}
+	
+	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta) {
+		if (OfertaApi.ORIGEN_WEBCOM.equals(oferta.getOrigen())) {
+			ActivoAgrupacion agr = oferta.getAgrupacion();
+			if (agr != null && agr.getTipoAgrupacion() != null
+					&& DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agr.getTipoAgrupacion().getCodigo())) {
+
+				agr.setFechaBaja(new Date());
+				activoAgrupacionApi.saveOrUpdate(agr);
+
+			}
+		}
 	}
 }

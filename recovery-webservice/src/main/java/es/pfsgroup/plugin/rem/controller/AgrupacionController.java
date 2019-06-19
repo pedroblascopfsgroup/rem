@@ -417,7 +417,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("msgError", jvex.getMessage());
 			//trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("error guardando agrupacion!",e);
 			model.put("success", false);
 			//trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}

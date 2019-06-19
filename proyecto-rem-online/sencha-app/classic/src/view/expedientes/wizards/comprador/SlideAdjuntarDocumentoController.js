@@ -51,36 +51,79 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 							esInternacional = form.getForm().findField('carteraInternacional').getValue(),
 							docOfertaComercial = form.getForm().findField('docOfertaComercial'),
 							btnFinalizar = form.lookupReference('btnFinalizar');
-						if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
-							if(esInternacional){
-								if(checkTransInternacionales){
-									btnFinalizar.enable();
+							if(!wizard.expediente.get('origen') === 'REM'){
+								if(checkCesionDatos){
+									if(esInternacional){
+										if(checkTransInternacionales){
+											btnFinalizar.enable();
+										}else{
+											btnFinalizar.disable();
+										}
+									}else{
+										btnFinalizar.enable();
+									}
 								}else{
 									btnFinalizar.disable();
 								}
 							}else{
-								btnFinalizar.enable();
+								if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
+									if(esInternacional){
+										if(checkTransInternacionales){
+											btnFinalizar.enable();
+										}else{
+											btnFinalizar.disable();
+										}
+									}else{
+										btnFinalizar.enable();
+									}
+								}else{
+									btnFinalizar.disable();
+								}
 							}
-						}else{
-							btnFinalizar.disable();
-						}
 						}
 					}
 				},
 				failure: function(record, operation) {
 					me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
 					wizard.unmask();
-					if (wizard.comprador.get('cesionDatos')) {
-						form.lookupReference('btnGenerarDocumento').disable();
-						form.lookupReference('btnSubirDocumento').disable();
-						form.lookupReference('btnFinalizar').disable();
+					if(!wizard.expediente.get('origen') === 'REM'){
+						if (wizard.comprador.get('cesionDatos')) {
+							form.lookupReference('btnGenerarDocumento').disable();
+							form.lookupReference('btnSubirDocumento').disable();
+							form.lookupReference('btnFinalizar').disable();
+							if(orm.getForm().findField('carteraInternacional').getValue()){
+								if(form.getForm().findField('transferenciasInternacionales').getValue()){
+									form.lookupReference('btnFinalizar').enable();
+								}else{
+									form.lookupReference('btnFinalizar').disable();
+									form.lookupReference('btnGenerarDocumento').enable();
+									form.lookupReference('btnSubirDocumento').enable();
+								}
+							}else{
+								form.lookupReference('btnFinalizar').enable();
+							}
+						}
+					}else{
+						if (wizard.comprador.get('cesionDatos')) {
+							form.lookupReference('btnGenerarDocumento').enable();
+							form.lookupReference('btnSubirDocumento').enable();
+							form.lookupReference('btnFinalizar').disable();							
+						}else{
+							form.lookupReference('btnGenerarDocumento').disable();
+							form.lookupReference('btnSubirDocumento').disable();
+							form.lookupReference('btnFinalizar').disable();	
+						}
 					}
 				}
 			});
-	
+
 			form.getForm().findField('cesionDatos').setValue(wizard.comprador.get('cesionDatos'));
 			form.getForm().findField('comunicacionTerceros').setValue(wizard.comprador.get('comunicacionTerceros'));
 			form.getForm().findField('transferenciasInternacionales').setValue(wizard.comprador.get('transferenciasInternacionales'));
+			form.cesionHaya = wizard.comprador.get('cesionDatos');
+			form.comunicacionTerceros = wizard.comprador.get('comunicacionTerceros');
+			form.tranferenciasInternacionales = wizard.comprador.get('transferenciasInternacionales');
+			//form.lookupReference('btnFinalizar').enable();
 		}
 	},
 
@@ -124,6 +167,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	onChangeCheckboxCesionDatos: function(checkbox, newVal, oldVal) {
 		var me = this,
 			form = me.getView(),
+			wizard =form.up('wizardBase'),
 			checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
 			esInternacional = form.getForm().findField('carteraInternacional').getValue(),
 			btnGenerarDoc = form.lookupReference('btnGenerarDocumento'),
@@ -152,24 +196,49 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnSubirDoc.disable();
 		}
 		
-		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkbox.getValue()){
-			if(esInternacional){
-				if(checkTransInternacionales){
-					btnFinalizar.enable();
+		if(!Ext.isEmpty(wizard.expediente) && !wizard.expediente.get('origen') === 'REM'){
+			if(me.hayCambios()){
+				if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkbox.getValue()){
+					if(esInternacional){
+						if(checkTransInternacionales){
+							btnFinalizar.enable();
+						}else{
+							btnFinalizar.disable();
+						}
+					}else{
+						btnFinalizar.enable();
+					}
 				}else{
 					btnFinalizar.disable();
 				}
 			}else{
-				btnFinalizar.enable();
+				if(checkCesionDatos){
+					btnFinalizar.enable();
+				}else{
+					btnFinalizar.disable();
+				}
 			}
 		}else{
-			btnFinalizar.disable();
+			if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkbox.getValue()){
+				if(esInternacional){
+					if(checkTransInternacionales){
+						btnFinalizar.enable();
+					}else{
+						btnFinalizar.disable();
+					}
+				}else{
+					btnFinalizar.enable();
+				}
+			}else{
+				btnFinalizar.disable();
+			}
 		}
 	},
 
 	onChangeCheckboxComunicacionTerceros: function(checkbox, newVal, oldVal) {
 		var me = this,
 			form = me.getView(),
+			wizard =form.up('wizardBase'),
 			checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
 			checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
 			esInternacional = form.getForm().findField('carteraInternacional').getValue(),
@@ -198,21 +267,62 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnGenerarDoc.disable();
 			btnSubirDoc.disable();
 		}
-		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
-			if(esInternacional){
-				if(checkTransInternacionales){
-					btnFinalizar.enable();
+		if(!Ext.isEmpty(wizard.expediente) && !wizard.expediente.get('origen') === 'REM'){
+			if(me.hayCambios()){
+				if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
+					if(esInternacional){
+						if(checkTransInternacionales){
+							btnFinalizar.enable();
+						}else{
+							btnFinalizar.disable();
+						}
+					}else{
+						btnFinalizar.enable();
+					}
 				}else{
 					btnFinalizar.disable();
 				}
 			}else{
-				btnFinalizar.enable();
+				if(checkCesionDatos){
+					btnFinalizar.enable();
+				}else{
+					btnFinalizar.disable();
+				}
 			}
 		}else{
-			btnFinalizar.disable();
+			if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
+				if(esInternacional){
+					if(checkTransInternacionales){
+						btnFinalizar.enable();
+					}else{
+						btnFinalizar.disable();
+					}
+				}else{
+					btnFinalizar.enable();
+				}
+			}else{
+				btnFinalizar.disable();
+			}
 		}
 	},
 
+	hayCambios: function(){
+		var me = this,
+		form = me.getView(),
+		wizard = form.up('wizardBase'),
+		checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
+		checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
+		comunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue();
+		if(form.cesionHaya == checkCesionDatos
+				&& form.comunicacionTerceros == comunicacionTerceros
+				&& form.tranferenciasInternacionales == checkTransInternacionales){
+			return false;
+		}else{
+			return true;
+		}
+		return true;
+	},
+	
 	onRenderTextfieldDocumentoOfertaComercial: function(text) {
 		var tip = Ext.create('Ext.tip.Tip', {
 			html: ''
@@ -233,6 +343,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	onChangeCheckboxTransferenciasInternacionales: function(checkbox) {
 		var me = this,
 			form = me.getView(),
+			wizard =form.up('wizardBase'),
 			checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
 			esInternacional = form.getForm().findField('carteraInternacional').getValue(),
 			btnGenerarDoc = form.lookupReference('btnGenerarDocumento'),
@@ -261,18 +372,42 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnSubirDoc.disable();
 		}
 
-		if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
-			if(esInternacional){
-				if(checkbox.getValue()){
-					btnFinalizar.enable();
+		if(!Ext.isEmpty(wizard.expediente) && !wizard.expediente.get('origen') === 'REM'){
+			if(me.hayCambios()){
+				if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
+					if(esInternacional){
+						if(checkTransInternacionales){
+							btnFinalizar.enable();
+						}else{
+							btnFinalizar.disable();
+						}
+					}else{
+						btnFinalizar.enable();
+					}
 				}else{
 					btnFinalizar.disable();
 				}
 			}else{
-				btnFinalizar.enable();
+				if(checkCesionDatos){
+					btnFinalizar.enable();
+				}else{
+					btnFinalizar.disable();
+				}
 			}
 		}else{
-			btnFinalizar.disable();
+			if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
+				if(esInternacional){
+					if(checkTransInternacionales){
+						btnFinalizar.enable();
+					}else{
+						btnFinalizar.disable();
+					}
+				}else{
+					btnFinalizar.enable();
+				}
+			}else{
+				btnFinalizar.disable();
+			}
 		}
 	},
 

@@ -268,7 +268,8 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		            	    	name:		'dederechotanteo',
 		            	    	allowBlank:	false,
 		            	    	bind:		'{oferta.deDerechoTanteo}',
-					        	inputValue: true
+					        	inputValue: true,
+					        	readOnly:		true
 		            	    },
 		            	    {
 								xtype: 		'checkboxfieldbase',

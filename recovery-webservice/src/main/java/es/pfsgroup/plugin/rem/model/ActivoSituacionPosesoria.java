@@ -137,7 +137,7 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Date fechaUltCambioTapiado;
 	
 	@Column(name = "SPS_COMBO_OTRO")
-	private Integer comboOtro;
+	private Integer comboOtro = 0;
 	
 	@Version   
 	private Long version;

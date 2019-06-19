@@ -3941,7 +3941,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										}
 				
 										//Campos dependientes de si el tipo de persona es jurídica
-										if (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {						
+										else if (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {						
 											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Razón social (Titular)
 												if (!Checks.esNulo(comprador.getNombreRazonSocialRte())) {																//Nombre del representante
 													if (!Checks.esNulo(comprador.getApellidosRte())) {																	//Apellidos del representante
@@ -5042,7 +5042,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else if (codigoTipoDoc.equals("10")) {
 			result = 'J';
 		} else if (codigoTipoDoc.equals("12")) {
-			result = 'J';
+			result = 'W';
 		} else {
 			throw new JsonViewerException("Tipo de documento no soportado");
 		}
@@ -5294,6 +5294,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					tipoDoc = DtoClienteUrsus.OTROS_PERSONA_FISICA;
 				if (DDTiposDocumentos.OTROS_PESONA_JURIDICA.equals(tipoDocumento))
 					tipoDoc = DtoClienteUrsus.OTROS_PESONA_JURIDICA;
+				if (DDTiposDocumentos.NIE.equals(tipoDocumento))
+					tipoDoc = DtoClienteUrsus.NIE;
 			}
 
 			if (!Checks.esNulo(idExpediente) && !Checks.esNulo(tipoDoc)) {

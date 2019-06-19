@@ -756,13 +756,13 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
 			Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 
-			if(!Checks.esNulo(galq)?responsableTrabajo.equals(galq):false){
+			if(!Checks.esNulo(galq)?galq.equals(responsableTrabajo):false){
 				supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_ALQUILERES);
-			}else if(!Checks.esNulo(gsue)?responsableTrabajo.equals(gsue):false){
+			}else if(!Checks.esNulo(gsue)?gsue.equals(responsableTrabajo):false){
 				supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_SUELOS);
-			}else if(!Checks.esNulo(gedi)?responsableTrabajo.equals(gedi):false){
+			}else if(!Checks.esNulo(gedi)?gedi.equals(responsableTrabajo):false){
 				supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_EDIFICACIONES);
-			}else if(!Checks.esNulo(gact)?responsableTrabajo.equals(gact):false){
+			}else if(!Checks.esNulo(gact)?gact.equals(responsableTrabajo):false){
 				supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_ACTIVOS);
 			}
 			

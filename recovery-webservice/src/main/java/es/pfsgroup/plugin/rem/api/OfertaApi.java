@@ -619,6 +619,14 @@ public interface OfertaApi {
 	 */
 	public boolean existeClienteOComprador(Long idActivo, Long idAgrupacion, Long idExpediente, String docCliente, String codtipoDoc);
 	
+	/**
+	 * Es cartera internacional?
+	 * 
+	 * @param idActivo
+	 * @param idAgrupacion
+	 * @param idExpediente
+	 * @return
+	 */
 	public boolean esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente);
 	
 	/**
@@ -627,5 +635,11 @@ public interface OfertaApi {
 	 * @return devuelve el id de la tarea activa.
 	 */
 	public Long getIdTareaByNumOfertaAndCodTarea(Long ofrNumOferta, String codTarea);
+
+	/**
+	 * Anula la oferta si viene de un lote crm
+	 * @param oferta
+	 */
+	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
 }
 

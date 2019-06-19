@@ -250,7 +250,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 	            	displayField: 'descripcion',
 					valueField: 'id'
 		        },
-		        { iconCls:'x-tbar-loading', itemId:'removeButton', handler: 'onReloadFotoClick', secFunPermToEnable: 'EDITAR_FOTOS_SUBDIVISION'}
+		        { iconCls:'x-tbar-loading', itemId:'reloadButton', handler: 'onReloadFotoClick', secFunPermToEnable: 'EDITAR_FOTOS_SUBDIVISION'}
 		    ]
 		}
 		];

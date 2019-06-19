@@ -56,14 +56,12 @@ public class RestSecurityFilter implements Filter {
 		PeticionRest peticion = null;
 		RestRequestWrapper restRequest = null;
 		JSONObject jsonFields = null;
-		String nombreServicio = "";
 		try {
 
 			restRequest = new RestRequestWrapper((HttpServletRequest) request);
 			restRequest.setTiempoInicio(System.currentTimeMillis());
 			peticion = restApi.crearPeticionObj(restRequest);
 			RequestDto datajson = (RequestDto) restRequest.getRequestData(RequestDto.class);
-			nombreServicio = restApi.obtenerNombreServicio(request);
 			
 			jsonFields = restRequest.getJsonObject();
 			restApi.doSessionConfig();

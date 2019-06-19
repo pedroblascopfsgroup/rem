@@ -157,7 +157,7 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
 		        { iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_ACTIVO_TECNICAS'},
 		        { iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_ACTIVO_TECNICAS'},
 		        { iconCls:'x-fa fa-download', itemId:'downloadButton', handler: 'onDownloadFotoClick'},
-		        { iconCls:'x-tbar-loading', itemId:'removeButton', handler: 'onReloadFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_ACTIVO_TECNICAS'}
+		        { iconCls:'x-tbar-loading', itemId:'reloadButton', handler: 'onReloadFotoClick', secFunPermToEnable: 'EDITAR_TAB_FOTOS_ACTIVO_TECNICAS'}
 		    ]
 		}
 		];

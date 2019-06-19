@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,7 +10,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
@@ -17,6 +17,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.factory.AltaActivoTPFactoryApi;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
@@ -142,18 +143,22 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 	}
 	
 	@Override
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws Exception {
-		
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException, Exception {
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		// Carga los datos de activo de la Fila excel al DTO
-		DtoAltaActivoThirdParty dtoAATP = new DtoAltaActivoThirdParty();
-		dtoAATP = filaExcelToDtoAltaActivoThirdParty(exc, dtoAATP, fila);
+		try{
+			DtoAltaActivoThirdParty dtoAATP = new DtoAltaActivoThirdParty();
+			dtoAATP = filaExcelToDtoAltaActivoThirdParty(exc, dtoAATP, fila);
 
-		// Factoria de alta de activos
-		// -------------------------------------------------
+			// Factoria de alta de activos
+			// -------------------------------------------------
 
-		AltaActivoThirdPartyService altaActivoThirdPartyService = altaActivoTPFactoryApi.getService(AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY);
-		altaActivoThirdPartyService.procesarAlta(dtoAATP);
-		return new ResultadoProcesarFila();
+			AltaActivoThirdPartyService altaActivoThirdPartyService = altaActivoTPFactoryApi.getService(AltaActivoThirdPartyService.CODIGO_ALTA_ACTIVO_THIRD_PARTY);
+			altaActivoThirdPartyService.procesarAlta(dtoAATP);
+		}catch(Exception e){
+			throw new JsonViewerException(e.getMessage());
+		}
+		return resultado;
 	}
 	
 	private DtoAltaActivoThirdParty filaExcelToDtoAltaActivoThirdParty (MSVHojaExcel exc,DtoAltaActivoThirdParty dtoAATP, int fila) throws IllegalArgumentException, IOException, ParseException

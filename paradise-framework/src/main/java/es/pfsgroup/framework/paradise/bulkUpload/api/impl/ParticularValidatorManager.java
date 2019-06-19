@@ -3409,6 +3409,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" WHERE ECO.ECO_NUM_EXPEDIENTE = '" +numExpedienteComercial +"' AND SCM.DD_SCM_CODIGO = '05' AND ECO.BORRADO = 0");
 		return "0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeActivoAsociado(String numActivo) {
+		if(Checks.esNulo(numActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PDV_PLAN_DIN_VENTAS WHERE"
+				+ "		 	ACT_ID = '(SELECT ACT_ID FROM ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+")' "
+				+ "		 	AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
 
 }
 

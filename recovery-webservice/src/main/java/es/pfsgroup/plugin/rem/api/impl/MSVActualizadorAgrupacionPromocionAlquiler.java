@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
+import es.pfsgroup.plugin.rem.gestorDocumental.manager.GestorDocumentalAdapterManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -96,6 +97,8 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 @Component
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
 	
+	private static final String ERROR_ACTIVO_NO_PROC_CORREC = "Activo no procesado correctamente, intentelo de nuevo más tarde";
+	
 	@Autowired
 	ProcessAdapter processAdapter;
 	
@@ -128,6 +131,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
+	
+	@Autowired
+	private GestorDocumentalAdapterManager gdAdapterManager;
 	
 	
 	@Override
@@ -216,7 +222,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		Filter tipoTituloFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivo.UNIDAD_ALQUILABLE);
 		DDTipoTituloActivo tituloUnidadAlquilable = genericDao.get(DDTipoTituloActivo.class, tipoTituloFilter);
-		unidadAlquilable.setNumActivo(Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO) + 100 FROM ACT_ACTIVO")));
 		unidadAlquilable.setAuditoria(auditoria);
 		unidadAlquilable.setBien(bien); 
 		unidadAlquilable.setNumActivoRem(activoApi.getNextNumActivoRem());
@@ -254,8 +259,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			String descripcion = exc.dameCelda(fila, 4);
 			unidadAlquilable.setDescripcion(descripcion);
 		}
-		 
-		genericDao.save(Activo.class, unidadAlquilable);
 		
 		Long idUnidadAlquilable = null;
 		Long idActivoMatriz = null;
@@ -263,14 +266,24 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		String cartera = null;
 		//--Seteo mediante maestro de activos
 		if (!Checks.esNulo(unidadAlquilable)) {
-			 idUnidadAlquilable = unidadAlquilable.getNumActivoRem();
+			if(!Checks.esNulo(unidadAlquilable.getNumActivoRem())) {
+				idUnidadAlquilable = unidadAlquilable.getNumActivoRem();
+			}else {
+				idUnidadAlquilable = activoApi.getNextNumActivoRem();
+				unidadAlquilable.setNumActivoRem(idUnidadAlquilable);
+			}
+			 
 		}
 		if (!Checks.esNulo(activoMatriz)) {
 			 idActivoMatriz = activoMatriz.getNumActivo();
 			 numRemActivoMatriz = activoMatriz.getNumActivoRem();
-			if (!Checks.esNulo(activoMatriz.getCartera())) {
-				if (!Checks.esNulo(activoMatriz.getCartera().getDescripcion())) {
-					 cartera = activoMatriz.getCartera().getDescripcion().toUpperCase();
+			if (!Checks.esNulo(activoMatriz.getCartera()) && !Checks.esNulo(activoMatriz.getSubcartera())) {
+				cartera = gdAdapterManager.getClienteByCarteraySubcarterayPropietario(activoMatriz.getCartera(), activoMatriz.getSubcartera(), activoMatriz.getPropietarioPrincipal());
+				
+				if(!Checks.esNulo(cartera)) {
+					cartera = cartera.toUpperCase();
+				}else {
+					cartera = activoMatriz.getCartera().getDescripcion().toUpperCase();
 				}
 			}
 		}
@@ -291,10 +304,17 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 					
 				}
 				unidadAlquilable.setNumActivo(numActivoUnidadAlquilable);
-				genericDao.save(Activo.class, unidadAlquilable);
+				
 			} 
 
 		}
+		
+		//Miramos si se ha generado bien en numActivo y persistimos la UA, o en su defecto devolvemos el error
+		if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
+			return falloConexionConMaestro(fila);
+		}
+		genericDao.save(Activo.class, unidadAlquilable);
+		
 		 //-- Lista propietarios 
 		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){    
 			List<ActivoPropietarioActivo> propietariosUA = new ArrayList<ActivoPropietarioActivo>();
@@ -904,6 +924,16 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 
 		return resultado;
 
+	}
+	
+	private ResultadoProcesarFila falloConexionConMaestro(int fila) {
+		
+		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		resultado.setFila(fila);
+		resultado.setErrorDesc(ERROR_ACTIVO_NO_PROC_CORREC);
+		resultado.setCorrecto(false);
+
+		return resultado;
 	}
 	
 	

@@ -54,7 +54,7 @@ def deployFrontal(String host, int port) {
             echo "Subiendo CONFIGURACION..."
             sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -port:"+port+" -cliente:rem -componente:config"
             echo "Desplegando ONLINE..."
-            sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -port:"+port+" -cliente:rem -componente:online -deploy:true"
+            sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -port:"+port+" -cliente:rem -componente:online -entorno:${entorno} -deploy:true"
         }
     }
 }

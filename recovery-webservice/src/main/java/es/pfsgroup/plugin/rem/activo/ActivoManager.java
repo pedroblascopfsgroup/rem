@@ -1111,7 +1111,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GALEON)));
 		}
-
+		// El combo "Comité seleccionado" vendrá informado para subcartera Zeus
+		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_EGEO) 
+				&& DDSubcartera.CODIGO_ZEUS.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_EGEO)));
+		}
+		
 		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
@@ -2921,11 +2927,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Override
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo) {
-		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class,
+				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
-		if ((!Checks.esNulo(activoPatrimonio) && DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo()))
-				|| (!Checks.esNulo(activoSituacionPosesoria) && !Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1
-				&& DDTipoTituloActivoTPA.tipoTituloSi.equals(activoSituacionPosesoria.getConTitulo().getCodigo()))) {
+		if ((!Checks.esNulo(activoPatrimonio) && activoPatrimonio.getTipoEstadoAlquiler() != null
+				&& DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO
+						.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo()))
+				|| (!Checks.esNulo(activoSituacionPosesoria) && !Checks.esNulo(activoSituacionPosesoria.getOcupado())
+						&& activoSituacionPosesoria.getConTitulo() != null
+						&& activoSituacionPosesoria.getOcupado() != null && activoSituacionPosesoria.getOcupado() == 1
+						&& DDTipoTituloActivoTPA.tipoTituloSi
+								.equals(activoSituacionPosesoria.getConTitulo().getCodigo()))) {
 			return true;
 		}
 		return false;

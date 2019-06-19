@@ -776,4 +776,6 @@ public interface ParticularValidatorApi {
 
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
+	Boolean existeActivoAsociado(String numActivo);
+
 }

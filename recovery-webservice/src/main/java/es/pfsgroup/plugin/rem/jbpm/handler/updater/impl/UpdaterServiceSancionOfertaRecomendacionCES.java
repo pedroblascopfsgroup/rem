@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -100,6 +101,9 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 							}
 						} else {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
+
+							expediente.setFechaVenta(null);
+							expediente.setFechaAnulacion(new Date());
 							
 							Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 							tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));

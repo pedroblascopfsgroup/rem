@@ -121,8 +121,6 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_TIPO_VENTA), isExpedienteNotTipoVenta(exc));
 			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_VENTA_ESTADO_CORRECTO), isExpedienteVentaEstadoOK(exc));
 			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_OFERTA_NO_TRAMITADA), isExpedienteOfertaNOTramitada(exc));
-			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_BANKIA), isExpedienteCarteraBankia(exc));
-			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_LIBERBANK), isExpedienteCarteraLiberbank(exc));
 			
 			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE), isColumnNotDateByRows(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
 			mapaErrores.put(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_ALTA_OFERTA), isFechaAltaOfertaMenorFechaIngreso(exc, COL_NUM.COL_NUM_FECHA_INGRESO_CHEQUE));
@@ -135,7 +133,6 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 			if (!mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_TIPO_VENTA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_VENTA_ESTADO_CORRECTO)).isEmpty() || !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_OFERTA_NO_TRAMITADA)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_BANKIA)).isEmpty() || !mapaErrores.get(messageServices.getMessage(EXPEDIENTE_COMERCIAL_CARTERA_ERRONEA_LIBERBANK)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(FECHA_INGRESO_CHEQUE)).isEmpty() || !mapaErrores.get(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_ALTA_OFERTA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_SANCION)).isEmpty() || !mapaErrores.get(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_ACEPTACION)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_RESERVA)).isEmpty() || !mapaErrores.get(messageServices.getMessage(FECHA_INGRESO_CHEQUE_MENOR_FECHA_VENTA)).isEmpty()){
@@ -265,62 +262,6 @@ public class MSVActualizadorFechaIngresoChequeExcelValidator extends MSVExcelVal
 				listaFilas.add(0);
 				e.printStackTrace();
 			}
-		}
-		return listaFilas;
-	}
-
-	private List<Integer> isExpedienteCarteraBankia(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		try {
-			for (int i = 1; i < this.numFilasHoja; i++) {
-				try {
-					if (particularValidator
-							.existeExpedienteComercial(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
-						if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
-							if (particularValidator.validadorCarteraBankia(
-									Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL)))) {
-								listaFilas.add(i);
-							}
-						}
-					}
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-		} catch (IllegalArgumentException e) {
-			listaFilas.add(0);
-			e.printStackTrace();
-		} catch (IOException e) {
-			listaFilas.add(0);
-			e.printStackTrace();
-		}
-		return listaFilas;
-	}
-
-	private List<Integer> isExpedienteCarteraLiberbank(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		try {
-			for (int i = 1; i < this.numFilasHoja; i++) {
-				try {
-					if (particularValidator
-							.existeExpedienteComercial(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
-						if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL))) {
-							if (particularValidator.validadorCarteraLiberbank(
-									Long.parseLong(exc.dameCelda(i, COL_NUM.COL_NUM_EXPDTE_COMERCIAL)))) {
-								listaFilas.add(i);
-							}
-						}
-					}
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-
-			}
-		} catch (Exception e) {
-			listaFilas.add(0);
-			e.printStackTrace();
 		}
 		return listaFilas;
 	}

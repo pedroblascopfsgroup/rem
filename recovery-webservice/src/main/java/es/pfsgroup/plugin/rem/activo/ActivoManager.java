@@ -5530,15 +5530,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DtoActivoFichaCabecera activoDto = new DtoActivoFichaCabecera();
 
 			Activo activo = activoAdapter.getActivoById(idActivo);
-			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+
 			if (!Checks.esNulo(activo)) {
 				try {
 					BeanUtils.copyProperties(activoDto, activo);
-					if(!Checks.esNulo(agr)) {
-						activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
-					}else {
-						activoDto.setActivosPropagables(new ArrayList<Activo>());
-					}
+					activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
 					return activoDto;
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
@@ -5550,7 +5546,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return null;
 	}
 	
-
+	
 	public List<DtoHistoricoDestinoComercial> getListDtoHistoricoDestinoComercialByBeanList(List<HistoricoDestinoComercial> hdc) {
 
 		List<DtoHistoricoDestinoComercial> dtoList = new ArrayList<DtoHistoricoDestinoComercial>();

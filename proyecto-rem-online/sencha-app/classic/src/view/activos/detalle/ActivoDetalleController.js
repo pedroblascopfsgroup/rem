@@ -5012,26 +5012,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                     transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
                                     btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[itemId=btnGenerarDoc]');
                                     btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
-                                    if (esInternacional) {
-                                    	Ext.global.console.log("internacional");
-                                    	Ext.global.console.log("cesion datos "+cesionDatos.getValue());
-                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
-										if (transferenciasInternacionales.getValue()) {
-											btnFinalizar.enable();
-										}else{
-											btnFinalizar.disable();
-										}
-									} else {
-										Ext.global.console.log("no internacional");
-										Ext.global.console.log("cesion datos "+cesionDatos.getValue());
-                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
-										if (cesionDatos.getValue()) {
-											btnFinalizar.enable();
-										}else{
-											btnFinalizar.disable();
-										}
-									}
-
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
                                     ventanaWizard.unmask()

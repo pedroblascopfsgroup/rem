@@ -50,34 +50,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				failure: function(record, operation) {
 					me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
 					wizard.unmask();
-					if(!wizard.expediente.get('origen') === 'REM'){
-						if (wizard.comprador.get('cesionDatos')) {
-							form.lookupReference('btnGenerarDocumento').disable();
-							form.lookupReference('btnSubirDocumento').disable();
-							form.lookupReference('btnFinalizar').disable();
-							if(orm.getForm().findField('carteraInternacional').getValue()){
-								if(form.getForm().findField('transferenciasInternacionales').getValue()){
-									form.lookupReference('btnFinalizar').enable();
-								}else{
-									form.lookupReference('btnFinalizar').disable();
-									form.lookupReference('btnGenerarDocumento').enable();
-									form.lookupReference('btnSubirDocumento').enable();
-								}
-							}else{
-								form.lookupReference('btnFinalizar').enable();
-							}
-						}
-					}else{
-						if (wizard.comprador.get('cesionDatos')) {
-							form.lookupReference('btnGenerarDocumento').enable();
-							form.lookupReference('btnSubirDocumento').enable();
-							form.lookupReference('btnFinalizar').disable();							
-						}else{
-							form.lookupReference('btnGenerarDocumento').disable();
-							form.lookupReference('btnSubirDocumento').disable();
-							form.lookupReference('btnFinalizar').disable();	
-						}
-					}
 				}
 			});
 
@@ -484,21 +456,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 										transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales');
 									var btnFinalizar = ventanaWizardAdjuntarDocumento.down('button[reference=btnFinalizar]');
 								if (!Ext.isEmpty(data.data)) {									
-									if (esInternacional) {
-										if (transferenciasInternacionales.getValue()) {
-											btnFinalizar.enable();
-										} else {
-											btnFinalizar.disable();
-										}
-	
-									} else {
-										if (cesionDatos.getValue()) {
-											btnFinalizar.enable();
-										} else {
-											btnFinalizar.disable();
-										}
-									}
-	
 									ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
 									ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
 									ventanaWizard.unmask()

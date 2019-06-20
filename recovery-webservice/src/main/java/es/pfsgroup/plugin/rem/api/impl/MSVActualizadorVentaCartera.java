@@ -1247,15 +1247,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 		}
 	}
 	
-	/**
-	 * Avanza la tarea "definicion de oferta"
-	 * 
-	 * @param idAgrupacion
-	 * @return
-	 * @throws Exception
-	 */
+
 	private void altaUvem(Long idAgrupacion, String codigoComite, ResultadoProcesarFila resultado) throws Exception {
-		logger.debug("OFERTA_CARTERA: Avanzamos la tarea");
+		logger.debug("OFERTA_CARTERA: Alta UVEM");
 		TransactionStatus transaction = null;
 
 		try {

@@ -28,7 +28,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('OFR_FECHA_REPSUESTA_OFERTANTE_PM', 'DATE', 'Campo con la fecha e respuesta por parte del ofertante de la tarea Respuesta ofertante PM')
+        T_TIPO_DATA('OFR_FECHA_RESPUESTA_OFERTANTE_PM', 'DATE', 'Campo con la fecha de respuesta por parte del ofertante de la tarea Respuesta ofertante PM')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

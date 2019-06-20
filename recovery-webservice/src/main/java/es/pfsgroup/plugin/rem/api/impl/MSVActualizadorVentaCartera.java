@@ -275,20 +275,20 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 					// creamos un posicionamiento en el expediente
 					crearPosicionamiento(agrupacion.getId());
-
-					// bloqueamos el expediente comercial
-					bloquearExpediente(agrupacion.getId());
-
+					
 					// Avanzar el tramite de la oferta, en este paso se llama al
 					avanzaPrimeraTarea(agrupacion.getId(),
 							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
-
+					
 					// Llamar al servicioweb Modi de Bankia
 					llamadaSercivioWeb(agrupacion.getId());
 
 					// simular llegada resolución
 					simularResolucion(agrupacion.getId(),
 							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
+					
+					// bloqueamos el expediente comercial
+					bloquearExpediente(agrupacion.getId());
 
 					// saltamos a cierre economico
 					saltoCierreEconomico(agrupacion.getId());
@@ -542,7 +542,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoExp.setCodigoComiteSancionador(
 					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
-			altaUvem(idAgrupacion, exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
+			//altaUvem(idAgrupacion, exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
 			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 			
 

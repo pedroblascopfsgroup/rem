@@ -3522,6 +3522,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
 			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 			
+			if (!Checks.esNulo(dto.getEstadoCivilURSUS())) {
+				comprador.setEstadoCivilURSUS(Long.parseLong(dto.getEstadoCivilURSUS()));
+			}
+			
+			if (!Checks.esNulo(dto.getNumeroConyugeUrsus())) {
+				comprador.setNumeroConyugeUrsus(Integer.parseInt(dto.getNumeroConyugeUrsus()));
+			}
+			
+			if (!Checks.esNulo(dto.getRegimenMatrimonialUrsus())) {
+				comprador.setRegimenMatrimonialUrsus(Long.parseLong(dto.getRegimenMatrimonialUrsus()));
+			}
+			
+			if (!Checks.esNulo(dto.getNombreConyugeURSUS())) {
+				comprador.setNombreConyugeURSUS(dto.getNombreConyugeURSUS());
+			}
+				
 			if (!Checks.esNulo(dto.getCodTipoPersona())) {
 				DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());

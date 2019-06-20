@@ -4990,7 +4990,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                     pedirDocValor = form.findField('pedirDoc').getValue();
 
                     if (pedirDocValor == 'false'){
-                        var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
+                    	var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
                         me.getView().mask(HreRem.i18n("msg.mask.loading"));
                         url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
                         ventanaWizard = btn.up('wizardaltaoferta'),

@@ -52,9 +52,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 					wizard.unmask();
 				}
 			});
-
+			me.firstExecution = false;
 			form.getForm().findField('cesionDatos').setValue(wizard.comprador.get('cesionDatos'));
 			form.getForm().findField('comunicacionTerceros').setValue(wizard.comprador.get('comunicacionTerceros'));
+			me.firstExecution = true;
 			form.getForm().findField('transferenciasInternacionales').setValue(wizard.comprador.get('transferenciasInternacionales'));
 			form.cesionHaya = wizard.comprador.get('cesionDatos');
 			form.comunicacionTerceros = wizard.comprador.get('comunicacionTerceros');
@@ -100,7 +101,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		me.firstExecution = true;
 		wizard.previousSlide();
 	},
-	activarFinalizar: function(form){
+	activarFinalizar: function(form,isDirty){
 		var me = this,
 		checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
 		esInternacional = form.getForm().findField('carteraInternacional').getValue(),
@@ -115,7 +116,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		}
 		
 		if(Ext.isEmpty(idExpediente)){
-			if(me.firstExecution && Ext.isEmpty(checkCesionDatos) && Ext.isEmpty(checkTransInternacionales) && Ext.isEmpty(checkComunicacionTerceros)){
+			if(isDirty && !Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
 				if(esInternacional){
 						if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && checkTransInternacionales=="true" && !Ext.isEmpty(documentoAdjunto)){
 							btnFinalizar.enable();
@@ -132,11 +133,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			}else{
 				btnFinalizar.disable();
 			}
-			if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
-				me.firstExecution = false;	
-			}
+			
 		}else{
-			if(me.firstExecution && !Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
+			if(isDirty && !Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
 				if(esInternacional){
 						if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && checkTransInternacionales=="true"){
 							btnFinalizar.enable();
@@ -153,9 +152,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			}else{
 				btnFinalizar.disable();
 			}
-			if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
-				me.firstExecution = false;	
-			}
+			
 			
 		}
 		
@@ -193,7 +190,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnSubirDoc.disable();
 		}
 		
-		me.activarFinalizar(form);
+		isDirty = Ext.isEmpty(oldVal)
+		me.activarFinalizar(form,isDirty);
 	},
 
 	onChangeCheckboxComunicacionTerceros: function(checkbox, newVal, oldVal) {
@@ -228,7 +226,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnGenerarDoc.disable();
 			btnSubirDoc.disable();
 		}
-		me.activarFinalizar(form);
+		isDirty = Ext.isEmpty(oldVal)
+		me.activarFinalizar(form,isDirty);
 	},
 	
 	hayCambios: function(){
@@ -265,7 +264,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		});
 	},
 
-	onChangeCheckboxTransferenciasInternacionales: function(checkbox) {
+	onChangeCheckboxTransferenciasInternacionales: function(checkbox, newVal, oldVal) {
 		var me = this,
 			form = me.getView(),
 			wizard =form.up('wizardBase'),
@@ -298,7 +297,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnSubirDoc.disable();
 		}
 
-		me.activarFinalizar(form);
+		isDirty = Ext.isEmpty(oldVal)
+		me.activarFinalizar(form,isDirty);
 	},
 
 	onClickBotonGenerarDoc: function(btn) {
@@ -459,7 +459,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 									ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
 									ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
 									ventanaWizard.unmask()
-								}							
+								}								
 							},
 	
 							failure: function(record, operation) {

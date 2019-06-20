@@ -3,13 +3,12 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
+
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -21,6 +20,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -35,7 +35,6 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
-import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 
 @Component
 public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
@@ -51,12 +50,9 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
-
+	
 	@Autowired
-	private GenericAdapter genericAdapter;
-
-	@Autowired
-	private GestorActivoApi gestorActivoApi;
+	private NotificatorServiceSancionOfertaSoloRechazo notificatorRechazo;
 
 	private static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaPBCReserva.class);
@@ -99,6 +95,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 								tramite.setEstadoTramite(
 										genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 								genericDao.save(ActivoTramite.class, tramite);
+								
 
 								// Rechaza la oferta y descongela el resto
 								ofertaApi.rechazarOferta(ofertaAceptada);
@@ -109,37 +106,20 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 									GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
 									gestorEntidadDto.setIdEntidad(act.getId());
 									gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
-									List<GestorEntidadHistorico> listaGestores = gestorActivoApi
-											.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
-									for (GestorEntidadHistorico gestor : listaGestores) {
-										if ((GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION
-												.equals(gestor.getTipoGestor().getCodigo())
-												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION
-														.equals(gestor.getTipoGestor().getCodigo())
-												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION_ADMINISTRACION
-														.equals(gestor.getTipoGestor().getCodigo()))
-												&& !Checks.esNulo(gestor.getUsuario().getEmail())) {
-
-											enviarCorreoAnularOfertaActivo(act, gestor.getUsuario().getEmail());
-										}
-									}
+									
 								}
+								
 
 								try {
 									ofertaApi.descongelarOfertas(expediente);
 								} catch (Exception e) {
 									logger.error("Error descongelando ofertas.", e);
 								}
-
-							} else {
-								expediente.setEstadoPbcR(1);
-								genericDao.save(ExpedienteComercial.class, expediente);
-
-							}
-
-							// Motivo anulación
+								notificatorRechazo.notificatorFinTareaConValores(tramite, valores);
+										
+								// Motivo anulación
 							if (!ofertaApi.checkReserva(ofertaAceptada) && DDSiNo.NO.equals(valor.getValor())) {
-								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								 filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 										CODIGO_ANULACION_IRREGULARIDADES);
 								DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao
 										.get(DDMotivoAnulacionExpediente.class, filtro);
@@ -156,6 +136,12 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 								motivoRechazo.setTipoRechazo(tipoRechazo);
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);
 								genericDao.save(Oferta.class, ofertaAceptada);
+							} 
+
+							} else {
+								expediente.setEstadoPbcR(1);
+								genericDao.save(ExpedienteComercial.class, expediente);
+
 							}
 						}
 					}
@@ -173,23 +159,6 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 		return new String[] { CODIGO_T017_PBC_RESERVA };
 	}
 
-	private Boolean enviarCorreoAnularOfertaActivo(Activo activo, String email) {
-		boolean resultado = false;
 
-		try {
-			ArrayList<String> mailsPara = new ArrayList<String>();
-			mailsPara.add(email);
-			String asunto = "Anulación de la oferta del activo " + activo.getNumActivo();
-			String cuerpo = "<p>Se ha anulado la oferta del activo " + activo.getNumActivo() + "<br></br>" + "<br></br>"
-					+ "Un saludo. </p>";
-
-			genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
-			resultado = true;
-		} catch (Exception e) {
-			logger.error("No se ha podido notificar la anulación de la oferta del activo.", e);
-		}
-
-		return resultado;
-	}
 
 }

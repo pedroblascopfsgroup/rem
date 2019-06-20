@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20190623
+--## FECHA_CREACION=20190624
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6663
@@ -1121,7 +1121,7 @@ begin
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-  TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">  Ídem que la tarea actual "Respuesta ofertante"  </p>';
+  TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">La resolución del comité sancionador ha sido porponer nuevo importe como contraoferta. Para finalizar esta tarea, debe reflejar la decisión del comprador con respecto a la misma.</p> <p style="margin-bottom: 10px">Si el ofertante ha rechazado la propuesta de contraoferta, seleccione la opción "Rechaza contraoferta" en el campo "Respuesta ofertante". Con esto se dará por concluido el trámite y el expediente quedará rechazado.</p> <p style="margin-bottom: 10px">Si el ofertante ha aceptado la propuesta de contraoferta, seleccione la opción "Acepta contraoferta". Si es así, se lanzará la tarea "Informe jurídico" a la gestoría de formalización.</p> <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -1237,7 +1237,7 @@ begin
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-  TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">  Ídem que la tarea actual "Respuesta ofertante"  </p>';
+  TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">La resolución del comité sancionador ha sido porponer nuevo importe como contraoferta. Para finalizar esta tarea, debe reflejar la decisión del comprador con respecto a la misma.</p> <p style="margin-bottom: 10px">Si el ofertante ha rechazado la propuesta de contraoferta, seleccione la opción "Rechaza contraoferta" en el campo "Respuesta ofertante". Con esto se dará por concluido el trámite y el expediente quedará rechazado.</p> <p style="margin-bottom: 10px">Si el ofertante ha aceptado la propuesta de contraoferta, seleccione la opción "Acepta contraoferta". Si es así, se lanzará la tarea "Informe jurídico" a la gestoría de formalización.</p> <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;

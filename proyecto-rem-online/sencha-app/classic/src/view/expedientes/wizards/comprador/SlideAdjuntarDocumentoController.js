@@ -51,34 +51,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 							esInternacional = form.getForm().findField('carteraInternacional').getValue(),
 							docOfertaComercial = form.getForm().findField('docOfertaComercial'),
 							btnFinalizar = form.lookupReference('btnFinalizar');
-							if(!wizard.expediente.get('origen') === 'REM'){
-								if(checkCesionDatos){
-									if(esInternacional){
-										if(checkTransInternacionales){
-											btnFinalizar.enable();
-										}else{
-											btnFinalizar.disable();
-										}
-									}else{
+							if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
+								if(esInternacional){
+									if(checkTransInternacionales){
 										btnFinalizar.enable();
+									}else{
+										btnFinalizar.disable();
 									}
 								}else{
-									btnFinalizar.disable();
+										btnFinalizar.enable();
 								}
 							}else{
-								if(!Ext.isEmpty(docOfertaComercial) && docOfertaComercial.getValue() && docOfertaComercial.getValue() != '' && checkCesionDatos){
-									if(esInternacional){
-										if(checkTransInternacionales){
-											btnFinalizar.enable();
-										}else{
-											btnFinalizar.disable();
-										}
-									}else{
-										btnFinalizar.enable();
-									}
-								}else{
-									btnFinalizar.disable();
-								}
+								btnFinalizar.disable();
 							}
 						}
 					}

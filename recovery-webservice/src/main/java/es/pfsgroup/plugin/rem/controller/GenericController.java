@@ -462,15 +462,15 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 		/**
-	 * Inserta una lista de documentos a la entidad correspondiente  Ejem: IP:8080/pfs/rest/generic/altaDocumento
+	 * Inserta un documento a la entidad correspondiente  Ejem: IP:8080/pfs/rest/generic/altaDocumento
 	 * HEADERS:
 	 * Content-Type - application/json
 	 * signature - 
 	 * 
 	 * BODY:
 	 * {  
-   "id":"112",
-   "data":[  
+   "idLlamada":"112",
+   "data": 
       {  "tipoEntidad":"T",
     	 "numEntidad":"161197",
     	 "tipoDocumento":"03",
@@ -480,7 +480,7 @@ public class GenericController extends ParadiseJsonController{
     	 "documento":"YnVlbm9zIGRpYXMgdGVuZ28gbGliZXJ0YWQgcGFyYSBoYWNlciBlbiBlbCB3ZWIgc2VydmljZSBjb21vIHlvIHZlYS4="
       
       }
-   ]
+   
 } *  
 	 *
 	 * @param model
@@ -492,7 +492,7 @@ public class GenericController extends ParadiseJsonController{
 	public void altaDocumento (ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		DocumentoRequestDto jsonData = null;
 		JSONObject jsonFields = null;
-		List<DocumentoDto> listaDocumentoDto = null;
+		DocumentoDto documentoDto = null;
 		String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/";
 		WebFileItem webFileItem;
 		FileItem fileItem;
@@ -506,13 +506,13 @@ public class GenericController extends ParadiseJsonController{
 			jsonFields = request.getJsonObject();
 			jsonData = (DocumentoRequestDto) request.getRequestData(DocumentoRequestDto.class);
 			idLlamada = jsonData.getIdLlamada();
-			listaDocumentoDto = jsonData.getData();
+			documentoDto = jsonData.getData();
 						
 			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				
 			}else{
-				for (DocumentoDto documentoDto : listaDocumentoDto) {
+				
 					if(documentoDto.getNombreDocumento().trim().length()<=4){
 						throw new Exception ("Error nombre incorrecto de documento ejemplo: nombre.extension");
 					}
@@ -582,14 +582,14 @@ public class GenericController extends ParadiseJsonController{
 					//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
 					if(errores==null){
 						model.put("idLlamada", idLlamada);
-						model.put("data", listaDocumentoDto);
+						model.put("data", documentoDto);
 						model.put("succes", true);
 
 					}else
 					{
 						throw new Exception(errores);
 					}
-			    }
+			   
 			}
 
 		} catch (Exception e) {
@@ -597,7 +597,7 @@ public class GenericController extends ParadiseJsonController{
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			errores = e.getMessage();
 			model.put("idLlamada", idLlamada);
-			model.put("data", listaDocumentoDto);
+			model.put("data", documentoDto);
 			model.put("succes", false);
 			model.put("error", errores);
 			

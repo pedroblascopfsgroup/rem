@@ -12,7 +12,7 @@ public class DocumentoRequestDto extends RequestDto{
 	
 	private Long idLlamada;
 	
-	private List<DocumentoDto> data;
+	private DocumentoDto data;
 
 	public Long getIdLlamada() {
 		return idLlamada;
@@ -22,11 +22,11 @@ public class DocumentoRequestDto extends RequestDto{
 		this.idLlamada = idLlamada;
 	}
 
-	public List<DocumentoDto> getData() {
+	public DocumentoDto getData() {
 		return data;
 	}
 
-	public void setData(List<DocumentoDto> data) {
+	public void setData(DocumentoDto data) {
 		this.data = data;
 	}
 	

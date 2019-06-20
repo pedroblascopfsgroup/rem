@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Salt
---## FECHA_CREACION=20190624
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190625
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6663
@@ -2322,7 +2322,7 @@ begin
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'oficinaReserva';
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Oficina en la que se ha firmado la reserva';
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-    TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
+    TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_VALIDACION') := NULL;
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
     TFI_MAP(13).tfi_field_row(2).tfi_field('VERSION') := 1;

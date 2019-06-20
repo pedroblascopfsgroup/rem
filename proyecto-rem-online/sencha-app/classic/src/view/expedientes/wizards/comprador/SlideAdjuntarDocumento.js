@@ -68,9 +68,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', {
 					hidden: true
 				},
 				{
-					xtype: 'checkboxfieldbase',
+					xtype: 'comboboxfieldbase',
 					fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),
-					bind: '{oferta.cesionDatos}',
+					valueField: 'codigo',
+					bind: {
+						store: '{comboSiNoWizard}',
+						value: '{oferta.cesionDatos}'
+					},
 					name: 'cesionDatos',
 					margin: '50px 0 0 200px',
 					reference: 'chkbxCesionDatosHaya',
@@ -80,9 +84,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', {
 					}
 				},
 				{
-					xtype: 'checkboxfieldbase',
+					xtype: 'comboboxfieldbase',
 					fieldLabel: HreRem.i18n('wizard.oferta.documento.comunicacionTerceros'),
-					bind: '{oferta.comunicacionTerceros}',
+					valueField: 'codigo',
+					bind: {
+						store: '{comboSiNoWizard}',
+						value: '{oferta.comunicacionTerceros}'
+					},
 					name: 'comunicacionTerceros',
 					margin: '10px 0 0 200px',
 					reference: 'chkbxcComunicacionTerceros',
@@ -92,9 +100,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', {
 					}
 				},
 				{
-					xtype: 'checkboxfieldbase',
+					xtype: 'comboboxfieldbase',
 					fieldLabel: HreRem.i18n('wizard.oferta.documento.transferenciasInternacionales'),
-					bind: '{oferta.transferenciasInternacionales}',
+					valueField: 'codigo',
+					bind: {
+						store: '{comboSiNoWizard}',
+						value: '{oferta.transferenciasInternacionales}'
+					},
 					name: 'transferenciasInternacionales',
 					margin: '10px 0 0 200px',
 					reference: 'chkbxTransferenciasInternacionales',

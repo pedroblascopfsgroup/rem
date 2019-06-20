@@ -1,7 +1,8 @@
+
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20190610
+--## FECHA_CREACION=20190620
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6681
@@ -29,7 +30,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('OFR_IMP_CONTRAOFERTA_PM', 'NUMBER(16,2)', 'Campo con el importe de la contraoferta introducida en la tarea Análisis PM'),
-        T_TIPO_DATA('OFR_FECHA_REPSUESTA_PM', 'DATE', 'Campo con la fecha e respuesta de la tarea Analisis PM')
+        T_TIPO_DATA('OFR_FECHA_RESPUESTA_PM', 'DATE', 'Campo con la fecha e respuesta de la tarea Analisis PM')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

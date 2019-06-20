@@ -242,7 +242,7 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name="OFR_IMP_CONTRAOFERTA_PM")
 	private Double importeContraofertaPM;
 	
-	@Column(name="OFR_FECHA_REPSUESTA_PM")
+	@Column(name="OFR_FECHA_RESPUESTA_PM")
 	private Date fechaRespuestaPM;
 	
 	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_PM")

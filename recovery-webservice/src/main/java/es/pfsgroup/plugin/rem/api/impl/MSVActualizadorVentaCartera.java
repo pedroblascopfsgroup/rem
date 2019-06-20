@@ -542,7 +542,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoExp.setCodigoComiteSancionador(
 					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
-			//altaUvem(idAgrupacion, exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
 			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 			
 
@@ -1241,36 +1240,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			agrupacionAdapter.saveAgrupacion(dtoAgrupacionMod, idAgrupacion);
 
 			transactionManager.commit(transaction);
-		} catch (Exception e) {
-			transactionManager.rollback(transaction);
-			throw e;
-		}
-	}
-	
-
-	private void altaUvem(Long idAgrupacion, String codigoComite, ResultadoProcesarFila resultado) throws Exception {
-		logger.debug("OFERTA_CARTERA: Alta UVEM");
-		TransactionStatus transaction = null;
-
-		try {
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
-			// Recuperamos el ExpedienteComercial
-			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
-			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					listaOfertas.get(0).getIdOferta()));
-			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
-			resultado.addResultado("NUM OFERTA", oferta.getNumOferta().toString());
-			resultado.addResultado("EXP comercial", expedienteComercial.getNumExpediente().toString());
-			// Obtenemos el tramite del expediente, y de este sus tareas.
-			List<ActivoTramite> listaTramites = activoTramiteApi
-					.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
-			List<TareaExterna> tareasTramite = activoTareaExternaApi
-					.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
-			validateJbpmManager.definicionOfertaT013(tareasTramite.get(0), expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
-
-			transactionManager.commit(transaction);
-
 		} catch (Exception e) {
 			transactionManager.rollback(transaction);
 			throw e;

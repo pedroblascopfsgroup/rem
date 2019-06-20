@@ -224,7 +224,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_DOCUMENTO_TITULAR),
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR),
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_PRESCRIPTOR),
-						agrupacion.getId(), null, context);
+						agrupacion.getId(), idUvem, context);
 
 				// Creamos un tramite para la oferta, y con ello el
 				// expedienteComercial
@@ -542,8 +542,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoExp.setCodigoComiteSancionador(
 					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
-			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 			altaUvem(idAgrupacion, exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
+			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
+			
 
 			// modificamos los importes de participación de los activos
 

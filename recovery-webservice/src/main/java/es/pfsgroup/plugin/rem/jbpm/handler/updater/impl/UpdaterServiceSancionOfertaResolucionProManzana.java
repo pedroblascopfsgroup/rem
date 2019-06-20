@@ -69,7 +69,11 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 							}
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())){
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO_PRO_MANZANA);
-							if(!DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo())) {
+							if(((!Checks.esNulo(expediente.getReserva()))
+									&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
+									&& !DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()))
+									|| Checks.esNulo(expediente.getReserva()) 
+									|| !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva()) && expediente.getCondicionante().getSolicitaReserva() == 0) {
 								expediente.setFechaVenta(null);
 								expediente.setFechaAnulacion(new Date());
 								// Finaliza el trámite

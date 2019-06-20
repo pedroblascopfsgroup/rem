@@ -381,16 +381,18 @@ public class AgendaController extends TareaController {
 						}else if(CODIGO_T017.equals(codigo)) {
 							if(DDEstadosExpedienteComercial.RESERVADO.equals(eco.getEstado().getCodigo())) {
 								salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
-
 							}else {
-								salto = adapter.saltoFin(tarea.getId());
+								for (TareaExterna tareasFin : listaTareas) {
+									salto = adapter.saltoFin(tareasFin.getId());
+								} 
+								expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);
+								oferta = eco.getOferta();
+								ofertaApi.rechazarOferta(oferta);
 							}
 						}
+						break;
 					}
-				}				
-				oferta = eco.getOferta();
-				ofertaApi.rechazarOferta(oferta);
-				expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);					
+				}								
 			}
 			model.put("success", salto);
 

@@ -587,7 +587,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						.expedienteComercialToInstanciaDecisionList(expedienteComercial, porcentajeImpuesto, null);
 
 				// modificar
-				// uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
+				 uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 				// modificar_honorarios
 				instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
 				uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);

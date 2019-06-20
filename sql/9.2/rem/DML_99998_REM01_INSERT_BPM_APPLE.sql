@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20190618
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=20190623
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6663
@@ -1157,7 +1157,7 @@ begin
   TFI_MAP(3).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'fechaRespuesta';
   TFI_MAP(3).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Fecha de respuesta PM';
   TFI_MAP(3).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-  TFI_MAP(3).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'FALSE';
+  TFI_MAP(3).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(3).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
   TFI_MAP(3).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
   TFI_MAP(3).tfi_field_row(2).tfi_field('VERSION') := 1;
@@ -1273,7 +1273,7 @@ begin
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'fechaRespuesta';
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Fecha de respuesta CES';
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-  TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'FALSE';
+  TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
   TFI_MAP(4).tfi_field_row(2).tfi_field('VERSION') := 1;
@@ -1465,7 +1465,7 @@ begin
   TFI_MAP(6).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'fechaEnvio';
   TFI_MAP(6).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Fecha de envío';
   TFI_MAP(6).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-  TFI_MAP(6).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'FALSE';
+  TFI_MAP(6).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(6).tfi_field_row(1).tfi_field('TFI_VALOR_INICIAL') := NULL;
   TFI_MAP(6).tfi_field_row(1).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
   TFI_MAP(6).tfi_field_row(1).tfi_field('VERSION') := 1;
@@ -1796,7 +1796,7 @@ begin
   TFI_MAP(9).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'fechaRespuesta';
   TFI_MAP(9).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Fecha respuesta recomendación CES';
   TFI_MAP(9).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-  TFI_MAP(9).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'FALSE';
+  TFI_MAP(9).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(9).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
   TFI_MAP(9).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
   TFI_MAP(9).tfi_field_row(2).tfi_field('VERSION') := 1;
@@ -1917,7 +1917,7 @@ begin
   TFI_MAP(10).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'fechaRespuesta';
   TFI_MAP(10).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Fecha respuesta';
   TFI_MAP(10).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-  TFI_MAP(10).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'FALSE';
+  TFI_MAP(10).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(10).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
   TFI_MAP(10).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
   TFI_MAP(10).tfi_field_row(2).tfi_field('VERSION') := 1;
@@ -2033,7 +2033,7 @@ begin
   TFI_MAP(11).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'motivoAnulacion';
   TFI_MAP(11).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Motivo anulación';
   TFI_MAP(11).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-  TFI_MAP(11).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'FALSE';
+  TFI_MAP(11).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(11).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
   TFI_MAP(11).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := 'DDMotivoAnulacionExpediente';
   TFI_MAP(11).tfi_field_row(2).tfi_field('VERSION') := 1;
@@ -2084,7 +2084,7 @@ begin
   TFI_MAP(11).tfi_field_row(5).tfi_field('TFI_NOMBRE') := 'comboMotivoAnulacionReserva';
   TFI_MAP(11).tfi_field_row(5).tfi_field('TFI_LABEL') :=  'Motivo anulación reserva';
   TFI_MAP(11).tfi_field_row(5).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-  TFI_MAP(11).tfi_field_row(5).tfi_field('TFI_VALIDACION') := 'FALSE';
+  TFI_MAP(11).tfi_field_row(5).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(11).tfi_field_row(5).tfi_field('TFI_VALOR_INICIAL') := NULL;
   TFI_MAP(11).tfi_field_row(5).tfi_field('TFI_BUSINESS_OPERATION') := 'DDMotivoAnulacionReserva';
   TFI_MAP(11).tfi_field_row(5).tfi_field('VERSION') := 1;
@@ -2186,7 +2186,7 @@ begin
     TFI_MAP(12).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'tipoArras';
     TFI_MAP(12).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Tipo de arras';
     TFI_MAP(12).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := 'Debe indicar el tipo de arras';
-    TFI_MAP(12).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(12).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(12).tfi_field_row(1).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(12).tfi_field_row(1).tfi_field('TFI_BUSINESS_OPERATION') := 'DDTiposArras';
     TFI_MAP(12).tfi_field_row(1).tfi_field('VERSION') := 1;
@@ -2203,7 +2203,7 @@ begin
     TFI_MAP(12).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'fechaEnvio';
     TFI_MAP(12).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Fecha de envío';
     TFI_MAP(12).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := null;
-    TFI_MAP(12).tfi_field_row(2).tfi_field('TFI_VALIDACION') := null;
+    TFI_MAP(12).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(12).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(12).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := null;
     TFI_MAP(12).tfi_field_row(2).tfi_field('VERSION') := 1;
@@ -2322,7 +2322,7 @@ begin
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'oficinaReserva';
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Oficina en la que se ha firmado la reserva';
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-    TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(13).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
     TFI_MAP(13).tfi_field_row(2).tfi_field('VERSION') := 1;
@@ -2339,7 +2339,7 @@ begin
     TFI_MAP(13).tfi_field_row(3).tfi_field('TFI_NOMBRE') := 'fechaFirma';
     TFI_MAP(13).tfi_field_row(3).tfi_field('TFI_LABEL') :=  'Fecha de firma';
     TFI_MAP(13).tfi_field_row(3).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-    TFI_MAP(13).tfi_field_row(3).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(13).tfi_field_row(3).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(13).tfi_field_row(3).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(13).tfi_field_row(3).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
     TFI_MAP(13).tfi_field_row(3).tfi_field('VERSION') := 1;
@@ -2450,7 +2450,7 @@ begin
     TFI_MAP(14).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'comboFirma';
     TFI_MAP(14).tfi_field_row(1).tfi_field('TFI_LABEL') :=  '¿Firmado?';
     TFI_MAP(14).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := 'Debe indicar el campo firma';
-    TFI_MAP(14).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(14).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(14).tfi_field_row(1).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(14).tfi_field_row(1).tfi_field('TFI_BUSINESS_OPERATION') := 'DDSiNo';
     TFI_MAP(14).tfi_field_row(1).tfi_field('VERSION') := 1;
@@ -2467,7 +2467,7 @@ begin
     TFI_MAP(14).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'fechaFirma';
     TFI_MAP(14).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Fecha firma';
     TFI_MAP(14).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := 'Debe indicar la fecha de firma';
-    TFI_MAP(14).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(14).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(14).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(14).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
     TFI_MAP(14).tfi_field_row(2).tfi_field('VERSION') := 1;
@@ -2501,7 +2501,7 @@ begin
     TFI_MAP(14).tfi_field_row(4).tfi_field('TFI_NOMBRE') := 'comboCondiciones';
     TFI_MAP(14).tfi_field_row(4).tfi_field('TFI_LABEL') :=  'Condiciones postventa';
     TFI_MAP(14).tfi_field_row(4).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-    TFI_MAP(14).tfi_field_row(4).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(14).tfi_field_row(4).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(14).tfi_field_row(4).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(14).tfi_field_row(4).tfi_field('TFI_BUSINESS_OPERATION') := 'DDSiNo';
     TFI_MAP(14).tfi_field_row(4).tfi_field('VERSION') := 1;
@@ -2535,7 +2535,7 @@ begin
     TFI_MAP(14).tfi_field_row(6).tfi_field('TFI_NOMBRE') := 'motivoNoFirma';
     TFI_MAP(14).tfi_field_row(6).tfi_field('TFI_LABEL') :=  'Motivo de no firma';
     TFI_MAP(14).tfi_field_row(6).tfi_field('TFI_ERROR_VALIDACION') := 'Debe indicar un motivo de no firma';
-    TFI_MAP(14).tfi_field_row(6).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(14).tfi_field_row(6).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(14).tfi_field_row(6).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(14).tfi_field_row(6).tfi_field('TFI_BUSINESS_OPERATION') := 'DDMotivoAnulacionExpediente';
     TFI_MAP(14).tfi_field_row(6).tfi_field('VERSION') := 1;
@@ -2569,7 +2569,7 @@ begin
     TFI_MAP(14).tfi_field_row(8).tfi_field('TFI_NOMBRE') := 'tieneReserva';
     TFI_MAP(14).tfi_field_row(8).tfi_field('TFI_LABEL') :=  'Tiene reserva';
     TFI_MAP(14).tfi_field_row(8).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-    TFI_MAP(14).tfi_field_row(8).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(14).tfi_field_row(8).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(14).tfi_field_row(8).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(14).tfi_field_row(8).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
     TFI_MAP(14).tfi_field_row(8).tfi_field('VERSION') := 1;
@@ -2584,11 +2584,11 @@ begin
     TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_ORDEN') := 9;
     TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_TIPO') := 'combobox';
     TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_NOMBRE') := 'asistenciaPBC';
-    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_LABEL') :=  '¿Firmado?';
-    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_ERROR_VALIDACION') := 'Confirmar asistencia PBC';
-    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_VALIDACION') := 'Debe confirmar la asistencia';
-    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_VALOR_INICIAL') := 'FALSE';
-    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
+    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_LABEL') :=  'Confirmar asistencia PBC';
+    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_ERROR_VALIDACION') := 'Debe confirmar la asistencia';
+    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_VALIDACION') := 'false';
+    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_VALOR_INICIAL') := NULL;
+    TFI_MAP(14).tfi_field_row(9).tfi_field('TFI_BUSINESS_OPERATION') := 'DDSiNo';
     TFI_MAP(14).tfi_field_row(9).tfi_field('VERSION') := 1;
     TFI_MAP(14).tfi_field_row(9).tfi_field('USUARIOCREAR') := USUARIOCREAR;
     TFI_MAP(14).tfi_field_row(9).tfi_field('FECHACREAR') := SYSDATE;
@@ -2603,7 +2603,7 @@ begin
     TFI_MAP(14).tfi_field_row(10).tfi_field('TFI_NOMBRE') := 'obsAsisPBC';
     TFI_MAP(14).tfi_field_row(10).tfi_field('TFI_LABEL') :=  'Asistencia PBC descripción';
     TFI_MAP(14).tfi_field_row(10).tfi_field('TFI_ERROR_VALIDACION') := 'Debe indicar los motivos';
-    TFI_MAP(14).tfi_field_row(10).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(14).tfi_field_row(10).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(14).tfi_field_row(10).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(14).tfi_field_row(10).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
     TFI_MAP(14).tfi_field_row(10).tfi_field('VERSION') := 1;
@@ -2713,7 +2713,7 @@ begin
     TFI_MAP(15).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'checkboxVentaDirecta';
     TFI_MAP(15).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Venta directa';
     TFI_MAP(15).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
-    TFI_MAP(15).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'FALSE';
+    TFI_MAP(15).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(15).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
     TFI_MAP(15).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
     TFI_MAP(15).tfi_field_row(2).tfi_field('VERSION') := 1;

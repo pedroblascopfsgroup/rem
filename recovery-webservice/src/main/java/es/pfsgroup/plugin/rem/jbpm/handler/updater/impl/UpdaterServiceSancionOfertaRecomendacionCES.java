@@ -82,7 +82,7 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 							}
 														
 						} else if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor())){
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
+							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_PTE_PRO_MANZANA);
 							
 							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 							for (Oferta oferta : listaOfertas) {
@@ -111,9 +111,7 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 												DDMotivoRechazoOferta.CODIGO_DECISION_COMITE);
 								
 								motivoRechazo.setTipoRechazo(tipoRechazo);
-								ofertaAceptada.setMotivoRechazo(motivoRechazo);
-								genericDao.save(Oferta.class, ofertaAceptada);
-								
+								ofertaAceptada.setMotivoRechazo(motivoRechazo);								
 								try {
 									ofertaApi.descongelarOfertas(expediente);
 								} catch (Exception e) {

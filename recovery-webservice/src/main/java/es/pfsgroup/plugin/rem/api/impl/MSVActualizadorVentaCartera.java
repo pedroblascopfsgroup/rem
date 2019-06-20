@@ -263,12 +263,12 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					// casados en regimen de ganaciales
 					setearConyuges(exc, fila, agrupacion.getId());
 					
-					//llamamos al alta de UVEM si son de Bankia
-					altaUvem(agrupacion.getId(),
-							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
+//					//llamamos al alta de UVEM si son de Bankia
+//					altaUvem(agrupacion.getId(),
+//							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
 					// guardamos los datos que hacen falta para avanzar el exp
 					// comercial
-					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila, context);
+					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila, context, resultado);
 
 					// actualizamos los importes de los activos
 					updateActivoExpediente(codigoOferta, agrupacion.getId(), context);
@@ -475,7 +475,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	 * @throws Exception
 	 */
 	private void guardarDatosNecesariosExpedienteComercial(MSVHojaExcel exc, Long idAgrupacion, int fila,
-			ProcesoMasivoContext context) throws Exception {
+			ProcesoMasivoContext context, ResultadoProcesarFila resultado) throws Exception {
 		logger.debug("OFERTA_CARTERA: Guardamos datos en el expediente comercial");
 		TransactionStatus transaction = null;
 		try {
@@ -541,9 +541,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoExp.setRiesgoReputacional(0);
 			dtoExp.setCodigoComiteSancionador(
 					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
-
-			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
+			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
+			altaUvem(idAgrupacion, exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
 
 			// modificamos los importes de participación de los activos
 
@@ -647,7 +647,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			valoresTarea.put("observaciones", new String[] { "Masivo Venta cartera" });
 			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
 			
-			validateJbpmManager.definicionOfertaT013(tareasTramite.get(0), expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			agendaAdapter.save(valoresTarea);
 			transactionManager.commit(transaction);
 

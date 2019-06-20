@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Giménez Mota
---## FECHA_CREACION=20190612
+--## FECHA_CREACION=20190620
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6725

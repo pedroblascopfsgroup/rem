@@ -3968,7 +3968,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			method : 'POST',
 			params: {idActivo: idActivo},
     		success: function(response, opts){
-    			
     			var isActivoMatriz = Ext.decode(response.responseText).data;
 				var vistaActual = me.getView();
 				var detalle = vistaActual.items.items[1];
@@ -3976,8 +3975,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				var referencia = tabActiva.reference;
 				var subReferencia = "";
 				if(tabActiva.ariaRole == 'tabpanel'){
-					var subTabActiva = tabActiva.getActiveTab(),
-					subReferencia = subTabActiva.reference;
+					if (referencia == 'publicacionactivoref') {
+						var subTabActiva = tabActiva.getActiveTab(),
+						subReferencia = subTabActiva.reference;
+					}
 				}
 				if(isActivoMatriz == "true" && !(referencia == 'publicacionactivoref'
 						&& subReferencia == 'datospublicacionactivoref')){

@@ -224,7 +224,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_DOCUMENTO_TITULAR),
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR),
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_PRESCRIPTOR),
-						agrupacion.getId(), null, context);
+						agrupacion.getId(), idUvem, context);
 
 				// Creamos un tramite para la oferta, y con ello el
 				// expedienteComercial
@@ -263,32 +263,32 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					// casados en regimen de ganaciales
 					setearConyuges(exc, fila, agrupacion.getId());
 					
-					//llamamos al alta de UVEM si son de Bankia
-					altaUvem(agrupacion.getId(),
-							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
+//					//llamamos al alta de UVEM si son de Bankia
+//					altaUvem(agrupacion.getId(),
+//							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
 					// guardamos los datos que hacen falta para avanzar el exp
 					// comercial
-					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila, context);
+					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila, context, resultado);
 
 					// actualizamos los importes de los activos
 					updateActivoExpediente(codigoOferta, agrupacion.getId(), context);
 
 					// creamos un posicionamiento en el expediente
 					crearPosicionamiento(agrupacion.getId());
-
-					// bloqueamos el expediente comercial
-					bloquearExpediente(agrupacion.getId());
-
+					
 					// Avanzar el tramite de la oferta, en este paso se llama al
 					avanzaPrimeraTarea(agrupacion.getId(),
 							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
-
+					
 					// Llamar al servicioweb Modi de Bankia
 					llamadaSercivioWeb(agrupacion.getId());
 
 					// simular llegada resolución
 					simularResolucion(agrupacion.getId(),
 							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
+					
+					// bloqueamos el expediente comercial
+					bloquearExpediente(agrupacion.getId());
 
 					// saltamos a cierre economico
 					saltoCierreEconomico(agrupacion.getId());
@@ -475,7 +475,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	 * @throws Exception
 	 */
 	private void guardarDatosNecesariosExpedienteComercial(MSVHojaExcel exc, Long idAgrupacion, int fila,
-			ProcesoMasivoContext context) throws Exception {
+			ProcesoMasivoContext context, ResultadoProcesarFila resultado) throws Exception {
 		logger.debug("OFERTA_CARTERA: Guardamos datos en el expediente comercial");
 		TransactionStatus transaction = null;
 		try {
@@ -541,9 +541,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoExp.setRiesgoReputacional(0);
 			dtoExp.setCodigoComiteSancionador(
 					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
-
-			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
+			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
+			
 
 			// modificamos los importes de participación de los activos
 
@@ -587,7 +587,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						.expedienteComercialToInstanciaDecisionList(expedienteComercial, porcentajeImpuesto, null);
 
 				// modificar
-				// uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
+				 uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 				// modificar_honorarios
 				instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
 				uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
@@ -647,7 +647,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			valoresTarea.put("observaciones", new String[] { "Masivo Venta cartera" });
 			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
 			
-			validateJbpmManager.definicionOfertaT013(tareasTramite.get(0), expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			agendaAdapter.save(valoresTarea);
 			transactionManager.commit(transaction);
 
@@ -1241,42 +1240,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			agrupacionAdapter.saveAgrupacion(dtoAgrupacionMod, idAgrupacion);
 
 			transactionManager.commit(transaction);
-		} catch (Exception e) {
-			transactionManager.rollback(transaction);
-			throw e;
-		}
-	}
-	
-	/**
-	 * Avanza la tarea "definicion de oferta"
-	 * 
-	 * @param idAgrupacion
-	 * @return
-	 * @throws Exception
-	 */
-	private void altaUvem(Long idAgrupacion, String codigoComite, ResultadoProcesarFila resultado) throws Exception {
-		logger.debug("OFERTA_CARTERA: Avanzamos la tarea");
-		TransactionStatus transaction = null;
-
-		try {
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
-			// Recuperamos el ExpedienteComercial
-			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
-			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					listaOfertas.get(0).getIdOferta()));
-			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
-			resultado.addResultado("NUM OFERTA", oferta.getNumOferta().toString());
-			resultado.addResultado("EXP comercial", expedienteComercial.getNumExpediente().toString());
-			// Obtenemos el tramite del expediente, y de este sus tareas.
-			List<ActivoTramite> listaTramites = activoTramiteApi
-					.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
-			List<TareaExterna> tareasTramite = activoTareaExternaApi
-					.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
-			validateJbpmManager.definicionOfertaT013(tareasTramite.get(0), expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
-
-			transactionManager.commit(transaction);
-
 		} catch (Exception e) {
 			transactionManager.rollback(transaction);
 			throw e;

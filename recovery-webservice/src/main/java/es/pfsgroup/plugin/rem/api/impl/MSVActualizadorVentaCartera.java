@@ -224,7 +224,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_DOCUMENTO_TITULAR),
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.DOC_IDENTIFICACION_TITULAR),
 						exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.CODIGO_PRESCRIPTOR),
-						agrupacion.getId(), idUvem, context);
+						agrupacion.getId(), null, context);
 
 				// Creamos un tramite para la oferta, y con ello el
 				// expedienteComercial
@@ -1257,7 +1257,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	private void altaUvem(Long idAgrupacion, String codigoComite, ResultadoProcesarFila resultado) throws Exception {
 		logger.debug("OFERTA_CARTERA: Avanzamos la tarea");
 		TransactionStatus transaction = null;
-		Long idTareaExterna = null;
+
 		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 

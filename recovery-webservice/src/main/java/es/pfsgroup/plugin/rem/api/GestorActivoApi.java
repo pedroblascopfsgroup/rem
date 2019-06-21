@@ -69,6 +69,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_DE_ADMINISTRACION = "GADMT";
 	public static final String CODIGO_GESTOR_FORMALIZACION_ADMINISTRACION = "GFORMADM";
 	
+	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 
 	Usuario getGestorByActivoYTipo(Activo activo, Long tipo);
@@ -150,5 +151,12 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public Boolean isGestorEdificaciones(Activo activo, Usuario usuario);
 
 	public void borrarGestorAdicionalEntidad(GestorEntidadDto dto);
+	
+	/**
+	 * Obtiene el usuario de grupo que realiza ciertas tareas del trámite comercial Apple
+	 * @param codigoTarea
+	 * @return
+	 */
+	public Usuario usuarioTareaApple(String codigoTarea);
 	
 }

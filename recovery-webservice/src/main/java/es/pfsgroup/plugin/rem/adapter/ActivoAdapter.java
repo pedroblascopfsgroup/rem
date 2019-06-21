@@ -2583,7 +2583,11 @@ public class ActivoAdapter {
 				ActivoAdjuntoActivo adjuntoActivo = activo.getAdjuntoGD(adj.getId());
 				if (!Checks.esNulo(adjuntoActivo)) {
 					if (!Checks.esNulo(adjuntoActivo.getTipoDocumentoActivo())) {
-						adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
+						//No borrar hasta que se compruebe que se obtiene el tipo de documento al margen de la información subida al gestor documental
+//						adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
+						Filter filtroMatricula = genericDao.createFilter(FilterType.EQUALS, "matricula", adjuntoActivo.getTipoDocumentoActivo().getMatricula());
+						DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtroMatricula);
+						adj.setDescripcionTipo(tipoDocumento.getDescripcion());
 					}
 					adj.setContentType(adjuntoActivo.getContentType());
 					if (!Checks.esNulo(adjuntoActivo.getAuditoria())) {

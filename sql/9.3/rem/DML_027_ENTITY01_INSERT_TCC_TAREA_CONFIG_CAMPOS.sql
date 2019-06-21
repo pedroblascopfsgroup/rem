@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=JOSE LUIS BARBA
---## FECHA_CREACION=20190609
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20190621
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-6586
+--## INCIDENCIA_LINK=HREOS-6758
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script para Insertar Registros de validación para el WS en la tabla TCC_TAREA_CONFIG_CAMPOS
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - Jose Luis Barba
+--##		0.2 Vicente Martinez - Se retiran campos innecesarios
 --##########################################
 --*/
 
@@ -63,10 +64,8 @@ DECLARE
 		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'comboFirma',				'01', 							'='),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'fechaFirma',				 '', 								'IS NOT NULL'),			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'numProtocolo',			 '', 								'IS NOT NULL'),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'comboCondiciones',	 '',	 							'IS NOT NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'condiciones',			 '', 								'IS NOT NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'fechaFirma',				 '', 								'IS NOT NULL'),				
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'comboCondiciones',	 '',	 							'IS NOT NULL'),	
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'motivoNoFirma',		 '',	 							'IS NULL'),
 
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'1'	,				'asistenciaPBC',		 'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO',	 		'IN'),
@@ -77,10 +76,8 @@ DECLARE
 		--			 					TAREA												INSTANCIA					CAMPO						 VALOR	 							ACCION			
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'comboFirma',				'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO', 			'IN'),					
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'comboFirma',				'01', 							'='),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'fechaFirma',				 '', 								'IS NOT NULL'),			
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'numProtocolo',			 '', 								'IS NOT NULL'),					
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'comboCondiciones',	 '',	 							'IS NOT NULL'),		
-		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'condiciones',			 '', 								'IS NOT NULL'),		
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'fechaFirma',				 '', 								'IS NOT NULL'),					
+		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'comboCondiciones',	 '',	 							'IS NOT NULL'),	
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'motivoNoFirma',		 '',	 							'IS NULL'),
 
 		T_TIPO_DATA('T013_PosicionamientoYFirma',					'2'	,				'asistenciaPBC',		 'SELECT DD_SIN_CODIGO FROM '||V_ESQUEMA_M||'.DD_SIN_SINO',	 		'IN'),

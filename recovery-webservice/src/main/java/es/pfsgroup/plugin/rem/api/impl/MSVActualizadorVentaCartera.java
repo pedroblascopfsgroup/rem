@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.ValidateJbpmManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -119,7 +120,10 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 	@Autowired
 	private ResolucionComiteApi resolucionComiteApi;
-
+	
+	@Autowired
+	private ValidateJbpmManager validateJbpmManager;
+	
 	@Resource
 	private MessageService messageServices;
 
@@ -258,31 +262,33 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					// que esten
 					// casados en regimen de ganaciales
 					setearConyuges(exc, fila, agrupacion.getId());
-
+					
+//					//llamamos al alta de UVEM si son de Bankia
+//					altaUvem(agrupacion.getId(),
+//							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
 					// guardamos los datos que hacen falta para avanzar el exp
 					// comercial
-					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila, context);
+					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila, context, resultado);
 
 					// actualizamos los importes de los activos
 					updateActivoExpediente(codigoOferta, agrupacion.getId(), context);
 
 					// creamos un posicionamiento en el expediente
 					crearPosicionamiento(agrupacion.getId());
-
-					// bloqueamos el expediente comercial
-					bloquearExpediente(agrupacion.getId());
-
+					
 					// Avanzar el tramite de la oferta, en este paso se llama al
-					// ALTA de uvem si los activos son de bankia
 					avanzaPrimeraTarea(agrupacion.getId(),
 							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
-
+					
 					// Llamar al servicioweb Modi de Bankia
 					llamadaSercivioWeb(agrupacion.getId());
 
 					// simular llegada resolución
 					simularResolucion(agrupacion.getId(),
 							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
+					
+					// bloqueamos el expediente comercial
+					bloquearExpediente(agrupacion.getId());
 
 					// saltamos a cierre economico
 					saltoCierreEconomico(agrupacion.getId());
@@ -469,7 +475,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	 * @throws Exception
 	 */
 	private void guardarDatosNecesariosExpedienteComercial(MSVHojaExcel exc, Long idAgrupacion, int fila,
-			ProcesoMasivoContext context) throws Exception {
+			ProcesoMasivoContext context, ResultadoProcesarFila resultado) throws Exception {
 		logger.debug("OFERTA_CARTERA: Guardamos datos en el expediente comercial");
 		TransactionStatus transaction = null;
 		try {
@@ -535,9 +541,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoExp.setRiesgoReputacional(0);
 			dtoExp.setCodigoComiteSancionador(
 					exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR));
-
-			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
 			expedienteComercialApi.saveCondicionesExpediente(condicionantes, expedienteComercial.getId());
+			expedienteComercialApi.saveFichaExpediente(dtoExp, expedienteComercial.getId());
+			
 
 			// modificamos los importes de participación de los activos
 
@@ -581,7 +587,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						.expedienteComercialToInstanciaDecisionList(expedienteComercial, porcentajeImpuesto, null);
 
 				// modificar
-				// uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
+				 uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 				// modificar_honorarios
 				instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
 				uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);
@@ -640,7 +646,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			valoresTarea.put("comiteSuperior", new String[] { "02" });
 			valoresTarea.put("observaciones", new String[] { "Masivo Venta cartera" });
 			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
-
+			
 			agendaAdapter.save(valoresTarea);
 			transactionManager.commit(transaction);
 
@@ -830,6 +836,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			VBusquedaDatosCompradorExpediente vDatosComprador = new VBusquedaDatosCompradorExpediente();
 			vDatosComprador.setIdExpedienteComercial(expedienteComercial.getId().toString());
 			vDatosComprador.setId(expedienteComercial.getCompradorPrincipal().getId().toString());
+			vDatosComprador.setNumDocumento(expedienteComercial.getCompradorPrincipal().getDocumento());
 			vDatosComprador.setPorcentajeCompra(nuevoPorcentaje);
 			if (DDSubcartera.CODIGO_BAN_BH.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
 				vDatosComprador.setNumeroClienteUrsusBh(numeroUrsus);

@@ -263,9 +263,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					// casados en regimen de ganaciales
 					setearConyuges(exc, fila, agrupacion.getId());
 					
-//					//llamamos al alta de UVEM si son de Bankia
-//					altaUvem(agrupacion.getId(),
-//							exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.COMITE_SANCIONADOR), resultado);
 					// guardamos los datos que hacen falta para avanzar el exp
 					// comercial
 					guardarDatosNecesariosExpedienteComercial(exc, agrupacion.getId(), fila, context, resultado);
@@ -587,7 +584,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						.expedienteComercialToInstanciaDecisionList(expedienteComercial, porcentajeImpuesto, null);
 
 				// modificar
-				 uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
+				//uvemManagerApi.modificarInstanciaDecision(instanciaDecisionDto);
 				// modificar_honorarios
 				instanciaDecisionDto.setCodigoCOTPRA(InstanciaDecisionDataDto.PROPUESTA_HONORARIOS);
 				uvemManagerApi.modificarInstanciaDecisionTres(instanciaDecisionDto);

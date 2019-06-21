@@ -9,6 +9,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', {
 		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoModel',
 		'HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoController'
 	],
+	cesionHaya: null,
+	comunicacionTerceros: null,
+	tranferenciasInternacionales: null,
 
 	controller: 'slideadjuntardocumento',
 	viewModel: {

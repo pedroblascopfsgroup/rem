@@ -128,23 +128,21 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh.getValue())) ) {
 			campoTipoPersona.setDisabled(true);
 			campoPorcionCompra.setDisabled(true);
-			campoTipoDocumentoRte.setDisabled(true); 
+			campoTipoDocumentoRte.setDisabled(true);
 			campoNumeroDocumentoRte.setDisabled(true);
 			campoSeleccionClienteUrsus.setDisabled(true);
 			campoEstadoCivil.setDisabled(true);
 			campoRegEconomico.setDisabled(true);
 			campoTipoDocumentoConyuge.setDisabled(true);
 			campoNumeroDocumentoConyugue.setDisabled(true);
-			campoNumeroUrsus.setDisabled(true);
-			campoNumeroUrsusBh.setDisabled(true);
+			campoNumeroUrsus.setReadOnly(true);
+			campoNumeroUrsusBh.setReadOnly(true);
 			numeroDocumentoConyuge.setDisabled(true);
-			
-
-			}
-			if (campoEstadoCivil.getValue() != CONST.TIPOS_ESTADO_CIVIL['CASADO'] && campoRegEconomico.getValue() != CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
-				campoTipoDocumentoConyuge.clearValue;
-				campoNumeroDocumentoConyugue.clearValue;
-			}				
+		}
+		if (campoEstadoCivil.getValue() != CONST.TIPOS_ESTADO_CIVIL['CASADO'] && campoRegEconomico.getValue() != CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
+			campoTipoDocumentoConyuge.clearValue;
+			campoNumeroDocumentoConyugue.clearValue;
+		}				
 	},
 
 	checkCoe: function() {

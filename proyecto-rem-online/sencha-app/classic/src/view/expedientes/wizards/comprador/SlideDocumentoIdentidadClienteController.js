@@ -262,6 +262,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		} else {
 			return true;
 		}
+	},
+	onChangeTipoDocumentoNuevoComprador : function(checkbox, newVal, oldVal){
+		
 	}
 
 });

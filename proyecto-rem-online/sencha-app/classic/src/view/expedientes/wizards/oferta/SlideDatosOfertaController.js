@@ -183,7 +183,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                     pedirDocValor = form.findField('pedirDoc').getValue();
 
                     if (pedirDocValor == 'false'){
-                        var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
+                    	var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
                         me.getView().mask(HreRem.i18n("msg.mask.loading"));
                         var url = $AC.getRemoteUrl('activooferta/getListAdjuntos'),
                         idActivo = wizard.oferta.data.idActivo,
@@ -204,30 +204,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                                     transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
                                     btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[reference=btnGenerarDocumento]');
                                     btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[reference=btnFinalizar]');
-                                    if (esInternacional) {
-                                    	Ext.global.console.log("internacional");
-                                    	Ext.global.console.log("cesion datos "+cesionDatos.getValue());
-                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
-										if (transferenciasInternacionales.getValue()) {
-											btnFinalizar.enable();
-										}else{
-											btnFinalizar.disable();
-										}
-									} else {
-										Ext.global.console.log("no internacional");
-										Ext.global.console.log("cesion datos "+cesionDatos.getValue());
-                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
-										if (cesionDatos.getValue()) {
-											btnFinalizar.enable();
-										}else{
-											btnFinalizar.disable();
-										}
-									}
-
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();                                    
                                  }
                                  wizard.unmask();
+                                 me.activarFinalizar(ventanaWizardAdjuntarDocumento,true);
                              },
 
                              failure: function(record, operation) {
@@ -264,6 +245,62 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                 me.fireEvent("errorToast", HreRem.i18n("wizardOferta.operacion.ko.nueva.oferta")+valueDestComercial);
             }
         }
-    }
+    },
+    activarFinalizar: function(form,isDirty){
+		var me = this,
+		checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
+		esInternacional = form.getForm().findField('carteraInternacional').getValue(),
+		checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
+		checkComunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue(),
+		documentoAdjunto = form.getForm().findField('docOfertaComercial').getValue(),
+		btnFinalizar = form.lookupReference('btnFinalizar');
+		if(!Ext.isEmpty(me.getView().up('wizardBase').expediente)){
+			idExpediente = me.getView().up('wizardBase').expediente.get('id');	
+		}else{
+			idExpediente = "";
+		}
+		
+		if(Ext.isEmpty(idExpediente)){
+			if(isDirty && !Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
+				if(esInternacional){
+						if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && checkTransInternacionales=="true" && !Ext.isEmpty(documentoAdjunto)){
+							btnFinalizar.enable();
+						}else{
+							btnFinalizar.disable();
+						}
+				}else{
+					if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros) && !Ext.isEmpty(documentoAdjunto)){
+						btnFinalizar.enable();
+					}else{
+						btnFinalizar.disable();
+					}
+				}
+			}else{
+				btnFinalizar.disable();
+			}
+			
+		}else{
+			if(isDirty && !Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
+				if(esInternacional){
+						if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && checkTransInternacionales=="true"){
+							btnFinalizar.enable();
+						}else{
+							btnFinalizar.disable();
+						}
+				}else{
+					if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
+						btnFinalizar.enable();
+					}else{
+						btnFinalizar.disable();
+					}
+				}
+			}else{
+				btnFinalizar.disable();
+			}
+			
+			
+		}
+		
+	}
 
 });

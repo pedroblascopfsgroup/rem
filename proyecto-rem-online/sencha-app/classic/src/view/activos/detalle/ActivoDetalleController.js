@@ -3967,7 +3967,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			method : 'POST',
 			params: {idActivo: idActivo},
     		success: function(response, opts){
-    			
     			var isActivoMatriz = Ext.decode(response.responseText).data;
 				var vistaActual = me.getView();
 				var detalle = vistaActual.items.items[1];
@@ -3975,8 +3974,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				var referencia = tabActiva.reference;
 				var subReferencia = "";
 				if(tabActiva.ariaRole == 'tabpanel'){
-					var subTabActiva = tabActiva.getActiveTab(),
-					subReferencia = subTabActiva.reference;
+					if (referencia == 'publicacionactivoref') {
+						var subTabActiva = tabActiva.getActiveTab(),
+						subReferencia = subTabActiva.reference;
+					}
 				}
 				if(isActivoMatriz == "true" && !(referencia == 'publicacionactivoref'
 						&& subReferencia == 'datospublicacionactivoref')){
@@ -4988,7 +4989,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                     pedirDocValor = form.findField('pedirDoc').getValue();
 
                     if (pedirDocValor == 'false'){
-                        var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
+                    	var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
                         me.getView().mask(HreRem.i18n("msg.mask.loading"));
                         url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
                         ventanaWizard = btn.up('wizardaltaoferta'),
@@ -5010,26 +5011,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                     transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
                                     btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[itemId=btnGenerarDoc]');
                                     btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
-                                    if (esInternacional) {
-                                    	Ext.global.console.log("internacional");
-                                    	Ext.global.console.log("cesion datos "+cesionDatos.getValue());
-                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
-										if (transferenciasInternacionales.getValue()) {
-											btnFinalizar.enable();
-										}else{
-											btnFinalizar.disable();
-										}
-									} else {
-										Ext.global.console.log("no internacional");
-										Ext.global.console.log("cesion datos "+cesionDatos.getValue());
-                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
-										if (cesionDatos.getValue()) {
-											btnFinalizar.enable();
-										}else{
-											btnFinalizar.disable();
-										}
-									}
-
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
                                     ventanaWizard.unmask()

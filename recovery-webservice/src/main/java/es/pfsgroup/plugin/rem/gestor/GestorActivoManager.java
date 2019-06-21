@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  @Service("gestorActivoManager")
  public class GestorActivoManager extends GestorEntidadManager implements GestorActivoApi  {
 	//En el caso de Apple existen varias tareas en que no se asignan a gestores si no a usuario de grupo
+	public static final String USERNAME_PORTFOLIO_MANAGER ="portfolioman";
 	public static final String USERNAME_GRUPO_CES ="grucoces";
 	public static final String USERNAME_PROMONTORIA_MANZANA ="gruproman";
  	
@@ -492,7 +493,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	public Usuario usuarioTareaApple(String codigoTarea) {
 		Usuario userTarea = null;
 		Filter filtro = null;
-		if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)) {
+		if (ComercialUserAssigantionService.CODIGO_T017_ANALISIS_PM.equals(codigoTarea)) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_PORTFOLIO_MANAGER);
+		} else if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);
 		} else if (ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) ) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);

@@ -74,6 +74,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String BUZON_REM = "buzon.rem";
 	public static final String BUZON_PFS = "buzon.pfs";
 	
+	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 
 	Usuario getGestorByActivoYTipo(Activo activo, Long tipo);

@@ -183,6 +183,18 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		else {
 			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
 		}
+
+		if(CODIGO_T017_ANALISIS_PM.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
+				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
+			return gestorActivoApi.usuarioTareaApple(codigoTarea);
+		} else {
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
+			
+			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+			if(Checks.esNulo(tipoGestor))
+				return null;
+		}
+		
 		if(GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(codigoGestor) || GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(codigoGestor) 
 				|| GestorActivoApi.CODIGO_GESTOR_RESERVA_CAJAMAR.equals(codigoGestor) || GestorActivoApi.CODIGO_GESTOR_MINUTA_CAJAMAR.equals(codigoGestor))
 			return this.getGestorOrSupervisorExpedienteByCodigo(tareaExterna, codigoGestor);
@@ -193,6 +205,11 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		
 		if(GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(codigoGestor) && loteComercial != null && !Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
 			return loteComercial.getUsuarioGestorComercialBackOffice();
+		}
+		
+		if(CODIGO_T017_ANALISIS_PM.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
+				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
+			return gestorActivoApi.usuarioTareaApple(codigoTarea);
 		}
 
 		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());
@@ -235,7 +252,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			codigoSupervisor = this.getMapCodigoTipoSupervisor(isFuerzaVentaDirecta, isLiberbank, isBankia, isSareb, isRetailActivo(tareaActivo), isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoGiants).get(codigoTarea);
 		}	
 		
-		if(CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
+		if(CODIGO_T017_ANALISIS_PM.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
 			return gestorActivoApi.usuarioTareaApple(codigoTarea);
 		} else {
@@ -863,8 +880,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-		}
-		
+		}		
 		return mapa;
 	}
 

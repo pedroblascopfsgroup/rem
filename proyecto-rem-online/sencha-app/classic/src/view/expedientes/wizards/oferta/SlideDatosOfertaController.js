@@ -207,8 +207,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();                                    
                                  }
-                                 wizard.unmask();
-                                 me.activarFinalizar(ventanaWizardAdjuntarDocumento,true);
+                                 wizard.unmask();                                 
                              },
 
                              failure: function(record, operation) {

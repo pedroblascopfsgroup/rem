@@ -177,13 +177,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 									esInternacional = slideAdjuntarDocumento.getForm().findField('carteraInternacional').getValue();
 									slideAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
 									slideAdjuntarDocumento.lookupReference('btnBorrarDocumentoAdjunto').show();
-									if(esInternacional){
-										if(slideAdjuntarDocumento.getForm().findField('transferenciasInternacionales').getValue()=="true"){
-											slideAdjuntarDocumento.lookupReference('btnFinalizar').enable();
-										}
-									}else{
-										slideAdjuntarDocumento.lookupReference('btnFinalizar').enable();	
-									}									
+									slideAdjuntarDocumento.lookupController().activarFinalizar(slideAdjuntarDocumento, slideAdjuntarDocumento.lookupController().hayCambios());									
 									slideAdjuntarDocumento.lookupReference('btnGenerarDocumento').disable();
 									slideAdjuntarDocumento.getForm().findField('comunicacionTerceros').disable();
 									slideAdjuntarDocumento.getForm().findField('cesionDatos').disable();

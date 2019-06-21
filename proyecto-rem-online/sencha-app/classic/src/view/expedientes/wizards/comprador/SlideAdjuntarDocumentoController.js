@@ -5,7 +5,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	requires: [
 		'HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial'
 	],
-	firstExecution : true,
 
 	onActivate: function() {
 		var me = this,
@@ -44,7 +43,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 					var data = Ext.decode(response.responseText);
 					if (!Ext.isEmpty(data.data)) {
 						form.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-						form.lookupReference('btnBorrarDocumentoAdjunto').show();						
+						form.lookupReference('btnBorrarDocumentoAdjunto').show();	
+						me.activarFinalizar(form,false);
 					}
 				},
 				failure: function(record, operation) {
@@ -52,15 +52,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 					wizard.unmask();
 				}
 			});
-			me.firstExecution = false;
 			form.getForm().findField('cesionDatos').setValue(wizard.comprador.get('cesionDatos'));
 			form.getForm().findField('comunicacionTerceros').setValue(wizard.comprador.get('comunicacionTerceros'));
-			me.firstExecution = true;
 			form.getForm().findField('transferenciasInternacionales').setValue(wizard.comprador.get('transferenciasInternacionales'));
 			form.cesionHaya = wizard.comprador.get('cesionDatos');
 			form.comunicacionTerceros = wizard.comprador.get('comunicacionTerceros');
 			form.tranferenciasInternacionales = wizard.comprador.get('transferenciasInternacionales');
-			//form.lookupReference('btnFinalizar').enable();
 		}
 	},
 
@@ -103,58 +100,33 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	},
 	activarFinalizar: function(form,isDirty){
 		var me = this,
+		form = me.getView(),
+		wizard = form.up('wizardBase'),
 		checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
 		esInternacional = form.getForm().findField('carteraInternacional').getValue(),
 		checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
 		checkComunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue(),
 		documentoAdjunto = form.getForm().findField('docOfertaComercial').getValue(),
 		btnFinalizar = form.lookupReference('btnFinalizar');
-		if(!Ext.isEmpty(me.getView().up('wizardBase').expediente)){
-			idExpediente = me.getView().up('wizardBase').expediente.get('id');	
-		}else{
-			idExpediente = "";
-		}
-		
-		if(Ext.isEmpty(idExpediente)){
-			if(isDirty && !Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
-				if(esInternacional){
-						if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && checkTransInternacionales=="true" && !Ext.isEmpty(documentoAdjunto)){
+		btnSubirDoc = form.lookupReference('btnSubirDocumento'),
+
+			btnFinalizar.disable();	
+			if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
+				if(checkCesionDatos && !Ext.isEmpty(documentoAdjunto) && btnSubirDoc.isDisabled()){
+					if(esInternacional){
+						if(checkTransInternacionales == "true"){
 							btnFinalizar.enable();
 						}else{
 							btnFinalizar.disable();
 						}
-				}else{
-					if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros) && !Ext.isEmpty(documentoAdjunto)){
-						btnFinalizar.enable();
 					}else{
-						btnFinalizar.disable();
+						btnFinalizar.enable();
 					}
 				}
 			}else{
-				btnFinalizar.disable();
+				btnFinalizar.disable();	
 			}
-			
-		}else{
-			if(isDirty && !Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
-				if(esInternacional){
-						if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && checkTransInternacionales=="true"){
-							btnFinalizar.enable();
-						}else{
-							btnFinalizar.disable();
-						}
-				}else{
-					if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
-						btnFinalizar.enable();
-					}else{
-						btnFinalizar.disable();
-					}
-				}
-			}else{
-				btnFinalizar.disable();
-			}
-			
-			
-		}
+
 		
 	},
 	onChangeCheckboxCesionDatos: function(checkbox, newVal, oldVal) {
@@ -190,7 +162,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnSubirDoc.disable();
 		}
 		
-		isDirty = Ext.isEmpty(oldVal)
+		isDirty = me.hayCambios();
 		me.activarFinalizar(form,isDirty);
 	},
 
@@ -226,7 +198,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnGenerarDoc.disable();
 			btnSubirDoc.disable();
 		}
-		isDirty = Ext.isEmpty(oldVal)
+		isDirty = me.hayCambios();
 		me.activarFinalizar(form,isDirty);
 	},
 	
@@ -297,7 +269,24 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			btnSubirDoc.disable();
 		}
 
-		isDirty = Ext.isEmpty(oldVal)
+		isDirty = me.hayCambios();
+		me.activarFinalizar(form,isDirty);
+	},
+	
+	onChangeDocOfertaComercial: function(checkbox, newVal, oldVal){
+		var me = this,
+		form = me.getView(),
+		wizard =form.up('wizardBase'),
+		checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
+		esInternacional = form.getForm().findField('carteraInternacional').getValue(),
+		checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
+		btnGenerarDoc = form.lookupReference('btnGenerarDocumento'),
+		btnSubirDoc = form.lookupReference('btnSubirDocumento'),
+		docOfertaComercial = form.getForm().findField('docOfertaComercial'),
+		btnFinalizar = form.lookupReference('btnFinalizar');
+
+		isDirty = me.hayCambios();
+		btnSubirDoc.disable();
 		me.activarFinalizar(form,isDirty);
 	},
 

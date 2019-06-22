@@ -1781,7 +1781,7 @@
 5952902|Alquiler|Alquilado|Especial|N|Antiguo deudor|N|N
 5952918|Alquiler|Alquilado|Especial|N|Normal|N|N
 5952922|Alquiler|Alquilado|Especial|N|Antiguo deudor|N|N
-5952930|Alquiler|Libre|FSV| | |N|
+5952930|Alquiler|Libre|FSV|||N|
 5952936|Alquiler|Alquilado|Especial|N|Antiguo deudor|N|N
 5952938|Alquiler|Alquilado|Especial|N|Antiguo deudor|N|N
 5952941|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
@@ -6271,3 +6271,2649 @@
 7100205|Alquiler y Venta|Alquilado|Ordinario|N|Antiguo deudor|N|N
 7101307|Alquiler y Venta|Alquilado|Ordinario|N|Antiguo deudor|N|N
 7101456|Alquiler y Venta|Alquilado|Ordinario|N|Antiguo deudor|N|N
+62620|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+62621|Alquiler y Venta|Libre|Ordinario|||N|
+62622|Alquiler y Venta|Libre|Ordinario|||N|
+62689|Alquiler y Venta|Libre|Ordinario|||N|
+62690|Alquiler y Venta|Libre|Ordinario|||N|
+62691|Alquiler y Venta|Libre|Ordinario|||N|
+62834|Alquiler y Venta|Libre|Ordinario|||N|
+62835|Alquiler y Venta|Libre|Ordinario|||N|
+62836|Alquiler y Venta|Libre|Ordinario|||N|
+62863|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+62864|Alquiler y Venta|Libre|Ordinario|||N|
+62915|Alquiler y Venta|Libre|Ordinario|||N|
+62916|Alquiler y Venta|Libre|Ordinario|||N|
+63010|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+63011|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+63061|Alquiler y Venta|Libre|Ordinario|||N|
+63062|Alquiler y Venta|Libre|Ordinario|||N|
+63184|Alquiler y Venta|Libre|Ordinario|||N|
+63185|Alquiler y Venta|Libre|Ordinario|||N|
+63189|Alquiler y Venta|Libre|Ordinario|||N|
+63208|Alquiler y Venta|Libre|Ordinario|||N|
+63248|Alquiler y Venta|Libre|Ordinario|||N|
+63324|Alquiler y Venta|Libre|Ordinario|||N|
+63686|Alquiler y Venta|Libre|Ordinario|||N|
+64588|Alquiler y Venta|Libre|Ordinario|||N|
+64747|Alquiler y Venta|Libre|Ordinario|||N|
+64748|Alquiler y Venta|Libre|Ordinario|||N|
+64928|Alquiler y Venta|Libre|Ordinario|||N|
+65327|Alquiler y Venta|Libre|Ordinario|||N|
+65328|Alquiler y Venta|Libre|Ordinario|||N|
+65329|Alquiler y Venta|Libre|Ordinario|||N|
+65615|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+65616|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+65617|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+66054|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+66055|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+69287|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+70235|Alquiler y Venta|Libre|Ordinario|||N|
+70436|Alquiler y Venta|Libre|Ordinario|||N|
+70956|Alquiler y Venta|Libre|Ordinario|||N|
+71449|Alquiler y Venta|Libre|Ordinario|||N|
+71502|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+71718|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+72838|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+73294|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+73617|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+75335|Alquiler y Venta|Libre|Ordinario|||S|
+75568|Alquiler y Venta|Libre|Ordinario|||S|
+75646|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+76954|Alquiler y Venta|Libre|Ordinario|||N|
+76955|Alquiler y Venta|Libre|Ordinario|||N|
+76956|Alquiler y Venta|Libre|Ordinario|||N|
+76957|Alquiler y Venta|Libre|Ordinario|||N|
+76958|Alquiler y Venta|Libre|Ordinario|||N|
+76959|Alquiler y Venta|Libre|Ordinario|||N|
+76992|Alquiler y Venta|Libre|Ordinario|||N|
+76993|Alquiler y Venta|Libre|Ordinario|||N|
+76994|Alquiler y Venta|Libre|Ordinario|||N|
+76995|Alquiler y Venta|Libre|Ordinario|||N|
+76996|Alquiler y Venta|Libre|Ordinario|||N|
+77049|Alquiler y Venta|Libre|Ordinario|||N|
+77050|Alquiler y Venta|Libre|Ordinario|||N|
+77051|Alquiler y Venta|Libre|Ordinario|||N|
+77116|Alquiler y Venta|Libre|Ordinario|||N|
+77138|Alquiler y Venta|Libre|Ordinario|||S|
+77160|Alquiler y Venta|Libre|Ordinario|||N|
+77161|Alquiler y Venta|Libre|Ordinario|||N|
+77289|Alquiler y Venta|Libre|Ordinario|||N|
+77383|Alquiler y Venta|Libre|Ordinario|||N|
+77555|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+78345|Alquiler y Venta|Libre|Ordinario|||N|
+78448|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+78464|Alquiler y Venta|Libre|Ordinario|||N|
+78465|Alquiler y Venta|Libre|Ordinario|||N|
+78466|Alquiler y Venta|Libre|Ordinario|||N|
+78467|Alquiler y Venta|Libre|Ordinario|||N|
+78490|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+78559|Alquiler y Venta|Libre|Ordinario|||N|
+78560|Alquiler y Venta|Libre|Ordinario|||N|
+78561|Alquiler y Venta|Libre|Ordinario|||N|
+78562|Alquiler y Venta|Libre|Ordinario|||N|
+78563|Alquiler y Venta|Libre|Ordinario|||N|
+78564|Alquiler y Venta|Libre|Ordinario|||N|
+78565|Alquiler y Venta|Libre|Ordinario|||N|
+78613|Alquiler y Venta|Libre|Ordinario|||N|
+78614|Alquiler y Venta|Libre|Ordinario|||N|
+78616|Alquiler y Venta|Libre|Ordinario|||N|
+78694|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+79039|Alquiler y Venta|Libre|Ordinario|||N|
+79040|Alquiler y Venta|Libre|Ordinario|||N|
+79041|Alquiler y Venta|Libre|Ordinario|||N|
+79115|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+79960|Alquiler y Venta|Libre|Ordinario|||S|
+80234|Alquiler y Venta|Libre|Ordinario|||N|
+80235|Alquiler y Venta|Libre|Ordinario|||N|
+80236|Alquiler y Venta|Libre|Ordinario|||N|
+80237|Alquiler y Venta|Libre|Ordinario|||N|
+80648|Alquiler y Venta|Libre|Ordinario|||N|
+80649|Alquiler y Venta|Libre|Ordinario|||N|
+80650|Alquiler y Venta|Libre|Ordinario|||N|
+80651|Alquiler y Venta|Libre|Ordinario|||N|
+80652|Alquiler y Venta|Libre|Ordinario|||N|
+80653|Alquiler y Venta|Libre|Ordinario|||N|
+80726|Alquiler y Venta|Libre|Ordinario|||N|
+80727|Alquiler y Venta|Libre|Ordinario|||N|
+80799|Alquiler y Venta|Libre|Ordinario|||S|
+82091|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+82092|Alquiler y Venta|Libre|Ordinario|||S|
+82093|Alquiler y Venta|Libre|Ordinario|||S|
+82094|Alquiler y Venta|Libre|Ordinario|||N|
+82095|Alquiler y Venta|Libre|Ordinario|||N|
+82096|Alquiler y Venta|Libre|Ordinario|||N|
+82097|Alquiler y Venta|Libre|Ordinario|||S|
+82128|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+82129|Alquiler y Venta|Libre|Ordinario|||N|
+82131|Alquiler y Venta|Libre|Ordinario|||N|
+82133|Alquiler y Venta|Libre|Ordinario|||N|
+82134|Alquiler y Venta|Libre|Ordinario|||N|
+82430|Alquiler y Venta|Libre|Ordinario|||N|
+82431|Alquiler y Venta|Libre|Ordinario|||N|
+82432|Alquiler y Venta|Libre|Ordinario|||N|
+82433|Alquiler y Venta|Libre|Ordinario|||N|
+82464|Alquiler y Venta|Libre|Ordinario|||N|
+82724|Alquiler y Venta|Libre|Ordinario|||N|
+82726|Alquiler y Venta|Libre|Ordinario|||N|
+82727|Alquiler y Venta|Libre|Ordinario|||N|
+82728|Alquiler y Venta|Libre|Con opción de compra|||N|
+82729|Alquiler y Venta|Libre|Ordinario|||N|
+83403|Alquiler y Venta|Libre|Ordinario|||S|
+83590|Alquiler y Venta|Libre|Ordinario|||S|
+84036|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+84137|Alquiler y Venta|Libre|Ordinario|||N|
+84156|Alquiler y Venta|Libre|Ordinario|||N|
+84157|Alquiler y Venta|Libre|Ordinario|||N|
+84706|Alquiler y Venta|Libre|Ordinario|||N|
+84707|Alquiler y Venta|Libre|Ordinario|||N|
+84892|Alquiler y Venta|Libre|Ordinario|||N|
+85015|Alquiler y Venta|Libre|Ordinario|||N|
+85017|Alquiler y Venta|Libre|Ordinario|||N|
+85071|Alquiler y Venta|Libre|Ordinario|||N|
+85073|Alquiler y Venta|Libre|Ordinario|||N|
+85074|Alquiler y Venta|Libre|Ordinario|||N|
+85075|Alquiler y Venta|Libre|Ordinario|||N|
+85076|Alquiler y Venta|Libre|Ordinario|||N|
+85161|Alquiler y Venta|Libre|Ordinario|||N|
+85162|Alquiler y Venta|Libre|Ordinario|||N|
+85164|Alquiler y Venta|Libre|Ordinario|||N|
+85298|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+85299|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+85300|Alquiler y Venta|Libre|Ordinario|||N|
+85301|Alquiler y Venta|Libre|Ordinario|||N|
+85302|Alquiler y Venta|Libre|Ordinario|||N|
+85303|Alquiler y Venta|Libre|Ordinario|||N|
+85304|Alquiler y Venta|Libre|Ordinario|||S|
+85305|Alquiler y Venta|Libre|Ordinario|||S|
+85453|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+85454|Alquiler y Venta|Libre|Ordinario|||N|
+85455|Alquiler y Venta|Libre|Ordinario|||N|
+85546|Alquiler y Venta|Libre|Ordinario|||N|
+85547|Alquiler y Venta|Libre|Ordinario|||N|
+85548|Alquiler y Venta|Libre|Ordinario|||N|
+85549|Alquiler y Venta|Libre|Ordinario|||N|
+85565|Alquiler y Venta|Libre|Ordinario|||N|
+85566|Alquiler y Venta|Libre|Ordinario|||N|
+85567|Alquiler y Venta|Libre|Ordinario|||N|
+85568|Alquiler y Venta|Libre|Ordinario|||N|
+85990|Alquiler y Venta|Libre|Ordinario|||N|
+85991|Alquiler y Venta|Libre|Ordinario|||N|
+85992|Alquiler y Venta|Libre|Ordinario|||N|
+88922|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+88923|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+89094|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+89095|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+89096|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+90635|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+90829|Alquiler y Venta|Libre|Ordinario|||N|
+90830|Alquiler y Venta|Libre|Ordinario|||N|
+91291|Alquiler y Venta|Libre|Ordinario|||N|
+91292|Alquiler y Venta|Libre|Ordinario|||N|
+91294|Alquiler y Venta|Libre|Ordinario|||N|
+91295|Alquiler y Venta|Libre|Ordinario|||N|
+91317|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+91467|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+91468|Alquiler y Venta|Libre|Ordinario|||N|
+91469|Alquiler y Venta|Libre|Ordinario|||N|
+91514|Alquiler y Venta|Libre|Ordinario|||N|
+91515|Alquiler y Venta|Libre|Ordinario|||S|
+91517|Alquiler y Venta|Libre|Ordinario|||N|
+91518|Alquiler y Venta|Libre|Ordinario|||N|
+91519|Alquiler y Venta|Libre|Ordinario|||N|
+91520|Alquiler y Venta|Libre|Ordinario|||N|
+91625|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+91626|Alquiler y Venta|Libre|Ordinario|||S|
+91628|Alquiler y Venta|Libre|Ordinario|||N|
+91874|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+91875|Alquiler y Venta|Libre|Ordinario|||N|
+91877|Alquiler y Venta|Libre|Ordinario|||N|
+91878|Alquiler y Venta|Libre|Ordinario|||N|
+91971|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+91972|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+92396|Alquiler y Venta|Libre|Ordinario|||N|
+92483|Alquiler y Venta|Libre|Ordinario|||N|
+92484|Alquiler y Venta|Libre|Ordinario|||N|
+92485|Alquiler y Venta|Libre|Ordinario|||N|
+92542|Alquiler y Venta|Libre|Ordinario|||N|
+92543|Alquiler y Venta|Libre|Ordinario|||N|
+92693|Alquiler y Venta|Libre|Ordinario|||N|
+92712|Alquiler y Venta|Libre|Ordinario|||N|
+92713|Alquiler y Venta|Libre|Ordinario|||N|
+92714|Alquiler y Venta|Libre|Ordinario|||N|
+92818|Alquiler y Venta|Libre|Ordinario|||N|
+92819|Alquiler y Venta|Libre|Ordinario|||N|
+92838|Alquiler y Venta|Libre|Ordinario|||N|
+92840|Alquiler y Venta|Libre|Ordinario|||N|
+92863|Alquiler y Venta|Libre|Ordinario|||N|
+92966|Alquiler y Venta|Libre|Ordinario|||N|
+92967|Alquiler y Venta|Libre|Ordinario|||N|
+92968|Alquiler y Venta|Libre|Ordinario|||N|
+92969|Alquiler y Venta|Libre|Ordinario|||N|
+93084|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+93108|Alquiler y Venta|Libre|Ordinario|||N|
+93109|Alquiler y Venta|Libre|Ordinario|||N|
+93110|Alquiler y Venta|Libre|Ordinario|||N|
+94112|Alquiler y Venta|Libre|Ordinario|||S|
+94113|Alquiler y Venta|Libre|Ordinario|||S|
+94299|Alquiler y Venta|Libre|Ordinario|||S|
+94305|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+94306|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+94310|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+94311|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+94419|Alquiler y Venta|Libre|Ordinario|||S|
+94420|Alquiler y Venta|Libre|Ordinario|||S|
+94422|Alquiler y Venta|Libre|Ordinario|||S|
+94694|Alquiler y Venta|Libre|Ordinario|||S|
+94700|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+94949|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+95704|Alquiler y Venta|Libre|Ordinario|||S|
+95834|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+96829|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+96830|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+97331|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+97332|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+97817|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+97893|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+97894|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+97895|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+97896|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+98431|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+98437|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+98438|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+98439|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+98441|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+98442|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+98530|Alquiler y Venta|Libre|Ordinario|||S|
+98532|Alquiler y Venta|Libre|Ordinario|||S|
+98541|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+98542|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+98560|Alquiler y Venta|Libre|Ordinario|||S|
+98625|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+98672|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+98675|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+98676|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+99002|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+99019|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+99126|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+99128|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+99240|Alquiler y Venta|Libre|Ordinario|||N|
+99241|Alquiler y Venta|Libre|Ordinario|||N|
+99242|Alquiler y Venta|Libre|Ordinario|||N|
+99243|Alquiler y Venta|Libre|Ordinario|||N|
+99270|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+99271|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+99272|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+99274|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+99310|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+99311|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+99312|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+99313|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+99390|Alquiler y Venta|Libre|Ordinario|||N|
+99600|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+99795|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100045|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100046|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100083|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100084|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100086|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100087|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100094|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100175|Alquiler y Venta|Libre|Ordinario|||N|
+100211|Alquiler y Venta|Libre|Ordinario|||N|
+100212|Alquiler y Venta|Libre|Ordinario|||N|
+100366|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100371|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100469|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100514|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100569|Alquiler y Venta|Libre|Ordinario|||N|
+100570|Alquiler y Venta|Libre|Ordinario|||N|
+100590|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100596|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100650|Alquiler y Venta|Libre|Ordinario|||S|
+100652|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+100712|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100717|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100724|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100725|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100726|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+100744|Alquiler y Venta|Libre|Ordinario|||N|
+100916|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+100918|Alquiler y Venta|Libre|Ordinario|||S|
+100972|Alquiler y Venta|Libre|Ordinario|||S|
+100979|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+101099|Alquiler y Venta|Libre|Ordinario|||S|
+101102|Alquiler y Venta|Libre|Ordinario|||S|
+101105|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+101107|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+101158|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+101159|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+101160|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+101162|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+101484|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+101488|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+102065|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+102931|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+102937|Alquiler y Venta|Libre|Ordinario|||S|
+102940|Alquiler y Venta|Libre|Ordinario|||S|
+102941|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103048|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103160|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+103161|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103164|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103216|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103497|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103498|Alquiler y Venta|Libre|Ordinario|||S|
+103500|Alquiler y Venta|Libre|Ordinario|||S|
+103778|Alquiler y Venta|Libre|Ordinario|||S|
+103779|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103780|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103781|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103782|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103783|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+103846|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104081|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104082|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104083|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104084|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104085|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104113|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104282|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+104283|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104284|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104449|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104498|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+104499|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104500|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104501|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+104572|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+107338|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+107415|Alquiler y Venta|Libre|Ordinario|||N|
+108411|Alquiler y Venta|Libre|Ordinario|||N|
+108611|Alquiler y Venta|Libre|Ordinario|||N|
+108612|Alquiler y Venta|Libre|Ordinario|||N|
+108613|Alquiler y Venta|Libre|Ordinario|||N|
+108614|Alquiler y Venta|Libre|Ordinario|||N|
+109767|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+109792|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+109793|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+109794|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+109795|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+109821|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+110117|Alquiler y Venta|Libre|Ordinario|||S|
+110118|Alquiler y Venta|Libre|Ordinario|||N|
+110346|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|S
+110611|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+112175|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+112433|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+112434|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+112965|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+112966|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+112967|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113197|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+113239|Alquiler y Venta|Libre|Ordinario|||S|
+113240|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113241|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113242|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113243|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113244|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113334|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113335|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113336|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113556|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+113557|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113558|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113559|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113560|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113561|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113621|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113622|Alquiler y Venta|Libre|Ordinario|||N|
+113624|Alquiler y Venta|Libre|Ordinario|||N|
+113705|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+113769|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113780|Alquiler y Venta|Libre|Ordinario|||N|
+113781|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113782|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113783|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113784|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113817|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+113818|Alquiler y Venta|Libre|Ordinario|||N|
+113868|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+113869|Alquiler y Venta|Libre|Ordinario|||N|
+114153|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+114154|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114155|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114317|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114318|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114319|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114374|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+114526|Alquiler y Venta|Libre|Ordinario|||N|
+114527|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114528|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114529|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114530|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114771|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114772|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114773|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+114774|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+115348|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+115462|Alquiler y Venta|Libre|Ordinario|||N|
+115463|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+115493|Alquiler y Venta|Libre|Ordinario|||N|
+115757|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+115769|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+115830|Alquiler y Venta|Libre|Ordinario|||N|
+115974|Alquiler y Venta|Libre|Ordinario|||N|
+115975|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+115976|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+115977|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+115978|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116125|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116126|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116127|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116286|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116287|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116288|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116289|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116355|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116356|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116357|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116358|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+116896|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+117100|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+117214|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+117215|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+117471|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|S
+117472|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+117491|Alquiler y Venta|Libre|Ordinario|||N|
+117524|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+117525|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+117590|Alquiler y Venta|Libre|Ordinario|||S|
+117591|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+117593|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+117632|Alquiler y Venta|Libre|Ordinario|||N|
+117634|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+117703|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+117737|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+117766|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+117767|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118097|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+118098|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118107|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+118108|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118109|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118336|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+118337|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118338|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118341|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+118417|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+118418|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118419|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118420|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118449|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118451|Alquiler y Venta|Libre|Ordinario|||N|
+118453|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+118461|Alquiler y Venta|Libre|Ordinario|||N|
+118607|Alquiler y Venta|Libre|Ordinario|||N|
+118608|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118609|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118717|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+118718|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118719|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118720|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118721|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118722|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118723|Alquiler y Venta|Libre|Ordinario|||N|
+118724|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+118725|Alquiler y Venta|Libre|Ordinario|||N|
+118726|Alquiler y Venta|Libre|Ordinario|||N|
+118727|Alquiler y Venta|Libre|Ordinario|||N|
+118820|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+118821|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118822|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118823|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118824|Alquiler y Venta|Libre|Ordinario|||N|
+118825|Alquiler y Venta|Libre|Ordinario|||N|
+118826|Alquiler y Venta|Libre|Ordinario|||N|
+118827|Alquiler y Venta|Libre|Ordinario|||N|
+118828|Alquiler y Venta|Libre|Ordinario|||N|
+118829|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+118830|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118831|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118953|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+118988|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+118989|Alquiler y Venta|Libre|Ordinario|||N|
+118990|Alquiler y Venta|Libre|Ordinario|||N|
+118991|Alquiler y Venta|Libre|Ordinario|||N|
+118992|Alquiler y Venta|Libre|Ordinario|||N|
+118993|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+118994|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+118995|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+118996|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+118997|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+118998|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119022|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+119168|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+119212|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119213|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119214|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119215|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119216|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119217|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119259|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+119333|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+119334|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119335|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119336|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119337|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119338|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119339|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+119345|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+119576|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+119577|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119578|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119579|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119580|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119581|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119582|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+119583|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+119584|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+119932|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+120282|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120283|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120538|Alquiler y Venta|Libre|Ordinario|||N|
+120596|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120597|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+120619|Alquiler y Venta|Libre|Ordinario|||N|
+120684|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120727|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120728|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120747|Alquiler y Venta|Libre|Ordinario|||N|
+120785|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120786|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+120787|Alquiler y Venta|Libre|Ordinario|||N|
+120788|Alquiler y Venta|Libre|Ordinario|||N|
+120789|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120790|Alquiler y Venta|Libre|Ordinario|||N|
+120791|Alquiler y Venta|Libre|Ordinario|||N|
+120792|Alquiler y Venta|Libre|Ordinario|||N|
+120793|Alquiler y Venta|Libre|Ordinario|||N|
+120825|Alquiler y Venta|Libre|Ordinario|||N|
+120826|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+120855|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+120872|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120873|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+120874|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+120875|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+120876|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+120877|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+120878|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+120879|Alquiler y Venta|Libre|Ordinario|||N|
+120907|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+121080|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+121162|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+121163|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+121164|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+121165|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+121166|Alquiler y Venta|Libre|Ordinario|||N|
+121167|Alquiler y Venta|Libre|Ordinario|||N|
+121168|Alquiler y Venta|Libre|Ordinario|||N|
+121169|Alquiler y Venta|Libre|Ordinario|||N|
+121170|Alquiler y Venta|Libre|Ordinario|||N|
+121171|Alquiler y Venta|Libre|Ordinario|||N|
+121172|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+121222|Alquiler y Venta|Libre|Ordinario|||N|
+121223|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+121224|Alquiler y Venta|Libre|Ordinario|||N|
+121374|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+121375|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+121376|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+121377|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+121378|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+121379|Alquiler y Venta|Libre|Ordinario|||N|
+121380|Alquiler y Venta|Libre|Ordinario|||N|
+121381|Alquiler y Venta|Libre|Ordinario|||N|
+121403|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+121509|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+121510|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+121511|Alquiler y Venta|Libre|Con opción de compra|||N|
+121823|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+121892|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+122019|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+122179|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+122180|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+122279|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+122334|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+122335|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+122336|Alquiler y Venta|Libre|Ordinario|||S|
+122432|Alquiler y Venta|Libre|Con opción de compra|||N|
+122462|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+123863|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+123980|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+124164|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+124190|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+124421|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+125019|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+125784|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+126175|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+126253|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+126254|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+126355|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+126559|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+126847|Alquiler y Venta|Libre|Ordinario|||N|
+126848|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+126898|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+127538|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+127598|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+127599|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+127800|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+129739|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+129972|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+130250|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+130897|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+131105|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|S
+131159|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+131598|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+131773|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+131906|Alquiler y Venta|Libre|Ordinario|||N|
+131992|Alquiler y Venta|Libre|Ordinario|||N|
+132004|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+132190|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+132191|Alquiler y Venta|Libre|Ordinario|||N|
+132192|Alquiler y Venta|Libre|Ordinario|||N|
+132337|Alquiler y Venta|Libre|Ordinario|||N|
+132338|Alquiler y Venta|Libre|Ordinario|||N|
+132374|Alquiler y Venta|Libre|Ordinario|||N|
+132375|Alquiler y Venta|Libre|Ordinario|||N|
+132376|Alquiler y Venta|Libre|Ordinario|||N|
+132602|Alquiler y Venta|Libre|Ordinario|||N|
+132606|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+132607|Alquiler y Venta|Libre|Ordinario|||N|
+132608|Alquiler y Venta|Libre|Ordinario|||N|
+132610|Alquiler y Venta|Libre|Ordinario|||N|
+132746|Alquiler y Venta|Libre|Ordinario|||N|
+132747|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+132870|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133032|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133034|Alquiler y Venta|Libre|Ordinario|||N|
+133114|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133116|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133122|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133198|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133199|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133200|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133202|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133204|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133205|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133207|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133208|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133209|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+133211|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133212|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133213|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133214|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133217|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133282|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133314|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133317|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133318|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133319|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133322|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+133325|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133326|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133345|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133362|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133488|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133490|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133518|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133519|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133520|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133521|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133523|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133524|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133526|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+133527|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133528|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133534|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133535|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133536|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133596|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+133606|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133622|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133623|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133625|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133626|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+133627|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+133629|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133685|Alquiler y Venta|Libre|Ordinario|||N|
+133724|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133725|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+133942|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134387|Alquiler y Venta|Libre|Ordinario|||N|
+134388|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134441|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134669|Alquiler y Venta|Libre|Ordinario|||N|
+134671|Alquiler y Venta|Libre|Ordinario|||N|
+134693|Alquiler y Venta|Libre|Ordinario|||N|
+134710|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134713|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134715|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134719|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134758|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134818|Alquiler y Venta|Libre|Ordinario|||N|
+134819|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134821|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134822|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134867|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134884|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134897|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134898|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134900|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134918|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+134921|Alquiler y Venta|Libre|Ordinario|||N|
+134982|Alquiler y Venta|Libre|Ordinario|||N|
+135082|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+135156|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+135157|Alquiler y Venta|Libre|Ordinario|||N|
+135158|Alquiler y Venta|Libre|Ordinario|||N|
+135173|Alquiler y Venta|Libre|Ordinario|||N|
+135176|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+135203|Alquiler y Venta|Libre|Ordinario|||N|
+135204|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+135206|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+135229|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+135243|Alquiler y Venta|Libre|Ordinario|||N|
+135260|Alquiler y Venta|Libre|Ordinario|||N|
+135263|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+135523|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+135524|Alquiler y Venta|Libre|Ordinario|||N|
+135578|Alquiler y Venta|Libre|Ordinario|||N|
+135714|Alquiler y Venta|Libre|Ordinario|||N|
+135770|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+136121|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+136122|Alquiler y Venta|Libre|Ordinario|||N|
+136266|Alquiler y Venta|Libre|Ordinario|||N|
+136726|Alquiler y Venta|Libre|Ordinario|||N|
+136727|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+136728|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+136748|Alquiler y Venta|Libre|Ordinario|||N|
+137012|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+137302|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137304|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+137307|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+137338|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137343|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+137344|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+137345|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+137347|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+137379|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+137381|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+137388|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137400|Alquiler y Venta|Libre|Ordinario|||N|
+137404|Alquiler y Venta|Libre|Ordinario|||N|
+137632|Alquiler y Venta|Libre|Ordinario|||N|
+137637|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+137660|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137661|Alquiler y Venta|Libre|Ordinario|||N|
+137828|Alquiler y Venta|Libre|Ordinario|||N|
+137829|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137830|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137871|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137872|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137907|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137933|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137965|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137966|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+137967|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+137968|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138055|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138078|Alquiler y Venta|Libre|Ordinario|||N|
+138112|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138113|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138114|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138115|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138116|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138117|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138161|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138166|Alquiler y Venta|Libre|Ordinario|||N|
+138167|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138213|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138240|Alquiler y Venta|Libre|Ordinario|||N|
+138241|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138303|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138304|Alquiler y Venta|Libre|Ordinario|||N|
+138306|Alquiler y Venta|Libre|Ordinario|||N|
+138308|Alquiler y Venta|Libre|Ordinario|||N|
+138318|Alquiler y Venta|Libre|Ordinario|||N|
+138381|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138382|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138383|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138491|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138499|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138532|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138533|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138534|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138535|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138536|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138537|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138538|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138539|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138593|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138650|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138690|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138705|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138706|Alquiler y Venta|Libre|Ordinario|||N|
+138779|Alquiler y Venta|Libre|Ordinario|||N|
+138782|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138783|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138784|Alquiler y Venta|Libre|Ordinario|||N|
+138785|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+138786|Alquiler y Venta|Libre|Ordinario|||N|
+138787|Alquiler y Venta|Libre|Ordinario|||N|
+138788|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138789|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138790|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138791|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138792|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138793|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138794|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138795|Alquiler y Venta|Libre|Ordinario|||N|
+138796|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138797|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138799|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138801|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138841|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138946|Alquiler y Venta|Libre|Ordinario|||N|
+138949|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+138967|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+138970|Alquiler y Venta|Libre|Ordinario|||N|
+138971|Alquiler y Venta|Libre|Ordinario|||N|
+138972|Alquiler y Venta|Libre|Ordinario|||N|
+138994|Alquiler y Venta|Libre|Ordinario|||N|
+139018|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139019|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139020|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139021|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139022|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139023|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139024|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+139025|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+139026|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139027|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139030|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+139072|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139151|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139155|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139156|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139157|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139229|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139230|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139246|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+139249|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139295|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139296|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139297|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139298|Alquiler y Venta|Libre|Ordinario|||N|
+139299|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139300|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+139301|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139302|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139304|Alquiler y Venta|Libre|Ordinario|||N|
+139305|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+139535|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+139536|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139554|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139603|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+139634|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139637|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139640|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139642|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139644|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139646|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139702|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139703|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139765|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139828|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139829|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139836|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139887|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139889|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139890|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+139892|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140047|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140085|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140101|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140214|Alquiler y Venta|Libre|Ordinario|||N|
+140215|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140339|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140412|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140445|Alquiler y Venta|Libre|Ordinario|||S|
+140534|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140535|Alquiler y Venta|Libre|Ordinario|||N|
+140552|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+140553|Alquiler y Venta|Libre|Ordinario|||S|
+140577|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+140578|Alquiler y Venta|Libre|Ordinario|||N|
+140580|Alquiler y Venta|Libre|Ordinario|||N|
+140626|Alquiler y Venta|Libre|Ordinario|||N|
+140627|Alquiler y Venta|Libre|Ordinario|||N|
+140642|Alquiler y Venta|Libre|Ordinario|||N|
+140655|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+140701|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+140703|Alquiler y Venta|Libre|Ordinario|||N|
+140782|Alquiler y Venta|Libre|Ordinario|||N|
+140783|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140827|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+140834|Alquiler y Venta|Libre|Ordinario|||S|
+141005|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+141029|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+141030|Alquiler y Venta|Libre|Ordinario|||N|
+141031|Alquiler y Venta|Libre|Ordinario|||N|
+141032|Alquiler y Venta|Libre|Ordinario|||N|
+141033|Alquiler y Venta|Libre|Ordinario|||N|
+141042|Alquiler y Venta|Libre|Ordinario|||N|
+141043|Alquiler y Venta|Libre|Ordinario|||S|
+141054|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+141188|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+141291|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+141292|Alquiler y Venta|Libre|Ordinario|||N|
+141388|Alquiler y Venta|Libre|Ordinario|||N|
+141548|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+141575|Alquiler y Venta|Libre|Ordinario|||N|
+141576|Alquiler y Venta|Libre|Ordinario|||S|
+141577|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+141578|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+141579|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+141580|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+141581|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+141630|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+141631|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+141816|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+142023|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+142126|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+142127|Alquiler y Venta|Libre|Ordinario|||N|
+142128|Alquiler y Venta|Libre|Ordinario|||N|
+142214|Alquiler y Venta|Libre|Ordinario|||N|
+142227|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+142231|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+142271|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|S
+142344|Alquiler y Venta|Libre|Ordinario|||N|
+142345|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+142346|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+142347|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+142444|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+142445|Alquiler y Venta|Libre|Ordinario|||N|
+142467|Alquiler y Venta|Libre|Ordinario|||N|
+142745|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+142796|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+142896|Alquiler y Venta|Libre|Ordinario|||N|
+143148|Alquiler y Venta|Libre|Ordinario|||N|
+143200|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143221|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+143314|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143322|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+143324|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143391|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143408|Alquiler y Venta|Libre|Ordinario|||N|
+143415|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143562|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+143576|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143577|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143578|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143580|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143581|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143582|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143583|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143584|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143588|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143589|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143620|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143652|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143653|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143657|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143661|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143691|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143692|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+143693|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+143695|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143696|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143699|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143883|Alquiler y Venta|Libre|Ordinario|||N|
+143915|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143940|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+143987|Alquiler y Venta|Libre|Ordinario|||N|
+143992|Alquiler y Venta|Libre|Ordinario|||S|
+143993|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143997|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+143999|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+144000|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+144107|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+144108|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+144389|Alquiler y Venta|Libre|Ordinario|||N|
+144449|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+144567|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+144660|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+144662|Alquiler y Venta|Libre|Ordinario|||N|
+144663|Alquiler y Venta|Libre|Ordinario|||N|
+144676|Alquiler y Venta|Libre|Ordinario|||N|
+144677|Alquiler y Venta|Libre|Ordinario|||S|
+144678|Alquiler y Venta|Libre|Ordinario|||S|
+144679|Alquiler y Venta|Libre|Ordinario|||N|
+144680|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+144924|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+144998|Alquiler y Venta|Libre|Ordinario|||S|
+145000|Alquiler y Venta|Libre|Ordinario|||N|
+145001|Alquiler y Venta|Libre|Ordinario|||N|
+145010|Alquiler y Venta|Libre|Ordinario|||N|
+145071|Alquiler y Venta|Libre|Ordinario|||N|
+145072|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+145130|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+145132|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145138|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145151|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145153|Alquiler y Venta|Libre|Ordinario|||N|
+145154|Alquiler y Venta|Libre|Ordinario|||N|
+145156|Alquiler y Venta|Libre|Ordinario|||N|
+145210|Alquiler y Venta|Libre|Ordinario|||N|
+145404|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145405|Alquiler y Venta|Libre|Ordinario|||N|
+145406|Alquiler y Venta|Libre|Ordinario|||N|
+145407|Alquiler y Venta|Libre|Ordinario|||N|
+145408|Alquiler y Venta|Libre|Ordinario|||N|
+145433|Alquiler y Venta|Libre|Ordinario|||N|
+145434|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145438|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145506|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145530|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145532|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145534|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145535|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145536|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+145537|Alquiler y Venta|Libre|Ordinario|||N|
+145610|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145641|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+145643|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145644|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145645|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145646|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145756|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145757|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145758|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145759|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145760|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145761|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145763|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145764|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145765|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145805|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145846|Alquiler y Venta|Libre|Ordinario|||N|
+145850|Alquiler y Venta|Libre|Ordinario|||N|
+145851|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145853|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145854|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145855|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145856|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145857|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145859|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145860|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145861|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145862|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145863|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145864|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145865|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145867|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145869|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145891|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+145892|Alquiler y Venta|Libre|Ordinario|||N|
+145893|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145894|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145895|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145896|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+145897|Alquiler y Venta|Libre|Ordinario|||S|
+145898|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+145899|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145901|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145902|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145903|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145907|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145909|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+145911|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+145938|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+145947|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+146040|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+147466|Alquiler y Venta|Libre|Ordinario|||N|
+147519|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+147570|Alquiler y Venta|Libre|Ordinario|||N|
+147672|Alquiler y Venta|Libre|Ordinario|||N|
+147673|Alquiler y Venta|Libre|Ordinario|||N|
+147674|Alquiler y Venta|Libre|Ordinario|||N|
+147735|Alquiler y Venta|Libre|Ordinario|||N|
+147779|Alquiler y Venta|Libre|Ordinario|||N|
+147787|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+147788|Alquiler y Venta|Libre|Ordinario|||N|
+147789|Alquiler y Venta|Libre|Ordinario|||N|
+147790|Alquiler y Venta|Libre|Ordinario|||N|
+147897|Alquiler y Venta|Libre|Ordinario|||N|
+147898|Alquiler y Venta|Libre|Ordinario|||N|
+148076|Alquiler y Venta|Libre|Ordinario|||N|
+148121|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+148122|Alquiler y Venta|Libre|Ordinario|||N|
+148217|Alquiler y Venta|Libre|Ordinario|||N|
+148273|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+148462|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+148684|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+148762|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+148790|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+148791|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+149073|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+149074|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149121|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149149|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149150|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+149151|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149223|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149224|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149249|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149303|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149481|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149497|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+149562|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149645|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149658|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149666|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149709|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+149710|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149711|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149712|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149713|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149714|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149732|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+149733|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149752|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+149849|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+149850|Alquiler y Venta|Libre|Ordinario|||N|
+149851|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149867|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+149868|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+149992|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+150122|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+150161|Alquiler y Venta|Libre|Ordinario|||N|
+150303|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+150341|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+150477|Alquiler y Venta|Libre|Ordinario|||N|
+150521|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+150579|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+150581|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+150583|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+150761|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+150764|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+150791|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+150792|Alquiler y Venta|Libre|Ordinario|||N|
+150815|Alquiler y Venta|Libre|Ordinario|||N|
+150866|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+150870|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+151062|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+151108|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+151109|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+151181|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+151328|Alquiler y Venta|Libre|Ordinario|||N|
+151357|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+151395|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+151442|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+151471|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+151898|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+152085|Alquiler y Venta|Libre|Ordinario|||N|
+152124|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+152160|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+152333|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+152334|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+152335|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+152396|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+152413|Alquiler y Venta|Libre|Ordinario|||N|
+152477|Alquiler y Venta|Libre|Ordinario|||N|
+152478|Alquiler y Venta|Libre|Ordinario|||N|
+152729|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+152798|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+152861|Alquiler y Venta|Libre|Ordinario|||N|
+152862|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+153204|Alquiler y Venta|Libre|Ordinario|||S|
+153205|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+153347|Alquiler y Venta|Libre|Ordinario|||S|
+153564|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+153638|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+153639|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153641|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153686|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153707|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+153709|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153756|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153760|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153761|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153762|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153906|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153976|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+153977|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+153979|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154017|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154021|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+154022|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154023|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154024|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154027|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154032|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154033|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+154035|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+154036|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+154220|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+154221|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154222|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154223|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154224|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154225|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154227|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154229|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154231|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154396|Alquiler y Venta|Libre|Ordinario|||N|
+154418|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+154420|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+154422|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154423|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154425|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+154542|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154564|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+154667|Alquiler y Venta|Libre|Ordinario|||N|
+154679|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+154712|Alquiler y Venta|Libre|Ordinario|||N|
+154713|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154754|Alquiler y Venta|Libre|Ordinario|||N|
+154756|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154761|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154949|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+154993|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+154994|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+155046|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+155145|Alquiler y Venta|Libre|Ordinario|||N|
+155183|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+155195|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+155373|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+155604|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+155706|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+155799|Alquiler y Venta|Libre|Ordinario|||N|
+155801|Alquiler y Venta|Libre|Ordinario|||N|
+155918|Alquiler y Venta|Libre|Ordinario|||N|
+155919|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+155920|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+155974|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+155975|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+156017|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+156050|Alquiler y Venta|Libre|Ordinario|||N|
+156079|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156080|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156084|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156165|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156206|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+156269|Alquiler y Venta|Libre|Ordinario|||N|
+156271|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156272|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156273|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156274|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156275|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156276|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+156277|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156278|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+156282|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156283|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156284|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156285|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156446|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156447|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+156452|Alquiler y Venta|Libre|Ordinario|||S|
+156453|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156454|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+156455|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+156456|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156457|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156508|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156509|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156510|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156511|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+156512|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156513|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156518|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156519|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156522|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156523|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156568|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+156569|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156570|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156571|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156572|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156577|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156634|Alquiler y Venta|Libre|Ordinario|||N|
+156636|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156640|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156642|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+156643|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156665|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156752|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156753|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156754|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156806|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156807|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156808|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156809|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156810|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+156811|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156813|Alquiler y Venta|Libre|Ordinario|||N|
+156814|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156815|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156816|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156820|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156821|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156822|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156823|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156824|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+156825|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156826|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156829|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156830|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156888|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156890|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156891|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156893|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156976|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156991|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156992|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156995|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+156996|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+157001|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+157002|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+157003|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+157092|Alquiler y Venta|Libre|Ordinario|||N|
+157136|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+157340|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+157628|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+157670|Alquiler y Venta|Libre|Ordinario|||N|
+157676|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+157906|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+158146|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+158148|Alquiler y Venta|Libre|Ordinario|||N|
+158149|Alquiler y Venta|Libre|Ordinario|||N|
+158150|Alquiler y Venta|Libre|Ordinario|||N|
+158202|Alquiler y Venta|Libre|Ordinario|||N|
+158228|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+158300|Alquiler y Venta|Libre|Ordinario|||N|
+158321|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+158365|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+158366|Alquiler y Venta|Libre|Ordinario|||N|
+158367|Alquiler y Venta|Libre|Ordinario|||N|
+158368|Alquiler y Venta|Libre|Ordinario|||N|
+158417|Alquiler y Venta|Libre|Ordinario|||N|
+158418|Alquiler y Venta|Libre|Ordinario|||N|
+158462|Alquiler y Venta|Libre|Ordinario|||N|
+158537|Alquiler y Venta|Libre|Ordinario|||N|
+158538|Alquiler y Venta|Libre|Ordinario|||N|
+158539|Alquiler y Venta|Libre|Ordinario|||N|
+158540|Alquiler y Venta|Libre|Ordinario|||N|
+158541|Alquiler y Venta|Libre|Ordinario|||N|
+158570|Alquiler y Venta|Libre|Ordinario|||N|
+158662|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+158729|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+158864|Alquiler y Venta|Libre|Ordinario|||N|
+158865|Alquiler y Venta|Libre|Ordinario|||N|
+158866|Alquiler y Venta|Libre|Ordinario|||N|
+158867|Alquiler y Venta|Libre|Ordinario|||N|
+158868|Alquiler y Venta|Libre|Ordinario|||N|
+161161|Alquiler y Venta|Libre|Ordinario|||N|
+161187|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+161191|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+161196|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+161211|Alquiler y Venta|Libre|Ordinario|||N|
+161354|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+161355|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+161526|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+161590|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+161732|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+161930|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+162006|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+162485|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+162502|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+162561|Alquiler y Venta|Libre|Ordinario|||S|
+162673|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+162682|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+162805|Alquiler y Venta|Libre|Ordinario|||S|
+162815|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+162963|Alquiler y Venta|Libre|Ordinario|||S|
+163397|Alquiler y Venta|Libre|Ordinario|||N|
+163670|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+163792|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+163830|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+163922|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+163923|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+164075|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+164076|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+164087|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+164130|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+164131|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+164173|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+164178|Alquiler y Venta|Libre|Ordinario|||N|
+164179|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+164186|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+164187|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+164198|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+164231|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+164232|Alquiler y Venta|Libre|Ordinario|||N|
+164233|Alquiler y Venta|Libre|Ordinario|||N|
+164234|Alquiler y Venta|Libre|Ordinario|||N|
+164321|Alquiler y Venta|Libre|Ordinario|||N|
+164322|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+164330|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+164374|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+164440|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+164447|Alquiler y Venta|Libre|Ordinario|||N|
+164468|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+164480|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+164481|Alquiler y Venta|Libre|Ordinario|||N|
+164482|Alquiler y Venta|Libre|Ordinario|||N|
+164488|Alquiler y Venta|Libre|Ordinario|||N|
+164494|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+164495|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+164509|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+164510|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+164736|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+165210|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+165215|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+165413|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+165414|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+165473|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+165475|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+165476|Alquiler y Venta|Libre|Ordinario|||N|
+165479|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+165484|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+165486|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+165488|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+165489|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+165844|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+165845|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+166064|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+166072|Alquiler y Venta|Libre|Ordinario|||S|
+166073|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+166100|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+166102|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+166871|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167017|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167059|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167204|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+167214|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167237|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167354|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167504|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+167525|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167530|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167650|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+167652|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167654|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167656|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167657|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167665|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167696|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167697|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167699|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167700|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167841|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+167872|Alquiler y Venta|Libre|Ordinario|||N|
+167975|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+168055|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+168096|Alquiler y Venta|Libre|Ordinario|||N|
+168133|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+168136|Alquiler y Venta|Libre|Ordinario|||N|
+168231|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+168345|Alquiler y Venta|Libre|Ordinario|||N|
+168361|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+168514|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+168762|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+168929|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+168930|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+168931|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+168932|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+168994|Alquiler y Venta|Libre|Ordinario|||N|
+168995|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+169189|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+169191|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+169236|Alquiler y Venta|Libre|Ordinario|||N|
+169237|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+169252|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+169338|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+169409|Alquiler y Venta|Libre|Ordinario|||N|
+169632|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+169658|Alquiler y Venta|Libre|Ordinario|||N|
+169902|Alquiler y Venta|Libre|Ordinario|||N|
+170117|Alquiler y Venta|Libre|Ordinario|||N|
+170166|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170167|Alquiler y Venta|Libre|Ordinario|||N|
+170168|Alquiler y Venta|Libre|Ordinario|||N|
+170169|Alquiler y Venta|Libre|Ordinario|||N|
+170399|Alquiler y Venta|Libre|Ordinario|||N|
+170412|Alquiler y Venta|Libre|Ordinario|||N|
+170413|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170491|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170492|Alquiler y Venta|Libre|Ordinario|||N|
+170493|Alquiler y Venta|Libre|Ordinario|||N|
+170494|Alquiler y Venta|Libre|Ordinario|||N|
+170495|Alquiler y Venta|Libre|Ordinario|||N|
+170514|Alquiler y Venta|Libre|Ordinario|||N|
+170556|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+170557|Alquiler y Venta|Libre|Ordinario|||N|
+170558|Alquiler y Venta|Libre|Ordinario|||N|
+170561|Alquiler y Venta|Libre|Ordinario|||N|
+170566|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+170567|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170568|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170569|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170570|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170601|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170854|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+170923|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170946|Alquiler y Venta|Libre|Ordinario|||N|
+170947|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170948|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+170949|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+171036|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+171225|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+171258|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+171259|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+171331|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+171332|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+171396|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+171632|Alquiler y Venta|Libre|Ordinario|||S|
+171850|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+171975|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+172086|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+172930|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+173061|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+173271|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+173352|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+173353|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+173577|Alquiler y Venta|Libre|Ordinario|||N|
+173631|Alquiler y Venta|Libre|Ordinario|||N|
+173748|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+173764|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+174028|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+174029|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+174108|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+174109|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+174110|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+174122|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+174123|Alquiler y Venta|Libre|Ordinario|||N|
+174124|Alquiler y Venta|Libre|Ordinario|||N|
+174208|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+174209|Alquiler y Venta|Libre|Ordinario|||N|
+174212|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+174221|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+174222|Alquiler y Venta|Libre|Ordinario|||N|
+174223|Alquiler y Venta|Libre|Ordinario|||N|
+174226|Alquiler y Venta|Libre|Ordinario|||N|
+174524|Alquiler y Venta|Libre|Ordinario|||N|
+174584|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+174585|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+175509|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+175510|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+175529|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+175726|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+175729|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+175918|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+175988|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176204|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176205|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176206|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176258|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176289|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176300|Alquiler y Venta|Libre|Ordinario|||S|
+176442|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176452|Alquiler y Venta|Libre|Ordinario|||N|
+176560|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+176562|Alquiler y Venta|Libre|Ordinario|||S|
+176771|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176775|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176883|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176909|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176919|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+176999|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+177407|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+177812|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+177916|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+178074|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+178275|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+178919|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+178920|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+179343|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+179440|Alquiler y Venta|Libre|Ordinario|||N|
+179449|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+179450|Alquiler y Venta|Libre|Ordinario|||N|
+179610|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+179719|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+179726|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+179727|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+179822|Alquiler y Venta|Libre|Ordinario|||N|
+181147|Alquiler y Venta|Libre|Ordinario|||N|
+181185|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+181544|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+181725|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+181992|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+182490|Alquiler y Venta|Libre|Ordinario|||N|
+182536|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+182623|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+182661|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+182680|Alquiler y Venta|Libre|Ordinario|||N|
+182843|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+182919|Alquiler y Venta|Libre|Ordinario|||N|
+182979|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+183065|Alquiler y Venta|Libre|Ordinario|||N|
+183437|Alquiler y Venta|Libre|Ordinario|||N|
+183438|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+184050|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+184291|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+184630|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+184920|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+185374|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+185375|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+185662|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+185721|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+185859|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+186216|Alquiler y Venta|Libre|Ordinario|||N|
+186265|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+186319|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+186523|Alquiler y Venta|Libre|Ordinario|||N|
+186524|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+186848|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+186863|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+187085|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+187086|Alquiler y Venta|Libre|Ordinario|||N|
+187087|Alquiler y Venta|Libre|Ordinario|||N|
+187128|Alquiler y Venta|Libre|Ordinario|||N|
+187129|Alquiler y Venta|Libre|Ordinario|||S|
+187362|Alquiler y Venta|Libre|Ordinario|||N|
+187481|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+187482|Alquiler y Venta|Libre|Ordinario|||S|
+187483|Alquiler y Venta|Libre|Ordinario|||N|
+187645|Alquiler y Venta|Libre|Ordinario|||N|
+187804|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+188678|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+188796|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+188941|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+188942|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+189530|Alquiler y Venta|Libre|Ordinario|||N|
+189594|Alquiler y Venta|Libre|Ordinario|||N|
+189595|Alquiler y Venta|Libre|Ordinario|||N|
+189597|Alquiler y Venta|Libre|Ordinario|||N|
+189598|Alquiler y Venta|Libre|Ordinario|||N|
+189708|Alquiler y Venta|Libre|Ordinario|||N|
+189709|Alquiler y Venta|Libre|Ordinario|||N|
+189710|Alquiler y Venta|Libre|Ordinario|||N|
+189711|Alquiler y Venta|Libre|Ordinario|||N|
+189712|Alquiler y Venta|Libre|Ordinario|||N|
+189713|Alquiler y Venta|Libre|Ordinario|||N|
+189714|Alquiler y Venta|Libre|Ordinario|||N|
+189715|Alquiler y Venta|Libre|Ordinario|||N|
+189716|Alquiler y Venta|Libre|Ordinario|||N|
+189717|Alquiler y Venta|Libre|Ordinario|||N|
+189718|Alquiler y Venta|Libre|Ordinario|||N|
+189904|Alquiler y Venta|Libre|Ordinario|||N|
+190018|Alquiler y Venta|Libre|Ordinario|||N|
+190019|Alquiler y Venta|Libre|Ordinario|||N|
+190020|Alquiler y Venta|Libre|Ordinario|||N|
+190021|Alquiler y Venta|Libre|Ordinario|||N|
+190022|Alquiler y Venta|Libre|Ordinario|||N|
+190023|Alquiler y Venta|Libre|Ordinario|||N|
+190024|Alquiler y Venta|Libre|Ordinario|||N|
+190025|Alquiler y Venta|Libre|Ordinario|||N|
+190026|Alquiler y Venta|Libre|Ordinario|||N|
+190393|Alquiler y Venta|Libre|Ordinario|||N|
+190531|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+190532|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+190688|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+190767|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+190768|Alquiler y Venta|Libre|Ordinario|||N|
+190769|Alquiler y Venta|Libre|Ordinario|||N|
+190770|Alquiler y Venta|Libre|Ordinario|||N|
+190772|Alquiler y Venta|Libre|Ordinario|||N|
+190773|Alquiler y Venta|Libre|Ordinario|||N|
+190835|Alquiler y Venta|Libre|Ordinario|||N|
+190846|Alquiler y Venta|Libre|Ordinario|||N|
+190847|Alquiler y Venta|Libre|Ordinario|||N|
+190848|Alquiler y Venta|Libre|Ordinario|||N|
+190876|Alquiler y Venta|Libre|Ordinario|||N|
+190885|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+190890|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+190891|Alquiler y Venta|Libre|Ordinario|||N|
+190892|Alquiler y Venta|Libre|Ordinario|||N|
+190893|Alquiler y Venta|Libre|Ordinario|||N|
+190894|Alquiler y Venta|Libre|Ordinario|||N|
+190895|Alquiler y Venta|Libre|Ordinario|||N|
+190937|Alquiler y Venta|Libre|Ordinario|||N|
+190959|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+190960|Alquiler y Venta|Libre|Ordinario|||N|
+190961|Alquiler y Venta|Libre|Ordinario|||N|
+191004|Alquiler y Venta|Libre|Ordinario|||N|
+191005|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+191084|Alquiler y Venta|Libre|Ordinario|||N|
+191085|Alquiler y Venta|Libre|Ordinario|||N|
+191086|Alquiler y Venta|Libre|Ordinario|||N|
+191087|Alquiler y Venta|Libre|Ordinario|||N|
+191088|Alquiler y Venta|Libre|Ordinario|||N|
+191089|Alquiler y Venta|Libre|Ordinario|||N|
+191090|Alquiler y Venta|Libre|Ordinario|||N|
+191125|Alquiler y Venta|Libre|Ordinario|||N|
+191126|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+191136|Alquiler y Venta|Libre|Ordinario|||N|
+191195|Alquiler y Venta|Libre|Ordinario|||N|
+191202|Alquiler y Venta|Libre|Ordinario|||N|
+191203|Alquiler y Venta|Libre|Ordinario|||S|
+191204|Alquiler y Venta|Libre|Ordinario|||S|
+191445|Alquiler y Venta|Libre|Ordinario|||N|
+191452|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+191510|Alquiler y Venta|Libre|Ordinario|||N|
+191516|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+191520|Alquiler y Venta|Libre|Ordinario|||N|
+191521|Alquiler y Venta|Libre|Ordinario|||N|
+191522|Alquiler y Venta|Libre|Ordinario|||N|
+191551|Alquiler y Venta|Libre|Ordinario|||N|
+191693|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+191694|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+191739|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+191740|Alquiler y Venta|Libre|Ordinario|||N|
+191741|Alquiler y Venta|Libre|Ordinario|||N|
+191742|Alquiler y Venta|Libre|Ordinario|||N|
+191743|Alquiler y Venta|Libre|Ordinario|||N|
+191744|Alquiler y Venta|Libre|Ordinario|||N|
+191745|Alquiler y Venta|Libre|Ordinario|||N|
+191746|Alquiler y Venta|Libre|Ordinario|||N|
+191747|Alquiler y Venta|Libre|Ordinario|||N|
+191764|Alquiler y Venta|Libre|Ordinario|||N|
+191765|Alquiler y Venta|Libre|Ordinario|||N|
+191766|Alquiler y Venta|Libre|Ordinario|||N|
+191767|Alquiler y Venta|Libre|Ordinario|||N|
+191768|Alquiler y Venta|Libre|Ordinario|||N|
+191769|Alquiler y Venta|Libre|Ordinario|||N|
+191831|Alquiler y Venta|Libre|Ordinario|||N|
+192028|Alquiler y Venta|Libre|Ordinario|||N|
+192030|Alquiler y Venta|Libre|Ordinario|||N|
+192090|Alquiler y Venta|Libre|Ordinario|||N|
+192169|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+192170|Alquiler y Venta|Libre|Ordinario|||N|
+192171|Alquiler y Venta|Libre|Ordinario|||N|
+192172|Alquiler y Venta|Libre|Ordinario|||N|
+193452|Alquiler y Venta|Libre|Ordinario|||N|
+193951|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+194111|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+194415|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+194802|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+194945|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+194979|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+195439|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+195440|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+195512|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+195682|Alquiler y Venta|Libre|Ordinario|||N|
+195683|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+195684|Alquiler y Venta|Libre|Ordinario|||N|
+195686|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+195772|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+195807|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+195808|Alquiler y Venta|Libre|Ordinario|||N|
+195809|Alquiler y Venta|Libre|Ordinario|||N|
+195810|Alquiler y Venta|Libre|Ordinario|||N|
+195811|Alquiler y Venta|Libre|Ordinario|||N|
+195844|Alquiler y Venta|Libre|Ordinario|||N|
+195852|Alquiler y Venta|Libre|Ordinario|||N|
+195853|Alquiler y Venta|Libre|Ordinario|||N|
+195854|Alquiler y Venta|Libre|Ordinario|||N|
+195855|Alquiler y Venta|Libre|Ordinario|||N|
+195880|Alquiler y Venta|Libre|Ordinario|||N|
+195881|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+195882|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+196093|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+196094|Alquiler y Venta|Libre|Ordinario|||N|
+196095|Alquiler y Venta|Libre|Ordinario|||N|
+196096|Alquiler y Venta|Libre|Ordinario|||N|
+196097|Alquiler y Venta|Libre|Ordinario|||N|
+196098|Alquiler y Venta|Libre|Ordinario|||N|
+196243|Alquiler y Venta|Libre|Ordinario|||N|
+196433|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+196434|Alquiler y Venta|Libre|Ordinario|||N|
+196442|Alquiler y Venta|Libre|Ordinario|||N|
+196443|Alquiler y Venta|Libre|Ordinario|||S|
+196491|Alquiler y Venta|Libre|Ordinario|||N|
+196626|Alquiler y Venta|Libre|Ordinario|||N|
+196665|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+196869|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+196870|Alquiler y Venta|Libre|Ordinario|||N|
+196871|Alquiler y Venta|Libre|Ordinario|||N|
+196872|Alquiler y Venta|Libre|Ordinario|||N|
+196873|Alquiler y Venta|Libre|Ordinario|||N|
+196874|Alquiler y Venta|Libre|Ordinario|||N|
+196975|Alquiler y Venta|Libre|Ordinario|||N|
+196976|Alquiler y Venta|Libre|Ordinario|||N|
+196977|Alquiler y Venta|Libre|Ordinario|||N|
+196978|Alquiler y Venta|Libre|Ordinario|||N|
+196979|Alquiler y Venta|Libre|Ordinario|||N|
+196980|Alquiler y Venta|Libre|Ordinario|||N|
+197251|Alquiler y Venta|Libre|Ordinario|||N|
+197252|Alquiler y Venta|Libre|Ordinario|||N|
+197254|Alquiler y Venta|Libre|Ordinario|||N|
+197255|Alquiler y Venta|Libre|Ordinario|||N|
+197256|Alquiler y Venta|Libre|Ordinario|||N|
+197257|Alquiler y Venta|Libre|Ordinario|||N|
+197258|Alquiler y Venta|Libre|Ordinario|||N|
+197397|Alquiler y Venta|Libre|Ordinario|||N|
+197398|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197399|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197406|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197453|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+197454|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197455|Alquiler y Venta|Libre|Ordinario|||N|
+197536|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197566|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197567|Alquiler y Venta|Libre|Ordinario|||N|
+197568|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197577|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197579|Alquiler y Venta|Libre|Ordinario|||N|
+197591|Alquiler y Venta|Libre|Ordinario|||N|
+197592|Alquiler y Venta|Libre|Ordinario|||S|
+197593|Alquiler y Venta|Libre|Ordinario|||N|
+197594|Alquiler y Venta|Libre|Ordinario|||N|
+197595|Alquiler y Venta|Libre|Ordinario|||N|
+197596|Alquiler y Venta|Libre|Ordinario|||N|
+197634|Alquiler y Venta|Libre|Ordinario|||N|
+197635|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197641|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197642|Alquiler y Venta|Libre|Ordinario|||N|
+197643|Alquiler y Venta|Libre|Ordinario|||N|
+197681|Alquiler y Venta|Libre|Ordinario|||N|
+197682|Alquiler y Venta|Libre|Ordinario|||N|
+197683|Alquiler y Venta|Libre|Ordinario|||N|
+197685|Alquiler y Venta|Libre|Ordinario|||N|
+197686|Alquiler y Venta|Libre|Ordinario|||N|
+197790|Alquiler y Venta|Libre|Ordinario|||N|
+197837|Alquiler y Venta|Libre|Ordinario|||N|
+197881|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197882|Alquiler y Venta|Libre|Ordinario|||N|
+197883|Alquiler y Venta|Libre|Ordinario|||N|
+197891|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+197893|Alquiler y Venta|Libre|Ordinario|||N|
+197941|Alquiler y Venta|Libre|Ordinario|||N|
+197942|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+198084|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+198085|Alquiler y Venta|Libre|Ordinario|||N|
+198086|Alquiler y Venta|Libre|Ordinario|||N|
+198087|Alquiler y Venta|Libre|Ordinario|||N|
+198558|Alquiler y Venta|Libre|Ordinario|||N|
+198559|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+198560|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+198561|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+198584|Alquiler y Venta|Libre|Ordinario|||N|
+198605|Alquiler y Venta|Libre|Ordinario|||N|
+198606|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+198607|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+198608|Alquiler y Venta|Libre|Ordinario|||N|
+198647|Alquiler y Venta|Libre|Ordinario|||N|
+198648|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+198852|Alquiler y Venta|Libre|Ordinario|||N|
+199179|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+199208|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+199209|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+199210|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+199296|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+199515|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+199753|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+199837|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+199899|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+199916|Alquiler y Venta|Libre|Ordinario|||N|
+199947|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+199949|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+199972|Alquiler y Venta|Libre|Ordinario|||N|
+199986|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+200132|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+200148|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+200182|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+200364|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+200478|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+200830|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+200859|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+201765|Alquiler y Venta|Alquilado|Ordinario|S|Normal|NO APLICA|N
+201852|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+201853|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+201854|Alquiler y Venta|Libre|Ordinario|||S|
+201855|Alquiler y Venta|Libre|Ordinario|||N|
+201856|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+201857|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202028|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202029|Alquiler y Venta|Libre|Ordinario|||N|
+202049|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202056|Alquiler y Venta|Libre|Ordinario|||N|
+202057|Alquiler y Venta|Libre|Ordinario|||S|
+202058|Alquiler y Venta|Libre|Ordinario|||S|
+202059|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202060|Alquiler y Venta|Libre|Ordinario|||N|
+202061|Alquiler y Venta|Libre|Ordinario|||N|
+202062|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202063|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202064|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202067|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202094|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202097|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202098|Alquiler y Venta|Libre|Ordinario|||N|
+202099|Alquiler y Venta|Libre|Ordinario|||N|
+202100|Alquiler y Venta|Libre|Ordinario|||N|
+202101|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202102|Alquiler y Venta|Libre|Ordinario|||N|
+202103|Alquiler y Venta|Libre|Ordinario|||S|
+202104|Alquiler y Venta|Libre|Ordinario|||N|
+202105|Alquiler y Venta|Libre|Ordinario|||N|
+202106|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202107|Alquiler y Venta|Libre|Ordinario|||S|
+202108|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202109|Alquiler y Venta|Libre|Ordinario|||N|
+202131|Alquiler y Venta|Libre|Ordinario|||N|
+202132|Alquiler y Venta|Libre|Ordinario|||S|
+202165|Alquiler y Venta|Libre|Ordinario|||S|
+202166|Alquiler y Venta|Libre|Ordinario|||S|
+202167|Alquiler y Venta|Libre|Ordinario|||N|
+202168|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202169|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202170|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202171|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202172|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202209|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202210|Alquiler y Venta|Libre|Ordinario|||S|
+202211|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202212|Alquiler y Venta|Libre|Ordinario|||N|
+202213|Alquiler y Venta|Libre|Ordinario|||N|
+202214|Alquiler y Venta|Libre|Ordinario|||N|
+202215|Alquiler y Venta|Libre|Ordinario|||N|
+202216|Alquiler y Venta|Libre|Ordinario|||N|
+202217|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202218|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202219|Alquiler y Venta|Libre|Ordinario|||N|
+202220|Alquiler y Venta|Libre|Ordinario|||S|
+202221|Alquiler y Venta|Libre|Ordinario|||N|
+202274|Alquiler y Venta|Libre|Ordinario|||N|
+202275|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202276|Alquiler y Venta|Libre|Ordinario|||N|
+202277|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202278|Alquiler y Venta|Libre|Ordinario|||N|
+202465|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202474|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202475|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202476|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202477|Alquiler y Venta|Libre|Ordinario|||N|
+202478|Alquiler y Venta|Libre|Ordinario|||N|
+202479|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202480|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202481|Alquiler y Venta|Libre|Ordinario|||N|
+202482|Alquiler y Venta|Libre|Ordinario|||N|
+202483|Alquiler y Venta|Libre|Ordinario|||N|
+202484|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202485|Alquiler y Venta|Libre|Ordinario|||N|
+202486|Alquiler y Venta|Libre|Ordinario|||N|
+202505|Alquiler y Venta|Libre|Ordinario|||N|
+202506|Alquiler y Venta|Libre|Ordinario|||S|
+202519|Alquiler y Venta|Libre|Ordinario|||S|
+202557|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+202564|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+202566|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|S
+202567|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202568|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202569|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202570|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202571|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202572|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202573|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202574|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202575|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202619|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202620|Alquiler y Venta|Libre|Ordinario|||N|
+202621|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202622|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202625|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+202626|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202627|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202628|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202629|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202630|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202631|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202632|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202749|Alquiler y Venta|Libre|Ordinario|||N|
+202750|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202752|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+202753|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202803|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+202805|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202808|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202815|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+202816|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+202817|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202818|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202819|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202820|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202821|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202822|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+202855|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202856|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+202857|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+202859|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+202860|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+202861|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+202862|Alquiler y Venta|Libre|Ordinario|||N|
+202896|Alquiler y Venta|Libre|Ordinario|||N|
+202897|Alquiler y Venta|Libre|Ordinario|||S|
+202912|Alquiler y Venta|Libre|Ordinario|||S|
+202913|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203079|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|S
+203080|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203081|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203082|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203134|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|S
+203135|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203136|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203137|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203138|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203139|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203140|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203141|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203142|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203143|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203144|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203229|Alquiler y Venta|Libre|Ordinario|||N|
+203230|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203231|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203232|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203241|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203242|Alquiler y Venta|Libre|Ordinario|||N|
+203243|Alquiler y Venta|Libre|Ordinario|||N|
+203244|Alquiler y Venta|Libre|Ordinario|||N|
+203245|Alquiler y Venta|Libre|Ordinario|||N|
+203246|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203247|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203248|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203249|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203255|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203256|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203257|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203258|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203259|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203260|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203261|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203262|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203263|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203264|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203265|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203266|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203280|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203281|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203282|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203283|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203284|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203285|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203286|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203310|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203311|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203313|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203316|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203317|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203319|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203322|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203323|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203324|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203348|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203349|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203350|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203407|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203408|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203409|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203457|Alquiler y Venta|Libre|Ordinario|||S|
+203459|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203460|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203462|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203463|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203525|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203526|Alquiler y Venta|Libre|Ordinario|||N|
+203527|Alquiler y Venta|Libre|Ordinario|||N|
+203531|Alquiler y Venta|Libre|Ordinario|||N|
+203532|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203537|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203538|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203539|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203540|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203541|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203542|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203543|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203544|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203545|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203546|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203563|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203564|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|S
+203565|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203566|Alquiler y Venta|Libre|Ordinario|||N|
+203567|Alquiler y Venta|Libre|Ordinario|||N|
+203568|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203569|Alquiler y Venta|Libre|Ordinario|||S|
+203570|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203616|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203617|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203618|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203619|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203620|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203621|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203622|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203667|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203668|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203669|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203670|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203671|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203698|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203699|Alquiler y Venta|Libre|Ordinario|||N|
+203700|Alquiler y Venta|Libre|Ordinario|||N|
+203701|Alquiler y Venta|Libre|Ordinario|||N|
+203702|Alquiler y Venta|Libre|Ordinario|||N|
+203703|Alquiler y Venta|Libre|Ordinario|||N|
+203770|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203771|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203772|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203773|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203774|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203775|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203776|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203777|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203778|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203779|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203780|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203781|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203845|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203846|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203855|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+203880|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203881|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+203897|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+203898|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203899|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203902|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203903|Alquiler y Venta|Libre|Ordinario|||S|
+203904|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203905|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203926|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203951|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203952|Alquiler y Venta|Libre|Ordinario|||N|
+203953|Alquiler y Venta|Libre|Ordinario|||N|
+203956|Alquiler y Venta|Libre|Ordinario|||N|
+203964|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203965|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203966|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203967|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203968|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203969|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203970|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203982|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+203983|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203987|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+203988|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+203989|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204102|Alquiler y Venta|Libre|Ordinario|||N|
+204103|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204104|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204118|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+204119|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204120|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204122|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+204123|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204200|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204201|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+204202|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+204341|Alquiler y Venta|Alquilado|Con opción de compra|S|Normal|N|N
+204467|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204468|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204479|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204483|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204561|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204562|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204563|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204564|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204565|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204567|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204568|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204577|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204578|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204579|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204583|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204584|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204585|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204586|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+204599|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+933875|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+936650|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+937630|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+939586|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+940470|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+940620|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+941207|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+942231|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+942722|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+943284|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+943326|Alquiler y Venta|Libre|Ordinario|||S|
+5876142|Alquiler y Venta|Libre|Ordinario|||S|
+5876143|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876144|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+5876145|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876146|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876147|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876148|Alquiler y Venta|Libre|Ordinario|||N|
+5876149|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876150|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876151|Alquiler y Venta|Libre|Ordinario|||N|
+5876152|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+5876153|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876154|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+5876155|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+5876156|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+5876157|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+5876158|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876159|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876160|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+5876161|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876162|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+5876163|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+5876164|Alquiler y Venta|Libre|Ordinario|||S|
+5876165|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876166|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+5876167|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+5876168|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876169|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+5876206|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+5876207|Alquiler y Venta|Libre|Ordinario|||N|
+5876208|Alquiler y Venta|Libre|Ordinario|||N|
+5876209|Alquiler y Venta|Libre|Ordinario|||N|
+5876210|Alquiler y Venta|Libre|Ordinario|||N|
+5876211|Alquiler y Venta|Libre|Ordinario|||N|
+5876212|Alquiler y Venta|Libre|Ordinario|||N|
+5876213|Alquiler y Venta|Libre|Ordinario|||N|
+5876214|Alquiler y Venta|Libre|Ordinario|||N|
+5876215|Alquiler y Venta|Libre|Ordinario|||N|
+5876216|Alquiler y Venta|Libre|Ordinario|||N|
+5876219|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+5877652|Alquiler y Venta|Libre|Ordinario|||N|
+6030412|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6030804|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6030805|Alquiler y Venta|Libre|Ordinario|||N|
+6031766|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6032083|Alquiler y Venta|Libre|Ordinario|||N|
+6033692|Alquiler y Venta|Libre|Ordinario|||N|
+6034208|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6034214|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6034637|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6035884|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6035885|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6035889|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6036440|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6036444|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6037042|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6037049|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6037551|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6037552|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6038986|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6039508|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6041132|Alquiler y Venta|Libre|Ordinario|||N|
+6043907|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6043991|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6076834|Alquiler y Venta|Libre|Ordinario|||N|
+6077241|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6077242|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6079145|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6079146|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6079147|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6079148|Alquiler y Venta|Libre|Ordinario|||N|
+6079153|Alquiler y Venta|Libre|Ordinario|||N|
+6079154|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6079155|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6079156|Alquiler y Venta|Libre|Ordinario|||N|
+6079157|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6079159|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6079160|Alquiler y Venta|Libre|Ordinario|||N|
+6079161|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6079162|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6079163|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6079174|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6079175|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6081706|Alquiler y Venta|Libre|Ordinario|||N|
+6081707|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6083161|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6083162|Alquiler y Venta|Alquilado|Especial|N|Normal|N|N
+6083492|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6083570|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6128733|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6130441|Alquiler y Venta|Libre|Ordinario|||N|
+6130442|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130444|Alquiler y Venta|Libre|Ordinario|||S|
+6130445|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130446|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130447|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130448|Alquiler y Venta|Libre|Ordinario|||S|
+6130449|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130450|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130451|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130452|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130453|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130454|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130455|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130456|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130458|Alquiler y Venta|Libre|Ordinario|||S|
+6130459|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130461|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130463|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130465|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130467|Alquiler y Venta|Libre|Ordinario|||S|
+6130468|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130469|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6130550|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130551|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130552|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130553|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130554|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130555|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130556|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130557|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130558|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130559|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130568|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130569|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130570|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130571|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130572|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130573|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130574|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130575|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130576|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130577|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130578|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130579|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130580|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130581|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130582|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130583|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130584|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130585|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130586|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130587|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130588|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130589|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130590|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130591|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130592|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130593|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130594|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130595|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130613|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130614|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130615|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130616|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130617|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130618|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130619|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130620|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130621|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130622|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130623|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130638|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130639|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130640|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130641|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130642|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130643|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130644|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130659|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130660|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130661|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130662|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130664|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130665|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130666|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130667|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130668|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130669|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130670|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130671|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130672|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130673|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130674|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130675|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130676|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130677|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130678|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130679|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130680|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130681|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130682|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130683|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130684|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130685|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130686|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130712|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130713|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130714|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130715|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130716|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130717|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130718|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130719|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130720|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130721|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130722|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130723|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130724|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130725|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130726|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130727|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130729|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+6130730|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130737|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130738|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130739|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130740|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130741|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130742|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130743|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130744|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130745|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130746|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130747|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130748|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130749|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130750|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130751|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130752|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130753|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130754|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130755|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130756|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130757|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130774|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130775|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130776|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130777|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130778|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130779|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130780|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130781|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130783|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130784|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130785|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130786|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130787|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130788|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130789|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130790|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130791|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130792|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130805|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6130806|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130807|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130808|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130809|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130810|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130811|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130812|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130813|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130814|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130815|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130816|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130817|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130818|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6130819|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6132738|Alquiler y Venta|Libre|Ordinario|||N|
+6132745|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6135881|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6343923|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+6343937|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+6343938|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6345999|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6346000|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6346001|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6346002|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6351584|Alquiler y Venta|Alquilado|Ordinario|N|Normal|NO APLICA|N
+6529748|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6529749|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6702981|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6702982|Alquiler y Venta|Libre|Ordinario|||N|
+6702986|Alquiler y Venta|Libre|Ordinario|||N|
+6705279|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6705292|Alquiler y Venta|Libre|Ordinario|||N|
+6705359|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6705360|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705364|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705365|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705367|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705368|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705369|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705370|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705372|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6705373|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705374|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705375|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705376|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705377|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705378|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705379|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705380|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705381|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705382|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705383|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705384|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705389|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6705394|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6705395|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705396|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705398|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6705401|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6705402|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705403|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705404|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705405|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705406|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705409|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6705413|Alquiler y Venta|Libre|Ordinario|||N|
+6705414|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6745615|Alquiler y Venta|Alquilado|Ordinario|N|Normal|S|N
+6745645|Alquiler y Venta|Libre|Ordinario|||N|
+6745647|Alquiler y Venta|Libre|Ordinario|||N|
+6745662|Alquiler y Venta|Libre|Ordinario|||N|
+6752865|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6752890|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6762985|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6762986|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762987|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762988|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762989|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762990|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762991|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762992|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762993|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762994|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762995|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762996|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762998|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6762999|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6763000|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6763001|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6763002|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6809685|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6809686|Alquiler y Venta|Libre|Ordinario|||N|
+6809688|Alquiler y Venta|Libre|Ordinario|||N|
+6809691|Alquiler y Venta|Libre|Ordinario|||N|
+6809694|Alquiler y Venta|Libre|Ordinario|||N|
+6809695|Alquiler y Venta|Libre|Ordinario|||N|
+6809696|Alquiler y Venta|Alquilado|Ordinario|S|Normal|N|N
+6809698|Alquiler y Venta|Libre|Ordinario|||N|
+6815031|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6839518|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6839522|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6839532|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6839538|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6839548|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6939958|Alquiler y Venta|Alquilado|Especial|N|Antiguo deudor|N|N
+6939959|Alquiler y Venta|Libre|Ordinario|||N|
+6939960|Alquiler y Venta|Libre|Ordinario|||N|
+6939961|Alquiler y Venta|Libre|Ordinario|||N|
+6939962|Alquiler y Venta|Libre|Ordinario|||N|
+6962412|Alquiler y Venta|Libre|Ordinario|||NO APLICA|
+6968378|Alquiler y Venta|Alquilado|Ordinario|N|Normal|N|N
+6968379|Alquiler y Venta|Libre|Ordinario|||N|
+6968380|Alquiler y Venta|Libre|Ordinario|||N|
+6968381|Alquiler y Venta|Libre|Ordinario|||N|
+6968382|Alquiler y Venta|Libre|Ordinario|||N|
+6968383|Alquiler y Venta|Libre|Ordinario|||N|
+6968384|Alquiler y Venta|Libre|Ordinario|||N|
+6968385|Alquiler y Venta|Libre|Ordinario|||N|
+6968386|Alquiler y Venta|Libre|Ordinario|||N|
+6968387|Alquiler y Venta|Libre|Ordinario|||N|
+6968388|Alquiler y Venta|Libre|Ordinario|||N|
+6968389|Alquiler y Venta|Libre|Ordinario|||N|
+6968390|Alquiler y Venta|Libre|Ordinario|||N|
+6968391|Alquiler y Venta|Libre|Ordinario|||N|
+6968392|Alquiler y Venta|Libre|Ordinario|||N|
+6968393|Alquiler y Venta|Libre|Ordinario|||N|
+6968394|Alquiler y Venta|Libre|Ordinario|||N|
+6968395|Alquiler y Venta|Libre|Ordinario|||N|
+6968396|Alquiler y Venta|Libre|Ordinario|||N|
+6968397|Alquiler y Venta|Libre|Ordinario|||N|
+6968398|Alquiler y Venta|Libre|Ordinario|||N|
+6968399|Alquiler y Venta|Libre|Ordinario|||N|
+6968400|Alquiler y Venta|Libre|Ordinario|||N|
+6968401|Alquiler y Venta|Libre|Ordinario|||N|
+6968402|Alquiler y Venta|Libre|Ordinario|||N|
+6968403|Alquiler y Venta|Libre|Ordinario|||N|
+6968404|Alquiler y Venta|Libre|Ordinario|||N|
+6968405|Alquiler y Venta|Libre|Ordinario|||N|
+6968406|Alquiler y Venta|Libre|Ordinario|||N|
+6968407|Alquiler y Venta|Libre|Ordinario|||N|
+6968408|Alquiler y Venta|Libre|Ordinario|||N|
+6968409|Alquiler y Venta|Libre|Ordinario|||N|
+6968410|Alquiler y Venta|Libre|Ordinario|||N|
+6968411|Alquiler y Venta|Libre|Ordinario|||N|
+6968412|Alquiler y Venta|Libre|Ordinario|||N|
+6968413|Alquiler y Venta|Libre|Ordinario|||N|
+6968414|Alquiler y Venta|Libre|Ordinario|||N|
+6968415|Alquiler y Venta|Libre|Ordinario|||N|
+6968416|Alquiler y Venta|Libre|Ordinario|||N|
+6968417|Alquiler y Venta|Libre|Ordinario|||N|
+6968418|Alquiler y Venta|Libre|Ordinario|||N|
+6968419|Alquiler y Venta|Libre|Ordinario|||N|
+6968420|Alquiler y Venta|Libre|Ordinario|||N|
+6968421|Alquiler y Venta|Libre|Ordinario|||N|
+6968422|Alquiler y Venta|Libre|Ordinario|||N|
+6968423|Alquiler y Venta|Libre|Ordinario|||N|
+6968424|Alquiler y Venta|Libre|Ordinario|||N|
+6976467|Alquiler y Venta|Alquilado|Especial|N|Normal|N|N
+6976740|Alquiler y Venta|Alquilado|Especial|N|Normal|N|N
+6976748|Alquiler y Venta|Alquilado|Especial|N|Normal|N|N
+6976749|Alquiler y Venta|Libre|Ordinario|||S|
+6976750|Alquiler y Venta|Libre|Ordinario|||S|
+7074827|Alquiler y Venta|Alquilado|Especial|N|Normal|N|N
+7074848|Alquiler y Venta|Alquilado|Especial|N|Normal|N|N

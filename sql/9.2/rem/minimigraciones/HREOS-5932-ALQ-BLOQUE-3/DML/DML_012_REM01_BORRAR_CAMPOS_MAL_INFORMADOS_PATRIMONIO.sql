@@ -35,6 +35,19 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] CORREGIR CAMPOS MAL INFORMADOS PESTAÑA PATRIMONIO '); 
 	
+	V_MSQL := 'MERGE into '||V_ESQUEMA||'.act_activo act using (
+								select act.act_id , aux.tipo_contrato_alquiler
+								from '||V_ESQUEMA||'.aux_hreos_5932 aux 
+								inner join '||V_ESQUEMA||'.act_activo act on act.act_num_activo = aux.id_haya
+					) AUX
+					ON (aux.act_id = act.act_id)
+					WHEN MATCHed THEN UPDATE SET 
+					act.dd_tal_id = (select dd_tal_id from '||V_ESQUEMA||'.dd_tal_tipo_alquiler where dd_tal_codigo = aux.tipo_contrato_alquiler)';   
+                                
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Se han actualizado '||SQL%ROWCOUNT||' registros.'); 
+	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO SET 
 					DD_ADA_ID = NULL
 				,   DD_EAL_ID = NULL

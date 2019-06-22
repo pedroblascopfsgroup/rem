@@ -198,14 +198,19 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                              success: function(response, opts) {
                              	 data = Ext.decode(response.responseText);
                                  if(!Ext.isEmpty(data.data)){
-                                    var ventanaWizardAdjuntarDocumento = wizard.down('slideadjuntardocumento'),
+                                 	var ventanaWizardAdjuntarDocumento = wizard.down('slideadjuntardocumento'),
                                     esInternacional = ventanaWizardAdjuntarDocumento.getForm().findField('carteraInternacional').getValue(),
                                     cesionDatos = ventanaWizardAdjuntarDocumento.getForm().findField('cesionDatos'),
                                     transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
                                     btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[reference=btnGenerarDocumento]');
                                     btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[reference=btnFinalizar]');
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-                                    ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();                                    
+                                    ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show(); 
+                                    if(!esInternacional || transferenciasInternacionales.getValue()=="true"){
+										btnFinalizar.enable();
+									}else{
+										btnFinalizar.disable();
+									}
                                  }
                                  wizard.unmask();                                 
                              },
@@ -244,62 +249,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
                 me.fireEvent("errorToast", HreRem.i18n("wizardOferta.operacion.ko.nueva.oferta")+valueDestComercial);
             }
         }
-    },
-    activarFinalizar: function(form,isDirty){
-		var me = this,
-		checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
-		esInternacional = form.getForm().findField('carteraInternacional').getValue(),
-		checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
-		checkComunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue(),
-		documentoAdjunto = form.getForm().findField('docOfertaComercial').getValue(),
-		btnFinalizar = form.lookupReference('btnFinalizar');
-		if(!Ext.isEmpty(me.getView().up('wizardBase').expediente)){
-			idExpediente = me.getView().up('wizardBase').expediente.get('id');	
-		}else{
-			idExpediente = "";
-		}
-		
-		if(Ext.isEmpty(idExpediente)){
-			if(isDirty && !Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
-				if(esInternacional){
-						if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && checkTransInternacionales=="true" && !Ext.isEmpty(documentoAdjunto)){
-							btnFinalizar.enable();
-						}else{
-							btnFinalizar.disable();
-						}
-				}else{
-					if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros) && !Ext.isEmpty(documentoAdjunto)){
-						btnFinalizar.enable();
-					}else{
-						btnFinalizar.disable();
-					}
-				}
-			}else{
-				btnFinalizar.disable();
-			}
-			
-		}else{
-			if(isDirty && !Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
-				if(esInternacional){
-						if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && checkTransInternacionales=="true"){
-							btnFinalizar.enable();
-						}else{
-							btnFinalizar.disable();
-						}
-				}else{
-					if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
-						btnFinalizar.enable();
-					}else{
-						btnFinalizar.disable();
-					}
-				}
-			}else{
-				btnFinalizar.disable();
-			}
-			
-			
-		}
-		
-	}
+    }
 
 });

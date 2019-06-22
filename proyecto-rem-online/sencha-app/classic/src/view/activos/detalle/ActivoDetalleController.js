@@ -5014,7 +5014,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                     btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
-                                    ventanaWizard.unmask()
+                                    btnFinalizar.enable();
+                                    ventanaWizard.unmask();
                                  }
                              },
 

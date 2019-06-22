@@ -912,6 +912,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				vistaSinComprador.setNumDocumento(dto.getNumDocumento());
 				vistaSinComprador.setCodTipoDocumento(dto.getCodTipoDocumento());
 				DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinComprador);
+				comprador.setTransferenciasInternacionales(null);
 				model.put(RESPONSE_DATA_KEY, comprador);
 				model.put(RESPONSE_SUCCESS_KEY, true);
 				

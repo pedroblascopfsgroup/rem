@@ -182,6 +182,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 									slideAdjuntarDocumento.getForm().findField('comunicacionTerceros').disable();
 									slideAdjuntarDocumento.getForm().findField('cesionDatos').disable();
 									slideAdjuntarDocumento.getForm().findField('transferenciasInternacionales').disable();
+									btnFinalizar =  slideAdjuntarDocumento.down('button[reference=btnFinalizar]');
+									btnFinalizar.enable();
+									if(!esInternacional || slideAdjuntarDocumento.getForm().findField('transferenciasInternacionales').getValue()=="true"){
+										btnFinalizar.enable();
+									}else{
+										btnFinalizar.disable();
+									}
 									me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 								}
 								me.parent.unmask();

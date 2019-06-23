@@ -122,7 +122,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoRegEconomico = me.lookupReference('regimenMatrimonial'),
 		campoTipoDocumentoConyuge = me.lookupReference('tipoDocConyuge'),
 		campoNumeroDocumentoConyugue = me.lookupReference('numRegConyuge'),
-		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef')
+		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef'),
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
 		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO'] && !tieneReserva)) 
 				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh.getValue())) ) {
@@ -721,11 +721,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 					data = {};
 				}
 				if (data.success == 'true' && !Utils.isEmptyJSON(data.data)) {
-					
 					estadoCivilUrsus.setValue(data.data.codigoEstadoCivil);
 			
 					if(data.data.codigoEstadoCivil ===  CONST.D_ESTADOS_CIVILES["COD_CASADO"]){
-						if (data.data.numeroClienteUrsusConyuge != 0 && data.data.numeroClienteUrsusConyuge != undefined && !data.data.numeroClienteUrsusConyuge) {
+						if (data.data.numeroClienteUrsusConyuge != 0 && !Ext.isEmpty(data.data.numeroClienteUrsusConyuge)) {
 							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_GANANCIALES"]);
 						} else if (data.data.numeroClienteUrsusConyuge === 0) {
 							regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_SEPARACION_BIENES"]);
@@ -912,7 +911,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						estadoCivilUrsus.setValue(data.data.codigoEstadoCivil);
 				
 						if(data.data.codigoEstadoCivil ===  CONST.D_ESTADOS_CIVILES["COD_CASADO"]){
-							if (data.data.numeroClienteUrsusConyuge != 0 && data.data.numeroClienteUrsusConyuge != undefined && !data.data.numeroClienteUrsusConyuge) {
+							if (data.data.numeroClienteUrsusConyuge != 0 && !Ext.isEmpty(data.data.numeroClienteUrsusConyuge)) {
 								regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_GANANCIALES"]);
 							} else if (data.data.numeroClienteUrsusConyuge === 0) {
 								regimenMatrimonialUrsus.setValue(CONST.DD_REGIMEN_MATRIMONIAL["COD_SEPARACION_BIENES"]);

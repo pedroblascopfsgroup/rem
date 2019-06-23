@@ -133,7 +133,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', {
 							padding: 10,
 							style: 'overflow: hidden',
 							listeners: {
-								render: 'onRenderTextfieldDocumentoOfertaComercial'
+								render: 'onRenderTextfieldDocumentoOfertaComercial',
+								change: 'onChangeDocOfertaComercial'
 							}
 						},
 						{

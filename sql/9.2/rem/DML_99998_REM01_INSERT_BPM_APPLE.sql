@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190625
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=20190626
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6663
@@ -1358,7 +1358,7 @@ begin
   En el campo Resultado deberá consignar el resultado del informe, seleccionado "Favorable" si todo es correcto o "Desfavorable" si hay alguna incidencia.
   De ser así, marque los checks correspondientes en el listado de bloqueos; el gestor comercial rebirá una notificación de estos bloqueos.</p>
   <p style="margin-bottom: 10px">Si el expediente lleva asociada una reserva, la siguiente tarea se le lanzará al gestor comercial para que prepare las "Instrucciones de reserva".</p> 
-  <p style="margin-bottom: 10px">Si no lleva reserva asociada, la siguiente tarea será "Resultado PBC", para el gestor de formalización.
+  <p style="margin-bottom: 10px">Si no lleva reserva asociada, la siguiente tarea será "PBC venta" o "PBC reserva", para el gestor de formalización.
   En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.
   </p>';
   TFI_MAP(5).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;

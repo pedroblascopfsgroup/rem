@@ -1439,6 +1439,35 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return true;
 	}
+	@Override
+	public Boolean finalizarOferta(Oferta oferta) {
+		try {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			updateStateDispComercialActivosByOferta(oferta);
+			genericDao.save(Oferta.class, oferta);
+
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+			if (!Checks.esNulo(expediente)) {
+				Trabajo trabajo = expediente.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				ActivoTramite tramite = tramites.get(0);
+
+				Set<TareaActivo> tareasTramite = tramite.getTareas();
+				for (TareaActivo tarea : tareasTramite) {
+					tarea.setFechaFin(new Date());
+					tarea.getAuditoria().setBorrado(true);
+				}
+			}
+			descongelarOfertas(expediente);
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			return false;
+		}
+		return true;
+	}
+
 
 	@Override
 	public Oferta tareaExternaToOferta(TareaExterna tareaExterna) {

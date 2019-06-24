@@ -106,6 +106,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        {
 		            dataIndex: 'codigoEstadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
+		            reference: 'estadoOferta',
 					editor: {
 						xtype: 'combobox',								        		
 						store: new Ext.data.Store({
@@ -291,13 +292,19 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			var activo = me.lookupController().getViewModel().get('activo');
 			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
 				if(activo.get('cambioEstadoActivo')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
+					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.activo"));
+					me.up('activosdetalle').lookupController().refrescarActivo(true);
+					return false;
 				}
 				if(activo.get('cambioEstadoPrecio')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
+					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.valor.precio"));
+					me.up('activosdetalle').lookupController().refrescarActivo(true);
+					return false;
 				}
 				if(activo.get('cambioEstadoPublicacion')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+					me.up('activosdetalle').lookupController().refrescarActivo(true);
+					return false;
 				}
 				
 			} 

@@ -112,6 +112,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 
 								try {
 									ofertaApi.descongelarOfertas(expediente);
+									ofertaApi.finalizarOferta(ofertaAceptada);
 								} catch (Exception e) {
 									logger.error("Error descongelando ofertas.", e);
 								}

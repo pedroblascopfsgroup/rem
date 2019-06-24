@@ -114,6 +114,7 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);								
 								try {
 									ofertaApi.descongelarOfertas(expediente);
+									ofertaApi.finalizarOferta(ofertaAceptada);
 								} catch (Exception e) {
 									logger.error("Error descongelando ofertas.", e);
 								}

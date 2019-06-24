@@ -59,7 +59,11 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 						padding: '120px 0 0 0',
 						bind: {
 							store: '{storeTipoDocumentoIdentidad}'
+						},
+						listeners: {
+							change: 'onChangeTipoDocumentoNuevoComprador'
 						}
+						
 					},
 					{
 						xtype: 'textfieldbase',

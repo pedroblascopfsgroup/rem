@@ -1254,7 +1254,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorBusqueda.setIdPersonaHaya(new Long(cliente.getIdPersonaHaya()));
 			}
 
-			genericDao.save(Comprador.class, compradorBusqueda);
+			
 			
 			CompradorExpediente.CompradorExpedientePk pk = new CompradorExpediente.CompradorExpedientePk();
 			pk.setComprador(compradorBusqueda);
@@ -1281,8 +1281,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			if (clienteGDPR != null && !clienteGDPR.isEmpty()){
 				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
+				compradorBusqueda.setAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
 			}
 			
+			genericDao.save(Comprador.class, compradorBusqueda);
 			listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			
 			// HREOS - 4937 - Historificando				

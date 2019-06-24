@@ -4,5 +4,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoMode
 
 	data: {},
 
-	stores: {}
+	stores: {
+		comboSiNoWizard: {
+				data : [
+			        {"codigo":"true", "descripcion":"Si"},
+			        {"codigo":"false", "descripcion":"No"}
+			    ]
+			}
+	}
 });

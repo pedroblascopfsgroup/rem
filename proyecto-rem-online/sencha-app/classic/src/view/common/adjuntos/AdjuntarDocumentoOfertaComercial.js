@@ -174,13 +174,21 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 								var data = Ext.decode(response.responseText);
 								if(!Ext.isEmpty(data.data)) {
 									var slideAdjuntarDocumento = me.parent.down('slideadjuntardocumento');
+									esInternacional = slideAdjuntarDocumento.getForm().findField('carteraInternacional').getValue();
 									slideAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
 									slideAdjuntarDocumento.lookupReference('btnBorrarDocumentoAdjunto').show();
-									slideAdjuntarDocumento.lookupReference('btnFinalizar').enable();
+									slideAdjuntarDocumento.lookupController().activarFinalizar(slideAdjuntarDocumento, slideAdjuntarDocumento.lookupController().hayCambios());									
 									slideAdjuntarDocumento.lookupReference('btnGenerarDocumento').disable();
 									slideAdjuntarDocumento.getForm().findField('comunicacionTerceros').disable();
 									slideAdjuntarDocumento.getForm().findField('cesionDatos').disable();
 									slideAdjuntarDocumento.getForm().findField('transferenciasInternacionales').disable();
+									btnFinalizar =  slideAdjuntarDocumento.down('button[reference=btnFinalizar]');
+									btnFinalizar.enable();
+									if(!esInternacional || slideAdjuntarDocumento.getForm().findField('transferenciasInternacionales').getValue()=="true"){
+										btnFinalizar.enable();
+									}else{
+										btnFinalizar.disable();
+									}
 									me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 								}
 								me.parent.unmask();

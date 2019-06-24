@@ -1229,7 +1229,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorBusqueda.setIdPersonaHaya(new Long(cliente.getIdPersonaHaya()));
 			}
 
-			genericDao.save(Comprador.class, compradorBusqueda);
+			
 			
 			CompradorExpediente.CompradorExpedientePk pk = new CompradorExpediente.CompradorExpedientePk();
 			pk.setComprador(compradorBusqueda);
@@ -1256,8 +1256,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			if (clienteGDPR != null && !clienteGDPR.isEmpty()){
 				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
+				compradorBusqueda.setAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
 			}
 			
+			genericDao.save(Comprador.class, compradorBusqueda);
 			listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			
 			// HREOS - 4937 - Historificando				
@@ -5530,15 +5532,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DtoActivoFichaCabecera activoDto = new DtoActivoFichaCabecera();
 
 			Activo activo = activoAdapter.getActivoById(idActivo);
-			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+
 			if (!Checks.esNulo(activo)) {
 				try {
 					BeanUtils.copyProperties(activoDto, activo);
-					if(!Checks.esNulo(agr)) {
-						activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
-					}else {
-						activoDto.setActivosPropagables(new ArrayList<Activo>());
-					}
+					activoDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
 					return activoDto;
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
@@ -5550,7 +5548,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return null;
 	}
 	
-
+	
 	public List<DtoHistoricoDestinoComercial> getListDtoHistoricoDestinoComercialByBeanList(List<HistoricoDestinoComercial> hdc) {
 
 		List<DtoHistoricoDestinoComercial> dtoList = new ArrayList<DtoHistoricoDestinoComercial>();

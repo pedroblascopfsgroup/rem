@@ -606,6 +606,7 @@ public class AgendaAdapter {
 		try{
 			tareaActivoApi.saltoCierreEconomico(idTareaExterna);
 		}catch(Exception ex){
+			logger.error("Error al realizar un salto en la tarea por codigo", ex);
 			return false;
 		}
 
@@ -616,6 +617,7 @@ public class AgendaAdapter {
 		try{
 			tareaActivoApi.saltoResolucionExpediente(idTareaExterna);
 		}catch(Exception ex){
+			logger.error("Error al realizar un salto en la tarea por codigo", ex);
 			return false;
 		}
 
@@ -626,6 +628,7 @@ public class AgendaAdapter {
 		try{
 			tareaActivoApi.saltoRespuestaBankiaAnulacionDevolucion(idTareaExterna);
 		}catch(Exception ex){
+			logger.error("Error al realizar un salto en la tarea por codigo", ex);
 			return false;
 		}
 
@@ -636,6 +639,7 @@ public class AgendaAdapter {
 		try{
 			tareaActivoApi.saltoPendienteDevolucion(idTareaExterna);
 		}catch(Exception ex){
+			logger.error("Error al realizar un salto en la tarea por codigo", ex);
 			return false;
 		}
 

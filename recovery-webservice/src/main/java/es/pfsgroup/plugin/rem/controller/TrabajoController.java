@@ -1490,7 +1490,6 @@ public class TrabajoController extends ParadiseJsonController {
 			logger.error("Error trabajo", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			model.put("idLlamada", idLlamada);
-			model.put("data", null);
 			model.put("error", error);
 			model.put("errorDesc", errorDesc);
 			model.put("success", false);

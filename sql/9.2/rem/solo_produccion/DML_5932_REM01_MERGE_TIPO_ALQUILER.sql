@@ -88,12 +88,12 @@ BEGIN
                             left join '||V_ESQUEMA||'.dd_tpi_tipo_inquilino tpi on pta.dd_tpi_id = tpi.dd_tpi_id
                             left join '||V_ESQUEMA||'.dd_eal_estado_alquiler eal on eal.dd_eal_id = pta.dd_eal_id
                             left join '||V_ESQUEMA||'.dd_tal_tipo_alquiler tal on tal.dd_tal_id = act.dd_tal_id
-                            INNER JOIN '||V_ESQUEMA||'.dd_tpi_tipo_inquilino TPIAUX on AUX.estado_adecuacion = TPIAUX.DD_TPI_CODIGO
+                            INNER JOIN '||V_ESQUEMA||'.dd_tpi_tipo_inquilino TPIAUX on AUX.inquilino_ant_prop = TPIAUX.DD_TPI_CODIGO
                             where (tpi.dd_tpi_codigo <> aux.inquilino_ant_prop OR (aux.inquilino_ant_prop is not null  and  tpi.dd_tpi_codigo is null)  OR (aux.inquilino_ant_prop is  null  and  tpi.dd_tpi_codigo is not null))
                     ) AUX
 					ON (PTA.ACT_ID = AUX.ACT_ID)
 					WHEN MATCHED THEN UPDATE SET
-						PTA.DD_ADA_ID = AUX.DD_TPI_ID
+						PTA.DD_TPI_ID = AUX.DD_TPI_ID
 					,   PTA.USUARIOMODIFICAR = '''||V_USR||'''
 					,   PTA.FECHAMODIFICAR = SYSDATE';
 					

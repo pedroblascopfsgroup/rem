@@ -1375,39 +1375,34 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
 				tipoTramite = tipoProcedimientoManager
 						.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA); 
-				
+				String username = null;
+				Usuario usuario = null;				
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_GESTORIA);
 				// Trámite de obtención de cédula				
 				// Si el trabajo es Sareb/Tango/Giants asignamos proveedorContacto
-				if ( this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
-					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
-							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
-					if (!Checks.esNulo(usuario)) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
-								DDTipoProveedor.COD_GESTORIA);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
-								filtro, filtro2);
-						if (!Checks.estaVacio(listaPVC)) {
-							trabajo.setProveedorContacto(listaPVC.get(0));
-							trabajo = genericDao.save(Trabajo.class, trabajo);
-						}
-					}
+				if (this.checkTango(trabajo) || this.checkGiants(trabajo)) {
+					usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
+							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);					
 				// Si el trabajo es Bankia asignamos proveedorContacto	
 				}else if(this.checkBankia(trabajo)){ 
-					String username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO);
-					Usuario usuario = usuarioDao.getByUsername(username);
-					if (!Checks.esNulo(usuario)) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
-								DDTipoProveedor.COD_GESTORIA);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
-								filtro, filtro2);
-						if (!Checks.estaVacio(listaPVC)) {
-							trabajo.setProveedorContacto(listaPVC.get(0));
-							trabajo = genericDao.save(Trabajo.class, trabajo);
-						}
+					username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO);					
+				}else if(this.checkSareb(trabajo)) {
+					username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEDULA_HABITABILIDAD_SAREB_POR_DEFECTO);
+					filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+				}
+				if(!Checks.esNulo(username)){
+					usuario = usuarioDao.getByUsername(username);
+				}
+				if (!Checks.esNulo(usuario)) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
+					List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+							filtro, filtro2);
+					if (!Checks.estaVacio(listaPVC)) {
+						trabajo.setProveedorContacto(listaPVC.get(0));
+						trabajo = genericDao.save(Trabajo.class, trabajo);
 					}
 				}
+			
 			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_INFORMES))
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_INFORME);// Trámite
 			// de

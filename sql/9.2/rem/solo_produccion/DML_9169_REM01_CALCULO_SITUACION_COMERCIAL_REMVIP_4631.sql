@@ -25,7 +25,7 @@ DECLARE
     V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USR VARCHAR2(30 CHAR) := 'REMVIP-3987'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-4631'; -- USUARIOCREAR/USUARIOMODIFICAR.
     V_ECO_ID NUMBER(16); 
     
     ACT_ID NUMBER(16);
@@ -37,7 +37,6 @@ DECLARE
 	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
 			T_JBV('3625'),
 			T_JBV('150126'),
-/*
 			T_JBV('238383'),
 			T_JBV('207496'),
 			T_JBV('219688'),
@@ -82,7 +81,7 @@ DECLARE
 			T_JBV('346228'),
 			T_JBV('345247'),
 			T_JBV('345859'),
-			T_JBV('349573'),*/
+			T_JBV('349573'),
 			T_JBV('353154')
 			); 
 	V_TMP_JBV T_JBV;

@@ -342,5 +342,4 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	
 	
 	
-	
 }

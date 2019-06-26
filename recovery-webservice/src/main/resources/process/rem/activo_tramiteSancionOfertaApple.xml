@@ -370,8 +370,12 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_DocsPosVenta" name="avanzaBPM"></transition>
-	</state> <!--Transicion directa a documentacion pos venta -->
+		<transition to="T017_PosicionamientoYFirmaDecision" name="avanzaBPM"></transition>
+	</state>
+	<decision name ="T017_PosicionamientoYFirmaDecision" expression="#{T017_PosicionamientoYFirmaDecision}">
+        <transition to="T017_DocsPosVenta" name="Firmado"></transition> <!--Nodo de union-->
+		<transition to="T017_ResolucionExpediente" name="NoFirmado"></transition>
+	</decision> <!--Decisión Posicionamiento y firma, a resolución expediente o a docs postventa -->
     <state name="T017_DocsPosVenta">
 		<event type="node-enter">
 			<action name="miTarea"

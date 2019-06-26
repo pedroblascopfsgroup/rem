@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20190627
+--## FECHA_CREACION=20190628
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6841
@@ -16,6 +16,7 @@
 --##	    0.4 David Garcia - HREOS-6663 - Actualización validación T017_AnalisisPM
 --##	    0.5 Alejandro Valverde - HREOS-6605 - Corrección validación T017_DefinicionOferta
 --##      0.6 Vicente Martinez - HREOS-6841 - Eliminación validacion T017_AnalisisPM
+--##      0.6 Vicente Martinez - HREOS-6840 - Modificacion decisión PyF
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -2376,7 +2377,7 @@ begin
     TAP(14).tap_field('TAP_VIEW') := NULL;
     TAP(14).tap_field('TAP_SCRIPT_VALIDACION') := '!tieneTramiteGENCATVigenteByIdActivo() ? checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un trámite GENCAT en curso.'''''; 
     TAP(14).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkExpedienteBloqueado() ? (valores[''''T017_PosicionamientoYFirma''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener algún posicionamiento'''') : null) : ''''El expediente no está bloqueado''''';
-    TAP(14).tap_field('TAP_SCRIPT_DECISION') := null;
+    TAP(14).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_PosicionamientoYFirma''''][''''comboFirma''''] == DDSiNo.SI ? ''''Firmado'''' : ''''NoFirmado''''';
     TAP(14).tap_field('DD_TPO_ID_BPM') := null;
     TAP(14).tap_field('TAP_SUPERVISOR') := 0;
     TAP(14).tap_field('TAP_DESCRIPCION') := 'Posicionamiento y firma';

@@ -103,15 +103,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                		hidden: '{esTipoAlquiler}'
 		                	}		                	
 		                },
-		               	{
-		                	xtype:'datefieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.CES'),
-		                	bind: {
-		                		value: '{datosbasicosoferta.fechaRespuestaCES}',
-		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
-		                	},		                	
-		                	readOnly: true              	
-		                },
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta'),
@@ -125,6 +116,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.aprobacion.pro.manzana'),
+		                	colspan: 2,
 		                	bind:{
 		                		value: '{datosbasicosoferta.fechaAprobacionProManzana}',
 		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
@@ -207,12 +199,20 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                {
 		                	xtype:'currencyfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.ces'),
-		                	colspan: 2,
 		                	bind: {
 		                		value: '{datosbasicosoferta.importeContraofertaCES}',
 		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
 		                	},
 		                	readOnly: true
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.CES'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuestaCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},		                	
+		                	readOnly: true              	
 		                },
 		                {
 		                	xtype: 'fieldset',

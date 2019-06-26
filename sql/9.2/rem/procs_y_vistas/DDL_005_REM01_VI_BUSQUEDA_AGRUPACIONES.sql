@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20190405
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20190620
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6004
+--## INCIDENCIA_LINK=REMVIP-4592
 --## PRODUCTO=NO
 --## Finalidad: Vista para la búsqueda de agrupaciones.
 --##  
@@ -79,7 +79,7 @@ BEGIN
 		    LEFT JOIN
 		      (SELECT SUM (CASE WHEN TAGA.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 1 then 0 else 1 end) ACTIVOS,
 			    SUM (CASE
-		      WHEN (EPA.DD_EPA_CODIGO = ''03'' AND (TAGA.DD_TAG_CODIGO <> ''16'' AND AGA.AGA_PRINCIPAL = 1)) OR (EPV.DD_EPV_CODIGO = ''03''  AND (TAGA.DD_TAG_CODIGO <> ''16'' AND AGA.AGA_PRINCIPAL = 1))
+		      WHEN (EPA.DD_EPA_CODIGO = ''03'' AND (TAGA.DD_TAG_CODIGO <> ''16'')) OR (EPV.DD_EPV_CODIGO = ''03''  AND (TAGA.DD_TAG_CODIGO <> ''16''))
 			  OR (EPA.DD_EPA_CODIGO = ''03'' AND (TAGA.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 0)) OR (EPV.DD_EPV_CODIGO = ''03''  AND (TAGA.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 0))
 		      THEN 1
 		      ELSE 0

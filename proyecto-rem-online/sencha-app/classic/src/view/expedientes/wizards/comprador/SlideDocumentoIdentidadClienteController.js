@@ -163,12 +163,18 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		    				   if(!Ext.isEmpty(comprador)){
 		    					   if(!Ext.isEmpty(comprador.cesionDatos)){
 		    					      slideDatos.getForm().findField('cesionDatos').setValue(comprador.cesionDatos);
+		    					   }else{
+		    					   	  slideDatos.getForm().findField('cesionDatos').setValue("true");
 		    					   }
 		    					   if(!Ext.isEmpty(comprador.comunicacionTerceros)){
-		        				     slideDatos.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
+		        				      slideDatos.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
+		    					   }else{
+		    					   	  slideDatos.getForm().findField('comunicacionTerceros').setValue("");
 		    					   }
 		        				   if(!Ext.isEmpty(comprador.transferenciasInternacionales)){
-		        				     slideDatos.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
+		        				      slideDatos.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
+		        				   }else{
+		        				      slideDatos.getForm().findField('transferenciasInternacionales').setValue("");		
 		        				   }
 		    				   }
 		    			   }
@@ -262,6 +268,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		} else {
 			return true;
 		}
+	},
+	onChangeTipoDocumentoNuevoComprador : function(checkbox, newVal, oldVal){
+		
 	}
 
 });

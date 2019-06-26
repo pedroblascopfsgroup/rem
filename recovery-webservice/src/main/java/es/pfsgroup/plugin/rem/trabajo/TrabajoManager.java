@@ -1384,8 +1384,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
 							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);					
 				// Si el trabajo es Bankia asignamos proveedorContacto	
-				}else if(this.checkBankia(trabajo)){ 
-					username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO);					
 				}else if(this.checkSareb(trabajo)) {
 					username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEDULA_HABITABILIDAD_SAREB_POR_DEFECTO);
 					filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);

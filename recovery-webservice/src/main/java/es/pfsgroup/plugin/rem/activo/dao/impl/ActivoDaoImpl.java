@@ -1569,4 +1569,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return trabajoList;
 		
 	}
+	
+	
 }

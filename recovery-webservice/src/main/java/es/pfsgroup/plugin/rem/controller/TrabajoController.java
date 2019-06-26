@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
+import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
@@ -157,6 +158,9 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ProveedoresDao proveedoresDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1356,88 +1360,139 @@ public class TrabajoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET, value = "/trabajo/getActuacionesTecnicas")
 	public void getActuacionesTecnicas(Long idLlamada, Long numActivo, String idProveedorRem, ModelMap model, RestRequestWrapper request,
 			HttpServletResponse response) {
-
+		Boolean flagnumActivoNoExiste = false;
+		Boolean flagidProveedorRemNoExiste = false;
+		Boolean flagActivoProveedorRelacionNoExiste = false;
+		Boolean flagParametrosANulo = false;
+		
+		ArrayList<TrabajoRespuestaDto> actuaciones = new ArrayList<TrabajoRespuestaDto>();
+		List<ActivoTrabajo> activosTrabajo = new ArrayList<ActivoTrabajo>();
+		
+		String error = null;
+		String errorDesc = null;
+		
 		DtoTrabajoFilter filtro = new DtoTrabajoFilter();
 		filtro.setNumActivo(numActivo);
 		filtro.setLimit(100);
-
-		Page page = trabajoApi.findAll(filtro, genericAdapter.getUsuarioLogado());
-
-		ArrayList<TrabajoRespuestaDto> actuaciones = new ArrayList<TrabajoRespuestaDto>();
-		TrabajoRespuestaDto actuacion;
-		VBusquedaTrabajos busquedaTrabajo;
-
-		// Recuperar lista de trabajos por activo
-		for (Object obj : page.getResults()) {
-			busquedaTrabajo = (VBusquedaTrabajos) obj;
-			Trabajo trabajo = trabajoApi.findOne(busquedaTrabajo.getId());
-
-			// Comprobación de criterios y generar listado
-			try {
-				
-				if (trabajo.getProveedorContacto().getUsuario().getUsername().equals(idProveedorRem)
-						&& DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
-
-					List<ActivoTrabajo> activosTrabajo = trabajo.getActivosTrabajo();
-
-					if (!Checks.estaVacio(activosTrabajo)) {
-						actuacion = new TrabajoRespuestaDto();
-						List<Long> activosLista = new ArrayList<Long>();
-
-						for (ActivoTrabajo activoTrabajo : activosTrabajo) {
-							Activo activo = activoTrabajo.getActivo();
-
-							if (!Checks.esNulo(activo)) {
-								activosLista.add(activo.getNumActivo());
+		if(Checks.esNulo(idLlamada) || Checks.esNulo(numActivo) || Checks.esNulo(idProveedorRem)) {
+			flagParametrosANulo = true;
+		}else if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivo))){
+			flagnumActivoNoExiste = true;
+		}else if(Checks.esNulo(proveedoresDao.getProveedorById(Long.valueOf(idProveedorRem)))){
+			flagidProveedorRemNoExiste = true;
+		}else{
+		
+			Page page = trabajoApi.findAll(filtro, genericAdapter.getUsuarioLogado());
+	
+			
+			TrabajoRespuestaDto actuacion;
+			VBusquedaTrabajos busquedaTrabajo;
+	
+			// Recuperar lista de trabajos por activo
+			for (Object obj : page.getResults()) {
+				busquedaTrabajo = (VBusquedaTrabajos) obj;
+				Trabajo trabajo = trabajoApi.findOne(busquedaTrabajo.getId());
+	
+				// Comprobación de criterios y generar listado
+				try {
+					
+					if (trabajo.getProveedorContacto().getUsuario().getUsername().equals(idProveedorRem)
+							&& DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
+	
+						activosTrabajo = trabajo.getActivosTrabajo();
+	
+						if(!Checks.estaVacio(activosTrabajo)) {
+							actuacion = new TrabajoRespuestaDto();
+							List<Long> activosLista = new ArrayList<Long>();
+	
+							for (ActivoTrabajo activoTrabajo : activosTrabajo) {
+								Activo activo = activoTrabajo.getActivo();
+	
+								if (!Checks.esNulo(activo)) {
+									activosLista.add(activo.getNumActivo());
+								}
 							}
+	
+							actuacion.setNumActivo(activosLista);
+							actuacion.setNumTrabajo(trabajo.getNumTrabajo());
+							actuacion.setFechaRealizacion(trabajo.getFechaEjecucionReal());
+							actuacion.setFechaExacta(!Checks.esNulo(trabajo.getFechaHoraConcreta()));
+							actuacion.setUrgentePrioridadReq(trabajo.getUrgente());
+							// En la ficha HREOS-6228 indican que requiriente corresponde a Tercero y su relación con los campos
+							actuacion.setNombreRequiriente(trabajo.getTerceroNombre());
+							actuacion.setTelefonoRequiriente(trabajo.getTerceroTel1());
+							actuacion.setEmailRequiriente(trabajo.getTerceroEmail());
+							actuacion.setDescripcionRequiriente(trabajo.getTerceroContacto()); 
+							actuacion.setRiesgoPrioridadReq(trabajo.getRequerimiento());
+							actuacion.setFechaPrioridadReq(trabajo.getFechaCompromisoEjecucion());// ACT_TBJ_TRABAJO.TBJ_FECHA_FIN_COMPROMISO
+	
+							// En la ficha HREOS-6228 indican que mediador se corresponde a contacto
+							ActivoProveedorContacto mediador = trabajo.getProveedorContacto();
+							if (mediador != null) {
+								actuacion.setNombreContacto(mediador.getNombre());
+								actuacion.setTelefonoContacto(mediador.getTelefono1());
+								actuacion.setEmailContacto(mediador.getEmail());
+								actuacion.setDescripcionContacto(mediador.getObservaciones());
+	
+							}
+							actuaciones.add(actuacion);
 						}
-
-						actuacion.setNumActivo(activosLista);
-						actuacion.setNumTrabajo(trabajo.getNumTrabajo());
-						actuacion.setFechaRealizacion(trabajo.getFechaEjecucionReal());
-						actuacion.setFechaExacta(!Checks.esNulo(trabajo.getFechaHoraConcreta()));
-						actuacion.setUrgentePrioridadReq(trabajo.getUrgente());
-						// En la ficha HREOS-6228 indican que requiriente corresponde a Tercero y su relación con los campos
-						actuacion.setNombreRequiriente(trabajo.getTerceroNombre());
-						actuacion.setTelefonoRequiriente(trabajo.getTerceroTel1());
-						actuacion.setEmailRequiriente(trabajo.getTerceroEmail());
-						actuacion.setDescripcionRequiriente(trabajo.getTerceroContacto()); 
-						actuacion.setRiesgoPrioridadReq(trabajo.getRequerimiento());
-						actuacion.setFechaPrioridadReq(trabajo.getFechaCompromisoEjecucion());// ACT_TBJ_TRABAJO.TBJ_FECHA_FIN_COMPROMISO
-
-						// En la ficha HREOS-6228 indican que mediador se corresponde a contacto
-						ActivoProveedorContacto mediador = trabajo.getProveedorContacto();
-						if (mediador != null) {
-							actuacion.setNombreContacto(mediador.getNombre());
-							actuacion.setTelefonoContacto(mediador.getTelefono1());
-							actuacion.setEmailContacto(mediador.getEmail());
-							actuacion.setDescripcionContacto(mediador.getObservaciones());
-
-						}
-						actuaciones.add(actuacion);
-					}
-
-				} // fin trabajo
-
-			} catch (NullPointerException e) {
-				logger.error("Error trabajo", e);
+	
+					} // fin trabajo
+	
+				} catch (NullPointerException e) {
+					logger.error("Error trabajo", e);
+				}
 			}
+			
 
 		} // fin listado trabajos
-
+		if(Checks.estaVacio(activosTrabajo)) {
+			flagActivoProveedorRelacionNoExiste = true;
+		}
 		//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
 		try {
+			if(flagParametrosANulo) {
+				error = RestApi.REST_NO_PARAM;
+				if(Checks.esNulo(idLlamada)) {
+					errorDesc = "Falta el campo idLlamada";
+				}else if( Checks.esNulo(numActivo)) {
+					errorDesc = "Falta el campo numActivo";
+				}else {
+					errorDesc = "Falta el campo codGestoria";
+				}
+				
+				throw new Exception(RestApi.REST_NO_PARAM);
+			}
+			if(flagnumActivoNoExiste || flagidProveedorRemNoExiste) {
+				error = RestApi.REST_MSG_UNKNOW_KEY;
+				if(flagnumActivoNoExiste) {
+					errorDesc ="El Activo " + numActivo + " no existe.";
+				}else{
+					errorDesc = "El proveedor " + idProveedorRem + " no existe.";
+				}
+				throw new Exception(RestApi.REST_MSG_UNKNOW_KEY);
+			}
+			if(flagActivoProveedorRelacionNoExiste) {
+				error = RestApi.REST_MSG_NO_RELATED_AT;
+				errorDesc = "No existe relación entre el activo "+ numActivo +" y la proveedor " + idProveedorRem;
+				
+				throw new Exception(RestApi.REST_MSG_NO_RELATED_AT);
+			}
+			
 			model.put("id", 0);
 			model.put("idLlamada", idLlamada);
 			model.put("data", actuaciones);
 			model.put("error", "null");
+			model.put("success", true);
+			
 		} catch (Exception e) {
 			logger.error("Error trabajo", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("id", 0);
 			model.put("idLlamada", idLlamada);
-			model.put("data", null);
-			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			model.put("error", error);
+			model.put("errorDesc", errorDesc);
+			model.put("success", false);
 		}
 		restApi.sendResponse(response, model, request);
 	}
@@ -1466,41 +1521,81 @@ public class TrabajoController extends ParadiseJsonController {
 		JSONObject jsonFields = null;
 		Long tareaId = null;
 		Long idLlamada = null;
-		
+		String codTarea = "";
+		String numTrabajo = "";
 		boolean resultado = false;
+		String error = null;
+		String errorDesc = null;
 		
 		try {
-			
 			jsonFields = request.getJsonObject();
 			jsonData = (TareaRequestDto) request.getRequestData(TareaRequestDto.class);
-			idLlamada = jsonData.getIdLlamada();
-			datosTarea = jsonData.getData();
 			
-			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
+			if(Checks.esNulo(jsonFields)) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-
-			} else {
-				tareaId = trabajoApi.getIdTareaBytbjNumTrabajoAndCodTarea(Long.parseLong(jsonFields.get("tbjNumTrabajo").toString()), jsonFields.get("codTarea").toString());
-				String[] idTarea = new String[1];
-				idTarea[0] = tareaId.toString();
-				datosTarea.put("idTarea",idTarea);
-
-				resultado = agendaAdapter.validationAndSave(datosTarea);
-
-				model.put("id", jsonFields.get("id"));
-				model.put("idLlamada", idLlamada);
-				model.put("data", resultado);
-				model.put("error", "null");
+			}else if (jsonFields.isNullObject()) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			}else if(jsonFields.isEmpty()) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			}else if(Checks.esNulo(jsonData)) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			} else if(Checks.esNulo(jsonData.getIdLlamada()) || Checks.esNulo(jsonData.getData())){
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			}else {
+				
+				idLlamada = jsonData.getIdLlamada();
+				datosTarea = jsonData.getData();
+				if(!Checks.esNulo(jsonFields.get("tbjNumTrabajo"))) {
+					numTrabajo  = jsonFields.get("tbjNumTrabajo").toString();
+				}
+				if(Checks.esNulo(trabajoApi.getTrabajoByNumeroTrabajo(Long.valueOf(numTrabajo)))){
+					
+					error = RestApi.REST_MSG_UNKNOW_JOB;
+					errorDesc = "El trabajo " + numTrabajo + " no existe.";
+					throw new Exception(RestApi.REST_MSG_UNKNOW_JOB);
+				}else {
+					if(!Checks.esNulo(jsonFields.get("codTarea"))) {
+						codTarea  = jsonFields.get("codTarea").toString();
+					}
+					tareaId = trabajoApi.getIdTareaBytbjNumTrabajoAndCodTarea(Long.parseLong(numTrabajo), codTarea);
+					if(Checks.esNulo(tareaId)) {
+						error = RestApi.REST_MSG_VALIDACION_TAREA;
+						errorDesc = "La tarea " + codTarea + " no existe.";
+						throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+						
+					}else {
+						String[] idTarea = new String[1];
+						idTarea[0] = tareaId.toString();
+						datosTarea.put("idTarea",idTarea);
+		
+						resultado = agendaAdapter.validationAndSave(datosTarea);
+		
+						model.put("id", jsonFields.get("id"));
+						model.put("idLlamada", idLlamada);
+						model.put("data", resultado);
+						model.put("error", "null");
+					}
+				}
 			}
 
 			//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
 		} catch (Exception e) {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("id", jsonFields.get("id"));
 			model.put("idLlamada", idLlamada);
-			model.put("data", resultado);
-			model.put("error", RestApi.REST_MSG_VALIDACION_TAREA+": "+e.getMessage());
+			model.put("error", error);
+			model.put("errorDesc", errorDesc);
+			model.put("success", false);
 		}
 
 		restApi.sendResponse(response, model, request);

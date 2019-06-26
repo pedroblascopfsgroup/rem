@@ -3121,6 +3121,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
+	public Boolean esUnidadAlquilable(String numActivo) {
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_ACTIVO ACT "
+				+ "LEFT JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID "
+				+ "WHERE TTA.DD_TTA_CODIGO = '05' "
+				+ "AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "'");
+
+		return !"0".equals(resultado);		
+	}
+	
+	@Override
 	public Boolean validadorTipoCartera(Long numExpediente) {
 		if(Checks.esNulo(numExpediente))
 			return true;

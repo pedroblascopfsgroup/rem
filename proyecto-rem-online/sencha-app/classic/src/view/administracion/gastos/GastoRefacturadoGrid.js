@@ -20,7 +20,7 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGrid', {
 				{ 
 		    		xtype: 'checkcolumn', 
 		    		dataIndex: 'gastoRefacturable',
-		    		reference: 'isGastoRefacturabl2',
+		    		reference: 'isGastoRefacturabl2'
 		    		
 	    		},
 		        {

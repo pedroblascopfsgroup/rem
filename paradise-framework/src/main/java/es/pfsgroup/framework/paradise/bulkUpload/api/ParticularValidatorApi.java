@@ -872,5 +872,11 @@ public interface ParticularValidatorApi {
 	public Boolean existeCodJGOJE(String codJunta);
 
 	String getActivoJunta(String numActivo, String fechaJunta);
+	
+	/**
+	 * @param numActivo
+	 * @return true si el activo es una unidad alquilable	 * 
+	 */
+	Boolean esUnidadAlquilable(String numActivo);
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteSancionOferta">
-
+	
 	<start-state name="inicio">
 		<transition to="router"></transition>
 	</start-state>	
@@ -22,9 +22,17 @@
 		<transition to="T013_InstruccionesReserva" name="T013_InstruccionesReserva"></transition>
 		<transition to="T013_PosicionamientoYFirma" name="T013_PosicionamientoYFirma"></transition>
 		<transition to="T013_ResolucionExpediente" name="T013_ResolucionExpediente"></transition>
-	</node>
-
+	</node>	
 	
+	<fork name="forkYubai">
+		<transition to="T013_DefinicionOferta" name="oferta"></transition>
+		<transition to="T013_InformeJuridico" name="informe"></transition>
+	</fork>
+	
+	<decision name="nodoOrigenTramiteActuacionTecnicaDecision" expression="#{nodoOrigenTramiteActuacionTecnicaDecision}">
+		<transition to="T013_DefinicionOferta" name="NO"></transition>
+		<transition to="forkYubai" name="SI"></transition>
+	</decision>
 	
 	<fork name="forkYubai">
 		<transition to="T013_DefinicionOferta" name="oferta"></transition>
@@ -204,12 +212,17 @@
 	
 	<decision name="T013_RatificacionComiteDecision" expression="#{T013_RatificacionComiteDecision}">
 		<transition to="forkReserva" name="AceptaConReserva"></transition>
+		<transition to="T013_InstruccionesReserva" name="AceptaConReservaYubai"></transition>
 		<transition to="T013_RespuestaOfertante" name="Contraoferta"></transition>
 		<transition to="forkSinReservaSinTanteo" name="AceptaSinReservaSinTanteo"></transition>
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 		<transition to="T013_ResultadoPBC" name="esYubai"></transition>
 >>>>>>> b763b98... Commit a la espera de X-Ray
+=======
+		<transition to="T013_ResultadoPBC" name="AceptaSinReservaSinTanteoYubai"></transition>
+>>>>>>> c3d7850... [HREOS-6828] Modificación tarea informe jurídico
 		<transition to="Fin" name="Rechaza"></transition>
 	</decision>
 	

@@ -101,7 +101,7 @@ public interface GastoProveedorApi {
 		 * @param idGasto
 		 * @return
 		 */
-		boolean updateGastoByPrinexLBK(String idGasto);
+		boolean updateGastoByPrinexLBK(Long idGasto);
 		
 		/**
 		 * Método que recupera los activos relacionados con un gasto

@@ -55,8 +55,6 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.Comprador;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -625,9 +623,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 				fileItem = uploadAdapter.getWebFileItem(request);
 	
-				String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
-				model.put("errores", errores);
-				model.put(RESPONSE_SUCCESS_KEY, errores == null);
+				expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
+				model.put(RESPONSE_SUCCESS_KEY, true);
 			}
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -944,6 +941,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				vistaSinComprador.setNumDocumento(dto.getNumDocumento());
 				vistaSinComprador.setCodTipoDocumento(dto.getCodTipoDocumento());
 				DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinComprador);
+				comprador.setTransferenciasInternacionales(null);
 				model.put(RESPONSE_DATA_KEY, comprador);
 				model.put(RESPONSE_SUCCESS_KEY, true);
 				

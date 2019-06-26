@@ -19,6 +19,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.titulo.model.DDTipoTitulo;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -72,8 +73,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
 
 @Service("gestorDocumentalAdapterManager")
@@ -83,6 +86,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	private static final String TIPO_EXPEDIENTE= "OP";
 	private static final String GESTOR_DOCUMENTAL = "GESTOR_DOC";
 	private static final String CLIENTE_HRE = "Haya Real Estate";
+	private static final String CODIGO_ESTADO_UA = "10";
 
 	@Resource
 	private Properties appProperties;
@@ -127,7 +131,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		String codigoEstado = Checks.esNulo(activo.getEstadoActivo()) ? null : activo.getEstadoActivo().getCodigo();
 		Usuario userLogin = genericAdapter.getUsuarioLogado();
 
-		if (!Checks.esNulo(codigoEstado)) {
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
+			codigoEstado = CODIGO_ESTADO_UA;
+		}else if (!Checks.esNulo(codigoEstado)) {
 			if (!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_SUELO) && !codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO) &&
 					!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO)) {
 				codigoEstado = DDEstadoActivo.ESTADO_ACTIVO_TERMINADO;
@@ -181,7 +187,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		String codigoEstado = Checks.esNulo(activo.getEstadoActivo()) ? null : activo.getEstadoActivo().getCodigo();
 
-		if (!Checks.esNulo(codigoEstado)) {
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
+			codigoEstado = CODIGO_ESTADO_UA;
+		}else if (!Checks.esNulo(codigoEstado)) {
 			if (!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_SUELO) && !codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO) &&
 					!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO)) {
 				codigoEstado = DDEstadoActivo.ESTADO_ACTIVO_TERMINADO;
@@ -606,7 +614,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return idExpediente;	
 	}
 
-	public String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
+	private String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
 		if(Checks.esNulo(subcartera)) {
 			return "";
 		}
@@ -916,5 +924,49 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	@Override
 	public FileItem getFileItemComunicacionGencat(Long id, String nombreDocumento) {
 	return this.getFileItem(id, nombreDocumento);
+	}
+	
+	public String getClienteWSByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
+		if(Checks.esNulo(subcartera)) {
+			return "";
+		}
+
+		MapeoGestorDocumental mgd = new MapeoGestorDocumental();
+		if(Checks.esNulo(actPro)){
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
+						return "";
+					}
+				}else{
+					return "";
+				}
+			}
+		} else {
+			if(!Checks.esNulo(cartera)) {
+				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera),
+						genericDao.createFilter(FilterType.EQUALS, "activoPropietario", actPro));
+				if(!Checks.esNulo(mgd)){
+					if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
+						return "";
+					}
+				}else{
+					mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+							genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+					if(!Checks.esNulo(mgd)){
+						if(Checks.esNulo(mgd.getClienteMaestroActivos())) {
+							return "";
+						}
+					}else{
+						return "";
+					}
+				}
+			}
+		}
+		
+		return mgd.getClienteMaestroActivos();
 	}
 }

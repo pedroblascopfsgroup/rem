@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20190405
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20190620
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6004
+--## INCIDENCIA_LINK=REMVIP-4592
 --## PRODUCTO=NO
 --## Finalidad: Vista para la búsqueda de agrupaciones.
 --##  
@@ -79,7 +79,7 @@ BEGIN
 		    LEFT JOIN
 		      (SELECT SUM (CASE WHEN TAGA.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 1 then 0 else 1 end) ACTIVOS,
 			    SUM (CASE
-		      WHEN (EPA.DD_EPA_CODIGO = ''03'' AND (TAGA.DD_TAG_CODIGO <> ''16'' AND AGA.AGA_PRINCIPAL = 1)) OR (EPV.DD_EPV_CODIGO = ''03''  AND (TAGA.DD_TAG_CODIGO <> ''16'' AND AGA.AGA_PRINCIPAL = 1))
+		      WHEN (EPA.DD_EPA_CODIGO = ''03'' AND (TAGA.DD_TAG_CODIGO <> ''16'')) OR (EPV.DD_EPV_CODIGO = ''03''  AND (TAGA.DD_TAG_CODIGO <> ''16''))
 			  OR (EPA.DD_EPA_CODIGO = ''03'' AND (TAGA.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 0)) OR (EPV.DD_EPV_CODIGO = ''03''  AND (TAGA.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 0))
 		      THEN 1
 		      ELSE 0
@@ -119,6 +119,16 @@ BEGIN
 	EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX ' || V_ESQUEMA || '.ACT_ACTIVO_IDX3 ON ' || V_ESQUEMA || '.ACT_ACTIVO (ACT_ID, DD_CRA_ID, DD_EPU_ID, BORRADO) LOGGING NOPARALLEL';
 
 	DBMS_OUTPUT.PUT_LINE('OK');
+	
+EXCEPTION
+  	WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;  
 
 END;
 /

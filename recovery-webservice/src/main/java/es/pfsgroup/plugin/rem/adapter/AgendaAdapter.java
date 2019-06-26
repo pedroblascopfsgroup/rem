@@ -81,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.TareaConfigPeticion;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
@@ -100,6 +101,7 @@ public class AgendaAdapter {
 	private static final String CODIGO_DEFINICION_OFERTA = "T013_DefinicionOferta";
 	private static final String TEXTO_ADVERTENCIA_T013_DO = "ATENCIÓN: Va a aprobar un expediente con importe inferior al precio mínimo. Confirme que tiene la autorización de su supervisor.";
 	private static final String ERROR_CAMPOS_VALIDACION ="Los campos requeridos y no requeridos no son correctos, revise las instrucciones de la tarea: ";
+	private static final String ERROR_TAREA_NO_PERMITIDA = "El tipo de tarea no esta permitida para avanzar";
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	private SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 	protected static final Log logger = LogFactory.getLog(AgendaAdapter.class);
@@ -359,8 +361,16 @@ public class AgendaAdapter {
 				idTarea = Long.parseLong((String)entry.getValue()[0]);
 			}
 		}
-
+		
 		dto = this.rellenaDTO(idTarea,camposFormulario);
+
+		Filter tareaId = genericDao.createFilter(FilterType.EQUALS, "tarea.id", dto.getForm().getTareaExterna().getTareaProcedimiento().getId());
+		TareaConfigPeticion tareaConfig = genericDao.get(TareaConfigPeticion.class, tareaId);
+		
+		if(Checks.esNulo(tareaConfig) || Checks.esNulo(tareaConfig.getPermitida()) || !tareaConfig.getPermitida()){
+			throw new UserException(ERROR_TAREA_NO_PERMITIDA);
+		}
+		
 		String codigoTarea = dto.getForm().getTareaExterna().getTareaProcedimiento().getCodigo();
 		
 		if(!Checks.esNulo(dto.getForm().getErrorValidacion())){
@@ -596,6 +606,7 @@ public class AgendaAdapter {
 		try{
 			tareaActivoApi.saltoCierreEconomico(idTareaExterna);
 		}catch(Exception ex){
+			logger.error("Error al realizar un salto en la tarea por codigo", ex);
 			return false;
 		}
 
@@ -606,6 +617,7 @@ public class AgendaAdapter {
 		try{
 			tareaActivoApi.saltoResolucionExpediente(idTareaExterna);
 		}catch(Exception ex){
+			logger.error("Error al realizar un salto en la tarea por codigo", ex);
 			return false;
 		}
 
@@ -616,6 +628,7 @@ public class AgendaAdapter {
 		try{
 			tareaActivoApi.saltoRespuestaBankiaAnulacionDevolucion(idTareaExterna);
 		}catch(Exception ex){
+			logger.error("Error al realizar un salto en la tarea por codigo", ex);
 			return false;
 		}
 
@@ -626,6 +639,7 @@ public class AgendaAdapter {
 		try{
 			tareaActivoApi.saltoPendienteDevolucion(idTareaExterna);
 		}catch(Exception ex){
+			logger.error("Error al realizar un salto en la tarea por codigo", ex);
 			return false;
 		}
 

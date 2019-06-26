@@ -462,15 +462,15 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 		/**
-	 * Inserta una lista de documentos a la entidad correspondiente  Ejem: IP:8080/pfs/rest/generic/altaDocumento
+	 * Inserta un documento a la entidad correspondiente  Ejem: IP:8080/pfs/rest/generic/altaDocumento
 	 * HEADERS:
 	 * Content-Type - application/json
 	 * signature - 
 	 * 
 	 * BODY:
 	 * {  
-   "id":"112",
-   "data":[  
+   "idLlamada":"112",
+   "data": 
       {  "tipoEntidad":"T",
     	 "numEntidad":"161197",
     	 "tipoDocumento":"03",
@@ -480,7 +480,7 @@ public class GenericController extends ParadiseJsonController{
     	 "documento":"YnVlbm9zIGRpYXMgdGVuZ28gbGliZXJ0YWQgcGFyYSBoYWNlciBlbiBlbCB3ZWIgc2VydmljZSBjb21vIHlvIHZlYS4="
       
       }
-   ]
+   
 } *  
 	 *
 	 * @param model
@@ -492,7 +492,7 @@ public class GenericController extends ParadiseJsonController{
 	public void altaDocumento (ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		DocumentoRequestDto jsonData = null;
 		JSONObject jsonFields = null;
-		List<DocumentoDto> listaDocumentoDto = null;
+		DocumentoDto documentoDto = null;
 		String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/";
 		WebFileItem webFileItem;
 		FileItem fileItem;
@@ -507,6 +507,7 @@ public class GenericController extends ParadiseJsonController{
 			
 			jsonFields = request.getJsonObject();
 			jsonData = (DocumentoRequestDto) request.getRequestData(DocumentoRequestDto.class);
+
 			
 			if(Checks.esNulo(jsonFields)) {
 				errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
@@ -521,106 +522,103 @@ public class GenericController extends ParadiseJsonController{
 				errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 				descErrores = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else{
-				if(Checks.esNulo(jsonData)) {
+			}else if(Checks.esNulo(jsonData)) {
 					errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 					descErrores = "Faltan campos";
 					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				}else {
-					idLlamada = jsonData.getIdLlamada();
-					if(Checks.esNulo(idLlamada) || Checks.esNulo(jsonData.getId()) || Checks.estaVacio(jsonData.getData())) {
-						errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-						descErrores = "Faltan campos";
+			}else {
+				idLlamada = jsonData.getIdLlamada();
+				
+				if(Checks.esNulo(idLlamada) || Checks.esNulo(jsonData.getId())) {
+					errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+					descErrores = "Faltan campos";
 						throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-					}else {
-						listaDocumentoDto = jsonData.getData();
+				}else {
+					documentoDto = jsonData.getData();
+
+					if(documentoDto.getNombreDocumento().trim().length()<=4){
+						throw new Exception ("Error nombre incorrecto de documento ejemplo: nombre.extension");
+					}
 						
-						for (DocumentoDto documentoDto : listaDocumentoDto) {
-							if(documentoDto.getNombreDocumento().trim().length()<=4){
-								throw new Exception ("Error nombre incorrecto de documento ejemplo: nombre.extension");
-							}
-							tipoEntidad = documentoDto.getTipoEntidad().trim().toUpperCase();
-							byte [] fichero = DatatypeConverter.parseBase64Binary(documentoDto.getDocumento());
-							file = new java.io.File(rutaFichero+documentoDto.getNombreDocumento()); 
-							file.createNewFile(); 
-							FileOutputStream fop = new FileOutputStream(file); 
-							fop.write(fichero); 
-							fop.flush(); 
-							fop.close(); 
-							fileItem = new FileItem(file);
-							fileItem.setFileName(documentoDto.getNombreDocumento());
-							fileItem.setLength(fichero.length);
-							webFileItem = new WebFileItem();
-							webFileItem.setFileItem(fileItem);
-							webFileItem.putParameter("tipo", documentoDto.getTipoDocumento());
-							webFileItem.putParameter("subtipo", documentoDto.getSubTipoDocumento());
-							webFileItem.putParameter("descripcion", documentoDto.getDescripcionDocumento());
-							
-							if(tipoEntidad.equals("A")) {
-							
-								Activo activo = genericDao.get(Activo.class , genericDao.createFilter(FilterType.EQUALS,"numActivo", Long.parseLong(documentoDto.getNumEntidad().trim())));
-														
-								if(activo == null){
-									errores = RestApi.REST_MSG_UNKNOW_ENTITY;
-									descErrores = "No existe el activo " + documentoDto.getNumEntidad().trim();
-								}else{
-								webFileItem.putParameter("idEntidad", String.valueOf(activo.getId()));
-								errores = adapterActivo.upload(webFileItem);}
-													
-							}else if(tipoEntidad.equals("P")){
+					tipoEntidad = documentoDto.getTipoEntidad().trim().toUpperCase();
+					byte [] fichero = DatatypeConverter.parseBase64Binary(documentoDto.getDocumento());
+					file = new java.io.File(rutaFichero+documentoDto.getNombreDocumento()); 
+					file.createNewFile(); 
+					FileOutputStream fop = new FileOutputStream(file); 
+					fop.write(fichero); 
+					fop.flush(); 
+					fop.close(); 
+					fileItem = new FileItem(file);
+					fileItem.setFileName(documentoDto.getNombreDocumento());
+					fileItem.setLength(fichero.length);
+					webFileItem = new WebFileItem();
+					webFileItem.setFileItem(fileItem);
+					webFileItem.putParameter("tipo", documentoDto.getTipoDocumento());
+					webFileItem.putParameter("subtipo", documentoDto.getSubTipoDocumento());
+					webFileItem.putParameter("descripcion", documentoDto.getDescripcionDocumento());
 						
-							}else if(tipoEntidad.equals("T")) {
-								Trabajo trabajo = genericDao.get(Trabajo.class , genericDao.createFilter(FilterType.EQUALS,"numTrabajo",  Long.parseLong(documentoDto.getNumEntidad().trim())));
-								if(trabajo == null){
-									errores = RestApi.REST_MSG_UNKNOW_ENTITY;
-									descErrores = "No existe el trabajo "+ documentoDto.getNumEntidad().trim();
-								}
-								else{
-									webFileItem.putParameter("idEntidad", String.valueOf(trabajo.getId()));
-									errores = trabajoApi.upload(webFileItem);	
-									
-								}
-								
-								
-								
-							}else if(tipoEntidad.equals("O")){
-								ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "numExpediente", Long.parseLong(documentoDto.getNumEntidad().trim())));
-								if(expedienteComercial == null){
-									errores = RestApi.REST_MSG_UNKNOW_ENTITY;
-									descErrores = "No existe el expediente " + documentoDto.getNumEntidad().trim();
-								}else{
-									webFileItem.putParameter("idEntidad", String.valueOf(expedienteComercial.getId()));
-									errores = expedienteComercialAdapter.uploadDocumento(webFileItem, null, null);
+						
 		
-								}
-							}else if(tipoEntidad.equals("G")){
-								GastoProveedor gastoPorveedor = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(documentoDto.getNumEntidad().trim())));
-								if(gastoPorveedor == null){
-									errores = RestApi.REST_MSG_UNKNOW_ENTITY;
-									descErrores = "No existe el proveedor " + documentoDto.getNumEntidad().trim();
-								}else{
-								webFileItem.putParameter("idEntidad", String.valueOf(gastoPorveedor.getId()));
-								errores = gastoProveedorApi.upload(webFileItem);}
-								
-		
-							}else{
-								errores = RestApi.REST_MSG_INVALID_ENTITY_TYPE;
-								descErrores = "El tipo de entidad especificada no existe";
-							}
-							//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
-							if(errores==null){
-								model.put("idLlamada", idLlamada);
-								model.put("data", listaDocumentoDto);
-								model.put("succes", true);
-		
-							}else
-							{	
-								throw new Exception(errores);
-							}
-					    }
+					if(tipoEntidad.equals("A")) {
+					
+						Activo activo = genericDao.get(Activo.class , genericDao.createFilter(FilterType.EQUALS,"numActivo", Long.parseLong(documentoDto.getNumEntidad().trim())));
+												
+						if(activo == null){
+							errores = RestApi.REST_MSG_UNKNOW_ENTITY;
+							descErrores = "No existe el activo " + documentoDto.getNumEntidad().trim();
+						}else{
+						webFileItem.putParameter("idEntidad", String.valueOf(activo.getId()));
+						errores = adapterActivo.upload(webFileItem);}
+											
+					}else if(tipoEntidad.equals("P")){
+	
+					}else if(tipoEntidad.equals("T")) {
+						Trabajo trabajo = genericDao.get(Trabajo.class , genericDao.createFilter(FilterType.EQUALS,"numTrabajo",  Long.parseLong(documentoDto.getNumEntidad().trim())));
+						if(trabajo == null){
+							errores = RestApi.REST_MSG_UNKNOW_ENTITY;
+							descErrores = "No existe el trabajo "+ documentoDto.getNumEntidad().trim();
+						}
+						else{
+							webFileItem.putParameter("idEntidad", String.valueOf(trabajo.getId()));
+							errores = trabajoApi.upload(webFileItem);	
+							
+						}	
+					}else if(tipoEntidad.equals("O")){
+						ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "numExpediente", Long.parseLong(documentoDto.getNumEntidad().trim())));
+						if(expedienteComercial == null){
+							errores = RestApi.REST_MSG_UNKNOW_ENTITY;
+							descErrores = "No existe el expediente " + documentoDto.getNumEntidad().trim();
+						}else{
+							webFileItem.putParameter("idEntidad", String.valueOf(expedienteComercial.getId()));
+							errores = expedienteComercialAdapter.uploadDocumento(webFileItem, null, null);
+	
+						}
+					}else if(tipoEntidad.equals("G")){
+						GastoProveedor gastoPorveedor = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(documentoDto.getNumEntidad().trim())));
+						if(gastoPorveedor == null){
+							errores = RestApi.REST_MSG_UNKNOW_ENTITY;
+							descErrores = "No existe el proveedor " + documentoDto.getNumEntidad().trim();
+						}else{
+						webFileItem.putParameter("idEntidad", String.valueOf(gastoPorveedor.getId()));
+						errores = gastoProveedorApi.upload(webFileItem);
+						}
+	
+					}else{
+						errores = RestApi.REST_MSG_INVALID_ENTITY_TYPE;
+						descErrores = "El tipo de entidad especificada no existe";
+					}
+								//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
+					if(errores==null){
+						model.put("idLlamada", idLlamada);
+						model.put("data", documentoDto);
+						model.put("succes", true);
+	
+					}else{	
+						throw new Exception(errores);
 					}
 				}
 			}
+			
 		} catch (Exception e) {
 			logger.error("Error alta documento en genericController", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());

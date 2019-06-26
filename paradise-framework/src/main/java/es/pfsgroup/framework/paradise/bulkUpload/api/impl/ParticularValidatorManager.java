@@ -2973,7 +2973,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String superficie =rawDao.getExecuteSQL("SELECT SUM(BDR.BIE_DREG_SUPERFICIE_CONSTRUIDA) "
 				+ "FROM BIE_DATOS_REGISTRALES BDR "
 				+ "JOIN ACT_ACTIVO ACT ON BDR.BIE_ID = ACT.BIE_ID "
-				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID AND AGA.BORRADO = 0"
 				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID  "
 				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
 				+ "AND AGA.AGA_PRINCIPAL <> 1");
@@ -2999,7 +2999,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String superficie =rawDao.getExecuteSQL("SELECT SUM(REG.REG_SUPERFICIE_UTIL) "
 				+ "FROM ACT_REG_INFO_REGISTRAL REG "
 				+ "JOIN ACT_ACTIVO ACT ON REG.ACT_ID = ACT.ACT_ID "
-				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID "
+				+ "JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID AND AGA.BORRADO = 0"
 				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID  "
 				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
 				+ "AND AGA.AGA_PRINCIPAL <> 1");
@@ -3014,7 +3014,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID "
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID "
 				+ "WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
-				+ "AND AGA.AGA_PRINCIPAL <> 1");
+				+ "AND AGA.AGA_PRINCIPAL <> 1 AND AGA.BORRADO = 0");
 		
 		return porcentaje;
 	}

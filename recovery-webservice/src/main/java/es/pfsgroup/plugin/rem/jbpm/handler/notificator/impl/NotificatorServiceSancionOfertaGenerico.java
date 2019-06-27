@@ -180,7 +180,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
 		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
 		Usuario buzonFormApple = usuarioManager.getByUsername(BUZON_FOR_APPLE);
+		Usuario usuarioBackOffice = null;
 		Oferta oferta = null;
+		
 		if (expediente != null) {
 			oferta = expediente.getOferta();
 		}
@@ -221,6 +223,22 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					destinatarios.add(buzonFormApple.getEmail());
 				}
 
+				if(oferta.getActivoPrincipal() != null){
+					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+							|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+						usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+						if(!Checks.esNulo(usuarioBackOffice)){
+							destinatarios.add(usuarioBackOffice.getEmail());
+						}	
+					}
+				}
+
 				this.enviaNotificacionAceptar(tramite, oferta, expediente, destinatarios.toArray(new String[] {}));
 
 			} else if (permiteRechazar
@@ -259,6 +277,22 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 				if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 					destinatarios.add(buzonOfertaApple.getEmail());
+				}
+
+				if(oferta.getActivoPrincipal() != null){
+					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+							|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+						usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+						if(!Checks.esNulo(usuarioBackOffice)){
+							destinatarios.add(usuarioBackOffice.getEmail());
+						}	
+					}
 				}
 
 				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));

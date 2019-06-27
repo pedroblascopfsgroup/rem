@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
@@ -83,9 +84,6 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	List<String> mailsPara = new ArrayList<String>();
 	List<String> mailsCC = new ArrayList<String>();
 	
-	
-	
-	
 	@Override
 	public String[] getKeys() {
 		return this.getCodigoTarea();
@@ -124,6 +122,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			Usuario gestor = null;
 			Usuario supervisor = null;
 			Usuario gestorBackoffice = null;
+			Usuario usuarioBackOffice = null;
 			Usuario buzonRem = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_REM));
 			Usuario buzonPfs = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_PFS));
 			Usuario buzonOfertaApple = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_OFR_APPLE));
@@ -139,6 +138,22 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 					else if(CODIGO_T013_RESOLUCION_COMITE.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
 						supervisor = tareaActivo.getSupervisorActivo();
 					}
+				}
+			}
+
+			if(activo != null){
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(usuarioBackOffice)){
+						mailsPara.add(usuarioBackOffice.getEmail());
+					}	
 				}
 			}
 			

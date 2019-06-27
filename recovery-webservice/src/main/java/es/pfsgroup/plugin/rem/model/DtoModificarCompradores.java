@@ -1,20 +1,13 @@
 package es.pfsgroup.plugin.rem.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
+public class DtoModificarCompradores{
+	
 
-public class DtoModificarCompradores implements Serializable{
+	private Long id;
 	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3505228685454599940L;
-
-	private String id;
-	
-	private String idExpedienteComercial;
+	private Long idExpedienteComercial;
 	
 	private String codTipoPersona;
 	
@@ -170,19 +163,19 @@ public class DtoModificarCompradores implements Serializable{
 	
 	
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getIdExpedienteComercial() {
+	public Long getIdExpedienteComercial() {
 		return idExpedienteComercial;
 	}
 
-	public void setIdExpedienteComercial(String idExpedienteComercial) {
+	public void setIdExpedienteComercial(Long idExpedienteComercial) {
 		this.idExpedienteComercial = idExpedienteComercial;
 	}
 

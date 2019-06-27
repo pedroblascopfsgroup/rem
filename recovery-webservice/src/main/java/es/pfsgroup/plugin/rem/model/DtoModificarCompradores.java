@@ -1,12 +1,17 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
 
-public class DtoModificarCompradores {
+public class DtoModificarCompradores implements Serializable{
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3505228685454599940L;
+
 	private String id;
 	
 	private String idExpedienteComercial;

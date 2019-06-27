@@ -348,10 +348,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			}
 		}
 		ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(ofertaAceptada);
-		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 		Activo activo = tramite.getActivo();
 		if(!Checks.esNulo(activo)) {
 			activoApi.actualizarOfertasTrabajosVivos(activo);
+			activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
 		}
 	}
 

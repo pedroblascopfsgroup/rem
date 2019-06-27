@@ -222,13 +222,19 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				|| agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] || agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['RESTRINGIDA']))
 			{
 				if(agrupacion.get('cambioEstadoActivo')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
+					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.activo"));
+					me.up('activosdetalle').lookupController().refrescarActivo(true);
+					return false;
 				}
 				if(agrupacion.get('cambioEstadoPrecio')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
+					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.valor.precio"));
+					me.up('activosdetalle').lookupController().refrescarActivo(true);
+					return false;
 				}
 				if(agrupacion.get('cambioEstadoPublicacion')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+					me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+					me.up('activosdetalle').lookupController().refrescarActivo(true);
+					return false;
 				}
 				
 			} 

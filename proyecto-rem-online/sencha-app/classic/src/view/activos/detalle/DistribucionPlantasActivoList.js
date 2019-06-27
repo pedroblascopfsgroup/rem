@@ -5,29 +5,44 @@ Ext.define('HreRem.view.activos.detalle.DistribucionPlantasActivoList', {
 	idPrincipal : 'activo.id',
 	scrollable	: 'y',
 	requires: ['HreRem.view.activos.detalle.AnyadirNuevaDistribucionActivo'],
-	minHeight: 20,
-	
-	
-	
+	minHeight: 20,	
 	
 	features: [{
         ftype: 'grouping',
-        groupHeaderTpl: 'Planta {[values.rows[0].data.numPlanta]} ({rows.length} estancia{[values.rows.length > 1 ? "s" : ""]})',
+        groupHeaderTpl: '{[values.rows[0].data.numPlanta == 0 ? "Planta Baja" : values.rows[0].data.numPlanta + "&ordf; Planta"]} ({rows.length} estancia{[values.rows.length > 1 ? "s" : ""]})',
         hideGroupedHeader: true,
         startCollapsed: true,
         enableGroupingMenu: false,
         id: 'distribucionGrouping'
     }],
     listeners: {
-        groupclick: function (view, node, group, e, eOpts) {
-        	view.getSelectionModel().deselectAll();  
-        	}
+	    groupclick: function (view, node, group, e, eOpts) {
+	    	view.getSelectionModel().deselectAll();  
+	    },
+    	boxready: function(){
+    		var me = this;
+            me.setStore(Ext.create('Ext.data.Store',{
+            	model: 'HreRem.model.Distribuciones',
+    			 proxy: {
+    			    type: 'uxproxy',
+    				remoteUrl: 'activo/getListDistribucionesById',
+    				extraParams: {id: me.lookupViewModel('activodetalle').get('activo.id')}
+    			 },
+    			 groupField: 'numPlanta',
+    			 listeners:{
+    		          load:function(){
+    		        	  	me.relayEvents(this,['storeloadsuccess']);
+    		               this.fireEvent('storeloadsuccess');
+    		          }
+    		     }
+                
+           }).load());
+    	},
+    	storeloadsuccess: function() {
+            this.view.getFeature('distribucionGrouping').startCollapsed = true;
+       }
     },			
-	
-    bind: {
-        store: '{storeDistribuciones}'
-    },
-    
+
     initComponent: function () {
         
         var me = this; 
@@ -63,10 +78,8 @@ Ext.define('HreRem.view.activos.detalle.DistribucionPlantasActivoList', {
 					}
 				}     
 		        
-        ]; 
-		
-        me.callParent(); 
-        
+        ];         		
+        me.callParent();      
     },
     
 

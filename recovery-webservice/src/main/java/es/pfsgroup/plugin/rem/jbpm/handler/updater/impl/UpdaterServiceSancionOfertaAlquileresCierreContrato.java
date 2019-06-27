@@ -21,6 +21,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -46,13 +47,15 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-    
 	
     @Autowired
 	private ApiProxyFactory proxyFactory;
     
     @Autowired
     private ActivoApi activoApi;
+    
+    @Autowired
+	private ActivoAdapter activoAdapter;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresCierreContrato.class);
     
@@ -142,6 +145,8 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 			expedienteComercialApi.enviarCorreoAsegurador(expedienteComercial.getId());
 		}
 		expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
+		
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 	}
 
 	public String[] getCodigoTarea() {

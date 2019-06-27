@@ -1131,7 +1131,9 @@ public interface ActivoApi {
 
 	public boolean isActivoBloqueadoGencat(Activo activo);
 
-	
+
+	public boolean isPisoPiloto(Activo activo);
+
 	/**
 	 * Devuelve la calificacion negativa de un activo a partir de un motivo
 	 * @param idActivo

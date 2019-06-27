@@ -3124,6 +3124,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public boolean isPisoPiloto(Activo activo) {
+		boolean pisoPiloto = false;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoId", activo.getId());
+		VActivosAgrupacion activoPisoPiloto = genericDao.get(VActivosAgrupacion.class, filtro);
+
+		if(!Checks.esNulo(activoPisoPiloto)) {
+			pisoPiloto = true;
+		}
+
+		return pisoPiloto;
+	}
+
+	@Override
 	public boolean necesitaDocumentoInformeOcupacion(Activo activo)
 	{
 		ActivoSituacionPosesoria activoSitPos = activo.getSituacionPosesoria();

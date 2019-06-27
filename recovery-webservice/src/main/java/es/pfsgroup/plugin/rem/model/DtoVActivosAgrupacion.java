@@ -35,6 +35,7 @@ public class DtoVActivosAgrupacion extends WebDto {
 	private String puerta;
 	private String publicado;
 	private Boolean estadoSituacionComercial;
+	private Boolean esPisoPiloto;
 	
 	public Long getId() {
 		return id;
@@ -188,5 +189,11 @@ public class DtoVActivosAgrupacion extends WebDto {
 	public void setSubtipoActivoDesc(String subtipoActivoDesc) {
 		this.subtipoActivo = subtipoActivoDesc;
 	}
-	
+
+	public Boolean getEsPisoPiloto() {
+		return esPisoPiloto;
+	}
+	public void setEsPisoPiloto(Boolean esPisoPiloto) {
+		this.esPisoPiloto = esPisoPiloto;
+	}
 }

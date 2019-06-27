@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20190629
+--## FECHA_CREACION=20190630
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6841
@@ -2672,6 +2672,7 @@ begin
     <ul class="alternate" type="square">
     <li>Copia simple.</li>
     <li>Justificante ingreso importe compraventa.</li>
+    <li>Ficha escrituración inmueble.</li>
     </ul>
     <p style="margin-bottom: 10px">Adicionalmente, podrá; adjuntar los siguientes documentos:</p>
     <ul class="alternate" type="square">

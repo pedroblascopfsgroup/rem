@@ -68,6 +68,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Double totalImportePromocion;
 	private Double importeTotalPrinex;
 	private Boolean prorrata;
+	private Boolean gastoRefacturable;
 	
 
 	public Long getGastoProveedor() {
@@ -354,6 +355,13 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setImporteTotalPrinex(Double importeTotalPrinex) {
 		this.importeTotalPrinex = importeTotalPrinex;
 	}
+	public Boolean getGastoRefacturable() {
+		return gastoRefacturable;
+	}
+	public void setGastoRefacturable(Boolean gastoRefacturable) {
+		this.gastoRefacturable = gastoRefacturable;
+	}
+	
 	
    	
 }

@@ -20,6 +20,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -1011,7 +1013,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setIban(detalleGasto.getIbanAbonar());
 			dto.setTitularCuenta(detalleGasto.getTitularCuentaAbonar());
 			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
-
+			dto.setGastoRefacturable(detalleGasto.getGastoRefacturable());
+			
 			if (!Checks.esNulo(detalleGasto.getPagadoConexionBankia())) {
 				dto.setPagadoConexionBankia(detalleGasto.getPagadoConexionBankia() == 1 ? true : false);
 			}
@@ -3254,4 +3257,46 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		listTasasImpuestos = genericDao.getList(VTasasImpuestos.class);
 		return listTasasImpuestos;
 	}
+
+	@Override
+	public List<String> getGastosRefacturados(String listaGastos) {
+		List<VGastosRefacturados>  listaVistaGastos = new ArrayList<VGastosRefacturados>();
+		List<String> listaGastosFinales = new ArrayList<String>();
+
+		if(!Checks.esNulo(listaGastos)) {
+			listaVistaGastos = gastoDao.getGastosRefacturados(listaGastos);
+			if(!Checks.estaVacio(listaVistaGastos)) {
+				for (VGastosRefacturados vGastosRefacturado : listaVistaGastos) {
+					listaGastosFinales.add(vGastosRefacturado.getNumGastoHaya());
+				}
+			}
+		}
+		
+		return listaGastosFinales;
+	}
+	@Override
+	public List<String> getGastosNoRefacturados(String gastos, List<String> gastosRefacturables) {
+		List<String> gastosTotales = new ArrayList<String>();
+		List<String> gastosNoRefacturables = new ArrayList<String>();
+			gastosTotales= Arrays.asList(gastos.split(","));
+			for (String gasto : gastosTotales) {
+				 if(!gastosRefacturables.contains(gasto)){
+					 gastosNoRefacturables.add(gasto);
+				 }
+			}
+
+		return gastosNoRefacturables;
+	}
+	
+	@Override
+	public String [] getGastosRefacturadosPruebas(String listaGastos) {
+		
+		String [] pruebalistagastos;
+		
+		pruebalistagastos = listaGastos.split(",");
+		
+		return pruebalistagastos;
+	}
+	
+	
 }

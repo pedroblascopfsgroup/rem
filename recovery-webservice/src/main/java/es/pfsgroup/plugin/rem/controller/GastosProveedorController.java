@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -1000,5 +1002,27 @@ public class GastosProveedorController extends ParadiseJsonController {
 		ExcelReport report = new TasasImpuestosExcelReport(listaTasasImpuestos);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getGastosRefacturados(@RequestParam String gastos) {
+		ModelMap model = new ModelMap();
+		List<String> gastosRefacturables = new ArrayList<String>();
+		List<String> gastosNoRefacturables = new ArrayList<String>();
+		if(!Checks.esNulo(gastos)) {
+			gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos);
+			gastosNoRefacturables = gastoProveedorApi.getGastosNoRefacturados(gastos, gastosRefacturables);
+		}
+		try {			
+			model.put("refacturable", gastosRefacturables);
+			model.put("noRefacturable", gastosNoRefacturables);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);		
+		}
+
+		return createModelAndViewJson(model);
 	}
 }

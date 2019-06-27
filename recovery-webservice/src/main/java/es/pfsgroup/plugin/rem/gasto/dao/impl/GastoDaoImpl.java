@@ -24,9 +24,11 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
+import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
@@ -370,4 +372,20 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 		return gastoProveedor;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VGastosRefacturados> getGastosRefacturados(String listaGastos) {
+
+		String from = "select vGastosRefacturados from VGastosRefacturados vGastosRefacturados";
+		
+		HQLBuilder hb = new HQLBuilder(from);		
+		String whereCondition = "vGastosRefacturados.numGastoHaya in (" + listaGastos + ")";
+		hb.appendWhere(whereCondition);
+		
+		
+		return (List<VGastosRefacturados>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		
+	}
+	
 }

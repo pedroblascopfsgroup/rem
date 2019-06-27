@@ -2,7 +2,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gastodetalle',
     
-    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto','HreRem.view.common.adjuntos.AdjuntarDocumentoGasto'],
+    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto','HreRem.view.common.adjuntos.AdjuntarDocumentoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGrid'],
     
     control: {
     	
@@ -312,6 +312,84 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 	},
 	
+	buscarGastosRefacturables: function(field, e){
+		var me= this;
+		var url = $AC.getRemoteUrl('gastosproveedor/getGastosRefacturados');
+		
+		var gastos= field.getValue();
+
+		Ext.Ajax
+		.request({
+			url : url,
+			params : {
+				gastos : gastos
+			},
+			success : function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				var gastosRefacturables = data.refacturable;
+				var gastosNoRefacturables= data.noRefacturable;
+			
+				var grid = me.lookupReference("gastoRefacturadoGrid");
+				
+				/*
+				
+				var arrayStoresCombos= new Array();
+				
+				
+				for(var i = 0; i < gastosNoRefacturables.length; i++){
+					arrayStoresCombos.push(gastosNoRefacturables[i]);
+				}
+				
+				arrayStoresCombos;	
+				*/
+				
+				var arrayCodVal= new Array();
+				
+				for(j=0;j < gastosRefacturables.length;j++){				
+					var ArrayvaloresCombo=  gastosRefacturables[j].split(',');
+					
+					var idCombo = j;
+					var codigo= ArrayvaloresCombo[0];
+					var valor= "y";
+					
+					arrayCodVal.push({idCombo:idCombo, codigo: codigo, valor: valor});
+				}
+				
+				for(j=0;j < gastosNoRefacturables.length;j++){				
+					var ArrayvaloresCombo=  gastosNoRefacturables[j].split(',');
+					
+					var idCombo = j + gastosRefacturables.length;
+					var idGasto= ArrayvaloresCombo[0];
+					var gastoRefacturable= "n";
+					
+					arrayCodVal.push({idCombo:idCombo, idGasto: idGasto, gastoRefacturable: gastoRefacturable});
+				}
+				var myStore = new Ext.data.JsonStore({
+						fields: ['idCombo','idGasto', 'gastoRefacturable'],
+						idIndex: 0,
+						data: arrayCodVal
+				});
+				
+				var arrayStoresCombo2s= new Array();
+				 arrayStoresCombo2s.push(myStore);
+				 grid.getStore().data.items.push(arrayCodVal);
+				 grid.setData(arrayCodVal);
+
+				 //grid.getStore().data.items.push(myStore);
+				
+
+			},
+			failure : function(response) {
+				me.fireEvent("errorToast", HreRem
+						.i18n("msg.operacion.ko"));
+			},
+			callback : function(options, success,
+					response) {
+			}
+
+		});
+	},
+
 	buscarPropietario: function(field, e){
 		
 		var me= this;

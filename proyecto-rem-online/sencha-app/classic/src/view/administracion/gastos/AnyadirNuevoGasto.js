@@ -2,7 +2,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
     extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'anyadirnuevogasto',
     layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() / 3,    
+    width	: Ext.Element.getViewportWidth() / 2.2,    
         
     parent: null,
     		
@@ -20,7 +20,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
         type: 'gastodetalle'
     },
     
-    requires: ['HreRem.model.GastoProveedor'],
+    requires: ['HreRem.model.GastoProveedor', 'HreRem.view.administracion.gastos.GastoRefacturadoGrid'],
     
     listeners: {    
 		boxready: function(window) {
@@ -91,24 +91,26 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 									layout: {
 									        type: 'table',
 									        // The total column count must be specified here
-									        columns: 1,
+									        columns: 2,
 									        trAttrs: {height: '45px', width: '100%'},
 									        tdAttrs: {width: '100%'},
 									        tableAttrs: {
 									            style: {
-									                width: '100%'
+									                width: '90%'
 												}
 									        }
 									},
 									defaultType: 'textfieldbase',
 									collapsed: false,
-									scrollable	: 'y',   				
+									scrollable	: 'y', 
+									align:'left',
 							        items: [
-							        
 												{
 													xtype: 'textfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
-													reference: 'buscadorNifEmisorField',
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),
+													colspan:1,
+													width: '500px',
+													reference: 'buscadorNifEmisorField',	
 													readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
 													triggers: {														
 															buscarEmisor: {
@@ -133,10 +135,22 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 												        	}
 												    },
 												    publishes: 'value'
-								                },	
+								                },
+								                /////	columna2
+								                {
+								                	xtype:'checkboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
+													reference: 'checkboxActivoRefacturable',
+													colspan:1,
+													name: 'nombrePropietario',
+													bind:'{gasto.gastoRefacturable}',			
+													width: '500px'
+												},
+												////
 												{
 													xtype: 'comboboxfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.gasto.emisor'),													
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.emisor'),	
+													colspan:1,
 													reference: 'comboProveedores',
 													allowBlank: false,
 													editable: false,
@@ -161,10 +175,46 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 									            		        '{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion} - {estadoProveedorDescripcion}',
 									            		    '</tpl>'
 									            	)
-							            	    },					        
+							            	    },
+							            	    /////	columna2
+								                {
+													xtype: 'textfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.gastos.a.refacturar'),
+													width: '500px',
+													colspan:1,
+													reference: 'gastosArefacturar',	
+													triggers: {														
+															buscarEmisor: {
+													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+													            handler: 'buscarGastosRefacturables'
+													        }
+													        
+													},
+													cls: 'searchfield-input sf-con-borde',
+													enableKeyEvents: true,
+											        listeners: {
+												        	specialKey: function(field, e) {
+												        		if (e.getKey() === e.ENTER) {
+												        			field.lookupController().buscarProveedor(field);											        			
+												        		}
+												        	},
+												        	change: function(field, newvalue) {										        		
+												        		if(Ext.isEmpty(newvalue)) {
+												        			field.up("form").down("[reference=comboProveedores]").reset()
+												        		}
+												        	
+												        	}
+												    },
+												    bind: {
+														disabled: '{checkboxActivoRefacturable.checked}'
+													},
+												    publishes: 'value'
+												},
+												////
 												{ 
 													xtype: 'comboboxfieldbase',
 									               	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
+									               	colspan:1,
 									               	reference: 'tipoGasto',
 					        						chainedStore: 'comboSubtipoGasto',
 													chainedReference: 'subtipoGastoCombo',
@@ -177,9 +227,25 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 									            	},
 										         	allowBlank: false
 										    	},
+										    	 /////	columna2
+								                {
+													
+													//fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.propietario'),
+													xtype: 'gastoRefacturadoGrid', 
+													width: '400px',
+													colspan: 1,
+													rowspan: 9,
+													reference: 'gastoRefacturadoGrid',
+													bind: {
+														disabled: '{checkboxActivoRefacturable.checked}'
+													}
+											
+												},
+												////
 											    { 
 													xtype: 'comboboxfieldbase',
 									               	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
+									               	colspan:2,
 									               	reference: 'subtipoGastoCombo',
 											      	bind: {
 										           		store: '{comboSubtiposNuevoGasto}',
@@ -191,11 +257,13 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							            	    {
 							            	    	xtype: 'datefieldbase',
 							            	    	fieldLabel: HreRem.i18n('fieldlabel.fecha.emision'),
+							            	    	colspan:2,
 													bind:		'{gastoNuevo.fechaEmision}',
 													allowBlank: false
 							            	    },
 							            	    {
 				    					        	fieldLabel:  HreRem.i18n('fieldlabel.referencia.emisor'),
+				    					        	colspan:2,
 				    					        	bind: {
 				    				            		value: '{gastoNuevo.referenciaEmisor}'
 				    				            	},
@@ -205,6 +273,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							            	    {
 													xtype: 'comboboxfieldbase',
 				    					        	fieldLabel:  HreRem.i18n('fieldlabel.destinatario.gasto'),
+				    					        	colspan:2,
 				    					        	store: storeDestinatarios,
 				    					        	bind: {
 				    				            		value: '{gastoNuevo.destinatarioGastoCodigo}'
@@ -232,6 +301,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 												{
 													xtype: 'textfieldbase',
 													fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.propietario'),
+													colspan:2,
 													name: 'buscadorNifPropietarioField',
 													disabled: true,
 													bind: {
@@ -246,7 +316,6 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													        }
 													},
 													cls: 'searchfield-input sf-con-borde',
-													emptyText:  HreRem.i18n('txt.buscar.propietario'),
 													enableKeyEvents: true,
 											        listeners: {
 											        	specialKey: function(field, e) {
@@ -267,6 +336,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 							                	{
 													xtype: 'textfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.propietario'),
+													colspan:2,
 													name: 'nombrePropietario',
 													disabled: true,
 													readOnly: true,

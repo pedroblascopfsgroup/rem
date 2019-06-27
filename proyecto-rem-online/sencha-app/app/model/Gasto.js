@@ -114,6 +114,10 @@ Ext.define('HreRem.model.Gasto', {
 				return docName;
 			},
 			depends: 'docIdentifPropietario'
+		},
+		{
+			name: 'gastoRefacturable',
+			type:'boolean'
 		}
     ],
 

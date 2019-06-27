@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20190628
+--## FECHA_CREACION=20190629
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6841
@@ -1310,7 +1310,7 @@ begin
   TAP(5).tap_field('TAP_CODIGO') := 'T017_InformeJuridico';
   TAP(5).tap_field('TAP_VIEW') := NULL;
   TAP(5).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente''''';
-  TAP(5).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkFechaEmisionInformeJuridico() ? mismoNumeroAdjuntosComoActivosExpedienteUGValidacion("10", "E") : "No todos los activos tienen fecha de emisión de informe en el listado de activos del expediente comercial"';
+  TAP(5).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkFechaEmisionInformeJuridico() ? mismoNumeroAdjuntosComoActivosExpedienteUGValidacion("10", "E") : "No todos los activos tienen fecha de emisi&oacute;n de informe en el listado de activos del expediente comercial"';
   TAP(5).tap_field('TAP_SCRIPT_DECISION') := null;
   TAP(5).tap_field('DD_TPO_ID_BPM') := null;
   TAP(5).tap_field('TAP_SUPERVISOR') := 0;
@@ -2375,8 +2375,8 @@ begin
 ------------------------TAP TAREA PROCEDIMIENTO-----------------------------
     TAP(14).tap_field('TAP_CODIGO') := 'T017_PosicionamientoYFirma';
     TAP(14).tap_field('TAP_VIEW') := NULL;
-    TAP(14).tap_field('TAP_SCRIPT_VALIDACION') := '!tieneTramiteGENCATVigenteByIdActivo() ? checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo está vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un trámite GENCAT en curso.'''''; 
-    TAP(14).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkExpedienteBloqueado() ? (valores[''''T017_PosicionamientoYFirma''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener algún posicionamiento'''') : null) : ''''El expediente no está bloqueado''''';
+    TAP(14).tap_field('TAP_SCRIPT_VALIDACION') := '!tieneTramiteGENCATVigenteByIdActivo() ? checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la política corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participación de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un tr&aacute;mite GENCAT en curso.'''''; 
+    TAP(14).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkExpedienteBloqueado() ? (valores[''''T017_PosicionamientoYFirma''''][''''comboFirma''''] == DDSiNo.SI ? (checkPosicionamiento() ? null : ''''El expediente debe tener algún posicionamiento'''') : null) : ''''El expediente no est&aacute; bloqueado''''';
     TAP(14).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_PosicionamientoYFirma''''][''''comboFirma''''] == DDSiNo.SI ? ''''Firmado'''' : ''''NoFirmado''''';
     TAP(14).tap_field('DD_TPO_ID_BPM') := null;
     TAP(14).tap_field('TAP_SUPERVISOR') := 0;

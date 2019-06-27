@@ -44,32 +44,32 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-				--    TIPO		SUBTIPO		PP A0AANT PP A1AANT	 PP A0AACT	PP A1AACT  CODIGO CARTERA    PRO_ID
-		T_TIPO_DATA('14'	,'57',      '906245',       '',     '906245',       '',     '03',				'3781'),
-		T_TIPO_DATA('14'	,'58',      '906247',       '',     '906247',       '',     '02',				'3780'),
-		T_TIPO_DATA('14'	,'61',      '906245',       '',     '906245',       '',     '03',				'3781'),
-		T_TIPO_DATA('14'	,'62',      '906245',       '',     '906245',       '',     '03',				'3781'),
-		T_TIPO_DATA('14'	,'63',      '906245',       '',     '906245',       '',     '03',				'3781'),
-		T_TIPO_DATA('14'	,'68',      '906245',       '',     '906245',       '',     '03',				'3781'),
-		T_TIPO_DATA('14'	,'69',      '906245',       '',     '906245',       '',     '03',				'3781'),
+				--    TIPO		SUBTIPO		PP A0AANT PP A1AANT	 PP A0AACT	PP A1AACT  CODIGO CARTERA    PRO_NOMBRE
+		T_TIPO_DATA('14'	,'57',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
+		T_TIPO_DATA('14'	,'58',      '906247',       '',     '906247',       '',     '02',				'Refacturación Sareb'),
+		T_TIPO_DATA('14'	,'61',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
+		T_TIPO_DATA('14'	,'62',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
+		T_TIPO_DATA('14'	,'63',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
+		T_TIPO_DATA('14'	,'68',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
+		T_TIPO_DATA('14'	,'69',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
 			
-		T_TIPO_DATA('15'	,'70',      '906247',       '',     '906247',       '',     '02',				'3780'),
-		T_TIPO_DATA('15'	,'71',      '906247',       '',     '906247',       '',     '02',				'3780'),
-		T_TIPO_DATA('15'	,'72',      '906247',       '',     '906247',       '',     '02',				'3780'),
-		T_TIPO_DATA('15'	,'73',      '906247',       '',     '906247',       '',     '02',				'3780'),
-		T_TIPO_DATA('15'	,'74',      '906247',       '',     '906247',       '',     '02',				'3780'),
-        T_TIPO_DATA('15'	,'74',      '906245',       '',     '906245',       '',     '03',				'3781'),
-		T_TIPO_DATA('15'	,'75',      '906247',       '',     '906247',       '',     '02',				'3780'),
-        T_TIPO_DATA('15'	,'75',      '906245',       '',     '906245',       '',     '03',				'3781'),
-		T_TIPO_DATA('15'	,'76',      '906247',       '',     '906247',       '',     '02',				'3780'),
-        T_TIPO_DATA('15'	,'76',      '906245',       '',     '906245',       '',     '03',				'3781'),
-		T_TIPO_DATA('15'	,'79',      '906247',       '',     '906247',       '',     '02',				'3780'),
-        T_TIPO_DATA('15'	,'79',      '906245',       '',     '906245',       '',     '03',				'3781'),
-        T_TIPO_DATA('15'	,'80',      '906248',       '',     '906248',       '',     '02',				'3780'),
+		T_TIPO_DATA('15'	,'70',      '906247',       '',     '906247',       '',     '02',				'Refacturación Sareb'),
+		T_TIPO_DATA('15'	,'71',      '906247',       '',     '906247',       '',     '02',				'Refacturación Sareb'),
+		T_TIPO_DATA('15'	,'72',      '906247',       '',     '906247',       '',     '02',				'Refacturación Sareb'),
+		T_TIPO_DATA('15'	,'73',      '906247',       '',     '906247',       '',     '02',				'Refacturación Sareb'),
+		T_TIPO_DATA('15'	,'74',      '906247',       '',     '906247',       '',     '02',				'Refacturación Sareb'),
+        T_TIPO_DATA('15'	,'74',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
+		T_TIPO_DATA('15'	,'75',      '906247',       '',     '906247',       '',     '02',				'Refacturación Sareb'),
+        T_TIPO_DATA('15'	,'75',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
+		T_TIPO_DATA('15'	,'76',      '906247',       '',     '906247',       '',     '02',				'Refacturación Sareb'),
+        T_TIPO_DATA('15'	,'76',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
+		T_TIPO_DATA('15'	,'79',      '906247',       '',     '906247',       '',     '02',				'Refacturación Sareb'),
+        T_TIPO_DATA('15'	,'79',      '906245',       '',     '906245',       '',     '03',				'Central técnica Bankia'),
+        T_TIPO_DATA('15'	,'80',      '906248',       '',     '906248',       '',     '02',				'Refacturación Sareb'),
 		
 
 			
-		T_TIPO_DATA('16'	,'85',      '906246',       '',     '906246',       '',     '02',				'3780')
+		T_TIPO_DATA('16'	,'85',      '906246',       '',     '906246',       '',     '02',				'Refacturación Sareb')
 
 
 		); 
@@ -103,7 +103,7 @@ BEGIN
 						INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_ID = CPP.DD_STG_ID
 						INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID
 						WHERE CRA.DD_CRA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(7)) ||'''
-						AND PRO.PRO_ID = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''
+						AND PRO.PRO_ID = (SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||''') 
 						AND EJE.EJE_ANYO = '''||V_EJE_ANYO||'''
 						AND STG.DD_STG_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''
 						AND TGA.DD_TGA_CODIGO ='''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''
@@ -119,7 +119,7 @@ BEGIN
 					(SELECT EJE_ID FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE WHERE EJE.EJE_ANYO = '''||V_EJE_ANYO||'''),
 					(SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG WHERE STG.DD_STG_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''' AND STG.DD_TGA_ID = (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA WHERE TGA.DD_TGA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''')),
 					(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(7)) ||'''),
-					(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_ID = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''), 
+					(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''), 
 					'''|| TRIM(V_TMP_TIPO_DATA(3)) ||''',
 					0,
 					''HREOS-6680'',
@@ -147,7 +147,7 @@ BEGIN
 						INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_ID = CPP.DD_STG_ID
 						INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID
 						WHERE CRA.DD_CRA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(7)) ||'''
-						AND PRO.PRO_ID= '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''
+						AND PRO.PRO_ID= (SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||''') 
 						AND EJE.EJE_ANYO = '''||V_EJE_ANYO||'''
 						AND STG.DD_STG_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''
 						AND TGA.DD_TGA_CODIGO ='''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''
@@ -163,7 +163,7 @@ BEGIN
 						(SELECT EJE_ID FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE WHERE EJE.EJE_ANYO = '''||V_EJE_ANYO||'''),
 						(SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG WHERE STG.DD_STG_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''' AND STG.DD_TGA_ID = (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA WHERE TGA.DD_TGA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''')),
 						(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(7)) ||'''), 
-						(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_ID= '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''), 
+						(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE= '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''), 
 						'''|| TRIM(V_TMP_TIPO_DATA(4)) ||''',
 						0,
 						''HREOS-6680'',
@@ -190,11 +190,11 @@ BEGIN
 						FROM '||V_ESQUEMA||'.CPP_CONFIG_PTDAS_PREP CPP
 						INNER JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ID = CPP.EJE_ID
 						INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = CPP.DD_CRA_ID
-						INNER JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID= CPP.PRO_ID
+						INNER JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = CPP.PRO_ID
 						INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_ID = CPP.DD_STG_ID
 						INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID
 						WHERE CRA.DD_CRA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(7)) ||'''
-						AND PRO.PRO_ID= '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''
+						AND PRO.PRO_ID= (SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||''') 
 						AND EJE.EJE_ANYO = '''||V_EJE_ANYO||'''
 						AND STG.DD_STG_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''
 						AND TGA.DD_TGA_CODIGO ='''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''
@@ -210,7 +210,7 @@ BEGIN
 					(SELECT EJE_ID FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE WHERE EJE.EJE_ANYO = '''||V_EJE_ANYO||'''),
 					(SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG WHERE STG.DD_STG_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''' AND STG.DD_TGA_ID = (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA WHERE TGA.DD_TGA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''')),
 					(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(7)) ||'''), 
-					(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_ID= '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''), 
+					(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE= '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''), 
 					'''|| TRIM(V_TMP_TIPO_DATA(5)) ||''',
 					0,
 					''HREOS-6680'',
@@ -237,7 +237,7 @@ BEGIN
 						INNER JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_STG_ID = CPP.DD_STG_ID
 						INNER JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID
 						WHERE CRA.DD_CRA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(7)) ||'''
-						AND PRO.PRO_ID = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''
+						AND PRO.PRO_ID = (SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||''') 
 						AND EJE.EJE_ANYO = '''||V_EJE_ANYO||'''
 						AND STG.DD_STG_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''
 						AND TGA.DD_TGA_CODIGO ='''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''
@@ -253,7 +253,7 @@ BEGIN
 						(SELECT EJE_ID FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE WHERE EJE.EJE_ANYO = '''||V_EJE_ANYO||'''),
 						(SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG WHERE STG.DD_STG_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''' AND STG.DD_TGA_ID = (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA WHERE TGA.DD_TGA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''')),
 						(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(7)) ||'''), 
-						(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_ID = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''), 
+						(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE = '''|| TRIM(V_TMP_TIPO_DATA(8)) ||'''), 
 						'''|| TRIM(V_TMP_TIPO_DATA(6)) ||''',
 						0,
 						''HREOS-6680'',

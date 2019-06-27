@@ -44,34 +44,34 @@ DECLARE
 
 
 		-- INFORMES TÉCNICOS Y OBTENCIÓN DOCUMENTOS			
-		T_CUENTA('58',                                                    '02',               62300043,     		2019,      0,		    '14',                  '3780'),
-        T_CUENTA('57',                                                    '03',               62300044,     		2019,      0,			'14',                  '3781'),
-		T_CUENTA('61',                                                    '03',               62300044,     		2019,      0,			'14',                  '3781'),
-		T_CUENTA('62',                                                    '03',               62300044,     		2019,      0,			'14',                  '3781'),
-		T_CUENTA('63',                                                    '03',               62300044,     		2019,      0,			'14',                  '3781'),
-		T_CUENTA('68',                                                    '03',               62300044,     		2019,      0,			'14',                  '3781'),
-		T_CUENTA('69',                                                    '03',               62300044,     		2019,      0,			'14',                  '3781'),
+		T_CUENTA('58',                                                    '02',               62300043,     		2019,      0,		    '14',                  'Refacturación Sareb'),
+        T_CUENTA('57',                                                    '03',               62300044,     		2019,      0,			'14',                  'Central técnica Bankia'),
+		T_CUENTA('61',                                                    '03',               62300044,     		2019,      0,			'14',                  'Central técnica Bankia'),
+		T_CUENTA('62',                                                    '03',               62300044,     		2019,      0,			'14',                  'Central técnica Bankia'),
+		T_CUENTA('63',                                                    '03',               62300044,     		2019,      0,			'14',                  'Central técnica Bankia'),
+		T_CUENTA('68',                                                    '03',               62300044,     		2019,      0,			'14',                  'Central técnica Bankia'),
+		T_CUENTA('69',                                                    '03',               62300044,     		2019,      0,			'14',                  'Central técnica Bankia'),
 	
 
 		-- ACTUACIÓN TÉCNICA Y MANTENIMIENTO			
-		T_CUENTA('70',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-		T_CUENTA('71',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-		T_CUENTA('72',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-		T_CUENTA('73',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-		T_CUENTA('74',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-		T_CUENTA('75',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-		T_CUENTA('76',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-		T_CUENTA('79',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-		T_CUENTA('80',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-		T_CUENTA('81',                                                    '02',               62300043,     		2019,      0,			'15',                   '3780'),
-        T_CUENTA('74',                                                    '03',               62300044,     		2019,      0,			'15',                   '3781'),
-		T_CUENTA('75',                                                    '03',               62300044,     		2019,      0,			'15',                   '3781'),
-		T_CUENTA('76',                                                    '03',               62300044,     		2019,      0,			'15',                   '3781'),
-		T_CUENTA('79',                                                    '03',               62300044,     		2019,      0,			'15',                   '3781'),
+		T_CUENTA('70',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+		T_CUENTA('71',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+		T_CUENTA('72',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+		T_CUENTA('73',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+		T_CUENTA('74',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+		T_CUENTA('75',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+		T_CUENTA('76',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+		T_CUENTA('79',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+		T_CUENTA('80',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+		T_CUENTA('81',                                                    '02',               62300043,     		2019,      0,			'15',                   'Refacturación Sareb'),
+        T_CUENTA('74',                                                    '03',               62300044,     		2019,      0,			'15',                   'Central técnica Bankia'),
+		T_CUENTA('75',                                                    '03',               62300044,     		2019,      0,			'15',                   'Central técnica Bankia'),
+		T_CUENTA('76',                                                    '03',               62300044,     		2019,      0,			'15',                   'Central técnica Bankia'),
+		T_CUENTA('79',                                                    '03',               62300044,     		2019,      0,			'15',                   'Central técnica Bankia'),
 		
 
 		-- VIGILANCIA Y SEGURIDAD			
-		T_CUENTA('85',                                                    '02',               62300043,     		2019,      0,			'16',                   '3780')
+		T_CUENTA('85',                                                    '02',               62300043,     		2019,      0,			'16',                   'Refacturación Sareb')
 
     );
     V_TMP_CUENTA T_CUENTA;
@@ -105,7 +105,7 @@ BEGIN
 															FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO 
 															WHERE DD_TGA_CODIGO = '''||TRIM(V_TMP_CUENTA(6))||'''))
                     AND DD_CRA_ID = (SELECT DD_CRA_ID  FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_CUENTA(2))||''')
-					AND PRO_ID = '||TRIM(V_TMP_CUENTA(7))||'
+					AND PRO_ID = (SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE = '''|| TRIM(V_TMP_CUENTA(7)) ||''')
                     AND CCC_CUENTA_CONTABLE = '||TRIM(V_TMP_CUENTA(3))||'
                     AND EJE_ID = '||V_EJE_ID||'
                     AND CCC_ARRENDAMIENTO = '||TRIM(V_TMP_CUENTA(5))||'';
@@ -140,7 +140,7 @@ BEGIN
 												FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO 
 												WHERE DD_TGA_CODIGO = '''||TRIM(V_TMP_CUENTA(6))||'''))
                             ,  (SELECT DD_CRA_ID  FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_CUENTA(2))||''')
-							, '||TRIM(V_TMP_CUENTA(7))||'
+							,  (SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO WHERE PRO.PRO_NOMBRE = '''|| TRIM(V_TMP_CUENTA(7)) ||''')
                             , 0
                             , '''||V_USUARIO||'''
                             , SYSDATE

@@ -6,11 +6,13 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -29,6 +31,9 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private RemUtils remUtils;
 
 	@Override
 	public String[] getKeys() {
@@ -60,16 +65,22 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 					|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera.getCodigo())) {
 
 				Filter filtroTipoGestor = null;
+				Filter filtroUsuarioPorDefecto = null;
 				if ((CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea)
 						|| CODIGO_T008_OBTENCION_DOCUMENTO.equals(codTarea)) 
 						&& gestorActivoApi.existeGestorEnActivo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_GESTORIA_CEDULAS)) {
 					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
 								GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
-				}else if(CODIGO_T008_ANALISIS_PETICION.equals(codTarea) && (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())
-						|| DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
+				}else if(CODIGO_T008_ANALISIS_PETICION.equals(codTarea) && (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
 					if(gestorActivoApi.existeGestorEnActivo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ACTIVO))
 						filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
 								GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+				}else if(CODIGO_T008_ANALISIS_PETICION.equals(codTarea) && (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))) {
+					filtroUsuarioPorDefecto = genericDao.createFilter(FilterType.EQUALS ,"username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO));
+					Usuario usuPorDefecto = genericDao.get(Usuario.class, filtroUsuarioPorDefecto);
+					if (!Checks.esNulo(usuPorDefecto)) {
+						return usuPorDefecto;
+					}
 				}else {
 					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
 							GestorActivoApi.CODIGO_GESTOR_ADMISION);

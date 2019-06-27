@@ -50,7 +50,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', {
 				text: HreRem.i18n('btn.finalizarBtnText'),
 				handler: 'onClickContinuar',
 				reference: 'btnFinalizar',
-				disabled: true
+				disabled: false
 			}
 		];
 

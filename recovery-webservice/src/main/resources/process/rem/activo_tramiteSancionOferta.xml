@@ -29,7 +29,7 @@
 		<transition to="T013_InformeJuridico" name="informe"></transition>
 	</fork>
 	
-	<decision name="nodoOrigenTramiteActuacionTecnicaDecision" expression="#{nodoOrigenTramiteActuacionTecnicaDecision}">
+	<decision name="nodoOrigenTramiteSancionOFertaDecision" expression="#{nodoOrigenTramiteSancionOFertaDecision}">
 		<transition to="T013_DefinicionOferta" name="NO"></transition>
 		<transition to="forkYubai" name="SI"></transition>
 	</decision>

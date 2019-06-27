@@ -18,7 +18,7 @@ public class TramiteSancionOfertaNodoOcultoHandler extends ActivoBaseActionHandl
 		DDCartera cartera = tramite.getActivo().getCartera();
 		DDSubcartera subcartera = tramite.getActivo().getSubcartera();
 		if(!Checks.esNulo(cartera) && !Checks.esNulo(subcartera)){
-			if((DDSubcartera.CODIGO_YUBAI.equals(subcartera.getCodigo()))){
+			if((DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(cartera.getCodigo())) && (DDSubcartera.CODIGO_YUBAI.equals(subcartera.getCodigo()))){
 				normal = "SI";
 			}
 		}

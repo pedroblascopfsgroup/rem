@@ -2003,7 +2003,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public VBusquedaDatosCompradorExpediente getDatosCompradorById(String idCom, String idExp) {
+	public VBusquedaDatosCompradorExpediente getDatosCompradorById(Long idCom, Long idExp) {
 		Filter filtroCom = genericDao.createFilter(FilterType.EQUALS, "id", idCom);
 		Filter filtroEco = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial", idExp);
 
@@ -2012,7 +2012,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 
 	@Override
-	public VBusquedaDatosCompradorExpediente getDatCompradorById(String idCom) {
+	public VBusquedaDatosCompradorExpediente getDatCompradorById(Long idCom) {
 		Filter filtroCom = genericDao.createFilter(FilterType.EQUALS, "id", idCom);
 
 		return genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroCom);
@@ -3513,7 +3513,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
 		Comprador comprador = genericDao.get(Comprador.class, filtro);
 
 		if (!Checks.esNulo(comprador)) {
@@ -3659,12 +3659,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
-			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador",
-					Long.parseLong(dto.getId()));
-			Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente",
-					Long.parseLong(dto.getIdExpedienteComercial()));
-			Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(dto.getIdExpedienteComercial()));
+			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", dto.getId());
+			Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente", dto.getIdExpedienteComercial());
+			Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpedienteComercial());
 
 			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
 					filtroExpedienteComercial);
@@ -4352,8 +4349,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento", dto.getNumDocumento());
 		Comprador compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
 
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id",
-				Long.parseLong(dto.getIdExpedienteComercial()));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpedienteComercial());
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		CompradorExpediente compradorExpediente = new CompradorExpediente();
 		compradorExpediente.setBorrado(false);
@@ -7689,13 +7685,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		try {
 			beanUtilNotNull.copyProperties(comprador, vista);
-		
+			String cartera = getCodigoCarteraExpediente(vista.getIdExpedienteComercial());
 			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
 			comprador.setCesionDatos(vista.getCesionDatos());
 			comprador.setComunicacionTerceros(vista.getComunicacionTerceros());
 			comprador.setTransferenciasInternacionales(vista.getTransferenciasInternacionales());
-			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
-			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()).equals(DDCartera.CODIGO_CARTERA_BANKIA));
+			comprador.setEntidadPropietariaCodigo(cartera);
+			comprador.setEsCarteraBankia(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera));
 			
 			if(comprador.getEsCarteraBankia()){
 				if(comprador.getEsBH()){
@@ -7751,27 +7747,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public Boolean esBH(String idExpediente) {
-		Long id = Long.parseLong(idExpediente);
+	public Boolean esBH(Long idExpediente) {
 
-		return DDSubcartera.CODIGO_BAN_BH.equals(getCodigoSubCarteraExpediente(id).getCodigo());
+		return DDSubcartera.CODIGO_BAN_BH.equals(getCodigoSubCarteraExpediente(idExpediente).getCodigo());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public String getCodigoCarteraExpediente(String idExpediente) {
-		Long id = Long.parseLong(idExpediente);
+	public String getCodigoCarteraExpediente(Long idExpediente) {
 		String cartera = null;
-
-		if (!Checks.esNulo(id)) {
-			DtoPage dto = this.getActivosExpediente(id);
-			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
-			if (!Checks.estaVacio(dtosActivos)) {
-				Activo primerActivo = activoApi.get(dtosActivos.get(0).getIdActivo());
-				if (!Checks.esNulo(primerActivo)) {
-					cartera = primerActivo.getCartera().getCodigo();
-				}
-			}
+		ExpedienteComercial expediente = null;
+		if (!Checks.esNulo(idExpediente)) {
+			expediente = findOne(idExpediente);
+//			DtoPage dto = this.getActivosExpediente(idExpediente);
+//			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
+//			if (!Checks.estaVacio(dtosActivos)) {
+//				Activo primerActivo = activoApi.get(dtosActivos.get(0).getIdActivo());
+//				if (!Checks.esNulo(primerActivo)) {
+//					cartera = primerActivo.getCartera().getCodigo();
+//				}
+//			}
+			if(!Checks.esNulo(expediente))
+				cartera = expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo();
 		}
 
 		return cartera;

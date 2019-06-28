@@ -724,6 +724,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
+			
+			// Comprobar que el precio de la oferta es inferior al mínimo del activo
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera())
+					&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
+
+				if (DDTipoOferta.CODIGO_VENTA.equals(tipoOferta)) {
+					Filter filtroMinVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
+							DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+					ActivoValoraciones precioMinVenta = genericDao.get(ActivoValoraciones.class, filtroActivo,
+							filtroMinVenta);
+					if (!Checks.esNulo(precioMinVenta) && !Checks.esNulo(precioMinVenta.getImporte()) 
+							&& !Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta() < precioMinVenta.getImporte()) {
+						throw new JsonViewerException("No se puede tramitar una oferta porque el precio es inferior al mínimo");
+					}
+					
+				} else if (DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta)) {
+					Filter filtroMinAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
+							DDTipoPrecio.CODIGO_TPC_MIN_AUT_PROP_RENTA);
+					ActivoValoraciones precioMinRenta = genericDao.get(ActivoValoraciones.class, filtroActivo,
+							filtroMinAlquiler);
+					if (!Checks.esNulo(precioMinRenta) && Checks.esNulo(precioMinRenta.getImporte()) 
+							&& !Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta() < precioMinRenta.getImporte()) {
+						throw new JsonViewerException("No se puede tramitar una oferta porque el precio es inferior al mínimo");
+					}
+				}
+			}
+			
 			if(DDTipoOferta.CODIGO_ALQUILER.equals(tipoOferta) && Checks.esNulo(activo.getTipoAlquiler())){
 				throw new JsonViewerException("El valor de Tipo de Alquiler del activo "+activo.getNumActivo()+" no permite la realización de una oferta");
 			}

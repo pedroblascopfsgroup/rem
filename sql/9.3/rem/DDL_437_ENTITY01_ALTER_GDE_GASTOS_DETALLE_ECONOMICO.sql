@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=Alvaro Garcia
---## FECHA_CREACION=20190625
+--## FECHA_CREACION=20190626
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.15
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6721
 --## PRODUCTO=NO
 --## Finalidad: Ampliar la tabla que contiene los datos del detalle económico del gasto

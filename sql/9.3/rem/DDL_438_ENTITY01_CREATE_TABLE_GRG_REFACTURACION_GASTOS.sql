@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=ALVARO GARCIA
---## FECHA_CREACION=20190627
+--## FECHA_CREACION=20190629
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.15
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6721
 --## PRODUCTO=NO
 --## Finalidad: DDL Creación de la tabla GRG_REFACTURACION_GASTOS
@@ -45,8 +45,8 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe.');
     ELSE
     -- Creamos la tabla
-        DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
-    V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+        	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
+    		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
                 (
 		    GRG_ID			NUMBER(16) NOT NULL,
                     GRG_GPV_ID                  NUMBER(16) NOT NULL,
@@ -70,6 +70,19 @@ BEGIN
 	
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_GRG_REFACTURACION_GASTOS... Secuencia creada correctamente.');
+
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.GRG_ID IS '' Id refacturacion de gasto''';
+    		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.GRG_GPV_ID IS '' Id gasto''';
+    		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.GRG_GPV_ID_REFACTURADO IS '' Id gasto refacturado''';
+    		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.USUARIOCREAR IS '' Usuario que crea el registro''';
+    		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FECHACREAR IS '' Fecha de creacion del registro''';
+    		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.USUARIOMODIFICAR IS '' Usuario que modifica el registro''';
+    		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FECHAMODIFICAR IS '' Fecha de modificacion del registro''';
+    		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.USUARIOBORRAR IS '' Usuario que borra el registro''';
+    		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FECHABORRAR IS '' Fecha de borrado del registro''';
+    		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.BORRADO IS '' Borrado logico del registro''';
+
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||' comentarios creados');
 
     END IF;
 	V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME=''UK_GRG_GPV_ID_BOR'' AND TABLE_NAME=''GRG_REFACTURACION_GASTOS''';

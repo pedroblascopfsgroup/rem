@@ -362,6 +362,7 @@ public class AgendaController extends TareaController {
 				for (int i = 0; i < listaTareas.size(); i++) {
 					TareaExterna tarea = listaTareas.get(i);
 					if (!Checks.esNulo(tarea)) {
+						expedienteComercialApi.finalizarTareaValidacionClientes(eco);
 						salto = adapter.saltoResolucionExpediente(tarea.getId());
 						break;
 					}

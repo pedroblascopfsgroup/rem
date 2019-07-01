@@ -135,21 +135,21 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		btnFinalizar = form.lookupReference('btnFinalizar');
 		btnSubirDoc = form.lookupReference('btnSubirDocumento');
 
-				
+				btnFinalizar.disable();	
 			if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
 				if(checkCesionDatos && btnSubirDoc.isDisabled()){
 					if(esInternacional){
 						if(checkTransInternacionales == "true"){
 							btnFinalizar.enable();
 						}else{
-							
+							btnFinalizar.disable();	
 						}
 					}else{
 						btnFinalizar.enable();
 					}
 				}
 			}else{
-					
+				btnFinalizar.disable();	
 			}
 
 		
@@ -173,13 +173,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		isDirty = me.hayCambios();
 		if(Ext.isEmpty(oldVal)){
 			me.oriCesionDatos = form.getForm().findField('cesionDatos').getValue();
-			
+			me.activarFinalizar(form,isDirty);
 		}else{
 			if(me.oriCesionDatos != newVal || 
 				me.oriComunicacionTerceros != form.getForm().findField('comunicacionTerceros').getValue() || 
 				me.oriTransferenciasInternacionales != form.getForm().findField('transferenciasInternacionales').getValue() ||
 				Ext.isEmpty(docOfertaComercial.getValue())){
-				
+				btnFinalizar.disable();
 			}else{
 				btnFinalizar.enable();
 			}
@@ -207,13 +207,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		isDirty = me.hayCambios();
 		if(Ext.isEmpty(oldVal)){
 			me.oriComunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue();
-			
+			me.activarFinalizar(form,isDirty);
 		}else{
 			if(me.oriComunicacionTerceros != newVal || 
 				me.oriCesionDatos != form.getForm().findField('cesionDatos').getValue() ||
 				me.oriTransferenciasInternacionales != form.getForm().findField('transferenciasInternacionales').getValue() ||
 				Ext.isEmpty(docOfertaComercial.getValue())){
-				
+				btnFinalizar.disable();
 			}else{
 				btnFinalizar.enable();
 			}
@@ -242,13 +242,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		isDirty = me.hayCambios();
 		if(Ext.isEmpty(oldVal)){
 			me.oriTransferenciasInternacionales = form.getForm().findField('transferenciasInternacionales').getValue();
-			
+			me.activarFinalizar(form,isDirty);
 		}else{
 			if(me.oriTransferenciasInternacionales != newVal || 
 				me.oriCesionDatos != form.getForm().findField('cesionDatos').getValue() ||
 				me.oriComunicacionTerceros != form.getForm().findField('comunicacionTerceros').getValue() || 
 				(esInternacional && checkTransInternacionales != "true")  || Ext.isEmpty(docOfertaComercial.getValue())){
-					
+					btnFinalizar.disable();
 			}else{
 				btnFinalizar.enable();
 			}
@@ -307,7 +307,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		if(!esInternacional || checkTransInternacionales=="true"){
 			btnFinalizar.enable();
 		}else{
-			
+			btnFinalizar.disable();
 		}
 
 		

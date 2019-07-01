@@ -190,8 +190,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public GastoProveedor findOne(Long id) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-
-		return genericDao.get(GastoProveedor.class, filtro);
+		Filter auditoria = genericDao.createFilter(FilterType.EQUALS, "gastoProveedorTrabajos.auditoria.borrado", false);
+		
+		return genericDao.get(GastoProveedor.class, filtro , auditoria );
 	}
 
 	@Override

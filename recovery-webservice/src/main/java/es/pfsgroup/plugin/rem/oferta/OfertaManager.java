@@ -2541,6 +2541,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				codigoOferta = oferta.getTipoOferta().getCodigo();
 			}
 		}
+		
+		String codLeadOrigin = null;
+		
+		if (!Checks.esNulo(oferta)) {
+			codLeadOrigin = oferta.getOrigenComprador().getCodigo();
+			
+		}
 
 		String tipoComercializar = null;
 		if (!Checks.esNulo(activo)) {
@@ -2549,11 +2556,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		} 
 		
+		String codTipoActivo = null;
+		if(!Checks.esNulo(activo.getTipoActivo())) {
+			codTipoActivo = activo.getTipoActivo().getCodigo();
+		}
+		
+		String codSubtipoActivo = null;
+		if(!Checks.esNulo(activo.getSubtipoActivo())) {
+			codSubtipoActivo = activo.getSubtipoActivo().getCodigo();
+		}
+		
 		ConsultaComisionDto consultaComisionDto = new ConsultaComisionDto();
 		consultaComisionDto.setAmount(importe);
-		consultaComisionDto.setLeadOrigin("01");  				//Habrá que cambiarlo por la variable leadOrigin.
+		consultaComisionDto.setLeadOrigin(codLeadOrigin);
 		consultaComisionDto.setOfferType(codigoOferta);
 		consultaComisionDto.setComercialType(tipoComercializar);
+		consultaComisionDto.setAssetType(codTipoActivo);
+		consultaComisionDto.setAssetSubtype(codSubtipoActivo);
+		
 
 			// Los honorarios de colaboración serán asignados al FDV de la oferta si
 			// existe,

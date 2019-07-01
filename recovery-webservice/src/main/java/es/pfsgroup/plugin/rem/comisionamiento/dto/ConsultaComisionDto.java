@@ -11,10 +11,9 @@ public class ConsultaComisionDto {
 	private String codTipoOferta;
 	private Double importeOferta;
 	private String codTipoActivo;
-	private String codSubtivoActivo;
+	private String codSubtipoActivo;
 	private String codTipoComercializar; 
 	private String codLeadOrigin;
-	
 	
 	public String getCodTipoOferta() {
 		return codTipoOferta;
@@ -34,11 +33,11 @@ public class ConsultaComisionDto {
 	public void setCodTipoActivo(String codTipoActivo) {
 		this.codTipoActivo = codTipoActivo;
 	}
-	public String getCodSubtivoActivo() {
-		return codSubtivoActivo;
+	public String getCodSubtipoActivo() {
+		return codSubtipoActivo;
 	}
-	public void setCodSubtivoActivo(String codSubtivoActivo) {
-		this.codSubtivoActivo = codSubtivoActivo;
+	public void setCodSubtipoActivo(String codSubtivoActivo) {
+		this.codSubtipoActivo = codSubtivoActivo;
 	}
 	public String getCodTipoComercializar() {
 		return codTipoComercializar;
@@ -58,6 +57,8 @@ public class ConsultaComisionDto {
 	private Double amount;
 	private String offerType;
 	private String comercialType;
+	private String assetType;
+	private String assetSubtype;
 
 	public String getLeadOrigin() {
 		return leadOrigin;
@@ -82,6 +83,18 @@ public class ConsultaComisionDto {
 	}
 	public void setComercialType(String comercialType) {
 		this.comercialType = comercialType;
+	}
+	public String getAssetType() {
+		return assetType;
+	}
+	public void setAssetType(String assetType) {
+		this.assetType = assetType;
+	}
+	public String getAssetSubtype() {
+		return assetSubtype;
+	}
+	public void setAssetSubtype(String assetSubtype) {
+		this.assetSubtype = assetSubtype;
 	}
 	
 }

@@ -864,4 +864,22 @@ public class AgendaAdapter {
 		Long idAgrupacion = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(id);
 		return idAgrupacion.toString();
 	}
+	
+	public Boolean saltoFin(Long idTareaExterna) {
+		try {
+			tareaActivoApi.saltoFin(idTareaExterna);
+		}catch(Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public Boolean saltoResolucionExpedienteApple(Long idTareaExterna){
+		try{
+			tareaActivoApi.saltoResolucionExpedienteApple(idTareaExterna);
+		}catch(Exception e){
+			return false;
+		}
+		return true;
+	}
 }

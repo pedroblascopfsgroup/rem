@@ -641,5 +641,7 @@ public interface OfertaApi {
 	 * @param oferta
 	 */
 	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
+
+	Boolean finalizarOferta(Oferta oferta);
 }
 

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -62,6 +63,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -256,6 +258,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 
 @Service("expedienteComercialManager")
@@ -426,6 +429,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public ExpedienteComercial findOneByNumExpediente(Long numExpediente) {
 		return expedienteComercialDao.getExpedienteComercialByNumeroExpediente(numExpediente);
+	}
+	
+	@Override
+	public FileItem getAdvisoryNote() {
+		FileItem advisoryNote = FileItemUtils.fromResource("docs/AN_Template_Modificada_MO.xlsx");
+		advisoryNote.setFileName("AN_Template_Modificada_MO.xlsx");
+		advisoryNote.setContentType(ExcelRepoApi.TIPO_EXCEL);
+
+		return advisoryNote;
 	}
 
 	@Override
@@ -1014,6 +1026,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaAlta(expediente.getFechaAlta());
 				dto.setFechaAltaOferta(oferta.getFechaAlta());
 				dto.setFechaSancion(expediente.getFechaSancion());
+				dto.setFechaEnvioAdvisoryNote(expediente.getFechaEnvioAdvisoryNote());
+				
+				if(!Checks.esNulo(expediente.getFechaRecomendacionCes())) {
+					dto.setFechaRecomendacionCes(expediente.getFechaRecomendacionCes());
+				}
 
 				if (!Checks.esNulo(expediente.getReserva())) {
 					dto.setFechaReserva(expediente.getReserva().getFechaFirma());
@@ -1152,9 +1169,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expediente.getRiesgoReputacional())) {
 					dto.setRiesgoReputacional(expediente.getRiesgoReputacional());
 				}
+				
 
 				if (!Checks.esNulo(expediente.getEstadoPbc())) {
 					dto.setEstadoPbc(expediente.getEstadoPbc());
+				}
+				if (!Checks.esNulo(expediente.getEstadoPbcR())) {
+					dto.setEstadoPbcR(expediente.getEstadoPbcR());
 				}
 
 				if (!Checks.esNulo(expediente.getFechaVenta())) {
@@ -1347,7 +1368,46 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else {
 			dto.setRefCircuitoCliente(null);
 		}
+		Boolean isCarteraCerberusApple = false;
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
+		&& (!Checks.esNulo(oferta.getActivoPrincipal().getCartera()) 
+		&& !Checks.esNulo(oferta.getActivoPrincipal().getSubcartera()))
+		&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
+		DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+			isCarteraCerberusApple = true;
+		}
+		dto.setIsCarteraCerberusApple(isCarteraCerberusApple);
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getFechaRespuestaCES()) && isCarteraCerberusApple) {
+			dto.setFechaRespuestaCES(oferta.getFechaRespuestaCES());
+		}
 		
+		if(!Checks.esNulo(oferta.getImporteContraofertaPM()) && isCarteraCerberusApple) {
+			dto.setImporteContraofertaPM(oferta.getImporteContraofertaPM());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaRespuestaPM()) && isCarteraCerberusApple) {
+			dto.setFechaRespuestaPM(oferta.getFechaRespuestaPM());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaRespuestaOfertantePM()) && isCarteraCerberusApple) {
+			dto.setFechaRespuestaOfertantePM(oferta.getFechaRespuestaOfertantePM());
+		}
+		
+		if(!Checks.esNulo(oferta.getImporteContraofertaCES()) && isCarteraCerberusApple) {
+			dto.setImporteContraofertaCES(oferta.getImporteContraofertaCES());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaResolucionCES()) && isCarteraCerberusApple) {
+			dto.setFechaResolucionCES(oferta.getFechaResolucionCES());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaRespuesta()) && isCarteraCerberusApple) {
+			dto.setFechaRespuesta(oferta.getFechaRespuesta());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaAprobacionProManzana()) && isCarteraCerberusApple) {
+			dto.setFechaAprobacionProManzana(oferta.getFechaAprobacionProManzana());
+		}
 
 		if(oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			///Comprobamos si la tarea Elevar a Sanción está activa

@@ -103,6 +103,26 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                		hidden: '{esTipoAlquiler}'
 		                	}		                	
 		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuesta}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true  
+		                	
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.aprobacion.pro.manzana'),
+		                	colspan: 2,
+		                	bind:{
+		                		value: '{datosbasicosoferta.fechaAprobacionProManzana}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true   
+		                },
 		                {	
 		                	xtype: 'comboboxfieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.alquiler'),
@@ -137,6 +157,62 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                		value: '{datosbasicosoferta.refCircuitoCliente}',
 		                		hidden: '{!esTipoAlquiler}'
 		                	}		                	
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.respuesta.pm'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuestaPM}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true
+		                },
+		                {
+		                	xtype:'currencyfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.pm'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.importeContraofertaPM}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true
+		                },
+		                {
+		                	xtype: 'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.ofertante.pm'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuestaOfertantePM}',
+		                		hidden: '{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+							readOnly: true
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.resolucion.ces'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaResolucionCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true
+		                },
+		                {
+		                	xtype:'currencyfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.ces'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.importeContraofertaCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.CES'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuestaCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},		                	
+		                	readOnly: true              	
 		                },
 		                {
 		                	xtype: 'fieldset',

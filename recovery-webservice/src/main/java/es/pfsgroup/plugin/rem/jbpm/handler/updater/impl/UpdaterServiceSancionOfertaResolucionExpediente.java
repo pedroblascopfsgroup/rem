@@ -108,6 +108,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
     public static final String MOTIVO_ANULACION_RESERVA = "comboMotivoAnulacionReserva";
     private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
+    private static final String CODIGO_T017_RESOLUCION_EXPEDIENTE = "T017_ResolucionExpediente";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -356,7 +357,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_RESOLUCION_EXPEDIENTE};
+		return new String[]{CODIGO_T013_RESOLUCION_EXPEDIENTE, CODIGO_T017_RESOLUCION_EXPEDIENTE};
 	}
 
 	public String[] getKeys() {

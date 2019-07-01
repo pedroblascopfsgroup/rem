@@ -198,6 +198,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String KEY_GDPR="gdpr.data.key";
 	private static final String URL_GDPR="gdpr.data.url";
 	private static final String AVISO_MENSAJE_MOTIVO_CALIFICACION = "activo.aviso.motivo.calificacion.duplicado";
+	private static final String AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE = "activo.aviso.precio.aprobado.apple";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -522,6 +523,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
 
 		}
+		
+		// Si el activo pertenece a la subcartera Apple y tiene precio aprobado de venta
+		if (oferta.getActivoPrincipal().getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)) {	
+			String[] numActivo = {String.valueOf(oferta.getActivoPrincipal().getNumActivo())};
+			
+			if (!Checks.estaVacio(oferta.getActivoPrincipal().getValoracion())) {
+				List<ActivoValoraciones> valoraciones = oferta.getActivoPrincipal().getValoracion();
+				
+				boolean existe = false;
+				for (ActivoValoraciones valoracion : valoraciones) {		
+					if (valoracion != null &&  valoracion.getTipoPrecio() != null && valoracion.getTipoPrecio().getCodigo().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA)) {
+						existe = true;
+					}		
+				}	 
+				if (!existe) {
+					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE, numActivo));
+				}
+			} else {
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE, numActivo));
+			}				
+		}
 
 		// Si el activo esta marcado como ocupado sin titulo no permitiremos
 		// tramitar ofertas de alquiler
@@ -558,7 +580,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								.equals(acivoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
 
 					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA));
-
 				}
 			}
 			
@@ -641,9 +662,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
+		
 
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());	
 
 		validateSaveOferta(dto, oferta, estadoOferta);
 		
@@ -663,7 +685,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			resultado = doRechazaOferta(dto, oferta);
 		}
 		
-		
 		if(!resultado){
 			resultado = this.persistOferta(oferta);
 		}
@@ -671,10 +692,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if(!Checks.esNulo(dto.getIdActivo())) {
 			this.actualizarOfertasTrabajosVivos(activoAdapter.getActivoById(dto.getIdActivo()));
 		}
-		
-		
-		
-		
 
 		return resultado;
 	}
@@ -781,31 +798,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Oferta oferta = expedienteComercial.getOferta();
 		DDTiposArras tipoArras = null;
 		if(!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())){
-			if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-					&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+				tipoArras = (DDTiposArras) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
+			}
+			if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				|| (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())  && 
+						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+	            tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
+			}
 
-				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-					tipoArras = (DDTiposArras) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
-				}
-				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-					tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
-				}
-				if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-		            tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
-				}
+			if(tipoArras != null){
+				if (Checks.esNulo(expedienteComercial.getReserva()) ) {
+					Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
+					reservaExpediente.setTipoArras(tipoArras);
 
-				if(tipoArras != null){
-					if (Checks.esNulo(expedienteComercial.getReserva()) ) {
-						Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
-						reservaExpediente.setTipoArras(tipoArras);
+					genericDao.save(Reserva.class, reservaExpediente);
 
-						genericDao.save(Reserva.class, reservaExpediente);
-
-					} else {
-						expedienteComercial.getReserva().setTipoArras(tipoArras);
-					}
+				} else {
+					expedienteComercial.getReserva().setTipoArras(tipoArras);
 				}
 			}
 		}
@@ -895,10 +907,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				&& (DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ||
 					(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
 			&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ||
-			DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-			&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
-					){
+					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))){
 
 				nuevoCondicionante.setSolicitaReserva(1);
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
@@ -907,6 +916,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setPorcentajeReserva(new Double(10));
 				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(10) / 100));
 			}
+			
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())  && 
+					DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+
+					nuevoCondicionante.setSolicitaReserva(1);
+					DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
+					nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+					
+					if (oferta.getImporteOferta() <= 50000) {
+						nuevoCondicionante.setImporteReserva((new Double(1000)));
+					} else {
+						nuevoCondicionante.setImporteReserva((new Double(3000)));
+					}
+				}
 		}
 
 		Activo activo = oferta.getActivoPrincipal();
@@ -1035,11 +1059,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
 				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())||
-					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())||
-					DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
+					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
 					{
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
-					} else {
+					}else if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_APPLE_CERBERUS)));
+					}else {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
 					}
 				} else {

@@ -1226,6 +1226,8 @@ public interface ExpedienteComercialApi {
 
 	boolean checkInquilinos(TareaExterna tareaExterna);
 
+	FileItem getAdvisoryNote();
+
 	boolean checkAmConUasConOfertasVivas(TareaExterna tareaExterna);
 
 	boolean hayDiscrepanciasClientesURSUS(Long idExpediente);

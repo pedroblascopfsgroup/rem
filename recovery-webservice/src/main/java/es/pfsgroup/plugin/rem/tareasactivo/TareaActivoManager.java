@@ -464,6 +464,12 @@ public class TareaActivoManager implements TareaActivoApi {
 	public List<TareaActivo> getTareasActivo(Long idActivo, String codigoTipoTramite) {
 		return tareaActivoDao.getTareasActivoPorIdActivoAndTramite(idActivo, codigoTipoTramite);
 	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoResolucionExpedienteApple(Long idTareaExterna){
+		saltoDesdeTareaExterna(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_RESOLUCION_APPLE);
+	}
 }
 
 

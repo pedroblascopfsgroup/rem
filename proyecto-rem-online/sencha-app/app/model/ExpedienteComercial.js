@@ -181,7 +181,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'riesgoReputacional'	
-    		},
+			},
+			{
+				name:'estadoPbcR'
+			},
     		{
     			name:'tipoAlquiler'
     		},
@@ -217,6 +220,14 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'subcarteraCodigo'
+			},
+			{
+    			name: 'isSubcarteraApple',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && data.subcarteraCodigo == CONST.SUBCARTERA['APPLEINMOBILIARIO'];
+    			},
+				depends: 'subcarteraCodigo',
+				depends: 'entidadPropietariaCodigo'
     		},
     		{
     			name:'estaFirmado',
@@ -235,6 +246,16 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name:'noEsOfertaFinalGencat',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'fechaEnvioAdvisoryNote',
+    			type:'date', 
+        		dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaRecomendacionCes',
+    			type:'date', 
+        		dateFormat: 'c'
     		}
     ],
     formulas: {

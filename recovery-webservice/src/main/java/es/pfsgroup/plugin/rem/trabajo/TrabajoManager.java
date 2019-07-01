@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ActuacionTecnicaUserAssigna
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -1487,7 +1488,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		// Módulo de Expediente comercial ----------
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
+			boolean esApple = false;
+			if ( !Checks.esNulo(expedienteComercial)) {
+				for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+					Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+					esApple=false;
+					if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
+						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+						esApple = true;
+					}
+					if (!esApple) {
+						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
+					}else {
+						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE);
+					}
+				}
+					
+			}
+
 		}
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);

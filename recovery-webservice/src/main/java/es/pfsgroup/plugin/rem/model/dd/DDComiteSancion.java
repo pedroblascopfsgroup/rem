@@ -49,6 +49,7 @@ public class DDComiteSancion implements Auditable, Dictionary {
 	public static final String CODIGO_HAYA_CERBERUS = "26";
 	public static final String CODIGO_EXTERNO_CERBERUS = "27";
 	public static final String CODIGO_CERBERUS = "29";
+	public static final String CODIGO_APPLE_CERBERUS = "31";
 	
 	public static final String CODIGO_HAYA_LIBERBANK = "22";
 	public static final String CODIGO_LIBERBANK_RESIDENCIAL = "23";
@@ -77,6 +78,10 @@ public class DDComiteSancion implements Auditable, Dictionary {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CRA_ID")
 	private DDCartera cartera;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SCR_ID")
+	private DDSubcartera Subcartera;
     
     @Transient
     private String carteraCodigo;
@@ -125,6 +130,14 @@ public class DDComiteSancion implements Auditable, Dictionary {
 
 	public void setCartera(DDCartera cartera) {
 		this.cartera = cartera;
+	}
+
+	public DDSubcartera getSubcartera() {
+		return Subcartera;
+	}
+
+	public void setSubcartera(DDSubcartera Subcartera) {
+		this.Subcartera = Subcartera;
 	}
 
 	public String getCarteraCodigo() {

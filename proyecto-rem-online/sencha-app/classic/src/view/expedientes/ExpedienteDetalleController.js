@@ -2831,6 +2831,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		me.fireEvent("downloadFile", config);
 	},
+	
+	onClickAdvisoryNoteExpediente : function(btn) {
+		var me = this;
+
+		var url =  $AC.getRemoteUrl('expedientecomercial/getAdvisoryNoteExpediente');
+
+		var config = {};
+		config.url= url;
+		me.fireEvent("downloadFile", config);
+
+	},
 
 	validarFechaPosicionamiento : function(value) {
 		/*

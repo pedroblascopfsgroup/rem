@@ -1293,6 +1293,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public Boolean rechazarOferta(Oferta oferta) {
 		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
@@ -1435,6 +1436,35 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return true;
 	}
+	@Override
+	public Boolean finalizarOferta(Oferta oferta) {
+		try {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			updateStateDispComercialActivosByOferta(oferta);
+			genericDao.save(Oferta.class, oferta);
+
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+			if (!Checks.esNulo(expediente)) {
+				Trabajo trabajo = expediente.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				ActivoTramite tramite = tramites.get(0);
+
+				Set<TareaActivo> tareasTramite = tramite.getTareas();
+				for (TareaActivo tarea : tareasTramite) {
+					tarea.setFechaFin(new Date());
+					tarea.getAuditoria().setBorrado(true);
+				}
+			}
+			descongelarOfertas(expediente);
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			return false;
+		}
+		return true;
+	}
+
 
 	@Override
 	public Oferta tareaExternaToOferta(TareaExterna tareaExterna) {
@@ -2838,7 +2868,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
-								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))) {
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.APROBADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo()))) {
 
 					return true;
 				}
@@ -3065,11 +3098,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
-		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-				&& !DDSubcartera.CODIGO_BAN_BH
-						.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())) {
+		if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+			&& !DDSubcartera.CODIGO_BAN_BH
+			.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())) 
+		||(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+			&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO
+				.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())) ) {
 
-			if (!DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo())) {
+			if (((!Checks.esNulo(expediente.getReserva()))
+				&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
+				&& !DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()))
+				|| Checks.esNulo(expediente.getReserva()) 
+				|| !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva()) && expediente.getCondicionante().getSolicitaReserva() == 0) {
 				result = false;
 			}
 		}

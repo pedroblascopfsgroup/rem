@@ -3,7 +3,7 @@
  */
 Ext.define('HreRem.model.DatosBasicosOferta', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
+    alias: 'viewmodel.datosBasicosOferta',
 
     fields: [ 
     		
@@ -80,8 +80,48 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name: 'comitePropuestoCodigo'
     		},
     		{
-    			name: 'ventaCartera'
+    			name: 'ventaCartera' 
     		},
+     		{
+			name:'fechaRespuestaCES',
+			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+			name:'fechaRespuesta',
+			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+			name:'fechaAprobacionProManzana',
+			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    			name: 'isCarteraCerberusApple',
+    			type: 'boolean'
+     		},
     		{
     			name: 'tipoAlquilerCodigo'
     		},
@@ -118,6 +158,48 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'idEco'
+    		},
+    		{
+    			name:'importeContraofertaPM'	
+    		},
+    		{
+    			name:'fechaRespuestaPM',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    			name:'fechaRespuestaOfertantePM',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    			name:'importeContraofertaCES'	
+    		},
+    		{
+    			name:'fechaResolucionCES',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		}
     ],
     

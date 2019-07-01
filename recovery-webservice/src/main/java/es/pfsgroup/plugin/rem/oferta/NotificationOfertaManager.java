@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -50,6 +51,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_PFS = "buzonpfs";
+	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -87,6 +89,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario usuario = null;
 		Usuario usuarioBackOffice = null;
 		Usuario supervisor= null;
+		String emailPrescriptor = null;
+		Usuario buzonOfertaApple = null;
 		Activo activo = oferta.getActivoPrincipal();
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) 
@@ -99,8 +103,12 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				supervisor= gestorActivoManager.getGestorByActivoYTipo(oferta.getAgrupacion().getActivos().get(0).getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 			}
 
-		} else {
+		} else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())){
 			// por activo
+			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			emailPrescriptor = oferta.getPrescriptor().getEmail();
+			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		} else {
 			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		}
@@ -134,9 +142,10 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			List<String> mailsCC 		= new ArrayList<String>();
 			List<String> mailsSustituto = new ArrayList<String>();
 			
-			if(oferta.getActivoPrincipal() != null){
-				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+			if(activo != null){
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) 
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
+						|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
 					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 					if(!Checks.esNulo(usuarioBackOffice)){
 						mailsSustituto.clear();
@@ -165,7 +174,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				}
 				
 				Usuario directorEquipo = gestorActivoManager.getDirectorEquipoByGestor(usuario);
-				if (!Checks.esNulo(directorEquipo)){
+				if (!Checks.esNulo(directorEquipo) && (!Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
 					mailsSustituto.clear();
 					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(directorEquipo);
 					if (!Checks.estaVacio(mailsSustituto)){
@@ -186,6 +195,10 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				}else{
 					mailsPara.add(supervisor.getEmail());
 				}
+			}
+			
+			if(!Checks.esNulo(emailPrescriptor)) {
+				mailsPara.add(emailPrescriptor);
 			}
 			
 			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
@@ -235,8 +248,10 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			if(!Checks.esNulo(buzonPfs)) {
 				mailsPara.add(buzonPfs.getEmail());
 			}
+			if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				mailsPara.add(buzonOfertaApple.getEmail());
+			}
 
-			
 			mailsCC.add(this.getCorreoFrom());
 			
 			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente()) && !Checks.esNulo(oferta.getCliente().getTipoDocumento())){

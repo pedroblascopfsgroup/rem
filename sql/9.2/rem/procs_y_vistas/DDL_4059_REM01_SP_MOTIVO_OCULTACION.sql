@@ -236,7 +236,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                                       AND MTO2.BORRADO = 0
                                                       AND MTO2.DD_MTO_ID = APU.DD_MTO_A_ID) 
                                          AND (SPS.SPS_OCUPADO = 0
-                                           OR SPS.SPS_CON_TITULO = 0)
+                                         OR SPS.DD_TPA_ID IN (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO IN (''02'', ''03'')))
                                           ) 
                                      OR (EXISTS (SELECT 1
                                                    FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO2

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20180829
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190701
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-1621
+--## INCIDENCIA_LINK=REMVIP-4640
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 Corrección activos publicados (módulo de publicaciones)
+--##		0.3 Contador activos UAs
 --##########################################
 --*/
 
@@ -56,13 +57,17 @@ BEGIN
       WITH AUX_NUM_ACTIVOS AS (
           SELECT AGR.AGR_ID, COUNT(AGA.ACT_ID) AS NUM_ACTIVOS
           FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
-          JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID
+          JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID AND AGA.BORRADO = 0
+		  JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
+		  WHERE (CASE WHEN TAG.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 1 THEN 0
+        			  ELSE 1
+   				END) = 1
           GROUP BY AGR.AGR_ID
       ),
       AUX_ACT_PUBLICADOS AS (
           SELECT AGR.AGR_ID, COUNT(ACT.ACT_ID) AS ACT_PUBLICADOS
           FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
-          JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID
+          JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID AND AGA.BORRADO = 0
           JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON AGA.ACT_ID = ACT.ACT_ID
           JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID

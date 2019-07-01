@@ -3671,59 +3671,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean esGastoEmisorHaya(String numGasto) {
-		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
-			return false;
-		
-		String resultado = rawDao
-				.getExecuteSQL("SELECT COUNT(*) "
-						+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
-						+ "JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
-						+ "JOIN ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR "
-						+ "JOIN DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID "
-						+ "WHERE TPR.DD_TPR_CODIGO IN ('35') "
-						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");
-
-		return !"0".equals(resultado);
-	}
-	
-	@Override
-	public Boolean esGastoDestinatarioHaya(String numGasto) {
-		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
-			return false;
-		
-		String resultado = rawDao
-				.getExecuteSQL("SELECT COUNT(*) "
-						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
-						+ "JOIN DD_DEG_DESTINATARIOS_GASTO DEG ON GPV.DD_DEG_ID = DEG.DD_DEG_ID "						
-						+ "WHERE DEG.DD_DEG_CODIGO IN (02) "
-						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");						
-
-		return !"0".equals(resultado);
-	}
-	
-	@Override
-	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto) {
-		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numOtroGasto)
-				|| !StringUtils.isNumeric(numOtroGasto))
-			return false;
-		
-		String resultado = rawDao
-				.getExecuteSQL("SELECT COUNT(*) " + "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
-				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
-				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "
-				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'" 
-				+ "AND PRO.DD_CRA_ID = " 
-				+ "(SELECT PRO.DD_CRA_ID "
-				+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
-				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
-				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "
-				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '" + numOtroGasto + "')");
-
-		return !"0".equals(resultado);
-	}
-	
-	@Override
 	public Boolean activoEnAgrupacionProyecto(String numActivo) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) FROM ACT_AGR_AGRUPACION AGR " +
 				" INNER JOIN DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = '04' " +
@@ -3815,7 +3762,102 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "JOIN DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID "
 				+ "WHERE SCR.DD_SCR_CODIGO = '138' "
 				+ "AND ACT.ACT_NUM_ACTIVO = "+numActivo+" ");
+		return !"0".equals(resultado);
+	}
+
+	public Boolean esGastoRefacturado(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
 		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT GDE.GDE_GASTO_REFACTURABLE " 
+						+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
+						+ "LEFT JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
+						+ "WHERE GPV.GPV_NUM_GASTO_HAYA ='" + numGasto + "'");
+
+		return "1".equals(resultado);
+	}
+
+	@Override
+	public Boolean esGastoRefacturable(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) " 
+						+ "FROM VGR_GASTOS_REFACTURABLES VGR "						
+						+ "WHERE VGR.NUM_GASTO_HAYA = '" + numGasto + "'");
+
+		return !"0".equals(resultado);
+	}	
+	
+	@Override
+	public Boolean perteneceGastoBankiaSareb(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) " 
+						+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
+						+ "JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
+						+ "JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID " 
+						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID " 
+						+ "WHERE CRA.DD_CRA_CODIGO IN (02,03) " 
+						+ "AND GPV.GPV_NUM_GASTO_HAYA ='" + numGasto + "'");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoEmisorHaya(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) "
+						+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
+						+ "JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
+						+ "JOIN ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR "
+						+ "JOIN DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID "
+						+ "WHERE TPR.DD_TPR_CODIGO IN ('35') "
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoDestinatarioHaya(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) "
+						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+						+ "JOIN DD_DEG_DESTINATARIOS_GASTO DEG ON GPV.DD_DEG_ID = DEG.DD_DEG_ID "						
+						+ "WHERE DEG.DD_DEG_CODIGO IN ('02') "
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");						
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numOtroGasto)
+				|| !StringUtils.isNumeric(numOtroGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) " + "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
+				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
+				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'" 
+				+ "AND PRO.DD_CRA_ID = " 
+				+ "(SELECT PRO.DD_CRA_ID "
+				+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
+				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
+				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '" + numOtroGasto + "')");
+
 		return !"0".equals(resultado);
 	}
 	

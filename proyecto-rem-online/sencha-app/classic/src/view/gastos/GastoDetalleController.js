@@ -126,6 +126,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 								// Si la API tiene metodo de escritura (create or update).
 								me.getView().mask(HreRem.i18n("msg.mask.loading"));
 								
+								var valoresGrid = new Array();
+				                    
+				                    for(var i = 0; i < me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data.length; i++){
+				                    	if(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == true ||
+				                    		me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == "true"){
+				                    			valoresGrid.push(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i]);
+				                    	}
+				                }
+
 								form.getBindRecord().save({
 									success: success,				            
 						            failure: function (a, operation) {

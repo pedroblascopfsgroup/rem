@@ -20,13 +20,17 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGrid', {
 				{ 
 		    		xtype: 'checkcolumn', 
 		    		dataIndex: 'gastoRefacturable',
-		    		reference: 'isGastoRefacturable'
+		    		reference: 'isGastoRefacturabl2',
+		    		
 	    		},
 		        {
 		            dataIndex: 'idGasto',
-		            reference: 'numeroDeGastoRefacturable',
+		            reference: 'numeroDeGastoRefacturable2',
 		            //text: HreRem.i18n('title.publicaciones.mediador.fechaDesde'),
-		            flex: 0.7         
+		            flex: 0.7,
+		            
+		    			value: '{gastoNuevo.numeroDeGastoRefacturable}'
+		    		
 		        }
 		    ];
 

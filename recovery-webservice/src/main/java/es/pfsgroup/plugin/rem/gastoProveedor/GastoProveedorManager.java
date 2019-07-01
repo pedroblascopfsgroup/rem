@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.GastoPrinex;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
+import es.pfsgroup.plugin.rem.model.GastoRefacturable;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -488,7 +489,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
-		dto.getGastoRefacturadoGrid();
+		if(!Checks.estaVacio(dto.getGastoRefacturadoGrid())){
+			Long idGasto = Long.valueOf(dto.getIdGasto());
+			for (String numGasto : dto.getGastoRefacturadoGrid()) {				
+			
+				Filter FiltraGastos = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.valueOf(numGasto));
+				GastoProveedor gastoRefacturableHaya = genericDao.get(GastoProveedor.class, FiltraGastos);
+				
+				if(!Checks.esNulo(gastoRefacturableHaya)) {
+					GastoRefacturable gastoRefacturable = new GastoRefacturable();
+					gastoRefacturable.setGastoProveedor(idGasto);
+					gastoRefacturable.setGastoProveedorRefacturado(gastoRefacturableHaya.getId());
+					genericDao.save(GastoRefacturable.class, gastoRefacturable);
+				}	
+			}
+		}
 
 		return gastoProveedor;
 	}

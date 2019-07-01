@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -294,9 +295,14 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView searchPropietarioNif(@RequestParam String nifPropietario) {
 		ModelMap model = new ModelMap();
-		
+		ActivoPropietario propietario = (ActivoPropietario) gastoProveedorApi.searchPropietarioNif(nifPropietario);
+		Boolean carteraSareboBankia = false;
+		if(!Checks.esNulo(propietario)&& !Checks.esNulo(propietario.getCartera())) {
+			carteraSareboBankia = gastoProveedorApi.isCarteraPropietarioBankiaSareb(propietario);
+		}
 		try {
-			model.put("data", gastoProveedorApi.searchPropietarioNif(nifPropietario));
+			model.put("data", propietario);
+			model.put("carteraSareboBankia", carteraSareboBankia);
 			model.put("success", true);			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -1006,8 +1012,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getGastosRefacturados(@RequestParam String gastos) {
+	public ModelAndView getGastosRefacturados(@RequestParam String gastos, String nifPropietario) {
 		ModelMap model = new ModelMap();
+		
 		List<String> gastosRefacturables = new ArrayList<String>();
 		List<String> gastosNoRefacturables = new ArrayList<String>();
 		if(!Checks.esNulo(gastos)) {

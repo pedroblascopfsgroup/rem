@@ -10,6 +10,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -360,10 +361,10 @@ public interface GastoProveedorApi {
 		public List<String> getGastosRefacturados(String listaGastos);
 
 
-		String[] getGastosRefacturadosPruebas(String listaGastos);
-
-
 		List<String> getGastosNoRefacturados(String listaGastos, List<String> gastosRefacturables);
+
+
+		Boolean isCarteraPropietarioBankiaSareb(ActivoPropietario propietario);
 
 
 }

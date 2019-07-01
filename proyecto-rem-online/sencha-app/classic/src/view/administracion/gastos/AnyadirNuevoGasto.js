@@ -142,7 +142,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
 													reference: 'checkboxActivoRefacturable',
 													colspan:1,
-													name: 'nombrePropietario',
+													name: 'checkGastoRefacturable',
 													bind:'{gasto.gastoRefacturable}',			
 													width: '500px'
 												},
@@ -286,13 +286,13 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 				    				            			}
 				    				            		},
 				    				            		change: function(combo, newValue) {
-				    				            			var disabled = CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] != newValue;
+				    				            			/*var disabled = CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] != newValue;
 			    				            				combo.up('form').down('[name=buscadorNifPropietarioField]').setDisabled(disabled);
 			    				            				combo.up('form').down('[name=nombrePropietario]').setDisabled(disabled);
 			    				            				if(disabled) {
 			    				            					combo.up('form').down('[name=buscadorNifPropietarioField]').reset();
 			    				            					combo.up('form').down('[name=nombrePropietario]').reset();
-			    				            				}
+			    				            				}*/
 				    				            			
 				    				            		}
 				    				            	},
@@ -302,14 +302,14 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													xtype: 'textfieldbase',
 													fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.propietario'),
 													colspan:2,
+													reference:'buscadorNifPropietarioField',
 													name: 'buscadorNifPropietarioField',
-													disabled: true,
+													//disabled: true,
 													bind: {
 														value: '{gastoNuevo.nifPropietario}'
 													},
 													allowBlank: false,
 													triggers: {
-														
 															buscarEmisor: {
 													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
 													            handler: 'buscarPropietario'
@@ -338,9 +338,10 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													fieldLabel: HreRem.i18n('fieldlabel.gasto.nombre.propietario'),
 													colspan:2,
 													name: 'nombrePropietario',
-													disabled: true,
+													//disabled: true,
 													readOnly: true,
-													allowBlank: false
+													allowBlank: true
+													
 												}
 							            	  
 							            ]

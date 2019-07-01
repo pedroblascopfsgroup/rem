@@ -322,7 +322,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		.request({
 			url : url,
 			params : {
-				gastos : gastos
+				gastos : gastos,
+				nifPropietario : nifPropietario
 			},
 			success : function(response, opts) {
 				var data = Ext.decode(response.responseText);
@@ -331,18 +332,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			
 				var grid = me.lookupReference("gastoRefacturadoGrid");
 				
-				/*
-				
-				var arrayStoresCombos= new Array();
-				
-				
-				for(var i = 0; i < gastosNoRefacturables.length; i++){
-					arrayStoresCombos.push(gastosNoRefacturables[i]);
-				}
-				
-				arrayStoresCombos;	
-				*/
-				
 				var arrayCodVal= new Array();
 				
 				for(j=0;j < gastosRefacturables.length;j++){				
@@ -350,9 +339,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					
 					var idCombo = j;
 					var codigo= ArrayvaloresCombo[0];
-					var valor= "y";
-					
-					arrayCodVal.push({idCombo:idCombo, codigo: codigo, valor: valor});
+					var gastoRefacturable= true;
+
+					arrayCodVal.push({idCombo:idCombo, gastoRefacturable: gastoRefacturable, idGasto: idGasto});
 				}
 				
 				for(j=0;j < gastosNoRefacturables.length;j++){				
@@ -360,22 +349,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					
 					var idCombo = j + gastosRefacturables.length;
 					var idGasto= ArrayvaloresCombo[0];
-					var gastoRefacturable= "n";
-					
-					arrayCodVal.push({idCombo:idCombo, idGasto: idGasto, gastoRefacturable: gastoRefacturable});
+					var gastoRefacturable= false;
+
+					arrayCodVal.push({idCombo:idCombo, gastoRefacturable: gastoRefacturable, idGasto: idGasto});
 				}
 				var myStore = new Ext.data.JsonStore({
-						fields: ['idCombo','idGasto', 'gastoRefacturable'],
+						fields: ['idCombo','gastoRefacturable', 'idGasto'],
 						idIndex: 0,
 						data: arrayCodVal
 				});
 				
-				var arrayStoresCombo2s= new Array();
-				 arrayStoresCombo2s.push(myStore);
-				 grid.getStore().data.items.push(arrayCodVal);
-				 grid.setData(arrayCodVal);
-
-				 //grid.getStore().data.items.push(myStore);
+				grid.setStore(myStore);
 				
 
 			},

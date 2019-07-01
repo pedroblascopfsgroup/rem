@@ -487,6 +487,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				logger.error("error creando el contenedor del gasto",gexc);
 			}
 		}
+		
+		dto.getGastoRefacturadoGrid();
 
 		return gastoProveedor;
 	}
@@ -3288,15 +3290,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return gastosNoRefacturables;
 	}
 	
-	@Override
-	public String [] getGastosRefacturadosPruebas(String listaGastos) {
-		
-		String [] pruebalistagastos;
-		
-		pruebalistagastos = listaGastos.split(",");
-		
-		return pruebalistagastos;
-	}
 	
+	@Override
+	public Boolean isCarteraPropietarioBankiaSareb(ActivoPropietario propietario) {
+		Boolean isCarteraPropietarioBankiaSareb = false;
+		if(!Checks.esNulo(propietario) && !Checks.esNulo(propietario.getCartera())) {
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(propietario.getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_SAREB.equals(propietario.getCartera().getCodigo())) {
+				isCarteraPropietarioBankiaSareb = true;
+			}
+		}
+		return isCarteraPropietarioBankiaSareb;
+	}
 	
 }

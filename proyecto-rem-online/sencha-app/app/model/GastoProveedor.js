@@ -174,6 +174,12 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
    		{
    			name: 'devengoPosteriorTraspaso'
+   		},
+   		{
+   			name: 'numeroDeGastoRefacturable'
+   		},
+   		{
+   			name:'isGastoRefacturable'
    		}
     		
     ],

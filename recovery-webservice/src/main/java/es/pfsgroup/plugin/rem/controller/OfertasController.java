@@ -517,7 +517,9 @@ public class OfertasController {
 			if(flagParametrosANulo) {
 				error = RestApi.REST_NO_PARAM;
 				if(Checks.esNulo(idLlamada)) {
+					error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 					errorDesc = "Falta el campo idLlamada";
+					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				}else if( Checks.esNulo(numActivo)) {
 					errorDesc = "Falta el campo numActivo";
 				}else {
@@ -536,7 +538,7 @@ public class OfertasController {
 			}
 			if(flagRelacionNumActivoCodGestoriaNoExiste){
 				error = RestApi.REST_MSG_NO_RELATED_OFFER;
-				errorDesc = "No existe relación entre el activo "+ numActivo +" y la gestoria " + codGestoria;
+				errorDesc = "No existe oferta relacionada con el activo "+ numActivo +" y la gestoria " + codGestoria;
 				throw new Exception(RestApi.REST_MSG_NO_RELATED_OFFER);
 			}
 

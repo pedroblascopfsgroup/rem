@@ -180,6 +180,15 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
    		{
    			name:'isGastoRefacturable'
+   		},
+   		{
+   			name: 'checkboxActivoRefacturable'
+   		},
+   		{
+   			name: 'gastoRefacturadoGrid'
+   		},
+   		{
+   			name: 'listaTotalGastosRefacturados'
    		}
     		
     ],

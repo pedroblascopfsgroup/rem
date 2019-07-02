@@ -128,12 +128,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 								
 								var valoresGrid = new Array();
 				                    
-				                    for(var i = 0; i < me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data.length; i++){
-				                    	if(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == true ||
-				                    		me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == "true"){
-				                    			valoresGrid.push(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i]);
-				                    	}
-				                }
+				                if(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data != undefined){
+									for(var i = 0; i < me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data.length; i++){
+										if(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == true ||
+											me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == "true"){
+												valoresGrid.push(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i]);
+										}
+									}
+								}
+								
+								form.getBindRecord().data.gastoRefacturadoGrid=valoresGrid;
 
 								form.getBindRecord().save({
 									success: success,				            
@@ -347,21 +351,25 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					var ArrayvaloresCombo=  gastosRefacturables[j].split(',');
 					
 					var idCombo = j;
-					var codigo= ArrayvaloresCombo[0];
+					var idGasto= ArrayvaloresCombo[0];
 					var gastoRefacturable= true;
 
 					arrayCodVal.push({idCombo:idCombo, gastoRefacturable: gastoRefacturable, idGasto: idGasto});
 				}
-				
-				for(j=0;j < gastosNoRefacturables.length;j++){				
-					var ArrayvaloresCombo=  gastosNoRefacturables[j].split(',');
-					
-					var idCombo = j + gastosRefacturables.length;
-					var idGasto= ArrayvaloresCombo[0];
-					var gastoRefacturable= false;
 
-					arrayCodVal.push({idCombo:idCombo, gastoRefacturable: gastoRefacturable, idGasto: idGasto});
-				}
+				/*
+						for(j=0;j < gastosNoRefacturables.length;j++){				
+								var ArrayvaloresCombo=  gastosNoRefacturables[j].split(',');
+										
+								var idCombo = j + gastosRefacturables.length;
+								var idGasto= ArrayvaloresCombo[0];
+								var gastoRefacturable= false;
+										
+								arrayCodVal.push({idCombo:idCombo, gastoRefacturable: gastoRefacturable, idGasto: idGasto});
+										
+						}
+				*/
+
 				var myStore = new Ext.data.JsonStore({
 						fields: ['idCombo','gastoRefacturable', 'idGasto'],
 						idIndex: 0,

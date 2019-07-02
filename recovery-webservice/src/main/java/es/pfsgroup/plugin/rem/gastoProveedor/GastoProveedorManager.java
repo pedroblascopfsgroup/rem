@@ -490,7 +490,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		if(!Checks.estaVacio(dto.getGastoRefacturadoGrid())){
-			Long idGasto = Long.valueOf(dto.getIdGasto());
 			for (String numGasto : dto.getGastoRefacturadoGrid()) {				
 			
 				Filter FiltraGastos = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.valueOf(numGasto));
@@ -498,7 +497,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 				if(!Checks.esNulo(gastoRefacturableHaya)) {
 					GastoRefacturable gastoRefacturable = new GastoRefacturable();
-					gastoRefacturable.setGastoProveedor(idGasto);
+					gastoRefacturable.setGastoProveedor(gastoProveedor.getId());
 					gastoRefacturable.setGastoProveedorRefacturado(gastoRefacturableHaya.getId());
 					genericDao.save(GastoRefacturable.class, gastoRefacturable);
 				}	

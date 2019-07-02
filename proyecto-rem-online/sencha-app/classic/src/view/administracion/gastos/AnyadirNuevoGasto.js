@@ -142,9 +142,12 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
 													reference: 'checkboxActivoRefacturable',
 													colspan:1,
-													name: 'checkGastoRefacturable',
+													name: 'checkboxActivoRefacturable',
 													bind:'{gasto.gastoRefacturable}',			
-													width: '500px'
+													width: '500px',
+													bind: {
+										           		value: '{gastoNuevo.checkboxActivoRefacturable}'
+										         	}
 												},
 												////
 												{
@@ -200,13 +203,14 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 												        	},
 												        	change: function(field, newvalue) {										        		
 												        		if(Ext.isEmpty(newvalue)) {
-												        			field.up("form").down("[reference=comboProveedores]").reset()
+												        			field.up("form").down("[reference=gastoRefacturadoGrid]").reset()
 												        		}
 												        	
 												        	}
 												    },
 												    bind: {
-														disabled: '{checkboxActivoRefacturable.checked}'
+														disabled: '{checkboxActivoRefacturable.checked}',
+														value: '{gastoNuevo.listaTotalGastosRefacturados}'
 													},
 												    publishes: 'value'
 												},

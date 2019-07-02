@@ -263,24 +263,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 			    				colspan: 2
 							},
 		            	    {
-		            	    	xtype: 		'checkboxfieldbase',
-		            	    	fieldLabel:	HreRem.i18n('fieldlabel.dederechotanteo'),
-		            	    	name:		'dederechotanteo',
-		            	    	allowBlank:	false,
-		            	    	bind:		'{oferta.deDerechoTanteo}',
-					        	inputValue: true,
-					        	readOnly:		true
-		            	    },
-		            	    {
-								xtype: 		'checkboxfieldbase',
-		            	    	fieldLabel:	HreRem.i18n('fieldlabel.intencionfinanciar'),
-		            	    	name:		'intencionfinanciar',
-		            	    	allowBlank:	false,
-		            	    	bind:		'{oferta.intencionFinanciar}',
-					        	inputValue: true,
-					        	colspan: 2
-							},
-		            	    {
 								xtype: 'textfieldbase',
 								fieldLabel: HreRem.i18n('header.visita.detalle.proveedor.presriptor.codigo.rem'),
 								name: 'buscadorPrescriptores',
@@ -355,6 +337,14 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								readOnly: true,
 								allowBlank: true,
 					        	colspan: 2
+							},
+		            	    {
+								xtype: 		'checkboxfieldbase',
+		            	    	fieldLabel:	HreRem.i18n('fieldlabel.intencionfinanciar'),
+		            	    	name:		'intencionfinanciar',
+		            	    	allowBlank:	false,
+		            	    	bind:		'{oferta.intencionFinanciar}',
+					        	inputValue: true
 							}
 						]
 				}

@@ -1009,15 +1009,16 @@ public class ActivoAdapter {
 			ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();		
 			
 				DtoNumPlantas dtoSotano = new DtoNumPlantas();
-				dtoSotano.setNumPlanta(0L);
-				dtoSotano.setDescripcionPlanta("Planta Baja");
+				dtoSotano.setNumPlanta(-1L);
+				dtoSotano.setDescripcionPlanta("Planta -1");
 				dtoSotano.setIdActivo(idActivo);
 				listaPlantas.add(dtoSotano);
 
-			for (int i = 1; i <= vivienda.getNumPlantasInter(); i++) {
+			for (int i = 0; i < vivienda.getNumPlantasInter(); i++) {
 				DtoNumPlantas dto = new DtoNumPlantas();
 				dto.setNumPlanta(Long.valueOf(i));
-				dto.setDescripcionPlanta(i + "ª Planta");
+				if(i==0) dto.setDescripcionPlanta("Planta Baja");
+				else dto.setDescripcionPlanta(i + "ª Planta");
 				dto.setIdActivo(idActivo);
 				listaPlantas.add(dto);
 			}

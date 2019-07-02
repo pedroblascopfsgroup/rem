@@ -1455,11 +1455,13 @@ public class TrabajoController extends ParadiseJsonController {
 			if(flagParametrosANulo) {
 				error = RestApi.REST_NO_PARAM;
 				if(Checks.esNulo(idLlamada)) {
+					error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 					errorDesc = "Falta el campo idLlamada";
+					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				}else if( Checks.esNulo(numActivo)) {
 					errorDesc = "Falta el campo numActivo";
 				}else {
-					errorDesc = "Falta el campo codGestoria";
+					errorDesc = "Falta el campo idProveedorRem";
 				}
 				
 				throw new Exception(RestApi.REST_NO_PARAM);
@@ -1475,7 +1477,7 @@ public class TrabajoController extends ParadiseJsonController {
 			}
 			if(flagActivoProveedorRelacionNoExiste) {
 				error = RestApi.REST_MSG_NO_RELATED_AT;
-				errorDesc = "No existe relación entre el activo "+ numActivo +" y la proveedor " + idProveedorRem;
+				errorDesc = "No existe actuación técnica relacionada entre el activo "+ numActivo +" y la proveedor " + idProveedorRem;
 				
 				throw new Exception(RestApi.REST_MSG_NO_RELATED_AT);
 			}

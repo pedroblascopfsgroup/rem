@@ -272,7 +272,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	}
 	
 	private void sendNotificationReserva(ActivoTramite tramite, ExpedienteComercial expediente, Date fechaFirma) {		
-		String asunto = null, cuerpoCorreo = null;
+		String asunto = null, cuerpo = null;
 		
 		Oferta oferta = expediente.getOferta();
 		
@@ -284,7 +284,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		asunto = "Notificación de reserva de la oferta " + oferta.getNumOferta();
 		
-		cuerpoCorreo = "La oferta " + oferta.getNumOferta() + " ha sido reservada a fecha de " + formato.format(fechaFirma);
+		cuerpo = "La oferta " + oferta.getNumOferta() + " ha sido reservada a fecha de " + formato.format(fechaFirma);
+		
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
+		dtoSendNotificator.setTitulo(asunto);
+
+		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		
 		if (!Checks.esNulo(buzonRem)) {
 			destinatarios.add(buzonRem.getEmail());
@@ -833,7 +838,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	}
 	
 	private void enviaNotificacionLlegadaTarea(ActivoTramite tramite, String codTareaActual, Activo activo, Oferta oferta) {
-		String asunto = null, cuerpoCorreo = null;
+		String asunto = null, cuerpo = null;
 		
 		ArrayList<String> destinatarios = new ArrayList<String>();
 		
@@ -844,7 +849,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		asunto = "La oferta " + oferta.getNumOferta() + " ha llegado a la tarea " + tareaAPasar;
 		
-		cuerpoCorreo = asunto + " en REM.";
+		cuerpo = asunto + " en REM.";
+		
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
+		dtoSendNotificator.setTitulo(asunto);
+
+		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		
 		String buzon = (CODIGO_T017_ANALISIS_PM.equals(codTareaActual) || CODIGO_T017_ADVISORY_NOTE.equals(codTareaActual)) ? BUZON_CES_APPLE : null;
 		

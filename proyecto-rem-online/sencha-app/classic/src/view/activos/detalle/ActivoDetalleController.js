@@ -4702,7 +4702,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickActivoMatriz: function(){
 		var me = this;
 		var numActivo = me.getViewModel().get('activo.numActivoMatriz');
-		if(numActivo != ""){
+		if(!Ext.isEmpty(numActivo)){
 		  	var url= $AC.getRemoteUrl('activo/getActivoExists');
         	var data;
     		Ext.Ajax.request({

@@ -884,11 +884,10 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getCompradorById(VBusquedaDatosCompradorExpediente dto, ModelMap model) {
+	public ModelAndView getCompradorById(DtoModificarCompradores dto, ModelMap model) {
 		try {
 			if (!Checks.esNulo(dto.getId())) {
-				VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi
-						.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
+				VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
 				if (!Checks.esNulo(vistaConExp)) {
 					DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
 					if("0".equals(comprador.getNumeroConyugeUrsus())) {
@@ -896,12 +895,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 					}
 					model.put(RESPONSE_DATA_KEY, comprador);
 					model.put(RESPONSE_SUCCESS_KEY, true);
-					if(vistaConExp.getIdExpedienteComercial() != null && !vistaConExp.getIdExpedienteComercial().isEmpty()){
-						ofertaApi.llamadaMaestroPersonas(Long.valueOf(vistaConExp.getIdExpedienteComercial()), OfertaApi.CLIENTE_HAYA);
+					if(!Checks.esNulo(vistaConExp.getIdExpedienteComercial())){
+						ofertaApi.llamadaMaestroPersonas(vistaConExp.getIdExpedienteComercial(), OfertaApi.CLIENTE_HAYA);
 					}					
 				} else {
-					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi
-							.getDatCompradorById(dto.getId());
+					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi.getDatCompradorById(dto.getId());
 					if (!Checks.esNulo(vistaSinExp)) {
 						if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
 							vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
@@ -936,8 +934,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView saveFichaComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador, @RequestParam Long id) {
 		try {
 			boolean success = false;
-			if(vDatosComprador.getId()==null || vDatosComprador.getId().isEmpty()){
-				this.createComprador(model, vDatosComprador, Long.valueOf(vDatosComprador.getIdExpedienteComercial()));
+			if(Checks.esNulo(vDatosComprador.getId())){
+				this.createComprador(model, vDatosComprador, vDatosComprador.getIdExpedienteComercial());
 				success = true;
 			}else{
 				success = expedienteComercialApi.saveFichaComprador(vDatosComprador);

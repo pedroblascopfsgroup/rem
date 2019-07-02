@@ -37,7 +37,6 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.AdecuacionGencatDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatDao;
 import es.pfsgroup.plugin.rem.activo.dao.HistoricoComunicacionGencatAdjuntoDao;
@@ -96,7 +95,6 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
 import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -157,8 +155,6 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	@Autowired
 	private NotificacionGencatDao notificacionGencatDao;
 	
-	@Autowired
-	private AdecuacionGencatDao adecuacionGencatDao;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -184,8 +180,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	@Autowired 
 	private OfertaApi ofertaApi;
 
-	private static final Long MIN_MESES = 60L;
-
+	
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
@@ -1178,7 +1173,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			//COMPROBACION SI HAY COMUNICACION GENCAT CREADA+
 			if(!Checks.esNulo(datoVista.getFecha_comunicacion())) {
 				//TODO REVISAR CONDICIONES DE ULTIMA OFERTA QUE PROVOCO LA COMUNICACION CON LOS DATOS DEL EXPEDIENTE QUE SE RECOGEN
-				comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivo));
+				comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivo),genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false));
 				if(!Checks.esNulo(expComercial.getCondicionante())) {
 					if(!Checks.esNulo(expComercial.getCondicionante().getSituacionPosesoria())){
 						codSitPos = expComercial.getCondicionante().getSituacionPosesoria().getCodigo();

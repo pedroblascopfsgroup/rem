@@ -61,7 +61,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
@@ -316,7 +315,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExp
 	 * @return
 	 */
-	VBusquedaDatosCompradorExpediente getDatosCompradorById(String idCom, String idExp);
+	VBusquedaDatosCompradorExpediente getDatosCompradorById(Long idCom, Long idExp);
 
 	/**
 	 * Recupera la informacion de un Comprador independientemente del Expediente
@@ -325,7 +324,7 @@ public interface ExpedienteComercialApi {
 	 * @param idCom
 	 * @return
 	 */
-	VBusquedaDatosCompradorExpediente getDatCompradorById(String idCom);
+	VBusquedaDatosCompradorExpediente getDatCompradorById(Long idCom);
 
 	/**
 	 * Método que guarda la información de la pestaña Condicionantes del expediente
@@ -1061,7 +1060,7 @@ public interface ExpedienteComercialApi {
 
 	Boolean checkFechaVenta(Long idTramite);
 
-	Boolean esBH(String idExpediente);
+	Boolean esBH(Long idExpediente);
 
 	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);
 
@@ -1168,7 +1167,7 @@ public interface ExpedienteComercialApi {
 	 */
 	ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna);
 
-	String getCodigoCarteraExpediente(String idExpediente);
+	String getCodigoCarteraExpediente(Long idExpediente);
 
 	DtoPage getActivosExpedienteVista(Long idExpediente);
 
@@ -1235,5 +1234,7 @@ public interface ExpedienteComercialApi {
 	boolean hayProblemasURSUS(Long idExpediente);
 	
 	Boolean modificarDatosUnCompradorProblemasURSUS( DtoSlideDatosCompradores dto) throws Exception;
+	
+	public void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial);
 
 }

@@ -4225,6 +4225,11 @@ public class ActivoAdapter {
 					}
 
 					activoApi.saveOrUpdate(activo);
+					
+					if (!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
+							&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+						activoApi.calcularRatingActivo(activo.getId());
+					}
 
 					aprobado = publicarActivoConHistorico(username, activo);
 					if (aprobado) {

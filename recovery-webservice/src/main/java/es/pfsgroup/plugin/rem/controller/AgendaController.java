@@ -390,6 +390,8 @@ public class AgendaController extends TareaController {
 								ofertaApi.rechazarOferta(oferta);
 							}
 						}
+						expedienteComercialApi.finalizarTareaValidacionClientes(eco);
+						salto = adapter.saltoResolucionExpediente(tarea.getId());
 						break;
 					}
 				}								

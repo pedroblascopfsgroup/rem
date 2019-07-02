@@ -1154,7 +1154,7 @@ Ext.define('HreRem.controller.ActivosController', {
     refrescarDetalleGasto: function(detalle, callbackFn) {
     	
     	var me = this,
-    	id = detalle.getViewModel().get("gasto.id");	;
+    	id = detalle.getViewModel().get("gasto.id");
     	
     	HreRem.model.GastoProveedor.load(id, {
     		scope: this,

@@ -388,6 +388,7 @@ public class AgendaController extends TareaController {
 								expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);
 								oferta = eco.getOferta();
 								ofertaApi.rechazarOferta(oferta);
+								ofertaApi.descongelarOfertas(eco);
 							}
 						}
 						expedienteComercialApi.finalizarTareaValidacionClientes(eco);

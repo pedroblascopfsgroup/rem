@@ -247,6 +247,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
+import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
@@ -401,6 +402,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GencatApi gencatApi;
+	
+	@Autowired
+	private GenericaRestDaoImp genericaRestDaoImp;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -2003,7 +2007,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public VBusquedaDatosCompradorExpediente getDatosCompradorById(String idCom, String idExp) {
+	public VBusquedaDatosCompradorExpediente getDatosCompradorById(Long idCom, Long idExp) {
 		Filter filtroCom = genericDao.createFilter(FilterType.EQUALS, "id", idCom);
 		Filter filtroEco = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial", idExp);
 
@@ -2012,7 +2016,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 
 	@Override
-	public VBusquedaDatosCompradorExpediente getDatCompradorById(String idCom) {
+	public VBusquedaDatosCompradorExpediente getDatCompradorById(Long idCom) {
 		Filter filtroCom = genericDao.createFilter(FilterType.EQUALS, "id", idCom);
 
 		return genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroCom);
@@ -3513,7 +3517,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
 		Comprador comprador = genericDao.get(Comprador.class, filtro);
 
 		if (!Checks.esNulo(comprador)) {
@@ -3659,12 +3663,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
-			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador",
-					Long.parseLong(dto.getId()));
-			Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente",
-					Long.parseLong(dto.getIdExpedienteComercial()));
-			Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(dto.getIdExpedienteComercial()));
+			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", dto.getId());
+			Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente", dto.getIdExpedienteComercial());
+			Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpedienteComercial());
 
 			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
 					filtroExpedienteComercial);
@@ -3931,7 +3932,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		
 		if(!Checks.esNulo(expedienteComercial)) {
-			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",Long.toString(expedienteComercial.getId()));
+			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",expedienteComercial.getId());
 			Filter filtroTitular = genericDao.createFilter(FilterType.EQUALS, "titularContratacion",1);
 			VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular); 
 			
@@ -4352,8 +4353,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento", dto.getNumDocumento());
 		Comprador compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
 
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id",
-				Long.parseLong(dto.getIdExpedienteComercial()));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpedienteComercial());
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		CompradorExpediente compradorExpediente = new CompradorExpediente();
 		compradorExpediente.setBorrado(false);
@@ -7689,13 +7689,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		try {
 			beanUtilNotNull.copyProperties(comprador, vista);
-		
+			String cartera = getCodigoCarteraExpediente(vista.getIdExpedienteComercial());
 			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
 			comprador.setCesionDatos(vista.getCesionDatos());
 			comprador.setComunicacionTerceros(vista.getComunicacionTerceros());
 			comprador.setTransferenciasInternacionales(vista.getTransferenciasInternacionales());
-			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
-			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()).equals(DDCartera.CODIGO_CARTERA_BANKIA));
+			comprador.setEntidadPropietariaCodigo(cartera);
+			comprador.setEsCarteraBankia(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera));
 			
 			if(comprador.getEsCarteraBankia()){
 				if(comprador.getEsBH()){
@@ -7751,27 +7751,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public Boolean esBH(String idExpediente) {
-		Long id = Long.parseLong(idExpediente);
+	public Boolean esBH(Long idExpediente) {
 
-		return DDSubcartera.CODIGO_BAN_BH.equals(getCodigoSubCarteraExpediente(id).getCodigo());
+		return DDSubcartera.CODIGO_BAN_BH.equals(getCodigoSubCarteraExpediente(idExpediente).getCodigo());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public String getCodigoCarteraExpediente(String idExpediente) {
-		Long id = Long.parseLong(idExpediente);
+	public String getCodigoCarteraExpediente(Long idExpediente) {
 		String cartera = null;
-
-		if (!Checks.esNulo(id)) {
-			DtoPage dto = this.getActivosExpediente(id);
-			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
-			if (!Checks.estaVacio(dtosActivos)) {
-				Activo primerActivo = activoApi.get(dtosActivos.get(0).getIdActivo());
-				if (!Checks.esNulo(primerActivo)) {
-					cartera = primerActivo.getCartera().getCodigo();
-				}
-			}
+		ExpedienteComercial expediente = null;
+		if (!Checks.esNulo(idExpediente)) {
+			expediente = findOne(idExpediente);
+//			DtoPage dto = this.getActivosExpediente(idExpediente);
+//			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
+//			if (!Checks.estaVacio(dtosActivos)) {
+//				Activo primerActivo = activoApi.get(dtosActivos.get(0).getIdActivo());
+//				if (!Checks.esNulo(primerActivo)) {
+//					cartera = primerActivo.getCartera().getCodigo();
+//				}
+//			}
+			if(!Checks.esNulo(expediente))
+				cartera = expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo();
 		}
 
 		return cartera;
@@ -9075,7 +9075,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		
 		if(!Checks.esNulo(expedienteComercial)) {
-			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",Long.toString(expedienteComercial.getId()));
+			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",expedienteComercial.getId());
 			Filter filtroTitular = genericDao.createFilter(FilterType.EQUALS, "titularContratacion",1);
 			VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular); 
 			
@@ -9403,33 +9403,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 	}
 	
-	private void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial){
-		
-		TareaNotificacion tarNot = new TareaNotificacion();
-		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajo(expedienteComercial.getTrabajo().getId());
-		if (!Checks.esNulo(tramite)){
-			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
-			for (TareaExterna tarea : tareasActivas){
-				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
-					tarNot = tarea.getTareaPadre();
-					if (!Checks.esNulo(tarNot)){
-						tarNot.setFechaFin(new Date());
-						
-						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-						if (!Checks.esNulo(usuarioLogado)){
-							tarNot.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
-							tarNot.getAuditoria().setFechaBorrar(new Date());
-							tarNot.getAuditoria().setBorrado(true);
-							
-							genericDao.update(TareaNotificacion.class, tarNot);
-						}
-					}
-					
-				}
-			}
-		}
-	}
-	
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean modificarDatosUnCompradorProblemasURSUS( DtoSlideDatosCompradores dto) throws Exception {
@@ -9607,5 +9580,34 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 		return null;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial){
+		TareaNotificacion tarNot = new TareaNotificacion();
+		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajo(expedienteComercial.getTrabajo().getId());
+		if (!Checks.esNulo(tramite)){
+			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
+			for (TareaExterna tarea : tareasActivas){
+				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
+					tarNot = tarea.getTareaPadre();
+					if (!Checks.esNulo(tarNot)){
+						tarNot.setFechaFin(new Date());
+						
+						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+						if (!Checks.esNulo(usuarioLogado)){
+							tarNot.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+							tarNot.getAuditoria().setFechaBorrar(new Date());
+							tarNot.getAuditoria().setBorrado(true);
+							
+							genericDao.update(TareaNotificacion.class, tarNot);
+						}
+					}
+					
+				}
+			}
+			genericaRestDaoImp.doFlush();
+		}
 	}
 }

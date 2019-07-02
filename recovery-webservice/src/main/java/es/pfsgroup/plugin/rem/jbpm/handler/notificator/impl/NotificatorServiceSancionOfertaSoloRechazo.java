@@ -58,7 +58,8 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 			}
 		}
 		
-		if((CODIGO_T017_RECOMENDACION_CES.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo()) && aprueba)) {
+		if((CODIGO_T017_RECOMENDACION_CES.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo()) && aprueba)
+				|| (CODIGO_T017_RESPUESTA_OFERTANTE_PM.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo()) && aprueba)) {
 			correoLlegadaTarea = true;
 			codTareaActual = valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo();
 		}

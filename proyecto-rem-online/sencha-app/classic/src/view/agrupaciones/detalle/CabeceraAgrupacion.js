@@ -118,7 +118,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 												    width: 225,
 												    height: 125,
 												    cls: 'cabecera-mapa',
-												    margin: '10 10 10 20'
+												    margin: '10 10 10 20',
+													listeners: {
+													   'render': function(panel) {
+													       panel.body.on('click', function() {
+													    	   panel.add(me.gmap);
+													       });
+													    }
+													}
 												}
 											]
 										},
@@ -321,7 +328,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
     	
     	me.gmap.center.geoCodeAddr = token;
     	me.gmap.center.marker = {title: title};
-    	me.down('[tipo=panelgmap]').add(me.gmap); 
-		
+    	
+    	me.down('[tipo=panelgmap]').setHtml("<img style= 'width: 225px; height: 125px;' alt= 'Imagen de relleno de google maps' src='resources/images/imagenPrecargaMapa.jpg' />");
 	}
 });

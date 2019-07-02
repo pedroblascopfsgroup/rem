@@ -396,8 +396,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 		me.down('botonfavorito').setOpenId(data.get("id"));
 
 		me.gmap.configurarMapa(latitud, longitud, token, title);
-
-		//me.down('[tipo=panelgmap]').add(me.gmap);
+		
 		me.down('[tipo=panelgmap]').setHtml("<img style= 'width: 225px; height: 125px;' alt= 'Imagen de relleno de google maps' src='resources/images/imagenPrecargaMapa.jpg' />");
 	}
 });

@@ -40,11 +40,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		id = me.getViewModel().get("gasto.id"),
 		model = form.getModelInstance();
 		form.up("tabpanel").mask(HreRem.i18n("msg.mask.loading"));	
-		
 		model.setId(id);
 		model.load({
 		    success: function(record) {
-		    	
 		    	form.setBindRecord(record);		    	
 		    	form.up("tabpanel").unmask();
 		    },
@@ -258,17 +256,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
      */
 	onClickBotonRefrescar: function (btn) {
 		var me = this;
-		tabPanel = me.getView().down("tabpanel");
-		var activeTab = tabPanel.getActiveTab();
-		if(activeTab.xtype = "activosafectadosgasto"){
-			me.updateGastoByPrinexLBK();
-		}
+//		tabPanel = me.getView().down("tabpanel");
+//		var activeTab = tabPanel.getActiveTab();
+//		if(activeTab.xtype = "activosafectadosgasto"){
+//			me.updateGastoByPrinexLBK();
+//		}
 		me.refrescarGasto(true);
 	},
 	
-	refrescarGasto: function(refrescarPestañaActiva) {	
+	refrescarGasto: function(refrescarPestaniaActiva) {	
 		var me = this,
-		refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false: refrescarPestañaActiva,
+		refrescarPestaniaActiva = Ext.isEmpty(refrescarPestaniaActiva) ? false: refrescarPestaniaActiva,
 		tabPanel = me.getView().down("tabpanel");
 
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
@@ -279,17 +277,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
   		});
   		
   		// Actualizamos la pestaña actual si tiene función de recargar y el gasto si estamos guardando uno.
-  		if(!Ext.isEmpty(tabPanel)) {	  		
+  		if(!Ext.isEmpty(tabPanel)) {
+  			var callbackFn = function() {me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);};
+			me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
 			var activeTab = tabPanel.getActiveTab();
-			if(refrescarPestañaActiva) {
+			if(refrescarPestaniaActiva) {
 				if(activeTab.funcionRecargar) {
 	  				activeTab.funcionRecargar();
 				}
-			}
-			var callbackFn = function() {me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);};
-			me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
+			}			
   		}
-
 	},
 	
 	buscarProveedor: function(field, e){
@@ -721,7 +718,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	            	}
 	            	
 	            }
-	            catch (e){ };
+	            catch (e){me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); };
     			
     		
 	    		
@@ -1465,10 +1462,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    	 data = Ext.decode(response.responseText);
 		    	 
 		    	 	if(data.success == "true"){
-		    	 		if(data.data == "true"){
+		    	 		if(data.data == "true"){		    	 			
 		    	 			panel.up().getLayout().columns=4;
 		    				panel.up().getLayout().tdAttrs.width="25%";
-		    				panel.lookupController().refrescarGasto();
+		    				panel.up().getLayout().renderChildren();
 		    	 		}else{
 		    	 			panel.destroy();
 		    	 		}

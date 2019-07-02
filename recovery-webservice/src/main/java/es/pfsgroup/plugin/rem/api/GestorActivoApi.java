@@ -45,6 +45,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String USU_PROVEEDOR_HOMESERVE = "proveedor.homeserve";
 	public static final String USU_PROVEEDOR_AESCTECTONICA = "proveedor.aesctectonica";
 	public static final String USU_CEE_BANKIA_POR_DEFECTO = "proveedor.cee.bankia";
+	public static final String USU_CEDULA_HABITABILIDAD_SAREB_POR_DEFECTO = "proveedor.cedula.habitabilidad.sareb";
 	public static final String CODIGO_TIPO_PROVEEDOR_TECNICO="PTEC";
 	public static final String CODIGO_GESTOR_GOLDEN_TREE = "GTREE";
 	public static final String CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK = "GCODI";

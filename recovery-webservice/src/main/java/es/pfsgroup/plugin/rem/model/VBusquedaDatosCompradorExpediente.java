@@ -19,10 +19,10 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Id
 	@Column(name = "COM_ID")
-	private String id;
+	private Long id;
 	
 	@Column(name = "ECO_ID")
-	private String idExpedienteComercial;
+	private Long idExpedienteComercial;
 	
 	@Column(name = "COD_TIPO_PERSONA")
 	private String codTipoPersona;
@@ -242,11 +242,11 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -550,11 +550,11 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.emailRte = emailRte;
 	}
 
-	public String getIdExpedienteComercial() {
+	public Long getIdExpedienteComercial() {
 		return idExpedienteComercial;
 	}
 
-	public void setIdExpedienteComercial(String idExpedienteComercial) {
+	public void setIdExpedienteComercial(Long idExpedienteComercial) {
 		this.idExpedienteComercial = idExpedienteComercial;
 	}
 

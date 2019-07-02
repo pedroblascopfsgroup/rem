@@ -127,8 +127,10 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 			}
 		}
 		Activo activo = tramite.getActivo();
-		if(!Checks.esNulo(activo))
+		if(!Checks.esNulo(activo)) {
 			activoApi.actualizarOfertasTrabajosVivos(activo);
+			activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
+		}
 		
 		//Llamada a Maestro de Personas
 		try {
@@ -146,7 +148,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 		}
 		expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
 		
-		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 	}
 
 	public String[] getCodigoTarea() {

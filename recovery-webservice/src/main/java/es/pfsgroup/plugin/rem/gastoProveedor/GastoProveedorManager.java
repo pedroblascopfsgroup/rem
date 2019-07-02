@@ -721,16 +721,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateGastoByPrinexLBK(String idGasto) {
-		Long idGastoLong = Long.valueOf(idGasto);
+	public boolean updateGastoByPrinexLBK(Long idGasto) {
 		Double gastoTotal = 0.0;
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGastoLong);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 		GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, filtro);
 
 		if (!Checks.esNulo(detalleGasto)) {
 			if(!Checks.esNulo(detalleGasto.getGastoProveedor())) {
 				List<GastoPrinex> listGastoPrinex = new ArrayList<GastoPrinex>();
-				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",idGastoLong);
+				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",idGasto);
 				listGastoPrinex = genericDao.getList(GastoPrinex.class, filtro3);
 				if(!Checks.estaVacio(listGastoPrinex)) {
 					
@@ -747,7 +746,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						if(!Checks.esNulo(gastoPrinexListActivos.getIdActivo())) {
 							GastoProveedorActivo gastoProveedorActivos = new GastoProveedorActivo();
 							
-							Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id",idGastoLong);
+							Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id",idGasto);
 							Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "activo.id",gastoPrinexListActivos.getIdActivo());
 
 							gastoProveedorActivos = genericDao.get(GastoProveedorActivo.class, filtro2,filtro4);
@@ -767,7 +766,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				}
 				GastoProveedor gasto = new GastoProveedor();
-				gasto = gastoDao.getGastoById(idGastoLong);
+				gasto = gastoDao.getGastoById(idGasto);
 				if(!Checks.esNulo(gasto)) {
 					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
 					this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);

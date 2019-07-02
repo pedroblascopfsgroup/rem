@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.gasto.avisos;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +25,9 @@ public class GastoAvisoTieneGPL implements GastoAvisadorApi{
 
 		DtoAviso dtoAviso = new DtoAviso();
 		
-		GastoPrinex gastoPrinex = genericDao.get(GastoPrinex.class,genericDao.createFilter(FilterType.EQUALS, "idGasto", gasto.getId()));
+		List<GastoPrinex> gastoPrinex = genericDao.getList(GastoPrinex.class,genericDao.createFilter(FilterType.EQUALS, "idGasto", gasto.getId()));
 		
-		if(!Checks.esNulo(gastoPrinex) ) {
+		if(!Checks.estaVacio(gastoPrinex) ) {
 
 			dtoAviso.setDescripcion("El gasto tiene información detalle PRINEX LBK");
 			dtoAviso.setId(String.valueOf(gasto.getId()));

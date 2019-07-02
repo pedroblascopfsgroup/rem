@@ -200,10 +200,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 															cls: 'cabecera-info-field',
 															width: 70,
 										                	bind: {
+										                		hidden:'{isEmptySrcCartera}',
 										                		src: '{getSrcCartera}',
 										                		alt: '{agrupacionficha.cartera}'
 										                	}
 										                },
+										                {
+																fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+																cls: 'cabecera-info-field',
+																fieldStyle: 'color: #0a94d6 !important;font-weight: bold !important',
+																width: 70,
+																bind: {
+																	hidden:'{!isEmptySrcCartera}',
+																	value: '{agrupacionficha.cartera}'
+																}
+																
+														},
 										                {
 															xtype: 'textfieldbase',
 															readOnly: true,

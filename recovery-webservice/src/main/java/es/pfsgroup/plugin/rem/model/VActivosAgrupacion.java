@@ -51,6 +51,9 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name = "VAL_IMPORTE_APROBADO_VENTA")
 	private Double importeAprobadoVenta;
 	
+	@Column(name = "VAL_IMPORTE_APROBADO_RENTA")
+	private Double importeAprobadoRenta;
+	
 	@Column(name = "VAL_NETO_CONTABLE")
 	private Double importeNetoContable;	
 	
@@ -392,5 +395,13 @@ public class VActivosAgrupacion implements Serializable {
 
 	public void setEstadoTitulo(String estadoTitulo) {
 		this.estadoTitulo = estadoTitulo;
+	}
+
+	public Double getImporteAprobadoRenta() {
+		return importeAprobadoRenta;
+	}
+
+	public void setImporteAprobadoRenta(Double importeAprobadoRenta) {
+		this.importeAprobadoRenta = importeAprobadoRenta;
 	}
 }

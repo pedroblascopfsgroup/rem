@@ -194,6 +194,33 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 															fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 															bind:		'{agrupacionficha.tipoAgrupacionDescripcion}'
 														},
+														{ 
+															xtype: 'imagefield',
+															fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+															cls: 'cabecera-info-field',
+															width: 70,
+										                	bind: {
+										                		src: '{getSrcCartera}',
+										                		alt: '{agrupacionficha.cartera}'
+										                	}
+										                },
+										                {
+															xtype: 'textfieldbase',
+															readOnly: true,
+															fieldLabel: HreRem.i18n('fieldlabel.activo.matriz'),
+															reference: 'activoMatrizRef',
+															bind: {
+																hidden: '{!esAgrupacionPromocionAlquiler}',
+																value: '{agrupacionficha.activoMatriz}'
+															},
+															cls: 'show-text-as-link',
+															listeners: {
+														        click: {
+														            element: 'el', //bind to the underlying el property on the panel
+														            fn:'onClickActivoMatriz'									       
+														        }
+															}
+														},
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.numero.activos.incluidos'),
 															bind:		'{agrupacionficha.numeroActivos}'
@@ -209,16 +236,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 																hidden : '{agrupacionficha.isAgrupacionGencat}'
 															}
 														},
-														{ 
-															xtype: 'imagefield',
-															fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-															cls: 'cabecera-info-field',
-															width: 70,
-										                	bind: {
-										                		src: '{getSrcCartera}',
-										                		alt: '{agrupacionficha.cartera}'
-										                	}
-										                },
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 															bind: {

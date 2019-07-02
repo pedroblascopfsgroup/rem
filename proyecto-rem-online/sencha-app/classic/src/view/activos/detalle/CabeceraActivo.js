@@ -251,9 +251,9 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										reference: 'numUnidadesAlquilablesRef', 
 										cls: 'cabecera-info-field',
 										bind: { 
-										hidden: '{!activo.activoMatriz}',
+											hidden: '{!activo.activoMatriz}',
 											value: '{activo.unidadesAlquilablesEnAgrupacion}'
-									}
+										}
 									},
 									{	
 										xtype: 'textfieldbase',

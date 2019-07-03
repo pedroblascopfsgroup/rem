@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
+import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -54,7 +56,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.rest.model.DestinatariosRest;
 import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
-import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApiImpl;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService
@@ -62,6 +63,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	private static final String STR_MISSING_VALUE = "---";
 	private final Log logger = LogFactory.getLog(getClass());
+	SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 
 	private static final String GESTOR_PRESCRIPTOR = "prescriptor";
 	private static final String GESTOR_MEDIADOR = "mediador";
@@ -80,10 +82,20 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_BACKOFFICE_SUS = "gestor-backoffice-sustituto";
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
 	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "gestor-comercial-backoffice-inmobiliario";
+	
+	//Variables de buzones
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_PFS = "buzonpfs";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	private static final String BUZON_FOR_APPLE = "buzonforapple";
+	private static final String BUZON_CES_APPLE = "buzoncesapple";
+	
+	//Variables de tareas
+	private static final String CODIGO_T017_ANALISIS_PM = "T017_AnalisisPM";
+	private static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
+	private static final String CODIGO_T017_ADVISORY_NOTE = "T017_AdvisoryNote";
+	private static final String CODIGO_T017_RECOMENDACION_CES = "T017_RecomendCES";
+	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
 
 	@Resource
 	private Properties appProperties;
@@ -122,12 +134,24 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	public final void notificator(ActivoTramite tramite) {
 
 	}
+	//genera notificacion llegada
+	public void generaNotificacionLlegadaDesdeUpdater(ActivoTramite tramite, boolean correoLlegadaTarea, String codTareaActual) {
+		generaNotificacion(tramite, false, false, correoLlegadaTarea, codTareaActual);
+	}
 
 	protected void generaNotificacion(ActivoTramite tramite, boolean permiteRechazar,
-			boolean permiteNotificarAprobacion) {
+			boolean permiteNotificarAprobacion, boolean correoLlegadaTarea, String codTareaActual) {
 
 		if (tramite.getActivo() != null && tramite.getTrabajo() != null) {
-			sendNotification(tramite, permiteRechazar, getExpComercial(tramite), permiteNotificarAprobacion);
+			sendNotification(tramite, permiteRechazar, getExpComercial(tramite), permiteNotificarAprobacion, correoLlegadaTarea, codTareaActual);
+		}
+
+	}
+	
+	protected void generaNotificacionReserva(ActivoTramite tramite, Date fechaFirma) {
+
+		if (tramite.getActivo() != null && tramite.getTrabajo() != null) {
+			sendNotificationReserva(tramite, getExpComercial(tramite), fechaFirma);
 		}
 
 	}
@@ -148,7 +172,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	}
 
 	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, ExpedienteComercial expediente,
-			boolean permiteNotificarAprobacion) {
+			boolean permiteNotificarAprobacion, boolean correoLlegadaTarea, String codTareaActual) {
 
 		ArrayList<String> destinatarios = new ArrayList<String>();
 
@@ -239,7 +263,45 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));
 			}
+			
+			//Si se pide notificacion de entrada a la siguiente tarea, se monta en el siguiente método
+			if(!Checks.esNulo(correoLlegadaTarea) && correoLlegadaTarea && !Checks.esNulo(codTareaActual)) {
+				enviaNotificacionLlegadaTarea(tramite, codTareaActual, activo, oferta);
+			}
 		}
+	}
+	
+	private void sendNotificationReserva(ActivoTramite tramite, ExpedienteComercial expediente, Date fechaFirma) {		
+		String asunto = null, cuerpo = null;
+		
+		Oferta oferta = expediente.getOferta();
+		
+		ArrayList<String> destinatarios = getDestinatariosNotificacion(oferta.getActivoPrincipal(), oferta, expediente);
+		
+		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		
+		asunto = "Notificación de reserva de la oferta " + oferta.getNumOferta();
+		
+		cuerpo = "La oferta " + oferta.getNumOferta() + " ha sido reservada a fecha de " + formato.format(fechaFirma);
+		
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
+		dtoSendNotificator.setTitulo(asunto);
+
+		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
+		
+		if (!Checks.esNulo(buzonRem)) {
+			destinatarios.add(buzonRem.getEmail());
+		}
+		if (!Checks.esNulo(buzonPfs)) {
+			destinatarios.add(buzonPfs.getEmail());
+		}
+		if(!Checks.esNulo(buzonOfertaApple)) {
+			destinatarios.add(buzonOfertaApple.getEmail());
+		}
+
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, false, oferta, destinatarios.toArray(new String[] {}));
 	}
 
 	protected void generaNotificacionSinTramite(Long idOferta) {
@@ -254,7 +316,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		ActivoTramite tramiteSimulado = new ActivoTramite();
 		tramiteSimulado.setActivo(activo);
 		ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(idOferta);
-		sendNotification(tramiteSimulado, true, eco, true);
+		sendNotification(tramiteSimulado, true, eco, true, false, null);
 	}
 
 	private String getPrescriptor(Activo activo, Oferta ofertaAceptada) {
@@ -773,6 +835,56 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, false, oferta, destinatarios);
+	}
+	
+	private void enviaNotificacionLlegadaTarea(ActivoTramite tramite, String codTareaActual, Activo activo, Oferta oferta) {
+		String asunto = null, cuerpo = null;
+		
+		ArrayList<String> destinatarios = new ArrayList<String>();
+		
+		String tareaAPasar = CODIGO_T017_ANALISIS_PM.equals(codTareaActual) ? "Resolución CES" 
+				: CODIGO_T017_ADVISORY_NOTE.equals(codTareaActual) ? "Recomendación CES"
+				: CODIGO_T017_RECOMENDACION_CES.equals(codTareaActual) ? "Resolución Promontoria Manzana"
+				: "";
+		
+		asunto = "La oferta " + oferta.getNumOferta() + " ha llegado a la tarea " + tareaAPasar;
+		
+		cuerpo = asunto + " en REM.";
+		
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
+		dtoSendNotificator.setTitulo(asunto);
+
+		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
+		
+		String buzon = (CODIGO_T017_ANALISIS_PM.equals(codTareaActual) || CODIGO_T017_ADVISORY_NOTE.equals(codTareaActual)) ? BUZON_CES_APPLE : null;
+		
+		if(!Checks.esNulo(buzon)) {
+			Usuario buzonces = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_CES_APPLE));
+			if(!Checks.esNulo(buzon)) {
+				destinatarios.add(buzonces.getEmail());
+			}
+		}else{
+			List<GrupoUsuario> grupoManzana = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "grupo.username", GrupoUsuario.GRUPO_MANZANA));
+			
+			for(GrupoUsuario usuario: grupoManzana) {
+				if(!Checks.esNulo(usuario)) {
+					destinatarios.add(usuario.getUsuario().getEmail());
+				}
+			}
+			
+		}
+		
+		Usuario buzonpfs = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_PFS));
+		Usuario buzonrem = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_REM));
+		
+		if(!Checks.esNulo(buzonpfs)) {
+			destinatarios.add(buzonpfs.getEmail());
+		}
+		if(!Checks.esNulo(buzonrem)) {
+			destinatarios.add(buzonrem.getEmail());
+		}
+		
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, false, oferta, destinatarios.toArray(new String[] {}));
 	}
 
 	private void enviaNotificacionGenerico(Activo activo, String asunto, String cuerpoCorreo,

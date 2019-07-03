@@ -46,6 +46,8 @@ import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class GrupoUsuario implements Serializable{
     private static final long serialVersionUID = 1L;
+    
+    public static final String GRUPO_MANZANA = "gruproman";
 
     @Id
     @Column(name = "GRU_ID")

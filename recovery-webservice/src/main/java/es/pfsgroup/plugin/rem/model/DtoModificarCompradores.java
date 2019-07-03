@@ -2,14 +2,12 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
+public class DtoModificarCompradores{
+	
 
-public class DtoModificarCompradores {
+	private Long id;
 	
-	
-	private String id;
-	
-	private String idExpedienteComercial;
+	private Long idExpedienteComercial;
 	
 	private String codTipoPersona;
 	
@@ -165,19 +163,19 @@ public class DtoModificarCompradores {
 	
 	
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getIdExpedienteComercial() {
+	public Long getIdExpedienteComercial() {
 		return idExpedienteComercial;
 	}
 
-	public void setIdExpedienteComercial(String idExpedienteComercial) {
+	public void setIdExpedienteComercial(Long idExpedienteComercial) {
 		this.idExpedienteComercial = idExpedienteComercial;
 	}
 

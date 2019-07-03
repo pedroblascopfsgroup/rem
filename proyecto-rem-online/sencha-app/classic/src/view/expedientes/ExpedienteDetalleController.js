@@ -215,7 +215,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onSaveFormularioCompleto: function(btn, form) {
 		var me = this;
-
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() || form.disableValidation) {
 
@@ -589,7 +588,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 	    activeTab = null,
 	    refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false : refrescarTabActiva;
-
 	    if(!Ext.isEmpty(me.getView().down("tabpanel"))){
 	         activeTab = me.getView().down("tabpanel").getActiveTab();
 	    }else {
@@ -598,8 +596,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
-  			if(component.rendered) {
+  			if(component.rendered && "datosbasicosexpediente".indexOf(component.reference) <0) {
   				component.recargar=true;
+  			}else {
+  				component.recargar=false;
   			}
   		});
   		

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Flores
---## FECHA_CREACION=20190701
+--## FECHA_CREACION=20190703
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6882
@@ -37,6 +37,7 @@ DECLARE
 	TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
 	TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
 	V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
+		T_FUNCION( 'grucoces' , 'grucoces'),
 		T_FUNCION( 'grucoces' , 'ext.mkelly'),
 		T_FUNCION( 'grucoces' , 'ext.bcunningham'),
 		T_FUNCION( 'grucoces' , 'ext.drubio'),
@@ -44,6 +45,7 @@ DECLARE
 		T_FUNCION( 'grucoces' , 'ext.ibastosmendes'),
 		T_FUNCION( 'grucoces' , 'ext.crenilla'),
 		T_FUNCION( 'grucoces' , 'ext.gcalnan'),
+		T_FUNCION( 'gruproman' , 'gruproman'),
 		T_FUNCION( 'gruproman', 'lgomezc')
 	); 
 	V_TMP_FUNCION T_FUNCION;

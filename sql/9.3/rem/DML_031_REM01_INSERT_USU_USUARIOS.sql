@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=Alberto Flores
---## FECHA_CREACION=20190701
+--## FECHA_CREACION=20190703
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6882
@@ -45,16 +45,16 @@ DECLARE
 	TYPE T_USUARIOS IS TABLE OF T_USU;
 	-- USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_APELLIDO1, USU_APELLIDO2, USU_GRUPO
 	V_USER T_USUARIOS := T_USUARIOS(
-		T_USU('grucoces', ''''||V_PWD(1)||'''', 'Comité CES','','','1'), 
-		T_USU('ext.mkelly', ''''||V_PWD(1)||'''', 'Maurice','Kelly','','0'),
-		T_USU('ext.bcunningham', ''''||V_PWD(1)||'''', 'Barry','Cunningham','','0'),
-		T_USU('ext.drubio', ''''||V_PWD(1)||'''', 'Diego','Rubio','','0'),
-		T_USU('ext.jperezb', ''''||V_PWD(1)||'''', 'Jesús','Pérez','','0'),
-		T_USU('ext.ibastosmendes', ''''||V_PWD(1)||'''', 'Íñigo','Bastos','Mendes','0'),
-		T_USU('ext.crenilla', ''''||V_PWD(1)||'''', 'Cristina','Renilla','','0'),
-		T_USU('ext.gcalnan', ''''||V_PWD(1)||'''', 'Georgia','Calnan','','0'),
-		T_USU('gruproman', ''''||V_PWD(2)||'''', 'Grupo Promontoria Manzana','','','1'),
-		T_USU('lgomezc', ''''||V_PWD(2)||'''', 'Luis',  'Gómez', '', '0')
+		T_USU('grucoces', ''||V_PWD(1)||'', 'Comité CES','','','1'), 
+		T_USU('ext.mkelly', ''||V_PWD(1)||'', 'Maurice','Kelly','','0'),
+		T_USU('ext.bcunningham', ''||V_PWD(1)||'', 'Barry','Cunningham','','0'),
+		T_USU('ext.drubio', ''||V_PWD(1)||'', 'Diego','Rubio','','0'),
+		T_USU('ext.jperezb', ''||V_PWD(1)||'', 'Jesús','Pérez','','0'),
+		T_USU('ext.ibastosmendes', ''||V_PWD(1)||'', 'Íñigo','Bastos','Mendes','0'),
+		T_USU('ext.crenilla', ''||V_PWD(1)||'', 'Cristina','Renilla','','0'),
+		T_USU('ext.gcalnan', ''||V_PWD(1)||'', 'Georgia','Calnan','','0'),
+		T_USU('gruproman', ''||V_PWD(2)||'', 'Grupo Promontoria Manzana','','','1'),
+		T_USU('lgomezc', ''||V_PWD(2)||'', 'Luis',  'Gómez', '', '0')
 	);
 	V_TMP_USU T_USU;
 
@@ -74,7 +74,20 @@ BEGIN
 		EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 		
 		IF V_COUNT > 0 THEN
-			DBMS_OUTPUT.PUT_LINE('[ERROR]: El usuario '''||V_TMP_USU(1)||''' ya se encontraba insertado, no realizamos acción');	
+			DBMS_OUTPUT.PUT_LINE('[ WRN ]: El usuario '''||V_TMP_USU(1)||''' ya se encontraba insertado. Actualizando datos...');
+			V_SQL := 'UPDATE '||V_ESQUEMA_M||'.'||V_TABLA||' SET 
+				USU_PASSWORD = '''||V_TMP_USU(2)||''', 
+				USU_NOMBRE = '''||V_TMP_USU(3)||''',
+				USU_APELLIDO1 = '''||V_TMP_USU(4)||''', 
+				USU_APELLIDO2 = '''||V_TMP_USU(5)||''', 
+				USUARIOMODIFICAR = '''||V_USUARIOCREAR||''', 
+				FECHAMODIFICAR = SYSDATE, 
+				USU_GRUPO = '''||V_TMP_USU(6)||''', 
+				BORRADO = 0
+				WHERE USU_USERNAME = '''||V_TMP_USU(1)||'''';
+			--DBMS_OUTPUT.PUT_LINE(''||V_SQL||'');
+			EXECUTE IMMEDIATE V_SQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO] Usuario '''||V_TMP_USU(1)||''' modificado correctamente');
 		ELSE
 			V_SQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TABLA||' 
 			(USU_ID,ENTIDAD_ID,USU_USERNAME,USU_PASSWORD,USU_NOMBRE,USU_APELLIDO1,USU_APELLIDO2,USUARIOCREAR,FECHACREAR,USU_GRUPO,BORRADO)

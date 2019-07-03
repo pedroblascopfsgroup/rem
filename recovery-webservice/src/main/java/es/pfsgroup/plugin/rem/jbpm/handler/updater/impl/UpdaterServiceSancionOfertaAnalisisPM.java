@@ -65,6 +65,7 @@ public class UpdaterServiceSancionOfertaAnalisisPM implements UpdaterService {
 					if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						try {
 							ofertaAceptada.setFechaRespuestaPM(ft.parse(valor.getValor()));
+							expediente.setFechaSancion(ft.parse(valor.getValor()));
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}

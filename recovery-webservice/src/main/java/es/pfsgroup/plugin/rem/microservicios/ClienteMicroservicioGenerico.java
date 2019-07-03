@@ -68,7 +68,7 @@ public class ClienteMicroservicioGenerico {
 			}
 		}
 		urlBase = !Checks.esNulo(appProperties.getProperty("rest.client.mscomisionamiento.url.base"))
-				? appProperties.getProperty("rest.client.mscomisionamiento.url.base") : "http://192.168.31.222:3141";
+				? appProperties.getProperty("rest.client.mscomisionamiento.url.base") : "https://acomisionamiento.pfsgroup.es:8000";
 		
 		if (Checks.esNulo(urlBase)) {
 			throw new RestConfigurationException("La url base del microservicio no esta definida");

@@ -131,6 +131,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		},
 	    bloquearExpediente: function(tab,bloqueado) {    	
 			var me = this;
+			debugger;
 			me.bloqueado = bloqueado;
 			me.down("[itemId=botoneditar]").setVisible(false);
 			var editionEnabled = function() {

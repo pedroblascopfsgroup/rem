@@ -1,17 +1,18 @@
 --/*
 --#########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20190611
+--## FECHA_CREACION=20190703
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4407
+--## INCIDENCIA_LINK=REMVIP-4701
 --## PRODUCTO=NO
 --## 
---## Finalidad: [REMVIP-4407] Cambios en el histórico de publicaciones
+--## Finalidad: [REMVIP-4701] Cambios en el histórico de publicaciones
 --##
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial (solo Bankia) - REMVIP-4407
+--##		0.2 Resto de carteras - REMVIP-4701
 --#########################################
 --*/
 
@@ -29,8 +30,8 @@ DECLARE
 
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar.
 	V_TABLA VARCHAR2(30 CHAR):= 'ACT_AHP_HIST_PUBLICACION'; --Vble. para la tabla histórica.
-	V_TABLA_COPIA VARCHAR2(30 CHAR):= 'AHP_COPIA_REMVIP_4407'; --Vble. para la tabla backup.
-	V_USUARIO VARCHAR2(40 CHAR) := 'REMVIP-4407'; --Vble. para el usuario REMVIP.
+	V_TABLA_COPIA VARCHAR2(30 CHAR):= 'AHP_COPIA_REMVIP_4701'; --Vble. para la tabla backup.
+	V_USUARIO VARCHAR2(40 CHAR) := 'REMVIP-4701'; --Vble. para el usuario REMVIP.
 	V_NUM NUMBER(16); -- Vble. para validar la existencia de una tabla.
 
 BEGIN

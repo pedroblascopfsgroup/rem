@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=REMVIP-4701
 --## PRODUCTO=NO
 --## 
---## Finalidad: [REMVIP-4407] Cambios en el histórico de publicaciones 2.0
+--## Finalidad: [REMVIP-4701] Cambios en el histórico de publicaciones 2.0
 --##
 --## INSTRUCCIONES:
 --## VERSIONES:

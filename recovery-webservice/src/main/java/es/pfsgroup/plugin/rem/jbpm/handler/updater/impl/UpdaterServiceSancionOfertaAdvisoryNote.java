@@ -13,6 +13,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -26,6 +27,9 @@ public class UpdaterServiceSancionOfertaAdvisoryNote implements UpdaterService {
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAdvisoryNote.class);
 
@@ -49,6 +53,8 @@ public class UpdaterServiceSancionOfertaAdvisoryNote implements UpdaterService {
 				}
 			}
 		}
+		//Generamos notificacion de llegada a la siguiente tarea
+		notificatorServiceSancionOfertaAceptacionYRechazo.generaNotificacionLlegadaDesdeUpdater(tramite, true, CODIGO_T017_ADVISORY_NOTE);
 	}
 
 	public String[] getCodigoTarea() {

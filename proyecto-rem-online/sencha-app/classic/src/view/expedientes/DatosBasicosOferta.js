@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
     disableValidation: true,
     reference: 'datosbasicosoferta',
     scrollable	: 'y',
-
+	refreshAfterSave: true,
 	recordName: "datosbasicosoferta",
 	
 	recordClass: "HreRem.model.DatosBasicosOferta",

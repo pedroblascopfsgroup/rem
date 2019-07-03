@@ -45,6 +45,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
     public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
     public static final String CODIGO_T017_ANALISIS_PM = "T017_AnalisisPM";
 	public static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
+	private static final String COMBO_RESOLUCION = "comboResolucion";
 
 	
 	@Resource
@@ -195,13 +196,28 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		} else {
 			Boolean permiteNotificarAprobacion = true;
+			Boolean correoLlegadaTarea = false;
+			Boolean aprueba = false;
+			String codTareaActual = null;
+			
+			for (TareaExternaValor valor : valores) {
+				if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					aprueba = DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor()) ? true : false;
+					break;
+				}
+			}
 			
 			if(CODIGO_T017_ANALISIS_PM.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo())) {
 				permiteNotificarAprobacion = false;
 			}
 			
+			if((CODIGO_T017_ANALISIS_PM.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo()) && aprueba)) {
+				correoLlegadaTarea = true;
+				codTareaActual = valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo();
+			}
+			
 			// Para los otros estados posibles, genero una notificacion de aceptacion o rechazo segun corresponda.
-			notificatorServiceSancionOfertaAceptacionYRechazo.generaNotificacion(tramite, true, permiteNotificarAprobacion);
+			notificatorServiceSancionOfertaAceptacionYRechazo.generaNotificacion(tramite, true, permiteNotificarAprobacion, correoLlegadaTarea, codTareaActual);
 		}
 	}
 	

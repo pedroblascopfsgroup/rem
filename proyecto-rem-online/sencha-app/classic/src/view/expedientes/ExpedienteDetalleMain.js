@@ -43,7 +43,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 		reservaDisabled = Ext.isDefined(reservaDisabled)? reservaDisabled : true;
 		bloqueado = me.getViewModel().get('expediente.bloqueado');
     	me.down('reservaexpediente').setDisabled(reservaDisabled);
-		me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
+		//me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
 		me.down('ofertaexpediente').bloquearExpediente(me.down('ofertaexpediente'),bloqueado);
 
 		// HREOS-4366 - HREOS 4374

@@ -27,10 +27,10 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -52,7 +53,6 @@ import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
@@ -90,6 +90,12 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private NotificatorServiceSancionOfertaSoloRechazo notificatorSoloRechazo;
+	
+	@Autowired
+	private ActivoTramiteDao tramiteDao;
 	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -371,6 +377,8 @@ public class AgendaController extends TareaController {
 
 				List<TareaExterna> listaTareas = activoTramiteApi
 						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				
+				ActivoTramite tramite = listaTramites.get(0);
 				for (int i = 0; i < listaTareas.size(); i++) {
 					TareaExterna tarea = listaTareas.get(i);
 					if (!Checks.esNulo(tarea)) {
@@ -389,12 +397,16 @@ public class AgendaController extends TareaController {
 								expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);
 								oferta = eco.getOferta();
 								ofertaApi.rechazarOferta(oferta);
+								ofertaApi.descongelarOfertas(eco);
+								notificatorSoloRechazo.notificatorFinTareaConValores(tramite, null);
 							}
 						}
-
+						
 						expedienteComercialApi.finalizarTareaValidacionClientes(eco);
-						salto = adapter.saltoResolucionExpediente(tarea.getId());
-
+						if(!salto) {
+							salto = adapter.saltoResolucionExpediente(tarea.getId());
+						}
+						
 						break;
 					}
 				}								

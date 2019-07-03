@@ -665,7 +665,6 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	var me = this,
     	id = detalle.getViewModel().get("expediente.id");
-    	debugger;
     	HreRem.model.ExpedienteComercial.load(id, {
     		scope: this,
 		    success: function(expediente) {

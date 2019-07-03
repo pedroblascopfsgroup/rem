@@ -215,7 +215,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onSaveFormularioCompleto: function(btn, form) {
 		var me = this;
-debugger;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() || form.disableValidation) {
 
@@ -589,7 +588,6 @@ debugger;
 		var me = this,
 	    activeTab = null,
 	    refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false : refrescarTabActiva;
-debugger;
 	    if(!Ext.isEmpty(me.getView().down("tabpanel"))){
 	         activeTab = me.getView().down("tabpanel").getActiveTab();
 	    }else {

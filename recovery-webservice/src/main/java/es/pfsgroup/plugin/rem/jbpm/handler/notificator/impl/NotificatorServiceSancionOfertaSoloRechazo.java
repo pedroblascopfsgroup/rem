@@ -9,7 +9,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
-import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 
 @Component
 public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServiceSancionOfertaGenerico implements NotificatorService{

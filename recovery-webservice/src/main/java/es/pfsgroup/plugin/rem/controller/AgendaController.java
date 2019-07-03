@@ -30,7 +30,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
@@ -93,9 +94,9 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private NotificatorServiceSancionOfertaSoloRechazo notificatorSoloRechazo;
-	
-	@Autowired
-	private ActivoTramiteDao tramiteDao;
+
+    @Autowired
+    private ActivoAdapter activoAdapter;
 	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -403,6 +404,13 @@ public class AgendaController extends TareaController {
 								ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 								//Actualizar el estado de la publicación de los activos de la oferta (desocultar activos)
 								ofertaApi.desocultarActivoOferta(oferta);
+								
+								ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(oferta);
+								Activo activo = tramite.getActivo();
+								if(!Checks.esNulo(activo)) {
+									activoApi.actualizarOfertasTrabajosVivos(activo);
+									activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
+								}
 							}
 						}
 						expedienteComercialApi.finalizarTareaValidacionClientes(eco);

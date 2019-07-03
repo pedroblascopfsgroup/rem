@@ -120,9 +120,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    							change: function(combo, value) {
 	    								var me = this;
 	    								var form = combo.up('form');
-	    								var checkTanteo = form.down('field[name=dederechotanteo]');
-	    								checkTanteo.reset();
-	    								checkTanteo.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
 	    								
 	    							}
 	    						},

@@ -52,18 +52,21 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 		Boolean aprueba = false;
 		String codTareaActual = null;
 		
-		for (TareaExternaValor valor : valores) {
-			if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				aprueba = DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor()) ? true : false;
-				break;
+		if(!Checks.esNulo(valores)) {
+			for (TareaExternaValor valor : valores) {
+				if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					aprueba = DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor()) ? true : false;
+					break;
+				}
+			}
+			
+			if((CODIGO_T017_RECOMENDACION_CES.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo()) && aprueba)
+					|| (CODIGO_T017_RESPUESTA_OFERTANTE_PM.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo()) && aprueba)) {
+				correoLlegadaTarea = true;
+				codTareaActual = valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo();
 			}
 		}
 		
-		if((CODIGO_T017_RECOMENDACION_CES.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo()) && aprueba)
-				|| (CODIGO_T017_RESPUESTA_OFERTANTE_PM.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo()) && aprueba)) {
-			correoLlegadaTarea = true;
-			codTareaActual = valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo();
-		}
 		this.generaNotificacion(tramite, true, false, correoLlegadaTarea, codTareaActual);
 	}
 

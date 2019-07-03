@@ -377,6 +377,8 @@ public class AgendaController extends TareaController {
 
 				List<TareaExterna> listaTareas = activoTramiteApi
 						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				
+				ActivoTramite tramite = listaTramites.get(0);
 				for (int i = 0; i < listaTareas.size(); i++) {
 					TareaExterna tarea = listaTareas.get(i);
 					if (!Checks.esNulo(tarea)) {
@@ -388,21 +390,20 @@ public class AgendaController extends TareaController {
 							if(DDEstadosExpedienteComercial.RESERVADO.equals(eco.getEstado().getCodigo())) {
 								salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
 							}else {
-								List <TareaExternaValor> valores = null;
 								for (TareaExterna tareasFin : listaTareas) {
 									salto = adapter.saltoFin(tareasFin.getId());
-									valores = tareasFin.getValores();
 								} 
 								expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);
 								oferta = eco.getOferta();
 								ofertaApi.rechazarOferta(oferta);
 								ofertaApi.descongelarOfertas(eco);
-								ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajo(eco.getTrabajo().getId());
-								notificatorSoloRechazo.notificatorFinTareaConValores(tramite, valores);
+								notificatorSoloRechazo.notificatorFinTareaConValores(tramite, null);
 							}
 						}
 						expedienteComercialApi.finalizarTareaValidacionClientes(eco);
-						//salto = adapter.saltoResolucionExpediente(tarea.getId());
+						if(!salto) {
+							salto = adapter.saltoResolucionExpediente(tarea.getId());
+						}
 						break;
 					}
 				}								

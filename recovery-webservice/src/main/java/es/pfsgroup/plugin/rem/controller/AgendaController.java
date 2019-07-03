@@ -398,6 +398,11 @@ public class AgendaController extends TareaController {
 								ofertaApi.rechazarOferta(oferta);
 								ofertaApi.descongelarOfertas(eco);
 								notificatorSoloRechazo.notificatorFinTareaConValores(tramite, null);
+								eco.setFechaVenta(null);
+								//Actualizar el estado comercial de los activos de la oferta
+								ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+								//Actualizar el estado de la publicación de los activos de la oferta (desocultar activos)
+								ofertaApi.desocultarActivoOferta(oferta);
 							}
 						}
 						expedienteComercialApi.finalizarTareaValidacionClientes(eco);

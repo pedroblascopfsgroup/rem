@@ -184,15 +184,15 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.alta.oferta'),
-	                	bind:		'{expediente.fechaAltaOferta}'
-	                	//,readOnly: true
+	                	bind:		'{expediente.fechaAltaOferta}',
+	                	readOnly: !$AU.userIsRol("HAYASUPER")
 	                },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.aceptacion'),
-	                	bind:		'{expediente.fechaAlta}'
-	                	//,readOnly: true
+	                	bind:		'{expediente.fechaAlta}',
+	                	readOnly: !$AU.userIsRol("HAYASUPER")
 	                },
 	                { //Fecha Scoring
 	                	xtype:'datefieldbase',
@@ -203,8 +203,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	},
 	                	listeners: {
 							render: 'tareaDefinicionDeOferta'
-						}
-	                	//,readOnly: true
+						},
+	                	readOnly: !$AU.userIsRol("HAYASUPER")
 	                },
 	                { 
 						xtype: 'datefieldbase',
@@ -213,14 +213,15 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			        	bind: {
 			        		value: '{expediente.fechaSancionComite}',
 			        		hidden: '{esOfertaVenta}'	
-			        	}
+			        	},
+	                	readOnly: !$AU.userIsRol("HAYASUPER")
 			        },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion'),
-	                	bind:		'{expediente.fechaSancion}'
-	                	//,readOnly: true
+	                	bind:		'{expediente.fechaSancion}',
+	                	readOnly: !$AU.userIsRol("HAYASUPER")
 	                },
 	                { 
 						xtype: 'datefieldbase',
@@ -229,7 +230,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			        	bind: {
 			        		value: '{expediente.fechaPosicionamiento}',
 			        		hidden: '{esOfertaVenta}'	
-			        	}
+			        	},
+	                	readOnly: !$AU.userIsRol("HAYASUPER")
 			        },
 	                {//FechaFirmaContrato
 	                	xtype:'datefieldbase',
@@ -237,9 +239,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	bind:		{
 	                		value: '{expediente.fechaVenta}',
 	                		fieldLabel:'{fechaVentaEsAlquiler}'
-	                		}
-	                	//,readOnly: true
-	                	//readOnly: !$AU.userIsRol("HAYASUPER")
+	                		},
+	                	readOnly: !$AU.userIsRol("HAYASUPER")
 	                },
 	                {
 	                	xtype:'datefieldbase',

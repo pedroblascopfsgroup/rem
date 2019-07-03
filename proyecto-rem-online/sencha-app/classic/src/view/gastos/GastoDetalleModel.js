@@ -514,6 +514,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	          	 },
 	          	 groupField: 'descripcionTipo'
     		}
+    	},
+    	
+    	gastosRefacturablesExistentes: {
+    		model: 'HreRem.model.AdjuntoGasto',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'gastosproveedor/getGastosRefacturablesGastoCreado',
+				extraParams: {idGasto: '{gasto.id}'}
+			},
+			autoLoad: true 
     	}
 
   

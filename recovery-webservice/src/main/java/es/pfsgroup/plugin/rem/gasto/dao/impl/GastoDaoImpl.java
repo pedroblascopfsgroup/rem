@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.gasto.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -388,4 +389,18 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> getGastosRefacturablesDelGasto(Long id) {
+		List<GastoProveedor> gastoProveedor = new ArrayList<GastoProveedor>();
+		
+		HQLBuilder hb = new HQLBuilder(" from GastoRefacturable gas");
+		
+		String whereCondition = "GastoRefacturable.idGastoProveedor = " + id + ")";
+		hb.appendWhere(whereCondition);
+		
+		gastoProveedor = HibernateQueryUtils.list(this, hb);
+		
+		return null;//HibernateQueryUtils.list(this, hb);
+	}
 }

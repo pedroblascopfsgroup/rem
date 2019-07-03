@@ -367,5 +367,8 @@ public interface GastoProveedorApi {
 		Boolean isCarteraPropietarioBankiaSareb(ActivoPropietario propietario);
 
 
+		List<Long> getGastosRefacturablesGastoCreado(Long id);
+
+
 }
 

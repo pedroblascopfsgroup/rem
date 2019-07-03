@@ -24,6 +24,7 @@ import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.ModelAndView;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -3322,4 +3323,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return isCarteraPropietarioBankiaSareb;
 	}
 	
+	@Override
+	public List<Long> getGastosRefacturablesGastoCreado(Long id) {
+		List<Long> listaDeGastosRefacturablesDelGasto = new ArrayList<Long>();
+		
+		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(id);
+		
+		
+		return listaDeGastosRefacturablesDelGasto;
+	}
 }

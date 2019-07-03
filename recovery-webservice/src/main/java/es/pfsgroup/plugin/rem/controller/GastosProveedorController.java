@@ -1032,4 +1032,27 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getGastosRefacturablesGastoCreado(Long id) {
+		ModelMap model = new ModelMap();
+		
+		List<String> gastosRefacturables = new ArrayList<String>();
+		
+		
+		
+		try {			
+			model.put("refacturable", gastosRefacturables);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);		
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
 }

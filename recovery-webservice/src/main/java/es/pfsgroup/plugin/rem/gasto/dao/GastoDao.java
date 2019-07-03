@@ -40,4 +40,6 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
     GastoProveedor getGastoPorNumeroGastoHaya(Long numeroGastoHaya);
 
     List<VGastosRefacturados> getGastosRefacturados(String listaGastos);
+
+	List<Long> getGastosRefacturablesDelGasto(Long id);
 }

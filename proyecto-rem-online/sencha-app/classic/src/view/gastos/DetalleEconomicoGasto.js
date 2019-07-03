@@ -10,7 +10,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 	recordClass: "HreRem.model.DetalleEconomicoGasto",
     refreshAfterSave: true,
     
-    requires: ['HreRem.model.DetalleEconomicoGasto'],
+    requires: ['HreRem.model.DetalleEconomicoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes','HreRem.model.AdjuntoGasto', 'HreRem.model.GastoRefacturableGridExistente'],
     
     listeners: {
 		boxready:'cargarTabData',
@@ -864,7 +864,39 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											}				
 
 									]
-								}
+								},
+								{   
+									xtype:'fieldsettable',
+									title: HreRem.i18n('fieldlabel.gasto.refacturable'),
+									items :
+										[
+											{
+							                	xtype:'checkboxfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
+												reference: 'checkboxActivoRefacturable',
+												colspan:3,
+												name: 'checkboxActivoRefacturableExistente'			
+												//width: '500px',
+										       	
+											},
+											 {
+												
+												
+												xtype: 'gastoRefacturadoGridExistentes', 
+												width: '400px',
+												colspan: 3,
+												rowspan: 9,
+												reference: 'gastoRefacturadoGridExistente',
+												bind: {
+													store: '{gastosRefacturablesExistentes}',
+													disabled: '{checkboxActivoRefacturable.checked}'
+												}
+										
+											}
+										]
+										
+					           }
+								
            
     	];
     

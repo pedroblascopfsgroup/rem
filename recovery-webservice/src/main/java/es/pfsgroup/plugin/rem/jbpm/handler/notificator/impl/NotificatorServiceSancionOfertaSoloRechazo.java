@@ -23,6 +23,7 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
 	private static final String CODIGO_T017_RECOMENDACION_CES = "T017_RecomendCES";
 	private static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
+	private static final String CODIGO_T017_RES_EXPEDIENTE = "T017_ResolucionExpediente";
 	private static final String COMBO_RESOLUCION = "comboRespuesta";
 
 	@Override
@@ -41,7 +42,8 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 				CODIGO_T017_RESPUESTA_OFERTANTE_PM,
 				CODIGO_T017_RESOLUCION_PRO_MANZANA,
 				CODIGO_T017_RECOMENDACION_CES,
-				CODIGO_T017_PBC_RESERVA };
+				CODIGO_T017_PBC_RESERVA,
+				CODIGO_T017_RES_EXPEDIENTE};
 	}
 
 

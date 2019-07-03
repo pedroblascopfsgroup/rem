@@ -17,7 +17,7 @@ public class NotificatorServiceSancionOfertaReserva extends NotificatorServiceSa
 	
 	public static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
 	private static final String FECHA_FIRMA = "fechaFirma";
-	SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+	SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
 	public String[] getKeys() {

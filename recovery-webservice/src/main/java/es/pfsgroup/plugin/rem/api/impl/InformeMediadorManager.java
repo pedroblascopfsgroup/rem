@@ -1533,7 +1533,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 				// Actualizamos el rating si es un activo de tipo vivienda y tiene el informe comercial aprobado
 				if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
-						&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+						&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
 					activoApi.calcularRatingActivo(activo.getId());
 				}
 				

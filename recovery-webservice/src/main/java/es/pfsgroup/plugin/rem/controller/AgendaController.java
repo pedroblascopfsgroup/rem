@@ -374,6 +374,7 @@ public class AgendaController extends TareaController {
 				for (int i = 0; i < listaTareas.size(); i++) {
 					TareaExterna tarea = listaTareas.get(i);
 					if (!Checks.esNulo(tarea)) {
+
 						String codigo = tarea.getTareaProcedimiento().getTipoProcedimiento().getCodigo();
 						if(CODIGO_T013.equals(codigo)) {
 							salto = adapter.saltoResolucionExpediente(tarea.getId());
@@ -390,6 +391,10 @@ public class AgendaController extends TareaController {
 								ofertaApi.rechazarOferta(oferta);
 							}
 						}
+
+						expedienteComercialApi.finalizarTareaValidacionClientes(eco);
+						salto = adapter.saltoResolucionExpediente(tarea.getId());
+
 						break;
 					}
 				}								

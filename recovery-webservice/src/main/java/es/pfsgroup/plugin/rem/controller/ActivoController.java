@@ -396,7 +396,7 @@ public class ActivoController extends ParadiseJsonController {
 			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
-					&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+					&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
 				activoApi.calcularRatingActivo(id);
 			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -470,7 +470,7 @@ public class ActivoController extends ParadiseJsonController {
 			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre información comercial, recalculamos el rating del activo.
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
-					&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+					&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
 				activoApi.calcularRatingActivo(id);
 			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -495,7 +495,7 @@ public class ActivoController extends ParadiseJsonController {
 			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
-					&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+					&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
 				activoApi.calcularRatingActivo(id);
 			}
 			model.put(RESPONSE_SUCCESS_KEY, success);

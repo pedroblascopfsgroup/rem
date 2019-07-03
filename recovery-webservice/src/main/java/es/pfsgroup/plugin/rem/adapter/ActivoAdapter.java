@@ -2583,11 +2583,13 @@ public class ActivoAdapter {
 				ActivoAdjuntoActivo adjuntoActivo = activo.getAdjuntoGD(adj.getId());
 				if (!Checks.esNulo(adjuntoActivo)) {
 					if (!Checks.esNulo(adjuntoActivo.getTipoDocumentoActivo())) {
-						//No borrar hasta que se compruebe que se obtiene el tipo de documento al margen de la información subida al gestor documental
-//						adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
+						adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
+					}else {
+						//Si en un adjunto que se ha subido al GD desde fuera de REM el tipo de documento es nulo, lo obtenemos a través de la matrícula
 						Filter filtroMatricula = genericDao.createFilter(FilterType.EQUALS, "matricula", adjuntoActivo.getTipoDocumentoActivo().getMatricula());
 						DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtroMatricula);
-						adj.setDescripcionTipo(tipoDocumento.getDescripcion());
+						adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+						adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
 					}
 					adj.setContentType(adjuntoActivo.getContentType());
 					if (!Checks.esNulo(adjuntoActivo.getAuditoria())) {

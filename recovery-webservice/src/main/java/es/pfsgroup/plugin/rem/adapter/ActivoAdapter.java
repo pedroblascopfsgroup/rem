@@ -413,7 +413,7 @@ public class ActivoAdapter {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
 		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
-		boolean resultado = true;
+		boolean resultado = false;
 		try {
 
 			if (gestorDocumentalFotos.isActive()) {
@@ -440,6 +440,9 @@ public class ActivoAdapter {
 				}
 			}
 			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
+			if(!Checks.esNulo(dtoFoto.getOrden())) {
+				activoFoto.setOrden(dtoFoto.getOrden());
+			}
 			genericDao.save(ActivoFoto.class, activoFoto);
 
 		} catch (Exception e) {

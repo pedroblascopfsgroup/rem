@@ -37,8 +37,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
         
         var imageTemplate = new Ext.XTemplate('<tpl for=".">',
         	'<div class="thumb-wrap" id="{nombre}">',
-        	'<span>&nbsp;{tituloFoto}</span>',
-      		'<div class="thumb"> <img src="'+$AC.getRemoteUrl("activo/getFotoActivoById")+'?idFoto={id}" title="{subdivisionDescripcion}"></div>',
+      		'<div class="thumb"> <img src="'+$AC.getRemoteUrl("activo/getFotoActivoById")+'?idFoto={id}" title="{nombre}"></div>',
          	'<span>{nombre} Orden: {orden} </span></div>',
       		'</tpl>');
 
@@ -66,21 +65,39 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
                     this.up('panel').setTitle('Fotos (' + l + ' item' + s + ' seleccionado' +  s + ')');
                 },
                 itemclick: function(dataview,record) {
-                	if (record.getData().principal ==  true || record.getData().principal == "true") {
-                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].show();
-                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].show();
-                		
-                		if(record.getData().interiorExterior== "true" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].getValue()){
-                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].setValue(true);
-                		}
-                		if(record.getData().interiorExterior== "false" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].getValue()){
-                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].setValue(true);
-                		}
+                	if(this.getSelectionModel().getCount() > 1){
+                		this.up('form').findField('nombre').setRawValue("<i>(Multiselecci&oacute;n)</i>");
+                		this.up('form').findField('descripcion').setRawValue("<i>(Multiselecci&oacute;n)</i>");
+                		this.up('form').findField('fechaDocumento').setRawValue("<i>(Multiselecci&oacute;n)</i>");
+                		this.up('form').findField('orden').setRawValue("<i>(Multiselecci&oacute;n)</i>");
+                		this.up('form').findField('principal').setRawValue(false);
+                	}else{
+	                	if (record.getData().principal ==  true || record.getData().principal == "true") {
+	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].show();
+	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].show();
+	                		
+	                		if(record.getData().interiorExterior== "true" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].getValue()){
+	                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].setValue(true);
+	                		}
+	                		if(record.getData().interiorExterior== "false" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].getValue()){
+	                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].setValue(true);
+	                		}
+	                	}
+	                	else{
+	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
+	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
+	                	}
+	                	if(Ext.isEmpty(record.getData().nombre)){
+	                		this.up('form').findField('nombre').setValue();
+	                	}
+	                	if(Ext.isEmpty(record.getData().descripcion)){
+	                		this.up('form').findField('descripcion').setValue();
+	                	}
+	                	if(Ext.isEmpty(record.getData().fechaDocumento)){
+	                		this.up('form').findField('fechaDocumento').setValue();
+	                	}
                 	}
-                	else{
-                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
-                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
-                	}
+                	
                 	Ext.global.console.log(record.data);
 	        		this.up('form').setBindRecord(record.data);
 	        	}
@@ -143,6 +160,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 		                	bind:		'{fechaDocumento}'
 		                },
 		                { 
+		                	name: 'orden',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.orden.publicacion.web'),
 		                	bind:		'{orden}',
 		                	xtype: 'displayfieldbase'

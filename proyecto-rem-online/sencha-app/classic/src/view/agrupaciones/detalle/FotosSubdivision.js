@@ -66,11 +66,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
                 },
                 itemclick: function(dataview,record) {
                 	if(this.getSelectionModel().getCount() > 1){
-                		this.up('form').findField('nombre').setRawValue("<i>(Multiselecci&oacute;n)</i>");
-                		this.up('form').findField('descripcion').setRawValue("<i>(Multiselecci&oacute;n)</i>");
-                		this.up('form').findField('fechaDocumento').setRawValue("<i>(Multiselecci&oacute;n)</i>");
-                		this.up('form').findField('orden').setRawValue("<i>(Multiselecci&oacute;n)</i>");
-                		this.up('form').findField('principal').setRawValue(false);
+                		this.up('form').getForm().findField('nombre').setRawValue("<i>(Multiselecci&oacute;n)</i>");
+                		this.up('form').getForm().findField('descripcion').setRawValue("<i>(Multiselecci&oacute;n)</i>");
+                		this.up('form').getForm().findField('fechaDocumento').setRawValue("<i>(Multiselecci&oacute;n)</i>");
+                		this.up('form').getForm().findField('orden').setRawValue("<i>(Multiselecci&oacute;n)</i>");
+                		this.up('form').getForm().findField('principal').setRawValue(false);
                 	}else{
 	                	if (record.getData().principal ==  true || record.getData().principal == "true") {
 	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].show();
@@ -87,14 +87,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
 	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
 	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
 	                	}
+
 	                	if(Ext.isEmpty(record.getData().nombre)){
-	                		this.up('form').findField('nombre').setValue();
+	                		this.up('form').getForm().findField('nombre').setValue();
 	                	}
 	                	if(Ext.isEmpty(record.getData().descripcion)){
-	                		this.up('form').findField('descripcion').setValue();
+	                		this.up('form').getForm().findField('descripcion').setValue();
 	                	}
 	                	if(Ext.isEmpty(record.getData().fechaDocumento)){
-	                		this.up('form').findField('fechaDocumento').setValue();
+	                		this.up('form').getForm().findField('fechaDocumento').setValue();
 	                	}
                 	}
                 	

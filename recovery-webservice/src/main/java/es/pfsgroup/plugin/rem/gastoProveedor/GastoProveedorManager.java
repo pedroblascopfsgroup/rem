@@ -450,6 +450,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if(Checks.esNulo(gastoProveedor.getGestoria())) {
 			Filter filtroTipoImpuestoIndirecto = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTiposImpuesto.TIPO_IMPUESTO_IVA);
 			detalleEconomico.setImpuestoIndirectoTipo(genericDao.get(DDTiposImpuesto.class, filtroTipoImpuestoIndirecto));
+		
+			if(!Checks.esNulo(dto.getGastoRefacturable())) {
+				detalleEconomico.setGastoRefacturable(dto.getGastoRefacturable());
+			}
+			
 		}
 		genericDao.save(GastoDetalleEconomico.class, detalleEconomico);
 

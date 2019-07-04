@@ -189,6 +189,10 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
    		{
    			name: 'listaTotalGastosRefacturados'
+   		},
+   		{
+   			name: 'gastoRefacturable',
+   			type: 'boolean'
    		}
     		
     ],

@@ -244,8 +244,13 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 
 		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
 			try {
-				if (!particularValidator.esGastoRefacturable(exc.dameCelda(i, colGasto)))
+
+				if (colGasto == COL_GASTO_HIJO && !particularValidator.esGastoRefacturable(exc.dameCelda(i, colGasto))
+						|| colGasto == COL_GASTO_PADRE
+								&& particularValidator.esGastoRefacturable(exc.dameCelda(i, colGasto))) {
 					listaFilas.add(i);
+				}
+
 			} catch (ParseException e) {
 				listaFilas.add(i);
 				logger.error(e.getMessage());

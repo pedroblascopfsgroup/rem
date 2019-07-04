@@ -3829,9 +3829,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 
 			if(esNuevo){
+				genericDao.save(Comprador.class, comprador);
 				expedienteComercial.getCompradores().add(compradorExpediente);
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
 			}else{
+				genericDao.save(Comprador.class, comprador);
 				genericDao.update(CompradorExpediente.class, compradorExpediente);
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
 			}

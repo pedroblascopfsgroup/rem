@@ -364,6 +364,15 @@ public interface OfertaApi {
 	 * @return true si tiene atribuciones, false si no las tiene
 	 */
 	public boolean checkAtribuciones(Trabajo trabajo);
+	
+	/**
+	 * Método que comprueba si el activo tiene atribuciones para sancionar el
+	 * expediente 
+	 *
+	 * @param oferta
+	 * @return
+	 */
+	public boolean checkAtribuciones(Oferta oferta);
 
 	/**
 	 * Método que da de alta el comité externo en Bankia

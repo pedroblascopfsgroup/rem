@@ -648,6 +648,21 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 	}else {
 		 		return get('agrupacionficha.estadoAlquilerDescripcion')
 		 	}
+		 },
+		 
+		 esVisibleParaCartera: function(get){
+		 //Si una cartera o subcartera aparece en esta función se devuelve true
+			var cartera = get('agrupacionficha.cartera');
+			var codCartera = get('agrupacion.codigoCartera');
+		 	var codSubcartera = get('agrupacion.codSubcartera')
+			if(cartera != undefined && cartera != null && codCartera != undefined && codCartera != null) {
+				if(cartera == CONST.NOMBRE_CARTERA2['THIRD'] || codCartera == CONST.NOMBRE_CARTERA['THIRD']) {
+					if(codSubcartera == CONST.SUBCARTERA['YUBAI']) {
+						return true;
+					}
+				}
+			}
+			return false;
 		 }
     },
     stores: {
@@ -943,6 +958,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			data : [
 		        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
 		        {"codigo":"0", "descripcion":"No"}
+		    ]
+		},
+		
+		comboTrueFalse: {
+			data : [
+		        {"codigo":"true", "descripcion":eval(String.fromCharCode(34,83,237,34))},
+		        {"codigo":"false", "descripcion":"No"}
 		    ]
 		},
 

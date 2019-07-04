@@ -70,6 +70,10 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean cambioEstadoPublicacion;
 	private Boolean cambioEstadoPrecio;
 	private Boolean cambioEstadoActivo; 
+	private Boolean comercializableConsPlano;
+	private Boolean existePiloto;
+	private Boolean esVisitable;
+	private Long pisoPiloto;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -427,5 +431,29 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
+	}
+	public Boolean getComercializableConsPlano() {
+		return comercializableConsPlano;
+	}
+	public void setComercializableConsPlano(Boolean comercializableConsPlano) {
+		this.comercializableConsPlano = comercializableConsPlano;
+	}
+	public Boolean getExistePiloto() {
+		return existePiloto;
+	}
+	public void setExistePiloto(Boolean existePiloto) {
+		this.existePiloto = existePiloto;
+	}
+	public Boolean getEsVisitable() {
+		return esVisitable;
+	}
+	public void setEsVisitable(Boolean esVisitable) {
+		this.esVisitable = esVisitable;
+	}
+	public Long getPisoPiloto() {
+		return pisoPiloto;
+	}
+	public void setPisoPiloto(Long pisoPiloto) {
+		this.pisoPiloto = pisoPiloto;
 	}
 }

@@ -303,6 +303,65 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
                                 value: '{agrupacionficha.tipoComercializacionCodigo}',
                                 readOnly: '{!esAgrupacionRestringida}'
                             }	
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.agrupacion.comercializable.construccion.plano'),
+							name: 'comercializableConsPlano',
+							allowBlank:	false,
+							bind: {
+								value: '{agrupacionficha.comercializableConsPlano}',
+								store: '{comboTrueFalse}',
+								readOnly: false,
+								disabled: '{!esVisibleParaCartera}',
+								hidden: '{!esVisibleParaCartera}',
+								listeners: {
+									change: 'onChangeComboComercializableConsPlano'
+								}
+							}
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.existe.piso.piloto'),
+							name: 'existePiloto',
+							reference: 'existePiloto',
+							allowBlank:	false,
+							disabled: 'onChangeComboComercializableConsPlano',
+							bind: {
+								value: '{agrupacionficha.existePiloto}',
+								store: '{comboTrueFalse}',
+								readOnly: false,
+								hidden: '{!esVisibleParaCartera}',
+								listeners: {
+									change: 'onChangeComboExistePisoPiloto'
+								}
+							}
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.visitable'),
+							name: 'esVisitable',
+							reference: 'esVisitable',
+							allowBlank:	false,
+							disabled: 'onChangeComboExistePisoPiloto',
+							bind: {
+								value: '{agrupacionficha.esVisitable}',
+								store: '{comboTrueFalse}',
+								readOnly: false,
+								hidden: '{!esVisibleParaCartera}'
+							}
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.piso.piloto'),
+							name: 'pisoPiloto',
+							reference: 'pisoPiloto',
+							disabled: true,
+							bind: {
+								value: '{agrupacionficha.pisoPiloto}',
+								readOnly: false,
+								hidden: '{!esVisibleParaCartera}'
+							}
 						}
 
 				]

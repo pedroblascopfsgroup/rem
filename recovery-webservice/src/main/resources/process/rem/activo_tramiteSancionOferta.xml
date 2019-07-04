@@ -6,6 +6,45 @@
 		<transition to="T013_DefinicionOferta"></transition>
 	</start-state>
 	
+	<node name="nodoOrigenTramiteSancionOFerta">
+		<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+			<targetBean>
+				tramiteSancionOfertaNodoOcultoHandler
+			</targetBean>
+		</action>
+		<transition to="nodoOrigenTramiteSancionOFertaDecision" name="avanzaBPM"></transition>
+	</node>
+	
+	<decision name="nodoOrigenTramiteSancionOFertaDecision" expression="#{nodoOrigenTramiteSancionOFertaDecision}">
+		<transition to="T013_DefinicionOferta" name="NO"></transition>
+		<transition to="forkYubai" name="SI"></transition>
+	</decision>
+	
+	<!--  Router BPM  -->
+		<node name="router">
+		<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+			<targetBean>
+				routerBPMSancionOfertaHandler
+			</targetBean>
+		</action>
+		<transition to="routerYubaiDecision" name="avanzaBPM"></transition>
+	</node>
+	
+	<decision name="routerYubaiDecision" expression="#{routerYubaiDecision}">
+		<transition to="T013_DefinicionOferta" name="NO"></transition>
+		<transition to="forkYubai" name="SI"></transition>
+	</decision>
+	
+	
+	<fork name="forkYubai">
+		<transition to="T013_DefinicionOferta" name="oferta"></transition>
+		<transition to="T013_InformeJuridico" name="informe"></transition>
+	</fork>
+	
 	<state name="T013_DefinicionOferta">
 		<event type="node-enter">
 			<action name="miTarea"

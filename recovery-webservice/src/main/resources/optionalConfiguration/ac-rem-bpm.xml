@@ -26,6 +26,9 @@
 
 	<bean id="activarProrroga" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoProrrogarTareasActionHandler"/>
 	<bean id="tramiteActuacionTecnicaNodoOcultoHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.TramiteActuacionTecnicaNodoOcultoHandler"/>
+	<bean id="tramiteSancionOfertaNodoOcultoHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.TramiteSancionOfertaNodoOcultoHandler"/>
+	<bean id="routerBPMSancionOfertaHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.routerBPMSancionOfertaHandler"/>
+
 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAdmision.xml" p:version="2033"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumental.xml" p:version="2034"/>

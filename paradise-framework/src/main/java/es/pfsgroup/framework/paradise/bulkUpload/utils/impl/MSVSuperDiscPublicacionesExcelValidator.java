@@ -113,8 +113,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 		try {
 			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage());			
 		}
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
@@ -197,9 +196,10 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 					listaFilas.add(i);
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -221,9 +221,10 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 					listaFilas.add(i);
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -246,9 +247,10 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 				}
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -333,9 +335,10 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -361,9 +364,10 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -389,9 +393,10 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -406,25 +411,42 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	private List<Integer> valorOtrosMotivos(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		String[] listaValidos = { "SI", "S" };
+		String[] listaNo = { "NO", "N" };
 		String celdaOtrosMotivos;
 		String celdaOtros;
+		boolean celdaMal;
 
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
+				celdaMal = false;
 				celdaOtrosMotivos = exc.dameCelda(i, COL_OTROS_MOTIVOS);
 				celdaOtros = exc.dameCelda(i, COL_OTROS);
 
-				
-				if (Arrays.asList(listaValidos).contains(celdaOtros.toUpperCase()) && (celdaOtrosMotivos.isEmpty() ||
-						esArroba(celdaOtros) && (!Checks.esNulo(celdaOtrosMotivos) && !esArroba(celdaOtrosMotivos)))) {
+				if (Arrays.asList(listaValidos).contains(celdaOtros.toUpperCase())
+						&& (celdaOtrosMotivos.isEmpty() || esArroba(celdaOtrosMotivos))) {
+					celdaMal = true;
+				}
+
+				if ((esArroba(celdaOtros) || Checks.esNulo(celdaOtros)) && !Checks.esNulo(celdaOtrosMotivos)
+						&& !esArroba(celdaOtrosMotivos)) {
+					celdaMal = true;
+				}
+
+				if (Arrays.asList(listaNo).contains(celdaOtros.toUpperCase())
+						&& (!Checks.esNulo(celdaOtrosMotivos) && !esArroba(celdaOtrosMotivos))) {
+					celdaMal = true;
+				}
+
+				if (celdaMal) {
 					listaFilas.add(i);
 				}
-				
+
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -450,9 +472,10 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -466,7 +489,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 	 */
 	private List<Integer> campoEstado(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		String[] listaValidos = { "INSCRITA", "NO INSCRITA"};
+		String[] listaValidos = { "INSCRITA", "NO INSCRITA" };
 		String[] listaValidosActivoSI = { "SI", "S" };
 		String[] listaValidosActivoNO = { "NO", "N", "@" };
 		String celdaEstado;
@@ -479,16 +502,16 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 				celdaEstado = exc.dameCelda(i, COL_DIVISION_HORIZONTAL_INTEGRADO);
 				celdaActivoIntegrado = exc.dameCelda(i, COL_ACTIVO_INTEGRADO);
 
-				if(Arrays.asList(listaValidosActivoSI).contains(celdaActivoIntegrado.toUpperCase())
-						&& !Arrays.asList(listaValidos).contains(celdaEstado.toUpperCase())){
+				if (Arrays.asList(listaValidosActivoSI).contains(celdaActivoIntegrado.toUpperCase())
+						&& !Arrays.asList(listaValidos).contains(celdaEstado.toUpperCase())) {
 					celdaMal = true;
 				}
-				if((Arrays.asList(listaValidosActivoNO).contains(celdaActivoIntegrado.toUpperCase())
+				if ((Arrays.asList(listaValidosActivoNO).contains(celdaActivoIntegrado.toUpperCase())
 						|| Checks.esNulo(celdaActivoIntegrado))
-						&& (!Checks.esNulo(celdaEstado) && !esArroba(celdaEstado))){
+						&& (!Checks.esNulo(celdaEstado) && !esArroba(celdaEstado))) {
 					celdaMal = true;
 				}
-				if(!Arrays.asList(listaValidosActivoSI).contains(celdaActivoIntegrado.toUpperCase())
+				if (!Arrays.asList(listaValidosActivoSI).contains(celdaActivoIntegrado.toUpperCase())
 						&& !Arrays.asList(listaValidosActivoNO).contains(celdaActivoIntegrado.toUpperCase())
 						&& !Checks.esNulo(celdaActivoIntegrado)) {
 					celdaMal = true;
@@ -500,9 +523,10 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -540,15 +564,20 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 						&& !esArroba(celdaEstadoNoIntegrado)) {
 					celdaMal = true;
 				}
+				if (!Arrays.asList(listaValidos).contains(celdaEstado.toUpperCase()) && !esArroba(celdaEstado)
+						&& !Checks.esNulo(celdaEstado) && !Checks.esNulo(celdaEstadoNoIntegrado)) {
+					celdaMal = true;
+				}
 				if (celdaMal) {
 					listaFilas.add(i);
 				}
 
 			} catch (ParseException e) {
 				listaFilas.add(i);
+				logger.error(e.getMessage());
 			} catch (Exception e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;
@@ -559,7 +588,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
 			return fileItem.getFile();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 	}

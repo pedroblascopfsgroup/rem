@@ -82,6 +82,7 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 		final String FILTRO_CODIGO = "codigo";
 		final String ARROBA = "@";
 		final String[] LISTA_SI = { "SI", "S" };
+		final String[] LISTA_INSCRITA = { "INSCRITA" };
 
 		final String celdaActivo = exc.dameCelda(fila, COL_NUM.NUM_ACTIVO);
 		final String celdaEstadoFisicoActivo = exc.dameCelda(fila, COL_NUM.ESTADO_FISICO_ACTIVO);
@@ -143,7 +144,8 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 			situacionPosesoria.setOtro(celdaOtrosMotivos);
 		}
 
-		genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+		//genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);		
+		activo.setSituacionPosesoria(situacionPosesoria);
 
 		// DivisionHorizontal-Activo Ingegrado
 
@@ -164,7 +166,7 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 
 				if (!Checks.esNulo(activoInfoRegistral)) {
 
-					if (Arrays.asList(LISTA_SI).contains(celdaEstadoIntegrado.toUpperCase())) {
+					if (Arrays.asList(LISTA_INSCRITA).contains(celdaEstadoIntegrado.toUpperCase())) {
 						inscritoDivisionHorizontal = 1;
 					}
 
@@ -185,8 +187,9 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 		}
 		
 		activo.setDivHorizontal(divisionHorizontal);
+		activo.setInfoRegistral(activoInfoRegistral);
 		activoDao.saveOrUpdate(activo);
-		genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
+		//genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
 		//lanzar el SP de publicaciones para el activo
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());	
 		 

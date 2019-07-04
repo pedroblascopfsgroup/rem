@@ -2584,19 +2584,26 @@ public class ActivoAdapter {
 				if (!Checks.esNulo(adjuntoActivo)) {
 					if (!Checks.esNulo(adjuntoActivo.getTipoDocumentoActivo())) {
 						adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
-					}else {
-						//Si en un adjunto que se ha subido al GD desde fuera de REM el tipo de documento es nulo, lo obtenemos a través de la matrícula
-						Filter filtroMatricula = genericDao.createFilter(FilterType.EQUALS, "matricula", adjuntoActivo.getTipoDocumentoActivo().getMatricula());
-						DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtroMatricula);
-						adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
-						adj.setDescripcionTipo(adjuntoActivo.getTipoDocumentoActivo().getDescripcion());
 					}
 					adj.setContentType(adjuntoActivo.getContentType());
 					if (!Checks.esNulo(adjuntoActivo.getAuditoria())) {
 						adj.setGestor(adjuntoActivo.getAuditoria().getUsuarioCrear());
 					}
 					adj.setTamanyo(adjuntoActivo.getTamanyo());
+				}else {
+					//Si en un adjunto que se ha subido al GD desde fuera de REM el tipo de documento es nulo, lo obtenemos a través de la matrícula
+					Filter filtroVisible = genericDao.createFilter(FilterType.EQUALS, "visible", 1);
+					Filter filtroMatricula = genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula());
+					List <DDTipoDocumentoActivo> tipoDocumento = (List<DDTipoDocumentoActivo>) genericDao.getList(DDTipoDocumentoActivo.class, filtroVisible, filtroMatricula); 
+					DDTipoDocumentoActivo tipoDoc = tipoDocumento.get(0); 
+					
+					if (Checks.esNulo(tipoDoc)) {
+						logger.error("El campo DD_TPD_VISIBLE no es válido. Debe serlo para buscar el tipo de documento a través de la matrícula.");
+					}else {
+						adj.setDescripcionTipo(tipoDoc.getDescripcion());
+					}
 				}
+				
 			}
 
 		} else {

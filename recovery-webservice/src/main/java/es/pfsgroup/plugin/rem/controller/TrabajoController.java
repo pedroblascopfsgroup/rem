@@ -1564,6 +1564,13 @@ public class TrabajoController extends ParadiseJsonController {
 					errorDesc = "Falta el id de llamada.";
 					throw new Exception(RestApi.REST_NO_PARAM);					
 				}
+				try {
+					Long.valueOf(idLlamada);
+				}catch(Exception e){
+					error = RestApi.REST_MSG_FORMAT_ERROR;
+					errorDesc = "El formato el idLlamada no es el correcto.";
+					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+				}
 				if(Checks.esNulo(jsonFields.get("codTarea"))){
 					error = RestApi.REST_NO_PARAM;
 					errorDesc = "Falta el codigo de la tarea.";
@@ -1629,7 +1636,7 @@ public class TrabajoController extends ParadiseJsonController {
 						}
 						Date finalizacion = null;
 						String stringFinalizacion = jsonFields.getJSONObject("data").get("fechaFinalizacion").toString();
-						stringFinalizacion =stringFinalizacion.substring(2,stringFinalizacion.length()-2	);
+						stringFinalizacion =stringFinalizacion.substring(2,stringFinalizacion.length()-2);
 						try {
 							finalizacion = format.parse(stringFinalizacion);
 						} catch (Exception ex) {

@@ -644,6 +644,13 @@ public class OfertasController {
 					errorDesc = "Falta el id de llamada.";
 					throw new Exception(RestApi.REST_NO_PARAM);					
 				}
+				try {
+					Long.valueOf(idLlamada);
+				}catch(Exception e){
+					error = RestApi.REST_MSG_FORMAT_ERROR;
+					errorDesc = "El formato el idLlamada no es el correcto.";
+					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+				}
 				if(Checks.esNulo(jsonFields.get("codTarea"))){
 					error = RestApi.REST_NO_PARAM;
 					errorDesc = "Falta el codigo de la tarea.";

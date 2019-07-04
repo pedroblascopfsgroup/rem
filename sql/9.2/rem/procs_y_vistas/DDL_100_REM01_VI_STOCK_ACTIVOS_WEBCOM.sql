@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ramon Llinares
---## FECHA_CREACION=20190613
+--## FECHA_CREACION=20190703
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.1.0
 --## INCIDENCIA_LINK=HREOS-6143

@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.AdjuntoExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
@@ -70,6 +71,9 @@ public class ExpedienteComercialAdapter {
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private AdjuntoExpedienteComercialDao adjuntoExpedienteComercialDao;
 	
 	
 	protected static final Log logger = LogFactory.getLog(ExpedienteComercialAdapter.class);
@@ -423,6 +427,9 @@ public class ExpedienteComercialAdapter {
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				try {
 					borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
+					dtoAdjunto = adjuntoExpedienteComercialDao.getAdjuntoByIdDocRest(dtoAdjunto);
+					if (borrado && !Checks.esNulo(dtoAdjunto) && !Checks.esNulo(dtoAdjunto.getId())) 
+						borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

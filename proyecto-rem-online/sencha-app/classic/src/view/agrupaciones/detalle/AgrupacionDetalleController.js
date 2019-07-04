@@ -360,6 +360,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
                             	}else{
                             		me.fireEvent("errorToast", data.error);
                             	}
+                            	me.getView().down('fotossubdivision').funcionRecargar()
 								 //me.unmask();
                             },
                             
@@ -510,11 +511,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	    		     		}
 	    			
 	    		    ,success: function (a, operation, context) {
-
 	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
 	                    	me.storeGuardado.load();
 	                    	me.refrescarGuardado = false;
 	                    }
+	                    me.getView().down('fotossubdivision').funcionRecargar();
 	                },
 	                
 	                failure: function (a, operation, context) {

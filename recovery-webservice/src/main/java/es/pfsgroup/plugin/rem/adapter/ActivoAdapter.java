@@ -2595,11 +2595,9 @@ public class ActivoAdapter {
 					Filter filtroVisible = genericDao.createFilter(FilterType.EQUALS, "visible", true);
 					Filter filtroMatricula = genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula());
 					List <DDTipoDocumentoActivo> tipoDocumento = (List<DDTipoDocumentoActivo>) genericDao.getList(DDTipoDocumentoActivo.class, filtroVisible, filtroMatricula); 
-					DDTipoDocumentoActivo tipoDoc = tipoDocumento.get(0); 
-					
-					if (Checks.esNulo(tipoDoc)) {
-						logger.error("El campo DD_TPD_VISIBLE no es válido. Debe serlo para buscar el tipo de documento a través de la matrícula.");
-					}else {
+
+					if (!Checks.esNulo(tipoDocumento)) {
+						DDTipoDocumentoActivo tipoDoc = tipoDocumento.get(0);
 						adj.setDescripcionTipo(tipoDoc.getDescripcion());
 					}
 				}

@@ -235,8 +235,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		// HREOS-2179 - Búsqueda carterizada
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				dtoGastosFilter.setSubentidadPropietariaCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+			}
 		}
 		
 		
@@ -261,8 +266,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		// HREOS-2179 - Búsqueda carterizada
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				dtoGastosFilter.setSubentidadPropietariaCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+			}
 		}
 		
 		

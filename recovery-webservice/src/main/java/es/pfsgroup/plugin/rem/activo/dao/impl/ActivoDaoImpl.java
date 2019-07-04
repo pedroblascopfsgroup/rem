@@ -97,11 +97,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
 		if (dto.getEntidadPropietariaCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(),
-					true);
+			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(),true);
 
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(),
-				true);
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(),true);
 
 		if (dto.getTipoTituloActivoCodigo() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
@@ -692,6 +690,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.tipoActivoCodigo", dto.getTipoActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subtipoActivoCodigo", dto.getSubtipoActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.cartera", dto.getCartera());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subCartera", dto.getSubCartera());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.estadoPublicacionCodigo",
 				dto.getEstadoPublicacionCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.admision", dto.getAdmision());

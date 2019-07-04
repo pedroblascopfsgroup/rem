@@ -277,9 +277,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera))
-			dto.setCartera(usuarioCartera.getCartera().getCodigo());
-
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dto.setCartera(usuarioCartera.getCartera().getCodigo());
+				dto.setSubcartera(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dto.setCartera(usuarioCartera.getCartera().getCodigo());
+			}
+		}
+		
+		
 		// Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
 		// y según HREOS-2272 en el modulo de trabajos
 		// los perfiles externos de CAPA_CONTROL_BANKIA y USUARIOS_DE_CONSULTA

@@ -377,8 +377,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// Carterización del buscador.
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+			}
 		}
 
 		return ofertaDao.getListOfertas(dto, usuarioGestor, usuarioGestoria);

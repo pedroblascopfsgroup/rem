@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -104,12 +105,20 @@ public class GenericAdapter {
 				Usuario usuarioLogado = getUsuarioLogado();
 				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				if (!Checks.esNulo(usuarioCartera)) {
+				if (!Checks.esNulo(usuarioCartera)){ 	
 					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.getCartera().getCodigo()));
+					lista = listaPeriodicidad;	
+				}
+			}else if (clase.equals(DDSubcartera.class)) {
+				Usuario usuarioLogado = getUsuarioLogado();
+				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+				if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera().getCodigo())){ 
+					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, usuarioCartera.getSubCartera().getCodigo()));
 					lista = listaPeriodicidad;
 				}
 			}
-		}	
+		}
 		return lista;
 	}
 	

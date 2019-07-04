@@ -18,6 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 
 /**
@@ -50,11 +51,15 @@ public class UsuarioCartera implements Serializable {
     @ManyToOne
     @JoinColumn(name = "DD_CRA_ID")
     private DDCartera cartera;
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_SCR_ID")
+    private DDSubcartera subCartera;
 
 	public Long getId() {
 		return id;
 	}
-
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -75,5 +80,12 @@ public class UsuarioCartera implements Serializable {
 		this.cartera = cartera;
 	}
 	
+	public DDSubcartera getSubCartera() {
+		return subCartera;
+	}
+
+	public void setSubCartera(DDSubcartera subCartera) {
+		this.subCartera = subCartera;
+	}
 
 }

@@ -1061,12 +1061,21 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	public List<DDSubcartera> getComboSubcartera(String codCartera) {
 
+		List<DDSubcartera> listaSubcartera;
 		Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", codCartera);
-
-		List<DDSubcartera> listaSubcartera = genericDao.getList(DDSubcartera.class, filtroCartera);
+		
+		Usuario usuarioLogado = adapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+				
+		if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera())){
+			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "codigo", usuarioCartera.getSubCartera().getCodigo());
+			listaSubcartera = genericDao.getList(DDSubcartera.class, filtroSubcartera);
+		}else{
+			listaSubcartera = genericDao.getList(DDSubcartera.class, filtroCartera);
+		}
 
 		return listaSubcartera;
-
 	}
 
 	@Override

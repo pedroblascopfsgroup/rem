@@ -9,6 +9,7 @@ public class DtoActivosPublicacion extends WebDto {
 	private String tipoActivo;
 	private String subtipoActivo;
 	private String cartera;
+	private String subCartera;
 	private String estadoPublicacionCodigo;
 	private String estadoPublicacionAlquilerCodigo;
 	private String tipoComercializacionCodigo[];
@@ -21,7 +22,6 @@ public class DtoActivosPublicacion extends WebDto {
 	private Boolean okalquiler;
 	private String motivosOcultacionCodigo;
 	private String motivosOcultacionAlquilerCodigo;
-
 
 	public String getNumActivo() {
 		return numActivo;
@@ -149,6 +149,14 @@ public class DtoActivosPublicacion extends WebDto {
 
 	public void setMotivosOcultacionAlquilerCodigo(String motivosOcultacionAlquilerCodigo) {
 		this.motivosOcultacionAlquilerCodigo = motivosOcultacionAlquilerCodigo;
+	}
+
+	public String getSubCartera() {
+		return subCartera;
+	}
+
+	public void setSubCartera(String subCartera) {
+		this.subCartera = subCartera;
 	}
 	
 }

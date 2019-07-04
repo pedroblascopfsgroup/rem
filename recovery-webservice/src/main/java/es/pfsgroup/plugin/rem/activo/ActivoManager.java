@@ -2530,12 +2530,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion) {
 		// Búsqueda carterizada
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", adapter.getUsuarioLogado().getId()));
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class
+				,genericDao.createFilter(FilterType.EQUALS, "usuario.id", adapter.getUsuarioLogado().getId()));
 		if (!Checks.esNulo(usuarioCartera)) {
-			dtoActivosPublicacion.setCartera(usuarioCartera.getCartera().getCodigo());
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoActivosPublicacion.setCartera(usuarioCartera.getCartera().getCodigo());
+				dtoActivosPublicacion.setSubCartera(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoActivosPublicacion.setCartera(usuarioCartera.getCartera().getCodigo());
+			}
 		}
-
+		
 		// Filtro por alquiler y venta
 		String filtroEstadoPublicacionAlquiler = dtoActivosPublicacion.getEstadoPublicacionAlquilerCodigo();
 		String filtroEstadoPublicacionVenta = dtoActivosPublicacion.getEstadoPublicacionCodigo();

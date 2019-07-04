@@ -1509,14 +1509,22 @@ public class ActivoAdapter {
 		return genericDao.getListOrdered(ActivoFoto.class, order, filtro);
 
 	}
-
+	
 	public Page getActivos(DtoActivoFilter dtoActivoFiltro) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera))
-			dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				dtoActivoFiltro.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+			}
+		}
+		
 		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
 	}
 

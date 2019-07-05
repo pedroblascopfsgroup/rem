@@ -483,7 +483,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	@Override
  	@Transactional(readOnly = false)
 	public Usuario usuarioTareaApple(String codigoTarea) {
-		Usuario userTarea;
+		Usuario userTarea = null;
 		Filter filtro = null;
 		if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);
@@ -492,8 +492,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		} else if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_PROMONTORIA_MANZANA);
 		}
-		
-		userTarea = genericDao.get(Usuario.class, filtro);
+		if(!Checks.esNulo(filtro)) {
+			userTarea = genericDao.get(Usuario.class, filtro);
+		}
 		
 		return userTarea;
 	}

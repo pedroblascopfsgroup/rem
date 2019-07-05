@@ -235,7 +235,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			codigoSupervisor = this.getMapCodigoTipoSupervisor(isFuerzaVentaDirecta, isLiberbank, isBankia, isSareb, isRetailActivo(tareaActivo), isActivoApple).get(codigoTarea);
 		}	
 		
-		if(CODIGO_T017_ANALISIS_PM.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
+		if(CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
 			return gestorActivoApi.usuarioTareaApple(codigoTarea);
 		} else {

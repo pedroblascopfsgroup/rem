@@ -469,7 +469,7 @@ public class GenericController extends ParadiseJsonController{
 	 * 
 	 * BODY:
 	 * {  
-   "idLlamada":"112",
+   "id":"112",
    "data": 
       {  "tipoEntidad":"T",
     	 "numEntidad":"161197",
@@ -499,7 +499,7 @@ public class GenericController extends ParadiseJsonController{
 		String tipoEntidad;
 		String errores="";
 		java.io.File file;
-		Long idLlamada = null;
+		String id = null;
 		String descErrores = null;
 		
 		
@@ -527,9 +527,9 @@ public class GenericController extends ParadiseJsonController{
 					descErrores = "Faltan campos";
 					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 			}else {
-				idLlamada = jsonData.getIdLlamada();
+				id = jsonData.getId();
 				
-				if(Checks.esNulo(idLlamada) || Checks.esNulo(jsonData.getId())) {
+				if(Checks.esNulo(id) || Checks.esNulo(jsonData.getIdTarea())) {
 					errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 					descErrores = "Faltan campos";
 						throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
@@ -607,9 +607,9 @@ public class GenericController extends ParadiseJsonController{
 						errores = RestApi.REST_MSG_INVALID_ENTITY_TYPE;
 						descErrores = "El tipo de entidad especificada no existe";
 					}
-								//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
+								//El id, tanto en el try como en el catch, lo debe devolver siempre
 					if(errores==null){
-						model.put("idLlamada", idLlamada);
+						model.put("id", id);
 						model.put("data", documentoDto);
 						model.put("succes", true);
 	
@@ -623,7 +623,7 @@ public class GenericController extends ParadiseJsonController{
 			logger.error("Error alta documento en genericController", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			errores = e.getMessage();
-			model.put("idLlamada", idLlamada);
+			model.put("id", id);
 			model.put("error", errores);
 			model.put("descError", descErrores);
 			model.put("success", false);

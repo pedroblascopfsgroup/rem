@@ -438,7 +438,7 @@ public class OfertasController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET, value="ofertas/getOfertasVivasActGestoria")
-	public void getOfertasVivasActGestoria(@PathParam("idLlamada") Long idLlamada, @PathParam("numActivo") Long numActivo, @PathParam("codGestoria") String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+	public void getOfertasVivasActGestoria(@PathParam("id") Long id, @PathParam("numActivo") Long numActivo, @PathParam("codGestoria") String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 	  try {
 		Usuario usuarioGestoria = null; 
 		DtoOfertasFilter filtro = new DtoOfertasFilter();
@@ -451,7 +451,7 @@ public class OfertasController {
 		String errorDesc = null;
 		List<OfertaVivaRespuestaDto> ofertasList = new ArrayList<OfertaVivaRespuestaDto>();
 		
-		if(Checks.esNulo(idLlamada) || Checks.esNulo(numActivo) || Checks.esNulo(codGestoria)) {
+		if(Checks.esNulo(id) || Checks.esNulo(numActivo) || Checks.esNulo(codGestoria)) {
 			flagParametrosANulo = true;
 		}else if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivo))){
 			flagnumActivoNoExiste = true;
@@ -511,14 +511,14 @@ public class OfertasController {
 		if(Checks.estaVacio(ofertasList)) {
 			flagRelacionNumActivoCodGestoriaNoExiste = true;
 		}
-		//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
+		//El id, tanto en el try como en el catch, lo debe devolver siempre
 
 		try {
 			if(flagParametrosANulo) {
 				error = RestApi.REST_NO_PARAM;
-				if(Checks.esNulo(idLlamada)) {
+				if(Checks.esNulo(id)) {
 					error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-					errorDesc = "Falta el campo idLlamada";
+					errorDesc = "Falta el campo id";
 					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				}else if( Checks.esNulo(numActivo)) {
 					errorDesc = "Falta el campo numActivo";
@@ -543,7 +543,7 @@ public class OfertasController {
 			}
 
 			model.put("id", 0);
-			model.put("idLlamada", idLlamada);
+			model.put("id", id);
 			model.put("data", ofertasList);
 			model.put("error", "null");
 			model.put("success", true);
@@ -551,7 +551,7 @@ public class OfertasController {
 		}catch(Exception e) {
 			logger.error("Error en OfertasController, metodo getOfertasVivasActGestoria", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("idLlamada", idLlamada);
+			model.put("id", id);
 			model.put("error", error);
 			model.put("errorDesc", errorDesc );
 			model.put("success", false);
@@ -562,7 +562,7 @@ public class OfertasController {
 	  catch(Exception e) {
 		  logger.error("Error en OfertasController, metodo getOfertasVivasActGestoria", e);
 		  request.getPeticionRest().setErrorDesc(e.getMessage());
-		  model.put("idLlamada", idLlamada);
+		  model.put("id", id);
 		  model.put("data", null);
 		  model.put("error", RestApi.CODE_ERROR);
 		  model.put("errorDesc", RestApi.CODE_ERROR );
@@ -575,6 +575,7 @@ public class OfertasController {
 	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
 	 * 
 	 * BODY: {
+	 * 			"id":"1234",
 	 *			"ofrNumOferta" :"90185574",
 	 *			"codTarea"	: "T013_DefinicionOferta",
 	 *			"data": {"observaciones":["asdasdasd"],
@@ -602,7 +603,7 @@ public class OfertasController {
 		boolean resultado = false;
 		String ofrNumOferta = "";
 		String codTarea = "";
-		Long idLlamada = null;
+		String id = null;
 		String error = null;
 		String errorDesc = null;
 		
@@ -628,27 +629,27 @@ public class OfertasController {
 				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 				errorDesc = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			} else if(Checks.esNulo(jsonData.getIdLlamada()) || Checks.esNulo(jsonData.getData())){
+			} else if(Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())){
 				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 				errorDesc = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 			}else {
 				
 				
-				idLlamada = jsonData.getIdLlamada();
+				id = jsonData.getId();
 				datosTarea = jsonData.getData();
 				
 				
-				if(Checks.esNulo(jsonFields.get("idLlamada"))){
+				if(Checks.esNulo(jsonFields.get("id"))){
 					error = RestApi.REST_NO_PARAM;
 					errorDesc = "Falta el id de llamada.";
 					throw new Exception(RestApi.REST_NO_PARAM);					
 				}
 				try {
-					Long.valueOf(idLlamada);
+					Long.valueOf(id);
 				}catch(Exception e){
 					error = RestApi.REST_MSG_FORMAT_ERROR;
-					errorDesc = "El formato el idLlamada no es el correcto.";
+					errorDesc = "El formato el id no es el correcto.";
 					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
 				}
 				if(Checks.esNulo(jsonFields.get("codTarea"))){
@@ -686,25 +687,23 @@ public class OfertasController {
 						errorDesc = "La tarea " + codTarea + " no existe.";
 						
 						datosTarea.put("idTarea",idTarea);
-						resultado = agendaAdapter.validationAndSave(datosTarea);
 						
-						if(resultado) {
-							model.put("idLlamada", idLlamada);
-							model.put("ofrNumOferta", ofrNumOferta);
-							model.put("codTarea", codTarea);
-							model.put("data", resultado);
-							model.put("success", true);
-						}
+						resultado = agendaAdapter.validationAndSave(datosTarea);
+						model.put("id", id);
+						model.put("ofrNumOferta", ofrNumOferta);
+						model.put("codTarea", codTarea);
+						model.put("data", resultado);
+						model.put("success", true);
 						
 					}
 				}
 			}
 
-			//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
+			//El id, tanto en el try como en el catch, lo debe devolver siempre
 		} catch (Exception e) {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("idLlamada", idLlamada);
+			model.put("id", id);
 			model.put("error",error);
 			model.put("descError", errorDesc);
 			model.put("success", false);

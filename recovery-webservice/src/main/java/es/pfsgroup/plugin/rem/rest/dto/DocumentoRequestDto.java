@@ -10,16 +10,26 @@ public class DocumentoRequestDto extends RequestDto{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Long idLlamada;
+	private String id;
+	
+	private String idTarea;
 	
 	private DocumentoDto data;
 
-	public Long getIdLlamada() {
-		return idLlamada;
+	public String getId() {
+		return id;
 	}
 
-	public void setIdLlamada(Long idLlamada) {
-		this.idLlamada = idLlamada;
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getIdTarea() {
+		return idTarea;
+	}
+
+	public void setIdTarea(String idTarea) {
+		this.idTarea = idTarea;
 	}
 
 	public DocumentoDto getData() {

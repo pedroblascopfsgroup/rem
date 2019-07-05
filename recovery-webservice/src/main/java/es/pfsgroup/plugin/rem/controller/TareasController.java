@@ -82,7 +82,7 @@ public class TareasController {
 			} else {
 				
 				String[] idTarea = new String[1];
-				idTarea[0] = jsonData.getId();
+				idTarea[0] = jsonData.getIdTarea();
 				datosTarea.put("idTarea",idTarea);
 
 				resultado = agendaAdapter.validationAndSave(datosTarea);

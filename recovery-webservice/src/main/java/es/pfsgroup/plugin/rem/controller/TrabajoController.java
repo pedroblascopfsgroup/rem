@@ -1360,7 +1360,7 @@ public class TrabajoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET, value = "/trabajo/getActuacionesTecnicas")
-	public void getActuacionesTecnicas(Long idLlamada, Long numActivo, String idProveedorRem, ModelMap model, RestRequestWrapper request,
+	public void getActuacionesTecnicas(Long id, Long numActivo, String idProveedorRem, ModelMap model, RestRequestWrapper request,
 			HttpServletResponse response) {
 		Boolean flagnumActivoNoExiste = false;
 		Boolean flagidProveedorRemNoExiste = false;
@@ -1376,7 +1376,7 @@ public class TrabajoController extends ParadiseJsonController {
 		DtoTrabajoFilter filtro = new DtoTrabajoFilter();
 		filtro.setNumActivo(numActivo);
 		filtro.setLimit(100);
-		if(Checks.esNulo(idLlamada) || Checks.esNulo(numActivo) || Checks.esNulo(idProveedorRem)) {
+		if(Checks.esNulo(id) || Checks.esNulo(numActivo) || Checks.esNulo(idProveedorRem)) {
 			flagParametrosANulo = true;
 		}else if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivo))){
 			flagnumActivoNoExiste = true;
@@ -1452,13 +1452,13 @@ public class TrabajoController extends ParadiseJsonController {
 		if(Checks.estaVacio(activosTrabajo)) {
 			flagActivoProveedorRelacionNoExiste = true;
 		}
-		//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
+		//El id, tanto en el try como en el catch, lo debe devolver siempre
 		try {
 			if(flagParametrosANulo) {
 				error = RestApi.REST_NO_PARAM;
-				if(Checks.esNulo(idLlamada)) {
+				if(Checks.esNulo(id)) {
 					error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-					errorDesc = "Falta el campo idLlamada";
+					errorDesc = "Falta el campo id";
 					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 				}else if( Checks.esNulo(numActivo)) {
 					errorDesc = "Falta el campo numActivo";
@@ -1485,7 +1485,7 @@ public class TrabajoController extends ParadiseJsonController {
 			}
 			
 			model.put("id", 0);
-			model.put("idLlamada", idLlamada);
+			model.put("id", id);
 			model.put("data", actuaciones);
 			model.put("error", "null");
 			model.put("success", true);
@@ -1493,7 +1493,7 @@ public class TrabajoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("Error trabajo", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("idLlamada", idLlamada);
+			model.put("id", id);
 			model.put("error", error);
 			model.put("errorDesc", errorDesc);
 			model.put("success", false);
@@ -1505,7 +1505,7 @@ public class TrabajoController extends ParadiseJsonController {
 	 * Avanza trabajos Ejem: IP:8080/pfs/rest/trabajo/avanzaTrabajo
 	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
 	 * 
-	 * BODY: {"tbjNumTrabajo":"4271073","codTarea":"T013_PosicionamientoYFirma","data": {"observaciones":["asdasdasd"], 
+	 * BODY: {"id":"1234","tbjNumTrabajo":"4271073","codTarea":"T013_PosicionamientoYFirma","data": {"observaciones":["asdasdasd"], 
 	 *  "comboConflicto": ["02"], 
 	 *	"comboRiesgo":["02"], 
 	 *	"comite":["29"],
@@ -1524,7 +1524,7 @@ public class TrabajoController extends ParadiseJsonController {
 		Map<String, String[]> datosTarea = new HashMap<String, String[]>();
 		JSONObject jsonFields = null;
 		Long tareaId = null;
-		Long idLlamada = null;
+		String id = null;
 		String codTarea = "";
 		String numTrabajo = "";
 		boolean resultado = false;
@@ -1551,24 +1551,24 @@ public class TrabajoController extends ParadiseJsonController {
 				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 				errorDesc = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			} else if(Checks.esNulo(jsonData.getIdLlamada()) || Checks.esNulo(jsonData.getData())){
+			} else if(Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())){
 				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 				errorDesc = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 			}else {
 				
-				idLlamada = jsonData.getIdLlamada();
+				id = jsonData.getId();
 				datosTarea = jsonData.getData();
-				if(Checks.esNulo(jsonFields.get("idLlamada"))){
+				if(Checks.esNulo(jsonFields.get("id"))){
 					error = RestApi.REST_NO_PARAM;
 					errorDesc = "Falta el id de llamada.";
 					throw new Exception(RestApi.REST_NO_PARAM);					
 				}
 				try {
-					Long.valueOf(idLlamada);
+					Long.valueOf(id);
 				}catch(Exception e){
 					error = RestApi.REST_MSG_FORMAT_ERROR;
-					errorDesc = "El formato el idLlamada no es el correcto.";
+					errorDesc = "El formato el id no es el correcto.";
 					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
 				}
 				if(Checks.esNulo(jsonFields.get("codTarea"))){
@@ -1668,7 +1668,7 @@ public class TrabajoController extends ParadiseJsonController {
 						
 		
 						model.put("id", jsonFields.get("id"));
-						model.put("idLlamada", idLlamada);
+						model.put("id", id);
 						model.put("data", resultado);
 						model.put("success", true);
 						
@@ -1676,11 +1676,11 @@ public class TrabajoController extends ParadiseJsonController {
 				}
 			}
 
-			//El idLlamada, tanto en el try como en el catch, lo debe devolver siempre
+			//El id, tanto en el try como en el catch, lo debe devolver siempre
 		} catch (Exception e) {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("idLlamada", idLlamada);
+			model.put("id", id);
 			model.put("error", error);
 			model.put("errorDesc", errorDesc);
 			model.put("success", false);

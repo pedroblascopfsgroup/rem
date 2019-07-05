@@ -8,27 +8,27 @@ public class TareaRequestDto extends RequestDto{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final Long serialVersionUID = 1L;
 	
+	private String idTarea;
 	private String id;
-	private Long idLlamada;
 	private Map<String, String[]> data;
 
 	
+	public String getIdTarea() {
+		return idTarea;
+	}
+
+	public void setIdTarea(String idTarea) {
+		this.idTarea = idTarea;
+	}
+
 	public String getId() {
 		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public Long getIdLlamada() {
-		return idLlamada;
-	}
-
-	public void setIdLlamada(Long idLlamada) {
-		this.idLlamada = idLlamada;
 	}
 
 	public Map<String, String[]> getData() {

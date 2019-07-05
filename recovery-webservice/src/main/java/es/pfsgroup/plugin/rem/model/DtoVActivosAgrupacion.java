@@ -73,7 +73,6 @@ public class DtoVActivosAgrupacion extends WebDto {
 	public void setFechaInclusion(Date fechaInclusion) {
 		this.fechaInclusion = fechaInclusion;
 	}
-	
 	public Long getAgrId() {
 		return agrId;
 	}
@@ -189,9 +188,8 @@ public class DtoVActivosAgrupacion extends WebDto {
 	public void setSubtipoActivoDesc(String subtipoActivoDesc) {
 		this.subtipoActivo = subtipoActivoDesc;
 	}
-
 	public Boolean getEsPisoPiloto() {
-		return esPisoPiloto;
+		return this.esPisoPiloto;
 	}
 	public void setEsPisoPiloto(Boolean esPisoPiloto) {
 		this.esPisoPiloto = esPisoPiloto;

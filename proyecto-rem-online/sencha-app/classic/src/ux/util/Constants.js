@@ -192,7 +192,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	'07': 'CERBERUS',
     	'08': 'LIBERBANK',
     	'10': 'TANGO',
-    	'11': 'THIRD',
+    	'11': 'THIRDPARTIES',
     	'12': 'GIANTS',
     	'15': 'GALEON',
     	'14': 'ZEUS'

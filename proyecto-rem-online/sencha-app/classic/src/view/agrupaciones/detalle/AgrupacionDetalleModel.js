@@ -650,25 +650,23 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 	}
 		 },
 
-		 esAgrupacionThirdpartiesYubaiObraNueva: function (get) {
-		 	var me = this;
-		 	var codCartera = get('agrupacionficha.codigoCartera'),
-		 		codSubcartera = get('agrupacionficha.codSubcartera'),
-		 		codAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-		 		
-		 		if ((codCartera === undefined || codCartera === null || codCartera.lenght === 0)
-		 		|| (codSubcartera === undefined || codSubcartera === null || codSubcartera.lenght === 0)
-		 		|| (CONST.TIPOS_AGRUPACION["OBRA_NUEVA"] !== codAgrupacion)){
-		 				return false;
-		 		}else {
-			 		if ( CONST.CARTERA["THIRD"] === codCartera 
-			 		&& CONST.SUBCARTERA["YUBAI"] === codSubcartera 
-			 		&& CONST.TIPOS_AGRUPACION["OBRA_NUEVA"] === codAgrupacion)
-		 				return true
-		 		}
-		 		
-		 		return false;
-		 }
+		 comercializableConstruccionPlano: function(get){
+			 return "true"===get('agrupacionficha.comercializableConsPlano');
+		 },
+		 
+		 existePisoPilotoAndcomercializableConstruccionPlano: function(get){
+			 return "true"===get('agrupacionficha.comercializableConsPlano') && "true"===get('agrupacionficha.existePiloto');
+		 },
+		 
+		 esAgrupacionThirdpartiesYubaiObraNueva: function(get) {
+			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
+			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
+			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		}
     },
     stores: {
     	comboCartera: {

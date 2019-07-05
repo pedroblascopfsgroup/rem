@@ -9612,4 +9612,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericaRestDaoImp.doFlush();
 		}
 	}
+	
+	@Override
+	public boolean existeComprador(String numDoc) {
+		if (!Checks.esNulo(numDoc) && !Checks.esNulo(numDoc)) {
+			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "documento", numDoc);
+			Comprador comprador = genericDao.get(Comprador.class, filterComprador);
+			if (!Checks.esNulo(comprador)) {
+				return true;
+			}			
+		}
+		return false;
+	}
 }

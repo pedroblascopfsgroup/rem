@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
@@ -61,6 +62,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	
 	@Autowired
 	private ComunicacionGencatApi comunicacionGencatApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
@@ -181,6 +185,10 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			
 			//Actualizar el estado comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+			
+			if(!Checks.esNulo(tramite.getActivo())) {
+				activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
+			}
 			
 		}
 

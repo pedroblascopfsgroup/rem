@@ -238,9 +238,12 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
     			+ "JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TAR_ID = TEX.TAR_ID "
     			+ "JOIN ACT_TBJ_TRABAJO TBJ ON TBJ.ACT_ID = TAC.ACT_ID "
     			+ "JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID "
+    			+ "JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TEX.TAR_ID = TAR.TAR_ID "
     			+ "WHERE TBJ.TBJ_NUM_TRABAJO = "+ idTrabajoStr+" "
     			+ "AND TBJ.BORRADO = 0 "
     			+ "AND TAP.BORRADO = 0 "
+    			+ "AND TAR.BORRADO = 0 "
+    			+ "AND TAR.TAR_TAREA_FINALIZADA = 0 "
     			+ "AND UPPER(TAP.TAP_CODIGO) = UPPER ('"+ codigoTareaProcedimiento +"')");
     	
     	List<Long> tareasExternasId = new ArrayList<Long>();

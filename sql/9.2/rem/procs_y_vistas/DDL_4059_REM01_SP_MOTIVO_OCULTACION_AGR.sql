@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190522
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20190701
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4227
+--## INCIDENCIA_LINK=REMVIP-4622
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -14,6 +14,7 @@
 --##		0.2 Versión con ofertas express Carles Molins -HREOS-4563
 --##		0.3 Sergio B -HREOS-4931- Optimización de tiempos
 --##		0.4 REMVIP-4301 - Cambios ocultación Revisión publicación
+--##		0.5 REMVIP-4622 - Ocultación alquilado
 --########################################## 
 --*/
 
@@ -162,8 +163,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''03'' AND MTO.BORRADO = 0 /*Alquilado*/
                                    WHERE ACT.BORRADO = 0
                                      AND SPS.SPS_OCUPADO = 1 
-                                     AND SPS.DD_TPA_ID = (SELECT DD_TPA_ID FROM DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO = ''01'')
-                                     AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
+                                     AND SPS.DD_TPA_ID = (SELECT DD_TPA_ID FROM DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO = ''01'')                                     
 									 AND (''A'' = '''||pTIPO||''' OR (''V'' = '''||pTIPO||''' AND TAL.DD_TAL_CODIGO <> ''01''))
                                      AND EXISTS '||vQUERY||                                                  
                          ' UNION
@@ -244,8 +244,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                                       AND MTO2.BORRADO = 0
                                                       AND MTO2.DD_MTO_ID = ACT.DD_MTO_A_ID) 
                                          AND (SPS.SPS_OCUPADO = 0
-                                           OR SPS.SPS_CON_TITULO = 0
-                                           OR SPS.SPS_FECHA_VENC_TITULO <= sysdate)
+                                         OR SPS.DD_TPA_ID IN (SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO IN (''02'', ''03'')))
                                           ) 
                                      OR (EXISTS (SELECT 1
                                                    FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO2

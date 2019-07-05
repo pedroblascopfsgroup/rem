@@ -14,7 +14,7 @@ public interface UsuarioRemApi{
 	 */
 	public List<String> getGestorSustitutoUsuario(Usuario usuario);
 	
-	public String getApellidoNombreSustituto(Usuario usuario);
+	public List<String> getApellidoNombreSustituto(Usuario usuario);
 	
 }
 

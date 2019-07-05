@@ -25,12 +25,14 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.recibo.model.DDMotivoRechazo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -41,8 +43,10 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
@@ -52,8 +56,8 @@ import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
@@ -90,6 +94,12 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private NotificatorServiceSancionOfertaSoloRechazo notificatorSoloRechazo;
+
+    @Autowired
+    private ActivoAdapter activoAdapter;
 	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -371,9 +381,12 @@ public class AgendaController extends TareaController {
 
 				List<TareaExterna> listaTareas = activoTramiteApi
 						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				
+				ActivoTramite tramite = listaTramites.get(0);
 				for (int i = 0; i < listaTareas.size(); i++) {
 					TareaExterna tarea = listaTareas.get(i);
 					if (!Checks.esNulo(tarea)) {
+
 						String codigo = tarea.getTareaProcedimiento().getTipoProcedimiento().getCodigo();
 						if(CODIGO_T013.equals(codigo)) {
 							salto = adapter.saltoResolucionExpediente(tarea.getId());
@@ -388,8 +401,31 @@ public class AgendaController extends TareaController {
 								expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);
 								oferta = eco.getOferta();
 								ofertaApi.rechazarOferta(oferta);
+								ofertaApi.descongelarOfertas(eco);
+								DDMotivoRechazoOferta motivoRechazo = genericDao.get(DDMotivoRechazoOferta.class, 
+										genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.CODIGO_OTROS));
+								oferta.setMotivoRechazo(motivoRechazo);
+								eco.setFechaVenta(null);
+								//Actualizar el estado comercial de los activos de la oferta
+								ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+								//Actualizar el estado de la publicación de los activos de la oferta (desocultar activos)
+								ofertaApi.desocultarActivoOferta(oferta);
+								
+								ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(oferta);
+								notificatorSoloRechazo.notificatorFinTareaConValores(tramite, null);
+								Activo activo = tramite.getActivo();
+								if(!Checks.esNulo(activo)) {
+									activoApi.actualizarOfertasTrabajosVivos(activo);
+									activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
+								}
 							}
 						}
+						
+						expedienteComercialApi.finalizarTareaValidacionClientes(eco);
+						if(!salto) {
+							salto = adapter.saltoResolucionExpediente(tarea.getId());
+						}
+						
 						break;
 					}
 				}								

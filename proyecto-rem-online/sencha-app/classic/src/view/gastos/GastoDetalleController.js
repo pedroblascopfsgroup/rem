@@ -1,204 +1,155 @@
-Ext
-		.define(
-				'HreRem.view.gastos.GastoDetalleController',
-				{
-					extend : 'Ext.app.ViewController',
-					alias : 'controller.gastodetalle',
+Ext.define('HreRem.view.gastos.GastoDetalleController',				{
+	extend: 'Ext.app.ViewController',
+	alias: 'controller.gastodetalle',
 
-					requires : [ 'HreRem.view.gastos.SeleccionTrabajosGasto',
-							'HreRem.view.common.adjuntos.AdjuntarDocumentoGasto' ],
+	requires : [ 'HreRem.view.gastos.SeleccionTrabajosGasto','HreRem.view.common.adjuntos.AdjuntarDocumentoGasto' ],
 
-					control : {
+	control : {
+		
+		'selecciontrabajosgastolist' : {
 
-						'selecciontrabajosgastolist' : {
+			persistedsselectionchange : function(sm, record, e,	grid, persistedSelection) {
+				var me = this;
+				var button = grid.up('window').down('button[itemId=btnGuardar]');
+				var disabled = Ext.isEmpty(persistedSelection);
+				button.setDisabled(disabled);
+			}
+		},
 
-							persistedsselectionchange : function(sm, record, e,
-									grid, persistedSelection) {
-								var me = this;
-								var button = grid.up('window').down(
-										'button[itemId=btnGuardar]');
-								var disabled = Ext.isEmpty(persistedSelection);
-								button.setDisabled(disabled);
-							}
-						},
+		'documentosgasto gridBase' : {
+			abrirFormulario : 'abrirFormularioAdjuntarDocumentos',
+			onClickRemove : 'borrarDocumentoAdjunto',
+			download : 'downloadDocumentoAdjunto',
+			afterupload : function(grid) {
+				grid.up('form').funcionRecargar();
+				grid.fireEvent("refreshComponent", "gestiongastos");
+			},
+			afterdelete : function(grid) {
+				grid.getStore().load();
+				grid.fireEvent("refreshComponent", "gestiongastos");
+				grid.disableRemoveButton(true);
+				this.onClickBotonRefrescar();
+			}
+		}
+	},
 
-						'documentosgasto gridBase' : {
-							abrirFormulario : 'abrirFormularioAdjuntarDocumentos',
-							onClickRemove : 'borrarDocumentoAdjunto',
-							download : 'downloadDocumentoAdjunto',
-							afterupload : function(grid) {
-								grid.up('form').funcionRecargar();
-								grid.fireEvent("refreshComponent",
-										"gestiongastos");
-							},
-							afterdelete : function(grid) {
-								grid.getStore().load();
-								grid.fireEvent("refreshComponent",
-										"gestiongastos");
-								grid.disableRemoveButton(true);
-								this.onClickBotonRefrescar();
-							}
-						}
+	cargarTabData : function(form) {
+		var me = this, 
+		id = me.getViewModel().get("gasto.id"),
+		model = form.getModelInstance();
+		form.up("tabpanel").mask(HreRem.i18n("msg.mask.loading"));
+		model.setId(id);
+		model.load({
+			success : function(record) {
+				form.setBindRecord(record);
+				form.up("tabpanel").unmask();
+			},
+			failure : function(operation) {
+				form.up("tabpanel").unmask();
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			}
+		});
+	},
 
-					},
+		cargarTabDataMultiple : function(form, index, models, nameModels) {
+			var me = this, 
+			id = me.getViewModel().get("gasto.id");
 
-					cargarTabData : function(form) {
-						var me = this, id = me.getViewModel().get("gasto.id"), model = form
-								.getModelInstance();
-						form.up("tabpanel").mask(
-								HreRem.i18n("msg.mask.loading"));
+			models[index].setId(id);
 
-						model.setId(id);
-						model.load({
-							success : function(record) {
+			if (Ext.isDefined(models[index].getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				models[index].load({
+					success : function(record) {
+						me.getViewModel().set(nameModels[index], record);
+						index++;
 
-								form.setBindRecord(record);
-								form.up("tabpanel").unmask();
-							},
-							failure : function(operation) {
-								form.up("tabpanel").unmask();
-								me.fireEvent("errorToast", HreRem
-										.i18n("msg.operacion.ko"));
-							}
-						});
-					},
-
-					cargarTabDataMultiple : function(form, index, models,
-							nameModels) {
-						var me = this, id = me.getViewModel().get("gasto.id");
-
-						models[index].setId(id);
-
-						if (Ext
-								.isDefined(models[index].getProxy().getApi().read)) {
-							// Si la API tiene metodo de lectura (read).
-							models[index].load({
-								success : function(record) {
-									me.getViewModel().set(nameModels[index],
-											record);
-									index++;
-
-									if (index < models.length) {
-										me.cargarTabDataMultiple(form, index,
-												models, nameModels);
-									} else {
-										form.unmask();
-									}
-								},
-								failure : function(a, operation) {
-									form.unmask();
-								}
-							});
+						if (index < models.length) {
+							me.cargarTabDataMultiple(form, index, models, nameModels);
 						} else {
-							// Si la API no contiene metodo de lectura (read).
-							me.getViewModel().set(nameModels[index],
-									models[index]);
-							index++;
-
-							if (index < models.length) {
-								me.cargarTabDataMultiple(form, index, models,
-										nameModels);
-							} else {
-								form.unmask();
-							}
+							form.unmask();
 						}
-
 					},
+					failure : function(a, operation) {
+						form.unmask();
+					}
+				});
+			} else {
+				// Si la API no contiene metodo de lectura (read).
+				me.getViewModel().set(nameModels[index], models[index]);
+				index++;
 
-					onSaveFormularioCompleto : function(btn, form, success) {
+				if (index < models.length) {
+					me.cargarTabDataMultiple(form, index, models, nameModels);
+				} else {
+					form.unmask();
+					}
+				}
 
-						var me = this;
-						// disableValidation: Atributo para indicar si el
-						// guardado del formulario debe aplicar o no, las
-						// validaciones
-						if (form.isFormValid() && !form.disableValidation
-								|| form.disableValidation) {
-							// var fechaMax = new Date();
-							// fechaMax.setMonth(fechaMax.getMonth()+1);
-							// var fechaDevengo =
-							// me.lookupReference('fechaDevengoEspecial').value;
-							// var anyoCombobox =
-							// me.lookupReference('comboboxfieldFechaEjercicio').lastMutatedValue;
-							// var anyoFechaDevengo =
-							// fechaDevengo.getFullYear();
-							//			
-							// if(anyoCombobox.indexOf(anyoFechaDevengo) == -1){
-							//
-							// me.fireEvent("errorToast",
-							// HreRem.i18n("msg.error.validacion.fechas"));
-							//
-							// }else{
-							//				
+			},
 
-							Ext.Array.each(form.query('field[isReadOnlyEdit]'),
-									function(field, index) {
-										field.fireEvent('update');
-										field.fireEvent('save');
-									});
+			onSaveFormularioCompleto : function(btn, form, success) {
+
+				var me = this;
+				// disableValidation: Atributo para indicar si el
+				// guardado del formulario debe aplicar o no, las
+				// validaciones
+				if (form.isFormValid() && !form.disableValidation || form.disableValidation) {
+				// var fechaMax = new Date();
+				// fechaMax.setMonth(fechaMax.getMonth()+1);
+				// var fechaDevengo =
+				// me.lookupReference('fechaDevengoEspecial').value;
+				// var anyoCombobox =
+				// me.lookupReference('comboboxfieldFechaEjercicio').lastMutatedValue;
+				// var anyoFechaDevengo =
+				// fechaDevengo.getFullYear();
+				//			
+				// if(anyoCombobox.indexOf(anyoFechaDevengo) == -1){
+				//
+				// me.fireEvent("errorToast",
+				// HreRem.i18n("msg.error.validacion.fechas"));
+				//
+				// }else{
+				//				
+					
+					Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+								function(field, index) {field.fireEvent('update'); field.fireEvent('save');}
+								);
 
 							if (!Ext.isEmpty(btn)) {
 								btn.hide();
-								btn.up('tabbar').down(
-										'button[itemId=botoncancelar]').hide();
-								btn.up('tabbar').down(
-										'button[itemId=botoneditar]').show();
+								btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
+								btn.up('tabbar').down('button[itemId=botoneditar]').show();
 								me.getViewModel().set("editing", false);
 							}
 
 							if (!form.saveMultiple) {
-								if (Ext.isDefined(form.getBindRecord()
-										.getProxy().getApi().create)
-										|| Ext.isDefined(form.getBindRecord()
-												.getProxy().getApi().update)) {
+								if (Ext.isDefined(form.getBindRecord().getProxy().getApi().create)
+										|| Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
 									// Si la API tiene metodo de escritura
 									// (create or update).
-									me.getView().mask(
-											HreRem.i18n("msg.mask.loading"));
+									me.getView().mask(HreRem.i18n("msg.mask.loading"));
 
-									form
-											.getBindRecord()
-											.save(
-													{
-														success : success,
-														failure : function(a,
-																operation) {
-															var data = {};
-															try {
-																data = Ext
-																		.decode(operation._response.responseText);
-															} catch (e) {
-															}
-															;
-															if (!Ext
-																	.isEmpty(data.msg)) {
-																me
-																		.fireEvent(
-																				"errorToast",
-																				data.msg);
-															} else {
-																me
-																		.fireEvent(
-																				"errorToast",
-																				HreRem
-																						.i18n("msg.operacion.ko"));
-															}
-															me.getView()
-																	.unmask();
-															if (form)
-																me
-																		.refrescarGasto(form.refreshAfterSave);
-															Ext.Array
-																	.each(
-																			form
-																					.query('field[isReadOnlyEdit]'),
-																			function(
-																					field,
-																					index) {
-																				field
-																						.fireEvent('edit');
-																			});
-														}
-													});
+									form.getBindRecord().save({
+										success : success,
+										failure : function(a, operation) {
+											var data = {};
+											try {
+												data = Ext.decode(operation._response.responseText);
+											} catch (e) { };
+											if (!Ext.isEmpty(data.msg)) {
+												me.fireEvent("errorToast", data.msg);
+											} else {
+												me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+											}
+											me.getView().unmask();
+											if (form)
+											me.refrescarGasto(form.refreshAfterSave);
+											Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+												function(field,	index) {field.fireEvent('edit');}
+												);
+											}
+										});
 								}
 								// Guardamos múltiples records
 							} else {
@@ -209,20 +160,15 @@ Ext
 
 							// }
 						} else {
-
-							me.fireEvent("errorToast", HreRem
-									.i18n("msg.form.invalido"));
+							me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 						}
 
 					},
 
 					saveMultipleRecords : function(contador, records) {
 						var me = this;
-						if (Ext
-								.isDefined(records[contador].getProxy()
-										.getApi().create)
-								|| Ext.isDefined(records[contador].getProxy()
-										.getApi().update)) {
+						if (Ext.isDefined(records[contador].getProxy().getApi().create)
+								|| Ext.isDefined(records[contador].getProxy().getApi().update)) {
 							// Si la API tiene metodo de escritura (create or
 							// update).
 
@@ -231,18 +177,15 @@ Ext
 									contador++;
 
 									if (contador < records.length) {
-										me.saveMultipleRecords(contador,
-												records);
+										me.saveMultipleRecords(contador, records);
 									} else {
-										me.fireEvent("infoToast", HreRem
-												.i18n("msg.operacion.ok"));
+										me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 										me.getView().unmask();
 										me.refrescarExpediente(false);
 									}
 								},
 								failure : function(a, operation) {
-									me.fireEvent("errorToast", HreRem
-											.i18n("msg.operacion.ko"));
+									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 									me.getView().unmask();
 								}
 							});
@@ -252,20 +195,16 @@ Ext
 					onClickBotonEditar : function(btn) {
 						var me = this;
 						btn.hide();
-						btn.up('tabbar').down('button[itemId=botonguardar]')
-								.show();
-						btn.up('tabbar').down('button[itemId=botoncancelar]')
-								.show();
+						btn.up('tabbar').down('button[itemId=botonguardar]').show();
+						btn.up('tabbar').down('button[itemId=botoncancelar]').show();
 						me.getViewModel().set("editing", true);
 
-						Ext.Array.each(btn.up('tabpanel').getActiveTab().query(
-								'field[isReadOnlyEdit]'),
+						Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
 								function(field, index) {
 									field.fireEvent('edit');
 								});
 
-						btn.up('tabpanel').getActiveTab().query(
-								'field[isReadOnlyEdit]')[0].focus();
+						btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
 						me.afterCargaCombo();
 					},
 
@@ -273,25 +212,19 @@ Ext
 						var me = this;
 
 						var success = function(a, operation, c) {
-							me.fireEvent("infoToast", HreRem
-									.i18n("msg.operacion.ok"));
+							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							me.getView().unmask();
-							me
-									.refrescarGasto(btn.up('tabpanel')
-											.getActiveTab().refreshAfterSave);
+							me.refrescarGasto(btn.up('tabpanel').getActiveTab().refreshAfterSave);
 						};
 
-						me.onSaveFormularioCompleto(btn, btn.up('tabpanel')
-								.getActiveTab(), success);
+						me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab(), success);
 					},
 
 					onClickBotonCancelar : function(btn) {
-						var me = this, activeTab = btn.up('tabpanel')
-								.getActiveTab();
+						var me = this, activeTab = btn.up('tabpanel').getActiveTab();
 
 						if (!activeTab.saveMultiple) {
-							if (activeTab && activeTab.getBindRecord
-									&& activeTab.getBindRecord()) {
+							if (activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
 								/*
 								 * activeTab.getForm().clearInvalid();
 								 * activeTab.getBindRecord().reject();
@@ -311,14 +244,11 @@ Ext
 						}
 
 						btn.hide();
-						btn.up('tabbar').down('button[itemId=botonguardar]')
-								.hide();
-						btn.up('tabbar').down('button[itemId=botoneditar]')
-								.show();
+						btn.up('tabbar').down('button[itemId=botonguardar]').hide();
+						btn.up('tabbar').down('button[itemId=botoneditar]').show();
 						me.getViewModel().set("editing", false);
 
-						Ext.Array.each(
-								activeTab.query('field[isReadOnlyEdit]'),
+						Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
 								function(field, index) {
 									field.fireEvent('save');
 									field.fireEvent('update');
@@ -343,17 +273,12 @@ Ext
 					},
 
 					refrescarGasto : function(refrescarPestañaActiva) {
-						var me = this, refrescarPestañaActiva = Ext
-								.isEmpty(refrescarPestañaActiva) ? false
-								: refrescarPestañaActiva, tabPanel = me
-								.getView().down("tabpanel");
+						var me = this, refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false	: refrescarPestañaActiva, tabPanel = me.getView().down("tabpanel");
 
 						// Marcamos todas los componentes para refrescar, de
 						// manera que se vayan actualizando conforme se vayan
 						// mostrando.
-						Ext.Array.each(me.getView().query(
-								'component[funcionRecargar]'), function(
-								component) {
+						Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
 							if (component.rendered) {
 								component.recargar = true;
 							}
@@ -369,11 +294,9 @@ Ext
 								}
 							}
 							var callbackFn = function() {
-								me.getView().down("tabpanel")
-										.evaluarBotonesEdicion(activeTab);
+								me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);
 							};
-							me.getView().fireEvent("refrescarGasto",
-									me.getView(), callbackFn);
+							me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
 						}
 
 					},
@@ -382,8 +305,7 @@ Ext
 						var me = this;
 						var nifProveedor = field.getValue();
 						var data;
-						var comboProveedores = me
-								.lookupReference("comboProveedores");
+						var comboProveedores = me.lookupReference("comboProveedores");
 
 						if (!Ext.isEmpty(nifProveedor)) {
 							comboProveedores.getStore().getProxy().extraParams.nifProveedor = nifProveedor;
@@ -403,66 +325,44 @@ Ext
 						var nifPropietario = field.getValue();
 						var data;
 
-						Ext.Ajax
-								.request({
+						Ext.Ajax.request({
 
-									url : url,
-									params : {
-										nifPropietario : nifPropietario
-									},
+								url : url,
+								params : {
+									nifPropietario : nifPropietario
+								},
 
-									success : function(response, opts) {
-										data = Ext
-												.decode(response.responseText);
+								success : function(response, opts) {
+									data = Ext.decode(response.responseText);
 										// var propietarioGastoField =
 										// field.up('formBase').down('[name=nifPropietario]')
-										var buscadorNifPropietario = field
-												.up('formBase')
-												.down(
-														'[name=buscadorNifPropietarioField]'), nombrePropietarioGasto = field
-												.up('formBase')
-												.down(
-														'[name=nombrePropietario]');
+										var buscadorNifPropietario = field.up('formBase').down('[name=buscadorNifPropietarioField]'), nombrePropietarioGasto = field.up('formBase').down('[name=nombrePropietario]');
 
 										if (!Utils.isEmptyJSON(data.data)) {
 											var id = data.data.id;
 											var nombrePropietario = data.data.nombre;
 
-											if (!Ext
-													.isEmpty(buscadorNifPropietario)) {
-												buscadorNifPropietario
-														.setValue(nifPropietario);
+											if (!Ext.isEmpty(buscadorNifPropietario)) {
+												buscadorNifPropietario.setValue(nifPropietario);
 											}
-											if (!Ext
-													.isEmpty(nombrePropietarioGasto)) {
-												nombrePropietarioGasto
-														.setValue(nombrePropietario);
+											if (!Ext.isEmpty(nombrePropietarioGasto)) {
+												nombrePropietarioGasto.setValue(nombrePropietario);
 
 											}
 										} else {
-											if (!Ext
-													.isEmpty(nombrePropietarioGasto)) {
-												nombrePropietarioGasto
-														.setValue('');
+											if (!Ext.isEmpty(nombrePropietarioGasto)) {
+												nombrePropietarioGasto.setValue('');
 											}
-											me
-													.fireEvent(
-															"errorToast",
-															HreRem
-																	.i18n("msg.buscador.no.encuentra.propietario"));
-											buscadorNifPropietario
-													.markInvalid(HreRem
-															.i18n("msg.buscador.no.encuentra.propietario"));
+											me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.propietario"));
+											buscadorNifPropietario.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.propietario"));
 
 										}
 
 									},
 									failure : function(response) {
-										me.fireEvent("errorToast", HreRem
-												.i18n("msg.operacion.ko"));
+										me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 									},
-									callback : function(options, success,
-											response) {
+									callback : function(options, success, response) {
 									}
 
 								});
@@ -474,11 +374,9 @@ Ext
 
 						var operacion = me.lookupReference('cbOperacionExenta');
 						var renuncia = me.lookupReference('cbRenunciaExencion');
-						var tipoImpositivo = me
-								.lookupReference('tipoImpositivo');
+						var tipoImpositivo = me.lookupReference('tipoImpositivo');
 						var cuota = me.lookupReference('cbCuota');
-						var importeTotal = me
-								.lookupReference('detalleEconomicoImporteTotal');
+						var importeTotal = me.lookupReference('detalleEconomicoImporteTotal');
 						if (operacion.getValue()) {
 							renuncia.setReadOnly(false);
 							tipoImpositivo.setDisabled(true);
@@ -504,11 +402,9 @@ Ext
 
 						var operacion = me.lookupReference('cbOperacionExenta');
 						var renuncia = me.lookupReference('cbRenunciaExencion');
-						var tipoImpositivo = me
-								.lookupReference('tipoImpositivo');
+						var tipoImpositivo = me.lookupReference('tipoImpositivo');
 						var cuota = me.lookupReference('cbCuota');
-						var importeTotal = me
-								.lookupReference('detalleEconomicoImporteTotal');
+						var importeTotal = me.lookupReference('detalleEconomicoImporteTotal');
 						if (operacion.getValue() && !renuncia.getValue()) {
 							tipoImpositivo.setDisabled(true);
 							cuota.setDisabled(true);
@@ -536,12 +432,10 @@ Ext
 						var me = this;
 						if (!Ext.isEmpty(field.getValue())) {
 							me.lookupReference('importePrincipalNoSujeto').allowBlank = true;
-							me.lookupReference('importePrincipalNoSujeto')
-									.validate();
+							me.lookupReference('importePrincipalNoSujeto').validate();
 						} else {
 							me.lookupReference('importePrincipalNoSujeto').allowBlank = false;
-							me.lookupReference('importePrincipalNoSujeto')
-									.validate();
+							me.lookupReference('importePrincipalNoSujeto').validate();
 						}
 					},
 
@@ -549,12 +443,10 @@ Ext
 						var me = this;
 						if (!Ext.isEmpty(field.getValue())) {
 							me.lookupReference('importePrincipalSujeto').allowBlank = true;
-							me.lookupReference('importePrincipalSujeto')
-									.validate();
+							me.lookupReference('importePrincipalSujeto').validate();
 						} else {
 							me.lookupReference('importePrincipalSujeto').allowBlank = false;
-							me.lookupReference('importePrincipalSujeto')
-									.validate();
+							me.lookupReference('importePrincipalSujeto').validate();
 						}
 					},
 
@@ -575,20 +467,17 @@ Ext
 
 					onChangeFechaPago : function(field, value) {
 
-						var me = this, fieldImportePagado = me
-								.lookupReference('detalleEconomicoImportePagado'), importePagado = Ext
-								.isEmpty(value) ? 0 : me.getViewModel().get(
-								"calcularImporteTotalGasto");
+						var me = this, fieldImportePagado = me.lookupReference('detalleEconomicoImportePagado'),
+						importePagado = Ext.isEmpty(value) ? 0 : me.getViewModel().get("calcularImporteTotalGasto");
 						fieldImportePagado.setValue(importePagado);
 					},
 
 					onChangeImporteTotal : function(field, value) {
 
-						var me = this, fieldFechaPago = me
-								.lookupReference('fechaPago'), fieldImportePagado = me
-								.lookupReference('detalleEconomicoImportePagado'), fieldImporteTotal = me
-								.lookupReference('detalleEconomicoImporteTotal'), importePagado = Ext
-								.isEmpty(fieldFechaPago.getValue()) ? 0 : value;
+						var me = this, fieldFechaPago = me.lookupReference('fechaPago'),
+						fieldImportePagado = me.lookupReference('detalleEconomicoImportePagado'),
+						fieldImporteTotal = me.lookupReference('detalleEconomicoImporteTotal'),
+						importePagado = Ext.isEmpty(fieldFechaPago.getValue()) ? 0 : value;
 
 						fieldImportePagado.setValue(importePagado);
 						fieldImporteTotal.setValue(value);
@@ -596,8 +485,7 @@ Ext
 					},
 
 					onChangeChainedCombo : function(combo) {
-						var me = this, chainedCombo = me
-								.lookupReference(combo.chainedReference);
+						var me = this, chainedCombo = me.lookupReference(combo.chainedReference);
 
 						me.getViewModel().notify();
 
@@ -605,31 +493,22 @@ Ext
 							chainedCombo.clearValue();
 						}
 
-						chainedCombo
-								.getStore()
-								.load(
-										{
-											callback : function(records,
-													operation, success) {
-												if (!Ext.isEmpty(records)
-														&& records.length > 0) {
-													if (chainedCombo.selectFirst == true) {
-														chainedCombo
-																.setSelection(1);
-													}
-													;
-													chainedCombo
-															.setDisabled(false);
-												} else {
-													chainedCombo
-															.setDisabled(true);
-												}
-											}
-										});
+						chainedCombo.getStore().load(
+								{
+									callback : function(records, operation, success) {
+										if (!Ext.isEmpty(records) && records.length > 0) {
+											if (chainedCombo.selectFirst == true) {
+												chainedCombo.setSelection(1);
+											};
+											chainedCombo.setDisabled(false);
+										} else {
+											chainedCombo.setDisabled(true);
+										}
+									}
+								});
 
 						if (me.lookupReference(chainedCombo.chainedReference) != null) {
-							var chainedDos = me
-									.lookupReference(chainedCombo.chainedReference);
+							var chainedDos = me.lookupReference(chainedCombo.chainedReference);
 							if (!chainedDos.isDisabled()) {
 								chainedDos.clearValue();
 								chainedDos.getStore().removeAll();
@@ -642,22 +521,18 @@ Ext
 					onCambiaBuscadorActivo : function(field, value) {
 						var me = this;
 						if (!Ext.isEmpty(value)) {
-							me.lookupReference('botonIncluirActivoRef')
-									.setDisabled(false);
+							me.lookupReference('botonIncluirActivoRef').setDisabled(false);
 						} else {
-							me.lookupReference('botonIncluirActivoRef')
-									.setDisabled(true);
+							me.lookupReference('botonIncluirActivoRef').setDisabled(true);
 						}
 					},
 
 					onCambiaBuscadorAgrupacion : function(field, value) {
 						var me = this;
 						if (!Ext.isEmpty(value)) {
-							me.lookupReference('botonIncluirAgrupacionRef')
-									.setDisabled(false);
+							me.lookupReference('botonIncluirAgrupacionRef').setDisabled(false);
 						} else {
-							me.lookupReference('botonIncluirAgrupacionRef')
-									.setDisabled(true);
+							me.lookupReference('botonIncluirAgrupacionRef').setDisabled(true);
 						}
 					},
 
@@ -670,11 +545,9 @@ Ext
 						var me = this;
 						var window = btn.up('window');
 						var form = window.down('formBase');
-						var detalle = btn.up().up().down(
-								'anyadirnuevogastoactivodetalle');
+						var detalle = btn.up().up().down('anyadirnuevogastoactivodetalle');
 						var idGasto = detalle.up().idGasto;
-						var url = $AC
-								.getRemoteUrl('gastosproveedor/fechaDevengoPosteriorFechaTraspaso');
+						var url = $AC.getRemoteUrl('gastosproveedor/fechaDevengoPosteriorFechaTraspaso');
 						window.mask(HreRem.i18n("msg.mask.loading"));
 
 						//CheckBox para indicar si se recalculan los gastos
@@ -683,13 +556,11 @@ Ext
 						
 							if (!Ext.isEmpty(detalle.getBindRecord())) {
 
-								var viewModelDetalle = btn.up(
-										"[xtype=gastodetalle]").lookupViewModel();
+								var viewModelDetalle = btn.up("[xtype=gastodetalle]").lookupViewModel();
 								if (!Ext.isEmpty(viewModelDetalle)) {
 									// var gasto_fechaDevengo =
 									// viewModelDetalle.data.gasto.get('fechaEmision');
-									var gasto_codigoImpuestoIndirecto = viewModelDetalle.data.gasto
-											.get('codigoImpuestoIndirecto');
+									var gasto_codigoImpuestoIndirecto = viewModelDetalle.data.gasto.get('codigoImpuestoIndirecto');
 								}
 
 								var numeroActivo = detalle.getBindRecord().numActivo;
@@ -698,220 +569,163 @@ Ext
 									//Actualizar calculo de gastos
 								
 								
-								if (!Ext.isEmpty(numeroActivo)
-										&& !Ext.isEmpty(numeroAgrupacion)) {
-									me
-											.fireEvent(
-													"errorToast",
-													HreRem
-															.i18n("msg.buscador.activo.gasto.busqueda.no.posible"));
+								if (!Ext.isEmpty(numeroActivo) && !Ext.isEmpty(numeroAgrupacion)) {
+									me.fireEvent("errorToast", HreRem.i18n("msg.buscador.activo.gasto.busqueda.no.posible"));
 									form.reset();
 									window.unmask();
 									window.parent.funcionRecargar();
 									window.close();
 								} else if (!Ext.isEmpty(numeroActivo)) {
-									if (Ext.isDefined(detalle.getModelInstance()
-											.getProxy().getApi().create)) {
+									if (Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)) {
 
-										Ext.Ajax
-												.request({
-													url : url,
-													params : {
-														idGasto : idGasto,
-														idActivo : numeroActivo,
-														idAgrupacion : -1														
-													},
-													success : function(response,
-															opts) {
+										Ext.Ajax.request({
+											url : url,
+											params : {
+												idGasto : idGasto,
+												idActivo : numeroActivo,
+												idAgrupacion : -1														
+											},
+											success : function(response, opts) {
 
-														var data = {};
-														try {
-															data = Ext
-																	.decode(response.responseText);
-														} catch (e) {
-														}
-														;
+												var data = {};
+												try {
+													data = Ext.decode(response.responseText);
+												} catch (e) { };
 
-														if (CONST.TIPO_IMPUESTO['IVA'] == gasto_codigoImpuestoIndirecto) {
+												if (CONST.TIPO_IMPUESTO['IVA'] == gasto_codigoImpuestoIndirecto) {
 
-															if (!Ext.isEmpty(data)
-																	&& data.fechaDevengoSuperior == "true") {
+													if (!Ext.isEmpty(data) && data.fechaDevengoSuperior == "true") {
 
-																Ext.Msg
-																		.show({
-																			title : HreRem
-																					.i18n('title.permitir.asociacion.gastoactivo'),
-																			msg : HreRem
-																					.i18n('msg.asociar.gastoactivo'),
-																			buttons : Ext.MessageBox.YESNO,
-																			fn : function(
-																					buttonId) {
-																				if (buttonId == 'yes') {
-																					me
-																							.asociarGastoConActivos(
-																									idGasto,
-																									numeroActivo,
-																									null,
-																									recalcular,
-																									detalle,
-																									form,
-																									window);
-																				} else {
-																					form
-																							.reset();
-																					window
-																							.unmask();
-																					window.parent
-																							.funcionRecargar();
-																					window
-																							.close();
-																				}
-																			}
-																		});
-															} else {
-																me
-																		.asociarGastoConActivos(
-																				idGasto,
-																				numeroActivo,
-																				null,
-																				recalcular,
-																				detalle,
-																				form,
-																				window);
+														Ext.Msg.show({
+																	title : HreRem.i18n('title.permitir.asociacion.gastoactivo'),
+																	msg : HreRem.i18n('msg.asociar.gastoactivo'),
+																	buttons : Ext.MessageBox.YESNO,
+																	fn : function(buttonId) {
+																		if (buttonId == 'yes') {
+																			me.asociarGastoConActivos(
+																							idGasto,
+																							numeroActivo,
+																							null,
+																							recalcular,
+																							detalle,
+																							form,
+																							window);
+																		} else {
+																			form.reset();
+																			window.unmask();
+																			window.parent.funcionRecargar();
+																			window.close();
+																		}
+																	}
+																});
+													} else {
+														me.asociarGastoConActivos(
+																		idGasto,
+																		numeroActivo,
+																		null,
+																		recalcular,
+																		detalle,
+																		form,
+																		window);
 
-															}
-
-														} else {
-
-															if (!Ext.isEmpty(data)
-																	&& !(data.fechaDevengoSuperior == "true")) {
-
-																me
-																		.asociarGastoConActivos(
-																				idGasto,
-																				numeroActivo,
-																				null,
-																				recalcular,
-																				detalle,
-																				form,
-																				window);
-
-															} else {
-																me
-																		.fireEvent(
-																				"errorToast",
-																				HreRem
-																						.i18n("msg.operacion.ko"));
-																form.reset();
-																window.unmask();
-																window.parent
-																		.funcionRecargar();
-																window.close();
-															}
-
-														}
-
-													},
-													failure : function(response) {
-														me
-																.fireEvent(
-																		"errorToast",
-																		HreRem
-																				.i18n("msg.operacion.ko"));
 													}
-												});
+
+												} else {
+
+													if (!Ext.isEmpty(data)
+															&& !(data.fechaDevengoSuperior == "true")) {
+
+														me.asociarGastoConActivos(
+																		idGasto,
+																		numeroActivo,
+																		null,
+																		recalcular,
+																		detalle,
+																		form,
+																		window);
+
+													} else {
+														me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+														form.reset();
+														window.unmask();
+														window.parent.funcionRecargar();
+														window.close();
+													}
+
+												}
+
+											},
+											failure : function(response) {
+												me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
+											}
+										});
 									}
 								} else if (!Ext.isEmpty(numeroAgrupacion)) {
-									if (Ext.isDefined(detalle.getModelInstance()
-											.getProxy().getApi().create)) {
+									if (Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)) {
 
-										Ext.Ajax
-												.request({
+										Ext.Ajax.request({
 
-													url : url,
-													params : {
-														idGasto : idGasto,
-														idActivo : -1,
-														idAgrupacion : numeroAgrupacion
-													},
-													success : function(response,
-															opts) {
+											url : url,
+											params : {
+												idGasto : idGasto,
+												idActivo : -1,
+												idAgrupacion : numeroAgrupacion
+											},
+											success : function(response, opts) {
 
-														var data = {};
-														try {
-															data = Ext
-																	.decode(response.responseText);
-														} catch (e) {
-														}
-														;
+												var data = {};
+												try {
+													data = Ext.decode(response.responseText);
+												} catch (e) { };
 
-														if (!Ext.isEmpty(data)
-																&& data.fechaDevengoSuperior == "true") {
+												if (!Ext.isEmpty(data) && data.fechaDevengoSuperior == "true") {
 
-															Ext.Msg
-																	.show({
-																		title : HreRem
-																				.i18n('title.permitir.asociacion.gastoactivo'),
-																		msg : HreRem
-																				.i18n('msg.asociar.gastoagrupacion'),
-																		buttons : Ext.MessageBox.YESNO,
-																		fn : function(
-																				buttonId) {
+													Ext.Msg.show({
+																title : HreRem.i18n('title.permitir.asociacion.gastoactivo'),
+																msg : HreRem.i18n('msg.asociar.gastoagrupacion'),
+																buttons : Ext.MessageBox.YESNO,
+																fn : function(buttonId) {
 
-																			if (buttonId == 'yes') {
+																	if (buttonId == 'yes') {
 
-																				me
-																						.asociarGastoConActivos(
-																								idGasto,
-																								null,
-																								numeroAgrupacion,
-																								recalcular,
-																								detalle,
-																								form,
-																								window);
+																		me.asociarGastoConActivos(
+																						idGasto,
+																						null,
+																						numeroAgrupacion,
+																						recalcular,
+																						detalle,
+																						form,
+																						window);
 
-																			} else {
-																				form
-																						.reset();
-																				window.parent
-																						.funcionRecargar();
-																				window
-																						.close();
-																			}
+																	} else {
+																		form.reset();
+																		window.parent.funcionRecargar();
+																		window.close();
+																	}
 
-																		}
-																	});
+																}
+															});
 
-														} else {
+												} else {
 
-															me
-																	.asociarGastoConActivos(
-																			idGasto,
-																			null,
-																			numeroAgrupacion,
-																			recalcular,
-																			detalle,
-																			form,
-																			window);
-
-														}
-													},
-													failure : function(response) {
-														me
-																.fireEvent(
-																		"errorToast",
-																		HreRem
-																				.i18n("msg.operacion.ko"));
-													}
-												});
+													me.asociarGastoConActivos(
+																	idGasto,
+																	null,
+																	numeroAgrupacion,
+																	recalcular,
+																	detalle,
+																	form,
+																	window);
+												}
+											},
+											failure : function(response) {
+												me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+											}
+										});
 									}
 								}
 							} else {
-								me
-										.fireEvent(
-												"errorToast",
-												HreRem
-														.i18n("msg.buscador.activo.gasto.busqueda.campos.vacios"));
+								me.fireEvent("errorToast", HreRem.i18n("msg.buscador.activo.gasto.busqueda.campos.vacios"));
 								form.reset();
 								window.unmask();
 								window.parent.funcionRecargar();
@@ -922,8 +736,7 @@ Ext
 					},
 					updateGastoByPrinexLBK : function() {
 						me = this;
-						var url = $AC
-								.getRemoteUrl('gastosproveedor/updateGastoByPrinexLBK');
+						var url = $AC.getRemoteUrl('gastosproveedor/updateGastoByPrinexLBK');
 						var idGasto = me.getViewModel().get("gasto.id");
 
 						Ext.Ajax.request({
@@ -940,20 +753,16 @@ Ext
 										me.refrescarGasto(true);
 									}
 
-								} catch (e) {
-								}
-								;
+								} catch (e) { };
 
 							},
 							failure : function(response) {
-								me.fireEvent("errorToast", HreRem
-										.i18n("msg.operacion.ko"));
+								me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 							}
 						});
 
 					},
-					asociarGastoConActivos : function(idGasto, numeroActivo,
-							numeroAgrupacion, recalcular, detalle, form, window) {
+					asociarGastoConActivos : function(idGasto, numeroActivo, numeroAgrupacion, recalcular, detalle, form, window) {
 
 						var me = this;
 
@@ -961,52 +770,38 @@ Ext
 						detalle.getModelInstance().getProxy().extraParams.numActivo = numeroActivo;
 						detalle.getModelInstance().getProxy().extraParams.numAgrupacion = numeroAgrupacion;
 						detalle.getModelInstance().getProxy().extraParams.recalcular = recalcular;
-						detalle
-								.getModelInstance()
-								.save(
-										{
+						detalle.getModelInstance().save(
+								{
 
-											success : function(a, operation, c) {
-												me
-														.fireEvent(
-																"infoToast",
-																HreRem
-																		.i18n("msg.operacion.ok"));
-											},
-											failure : function(a, operation) {
-												var data = {};
-												try {
-													data = Ext
-															.decode(operation._response.responseText);
-												} catch (e) {
-												}
-												;
-												if (!Ext.isEmpty(data.msg)) {
-													me.fireEvent("errorToast",
-															data.msg);
-												} else {
-													me
-															.fireEvent(
-																	"errorToast",
-																	HreRem
-																			.i18n("msg.operacion.ko"));
-												}
-											},
-											callback : function(records,
-													operation, success) {
-												form.reset();
-												if (numeroActivo != null)
-													window.unmask();
-												window.parent.funcionRecargar();
-												window.close();
-											}
+									success : function(a, operation, c) {
+										me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+									},
+									failure : function(a, operation) {
+										var data = {};
+										try {
+											data = Ext
+													.decode(operation._response.responseText);
+										} catch (e) { };
+										if (!Ext.isEmpty(data.msg)) {
+											me.fireEvent("errorToast",
+													data.msg);
+										} else {
+											me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+										}
+									},
+									callback : function(records, operation, success) {
+										form.reset();
+										if (numeroActivo != null)
+											window.unmask();
+										window.parent.funcionRecargar();
+										window.close();
+									}
 
-										});
+								});
 
 					},
 
-					onEnlaceActivosClick : function(tableView, indiceFila,
-							indiceColumna) {
+					onEnlaceActivosClick : function(tableView, indiceFila, indiceColumna) {
 						var me = this;
 						var grid = tableView.up('grid');
 						var record = grid.store.getAt(indiceFila);
@@ -1023,92 +818,67 @@ Ext
 
 					onClickBotonGuardarGasto : function(btn) {
 						var me = this;
-						var window = btn.up('window'), form = window
-								.down('formBase');
+						var window = btn.up('window'), form = window.down('formBase');
 
 						if (form.isFormValid() && !form.disableValidation
 								|| form.disableValidation) {
 							// Comprobar si el proveedor está dado de baja para
 							// notificarlo.
-							var combo = window
-									.lookupReference('comboProveedores');
+							var combo = window.lookupReference('comboProveedores');
 							var fechaBaja = combo.getSelection().getData().fechaBaja;
 							if (!Ext.isEmpty(fechaBaja)) {
-								Ext.Msg
-										.show({
-											title : HreRem
-													.i18n('title.mensaje.confirmacion'),
-											msg : HreRem
-													.i18n('msg.desea.crear.proveedor.baja'),
+								Ext.Msg.show({
+											title : HreRem.i18n('title.mensaje.confirmacion'),
+											msg : HreRem.i18n('msg.desea.crear.proveedor.baja'),
 											buttons : Ext.MessageBox.YESNO,
 											fn : function(buttonId) {
 												if (buttonId == 'yes') {
-													me
-															.onGuardarGastoComprobarExisteGasto(
-																	window,
-																	form);
+													me.onGuardarGastoComprobarExisteGasto(window, form);
 												}
 											}
 										});
 							} else {
-								me.onGuardarGastoComprobarExisteGasto(window,
-										form);
+								me.onGuardarGastoComprobarExisteGasto(window, form);
 							}
 						} else {
-							me.fireEvent("errorToast", HreRem
-									.i18n("msg.form.invalido"));
+							me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 						}
 					},
 
 					onGuardarGastoComprobarExisteGasto : function(window, form) {
 						var me = this;
-						var url = $AC
-								.getRemoteUrl('gastosproveedor/existeGasto');
+						var url = $AC.getRemoteUrl('gastosproveedor/existeGasto');
 
-						Ext.Ajax
-								.request({
+						Ext.Ajax.request({
 									url : url,
 									params : form.getBindRecord().getData(),
 									success : function(response, opts) {
 										var data = {};
 										try {
-											data = Ext
-													.decode(response.responseText);
-										} catch (e) {
-										}
-										;
+											data = Ext.decode(response.responseText);
+										} catch (e) {};
 
-										if (!Ext.isEmpty(data)
-												&& data.success == "true") {
+										if (!Ext.isEmpty(data) && data.success == "true") {
 
 											if (data.existeGasto == "true") {
 
-												Ext.Msg
-														.show({
-															title : HreRem
-																	.i18n('title.mensaje.confirmacion'),
-															msg : HreRem
-																	.i18n('msg.desea.crear.gasto.duplicado'),
-															buttons : Ext.MessageBox.YESNO,
-															fn : function(
-																	buttonId) {
-																if (buttonId == 'yes') {
-																	me
-																			.onGuardarGasto(
-																					window,
-																					form);
-																}
+												Ext.Msg.show({
+														title : HreRem.i18n('title.mensaje.confirmacion'),
+														msg : HreRem.i18n('msg.desea.crear.gasto.duplicado'),
+														buttons : Ext.MessageBox.YESNO,
+														fn : function(buttonId) {
+															if (buttonId == 'yes') {
+																me.onGuardarGasto(window, form);
 															}
-														});
+														}
+													});
 
 											} else if (data.existeGasto == "false") {
 												me.onGuardarGasto(window, form);
 											}
 
-										} else if (!Ext.isEmpty(data)
-												&& data.success == "false") {
-											me.fireEvent("errorToast", HreRem
-													.i18n("msg.operacion.ko"));
+										} else if (!Ext.isEmpty(data) && data.success == "false") {
+											me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 										}
 									}
 								});
@@ -1119,21 +889,16 @@ Ext
 
 						var success = function(record, operation) {
 							me.getView().unmask();
-							me.fireEvent("infoToast", HreRem
-									.i18n("msg.operacion.ok"));
+							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							window.parent.funcionRecargar();
 							var data = {};
 							try {
-								data = Ext
-										.decode(operation._response.responseText);
-							} catch (e) {
-							}
-							;
+								data = Ext.decode(operation._response.responseText);
+							} catch (e) {};
 
 							record.set("id", data.id);
 
-							window.parent.up('administraciongastosmain')
-									.fireEvent('abrirDetalleGasto', record);
+							window.parent.up('administraciongastosmain').fireEvent('abrirDetalleGasto', record);
 
 							window.destroy();
 						};
@@ -1145,8 +910,7 @@ Ext
 
 						var me = this;
 						var gasto = me.getViewModel().get("gasto");
-						Ext.create("HreRem.view.gastos.SeleccionTrabajosGasto",
-								{
+						Ext.create("HreRem.view.gastos.SeleccionTrabajosGasto",{
 									gasto : gasto,
 									parent : btn.up('formBase')
 								}).show();
@@ -1155,8 +919,7 @@ Ext
 					onExportClickTrabajos : function(btn) {
 						var me = this;
 						var idGasto = me.getViewModel().get("gasto.id");
-						var url = $AC
-								.getRemoteUrl('gastosproveedor/generateExcelTrabajosGasto');
+						var url = $AC.getRemoteUrl('gastosproveedor/generateExcelTrabajosGasto');
 
 						var config = {};
 
@@ -1181,8 +944,7 @@ Ext
 						var me = this;
 
 						var idGasto = me.getViewModel().get("gasto.id");
-						var url = $AC
-								.getRemoteUrl('gastosproveedor/generateExcelActivosGasto');
+						var url = $AC.getRemoteUrl('gastosproveedor/generateExcelActivosGasto');
 
 						var config = {};
 
@@ -1205,10 +967,13 @@ Ext
 
 					onClickBotonDesasignarTrabajosGasto : function(btn) {
 
-						var me = this, form = btn.up('form'), grid = btn
-								.up('grid'), trabajos = grid.getSelection(), url = $AC
-								.getRemoteUrl('gastosproveedor/desasignarTrabajos'), idGasto = me
-								.getViewModel().get("gasto.id"), idTrabajos = [];
+						var me = this,
+						form = btn.up('form'),
+						grid = btn.up('grid'), 
+						trabajos = grid.getSelection(),
+						url = $AC.getRemoteUrl('gastosproveedor/desasignarTrabajos'),
+						idGasto = me.getViewModel().get("gasto.id"),
+						idTrabajos = [];
 
 						if (!Ext.isEmpty(trabajos)) {
 							// Recuperamos todos los ids de los trabajos
@@ -1219,8 +984,7 @@ Ext
 
 							grid.mask(HreRem.i18n("msg.mask.loading"));
 
-							Ext.Ajax
-									.request({
+							Ext.Ajax.request({
 
 										url : url,
 										params : {
@@ -1239,20 +1003,12 @@ Ext
 											grid.unmask();
 											var data = {};
 											try {
-												data = Ext
-														.decode(operation._response.responseText);
-											} catch (e) {
-											}
-											;
+												data = Ext.decode(operation._response.responseText);
+											} catch (e) {};
 											if (!Ext.isEmpty(data.msg)) {
-												me.fireEvent("errorToast",
-														data.msg);
+												me.fireEvent("errorToast",data.msg);
 											} else {
-												me
-														.fireEvent(
-																"errorToast",
-																HreRem
-																		.i18n("msg.operacion.ko"));
+												me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 											}
 										}
 
@@ -1263,8 +1019,7 @@ Ext
 					onSearchClick : function(btn) {
 
 						var me = this;
-						this.lookupReference('seleccionTrabajosGastoList')
-								.getStore().loadPage(1);
+						this.lookupReference('seleccionTrabajosGastoList').getStore().loadPage(1);
 
 					},
 
@@ -1279,8 +1034,7 @@ Ext
 
 						var me = this;
 
-						var searchForm = me
-								.lookupReference('seleccionTrabajosGastoSearch');
+						var searchForm = me.lookupReference('seleccionTrabajosGastoSearch');
 						if (searchForm.isValid()) {
 
 							var criteria = me.getFormCriteria(searchForm);
@@ -1294,8 +1048,7 @@ Ext
 
 						var me = this, initialData = {};
 
-						var criteria = Ext.apply(initialData, form ? form
-								.getValues() : {});
+						var criteria = Ext.apply(initialData, form ? form.getValues() : {});
 
 						Ext.Object.each(criteria, function(key, val) {
 							if (Ext.isEmpty(val)) {
@@ -1308,12 +1061,12 @@ Ext
 
 					asignarSeleccionTrabajosGasto : function(btn) {
 
-						var me = this, ventanaSeleccionTrabajos = btn
-								.up('window'), trabajos = ventanaSeleccionTrabajos
-								.down('selecciontrabajosgastolist')
-								.getPersistedSelection(), idGasto = ventanaSeleccionTrabajos.gasto
-								.get("id"), url = $AC
-								.getRemoteUrl('gastosproveedor/asignarTrabajos'), idTrabajos = [];
+						var me = this, 
+						ventanaSeleccionTrabajos = btn.up('window'), 
+						trabajos = ventanaSeleccionTrabajos.down('selecciontrabajosgastolist').getPersistedSelection(), 
+						idGasto = ventanaSeleccionTrabajos.gasto.get("id"), 
+						url = $AC.getRemoteUrl('gastosproveedor/asignarTrabajos'), 
+						idTrabajos = [];
 
 						// Recuperamos todos los ids de los trabajos
 						// seleccionados
@@ -1324,8 +1077,7 @@ Ext
 						ventanaSeleccionTrabajos.mask(HreRem
 								.i18n("msg.mask.loading"));
 
-						Ext.Ajax
-								.request({
+						Ext.Ajax.request({
 
 									url : url,
 									params : {
@@ -1336,28 +1088,19 @@ Ext
 									success : function(response, opts) {
 										ventanaSeleccionTrabajos.unmask();
 										ventanaSeleccionTrabajos.destroy();
-										me.fireEvent("infoToast", HreRem
-												.i18n("msg.operacion.ok"));
-										me
-												.refrescarGastoAlIncluirTrabajo(ventanaSeleccionTrabajos
-														.up('gastodetallemain'));
+										me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+										me.refrescarGastoAlIncluirTrabajo(ventanaSeleccionTrabajos.up('gastodetallemain'));
 									},
 									failure : function(response) {
 										ventanaSeleccionTrabajos.unmask();
 										var data = {};
 										try {
-											data = Ext
-													.decode(operation._response.responseText);
-										} catch (e) {
-										}
-										;
+											data = Ext.decode(operation._response.responseText);
+										} catch (e) {};
 										if (!Ext.isEmpty(data.msg)) {
-											me
-													.fireEvent("errorToast",
-															data.msg);
+											me.fireEvent("errorToast",data.msg);
 										} else {
-											me.fireEvent("errorToast", HreRem
-													.i18n("msg.operacion.ko"));
+											me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 										}
 									}
 
@@ -1387,8 +1130,7 @@ Ext
 							}
 
 							var callbackFn = function() {
-								view.down("tabpanel").evaluarBotonesEdicion(
-										activeTab);
+								view.down("tabpanel").evaluarBotonesEdicion(activeTab);
 							};
 							view.fireEvent("refrescarGasto", view, callbackFn);
 						}
@@ -1415,8 +1157,7 @@ Ext
 						var iban5 = me.lookupReference('iban5').getValue();
 						var iban6 = me.lookupReference('iban6').getValue();
 
-						ibanfield.setValue(iban1 + iban2 + iban3 + iban4
-								+ iban5 + iban6);
+						ibanfield.setValue(iban1 + iban2 + iban3 + iban4 + iban5 + iban6);
 
 					},
 
@@ -1425,19 +1166,14 @@ Ext
 
 						// Habilitamos/deshabilitamos campos
 						me.lookupReference('ibanRef').setDisabled(!checked);
-						me.lookupReference('titularCuentaRef').setDisabled(
-								!checked);
-						me.lookupReference('nifTitularCuentaRef').setDisabled(
-								!checked);
+						me.lookupReference('titularCuentaRef').setDisabled(!checked);
+						me.lookupReference('nifTitularCuentaRef').setDisabled(!checked);
 
 						if (checked) {
 							// Desmarcamos el resto de opciones
-							me.lookupReference('pagadoConexionBankiaRef')
-									.setValue(!checked);
-							me.lookupReference('incluirPagoProvisionRef')
-									.setValue(!checked);
-							me.lookupReference('anticipoRef')
-									.setValue(!checked);
+							me.lookupReference('pagadoConexionBankiaRef').setValue(!checked);
+							me.lookupReference('incluirPagoProvisionRef').setValue(!checked);
+							me.lookupReference('anticipoRef').setValue(!checked);
 							me.lookupReference('fechaPago').setAllowBlank(true);
 						} else {
 							me.lookupReference('iban1').setValue("");
@@ -1447,8 +1183,7 @@ Ext
 							me.lookupReference('iban5').setValue("");
 							me.lookupReference('iban6').setValue("");
 							me.lookupReference('titularCuentaRef').setValue("");
-							me.lookupReference('nifTitularCuentaRef').setValue(
-									"");
+							me.lookupReference('nifTitularCuentaRef').setValue("");
 							me.lookupReference('fechaPago').setAllowBlank(true);
 						}
 
@@ -1459,25 +1194,18 @@ Ext
 
 						// Habilitamos/deshabilitamos campos
 						me.lookupReference('oficinaRef').setDisabled(!checked);
-						me.lookupReference('numeroConexionRef').setDisabled(
-								!checked);
-						me.lookupReference('fechaConexionRef').setDisabled(
-								!checked);
+						me.lookupReference('numeroConexionRef').setDisabled(!checked);
+						me.lookupReference('fechaConexionRef').setDisabled(!checked);
 
 						if (checked) {
 							// Desmarcamos el resto de opciones
-							me.lookupReference('abonoCuentaRef').setValue(
-									!checked);
-							me.lookupReference('incluirPagoProvisionRef')
-									.setValue(!checked);
-							me.lookupReference('anticipoRef')
-									.setValue(!checked);
-							me.lookupReference('fechaPago')
-									.setAllowBlank(false);
+							me.lookupReference('abonoCuentaRef').setValue(!checked);
+							me.lookupReference('incluirPagoProvisionRef').setValue(!checked);
+							me.lookupReference('anticipoRef').setValue(!checked);
+							me.lookupReference('fechaPago').setAllowBlank(false);
 						} else {
 							me.lookupReference('oficinaRef').setValue("");
-							me.lookupReference('numeroConexionRef')
-									.setValue("");
+							me.lookupReference('numeroConexionRef').setValue("");
 							me.lookupReference('fechaConexionRef').setValue("");
 							me.lookupReference('fechaPago').setAllowBlank(true);
 						}
@@ -1487,14 +1215,10 @@ Ext
 						var me = this;
 
 						if (checked) {
-							me.lookupReference('abonoCuentaRef').setValue(
-									!checked);
-							me.lookupReference('pagadoConexionBankiaRef')
-									.setValue(!checked);
-							me.lookupReference('anticipoRef')
-									.setValue(!checked);
-							me.lookupReference('fechaPago')
-									.setAllowBlank(false);
+							me.lookupReference('abonoCuentaRef').setValue(!checked);
+							me.lookupReference('pagadoConexionBankiaRef').setValue(!checked);
+							me.lookupReference('anticipoRef').setValue(!checked);
+							me.lookupReference('fechaPago').setAllowBlank(false);
 						} else {
 							me.lookupReference('fechaPago').setAllowBlank(true);
 						}
@@ -1504,19 +1228,14 @@ Ext
 
 						var me = this;
 
-						me.lookupReference('fechaAnticipoRef').setDisabled(
-								!checked);
+						me.lookupReference('fechaAnticipoRef').setDisabled(!checked);
 
 						if (checked) {
 							// Desmarcamos el resto de opciones
-							me.lookupReference('abonoCuentaRef').setValue(
-									!checked);
-							me.lookupReference('incluirPagoProvisionRef')
-									.setValue(!checked);
-							me.lookupReference('pagadoConexionBankiaRef')
-									.setValue(!checked);
-							me.lookupReference('fechaPago')
-									.setAllowBlank(false);
+							me.lookupReference('abonoCuentaRef').setValue(!checked);
+							me.lookupReference('incluirPagoProvisionRef').setValue(!checked);
+							me.lookupReference('pagadoConexionBankiaRef').setValue(!checked);
+							me.lookupReference('fechaPago').setAllowBlank(false);
 						} else {
 							me.lookupReference('fechaAnticipoRef').setValue("");
 							me.lookupReference('fechaPago').setAllowBlank(true);
@@ -1526,11 +1245,8 @@ Ext
 
 					abrirFormularioAdjuntarDocumentos : function(grid) {
 
-						var me = this, idGasto = me.getViewModel().get(
-								"gasto.id");
-						Ext
-								.create(
-										"HreRem.view.common.adjuntos.AdjuntarDocumentoGasto",
+						var me = this, idGasto = me.getViewModel().get("gasto.id");
+						Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoGasto",
 										{
 											entidad : 'gastos',
 											idEntidad : idGasto,
@@ -1549,14 +1265,12 @@ Ext
 							},
 							success : function(record, operation) {
 								me.getView().unmask();
-								me.fireEvent("infoToast", HreRem
-										.i18n("msg.operacion.ok"));
+								me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 								grid.fireEvent("afterdelete", grid);
 							},
 							failure : function(record, operation) {
 								me.getView().unmask();
-								me.fireEvent("errorToast", HreRem
-										.i18n("msg.operacion.ko"));
+								me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 								grid.fireEvent("afterdelete", grid);
 							}
 
@@ -1583,92 +1297,55 @@ Ext
 
 					onClickBotonCerrarTodas : function(btn) {
 						var me = this;
-						me.getView().up("tabpanel").fireEvent("cerrarTodas",
-								me.getView().up("tabpanel"));
+						me.getView().up("tabpanel").fireEvent("cerrarTodas", me.getView().up("tabpanel"));
 
 					},
 
 					buscarGasto : function(field, e) {
 						var me = this;
-						var url = $AC
-								.getRemoteUrl('gastosproveedor/searchGastoNumHaya');
+						var url = $AC.getRemoteUrl('gastosproveedor/searchGastoNumHaya');
 						var numeroGastoHaya = field.getValue();
-						var proveedorEmisor = field.up('formBase').down(
-								'[name=buscadorCodigoRemEmisorField]')
-								.getValue();
-						var destinatario = field.up('formBase').down(
-								'[name=destinatarioField]').getValue();
+						var proveedorEmisor = field.up('formBase').down('[name=buscadorCodigoRemEmisorField]').getValue();
+						var destinatario = field.up('formBase').down('[name=destinatarioField]').getValue();
 						var data;
 
-						if (!Ext.isEmpty(numeroGastoHaya)
-								&& !Ext.isEmpty(proveedorEmisor)
-								&& !Ext.isEmpty(destinatario)) {
-							if (!Ext.isEmpty(proveedorEmisor)
-									&& !Ext.isEmpty(destinatario)) {
-								Ext.Ajax
-										.request({
+						if (!Ext.isEmpty(numeroGastoHaya) && !Ext.isEmpty(proveedorEmisor) && !Ext.isEmpty(destinatario)) {
+							if (!Ext.isEmpty(proveedorEmisor) && !Ext.isEmpty(destinatario)) {
+								Ext.Ajax.request({
 
-											url : url,
-											params : {
-												numeroGastoHaya : numeroGastoHaya,
-												proveedorEmisor : proveedorEmisor,
-												destinatario : destinatario
-											},
+									url : url,
+									params : {
+										numeroGastoHaya : numeroGastoHaya,
+										proveedorEmisor : proveedorEmisor,
+										destinatario : destinatario
+									},
 
-											success : function(response, opts) {
-												var data = Ext
-														.decode(response.responseText);
-												var numeroGastoAbonado = field
-														.up('formBase')
-														.down(
-																'[name=numGastoAbonado]');
-												var idGastoAbonadoField = field
-														.up('formBase')
-														.down(
-																'[name=idGastoAbonado]');
+									success : function(response, opts) {
+										var data = Ext.decode(response.responseText);
+										var numeroGastoAbonado = field.up('formBase').down('[name=numGastoAbonado]');
+										var idGastoAbonadoField = field.up('formBase').down('[name=idGastoAbonado]');
 
-												if (!Utils
-														.isEmptyJSON(data.data)) {
-													var id = data.data.id;
-													idGastoAbonadoField
-															.setValue(id);
-													me
-															.fireEvent(
-																	"infoToast",
-																	HreRem
-																			.i18n("msg.buscador.encuentra.gasto"));
-												} else {
+										if (!Utils.isEmptyJSON(data.data)) {
+											var id = data.data.id;
+											idGastoAbonadoField.setValue(id);
+											me.fireEvent("infoToast",HreRem.i18n("msg.buscador.encuentra.gasto"));
+										} else {
 
-													if (!Ext
-															.isEmpty(numeroGastoAbonado)) {
-														numeroGastoAbonado
-																.setValue('');
-													}
-													me
-															.fireEvent(
-																	"errorToast",
-																	HreRem
-																			.i18n("msg.buscador.no.encuentra.gasto"));
-												}
-
-											},
-											failure : function(response) {
-												me
-														.fireEvent(
-																"errorToast",
-																HreRem
-																		.i18n("msg.operacion.ko"));
-											},
-											callback : function(options,
-													success, response) {
+											if (!Ext.isEmpty(numeroGastoAbonado)) {
+												numeroGastoAbonado.setValue('');
 											}
-										});
+											me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.gasto"));
+										}
+
+									},
+									failure : function(response) {
+										me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+									},
+									callback : function(options, success, response) {
+									}
+								});
 							} else {
-								me
-										.fireEvent(
-												"errorToast",
-												HreRem
-														.i18n("msg.buscador.gasto.faltan.campos"));
+								me.fireEvent("errorToast", HreRem.i18n("msg.buscador.gasto.faltan.campos"));
 							}
 						}
 
@@ -1677,97 +1354,56 @@ Ext
 					onClickAutorizar : function(btn) {
 						var me = this;
 
-						Ext.Msg
-								.show({
-									title : HreRem
-											.i18n('title.mensaje.confirmacion'),
-									msg : HreRem
-											.i18n('msg.desea.autorizar.gasto'),
+						Ext.Msg.show({
+									title : HreRem.i18n('title.mensaje.confirmacion'),
+									msg : HreRem.i18n('msg.desea.autorizar.gasto'),
 									buttons : Ext.MessageBox.YESNO,
 									fn : function(buttonId) {
 										if (buttonId == 'yes') {
-											var url = $AC
-													.getRemoteUrl('gastosproveedor/autorizarGasto'), idGasto = me
-													.getViewModel().get(
-															"gasto.id");
+											var url = $AC.getRemoteUrl('gastosproveedor/autorizarGasto'), 
+											idGasto = me.getViewModel().get("gasto.id");
 
-											me
-													.getView()
-													.mask(
-															HreRem
-																	.i18n("msg.mask.loading"));
+											me.getView().mask(HreRem.i18n("msg.mask.loading"));
 
-											Ext.Ajax
-													.request({
+											Ext.Ajax.request({
 
-														url : url,
-														params : {
-															idGasto : idGasto
-														},
+												url : url,
+												params : {
+													idGasto : idGasto
+												},
 
-														success : function(
-																response, opts) {
-															me.getView()
-																	.unmask();
-															var data = {};
-															try {
-																data = Ext
-																		.decode(response.responseText);
-															} catch (e) {
-															}
-															;
+												success : function(response, opts) {
+													me.getView().unmask();
+													var data = {};
+													try {
+														data = Ext.decode(response.responseText);
+													} catch (e) {};
 
-															if (data.success === "false") {
-																if (!Ext
-																		.isEmpty(data.msg)) {
-																	me
-																			.fireEvent(
-																					"errorToast",
-																					data.msg);
-																} else {
-																	me
-																			.fireEvent(
-																					"errorToast",
-																					HreRem
-																							.i18n("msg.operacion.ko"));
-																}
-															} else {
-																me
-																		.fireEvent(
-																				"infoToast",
-																				HreRem
-																						.i18n("msg.operacion.ok"));
-																me
-																		.refrescarGasto(true);
-															}
-														},
-														failure : function(
-																response) {
-															me.getView()
-																	.unmask();
-															var data = {};
-															try {
-																data = Ext
-																		.decode(response.responseText);
-															} catch (e) {
-															}
-															;
-															if (!Ext
-																	.isEmpty(data.msg)) {
-																me
-																		.fireEvent(
-																				"errorToast",
-																				data.msg);
-															} else {
-																me
-																		.fireEvent(
-																				"errorToast",
-																				HreRem
-																						.i18n("msg.operacion.ko"));
-															}
+													if (data.success === "false") {
+														if (!Ext.isEmpty(data.msg)) {
+															me.fireEvent("errorToast",data.msg);
+														} else {
+															me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
 														}
+													} else {
+														me.fireEvent("infoToast",HreRem.i18n("msg.operacion.ok"));
+														me.refrescarGasto(true);
+													}
+												},
+												failure : function(response) {
+													me.getView().unmask();
+													var data = {};
+													try {
+														data = Ext.decode(response.responseText);
+													} catch (e) {};
+													if (!Ext.isEmpty(data.msg)) {
+														me.fireEvent("errorToast",data.msg);
+													} else {
+														me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
+													}
+												}
 
-													});
+											});
 										}
 									}
 								});
@@ -1778,19 +1414,14 @@ Ext
 
 						var me = this;
 
-						Ext.Msg
-								.show({
-									title : HreRem
-											.i18n('title.mensaje.confirmacion'),
-									msg : HreRem
-											.i18n('msg.desea.rechazar.gasto'),
+						Ext.Msg.show({
+									title : HreRem.i18n('title.mensaje.confirmacion'),
+									msg : HreRem.i18n('msg.desea.rechazar.gasto'),
 									buttons : Ext.MessageBox.YESNO,
 									fn : function(buttonId) {
 										if (buttonId == 'yes') {
 
-											var combo = Ext
-													.create(
-															"HreRem.view.common.ComboBoxFieldBase",
+											var combo = Ext.create("HreRem.view.common.ComboBoxFieldBase",
 															{
 																addUxReadOnlyEditFieldPlugin : false,
 																store : {
@@ -1805,104 +1436,56 @@ Ext
 																}
 															});
 
-											HreRem.Msg
-													.promptCombo(
-															HreRem
-																	.i18n('title.motivo.rechazo'),
-															"",
-															function(btn, text) {
+											HreRem.Msg.promptCombo(HreRem.i18n('title.motivo.rechazo'),"",function(btn, text) {
 																if (btn == 'ok') {
 
-																	var url = $AC
-																			.getRemoteUrl('gastosproveedor/rechazarGasto'), idGasto = me
-																			.getViewModel()
-																			.get(
-																					"gasto.id");
-																	me
-																			.getView()
-																			.mask(
-																					HreRem
-																							.i18n("msg.mask.loading"));
+																	var url = $AC.getRemoteUrl('gastosproveedor/rechazarGasto'), 
+																	idGasto = me.getViewModel().get("gasto.id");
+																	me.getView().mask(HreRem.i18n("msg.mask.loading"));
 
-																	Ext.Ajax
-																			.request({
+																	Ext.Ajax.request({
 
-																				url : url,
-																				params : {
-																					idGasto : idGasto,
-																					motivoRechazo : text
-																				},
+																		url : url,
+																		params : {
+																			idGasto : idGasto,
+																			motivoRechazo : text
+																		},
 
-																				success : function(
-																						response,
-																						opts) {
-																					me
-																							.getView()
-																							.unmask();
-																					var data = {};
-																					try {
-																						data = Ext
-																								.decode(response.responseText);
-																					} catch (e) {
-																					}
-																					;
+																		success : function(response,opts) {
+																			me.getView().unmask();
+																			var data = {};
+																			try {
+																				data = Ext.decode(response.responseText);
+																			} catch (e) {};
 
-																					if (data.success === "false") {
-																						if (!Ext
-																								.isEmpty(data.msg)) {
-																							me
-																									.fireEvent(
-																											"errorToast",
-																											data.msg);
-																						} else {
-																							me
-																									.fireEvent(
-																											"errorToast",
-																											HreRem
-																													.i18n("msg.operacion.ko"));
-																						}
-																					} else {
-																						me
-																								.fireEvent(
-																										"infoToast",
-																										HreRem
-																												.i18n("msg.operacion.ok"));
-																						me
-																								.refrescarGasto(true);
-																					}
-																				},
-																				failure : function(
-																						response) {
-																					me
-																							.getView()
-																							.unmask();
-																					var data = {};
-																					try {
-																						data = Ext
-																								.decode(response.responseText);
-																					} catch (e) {
-																					}
-																					;
-																					if (!Ext
-																							.isEmpty(data.msg)) {
-																						me
-																								.fireEvent(
-																										"errorToast",
-																										data.msg);
-																					} else {
-																						me
-																								.fireEvent(
-																										"errorToast",
-																										HreRem
-																												.i18n("msg.operacion.ko"));
-																					}
+																			if (data.success === "false") {
+																				if (!Ext.isEmpty(data.msg)) {
+																					me.fireEvent("errorToast",data.msg);
+																				} else {
+																					me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
 																				}
+																			} else {
+																				me.fireEvent("infoToast",HreRem.i18n("msg.operacion.ok"));
+																				me.refrescarGasto(true);
+																			}
+																		},
+																		failure : function(response) {
+																			me.getView().unmask();
+																			var data = {};
+																			try {
+																				data = Ext.decode(response.responseText);
+																			} catch (e) {};
+																			if (!Ext.isEmpty(data.msg)) {
+																				me.fireEvent("errorToast",data.msg);
+																			} else {
+																				me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko"));
+																			}
+																		}
 
-																			});
+																	});
 
 																}
-															}, null, null,
-															null, combo);
+															}, null, null,null, combo);
 										}
 									}
 								});
@@ -1923,73 +1506,60 @@ Ext
 					afterCargaCombo : function() {
 						var me = this;
 						var fechaActual = new Date();
-						var combobox = me
-								.lookupReference('comboboxfieldFechaEjercicio');
+						var combobox = me.lookupReference('comboboxfieldFechaEjercicio');
 						if (combobox) {
 							var anyo = combobox.getStore().getAt(0).data.anyo;
 							var fechaMin = new Date(anyo);
 							fechaActual.setMonth(fechaActual.getMonth() + 1);
-							fechaField = me
-									.lookupReference('fechaDevengoEspecial');
+							fechaField = me.lookupReference('fechaDevengoEspecial');
 							fechaField.setMinValue(fechaMin);
 							fechaField.setMaxValue(fechaActual);
 						}
 					},
 					isLiberbankAndGastosPrinex : function(panel) {
 						var me = this;
-						var url = $AC
-								.getRemoteUrl('gastosproveedor/searchActivoCarteraAndGastoPrinex');
-						var gastoHaya = me.getViewModel().get(
-								"gasto.numGastoHaya");
+						var url = $AC.getRemoteUrl('gastosproveedor/searchActivoCarteraAndGastoPrinex');
+						var gastoHaya = me.getViewModel().get("gasto.numGastoHaya");
 
-						Ext.Ajax
-								.request({
+						Ext.Ajax.request({
 
-									url : url,
-									params : {
-										numGastoHaya : gastoHaya
-									},
+							url : url,
+							params : {
+								numGastoHaya : gastoHaya
+							},
 
-									success : function(response, opts) {
-										data = Ext
-												.decode(response.responseText);
+							success : function(response, opts) {
+								data = Ext.decode(response.responseText);
 
-										if (data.success == "true") {
-											if (data.data == "true") {
-												panel.up().getLayout().columns = 4;
-												panel.up().getLayout().tdAttrs.width = "25%";
-												panel.lookupController()
-														.refrescarGasto();
-											} else {
-												panel.destroy();
-											}
-										}
-									},
-
-									failure : function(response) {
-										grid.unmask();
-										var data = {};
-										try {
-											me.fireEvent("errorToast", HreRem
-													.i18n("msg.operacion.ko"));
-										} catch (e) {
-											me.fireEvent("errorToast", HreRem
-													.i18n("msg.operacion.ko"));
-										}
-										;
-
+								if (data.success == "true") {
+									if (data.data == "true") {
+										panel.up().getLayout().columns = 4;
+										panel.up().getLayout().tdAttrs.width = "25%";
+										panel.lookupController().refrescarGasto();
+									} else {
+										panel.destroy();
 									}
+								}
+							},
 
-								});
+							failure : function(response) {
+								grid.unmask();
+								var data = {};
+								try {
+									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+								} catch (e) {
+									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+								};
+
+							}
+
+						});
 
 					},
 
-					botonesEdicionGasto : function(estadoGasto, autorizado,
-							rechazado, agrupado, gestoria, tabSeleccionada) {
+					botonesEdicionGasto : function(estadoGasto, autorizado, rechazado, agrupado, gestoria, tabSeleccionada) {
 						var me = this;
-						if (tabSeleccionada.xtype == 'datosgeneralesgasto'
-								&& $AU
-										.userHasFunction('EDITAR_TAB_DATOS_GENERALES_GASTOS')
+						if (tabSeleccionada.xtype == 'datosgeneralesgasto' && $AU.userHasFunction('EDITAR_TAB_DATOS_GENERALES_GASTOS')
 								&& (CONST.ESTADOS_GASTO['INCOMPLETO'] == estadoGasto
 										|| CONST.ESTADOS_GASTO['PENDIENTE'] == estadoGasto
 										|| CONST.ESTADOS_GASTO['RECHAZADO'] == estadoGasto
@@ -1999,9 +1569,7 @@ Ext
 							return true;
 						}
 
-						if (tabSeleccionada.xtype == 'detalleeconomicogasto'
-								&& $AU
-										.userHasFunction('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS')
+						if (tabSeleccionada.xtype == 'detalleeconomicogasto' && $AU.userHasFunction('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS')
 								&& ((CONST.ESTADOS_GASTO['PAGADO'] == estadoGasto)
 										|| (CONST.ESTADOS_GASTO['AUTORIZADO'] == estadoGasto && gestoria)
 										|| /* CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO']==estadoGasto || */
@@ -2016,9 +1584,7 @@ Ext
 							return true;
 						}
 
-						if (tabSeleccionada.xtype == 'activosafectadosgasto'
-								&& $AU
-										.userHasFunction('EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS')
+						if (tabSeleccionada.xtype == 'activosafectadosgasto' && $AU.userHasFunction('EDITAR_TAB_ACTIVOS_AFECTADOS_GASTOS')
 								&& (CONST.ESTADOS_GASTO['INCOMPLETO'] == estadoGasto
 										|| CONST.ESTADOS_GASTO['PENDIENTE'] == estadoGasto
 										|| CONST.ESTADOS_GASTO['RECHAZADO'] == estadoGasto
@@ -2028,9 +1594,7 @@ Ext
 							return true;
 						}
 
-						if (tabSeleccionada.xtype == 'contabilidadgasto'
-								&& $AU
-										.userHasFunction('EDITAR_TAB_CONTABILIDAD_GASTOS')
+						if (tabSeleccionada.xtype == 'contabilidadgasto' && $AU.userHasFunction('EDITAR_TAB_CONTABILIDAD_GASTOS')
 								&& (CONST.ESTADOS_GASTO['INCOMPLETO'] == estadoGasto
 										|| CONST.ESTADOS_GASTO['PENDIENTE'] == estadoGasto
 										|| CONST.ESTADOS_GASTO['RECHAZADO'] == estadoGasto
@@ -2041,8 +1605,7 @@ Ext
 						}
 
 						if (tabSeleccionada.xtype == 'gestiongasto'
-								&& $AU
-										.userHasFunction('EDITAR_TAB_GESTION_GASTOS')
+								&& $AU.userHasFunction('EDITAR_TAB_GESTION_GASTOS')
 								&& (CONST.ESTADOS_GASTO['CONTABILIZADO'] != estadoGasto
 										&& CONST.ESTADOS_GASTO['ANULADO'] != estadoGasto
 										&& CONST.ESTADOS_GASTO['AUTORIZADO'] != estadoGasto && CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] != estadoGasto)

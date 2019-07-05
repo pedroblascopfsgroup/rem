@@ -46,25 +46,28 @@ public class UsuarioRemApiImpl implements UsuarioRemApi{
 		return mailsPara;
 	}
 	
-	public String getApellidoNombreSustituto(Usuario usuario) {
+	public List<String> getApellidoNombreSustituto(Usuario usuario) {
 		
-		String apellidoNombreSus = null;
-		
-		GestorSustituto gestorSustituto = genericDao.get(GestorSustituto.class,genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
-		if (!Checks.esNulo(gestorSustituto)) {
-			if (!Checks.esNulo(gestorSustituto)) {
+		List<String> apellidoNombreSus = new ArrayList<String>();
+
+		List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
+		if (!Checks.estaVacio(sustitutos)) {
+			if (!Checks.esNulo(sustitutos)) {
+				for (GestorSustituto gestorSustituto : sustitutos) {
 					if (!Checks.esNulo(gestorSustituto)) {
 						if ((gestorSustituto.getFechaFin() == null || gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date()))
 								&& (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date()))
 								&& !gestorSustituto.getAuditoria().isBorrado()) {
 
 							if (!Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto()) || !Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto().getEmail())) {
-								apellidoNombreSus = gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre();
+								apellidoNombreSus.add(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre());
 							}
 						}
 					}
 				}
 			}
+		}
 		
 		return apellidoNombreSus;
 		

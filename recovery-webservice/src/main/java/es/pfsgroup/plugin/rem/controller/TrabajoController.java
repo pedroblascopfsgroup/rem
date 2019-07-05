@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1557,8 +1559,36 @@ public class TrabajoController extends ParadiseJsonController {
 				
 				idLlamada = jsonData.getIdLlamada();
 				datosTarea = jsonData.getData();
+				if(Checks.esNulo(jsonFields.get("idLlamada"))){
+					error = RestApi.REST_NO_PARAM;
+					errorDesc = "Falta el id de llamada.";
+					throw new Exception(RestApi.REST_NO_PARAM);					
+				}
+				try {
+					Long.valueOf(idLlamada);
+				}catch(Exception e){
+					error = RestApi.REST_MSG_FORMAT_ERROR;
+					errorDesc = "El formato el idLlamada no es el correcto.";
+					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+				}
+				if(Checks.esNulo(jsonFields.get("codTarea"))){
+					error = RestApi.REST_NO_PARAM;
+					errorDesc = "Falta el codigo de la tarea.";
+					throw new Exception(RestApi.REST_NO_PARAM);					
+				}
 				if(!Checks.esNulo(jsonFields.get("tbjNumTrabajo"))) {
 					numTrabajo  = jsonFields.get("tbjNumTrabajo").toString();
+				}else {
+					error = RestApi.REST_NO_PARAM;
+					errorDesc = "Falta el numero del trabajo.";
+					throw new Exception(RestApi.REST_NO_PARAM);
+				}
+				try {
+					Long.valueOf(numTrabajo);
+				}catch(Exception e){
+					error = RestApi.REST_MSG_FORMAT_ERROR;
+					errorDesc = "El formato el número de trabajo no es el correcto.";
+					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
 				}
 				if(Checks.esNulo(trabajoApi.getTrabajoByNumeroTrabajo(Long.valueOf(numTrabajo)))){
 					
@@ -1576,16 +1606,72 @@ public class TrabajoController extends ParadiseJsonController {
 						throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
 						
 					}else {
+						jsonFields.get("data");
+						jsonFields.getJSONObject("data").get("fechaAtPrimaria");
+					
+						if(Checks.esNulo(jsonFields.getJSONObject("data").get("fechaAtPrimaria"))){
+							error = RestApi.REST_NO_PARAM;
+							errorDesc = "Falta la fecha de at primaria.";
+							throw new Exception(RestApi.REST_NO_PARAM);
+							
+						}else if(Checks.esNulo(jsonFields.getJSONObject("data").get("fechaFinalizacion"))){
+							error = RestApi.REST_NO_PARAM;
+							errorDesc = "Falta la fecha de finalización.";
+							throw new Exception(RestApi.REST_NO_PARAM);
+							
+						}
+						SimpleDateFormat format  = new SimpleDateFormat("dd/MM/yyyy");
+						format.setLenient(false);
+						Date atprimaria = null;
+						String stringAtprimaria = jsonFields.getJSONObject("data").get("fechaAtPrimaria").toString();
+						stringAtprimaria =stringAtprimaria.substring(2,stringAtprimaria.length()-2);
+						try {
+							atprimaria = format.parse(stringAtprimaria);
+
+						} catch (Exception ex) {
+							error = RestApi.REST_MSG_FORMAT_ERROR;
+							errorDesc = "El formato de la fecha de at primaria no es correcto.";
+							throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+							
+						}
+						Date finalizacion = null;
+						String stringFinalizacion = jsonFields.getJSONObject("data").get("fechaFinalizacion").toString();
+						stringFinalizacion =stringFinalizacion.substring(2,stringFinalizacion.length()-2);
+						try {
+							finalizacion = format.parse(stringFinalizacion);
+						} catch (Exception ex) {
+							error = RestApi.REST_MSG_FORMAT_ERROR;
+							errorDesc = "El formato de la fecha de finalización no es correcto.";
+							throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+						}
+						if(finalizacion.before(atprimaria)) {
+							error = RestApi.REST_MSG_VALIDACION_TAREA;
+							errorDesc = "La tarea " + codTarea + " no existe.";
+							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+						}
+						
 						String[] idTarea = new String[1];
 						idTarea[0] = tareaId.toString();
 						datosTarea.put("idTarea",idTarea);
 		
+						
+						error = RestApi.REST_MSG_VALIDACION_TAREA;
+						errorDesc = "Fallo al avanzar la tarea.";
+						
 						resultado = agendaAdapter.validationAndSave(datosTarea);
+						
+						if(!resultado) {
+							error = RestApi.REST_MSG_VALIDACION_TAREA;
+							errorDesc = "Error al avanzar la " + codTarea + ".";
+							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+						}
+						
 		
 						model.put("id", jsonFields.get("id"));
 						model.put("idLlamada", idLlamada);
 						model.put("data", resultado);
-						model.put("error", "null");
+						model.put("success", true);
+						
 					}
 				}
 			}

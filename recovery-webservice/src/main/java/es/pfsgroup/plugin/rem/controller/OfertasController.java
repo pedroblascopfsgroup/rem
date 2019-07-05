@@ -637,8 +637,33 @@ public class OfertasController {
 				
 				idLlamada = jsonData.getIdLlamada();
 				datosTarea = jsonData.getData();
-				ofrNumOferta = jsonFields.get("ofrNumOferta").toString();
 				
+				
+				if(Checks.esNulo(jsonFields.get("idLlamada"))){
+					error = RestApi.REST_NO_PARAM;
+					errorDesc = "Falta el id de llamada.";
+					throw new Exception(RestApi.REST_NO_PARAM);					
+				}
+				try {
+					Long.valueOf(idLlamada);
+				}catch(Exception e){
+					error = RestApi.REST_MSG_FORMAT_ERROR;
+					errorDesc = "El formato el idLlamada no es el correcto.";
+					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+				}
+				if(Checks.esNulo(jsonFields.get("codTarea"))){
+					error = RestApi.REST_NO_PARAM;
+					errorDesc = "Falta el codigo de la tarea.";
+					throw new Exception(RestApi.REST_NO_PARAM);					
+				}
+				ofrNumOferta = jsonFields.get("ofrNumOferta").toString();
+				try {
+					Long.valueOf(ofrNumOferta);
+				}catch(Exception e){
+					error = RestApi.REST_MSG_FORMAT_ERROR;
+					errorDesc = "El formato el número de oferta no es el correcto.";
+					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+				}
 				if(Checks.esNulo(ofertaApi.getOfertaByNumOfertaRem(Long.valueOf(ofrNumOferta)))){
 					
 					error = RestApi.REST_MSG_UNKNOW_OFFER;
@@ -656,13 +681,21 @@ public class OfertasController {
 					}
 					else {
 						idTarea[0] = tareaId.toString();
+						
+						error = RestApi.REST_MSG_VALIDACION_TAREA;
+						errorDesc = "La tarea " + codTarea + " no existe.";
+						
 						datosTarea.put("idTarea",idTarea);
-						model.put("idLlamada", idLlamada);
-						model.put("ofrNumOferta", ofrNumOferta);
-						model.put("codTarea", codTarea);
-						model.put("data", resultado);
-						model.put("success", true);
 						resultado = agendaAdapter.validationAndSave(datosTarea);
+						
+						if(resultado) {
+							model.put("idLlamada", idLlamada);
+							model.put("ofrNumOferta", ofrNumOferta);
+							model.put("codTarea", codTarea);
+							model.put("data", resultado);
+							model.put("success", true);
+						}
+						
 					}
 				}
 			}

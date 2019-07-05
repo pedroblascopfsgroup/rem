@@ -41,7 +41,7 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 							proxy: {
 								type: 'uxproxy',
 								remoteUrl: 'gastosproveedor/getGastosRefacturablesGastoCreado',
-								extraParams: {idGasto : 'detalleeconomico.idGasto'}
+								extraParams: {idGasto : '1'}
 							},
 							autoLoad: true
 						}),

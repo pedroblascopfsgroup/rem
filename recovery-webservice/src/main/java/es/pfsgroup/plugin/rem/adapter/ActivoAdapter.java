@@ -2596,7 +2596,7 @@ public class ActivoAdapter {
 					Filter filtroMatricula = genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula());
 					List <DDTipoDocumentoActivo> tipoDocumento = (List<DDTipoDocumentoActivo>) genericDao.getList(DDTipoDocumentoActivo.class, filtroVisible, filtroMatricula); 
 
-					if (!Checks.esNulo(tipoDocumento)) {
+					if (!Checks.estaVacio(tipoDocumento)) {
 						DDTipoDocumentoActivo tipoDoc = tipoDocumento.get(0);
 						adj.setDescripcionTipo(tipoDoc.getDescripcion());
 					}

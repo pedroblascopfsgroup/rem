@@ -1036,7 +1036,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getGastosRefacturablesGastoCreado(Long id) {
+	public ModelAndView getGastosRefacturablesGastoCreado(String id) {
 		ModelMap model = new ModelMap();
 		
 		List<String> gastosRefacturables = new ArrayList<String>();

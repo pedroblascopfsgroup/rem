@@ -4,6 +4,8 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 	topBar		: true,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
+	targetGrid	: 'gastoRefacturadoGridExistentes',
+	idPrincipal : 'idGasto',
 	bind:{
 		store:'gastosRefacturablesExistentes'
 	},
@@ -28,23 +30,33 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		    		
 	    		},
 		        {
-		            dataIndex: 'idGasto',
+		            dataIndex: 'idGastoRefacturable',
 		            reference: 'numeroDeGastoRefacturable',
 		            name:'numeroDeGastoRefacturable',
 		            text: HreRem.i18n('fieldlabel.gastos.a.refacturar'),
-		            flex: 0.7,
+		            editor: {
+						xtype: 'combobox',								        		
+						store: new Ext.data.Store({
+							model: 'HreRem.model.ComboBase',
+							proxy: {
+								type: 'uxproxy',
+								remoteUrl: 'gastosproveedor/getGastosRefacturablesGastoCreado',
+								extraParams: {idGasto : 'detalleeconomico.idGasto'}
+							},
+							autoLoad: true
+						}),
+						displayField: 'descripcion',
+    					valueField: 'codigo'
+					},
+		            flex: 0.7
 		            
-		    			value: '{gastoNuevo.numeroDeGastoRefacturable}'
+		    		//value: '{gastoNuevo.numeroDeGastoRefacturable}'
 		    		
 		        }
 		    ];
+		    
+		   
 
-
-		/*    me.saveSuccessFn = function() {
-		    	var me = this;
-		    	me.up('informecomercialactivo').funcionRecargar();
-		    	return true;
-		    },*/
 
 		    me.callParent();
     },

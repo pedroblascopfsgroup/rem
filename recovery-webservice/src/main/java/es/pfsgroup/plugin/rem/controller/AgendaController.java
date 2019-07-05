@@ -25,8 +25,10 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.recibo.model.DDMotivoRechazo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -55,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
@@ -398,7 +401,9 @@ public class AgendaController extends TareaController {
 								oferta = eco.getOferta();
 								ofertaApi.rechazarOferta(oferta);
 								ofertaApi.descongelarOfertas(eco);
-								notificatorSoloRechazo.notificatorFinTareaConValores(tramite, null);
+								DDMotivoRechazoOferta motivoRechazo = genericDao.get(DDMotivoRechazoOferta.class, 
+										genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.CODIGO_OTROS));
+								oferta.setMotivoRechazo(motivoRechazo);
 								eco.setFechaVenta(null);
 								//Actualizar el estado comercial de los activos de la oferta
 								ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -406,6 +411,7 @@ public class AgendaController extends TareaController {
 								ofertaApi.desocultarActivoOferta(oferta);
 								
 								ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(oferta);
+								notificatorSoloRechazo.notificatorFinTareaConValores(tramite, null);
 								Activo activo = tramite.getActivo();
 								if(!Checks.esNulo(activo)) {
 									activoApi.actualizarOfertasTrabajosVivos(activo);

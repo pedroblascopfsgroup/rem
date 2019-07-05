@@ -1068,7 +1068,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 				
-		if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera())){
+		if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera()) && !Checks.esNulo(usuarioCartera.getSubCartera().getCodigo())){
 			Filter filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "codigo", usuarioCartera.getSubCartera().getCodigo());
 			listaSubcartera = genericDao.getList(DDSubcartera.class, filtroSubcartera);
 		}else{

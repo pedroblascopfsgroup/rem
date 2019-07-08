@@ -1631,12 +1631,37 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	  onClickGuardarGastoRefacturado: function(){
 	    	var me = this;
-	    	var gastosRefacturables = me.lookupReference('anyadirGastoRefacturado').getValue();
-	    	
+	    	var gastosRefacturables = me.lookupReference('anyadirGastoRefacturado').getValue();	    	
 	    	var idGasto = me.getView().idGasto;
+	    	var url = $AC.getRemoteUrl('gastosproveedor/anyadirGastoRefacturable');
+	    	
+	    	
 	    	
 	    	if(gastosRefacturables == ""){
-	    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+	    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anyadir.gastos.refacturados")); 
+	    	}else{
+	    	
+	    		Ext.Ajax.request({
+	    			
+			 		url: url,
+			   		params: {
+			   					idGasto:idGasto,
+			   					gastosRefacturables : gastosRefacturables
+			   				},
+			    		
+			    	success: function(response, opts) {
+				    	data = Ext.decode(response.responseText);
+				    	
+			    		    	 
+			    	},
+			    	failure: function(response) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	},
+			    	callback: function(options, success, response){
+					}
+			    		     
+			  });
+	    		
 	    	}
 	    	
 	    }

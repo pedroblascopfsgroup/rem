@@ -105,7 +105,7 @@ public class GenericAdapter {
 				Usuario usuarioLogado = getUsuarioLogado();
 				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				if (!Checks.esNulo(usuarioCartera)){ 	
+				if (!Checks.esNulo(usuarioCartera)) { 	
 					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.getCartera().getCodigo()));
 					lista = listaPeriodicidad;	
 				}
@@ -113,7 +113,7 @@ public class GenericAdapter {
 				Usuario usuarioLogado = getUsuarioLogado();
 				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera().getCodigo())){ 
+				if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera()) && !Checks.esNulo(usuarioCartera.getSubCartera().getCodigo())) {
 					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, usuarioCartera.getSubCartera().getCodigo()));
 					lista = listaPeriodicidad;
 				}

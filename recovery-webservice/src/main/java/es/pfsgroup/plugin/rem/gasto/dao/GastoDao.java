@@ -6,6 +6,7 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoRefacturable;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 
 public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
@@ -41,5 +42,5 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 
     List<VGastosRefacturados> getGastosRefacturados(String listaGastos);
 
-	List<Long> getGastosRefacturablesDelGasto(Long id);
+	List<GastoRefacturable> getGastosRefacturablesDelGasto(Long id);
 }

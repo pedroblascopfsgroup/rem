@@ -1039,12 +1039,12 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public ModelAndView getGastosRefacturablesGastoCreado(String id) {
 		ModelMap model = new ModelMap();
 		
-		List<String> gastosRefacturables = new ArrayList<String>();
+		List<Long> gastosRefacturables = new ArrayList<Long>();
 		Long x = 24L;
-		gastoProveedorApi.getGastosRefacturablesGastoCreado(x);
+		gastosRefacturables = gastoProveedorApi.getGastosRefacturablesGastoCreado(x);
 		
 		try {			
-			model.put("refacturable", gastosRefacturables);
+			model.put("gastosRefacturadosGasto", gastosRefacturables);
 			model.put("success", true);			
 		} catch (Exception e) {
 			logger.error(e.getMessage());

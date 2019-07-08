@@ -196,6 +196,9 @@ Ext.define('HreRem.model.GastoProveedor', {
 		}, 
 		{
    			name: 'idGastoRefacturable'
+   		},
+   		{
+   			name: 'gastosRefacturadosGasto'
    		}
     		
     ],

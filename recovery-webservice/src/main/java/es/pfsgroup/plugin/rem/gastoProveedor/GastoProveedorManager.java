@@ -3325,11 +3325,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	public List<Long> getGastosRefacturablesGastoCreado(Long id) {
-		List<Long> listaDeGastosRefacturablesDelGasto = new ArrayList<Long>();
-		
+		List<GastoRefacturable> listaDeGastosRefacturablesDelGasto = new ArrayList<GastoRefacturable>();
+		GastoProveedor gastoProveedor = new GastoProveedor();
+		List<Long> listaNumGastoHayaGastosRefacurables = new ArrayList<Long>();
 		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(id);
 		
-		
-		return listaDeGastosRefacturablesDelGasto;
+		for (GastoRefacturable gastoRefacturable : listaDeGastosRefacturablesDelGasto) {
+			if(!Checks.esNulo(gastoRefacturable.getGastoProveedorRefacturado())) {
+				gastoProveedor = gastoDao.getGastoById(gastoRefacturable.getGastoProveedorRefacturado());
+				if(!Checks.esNulo(gastoProveedor)) {
+					listaNumGastoHayaGastosRefacurables.add(gastoProveedor.getNumGastoHaya());
+				}
+			}	
+		}
+				
+		return listaNumGastoHayaGastosRefacurables;
 	}
 }

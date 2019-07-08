@@ -5,9 +5,9 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 	editOnSelect: false,
 	disabledDeleteBtn: true,
 	targetGrid	: 'gastoRefacturadoGridExistentes',
-	idPrincipal : 'idGasto',
+	idPrincipal : 'numeroDeGastoRefacturable',
 	bind:{
-		store:'gastosRefacturablesExistentes'
+		store:'{storeGastosRefacturablesExistentes}'
 	},
 	
     initComponent: function () {
@@ -16,46 +16,35 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
      	
      	
 		me.columns = [
-				{
-					dataIndex: 'idCombo',
-					reference: 'idComboGastosRefacturados',
-		            hidden: true
-				},
 				{ 
 		    		xtype: 'checkcolumn', 
-		    		dataIndex: 'gastoRefacturable',
-		    		reference: 'isGastoRefacturable',
-		    		name:'isGastoRefacturable'
-
-		    		
+		    		dataIndex: 'isGastoRefacturableExistente',
+		    		reference: 'isGastoRefacturableExistente',
+		    		name:'isGastoRefacturable'		    		
 	    		},
 		        {
-		            dataIndex: 'idGastoRefacturable',
+		            dataIndex: 'numeroGastoRefacturableExistente',
 		            reference: 'numeroDeGastoRefacturable',
-		            name:'numeroDeGastoRefacturable',
+		            name:'numeroDeGastoRefacturableExistente',
 		            text: HreRem.i18n('fieldlabel.gastos.a.refacturar'),
-		            editor: {
-						xtype: 'combobox',								        		
-						store: new Ext.data.Store({
-							model: 'HreRem.model.ComboBase',
-							proxy: {
-								type: 'uxproxy',
-								remoteUrl: 'gastosproveedor/getGastosRefacturablesGastoCreado',
-								extraParams: {idGasto : '1'}
-							},
-							autoLoad: true
-						}),
-						displayField: 'descripcion',
-    					valueField: 'codigo'
-					},
 		            flex: 0.7
-		            
-		    		//value: '{gastoNuevo.numeroDeGastoRefacturable}'
-		    		
+		           
 		        }
 		    ];
 		    
-		   
+
+	    me.dockedItems = [
+	        {
+	            xtype: 'pagingtoolbar',
+	            dock: 'bottom',
+	            itemId: 'activosPaginationToolbar',
+	            inputItemWidth: 60,
+	            displayInfo: true,
+	            bind: {
+	                store: '{storeGastosRefacturablesExistentes}'
+	            }
+	        }
+	    ];
 
 
 		    me.callParent();

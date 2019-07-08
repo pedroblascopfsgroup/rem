@@ -2,7 +2,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.gastodetalle',
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto',
-    			'HreRem.model.BusquedaTrabajo', 'HreRem.model.AdjuntoGasto'],
+    			'HreRem.model.BusquedaTrabajo', 'HreRem.model.AdjuntoGasto', 'HreRem.model.GastoRefacturableGridExistenteStore'],
 
     
     data: {
@@ -505,26 +505,24 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     	},
     	
     	storeDocumentosGasto: {
-    			 pageSize: $AC.getDefaultPageSize(),
-    			 model: 'HreRem.model.AdjuntoGasto',
-	      	     proxy: {
-	      	        type: 'uxproxy',
-	      	        remoteUrl: 'gastosproveedor/getListAdjuntos',
-	      	        extraParams: {idGasto: '{gasto.id}'}
-	          	 },
-	          	 groupField: 'descripcionTipo'
-    		}
-    	},
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AdjuntoGasto',
+      	     proxy: {
+      	        type: 'uxproxy',
+      	        remoteUrl: 'gastosproveedor/getListAdjuntos',
+      	        extraParams: {idGasto: '{gasto.id}'}
+          	 },
+          	 groupField: 'descripcionTipo'
+		},
     	
-    	gastosRefacturablesExistentes: {
-    		model: 'HreRem.model.AdjuntoGasto',
+    	storeGastosRefacturablesExistentes: {
+   			model: 'HreRem.model.GastoRefacturableGridExistenteStore',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'gastosproveedor/getGastosRefacturablesGastoCreado',
-				extraParams: {idGasto: '{gasto.id}'}
+				extraParams: {id : '{gasto.id}'}
 			},
-			autoLoad: true 
-    	}
-
-  
+			autoLoad: true
+   		}
+    }
 });

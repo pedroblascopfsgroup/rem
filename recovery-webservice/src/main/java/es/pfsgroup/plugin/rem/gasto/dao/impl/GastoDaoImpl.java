@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+
+import org.apache.velocity.runtime.directive.Foreach;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -23,8 +25,10 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoRefacturable;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
@@ -391,16 +395,17 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> getGastosRefacturablesDelGasto(Long id) {
-		List<GastoProveedor> gastoProveedor = new ArrayList<GastoProveedor>();
+	public List<GastoRefacturable> getGastosRefacturablesDelGasto(Long id) {
+		List<GastoRefacturable> gastorefacturable = new ArrayList<GastoRefacturable>();
 		
 		HQLBuilder hb = new HQLBuilder(" from GastoRefacturable gas");
 		
-		String whereCondition = "GastoRefacturable.idGastoProveedor = " + id + ")";
+		String whereCondition = "gas.idGastoProveedor = " + id + ")";
 		hb.appendWhere(whereCondition);
 		
-		gastoProveedor = HibernateQueryUtils.list(this, hb);
-		
-		return null;//HibernateQueryUtils.list(this, hb);
+		gastorefacturable = (List<GastoRefacturable>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	
+	
+		return gastorefacturable;
 	}
 }

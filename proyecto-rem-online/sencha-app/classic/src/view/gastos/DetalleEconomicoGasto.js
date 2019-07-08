@@ -10,7 +10,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 	recordClass: "HreRem.model.DetalleEconomicoGasto",
     refreshAfterSave: true,
     
-    requires: ['HreRem.model.DetalleEconomicoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes','HreRem.model.AdjuntoGasto', 'HreRem.model.GastoRefacturableGridExistente'],
+    requires: ['HreRem.model.DetalleEconomicoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes','HreRem.model.AdjuntoGasto', 'HreRem.model.GastoRefacturableGridExistenteStore'],
     
     listeners: {
 		boxready:'cargarTabData',
@@ -883,12 +883,12 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												
 												
 												xtype: 'gastoRefacturadoGridExistentes', 
-												width: '400px',
+												width: '500px',
 												colspan: 3,
 												rowspan: 9,
 												reference: 'gastoRefacturadoGridExistente',
 												bind: {
-													store: '{gastosRefacturablesExistentes}',
+													store: '{storeGastosRefacturablesExistentes}',
 													disabled: '{checkboxActivoRefacturable.checked}'
 												}
 										
@@ -908,6 +908,9 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
     	var me = this; 
 		me.recargar = false;		
 		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load(grid.loadCallbackFunction);
+  		});
 		//me.lookupController().refrescarGasto(true);    	
     }
 });

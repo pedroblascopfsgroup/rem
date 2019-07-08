@@ -82,6 +82,7 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 		final String FILTRO_CODIGO = "codigo";
 		final String ARROBA = "@";
 		final String[] LISTA_SI = { "SI", "S" };
+		final String[] LISTA_NO = { "NO", "N" };
 		final String[] LISTA_INSCRITA = { "INSCRITA" };
 
 		final String celdaActivo = exc.dameCelda(fila, COL_NUM.NUM_ACTIVO);
@@ -144,55 +145,50 @@ public class MSVSuperDiscPublicacionesProcesar extends AbstractMSVActualizador i
 			situacionPosesoria.setOtro(celdaOtrosMotivos);
 		}
 
-		//genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);		
+		// genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
 		activo.setSituacionPosesoria(situacionPosesoria);
 
-		// DivisionHorizontal-Activo Ingegrado
+		// DivisionHorizontal-Activo Integrado
 
-		ActivoInfoRegistral activoInfoRegistral  = activo.getInfoRegistral();
-		
-		if (ARROBA.equals(celdaSiNoInscrito) || ARROBA.equals(celdaEstadoIntegrado) || ARROBA.equals(celdaIntegrado)) {
+		ActivoInfoRegistral activoInfoRegistral = activo.getInfoRegistral();
+
+		if (ARROBA.equals(celdaSiNoInscrito) || ARROBA.equals(celdaEstadoIntegrado) || ARROBA.equals(celdaIntegrado) 
+				|| Arrays.asList(LISTA_NO).contains(celdaIntegrado.toUpperCase())) {
+			
 			activoInfoRegistral.setDivHorInscrito(null);
 			activoInfoRegistral.setEstadoDivHorizontal(null);
-			
+
 		} else {
 			Filter filtroEstadoDivisionHorizontal = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO,
 					celdaSiNoInscrito);
 			DDEstadoDivHorizontal estadoDivisionHorizontal = genericDao.get(DDEstadoDivHorizontal.class,
-					filtroEstadoDivisionHorizontal);			
+					filtroEstadoDivisionHorizontal);
 
 			if (Arrays.asList(LISTA_SI).contains(celdaIntegrado.toUpperCase())) {
 				divisionHorizontal = 1;
-
-				if (!Checks.esNulo(activoInfoRegistral)) {
-
-					if (Arrays.asList(LISTA_INSCRITA).contains(celdaEstadoIntegrado.toUpperCase())) {
-						inscritoDivisionHorizontal = 1;
-					}
-
-					activoInfoRegistral.setDivHorInscrito(inscritoDivisionHorizontal);
-
-					if (!Checks.esNulo(estadoDivisionHorizontal) && inscritoDivisionHorizontal != 0)
-						activoInfoRegistral.setEstadoDivHorizontal(estadoDivisionHorizontal);
-				}
-
-			} else {
-
-				if (!Checks.esNulo(activoInfoRegistral)) {
-					activoInfoRegistral.setDivHorInscrito(null);
-					activoInfoRegistral.setEstadoDivHorizontal(null);
-				}
-
 			}
+			
+			if (!Checks.esNulo(activoInfoRegistral)) {
+
+				if (Arrays.asList(LISTA_INSCRITA).contains(celdaEstadoIntegrado.toUpperCase())) {
+					inscritoDivisionHorizontal = 1;
+				}
+
+				activoInfoRegistral.setDivHorInscrito(inscritoDivisionHorizontal);				
+				activoInfoRegistral.setEstadoDivHorizontal(estadoDivisionHorizontal);
+				
+			}
+			
 		}
-		
-		activo.setDivHorizontal(divisionHorizontal);
+
+		activo.setDivHorizontal(divisionHorizontal);		
 		activo.setInfoRegistral(activoInfoRegistral);
+		
 		activoDao.saveOrUpdate(activo);
-		//genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
-		//lanzar el SP de publicaciones para el activo
-		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());	
-		 
+		// genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
+		// lanzar el SP de publicaciones para el activo
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+
 		return new ResultadoProcesarFila();
 	}
 

@@ -312,10 +312,9 @@ public class AgrupacionAdapter {
 	private static final String ACTIVO_SIN_GESTORES = "El activo NO tiene gestores";
 	private static final String ACTIVO_SIN_GESTION = "Este activo NO está bajo su gestión";
 	private static final String ACTIVO_SIN_GESTORES_ADECUADOS = "Este activo NO tiene los gestores adecuados para añadirlo a matriz de alquiler";
-	private static final String ACTIVO_FUERA_AGRUPACION = "msg.agrupacion.piso.piloto.fuera";
-	private static final String ACTIVO_NO_YUBAI = "msg.agrupacion.activo.no.Yubai";
-	private static final String ACTIVO_NO_OBRA_NUEVA = "msg.agrupacion.no.obra.nueva";
-	private static final String ACTIVO_EXISTE_PISO_PILOTO = "msg.agrupacion.existe.piso.piloto";
+	private static final String ACTIVO_FUERA_AGRUPACION = "El activo no se encuentra dentro de la agrupación";
+	private static final String ACTIVO_NO_YUBAI = "El activo no es de Yubai";
+	private static final String ACTIVO_NO_OBRA_NUEVA = "El activo no es de obra nueva";
 
 
 	public static final String SPLIT_VALUE = ";s;";
@@ -760,14 +759,14 @@ public class AgrupacionAdapter {
 					dtoAgrupacion.setComercializableConsPlano(agrupacion.isComercializableConsPlano());
 				}
 				
-				if(!Checks.esNulo(agrupacion.isExistePiloto())) {
+				if(!Checks.esNulo(agrupacion.isExistePiloto()) && agrupacion.isExistePiloto()) {
 					dtoAgrupacion.setExistePiloto(agrupacion.isExistePiloto());
-					
+
 					Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(agrupacion.getId());
-	
-					if(!Checks.esNulo(pisoPiloto) && !Checks.esNulo(pisoPiloto.getId())) {
-						dtoAgrupacion.setPisoPiloto(pisoPiloto.getId());
+					if(!Checks.esNulo(pisoPiloto) && !Checks.esNulo(pisoPiloto.getId()) && !Checks.esNulo(pisoPiloto.getNumActivo())) {
+						dtoAgrupacion.setPisoPiloto(pisoPiloto.getNumActivo());
 					}
+					
 				}
 				
 				if(!Checks.esNulo(agrupacion.isEsVisitable())) {
@@ -1113,6 +1112,7 @@ public class AgrupacionAdapter {
 			activoAgrupacionActivo.setAgrupacion(agrupacion);
 			Date today = new Date();
 			activoAgrupacionActivo.setFechaInclusion(today);
+			activoAgrupacionActivo.setPisoPiloto(false);
 			activoAgrupacionActivoApi.save(activoAgrupacionActivo);
 		}
 
@@ -3081,6 +3081,7 @@ public class AgrupacionAdapter {
 				}
 				else
 				{
+					boolean hasPisoPiloto = agrupacion.isExistePiloto();
 					beanUtilNotNull.copyProperties(obraNueva, dto);
 
 					if (dto.getMunicipioCodigo() != null) {
@@ -3111,37 +3112,32 @@ public class AgrupacionAdapter {
 					
 					if (!Checks.esNulo(dto.getPisoPiloto())){
 						Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(id);
-						boolean estaEnAgrupacion = false;
 						
-						if (!Checks.esNulo(pisoPiloto) && agrupacion.isExistePiloto()) {
-							//Si se quiere definir un piso piloto, pero ya había uno definido, mostramos mensaje de error
-							throw new JsonViewerException(ACTIVO_EXISTE_PISO_PILOTO);
-						}else if (Checks.esNulo(pisoPiloto) && !agrupacion.isExistePiloto()) {
-							for(ActivoAgrupacionActivo activo_aga : agrupacion.getActivos()){
-								if(activo_aga.getActivo().getId().equals(dto.getPisoPiloto())) {
-									estaEnAgrupacion = true;
-									pisoPiloto = activo_aga.getActivo();
-								}
-							}
-							if(!estaEnAgrupacion) {
-								//Si el activo indicado como piso piloto no está en la agrupación, significa que no puede ser piso piloto de la misma porque está fuera de esta.
-								throw new JsonViewerException(ACTIVO_FUERA_AGRUPACION);
-							}else {
-								if (pisoPiloto.getEntidadOrigen().equals(DDSubcartera.CODIGO_YUBAI)) {
-									//Si no hay piso piloto definido y el seleccionado es de Yubai, procedemos a guardar los cambios
-									Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo", pisoPiloto.getId());
-									ActivoAgrupacionActivo aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
-									aga_piloto.setPisoPiloto(true);
-									agrupacion.setExistePiloto(true);
-									activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
-								}else {
-									//Si el activo seleccionado no es de Yubai, mostramos mensaje de error
-									throw new JsonViewerException(ACTIVO_NO_YUBAI);
-								}
-							}
+						if (!Checks.esNulo(pisoPiloto) && hasPisoPiloto) {
+							Activo pisoPilotoOld = pisoPiloto;
+							ActivoAgrupacionActivo aga_piloto;
+							//Si se quiere definir un piso piloto pero no existe en la agrupación, mostramos mensaje de error
+							pisoPiloto = this.isActivoValido(agrupacion, dto.getPisoPiloto());
+							Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPilotoOld.getId()); 
+							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
+							aga_piloto.setPisoPiloto(false);
+							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							
+							// Anyadir piso piloto nuevo
+							filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId()); 
+							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
+							aga_piloto.setPisoPiloto(true);
+							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+						}else if (Checks.esNulo(pisoPiloto) && !hasPisoPiloto) {
+							pisoPiloto = this.isActivoValido(agrupacion, dto.getPisoPiloto());
+							//Si no hay piso piloto definido y el seleccionado es de Yubai, procedemos a guardar los cambios
+							Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId());
+							ActivoAgrupacionActivo aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
+							aga_piloto.setPisoPiloto(true);
+							agrupacion.setExistePiloto(true);
+							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
 						}
 					}
-					
 					if(!Checks.esNulo(dto.getEsVisitable())) {
 						agrupacion.setEsVisitable(dto.getEsVisitable());
 					}
@@ -3154,10 +3150,13 @@ public class AgrupacionAdapter {
 					activoAgrupacionApi.saveOrUpdate(obraNueva);
 				}
 
+			} catch (JsonViewerException jsonViewerException) {
+				return "false"+SPLIT_VALUE+jsonViewerException.getMessage();
 			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);
 				return "false";
 			}
+			
 		} else {
 			if (!Checks.esNulo(dto.getPisoPiloto())){
 				//Si se quiere definir un piso piloto pero la agrupación no es de obra nueva, mostramos mensaje de error
@@ -4161,5 +4160,40 @@ public class AgrupacionAdapter {
 			}		
 		}
 		return true;
+	}
+	
+	/*
+	 *  @param agrupacion Objecto ActivoAgrupacion
+	 *  @param acticoNum número del activo
+	 *  @return Activo or null
+	 *  @throws Activo fuera de perímetro
+	 *  @throws Activo no pertenece a Yubai
+	 *  @throws Activo no de obtra nueva
+	 * */
+	private Activo isActivoValido(ActivoAgrupacion agrupacion, Long activoNum) throws JsonViewerException {
+		Activo nuevoPisoPiloto = null; 
+		for(ActivoAgrupacionActivo activo_aga : agrupacion.getActivos()){
+			if(activo_aga.getActivo().getNumActivo().equals(activoNum)) {
+				if(DDSubcartera.CODIGO_YUBAI.equals(activo_aga.getActivo().getSubcartera().getCodigo())){
+					String estadoAcitvo = activo_aga.getActivo().getEstadoActivo().getCodigo();
+					if(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO.equals(estadoAcitvo) || 
+							DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(estadoAcitvo) ||
+							DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO.equals(estadoAcitvo)) {
+						nuevoPisoPiloto = activo_aga.getActivo();
+						break;
+					}else {
+						throw new JsonViewerException(ACTIVO_NO_OBRA_NUEVA);
+					}
+				}else {
+					throw new JsonViewerException(ACTIVO_NO_YUBAI);
+				}
+			}
+		}
+		
+		if(Checks.esNulo(nuevoPisoPiloto)) {
+			throw new JsonViewerException(ACTIVO_FUERA_AGRUPACION);
+		}
+			
+		return nuevoPisoPiloto;
 	}
 }

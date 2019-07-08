@@ -277,10 +277,11 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.pisoPiloto", 1);
 		HQLBuilder.addFiltroIgualQue(hb, "aga.auditoria.borrado", false);
 		HQLBuilder.addFiltroIgualQue(hb, "aga.agrupacion.auditoria.borrado", false);
-
-		try {
-			return (Activo) getHibernateTemplate().find(hb.toString()).get(0);
-		} catch(Exception e) {
+		
+		ActivoAgrupacionActivo actAga = HibernateQueryUtils.uniqueResult(this, hb);
+		if(!Checks.esNulo(actAga)) {
+			return actAga.getActivo();
+		}else {
 			return null;
 		}
 	}

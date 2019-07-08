@@ -872,13 +872,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(data.data == 'true' || data.data == true){
 							me.fireEvent("errorToast", "El NIF indicado ya existe para otro comprador");
 						}
-					}else if(data.data == 'false' || data.data == false){
-						if (pedirDocValor === 'false') {
-							wizard.comprador = modelComprador;
-							wizard.nextSlide();
-						} else {
-							me.guardarModeloComprador();
-						}					
+						else if(data.data == 'false' || data.data == false){
+							if (pedirDocValor === 'false') {
+								wizard.comprador = modelComprador;
+								wizard.nextSlide();
+							} else {
+								me.guardarModeloComprador();
+							}					
+						}
+					}else{
+						me.fireEvent("errorToast", HreRem.i18n('msg.operacion.ko'));
 					}
 				},
 				failure: function(response){

@@ -586,8 +586,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				precio = !Checks.esNulo(exc.dameCelda(i, columnNumber))
-						? Double.parseDouble(exc.dameCelda(i, columnNumber)) : null;
+				String value = exc.dameCelda(i, columnNumber);
+				if(value != null && !value.isEmpty()){
+					if(value.contains(",")){
+						value = value.replace(",", ".");
+					}
+				}
+				precio = !Checks.esNulo(value) ? Double.parseDouble(value) : null;
 
 				// Si el precio no se encuentra por encima de 0.
 				if ((!Checks.esNulo(precio) && precio.compareTo(0.0D) <= 0))

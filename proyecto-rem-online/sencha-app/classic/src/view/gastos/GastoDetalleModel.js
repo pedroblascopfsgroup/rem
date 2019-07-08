@@ -521,8 +521,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'gastosproveedor/getGastosRefacturablesGastoCreado',
 				extraParams: {id : '{gasto.id}'}
-			},
-			autoLoad: true
+			}
    		}
     }
 });

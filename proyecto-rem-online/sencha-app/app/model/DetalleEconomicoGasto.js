@@ -193,6 +193,16 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		},
 		{
 			name: 'prorrata'
+		},
+		{
+			name: 'gastosRefacturadosGasto'
+		},
+		{
+			name: 'numeroGastoHaya'
+		},
+		{
+			name:'isGastoRefacturableExistente',
+			type: 'boolean'
 		}
 	],
     

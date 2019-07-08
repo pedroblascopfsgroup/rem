@@ -400,8 +400,10 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		
 		HQLBuilder hb = new HQLBuilder(" from GastoRefacturable gas");
 		
-		String whereCondition = "gas.idGastoProveedor = " + id + ")";
-		hb.appendWhere(whereCondition);
+		String whereCondition1 = "gas.idGastoProveedor = " + id + ")";
+		String whereCondition2 = "gas.borrado = 0)";
+		hb.appendWhere(whereCondition1);
+		hb.appendWhere(whereCondition2);
 		
 		gastorefacturable = (List<GastoRefacturable>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	

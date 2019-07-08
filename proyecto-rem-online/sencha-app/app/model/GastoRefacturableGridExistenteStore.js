@@ -3,17 +3,14 @@
  */
 Ext.define('HreRem.model.GastoRefacturableGridExistenteStore', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',    
+    idProperty: 'numeroGastoHaya',    
     
 
-    fields: [ 
-        	{
-    			name: 'isGastoRefacturableExistente'
-    		},    
-    		{
-    			name:'numeroGastoRefacturableExistente'
-    		}		        
-    ] 
+    fields: [     
+	    		{
+	    			name:'numeroGastoHaya'
+	    		}		        
+	    	]
     
 
 });

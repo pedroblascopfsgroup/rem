@@ -1627,6 +1627,19 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			}
 
 		});
-	}
+	},
+	
+	  onClickGuardarGastoRefacturado: function(){
+	    	var me = this;
+	    	var gastosRefacturables = me.lookupReference('anyadirGastoRefacturado').getValue();
+	    	
+	    	var idGasto = me.getView().idGasto;
+	    	
+	    	if(gastosRefacturables == ""){
+	    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+	    	}
+	    	
+	    }
+	    
 
 });

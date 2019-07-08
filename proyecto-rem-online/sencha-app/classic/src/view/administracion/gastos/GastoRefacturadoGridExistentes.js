@@ -4,6 +4,7 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 	topBar		: true,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
+	removeButton: true,
 	targetGrid	: 'gastoRefacturadoGridExistentes',
 	idPrincipal : 'numeroDeGastoRefacturable',
 	bind:{
@@ -11,19 +12,13 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 	},
 	
     initComponent: function () {
-
+ 
      	var me = this;
      	
      	
 		me.columns = [
-				{ 
-		    		xtype: 'checkcolumn', 
-		    		dataIndex: 'isGastoRefacturableExistente',
-		    		reference: 'isGastoRefacturableExistente',
-		    		name:'isGastoRefacturable'		    		
-	    		},
 		        {
-		            dataIndex: 'numeroGastoRefacturableExistente',
+		            dataIndex: 'numeroGastoHaya',
 		            reference: 'numeroDeGastoRefacturable',
 		            name:'numeroDeGastoRefacturableExistente',
 		            text: HreRem.i18n('fieldlabel.gastos.a.refacturar'),
@@ -32,7 +27,11 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		        }
 		    ];
 		    
-
+		 me.selModel = {
+		          selType: 'checkboxmodel',
+		          mode: 'SINGLE'
+		      	}; 
+		 
 	    me.dockedItems = [
 	        {
 	            xtype: 'pagingtoolbar',
@@ -53,9 +52,18 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 	onAddClick: function(btn){
     	
 		var me = this;
+		var idGasto = me.lookupController().getViewModel().getData().gasto.id;
+		
+		Ext.create('HreRem.view.gastos.AnyadirNuevoGastoRefacturado',{idGasto: idGasto}).show();
 	
+
         
 
     }
+    
+  /*  onDeleteClick: function(btn){
+    	var me = this;
+    }
+    */
     
 });

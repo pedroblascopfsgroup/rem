@@ -305,7 +305,6 @@ public class StockDto implements WebcomRESTDto{
 	
 
 	@WebcomRequired
-	@MappedColumn("COD_AGRUPACION_COMERCIAL_REM")
 	private LongDataType codigoAgrupacionComercialRem;
 	
 	@WebcomRequired
@@ -320,17 +319,27 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private StringDataType codTipoUsoDestino;
 	
+	//HREOS-6082
 	@WebcomRequired
-	@MappedColumn("NOMBRE_GMO")
-	private StringDataType nombreGMO;
+	private BooleanDataType esActivoMatrizPa;
 	
 	@WebcomRequired
-	@MappedColumn("TELEFONO_GMO")
-	private StringDataType telefonoGMO;
+	private LongDataType idActivoHayaPa;
 	
 	@WebcomRequired
-	@MappedColumn("EMAIL_GMO")
-	private StringDataType emailGMO;
+	private LongDataType codigoAgrupacionPa;
+	
+	@WebcomRequired
+	private LongDataType codigoCabeceraPa;
+	
+	@WebcomRequired
+	private StringDataType nombreGmo;
+	
+	@WebcomRequired
+	private StringDataType telefonoGmo;
+	
+	@WebcomRequired
+	private StringDataType emailGmo;
 
 	@WebcomRequired
 	private StringDataType codTipoAlquiler;
@@ -924,4 +933,46 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodigoAgrupacionComercialRem(LongDataType codigoAgrupacionComercialRem) {
 		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
 	}
+	public BooleanDataType getEsActivoMatrizPa() {
+		return esActivoMatrizPa;
+	}
+	public void setEsActivoMatrizPa(BooleanDataType esActivoMatrizPa) {
+		this.esActivoMatrizPa = esActivoMatrizPa;
+	}
+	public LongDataType getIdActivoHayaPa() {
+		return idActivoHayaPa;
+	}
+	public void setIdActivoHayaPa(LongDataType idActivoHayaPa) {
+		this.idActivoHayaPa = idActivoHayaPa;
+	}
+	public LongDataType getCodigoAgrupacionPa() {
+		return codigoAgrupacionPa;
+	}
+	public void setCodigoAgrupacionPa(LongDataType codigoAgrupacionPa) {
+		this.codigoAgrupacionPa = codigoAgrupacionPa;
+	}
+	public LongDataType getCodigoCabeceraPa() {
+		return codigoCabeceraPa;
+	}
+	public void setCodigoCabeceraPa(LongDataType codigoCabeceraPa) {
+		this.codigoCabeceraPa = codigoCabeceraPa;
+	}
+	public StringDataType getNombreGmo() {
+		return nombreGmo;
+	}
+	public void setNombreGmo(StringDataType nombreGmo) {
+		this.nombreGmo = nombreGmo;
+	}
+	public StringDataType getTelefonoGmo() {
+		return telefonoGmo;
+	}
+	public void setTelefonoGmo(StringDataType telefonoGmo) {
+		this.telefonoGmo = telefonoGmo;
+	}
+	public StringDataType getEmailGmo() {
+		return emailGmo;
+	}
+	public void setEmailGmo(StringDataType emailGmo) {
+		this.emailGmo = emailGmo;
+	}	
 }

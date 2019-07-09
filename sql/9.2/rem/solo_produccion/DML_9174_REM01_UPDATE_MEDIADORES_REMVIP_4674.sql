@@ -1,0 +1,293 @@
+--/*
+--###########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20190701
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-4674
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Eliminar mediadores activos Y PPONER FECHA FIN EN EL HISTORICO DE MEDIADOR
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--###########################################
+----*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+  V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+  V_ECO_ID NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+  ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+  V_MODIFICAR VARCHAR2(100 CHAR):= 'REMVIP-4674';
+  V_COUNT NUMBER(16):= 0;
+  V_COUNT2 NUMBER(16):= 0;
+  V_COUNT3 NUMBER(16):= 0;
+  V_RESULT VARCHAR(2000 CHAR);
+  
+  TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+  TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+    --          NUM_ACTIVO
+	T_TIPO_DATA('201726'),
+	T_TIPO_DATA('201727'),
+	T_TIPO_DATA('201728'),
+	T_TIPO_DATA('201729'),
+	T_TIPO_DATA('201730'),
+	T_TIPO_DATA('201731'),
+	T_TIPO_DATA('201732'),
+	T_TIPO_DATA('201733'),
+	T_TIPO_DATA('201734'),
+	T_TIPO_DATA('201735'),
+	T_TIPO_DATA('201736'),
+	T_TIPO_DATA('201737'),
+	T_TIPO_DATA('201738'),
+	T_TIPO_DATA('201739'),
+	T_TIPO_DATA('201740'),
+	T_TIPO_DATA('201741'),
+	T_TIPO_DATA('201742'),
+	T_TIPO_DATA('201743'),
+	T_TIPO_DATA('201744'),
+	T_TIPO_DATA('201745'),
+	T_TIPO_DATA('201746'),
+	T_TIPO_DATA('201747'),
+	T_TIPO_DATA('201748'),
+	T_TIPO_DATA('201749'),
+	T_TIPO_DATA('201782'),
+	T_TIPO_DATA('201783'),
+	T_TIPO_DATA('201784'),
+	T_TIPO_DATA('201785'),
+	T_TIPO_DATA('201786'),
+	T_TIPO_DATA('201787'),
+	T_TIPO_DATA('201788'),
+	T_TIPO_DATA('201789'),
+	T_TIPO_DATA('201790'),
+	T_TIPO_DATA('201791'),
+	T_TIPO_DATA('201792'),
+	T_TIPO_DATA('201793'),
+	T_TIPO_DATA('201794'),
+	T_TIPO_DATA('201795'),
+	T_TIPO_DATA('201796'),
+	T_TIPO_DATA('201797'),
+	T_TIPO_DATA('201798'),
+	T_TIPO_DATA('201799'),
+	T_TIPO_DATA('201800'),
+	T_TIPO_DATA('201801'),
+	T_TIPO_DATA('201802'),
+	T_TIPO_DATA('201803'),
+	T_TIPO_DATA('201925'),
+	T_TIPO_DATA('201926'),
+	T_TIPO_DATA('201927'),
+	T_TIPO_DATA('201928'),
+	T_TIPO_DATA('201929'),
+	T_TIPO_DATA('201930'),
+	T_TIPO_DATA('201991'),
+	T_TIPO_DATA('201992'),
+	T_TIPO_DATA('201993'),
+	T_TIPO_DATA('201994'),
+	T_TIPO_DATA('202110'),
+	T_TIPO_DATA('202111'),
+	T_TIPO_DATA('202112'),
+	T_TIPO_DATA('202113'),
+	T_TIPO_DATA('202114'),
+	T_TIPO_DATA('202115'),
+	T_TIPO_DATA('202116'),
+	T_TIPO_DATA('202117'),
+	T_TIPO_DATA('202118'),
+	T_TIPO_DATA('202119'),
+	T_TIPO_DATA('202120'),
+	T_TIPO_DATA('202121'),
+	T_TIPO_DATA('202122'),
+	T_TIPO_DATA('202123'),
+	T_TIPO_DATA('202125'),
+	T_TIPO_DATA('202126'),
+	T_TIPO_DATA('202222'),
+	T_TIPO_DATA('202224'),
+	T_TIPO_DATA('202225'),
+	T_TIPO_DATA('202226'),
+	T_TIPO_DATA('202227'),
+	T_TIPO_DATA('202228'),
+	T_TIPO_DATA('202229'),
+	T_TIPO_DATA('202279'),
+	T_TIPO_DATA('202280'),
+	T_TIPO_DATA('202281'),
+	T_TIPO_DATA('202282'),
+	T_TIPO_DATA('202283'),
+	T_TIPO_DATA('202284'),
+	T_TIPO_DATA('202285'),
+	T_TIPO_DATA('202286'),
+	T_TIPO_DATA('202287'),
+	T_TIPO_DATA('202288'),
+	T_TIPO_DATA('202289'),
+	T_TIPO_DATA('202290'),
+	T_TIPO_DATA('202291'),
+	T_TIPO_DATA('202292'),
+	T_TIPO_DATA('202293'),
+	T_TIPO_DATA('202320'),
+	T_TIPO_DATA('202321'),
+	T_TIPO_DATA('202322'),
+	T_TIPO_DATA('202323'),
+	T_TIPO_DATA('202324'),
+	T_TIPO_DATA('202325'),
+	T_TIPO_DATA('202326'),
+	T_TIPO_DATA('202327'),
+	T_TIPO_DATA('202328'),
+	T_TIPO_DATA('202329'),
+	T_TIPO_DATA('202371'),
+	T_TIPO_DATA('202372'),
+	T_TIPO_DATA('202373'),
+	T_TIPO_DATA('202374'),
+	T_TIPO_DATA('202375'),
+	T_TIPO_DATA('202376'),
+	T_TIPO_DATA('202377'),
+	T_TIPO_DATA('202378'),
+	T_TIPO_DATA('202379'),
+	T_TIPO_DATA('202380'),
+	T_TIPO_DATA('202415'),
+	T_TIPO_DATA('202416'),
+	T_TIPO_DATA('202417'),
+	T_TIPO_DATA('202418'),
+	T_TIPO_DATA('202419'),
+	T_TIPO_DATA('202420'),
+	T_TIPO_DATA('202421'),
+	T_TIPO_DATA('202422'),
+	T_TIPO_DATA('202423'),
+	T_TIPO_DATA('202424'),
+	T_TIPO_DATA('202425'),
+	T_TIPO_DATA('202426'),
+	T_TIPO_DATA('202430'),
+	T_TIPO_DATA('202431'),
+	T_TIPO_DATA('202432'),
+	T_TIPO_DATA('202433'),
+	T_TIPO_DATA('202434'),
+	T_TIPO_DATA('202435'),
+	T_TIPO_DATA('202436'),
+	T_TIPO_DATA('202437'),
+	T_TIPO_DATA('202438'),
+	T_TIPO_DATA('202439'),
+	T_TIPO_DATA('202440'),
+	T_TIPO_DATA('202441'),
+	T_TIPO_DATA('202442'),
+	T_TIPO_DATA('202443'),
+	T_TIPO_DATA('202444'),
+	T_TIPO_DATA('202445'),
+	T_TIPO_DATA('202487'),
+	T_TIPO_DATA('202488'),
+	T_TIPO_DATA('202489'),
+	T_TIPO_DATA('202490'),
+	T_TIPO_DATA('202491'),
+	T_TIPO_DATA('202492'),
+	T_TIPO_DATA('202493'),
+	T_TIPO_DATA('202494'),
+	T_TIPO_DATA('202495'),
+	T_TIPO_DATA('202496'),
+	T_TIPO_DATA('202497'),
+	T_TIPO_DATA('202498'),
+	T_TIPO_DATA('202499'),
+	T_TIPO_DATA('202500'),
+	T_TIPO_DATA('202501'),
+	T_TIPO_DATA('202502'),
+	T_TIPO_DATA('202829'),
+	T_TIPO_DATA('202830'),
+	T_TIPO_DATA('202831'),
+	T_TIPO_DATA('202832'),
+	T_TIPO_DATA('202833'),
+	T_TIPO_DATA('202834'),
+	T_TIPO_DATA('202835'),
+	T_TIPO_DATA('203649'),
+	T_TIPO_DATA('203650'),
+	T_TIPO_DATA('203651'),
+	T_TIPO_DATA('203652'),
+	T_TIPO_DATA('203653'),
+	T_TIPO_DATA('203654'),
+	T_TIPO_DATA('203655'),
+	T_TIPO_DATA('203656'),
+	T_TIPO_DATA('203657')
+	); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+	 
+    -- LOOP para actualizar los valores en ECO_CONDICIONANTES_EXPEDIENTE -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: Elimina mediadores ');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+		        
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+        V_MSQL:='SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO on act.act_id = ICO.ACT_ID
+                WHERE ACT.ACT_NUM_ACTIVO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';   
+        
+        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        
+        EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+        
+        IF V_COUNT = 1 THEN
+           
+            V_MSQL:='SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ICM_INF_COMER_HIST_MEDI 
+						WHERE ACT_ID = (SELECT act.ACT_ID from '||V_ESQUEMA||'.ACT_ACTIVO act where act.act_num_activo = '''||TRIM(V_TMP_TIPO_DATA(1))||''') 
+						AND ICM_FECHA_HASTA IS NULL';
+            
+            EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+            
+            IF V_COUNT = 1 THEN
+				V_MSQL:='UPDATE '||V_ESQUEMA||'.ACT_ICM_INF_COMER_HIST_MEDI SET ICM_FECHA_HASTA = SYSDATE , fechamodificar = SYSDATE,usuariomodificar = '''||V_MODIFICAR||'''
+                    WHERE ACT_ID = (SELECT ACT_ID from '||V_ESQUEMA||'.ACT_ACTIVO where act_num_activo = '''||TRIM(V_TMP_TIPO_DATA(1))||''') 
+                    AND ICM_FECHA_HASTA IS NULL';
+                EXECUTE IMMEDIATE V_MSQL ;
+            ELSE
+				DBMS_OUTPUT.PUT_LINE('[ERROR]: No se actualiza el histórico del activo '||TRIM(V_TMP_TIPO_DATA(1))||'');
+            END IF;
+            
+            
+            V_MSQL:='UPDATE '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL SET ICO_MEDIADOR_ID = null, USUARIOMODIFICAR = '''||V_MODIFICAR||''',FECHAMODIFICAR = sysdate
+                        where ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO where ACT_NUM_ACTIVO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+                        
+            --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+            EXECUTE IMMEDIATE V_MSQL;
+            
+            V_COUNT2 := V_COUNT2 +1;
+            V_COUNT3 := V_COUNT3 +1;
+        ELSE 
+            DBMS_OUTPUT.PUT_LINE('El activo '||TRIM(V_TMP_TIPO_DATA(1))||'no existe ');
+        END IF;
+        
+        IF V_COUNT3 >= 50 THEN 
+            COMMIT;
+            DBMS_OUTPUT.PUT_LINE('[INFO]: Actualizamos '||V_COUNT3||' registros.');
+            V_COUNT3 := 0;
+        END IF;
+                
+END LOOP;
+
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN]:  Ha finalizado el borrado de mediadores en '||V_COUNT2||' activos.');
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          DBMS_OUTPUT.put_line(V_MSQL);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;
+                    

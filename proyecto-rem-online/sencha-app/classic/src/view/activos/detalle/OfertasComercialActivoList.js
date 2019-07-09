@@ -106,6 +106,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        {
 		            dataIndex: 'codigoEstadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
+		            reference: 'estadoOferta',
 					editor: {
 						xtype: 'combobox',								        		
 						store: new Ext.data.Store({
@@ -291,13 +292,31 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			var activo = me.lookupController().getViewModel().get('activo');
 			if (activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BANKIA']){
 				if(activo.get('cambioEstadoActivo')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
+					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
+						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
+					}else{
+						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.activo"));
+						me.up('activosdetalle').lookupController().refrescarActivo(true);
+						return false;
+					}
 				}
 				if(activo.get('cambioEstadoPrecio')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
+					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
+						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
+					}else{
+						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.valor.precio"));
+						me.up('activosdetalle').lookupController().refrescarActivo(true);
+						return false;
+					}
 				}
 				if(activo.get('cambioEstadoPublicacion')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
+						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+					}else{
+						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+						me.up('activosdetalle').lookupController().refrescarActivo(true);
+						return false;
+					}
 				}
 				
 			} 
@@ -450,7 +469,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var activo = me.lookupController().getViewModel().get('activo');
 
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
-			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')  || activo.get('isActivoEnTramite')) {
+			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')  || activo.get('isActivoEnTramite') || activo.get('situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['ALQUILADO_PARCIALMENTE']) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

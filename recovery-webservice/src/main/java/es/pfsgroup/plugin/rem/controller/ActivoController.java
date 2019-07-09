@@ -41,8 +41,10 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -52,7 +54,11 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
+import es.pfsgroup.plugin.rem.activo.ActivoPropagacionUAsFieldTabMap;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -69,7 +75,10 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
@@ -127,6 +136,9 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -161,6 +173,12 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Autowired
 	private OfertaApi ofertaApi;
@@ -200,7 +218,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTabActivo(Long id, String tab, ModelMap model, HttpServletRequest request) {
-		try {
+		try { 
 			model.put(RESPONSE_DATA_KEY, adapter.getTabActivo(id, tab));
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, tab, ACCION_CODIGO.CODIGO_VER);
 
@@ -264,11 +282,15 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_REGISTRALES);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
 			model.put(RESPONSE_SUCCESS_KEY, success);
-
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			logger.error(jvex.getMessage());
+			throw new JsonViewerException(jvex.getMessage());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-		}
+		} 
 
 		return createModelAndViewJson(model);
 	}
@@ -374,7 +396,7 @@ public class ActivoController extends ParadiseJsonController {
 			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
-					&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+					&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
 				activoApi.calcularRatingActivo(id);
 			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -448,7 +470,7 @@ public class ActivoController extends ParadiseJsonController {
 			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre información comercial, recalculamos el rating del activo.
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
-					&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+					&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
 				activoApi.calcularRatingActivo(id);
 			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -473,7 +495,7 @@ public class ActivoController extends ParadiseJsonController {
 			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
-					&& !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+					&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
 				activoApi.calcularRatingActivo(id);
 			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -578,7 +600,13 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getOrigenActivo(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, adapter.getOrigenActivo(id));
 
+		return createModelAndViewJson(model);
+	}
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getListLlavesById(DtoLlaves dto, ModelMap model) {
@@ -1170,6 +1198,14 @@ public class ActivoController extends ParadiseJsonController {
 			if (!success) {
 				model.put("errorCode", "msg.activo.gestores.noasignar.tramite.multiactivo");
 			}
+			
+			//si es activo matriz, debemos propagar a todas sus UA's
+			if(activoDao.isActivoMatriz(idActivo)) {
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivo);
+				if(!Checks.esNulo(agr)) {
+					propagarCambiosGestoresUAs(agr.getId(), idActivo, usuarioGestor, tipoGestor, webDto, model);
+				}				
+			}
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
@@ -1178,6 +1214,14 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return new ModelAndView("jsonView", model);
+	}
+
+	private void propagarCambiosGestoresUAs(Long idAgrupacionUAS, Long idActivo, Long usuarioGestor, Long tipoGestor,
+			WebDto webDto, ModelMap model) {
+		List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(idAgrupacionUAS);
+		for (Activo activo : listaUAs) {
+			insertarGestorAdicional(activo.getId(), usuarioGestor, tipoGestor, webDto, model);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1309,7 +1353,11 @@ public class ActivoController extends ParadiseJsonController {
 				if (activoApi.isVendido(idActivo)) {
 					model.put("errorCreacion", "No se puede lanzar un trámite de admisión de un activo vendido");
 					model.put(RESPONSE_SUCCESS_KEY, false);
-				} else {
+				}else if(activoDao.isUnidadAlquilable(idActivo)) {
+					model.put("errorCreacion", "No se puede lanzar un trámite de admisión de una unidad alquilable");
+					model.put(RESPONSE_SUCCESS_KEY, false);
+				}
+				else {
 					model.put(RESPONSE_DATA_KEY, adapter.crearTramiteAdmision(idActivo));
 				}
 			}
@@ -2348,9 +2396,15 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView propagarInformacion(@RequestParam() Long id, @RequestParam() String tab, ModelMap model) {
 		List<String> fields = new ArrayList<String>();
-
-		if (ActivoPropagacionFieldTabMap.map.get(tab) != null) {
-			fields.addAll(ActivoPropagacionFieldTabMap.map.get(tab));
+		
+		if(!activoDao.isActivoMatriz(id)) {
+			if(ActivoPropagacionFieldTabMap.map.get(tab) != null) {
+				fields.addAll(ActivoPropagacionFieldTabMap.map.get(tab));
+			}
+		}else {
+			if(ActivoPropagacionUAsFieldTabMap.mapUAs.get(tab) != null) {
+				fields.addAll(ActivoPropagacionUAsFieldTabMap.mapUAs.get(tab));
+			}
 		}
 
 		model.put("propagateFields", fields);
@@ -2371,9 +2425,10 @@ public class ActivoController extends ParadiseJsonController {
 			} catch (JsonViewerException jvex) {
 				model.put(RESPONSE_SUCCESS_KEY, false);
 				model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+				model.put(RESPONSE_MESSAGE_KEY, jvex.getMessage());
 			} catch (Exception e) {
-				logger.error("No se ha podido guardar el activo", e);
-				model.put(RESPONSE_ERROR_KEY, e.getMessage());
+				logger.error("No se ha podido guardar el activo", e); 
+				model.put(RESPONSE_ERROR_KEY, e.getMessage()); 
 			}
 		}
 
@@ -2452,15 +2507,20 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDatosPatrimonio(DtoActivoPatrimonio patrimonioDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
+			
 			boolean success = adapter.saveTabActivo(patrimonioDto, id, TabActivoService.TAB_PATRIMONIO);
 			if (success){
+				
 				adapter.actualizarEstadoPublicacionActivo(id);
+				activoApi.actualizarMotivoOcultacionUAs(patrimonioDto, id);
+				
 			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException jvex) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			throw new JsonViewerException(jvex.getMessage());
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
@@ -2714,6 +2774,19 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getIsUnidadAlquilable(Long idActivo,ModelMap model) {
+		
+		try {
+			model.put(RESPONSE_DATA_KEY, activoAdapter.isUnidadAlquilable(idActivo));
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		return createModelAndViewJson(model);
+	}
 	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
 	public ModelAndView getCalificacionNegativaMotivo( Long idActivo, String idMotivo, ModelMap model) {
 
@@ -2731,8 +2804,23 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIsActivoMatriz(String idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.isActivoMatriz(Long.parseLong(idActivo)));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
 	
 	@SuppressWarnings("unchecked")
+
 	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
 	public ModelAndView saveCalificacionNegativaMotivo(Long idActivo, String idMotivo, String calificacionNegativa, String estadoMotivoCalificacionNegativa, 
 			String responsableSubsanar, String descripcionCalificacionNegativa, String fechaSubsanacion, ModelMap model) {
@@ -2783,14 +2871,56 @@ public class ActivoController extends ParadiseJsonController {
 			e.printStackTrace();
 			model.put("success", false);
 		}
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView propagarActivosMatriz(String idActivo, ModelMap model){
+		
+		
+		try{
+			
+		model.put(RESPONSE_DATA_KEY, activoApi.getActivosPropagables(Long.valueOf(idActivo)));
+			
+			
+		} catch (JsonViewerException jvex) {
+						model.put(RESPONSE_SUCCESS_KEY, false);
+						model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+						logger.error(jvex.getMessage());
+						throw new JsonViewerException(jvex.getMessage());
+		}catch (Exception e) {
+			
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
 
 		return createModelAndViewJson(model);
 	}
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCalificacionNegativa(Long id, ModelMap model) {
-		model.put(RESPONSE_DATA_KEY, activoApi.getActivoCalificacionNegativa(id));
+		try {
+			model.put(RESPONSE_DATA_KEY, activoApi.getActivoCalificacionNegativa(id));
+			} catch (Exception e) {
+				logger.error("error en activoController", e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			}
+		return createModelAndViewJson(model);
+	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getisActivoUa(String idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.isUnidadAlquilable(Long.parseLong(idActivo)));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
 		return createModelAndViewJson(model);
 	}
 	
@@ -2799,4 +2929,18 @@ public class ActivoController extends ParadiseJsonController {
 		return activoApi.getActivoCalificacionNegativaCodigos(id);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView bloquearChecksComercializacion(String idActivo, Integer action, ModelMap model) {
+		Activo activo = activoDao.getActivoById(Long.parseLong(idActivo));
+		try{
+			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo, action));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

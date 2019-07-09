@@ -19,6 +19,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -31,12 +32,16 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -44,6 +49,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
@@ -96,7 +102,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String AVISO_MENSAJE_GESTOR_COMERCIAL = "activo.aviso.descripcion.cambio.gestor.comercial";
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_VENTA = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER = "msg.error.tipo.comercializacion.ofertas.vivas";
-
+	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
+	private static final Integer CHECK_GESTION = 1;
+	private static final Integer CHECK_PUBLICACION = 2;
+	private static final Integer CHECK_COMERCIALIZAR = 3;
+	private static final Integer CHECK_FORMALIZAR = 4;
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -109,6 +119,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
@@ -153,6 +166,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Resource
 	private MessageService messageServices;
+	
+	@Autowired
+	private ActivoAgrupacionDao activoAgrupacionDao;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -308,8 +327,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
 		if(!Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())){
-			BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
-			BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", activo.getActivoPublicacion().getTipoComercializacion().getDescripcion());
+				BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
+				BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", activo.getActivoPublicacion().getTipoComercializacion().getDescripcion());
 		}
 		
 		if(activo.getTipoAlquiler() != null){
@@ -449,35 +468,64 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		// Si no exite perimetro en BBDD, se crea una nueva instancia PerimetroActivo, con todas las condiciones marcadas
 		// y por tanto, por defecto se marcan los checkbox.
-		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", new Integer(1).equals(perimetroActivo.getAplicaTramiteAdmision()));
-		BeanUtils.copyProperty(activoDto,"aplicaGestion", new Integer(1).equals(perimetroActivo.getAplicaGestion()));
-		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador()));
-		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar()));
-		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar()));
-		if(!Checks.esNulo(perimetroActivo.getAplicaPublicar()))
-			BeanUtils.copyProperty(activoDto,"aplicaPublicar", new Integer(1).equals(perimetroActivo.getAplicaPublicar() ? 1 : 0));
-		BeanUtils.copyProperty(activoDto,"enTramite", activo.getEnTramite());
+		
 		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", new Integer(1).equals( perimetroActivo.getAplicaTramiteAdmision())? true: false);
+		
 		BeanUtils.copyProperty(activoDto,"aplicaGestion", new Integer(1).equals( perimetroActivo.getAplicaGestion())? true: false);
 		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador())? true: false);
-		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar())? true: false);
+
+		if(!Checks.esNulo(perimetroActivo.getAplicaComercializar())) {
+			BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar())? true: false);
+		}
+		
 		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar())? true: false);
 		BeanUtils.copyProperty(activoDto,"enTramite", activo.getEnTramite());
+		
+		
 		if(!Checks.esNulo(perimetroActivo.getAplicaPublicar()))
 			BeanUtils.copyProperty(activoDto,"aplicaPublicar", new Integer(1).equals(perimetroActivo.getAplicaPublicar() ? 1 : 0));
 
-		// En la sección de perímetro pero no dependiente del mismo.
-		BeanUtils.copyProperty(activoDto, "numInmovilizadoBankia", activo.getNumInmovilizadoBnk());
-
-		//Comprobar los condicionantes del indicador Venta y Alquiler
-		BeanUtils.copyProperties(activoDto, perimetroActivo);
+		
+		
+		DDSiNo si = genericDao.get(DDSiNo.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDSiNo.SI));
+		DDSiNo no = genericDao.get(DDSiNo.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDSiNo.NO));
+		
+		if(!Checks.esNulo(perimetroActivo.getOfertasVivas())) {
+			
+			if( perimetroActivo.getOfertasVivas()) {
+				BeanUtils.copyProperty(activoDto, "ofertasVivas",si.getDescripcion());
+			}
+			else {
+				BeanUtils.copyProperty(activoDto, "ofertasVivas", no.getDescripcion());
+			}
+		}
+		if(!Checks.esNulo(perimetroActivo.getTrabajosVivos())) {
+			if(perimetroActivo.getTrabajosVivos())
+				
+				BeanUtils.copyProperty(activoDto, "trabajosVivos",si.getDescripcion());
+			else {
+				BeanUtils.copyProperty(activoDto, "trabajosVivos", no.getDescripcion());
+			}
+		}
 
 		// Indicador del estado de publicación para venta y alquiler.
 		activoDto.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionVenta(activo));
 		activoDto.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAlquiler(activo));
 
 		// Datos de activo bancario del activo al Dto de datos basicos
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
 		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		
+		if(esUA) {
+			//Cuando es una UA, cargamos los datos de su AM
+			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			if (!Checks.esNulo(agrupacion)) {
+				Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+				if (!Checks.esNulo(activoMatriz)) {
+					activoBancario = activoApi.getActivoBancarioByIdActivo(activoMatriz.getId());
+				}
+			}
+		}
 		
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
 			BeanUtils.copyProperty(activoDto, "claseActivoCodigo", activoBancario.getClaseActivo().getCodigo());
@@ -561,10 +609,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "estadoAlquilerCodigo", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo() : "");
 			BeanUtils.copyProperty(activoDto, "estadoVentaCodigo", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionVenta()) ? activo.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo(): "");
 		}
-
-		// Buscamos los campos que pueden ser propagados para esta pestaña
-		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
-
+		
+		if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+			activoDto.setCamposPropagablesUas(TabActivoService.TAB_DATOS_BASICOS);
+		}else {
+			// Buscamos los campos que pueden ser propagados para esta pestaña
+			activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
+		}
+		
 		if (!Checks.esNulo(activo.getSituacionPosesoria()) && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
 			activoDto.setOcupado(activo.getSituacionPosesoria().getOcupado());
 		} else {
@@ -654,6 +706,46 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 		}
 		
+		if (!Checks.esNulo(activo)) {
+			boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
+			activoDto.setUnidadAlquilable(isUnidadAlquilable);
+			boolean isActivoMatriz = activoDao.isActivoMatriz(activo.getId());
+			
+			if (isUnidadAlquilable || isActivoMatriz) {
+				activoDto.setIsPANoDadaDeBaja(activoDao.isPANoDadaDeBaja(activo.getId()));
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "ACT_ID", activo.getId());
+				List<ActivoAgrupacionActivo> activosAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroActivo);
+				if (!Checks.estaVacio(activosAgrupacion)) {
+					for (ActivoAgrupacionActivo agrupacionActivo : activosAgrupacion) {
+						
+						if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getPrincipal() == 1) {
+							
+							activoDto.setActivoMatriz(true);
+							activoDto.setAgrupacionDadaDeBaja(Checks.esNulo(activoDao.getAgrupacionPAByIdActivo(activo.getId())));
+							
+							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
+							Long countUnidadesAlquilables = activoDao.countUAsByIdAgrupacionPA(agrupacionActivo.getAgrupacion().getId());
+							activoDto.setUnidadesAlquilablesEnAgrupacion(countUnidadesAlquilables);
+							
+							
+						}else if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getPrincipal() == 0) {
+							activoDto.setPorcentajeParticipacion(agrupacionActivo.getParticipacionUA());
+							activoDto.setIdPrinexHPM(agrupacionActivo.getIdPrinexHPM());
+							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
+							List<ActivoAgrupacionActivo> UAsEnAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
+							if (!Checks.estaVacio(UAsEnAgrupacion)) {
+								for (ActivoAgrupacionActivo aga : UAsEnAgrupacion) {
+									if (aga.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && aga.getPrincipal() == 1) 
+										activoDto.setNumActivoMatriz(aga.getActivo().getNumActivo());
+								}
+							}
+							activoDto.setUnidadAlquilable(isUnidadAlquilable);
+						}
+					}
+				}
+			}	
+		}
+		
 		Boolean tieneRegistro = false;
 		List<ActivoPatrimonioContrato> listActivoPatrimonioContrato = activoPatrimonioContratoDao.getActivoPatrimonioContratoByActivo(activo.getId());
 		if(!Checks.estaVacio(listActivoPatrimonioContrato)) {
@@ -707,7 +799,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setCambioEstadoPublicacion(cambioEstadoPublicacion);
 
 		}
-		
 		
 		return activoDto;
 	}
@@ -899,8 +990,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setFechaAplicaAsignarMediador(new Date());
 				}
 				if(!Checks.esNulo(dto.getAplicaComercializar())) {
-					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
-					perimetroActivo.setFechaAplicaComercializar(new Date());
+					if(activoDao.isUnidadAlquilable(activo.getId())) {
+						Boolean marcarComercializar = activoApi.bloquearChecksComercializacionActivo(activo, CHECK_COMERCIALIZAR);
+						if(marcarComercializar) {
+							perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
+							perimetroActivo.setFechaAplicaComercializar(new Date());
+						}
+					}else {
+						perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
+						perimetroActivo.setFechaAplicaComercializar(new Date());
+					}
+						
+					
 					
 					//Acciones al desmarcar check comercializar
 					if(!dto.getAplicaComercializar()) {
@@ -908,8 +1009,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
-					perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
-					perimetroActivo.setFechaAplicaFormalizar(new Date());
+					if(activoDao.isUnidadAlquilable(activo.getId())) {
+						Boolean marcarFormalizar = activoApi.bloquearChecksComercializacionActivo(activo, CHECK_FORMALIZAR);
+						if(marcarFormalizar) {
+							perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
+							perimetroActivo.setFechaAplicaFormalizar(new Date());
+						}
+					}else {
+						perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
+						perimetroActivo.setFechaAplicaFormalizar(new Date());
+					}
 					
 					//Validacion al desmarcar check formalizar
 					if(!dto.getAplicaFormalizar()) {
@@ -918,9 +1027,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 
 				if(!Checks.esNulo(dto.getAplicaGestion())) {
-					perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
-					perimetroActivo.setFechaAplicaGestion(new Date());
+					if(activoDao.isUnidadAlquilable(activo.getId())) {
+						Boolean marcarGestionar = activoApi.bloquearChecksComercializacionActivo(activo, CHECK_GESTION);
+						if(marcarGestionar) {
+							perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
+							perimetroActivo.setFechaAplicaGestion(new Date());
+						}
+					}else {
+						perimetroActivo.setAplicaGestion(dto.getAplicaGestion() ? 1 : 0);
+						perimetroActivo.setFechaAplicaGestion(new Date());
+					}
 				}
+			
 
 				if(!Checks.esNulo(dto.getAplicaTramiteAdmision())) {
 					perimetroActivo.setAplicaTramiteAdmision(dto.getAplicaTramiteAdmision() ? 1 : 0);
@@ -933,14 +1051,75 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 
 				if(!Checks.esNulo(dto.getAplicaPublicar())) {
-					perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar());
-					perimetroActivo.setFechaAplicaPublicar(new Date());
+					if(activoDao.isUnidadAlquilable(activo.getId())) {
+						Boolean marcarPublicar = activoApi.bloquearChecksComercializacionActivo(activo, CHECK_PUBLICACION);
+						if(marcarPublicar) {
+							perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar());
+							perimetroActivo.setFechaAplicaPublicar(new Date());
+						}
+					}else {
+						perimetroActivo.setAplicaPublicar(dto.getAplicaPublicar());
+						perimetroActivo.setFechaAplicaPublicar(new Date());
+					}
 				}
 
 				beanUtilNotNull.copyProperty(perimetroActivo, "motivoNoAplicaComercializar", dto.getMotivoNoAplicaComercializar());
-
+				
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+
 			}
+			if(activoDao.isActivoMatriz(activo.getId())) {
+				PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+				ActivoAgrupacion agrupacionPa = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				List<ActivoAgrupacionActivo> activosAgrupacionPa = agrupacionPa.getActivos();
+				for (ActivoAgrupacionActivo activoAgrupacionPa : activosAgrupacionPa) {
+					Long idActivoUa = activoAgrupacionPa.getActivo().getId();
+					PerimetroActivo perimetroActivoUA = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivoUa));
+					if(!Checks.esNulo(dto.getAplicaComercializar()) && !dto.getAplicaComercializar()) {
+						perimetroActivoUA.setAplicaComercializar(0);
+						perimetroActivoUA.setFechaAplicaComercializar(new Date());
+						if(Checks.esNulo(dto.getMotivoAplicaComercializarCodigo())) {
+							perimetroActivoUA.setMotivoAplicaComercializar(perimetroActivo.getMotivoAplicaComercializar());
+						}else {
+							DDMotivoComercializacion comercializacion = genericDao.get(DDMotivoComercializacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getMotivoAplicaComercializarCodigo()));
+							perimetroActivoUA.setMotivoAplicaComercializar(comercializacion);
+						}
+					}
+						
+					if(!Checks.esNulo(dto.getAplicaFormalizar()) && !dto.getAplicaFormalizar()) {
+						perimetroActivoUA.setAplicaFormalizar(0);
+						perimetroActivoUA.setFechaAplicaFormalizar(new Date());
+						if(Checks.esNulo(dto.getMotivoAplicaFormalizar())) {
+							perimetroActivoUA.setMotivoAplicaFormalizar(perimetroActivo.getMotivoAplicaFormalizar());
+						}else {
+							perimetroActivoUA.setMotivoAplicaFormalizar(dto.getMotivoAplicaFormalizar());
+						}
+					}
+					
+					if(!Checks.esNulo(dto.getAplicaGestion()) && !dto.getAplicaGestion()) {
+						perimetroActivoUA.setAplicaGestion(0);
+						perimetroActivoUA.setFechaAplicaGestion(new Date());
+						if(Checks.esNulo(dto.getMotivoAplicaGestion())) {
+							perimetroActivoUA.setMotivoAplicaGestion(perimetroActivo.getMotivoAplicaGestion());
+						}else {
+							perimetroActivoUA.setMotivoAplicaGestion(dto.getMotivoAplicaGestion());
+						}
+					}
+					
+					if(!Checks.esNulo(dto.getAplicaPublicar()) && !dto.getAplicaPublicar()) {
+						perimetroActivoUA.setAplicaPublicar(false);
+						perimetroActivoUA.setFechaAplicaFormalizar(new Date());
+						if(Checks.esNulo(dto.getMotivoAplicaGestion())) {
+							perimetroActivoUA.setMotivoAplicaPublicar(perimetroActivo.getMotivoAplicaPublicar());
+						}else {
+							perimetroActivoUA.setMotivoAplicaPublicar(dto.getMotivoAplicaPublicar());
+						}
+					}
+					
+					activoApi.saveOrUpdatePerimetroActivo(perimetroActivoUA);
+				}
+			}
+			
 			
 			// --------- Perimetro --> Bloque Comercializción
 			if (!Checks.esNulo(dto.getTipoComercializarCodigo())) {
@@ -1053,6 +1232,36 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					ofertaApi.resetPBC(expediente, false);
 				}
 			}
+			
+
+			if (!Checks.esNulo(activo)) {
+				boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
+				
+				if(isUnidadAlquilable) {
+					ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+					
+					if(!Checks.esNulo(agrupacion)) {
+						//Los porcentajes de participación se encuentran en la tabla que relaciona agrupaciones con activos (AGA).
+						Double porcentajeUAs = activoAgrupacionDao.getPorcentajeParticipacionUATotalDeUnAMById(agrupacion.getId());			//Obtenemos la suma de porcentajes
+						Filter filterIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+						Filter filterIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+						ActivoAgrupacionActivo aga = genericDao.get(ActivoAgrupacionActivo.class, filterIdActivo, filterIdAgrupacion);		//Filtramos las agas en función del idAgrupacion y el idActivo
+						
+						if(!Checks.esNulo(dto.getPorcentajeParticipacion())) {
+							//Si el porcentaje total se pasa de 100
+							if(porcentajeUAs - aga.getParticipacionUA() + dto.getPorcentajeParticipacion() > 100) {
+								throw new JsonViewerException(messageServices.getMessage(ERROR_PORCENTAJE_PARTICIPACION));
+							} else {
+								aga.setParticipacionUA(dto.getPorcentajeParticipacion());							
+							}
+						}
+						
+						if(!Checks.esNulo(dto.getIdPrinexHPM())) {
+							aga.setIdPrinexHPM(dto.getIdPrinexHPM());
+						}
+					}
+				}
+			}		
 
 		} catch(JsonViewerException jve) {
 			throw jve;

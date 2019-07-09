@@ -459,7 +459,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateGastoByPrinexLBK( @RequestParam String idGasto, ModelMap model) {
+	public ModelAndView updateGastoByPrinexLBK( @RequestParam Long idGasto, ModelMap model) {
 		try {
 
 			boolean success = gastoProveedorApi.updateGastoByPrinexLBK(idGasto);
@@ -557,7 +557,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", success);
 			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("error desasignando trabajos",e);
 			model.put("success", false);
 		}	
 		
@@ -982,7 +982,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelFacturas(HttpServletRequest request, HttpServletResponse response) throws IOException{
 
@@ -993,7 +992,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelTasasImpuestos(HttpServletRequest request, HttpServletResponse response) throws IOException{
 

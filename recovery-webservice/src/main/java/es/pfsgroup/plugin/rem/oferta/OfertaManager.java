@@ -377,8 +377,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// Carterización del buscador.
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+			}
 		}
 
 		return ofertaDao.getListOfertas(dto, usuarioGestor, usuarioGestoria);
@@ -1304,6 +1309,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			oferta.setUsuarioBaja(usu.getApellidoNombre());
 			updateStateDispComercialActivosByOferta(oferta);
+			darDebajaAgrSiOfertaEsLoteCrm(oferta);
 			genericDao.save(Oferta.class, oferta);
 
 		} catch (Exception e) {
@@ -1313,7 +1319,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return true;
 
 	}
-
+	
 	@Transactional(readOnly = false)
 	@Override
 	public void descongelarOfertas(ExpedienteComercial expediente) throws Exception {
@@ -1801,75 +1807,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public boolean checkAtribuciones(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
-		if (!Checks.esNulo(oferta)) {
-
-			if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-				List<ActivoOferta> actOfr = oferta.getActivosOferta();
-
-				for (int i = 0; i < actOfr.size(); i++) {
-
-					Activo activo = actOfr.get(i).getPrimaryKey().getActivo();
-
-					List<ActivoValoraciones> activoValoraciones = genericDao.getList(ActivoValoraciones.class,
-							genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-
-					Double deudaBruta = null;
-					Double valorNetoContable = null;
-
-					for (ActivoValoraciones valoracion : activoValoraciones) {
-						if (DDTipoPrecio.CODIGO_TPC_DEUDA_BRUTA_LIBERBANK.equals(valoracion.getTipoPrecio().getCodigo())) {
-							deudaBruta = valoracion.getImporte();
-						} else if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK
-								.equals(valoracion.getTipoPrecio().getCodigo())) {
-							valorNetoContable = valoracion.getImporte();
-						}
-					}
-
-					if (!Checks.esNulo(deudaBruta) && !Checks.esNulo(valorNetoContable)) {
-						if (deudaBruta > DDTipoPrecio.MAX_DEUDA_BRUTA_LIBERBANK) {
-							if (DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo())
-									|| DDTipoActivo.COD_EN_COSTRUCCION.equals(activo.getTipoActivo().getCodigo())) {
-
-								if (1D - valorNetoContable / deudaBruta > 0.6D) {
-									return false;
-								}
-							} else if (1D - valorNetoContable / deudaBruta > 0.5D) {
-								return false;
-							}
-						}
-					}
-
-				}
-			}
-
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-			if (!Checks.esNulo(expediente)) {
-				if (!Checks.esNulo(expediente.getComiteSancion())) {
-					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
-					if (DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_TANGO_TANGO.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion))
-						return true;
-				} else {
-					if (trabajoApi.checkBankia(tareaExterna)) {
-						String codigoComite = null;
-						try {
-							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());							
-						} catch (Exception e) {
-							logger.error("error en OfertasManager", e);
-						}
-						if (DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComite))
-							return true;
-					}
-				}
-			}
-		}
-
-		return false;
+		return checkAtribuciones(oferta);
 	}
 
 
@@ -1902,6 +1840,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public boolean checkAtribuciones(Trabajo trabajo) {
 		Oferta oferta = trabajoToOferta(trabajo);
+		return checkAtribuciones(oferta);
+	}
+	
+	@Override
+	public boolean checkAtribuciones(Oferta oferta) {
 		if (!Checks.esNulo(oferta)) {
 			if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 				List<ActivoOferta> actOfr = oferta.getActivosOferta();
@@ -1949,13 +1892,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							|| DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_TANGO_TANGO.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_HYT.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_THIRD_PARTIES.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion))
 						return true;
 				} else {
-					if (trabajoApi.checkBankia(trabajo)) {
+					if (Checks.esNulo(oferta.getActivoPrincipal())
+							&& Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+							&& DDCartera.CODIGO_CARTERA_BANKIA
+									.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 						String codigoComite = null;
 						try {
 							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
@@ -3045,6 +2992,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
+	@Deprecated
 	public void desocultarActivoOferta(Oferta oferta) throws Exception {
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
@@ -3841,5 +3789,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 	return esCarteraInternacional;
 		
+	}
+	
+	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta) {
+		if (OfertaApi.ORIGEN_WEBCOM.equals(oferta.getOrigen())) {
+			ActivoAgrupacion agr = oferta.getAgrupacion();
+			if (agr != null && agr.getTipoAgrupacion() != null
+					&& DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agr.getTipoAgrupacion().getCodigo())) {
+
+				agr.setFechaBaja(new Date());
+				activoAgrupacionApi.saveOrUpdate(agr);
+
+			}
+		}
 	}
 }

@@ -277,9 +277,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera))
-			dto.setCartera(usuarioCartera.getCartera().getCodigo());
-
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dto.setCartera(usuarioCartera.getCartera().getCodigo());
+				dto.setSubcartera(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dto.setCartera(usuarioCartera.getCartera().getCodigo());
+			}
+		}
+		
+		
 		// Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
 		// y según HREOS-2272 en el modulo de trabajos
 		// los perfiles externos de CAPA_CONTROL_BANKIA y USUARIOS_DE_CONSULTA
@@ -813,7 +820,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				isFirstLoop = false;
 			}
 
-			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()))
+			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
+					|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo()))
 				trabajo.setEsTarificado(true);
 
 			if (activosAgrupacionTrabajo.size() > 0) {
@@ -988,7 +996,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						trabajo.setFechaAprobacion(new Date());
 					}
 
-					if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())) {
+					if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()) 
+							|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 						trabajo.setEsTarificado(true);
 					}
 				}
@@ -1104,7 +1113,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
 			trabajo.getActivosTrabajo().add(activoTrabajo);
 
-			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()))
+			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
+					|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo()))
 				trabajo.setEsTarificado(true);
 
 			// El gestor de activo se salta tareas de estos trámites y por tanto
@@ -1173,6 +1183,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (trabajo.getId() == null) {
 			trabajo = genericDao.save(Trabajo.class, trabajo);
 		}
+		
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			ActivoAgrupacion actagr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			Activo activoMatriz =new Activo();
+			activoMatriz = activoApi.get(activoDao.getIdActivoMatriz(actagr.getId()));
+			trabajo.setActivo(activoMatriz);
+			trabajo = genericDao.save(Trabajo.class, trabajo);
+		}
+		
 		ActivoTrabajo activoTrabajo = new ActivoTrabajo();
 		activoTrabajo.setActivo(activo);
 		activoTrabajo.setTrabajo(trabajo);
@@ -1366,39 +1385,32 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
 				tipoTramite = tipoProcedimientoManager
 						.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA); 
-				
+				String username = null;
+				Usuario usuario = null;				
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_GESTORIA);
 				// Trámite de obtención de cédula				
 				// Si el trabajo es Sareb/Tango/Giants asignamos proveedorContacto
-				if ( this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
-					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
-							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
-					if (!Checks.esNulo(usuario)) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
-								DDTipoProveedor.COD_GESTORIA);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
-								filtro, filtro2);
-						if (!Checks.estaVacio(listaPVC)) {
-							trabajo.setProveedorContacto(listaPVC.get(0));
-							trabajo = genericDao.save(Trabajo.class, trabajo);
-						}
-					}
+				if (this.checkTango(trabajo) || this.checkGiants(trabajo)) {
+					usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
+							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);					
 				// Si el trabajo es Bankia asignamos proveedorContacto	
-				}else if(this.checkBankia(trabajo)){ 
-					String username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO);
-					Usuario usuario = usuarioDao.getByUsername(username);
-					if (!Checks.esNulo(usuario)) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
-								DDTipoProveedor.COD_GESTORIA);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
-								filtro, filtro2);
-						if (!Checks.estaVacio(listaPVC)) {
-							trabajo.setProveedorContacto(listaPVC.get(0));
-							trabajo = genericDao.save(Trabajo.class, trabajo);
-						}
+				}else if(this.checkSareb(trabajo)) {
+					username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEDULA_HABITABILIDAD_SAREB_POR_DEFECTO);
+					filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+				}
+				if(!Checks.esNulo(username)){
+					usuario = usuarioDao.getByUsername(username);
+				}
+				if (!Checks.esNulo(usuario)) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
+					List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+							filtro, filtro2);
+					if (!Checks.estaVacio(listaPVC)) {
+						trabajo.setProveedorContacto(listaPVC.get(0));
+						trabajo = genericDao.save(Trabajo.class, trabajo);
 					}
 				}
+			
 			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_INFORMES))
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_INFORME);// Trámite
 			// de
@@ -2203,6 +2215,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
    		
 		//flashDao.getList(VBusquedaActivosTrabajoParticipa.class,filtrosArray);
 		return trabajoDao.getListActivosTrabajo(dto);
+	}
+	
+	@Override
+	public Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto) {
+
+		return trabajoDao.getActivoMatrizPresupuesto(dto);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -4087,7 +4105,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	public Boolean activoEnTramite(Long idActivo) {
-		Activo activo = activoApi.get(idActivo);
+		Activo activo;
+		if(activoDao.isUnidadAlquilable(idActivo)) {
+			ActivoAgrupacion actagr = activoDao.getAgrupacionPAByIdActivo(idActivo);
+			activo = activoApi.get(activoDao.getIdActivoMatriz(actagr.getId()));
+			
+		}else {
+			activo = activoApi.get(idActivo);
+		}
 		return activo.getEnTramite() == 1;
 	}
 

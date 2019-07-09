@@ -14,21 +14,20 @@ import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -37,12 +36,6 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -51,18 +44,19 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
-import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
 
 @Component
@@ -94,8 +88,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	@Autowired
 	private ComunicacionGencatApi comunicacionGencatApi;
 	
-	@Autowired
-	private ActivoTareaExternaApi activoTareaExternaApi;
 	
 	@Autowired
 	private ActivoTramiteDao activoTramiteDao;
@@ -105,6 +97,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
@@ -279,12 +275,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 										Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 										VBusquedaTramitesActivo vBusquedaTramitesActivo = tramitesActivo.get(0);
 										ActivoTramite activoTramite = activoTramiteDao.get(vBusquedaTramitesActivo.getIdTramite());
-										List<TareaExterna> listaTareas = activoTareaExternaApi.getActivasByIdTramiteTodas(vBusquedaTramitesActivo.getIdTramite());
-										for (TareaExterna tex : listaTareas) {
-											EXTTareaNotificacion tar = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS,"id", tex.getTareaPadre().getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-											// finalizamos la tarea
-											activoAdapter.borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
-										}
+										activoAdapter.borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
 										
 										//Finaliza el trámite
 										activoAdapter.cerrarActivoTramite(usuarioLogado, activoTramite);
@@ -337,20 +328,23 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					}
 					
 					genericDao.save(ExpedienteComercial.class, expediente);
+					
+					DDEstadoTrabajo estadoTrabajoAnulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoTrabajo.ESTADO_ANULADO));
+					Trabajo trabajo = tramite.getTrabajo();
+					if(!Checks.esNulo(trabajo)) {
+						trabajo.setEstado(estadoTrabajoAnulado);
+						genericDao.save(Trabajo.class, trabajo);
+					}
 				}
 			}
 
-			try {
-				//Actualizar el estado comercial de los activos de la oferta
-				ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
-				//Actualizar el estado de la publicación de los activos de la oferta (desocultar activos)
-				ofertaApi.desocultarActivoOferta(ofertaAceptada);
-			} catch (Exception e) {
-				logger.error("Error al ocultar activos de la oferta.", e);
+			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+			ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(ofertaAceptada);
+			if(!Checks.esNulo(activo)) {
+				activoApi.actualizarOfertasTrabajosVivos(activo);
 			}
 		}
 		
-		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 	}
 
 	public String[] getCodigoTarea() {

@@ -22,7 +22,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -45,9 +44,6 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	@Autowired
 	private OfertaApi ofertaApi;
 
-	@Autowired
-	private TrabajoApi trabajoApi;
-	
 	@Autowired
 	private NotificacionApi notificacionApi;
 
@@ -135,6 +131,8 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 								// Deniega el expediente
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
 	
+								//finalizamos las posibles tareas de validación pendientes
+								expedienteComercialApi.finalizarTareaValidacionClientes(expediente);
 								// Finaliza el trámite
 								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));

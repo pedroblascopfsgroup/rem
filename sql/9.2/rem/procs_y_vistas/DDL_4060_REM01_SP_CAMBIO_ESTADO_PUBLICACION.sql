@@ -1,4 +1,4 @@
---/*
+--/* 
 --##########################################
 --## AUTOR=Carles Molins
 --## FECHA_CREACION=20190516
@@ -89,6 +89,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
     vACTUALIZAR_COND  VARCHAR2(1 CHAR);
     vUSUARIOMODIFICAR VARCHAR2(50 CHAR);
     vCondAlquiler     VARCHAR2(1 CHAR);
+    V_AUX             VARCHAR2(50 CHAR);
 
     TYPE CurTyp IS REF CURSOR;
     v_cursor    CurTyp;
@@ -150,6 +151,11 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
     IF SQL%ROWCOUNT > 0 THEN
       vACTUALIZADO_A := 'S';
     END IF;
+
+
+
+
+    
   END;
 
   PROCEDURE PLP$CAMBIO_ESTADO_VENTA(nACT_ID NUMBER, pESTADO VARCHAR2, pUSUARIOMODIFICAR VARCHAR2) IS
@@ -1097,8 +1103,6 @@ END IF;
 		    EXECUTE IMMEDIATE V_MSQL;
         END IF;
         
-
-
         /**************/
         /*HISTORIFICAR*/
         /**************/

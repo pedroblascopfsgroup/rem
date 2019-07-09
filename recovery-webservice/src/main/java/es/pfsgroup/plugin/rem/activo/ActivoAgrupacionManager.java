@@ -19,8 +19,10 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -46,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -54,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -65,6 +69,7 @@ import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoAgrupacionManager")
 public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
@@ -96,6 +101,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	// @Override
 	// public String managerName() {
@@ -302,6 +310,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				}
 
 				activoFoto.setFechaDocumento(fechaSubida);
+				
+				if(fileItem.getMetadata().containsKey("orden")) {
+					activoFoto.setOrden(Integer.valueOf(fileItem.getMetadata().get("orden")));
+				}
 
 				// Auditoria.save(activoFoto);
 
@@ -531,7 +543,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 			try {
-				if (agrupacion != null) {
+				if (agrupacion != null) { //TODO: Si el gestor documental activo traer las fotos del gestor documental del AM y no de la agrupación.
 					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.AGRUPACION, agrupacion.getNumAgrupRem());
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
@@ -734,6 +746,61 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		return false;
 	}
 	
+	@Override
+	public List<DtoTipoAgrupacion> getComboTipoAgrupacion() {
+		
+		String USUARIO_IT = "HAYASUPER";
+		String GESTOR_COMERCIAL_ALQUILER = "HAYAGESTCOM";  
+		String SUPERVISOR_COMERCIAL_ALQUILER = "HAYASUPCOM";
+		
+		boolean perfilValido = false;
+		
+		List<Perfil> usu= proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getPerfiles();
+
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+		DDTipoAgrupacion promocionAlquiler = genericDao.get(DDTipoAgrupacion.class, filtro);
+		
+		List <DtoTipoAgrupacion> listDtoTipoAgrupacion = new ArrayList <DtoTipoAgrupacion>();
+		List <DDTipoAgrupacion> listaDDTipoAgrupacion= new ArrayList <DDTipoAgrupacion>();
+		
+		for(Perfil p : usu) {
+			if(p.getCodigo().equals(USUARIO_IT) || p.getCodigo().equals(GESTOR_COMERCIAL_ALQUILER) || p.getCodigo().equals(SUPERVISOR_COMERCIAL_ALQUILER)) {
+				perfilValido = true;
+			}
+		}
+
+		listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);
+		
+		if(perfilValido) {
+			
+			for(DDTipoAgrupacion ta : listaDDTipoAgrupacion) {
+				DtoTipoAgrupacion aux = new DtoTipoAgrupacion();
+				aux.setIdAgrupacion(ta.getId());
+				aux.setCodigo(ta.getCodigo());
+				aux.setDescripcion(ta.getDescripcion());
+				aux.setDescripcionLarga(ta.getDescripcionLarga());
+				listDtoTipoAgrupacion.add(aux);
+			}
+		}else {
+			
+			listaDDTipoAgrupacion.remove(promocionAlquiler);
+			
+			for(DDTipoAgrupacion ta : listaDDTipoAgrupacion) {
+				DtoTipoAgrupacion aux = new DtoTipoAgrupacion();
+				aux.setIdAgrupacion(ta.getId());
+				aux.setCodigo(ta.getCodigo());
+				aux.setDescripcion(ta.getDescripcion());
+				aux.setDescripcionLarga(ta.getDescripcionLarga());
+				listDtoTipoAgrupacion.add(aux);
+			}
+			
+		}
+		
+		return  listDtoTipoAgrupacion;
+	}
+
+	@Override
     public int countActivosAfectoGENCAT(ActivoAgrupacion agrupacion) {
 		int numActivos = 0;
 		
@@ -744,5 +811,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			numActivos = activos.getContador();
 		}
 		return numActivos;
+
 	}
 }

@@ -364,6 +364,15 @@ public interface OfertaApi {
 	 * @return true si tiene atribuciones, false si no las tiene
 	 */
 	public boolean checkAtribuciones(Trabajo trabajo);
+	
+	/**
+	 * Método que comprueba si el activo tiene atribuciones para sancionar el
+	 * expediente 
+	 *
+	 * @param oferta
+	 * @return
+	 */
+	public boolean checkAtribuciones(Oferta oferta);
 
 	/**
 	 * Método que da de alta el comité externo en Bankia
@@ -619,6 +628,20 @@ public interface OfertaApi {
 	 */
 	public boolean existeClienteOComprador(Long idActivo, Long idAgrupacion, Long idExpediente, String docCliente, String codtipoDoc);
 	
+	/**
+	 * Es cartera internacional?
+	 * 
+	 * @param idActivo
+	 * @param idAgrupacion
+	 * @param idExpediente
+	 * @return
+	 */
 	public boolean esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente);
+	
+	/**
+	 * Anula la oferta si viene de un lote crm
+	 * @param oferta
+	 */
+	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
 }
 

@@ -3,3 +3,4 @@ export DB_BI=***
 export BASE_DIR_APP=/home/map017
 export BASE_DIR_BATCH=/recovery/rem/batch-server-val03
 export BASE_DIR_TRANSFERENCIA=/recovery/rem/transferencia
+export BASE_DIR_PLANTILLAS=/recovery/rem/app-server/wsdl/pre/

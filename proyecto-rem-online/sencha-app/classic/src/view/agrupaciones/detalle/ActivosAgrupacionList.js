@@ -57,20 +57,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         
         var estadoRenderer =  function(condicionado) {
         	var src = '',
-        	alt = '';
+        	alt = '',
+        	ret = '';
+        	
         	if (condicionado == '0') {
         		src = 'icono_KO.svg';
         		alt = 'KO';
-        		var ret= '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        		ret = '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
         	} else if(condicionado == '1'){ 
         		src = 'icono_OK.svg';
         		alt = 'OK';
-        		var ret= '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        		ret = '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
         	} else if(condicionado == '2'){
         		src = 'icono_OKN.svg';
         		alt = 'OKN';
-        		var ret= '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
-        	}else var ret= '<div>-</div>';
+        		ret = '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	} else ret= '<div>-</div>';
         	
         	return ret;
         }; 
@@ -105,7 +107,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				});	
 				
 		};
-
+		
 		// Aplicar plugins segun permisos.
 		if(Ext.isEmpty(me.rowPluginSecurity) && Ext.isEmpty(me.secFunToEdit)) {		
 			addRowPluginFunction();
@@ -116,8 +118,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		}
 
         // Botones genéricos de la barra del grid.
-        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClick', scope: this};
-		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteClick', scope: this, disabled: true};
+        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: '{esAgrupacionPromocionAlquiler}'}, handler: 'onAddClick', scope: this};
+		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton',  handler: 'onDeleteClick', scope: this, disabled: true};
+		
 
 		// Se configura manualmente la Top-Bar mostrándola si se dispone de alguno de los siguientes permisos.
 		if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION', 'EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION'])) {
@@ -125,14 +128,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	    		xtype: 'toolbar',
 	    		dock: 'top'
 			};
-			
+					
 			// Insertar elementos a la Top-Bar según permisos y tipos de agrupación.
 			me.tbar.items = [];
 			
+			var agrupacionPromocionAlquiler = false;
+			var tipoAgrupacion =  this.lookupController().getViewModel().get('agrupacionficha.tipoAgrupacionCodigo');
+			
+			if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
+	     		agrupacionPromocionAlquiler = true;
+	     	}
+			
 			if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION'])) {
-				me.tbar.items.push(configAddBtn);
-				me.tbar.items.push(configRemoveBtn);
-			}
+				if(agrupacionPromocionAlquiler){
+					if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_COMERCIAL'])){
+						me.tbar.items.push(configAddBtn);
+						me.tbar.items.push(configRemoveBtn);
+					}
+				}else{
+					me.tbar.items.push(configAddBtn);
+					me.tbar.items.push(configRemoveBtn);
+				}	
+		    }
 			
 			/*var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
 			if($AU.userHasFunction(['EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION']) &&
@@ -171,28 +188,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				me.tbar.items.push(configGridMenu);
 			}*/
 		}
-		
-    	var condPublRenderer =  function(condicionado) {
-        	var src = '',
-        	alt = '';
-        	
-        	if (condicionado == 0) {
-        		src = 'icono_KO.svg';
-        		alt = 'KO';
-        	} else if (condicionado == 1) {
-        		src = 'icono_OK.svg';
-        		alt = 'OK';
-        	} else if (condicionado == 2) { 
-        		src = 'icono_OKN.svg';
-        		alt = 'OKN';
-        	}  
-
-        	if(condicionado != null)
-        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
-        	else
-        		return '<div> - </div>';
-        };
-
+        
+        var coloredRender = function (value, meta, record) {
+    		var borrado = record.get('borrado');
+    		var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+    		
+    		if (borrado == 1 && tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER']) {
+    			return '<span style="color: #DF0101;">'+value+'</span>';
+    		} else {
+    			return value; 
+    		}
+    	};
  
         me.columns= [
         	{
@@ -225,8 +231,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				editor: {
 					xtype:'textfield',
 					maskRe: /[0-9]/
-				}
+				},
+				renderer: coloredRender
 
+	        },
+	        {
+	        	dataIndex: 'idPrinexHPM',
+	        	text: HreRem.i18n('header.id.prinex.hpm'),
+	        	bind: {
+	        		hidden: '{!esAgrupacionPromocionAlquiler}'
+	        	},
+	        	flex: 1
 	        },
 	        {   
             	text	 : HreRem.i18n('header.fecha.alta'),
@@ -250,7 +265,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.subdivision'),
 	            hideable: false,
 	            bind: {
-		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            flex: 2
 	        },
@@ -259,7 +274,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.direccion'),
 	            hideable: false,
 	            bind: {
-		        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            flex: 1
 	        },
@@ -268,7 +283,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.finca.registral'),
 	            hideable: false,
 	            bind: {
-		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            flex: 0.5
 	        },
@@ -276,18 +291,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	        	 text: HreRem.i18n('title.publicaciones.estadoPublicacion'),
 	        	 dataIndex: 'publicado',
 	        	 bind: {
-	        		 hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	        		 hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 	        	 },
 	        	 hideable:  false,
 	        	 flex: 1
-	        },
-	        {
+	       },
+	       {
 	            dataIndex: 'condPublVenta',
 	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
 	            flex: 1,
 	            hideable: false,
 	            bind:{
-	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 	            },
 	            renderer: estadoRenderer
 	            
@@ -298,7 +313,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            hideable: false,
 	            flex: 1,
 	            bind:{
-	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 	            },
 	            renderer: estadoRenderer
 	            
@@ -308,7 +323,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.puerta'),
 	            hideable: false,
 	            bind: {
-		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            flex: 0.5
 	        },
@@ -321,39 +336,60 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            dataIndex: 'importeMinimoAutorizado',
 	            text: HreRem.i18n('header.valor.web'),
 	            flex: 1,
+	            bind: {
+	        		hidden: '{esAgrupacionPromocionAlquiler}'
+	        	},
 	            renderer: function(value) {
 	        		return Ext.util.Format.currency(value);
 	        	},
-	            sortable: false		            
+	            sortable: false
 	        },
 	        {
 	            dataIndex: 'importeAprobadoVenta',
 	            text: HreRem.i18n('header.valor.aprobado.venta'),
 	            flex: 1,
+	            bind: {
+	        		hidden: '{esAgrupacionPromocionAlquiler}'
+	        	},
 	            renderer: function(value) {
 	        		return Ext.util.Format.currency(value);
 	        	},
-	            sortable: false		            
+	            sortable: false
+	        },
+	        {
+	            dataIndex: 'importeAprobadoRenta',
+	            text: HreRem.i18n('header.valor.aprobado.alquiler'),
+	            flex: 1,
+	            bind: {
+	        		hidden: '{!esAgrupacionPromocionAlquiler}'
+	        	},
+	            renderer: function(value) {
+	        		return Ext.util.Format.currency(value);
+	        	},
+	            sortable: false
 	        },
 	        {
 	            dataIndex: 'importeDescuentoPublicado',
 	            text: HreRem.i18n('header.valor.descuento.publicado'),
 	            flex: 1,
+	            bind: {
+	        		hidden: '{esAgrupacionPromocionAlquiler}'
+	        	},
 	            renderer: function(value) {
 	        		return Ext.util.Format.currency(value);
 	        	},
-	            sortable: false		            
+	            sortable: false
 	        },
 	        {
 	            dataIndex: 'superficieConstruida',
 	            hideable: false,
 	            bind: {
-		        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            text: HreRem.i18n('header.superficie.construida'),
 	            flex: 1,
 	            renderer: Ext.util.Format.numberRenderer('0,000.00'),
-	            sortable: false      
+	            sortable: false
 	        },
 	        {
 	        	 dataIndex: 'activoGencat',
@@ -489,6 +525,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     	var me = this;
     	var sePuedeBorrar;
     	var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+    	var ua = false;
+    	
     	
     	if((tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA'])){
     		sePuedeBorrar = true;
@@ -496,6 +534,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     		sePuedeBorrar = true;
     	}else{
     		sePuedeBorrar = false;
+    	}
+    	
+    	//Si el activo es PA
+    	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
+    		//Validaciones RUFU-016
+        	if(me.selection.data.borrado == 1) { //Comprobamos si el activo ha sido previamente dado de baja
+        		sePuedeBorrar = false;
+        		ua = true;
+        	}	
     	}
     		    	
     	if(sePuedeBorrar){
@@ -542,8 +589,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				   }
 			});
     	}else{
-    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activoPrincipal"));
-    		me.deleteFailureFn();
+    		if(ua) {
+    			me.fireEvent("errorToast", HreRem.i18n("msg.operation.ko.activoDadoDeBaja"));
+        		me.deleteFailureFn();
+        	} else {
+        		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activoPrincipal"));
+        		me.deleteFailureFn();
+        	}
+
     	}
     },
     

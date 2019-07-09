@@ -74,7 +74,7 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
 	    	{ 
 	    		text: HreRem.i18n('gestores.comboGestores.button.botonAgregar'),
 	    		handler: 'onAgregarGestoresClick',
-	    		bind: { disabled: '{!usuarioGestor.selection}'}
+	    		bind: { disabled: '{!usuarioGestor.selection}' && '{activo.unidadAlquilable}'}
 	    	}
 	    ];
     	

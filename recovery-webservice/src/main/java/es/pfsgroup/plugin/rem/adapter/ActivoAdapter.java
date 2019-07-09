@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -159,14 +160,17 @@ import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivoMatrizPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivoMatriz;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
@@ -197,6 +201,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -269,7 +274,10 @@ public class ActivoAdapter {
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
-
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
+	
 	@Autowired
 	private DownloaderFactoryApi downloaderFactoryApi;
 
@@ -329,7 +337,7 @@ public class ActivoAdapter {
 
 	@Autowired
     private ActivoAgrupacionDao activoAgrupacionDao;
-	
+
 	@Autowired
 	private PresupuestoApi presupuestoManager;
 
@@ -405,7 +413,7 @@ public class ActivoAdapter {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
 		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
-		boolean resultado = true;
+		boolean resultado = false;
 		try {
 
 			if (gestorDocumentalFotos.isActive()) {
@@ -432,6 +440,9 @@ public class ActivoAdapter {
 				}
 			}
 			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
+			if(!Checks.esNulo(dtoFoto.getOrden())) {
+				activoFoto.setOrden(dtoFoto.getOrden());
+			}
 			genericDao.save(ActivoFoto.class, activoFoto);
 
 		} catch (Exception e) {
@@ -670,6 +681,16 @@ public class ActivoAdapter {
 
 		Activo activo = activoApi.get(id);
 		List<DtoActivoCargas> listaDtoCarga = new ArrayList<DtoActivoCargas>();
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+		Activo activoMatriz = null;
+		if (!Checks.esNulo(agrupacion)) {
+			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+		}
+		
+		if (esUA) {
+			activo = activoMatriz;
+		}
 
 		if (activo.getCargas() != null) {
 
@@ -992,14 +1013,15 @@ public class ActivoAdapter {
 			
 				DtoNumPlantas dtoSotano = new DtoNumPlantas();
 				dtoSotano.setNumPlanta(-1L);
-				dtoSotano.setDescripcionPlanta("Planta - 1");
+				dtoSotano.setDescripcionPlanta("Planta -1");
 				dtoSotano.setIdActivo(idActivo);
 				listaPlantas.add(dtoSotano);
 
 			for (int i = 0; i < vivienda.getNumPlantasInter(); i++) {
 				DtoNumPlantas dto = new DtoNumPlantas();
 				dto.setNumPlanta(Long.valueOf(i));
-				dto.setDescripcionPlanta("Planta " + i );
+				if(i==0) dto.setDescripcionPlanta("Planta Baja");
+				else dto.setDescripcionPlanta(i + "ª Planta");
 				dto.setIdActivo(idActivo);
 				listaPlantas.add(dto);
 			}
@@ -1240,7 +1262,20 @@ public class ActivoAdapter {
 	
 
 	public List<DtoActivoCatastro> getListCatastroById(Long id) {
+		
 		Activo activo = activoApi.get(id);
+		// Si es una UA cogemos los datos del activo matriz
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		if(esUA) {
+			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			if (!Checks.esNulo(agrupacion)) {
+				Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+				if (!Checks.esNulo(activoMatriz)) {
+					activo=activoMatriz;
+					}
+			}
+		}
+		//Activo activo = activoApi.get(id);
 		List<DtoActivoCatastro> listaDtoCatastro = new ArrayList<DtoActivoCatastro>();
 
 		if (activo.getInfoAdministrativa() != null && activo.getCatastro() != null) {
@@ -1474,14 +1509,22 @@ public class ActivoAdapter {
 		return genericDao.getListOrdered(ActivoFoto.class, order, filtro);
 
 	}
-
+	
 	public Page getActivos(DtoActivoFilter dtoActivoFiltro) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera))
-			dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				dtoActivoFiltro.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+			}
+		}
+		
 		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
 	}
 
@@ -1672,13 +1715,11 @@ public class ActivoAdapter {
 	}
 
 	public List<DtoListadoTramites> getTramitesActivo(Long idActivo, WebDto webDto) {
-
 		// List<ActivoTramite> tramitesActivo = (List<ActivoTramite>)
 		// activoTramiteApi.getTramitesActivo(idActivo, webDto).getResults();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
-		List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtro);
 		List<DtoListadoTramites> listadoTramitesDto = new ArrayList<DtoListadoTramites>();
-
+		List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtro);
 		for (VBusquedaTramitesActivo tramite : tramitesActivo) {
 			DtoListadoTramites dtoTramite = new DtoListadoTramites();
 			try {
@@ -1691,14 +1732,33 @@ public class ActivoAdapter {
 			}
 			listadoTramitesDto.add(dtoTramite);
 		}
-
+		if (activoDao.isActivoMatriz(idActivo)) {
+			List<DtoListadoTramites> listadoTramitesDtoActivoMatriz = new ArrayList<DtoListadoTramites>();
+			for (DtoListadoTramites tramite : listadoTramitesDto ) {
+				Filter fTramite = genericDao.createFilter(FilterType.EQUALS, "idTramite", tramite.getIdTramite());
+				List<VBusquedaTramitesActivoMatriz> tramiteAM = genericDao.getList(VBusquedaTramitesActivoMatriz.class, fTramite);
+				if (tramiteAM.size() == 1) {
+					listadoTramitesDtoActivoMatriz.add(tramite);
+				}
+			}
+			return listadoTramitesDtoActivoMatriz;
+		}
 		return listadoTramitesDto;
 	}
-
 	public List<DtoPropietario> getListPropietarioById(Long id) {
 
 		Activo activo = activoApi.get(id);
 		List<DtoPropietario> listaDtoPropietarios = new ArrayList<DtoPropietario>();
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+		Activo activoMatriz = null;
+		if (!Checks.esNulo(agrupacion)) {
+			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+		}
+		
+		if (esUA) {
+			activo = activoMatriz;
+		}
 
 		for (int i = 0; i < activo.getPropietariosActivo().size(); i++) {
 			if (activo.getPropietariosActivo() != null && activo.getPropietariosActivo().size() > 0) {
@@ -2192,7 +2252,9 @@ public class ActivoAdapter {
 				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
 				// value);
 
-				beanUtilNotNull.copyProperty(dtoListadoTareas, "codigoTarea",tareaExterna.getTareaProcedimiento().getCodigo());
+				if (!Checks.esNulo(tareaExterna)) {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "codigoTarea",tareaExterna.getTareaProcedimiento().getCodigo());
+				}
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaInicio", tareaActivo.getFechaInicio());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaVenc", tareaActivo.getFechaVenc());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaFin", tareaActivo.getFechaFin());
@@ -2695,7 +2757,29 @@ public class ActivoAdapter {
 	public DtoPage findAllHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dtoPresupuestoFiltro) {
 
 		
+		Activo activo = getActivoById(Long.parseLong(dtoPresupuestoFiltro.getIdActivo()));
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId()).getId())); 
+			dtoPresupuestoFiltro.setIdActivo(Long.toString(activo.getId()));
+			String presupuestoId="";
+			if (!Checks.esNulo(activo.getPresupuesto())) {
+				List<PresupuestoActivo> presupuestos= activo.getPresupuesto();
+				for(PresupuestoActivo presupuesto:presupuestos) {
+					Calendar cal1 = Calendar.getInstance();
+					Calendar cal2 = Calendar.getInstance();
+					cal1.setTime(presupuesto.getFechaAsignacion());
+					cal2.setTime(new Date());
+					if(cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)) {
+						presupuestoId =Long.toString(presupuesto.getId());
+						break;
+					}
+				}
+			}
+			dtoPresupuestoFiltro.setIdPresupuesto(presupuestoId);
+		}
+
 		List<VBusquedaPresupuestosActivo> presupuestosActivo = presupuestoManager.getListHistoricoPresupuestos(dtoPresupuestoFiltro);
+
 		
 		// Gastado + Pendiente de pago
 		DtoActivosTrabajoFilter dtoFilter = new DtoActivosTrabajoFilter();
@@ -2732,12 +2816,28 @@ public class ActivoAdapter {
 
 	// public List<DtoPresupuestoGraficoActivo>
 	// findLastPresupuesto(DtoActivosTrabajoFilter dtoFilter) {
+	@SuppressWarnings("unchecked")
 	public DtoPresupuestoGraficoActivo findLastPresupuesto(DtoActivosTrabajoFilter dtoFilter) {
 
 		DtoPresupuestoGraficoActivo presupuestoGrafico = new DtoPresupuestoGraficoActivo();
 
-		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
+		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy"); 
 		String ejercicioActual = dfAnyo.format(new Date());
+		
+		Activo activo = getActivoById(Long.parseLong(dtoFilter.getIdActivo()));
+		Boolean esMatrizoUA = false;
+		
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			if(!Checks.esNulo(activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId()))){
+				activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivoConFechaBaja(activo.getId()).getId()));
+				esMatrizoUA = true;
+				dtoFilter.setIdActivo(Long.toString(activo.getId()));
+			}
+			
+		}else if(activoDao.isActivoMatriz(activo.getId())) {
+			esMatrizoUA = true;
+		}
+		
 
 		Long idPresupuesto = activoApi.getUltimoHistoricoPresupuesto(Long.parseLong(dtoFilter.getIdActivo()));
 		DtoHistoricoPresupuestosFilter dtoFiltroHistorico = new DtoHistoricoPresupuestosFilter();
@@ -2752,12 +2852,35 @@ public class ActivoAdapter {
 		// presupuestos porque si no sale ordenado, no coge el bueno
 		// esto se hace gracias a calcular el id de presupuesto con el metodo
 		// "getUltimoHistoricoPresupuesto"
+
 		VBusquedaPresupuestosActivo presupuestoActivo = presupuestoManager.getListHistoricoPresupuestos(dtoFiltroHistorico).get(0);
 		// Disponible para ejercicio actual
 		// Se calcula el disponible, el gasto conforme la lógica anterior, pero optimizando costes
 		dtoFilter.setEjercicioPresupuestario(ejercicioActual);
 		List<VBusquedaActivosTrabajoPresupuesto> activosTrabajo = presupuestoManager.getListActivosPresupuesto(dtoFilter);
-		if (!Checks.estaVacio(activosTrabajo)) {
+		
+		
+		if(esMatrizoUA) {
+			Page vista = trabajoApi.getActivoMatrizPresupuesto(dtoFilter);
+			if (vista.getTotalCount() > 0) {
+				
+				List<VBusquedaActivoMatrizPresupuesto>  activosMatriz = (List<VBusquedaActivoMatrizPresupuesto>) vista.getResults();
+				VBusquedaActivoMatrizPresupuesto activoMatriz = activosMatriz.get(0);
+				
+				presupuestoGrafico.setDisponible(activoMatriz.getSaldoDisponible());
+				presupuestoGrafico.setGastado(activoMatriz.getImporteTrabajos());
+				presupuestoGrafico.setDispuesto(activoMatriz.getImporteTrabajosPendientesPago());
+				
+				
+				presupuestoGrafico.setGastado(presupuestoGrafico.getGastado() - presupuestoGrafico.getDispuesto());
+				presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible() + presupuestoGrafico.getDispuesto() + presupuestoGrafico.getGastado());
+				presupuestoGrafico.setDisponiblePorcentaje(Double.valueOf(((presupuestoGrafico.getDisponible() / presupuestoGrafico.getPresupuesto()) * 100)));
+				presupuestoGrafico.setDispuestoPorcentaje(Double.valueOf(((presupuestoGrafico.getDispuesto() / presupuestoGrafico.getPresupuesto()) * 100)));
+				presupuestoGrafico.setGastadoPorcentaje(Double.valueOf(((presupuestoGrafico.getGastado() / presupuestoGrafico.getPresupuesto()) * 100)));
+				presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
+				
+			}
+		}else if (!Checks.estaVacio(activosTrabajo)) {
 			presupuestoGrafico.setDisponible(new Double(activosTrabajo.get(0).getSaldoDisponible()));
 			presupuestoGrafico.setGastado(new Double(0));
 			presupuestoGrafico.setDispuesto(new Double(0));
@@ -2804,7 +2927,8 @@ public class ActivoAdapter {
 			presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible());
 
 		}
-
+			
+		
 		return presupuestoGrafico;
 
 	}
@@ -2813,33 +2937,36 @@ public class ActivoAdapter {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "presupuestoActivo.id", idPresupuesto);
 		Order order = new Order(OrderType.DESC, "fechaAprobacion");
-
-		List<IncrementoPresupuesto> listaPresupuestos = genericDao.getListOrdered(IncrementoPresupuesto.class, order,
-				filtro);
 		List<DtoIncrementoPresupuestoActivo> listaDto = new ArrayList<DtoIncrementoPresupuestoActivo>();
-
-		for (int i = 0; i < listaPresupuestos.size(); i++) {
-			DtoIncrementoPresupuestoActivo dtoPresupuesto = new DtoIncrementoPresupuestoActivo();
-
-			try {
-
-				IncrementoPresupuesto incrementoPresupuesto = listaPresupuestos.get(i);
-				BeanUtils.copyProperties(dtoPresupuesto, incrementoPresupuesto);
-
-				beanUtilNotNull.copyProperty(dtoPresupuesto, "presupuestoActivoImporte",
-						incrementoPresupuesto.getPresupuestoActivo().getImporteInicial());
-				if (incrementoPresupuesto.getTrabajo() != null) {
-					beanUtilNotNull.copyProperty(dtoPresupuesto, "codigoTrabajo",
-							incrementoPresupuesto.getTrabajo().getNumTrabajo());
+		
+		if(!Checks.esNulo(idPresupuesto)) {
+			List<IncrementoPresupuesto> listaPresupuestos = genericDao.getListOrdered(IncrementoPresupuesto.class, order,
+					filtro);
+			
+	
+			for (int i = 0; i < listaPresupuestos.size(); i++) {
+				DtoIncrementoPresupuestoActivo dtoPresupuesto = new DtoIncrementoPresupuestoActivo();
+	
+				try {
+	
+					IncrementoPresupuesto incrementoPresupuesto = listaPresupuestos.get(i);
+					BeanUtils.copyProperties(dtoPresupuesto, incrementoPresupuesto);
+	
+					beanUtilNotNull.copyProperty(dtoPresupuesto, "presupuestoActivoImporte",
+							incrementoPresupuesto.getPresupuestoActivo().getImporteInicial());
+					if (incrementoPresupuesto.getTrabajo() != null) {
+						beanUtilNotNull.copyProperty(dtoPresupuesto, "codigoTrabajo",
+								incrementoPresupuesto.getTrabajo().getNumTrabajo());
+					}
+	
+				} catch (IllegalAccessException e) {
+					logger.error("Error en ActivoAdapter", e);
+				} catch (InvocationTargetException e) {
+					logger.error("Error en ActivoAdapter", e);
 				}
-
-			} catch (IllegalAccessException e) {
-				logger.error("Error en ActivoAdapter", e);
-			} catch (InvocationTargetException e) {
-				logger.error("Error en ActivoAdapter", e);
+	
+				listaDto.add(dtoPresupuesto);
 			}
-
-			listaDto.add(dtoPresupuesto);
 		}
 
 		return listaDto;
@@ -2906,19 +3033,23 @@ public class ActivoAdapter {
 	public boolean guardarCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
-		
-		if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+		boolean success = false;
+		if(Checks.esNulo(dto) || (Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad))) {
+			success = false;
+		}else if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad))) {
+			success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
+			activoApi.updateCondicionantesDisponibilidad(idActivo);
+		}else if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
 				|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))
 			    || (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
-			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
+			success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
 			activoApi.updateCondicionantesDisponibilidad(idActivo);
-			if (success)
+		}
+			if (success) {
 				actualizarEstadoPublicacionActivo(idActivo);
+			}
 
 			return success;
-		}else {
-			return false;
-		}
 	}
 
 	@Transactional(readOnly = false)
@@ -4105,6 +4236,11 @@ public class ActivoAdapter {
 					}
 
 					activoApi.saveOrUpdate(activo);
+					
+					if (!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
+							&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+						activoApi.calcularRatingActivo(activo.getId());
+					}
 
 					aprobado = publicarActivoConHistorico(username, activo);
 					if (aprobado) {
@@ -4237,6 +4373,23 @@ public class ActivoAdapter {
 				}
 			}
 		}
+	}
+
+	public List<DDTipoTituloActivo> getOrigenActivo(Long id) {
+		List<DDTipoTituloActivo>  StoreOrigenActivos = null;
+		if (!Checks.esNulo(id)) {
+			StoreOrigenActivos = genericDao.getList(DDTipoTituloActivo.class);
+				if (!activoDao.isUnidadAlquilable(id)) {
+					DDTipoTituloActivo unidadAlquilable =
+							(DDTipoTituloActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, DDTipoTituloActivo.UNIDAD_ALQUILABLE);
+						StoreOrigenActivos.remove(unidadAlquilable);
+				}
+		}		
+		return StoreOrigenActivos;
+	}
+	
+	public boolean isUnidadAlquilable (Long idActivo) {
+		return activoDao.isUnidadAlquilable(idActivo);
 	}
 
 }

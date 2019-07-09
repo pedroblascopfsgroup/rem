@@ -1,16 +1,20 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190508
+--## AUTOR=Guillermo Llidó Parra
+--## FECHA_CREACION=20190703
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6379
+--## INCIDENCIA_LINK=REMVIP-4472
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Cambio obtener id-activo de la unidad alquilable
+--##		0.3 Añadimos el numero de activo UA
+--##        0.4 Deshacemos cambios de 0.2 y 0.3
+--##		0.5 Añadimos la subcartera
 --##########################################
 --*/
 
@@ -82,16 +86,18 @@ BEGIN
 			bieloc.bie_loc_cod_post AS codpostal, 
 			act.act_num_activo AS numactivo,
           	agr.agr_num_agrup_rem AS numagrupacion, 
-			cra.dd_cra_codigo AS cartera, 
+			cra.dd_cra_codigo AS cartera,
+			scr.dd_scr_codigo AS subcartera,
 			usu.usu_username AS gestor_activo, 
 			DECODE (tbj.tbj_fecha_cierre_economico, NULL, 0, 1) AS con_cierre_economico,
           	tbj.tbj_fecha_cierre_economico, 
 			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, DECODE(tbj.TBJ_IMPORTE_TOTAL, NULL, 1, 0, 1, 0), 1) AS facturado, 
 			ttr.dd_ttr_filtrar
+			
 
-     FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj JOIN ' || V_ESQUEMA || '.act_tbj atj ON atj.tbj_id = tbj.tbj_id
+     	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj JOIN ' || V_ESQUEMA || '.act_tbj atj ON atj.tbj_id = tbj.tbj_id
           LEFT JOIN ' || V_ESQUEMA || '.act_activo act ON act.act_id = atj.act_id and act.borrado = 0
-		LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
+		  LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
           LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr ON agr.agr_id = tbj.agr_id and agr.borrado = 0
           LEFT JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac ON gac.act_id = act.act_id
           LEFT JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee ON gac.gee_id = gee.gee_id
@@ -105,6 +111,7 @@ BEGIN
           LEFT JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str ON str.dd_str_id = tbj.dd_str_id
           LEFT JOIN ' || V_ESQUEMA || '.dd_est_estado_trabajo est ON tbj.dd_est_id = est.dd_est_id
           INNER JOIN ' || V_ESQUEMA || '.dd_cra_cartera cra ON cra.dd_cra_id = act.dd_cra_id
+          INNER JOIN ' || V_ESQUEMA || '.dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id
           LEFT JOIN ' || V_ESQUEMA || '.act_pvc_proveedor_contacto pvc ON pvc.pvc_id = tbj.pvc_id
           LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve ON pve.pve_id = pvc.pve_id
           LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 ON pve2.pve_id = tbj.mediador_id

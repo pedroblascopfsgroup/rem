@@ -25,7 +25,7 @@ public class DtoVisitasFilter extends WebDto {
 	private Date fechaVisita;
 	private String estadoVisita;
 	private String carteraCodigo;
-	
+	private String subcarteraCodigo;
 
 	public Long getNumVisitaRem() {
 		return numVisitaRem;
@@ -98,5 +98,11 @@ public class DtoVisitasFilter extends WebDto {
 	}
 	public void setCarteraCodigo(String carteraCodigo) {
 		this.carteraCodigo = carteraCodigo;
+	}
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
 	}	
 }

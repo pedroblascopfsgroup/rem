@@ -54,12 +54,12 @@ def deployFrontal(String host, int port) {
             echo "Subiendo CONFIGURACION..."
             sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -port:"+port+" -cliente:rem -componente:config"
             echo "Desplegando ONLINE..."
-            sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -port:"+port+" -cliente:rem -componente:online -deploy:true"
+            sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -port:"+port+" -cliente:rem -componente:online -entorno:${entorno} -deploy:true"
         }
     }
 }
 
-def deploySpringBatch(String host, int port) {
+/*def deploySpringBatch(String host, int port) {
     dir ('.entregable') {
         if (fileExists('spring-batch.zip')) {
             echo "Subiendo CONFIGURACION..."
@@ -68,7 +68,7 @@ def deploySpringBatch(String host, int port) {
             sh script: "bash ../proyecto-rem-online/dev-ops/common-upload-SSH.sh -host:"+host+" -port:"+port+" -cliente:ren -componente:spring-batch -deploy:true"
         }
     }
-}
+}*/
 
 def deployProcesos(String host, int port) {
     dir ('.entregable') {
@@ -91,7 +91,7 @@ def deployPitertul(String host, int port) {
 
                 withCredentials([string(credentialsId: 'password-BBDD-val03', variable: 'PASSWORD')]) {
                     echo "Running scripts [${entorno}]... DEFECTO - ejecutamos script de todo"
-                    sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xbi:si -Xgrants:si -Pmaster:"AOk$M{~2" -Pentity01:"AOk$M{~2" -Pdwh:"AOk$M{~2" -Psystempfs:admin\""
+                    sh script: "ssh -o StrictHostKeyChecking=no "+host+" \"cd deploy/rem/${entorno}/pitertul;bash ./deploy-pitertul.sh -entorno:${entorno} -Xapp:si -Xbi:si -Xgrants:si -Pmaster:\"${PASSWORD}\" -Pentity01:\"${PASSWORD}\" -Psystempfs:admin\""
                 }
 
             }
@@ -116,16 +116,18 @@ pipeline {
      }
 
     stages {
+
         stage("Setup") {
+        	when { environment name: 'MAVEN', value: 'true' }
             steps {
                 echo """PARAMETROS: tagReferencia: ${env.tagReferencia}
                     tag/version/rama: ${env.version}
                     hito Link: ${env.hito}
                     entorno: ${entorno}
-		    maven: ${MAVEN}
-		    scripts: ${SCRIPTS}
-		    web: ${WEB}
-		    etl: ${ETL}
+		    		maven: ${MAVEN}
+		    		scripts: ${SCRIPTS}
+		    		web: ${WEB}
+		    		etl: ${ETL}
                     """
 		
                 // Esto es necesario porque sino no descarga bien los módulos
@@ -137,17 +139,17 @@ pipeline {
                 
                 echo "Comprueba formato y codificación ficheros"
                 sh script: "bash ./proyecto-rem-online/dev-ops/common-check-file-format.sh ${GIT_USER}"
-                /*script {
+                script {
                     env.GIT_COMMIT = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%H'").trim()
                     echo "Posicionados en commit: ${GIT_COMMIT}"
-                }*/
-
+                }
+                
                 echo "Fusiona versiones de BPMS"
                 sh script: "if [[ -f dev-ops/bpms/fusionar-properties-xmls.sh ]] && [[ -f dev-ops/bpms/versiones-bpms.txt ]] ; then bash ./dev-ops/bpms/fusionar-properties-xmls.sh ./dev-ops/bpms/versiones-bpms.txt ; fi"
-
             }
         }
 		stage('Build') {
+			when { environment name: 'MAVEN', value: 'true' }
 		    steps {
 		        withMaven(
 		            mavenSettingsConfig: 'pfs-recovery-settings.xml'
@@ -169,19 +171,19 @@ pipeline {
 
         stage('Package') {
             steps {
-                parallel (
+            	parallel (
                     "package-config" : { 
                         sh script: "bash ./proyecto-rem-online/dev-ops/package-config.sh -out-dir:${DIR_SALIDA} -entorno:${entorno}"
                     }, "package-pitertul" : {
-                        sh script: "bash ./proyecto-rem-online/dev-ops/package-pitertul.sh -tagAnterior:${tagReferencia} -out-dir:${DIR_SALIDA} -entornos:${entorno}"
-                    }, "package-online" : {
-                        sh script: "bash ./proyecto-rem-online/dev-ops/package-online.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
+                        sh script: "if [[ ${SCRIPTS} = true ]] ; then bash ./proyecto-rem-online/dev-ops/package-pitertul.sh -tagAnterior:${tagReferencia} -out-dir:${DIR_SALIDA} -entornos:${entorno} ; fi"
+                    },"package-online" : {
+                        sh script: "if [[ ${WEB} = true ]] ; then bash ./proyecto-rem-online/dev-ops/package-online.sh -version:${version} -out-dir:${DIR_SALIDA} -entorno:${entorno} ; fi"
                     }, "package-procesos" : {
                         withCredentials([usernameColonPassword(credentialsId: 'jenkins@pfsgroup.es', variable: 'USERPASS')]) {
-                            sh script: "bash ./proyecto-rem-online/dev-ops/package-procesos.sh -UPnexus:${env.USERPASS} -out-dir:${DIR_SALIDA} -entorno:${entorno}"
-                        }
+                            sh script: "if [[ ${ETL} = true ]] ; then bash ./proyecto-rem-online/dev-ops/package-procesos.sh -UPnexus:${env.USERPASS} -out-dir:${DIR_SALIDA} -entorno:${entorno} ; fi"
+                    	}
                     }
-                );
+                )
             }
         }
 
@@ -211,10 +213,10 @@ pipeline {
     }
     post { 
         failure { 
-            notifyEmail(true)
+            notifyEmail(false)
         }
         unstable { 
-            notifyEmail(true)
+            notifyEmail(false)
         }
     }
 

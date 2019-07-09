@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina Garrido
---## FECHA_CREACION=20190521
+--## AUTOR=RLB
+--## FECHA_CREACION=20190702
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4259
+--## INCIDENCIA_LINK=REMVIP-4606
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -30,6 +30,7 @@
 --##		0.17 REMVIP-4233 - Se corrige el join con la ACT_ABA ya que hay activos que no aparecen en esta.
 --##        0.18 David Gonzalez - HREOS-6184 - Ajustes joins
 --##        0.19 Adrián Molina - REMVIP-4259 - Se añade la columna del combo otros
+--##        0.20 GUILLEM REY - REMVIP-4606 - Discleimer "Ocupado con título" para Activos Matrices
 --##########################################
 --*/
 
@@ -100,7 +101,7 @@ AS
 							ELSE 0 
 						END 
                 END AS sin_toma_posesion_inicial,        
-                CASE WHEN (sps1.sps_ocupado = 1 AND TPA.DD_TPA_CODIGO = ''01'') THEN 1 ELSE 0 END AS ocupado_contitulo,
+                CASE WHEN (sps1.sps_ocupado = 1 AND TPA.DD_TPA_CODIGO = ''01'' OR ua.act_id is not null) THEN 1 ELSE 0 END AS ocupado_contitulo,
                 NVL2 (tit.act_id, 0, 1) AS pendiente_inscripcion,
                 NVL2 (npa.act_id, 1, 0) AS proindiviso,
                 CASE WHEN sps1.sps_acc_tapiado = 1 THEN 1 ELSE 0 END AS tapiado, 
@@ -152,7 +153,16 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id                  
 				  LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS1.DD_TPA_ID
 				  LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA sij on  sij.dd_sij_id =sps1.dd_sij_id                   
-
+				  LEFT JOIN (select  aga.act_id 
+                      from '||V_ESQUEMA||'.act_aga_agrupacion_activo aga
+                      where AGA.AGA_PRINCIPAL = 1 AND EXISTS
+                       (
+                         select aga2.agr_id from '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO aga2
+                         inner join '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA sps on sps.act_id = aga2.act_id
+                         inner join '||V_ESQUEMA||'.ACT_AGR_AGRUPACION agr on aga2.agr_id = agr.agr_id
+                         inner join '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION tag1 on tag1.dd_tag_id = agr.dd_tag_id 
+                         where TAG1.DD_TAG_CODIGO = ''16'' and SPS.DD_TPA_ID = 1 AND aga.AGA_ID = aga2.AGA_ID
+                        )) ua on ua.act_id = act.act_id
 				  LEFT JOIN
                   (SELECT act_tit.act_id
                      FROM '||V_ESQUEMA||'.act_reg_info_registral act_reg 

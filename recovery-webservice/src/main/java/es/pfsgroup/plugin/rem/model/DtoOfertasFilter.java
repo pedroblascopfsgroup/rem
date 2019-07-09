@@ -54,7 +54,7 @@ public class DtoOfertasFilter extends WebDto {
 	private String codigoSucursal;
 	private String tipoSucursal;
 	private String carteraCodigo;
-	private String gestoria;
+	private Long gestoria;
 	private String tipoPersona;
 	private String estadoCivil;
 	private String regimenMatrimonial;
@@ -299,10 +299,10 @@ public class DtoOfertasFilter extends WebDto {
 	public void setDocumentoOfertante(String documentoOfertante) {
 		this.documentoOfertante = documentoOfertante;
 	}
-	public String getGestoria() {
+	public Long getGestoria() {
 		return gestoria;
 	}
-	public void setGestoria(String codGestoria) {
+	public void setGestoria(Long codGestoria) {
 		this.gestoria = codGestoria;
 	}
 	public String getCodigoPromocionPrinex() {

@@ -47,6 +47,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -114,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -180,13 +182,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private ProvisionGastosDao provisionGastosDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	@Override
 	public GastoProveedor findOne(Long id) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-
-		return genericDao.get(GastoProveedor.class, filtro);
+		
+		return genericDao.get(GastoProveedor.class, filtro );
 	}
 
 	@Override
@@ -230,8 +235,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		// HREOS-2179 - Búsqueda carterizada
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				dtoGastosFilter.setSubentidadPropietariaCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+			}
 		}
 		
 		
@@ -256,8 +266,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		// HREOS-2179 - Búsqueda carterizada
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				dtoGastosFilter.setSubentidadPropietariaCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+			}
 		}
 		
 		
@@ -716,16 +731,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateGastoByPrinexLBK(String idGasto) {
-		Long idGastoLong = Long.valueOf(idGasto);
+	public boolean updateGastoByPrinexLBK(Long idGasto) {
 		Double gastoTotal = 0.0;
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGastoLong);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 		GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, filtro);
 
 		if (!Checks.esNulo(detalleGasto)) {
 			if(!Checks.esNulo(detalleGasto.getGastoProveedor())) {
 				List<GastoPrinex> listGastoPrinex = new ArrayList<GastoPrinex>();
-				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",idGastoLong);
+				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",idGasto);
 				listGastoPrinex = genericDao.getList(GastoPrinex.class, filtro3);
 				if(!Checks.estaVacio(listGastoPrinex)) {
 					
@@ -742,7 +756,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						if(!Checks.esNulo(gastoPrinexListActivos.getIdActivo())) {
 							GastoProveedorActivo gastoProveedorActivos = new GastoProveedorActivo();
 							
-							Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id",idGastoLong);
+							Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id",idGasto);
 							Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "activo.id",gastoPrinexListActivos.getIdActivo());
 
 							gastoProveedorActivos = genericDao.get(GastoProveedorActivo.class, filtro2,filtro4);
@@ -762,7 +776,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				}
 				GastoProveedor gasto = new GastoProveedor();
-				gasto = gastoDao.getGastoById(idGastoLong);
+				gasto = gastoDao.getGastoById(idGasto);
 				if(!Checks.esNulo(gasto)) {
 					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
 					this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
@@ -1169,10 +1183,25 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	public List<VBusquedaGastoActivo> getListActivosGastos(Long idGasto) {
 
-		List<VBusquedaGastoActivo> gastosActivos = new ArrayList<VBusquedaGastoActivo>();
+		List<VBusquedaGastoActivo> gastosActivos;
+		List<GastoProveedorTrabajo> gastosTrabajosActivos;
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto);
 		gastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtro);
+		Filter filtroGastosTrabajos = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+		gastosTrabajosActivos = genericDao.getList(GastoProveedorTrabajo.class, filtroGastosTrabajos);
+		for (VBusquedaGastoActivo vBusquedaGastoActivo : gastosActivos) {
+			for (GastoProveedorTrabajo gastoProveedorTrabajo : gastosTrabajosActivos) {
+				Activo activo = gastoProveedorTrabajo.getTrabajo().getActivo();
+				if (!Checks.esNulo(activo) && activoDao.isUnidadAlquilable(activo.getId()) && activoDao.isActivoMatriz(vBusquedaGastoActivo.getIdActivo())) {
+					Long idAM = activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId());
+					if (vBusquedaGastoActivo.getIdActivo().equals(idAM)) {
+						vBusquedaGastoActivo.setIdActivo(activo.getId());
+						vBusquedaGastoActivo.setNumActivo(activo.getNumActivo());
+					}
+				}
+			}
+		}
 
 		return gastosActivos;
 	}
@@ -2855,7 +2884,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtroEjercicioCuentaContable= genericDao.createFilter(FilterType.EQUALS, "ejercicio.id", ejercicio.getId());
 			Filter filtroSubtipoGasto= genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", gasto.getSubtipoGasto().getId());
 			Filter filtroCartera= genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
-			Filter filtroSubcartera= genericDao.createFilter(FilterType.EQUALS, "subcartera.id", gasto.getSubcartera().getId());
+			Filter filtroSubcartera = null;
+			if(!Checks.esNulo(gasto.getSubcartera())) {
+				filtroSubcartera= genericDao.createFilter(FilterType.EQUALS, "subcartera.id", gasto.getSubcartera().getId());
+			}
 			Filter filtroSubcarteraNull= genericDao.createFilter(FilterType.NULL, "subcartera.id");
 			Filter filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 1);
 			Filter filtroCuentaNoArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 0);
@@ -2863,8 +2895,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			todosActivoAlquilados = estanTodosActivosAlquilados(gasto);
 				
 				//Obtener la configuracion de la Partida Presupuestaria a nivel de subcartera
-				ConfigPdaPresupuestaria partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado);
-				ConfigPdaPresupuestaria partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,filtroBorrado);
+				ConfigPdaPresupuestaria partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento,filtroBorrado);
+				ConfigPdaPresupuestaria partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento,filtroBorrado);
+				
+				if(!Checks.esNulo(gasto.getSubcartera())) {
+					partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado);
+					partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,filtroBorrado);
+				}
 				
 				if(!Checks.esNulo(partidaArrendada) || !Checks.esNulo(partidaNoArrendada)){
 					if(!todosActivoAlquilados){
@@ -2900,8 +2937,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				}
 				//Obtener la configuracion de la Cuenta Contable a nivel de subcartera
-				ConfigCuentaContable cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado);
-				ConfigCuentaContable cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,filtroBorrado);
+				ConfigCuentaContable cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento,filtroBorrado);
+				ConfigCuentaContable cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento,filtroBorrado);
+				
+				if(!Checks.esNulo(gasto.getSubcartera())) {
+					cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado);
+					cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,filtroBorrado);
+				}
 				
 				if(!Checks.esNulo(cuentaArrendada) || !Checks.esNulo(cuentaNoArrendada)){
 					if(!todosActivoAlquilados){

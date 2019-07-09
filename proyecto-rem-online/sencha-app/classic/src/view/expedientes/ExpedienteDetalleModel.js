@@ -54,6 +54,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
         		return 'resources/images/'+src;	     
         	} 
 	     },
+	     isEmptySrcCartera: function(get) {
+	     	var cartera = get('expediente.entidadPropietariaDescripcion');
+	     	var src=null;
+	     	if(!Ext.isEmpty(cartera)) {
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
+	     	}
+        	if(Ext.isEmpty(src)) {
+        		return 	true;
+        	}else {
+        		return false;	     
+        	}     	
+	     	
+	     },
 	     
 	     esCarteraBankia: function(get) {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');

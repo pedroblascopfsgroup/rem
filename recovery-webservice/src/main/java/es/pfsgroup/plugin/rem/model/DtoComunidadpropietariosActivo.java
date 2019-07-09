@@ -23,7 +23,7 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	private Date fechaEnvioCarta;
 	private String situacionDescripcion;
 	private String situacionCodigo;
-	
+	private Boolean unidadAlquilable;
 	
 
 	public Date getFechaComunicacionComunidad() {
@@ -91,6 +91,12 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	}
 	public void setSituacionCodigo(String situacionCodigo) {
 		this.situacionCodigo = situacionCodigo;
+	}
+	public Boolean getUnidadAlquilable() {
+		return unidadAlquilable;
+	}
+	public void setUnidadAlquilable(Boolean unidadAlquilable) {
+		this.unidadAlquilable = unidadAlquilable;
 	}
 	
 	

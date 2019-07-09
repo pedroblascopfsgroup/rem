@@ -155,8 +155,13 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		// HREOS-2179 - Búsqueda carterizada
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			dtoProveedorFiltro.setCartera(usuarioCartera.getCartera().getCodigo());
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoProveedorFiltro.setCartera(usuarioCartera.getCartera().getCodigo());
+				dtoProveedorFiltro.setSubCartera(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoProveedorFiltro.setCartera(usuarioCartera.getCartera().getCodigo());
+			}
 		}
 		
 		return proveedoresDao.getProveedoresList(dtoProveedorFiltro, usuarioLogado, esProveedor, esGestoria, esExterno);
@@ -289,7 +294,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 		//Transforma la lista de la vista en una lista de proveedores
 		for(VBusquedaProveedoresActivo proveedorVB : listadoVBProveedores){
-			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "id", proveedorVB.getId());
+			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "id", proveedorVB.getIdFalso().getId());
 			listaProveedores.add(genericDao.get(ActivoProveedor.class, filtroProveedor));
 		}
 		

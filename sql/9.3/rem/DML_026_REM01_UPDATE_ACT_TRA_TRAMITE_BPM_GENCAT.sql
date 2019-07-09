@@ -1,0 +1,103 @@
+--/*
+--##########################################
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20190612
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-4443
+--## PRODUCTO=NO
+--##
+--## Finalidad: update ACT_TRA_TRAMITE y TEX_TAREA_EXTERNA quitar id bpm de las tareas de los trámites de venta de gencat
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Version inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla. 
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    table_count number(3); -- Vble. para validar la existencia de las Tablas.
+	V_ID NUMBER(16);
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+
+BEGIN
+
+    --DBMS_OUTPUT.PUT_LINE('COMENZANDO EL PROCESO DE ACTUALIZACIÓN');
+	EXECUTE IMMEDIATE 'MERGE
+						INTO '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX
+						USING (
+						        SELECT DISTINCT TEX.TEX_ID
+								FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
+								INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+								INNER JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON ECO.TBJ_ID = TRA.TBJ_ID AND TRA.BORRADO = 0
+								INNER JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID = TRA.TRA_ID AND TAC.BORRADO = 0
+								INNER JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TAC.TAR_ID AND TEX.BORRADO = 0
+								INNER JOIN '||V_ESQUEMA||'.VI_ACTIVOS_AFECTOS_GENCAT ACT ON ACT.ACT_ID = TAC.ACT_ID
+								LEFT JOIN '||V_ESQUEMA||'.ACT_OFG_OFERTA_GENCAT OFG ON OFG.OFR_ID = OFR.OFR_ID
+								WHERE OFG.OFR_ID IS NULL
+								   AND OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
+								   AND ECO.ECO_FECHA_ALTA < TO_DATE(''2019-05-04'', ''YYYY-MM-DD'')
+								   AND ECO.DD_EEC_ID NOT IN (SELECT DD_EEC_ID 
+																FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL 
+																WHERE DD_EEC_CODIGO IN (''02'',''03'',''08'',''12'',''16''))
+								   AND TRA.DD_TPO_ID = (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''T013'')
+								   AND OFR.BORRADO = 0
+						        ) SRC
+						ON (TEX.TEX_ID = SRC.TEX_ID)
+						WHEN MATCHED THEN UPDATE
+						SET TEX.TEX_TOKEN_ID_BPM = NULL, USUARIOMODIFICAR = ''REMVIP-4443'', FECHAMODIFICAR = SYSDATE';
+						    
+	EXECUTE IMMEDIATE 'MERGE
+						INTO '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA
+						USING (
+						        SELECT DISTINCT TRA.TRA_ID
+								FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
+								INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID AND ECO.BORRADO = 0
+								INNER JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON ECO.TBJ_ID = TRA.TBJ_ID AND TRA.BORRADO = 0
+								INNER JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID = TRA.TRA_ID AND TAC.BORRADO = 0
+								INNER JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TAC.TAR_ID AND TEX.BORRADO = 0
+								INNER JOIN '||V_ESQUEMA||'.VI_ACTIVOS_AFECTOS_GENCAT ACT ON ACT.ACT_ID = TAC.ACT_ID
+								LEFT JOIN '||V_ESQUEMA||'.ACT_OFG_OFERTA_GENCAT OFG ON OFG.OFR_ID = OFR.OFR_ID
+								WHERE OFG.OFR_ID IS NULL
+								   AND OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
+								   AND ECO.ECO_FECHA_ALTA < TO_DATE(''2019-05-04'', ''YYYY-MM-DD'')
+								   AND ECO.DD_EEC_ID NOT IN (SELECT DD_EEC_ID 
+																FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL 
+																WHERE DD_EEC_CODIGO IN (''02'',''03'',''08'',''12'',''16''))
+								   AND TRA.DD_TPO_ID = (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''T013'')
+								   AND OFR.BORRADO = 0
+						        ) SRC
+						ON (TRA.TRA_ID = SRC.TRA_ID)
+						WHEN MATCHED THEN UPDATE
+						SET TRA.TRA_PROCESS_BPM = NULL, USUARIOMODIFICAR = ''REMVIP-4443'', FECHAMODIFICAR = SYSDATE';
+						
+	ALTA_BPM_INSTANCES('REMVIP-4443', PL_OUTPUT);
+    
+    COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

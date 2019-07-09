@@ -247,14 +247,61 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										bind: '{activo.numActivo}'
 									},
 									{
+										fieldLabel: HreRem.i18n('fieldlabel.activo.unidades.Alquilables'),
+										reference: 'numUnidadesAlquilablesRef', 
+										cls: 'cabecera-info-field',
+										bind: { 
+											hidden: '{!activo.activoMatriz}',
+											value: '{activo.unidadesAlquilablesEnAgrupacion}'
+										}
+									},
+									{	
+										xtype: 'textfieldbase',
+										readOnly: true,
+										fieldLabel: HreRem.i18n('fieldlabel.activo.matriz'),
+										reference: 'activoMatrizRef',
+										bind: {
+											hidden: '{!activo.unidadAlquilable}',
+											value: '{activo.numActivoMatriz}'
+										},
+										cls: 'show-text-as-link',
+										listeners: {
+									        click: {
+									            element: 'el', //bind to the underlying el property on the panel
+									            fn:'onClickActivoMatriz'									       
+									        }
+										}
+									},
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.activo.UA.participacion'), 
+									reference: 'porcentajeParticipacionUaRef',
+									cls: 'cabecera-info-field',
+									bind: {
+										hidden: '{!activo.unidadAlquilable}',
+										value: '{activo.porcentajeParticipacion} %'
+									}
+									},
+									{
 										xtype: 'imagefield',
 										fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 										cls: 'cabecera-info-field',
 										width: 70,
 										bind: {
+											hidden:'{isEmptySrcCartera}',
 											src: '{getSrcCartera}',
-											alt: '{activo.entidadPropietariaDescripcion}'
+											alt: '{isEmptySrcCartera}'
 										}
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+										cls: 'cabecera-info-field',
+										fieldStyle: 'color: #0a94d6 !important;font-weight: bold !important',
+										width: 70,
+										bind: {
+											hidden:'{!isEmptySrcCartera}',
+											value: '{activo.entidadPropietariaDescripcion}'
+										}
+										
 									},
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.tipo'),
@@ -361,8 +408,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 		me.down('botonfavorito').setOpenId(data.get("id"));
 
 		me.gmap.configurarMapa(latitud, longitud, token, title);
-
-		//me.down('[tipo=panelgmap]').add(me.gmap);
+		
 		me.down('[tipo=panelgmap]').setHtml("<img style= 'width: 225px; height: 125px;' alt= 'Imagen de relleno de google maps' src='resources/images/imagenPrecargaMapa.jpg' />");
 	}
 });

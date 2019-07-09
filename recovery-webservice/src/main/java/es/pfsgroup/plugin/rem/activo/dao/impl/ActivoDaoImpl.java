@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -32,15 +35,18 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -51,12 +57,15 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
 
 @Repository("ActivoDao")
@@ -64,6 +73,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	private static final String REST_USER_USERNAME = "REST-USER";
 	private static final String REST_USER_HDC_NAME = "Proceso Excel Masivo";
+	
+	@Resource
+	private MessageService messageServices;
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
@@ -73,6 +85,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Autowired
 	private GenericAdapter adapter;
+	
+	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
+	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 
 	@Override
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
@@ -82,11 +97,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
 		if (dto.getEntidadPropietariaCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(),
-					true);
+			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(),true);
 
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(),
-				true);
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(),true);
 
 		if (dto.getTipoTituloActivoCodigo() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
@@ -460,23 +473,23 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			return null;
 		}
 	}
+    
+    @Override
+   	public Long getUltimoHistoricoPresupuesto(Long id) {
+       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
+       			+ " where presupuesto.activo.id = " + id 
+       			+ " order by presupuesto.ejercicio.anyo desc ");
 
-	@Override
-	public Long getUltimoHistoricoPresupuesto(Long id) {
-		HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
-				+ " where presupuesto.activo.id = " + id + " order by presupuesto.ejercicio.anyo desc ");
-
-		try {
-			if (getHibernateTemplate().find(hb.toString()).size() > 0)
-				return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
-			else
-				return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
+       	try {
+       		if (getHibernateTemplate().find(hb.toString()).size() > 0)
+	       		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+       		else return null;
+       	} catch (Exception e) {
+       		e.printStackTrace();
+       		return null;
+       	}
+   	}
+ 
 	@Override
 	public Page getListActivosPrecios(DtoActivoFilter dto) {
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosPrecios act");
@@ -677,6 +690,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.tipoActivoCodigo", dto.getTipoActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subtipoActivoCodigo", dto.getSubtipoActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.cartera", dto.getCartera());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subCartera", dto.getSubCartera());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.estadoPublicacionCodigo",
 				dto.getEstadoPublicacionCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.admision", dto.getAdmision());
@@ -1268,5 +1282,290 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				 return false;
 		}
 	}
+	
+	@Override 
+	public ActivoAgrupacion getAgrupacionPAByIdActivo(Long idActivo) {
 
+		HQLBuilder hb = new HQLBuilder("select act.agrupacion	 from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+
+		List<ActivoAgrupacion> lista = getHibernateTemplate().find(hb.toString());
+		
+		if (!Checks.estaVacio(lista)) {
+			return lista.get(0);
+		} else {
+			return null;
+		}
+	}
+	
+	@Override 
+	public ActivoAgrupacion getAgrupacionPAByIdActivoConFechaBaja(Long idActivo) {
+
+		HQLBuilder hb = new HQLBuilder("select act.agrupacion	 from ActivoAgrupacionActivo act where act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+
+		List<ActivoAgrupacion> lista = getHibernateTemplate().find(hb.toString());
+		
+		if (!Checks.estaVacio(lista)) {
+			return lista.get(0);
+		} else {
+			return null;
+		}
+	}
+	
+//	@Override
+//	public boolean isAgrupacionDadaDeBaja(Long idActivo) {
+//		
+//	}
+
+	@Override
+	public boolean isIntegradoEnAgrupacionPA(Long idActivo) {
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+
+   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
+	}
+	
+	@Override
+	public boolean isActivoMatriz(Long idActivo) {  
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.activo.id = " + idActivo 
+				+ " and aga.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER 
+				+ " and aga.principal = 1");
+
+   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
+	}
+    @Override
+    public Long getIdActivoMatriz (Long idAgrupacion) {
+    	
+    	String sql = "SELECT aga.ACT_ID "
+    			+"FROM ACT_AGA_AGRUPACION_ACTIVO aga " 
+    			+"WHERE aga.AGA_PRINCIPAL = 1 " 
+    			+"AND aga.AGR_ID  = "+ idAgrupacion; 
+    	
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();  
+		}
+		return null; 
+    }
+	@Override
+	public boolean isUnidadAlquilable(Long idActivo) {
+		boolean isUnidadAlquilable = false;
+		if (!Checks.esNulo(idActivo)) {
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+			Activo activo = genericDao.get(Activo.class, filtroActivo);
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
+				isUnidadAlquilable = true; 
+			}
+		}
+		
+		return isUnidadAlquilable;
+	}
+	
+	@Override
+	public Long countUAsByIdAgrupacionPA( Long idAgrupacion) { 
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.agrupacion.id = " + idAgrupacion
+				+" and aga.principal = 0"
+				+ " and aga.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+
+   		return (long) ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+	}
+	
+	@Override
+	public boolean isAgrupacionPromocionAlquiler (Long idAgrupacion ) {
+		HQLBuilder hb = new HQLBuilder ( "SELECT  count (*) FROM ActivoAgrupacion agr WHERE agr.id = " +idAgrupacion
+				+ " and  agr.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+		
+		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
+	}
+
+	@Override
+	public boolean existenUAsconOfertasVivas(Long idAgrupacion) {   
+		String sql = " SELECT count(1)      " 
+	+			"				 FROM ACT_AGA_AGRUPACION_ACTIVO aga      " 
+	+			"				 INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID      " 
+	+			"				 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID      " 
+	+			"				 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID      " 
+	+			"				 INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID      " 
+	+			"				 WHERE aga.AGR_ID =    "	+idAgrupacion
+	+			"                AND eco.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN ('02','03','08')) " 
+	+			"				 AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')      " 
+	+			"				 AND aga.AGA_PRINCIPAL = 0 " 
+	+			"				 AND act.DD_TTA_ID  = ( SELECT DD_TTA_ID FROM DD_TTA_TIPO_TITULO_ACTIVO WHERE DD_TTA_CODIGO = '05') ";
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;  
+		}
+		return false;
+		
+	}
+	
+	@Override
+	public boolean existenUAsconTrabajos(Long idAgrupacion) {
+		String sql = "                SELECT count(*)  " + 
+				"				FROM REM01.ACT_AGA_AGRUPACION_ACTIVO aga   " + 
+				"				INNER JOIN REM01.V_BUSQUEDA_TRAMITES_ACTIVO VBTA ON aga.ACT_ID = VBTA.ACT_ID  " + 
+				"				WHERE aga.AGR_ID = "+ idAgrupacion 
+				+"				AND VBTA.ESTADO_CODIGO NOT IN ('04','05','11')";
+
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+		
+	}
+	
+	@Override
+	public boolean activoUAsconOfertasVivas(Long idActivo) {   
+		String sql = " SELECT count(1)      " 
+	+			"				 FROM ACT_OFR  actOfr      " 
+	+			"				 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID      " 
+	+			"				 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID      " 
+	+			"				 INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID      " 
+	+			"				 WHERE  act.ACT_ID =    "	+idActivo
+	+			"                AND eco.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN ('02','03','08')) " 
+	+			"				 AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')      " 
+	+			"				 AND act.DD_TTA_ID  = ( SELECT DD_TTA_ID FROM DD_TTA_TIPO_TITULO_ACTIVO WHERE DD_TTA_CODIGO = '05') ";
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;  
+		}
+		return false;
+		
+	}
+	
+	@Override
+	public boolean activoUAsconTrabajos(Long idActivo) {
+		String sql = "          SELECT count(*)  " + 
+				"				FROM REM01.V_BUSQUEDA_TRAMITES_ACTIVO VBTA   " + 
+				"				WHERE VBTA.ACT_ID = "+ idActivo +
+				"				AND VBTA.ESTADO_CODIGO NOT IN ('04','05','11')";
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+		
+	}
+	
+	@Override
+	public boolean existeAMconOfertasVivas(Long idAgrupacion) { 
+		String sql = " SELECT count(1)      "
+	+			"				 FROM ACT_AGA_AGRUPACION_ACTIVO aga      " 
+	+			"				 INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID      " 
+	+			"				 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID      " 
+	+			"				 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID      " 
+	+			"				 INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID      " 
+	+			"				 WHERE aga.AGR_ID =    "	+idAgrupacion
+	+			"                AND eco.DD_EEC_ID NOT IN (SELECT DD_EEC_ID FROM DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO IN ('02','03','08')) " 
+	+			"				 AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')      " 
+	+			"				 AND aga.AGA_PRINCIPAL = 1 ";
+		
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
+	
+	
+	public void validateAgrupacion(Long idActivo) {
+		
+		ActivoAgrupacion agrupacion = getAgrupacionPAByIdActivo(idActivo);
+		
+		if(!Checks.esNulo(agrupacion)) { 
+			if (isActivoMatriz(idActivo)) {
+				if (existenUAsconOfertasVivas(agrupacion.getId())) {
+					logger.error(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS);
+					throw new JsonViewerException(messageServices.getMessage(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS));
+					
+				}
+			}else if (isUnidadAlquilable(idActivo)) {
+				if (existeAMconOfertasVivas(agrupacion.getId())) {
+					logger.error(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS);
+					throw new JsonViewerException(messageServices.getMessage(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS));
+					
+				}
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VBusquedaProveedoresActivo> getListProveedor(List<String> listaIds) {
+		String hql = " from VBusquedaProveedoresActivo acn ";
+		String ids = "";
+		HQLBuilder hb = new HQLBuilder(hql);
+		
+		for (int i = 0; i<listaIds.size();i++) {
+			ids+=listaIds.get(i);
+			if(i+1 != listaIds.size()){
+				ids+=", ";
+			}
+		}
+		hb.appendWhereIN("acn.idFalso.idActivo", ids);
+		
+
+		return (List<VBusquedaProveedoresActivo>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	}
+
+	@Override
+	public Boolean isPANoDadaDeBaja(Long idActivo) {  
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.activo.id = " + idActivo 
+				+ " and aga.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER 
+				+ " and aga.principal = 1 and aga.agrupacion.fechaBaja is null");
+
+   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
+
+	}
+	@Override
+	public Boolean checkOfertasVivasAgrupacion(Long idAgrupacion) {
+		String sql = "SELECT Count(1) FROM ACT_PAC_PERIMETRO_ACTIVO pac " + 
+				" JOIN ACT_AGA_AGRUPACION_ACTIVO aga on pac.act_id = aga.act_id and aga.agr_id =" + idAgrupacion +
+				" WHERE pac.PAC_OFERTAS_VIVAS = 1 AND AGA.AGA_PRINCIPAL = 0";
+				
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
+	@Override
+	public Boolean checkOTrabajosVivosAgrupacion(Long idAgrupacion) {
+		String sql = "SELECT Count(1) FROM ACT_PAC_PERIMETRO_ACTIVO pac " + 
+				" JOIN ACT_AGA_AGRUPACION_ACTIVO aga on pac.act_id = aga.act_id and aga.agr_id = " + idAgrupacion +
+				" WHERE pac.PAC_TRABAJOS_VIVOS = 1 AND AGA.AGA_PRINCIPAL = 0";
+				
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
+	
+	@Override
+	public Boolean existeActivo(Long numActivo) {
+		String sql = "SELECT Count(1) FROM ACT_ACTIVO " + 
+				" WHERE act_num_activo = "  + numActivo;
+				
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getTrabajosUa (Long idAM, Long idUA){
+				
+		HQLBuilder hb = new HQLBuilder(" from Trabajo tbj, ActivoTrabajo atj, Activo act, Activo actUA");
+		hb.appendWhere(" atj.trabajo.id = tbj.id ");
+		hb.appendWhere(" act.id = tbj.activo.id ");
+		hb.appendWhere(" actUA.id = atj.activo.id ");
+		hb.appendWhere(" act.id = " + idAM);
+		hb.appendWhere(" actUA.id = " + idUA);
+			
+		List<Object[]> trabajoList = (List<Object[]>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+		return trabajoList;
+		
+	}
 }

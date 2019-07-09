@@ -188,6 +188,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			name:'acreedorNumExp'
     		},
     		{
+    			name:'tipoTituloActivoMatriz'
+    		},
+    		{
     			name:'fechaEntregaGestoria',
     			convert: function(value) {
     				if (!Ext.isEmpty(value)) {
@@ -466,6 +469,36 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 	    				}
     				}
     			}
+    		},
+    		{
+				name: 'unidadAlquilable',
+				type: 'boolean'
+    		},{
+    			name:'localidadAnteriorCodigo'
+    		},
+    		{
+    			name: 'isJudicial',
+    			type:'boolean',
+    			calculate: function(data) {
+    				if (data.tipoTituloActivoMatriz === CONST.TIPO_TITULO_ACTIVO['JUDICIAL']) {
+						return true;
+    				}else{
+    					return false;
+    				}
+    			},
+    			depends:'tipoTituloActivoMatriz'
+    		},
+    		{
+    			name: 'isNotJudicial',
+    			type:'boolean',
+    			calculate: function(data) {
+    				if (data.tipoTituloActivoMatriz === CONST.TIPO_TITULO_ACTIVO['NO_JUDICIAL']) {
+						return true;
+    				}else{
+    					return false;
+    				}
+    			},
+    			depends:'tipoTituloActivoMatriz'
     		}
 
     ],

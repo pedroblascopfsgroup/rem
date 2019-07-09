@@ -102,6 +102,14 @@ if [ -f $DIR_SRC/pfs.war ]; then
     cp $DIR_SRC/pfs.war $BASE_DIR_APP/
 fi
 
+echo "Copiando ficheros WAR ..."
+if [ -f $DIR_SRC/pfs-rec-web.war ]; then
+    cp $DIR_SRC/pfs-rec-web.war $BASE_DIR_APP/
+fi
+
+echo "Copiando Maestro de Unidades ..."
+    cp $DIR_SRC/wsdl/pre/* $BASE_DIR_PLANTILLAS
+
 startAppServer
 
 exit 0

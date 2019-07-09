@@ -13,6 +13,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
@@ -40,6 +41,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	
 	@Autowired 
     private ActivoApi activoApi;
+	
 
 	
 	@Override
@@ -281,7 +283,23 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);
 		}
 
-		// Aviso 17: Cuando el activo esta publicado para la venta y el precio venta está oculto
+		//Aviso 17: Es unidad Alquilable / Es activo matriz
+		if (!Checks.esNulo(id)) {
+			if (activoDao.isActivoMatriz(id)) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Activo dividido en unidades alquilables");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			}else if (activoDao.isUnidadAlquilable(id)) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Unidad Alquilable");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			}
+		}
+
+
+		// Aviso 18: Cuando el activo esta publicado para la venta y el precio venta está oculto
 		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
 			if(!Checks.esNulo(activo.getActivoPublicacion())) {
 				if((activo.getActivoPublicacion().getCheckPublicarVenta() && activo.getActivoPublicacion().getCheckOcultarPrecioVenta())
@@ -293,6 +311,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				}
 			}
 		}
+
 		return listaAvisos;
 	}
 }

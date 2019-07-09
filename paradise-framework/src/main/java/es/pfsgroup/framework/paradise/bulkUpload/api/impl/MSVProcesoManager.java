@@ -134,8 +134,9 @@ public class MSVProcesoManager implements MSVProcesoApi {
 		}
 		return resultado;
 	}
-
-	private String getUsername() {
+	
+	@Override
+	public String getUsername() {
 		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		String username = usu.getUsername();
 		return username;

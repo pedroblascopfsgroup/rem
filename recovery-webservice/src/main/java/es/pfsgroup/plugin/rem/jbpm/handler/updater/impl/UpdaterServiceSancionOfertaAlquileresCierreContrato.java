@@ -18,6 +18,12 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+
+import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -36,13 +42,20 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 
     @Autowired
     private GenericABMDao genericDao;
+    @Autowired
+    private ActivoDao activoDao;
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-    
 	
     @Autowired
 	private ApiProxyFactory proxyFactory;
+    
+    @Autowired
+    private ActivoApi activoApi;
+    
+    @Autowired
+	private ActivoAdapter activoAdapter;
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresCierreContrato.class);
     
@@ -94,7 +107,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 					Activo activo = activoOferta.getPrimaryKey().getActivo();
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
-					
 					if(!Checks.esNulo(activoPatrimonio)){
 						activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
 					} else{
@@ -104,6 +116,7 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 							activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
 						}
 					}
+					activoDao.validateAgrupacion(expedienteComercial.getId());
 					genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 				}
 			}
@@ -112,6 +125,11 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 				oferta.setNumContratoPrinex(valor.getValor());
 				expedienteComercial.setNumContratoAlquiler(valor.getValor());
 			}
+		}
+		Activo activo = tramite.getActivo();
+		if(!Checks.esNulo(activo)) {
+			activoApi.actualizarOfertasTrabajosVivos(activo);
+			activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
 		}
 		
 		//Llamada a Maestro de Personas
@@ -129,6 +147,7 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 			expedienteComercialApi.enviarCorreoAsegurador(expedienteComercial.getId());
 		}
 		expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
+		
 	}
 
 	public String[] getCodigoTarea() {

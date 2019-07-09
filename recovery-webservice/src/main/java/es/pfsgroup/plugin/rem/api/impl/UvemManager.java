@@ -294,7 +294,7 @@ public class UvemManager implements UvemManagerApi {
 
 			} else if (servicio instanceof GMPDJB13_INS) {
 				((GMPDJB13_INS) servicio).setLongitudMensajeDeSalidarcslon(2);
-				((GMPDJB13_INS) servicio).setCodigoComitecocom7(Short.valueOf(DDComiteSancion.CODIGO_BANKIA_DGVIER));
+				((GMPDJB13_INS) servicio).setCodigoComitecocom7(Short.valueOf(DDComiteSancion.CODIGO_PLATAFORMA));
 				((GMPDJB13_INS) servicio).setCodigoDeOfertaHayacoofhx2("9");
 				if (((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw() > 0) {
 					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(

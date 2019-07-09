@@ -212,6 +212,7 @@ BEGIN
         		UPDATE #ESQUEMA#.ACT_ACTIVO act
         			SET act.DD_RTG_ID = v_dd_rtg_id, act.USUARIOMODIFICAR = v_username, act.FECHAMODIFICAR = SYSDATE
         			WHERE act.ACT_ID = v_act_id;
+				DBMS_OUTPUT.PUT_LINE('	[INFO] Rating asignado: ' || v_dd_rtg_id);
         		EXIT;
         	END IF;
           END LOOP;
@@ -222,7 +223,7 @@ BEGIN
 	CLOSE crs_activos;
    COMMIT;
 
-   DBMS_OUTPUT.PUT_LINE('[Rating actualizado correctamente] - idRating asignado: ');
+   DBMS_OUTPUT.PUT_LINE('[FIN]');
 EXCEPTION
    WHEN OTHERS
    THEN

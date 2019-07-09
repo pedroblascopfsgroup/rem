@@ -11,6 +11,7 @@ public class DtoCondicionEspecifica {
     private Date fechaHasta;
     private String usuarioAlta;
     private String usuarioBaja;
+    private String codigo;
     
     public String getId(){
     	return id;
@@ -56,5 +57,11 @@ public class DtoCondicionEspecifica {
 	}
 	public void setUsuarioBaja(String usuarioBaja) {
 		this.usuarioBaja = usuarioBaja;
+	}
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 }

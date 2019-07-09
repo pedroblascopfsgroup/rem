@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20190529
+--## AUTOR=Guillermo Llidó Parra
+--## FECHA_CREACION=20190703
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6469
+--## INCIDENCIA_LINK=REMVIP-4472
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Cambio obtener id-activo de la unidad alquilable
 --##		0.3 Añadimos el numero de activo UA
 --##        0.4 Deshacemos cambios de 0.2 y 0.3
+--##		0.5 Añadimos la subcartera
 --##########################################
 --*/
 
@@ -85,7 +86,8 @@ BEGIN
 			bieloc.bie_loc_cod_post AS codpostal, 
 			act.act_num_activo AS numactivo,
           	agr.agr_num_agrup_rem AS numagrupacion, 
-			cra.dd_cra_codigo AS cartera, 
+			cra.dd_cra_codigo AS cartera,
+			scr.dd_scr_codigo AS subcartera,
 			usu.usu_username AS gestor_activo, 
 			DECODE (tbj.tbj_fecha_cierre_economico, NULL, 0, 1) AS con_cierre_economico,
           	tbj.tbj_fecha_cierre_economico, 
@@ -109,6 +111,7 @@ BEGIN
           LEFT JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str ON str.dd_str_id = tbj.dd_str_id
           LEFT JOIN ' || V_ESQUEMA || '.dd_est_estado_trabajo est ON tbj.dd_est_id = est.dd_est_id
           INNER JOIN ' || V_ESQUEMA || '.dd_cra_cartera cra ON cra.dd_cra_id = act.dd_cra_id
+          INNER JOIN ' || V_ESQUEMA || '.dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id
           LEFT JOIN ' || V_ESQUEMA || '.act_pvc_proveedor_contacto pvc ON pvc.pvc_id = tbj.pvc_id
           LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve ON pve.pve_id = pvc.pve_id
           LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 ON pve2.pve_id = tbj.mediador_id

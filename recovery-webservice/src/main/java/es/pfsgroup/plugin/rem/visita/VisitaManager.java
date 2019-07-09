@@ -583,11 +583,14 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogeado.getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			;
-			dtoVisitasFilter.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoVisitasFilter.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+				dtoVisitasFilter.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoVisitasFilter.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+			}
 		}
-
 		return visitaDao.getListVisitasDetalle(dtoVisitasFilter);
 
 	}

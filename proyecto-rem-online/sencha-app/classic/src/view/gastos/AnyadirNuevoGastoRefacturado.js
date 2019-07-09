@@ -12,7 +12,6 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoRefacturado', {
     
     idGasto: null,
     
-    //requires: ['HreRem.view.gastos.AnyadirNuevoGastoActivoDetalle'],
     
     listeners: {    
 		boxready: function(window) {

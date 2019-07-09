@@ -35,6 +35,7 @@ import es.capgemini.devon.message.MessageService;
 //import es.capgemini.devon.utils.PropertyUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -188,6 +189,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
 
 	@Override
 	public GastoProveedor findOne(Long id) {
@@ -3340,5 +3344,43 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 				
 		return listaNumGastoHayaGastosRefacurables;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista) {
+		try {
+			Long id = Long.valueOf(idGasto);
+			Long idGastoRfLong;
+			Filter filterGastoId = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", id);
+			GastoDetalleEconomico gastoDetalleEconomico = genericDao.get(GastoDetalleEconomico.class, filterGastoId);
+			
+			genericDao.update(GastoDetalleEconomico.class, gastoDetalleEconomico);
+			
+			if(!Checks.esNulo(gastoDetalleEconomico)) {
+				gastoDetalleEconomico.setGastoRefacturable(true);
+				
+				for (String gasto : gastosRefacturablesLista) {
+					GastoRefacturable gastoRefacturableNuevo = new GastoRefacturable();
+					gastoRefacturableNuevo.setGastoProveedor(id);
+					idGastoRfLong = Long.valueOf(gasto);
+					filterGastoId = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", idGastoRfLong);
+					GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filterGastoId);
+					gastoRefacturableNuevo.setGastoProveedorRefacturado(gastoProveedor.getId());
+					
+					Auditoria auditoria = new Auditoria();
+					auditoria.setBorrado(false);
+					auditoria.setFechaCrear(new Date());
+					
+					auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
+					gastoRefacturableNuevo.setAuditoria(auditoria);
+					
+					genericDao.save(GastoRefacturable.class, gastoRefacturableNuevo);
+					
+				}
+			}
+		}catch(Exception e) {
+			logger.error(e.getMessage(),e);
+		}
 	}
 }

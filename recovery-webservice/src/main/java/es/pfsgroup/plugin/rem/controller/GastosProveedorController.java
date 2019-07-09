@@ -1042,24 +1042,17 @@ public class GastosProveedorController extends ParadiseJsonController {
 		List<Long> gastosRefacturables = new ArrayList<Long>();
 		int i;
 		Long idEnLong = Long.parseLong(id);
-		//Parte trucada
-		idEnLong = 24L;
-		Long y = 2L;
-		
-		//parte trucada
+	
 		gastosRefacturables = gastoProveedorApi.getGastosRefacturablesGastoCreado(idEnLong);
-		gastosRefacturables.add(y); 
+
 		List<DtoDetalleEconomicoGasto> dto = new ArrayList<DtoDetalleEconomicoGasto>();
-		
+	
 		for (i = 0; i < gastosRefacturables.size(); i++) {
 			DtoDetalleEconomicoGasto dtoAuxiliar = new DtoDetalleEconomicoGasto();
 			dtoAuxiliar.setNumeroGastoHaya(gastosRefacturables.get(i));
 			
 			dto.add(dtoAuxiliar);
 		}
-		
-		
-	
 		
 		try {			
 			model.put("data", dto);
@@ -1078,17 +1071,17 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public ModelAndView anyadirGastoRefacturable(@RequestParam String idGasto, String gastosRefacturables) {
 		ModelMap model = new ModelMap();
 		
-		List<String> gastosRefacturablesLista = new ArrayList<String>();
-		
-		if(!Checks.esNulo(gastosRefacturables)) {
-			gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables);
-		}
-		if(!Checks.estaVacio(gastosRefacturablesLista)){
+		if(!Checks.esNulo(idGasto)) {
+			List<String> gastosRefacturablesLista = new ArrayList<String>();
 			
+			if(!Checks.esNulo(gastosRefacturables)) {
+				gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables);
+			}
+			if(!Checks.estaVacio(gastosRefacturablesLista)){
+				gastoProveedorApi.anyadirGastosRefacturadosAGastoExistente(idGasto, gastosRefacturablesLista);
+			}
 		}
-		
-		try {	
-			
+		try {		
 			model.put("success", true);			
 		} catch (Exception e) {
 			logger.error(e.getMessage());

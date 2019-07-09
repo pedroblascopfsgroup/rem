@@ -3,7 +3,7 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
     xtype		: 'gastoRefacturadoGridExistentes',
 	topBar		: true,
 	editOnSelect: false,
-	disabledDeleteBtn: true,
+	disabledDeleteBtn: false,
 	removeButton: true,
 	targetGrid	: 'gastoRefacturadoGridExistentes',
 	idPrincipal : 'numeroDeGastoRefacturable',

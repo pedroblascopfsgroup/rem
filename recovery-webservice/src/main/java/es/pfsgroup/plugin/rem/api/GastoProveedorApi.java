@@ -370,5 +370,8 @@ public interface GastoProveedorApi {
 		List<Long> getGastosRefacturablesGastoCreado(Long id);
 
 
+		public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista);
+
+
 }
 

@@ -106,6 +106,9 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		
 		if(!Checks.esNulo(usuarioCartera)) {
 			hb.appendWhere("vvisita.idCartera = "+usuarioCartera.getCartera().getId());
+			if(!Checks.esNulo(usuarioCartera.getSubCartera().getCodigo())) {
+				hb.appendWhere("vvisita.idSubcartera = "+usuarioCartera.getSubCartera().getId());
+			}
 		}
 
 		if(!Checks.esNulo(dtoVisitasFilter.getNumVisitaRem())){

@@ -55,6 +55,8 @@ public class DtoTrabajoFilter extends WebDto {
 	
 	private String cartera;
 	
+	private String subcartera;
+	
 	private String gestorActivo;
 	
 	private Integer cubreSeguro;
@@ -293,6 +295,14 @@ public class DtoTrabajoFilter extends WebDto {
 
 	public void setNumGasto(Long numGasto) {
 		this.numGasto = numGasto;
+	}
+
+	public String getSubcartera() {
+		return subcartera;
+	}
+
+	public void setSubcartera(String subcartera) {
+		this.subcartera = subcartera;
 	}
 
 }

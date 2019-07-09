@@ -982,7 +982,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelFacturas(HttpServletRequest request, HttpServletResponse response) throws IOException{
 
@@ -993,7 +992,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelTasasImpuestos(HttpServletRequest request, HttpServletResponse response) throws IOException{
 

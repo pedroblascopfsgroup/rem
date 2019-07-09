@@ -251,9 +251,9 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										reference: 'numUnidadesAlquilablesRef', 
 										cls: 'cabecera-info-field',
 										bind: { 
-										hidden: '{!activo.activoMatriz}',
+											hidden: '{!activo.activoMatriz}',
 											value: '{activo.unidadesAlquilablesEnAgrupacion}'
-									}
+										}
 									},
 									{	
 										xtype: 'textfieldbase',
@@ -287,9 +287,21 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										cls: 'cabecera-info-field',
 										width: 70,
 										bind: {
+											hidden:'{isEmptySrcCartera}',
 											src: '{getSrcCartera}',
-											alt: '{activo.entidadPropietariaDescripcion}'
+											alt: '{isEmptySrcCartera}'
 										}
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+										cls: 'cabecera-info-field',
+										fieldStyle: 'color: #0a94d6 !important;font-weight: bold !important',
+										width: 70,
+										bind: {
+											hidden:'{!isEmptySrcCartera}',
+											value: '{activo.entidadPropietariaDescripcion}'
+										}
+										
 									},
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.tipo'),
@@ -396,8 +408,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 		me.down('botonfavorito').setOpenId(data.get("id"));
 
 		me.gmap.configurarMapa(latitud, longitud, token, title);
-
-		//me.down('[tipo=panelgmap]').add(me.gmap);
+		
 		me.down('[tipo=panelgmap]').setHtml("<img style= 'width: 225px; height: 125px;' alt= 'Imagen de relleno de google maps' src='resources/images/imagenPrecargaMapa.jpg' />");
 	}
 });

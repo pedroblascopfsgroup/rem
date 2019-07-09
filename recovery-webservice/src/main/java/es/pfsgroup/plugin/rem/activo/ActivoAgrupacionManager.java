@@ -310,6 +310,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				}
 
 				activoFoto.setFechaDocumento(fechaSubida);
+				
+				if(fileItem.getMetadata().containsKey("orden")) {
+					activoFoto.setOrden(Integer.valueOf(fileItem.getMetadata().get("orden")));
+				}
 
 				// Auditoria.save(activoFoto);
 

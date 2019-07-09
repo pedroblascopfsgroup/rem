@@ -131,6 +131,8 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 								// Deniega el expediente
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO);
 	
+								//finalizamos las posibles tareas de validación pendientes
+								expedienteComercialApi.finalizarTareaValidacionClientes(expediente);
 								// Finaliza el trámite
 								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));

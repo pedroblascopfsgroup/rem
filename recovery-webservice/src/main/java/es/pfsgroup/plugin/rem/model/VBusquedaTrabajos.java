@@ -90,6 +90,9 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="CARTERA")
 	private String cartera;
 	
+	@Column(name="SUBCARTERA")
+	private String subcartera;
+	
 	@Column(name="GESTOR_ACTIVO")
 	private String gestorActivo;
 	
@@ -270,14 +273,6 @@ public class VBusquedaTrabajos implements Serializable {
 		this.codPostal = codPostal;
 	}
 
-	public String getCartera() {
-		return cartera;
-	}
-
-	public void setCartera(String cartera) {
-		this.cartera = cartera;
-	}
-
 	public String getGestorActivo() {
 		return gestorActivo;
 	}
@@ -325,7 +320,13 @@ public class VBusquedaTrabajos implements Serializable {
 	public void setFechaEjecutado(Date fechaEjecutado) {
 		this.fechaEjecutado = fechaEjecutado;
 	}
+	public String getCartera() {
+		return cartera;
+	}
 
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
+	}
 	public Long getIdProveedor() {
 		return idProveedor;
 	}
@@ -365,5 +366,13 @@ public class VBusquedaTrabajos implements Serializable {
 	public void setPropietario(Long propietario) {
 		this.propietario = propietario;
 	}
+	
+	public String getSubCartera() {
+		return subcartera;
+	}
 
+	public void setSubCartera(String subcartera) {
+		this.subcartera = subcartera;
+	}
+	
 }

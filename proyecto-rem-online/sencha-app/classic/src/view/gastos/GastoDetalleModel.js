@@ -103,7 +103,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     		return false;
 	     	}
 	     },
-	     
+	     importeRecargoVacio: function(get){
+    	    var me= this;
+    	    if((get('detalleeconomico.importeRecargo')== 0 || get('detalleeconomico.importeRecargo')== null) && get('detalleeconomico.cartera') == CONST.CARTERA['BANKIA']){
+    	    	return true;
+    	    }
+    	    else{
+	    		return false;
+    	    }
+	     },
 	     seleccionadoPagadoBankia: function(get){
 	     	var me= this;
 	     	if(get('detalleeconomico.pagadoConexionBankia')=="true" || get('detalleeconomico.pagadoConexionBankia')==true){

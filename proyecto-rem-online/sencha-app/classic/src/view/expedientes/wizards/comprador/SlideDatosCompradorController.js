@@ -1311,14 +1311,41 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 			modelComprador = form.getRecord(),
 			pedirDocValor = form.getForm().findField('pedirDoc').getValue(),
 			wizard = form.up('wizardBase');
-		
-		if (pedirDocValor === 'false') {
-			wizard.comprador = modelComprador;
-			wizard.nextSlide();
-
-		} else {
-			me.guardarModeloComprador();
-		}
+	    if(!Ext.isEmpty(modelComprador.modified.numDocumento) && modelComprador.modified.numDocumento != modelComprador.get('numDocumento')){
+		    Ext.Ajax.request({
+				url: $AC.getRemoteUrl('expedientecomercial/existeComprador'),
+				params: {
+					numDocumento: modelComprador.get('numDocumento')
+				},
+				method: 'GET',
+				success: function(response, opts){
+					var data = {};
+					data = Ext.decode(response.responseText);
+					if(data.success == 'true' && !Utils.isEmptyJSON(data.data)){
+						if(data.data == 'true' || data.data == true){
+							me.fireEvent("errorToast", "El NIF indicado ya existe para otro comprador");
+						}
+					}else if(data.data == 'false' || data.data == false){
+						if (pedirDocValor === 'false') {
+							wizard.comprador = modelComprador;
+							wizard.nextSlide();
+						} else {
+							me.guardarModeloComprador();
+						}					
+					}
+				},
+				failure: function(response){
+					me.fireEvent("errorToast", HreRem.i18n('msg.operacion.ko'));
+				}
+		    });
+	    }else{
+	    	if (pedirDocValor === 'false') {
+				wizard.comprador = modelComprador;
+				wizard.nextSlide();
+			} else {
+				me.guardarModeloComprador();
+			}	
+	    }		
     },
 
     discrepanciasVeracidadDatosComprador: function() {

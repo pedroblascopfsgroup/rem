@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Ortuño
---## FECHA_CREACION=20180801
+--## AUTOR=Guillermo Llidó Parra
+--## FECHA_CREACION=20190704
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial Luis Caballero
 --##        0.2 HREOS-4214 Alejandro Valverde - Anyadir campo para obtener el ID de la cartera del activo relacionado con la vista
 --##        0.3 SOG Añadido el código cartera 
+--##		0.4 GLLP Añadido el código Subcartera
 --##########################################
 --*/
 
@@ -82,11 +83,14 @@ BEGIN
 				TPRP.DD_TPR_DESCRIPCION AS SUBTIPO_PRESCRIPTOR_DESC,
 				TPRP.DD_TPR_CODIGO AS SUBTIPO_PRESCRIPTOR_COD,
 				CRA.DD_CRA_CODIGO AS CODIGO_CARTERA,
-				CRA.DD_CRA_ID AS DD_CRA_ID
+				CRA.DD_CRA_ID AS DD_CRA_ID,
+				SCR.DD_SCR_CODIGO AS CODIGO_SUBCARTERA,
+				SCR.DD_SCR_ID AS DD_SCR_ID
 
 		FROM ' || V_ESQUEMA || '.VIS_VISITAS VIS
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_ACTIVO ACT on ACT.ACT_ID = VIS.ACT_ID and ACT.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID and CRA.BORRADO = 0
+		LEFT JOIN ' || V_ESQUEMA || '.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID and SCR.BORRADO = 0
     	LEFT JOIN ' || V_ESQUEMA || '.DD_EVI_ESTADOS_VISITA EVI on EVI.DD_EVI_ID = VIS.DD_EVI_ID and EVI.BORRADO = 0
     	LEFT JOIN ' || V_ESQUEMA || '.DD_SVI_SUBESTADOS_VISITA SVI on SVI.DD_SVI_ID = VIS.DD_SVI_ID and SVI.BORRADO = 0
     	LEFT JOIN ' || V_ESQUEMA || '.CLC_CLIENTE_COMERCIAL CLC on CLC.CLC_ID = VIS.CLC_ID and CLC.BORRADO = 0

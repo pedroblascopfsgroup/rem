@@ -360,6 +360,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
                             	}else{
                             		me.fireEvent("errorToast", data.error);
                             	}
+                            	me.getView().down('fotossubdivision').funcionRecargar()
 								 //me.unmask();
                             },
                             
@@ -510,11 +511,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	    		     		}
 	    			
 	    		    ,success: function (a, operation, context) {
-
 	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
 	                    	me.storeGuardado.load();
 	                    	me.refrescarGuardado = false;
 	                    }
+	                    me.getView().down('fotossubdivision').funcionRecargar();
 	                },
 	                
 	                failure: function (a, operation, context) {
@@ -1141,5 +1142,30 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		textArea.setValue('');
     		textArea.setDisabled(true);
     	}
-    }
+    },
+    onClickActivoMatriz: function(){
+		var me = this;
+		var numActivo = me.getViewModel().get('agrupacionficha.activoMatriz');
+		if(!Ext.isEmpty(numActivo)){
+		  	var url= $AC.getRemoteUrl('activo/getActivoExists');
+        	var data;
+    		Ext.Ajax.request({
+    		     url: url,
+    		     params: {numActivo : numActivo},
+    		     success: function(response, opts) {
+    		    	 data = Ext.decode(response.responseText);
+    		    	 if(data.success == "true"){
+    		    		 var titulo = "Activo " + numActivo;
+        		    	 me.getView().up().fireEvent('abrirDetalleActivoById', data.data, titulo); 
+    		    	 }else{
+        		    	 me.fireEvent("errorToast", data.error);
+    		    	 }
+    		         
+    		     },
+    		     failure: function(response) {
+    		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		     }
+    		 });    
+		}
+	}
 });

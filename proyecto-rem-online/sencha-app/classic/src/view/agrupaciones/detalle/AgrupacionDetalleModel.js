@@ -35,6 +35,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
         		return 'resources/images/'+src;	     
         	}
 	     },
+	     isEmptySrcCartera: function(get) {
+	     	var cartera = get('agrupacionficha.cartera');
+	     	var src=null;
+	     	if(!Ext.isEmpty(cartera)) {
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
+	     	}
+        	if(Ext.isEmpty(src)) {
+        		return 	true;
+        	}else {
+        		return false;	     
+        	}     	
+	     	
+	     },
 	     
 	     esAgrupacionPromocionAlquiler: function(get) {
 	    	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo') ;

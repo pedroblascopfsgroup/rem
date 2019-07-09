@@ -331,6 +331,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	
 	     },
 	     
+	       isEmptySrcCartera: function(get) {
+	     	var cartera = get('activo.entidadPropietariaDescripcion');
+	     	var src=null;
+	     	if(!Ext.isEmpty(cartera)) {
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
+	     	}
+        	if(Ext.isEmpty(src)) {
+        		return 	true;
+        	}else {
+        		return false;	     
+        	}     	
+	     	
+	     },
+	     
 	     getEstadoPublicacionCodigo: function(get) {
 			var codigo = Ext.isEmpty(get('activo.estadoPublicacionCodigo')) ? "" : get('activo.estadoPublicacionCodigo');
 			return codigo;

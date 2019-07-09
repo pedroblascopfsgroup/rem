@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos López
---## FECHA_CREACION=20190610
+--## FECHA_CREACION=20190617
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6668
@@ -17,7 +17,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
-CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_ACTUALIZAR_DNI (resultado out varchar2) AUTHID CURRENT_USER AS		
+CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_ACTUALIZAR_DNI (P_PLAN NUMBER, resultado out varchar2) AUTHID CURRENT_USER AS		
 
     CONTADOR NUMBER := 5000;
     TYPE MATRIZ_ROWID IS TABLE OF ROWID;
@@ -32,7 +32,9 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_ACTUALIZAR_DNI (resultado out varchar2)
     CURSOR C_AUXILIAR IS
         SELECT OWNER, TABLE_NAME, COLUMN_NAME
         FROM #ESQUEMA#.AUX_DNI_FASE2
-        WHERE PROCESADO = 0;
+        WHERE PROCESADO = 0
+        AND TABLE_PLAN = P_PLAN;
+        
     NOMBRE_ESQUEMA VARCHAR2(30 CHAR);
     NOMBRE_TABLA VARCHAR2(30 CHAR);
     NOMBRE_CAMPO VARCHAR2(30 CHAR);
@@ -40,12 +42,20 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_ACTUALIZAR_DNI (resultado out varchar2)
     V_MSQL VARCHAR2(4000 CHAR);
     porcentaje varchar2(2000 char);
     
+    V_START TIMESTAMP;
+    V_ELAPSED TIMESTAMP;
+    v_n  INTERVAL DAY TO SECOND ;    
+    
 BEGIN
+    V_START := SYSTIMESTAMP;
+    
     SELECT round((select nvl(SUM(NUM_ROWS),0) from #ESQUEMA#.AUX_DNI_FASE2 where procesado = 1)*100/(select nvl(SUM(NUM_ROWS),0) from #ESQUEMA#.AUX_DNI_FASE2 ),2) || ' %' porcentaje
       into porcentaje
       FROM dual;
-      
-    resultado := '[INFO]'||chr(13)||chr(10)||' Porcentaje inicio SP: '||porcentaje ;
+    
+    resultado := 'Parámetro P_PLAN = '||P_PLAN||chr(13)||chr(10);
+    resultado := resultado||'[INFO]'||chr(13)||chr(10)||' Porcentaje inicio SP: '||porcentaje ;  
+    resultado := resultado||chr(13)||chr(10)||' Hora inicio SP: '||V_START; 
       
     FOR i IN C_AUXILIAR
         LOOP
@@ -89,7 +99,14 @@ BEGIN
       into porcentaje
       FROM dual;
     
-    resultado := resultado||chr(13)||chr(10)||' Porcentaje fin SP: '||porcentaje||chr(13)||chr(10)||'[INFO FIN]';      
+    resultado := resultado||chr(13)||chr(10);
+    resultado := resultado||chr(13)||chr(10)||' Porcentaje fin SP: '||porcentaje||chr(13)||chr(10); 
+    
+    V_ELAPSED := SYSTIMESTAMP;
+       
+    v_n := V_ELAPSED - V_START;
+       
+    resultado := resultado||' Tiempo fin SP: '||v_n||' s.'||chr(13)||chr(10)||'[INFO FIN]';      
               
 EXCEPTION
     WHEN OTHERS THEN

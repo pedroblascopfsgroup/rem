@@ -290,6 +290,8 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 			}
 		}
 		
+		porcentajeTotal = FormatUtils.redondear(porcentajeTotal, 2);
+		
 		if(porcentajeTotal < 100.00){
 			listaFilas.add(1);
 		}

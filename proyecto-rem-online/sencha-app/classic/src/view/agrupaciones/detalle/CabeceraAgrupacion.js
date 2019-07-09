@@ -118,7 +118,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 												    width: 225,
 												    height: 125,
 												    cls: 'cabecera-mapa',
-												    margin: '10 10 10 20'
+												    margin: '10 10 10 20',
+													listeners: {
+													   'render': function(panel) {
+													       panel.body.on('click', function() {
+													    	   panel.add(me.gmap);
+													       });
+													    }
+													}
 												}
 											]
 										},
@@ -187,6 +194,45 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 															fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 															bind:		'{agrupacionficha.tipoAgrupacionDescripcion}'
 														},
+														{ 
+															xtype: 'imagefield',
+															fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+															cls: 'cabecera-info-field',
+															width: 70,
+										                	bind: {
+										                		hidden:'{isEmptySrcCartera}',
+										                		src: '{getSrcCartera}',
+										                		alt: '{agrupacionficha.cartera}'
+										                	}
+										                },
+										                {
+																fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+																cls: 'cabecera-info-field',
+																fieldStyle: 'color: #0a94d6 !important;font-weight: bold !important',
+																width: 70,
+																bind: {
+																	hidden:'{!isEmptySrcCartera}',
+																	value: '{agrupacionficha.cartera}'
+																}
+																
+														},
+										                {
+															xtype: 'textfieldbase',
+															readOnly: true,
+															fieldLabel: HreRem.i18n('fieldlabel.activo.matriz'),
+															reference: 'activoMatrizRef',
+															bind: {
+																hidden: '{!esAgrupacionPromocionAlquiler}',
+																value: '{agrupacionficha.activoMatriz}'
+															},
+															cls: 'show-text-as-link',
+															listeners: {
+														        click: {
+														            element: 'el', //bind to the underlying el property on the panel
+														            fn:'onClickActivoMatriz'									       
+														        }
+															}
+														},
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.numero.activos.incluidos'),
 															bind:		'{agrupacionficha.numeroActivos}'
@@ -202,16 +248,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 																hidden : '{agrupacionficha.isAgrupacionGencat}'
 															}
 														},
-														{ 
-															xtype: 'imagefield',
-															fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-															cls: 'cabecera-info-field',
-															width: 70,
-										                	bind: {
-										                		src: '{getSrcCartera}',
-										                		alt: '{agrupacionficha.cartera}'
-										                	}
-										                },
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 															bind: {
@@ -321,7 +357,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
     	
     	me.gmap.center.geoCodeAddr = token;
     	me.gmap.center.marker = {title: title};
-    	me.down('[tipo=panelgmap]').add(me.gmap); 
-		
+    	
+    	me.down('[tipo=panelgmap]').setHtml("<img style= 'width: 225px; height: 125px;' alt= 'Imagen de relleno de google maps' src='resources/images/imagenPrecargaMapa.jpg' />");
 	}
 });

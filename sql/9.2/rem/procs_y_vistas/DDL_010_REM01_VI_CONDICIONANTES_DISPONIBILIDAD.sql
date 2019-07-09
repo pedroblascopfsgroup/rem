@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20190521
+--## AUTOR=RLB
+--## FECHA_CREACION=20190702
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-4606
@@ -153,13 +153,16 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id                  
 				  LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS1.DD_TPA_ID
 				  LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA sij on  sij.dd_sij_id =sps1.dd_sij_id                   
-				  LEFT JOIN (select aga.act_id from '||V_ESQUEMA||'.act_aga_agrupacion_activo aga
-                      inner join (select aga.agr_id from '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO aga
-                      inner join '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA sps on sps.act_id = aga.act_id
-                      inner join '||V_ESQUEMA||'.ACT_AGR_AGRUPACION agr on aga.agr_id = agr.agr_id
-                      inner join '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION tag1 on tag1.dd_tag_id = agr.dd_tag_id 
-                      where TAG1.DD_TAG_CODIGO = ''16'' and SPS.DD_TPA_ID = 1) aux on aga.agr_id = aux.agr_id
-                      where AGA.AGA_PRINCIPAL = 1) ua on ua.act_id = act.act_id
+				  LEFT JOIN (select  aga.act_id 
+                      from '||V_ESQUEMA||'.act_aga_agrupacion_activo aga
+                      where AGA.AGA_PRINCIPAL = 1 AND EXISTS
+                       (
+                         select aga2.agr_id from '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO aga2
+                         inner join '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA sps on sps.act_id = aga2.act_id
+                         inner join '||V_ESQUEMA||'.ACT_AGR_AGRUPACION agr on aga2.agr_id = agr.agr_id
+                         inner join '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION tag1 on tag1.dd_tag_id = agr.dd_tag_id 
+                         where TAG1.DD_TAG_CODIGO = ''16'' and SPS.DD_TPA_ID = 1 AND aga.AGA_ID = aga2.AGA_ID
+                        )) ua on ua.act_id = act.act_id
 				  LEFT JOIN
                   (SELECT act_tit.act_id
                      FROM '||V_ESQUEMA||'.act_reg_info_registral act_reg 

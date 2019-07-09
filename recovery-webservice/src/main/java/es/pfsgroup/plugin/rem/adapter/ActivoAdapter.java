@@ -414,7 +414,7 @@ public class ActivoAdapter {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
 		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
-		boolean resultado = true;
+		boolean resultado = false;
 		try {
 
 			if (gestorDocumentalFotos.isActive()) {
@@ -441,6 +441,9 @@ public class ActivoAdapter {
 				}
 			}
 			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
+			if(!Checks.esNulo(dtoFoto.getOrden())) {
+				activoFoto.setOrden(dtoFoto.getOrden());
+			}
 			genericDao.save(ActivoFoto.class, activoFoto);
 
 		} catch (Exception e) {
@@ -1010,15 +1013,16 @@ public class ActivoAdapter {
 			ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();		
 			
 				DtoNumPlantas dtoSotano = new DtoNumPlantas();
-				dtoSotano.setNumPlanta(0L);
-				dtoSotano.setDescripcionPlanta("Planta Baja");
+				dtoSotano.setNumPlanta(-1L);
+				dtoSotano.setDescripcionPlanta("Planta -1");
 				dtoSotano.setIdActivo(idActivo);
 				listaPlantas.add(dtoSotano);
 
-			for (int i = 1; i <= vivienda.getNumPlantasInter(); i++) {
+			for (int i = 0; i < vivienda.getNumPlantasInter(); i++) {
 				DtoNumPlantas dto = new DtoNumPlantas();
 				dto.setNumPlanta(Long.valueOf(i));
-				dto.setDescripcionPlanta(i + "ª Planta");
+				if(i==0) dto.setDescripcionPlanta("Planta Baja");
+				else dto.setDescripcionPlanta(i + "ª Planta");
 				dto.setIdActivo(idActivo);
 				listaPlantas.add(dto);
 			}
@@ -1506,14 +1510,22 @@ public class ActivoAdapter {
 		return genericDao.getListOrdered(ActivoFoto.class, order, filtro);
 
 	}
-
+	
 	public Page getActivos(DtoActivoFilter dtoActivoFiltro) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera))
-			dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+				dtoActivoFiltro.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+			}
+		}
+		
 		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
 	}
 

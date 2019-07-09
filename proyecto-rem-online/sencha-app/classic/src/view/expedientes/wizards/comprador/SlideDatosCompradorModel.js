@@ -4,18 +4,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 
 	data: {},
 	stores: {		
-		comboTipoPersona: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {
-					diccionario: 'tipoPersona'
-				}
-			},
-			autoLoad: true
-		},
-
 		comboTipoGradoPropiedad: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -38,34 +26,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorModel',
 			}
 		},
 
-		comboProvincia: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {
-					diccionario: 'provincias'
-				}
-			}
-		},
-
 		comboMunicipio: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboMunicipio',
 				extraParams: {codigoProvincia: '{comprador.provinciaCodigo}'} 
-			}
-		},
-
-		comboPaises: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {
-					diccionario: 'paises'
-				}
 			}
 		},
 

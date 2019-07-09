@@ -67,6 +67,9 @@ public class ActivoCondicionEspecifica implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "COE_USUARIO_BAJA")
 	private Usuario usuarioBaja;
+	
+	@Column(name = "COE_CODIGO")
+	private String codigo;
 		
 	@Version   
 	private Long version;
@@ -148,5 +151,13 @@ public class ActivoCondicionEspecifica implements Serializable, Auditable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 }

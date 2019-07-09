@@ -93,10 +93,15 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 		
 		// Carterización del buscador.
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera)) {
-			dto.setCodCartera(usuarioCartera.getCartera().getCodigo());
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dto.setCodCartera(usuarioCartera.getCartera().getCodigo());
+				dto.setCodSubCartera(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dto.setCodCartera(usuarioCartera.getCartera().getCodigo());
+			}
 		}
-
+		
 		page = provisionAgrupacionGastosDao.findAll(dto);
 		
 		if(!Checks.esNulo(page)){

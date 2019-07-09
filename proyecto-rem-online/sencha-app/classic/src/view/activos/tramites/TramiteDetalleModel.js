@@ -24,6 +24,19 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
         		return 'resources/images/'+src;	     
         	}		
 		},
+		isEmptySrcCartera: function(get) {
+	     	var cartera = get('tramite.cartera');
+	     	var src=null;
+	     	if(!Ext.isEmpty(cartera)) {
+	     		src = CONST.IMAGENES_CARTERA[cartera.toUpperCase()];
+	     	}
+        	if(Ext.isEmpty(src)) {
+        		return 	true;
+        	}else {
+        		return false;	     
+        	}     	
+	     	
+	     },
 		
 		getSrcMultiActivo: function(get) {
 		 	var esMultiActivo = get('tramite.esMultiActivo');

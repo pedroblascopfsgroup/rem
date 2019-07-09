@@ -66,6 +66,9 @@ public class VBusquedaPublicacionActivo implements Serializable {
     @Column(name="CARTERA_CODIGO")
     private String cartera;
     
+    @Column(name="SUBCARTERA_CODIGO")
+    private String subCartera;
+    
     @Column(name="OKALQUILER")
     private Boolean okalquiler;
     
@@ -204,6 +207,14 @@ public class VBusquedaPublicacionActivo implements Serializable {
 
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
+	}
+	
+	public String getSubCartera() {
+		return subCartera;
+	}
+
+	public void setSubCartera(String subCartera) {
+		this.subCartera = subCartera;
 	}
 
 	public Boolean getOkalquiler() {

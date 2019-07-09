@@ -1237,4 +1237,6 @@ public interface ExpedienteComercialApi {
 	
 	public void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial);
 
+	boolean existeComprador(String numDoc);
+
 }

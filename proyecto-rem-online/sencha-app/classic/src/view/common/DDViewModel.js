@@ -104,6 +104,38 @@ Ext.define('HreRem.view.common.DDViewModel', {
 			        {"codigo": 0, "descripcion": "No Solucionar"},
 			        {"codigo": 1, "descripcion": "Solucionar"}
 			    ]
-    		}
+    		},
+    		comboPaises: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {
+						diccionario: 'paises'
+					}
+				},
+				autoLoad: true
+			},
+			comboProvincia: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {
+						diccionario: 'provincias'
+					}
+				}
+			},
+			comboTipoPersona: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {
+						diccionario: 'tipoPersona'
+					}
+				},
+				autoLoad: true
+			}
      }
 });

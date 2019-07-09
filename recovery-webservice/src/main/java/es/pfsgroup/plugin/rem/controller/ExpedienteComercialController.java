@@ -2120,4 +2120,21 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView existeComprador(String numDocumento, ModelMap model) {
+		try {
+			boolean existe = expedienteComercialApi.existeComprador(numDocumento);
+			model.put("data", existe);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

@@ -108,6 +108,12 @@ public class VBusquedaVisitasDetalle implements Serializable {
 	@Column(name="DD_CRA_ID")
 	private String idCartera;
 	
+	@Column(name="CODIGO_SUBCARTERA")
+	private String subcarteraCodigo;
+
+	@Column(name="DD_SCR_ID")
+	private String idSubcartera;
+	
 	
 	public String getId() {
 		return id;
@@ -349,4 +355,21 @@ public class VBusquedaVisitasDetalle implements Serializable {
 	public void setIdCartera(String idCartera) {
 		this.idCartera = idCartera;
 	}
+	
+	public String getSubCarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void getSubCarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
+	}
+	
+	public String getIdSubCartera() {
+		return idSubcartera;
+	}
+
+	public void setIdSubCartera(String idSubcartera) {
+		this.idSubcartera = idSubcartera;
+	}
+	
 }

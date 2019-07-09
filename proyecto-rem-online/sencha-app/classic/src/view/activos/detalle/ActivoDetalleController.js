@@ -3592,13 +3592,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    
 	    for (var i = 0; i < recordsGridArray.length; i++) {
 	    	l_CondicionEspecifica.push(recordsGridArray[i].data.texto);
+	    	l_CondicionEspecifica.push(recordsGridArray[i].data.codigo);
+	    	l_CondicionEspecifica.push(recordsGridArray[i].data.fechaDesde);
+	    	l_CondicionEspecifica.push(recordsGridArray[i].data.fechaHasta);
 	    }
 
 	    Ext.Array.each(listadoActivos, function(record, index) {
 	          var model = {};
 	          model.name = 'condicionesespecificas';
 	          model.type = 'activo';
-	          model.data = {texto: l_CondicionEspecifica[0]};
+	          model.data = {texto: l_CondicionEspecifica[0], codigo: l_CondicionEspecifica[1], fechaDesde: l_CondicionEspecifica[2], fechaHasta: l_CondicionEspecifica[3]};
 	          model.data.idActivo = record.data.activoId;
 	          tabData.models.push(model);
 	        });
@@ -4702,7 +4705,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickActivoMatriz: function(){
 		var me = this;
 		var numActivo = me.getViewModel().get('activo.numActivoMatriz');
-		if(numActivo != ""){
+		if(!Ext.isEmpty(numActivo)){
 		  	var url= $AC.getRemoteUrl('activo/getActivoExists');
         	var data;
     		Ext.Ajax.request({

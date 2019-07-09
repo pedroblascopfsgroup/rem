@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.beans.Service;
@@ -2911,7 +2912,7 @@ public class AgrupacionAdapter {
 	
 	
 
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, rollbackFor=Exception.class)
 	public String saveAgrupacion(DtoAgrupaciones dto, Long id) throws Exception {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
@@ -2925,9 +2926,7 @@ public class AgrupacionAdapter {
 
 			if (!Checks.esNulo(error)) {
 				throw new JsonViewerException(error);
-			}
-			
-			
+			}	
 		}
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			// si modificamos la vigencia nos guardamos la traza
@@ -3081,7 +3080,6 @@ public class AgrupacionAdapter {
 				}
 				else
 				{
-					boolean hasPisoPiloto = agrupacion.isExistePiloto();
 					beanUtilNotNull.copyProperties(obraNueva, dto);
 
 					if (dto.getMunicipioCodigo() != null) {
@@ -3113,7 +3111,7 @@ public class AgrupacionAdapter {
 					if (!Checks.esNulo(dto.getPisoPiloto())){
 						Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(id);
 						
-						if (!Checks.esNulo(pisoPiloto) && hasPisoPiloto) {
+						if (!Checks.esNulo(pisoPiloto)) {
 							Activo pisoPilotoOld = pisoPiloto;
 							ActivoAgrupacionActivo aga_piloto;
 							//Si se quiere definir un piso piloto pero no existe en la agrupación, mostramos mensaje de error
@@ -3128,7 +3126,7 @@ public class AgrupacionAdapter {
 							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
 							aga_piloto.setPisoPiloto(true);
 							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
-						}else if (Checks.esNulo(pisoPiloto) && !hasPisoPiloto) {
+						}else {
 							pisoPiloto = this.isActivoValido(agrupacion, dto.getPisoPiloto());
 							//Si no hay piso piloto definido y el seleccionado es de Yubai, procedemos a guardar los cambios
 							Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId());
@@ -3146,11 +3144,11 @@ public class AgrupacionAdapter {
 						agrupacion.setComercializableConsPlano(dto.getComercializableConsPlano());
 					}
 					
-					activoAgrupacionApi.saveOrUpdate(agrupacion);
 					activoAgrupacionApi.saveOrUpdate(obraNueva);
 				}
 
 			} catch (JsonViewerException jsonViewerException) {
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return "false"+SPLIT_VALUE+jsonViewerException.getMessage();
 			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);

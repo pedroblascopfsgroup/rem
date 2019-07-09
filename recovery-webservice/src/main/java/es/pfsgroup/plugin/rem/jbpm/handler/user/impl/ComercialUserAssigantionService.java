@@ -189,16 +189,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 
 		if(GestorActivoApi.CODIGO_GESTOR_COMERCIAL.equals(codigoGestor) && loteComercial != null && !Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
 			return loteComercial.getUsuarioGestorComercial();
-		}
-		
+		}		
 		
 		if(GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(codigoGestor) && loteComercial != null && !Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
 			return loteComercial.getUsuarioGestorComercialBackOffice();
-		}
-		
-		if(CODIGO_T017_ANALISIS_PM.equals(codigoTarea) || CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
-				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
-			return gestorActivoApi.usuarioTareaApple(codigoTarea);
 		}
 
 		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());

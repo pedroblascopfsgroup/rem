@@ -529,7 +529,7 @@ public class GenericController extends ParadiseJsonController{
 			}else {
 				id = jsonData.getId();
 				
-				if(Checks.esNulo(id) || Checks.esNulo(jsonData.getIdTarea())) {
+				if(Checks.esNulo(id)) {
 					errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 					descErrores = "Faltan campos";
 						throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);

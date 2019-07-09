@@ -2139,6 +2139,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioBaja",
 							condicion.getUsuarioBaja().getUsername());
 				}
+				if(!Checks.esNulo(condicion.getCodigo())){
+					beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "codigo", condicion.getCodigo());
+				}
 
 			} catch (IllegalAccessException e) {
 				logger.error("Error en activoManager", e);
@@ -2158,13 +2161,96 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public Boolean createCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica) {
 		ActivoCondicionEspecifica condicionEspecifica = new ActivoCondicionEspecifica();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoCondicionEspecifica.getIdActivo());
-
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddhhmmss");
+		
+		int i = 0;
+		
+		String codigo = null;
+		
+		Filter filtro2 = null;
+		
+		if(!Checks.esNulo(dtoCondicionEspecifica.getCodigo())) {
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", dtoCondicionEspecifica.getIdActivo());
+			Order order = new Order(OrderType.DESC, "id");
+			List<ActivoCondicionEspecifica> listaCondicionesEspecificas = genericDao
+					.getListOrdered(ActivoCondicionEspecifica.class, order, filter);
+			
+			List<DtoCondicionEspecifica> listaDtoCondicionesEspecificas = new ArrayList<DtoCondicionEspecifica>();
+			
+			int coincidencia = 0;
+			
+			for (ActivoCondicionEspecifica condicion : listaCondicionesEspecificas) {
+				
+				if(dtoCondicionEspecifica.getCodigo().equals(condicion.getCodigo())) {
+					if(!Checks.esNulo(dtoCondicionEspecifica.getTexto())) {
+						condicion.setTexto(dtoCondicionEspecifica.getTexto());
+					}
+					if(!Checks.esNulo(dtoCondicionEspecifica.getFechaDesde())) {
+						condicion.setFechaDesde(dtoCondicionEspecifica.getFechaDesde());
+					}
+					if(!Checks.esNulo(dtoCondicionEspecifica.getFechaHasta())) {
+						condicion.setFechaHasta(dtoCondicionEspecifica.getFechaHasta());
+					}
+					condicion.setUsuarioAlta(adapter.getUsuarioLogado());
+					condicion.setUsuarioBaja(adapter.getUsuarioLogado());
+					
+					coincidencia = 1;
+					
+					genericDao.save(ActivoCondicionEspecifica.class, condicion);
+					
+					return true;
+				}
+			}
+			
+			if(coincidencia == 0) {
+				Activo activo = genericDao.get(Activo.class, filtro);
+				
+				try {
+					beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
+					beanUtilNotNull.copyProperty(condicionEspecifica, "fechaDesde", new Date());
+					beanUtilNotNull.copyProperty(condicionEspecifica, "usuarioAlta", adapter.getUsuarioLogado());
+					beanUtilNotNull.copyProperty(condicionEspecifica, "codigo", dtoCondicionEspecifica.getCodigo());
+					beanUtilNotNull.copyProperty(condicionEspecifica, "activo", activo);
+					
+					// Actualizar la fehca de la anterior condición.
+					ActivoCondicionEspecifica condicionAnterior = activoDao
+							.getUltimaCondicion(dtoCondicionEspecifica.getIdActivo());
+					if (!Checks.esNulo(condicionAnterior)) {
+						beanUtilNotNull.copyProperty(condicionAnterior, "fechaHasta", new Date());
+						condicionAnterior.setUsuarioBaja(adapter.getUsuarioLogado());
+						genericDao.save(ActivoCondicionEspecifica.class, condicionAnterior);
+					}
+					
+				} catch (IllegalAccessException e) {
+					logger.error("Error en activoManager", e);
+					
+				} catch (InvocationTargetException e) {
+					logger.error("Error en activoManager", e);
+				}
+				
+				genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
+				
+				return true;
+			}
+		}
+		
+		do {
+			codigo = dtoCondicionEspecifica.getIdActivo().toString() + sdf.format(new Date())+i;
+			filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+			condicionEspecifica = genericDao.get(ActivoCondicionEspecifica.class, filtro2);
+			i++;
+		}while(!Checks.esNulo(condicionEspecifica));
+		
 		Activo activo = genericDao.get(Activo.class, filtro);
+		
+		condicionEspecifica = new ActivoCondicionEspecifica();
 
 		try {
 			beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
 			beanUtilNotNull.copyProperty(condicionEspecifica, "fechaDesde", new Date());
 			beanUtilNotNull.copyProperty(condicionEspecifica, "usuarioAlta", adapter.getUsuarioLogado());
+			beanUtilNotNull.copyProperty(condicionEspecifica, "codigo", codigo);
 			beanUtilNotNull.copyProperty(condicionEspecifica, "activo", activo);
 
 			// Actualizar la fehca de la anterior condición.
@@ -2469,12 +2555,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion) {
 		// Búsqueda carterizada
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuario.id", adapter.getUsuarioLogado().getId()));
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class
+				,genericDao.createFilter(FilterType.EQUALS, "usuario.id", adapter.getUsuarioLogado().getId()));
 		if (!Checks.esNulo(usuarioCartera)) {
-			dtoActivosPublicacion.setCartera(usuarioCartera.getCartera().getCodigo());
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoActivosPublicacion.setCartera(usuarioCartera.getCartera().getCodigo());
+				dtoActivosPublicacion.setSubCartera(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoActivosPublicacion.setCartera(usuarioCartera.getCartera().getCodigo());
+			}
 		}
-
+		
 		// Filtro por alquiler y venta
 		String filtroEstadoPublicacionAlquiler = dtoActivosPublicacion.getEstadoPublicacionAlquilerCodigo();
 		String filtroEstadoPublicacionVenta = dtoActivosPublicacion.getEstadoPublicacionCodigo();
@@ -6261,19 +6352,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		tieneOfertasVivas = particularValidator.existeActivoConOfertaVivaEstadoExpediente(Long.toString(activo.getNumActivo()));
 		
-		for (ActivoTrabajo activoTrabajo : trabajosDelActivo) {	
-			if(!DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA.equals(activoTrabajo.getTrabajo().getSubtipoTrabajo().getCodigo())
-					&& !DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER.equals(activoTrabajo.getTrabajo().getSubtipoTrabajo().getCodigo())
-					&& (DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
-					|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
-					|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
-					|| DDEstadoTrabajo.ESTADO_PAGADO.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
-					|| DDEstadoTrabajo.ESTADO_VALIDADO.equals(activoTrabajo.getTrabajo().getEstado().getCodigo()))
-			) {
-				
-				tieneTrabajosVivos = true;
-				
-				break;
+		for (ActivoTrabajo activoTrabajo : trabajosDelActivo) {
+			if (activoTrabajo.getTrabajo().getEstado() != null
+					&& activoTrabajo.getTrabajo().getSubtipoTrabajo() != null) {
+				if (!DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA
+						.equals(activoTrabajo.getTrabajo().getSubtipoTrabajo().getCodigo())
+						&& !DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER
+								.equals(activoTrabajo.getTrabajo().getSubtipoTrabajo().getCodigo())
+						&& (DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
+								|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA
+										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
+								|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO
+										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
+								|| DDEstadoTrabajo.ESTADO_PAGADO
+										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
+								|| DDEstadoTrabajo.ESTADO_VALIDADO
+										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo()))) {
+
+					tieneTrabajosVivos = true;
+
+					break;
+				}
 			}
 		}
 		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));	

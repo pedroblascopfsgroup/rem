@@ -97,10 +97,22 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 															cls: 'cabecera-info-field',
 															width: 70,
 										                	bind: {
+										                		hidden:'{isEmptySrcCartera}',
 										                		src: '{getSrcCartera}',
 										                		alt: '{expediente.entidadPropietariaDescripcion}'
 										                	}
 										                },
+										                {
+																fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+																cls: 'cabecera-info-field',
+																fieldStyle: 'color: #0a94d6 !important;font-weight: bold !important',
+																width: 70,
+																bind: {
+																	hidden:'{!isEmptySrcCartera}',
+																	value: '{expediente.entidadPropietariaDescripcion}'
+																}
+																
+														},
 										                {
 										                	xtype: 'currencyfieldbase',
 										                	fieldLabel: HreRem.i18n('fieldlabel.importe'),

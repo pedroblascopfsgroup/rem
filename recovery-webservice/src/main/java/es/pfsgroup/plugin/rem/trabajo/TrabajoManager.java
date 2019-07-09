@@ -278,9 +278,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera))
-			dto.setCartera(usuarioCartera.getCartera().getCodigo());
-
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dto.setCartera(usuarioCartera.getCartera().getCodigo());
+				dto.setSubcartera(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dto.setCartera(usuarioCartera.getCartera().getCodigo());
+			}
+		}
+		
+		
 		// Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
 		// y según HREOS-2272 en el modulo de trabajos
 		// los perfiles externos de CAPA_CONTROL_BANKIA y USUARIOS_DE_CONSULTA
@@ -814,7 +821,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				isFirstLoop = false;
 			}
 
-			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()))
+			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
+					|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo()))
 				trabajo.setEsTarificado(true);
 
 			if (activosAgrupacionTrabajo.size() > 0) {
@@ -989,7 +997,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						trabajo.setFechaAprobacion(new Date());
 					}
 
-					if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())) {
+					if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()) 
+							|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 						trabajo.setEsTarificado(true);
 					}
 				}
@@ -1105,7 +1114,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
 			trabajo.getActivosTrabajo().add(activoTrabajo);
 
-			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()))
+			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
+					|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo()))
 				trabajo.setEsTarificado(true);
 
 			// El gestor de activo se salta tareas de estos trámites y por tanto

@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 	requires: ['HreRem.model.TasacionBankiaModel', 'HreRem.model.ActivoTasacion'],
 
 	listeners: {
-    	boxready:'cargarTabData'
+    	//boxready:'cargarTabData'
     },
 	
     initComponent: function () {

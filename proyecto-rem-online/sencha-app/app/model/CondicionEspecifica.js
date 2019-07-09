@@ -16,16 +16,23 @@ Ext.define('HreRem.model.CondicionEspecifica', {
     			name:'texto'
     		},
     		{
-    			name:'fechaDesde'
+    			name:'fechaDesde',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
-    			name:'fechaHasta'
+    			name:'fechaHasta',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name:'usuarioAlta'
     		},
     		{
     			name:'usuarioBaja'
+    		},
+    		{
+    			name:'codigo'
     		}
     ],
     

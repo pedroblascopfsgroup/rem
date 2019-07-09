@@ -817,11 +817,18 @@ public class AgrupacionAdapter {
 
 	public Page getListAgrupaciones(DtoAgrupacionFilter dtoAgrupacionFilter) {
 
-		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if (!Checks.esNulo(usuarioCartera))
-			dtoAgrupacionFilter.setCodCartera(usuarioCartera.getCartera().getCodigo());
+				
+		if (!Checks.esNulo(usuarioCartera)){
+			if(!Checks.esNulo(usuarioCartera.getSubCartera())){
+				dtoAgrupacionFilter.setCodCartera(usuarioCartera.getCartera().getCodigo());
+				dtoAgrupacionFilter.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}else{
+				dtoAgrupacionFilter.setCodCartera(usuarioCartera.getCartera().getCodigo());
+			}
+		}
 
 		Page temp = (Page) activoAgrupacionApi.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado);
 		return temp;

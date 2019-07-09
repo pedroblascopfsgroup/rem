@@ -15,6 +15,7 @@ public class DtoHistoricoPropuestaFilter extends WebDto {
 	private String numPropuesta;
 	private String nombrePropuesta;
 	private String entidadPropietariaCodigo;
+	private String subCartera;
 	private String tipoPropuesta;
 	private String numTramite;
 	private String numTrabajo;
@@ -98,5 +99,11 @@ public class DtoHistoricoPropuestaFilter extends WebDto {
 		this.idAdjunto = idAdjunto;
 	}
 
+	public String getSubCartera() {
+		return subCartera;
+	}
+	public void setSubCartera(String subCartera) {
+		this.subCartera = subCartera;
+	}
 	
 }

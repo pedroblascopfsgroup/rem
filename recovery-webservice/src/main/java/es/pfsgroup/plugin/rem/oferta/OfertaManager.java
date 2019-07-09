@@ -2992,6 +2992,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
+	@Deprecated
 	public void desocultarActivoOferta(Oferta oferta) throws Exception {
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {

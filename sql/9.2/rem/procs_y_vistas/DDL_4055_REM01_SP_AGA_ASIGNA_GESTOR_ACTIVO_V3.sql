@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JINLI HU
---## FECHA_CREACION=20190412
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20190709
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3624
+--## INCIDENCIA_LINK=HREOS-7039
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -24,6 +24,7 @@
 --##        1.1 HREOS-5838 Guillermo Llidó : se añaden las subcarteras de Agora para que pueda asignar gestores
 --##        1.2 HREOS-5838 Daniel Algaba : corrección subcarteras
 --##		1.3 REMVIP-3624 JINLI HU : añadir filtro para la asignación de gestor/supervisor de BO para los activos de sareb/bankia que tengan el tipo de comercialización a Singular 
+--##        1.4 HREOS-7039 Se añade el gestor Portfolio Manager (GPM)
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -50,7 +51,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     V_CLASE_ACTIVO_NULL VARCHAR (500 CHAR);
 
     V_GESTOR_FINANCIERO VARCHAR2(4000 CHAR) := ' (''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''GESRES'',''SUPRES'',''HAYAGBOINM'',''HAYASBOINM'') ';
-    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''HAYASBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'', ''GESTCOMALQ'', ''SUPCOMALQ'', ''GFORMADM'')';
+    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''HAYASBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'',''GESTCOMALQ'',''SUPCOMALQ'',''GFORMADM'',''GPM'')';
     V_GESTOR            VARCHAR2(4000 CHAR);
 
     CURSOR C_LOG IS

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190618
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20190709
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6080
+--## INCIDENCIA_LINK=HREOS-7039
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -26,6 +26,7 @@
 --##	0.13 Se corrige la query de GACT
 --##    0.14 Se modifica la vista para optimizarla y quitar codigo duplicado
 --##    0.15 Permitir que los gestores HAYAGBOINM, HAYASBOINM, SCOM, GCOM, SUPRES, GESRES se puedan asignar con activos con DD_TCR_ID nulo
+--##    0.16 Se añade el gestor Portfolio Manager (GPM)
 --##########################################
 --*/
 
@@ -48,8 +49,8 @@ DECLARE
     V_MSQL6 VARCHAR2( 32767 CHAR); -- Sentencia a ejecutar  
     V_MSQL7 VARCHAR2( 32767 CHAR); -- Sentencia a ejecutar  
     V_MSQL8 VARCHAR2( 32767 CHAR); -- Sentencia a ejecutar  
-    V_ESQUEMA VARCHAR2( 25 CHAR):= 'REM01'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2( 25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+    V_ESQUEMA VARCHAR2( 25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2( 25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     ERR_NUM NUMBER( 25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2( 32767 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
@@ -129,7 +130,8 @@ SELECT /*+ ALL_ROWS */  act.act_id,
 			 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT 
                 JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra on act.dd_cra_id = cra.dd_cra_id
                 JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA scr on act.dd_scr_id = scr.dd_scr_id AND cra.dd_cra_id = scr.dd_cra_id
-                JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO IN (''GADM'', ''GMARK'', ''GPREC'', ''GTOPDV'', ''GTOPLUS'', ''GESTLLA'', ''GADMT'', ''GFSV'', ''GCAL'', ''GESMIN'', ''SUPMIN'', ''SUPADM'',''GBACKOFFICE'')
+                JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO IN (''GADM'', ''GMARK'', ''GPREC'', ''GTOPDV'', ''GTOPLUS'', ''GESTLLA'', 
+                ''GADMT'', ''GFSV'', ''GCAL'', ''GESMIN'', ''SUPMIN'', ''SUPADM'',''GBACKOFFICE'')
                 LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
                 ON (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
                     AND dist0.cod_cartera IS NULL
@@ -195,7 +197,7 @@ SELECT /*+ ALL_ROWS */  act.act_id,
 																					,''GCOIN'',''GCOINM'',''GCODI'',''SUPCOMALQ''
                                                                                     ,''SUPACT'',''HAYASBOINM'',''GGADM'',''GIAADMT'',''GIAFORM''
                                                                                     ,''GFORM'',''SFORM'',''GESTCOMALQ'',''PTEC''
-                                                                                    ,''GCOM'',''SCOM'',''GPUBL'',''SPUBL''
+                                                                                    ,''GCOM'',''SCOM'',''GPUBL'',''SPUBL'', ''GPM''
                                                                                     )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
                 ON (dist0.cod_estado_activo IS NULL

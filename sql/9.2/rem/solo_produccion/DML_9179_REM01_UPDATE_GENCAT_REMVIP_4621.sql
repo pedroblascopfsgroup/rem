@@ -220,9 +220,9 @@ BEGIN
 
 -----------------------------------------------------------------------------------------------------------------
 
-	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza OFG_OFERTAS - Borrado lógico ');
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza OFR_OFERTAS - Borrado lógico ');
 										
-	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.OFG_OFERTAS T1
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.OFR_OFERTAS T1
         USING (
 
 		SELECT  TAC.TRA_ID, TAC.TAR_ID, OFR.OFR_ID, ECO.ECO_ID, OFG.OFG_ID
@@ -242,7 +242,7 @@ BEGIN
 		AND ECO_NUM_EXPEDIENTE IN ( 165063, 165640 )
 
         ) T2 
-        ON ( T1.OFG_ID = T2.OFG_ID )
+        ON ( T1.OFR_ID = T2.OFR_ID )
 	WHEN MATCHED THEN UPDATE
 	SET T1.BORRADO = 1,
 	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
@@ -252,7 +252,7 @@ BEGIN
 
 	EXECUTE IMMEDIATE V_SQL;
 	
-	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en OFG_OFERTAS ');  
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en OFR_OFERTAS ');  
 
 
 -----------------------------------------------------------------------------------------------------------------

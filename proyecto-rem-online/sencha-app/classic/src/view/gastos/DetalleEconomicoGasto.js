@@ -163,11 +163,9 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															                me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = false;
 																               	if (me.up('gastodetallemain').lookupReference('destinatariosPago').getValue() == null){
 																               		me.up('gastodetallemain').lookupReference('destinatariosPago')  == false;
-																               		debugger;
 																               	} else {
 																               		me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = true;
 																               		me.up('gastodetallemain').lookupReference('destinatariosPago').isValid() == true;
-																               		debugger;
 																               	}
 															               	}        	   
 														            	   	}

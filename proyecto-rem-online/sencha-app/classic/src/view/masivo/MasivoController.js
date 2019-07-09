@@ -59,7 +59,7 @@ Ext.define('HreRem.view.masivo.MasivoController', {
                  btn.up('grid').getSelectionModel().clearSelections();
                  btn.up('grid').down('#procesarButton').setDisabled(true);
                  btn.up('grid').down('#downloadButton').setDisabled(true);
-                 btn.up('grid').down('#downloadButton').setDisabled(true);
+                 btn.up('grid').down('#validarButton').setDisabled(true);
 			     me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		     },
 		     failure: function(response, opts) {
@@ -131,8 +131,12 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 		         } catch (e){ };
 		       
 		         me.getView().unmask();
-		         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		         me.getView().lookupReference("listadoCargamasiva").getStore().load();
+		         btn.up('grid').getStore().load();
+			     btn.up('grid').getSelectionModel().deselectAll();
+                 btn.up('grid').getSelectionModel().clearSelections();
+                 btn.up('grid').down('#procesarButton').setDisabled(true);
+				 btn.up('grid').down('#downloadButton').setDisabled(true);
+			     me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		     },
 		     failure: function(response, opts) {
 		     	

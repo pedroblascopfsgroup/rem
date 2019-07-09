@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Marco Munoz
---## FECHA_CREACION=20181001
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20190709
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=REMVIP-2082
+--## INCIDENCIA_LINK=HREOS-6963
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -19,6 +19,7 @@
 --##        0.5 (20180920) - Marco Muñoz - Se ajusta el SP para actuar también sobre agrupaciones de activos en los pasos 2.1 y 2.2.
 --##        1.02 (20180927) - Ivan Castelló - Añadir estado o en Pendiente de devolución.
 --##		1.03 (20181001) - Marco Muñoz - Se añade la actualización de la fecha de devolucion de la reserva del Expediente en la segunda casuistica (FECHA_DEVOLUCION_RESERVA)
+--##		1.04 (20190709) - Alejandro Valverde - Se añade comprobacion de la cartera Cerberus y la subcartera Apple para la obtencion de la fecha de firma de la tarea Obtención de contrato de reserva.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -99,11 +100,13 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON ACT.ACT_ID = OFA.ACT_ID
                                                             INNER JOIN REM01.DD_CRA_CARTERA CAR
                                                             ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
+															INNER JOIN REM01.DD_SCR_SUBCARTERA SCR
+															ON SCR.DD_CRA_ID = CAR.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO = ''08''
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138''))
                                                             AND OFR.OFR_NUM_OFERTA = :1';
                                                             
     V_FROM_RESERVA2                VARCHAR2(2000 CHAR) := 'FROM REM01.RES_RESERVAS RES
@@ -117,11 +120,13 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON ACT.ACT_ID = OFA.ACT_ID
                                                             INNER JOIN REM01.DD_CRA_CARTERA CAR
                                                             ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
+															INNER JOIN REM01.DD_SCR_SUBCARTERA SCR
+															ON SCR.DD_CRA_ID = CAR.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO = ''08''
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138''))
                                                             AND OFR.OFR_NUM_OFERTA = :1
                                                             AND ROWNUM = 1';                                                        
 
@@ -302,7 +307,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     END;
 
 BEGIN
---v1.03
+--v1.04
 
     COD_RETORNO := 0;
     DBMS_OUTPUT.PUT_LINE('[INICIO] Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación.');
@@ -1199,6 +1204,7 @@ EXCEPTION
           RAISE;*/
      WHEN OTHERS THEN
 		  ROLLBACK;
+		  RAISE;
           DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
           DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
           DBMS_OUTPUT.PUT_LINE(SQLERRM);

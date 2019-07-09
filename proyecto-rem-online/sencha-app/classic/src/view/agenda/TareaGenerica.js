@@ -2261,10 +2261,28 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
    T017_ObtencionContratoReservaValidacion: function(){
     	var me = this;
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-
-    	if((me.down('[name=fechaFirma]').getValue()!=null && me.down('[name=fechaFirma]').getValue()!="") || (CONST.CARTERA['LIBERBANK'] == codigoCartera)){
+        var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
+        var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+        
+        var parametros = me.down("form").getValues();
+        parametros.idExpediente = idExpediente;
+        
+        var urlFechaFirma =  $AC.getRemoteUrl('reserva/getFechaFirmaByIdExpediente');
+        
+        Ext.Ajax.request({
+			url: urlFechaFirma,
+		    params: parametros,
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var fechaFirma = new Date(data.fechaFirma);
+		    	me.down('[name=fechaFirma]').setValue(Ext.Date.format(fechaFirma, 'd/m/Y'));
+		    }
+		});
+		
+    	if((me.down('[name=fechaFirma]').getValue()!=null && me.down('[name=fechaFirma]').getValue()!="") || 
+    			(CONST.CARTERA['LIBERBANK'] == codigoCartera || (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == codigoSubcartera))){
     		me.down('[name=fechaFirma]').setReadOnly(true);
-        	
+    		me.campoObligatorio(me.down('[name=fechaFirma]'));
     	}
     },
         T017_ResolucionExpedienteValidacion: function() {

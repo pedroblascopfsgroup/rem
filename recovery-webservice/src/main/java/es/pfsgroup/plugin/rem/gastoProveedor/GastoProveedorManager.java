@@ -36,6 +36,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -1039,7 +1040,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setIban(detalleGasto.getIbanAbonar());
 			dto.setTitularCuenta(detalleGasto.getTitularCuentaAbonar());
 			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
-			dto.setGastoRefacturable(detalleGasto.getGastoRefacturable());
+			
+			if(DDSiNo.SI.equals(detalleGasto.getGastoRefacturable())) {
+				dto.setGastoRefacturable(true);
+			}else {
+				dto.setGastoRefacturable(false);
+			}
+			
 			
 			if (!Checks.esNulo(detalleGasto.getPagadoConexionBankia())) {
 				dto.setPagadoConexionBankia(detalleGasto.getPagadoConexionBankia() == 1 ? true : false);
@@ -3355,10 +3362,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filterGastoId = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", id);
 			GastoDetalleEconomico gastoDetalleEconomico = genericDao.get(GastoDetalleEconomico.class, filterGastoId);
 			
-			genericDao.update(GastoDetalleEconomico.class, gastoDetalleEconomico);
-			
 			if(!Checks.esNulo(gastoDetalleEconomico)) {
-				gastoDetalleEconomico.setGastoRefacturable(true);
+				Filter si = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.SI);
+				DDSiNo idSi = genericDao.get(DDSiNo.class, si);
+				gastoDetalleEconomico.setGastoRefacturable(idSi);
+				genericDao.update(GastoDetalleEconomico.class, gastoDetalleEconomico);
 				
 				for (String gasto : gastosRefacturablesLista) {
 					GastoRefacturable gastoRefacturableNuevo = new GastoRefacturable();
@@ -3382,5 +3390,40 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}catch(Exception e) {
 			logger.error(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean eliminarGastoRefacturado(Long idGasto, Long numGastoRefacturado) {
+		List<GastoRefacturable> listaDeGastosRefacturablesDelGasto = new ArrayList<GastoRefacturable>();
+		Boolean noTieneGastosRefacturados = false;
+		
+		Filter gastoRefacturadoNum = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", numGastoRefacturado);
+		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, gastoRefacturadoNum);
+		
+		Filter gastoId = genericDao.createFilter(FilterType.EQUALS, "idGastoProveedor", idGasto);
+		Filter gastoRefacturadoId = genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gastoProveedor.getId());
+		GastoRefacturable gastoRefacturable = genericDao.get(GastoRefacturable.class, gastoId, gastoRefacturadoId);
+		
+		gastoRefacturable.getAuditoria().setBorrado(true);
+		genericDao.update(GastoRefacturable.class, gastoRefacturable);
+		
+		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(idGasto);
+		if(Checks.estaVacio(listaDeGastosRefacturablesDelGasto)) {
+			noTieneGastosRefacturados = true;
+			
+			Filter filterGastoId = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+			GastoDetalleEconomico gastoDetalleEconomico = genericDao.get(GastoDetalleEconomico.class, filterGastoId);
+			
+			Filter no = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO);
+			DDSiNo idNo = genericDao.get(DDSiNo.class, no);
+			
+			gastoDetalleEconomico.setGastoRefacturable(idNo);
+			
+			genericDao.update(GastoDetalleEconomico.class, gastoDetalleEconomico);
+		}
+		
+		return noTieneGastosRefacturados;
+		
 	}
 }

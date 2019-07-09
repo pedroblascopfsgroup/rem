@@ -1091,5 +1091,24 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView eliminarGastoRefacturado(@RequestParam Long idGasto, Long numGastoRefacturado) {
+		ModelMap model = new ModelMap();
+		Boolean noTieneGastosRefacturados = false;	
+		if(!Checks.esNulo(idGasto) && !Checks.esNulo(numGastoRefacturado)) {
+			noTieneGastosRefacturados = gastoProveedorApi.eliminarGastoRefacturado(idGasto, numGastoRefacturado);
+		}
+		
+		try {	
+			model.put("noTieneGastosRefacturados", noTieneGastosRefacturados);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);		
+		}
+
+		return createModelAndViewJson(model);
+	}
 	
 }

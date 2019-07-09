@@ -59,11 +59,36 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 
         
 
+    },
+    
+    onDeleteClick: function(btn){
+    	var me = this;
+    	var numGastoRefacturado = me.getSelectionModel().getSelection()[0].getData().numeroGastoHaya;
+    	var idGasto = me.lookupController().getViewModel().getData().gasto.id;
+    	var url = $AC.getRemoteUrl('gastosproveedor/eliminarGastoRefacturado');
+    	
+    	
+    	if( numGastoRefacturado== undefined || numGastoRefacturado == ""){
+    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+    	}else{
+    		Ext.Ajax.request({	
+		 		url: url,
+		   		params: {
+		   					idGasto:idGasto,
+		   					numGastoRefacturado : numGastoRefacturado
+		   				},
+		    	success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);    
+			    
+		    	},
+		    	failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	},
+		    	callback: function(options, success, response){
+				}		     
+		  });		
+    	}
     }
     
-  /*  onDeleteClick: function(btn){
-    	var me = this;
-    }
-    */
     
 });

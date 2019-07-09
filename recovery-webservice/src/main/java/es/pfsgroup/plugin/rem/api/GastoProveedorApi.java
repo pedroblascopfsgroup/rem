@@ -373,5 +373,8 @@ public interface GastoProveedorApi {
 		public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista);
 
 
+		public Boolean eliminarGastoRefacturado(Long idGasto, Long numGastoRefacturado);
+
+
 }
 

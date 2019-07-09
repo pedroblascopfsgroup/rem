@@ -257,9 +257,9 @@ BEGIN
 
 -----------------------------------------------------------------------------------------------------------------
 
-	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ECO_EXPEDIENTE - Borrado lógico ');
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ECO_EXPEDIENTE_COMERCIAL - Borrado lógico ');
 										
-	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ECO_EXPEDIENTE T1
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL T1
         USING (
 
 		SELECT  TAC.TRA_ID, TAC.TAR_ID, OFR.OFR_ID, ECO.ECO_ID, OFG.OFG_ID
@@ -289,7 +289,7 @@ BEGIN
 
 	EXECUTE IMMEDIATE V_SQL;
 	
-	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ECO_EXPEDIENTE ');  
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ECO_EXPEDIENTE_COMERCIAL ');  
 
 
 -----------------------------------------------------------------------------------------------------------------

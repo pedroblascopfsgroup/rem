@@ -1651,13 +1651,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			    		
 			    	success: function(response, opts) {
 				    	data = Ext.decode(response.responseText);
-				    	
-			    		    	 
+				    	    	 
 			    	},
 			    	failure: function(response) {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			    	},
 			    	callback: function(options, success, response){
+			    		me.getView().grid.getStore().reload();
+				    	me.closeView();
 					}
 			    		     
 			  });
@@ -1665,6 +1666,4 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    	}
 	    	
 	    }
-	    
-
 });

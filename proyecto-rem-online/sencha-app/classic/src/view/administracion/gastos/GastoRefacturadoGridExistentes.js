@@ -50,14 +50,10 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
     },
     
 	onAddClick: function(btn){
-    	
 		var me = this;
 		var idGasto = me.lookupController().getViewModel().getData().gasto.id;
 		
-		Ext.create('HreRem.view.gastos.AnyadirNuevoGastoRefacturado',{idGasto: idGasto}).show();
-	
-
-        
+		Ext.create('HreRem.view.gastos.AnyadirNuevoGastoRefacturado',{idGasto: idGasto, grid:this}).show();    
 
     },
     
@@ -66,7 +62,6 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
     	var numGastoRefacturado = me.getSelectionModel().getSelection()[0].getData().numeroGastoHaya;
     	var idGasto = me.lookupController().getViewModel().getData().gasto.id;
     	var url = $AC.getRemoteUrl('gastosproveedor/eliminarGastoRefacturado');
-    	
     	
     	if( numGastoRefacturado== undefined || numGastoRefacturado == ""){
     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
@@ -78,8 +73,15 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		   					numGastoRefacturado : numGastoRefacturado
 		   				},
 		    	success: function(response, opts) {
-			    	data = Ext.decode(response.responseText);    
-			    
+			    	data = Ext.decode(response.responseText);   
+			    	var checkGastosRefacturados = me.getView().up("[reference=detalleeconomicogastoref]").down("[name=checkboxActivoRefacturableExistente]");
+
+			    	me.getStore().reload();
+			    	
+			    	if(data.noTieneGastosRefacturados == true || data.noTieneGastosRefacturados == "true" ){
+			    		checkGastosRefacturados.setValue(true);
+			    		checkGastosRefacturados.readOnly=true;
+			    	}
 		    	},
 		    	failure: function(response) {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

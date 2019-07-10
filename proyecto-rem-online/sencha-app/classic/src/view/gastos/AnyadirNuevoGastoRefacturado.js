@@ -11,6 +11,7 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoRefacturado', {
     },
     
     idGasto: null,
+    grid: null,
     
     
     listeners: {    

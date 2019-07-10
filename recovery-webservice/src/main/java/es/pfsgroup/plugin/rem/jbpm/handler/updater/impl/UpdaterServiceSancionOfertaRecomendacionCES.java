@@ -71,8 +71,7 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 						}
 					}
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {		
-						if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor()) && !Checks.esNulo(expediente.getReserva()) && DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo())) {
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA);
+						if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor())) {
 
 							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 							for (Oferta oferta : listaOfertas) {
@@ -80,16 +79,7 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 									ofertaApi.congelarOferta(oferta);
 								}
 							}
-														
-						} else if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor())){
-							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO_PTE_PRO_MANZANA);
 							
-							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
-							for (Oferta oferta : listaOfertas) {
-								if (!oferta.getId().equals(ofertaAceptada.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-									ofertaApi.congelarOferta(oferta);
-								}
-							}
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())) {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES); 
 							if (!Checks.esNulo(expediente.getCondicionante().getSolicitaReserva()) && expediente.getCondicionante().getSolicitaReserva() == 0) {
@@ -122,8 +112,10 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 						}
 					}
 				}
-				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-				expediente.setEstado(estado);
+				if(!Checks.esNulo(filtro)) {
+					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setEstado(estado);
+				}
 				genericDao.save(Oferta.class, ofertaAceptada);
 				genericDao.save(ExpedienteComercial.class, expediente);
 			}

@@ -72,4 +72,6 @@ public interface TareaActivoApi {
 		
 		public void saltoResolucionExpedienteApple(Long idTareaExterna);
 
+		boolean getSiTareaHaSidoCompletada(Long idTramite, String nombreTarea);
+
     }

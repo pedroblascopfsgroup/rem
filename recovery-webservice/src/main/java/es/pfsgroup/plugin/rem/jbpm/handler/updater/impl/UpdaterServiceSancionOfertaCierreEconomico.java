@@ -15,8 +15,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 @Component
 public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterService {
@@ -34,10 +36,22 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 	@Autowired
 	private ActivoAdapter activoAdapter;
 	
+    @Autowired
+    private OfertaApi ofertaApi;
+	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		// Finaliza el trámite
 		Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 		tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+		
+		if (!Checks.esNulo(tramite.getTrabajo())) {
+			Filter filtroExp = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tramite.getTrabajo().getId());
+			ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, filtroExp);
+			if (!Checks.esNulo(exp.getOferta()))
+			ofertaApi.finalizarOferta(exp.getOferta());	
+		}
+			
+		
 		genericDao.save(ActivoTramite.class, tramite);
 		
 		activoApi.actualizarOfertasTrabajosVivos(tramite.getActivo());

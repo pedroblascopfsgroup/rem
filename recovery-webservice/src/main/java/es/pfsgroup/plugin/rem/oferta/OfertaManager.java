@@ -1839,7 +1839,76 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public boolean checkAtribuciones(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
-		return checkAtribuciones(oferta);
+		if (!Checks.esNulo(oferta)) {
+
+			if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				List<ActivoOferta> actOfr = oferta.getActivosOferta();
+
+				for (int i = 0; i < actOfr.size(); i++) {
+
+					Activo activo = actOfr.get(i).getPrimaryKey().getActivo();
+
+					List<ActivoValoraciones> activoValoraciones = genericDao.getList(ActivoValoraciones.class,
+							genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+
+					Double deudaBruta = null;
+					Double valorNetoContable = null;
+
+					for (ActivoValoraciones valoracion : activoValoraciones) {
+						if (DDTipoPrecio.CODIGO_TPC_DEUDA_BRUTA_LIBERBANK.equals(valoracion.getTipoPrecio().getCodigo())) {
+							deudaBruta = valoracion.getImporte();
+						} else if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK
+								.equals(valoracion.getTipoPrecio().getCodigo())) {
+							valorNetoContable = valoracion.getImporte();
+						}
+					}
+
+					if (!Checks.esNulo(deudaBruta) && !Checks.esNulo(valorNetoContable)) {
+						if (deudaBruta > DDTipoPrecio.MAX_DEUDA_BRUTA_LIBERBANK) {
+							if (DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo())
+									|| DDTipoActivo.COD_EN_COSTRUCCION.equals(activo.getTipoActivo().getCodigo())) {
+
+								if (1D - valorNetoContable / deudaBruta > 0.6D) {
+									return false;
+								}
+							} else if (1D - valorNetoContable / deudaBruta > 0.5D) {
+								return false;
+							}
+						}
+					}
+
+				}
+			}
+
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+			if (!Checks.esNulo(expediente)) {
+				if (!Checks.esNulo(expediente.getComiteSancion())) {
+					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
+					if (DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_TANGO_TANGO.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_THIRD_PARTIES_YUBAI.equals(codigoComiteSancion))
+						return true;
+				} else {
+					if (trabajoApi.checkBankia(tareaExterna)) {
+						String codigoComite = null;
+						try {
+							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());							
+						} catch (Exception e) {
+							logger.error("error en OfertasManager", e);
+						}
+						if (DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComite))
+							return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 
@@ -1859,9 +1928,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							|| DDComiteAlquiler.CODIGO_HAYA_BANKIA.equals(codigoComiteSancionAlquiler)
 							|| DDComiteAlquiler.CODIGO_HAYA_OTRAS.equals(codigoComiteSancionAlquiler)
 							|| DDComiteAlquiler.CODIGO_HAYA_HyT.equals(codigoComiteSancionAlquiler)
-							|| DDComiteAlquiler.CODIGO_HAYA_CERBERUS.equals(codigoComiteSancionAlquiler)
-							|| DDComiteAlquiler.CODIGO_HAYA_THIRD_PARTIES.equals(codigoComiteSancionAlquiler)
-							)
+							|| DDComiteAlquiler.CODIGO_HAYA_CERBERUS.equals(codigoComiteSancionAlquiler))
 						return true;
 				}
 			}
@@ -1928,7 +1995,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							|| DDComiteSancion.CODIGO_HAYA_HYT.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_THIRD_PARTIES.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion))
+							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_THIRD_PARTIES_YUBAI.equals(codigoComiteSancion))
 						return true;
 				} else {
 					if (Checks.esNulo(oferta.getActivoPrincipal())
@@ -3854,7 +3922,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 	}
-
 	@Override
 	public Oferta getOfertaByIdExpediente(Long idExpediente) {
 		return genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente)).getOferta();
@@ -3880,10 +3947,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						if(!resultado || (resultado && T017.equals(tramite.getTipoTramite().getCodigo()))) break;
 					}
 				}
-			}
-			
+			}	
 		}
 		
 		return resultado;
+	}
+
+	@Override
+	public boolean checkEsYubai(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			Activo activo = ofertaAceptada.getActivoPrincipal();
+			if (!Checks.esNulo(activo) && (!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera()))) {
+				return (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo()));
+			}
+		}
+		return false;
 	}
 }

@@ -140,6 +140,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 
 							//Rechaza la oferta y descongela el resto
 							ofertaApi.rechazarOferta(ofertaAceptada);
+							ofertaApi.finalizarOferta(ofertaAceptada);
 							try {
 								ofertaApi.descongelarOfertas(expediente);
 							} catch (Exception e) {

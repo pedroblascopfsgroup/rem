@@ -140,6 +140,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 								// Rechaza la oferta y descongela el resto
 								ofertaApi.rechazarOferta(ofertaAceptada);
+								ofertaApi.finalizarOferta(ofertaAceptada);
 								
 								// Tipo rechazo y motivo rechazo ofertas cajamar
 								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi

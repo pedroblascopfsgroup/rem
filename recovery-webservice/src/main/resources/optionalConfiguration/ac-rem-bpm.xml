@@ -614,6 +614,14 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkDiscrepanciasUrsus(idTramite);
             }
+            def existeEnTablaDeConfiguracion = { 
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.existeEnTablaDeConfiguracion(tareaExterna);
+            }
+            def esYubai = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.esYubai(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

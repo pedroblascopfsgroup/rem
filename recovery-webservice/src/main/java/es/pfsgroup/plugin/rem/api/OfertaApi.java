@@ -663,5 +663,7 @@ public interface OfertaApi {
 	Boolean finalizarOferta(Oferta oferta);
 
 	Oferta getOfertaByIdExpediente(Long idExpediente);
+
+	boolean checkEsYubai(TareaExterna tareaExterna);
 }
 

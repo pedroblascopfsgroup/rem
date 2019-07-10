@@ -8986,6 +8986,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return esApple;
 	}
 	
+	
 	@Override
 	public Boolean checkPaseDirectoPendDevol(TareaExterna tareaExterna) {
 		
@@ -9587,5 +9588,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		listaAN = genericDao.getList(VReportAdvisoryNotes.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", oferta.getNumOferta()));
 		
 		return listaAN;
+	}
+	public boolean esYubai(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esYubai = false;
+		if ( !Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) ) {
+			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
+			if ( !Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera())) {
+				esYubai = ( DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo()) 
+							&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo()) );
+			}
+		}
+		return esYubai;
 	}
 }

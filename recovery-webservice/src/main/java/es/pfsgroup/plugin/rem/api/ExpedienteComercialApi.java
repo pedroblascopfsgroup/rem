@@ -1242,4 +1242,6 @@ public interface ExpedienteComercialApi {
 
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 
+	boolean esYubai(TareaExterna tareaExterna);
 }
+

@@ -1146,6 +1146,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_EGEO)));
 		}
+		else if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+				&& DDSubcartera.CODIGO_YUBAI.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_THIRD_PARTIES_YUBAI)));
+		}
+		
 		
 		crearCompradores(oferta, nuevoExpediente);
 

@@ -57,6 +57,7 @@ public class DDComiteSancion implements Auditable, Dictionary {
 	public static final String CODIGO_LIBERBANK_INVERSION_INMOBILIARIA = "25";
 	public static final String CODIGO_HAYA_GALEON = "28";
 	public static final String CODIGO_HAYA_EGEO = "30";
+	public static final String CODIGO_THIRD_PARTIES_YUBAI = "32";
 	
 	private static final long serialVersionUID = 1L;
 

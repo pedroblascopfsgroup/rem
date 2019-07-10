@@ -98,6 +98,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 
 								//Rechaza la oferta y descongela el resto
 								ofertaApi.rechazarOferta(ofertaAceptada);
+								ofertaApi.finalizarOferta(ofertaAceptada);
 								try {
 									ofertaApi.descongelarOfertas(expediente);
 									ofertaApi.finalizarOferta(ofertaAceptada);

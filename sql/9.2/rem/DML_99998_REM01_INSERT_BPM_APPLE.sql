@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20190711
+--## FECHA_CREACION=20190712
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6937
@@ -18,7 +18,7 @@
 --##      0.6 Vicente Martinez - HREOS-6841 - Eliminación validacion T017_AnalisisPM
 --##      0.6 Vicente Martinez - HREOS-6840 - Modificacion decisión PyF
 --##      0.7 Vicente Martinez - HREOS-6937 - Corrección acentos
---##	  0.8 Vicente Martinez - HREOS-7040 - Correccion label Observaciones
+--##	    0.8 Vicente Martinez - HREOS-7040 - Correccion label Observaciones
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -1714,7 +1714,7 @@ begin
   TAP(9).tap_field('TAP_VIEW') := NULL;
   TAP(9).tap_field('TAP_SCRIPT_VALIDACION') := null;
   TAP(9).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGValidacion("58","E")';
-  TAP(9).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RecomendCES''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Acepta'''': checkReserva() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReserva'''' ';
+  TAP(9).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RecomendCES''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Acepta'''': checkReservaFirmada() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReserva'''' ';
   TAP(9).tap_field('DD_TPO_ID_BPM') := null;
   TAP(9).tap_field('TAP_SUPERVISOR') := 0;
   TAP(9).tap_field('TAP_DESCRIPCION') := 'Recomendación CES';

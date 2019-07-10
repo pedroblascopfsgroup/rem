@@ -2151,7 +2151,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			List<ActivoCondicionEspecifica> listaCondicionesEspecificas = genericDao
 					.getListOrdered(ActivoCondicionEspecifica.class, order, filter);
 			
-			List<DtoCondicionEspecifica> listaDtoCondicionesEspecificas = new ArrayList<DtoCondicionEspecifica>();
 			
 			int coincidencia = 0;
 			

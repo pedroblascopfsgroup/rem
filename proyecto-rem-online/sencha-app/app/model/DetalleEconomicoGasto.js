@@ -203,7 +203,11 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		{
 			name:'isGastoRefacturableExistente',
 			type: 'boolean'
-		}
+		},	
+		{
+   			name: 'gastoRefacturable',
+   			type: 'boolean'
+   		}
 	],
     
 	proxy: {

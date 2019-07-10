@@ -1613,10 +1613,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				});
 				
 				grid.setStore(myStore);
-				
-
-				 
-
 			},
 			failure : function(response) {
 				me.fireEvent("errorToast", HreRem
@@ -1665,5 +1661,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    		
 	    	}
 	    	
+	    },
+	   disableGridGastosRefacturados: function (combo, newValue, oldValue, eOps) {
+	    	var me = this;
+	    	
+	    	me.lookupReference("gastoRefacturadoGridExistente").setDisabled(newValue);
+
 	    }
 });

@@ -1050,11 +1050,28 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setTitularCuenta(detalleGasto.getTitularCuentaAbonar());
 			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
 			
-			if(DDSiNo.SI.equals(detalleGasto.getGastoRefacturable())) {
+			Filter no = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO);
+			DDSiNo idNo = genericDao.get(DDSiNo.class, no);
+			
+			if(idNo.equals(detalleGasto.getGastoRefacturable())) { 
 				dto.setGastoRefacturable(true);
 			}else {
 				dto.setGastoRefacturable(false);
 			}
+			
+			dto.setBloquearCheckRefacturado(false);
+			
+			if(!Checks.esNulo(gasto.getEstadoGasto())) {
+				String estadoGasto = gasto.getEstadoGasto().getCodigo();
+				
+				if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
+					||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
+					||	DDEstadoGasto.PAGADO.equals(estadoGasto)
+					||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)) {
+						dto.setBloquearCheckRefacturado(true);
+				}
+			}
+			
 			
 			
 			if (!Checks.esNulo(detalleGasto.getPagadoConexionBankia())) {

@@ -875,14 +875,15 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
 												reference: 'checkboxActivoRefacturable',
 												colspan:3,
-												name: 'checkboxActivoRefacturableExistente'		
-												/*bind:{
-													//value:'';
-												}*/
+												name: 'checkboxActivoRefacturableExistente',
+												bind:{
+													value:'{detalleeconomico.gastoRefacturable}'
+												},
+												listeners: {
+													change: 'disableGridGastosRefacturados'
+												}
 											},
-											 {
-												
-												
+											 {				
 												xtype: 'gastoRefacturadoGridExistentes', 
 												width: '500px',
 												colspan: 3,
@@ -890,7 +891,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												reference: 'gastoRefacturadoGridExistente',
 												bind: {
 													store: '{storeGastosRefacturablesExistentes}',
-													disabled: '{checkboxActivoRefacturable.checked}'
+													disabled: '{deshabilitarGridGastosRefacturados}'
 												}
 										
 											}

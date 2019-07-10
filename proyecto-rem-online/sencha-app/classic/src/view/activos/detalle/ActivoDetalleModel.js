@@ -1407,6 +1407,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
     		},
     		
+    		comboTipoSolicitud: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoSolicitudTributo'}
+				},
+				autoLoad: true
+    		},
+    		
+    		comboResultadoSolicitud: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'favorableDesfavorable'}
+				},
+				autoLoad: true
+    		},
+    		
     		comboMotivoNoAplicaComercializarActivo: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -1735,6 +1755,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			remoteSort: false,
 		    remoteFilter: false,	    	
 		    autoLoad: false
+		},
+		
+		storeActivoTributos: {
+			model: 'HreRem.model.ActivoTributos', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getActivoTributosById',
+				extraParams: {idActivo: '{activo.id}'}
+			}
 		},
 		
 		comboTipoComercializarActivo: {

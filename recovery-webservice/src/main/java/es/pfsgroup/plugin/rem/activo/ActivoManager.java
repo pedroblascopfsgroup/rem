@@ -53,6 +53,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -155,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
@@ -3505,6 +3507,44 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return gastosActivos;
 	}
+	
+	@Override
+	public List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto) {
+		List<DtoActivoTributos> tributos = new ArrayList<DtoActivoTributos>();
+		List<ActivoTributos> listTributos = new ArrayList<ActivoTributos>();
+
+		if (!Checks.esNulo(idActivo)) {
+			Filter filterTributo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			listTributos = genericDao.getList(ActivoTributos.class, filterTributo, filtroAuditoria);
+		}
+		
+		if(!Checks.estaVacio(listTributos)){
+			for(ActivoTributos tributo : listTributos){
+				DtoActivoTributos dtoTributo = new DtoActivoTributos();
+				dtoTributo.setIdTributo(tributo.getId());
+				dtoTributo.setFechaPresentacion(tributo.getFechaPresentacionRecurso());
+				dtoTributo.setFechaRecPropietario(tributo.getFechaRecepcionPropietario());
+				dtoTributo.setFechaRecGestoria(tributo.getFechaRecepcionGestoria());
+				if(!Checks.esNulo(tributo.getTipoSolicitudTributo())){
+					dtoTributo.setTipoSolicitud(tributo.getTipoSolicitudTributo().getCodigo());
+				}
+				dtoTributo.setObservaciones(tributo.getObservaciones());
+				dtoTributo.setFechaRecRecursoPropietario(tributo.getFechaRecepcionRecursoPropietario());
+				dtoTributo.setFechaRecRecursoGestoria(tributo.getFechaRecepcionRecursoGestoria());
+				dtoTributo.setFechaRespRecurso(tributo.getFechaRespuestaRecurso());
+				if(!Checks.esNulo(tributo.getFavorable())){
+					dtoTributo.setResultadoSolicitud(tributo.getFavorable().getCodigo());
+				}
+				if(!Checks.esNulo(tributo.getGastoProveedor())){
+					dtoTributo.setNumGastoHaya(tributo.getGastoProveedor().getNumGastoHaya());
+				}
+				tributos.add(dtoTributo);
+			}
+		}
+		
+		return tributos;
+	}
 
 	@Override
 	public Oferta tieneOfertaAceptada(Activo activo) {
@@ -6511,6 +6551,100 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return UAsAlquiladas;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo) {
+		ActivoTributos tributo = new ActivoTributos();
+		
+		if(!Checks.esNulo(dto.getIdTributo())){
+			Filter filtroTributo = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTributo());
+			tributo = genericDao.get(ActivoTributos.class, filtroTributo);
+		}
+		
+		if(!Checks.esNulo(dto)){
+				if(!Checks.esNulo(idActivo)){
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+					Activo activo = genericDao.get(Activo.class, filtroActivo);
+					
+					if(!Checks.esNulo(activo)){
+						tributo.setActivo(activo);
+					}
+				}
+				if(!Checks.esNulo(dto.getFechaPresentacion())){
+					tributo.setFechaPresentacionRecurso(dto.getFechaPresentacion());
+				}
+				if(!Checks.esNulo(dto.getFechaRecPropietario())){
+					tributo.setFechaRecepcionPropietario(dto.getFechaRecPropietario());
+				}
+				if(!Checks.esNulo(dto.getFechaRecGestoria())){
+					tributo.setFechaRecepcionGestoria(dto.getFechaRecGestoria());
+				}
+				if(!Checks.esNulo(dto.getTipoSolicitud())){
+					Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoSolicitud());
+					DDTipoSolicitudTributo tipoSolicitud = genericDao.get(DDTipoSolicitudTributo.class, filtroTipo);
+					
+					if(!Checks.esNulo(tipoSolicitud)){
+						tributo.setTipoSolicitudTributo(tipoSolicitud);
+					}
+				}
+				if(!Checks.esNulo(dto.getObservaciones())){
+					tributo.setObservaciones(dto.getObservaciones());
+				}
+				if(!Checks.esNulo(dto.getFechaRecRecursoPropietario())){
+					tributo.setFechaRecepcionRecursoPropietario(dto.getFechaRecRecursoPropietario());
+				}
+				if(!Checks.esNulo(dto.getFechaRecRecursoGestoria())){
+					tributo.setFechaRecepcionRecursoGestoria(dto.getFechaRecRecursoGestoria());
+				}
+				if(!Checks.esNulo(dto.getFechaRespRecurso())){
+					tributo.setFechaRespuestaRecurso(dto.getFechaRespRecurso());
+				}
+				if(!Checks.esNulo(dto.getResultadoSolicitud())){
+					Filter filtroResultado = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getResultadoSolicitud());
+					DDFavorable favorable = genericDao.get(DDFavorable.class, filtroResultado);
+					
+					if(!Checks.esNulo(favorable)){
+						tributo.setFavorable(favorable);
+					}
+				}
+				if(!Checks.esNulo(dto.getNumGastoHaya())){
+					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", dto.getNumGastoHaya());
+					GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtroGasto);
+					
+					if(!Checks.esNulo(gasto)){
+						tributo.setGastoProveedor(gasto);
+					}
+				}
+								
+				if(!Checks.esNulo(tributo.getId())){
+					genericDao.update(ActivoTributos.class, tributo);
+				}else {
+					tributo.setAuditoria(Auditoria.getNewInstance());
+					genericDao.save(ActivoTributos.class, tributo);
+				}				
+				return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteActivoTributo(DtoActivoTributos dto) {
+		
+		if(!Checks.esNulo(dto.getIdTributo())){
+			Filter filtroTributo = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTributo());
+			ActivoTributos tributo = genericDao.get(ActivoTributos.class, filtroTributo);
+			
+			tributo.getAuditoria().setBorrado(true);
+			genericDao.update(ActivoTributos.class, tributo);
+			
+			return true;
+		}else {
+			return false;
+		}
 	}
 	
 }

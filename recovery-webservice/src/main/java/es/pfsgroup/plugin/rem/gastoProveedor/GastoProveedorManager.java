@@ -779,17 +779,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(!Checks.esNulo(gasto)) {
 					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
 					this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
-				}
-				
+					if(DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())) {
+						updaterStateApi.updaterStates(gasto, DDEstadoGasto.SUBSANADO);
+						gasto.getGastoGestion().setEstadoAutorizacionPropietario(genericDao.get(DDEstadoAutorizacionPropietario.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE)));
+						gasto.getGastoGestion().setMotivoRechazoAutorizacionPropietario(null);
+						gasto.getGastoGestion().setFechaEstadoAutorizacionPropietario(null);
+						genericDao.update(GastoProveedor.class, gasto);
+					}
+				}				
 				return true;
-
-		}
-		}
-
-		
-		return false;
-
-		
+			}
+		}		
+		return false;		
 	}
 	
 	

@@ -37,7 +37,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 	
-	V_MSQL := 'MERGE INTO GPV_GASTOS_PROVEEDOR GPV USING (
+	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV USING (
 									SELECT  distinct
 										GPV.GPV_ID AS GPV_ID
 									,   1 AS GPV_EXISTE_DOCUMENTO
@@ -45,18 +45,18 @@ BEGIN
 											AND NVL(GDE.GDE_INCLUIR_PAGO_PROVISION,0) = 0 
 											AND (NVL(GDE.GDE_ANTICIPO,0) = 0 AND GDE.GDE_FECHA_ANTICIPO IS NULL)
 										THEN
-											(select DD_EGA_ID FROM REM01.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''05'') 
+											(select DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''05'') 
 										ELSE
-											(select DD_EGA_ID FROM REM01.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''01'') 
+											(select DD_EGA_ID FROM '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO = ''01'') 
 										END AS DD_EGA_ID
 									,    ''apr_main_gr_documentos_gestoria'' AS USUARIOMODIFICAR
 									,    sysdate AS FECHAMODIFICAR  
-									FROM REM01.GPV_GASTOS_PROVEEDOR GPV 
-									JOIN REM01.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GDE.GPV_ID = GPV.GPV_ID
-									JOIN REM01.GGE_GASTOS_GESTION GGE ON GGE.GPV_ID = GPV.GPV_ID 
-									JOIN REM01.DD_EGA_ESTADOS_GASTO EGA ON GPV.DD_EGA_ID = EGA.DD_EGA_ID   
-									JOIN REM01.dgg_doc_ges_gastos DGG on gpv.gpv_id = dgg.gpv_id and dgg.VALIDO  = 1  and trunc(dgg.fechaenvio) = TO_DATE(''09/07/2019'',''DD/MM/YYYY'')
-									JOIN REM01.dd_grf_gestoria_recep_fich grf on gpv.dd_grf_id = grf.dd_grf_id
+									FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV 
+									JOIN '||V_ESQUEMA||'.GDE_GASTOS_DETALLE_ECONOMICO GDE ON GDE.GPV_ID = GPV.GPV_ID
+									JOIN '||V_ESQUEMA||'.GGE_GASTOS_GESTION GGE ON GGE.GPV_ID = GPV.GPV_ID 
+									JOIN '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO EGA ON GPV.DD_EGA_ID = EGA.DD_EGA_ID   
+									JOIN '||V_ESQUEMA||'.dgg_doc_ges_gastos DGG on gpv.gpv_id = dgg.gpv_id and dgg.VALIDO  = 1  and trunc(dgg.fechaenvio) = TO_DATE(''09/07/2019'',''DD/MM/YYYY'')
+									JOIN '||V_ESQUEMA||'.dd_grf_gestoria_recep_fich grf on gpv.dd_grf_id = grf.dd_grf_id
 									WHERE EGA.DD_EGA_CODIGO = ''12'')AUX
 				ON (GPV.GPV_ID = AUX.GPV_ID)
 				WHEN MATCHED THEN UPDATE SET

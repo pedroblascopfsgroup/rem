@@ -2,7 +2,7 @@
 --##########################################
 --## TITULO=Informe Diccionarios REM
 --## MENSAJE=Adjuntamos informe de Diccionarios. Cualquier duda o problema contacte con Delivery.
---## RECEPTORES=NADA
+--## RECEPTORES=guillermo.llido@pfsgroup.es
 --## ENTORNO=PRODUCCION-REM
 --## ESQUEMA=PFSREM
 --## FRECUENCIA=0 23 * * 6

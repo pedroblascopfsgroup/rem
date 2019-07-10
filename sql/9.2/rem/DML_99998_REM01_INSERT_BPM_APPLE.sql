@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Salt
---## FECHA_CREACION=20190706
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20190711
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6937
@@ -18,6 +18,7 @@
 --##      0.6 Vicente Martinez - HREOS-6841 - Eliminación validacion T017_AnalisisPM
 --##      0.6 Vicente Martinez - HREOS-6840 - Modificacion decisión PyF
 --##      0.7 Vicente Martinez - HREOS-6937 - Corrección acentos
+--##	  0.8 Vicente Martinez - HREOS-7040 - Correccion label Observaciones
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -2732,7 +2733,7 @@ begin
     TFI_MAP(15).tfi_field_row(3).tfi_field('TFI_ORDEN') := 3;
     TFI_MAP(15).tfi_field_row(3).tfi_field('TFI_TIPO') := 'textarea';
     TFI_MAP(15).tfi_field_row(3).tfi_field('TFI_NOMBRE') := 'observaciones';
-    TFI_MAP(15).tfi_field_row(3).tfi_field('TFI_LABEL') :=  'Observaciones recomendación CES';
+    TFI_MAP(15).tfi_field_row(3).tfi_field('TFI_LABEL') :=  'Observaciones';
     TFI_MAP(15).tfi_field_row(3).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(15).tfi_field_row(3).tfi_field('TFI_VALIDACION') := NULL;
     TFI_MAP(15).tfi_field_row(3).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -2833,7 +2834,7 @@ begin
     TFI_MAP(16).tfi_field_row(2).tfi_field('TFI_ORDEN') := 2;
     TFI_MAP(16).tfi_field_row(2).tfi_field('TFI_TIPO') := 'textarea';
     TFI_MAP(16).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'observaciones';
-    TFI_MAP(16).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Observaciones recomendación CES';
+    TFI_MAP(16).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Observaciones';
     TFI_MAP(16).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(16).tfi_field_row(2).tfi_field('TFI_VALIDACION') := NULL;
     TFI_MAP(16).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;

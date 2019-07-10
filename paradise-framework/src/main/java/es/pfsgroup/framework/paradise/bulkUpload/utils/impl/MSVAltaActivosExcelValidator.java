@@ -711,8 +711,11 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				if (!particularValidator.existeSociedadAcreedora(exc.dameCelda(i, columnNumber)) && particularValidator.existeActivoAsociado(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
-					listaFilas.add(i);
+				if (particularValidator.existeActivoAsociado(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))) {
+					if(!particularValidator.existeSociedadAcreedora(exc.dameCelda(i, columnNumber))) {
+						listaFilas.add(i);
+					}
+				}
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage(),e);
 				e.printStackTrace();

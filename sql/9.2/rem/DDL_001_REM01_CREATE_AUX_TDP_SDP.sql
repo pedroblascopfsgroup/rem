@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20190709
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.9.0
---## INCIDENCIA_LINK=NO
+--## INCIDENCIA_LINK=HREOS-6927
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla 'AUX_TDP_SDP'

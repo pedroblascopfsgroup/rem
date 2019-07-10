@@ -373,15 +373,6 @@ public interface OfertaApi {
 	public boolean checkAtribuciones(Trabajo trabajo);
 
 	/**
-	 * Método que comprueba si el activo tiene atribuciones para sancionar el
-	 * expediente
-	 *
-	 * @param oferta
-	 * @return
-	 */
-	public boolean checkAtribuciones(Oferta oferta);
-
-	/**
 	 * Método que da de alta el comité externo en Bankia
 	 * @param tareaExterna
 	 * @return
@@ -782,4 +773,6 @@ public interface OfertaApi {
 	 * @return boolean
 	 */
 	public boolean activoYaIncluidoEnOfertaAgrupadaLbk(Long idActivo, Oferta ofertaPrincipal);
+
+	boolean checkAtribuciones(Oferta oferta);
 }

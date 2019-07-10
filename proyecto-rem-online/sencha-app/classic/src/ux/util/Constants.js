@@ -178,6 +178,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	LIBERBANK: '08',
     	TANGO: '10',
     	THIRD: '11',
+    	THIRDPARTIES: '11',
     	GIANTS: '12',
     	EGEO: '13',
     	GALEON:'15',
@@ -466,6 +467,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMBO_SI_NO: {
 		SI: 1,
 		NO: 0
+	},
+	
+	COMBO_TRUE_FALSE: {
+		TRUE: 'true',
+		FALSE: 'false'
 	},
 
 	COMBO_TRUE_FALSE: {

@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 
@@ -316,7 +317,12 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 
 		// Aviso 19: Es Piso Piloto
-		if(!Checks.esNulo(activo)) {
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera().getCodigo()) &&
+				DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo()) &&
+				!Checks.esNulo(activo.getEstadoActivo().getCodigo()) &&
+				(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO.equals(activo.getEstadoActivo().getCodigo()) ||
+				DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo()) ||
+				DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo()))) {
 			DtoAviso dtoAviso = new DtoAviso();
 			if (activoApi.isPisoPiloto(activo)) {
 				dtoAviso.setDescripcion("Piso Piloto");

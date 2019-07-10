@@ -2087,7 +2087,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta oferta = trabajoToOferta(trabajo);
 		return checkAtribuciones(oferta);
 	}
-
 	@Override
 	public boolean checkAtribuciones(Oferta oferta) {
 		if (!Checks.esNulo(oferta)) {

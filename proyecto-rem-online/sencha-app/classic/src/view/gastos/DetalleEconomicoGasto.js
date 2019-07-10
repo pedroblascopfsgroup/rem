@@ -875,9 +875,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
 												reference: 'checkboxActivoRefacturable',
 												colspan:3,
-												name: 'checkboxActivoRefacturableExistente'			
-												//width: '500px',
-										       	
+												name: 'checkboxActivoRefacturableExistente'		
+												/*bind:{
+													//value:'';
+												}*/
 											},
 											 {
 												

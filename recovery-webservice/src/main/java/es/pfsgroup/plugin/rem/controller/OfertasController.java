@@ -667,6 +667,22 @@ public class OfertasController {
 				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 				errorDesc = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			}else if (jsonFields.isNullObject()) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+
+			} else if(jsonFields.isEmpty()) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			}else if(Checks.esNulo(jsonData)) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			} else if(Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())){
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
 			}else {
 				
 				
@@ -724,6 +740,10 @@ public class OfertasController {
 					}
 					else {
 						idTarea[0] = tareaId.toString();
+						
+						error = RestApi.REST_MSG_VALIDACION_TAREA;
+						errorDesc = "La tarea " + codTarea + " no existe.";
+						
 						datosTarea.put("idTarea",idTarea);
 						
 						resultado = agendaAdapter.validationAndSave(datosTarea);

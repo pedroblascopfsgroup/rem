@@ -80,7 +80,6 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 			    	
 			    	if(data.noTieneGastosRefacturados == true || data.noTieneGastosRefacturados == "true" ){
 			    		checkGastosRefacturados.setValue(true);
-			    		checkGastosRefacturados.readOnly=true;
 			    	}
 		    	},
 		    	failure: function(response) {

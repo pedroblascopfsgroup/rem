@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
@@ -1195,5 +1196,11 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
+
+	List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto);
+	
+	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo);
+	
+	boolean deleteActivoTributo(DtoActivoTributos dto);
 
 }

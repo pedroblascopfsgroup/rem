@@ -106,10 +106,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     importeRecargoVacio: function(get){
     	    var me= this;
     	    if((get('detalleeconomico.importeRecargo')== 0 || get('detalleeconomico.importeRecargo')== null) && get('detalleeconomico.cartera') == CONST.CARTERA['BANKIA']){
-    	    	return true;
+    	    	return false;
     	    }
     	    else{
-	    		return false;
+	    		return true;
     	    }
 	     },
 	     seleccionadoPagadoBankia: function(get){

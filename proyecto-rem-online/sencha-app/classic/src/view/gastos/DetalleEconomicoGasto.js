@@ -160,14 +160,14 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															               	var me = this;
 															               	if (me.up('gastodetallemain').getViewModel().get('gasto').get('cartera') == CONST.CARTERA['BANKIA'] && 
 															               	(me.getValue() == null || me.getValue() == 0)){
-															                me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = false;
+															                me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = true;
 																               	if (me.up('gastodetallemain').lookupReference('destinatariosPago').getValue() == null){
-																               		me.up('gastodetallemain').lookupReference('destinatariosPago')  == false;
-																               		debugger;
+																               		me.up('gastodetallemain').lookupReference('destinatariosPago')  == true;
+																               		
 																               	} else {
-																               		me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = true;
-																               		me.up('gastodetallemain').lookupReference('destinatariosPago').isValid() == true;
-																               		debugger;
+																               		me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = false;
+																               		me.up('gastodetallemain').lookupReference('destinatariosPago').isValid() == false;
+																               		
 																               	}
 															               	}        	   
 														            	   	}

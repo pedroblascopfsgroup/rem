@@ -46,7 +46,6 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String DESTINO_COMERCIAL_CODIGO_SOLO_ALQUILER = "03";
 	public static final String DESTINO_COMERCIAL_CODIGO_ALQUILER_OPCION_COMPRA = "04";
 	public static final String CODIGO_CARTERA_SAREB = "02";
-	public static final String CODIGO_CARTERA_ZEUS = "14";
 	public static final String TIPO_TITULO_COLATERAL_LIQUIDACION_COLATERALES = "04";
 
 	// Textos con errores de validacion
@@ -462,9 +461,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
 				if (Checks.esNulo(exc.dameCelda(i, columnNumber))) {
-					if (!(columnNumber == COL_NUM.COD_SUBCARTERA && CODIGO_CARTERA_ZEUS.equals(exc.dameCelda(i, COL_NUM.COD_CARTERA)))) {
-						listaFilas.add(i);
-					}
+					listaFilas.add(i);
 				}
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage(),e);
@@ -933,7 +930,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
 				String subcartera = exc.dameCelda(i, columnNumber);
-				if(!Checks.esNulo(subcartera) && !particularValidator.subcarteraPerteneceCartera( exc.dameCelda(i, columnNumber-1), cartera)) {
+
+				if(!Checks.esNulo(subcartera) && !particularValidator.subcarteraPerteneceCartera(subcartera, exc.dameCelda(i, columnNumber-1))) {
 					listaFilas.add(i);
 				}
 			} catch (IllegalArgumentException e) {

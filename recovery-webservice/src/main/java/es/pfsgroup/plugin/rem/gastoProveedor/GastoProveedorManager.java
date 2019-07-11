@@ -1054,9 +1054,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			DDSiNo idNo = genericDao.get(DDSiNo.class, no);
 			
 			if(idNo.equals(detalleGasto.getGastoRefacturable())) { 
-				dto.setGastoRefacturable(true);
-			}else {
 				dto.setGastoRefacturable(false);
+			}else {
+				dto.setGastoRefacturable(true);
 			}
 			
 			dto.setBloquearCheckRefacturado(false);
@@ -1067,12 +1067,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
 					||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
 					||	DDEstadoGasto.PAGADO.equals(estadoGasto)
-					||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)) {
+					||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)
+					||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto)) {
 						dto.setBloquearCheckRefacturado(true);
 				}
 			}
-			
-			
+		
 			
 			if (!Checks.esNulo(detalleGasto.getPagadoConexionBankia())) {
 				dto.setPagadoConexionBankia(detalleGasto.getPagadoConexionBankia() == 1 ? true : false);

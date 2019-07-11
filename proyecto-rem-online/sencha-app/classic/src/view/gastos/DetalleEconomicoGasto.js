@@ -877,7 +877,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												colspan:3,
 												name: 'checkboxActivoRefacturableExistente',
 												bind:{
-													value:'{detalleeconomico.gastoRefacturable}'
+													value:'{detalleeconomico.gastoRefacturable}',
+													readOnly: '{detalleeconomico.bloquearCheckRefacturado}'
 												},
 												listeners: {
 													change: 'disableGridGastosRefacturados'

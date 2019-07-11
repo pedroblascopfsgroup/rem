@@ -283,12 +283,27 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     deshabilitarGridGastosRefacturados: function(get){
 				var me = this;
 				var isGastoRefacturable = get('detalleeconomico.gastoRefacturable');
+				var bloquearCheckRefacturado = get('detalleeconomico.bloquearCheckRefacturado');
 				
-				if(isGastoRefacturable== true || isGastoRefacturable == "true"){ 
+				
+				if(isGastoRefacturable == true || isGastoRefacturable == "true" || bloquearCheckRefacturado == true || bloquearCheckRefacturado == "true"){ 
+					return true;
+				}
+				return false;
+			},
+			
+			deshabilitarCheckEstadoAutorizado: function(get){
+				var me = this;
+				var bloquearCheckRefacturado = get('detalleeconomico.bloquearCheckRefacturado');
+				
+				
+				if(bloquearCheckRefacturado == true || bloquearCheckRefacturado == "true"){ 
 					return true;
 				}
 				return false;
 			}
+			
+		
 	 },
 	 
 		

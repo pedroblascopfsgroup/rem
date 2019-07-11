@@ -29,7 +29,9 @@ public class MSVDDOperacionMasivaDaoImpl extends AbstractEntityDao<MSVDDOperacio
 		
 		for (Perfil p : usu.getPerfiles()){
 			for (Funcion f : p.getFunciones() ){
-				listaidfunciones.add(f.getId());
+				if(!listaidfunciones.contains(f.getId())) {
+					listaidfunciones.add(f.getId());
+				}
 			}
 		}
 		

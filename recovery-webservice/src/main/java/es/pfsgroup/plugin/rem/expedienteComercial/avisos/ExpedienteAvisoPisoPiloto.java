@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -19,9 +18,6 @@ public class ExpedienteAvisoPisoPiloto implements ExpedienteAvisadorApi{
 	
 	@Autowired
 	private ActivoDao activoDao;
-
-	@Autowired
-    private GenericABMDao genericDao;
 	
 	@Override
 	public DtoAviso getAviso(ExpedienteComercial expediente, Usuario usuarioLogado) {

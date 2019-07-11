@@ -4221,22 +4221,19 @@ public class AgrupacionAdapter {
 	 * */
 	private Activo isActivoValido(ActivoAgrupacion agrupacion, Long activoNum) throws JsonViewerException {
 		Activo nuevoPisoPiloto = null; 
-		for(ActivoAgrupacionActivo activo_aga : agrupacion.getActivos()){
-			if(activo_aga.getActivo().getNumActivo().equals(activoNum)) {
-				if(DDSubcartera.CODIGO_YUBAI.equals(activo_aga.getActivo().getSubcartera().getCodigo())){
-					String estadoAcitvo = activo_aga.getActivo().getEstadoActivo().getCodigo();
-					if(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO.equals(estadoAcitvo) || 
-							DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(estadoAcitvo) ||
-							DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO.equals(estadoAcitvo)) {
+		if(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			for(ActivoAgrupacionActivo activo_aga : agrupacion.getActivos()){
+				if(activo_aga.getActivo().getNumActivo().equals(activoNum)) {
+					if(DDSubcartera.CODIGO_YUBAI.equals(activo_aga.getActivo().getSubcartera().getCodigo())){
 						nuevoPisoPiloto = activo_aga.getActivo();
 						break;
 					}else {
-						throw new JsonViewerException(ACTIVO_NO_OBRA_NUEVA);
+						throw new JsonViewerException(ACTIVO_NO_YUBAI);
 					}
-				}else {
-					throw new JsonViewerException(ACTIVO_NO_YUBAI);
 				}
 			}
+		}else {
+			throw new JsonViewerException(ACTIVO_NO_OBRA_NUEVA);
 		}
 		
 		if(Checks.esNulo(nuevoPisoPiloto)) {

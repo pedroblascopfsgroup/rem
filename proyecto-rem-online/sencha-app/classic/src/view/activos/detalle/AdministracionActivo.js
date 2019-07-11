@@ -15,8 +15,8 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
     		}
     		
     		if (!$AU.userIsRol(CONST.PERFILES['GESOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION'])){
-    			me.lookupController().lookupReference('tributos').setEditOnSelect(false);
-    			me.lookupController().lookupReference('tributos').setTopBar(false);
+    			me.lookupController().lookupReference('tributosGrid').setEditOnSelect(false);
+    			me.lookupController().lookupReference('tributosGrid').setTopBar(false);
     		}
     	}
     },
@@ -284,6 +284,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				    	idPrincipal : 'activo.id',
 				    	topBar: true,
 				    	colspan: 3,
+				    	reference: 'tributosGrid',
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storeActivoTributos}'

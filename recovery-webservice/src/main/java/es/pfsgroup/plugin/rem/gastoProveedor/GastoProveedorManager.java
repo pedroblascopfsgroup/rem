@@ -1053,10 +1053,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter no = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO);
 			DDSiNo idNo = genericDao.get(DDSiNo.class, no);
 			
-			if(idNo.equals(detalleGasto.getGastoRefacturable())) { 
-				dto.setGastoRefacturable(false);
-			}else {
+			if(idNo.equals(detalleGasto.getGastoRefacturable()) || Checks.esNulo(detalleGasto.getGastoRefacturable())) { 
 				dto.setGastoRefacturable(true);
+			}else {
+				dto.setGastoRefacturable(false );
 			}
 			
 			dto.setBloquearCheckRefacturado(false);

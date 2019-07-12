@@ -5779,7 +5779,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					filter.setLimit(1000);
 					filter.setStart(0);
 					Page page = agrupacionAdapter.getListActivosAgrupacionById(filter,
-							activoAgrupacionActivo.getAgrupacion().getId());
+							activoAgrupacionActivo.getAgrupacion().getId(),true);
 					return page.getResults();
 				}
 			}

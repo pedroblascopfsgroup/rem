@@ -47,7 +47,7 @@ public interface ActivoAgrupacionApi {
     public Page getListAgrupaciones(DtoAgrupacionFilter dto, Usuario usuarioLogado);
     
     @BusinessOperationDefinition("activoAgrupacionManager.getListActivosAgrupacionById")
-    public Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuarioLogado);
+    public Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuarioLogado,Boolean little);
     
 //    @BusinessOperationDefinition("activoAgrupacionManager.getNextNumAgrupacionRemManual")
 //    private Long getNextNumAgrupacionRemManual();

@@ -210,9 +210,13 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	}
 
 	@Override
-	public Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuLogado) {
+	public Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuLogado,Boolean little) {
 
 		HQLBuilder hb = new HQLBuilder(" from VActivosAgrupacion aga");
+		
+		if(little){
+			hb = new HQLBuilder(" from VActivosAgrupacionLil aga");
+		}
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(Long.valueOf(dto.getAgrupacionId()));
 		
 
@@ -227,8 +231,12 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		}
 		
 
-		if (dto.getSort() == null || dto.getSort().isEmpty()) {
-			hb.orderBy("activoPrincipal", HQLBuilder.ORDER_DESC);
+		if(!little){
+			if (dto.getSort() == null || dto.getSort().isEmpty()) {
+				hb.orderBy("activoPrincipal", HQLBuilder.ORDER_DESC);
+			}
+		}else{
+			hb.orderBy("numActivo", HQLBuilder.ORDER_DESC);
 		}
 
 		return HibernateQueryUtils.page(this, hb, dto);
@@ -367,6 +375,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		return HibernateQueryUtils.page(this, hb, subdivision);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Long getIdSubdivisionByIdActivo(Long idActivo) {
 		
@@ -389,6 +398,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Long> getListIdActivoByIdSubdivisionAndIdsAgrupacion(Long idSubdivision, String idsAgrupacion) {
 
 		try {
@@ -502,6 +512,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		return resultado;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Double getPorcentajeParticipacionUATotalDeUnAMById(Long id) {
 		Double porcentajeUAs = 0.00;
@@ -521,21 +532,4 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 			return null;
 		}
 	}
-	
-	/*@Override
-	public Page getListActivosAgrupacionByIdAgrupacion(DtoAgrupacionFilter dto, Usuario usuLogado) {
-
-		HQLBuilder hb = new HQLBuilder(" from VActivosAgrupacion agr");
-
-		if (dto.getAgrupacionId() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.agrId", Long.valueOf(dto.getAgrupacionId()));
-		}
-
-		if (dto.getSort() == null || dto.getSort().isEmpty()) {
-			hb.orderBy("activoPrincipal", HQLBuilder.ORDER_DESC);
-		}
-
-		return HibernateQueryUtils.page(this, hb, dto);
-
-	}*/
 }

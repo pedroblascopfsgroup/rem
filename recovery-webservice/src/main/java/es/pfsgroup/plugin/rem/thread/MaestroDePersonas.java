@@ -101,25 +101,25 @@ public class MaestroDePersonas implements Runnable {
 							personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
 							personaDto.setIdCliente(cartera);
 
-							logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
-							logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
+							logger.info("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
+							logger.info("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
 							PersonaOutputDto personaOutputDto = new PersonaOutputDto();
 							BeanUtils.copyProperties(gestorDocumentalMaestroManager
 									.ejecutar(personaDto), personaOutputDto);
 
-							logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
-							logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: "
+							logger.info("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
+							logger.info("[MAESTRO DE PERSONAS] Datos de la respuesta: "
 									.concat(personaOutputDto.toString()));
 
 							if (Checks.esNulo(personaOutputDto)) {
-								logger.error("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
+								logger.info("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
 							} else if (Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
-								logger.error("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
+								logger.info("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
 
 								SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 								String today = df.format(new Date());
 
-								logger.error("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
+								logger.info("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
 								personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
 								personaDto.setIdCliente(ID_CLIENTE_HAYA);
 								personaDto.setIdPersonaOrigen(
@@ -133,7 +133,7 @@ public class MaestroDePersonas implements Runnable {
 								BeanUtils.copyProperties(gestorDocumentalMaestroManager
 										.ejecutar(personaDto), personaOutputDto);
 
-								logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
+								logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
 										+ personaOutputDto.getIdIntervinienteHaya());
 								if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
 									TmpClienteGDPR tmpClienteGDPR = new TmpClienteGDPR();
@@ -156,7 +156,7 @@ public class MaestroDePersonas implements Runnable {
 									}
 								}
 							} else {
-								logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
+								logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
 										+ personaOutputDto.getIdIntervinienteHaya());
 							}
 
@@ -214,25 +214,25 @@ public class MaestroDePersonas implements Runnable {
 					personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
 					personaDto.setIdCliente(cartera);
 
-					logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
-					logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
+					logger.info("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
+					logger.info("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
 					PersonaOutputDto personaOutputDto = new PersonaOutputDto();
 					BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
 							.ejecutar(personaDto));
 					//PersonaOutputDto personaOutputDto = new PersonaOutputDto();
 					
-					logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
-					logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(!Checks.esNulo(personaOutputDto) ? personaOutputDto.toString() : "NULL"));
+					logger.info("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
+					logger.info("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(!Checks.esNulo(personaOutputDto) ? personaOutputDto.toString() : "NULL"));
 
 					if (Checks.esNulo(personaOutputDto)) {
-						logger.error("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
+						logger.info("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
 					} else if (Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
-						logger.error("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
+						logger.info("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
 
 						SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 						String today = df.format(new Date());
 
-						logger.error("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
+						logger.info("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
 						personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
 						personaDto.setIdCliente(ID_CLIENTE_HAYA);
 						personaDto.setIdPersonaOrigen(documento);
@@ -245,7 +245,7 @@ public class MaestroDePersonas implements Runnable {
 								.ejecutar(personaDto), personaOutputDto);
 						//personaOutputDto.setIdIntervinienteHaya("123456789");
 
-						logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
+						logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
 						if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
 							Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
 							criteria.add(Restrictions.eq("idPersonaHaya", Long.parseLong(personaOutputDto.getIdIntervinienteHaya())));
@@ -271,7 +271,7 @@ public class MaestroDePersonas implements Runnable {
 							}
 						}
 					} else {
-						logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
+						logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
 					}
 
 					if (!Checks.esNulo(personaOutputDto) && !Checks.esNulo(clienteCom) && clienteCom.size() > 0) {
@@ -298,9 +298,7 @@ public class MaestroDePersonas implements Runnable {
 				}
 			}
 			sessionObj.close();
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			logger.error("Error maestro de personas", e);
 		}
 	}

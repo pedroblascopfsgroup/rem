@@ -16,6 +16,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
@@ -136,9 +137,11 @@ public class MaestroDePersonas implements Runnable {
 								logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
 										+ personaOutputDto.getIdIntervinienteHaya());
 								if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
-									TmpClienteGDPR tmpClienteGDPR = new TmpClienteGDPR();
-									tmpClienteGDPR.setIdPersonaHaya(
-											Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
+									TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya",Long.valueOf(personaOutputDto.getIdIntervinienteHaya())));
+									if(tmpClienteGDPR == null){
+										tmpClienteGDPR = new TmpClienteGDPR();
+										tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
+									}									
 									tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
 									genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
 								} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {

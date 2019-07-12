@@ -279,38 +279,38 @@ public class ExpedienteComercialAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean deleteAdjuntoComprador(AdjuntoComprador adjuntoComprador, Comprador comprador) {
-		boolean borrado = true;
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {	
-				try {
-					borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjuntoComprador.getIdDocRestClient(), usuarioLogado.getUsername());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		boolean borrado = false;
+		if(adjuntoComprador != null){
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjuntoComprador.getIdDocRestClient(),
+						usuarioLogado.getUsername());
 			}
-				
-			if(borrado) {
-				//Borrado lógico del documento
+	
+			if (borrado) {
+				// Borrado lógico del documento
 				adjuntoComprador.getAuditoria().setBorrado(true);
 				adjuntoComprador.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
 				adjuntoComprador.getAuditoria().setFechaBorrar(new Date());
 				genericDao.update(AdjuntoComprador.class, adjuntoComprador);
-				
+	
 				if (!Checks.esNulo(comprador)) {
-					//Actualizacion del campo en Comprador
+					// Actualizacion del campo en Comprador
 					comprador.setAdjunto(null);
 					Auditoria.save(comprador);
 					genericDao.update(Comprador.class, comprador);
 				} else {
-					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto", adjuntoComprador.getId());
+					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto",
+							adjuntoComprador.getId());
 					TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
-					if(!Checks.esNulo(tmpClienteGDPR)) {
+					if (!Checks.esNulo(tmpClienteGDPR)) {
 						tmpClienteGDPR.setIdAdjunto(null);
 						genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
 					}
 				}
 			}
-		return borrado;		
+		}
+		return borrado;
 	}
 
 	public List<DtoAdjunto> getAdjuntos(Long idExpediente, List<DtoAdjunto> listaAdjuntos) {

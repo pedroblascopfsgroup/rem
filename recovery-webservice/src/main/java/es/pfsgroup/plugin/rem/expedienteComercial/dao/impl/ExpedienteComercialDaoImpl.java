@@ -133,4 +133,16 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 			return null;
 		}
 	}
+	
+	/*	
+	@Override
+	public List<VListadoOfertasAgrupadasLB> getListActivosOfertaPrincipal(Long idOferta) {
+
+		HQLBuilder hb = new HQLBuilder(
+				" from VListadoOfertasAgrupadasLB listadoOfertas where listadoOfertas.ofertaId = " + idOferta);
+
+		return (List<VListadoOfertasAgrupadasLB>) getHibernateTemplate().find(hb.toString());
+
+	}
+	*/
 }

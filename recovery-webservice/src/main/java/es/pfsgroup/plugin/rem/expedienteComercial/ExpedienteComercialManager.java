@@ -9580,6 +9580,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
+
 	
 	@Override
 	public List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta){
@@ -9601,4 +9602,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return esYubai;
 	}
+
+/*	
+	@Override
+	public List<VListadoOfertasAgrupadasLB> getListActivosAgrupacionById(Long idOferta){
+		
+		
+		List<VListadoOfertasAgrupadasLB> listaOfertasAgrupadas = expedienteComercialDao.getListActivosOfertaPrincipal(Long idOferta);
+		
+		return listaOfertasAgrupadas;
+	}
+*/
+
 }

@@ -1239,6 +1239,8 @@ public interface ExpedienteComercialApi {
 	public void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial);
 
 	boolean existeComprador(String numDoc);
+	
+	//List<VListadoOfertasAgrupadasLB> getListActivosAgrupacionById(Long idOferta);
 
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 

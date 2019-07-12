@@ -4689,6 +4689,16 @@ comprobarFormatoModificar: function() {
 			
 		}
 			
+	},
+	onClickGenerarListadoDeActivos : function(btn) {
+		var me = this, config = {};
+
+		config.params = {};
+		config.params.idExpediente = me.getViewModel().get("expediente.id");
+		config.url = $AC.getRemoteUrl("expedientecomercial/exportarListadoActivosOfertaPrincipal");
+
+		me.fireEvent("downloadFile", config);
 	}
+	
 
 });

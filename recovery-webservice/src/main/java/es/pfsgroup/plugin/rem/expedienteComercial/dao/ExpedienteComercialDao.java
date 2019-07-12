@@ -95,4 +95,6 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 */
 	ExpedienteComercial getExpedienteComercialByNumExpediente(Long numeroExpediente);
 	
+	//List<VListadoOfertasAgrupadasLB> getListActivosOfertaPrincipal(Long idOferta);
+	
 }

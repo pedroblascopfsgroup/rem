@@ -268,7 +268,17 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 	    				}
     				}
     			}
-    		}
+    		},
+			{
+				name: 'esCarteraLiberbankVenta',
+				calculate: function(data) { 
+					if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
+						return true;
+					}
+					return false;
+				},
+				depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
+			}
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

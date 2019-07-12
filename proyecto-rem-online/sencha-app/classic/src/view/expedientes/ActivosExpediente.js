@@ -2,7 +2,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 	extend: 'Ext.panel.Panel',
     xtype: 'activosexpediente', 
     cls	: 'panel-base shadow-panel',
-    requires: ['HreRem.view.expedientes.ActivoExpedienteTabPanel'],
+    requires: ['HreRem.view.expedientes.ActivoExpedienteTabPanel','HreRem.view.expedientes.DatosBasicosExpediente'],
     collapsed: false,
     reference: 'activosexpedienteref',
     layout: {
@@ -68,7 +68,20 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            	handler: 'onClickGenerarHojaExcelActivos',
 			            	margin: '10 10 10 10'
 			            
-					}
+					},
+					{
+						
+		            	xtype: 'button',
+		            	reference: 'btnExportarActivosLibertyBankVenta',
+		            	bind: {
+		            		hidden: '{!expediente.esCarteraLiberbankVenta}'
+		            	},
+		            	text: HreRem.i18n('title.activo.administracion.exportar.listado.activos'),
+		            	handler: 'onClickGenerarListadoDeActivos',
+		            	margin: '10 10 10 10'
+		            
+				}
+					
 					]
 			},
 			{

@@ -438,4 +438,17 @@ public class ExpedienteComercialAdapter {
 			}
 			return borrado;		
 	}
+
+	/*
+	public List<VListadoOfertasAgrupadasLB> getListActivosAgrupacionById(Long idOferta){
+		
+		 List<VListadoOfertasAgrupadasLB> listaOfertasAgrupadas = expedienteComercialApi.getListActivosAgrupacionById(idOferta);
+		
+		
+		return listaOfertasAgrupadas;
+	}
+	*/
 }
+
+
+

@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Sergio Gimenez Mota
---## FECHA_CREACION=20190712
+--## FECHA_CREACION=20190713
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.9.0
 --## INCIDENCIA_LINK=NO

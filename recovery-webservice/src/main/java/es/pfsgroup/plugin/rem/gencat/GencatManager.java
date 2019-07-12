@@ -1234,7 +1234,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				}
 			}else {
 				comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivo));
-				if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+				if(comGencat != null && !Checks.esNulo(comGencat.getEstadoComunicacion())
 					&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
 					|| DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
 						lanzarTramiteGENCAT(idActivo, oferta, expComercial);

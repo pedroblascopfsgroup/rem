@@ -1,10 +1,13 @@
 package es.pfsgroup.plugin.rem.comisionamiento.dto;
 
 public class RespuestaComisionReglaDto {
+	private String _id;
 	private String id;
 	private String leadOrigin;
 	private String assetType;
 	private String assetSubtype;
+	private String portfolio;
+	private String subPortfolio;
 	private String offerType;
 	private String commissionType;
 	private String comercialType;
@@ -13,6 +16,12 @@ public class RespuestaComisionReglaDto {
 	private String commissionPercentage;
 	private String maxCommissionAmount;
 	private String minCommissionAmount;
+	public String get_id() {
+		return _id;
+	}
+	public void set_id(String _id) {
+		this._id = _id;
+	}
 	public String getId() {
 		return id;
 	}
@@ -84,6 +93,18 @@ public class RespuestaComisionReglaDto {
 	}
 	public void setMinCommissionAmount(String minCommissionAmount) {
 		this.minCommissionAmount = minCommissionAmount;
+	}
+	public String getSubPortfolio() {
+		return subPortfolio;
+	}
+	public void setSubPortfolio(String subPortfolio) {
+		this.subPortfolio = subPortfolio;
+	}
+	public String getPortfolio() {
+		return portfolio;
+	}
+	public void setPortfolio(String portfolio) {
+		this.portfolio = portfolio;
 	}
 	
 	

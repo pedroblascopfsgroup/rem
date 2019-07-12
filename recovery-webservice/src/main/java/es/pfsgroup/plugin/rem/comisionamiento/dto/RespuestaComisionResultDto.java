@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.rem.comisionamiento.dto;
 
-import java.util.ArrayList;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import antlr.collections.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RespuestaComisionResultDto {

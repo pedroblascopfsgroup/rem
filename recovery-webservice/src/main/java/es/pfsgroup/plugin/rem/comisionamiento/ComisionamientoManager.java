@@ -2,22 +2,14 @@ package es.pfsgroup.plugin.rem.comisionamiento;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectReader;
-import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
@@ -37,6 +29,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 
 	ObjectMapper mapper = new ObjectMapper();
 	
+	@SuppressWarnings("unused")
 	@Override
 	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
 			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException, HttpsClientException {

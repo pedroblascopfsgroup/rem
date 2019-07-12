@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.oferta;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -2519,7 +2518,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		consultaComisionDto.setComercialType(tipoComercializar);
 		consultaComisionDto.setAssetType(codTipoActivo);
 		consultaComisionDto.setAssetSubtype(codSubtipoActivo);
-		
+		consultaComisionDto.setPortfolio(activo.getCartera().getCodigo());
+		consultaComisionDto.setSubPortfolio(activo.getSubcartera().getCodigo());
 
 			// Los honorarios de colaboración serán asignados al FDV de la oferta si
 			// existe,

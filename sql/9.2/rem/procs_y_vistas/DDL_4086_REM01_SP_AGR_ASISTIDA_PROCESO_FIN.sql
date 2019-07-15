@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190711
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20190715
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-4773
+--## INCIDENCIA_LINK=REMVIP-4815
 --## PRODUCTO=NO
 --## Finalidad: Modificar el procedure para procesar lo necesario despues de que una agrupación de tipo asistida finalice.
 --##           
@@ -12,7 +12,8 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 SHG -> Añadimos salida de control de errores
---##        0.3 ODP -> Modificado para que no quite de perímetro los activos vendidos
+--##        0.3 ODP -> Modificado para que no quite de perímetro los activos vendidos 
+--##	    0.4 VRO -> Correccion error 
 --##########################################
 --*/ 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -80,7 +81,7 @@ BEGIN
         JOIN '||V_ESQUEMA||'.AUX_ACTIVOS_PDV_CADUCADA T3 ON T3.ACT_ID = T1.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.AUX_OFERTAS_ACTIVAS T4 ON T4.ACT_ID = T1.ACT_ID
         WHERE T4.ACT_ID IS NULL and (t2.act_id is null or T2.PAC_INCLUIDO = 1)
-	AND T1.DD_SCM_ID <> (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO IN ( ''05'', ''10'' ) )
+	AND T1.DD_SCM_ID NOT IN (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO IN ( ''05'', ''10'' ) )
 ';
 
     --Modificar estado comercial

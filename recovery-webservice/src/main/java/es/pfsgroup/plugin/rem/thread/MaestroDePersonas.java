@@ -137,7 +137,10 @@ public class MaestroDePersonas implements Runnable {
 								logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
 										+ personaOutputDto.getIdIntervinienteHaya());
 								if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
-									TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya",Long.valueOf(personaOutputDto.getIdIntervinienteHaya())));
+									Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
+									criteria.add(Restrictions.eq("idPersonaHaya",Long.valueOf(personaOutputDto.getIdIntervinienteHaya())));
+									TmpClienteGDPR tmpClienteGDPR = HibernateUtils.castObject(TmpClienteGDPR.class,
+											criteria.uniqueResult());
 									if(tmpClienteGDPR == null){
 										tmpClienteGDPR = new TmpClienteGDPR();
 										tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));

@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
@@ -357,6 +358,22 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		List<Long> listaProveedores = (List<Long>) this.getSessionFactory().getCurrentSession()
 				.createQuery(hb.toString()).list();
 		return listaProveedores;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DDCartera> getCarteraPorProveedor(Long idProveedor){
+		List<DDCartera> carterasProveedor = new ArrayList<DDCartera>();
+		
+		HQLBuilder hb = new HQLBuilder("select cra from DDCartera cra, VCarteraTrabajosProveedor vis ");
+
+		hb.appendWhere("cra.id = vis.idCartera");
+		hb.appendWhere("vis.idProveedor = " + idProveedor);
+		
+		carterasProveedor = (List<DDCartera>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+		
+		return carterasProveedor;
 	}
 	
 	

@@ -21,9 +21,9 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de carteras.
+ * Modelo que gestiona el diccionario de subtipos de documento para el Proveedor
  * 
- * @author Benjamín Guerrero
+ * @author Vicente Martinz Cifre
  *
  */
 @Entity
@@ -32,7 +32,23 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDSubtipoDocumentoProveedor implements Auditable, Dictionary {
 
-	
+	public static final String CODIGO_NIF = "01";
+	public static final String CODIGO_CUENTA_BANCARIA = "02";
+	public static final String CODIGO_ESCRITURA_CONSTITUCION = "03";
+	public static final String CODIGO_ESTATUTOS_VIGENTES = "04";
+	public static final String CODIGO_ACTA_DE_ASAMBLEA = "05";
+	public static final String CODIGO_CONVOCATORIA_ASAMBLEA = "06";
+	public static final String CODIGO_CIRCULAR_COMUNIDAD = "07";
+	public static final String CODIGO_ACTA_TITULAR_REAL = "08";
+	public static final String CODIGO_CERTIFICADO_AEAT = "09";
+	public static final String CODIGO_CERTIFICADO_SS = "10";
+	public static final String CODIGO_CERTIFICADO_SUBCONTRATISTAS = "11";
+	public static final String CODIGO_IMPUESTO_ACT_ECONOMICAS = "12";
+	public static final String CODIGO_SEGUROS_SOCIALES_MES = "13";
+	public static final String CODIGO_CARTA_PARA_LOC = "14";
+	public static final String CODIGO_BUROFAX_PARA_LOC = "15";
+	public static final String CODIGO_CERTIFICADO_NO_DEUDA = "16";
+	public static final String CODIGO_ACTA_JUNTA = "17";
 	
 	/**
 	 * 

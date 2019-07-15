@@ -65,8 +65,10 @@ import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
+import es.pfsgroup.plugin.rem.model.VCarteraTrabajosProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedorRetirar;
 import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
@@ -76,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
@@ -1311,5 +1314,27 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			resultado = usuario.getPerfiles().contains(perfilProveedorHaya);
 		}
 		return resultado;
+	}
+	
+	@Override
+	public List<DDSubtipoDocumentoProveedor> getSubtipoDocProveedor(String codigoTipoDoc){
+		List<DDSubtipoDocumentoProveedor> lista = new ArrayList<DDSubtipoDocumentoProveedor>();
+		
+		lista = genericDao.getList(DDSubtipoDocumentoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoProveedor.codigo", codigoTipoDoc));
+		
+		return lista;
+	}
+	
+	@Override
+	public List<DDCartera> getCarteraPorProveedor(Long idProveedor){
+		/*List<DDCartera> carterasProveedor = new ArrayList<DDCartera>();
+		
+		List<VCarteraTrabajosProveedor> listaCarteras = genericDao.getList(VCarteraTrabajosProveedor.class, genericDao.createFilter(FilterType.EQUALS, "idProveedor", idProveedor));
+		
+		for(VCarteraTrabajosProveedor vc: listaCarteras) {
+			carterasProveedor.add(genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "id", vc.getIdCartera())));
+		}*/
+		
+		return proveedoresDao.getCarteraPorProveedor(idProveedor);
 	}
 }

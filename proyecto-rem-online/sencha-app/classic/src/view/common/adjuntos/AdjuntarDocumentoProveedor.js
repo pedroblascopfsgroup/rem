@@ -2,9 +2,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 	extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'adjuntardocumentoproveedorwindow',
     layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() /3,
+    width: Ext.Element.getViewportWidth() / 2.5,
    /* height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50 ,*/
+    requires: ['HreRem.view.common.adjuntos.AdjuntarDocumentoProveedorModel'],
 	reference: 'adjuntarDocumentoProveedorWindowRef',
+	viewModel: {
+        type: 'adjuntardocumentoproveedor'
+    },
     /**
      * Parámetro para construir la url que sibirá el documento
      * @type 
@@ -64,15 +68,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
     	
     	me.buttonAlign = 'left';
     	
-    	var comboTipoDocumento = new Ext.data.Store({
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tipoDocumentoProveedor'}
-			}
-    	});
-    	
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 
     	me.items = [
@@ -83,9 +78,25 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 	    				collapsed: false,
 	   			 		scrollable	: 'y',
 	   			 		layout: {
-	   			 			type: 'vbox'
+	   			 			type: 'table',
+	   			 			columns: 2,
+	   			 			trAttrs: {height: '30px', width: '100%'},
+					        tdAttrs: {width: '50%'},
+					        tableAttrs: {
+					            style: {
+					                width: '100%'
+									}
+					        }
 	   			 		},
 	   			 		cls:'formbase_no_shadow',
+	   			 		defaults: {
+	   			 			columnWidth: '50%',
+	   			 			width: '100%',
+	   			 			labelWidth: 100,
+	   			 			msgTarget: 'side',
+	   			 			addUxReadOnlyEditFieldPlugin: false,
+	   			 			labelWidth: 100
+	   			 		},
 	    				items: [
 	    						{
 
@@ -93,9 +104,9 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 							        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
 							        name: 'fileUpload',							        
 							        anchor: '100%',
-							        width: '100%',
 							        allowBlank: false,
 							        msgTarget: 'side',
+							        width: '100%',
 							        buttonConfig: {
 							        	iconCls: 'ico-search-white',
 							        	text: ''
@@ -115,17 +126,84 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 				                    }
 					    		},
 					    		{ 
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.entidad.propietaria'),
+						        	reference: 'cartera',
+						        	name: 'cartera',
+						        	width: '100%',
+						        	msgTarget: 'side',
+						        	disabled: true,
+						        	bind: {
+						        		store: '{comboCarteraPorProveedor}'
+						        	},
+									allowBlank: true
+						        },
+					    		{ 
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
+						        	reference: 'tipo',
 						        	name: 'tipo',
 						        	editable: true,
 						        	msgTarget: 'side',
-					            	store: comboTipoDocumento,
+						        	publishes: 'value',
+						        	width: '100%',
+						        	bind: {
+						        		store: '{comboTipoDocumento}'
+						        	},
+					            	chainedStore: 'comboSubTipoDocumento',
+									chainedReference: 'subtipo',
 					            	displayField	: 'descripcion',
 								    							
 								    valueField		: 'codigo',
 									allowBlank: false,
 									width: '100%',
+									enableKeyEvents:true,
+								    listeners: {
+								    	'keyup': function() {
+								    		this.getStore().clearFilter();
+								    	   	this.getStore().filter({
+								        	    property: 'descripcion',
+								        	    value: this.getRawValue(),
+								        	    anyMatch: true,
+								        	    caseSensitive: false
+								        	})
+								    	},
+								    	'beforequery': function(queryEvent) {
+								         	queryEvent.combo.onLoad();
+								    	},			
+										select: 'onChangeChainedCombo'
+								    }
+						        },
+						        {
+								   	xtype:'checkboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.todas.carteras'),
+									reference: 'checkboxTodasCarteras',
+									name: 'checkboxTodasCarteras',		
+									disabled: true,
+									width: '100%',
+									bind: {
+								  		value: '{todasCarteras}'
+								   	},
+								   	listeners: {
+								   		change: 'onChangeCheckboxTodasCarteras'	
+								   	}
+								},
+						        { 
+									xtype: 'combobox',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
+						        	reference: 'subtipo',
+						        	name: 'subtipo',
+						        	editable: true,
+						        	msgTarget: 'side',
+						        	width: '100%',
+						        	bind: {
+						        		store: '{comboSubTipoDocumento}'
+						        	},
+					            	displayField	: 'descripcion',
+								    							
+								    valueField		: 'codigo',
+									allowBlank: false,
+									disabled: true,
 									enableKeyEvents:true,
 								    listeners: {
 								    	'keyup': function() {

@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.ProveedorExcelReport;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
@@ -580,6 +581,50 @@ public class ProveedoresController extends ParadiseJsonController {
 			model.put("success", false);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSubtipoDocProveedor(String codigoTipoDoc){
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", proveedoresApi.getSubtipoDocProveedor(codigoTipoDoc));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCarteraPorProveedor(Long idProveedor) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", proveedoresApi.getCarteraPorProveedor(idProveedor));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getCountCarteraPorProveedor(Long idProveedor, ModelMap model) {
+		
+		try {
+			model.put("data", proveedoresApi.getCarteraPorProveedor(idProveedor).size());
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
 		return createModelAndViewJson(model);
 	}
 }

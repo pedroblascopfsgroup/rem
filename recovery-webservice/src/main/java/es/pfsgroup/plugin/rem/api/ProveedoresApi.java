@@ -18,6 +18,8 @@ import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
 import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoProveedor;
 
 public interface ProveedoresApi {
 	
@@ -286,4 +288,8 @@ public interface ProveedoresApi {
 	 * @return Devuelve True si el usuario tiene el perfil de proveedor, False si no lo tiene.
 	 */
 	public Boolean esUsuarioConPerfilProveedor(Usuario usuario);
+
+	public List<DDSubtipoDocumentoProveedor> getSubtipoDocProveedor(String codigoTipoDoc);
+
+	List<DDCartera> getCarteraPorProveedor(Long idProveedor);
 }

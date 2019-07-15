@@ -1,7 +1,7 @@
 /**
  * This view is used to present the details of a single AdmisionDocumento.
  */
-Ext.define('HreRem.model.AdjuntoActivoPromocion', {
+Ext.define('HreRem.model.AdjuntoActivoProyecto', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
 
@@ -51,12 +51,12 @@ Ext.define('HreRem.model.AdjuntoActivoPromocion', {
     proxy: {
 		type: 'uxproxy',
 		localUrl: 'adjuntos.json',
-		remoteUrl: 'promocion/getAdjuntoById',
+		remoteUrl: 'proyecto/getAdjuntoById',
 		api: {
-            read: 'promocion/getAdjunto',
-            create: 'promocion/saveAdjunto',
-            update: 'promocion/updateAdjunto',
-            destroy: 'promocion/deleteAdjunto'
+            read: 'proyecto/getAdjunto',
+            create: 'proyecto/saveAdjunto',
+            update: 'proyecto/updateAdjunto',
+            destroy: 'proyecto/deleteAdjunto'
         }
     }   
 

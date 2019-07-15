@@ -342,6 +342,11 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     private List<AdjuntosPromocion> adjuntosPromocion;
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<AdjuntosProyecto> adjuntosProyecto;
 
 
     // Indicadores de precios del activo y de activo publicable
@@ -1847,6 +1852,30 @@ public class Activo implements Serializable, Auditable {
 	public void setEquipoGestion(DDEquipoGestion equipoGestion) {
 		this.equipoGestion = equipoGestion;
 	}
+
+	public List<AdjuntosProyecto> getAdjuntosProyecto() {
+		return this.adjuntosProyecto;
+	}
+	
+	public void setAdjuntosProyecto(List<AdjuntosProyecto> adjuntosProyecto) {
+		this.adjuntosProyecto = adjuntosProyecto;
+	}
+	
+   public AdjuntosProyecto getAdjuntoProyecto(Long id) {
+       for (AdjuntosProyecto adj : getAdjuntosProyecto()) {
+           if (adj.getId().equals(id)) { return adj; }
+       }
+       return null;
+   }
+   
+   public void addAdjuntoProyecto(FileItem fileItem) {
+	   AdjuntosProyecto adjuntosProyecto = new AdjuntosProyecto(fileItem);
+	   adjuntosProyecto.setActivo(this);
+       Auditoria.save(adjuntosProyecto);
+       getAdjuntosProyecto().add(adjuntosProyecto);
+
+   }
+
 	
 	public ActivoAutorizacionTramitacionOfertas getActivoAutorizacionTramitacionOfertas() {
 		return activoAutorizacionTramitacionOfertas;

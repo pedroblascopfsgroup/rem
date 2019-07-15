@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosE
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
 
 public class GestorDocToRecoveryAssembler {
 	
@@ -165,8 +166,49 @@ public class GestorDocToRecoveryAssembler {
 		return list;
 	}	
 	
-	
-	
+	public static List<DtoAdjuntoProyecto> getListDtoAdjuntoProyecto(RespuestaDocumentosExpedientes documentosExp) {
+
+		List<DtoAdjuntoProyecto> list = new ArrayList<DtoAdjuntoProyecto>();
+		
+		if (!Checks.esNulo(documentosExp)) {
+			// TODO Hay que setear todos los campos. Falta saber que campo del GD va con el de Recovery
+			for (IdentificacionDocumento idnDoc : documentosExp.getDocumentos()) {
+				DtoAdjuntoProyecto dtoAdj = new DtoAdjuntoProyecto();
+				dtoAdj.setId(new Long(idnDoc.getIdentificadorNodo()));
+				dtoAdj.setIdEntidad(idnDoc.getId_activo());
+				dtoAdj.setNombre(idnDoc.getNombreNodo());
+				dtoAdj.setCodigoTipo(idnDoc.getTdn1() + "-" + idnDoc.getTdn2());
+				dtoAdj.setDescripcionTipo("");
+				dtoAdj.setContentType(null);
+				dtoAdj.setTamanyo(null);
+				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
+				dtoAdj.setMatricula(idnDoc.getTipoExpediente() +"-"+idnDoc.getSerieDocumental()+"-"+idnDoc.getTdn1()+"-"+idnDoc.getTdn2());
+						        
+				Date fechaDocumento = null;
+				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
+					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
+				    }
+				dtoAdj.setFechaDocumento(fechaDocumento);
+				Date createDate = null;
+				if(!Checks.esNulo(idnDoc.getCreatedate())){
+					createDate = new Timestamp(stringToDate(idnDoc.getCreatedate()).getTime());
+				    }
+				dtoAdj.setCreateDate(createDate);
+				dtoAdj.setFileSize(idnDoc.getFileSize());
+				dtoAdj.setCodProyecto(idnDoc.getId_activo()); //@TODO ver que hay que setear en el codProyecto
+				dtoAdj.setRel(idnDoc.getRel());
+				dtoAdj.setTdn2_desc(idnDoc.getTdn2_desc());
+				dtoAdj.setTipoExpediente(idnDoc.getTipoExpediente());
+				
+				
+				list.add(dtoAdj);
+			}
+		}
+
+
+		return list;
+	}	
+		
 	public static FileItem getFileItem(byte[] contenido, RespuestaDescargarDocumento descargar) throws IOException {
 		
 		String nomFichero = descargar.getNombreDocumento();

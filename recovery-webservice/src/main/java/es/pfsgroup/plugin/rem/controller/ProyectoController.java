@@ -24,32 +24,32 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.rem.adapter.PromocionAdapter;
+import es.pfsgroup.plugin.rem.adapter.ProyectoAdapter;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 
 
 @Controller
-public class PromocionController extends ParadiseJsonController {
+public class ProyectoController extends ParadiseJsonController {
 	
-	protected static final Log logger = LogFactory.getLog(PromocionController.class);
+	protected static final Log logger = LogFactory.getLog(ProyectoController.class);
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
 	
 	@Autowired
-	private PromocionAdapter promocionAdapter;
+	private ProyectoAdapter proyectoAdapter;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAdjuntosPromocion(Long id, ModelMap model) {
+	public ModelAndView getListAdjuntosProyecto(Long id, ModelMap model) {
 
 		try {
-			model.put("data", promocionAdapter.getAdjuntosPromocion(id));
+			model.put("data", proyectoAdapter.getAdjuntosProyecto(id));
 		} catch (GestorDocumentalException e) {
-			logger.error("error en promocionController", e);
+			logger.error("error en proyectoController", e);
 			model.put("success", false);
 			model.put("errorMessage",
-					"Gestor documental: No existe la promoción o no tiene permisos para listar el contenedor");
+					"Gestor documental: No existe el proyecto o no tiene permisos para listar el contenedor");
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
@@ -68,14 +68,14 @@ public class PromocionController extends ParadiseJsonController {
 
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
-			promocionAdapter.upload(webFileItem);
+			proyectoAdapter.upload(webFileItem);
 			model.put("success", true);
 		} catch (GestorDocumentalException e) {
-			logger.error("error en promocionController", e);
+			logger.error("error en proyectoController", e);
 			model.put("success", false);
-			model.put("errorMessage", "Gestor documental: No existe la promoción o no tiene permiso para subir el documento");
+			model.put("errorMessage", "Gestor documental: No existe el proyecto o no tiene permiso para subir el documento");
 		} catch (Exception e) {
-			logger.error("error en promocionController", e);
+			logger.error("error en proyectoController", e);
 			model.put("success", false);
 			model.put("errorMessage",e.getMessage());
 		}
@@ -88,14 +88,14 @@ public class PromocionController extends ParadiseJsonController {
 	 * @param response
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public void bajarAdjuntoActivoPromocion(HttpServletRequest request, HttpServletResponse response) {
+	public void bajarAdjuntoActivoProyecto(HttpServletRequest request, HttpServletResponse response) {
 		ServletOutputStream salida = null;
 		Long id = null;
 		try {
 			id = Long.parseLong(request.getParameter("id"));
 			String nombreDocumento = request.getParameter("nombreDocumento");
 			salida = response.getOutputStream();
-			FileItem fileItem = promocionAdapter.download(id,nombreDocumento);
+			FileItem fileItem = proyectoAdapter.download(id,nombreDocumento);
 			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
 			response.setHeader("Cache-Control", "max-age=0");
@@ -134,10 +134,10 @@ public class PromocionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteAdjunto(DtoAdjunto dtoAdjunto, ModelMap model) {
 		try {
-			model.put("success", promocionAdapter.deleteAdjunto(dtoAdjunto));
+			model.put("success", proyectoAdapter.deleteAdjunto(dtoAdjunto));
 
 		} catch (Exception e) {
-			logger.error("error en promocionController", e);
+			logger.error("error en proyectoController", e);
 			model.put("success", false);
 			model.put("errorMessage", e.getMessage());
 		}

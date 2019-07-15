@@ -24,8 +24,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
          'documentosactivopromocion gridBase': {
              abrirFormulario: 'abrirFormularioAdjuntarDocPromo',
-             // onClickRemove: 'borrarDocumentoAdjunto',
+             onClickRemove: 'borrarDocumentoAdjunto',
              download: 'downloadDocumentoAdjuntoPromocion',
+             afterupload: function(grid) {
+             	grid.getStore().load();
+             }
+         },
+
+         'documentosactivoproyecto gridBase': {
+             abrirFormulario: 'abrirFormularioAdjuntarDocProyecto',
+             onClickRemove: 'borrarDocumentoAdjunto',
+             download: 'downloadDocumentoAdjuntoProyecto',
              afterupload: function(grid) {
              	grid.getStore().load();
              }
@@ -1121,6 +1130,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
+	abrirFormularioAdjuntarDocProyecto: function(grid) {
+
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto", {entidad: 'proyecto', idEntidad: idActivo, parent: grid, title: HreRem.i18n("title.adjuntar.documento.proyecto"), diccionario: "tiposDocumentoProyecto"}).show();
+
+	},
+
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
@@ -1247,6 +1264,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=me.getViewModel().get("activo.id");
+		config.params.nombreDocumento=record.get("nombre");
+		me.fireEvent("downloadFile", config);
+	},
+
+	downloadDocumentoAdjuntoProyecto: function(grid, record) {
+
+		var me = this,
+		config = {};
+
+		config.url=$AC.getWebPath()+"proyecto/bajarAdjuntoActivoProyecto."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idActivo=record.get("idActivo");
 		config.params.nombreDocumento=record.get("nombre");
 		me.fireEvent("downloadFile", config);
 	},

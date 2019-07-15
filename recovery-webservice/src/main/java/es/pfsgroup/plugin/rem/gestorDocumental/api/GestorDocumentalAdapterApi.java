@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
@@ -67,7 +68,11 @@ public interface GestorDocumentalAdapterApi {
 	
 	Long uploadDocumentoPromociones(String codPromo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
 	
+	Long uploadDocumentoProyecto(String codAgrupacion, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
+	
 	List<DtoAdjuntoPromocion> getAdjuntosPromociones (String codPromo) throws GestorDocumentalException;
+	
+	List<DtoAdjuntoProyecto> getAdjuntosProyecto (String codProyecto) throws GestorDocumentalException;
 
 	void crearRelacionTrabajosActivo(Trabajo trabajo, Long idDocRestClient, String activo, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException ;
 

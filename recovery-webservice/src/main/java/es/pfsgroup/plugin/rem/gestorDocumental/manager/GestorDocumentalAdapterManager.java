@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
@@ -952,6 +953,22 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		return new Long(respuestaCrearDocumento.getIdDocumento());
 	}
+	
+
+	@Override
+	public Long uploadDocumentoProyecto(String codAgrupacionActivo, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(codAgrupacionActivo, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PROYECTO);
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+
+		if(!Checks.esNulo(respuestaCrearDocumento) && !Checks.esNulo(respuestaCrearDocumento.getCodigoError())) {
+			logger.debug(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+			throw new GestorDocumentalException(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+		}
+
+		return new Long(respuestaCrearDocumento.getIdDocumento());
+	}
 
 	@Override
 	public List<DtoAdjuntoPromocion> getAdjuntosPromociones(String codPromo) throws GestorDocumentalException {
@@ -1420,5 +1437,26 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		
 		return idExpediente;	
+	}
+	
+	@Override
+	public List<DtoAdjuntoProyecto> getAdjuntosProyecto(String codProyecto) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(codProyecto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_PROMOCIONES);
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+		List<DtoAdjuntoProyecto> list = GestorDocToRecoveryAssembler.getListDtoAdjuntoProyecto(respuesta);
+
+		for (DtoAdjuntoProyecto adjunto : list) {
+			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
+			if (tipoDoc == null) {
+				adjunto.setDescripcionTipo("");
+			} else {
+				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
+			}
+		}
+
+		return list;
 	}
 }

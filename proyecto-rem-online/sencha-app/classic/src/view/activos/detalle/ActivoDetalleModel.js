@@ -1307,6 +1307,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	          	 autoLoad: false
     		},
 
+    		storeDocumentosActivoProyecto: {
+   			 pageSize: $AC.getDefaultPageSize(),
+   			 model: 'HreRem.model.AdjuntoActivoProyecto',
+	      	     proxy: {
+	      	        type: 'uxproxy',
+	      	        remoteUrl: 'proyecto/getListAdjuntosProyecto',
+	      	        extraParams: {id:'{activo.id}'}
+	          	 },
+	          	 groupField: 'descripcionTipo',
+	          	 autoLoad: false
+    		},
+
     		historicoTrabajos: {
 				pageSize: $AC.getDefaultPageSize(),
 		    	model: 'HreRem.model.BusquedaTrabajo',

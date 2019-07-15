@@ -1,14 +1,14 @@
-Ext.define('HreRem.view.activos.detalle.DocumentosActivoPromocion', {
+Ext.define('HreRem.view.activos.detalle.DocumentosActivoProyecto', {
     extend		: 'Ext.panel.Panel',
-    xtype		: 'documentosactivopromocion', 
-    reference	: 'documentosactivopromocionref',
+    xtype		: 'documentosactivoproyecto', 
+    reference	: 'documentosactivoproyectoref',
     cls			: 'panel-base shadow-panel',
     collapsed	: false,
     scrollable	: 'y',
 
     initComponent: function () {
     	 var me = this;
-        me.setTitle(HreRem.i18n('fieldlabel.documentacion.promocion'));
+        me.setTitle(HreRem.i18n('fieldlabel.documentacion.proyectos'));
 
     	var items= [
     	         {
@@ -16,10 +16,10 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoPromocion', {
 				    topBar		:  true,
 				    removeButton : true,
 				    features: [{ftype:'grouping'}],
-				    reference: 'listadoDocumentosPromocion',
+				    reference: 'listadoDocumentosProyecto',
 					cls	: 'panel-base shadow-panel',
 					bind: { 
-						store: '{storeDocumentosActivoPromocion}'
+						store: '{storeDocumentosActivoProyecto}'
 					},
 					loadCallbackFunction: {
 					    callback: function(records, operation, success) {
@@ -93,7 +93,6 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoPromocion', {
 				        		} else {
 				        			return value + " bytes";
 				        		}
-				        		return
 				        	}
 				        },
 				        {   

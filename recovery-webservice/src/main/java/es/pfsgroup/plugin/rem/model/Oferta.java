@@ -31,6 +31,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -259,6 +260,10 @@ public class Oferta implements Serializable, Auditable {
    	
    	@Column(name="OFR_FECHA_APROBACION_PRO_MANZANA")
    	private Date fechaAprobacionProManzana;	
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CLO_ID")
+	private DDClaseOferta claseOferta;  
     
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -780,5 +785,11 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaAprobacionProManzana(Date fechaAprobacionProManzana) {
 		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
 	}
+	public DDClaseOferta getClaseOferta() {
+		return claseOferta;
+	}
 
+	public void setClaseOferta(DDClaseOferta claseOferta) {
+		this.claseOferta = claseOferta;
+	}
 }

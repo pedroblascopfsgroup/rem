@@ -179,6 +179,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -3725,7 +3726,15 @@ public class ActivoAdapter {
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
-
+			
+			if (!Checks.esNulo(dto.getClaseOferta())) {
+				DDClaseOferta claseOferta = (DDClaseOferta) genericDao.get(DDClaseOferta.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOferta()));
+				if (!Checks.esNulo(claseOferta)) {
+					oferta.setClaseOferta(claseOferta);
+				}
+			}
+			
 			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {

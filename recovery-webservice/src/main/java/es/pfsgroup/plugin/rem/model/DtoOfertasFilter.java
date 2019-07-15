@@ -69,6 +69,9 @@ public class DtoOfertasFilter extends WebDto {
 	private Long idCliente;
 	private Boolean excluirGencat;
 	
+	//HREOS-6905
+	private String claseOferta;
+	
 	//HREOS-4937
 	private Boolean cesionDatos;
 	private Boolean comunicacionTerceros;
@@ -458,4 +461,12 @@ public class DtoOfertasFilter extends WebDto {
 	
 	
 		
+	//HREOS-6905 
+	public String getClaseOferta() {
+		return claseOferta;
+	}
+	public void setClaseOferta(String claseOferta) {
+		this.claseOferta = claseOferta;
+	}
+	
 }

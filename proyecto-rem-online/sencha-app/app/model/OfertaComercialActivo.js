@@ -77,6 +77,9 @@ Ext.define('HreRem.model.OfertaComercialActivo', {
             {
             	name: 'transferenciasInternacionales',
             	type : 'boolean'
+            },
+    		{
+            	name: 'claseOferta'
             }
     ],
     

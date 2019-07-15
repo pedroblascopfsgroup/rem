@@ -121,6 +121,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var me = this;
 	    								var form = combo.up('form');
 	    								
+	    								var lockClaseOferta = form.down('field[name=claseOferta]');
+	    								lockClaseOferta.reset();
+	    								lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
 	    							}
 	    						},
 			    				colspan: 2
@@ -342,6 +345,21 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		            	    	allowBlank:	false,
 		            	    	bind:		'{oferta.intencionFinanciar}',
 					        	inputValue: true
+					        },
+							{
+								xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
+					        	itemId: 'comboClaseOferta',
+					        	name: 'claseOferta',
+					        	flex:	1,
+					        	allowBlank: true,
+					        	bind: {
+				            		store: '{comboClaseOferta}',
+				            		value: '{oferta.claseOferta}',
+				            		hidden: '{esLiberbank}'
+				            	},
+				            	displayField: 'descripcion',
+	    						valueField: 'codigo'
 							}
 						]
 				}

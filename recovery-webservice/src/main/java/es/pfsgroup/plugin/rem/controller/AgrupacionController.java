@@ -29,6 +29,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -747,7 +748,11 @@ public class AgrupacionController extends ParadiseJsonController {
 			ModelMap model) {
 
 		try {
-			model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor));
+			if (GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(codigoGestor)) {
+				model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor, agrId));
+			} else {
+				model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor));
+			}
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error(e);

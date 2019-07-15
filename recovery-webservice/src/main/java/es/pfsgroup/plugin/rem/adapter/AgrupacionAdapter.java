@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -265,6 +266,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private GestorDocumentalFotosApi gestorDocumentalFotos;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -2159,8 +2163,20 @@ public class AgrupacionAdapter {
 				return false;
 			}
 		} else {
-			if((agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)
-					|| agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB))
+			if((DDCartera.CODIGO_CARTERA_BANKIA.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| (DDCartera.CODIGO_CARTERA_EGEO.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) 
+							&& (DDSubcartera.CODIGO_ZEUS.equals(agr.getActivos().get(0).getActivo().getSubcartera().getCodigo()))		
+						)
+					|| DDCartera.CODIGO_CARTERA_GALEON.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_GIANTS.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_HYT.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_TANGO.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) 
+							&& (DDSubcartera.CODIGO_THIRD_PARTIES_QUITAS_ING.equals(agr.getActivos().get(0).getActivo().getSubcartera().getCodigo()) 
+							|| DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING.equals(agr.getActivos().get(0).getActivo().getSubcartera().getCodigo()))
+						)	
+				)
 					&& isRetail(agr)){
 				if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) || Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
 					return false;
@@ -3697,6 +3713,54 @@ public class AgrupacionAdapter {
 
 		if (!Checks.esNulo(tipoGestor)) {
 			return activoAdapter.getComboUsuarios(tipoGestor.getId());
+		}
+
+		return null;
+	}
+	
+	public List<DtoUsuario> getUsuariosPorCodTipoGestor(String codigoGestor, Long agrId) {
+		List<DtoUsuario> listaUsuariosDto = new ArrayList<DtoUsuario>();
+		String cartera = "";
+		String subCartera = "";
+		Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrId);
+		List<ActivoAgrupacionActivo> agrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
+		if (!Checks.esNulo(agrupacion.get(0).getActivo()) && !Checks.esNulo(agrupacion.get(0).getActivo().getCartera())) {
+			cartera = agrupacion.get(0).getActivo().getCartera().getCodigo();
+			subCartera = agrupacion.get(0).getActivo().getSubcartera().getCodigo();
+		}
+
+		if(((DDCartera.CODIGO_CARTERA_EGEO.equals(cartera) && DDSubcartera.CODIGO_ZEUS.equals(subCartera))
+				|| DDCartera.CODIGO_CARTERA_GALEON.equals(cartera)
+				|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera)
+				|| DDCartera.CODIGO_CARTERA_HYT.equals(cartera)
+				|| DDCartera.CODIGO_CARTERA_TANGO.equals(cartera)
+				|| (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(cartera) 
+						&& (DDSubcartera.CODIGO_THIRD_PARTIES_QUITAS_ING.equals(subCartera) 
+						|| DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING.equals(subCartera))
+					))
+				&& isRetail(agrupacion.get(0).getAgrupacion())
+			){
+			Usuario gestoBO = gestorActivoApi.getGestorByActivoYTipo(agrupacion.get(0).getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			
+			if (!Checks.esNulo(gestoBO)) {			
+				try {
+					DtoUsuario dtoUsuario = new DtoUsuario();
+					BeanUtils.copyProperties(dtoUsuario, gestoBO);
+					listaUsuariosDto.add(dtoUsuario);
+				} catch (IllegalAccessException e) {
+					logger.error("Error en ActivoAdapter", e);
+				} catch (InvocationTargetException e) {
+					logger.error("Error en ActivoAdapter", e);
+				}
+				return listaUsuariosDto;
+			}			
+		} else {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
+			EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);
+	
+			if (!Checks.esNulo(tipoGestor)) {
+				return activoAdapter.getComboUsuarios(tipoGestor.getId());
+			}
 		}
 
 		return null;

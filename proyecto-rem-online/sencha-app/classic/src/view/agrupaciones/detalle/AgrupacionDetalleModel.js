@@ -314,12 +314,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 	     
 	     mostrarComboBO: function(get) {
-			var codigoCartera=get('agrupacionficha.codigoCartera');
-			var codigoSubCartera=get('agrupacionficha.codSubcartera');
+	    	 var codigoCartera=get('agrupacionficha.codigoCartera');
+	    	 var codigoSubCartera=get('agrupacionficha.codSubcartera');
 	         var tipoAgrup= get('agrupacionficha.tipoAgrupacionCodigo');
-	         if((codigoCartera == CONST.CARTERA['LIBERBANK'] || codigoCartera == CONST.CARTERA['BANKIA'] || codigoCartera == CONST.CARTERA['SAREB'] 
-	         	|| (codigoCartera == CONST.CARTERA['CERBERUS']) && codigoSubCartera == CONST.SUBCARTERA['APPLEINMOBILIARIO']) 
-	         		&& tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
+	         if((codigoCartera == CONST.CARTERA['LIBERBANK'] || 
+	        	codigoCartera == CONST.CARTERA['BANKIA'] ||
+	        	(codigoCartera == CONST.CARTERA['CERBERUS'] && 
+	        		(codigoSubCartera == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || 
+	        		codigoSubCartera == CONST.SUBCARTERA['JAIPURFINANCIERO'])
+	         	) ||
+	        	(codigoCartera == CONST.CARTERA['EGEO'] 
+	        		 && codigoSubCartera == CONST.SUBCARTERA['ZEUS']) ||
+	        	codigoCartera == CONST.CARTERA['GALEON'] || 
+	        	codigoCartera == CONST.CARTERA['GIANTS'] ||
+		        codigoCartera == CONST.CARTERA['HYT'] || 
+	        	codigoCartera == CONST.CARTERA['SAREB'] || 
+	        	codigoCartera == CONST.CARTERA['TANGO'] ||
+	        	(codigoCartera == CONST.CARTERA['THIRDPARTIES'] && 
+	        		(codigoSubCartera == CONST.SUBCARTERA['QUITASBANKIA'] ||
+	        		codigoSubCartera == CONST.SUBCARTERA['COMERCIALING']) 
+	        	)
+	         ) 
+	         && tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
 	             return true;
 	         }else{
 	             return false;

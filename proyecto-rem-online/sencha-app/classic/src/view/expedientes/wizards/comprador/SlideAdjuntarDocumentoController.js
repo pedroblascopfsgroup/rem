@@ -734,7 +734,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
 				deDerechoTanteo: bindRecord.dederechotanteo,
-				claseOferta: bindRecord.claseOferta
+				claseOferta: bindRecord.claseOferta,
+				numOferPrincipal: bindRecord.numOferPrincipal
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -756,7 +757,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
 				deDerechoTanteo: bindRecord.dederechotanteo,
-				claseOferta: bindRecord.claseOferta
+				claseOferta: bindRecord.claseOferta,
+				numOferPrincipal: bindRecord.numOferPrincipal
 			});
 		}
 

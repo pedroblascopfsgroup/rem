@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -503,6 +504,7 @@ public interface OfertaApi {
 	 * @return List<ActivoOferta> 
 	 */
 	public List<ActivoOferta> buildListaActivoOferta(Activo activo, ActivoAgrupacion agrupacion, Oferta oferta) throws Exception;
+	
 
 	/**
 	 * 
@@ -665,5 +667,13 @@ public interface OfertaApi {
 	Oferta getOfertaByIdExpediente(Long idExpediente);
 
 	boolean checkEsYubai(TareaExterna tareaExterna);
+	
+	/**
+	 * Este método construye una lista de OfertasAgrupadasLbk para la creación de ofertas.
+	 * @param idOfertaPrincipal a incluir en la oferta
+	 * @param oferta con la información de la oferta
+	 * @return List<OfertasAgrupadasLbk> 
+	 */
+	public List<OfertasAgrupadasLbk> buildListaOfertasAgrupadasLbk(Oferta principal, Oferta dependiente, String claseOferta) throws Exception;
 }
 

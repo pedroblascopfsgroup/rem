@@ -1720,7 +1720,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
 				deDerechoTanteo: bindRecord.deDerechoTanteo,
-				claseOferta: bindRecord.claseOferta
+				claseOferta: bindRecord.claseOferta,
+				numOferPrincipal: bindRecord.numOferPrincipal
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -1742,7 +1743,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
 				deDerechoTanteo: bindRecord.deDerechoTanteo,
-				claseOferta: bindRecord.claseOferta
+				claseOferta: bindRecord.claseOferta,
+				numOferPrincipal: bindRecord.numOferPrincipal
 			});
 		}
 

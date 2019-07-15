@@ -3,11 +3,13 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 	alias: 'controller.slidedatosoferta',
 
 	onActivate: function() {
+
 		var me = this,
 			wizard = me.getView().up('wizardBase');
+		
 		Ext.Array.each(wizard.query('field[isReadOnlyEdit]'), function(field, index) {
 			field.fireEvent('edit');
-			if(index == 0) field.focus();
+			if(index == 0) field.focus(); 		
 		});
 	},
 

@@ -121,9 +121,18 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var me = this;
 	    								var form = combo.up('form');
 	    								
+	    								//Este check de tanteo ha sido suprimido por otro compañero
+//	    								var checkTanteo = form.down('field[name=dederechotanteo]');
+//	    								checkTanteo.reset();
+//	    								checkTanteo.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    								
 	    								var lockClaseOferta = form.down('field[name=claseOferta]');
 	    								lockClaseOferta.reset();
-	    								lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
+	    								lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    								
+	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
+	    								checkNumOferPrin.reset();
+	    								checkNumOferPrin.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
 	    							}
 	    						},
 			    				colspan: 2
@@ -348,18 +357,26 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 					        },
 							{
 								xtype: 'comboboxfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
-					        	itemId: 'comboClaseOferta',
-					        	name: 'claseOferta',
-					        	flex:	1,
-					        	allowBlank: true,
-					        	bind: {
-				            		store: '{comboClaseOferta}',
-				            		value: '{oferta.claseOferta}',
-				            		hidden: '{esLiberbank}'
-				            	},
-				            	displayField: 'descripcion',
-	    						valueField: 'codigo'
+								fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
+								itemId: 'comboClaseOferta',
+								name: 'claseOferta',
+								flex:	1,
+								allowBlank: true,
+								bind: {
+									store: '{comboClaseOferta}',
+									value: '{oferta.claseOferta}',
+									hidden: '{esLiberbank}'
+								},
+								displayField: 'descripcion',
+								valueField: 'codigo'
+							},
+							{
+								fieldLabel:  HreRem.i18n('fieldlabel.numOferPrincipal'),
+								name: 		'numOferPrincipal', 
+								allowBlank: true,
+								bind: 		{
+									value: '{oferta.numOferPrincipal}'
+								}
 							}
 						]
 				}

@@ -18,6 +18,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -25,6 +26,8 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
+
+import com.bankia.arq.mad.catalogofmt.Campo;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -147,6 +150,15 @@ public class Oferta implements Serializable, Auditable {
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
     private List<ActivoOferta> activosOferta;
+
+    @OneToMany(mappedBy = "ofertaPrincipal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<OfertasAgrupadasLbk> ofertasAgrupadas;
+
+    @OneToOne(mappedBy = "ofertaDependiente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private OfertasAgrupadasLbk ofertaDependiente;
     
    	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_CES")
    	private Date fechaRespuestaCES;	
@@ -792,4 +804,23 @@ public class Oferta implements Serializable, Auditable {
 	public void setClaseOferta(DDClaseOferta claseOferta) {
 		this.claseOferta = claseOferta;
 	}
+
+	public List<OfertasAgrupadasLbk> getOfertasAgrupadas() {
+		
+		if(ofertasAgrupadas == null) ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>(); 
+		
+		return ofertasAgrupadas;
+	}
+
+	public void setOfertasAgrupadas(List<OfertasAgrupadasLbk> ofertasAgrupadas) {
+		this.ofertasAgrupadas = ofertasAgrupadas;
+	}
+
+	public OfertasAgrupadasLbk getOfertaDependiente() {
+		return ofertaDependiente;
+	}
+
+	public void setOfertaDependiente(OfertasAgrupadasLbk ofertaDependiente) {
+		this.ofertaDependiente = ofertaDependiente;
+	}	
 }

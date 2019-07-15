@@ -26,6 +26,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -101,6 +102,7 @@ public class AgendaAdapter {
 	private static final String CODIGO_DEFINICION_OFERTA = "T013_DefinicionOferta";
 	private static final String TEXTO_ADVERTENCIA_T013_DO = "ATENCIÓN: Va a aprobar un expediente con importe inferior al precio mínimo. Confirme que tiene la autorización de su supervisor.";
 	private static final String ERROR_CAMPOS_VALIDACION ="Los campos requeridos y no requeridos no son correctos, revise las instrucciones de la tarea: ";
+	private static final String ERROR_CAMPOS_VALIDACION_FORMATO ="Los formatos de los siguientes campos requeridos y no requeridos no son correctos: ";
 	private static final String ERROR_TAREA_NO_PERMITIDA = "El tipo de tarea no esta permitida para avanzar";
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	private SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
@@ -392,15 +394,101 @@ public class AgendaAdapter {
 		
 		//validaciones campos requeridos
 		boolean camposValidos = avanzaTareasGenericDao.validaCamposTarea(codigoTarea, valores);
+		String errores = null;
 		if(!camposValidos){
 			throw new UserException(ERROR_CAMPOS_VALIDACION+instrucciones.replaceAll("\\<.*?>","") );
+		}else {
+			//si los campos coinciden con la instancia, validamos sus formatos
+			errores = validaFormatosTFI(campos,valores);
 		}
-
+		if(!Checks.esNulo(errores)) {
+			throw new UserException(ERROR_CAMPOS_VALIDACION_FORMATO+errores);
+		}
 		actGenericFormManager.validateAndSaveValues(dto);
 
 		return true;
 	}
 	
+	private String validaFormatosTFI(List<GenericFormItem> campos, Map<String, String[]> valores) {
+		String errores = "";
+		for (GenericFormItem tfi : campos) {
+			if(!Checks.esNulo(valores.get(tfi.getNombre()))) {
+				String[] valor = valores.get(tfi.getNombre());
+				if(!Checks.esNulo(valor[0])){
+					switch (tfi.getType()) {
+					case "combobox":
+						String diccionarioCombo = tfi.getValuesBusinessOperation();
+						switch (diccionarioCombo) {
+						case "DDSiNo":
+							if(DDSiNo.SI.equals(valor[0]) || DDSiNo.NO.equals(valor[0])) {
+								break;
+							}else {
+								errores= errores + "El valor del diccionario "+tfi.getNombre()+" debe ser un 01 o 02. ";
+							}
+							break;
+						case "DDMotivoAnulacionExpediente":
+							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", tfi.getValue());
+							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+							DDMotivoAnulacionExpediente diccionario = genericDao.get(DDMotivoAnulacionExpediente.class, filtroCodigo, filtroBorrado);
+							if(Checks.esNulo(diccionario)) {
+								errores= errores + "El valor "+tfi.getLabel()+" no es correcto. ";
+							}
+							break;
+						default:
+							break;
+						}
+						break;
+					case "datemaxtoday":
+						Date hoy = new Date();
+						String hoyString = ft.format(hoy);
+						String dateValor = "";
+						try {
+							Date fecha = ft.parse(valor[0]);
+						} catch (ParseException e) {
+							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. ";
+							break;
+						}
+						dateValor = valor[0];
+						if(hoyString.compareTo(dateValor) <= 0) {
+							errores= errores + "La fecha "+tfi.getLabel()+" es mayor que hoy. ";
+						}
+						break;
+					case "numberfield":
+						if(!isNumeric(valor[0])) {
+							errores= errores + "El dato "+tfi.getLabel()+" no es numérico. ";
+						}
+						break;
+					case "datefield":
+						try {
+							Date fecha = ft.parse(valor[0]);
+						} catch (ParseException e) {
+							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. "; 
+						}
+						break;
+					case "elctrabajo":
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+		if(!"".equals(errores)) {
+			return errores;
+		}
+		return null;
+	}
+	
+	private boolean isNumeric(String str) {
+		try {
+			Double.parseDouble(str);  
+		    return true;
+		 	} 
+		catch(NumberFormatException e){  
+		    return false;  
+		  }  
+	}
+
 	public Boolean save(Map<String,String[]> valores) throws Exception{
 		DtoGenericForm dto = new DtoGenericForm();
 		Long idTarea = 0L;
@@ -438,7 +526,11 @@ public class AgendaAdapter {
 				if (nombreCampo.equals(((Map.Entry) stringStringEntry).getKey())) {
 					String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
 					if (valorCampo != null && !valorCampo.isEmpty() && nombreCampo.toUpperCase().contains("FECHA")) {
-						valorCampo = valorCampo.substring(6, 10) + "-" + valorCampo.substring(3, 5) + "-" + valorCampo.substring(0, 2);
+						try {
+							valorCampo = valorCampo.substring(6, 10) + "-" + valorCampo.substring(3, 5) + "-" + valorCampo.substring(0, 2);
+						}catch (Exception e) {
+							//que hacemos
+						}
 					}
 					valores[i] = valorCampo;
 					break;

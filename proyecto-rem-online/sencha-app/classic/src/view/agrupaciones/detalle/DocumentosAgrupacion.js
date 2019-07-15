@@ -1,6 +1,10 @@
 Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
-    extend: 'Ext.form.Panel',
+	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype: 'documentosagrupacion',
+	topBar		: true,
+	editOnSelect: false,
+	disabledDeleteBtn: false,
+	removeButton: true,
 	layout: 'fit',
 	requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.DocumentosAgrupacion'],
 
@@ -10,7 +14,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
         
         me.setTitle('Documentos');
         		         
-        var items= [
+      /* me.items= [
 
 			{
 			    xtype		: 'gridBaseEditableRow',
@@ -24,8 +28,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
 				bind: {
 					topBar: '{agrupacionficha.esEditable}',
 					editOnSelect: '{agrupacionficha.esEditable}'
-				},
-				columns: [
+				}
+		*/
+				me.columns= [
 				   {    text: 'Nombre del documento',
 			        	dataIndex: 'nombreDocumento',
 			        	flex: 2
@@ -58,8 +63,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
 			        	flex: 2
 			       }
 			       	        
-			    ],
-			    listeners : {
+			    ];
+			    me.selModel = {
+				          selType: 'checkboxmodel',
+				          mode: 'SINGLE'
+				      	}; 
+			/*    listeners : {
    	                beforeedit : function(editor, context, eOpts ) {
    	                    var idUsuario = context.record.get("idUsuario");
    	                	if (!Ext.isEmpty(idUsuario))
@@ -87,20 +96,35 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
             			}
             		}
 	            },
-			    dockedItems : [
+	           */
+			    me.dockedItems = [
 			        {
 			            xtype: 'pagingtoolbar',
 			            dock: 'bottom',
 			            displayInfo: true
 			        }
-			    ]
+			    ];
+	
 			    
-			}
+			
             
             
-        ];
-		me.addPlugin({ptype: 'lazyitems', items: items });
+        
+		//me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
+    	
+    },
+    
+    onAddClick: function(btn){
+		var me = this;
+		var idAgrupacion = me.lookupController().getViewModel().getData().agrupacionficha.id
+
+
+		Ext.create('HreRem.view.agrupaciones.detalle.AnyadirNuevoDocumentoAgrupacion',{idAgrupacion: idAgrupacion, grid:this}).show();    
+
+    },
+    
+    onDeleteClick: function(btn){
     	
     }
 

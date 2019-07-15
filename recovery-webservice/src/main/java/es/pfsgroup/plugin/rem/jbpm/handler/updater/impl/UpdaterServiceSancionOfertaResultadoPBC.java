@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -64,6 +65,8 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Activo activo = ofertaAceptada.getActivoPrincipal();
+		
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
@@ -76,7 +79,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							&& !Checks.esNulo(valor.getValor())) {
 						//TODO: Rellenar campo PBC del expediente cuando esté creado.
 						if(DDSiNo.NO.equals(valor.getValor())) {
-							if(!ofertaApi.checkReserva(ofertaAceptada)){
+							if(!ofertaApi.checkReserva(ofertaAceptada) || 
+							(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
+							&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
 								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								expediente.setEstado(estado);
@@ -95,6 +100,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								ofertaApi.rechazarOferta(ofertaAceptada);
 								try {
 									ofertaApi.descongelarOfertas(expediente);
+									ofertaApi.finalizarOferta(ofertaAceptada);
 								} catch (Exception e) {
 									logger.error("Error descongelando ofertas.", e);
 								}

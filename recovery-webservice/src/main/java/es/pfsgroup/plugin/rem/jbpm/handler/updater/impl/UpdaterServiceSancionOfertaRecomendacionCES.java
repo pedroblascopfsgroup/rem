@@ -82,7 +82,11 @@ public class UpdaterServiceSancionOfertaRecomendacionCES implements UpdaterServi
 							
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())) {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES); 
-							if (!Checks.esNulo(expediente.getCondicionante().getSolicitaReserva()) && expediente.getCondicionante().getSolicitaReserva() == 0) {
+							if(((!Checks.esNulo(expediente.getReserva()))
+									&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
+									&& !DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()))
+									|| Checks.esNulo(expediente.getReserva()) 
+									|| !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva()) && expediente.getCondicionante().getSolicitaReserva() == 0) {
 								expediente.setFechaVenta(null);
 								expediente.setFechaAnulacion(new Date());
 								

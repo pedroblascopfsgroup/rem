@@ -139,10 +139,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 				
 				var motivo = context.record.data.motivoCalificacionNegativa;
 				var estado = context.record.data.estadoMotivoCalificacionNegativa;
-				
-				 if(motivo !=  CONST.COMBO_MOTIVO_CALIFICACION_NEGATIVA["OTROS"] && motivo != CONST.COMBO_MOTIVO_CALIFICACION_NEGATIVA["COD_OTROS"]){
-					 context.record.data.descripcionCalificacionNegativa = " ";
-				 }
+
 				 if(estado != CONST.COMBO_ESTADO_CALIFICACION_NEGATIVA["SUBSANADO"] && estado != CONST.COMBO_ESTADO_CALIFICACION_NEGATIVA["COD_SUBSANADO"] ){
 					 context.record.data.fechaSubsanacion = "";
 				 }

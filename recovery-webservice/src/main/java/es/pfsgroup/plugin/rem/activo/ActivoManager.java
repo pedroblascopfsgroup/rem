@@ -5396,10 +5396,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				beanUtilNotNull.copyProperty(activoCalificacionNegativa, "fechaSubsanacion", dto.getFechaSubsanacion());
 				
-				if(DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(activoCalificacionNegativa.getMotivoCalificacionNegativa().getCodigo())) {
-					beanUtilNotNull.copyProperty(activoCalificacionNegativa, "descripcion", dto.getDescripcionCalificacionNegativa());
-				}else {
-					activoCalificacionNegativa.setDescripcion(dto.getDescripcionCalificacionNegativa());
+				String descripcionCalificacionNegativa = dto.getDescripcionCalificacionNegativa();
+				if(!Checks.esNulo(descripcionCalificacionNegativa)) {
+					beanUtilNotNull.copyProperty(activoCalificacionNegativa, "descripcion", descripcionCalificacionNegativa);
 				}
 				
 				

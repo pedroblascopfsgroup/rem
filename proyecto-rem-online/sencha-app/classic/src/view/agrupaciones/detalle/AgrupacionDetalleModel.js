@@ -187,13 +187,26 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return false;
 	     	}
 	     },
-
+		
 		 esAgrupacionProyecto: function(get) {
 
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
 		     		return true;
 		     	} else {
+		     		return false;
+		     	}
+		 },
+ 		 visibilidadPestanyaDocumentos: function(get) {
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo'),
+		     	cartera = get('agrupacionficha.codigoCartera'),
+		     	subCartera =  get('agrupacionficha.codSubcartera');
+		     	if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
+		     		return true;
+		     	} else if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION["OBRA_NUEVA"] && cartera == CONST.CARTERA["THIRDPARTIES"]  && subCartera == CONST.SUBCARTERA["YUBAI"] )) {
+		     		console.log( '%cEs yubai',"color: blue; font-size:15px;");
+		     		return true;
+		     	}else{
 		     		return false;
 		     	}
 		 },
@@ -674,7 +687,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     	} else {
 		     		return false;
 		     	}
-		}
+		}/*,
+		
+		habilitaPestanyaDocumentos : function (get) {
+				if (get('agrupacionficha'))
+		}*/
     },
     stores: {
     	comboCartera: {

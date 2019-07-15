@@ -778,4 +778,18 @@ public interface ParticularValidatorApi {
 
 	Boolean existeActivoAsociado(String numActivo);
 
+	public Boolean esActivoUA(String numActivo);
+
+	public Boolean esAccionValido(String codAccion);
+
+	public Boolean esResultadoValido(String codResultado);
+
+	public Boolean esSolicitudValido(String codSolicitud);
+
+	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+
+	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+
+	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
+
 }

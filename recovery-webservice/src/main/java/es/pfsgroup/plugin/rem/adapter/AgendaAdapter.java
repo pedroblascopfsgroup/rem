@@ -415,30 +415,21 @@ public class AgendaAdapter {
 			if(!Checks.esNulo(valores.get(tfi.getNombre()))) {
 				String[] valor = valores.get(tfi.getNombre());
 				if(!Checks.esNulo(valor[0])){
-					switch (tfi.getType()) {
-					case "combobox":
-						String diccionarioCombo = tfi.getValuesBusinessOperation();
-						switch (diccionarioCombo) {
-						case "DDSiNo":
+					if("combobox".equals(tfi.getType())) {
+						if("DDSiNo".equals(tfi.getValuesBusinessOperation())) {
 							if(DDSiNo.SI.equals(valor[0]) || DDSiNo.NO.equals(valor[0])) {
-								break;
 							}else {
 								errores= errores + "El valor del diccionario "+tfi.getNombre()+" debe ser un 01 o 02. ";
 							}
-							break;
-						case "DDMotivoAnulacionExpediente":
+						}else if("DDMotivoAnulacionExpediente".equals(tfi.getValuesBusinessOperation())) {
 							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", tfi.getValue());
 							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 							DDMotivoAnulacionExpediente diccionario = genericDao.get(DDMotivoAnulacionExpediente.class, filtroCodigo, filtroBorrado);
 							if(Checks.esNulo(diccionario)) {
 								errores= errores + "El valor "+tfi.getLabel()+" no es correcto. ";
 							}
-							break;
-						default:
-							break;
 						}
-						break;
-					case "datemaxtoday":
+					}else if("datemaxtoday".equals(tfi.getType())){
 						Date hoy = new Date();
 						String hoyString = ft.format(hoy);
 						String dateValor = "";
@@ -446,29 +437,21 @@ public class AgendaAdapter {
 							Date fecha = ft.parse(valor[0]);
 						} catch (ParseException e) {
 							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. ";
-							break;
 						}
 						dateValor = valor[0];
 						if(hoyString.compareTo(dateValor) <= 0) {
 							errores= errores + "La fecha "+tfi.getLabel()+" es mayor que hoy. ";
 						}
-						break;
-					case "numberfield":
+					}else if("numberfield".equals(tfi.getType())) {
 						if(!isNumeric(valor[0])) {
 							errores= errores + "El dato "+tfi.getLabel()+" no es numérico. ";
 						}
-						break;
-					case "datefield":
+					}else if("datefield".equals(tfi.getType())) {
 						try {
 							Date fecha = ft.parse(valor[0]);
 						} catch (ParseException e) {
 							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. "; 
 						}
-						break;
-					case "elctrabajo":
-						break;
-					default:
-						break;
 					}
 				}
 			}

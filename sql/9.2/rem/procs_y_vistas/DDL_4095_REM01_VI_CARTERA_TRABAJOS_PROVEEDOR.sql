@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20190619
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-6925
 --## PRODUCTO=NO
 --## Finalidad: Creación de vista para sacar las carteras de los trabajos de un proveedor
 --##           

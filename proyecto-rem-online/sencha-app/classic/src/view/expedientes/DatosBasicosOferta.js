@@ -11,7 +11,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 	
 	recordClass: "HreRem.model.DatosBasicosOferta",
     
-    requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel'],
+    requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel',
+    	'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel'],
     
     listeners: {
 			boxready:'cargarTabData',
@@ -377,6 +378,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 					    			
 		                    ]
                 		},
+		                {
+                			xtype : 'ofertasagrupadastabpanel',
+                			colspan: 3
+	                    },
                 		{
                 			xtype: "container",
                 			layout: "hbox",

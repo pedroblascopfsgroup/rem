@@ -102,7 +102,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     },
     
     cargarTabData: function (form) {
-		var me = this,
+    	var me = this,
 		model = null,
 		models = null,
 		nameModels = null,

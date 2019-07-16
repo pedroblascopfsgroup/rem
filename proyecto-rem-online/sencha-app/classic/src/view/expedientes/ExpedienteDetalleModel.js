@@ -6,7 +6,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
-				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones'],
+				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones',
+				'HreRem.model.OfertasAgrupadasModel'],
     
     data: {
     },
@@ -669,6 +670,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
           	 },
           	 groupField: 'descripcionTipo'
 		},
+		// @TO-DO Store Activos Ofetas Agrupados
+		/*storeActivosAgrupadosLbk:{
+			model:'HreRem.model.ActivosOfertaAgrupadaLbk',
+			proxy:{
+				type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getActivosOfertaAgrupados',
+		        extraParams: {idExpediente: '{expediente.id}'}
+			}
+		},*/
 		
 		tareasTramiteExpediente: {
 			pageSize: $AC.getDefaultPageSize(),
@@ -1146,11 +1156,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			autoSync: true,
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus',
-				extraParams: {numeroUrsus: '', idExpediente: '{expediente.id}'}
+				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus'
+				//extraParams: {numeroUrsus: '', idExpediente: '{expediente.id}'}
+			}
+		},
+		storeOfertasAgrupadas: {
+			model: 'HreRem.model.OfertasAgrupadasModel',
+			//autoLoad: true,
+			//autoSync: true,
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'ofertas/getListOfertasAgrupadas',
+				extraParams: {numOfertaPrincipal:'{datosbasicosoferta.numOferta}'}
 			}
 		}
-		
 		
     }
 });

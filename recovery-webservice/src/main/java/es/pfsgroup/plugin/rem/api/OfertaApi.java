@@ -21,10 +21,12 @@ import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -667,7 +669,6 @@ public interface OfertaApi {
 	Oferta getOfertaByIdExpediente(Long idExpediente);
 
 	boolean checkEsYubai(TareaExterna tareaExterna);
-	
 	/**
 	 * Este método construye una lista de OfertasAgrupadasLbk para la creación de ofertas.
 	 * @param idOfertaPrincipal a incluir en la oferta
@@ -675,5 +676,13 @@ public interface OfertaApi {
 	 * @return List<OfertasAgrupadasLbk> 
 	 */
 	public List<OfertasAgrupadasLbk> buildListaOfertasAgrupadasLbk(Oferta principal, Oferta dependiente, String claseOferta) throws Exception;
+
+	/**
+	 * Obtener la lista de ofertas agrupadas para Liberbank 
+	 * @param dtoVListadoOfertasAgrupadasLbk <DtoVListadoOfertasAgrupadasLbk>
+	 * @return <DtoPage> Página de valores de ofertas agrupadas Liberbank
+	 */
+	DtoPage getListOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
+	
 }
 

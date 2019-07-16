@@ -11,7 +11,7 @@ Ext.define('HreRem.model.DocumentosAgrupacion', {
     			name:'id'
     		},
     		{
-    			name:'idUsuario'
+    			name:'idAgrupacion'
     		},
     		{
     			name:'nombreDocumento'
@@ -33,7 +33,6 @@ Ext.define('HreRem.model.DocumentosAgrupacion', {
     		{
     			name:'nombreCompleto'
     		}
-    		
     ],
     
 	proxy: {

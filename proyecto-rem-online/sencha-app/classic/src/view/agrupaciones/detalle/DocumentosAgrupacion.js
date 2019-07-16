@@ -11,25 +11,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
     initComponent: function () {
 
         var me = this;
-        
         me.setTitle('Documentos');
-        		         
-      /* me.items= [
-
-			{
-			    xtype		: 'gridBaseEditableRow',
-			    topBar		: $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS_AGRUPACION']),
-			    idPrincipal : 'agrupacionficha.id',
-			   	secFunToEdit: 'EDITAR_AGRUPACION',				
-				secButtons: {
-					secFunPermToEnable : 'EDITAR_AGRUPACION'
-				},
-				cls	: 'grid-editable-row',
-				bind: {
-					topBar: '{agrupacionficha.esEditable}',
-					editOnSelect: '{agrupacionficha.esEditable}'
-				}
-		*/
 				me.columns= [
 				   {    text: 'Nombre del documento',
 			        	dataIndex: 'nombreDocumento',
@@ -57,46 +39,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
 			            flex: 2,
 			        	formatter: 'date("d/m/Y")'
 			            
-			       },
-			       {    text: 'Gestor',
-			        	dataIndex: 'nombreCompleto',
-			        	flex: 2
 			       }
-			       	        
 			    ];
-			    me.selModel = {
-				          selType: 'checkboxmodel',
-				          mode: 'SINGLE'
-				      	}; 
-			/*    listeners : {
-   	                beforeedit : function(editor, context, eOpts ) {
-   	                    var idUsuario = context.record.get("idUsuario");
-   	                	if (!Ext.isEmpty(idUsuario))
-   	                	{
-	   	                    var allowEdit = $AU.sameUserPermToEnable(idUsuario);
-	   	                    return allowEdit;
-   	                	}
-	                }
-	            },
-	            
-	            onGridBaseSelectionChange: function (grid, records) {
-	            	if(!records.length)
-            		{
-            			
-            			me.down('#removeButton').setDisabled(true);
-            			me.down('#addButton').setDisabled(false);
-            		}
-            		else
-            		{
-            			var idUsuario = records[0].get("idUsuario");
-            			var allowRemove = $AU.sameUserPermToEnable(idUsuario);
-            			if (!me.down("gridBaseEditableRow").getPlugin("rowEditingPlugin").editing)
-            			{
-            				me.down('#removeButton').setDisabled(!allowRemove);
-            			}
-            		}
-	            },
-	           */
+			    me.selModel = 
+			    	{
+			          selType: 'checkboxmodel',
+			          mode: 'SINGLE'
+			      	}; 
 			    me.dockedItems = [
 			        {
 			            xtype: 'pagingtoolbar',
@@ -104,13 +53,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
 			            displayInfo: true
 			        }
 			    ];
-	
-			    
-			
             
-            
-        
-		//me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
     	
     },

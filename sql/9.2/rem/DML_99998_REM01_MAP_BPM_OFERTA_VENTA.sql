@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20190706
+--## FECHA_CREACION=20190719
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6841
@@ -3083,7 +3083,7 @@ relevante que considere que debe quedar reflejado en este punto del tr&aacute;mi
   
   TFI_MAP(16).tfi_field_row(1).tfi_field('TFI_ORDEN') := 1;
   TFI_MAP(16).tfi_field_row(1).tfi_field('TFI_TIPO') := 'datefield';
-  TFI_MAP(16).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'comboRespufechaIngresoesta';
+  TFI_MAP(16).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'fechaIngreso';
   TFI_MAP(16).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Fecha ingreso cheque';
   TFI_MAP(16).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(16).tfi_field_row(1).tfi_field('TFI_VALIDACION') := NULL;

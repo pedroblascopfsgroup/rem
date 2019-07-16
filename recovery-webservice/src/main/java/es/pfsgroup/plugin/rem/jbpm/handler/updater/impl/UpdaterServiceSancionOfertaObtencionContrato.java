@@ -53,16 +53,16 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
+
 	@Autowired
-    private GencatApi gencatApi;
-	
+	private GencatApi gencatApi;
+
 	@Autowired
 	private ActivoApi activoApi;
-	
+
 	@Autowired
 	private ComunicacionGencatApi comunicacionGencatApi;
-	
+
 	@Autowired
 	private ActivoAdapter activoAdapter;
 
@@ -83,16 +83,16 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		Activo activo = null;
 		
 		Boolean proManzanaFinalizada = ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_RESOLUCION_PRO_MANZANA);
-		
+
 
 		for (TareaExternaValor valor : valores) {
 
 			if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				Reserva reserva = expediente.getReserva();
 				if (!Checks.esNulo(reserva)) {
-					//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
+					// Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
 					activoTramiteApi.reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
-					try {			
+					try {
 						reserva.setFechaFirma(ft.parse(valor.getValor()));
 						genericDao.save(Reserva.class, reserva);
 					} catch (ParseException e) {
@@ -101,30 +101,36 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				}
 			}
 			genericDao.save(ExpedienteComercial.class, expediente);
-			
-			
-		}		
-//		}
-//			genericDao.save(ExpedienteComercial.class, expediente);
-//		
-		
+
+		}
+		// }
+		// genericDao.save(ExpedienteComercial.class, expediente);
+		//
+
 		if (!Checks.esNulo(ofertaAceptada)) {
 			List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 			for (ActivoOferta activoOferta : listActivosOferta) {
-				ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-				if(!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
-					Oferta oferta = expediente.getOferta();	
+				ComunicacionGencat comunicacionGencat = comunicacionGencatApi
+						.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
+				if (!Checks.esNulo(expediente.getReserva())
+						&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+						&& activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())) {
+					Oferta oferta = expediente.getOferta();
 					OfertaGencat ofertaGencat = null;
 					if (!Checks.esNulo(comunicacionGencat)) {
-						ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
+						ofertaGencat = genericDao.get(OfertaGencat.class,
+								genericDao.createFilter(FilterType.EQUALS, "oferta", oferta),
+								genericDao.createFilter(FilterType.EQUALS, "comunicacion", comunicacionGencat));
 					}
-					if(!Checks.esNulo(ofertaGencat)) {
-							if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
-								gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
-							}
-					}else{	
+					if (!Checks.esNulo(ofertaGencat)) {
+						if (Checks.esNulo(ofertaGencat.getIdOfertaAnterior())
+								&& !ofertaGencat.getAuditoria().isBorrado()) {
+							gencatApi.bloqueoExpedienteGENCAT(expediente,
+									activoOferta.getPrimaryKey().getActivo().getId());
+						}
+					} else {
 						gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
-					}					
+					}
 				}
 			}
 
@@ -144,24 +150,30 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_FIRMADA));
 				expediente.getReserva().setEstadoReserva(estadoReserva);
-				
-				//Si ningun activo esta sujeto a tanteo, se informa el campo "Fecha vencimiento reserva" con Fecha firma + 40 dias
-				if(!Checks.esNulo(expediente.getReserva().getFechaFirma()) && !ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
+
+				// Si ningun activo esta sujeto a tanteo, se informa el campo "Fecha vencimiento
+				// reserva" con Fecha firma + 40 dias
+				if (!Checks.esNulo(expediente.getReserva().getFechaFirma())
+						&& !ofertaApi.checkDerechoTanteo(tramite.getTrabajo())) {
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(expediente.getReserva().getFechaFirma());
-					if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+					if (!Checks.esNulo(activo)
+							&& DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
 						calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
-					}else {
-						calendar.add(Calendar.DAY_OF_YEAR, UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
+					} else {
+						calendar.add(Calendar.DAY_OF_YEAR,
+								UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
 					}
-				    expediente.getReserva().setFechaVencimiento(calendar.getTime());
+					expediente.getReserva().setFechaVencimiento(calendar.getTime());
 				}
-				
-				//Si algún activo esta sujeto a tanteo y todos tienen la resolucion Renunciada, se informa el campo "Fecha vencimiento reserva" con la mayor fecha de resolucion de los tanteos
-				if(ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
-					List<TanteoActivoExpediente> tanteosExpediente= expediente.getTanteoActivoExpediente();
-					if(!Checks.estaVacio(tanteosExpediente)){
-						//HREOS-2686 Punto 2
+
+				// Si algún activo esta sujeto a tanteo y todos tienen la resolucion Renunciada,
+				// se informa el campo "Fecha vencimiento reserva" con la mayor fecha de
+				// resolucion de los tanteos
+				if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo())) {
+					List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
+					if (!Checks.estaVacio(tanteosExpediente)) {
+						// HREOS-2686 Punto 2
 						expedienteComercialApi.actualizarFVencimientoReservaTanteosRenunciados(null, tanteosExpediente);
 					}
 				}
@@ -169,16 +181,16 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 			genericDao.save(ExpedienteComercial.class, expediente);
 
-
-			//Actualizar el estado comercial de los activos de la oferta y, consecuentemente, el estado de publicación.
+			// Actualizar el estado comercial de los activos de la oferta y,
+			// consecuentemente, el estado de publicación.
 			for (TareaExternaValor valor : valores) {
 
 				if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					Reserva reserva = expediente.getReserva();
 					if (!Checks.esNulo(reserva)) {
-						//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
+						// Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
 						activoTramiteApi.reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
-						try {			
+						try {
 							reserva.setFechaFirma(ft.parse(valor.getValor()));
 							genericDao.save(Reserva.class, reserva);
 						} catch (ParseException e) {
@@ -187,8 +199,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 					}
 				}
 				genericDao.save(ExpedienteComercial.class, expediente);
-				
-				
+
 			}
 			
 			//Si es T017, revisamos GENCAT
@@ -214,17 +225,17 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			
 			//Actualizar el estado comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
-			
-			if(!Checks.esNulo(tramite.getActivo())) {
+
+			if (!Checks.esNulo(tramite.getActivo())) {
 				activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
 			}
-			
+
 		}
 
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[] {CODIGO_T013_OBTENCION_CONTRATO_RESERVA, CODIGO_T017_OBTENCION_CONTRATO_RESERVA};
+		return new String[] { CODIGO_T013_OBTENCION_CONTRATO_RESERVA, CODIGO_T017_OBTENCION_CONTRATO_RESERVA };
 	}
 
 	public String[] getKeys() {

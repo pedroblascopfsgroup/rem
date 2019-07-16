@@ -79,6 +79,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							&& !Checks.esNulo(valor.getValor())) {
 						//TODO: Rellenar campo PBC del expediente cuando esté creado.
 						if(DDSiNo.NO.equals(valor.getValor())) {
+							expediente.setEstadoPbc(0);
 							if(!ofertaApi.checkReserva(ofertaAceptada) || 
 							(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
 							&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
@@ -86,12 +87,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								expediente.setEstado(estado);
 								expediente.setFechaVenta(null);
-								expediente.setEstadoPbc(0);
 								expediente.setFechaAnulacion(new Date());
-
-								genericDao.save(ExpedienteComercial.class, expediente);
-
 								//Finaliza el trámite
+								
 								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 								genericDao.save(ActivoTramite.class, tramite);
@@ -137,6 +135,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);
 								genericDao.save(Oferta.class, ofertaAceptada);
 							}
+							genericDao.save(ExpedienteComercial.class, expediente);
 						} else {
 							expediente.setEstadoPbc(1);
 							genericDao.save(ExpedienteComercial.class, expediente);

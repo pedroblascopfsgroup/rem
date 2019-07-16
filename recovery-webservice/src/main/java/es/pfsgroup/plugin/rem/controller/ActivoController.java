@@ -87,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
@@ -2981,6 +2982,28 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatosPlusvalia(DtoActivoPlusvalia plusvaliaDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
+		try {
+			
+			boolean success = adapter.saveTabActivo(plusvaliaDto, id, TabActivoService.TAB_PLUSVALIA);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			throw new JsonViewerException(jvex.getMessage());
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "plusvalia", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
 		return createModelAndViewJson(model);
 	}
 }

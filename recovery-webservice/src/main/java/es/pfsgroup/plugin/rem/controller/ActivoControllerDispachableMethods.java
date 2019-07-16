@@ -356,6 +356,24 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
+		
+		/*
+		 * TAB_PLUSVALIA
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_PLUSVALIA, new DispachableMethod<DtoActivoPlusvalia>() {
+
+			@Override
+			public Class<DtoActivoPlusvalia> getArgumentType() {
+				return DtoActivoPlusvalia.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoActivoPlusvalia dto, HttpServletRequest request) {
+				if (dto != null ){
+					this.controller.saveDatosPlusvalia(dto, id, new ModelMap(), request);
+				}
+			}
+		});
 
 		/*
 		 * TAB_COMUNIDAD-ENTIDADES

@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -1567,5 +1568,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				.createQuery(hb.toString()).list();
 		return trabajoList;
 		
+	}
+	
+	@Override
+	public ActivoPlusvalia getPlusvaliaByIdActivo(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPlusvalia.class);
+		criteria.add(Restrictions.eq("activo.id", idActivo));
+
+		return HibernateUtils.castObject(ActivoPlusvalia.class, criteria.uniqueResult());
 	}
 }

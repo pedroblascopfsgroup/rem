@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -838,6 +839,22 @@ public interface ActivoApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	boolean saveComercialActivo(DtoComercialActivo dto);
+	
+	/**
+	 * ESte método obtiene información de la tab plusvalia del activo.
+	 *
+	 * @param dto : dto con el ID de activo a filtrar.
+	 * @return Devuevle un dto DtoActivoPlusvalia con información sobre la tab comercial del activo.
+	 */
+	DtoActivoPlusvalia getPlusvaliaActivo(DtoActivoPlusvalia dto);
+
+	/**
+	 * Este método almacena los cambios obrtenidos del dto.
+	 *
+	 * @param dto : contiene los cambios a almacenar.
+	 * @return Devuelve True si la operación ha sido satisfactoria.
+	 */
+	boolean savePlusvaliaActivo(DtoActivoPlusvalia dto);
 
 	/**
 	 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo Obra Nueva ó Asistida (PDV)

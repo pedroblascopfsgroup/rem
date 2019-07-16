@@ -1973,6 +1973,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
    				extraParams: {numActivo: '{activo.numActivo}'}
 			}
+		},
+		comboSiNoPlusvalia: {
+			data : [
+		        {"codigo":"1", "descripcion":"Si"},
+		        {"codigo":"0", "descripcion":"No"}
+		    ]
 		}
      }
 });

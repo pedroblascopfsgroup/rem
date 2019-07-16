@@ -13,6 +13,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -299,4 +300,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return boolean true or false
 	 */
 	Boolean existeActivo(Long numActivo);
+	
+	/**
+	 * 
+	 * @param idActivo
+	 * @return ActivoPlusvalia
+	 */
+	public ActivoPlusvalia getPlusvaliaByIdActivo(Long idActivo);
 }

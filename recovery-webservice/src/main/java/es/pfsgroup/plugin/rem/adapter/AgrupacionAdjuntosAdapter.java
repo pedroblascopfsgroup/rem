@@ -25,7 +25,6 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
 
 
 @Service

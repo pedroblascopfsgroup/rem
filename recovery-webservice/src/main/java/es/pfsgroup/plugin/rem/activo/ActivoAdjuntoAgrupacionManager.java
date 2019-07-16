@@ -8,6 +8,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.files.FileItem;
@@ -30,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoPromocion;
 
+@Service("activoAdjuntoAgrupacionManager")
 public class ActivoAdjuntoAgrupacionManager  implements ActivoAdjuntosAgrupacionApi { 
 	
 	protected static final Log logger = LogFactory.getLog(ActivoAdjuntoAgrupacionManager.class);

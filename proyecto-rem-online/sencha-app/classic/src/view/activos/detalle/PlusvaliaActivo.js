@@ -77,7 +77,7 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	            },
 	            allowBlank: false
 	        }, {
-	            xtype : 'textfieldbase',
+	            xtype : 'numberfieldbase',
 	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.gasto'),
 	            bind : {
 		            value : '{plusvalia.numGastoHaya}'

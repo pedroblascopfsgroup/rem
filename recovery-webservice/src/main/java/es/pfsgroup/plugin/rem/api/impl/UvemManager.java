@@ -212,10 +212,11 @@ public class UvemManager implements UvemManagerApi {
 		registro.setMetodo("WEBSERVICE");
 		registro.setEndpoint(endPoint);
 		registro.setRequest(request);
-		// borrame
-		logger.debug(request);
-		logger.debug("-------------------");
-		logger.debug(result);
+		logger.error("REQUEST -------------------");
+		logger.error(request);
+		logger.error("RESULT -------------------");
+		logger.error(result);
+		logger.error("-------------------");
 		if (!Checks.esNulo(errorDesc)) {
 			registro.setErrorDesc(errorDesc);
 		}

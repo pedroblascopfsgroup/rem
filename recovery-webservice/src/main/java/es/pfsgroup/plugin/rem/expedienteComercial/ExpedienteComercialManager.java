@@ -5371,7 +5371,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		List<DatosClienteProblemasVentaDto> datosClienteProblemasVentaDto = new ArrayList<DatosClienteProblemasVentaDto>();
 
 		try {
-			if(!Checks.esNulo(numeroUrsus)) {
+			if(!Checks.esNulo(numeroUrsus) && !numeroUrsus.equals("null")) {
 				Integer numURSUS = Integer.parseInt(numeroUrsus);
 			
 				if (!Checks.esNulo(idExpediente)) {

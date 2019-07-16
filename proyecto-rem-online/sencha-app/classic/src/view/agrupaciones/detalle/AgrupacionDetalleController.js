@@ -6,6 +6,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
       'fotossubdivision': {
          	updateOrdenFotos: 'updateOrdenFotosInterno',
          	cargarFotosSubdivision: 'cargarFotosSubdivision'
+      },
+      'documentosagrupacion': {
+    	  download: 'downloadDocumentosAgrupacion',
+    	  onClickRemove: 'borrarDocumentoAdjuntoAgrupacion'
       }
     },
 
@@ -1255,5 +1259,73 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 				    	 });
 					}
 				});
-    }
+    },
+
+	  onClickAnyadirNuevoDocumentoAgrupacion: function(btn){
+	    	var idAgrupacion = me.getView().idAgrupacion;
+	    	form = me.down("form");
+	  
+	    	if(form.isValid()){
+	    		
+	            form.submit({
+	                waitMsg: HreRem.i18n('msg.mask.loading'),
+	                params: {
+	                	idAgrupacion: idAgrupacion
+	                },
+	                success: function(fp, o) {
+
+	                	if(o.result.success == "false") {
+	                		me.fireEvent("errorToast", o.result.errorMessage);
+	                	}
+	                	else {
+	                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	                	}
+	                	
+	                	if(!Ext.isEmpty(me.parent)) {
+	                		me.parent.fireEvent("afterupload", me.parent);
+	                	}
+	                    me.close();
+	                },
+	                failure: function(fp, o) {
+	                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	                }
+	            });
+	        }
+	    },
+	
+		downloadDocumentosAgrupacion: function(grid, record) {
+			
+			var me = this,
+			config = {};
+			
+			config.url= $AC.getWebPath() + "gencat/bajarAdjuntoComunicacion." + $AC.getUrlPattern();
+			config.params = {};
+			config.params.id=record.get('id');
+			config.params.nombreDocumento=record.get("nombre");
+			
+			me.fireEvent("downloadFile", config);
+		},
+		
+		borrarDocumentoAdjuntoAgrupacion: function(grid, record) {
+			var me = this,
+			idActivo = me.getViewModel().get("activo.id");
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			record.erase({
+				params: {idEntidad: idActivo},
+	            success: function(record, operation) {
+	            	 grid.fireEvent("afterdelete", grid);
+	            	 grid.getStore().load();
+	             	 grid.disableRemoveButton(true);
+	           		 me.getView().unmask();
+	           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	            },
+	            failure: function(record, operation) {
+					 grid.fireEvent("afterdelete", grid);
+					 me.getView().unmask();
+	                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	            }
+	            
+	        });	
+		}
+
 });

@@ -35,15 +35,13 @@ Ext.define('HreRem.model.DocumentosAgrupacion', {
     		}
     ],
     
-	proxy: {
+    proxy: {
 		type: 'uxproxy',
-		localUrl: '',
-		remoteUrl: '',
-		api: {
-            create: '',
-            update: '',
-            destroy: ''
-        }
-    }
+		localUrl: 'activos.json',
+		//remoteUrl: 'activo/getActivoById',
+			api: {
+	            //destroy: 'gencat/deleteAdjunto'
+	        }
+    } 
 
 });

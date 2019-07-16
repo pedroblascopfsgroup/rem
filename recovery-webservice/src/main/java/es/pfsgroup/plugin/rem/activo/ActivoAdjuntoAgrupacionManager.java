@@ -15,6 +15,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -25,10 +26,13 @@ import es.pfsgroup.plugin.rem.api.ActivoAdjuntosAgrupacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.AdjuntosPromocion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
+import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoPromocion;
 
 @Service("activoAdjuntoAgrupacionManager")
@@ -48,7 +52,7 @@ public class ActivoAdjuntoAgrupacionManager  implements ActivoAdjuntosAgrupacion
 
 	@Override
 	@Transactional(readOnly = false)
-	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, ActivoAgrupacion agrupacion) throws Exception {
+	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, ActivoAgrupacion agrupacion, String matricula, Usuario usuarioLogado) throws Exception {
 		DDTipoDocumentoAgrupacion tipoDocumento = null;
 		if (Checks.esNulo(agrupacion)) {
 			throw new Exception("Se debe de indicar la agrupacion");
@@ -58,51 +62,56 @@ public class ActivoAdjuntoAgrupacionManager  implements ActivoAdjuntosAgrupacion
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipoDocumento"));
 			tipoDocumento = genericDao.get(DDTipoDocumentoAgrupacion.class, filtro);
 		}
-			
-	/* TODO: Añadir la obtencion de la matricula;
-			activo = activoEntrada;
+		
+//TODO: Añadir la obtencion de la matricula;
+		
 			if (!Checks.esNulo(matricula)) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
-				tipoDocumento = (DDTipoDocumentoPromocion) genericDao.get(DDTipoDocumentoPromocion.class, filtro);
+				tipoDocumento = (DDTipoDocumentoAgrupacion) genericDao.get(DDTipoDocumentoAgrupacion.class, filtro);
 			}
 			if (tipoDocumento == null) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-				tipoDocumento = (DDTipoDocumentoPromocion) genericDao.get(DDTipoDocumentoPromocion.class, filtro);
+				tipoDocumento = (DDTipoDocumentoAgrupacion) genericDao.get(DDTipoDocumentoAgrupacion.class, filtro);
 			}
-		}*/
+		
 
 		try {
 			if (!Checks.esNulo(agrupacion) && !Checks.esNulo(tipoDocumento)) {
-				ActivoAdjuntoAgrupacion adjuntoAgrupacion = new ActivoAdjuntoAgrupacion();
-				
-				//Si es nulo el idDocRestClient es que el gestor documental está desactivado
-				if (Checks.esNulo(idDocRestClient)) {
+
+
+				ActivoAdjuntoAgrupacion adjuntoActivoAgrupacion = new ActivoAdjuntoAgrupacion();
+				if(Checks.esNulo(idDocRestClient)){
 					Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
-					adjuntoAgrupacion.setAdjunto(adj);
+					adjuntoActivoAgrupacion.setAdjunto(adj);
 				}
-				adjuntoAgrupacion.setAgrupacion(agrupacion);
 				
-				adjuntoAgrupacion.setIdDocRestClient(idDocRestClient);
+			
+				adjuntoActivoAgrupacion.setAgrupacion(agrupacion);
 
-				adjuntoAgrupacion.setTipoDocumentoAgrupacion(tipoDocumento);
+				adjuntoActivoAgrupacion.setIdDocRestClient(idDocRestClient);
 
-				adjuntoAgrupacion.setContentType(webFileItem.getFileItem().getContentType());
+				adjuntoActivoAgrupacion.setTipoDocumentoAgrupacion(tipoDocumento);
 
-				adjuntoAgrupacion.setTamanyo(webFileItem.getFileItem().getLength());
+				adjuntoActivoAgrupacion.setContentType(webFileItem.getFileItem().getContentType());
 
-				adjuntoAgrupacion.setNombre(webFileItem.getFileItem().getFileName());
+				adjuntoActivoAgrupacion.setTamanyo(webFileItem.getFileItem().getLength());
 
-				adjuntoAgrupacion.setDescripcion(webFileItem.getParameter("descripcion"));
+				adjuntoActivoAgrupacion.setNombre(webFileItem.getFileItem().getFileName());
 
-				adjuntoAgrupacion.setFechaDocumento(new Date());
+				adjuntoActivoAgrupacion.setDescripcion(webFileItem.getParameter("descripcion"));
+
+				adjuntoActivoAgrupacion.setFechaDocumento(new Date());
 				
-				genericDao.save(ActivoAdjuntoAgrupacion.class, adjuntoAgrupacion);
 
-			} else {
-				throw new Exception("No se ha encontrado agrupacion o tipo del adjunto");
+				genericDao.save(ActivoAdjuntoAgrupacion.class, adjuntoActivoAgrupacion);
+				
+				return adjuntoActivoAgrupacion.getId().toString();
+			} 
+			else {
+				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
 			}
 		} catch (Exception e) {
-			logger.error("Error en activoAdjuntoAgrupacionManager", e);
+			logger.error("Error en gencatManager", e);
 		}
 
 		return null;
@@ -152,6 +161,5 @@ public class ActivoAdjuntoAgrupacionManager  implements ActivoAdjuntosAgrupacion
 			return agrupacionAdjunto.getAdjunto().getFileItem();
 	
 		return null;
-	}
-
+	}		
 }

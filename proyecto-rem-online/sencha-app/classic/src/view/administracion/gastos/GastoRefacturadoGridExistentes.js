@@ -40,7 +40,7 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 	            inputItemWidth: 60,
 	            displayInfo: true,
 	            bind: {
-	                store: '{storeGastosRefacturablesExistentes}'
+	                store: '{}'
 	            }
 	        }
 	    ];

@@ -29,7 +29,8 @@ public class DtoAdjuntoAgrupacion implements Serializable {
 	
 	private String contentType;
 
-
+	private String matricula;
+	
 	public Long getId() {
 		return id;
 	}
@@ -128,5 +129,15 @@ public class DtoAdjuntoAgrupacion implements Serializable {
 
 	private String fileSize;
 
+
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
+	}
+	
+	
 
 }

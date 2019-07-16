@@ -8,6 +8,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 		isLiberbank: function(get){
 	    	this._view.down('field[name=claseOferta]').setHidden(!get('activo.isCarteraLiberbank'));
 	    	this._view.down('field[name=numOferPrincipal]').setHidden(!get('activo.isCarteraLiberbank')); 
+	    	this._view.down('field[name=claseOferta]').allowBlank = !get('activo.isCarteraLiberbank')	 
 		 }
 
     },

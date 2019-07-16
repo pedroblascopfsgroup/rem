@@ -133,6 +133,10 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								checkNumOferPrin.reset();
 	    								checkNumOferPrin.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    								var lockClaseOferta = form.down('field[name=claseOferta]');
+	    								lockClaseOferta.reset();
+	    								lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
+	    								lockClaseOferta.hidden ? lockClaseOferta.setAllowBlank(true) : lockClaseOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value)
 	    							}
 	    						},
 			    				colspan: 2

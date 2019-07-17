@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Juan Beltrán
---## FECHA_CREACION=20190709
+--## FECHA_CREACION=20190717
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6821
@@ -35,7 +35,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('MASCT', 'Control de tributos', 'Control de tributos','MASIVO_CONTROL_TRIBUTOS','n*,f*,f*,f*,s*,s,d*,d*,d*,s*,n,s*')
+	  T_FUNCION('MASCT', 'Control de tributos', 'Control de tributos','MASIVO_CONTROL_TRIBUTOS','n*,f*,f*,f*,s*,s,f*,f*,f*,s*,n,s*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

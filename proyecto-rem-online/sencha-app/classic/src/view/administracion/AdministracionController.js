@@ -157,10 +157,24 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var initialData = {};
 
 		var searchForm = btn.up('formBase');
-
+		
 		if (searchForm.isValid()) {
 			this.lookupReference('gestiongastoslistref').deselectAll();
 			this.lookupReference('gestiongastoslistref').getStore().loadPage(1);
+        }
+		
+		
+	},
+	
+	 //Funcion que se ejecuta al hacer click en el botón buscar plusvalia
+	onClickPlusvaliaSearch: function(btn) {
+		var me = this;
+		var initialData = {};
+
+		var searchForm = btn.up('formBase');
+		
+		if (searchForm.isValid()) {
+			this.lookupReference('gestionplusvalialistref').getStore().loadPage(1);
         }
 		
 		
@@ -249,7 +263,14 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	paramLoading: function(store, operation, opts) {
 		var initialData = {};
 		var me = this;
-		var searchForm = this.lookupReference('gestiongastossearchref');
+		var searchForm = null;
+		
+		if(this.lookupReference('gestiongastossearchref') == null){
+			searchForm = this.lookupReference('gestionplusvaliasearchref');
+		}else{
+			searchForm = this.lookupReference('gestiongastossearchref');
+		}
+
 		if (searchForm.isValid()) {
 			
 			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
@@ -259,9 +280,6 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 					delete criteria[key];
 				}
 			});	
-			if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
-				criteria.nifProveedor = me.nifProveedorIdentificado;
-			}
 			store.getProxy().extraParams = criteria;
 			
 			return true;		
@@ -272,6 +290,13 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var me = this;
 		
     	me.getView().fireEvent('abrirDetalleGasto', record);
+		
+	},
+	
+	onClickAbrirPlusvalia: function(grid, record){
+		var me = this;
+		
+    	me.getView().fireEvent('abrirDetallePlusvalia', record);
 		
 	},
 
@@ -1297,6 +1322,15 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		config.url= url;
 		
 		me.fireEvent("downloadFile", config);		
-	}
+	},
+	
+	 onChangeChainedCombo: function(combo) {
+    	
+    	var me = this, chainedCombo = me.lookupReference(combo.chainedReference);
+    	me.getViewModel().notify();
+		chainedCombo.clearValue("");
+		chainedCombo.getStore().load(); 	
+    	
+    }
 
 });

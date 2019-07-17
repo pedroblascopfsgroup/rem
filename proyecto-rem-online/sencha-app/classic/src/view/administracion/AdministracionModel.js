@@ -21,6 +21,22 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	            beforeload : 'paramLoading'
 	        }
     	},
+    	
+    	plusvaliaAdministracion: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Plusvalia',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/plusvalia.json',
+		        remoteUrl: 'activo/getListPlusvalia'
+	    	},
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true,
+	        listeners : {
+	            beforeload : 'paramLoading'
+	        }
+    	},
 
     	provisiones: {
     		pageSize: $AC.getDefaultPageSize(),

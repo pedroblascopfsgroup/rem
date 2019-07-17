@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
@@ -1204,5 +1205,12 @@ public interface ActivoApi {
 	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo);
 	
 	boolean deleteActivoTributo(DtoActivoTributos dto);
+	
+	/**
+	 * Devuelve una lista de plusvalias aplicando el filtro que recibe.
+	 * @param dtoPlusvaliaFilter con los parametros de filtro
+	 * @return DtoPage 
+	 */
+	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
 
 }

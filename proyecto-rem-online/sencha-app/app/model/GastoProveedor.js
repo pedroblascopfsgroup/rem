@@ -64,6 +64,21 @@ Ext.define('HreRem.model.GastoProveedor', {
 			dateFormat: 'c'
 		},
 		{
+			name : 'fechaRecPropiedad',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
+			name : 'fechaRecGestoria',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
+			name : 'fechaRecHaya',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
 			name : 'importe'
 		},
 		{

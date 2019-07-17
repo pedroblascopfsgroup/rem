@@ -17,6 +17,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 	    	var rechazado = me.lookupController().getViewModel().get('gasto').get('rechazado');
 	    	var agrupado = me.lookupController().getViewModel().get('gasto').get('esGastoAgrupado');
 	    	var gestoria = me.lookupController().getViewModel().get('gasto').get('nombreGestoria')!=null;
+	    	var cartera = me.lookupController().getViewModel().get('gasto').get('cartera');
 			if(this.lookupController().botonesEdicionGasto(estadoGasto,autorizado,rechazado,agrupado,gestoria,this)){
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').show();
 			}
@@ -29,7 +30,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
     initComponent: function () {
 
         var me = this;
-
+        
         var storeEmisoresGasto = new Ext.data.Store({  
     		model: 'HreRem.model.Proveedor',
 			proxy: {
@@ -48,7 +49,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							{
 								xtype: 'fieldset',
 								title: HreRem.i18n('title.identificacion'),
-								height: 275,
+								height: 375,
 								margin: '0 10 10 0',
 								collapsible: false,
 								layout: 'vbox',
@@ -111,7 +112,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								xtype: 'fieldset',
 								title: HreRem.i18n('title.sujetos'),
 								layout: 'vbox',
-								height: 275,
+								height: 375,
 								margin: '0 10 10 0',
 								collapsible: false,
 								items: [
@@ -223,7 +224,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							{
 								xtype: 'fieldset',
 								layout: 'vbox',
-								height: 275,
+								height: 375,
 								margin: '0 5 10 0',
 								title: HreRem.i18n('title.datos'),
 								collapsible: false,
@@ -301,7 +302,34 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												value: '{gasto.idGastoAbonado}'													
 											},
 											hidden: true
-										}											
+										},
+										{
+								        	xtype:'datefieldbase',
+								        	formatter: 'date("d/m/Y")',
+											reference: 'fechaRecPropiedad',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recPropiedad')+' *',
+									       	bind: '{gasto.fechaRecPropiedad}',
+									       	maxValue: null,
+									       	allowBlank: false
+									    },
+									    {
+								        	xtype:'datefieldbase',
+								        	formatter: 'date("d/m/Y")',
+											reference: 'fechaRecGestoria',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recGestoria')+' *',
+									       	bind: '{gasto.fechaRecGestoria}',
+									       	maxValue: null,
+									       	allowBlank: false
+									    },
+									    {
+								        	xtype:'datefieldbase',
+								        	formatter: 'date("d/m/Y")',
+											reference: 'fechaRecHaya',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recHaya')+' *',
+									       	bind: '{gasto.fechaRecHaya}',
+									       	maxValue: null,
+									       	allowBlank: false
+									    }										
 									]
 								}
 							]

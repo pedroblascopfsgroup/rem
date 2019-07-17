@@ -411,6 +411,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo())) {
 				dto.setCodigoImpuestoIndirecto(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo().getCodigo());
 			}
+				
+			if (!Checks.esNulo(gasto.getFechaRecPropiedad())) { 
+				dto.setFechaRecPropiedad(gasto.getFechaRecPropiedad());	
+			}
+			
+			if (!Checks.esNulo(gasto.getFechaRecGestoria())) { 
+				dto.setFechaRecGestoria(gasto.getFechaRecGestoria()); 
+			}			
+			
+			if (!Checks.esNulo(gasto.getFechaRecHaya())) { 
+				dto.setFechaRecHaya(gasto.getFechaRecHaya()); 
+			}
 
 		}
 

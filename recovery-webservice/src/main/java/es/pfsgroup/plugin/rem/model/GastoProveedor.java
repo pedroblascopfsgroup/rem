@@ -186,7 +186,14 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_EXISTE_DOCUMENTO")
 	private Integer existeDocumento;
 	
+	@Column(name="GPV_FECHA_REC_PROP")
+	private Date fechaRecPropiedad;
+
+	@Column(name="GPV_FECHA_REC_GEST")
+	private Date fechaRecGestoria;
 	
+	@Column(name="GPV_FECHA_REC_HAYA")
+	private Date fechaRecHaya;
     
 	@Version   
 	private Long version;
@@ -490,4 +497,28 @@ public class GastoProveedor implements Serializable, Auditable {
 		return subcartera;
 	
 	}	
+	
+	public Date getFechaRecPropiedad() {
+		return (Date) fechaRecPropiedad.clone();
+	}
+
+	public void setFechaRecPropiedad(Date fechaRecPropiedad) {
+		this.fechaRecPropiedad = (Date) fechaRecPropiedad.clone();
+	}
+
+	public Date getFechaRecGestoria() {
+		return (Date) fechaRecGestoria.clone();
+	}
+
+	public void setFechaRecGestoria(Date fechaRecGestoria) {
+		this.fechaRecGestoria = (Date) fechaRecGestoria.clone();
+	}
+
+	public Date getFechaRecHaya() {
+		return (Date) fechaRecHaya.clone();
+	}
+
+	public void setFechaRecHaya(Date fechaRecHaya) {
+		this.fechaRecHaya = (Date) fechaRecHaya.clone();
+	}
 }

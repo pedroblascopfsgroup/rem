@@ -90,7 +90,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
-import es.pfsgroup.plugin.rem.activoplusvalia.dao.ActivoPlusvaliaDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -332,9 +331,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
-	
-	@Autowired
-	private ActivoPlusvaliaDao activoPlusvaliaDao;
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
@@ -6649,147 +6645,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}else {
 			return false;
 		}
-	}
-	
-	@Override
-	public DtoActivoPlusvalia getPlusvaliaActivo(DtoActivoPlusvalia dto) {
-		
-		ActivoPlusvalia activoPlusvalia = activoPlusvaliaDao.getPlusvaliaByIdActivo(dto.getIdActivo());
-		
-		try {
-			
-			if (!Checks.esNulo(activoPlusvalia.getId())) {
-				beanUtilNotNull.copyProperty(dto, "idPlusvalia",
-							activoPlusvalia.getId());
-			}
-			
-			if (!Checks.esNulo(activoPlusvalia.getActivo().getId())) {
-				beanUtilNotNull.copyProperty(dto, "idActivo",
-							activoPlusvalia.getActivo().getId());
-			}
-			
-			if (!Checks.esNulo(activoPlusvalia.getDateRecepcionPlus())) {
-				beanUtilNotNull.copyProperty(dto, "dateRecepcionPlus",
-							activoPlusvalia.getDateRecepcionPlus());
-			}	
-			
-			if (!Checks.esNulo(activoPlusvalia.getDatePresentacionPlus())) {
-				beanUtilNotNull.copyProperty(dto, "datePresentacionPlus",
-							activoPlusvalia.getDatePresentacionPlus());
-			}
-			
-			if (!Checks.esNulo(activoPlusvalia.getDatePresentacionRecu())) {
-				beanUtilNotNull.copyProperty(dto, "datePresentacionRecu",
-							activoPlusvalia.getDatePresentacionRecu());
-			}
-			
-			if (!Checks.esNulo(activoPlusvalia.getDateRespuestaRecu())) {
-				beanUtilNotNull.copyProperty(dto, "dateRespuestaRecu",
-							activoPlusvalia.getDateRespuestaRecu());
-			}
-			
-			if (!Checks.esNulo(activoPlusvalia.getAperturaSeguimientoExp())) {
-				beanUtilNotNull.copyProperty(dto, "aperturaSeguimientoExp",
-							activoPlusvalia.getAperturaSeguimientoExp());
-			}	
-			
-			if (!Checks.esNulo(activoPlusvalia.getImportePagado())) {
-				beanUtilNotNull.copyProperty(dto, "importePagado",
-							activoPlusvalia.getImportePagado());
-			}
-			
-			if (!Checks.esNulo(activoPlusvalia.getGastoProveedor().getId())) {
-				beanUtilNotNull.copyProperty(dto, "gastoProveedor",
-							activoPlusvalia.getGastoProveedor().getId());
-			}
-			
-			if (!Checks.esNulo(activoPlusvalia.getMinusvalia())) {
-				beanUtilNotNull.copyProperty(dto, "minusvalia",
-							activoPlusvalia.getMinusvalia());
-			}
-			
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return dto;
-	}
-	
-	@Override
-	public boolean savePlusvaliaActivo(DtoActivoPlusvalia dto) {
-//		if (Checks.esNulo(dto.getIdPlusvalia())) {
-//			return false;
-//		}
-//		
-//		
-//		
-//		try {
-//			
-//			if (!Checks.esNulo(dto.getIdPlusvalia())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "id",
-//							dto.getIdPlusvalia());
-//			}
-//			
-//			if (!Checks.esNulo(dto.getIdActivo())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "activo",
-//							dto.getIdActivo());
-//			}
-//			
-//			if (!Checks.esNulo(dto.getDateRecepcionPlus())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "dateRecepcionPlus",
-//							dto.getDateRecepcionPlus());
-//			}	
-//			
-//			if (!Checks.esNulo(dto.getDatePresentacionPlus())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "datePresentacionPlus",
-//							dto.getDatePresentacionPlus());
-//			}
-//			
-//			if (!Checks.esNulo(dto.getDatePresentacionRecu())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "datePresentacionRecu",
-//							dto.getDatePresentacionRecu());
-//			}
-//			
-//			if (!Checks.esNulo(dto.getDateRespuestaRecu())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "dateRespuestaRecu",
-//							dto.getDateRespuestaRecu());
-//			}
-//			
-//			if (!Checks.esNulo(dto.getAperturaSeguimientoExp())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "aperturaSeguimientoExp",
-//							dto.getAperturaSeguimientoExp());
-//			}	
-//			
-//			if (!Checks.esNulo(dto.getImportePagado())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "importePagado",
-//							dto.getImportePagado());
-//			}
-//			
-//			if (!Checks.esNulo(dto.getIdGasto())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "gastoProveedor",
-//							dto.getIdGasto());
-//			}
-//			
-//			if (!Checks.esNulo(dto.getMinusvalia())) {
-//				beanUtilNotNull.copyProperty(activoPlusvalia, "minusvalia",
-//							dto.getMinusvalia());
-//			}
-//			
-//		} catch (IllegalAccessException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (InvocationTargetException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
-		
-		return true;
-	}
-	
+	}	
 }

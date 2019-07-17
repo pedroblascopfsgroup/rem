@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
@@ -840,21 +841,6 @@ public interface ActivoApi {
 	 */
 	boolean saveComercialActivo(DtoComercialActivo dto);
 	
-	/**
-	 * ESte método obtiene información de la tab plusvalia del activo.
-	 *
-	 * @param dto : dto con el ID de activo a filtrar.
-	 * @return Devuevle un dto DtoActivoPlusvalia con información sobre la tab comercial del activo.
-	 */
-	DtoActivoPlusvalia getPlusvaliaActivo(DtoActivoPlusvalia dto);
-
-	/**
-	 * Este método almacena los cambios obrtenidos del dto.
-	 *
-	 * @param dto : contiene los cambios a almacenar.
-	 * @return Devuelve True si la operación ha sido satisfactoria.
-	 */
-	boolean savePlusvaliaActivo(DtoActivoPlusvalia dto);
 
 	/**
 	 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo Obra Nueva ó Asistida (PDV)
@@ -1219,5 +1205,12 @@ public interface ActivoApi {
 	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo);
 	
 	boolean deleteActivoTributo(DtoActivoTributos dto);
+	
+	/**
+	 * Devuelve una lista de plusvalias aplicando el filtro que recibe.
+	 * @param dtoPlusvaliaFilter con los parametros de filtro
+	 * @return DtoPage 
+	 */
+	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
 
 }

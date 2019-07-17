@@ -170,6 +170,13 @@
     		me.buttons = [ { text: HreRem.i18n('btn.saveBtnText'), handler: 'onSaveEditClick' }];
     		
     	}
+    	if (me.isSearchFormPlusvalia) {
+
+    		me.collapsible= false;
+    		me.collapsed= false;    		
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickPlusvaliaSearch', reference: 'btnSearchPlusvalia' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}];
+    	}
 
     	
     	me.callParent();

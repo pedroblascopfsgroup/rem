@@ -35,6 +35,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -47,23 +48,23 @@ import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -1576,5 +1577,54 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(ActivoPlusvalia.class, criteria.uniqueResult());
+	}
+	
+	@Override
+	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter) {
+
+		HQLBuilder hb = this.rellenarFiltrosBusquedaPlusvalia(dtoPlusvaliaFilter);
+
+		return this.getListadoPlusvaliaCompleto(dtoPlusvaliaFilter, hb);
+	}
+	
+	private HQLBuilder rellenarFiltrosBusquedaPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter) {
+		String select = "select vplusvalia ";
+		String from = "from VPlusvalia vplusvalia";
+
+		String where = "";
+		boolean hasWhere = false;
+		HQLBuilder hb = null;
+
+		hb = new HQLBuilder(select + from + where);
+		if (hasWhere) {
+			hb.setHasWhere(true);
+		}
+
+		if (!Checks.esNulo(dtoPlusvaliaFilter.getNumActivo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vplusvalia.activo", dtoPlusvaliaFilter.getNumActivo());
+		}
+		
+		if (!Checks.esNulo(dtoPlusvaliaFilter.getNumPlusvalia())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vplusvalia.plusvalia", dtoPlusvaliaFilter.getNumPlusvalia());
+		}
+		
+		if (!Checks.esNulo(dtoPlusvaliaFilter.getProvinciaCombo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vplusvalia.provincia", dtoPlusvaliaFilter.getProvinciaCombo());
+		}
+		if (!Checks.esNulo(dtoPlusvaliaFilter.getMunicipioCombo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vplusvalia.municipio", dtoPlusvaliaFilter.getMunicipioCombo());
+		}
+
+		return hb;
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	private DtoPage getListadoPlusvaliaCompleto(DtoPlusvaliaFilter dtoPlusvaliaFilter, HQLBuilder hb) {
+
+		Page pagePlusvalia = HibernateQueryUtils.page(this, hb, dtoPlusvaliaFilter);
+		List<VPlusvalia> plusvalias = (List<VPlusvalia>) pagePlusvalia.getResults();
+
+		return new DtoPage(plusvalias, pagePlusvalia.getTotalCount());
 	}
 }

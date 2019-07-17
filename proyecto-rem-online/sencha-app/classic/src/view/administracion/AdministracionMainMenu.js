@@ -4,7 +4,7 @@ Ext.define('HreRem.view.administracion.AdministracionMainMenu', {
     xtype		: 'administracionmainmenu',
     reference	: 'administracionMainMenu',
     layout		: 'fit',
-    requires	: ['HreRem.view.administracion.gastos.AdministracionGastosMain'],
+    requires	: ['HreRem.view.administracion.gastos.AdministracionGastosMain', 'HreRem.view.administracion.plusvalia.GestionPlusvalia'],
     listeners	: {
     	boxready: function (tabPanel) {   		
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -19,7 +19,8 @@ Ext.define('HreRem.view.administracion.AdministracionMainMenu', {
 
         var items = [];
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'administraciongastosmain', reference: 'administracionGastosMain'})}, ['TAB_GASTOS_ADMINISTRACION']);
-
+		items.push({xtype: 'gestionplusvalia', reference: 'gestionPlusvalia'});
+        
 	    me.addPlugin({ptype: 'lazyitems', items: items });
         me.callParent();
     }

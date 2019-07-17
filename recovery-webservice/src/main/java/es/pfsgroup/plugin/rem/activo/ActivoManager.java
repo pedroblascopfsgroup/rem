@@ -90,7 +90,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
-import es.pfsgroup.plugin.rem.activoplusvalia.dao.ActivoPlusvaliaDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -332,9 +331,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
-	
-	@Autowired
-	private ActivoPlusvaliaDao activoPlusvaliaDao;
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
@@ -6719,8 +6715,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return dto;
 	}
 	
-	@Override
-	public boolean savePlusvaliaActivo(DtoActivoPlusvalia dto) {
+//	@Override
+//	public boolean savePlusvaliaActivo(DtoActivoPlusvalia dto) {
 //		if (Checks.esNulo(dto.getIdPlusvalia())) {
 //			return false;
 //		}
@@ -6789,7 +6785,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 //		
 //		genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
 		
-		return true;
+//		return true;
+//	}
+	
+	@Override
+	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter) {
+
+		return activoDao.getListPlusvalia(dtoPlusvaliaFilter);
 	}
 	
 }

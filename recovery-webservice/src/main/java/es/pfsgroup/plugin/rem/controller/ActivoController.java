@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
@@ -3002,6 +3003,25 @@ public class ActivoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "plusvalia", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter, ModelMap model) {
+		try {
+
+			DtoPage page = activoApi.getListPlusvalia(dtoPlusvaliaFilter);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);
+			model.put("exception", e.getMessage());
 		}
 
 		return createModelAndViewJson(model);

@@ -133,7 +133,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		VISITAS:		'comercialactivo.visitascomercialactivo',
 		GENCAT:			'comercialactivo.gencatactivo',
 		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
-		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo'
+		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo',
+		PLUSVALIA:		'plusvaliaactivo'
 //		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace		
 	},
 

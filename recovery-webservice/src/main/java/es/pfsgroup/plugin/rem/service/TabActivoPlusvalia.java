@@ -13,9 +13,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.activoplusvalia.dao.ActivoPlusvaliaDao;
-import es.pfsgroup.plugin.rem.expedienteComercial.ExpedienteComercialManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
@@ -29,7 +27,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 	protected static final Log logger = LogFactory.getLog(TabActivoPlusvalia.class);
 	
 	@Autowired
-	private ActivoPlusvaliaDao activoPlusvaliaDao;
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -51,7 +49,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 		
 		DtoActivoPlusvalia activoPlusvaliaDto = new DtoActivoPlusvalia();
 		
-		ActivoPlusvalia activoPlusvalia = activoPlusvaliaDao.getPlusvaliaByIdActivo(activo.getId());
+		ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(activo.getId());
 		
 		if(!Checks.esNulo(activoPlusvalia)) {
 			if(!Checks.esNulo(activoPlusvalia)) {

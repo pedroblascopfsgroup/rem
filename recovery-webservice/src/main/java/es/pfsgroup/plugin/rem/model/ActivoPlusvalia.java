@@ -23,7 +23,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSiNSiNo;
+
 
 /**
  * Modelo que gestiona la plusvalía de un activo.
@@ -63,8 +64,10 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 	@Column(name = "ACT_PLS_FECHA_RESPUESTA_RECURSO")
 	private Date dateRespuestaRecu;
 	
-    @Column(name = "ACT_PLS_APERTURA_Y_SEGUIMIENTO_EXP")
-   	private Boolean aperturaSeguimientoExp;
+	
+	@JoinColumn(name = "ACT_PLS_APERTURA_Y_SEGUIMIENTO_EXP")  
+    @ManyToOne(fetch = FetchType.LAZY)
+   	private DDSiNSiNo aperturaSeguimientoExp;
     
     @Column(name = "ACT_PLS_IMPORTE_PAGADO")
    	private Integer importePagado;
@@ -73,14 +76,17 @@ public class ActivoPlusvalia implements Serializable, Auditable {
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor; 
     
-    @Column(name = "ACT_PLS_MINUSVALIA")
-   	private Boolean minusvalia;
+	@JoinColumn(name = "ACT_PLS_MINUSVALIA")  
+    @ManyToOne(fetch = FetchType.LAZY)
+   	private DDSiNSiNo minusvalia;
     
-    @Column(name = "ACT_PLS_EXENTO")
-   	private Boolean exento;
+	@JoinColumn(name = "ACT_PLS_EXENTO")  
+    @ManyToOne(fetch = FetchType.LAZY)
+   	private DDSiNSiNo exento;
     
-    @Column(name = "ACT_PLS_AUTOLIQUIDACION")
-   	private Boolean autoliquidacion;
+	@JoinColumn(name = "ACT_PLS_AUTOLIQUIDACION")  
+    @ManyToOne(fetch = FetchType.LAZY)
+   	private DDSiNSiNo autoliquidacion;
     
     @Column(name = "ACT_PLS_OBSERVACIONES")
    	private String observaciones;
@@ -155,11 +161,11 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		this.dateRespuestaRecu = dateRespuestaRecu;
 	}
 
-	public Boolean getAperturaSeguimientoExp() {
+	public DDSiNSiNo getAperturaSeguimientoExp() {
 		return aperturaSeguimientoExp;
 	}
 
-	public void setAperturaSeguimientoExp(Boolean aperturaSeguimientoExp) {
+	public void setAperturaSeguimientoExp(DDSiNSiNo aperturaSeguimientoExp) {
 		this.aperturaSeguimientoExp = aperturaSeguimientoExp;
 	}
 
@@ -179,27 +185,27 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		this.gastoProveedor = gastoProveedor;
 	}
 
-	public Boolean getMinusvalia() {
+	public DDSiNSiNo getMinusvalia() {
 		return minusvalia;
 	}
 
-	public void setMinusvalia(Boolean minusvalia) {
+	public void setMinusvalia(DDSiNSiNo minusvalia) {
 		this.minusvalia = minusvalia;
 	}
 
-	public Boolean getExento() {
+	public DDSiNSiNo getExento() {
 		return exento;
 	}
 
-	public void setExento(Boolean exento) {
+	public void setExento(DDSiNSiNo exento) {
 		this.exento = exento;
 	}
 
-	public Boolean getAutoliquidacion() {
+	public DDSiNSiNo getAutoliquidacion() {
 		return autoliquidacion;
 	}
 
-	public void setAutoliquidacion(Boolean autoliquidacion) {
+	public void setAutoliquidacion(DDSiNSiNo autoliquidacion) {
 		this.autoliquidacion = autoliquidacion;
 	}
 

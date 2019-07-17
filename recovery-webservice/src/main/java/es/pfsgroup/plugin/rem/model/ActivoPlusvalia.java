@@ -23,6 +23,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 
 /**
  * Modelo que gestiona la plusvalía de un activo.
@@ -62,8 +63,9 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 	@Column(name = "ACT_PLS_FECHA_RESPUESTA_RECURSO")
 	private Date dateRespuestaRecu;
 	
+	@ManyToOne
     @Column(name = "ACT_PLS_APERTURA_Y_SEGUIMIENTO_EXP")
-   	private Integer aperturaSeguimientoExp;
+   	private DDSiNo aperturaSeguimientoExp;
     
     @Column(name = "ACT_PLS_IMPORTE_PAGADO")
    	private Integer importePagado;
@@ -72,8 +74,20 @@ public class ActivoPlusvalia implements Serializable, Auditable {
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor; 
     
+	@ManyToOne
     @Column(name = "ACT_PLS_MINUSVALIA")
-   	private Integer minusvalia;
+   	private DDSiNo minusvalia;
+    
+	@ManyToOne
+    @Column(name = "ACT_PLS_EXENTO")
+   	private DDSiNo exento;
+    
+	@ManyToOne
+    @Column(name = "ACT_PLS_AUTOLIQUIDACION")
+   	private DDSiNo autoliquidacion;
+    
+    @Column(name = "ACT_PLS_OBSERVACIONES")
+   	private String observaciones;
 	
 	@Version
 	private Long version;
@@ -145,11 +159,11 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		this.dateRespuestaRecu = dateRespuestaRecu;
 	}
 
-	public Integer getAperturaSeguimientoExp() {
+	public DDSiNo getAperturaSeguimientoExp() {
 		return aperturaSeguimientoExp;
 	}
 
-	public void setAperturaSeguimientoExp(Integer aperturaSeguimientoExp) {
+	public void setAperturaSeguimientoExp(DDSiNo aperturaSeguimientoExp) {
 		this.aperturaSeguimientoExp = aperturaSeguimientoExp;
 	}
 
@@ -169,15 +183,41 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		this.gastoProveedor = gastoProveedor;
 	}
 
-	public Integer getMinusvalia() {
+	public DDSiNo getMinusvalia() {
 		return minusvalia;
 	}
 
-	public void setMinusvalia(Integer minusvalia) {
+	public void setMinusvalia(DDSiNo minusvalia) {
 		this.minusvalia = minusvalia;
 	}
-	
-	
+
+	public DDSiNo getExento() {
+		return exento;
+	}
+
+	public void setExento(DDSiNo exento) {
+		this.exento = exento;
+	}
+
+	public DDSiNo getAutoliquidacion() {
+		return autoliquidacion;
+	}
+
+	public void setAutoliquidacion(DDSiNo autoliquidacion) {
+		this.autoliquidacion = autoliquidacion;
+	}
+
+	public void setDatePresentacionRecu(Date datePresentacionRecu) {
+		this.datePresentacionRecu = datePresentacionRecu;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
 	
 }
 	

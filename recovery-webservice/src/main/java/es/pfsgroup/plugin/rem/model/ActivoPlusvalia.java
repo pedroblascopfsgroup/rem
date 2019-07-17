@@ -147,7 +147,7 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		return datePresentacionRecu;
 	}
 
-	public void setDatePresentacionRec(Date datePresentacionRecu) {
+	public void setDatePresentacionRecu(Date datePresentacionRecu) {
 		this.datePresentacionRecu = datePresentacionRecu;
 	}
 
@@ -205,10 +205,6 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 
 	public void setAutoliquidacion(DDSiNo autoliquidacion) {
 		this.autoliquidacion = autoliquidacion;
-	}
-
-	public void setDatePresentacionRecu(Date datePresentacionRecu) {
-		this.datePresentacionRecu = datePresentacionRecu;
 	}
 
 	public String getObservaciones() {

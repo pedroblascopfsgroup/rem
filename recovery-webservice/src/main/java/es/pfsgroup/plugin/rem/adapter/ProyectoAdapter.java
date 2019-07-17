@@ -11,6 +11,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.exception.UserException;
@@ -32,7 +33,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.AdjuntosProyecto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
-import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProyecto;
 
@@ -73,29 +73,32 @@ public class ProyectoAdapter {
 		Activo activo = activoProyectoApi.get(id);
 		if (gestorDocumentalAdapterApi.modoRestClientActivado() && activo.getAgrupaciones() != null && !activo.getAgrupaciones().isEmpty()) {
 			
-			String codAgrupacion = activo.getAgrupaciones().get(0).getAgrupacion().getNumAgrupRem().toString();
-			listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosProyecto(codAgrupacion);
-
-			for (DtoAdjuntoProyecto adj : listaAdjuntos) {
-				AdjuntosProyecto adjuntosProyecto = activo.getAdjuntoProyecto(adj.getId());
-				if (!Checks.esNulo(adjuntosProyecto)) {
-					if (!Checks.esNulo(adjuntosProyecto.getTipoDocumentoProyecto())) {
-						adj.setDescripcionTipo(adjuntosProyecto.getTipoDocumentoProyecto().getDescripcion());
-					}
-					adj.setContentType(adjuntosProyecto.getContentType());
-					if (!Checks.esNulo(adjuntosProyecto.getAuditoria())) {
-						adj.setGestor(adjuntosProyecto.getAuditoria().getUsuarioCrear());
-					}
-					adj.setTamanyo(adjuntosProyecto.getTamanyo());
+			String codAgrupacion = null;
+			
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) { //Buscamos si el activo tiene agrupación de tipo Proyecto
+				if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					codAgrupacion = activoAgrupacionActivo.getAgrupacion().getNumAgrupRem().toString();
+					break;
 				}
 			}
 			
-			
-//			for (ActivoAgrupacionActivo agrupacion : activo.getAgrupaciones()) {
-//				if (!Checks.esNulo(agrupacion.getAgrupacion()) && !Checks.esNulo(agrupacion.getAgrupacion())) {
-//					listaAdjuntos.addAll(gestorDocumentalAdapterApi.getAdjuntosProyecto(agrupacion.getAgrupacion().getNumAgrupRem().toString()));
-//				}
-//			}
+			if (!Checks.esNulo(codAgrupacion)) {			
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosProyecto(codAgrupacion);
+	
+				for (DtoAdjuntoProyecto adj : listaAdjuntos) {
+					AdjuntosProyecto adjuntosProyecto = activo.getAdjuntoProyecto(adj.getId());
+					if (!Checks.esNulo(adjuntosProyecto)) {
+						if (!Checks.esNulo(adjuntosProyecto.getTipoDocumentoProyecto())) {
+							adj.setDescripcionTipo(adjuntosProyecto.getTipoDocumentoProyecto().getDescripcion());
+						}
+						adj.setContentType(adjuntosProyecto.getContentType());
+						if (!Checks.esNulo(adjuntosProyecto.getAuditoria())) {
+							adj.setGestor(adjuntosProyecto.getAuditoria().getUsuarioCrear());
+						}
+						adj.setTamanyo(adjuntosProyecto.getTamanyo());
+					}
+				}
+			}
 
 		} else {
 			listaAdjuntos = getAdjuntosProyecto(id, listaAdjuntos);
@@ -107,33 +110,42 @@ public class ProyectoAdapter {
 		Activo activo = activoApi.get(id);
 		
 		if (!Checks.esNulo(activo.getAgrupaciones()) && !Checks.estaVacio(activo.getAgrupaciones())) {
-			Long codAgrupacion = activo.getAgrupaciones().get(0).getAgrupacion().getNumAgrupRem();
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			List<AdjuntosProyecto> adjuntosProyecto = (List<AdjuntosProyecto>) genericDao.getList(AdjuntosProyecto.class, filtro);
+			Long codAgrupacion = null;
+			Long idAgrupacion = null;
+			
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) { //Buscamos si el activo tiene agrupación de tipo Proyecto
+				if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					codAgrupacion = activoAgrupacionActivo.getAgrupacion().getNumAgrupRem();
+					idAgrupacion = activoAgrupacionActivo.getAgrupacion().getId();
 
-			for (AdjuntosProyecto adjuntoProyecto : adjuntosProyecto) {
-				DtoAdjuntoProyecto dto = new DtoAdjuntoProyecto();
-				BeanUtils.copyProperties(dto, adjuntoProyecto);
-//				dto.setIdEntidad(codAgrupacion.toString());
-				dto.setIdEntidad(activo.getId().toString());
-				dto.setDescripcionTipo(adjuntoProyecto.getTipoDocumentoProyecto().getDescripcion());
-				dto.setGestor(adjuntoProyecto.getAuditoria().getUsuarioCrear());
-				dto.setCodProyecto(codAgrupacion.toString());
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", idAgrupacion);
+					Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					List<AdjuntosProyecto> adjuntosProyecto = (List<AdjuntosProyecto>) genericDao.getList(AdjuntosProyecto.class, filtro, filtroBorrado);
 
-				listaAdjuntos.add(dto);
-			}
+					for (AdjuntosProyecto adjuntoProyecto : adjuntosProyecto) {
+						DtoAdjuntoProyecto dto = new DtoAdjuntoProyecto();
+						BeanUtils.copyProperties(dto, adjuntoProyecto);
+						dto.setIdEntidad(activo.getId().toString());
+						dto.setDescripcionTipo(adjuntoProyecto.getTipoDocumentoProyecto().getDescripcion());
+						dto.setGestor(adjuntoProyecto.getAuditoria().getUsuarioCrear());
+						dto.setCodProyecto(codAgrupacion.toString());
+
+						listaAdjuntos.add(dto);
+					}
+				}
+			}			
 		}
-
 		return listaAdjuntos;
-	}
-	
+	}	
 	
 	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
 		Activo activo = activoProyectoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
 		if (!Checks.esNulo(activo.getAgrupaciones()) && !Checks.estaVacio(activo.getAgrupaciones())) {
+			boolean tieneAgrupacionProyecto = false;
 			for (ActivoAgrupacionActivo agrupacion : activo.getAgrupaciones()) {
-				if (agrupacion.getAgrupacion().getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
+				if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					tieneAgrupacionProyecto = true;
 					String codAgrupacion = agrupacion.getAgrupacion().getNumAgrupRem().toString();
 					if (Checks.esNulo(activoEntrada)) {
 						
@@ -164,13 +176,16 @@ public class ProyectoAdapter {
 					}
 				}
 			}
+			
+			if (!tieneAgrupacionProyecto) {
+				throw new Exception("El activo no está en una agrupación de tipo proyecto.");
+			}			
+		} else {
+			throw new Exception("El activo no está en una agrupación de tipo proyecto.");
 		}
 		return null;
 	}
-	
-	
-	
-	
+		
 	public String upload(WebFileItem webFileItem) throws Exception {
 		return uploadDocumento(webFileItem, null, null);
 
@@ -186,6 +201,7 @@ public class ProyectoAdapter {
 		return result;
 	}
 	
+	@Transactional(readOnly = false)
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 		boolean borrado = false;
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
@@ -196,7 +212,7 @@ public class ProyectoAdapter {
 				logger.error("Error en ProyectoAdapter", e);
 			}
 		} else {
-			borrado = activoApi.deleteAdjunto(dtoAdjunto);
+			borrado = activoProyectoApi.deleteAdjunto(dtoAdjunto);
 		}
 		return borrado;
 	}

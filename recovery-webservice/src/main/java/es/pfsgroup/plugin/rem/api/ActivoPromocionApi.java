@@ -6,6 +6,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 
 public interface  ActivoPromocionApi {
@@ -68,5 +69,12 @@ public interface  ActivoPromocionApi {
 	@BusinessOperationDefinition("ActivoPromocionManager.get")
 	public Activo get(Long id);
     
+	/**
+	 * Elimina un adjunto
+	 *
+	 * @return
+	 */
+	@BusinessOperationDefinition("ActivoPromocionManager.deleteAdjunto")
+	boolean deleteAdjunto(DtoAdjunto dtoAdjunto);
 	
 }

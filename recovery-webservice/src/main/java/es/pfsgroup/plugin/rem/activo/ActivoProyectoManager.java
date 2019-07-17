@@ -26,10 +26,13 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoProyectoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.AdjuntosProyecto;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProyecto;
 
 
@@ -109,12 +112,18 @@ public class ActivoProyectoManager extends BusinessOperationOverrider<ActivoProy
 				
 				adjuntoProyecto.setActivo(activo);
 				
-//				List<ActivoAgrupacion> agrupaciones = new ArrayList<ActivoAgrupacion>();
-//				for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
-//					agrupaciones.add(activoAgrupacionActivo.getAgrupacion());
-//				}
-//				agrupaciones.add(activo.getAgrupaciones().get(0).getAgrupacion());
-				adjuntoProyecto.setAgrupacion(activo.getAgrupaciones().get(0).getAgrupacion());
+				ActivoAgrupacion activoAgrupacionProyecto = null;
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
+					if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+						activoAgrupacionProyecto = activoAgrupacionActivo.getAgrupacion();
+						break;
+					}
+				}
+				
+				if (Checks.esNulo(activoAgrupacionProyecto)) {
+					throw new Exception("No hay agrupaciones de tipo proyecto");
+				}
+				adjuntoProyecto.setAgrupacion(activoAgrupacionProyecto);
 				
 				adjuntoProyecto.setIdDocRest(idDocRest);
 
@@ -207,5 +216,27 @@ public class ActivoProyectoManager extends BusinessOperationOverrider<ActivoProy
 
 		return listaAdjuntosProyecto;
 	}
+	
+	@Override
+	@BusinessOperation(overrides = "activoProyectoManager.deleteAdjunto")
+	@Transactional(readOnly = false)
+	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		Activo activo = get(dtoAdjunto.getIdEntidad());
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoAdjunto.getId());
+		AdjuntosProyecto adjunto = genericDao.get(AdjuntosProyecto.class, filtro);
+		
+		if (adjunto == null) {
+			return false;
+		}
+		
+		genericDao.deleteById(AdjuntosProyecto.class, dtoAdjunto.getId());
+		
+		activo.getAdjuntosProyecto().remove(adjunto);
+		activoDao.save(activo);
+
+		return true;
+	}
+	
 
 }

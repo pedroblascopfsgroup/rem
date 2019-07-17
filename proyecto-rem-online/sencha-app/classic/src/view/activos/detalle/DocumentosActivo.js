@@ -28,6 +28,10 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     	     		xtype:'documentosactivoproyecto',
     	 			reference: 'listadoDocumentosProyecto',
     	            collapsible: true,
+//    	            readOnly: true,
+    	            bind:{
+    	            	disabled: '{!activo.isCarteraSareb}'
+    	            },
     	 			colspan: 3
     	 		}
     	];

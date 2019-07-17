@@ -187,7 +187,7 @@ public class PromocionAdapter {
 				logger.error("Error en PromocionAdapter", e);
 			}
 		} else {
-			borrado = activoApi.deleteAdjunto(dtoAdjunto);
+			borrado = activoPromocionApi.deleteAdjunto(dtoAdjunto);
 		}
 		return borrado;
 	}

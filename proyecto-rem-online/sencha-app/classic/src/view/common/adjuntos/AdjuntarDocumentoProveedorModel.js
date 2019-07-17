@@ -36,6 +36,16 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedorModel', {
 				extraParams: {idProveedor: '{proveedor.id}'}
 			},
 	    	autoLoad: true
+    	},
+    	
+    	comboSubcarteraPorProveedor: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'proveedores/getSubcarterasProveedor',
+				extraParams: {idProveedor: '{proveedor.id}', codigoCartera: '{cartera.value}'}
+			},
+	    	autoLoad: false
     	}
     }
 });

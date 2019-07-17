@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
@@ -376,6 +377,22 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		return carterasProveedor;
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera){
+		List<DDSubcartera> carterasProveedor = new ArrayList<DDSubcartera>();
+		
+		HQLBuilder hb = new HQLBuilder("select scr from DDSubcartera scr, DDCartera cra, VSubcarteraCarteraTrabajosProveedor vis ");
+
+		hb.appendWhere("cra.id = vis.idCartera");
+		hb.appendWhere("scr.id = vis.idSubcartera");
+		hb.appendWhere("vis.idProveedor = " + idProveedor);
+		hb.appendWhere("cra.codigo = " + codigoCartera);
+		
+		carterasProveedor = (List<DDSubcartera>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+		
+		return carterasProveedor;
+	}
 	
 }

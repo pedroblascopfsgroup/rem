@@ -627,4 +627,19 @@ public class ProveedoresController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSubcarterasProveedor(Long idProveedor, String codigoCartera) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", proveedoresApi.getSubcarteraPorProveedor(idProveedor, codigoCartera));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+		return createModelAndViewJson(model);
+	}
 }

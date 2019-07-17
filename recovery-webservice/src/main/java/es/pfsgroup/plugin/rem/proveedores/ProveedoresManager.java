@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
@@ -1327,14 +1328,13 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Override
 	public List<DDCartera> getCarteraPorProveedor(Long idProveedor){
-		/*List<DDCartera> carterasProveedor = new ArrayList<DDCartera>();
-		
-		List<VCarteraTrabajosProveedor> listaCarteras = genericDao.getList(VCarteraTrabajosProveedor.class, genericDao.createFilter(FilterType.EQUALS, "idProveedor", idProveedor));
-		
-		for(VCarteraTrabajosProveedor vc: listaCarteras) {
-			carterasProveedor.add(genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "id", vc.getIdCartera())));
-		}*/
 		
 		return proveedoresDao.getCarteraPorProveedor(idProveedor);
+	}
+	
+	@Override
+	public List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera){
+		
+		return proveedoresDao.getSubcarteraPorProveedor(idProveedor, codigoCartera);
 	}
 }

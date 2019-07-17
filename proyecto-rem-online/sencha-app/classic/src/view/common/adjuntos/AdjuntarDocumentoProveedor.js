@@ -130,13 +130,19 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 						        	fieldLabel:  HreRem.i18n('fieldlabel.entidad.propietaria'),
 						        	reference: 'cartera',
 						        	name: 'cartera',
+						        	chainedStore: 'comboSubcarteraPorProveedor',
+									chainedReference: 'subcartera',
 						        	width: '100%',
 						        	msgTarget: 'side',
+						        	publishes: 'value',
 						        	disabled: true,
 						        	bind: {
 						        		store: '{comboCarteraPorProveedor}'
 						        	},
-									allowBlank: true
+									allowBlank: true,
+									listeners: {
+										select: 'onChangeChainedCombo'
+									}
 						        },
 					    		{ 
 									xtype: 'combobox',
@@ -175,19 +181,18 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 								    }
 						        },
 						        {
-								   	xtype:'checkboxfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.todas.carteras'),
-									reference: 'checkboxTodasCarteras',
-									name: 'checkboxTodasCarteras',		
-									disabled: true,
-									width: '100%',
-									bind: {
-								  		value: '{todasCarteras}'
-								   	},
-								   	listeners: {
-								   		change: 'onChangeCheckboxTodasCarteras'	
-								   	}
-								},
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.proveedores.subcartera'),
+						        	reference: 'subcartera',
+						        	name: 'subcartera',
+						        	width: '100%',
+						        	msgTarget: 'side',
+						        	disabled: true,
+						        	bind: {
+						        		store: '{comboSubcarteraPorProveedor}'
+						        	},
+									allowBlank: true
+						        },
 						        { 
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
@@ -220,6 +225,20 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 								    	}
 								    }
 						        },
+						        {
+								   	xtype:'checkboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.todas.carteras'),
+									reference: 'checkboxTodasCarteras',
+									name: 'checkboxTodasCarteras',		
+									disabled: true,
+									width: '100%',
+									bind: {
+								  		value: '{todasCarteras}'
+								   	},
+								   	listeners: {
+								   		change: 'onChangeCheckboxTodasCarteras'	
+								   	}
+								},
 						        {
 				                	xtype: 'textarea',
 				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),

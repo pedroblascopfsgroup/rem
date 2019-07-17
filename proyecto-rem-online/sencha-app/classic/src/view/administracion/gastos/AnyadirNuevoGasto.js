@@ -203,7 +203,8 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 												        	},
 												        	change: function(field, newvalue) {										        		
 												        		if(Ext.isEmpty(newvalue)) {
-												        			field.up("form").down("[reference=gastoRefacturadoGrid]").reset()
+												        			if (field.up("form").down("[reference=gastoRefacturadoGrid]"))
+												        				field.up("form").down("[reference=gastoRefacturadoGrid]").reset()
 												        		}
 												        	
 												        	}

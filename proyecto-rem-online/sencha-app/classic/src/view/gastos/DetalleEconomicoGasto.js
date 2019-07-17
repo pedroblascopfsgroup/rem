@@ -413,7 +413,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                bind: '{detalleeconomico.irpfTipoImpositivo}',
 											                listeners:{
 										        				edit: function(){
-										        					if(this.getValue()==0)
+										        					if(this.getValue()==0)B86845179
 										        						this.setValue('');
 										        				},
 																update: function(){
@@ -871,17 +871,14 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 									items :
 										[
 											{
-							                	xtype:'checkboxfieldbase',
+							                	xtype:'checkboxfield',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
 												reference: 'checkboxActivoRefacturable',
-												colspan:3,
+												colspan:4,
 												name: 'checkboxActivoRefacturableExistente',
 												bind:{
 													value:'{detalleeconomico.gastoRefacturable}',
 													readOnly: '{detalleeconomico.bloquearCheckRefacturado}'
-												},
-												listeners: {
-													change: 'disableGridGastosRefacturados'
 												}
 											},
 											 {				

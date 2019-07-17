@@ -126,7 +126,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 								// Si la API tiene metodo de escritura (create or update).
 								var chkboxActivoRefacturable = me.lookupReference("checkboxActivoRefacturable");
 								me.getView().mask(HreRem.i18n("msg.mask.loading"));
-			                    var valoresGrid = new Array();
+			                    var valoresGrid = [];
 			                    var gastoRefacturable = false;
 				                 
 			                    if(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data != undefined){
@@ -137,8 +137,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				                    	}
 				                    }
 			                    }
-			                    
-			                    if(chkboxActivoRefacturable.existePropietario && !chkboxActivoRefacturable.isChecked()){
+			                    if(chkboxActivoRefacturable != null && chkboxActivoRefacturable.existePropietario && chkboxActivoRefacturable.value){
 			                    	gastoRefacturable  = true;
 			                    }
 			               

@@ -1050,13 +1050,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setTitularCuenta(detalleGasto.getTitularCuentaAbonar());
 			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
 			
-			Filter no = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO);
-			DDSiNo idNo = genericDao.get(DDSiNo.class, no);
+			Filter fsi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.SI);
+			DDSiNo idSi = genericDao.get(DDSiNo.class, fsi);
 			
-			if(idNo.equals(detalleGasto.getGastoRefacturable()) || Checks.esNulo(detalleGasto.getGastoRefacturable())) { 
-				dto.setGastoRefacturable(true);
+			if(idSi.equals(detalleGasto.getGastoRefacturable()) || Checks.esNulo(detalleGasto.getGastoRefacturable())) { 
+				dto.setGastoRefacturableB(true);
 			}else {
-				dto.setGastoRefacturable(false );
+				dto.setGastoRefacturableB(false );
 			}
 			
 			dto.setBloquearCheckRefacturado(false);
@@ -1233,6 +1233,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				}
 				DtoDetalleEconomicoGasto dtoFin = detalleEconomicoToDtoDetalleEconomico(gasto);
+				
+				Filter filtroGastoSiNo = null;
+				if(dto.getGastoRefacturableB()) {
+					filtroGastoSiNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.SI);
+				}else {
+					filtroGastoSiNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO);
+				}
+				
+				DDSiNo siNoGasto = genericDao.get(DDSiNo.class, filtroGastoSiNo);
+				detalleGasto.setGastoRefacturable(siNoGasto);
 				
 				boolean cambios = hayCambiosGasto(dtoIni, dtoFin, gasto);
 				if(!cambios && (DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) 
@@ -3452,4 +3462,28 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return noTieneGastosRefacturados;
 		
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void eliminarUltimoGastoRefacturado(Long idGasto) {
+		
+		
+		Filter fIdGasto = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+		GastoDetalleEconomico gastoDetalle = genericDao.get(GastoDetalleEconomico.class, fIdGasto);
+		
+		
+		if(!Checks.esNulo(gastoDetalle)) {
+			Filter si = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.SI);
+			DDSiNo idSi = genericDao.get(DDSiNo.class, si);
+			gastoDetalle.setGastoRefacturable(idSi);
+		}
+		
+		
+		genericDao.update(GastoDetalleEconomico.class, gastoDetalle);
+		
+		
+		
+	}
+	
+	
 }

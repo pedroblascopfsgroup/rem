@@ -1111,4 +1111,22 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView eliminarUltimoGastoRefacturado(@RequestParam Long idGasto) {
+		ModelMap model = new ModelMap();	
+		if(!Checks.esNulo(idGasto)){
+			gastoProveedorApi.eliminarUltimoGastoRefacturado(idGasto);
+		}
+		try {	
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);		
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
 }

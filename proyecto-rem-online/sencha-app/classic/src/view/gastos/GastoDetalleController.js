@@ -345,6 +345,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    		
 		    	success: function(response, opts) {
 			    	data = Ext.decode(response.responseText);
+			    	
 			    	//var propietarioGastoField = field.up('formBase').down('[name=nifPropietario]')
 		    		var buscadorNifPropietario = field.up('formBase').down('[name=buscadorNifPropietarioField]'),
 		    		nombrePropietarioGasto = field.up('formBase').down('[name=nombrePropietario]'),
@@ -360,6 +361,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    		    }
 		    		    if(!Ext.isEmpty(nombrePropietarioGasto)) {
 		    		    	nombrePropietarioGasto.setValue(nombrePropietario);
+		    		    	me.lookupReference("checkboxActivoRefacturable").setDisabled(false);
+		    		    	me.lookupReference("gastosArefacturar").setDisabled(false);
+			    			me.lookupReference("gastoRefacturadoGrid").setDisabled(false);
 
 			    		}
 		    		    chkboxActivoRefacturable.existePropietario=true;
@@ -1663,7 +1667,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    },
 	   disableGridGastosRefacturados: function (combo, newValue, oldValue, eOps) {
 	    	var me = this;
-	    	
+	    	debugger;
 	    	me.lookupReference("gastoRefacturadoGridExistente").setDisabled(newValue);
 
 	    }

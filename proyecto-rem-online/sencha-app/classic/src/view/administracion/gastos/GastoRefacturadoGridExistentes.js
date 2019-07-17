@@ -73,13 +73,29 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		   					numGastoRefacturado : numGastoRefacturado
 		   				},
 		    	success: function(response, opts) {
-			    	data = Ext.decode(response.responseText);   
+			    	data = Ext.decode(response.responseText);  
+			
 			    	var checkGastosRefacturados = me.getView().up("[reference=detalleeconomicogastoref]").down("[name=checkboxActivoRefacturableExistente]");
-
+			    	var idGasto = me.lookupController().getViewModel().getData().gasto.id;
+			    	var url2 = $AC.getRemoteUrl('gastosproveedor/eliminarUltimoGastoRefacturado');
 			    	me.getStore().reload();
 			    	
 			    	if(data.noTieneGastosRefacturados == true || data.noTieneGastosRefacturados == "true" ){
 			    		checkGastosRefacturados.setValue(true);
+			    		Ext.Ajax.request({	
+					 		url: url2,
+					   		params: {
+					   					idGasto:idGasto,
+					   				},
+					    	success: function(response, opts) {
+						    	
+					    	},
+					    	failure: function(response) {
+								me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					    	},
+					    	callback: function(options, success, response){
+							}		     
+					  });
 			    	}
 		    	},
 		    	failure: function(response) {

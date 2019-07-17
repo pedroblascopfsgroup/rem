@@ -282,9 +282,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     
 	     deshabilitarGridGastosRefacturados: function(get){
 				var me = this;
-				var isGastoRefacturable = get('detalleeconomico.gastoRefacturable');
+				var isGastoRefacturable = get('detalleeconomico.gastoRefacturableB');
 				var bloquearCheckRefacturado = get('detalleeconomico.bloquearCheckRefacturado');
-				
+				debugger;
 				
 				if(isGastoRefacturable == true || isGastoRefacturable == "true" || bloquearCheckRefacturado == true || bloquearCheckRefacturado == "true"){ 
 					return true;

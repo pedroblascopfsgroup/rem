@@ -376,5 +376,8 @@ public interface GastoProveedorApi {
 		public Boolean eliminarGastoRefacturado(Long idGasto, Long numGastoRefacturado);
 
 
+		void eliminarUltimoGastoRefacturado(Long idGasto);
+
+
 }
 

@@ -205,7 +205,7 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 			type: 'boolean'
 		},	
 		{
-   			name: 'gastoRefacturable',
+   			name: 'gastoRefacturableB',
    			type: 'boolean'
    		},
    		{

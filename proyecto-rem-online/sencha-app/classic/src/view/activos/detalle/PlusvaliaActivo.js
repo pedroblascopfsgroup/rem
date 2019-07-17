@@ -30,8 +30,7 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	    {
 	        xtype : 'fieldsettable',
 	        defaultType : 'textfieldbase',
-	        title : 'Plusvalía',
-	        reference : 'detalleOfertaFieldsetref',
+	        title : HreRem.i18n('title.plusvalia.activo'),
 	        collapsible : false,
 	        items : [ {
 	            xtype : 'datefieldbase',

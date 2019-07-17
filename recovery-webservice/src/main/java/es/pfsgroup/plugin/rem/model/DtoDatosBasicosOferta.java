@@ -31,11 +31,12 @@ public class DtoDatosBasicosOferta extends WebDto {
     private String tipoOfertaDescripcion;
     
     private String tipoOfertaCodigo;
+    
+    private Long numOferPrincipal;
+    
     private String claseOfertaDescripcion;
     
     private String claseOfertaCodigo;
-    
-    private String numOferPrincipal;
     
     private Date fechaNotificacion;
     
@@ -142,11 +143,11 @@ public class DtoDatosBasicosOferta extends WebDto {
 	}
 
 
-	public String getNumOferPrincipal() {
+	public Long getNumOferPrincipal() {
 		return numOferPrincipal;
 	}
 
-	public void setNumOferPrincipal(String numOferPrincipal) {
+	public void setNumOferPrincipal(Long numOferPrincipal) {
 		this.numOferPrincipal = numOferPrincipal;
 	}
 

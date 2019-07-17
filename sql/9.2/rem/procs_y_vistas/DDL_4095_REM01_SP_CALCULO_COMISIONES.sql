@@ -476,10 +476,11 @@ COMMIT;
 #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','CCA_COMISIONES_CALC_ACTIVOS');
 COMMIT;
 
-
+P_TEXTO:='OK';
     DBMS_OUTPUT.PUT_LINE('[FIN] Comisiones calculadas.');
 EXCEPTION
   WHEN OTHERS THEN
+  P_TEXTO:='KO';
     DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(V_SQL));
     DBMS_OUTPUT.put_line('-----------------------------------------------------------');
     DBMS_OUTPUT.put_line(err_msg);

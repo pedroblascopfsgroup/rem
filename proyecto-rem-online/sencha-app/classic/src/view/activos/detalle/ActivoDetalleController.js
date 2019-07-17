@@ -5353,8 +5353,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}else{
 			return true;
 		}
+	},
+	
+	disableAgregarGestores: function(get){
+		var me = this;
+		var usuarioGestor = me.lookupReference('usuarioGestor');
+		var agregarGestor = me.lookupReference('agregarGestor');
+		var unidadAlquilable = me.getViewModel().get('activo.unidadAlquilable');
+		
+		if(!Ext.isEmpty(usuarioGestor.getSelection()) && !unidadAlquilable)
+			agregarGestor.setDisabled(false);
 	}
-
 
 });
 

@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 
@@ -439,15 +440,15 @@ public class ExpedienteComercialAdapter {
 			return borrado;		
 	}
 
-	/*
-	public List<VListadoOfertasAgrupadasLB> getListActivosAgrupacionById(Long idOferta){
+	
+	public List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta){
 		
-		 List<VListadoOfertasAgrupadasLB> listaOfertasAgrupadas = expedienteComercialApi.getListActivosAgrupacionById(idOferta);
+		 List<VListadoOfertasAgrupadasLbk> listaOfertasAgrupadas = expedienteComercialApi.getListActivosAgrupacionById(idOferta);
 		
 		
 		return listaOfertasAgrupadas;
 	}
-	*/
+	
 }
 
 

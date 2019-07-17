@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1240,7 +1241,7 @@ public interface ExpedienteComercialApi {
 
 	boolean existeComprador(String numDoc);
 	
-	//List<VListadoOfertasAgrupadasLB> getListActivosAgrupacionById(Long idOferta);
+	List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta);
 
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 

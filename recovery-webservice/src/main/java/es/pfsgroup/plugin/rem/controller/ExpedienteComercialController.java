@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.OfertaAgrupadaListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
@@ -99,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 
@@ -169,6 +171,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2134,21 +2137,21 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-/*	
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void exportarListadoActivosOfertaPrincipal(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpediente);
-		Long idOferta = expedienteComercial.getOferta().getId()
+		Long idOferta = expedienteComercial.getOferta().getId();
 
 		
-		List<VListadoOfertasAgrupadasLB> listaActivosPorAgrupacion = (List<VListadoOfertasAgrupadasLB>) adapter.getListActivosOfertaPrincipal(idOferta).getResults();
+		List<VListadoOfertasAgrupadasLbk> listaActivosPorAgrupacion = expedienteComercialAdapter.getListActivosAgrupacionById(idOferta);
 
 
 		ExcelReport report = new OfertaAgrupadaListadoActivosExcelReport(listaActivosPorAgrupacion);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
-	*/
+	
 }

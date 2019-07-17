@@ -9603,15 +9603,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return esYubai;
 	}
 
-/*	
+
 	@Override
-	public List<VListadoOfertasAgrupadasLB> getListActivosAgrupacionById(Long idOferta){
+	public List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta){
 		
 		
-		List<VListadoOfertasAgrupadasLB> listaOfertasAgrupadas = expedienteComercialDao.getListActivosOfertaPrincipal(Long idOferta);
+		List<VListadoOfertasAgrupadasLbk> listaOfertasAgrupadas = expedienteComercialDao.getListActivosOfertaPrincipal(idOferta);
 		
 		return listaOfertasAgrupadas;
 	}
-*/
+
 
 }

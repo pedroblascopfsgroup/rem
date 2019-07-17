@@ -1,4 +1,4 @@
-/*package es.pfsgroup.plugin.rem.excel;
+package es.pfsgroup.plugin.rem.excel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,20 +6,15 @@ import java.util.List;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 public class OfertaAgrupadaListadoActivosExcelReport extends AbstractExcelReport implements ExcelReport {
 
-	private List<VActivosAgrupacion> listaActivosAgrupacion;
+	private List<VListadoOfertasAgrupadasLbk> listaOfertasAgrupadas;
 	
-	private DtoAgrupaciones agrupacionDto;
 
-	public OfertaAgrupadaListadoActivosExcelReport(VListadoOfertasAgrupadasLB listaOfertasAgrupadas) {
-		this.listaOfertasAgrupadas = listaOfertasAgrupadas;
-		this.agrupacionDto = null;
-	}
-	
-	public OfertaAgrupadaListadoActivosExcelReport(VListadoOfertasAgrupadasLB listaOfertasAgrupadas) {
+	public OfertaAgrupadaListadoActivosExcelReport(List<VListadoOfertasAgrupadasLbk> listaOfertasAgrupadas) {
 		this.listaOfertasAgrupadas = listaOfertasAgrupadas;
 	}
 
@@ -44,26 +39,24 @@ public class OfertaAgrupadaListadoActivosExcelReport extends AbstractExcelReport
 		
 		
 
-		for(VListadoOfertasAgrupadasLB ofertasAgrupadas: listaOfertasAgrupadas){
-			List<String> fila = new ArrayList<String>();
-
-			fila.add(ofertasAgrupadas.getNumActivo().toString());
-			fila.add(this.getDateStringValue(ofertasAgrupadas.getFechaInclusion()));
-			fila.add(ofertasAgrupadas.getTipoActivoDescripcion());
-			fila.add(ofertasAgrupadas.getSubtipoActivoDescripcion());
-			fila.add(ofertasAgrupadas.getDireccion());
-			fila.add(ofertasAgrupadas.getPublicado());
-			fila.add(ofertasAgrupadas.getSituacionComercial());
+		for(VListadoOfertasAgrupadasLbk ofertasAgrupadas: listaOfertasAgrupadas){
 			
+			List<String> fila = new ArrayList<String>();
+			fila.add(ofertasAgrupadas.getNumActivo().toString());
+			fila.add(ofertasAgrupadas.getNumOfertaPrincipal().toString());
+			fila.add(ofertasAgrupadas.getImporteOfertaDependiente().toString());
+			fila.add(ofertasAgrupadas.getValorTasacionActivo().toString());
+			fila.add(ofertasAgrupadas.getValorNetoContable().toString());
+			fila.add(ofertasAgrupadas.getValorRazonable().toString());
 			
 			valores.add(fila);
+			
 		}
 
 		return valores;
 	}
-
+	
 	public String getReportName() {
 		return LISTA_DE_OFERTAS_AGRUPADAS_XLS;
 	}
 }
-*/

@@ -1156,14 +1156,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			autoSync: true,
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus'
-				//extraParams: {numeroUrsus: '', idExpediente: '{expediente.id}'}
+				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus',
+				extraParams: {numeroUrsus: '', idExpediente: '{expediente.id}'}
 			}
 		},
 		storeOfertasAgrupadas: {
+			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.OfertasAgrupadasModel',
-			//autoLoad: true,
-			//autoSync: true,
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'ofertas/getListOfertasAgrupadas',
+				extraParams: {numOfertaPrincipal:'{datosbasicosoferta.numOferta}'}
+			}
+		},
+		storeActivosOfertasAgrupadas:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.OfertasAgrupadasModel',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'ofertas/getListOfertasAgrupadas',

@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.expedientes.ListaActivosOfertaAgrupadaExpediente', {
-    extend		: 'Ext.panel.Panel',
+    extend		: 'HreRem.view.common.FormBase',
     xtype		: 'listaactivosofertaagrupadaexpediente',
     requires	: ['HreRem.view.expedientes.ListaActivosOfertaAgrupadaExpedienteList'],
     scrollable	: 'y',

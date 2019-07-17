@@ -3,9 +3,12 @@
  */
 Ext.define('HreRem.model.OfertasAgrupadasModel', {
     extend: 'HreRem.model.Base',
-    idProperty: 'numOfertaPrincipal',
+    idProperty: 'id',
 
     fields: [
+    	{
+    		name : 'id'
+    	},
     	{
     		name : 'numOfertaPrincipal'
     	},
@@ -31,7 +34,6 @@ Ext.define('HreRem.model.OfertasAgrupadasModel', {
     
     proxy: {
 		type: 'uxproxy',
-		remoteUrl: 'ofertas/getListOfertasAgrupadas',
 		api: {
 				remoteUrl: 'ofertas/getListOfertasAgrupadas',
 	            read: 'ofertas/getListOfertasAgrupadas'

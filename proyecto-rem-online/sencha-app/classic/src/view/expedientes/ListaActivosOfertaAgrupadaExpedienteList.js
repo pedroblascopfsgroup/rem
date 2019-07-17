@@ -1,11 +1,12 @@
 Ext.define('HreRem.view.expedientes.ListaActivosOfertaAgrupadaExpedienteList', {
 	extend		: 'HreRem.view.common.GridBase',
     xtype		: 'listaactivosofertaagrupadaexpedientelist',
+    idPrincipal : 'id',
     bind: {
-        store: '{storeOfertasAgrupadas}'
+        store: '{storeActivosOfertasAgrupadas}'
     },
-        
-    initComponent: function () {
+
+	initComponent: function () {
         
         var me = this;  
         
@@ -56,14 +57,13 @@ Ext.define('HreRem.view.expedientes.ListaActivosOfertaAgrupadaExpedienteList', {
         
         
         me.dockedItems = [
-		        {
+        	 {
 		            xtype: 'pagingtoolbar',
 		            dock: 'bottom',
-		            itemId: 'visitasPaginationToolbar',
 		            inputItemWidth: 100,
 		            displayInfo: true,
 		            bind: {
-		                store: '{storeOfertasAgrupadas}'
+		                store: '{storeActivosOfertasAgrupadas}'
 		            }
 		        }
 		];

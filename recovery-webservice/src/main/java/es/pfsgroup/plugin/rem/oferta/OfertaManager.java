@@ -100,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
@@ -4086,16 +4087,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public DtoPage getListOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dto) {
 		
-		DtoPage ofertasAgrupadasPage = null;
+		DtoPage ofertasAgrupadasPage;
 		
 		Oferta oferta = genericDao.get(Oferta.class,
 				genericDao.createFilter(FilterType.EQUALS, "numOferta",dto.getNumOfertaPrincipal()));
 		
-		if(!Checks.esNulo(oferta) && 
+		if(!Checks.esNulo(oferta) && !Checks.estaVacio(oferta.getActivosOferta()) && 
 				DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())){
 			ofertasAgrupadasPage = ofertasAgrupadasLbkDao.getListOfertasAgrupadasLbk(dto);
+		}else {
+			ofertasAgrupadasPage = new DtoPage(new ArrayList<VListadoOfertasAgrupadasLbk>(),0);
 		}
-
+			
 		return ofertasAgrupadasPage;
 	}
 }

@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.expedientes.OfertasDependientesExpedienteList', {
 	extend		: 'HreRem.view.common.GridBase',
     xtype		: 'ofertasdependientesexpedientelist',
+    idPrincipal : 'id',
     bind: {
         store: '{storeOfertasAgrupadas}'
     },
@@ -30,7 +31,6 @@ Ext.define('HreRem.view.expedientes.OfertasDependientesExpedienteList', {
 		        {
 		            xtype: 'pagingtoolbar',
 		            dock: 'bottom',
-		            itemId: 'visitasPaginationToolbar',
 		            inputItemWidth: 100,
 		            displayInfo: true,
 		            bind: {

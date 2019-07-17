@@ -1269,31 +1269,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
 
 		// Al crear una oferta Agrupada Dependiente, que compruebe que la oferta principal a relacionar existe.
-		if ("02".equals(claseOferta) && Checks.esNulo(principal)) {
-			throw new Exception("Parámetros incorrectos. La oferta principal debe existir.");
-		} else if (!Checks.esNulo(principal)) {
+//		if ("02".equals(claseOferta) && Checks.esNulo(principal)) {
+//			throw new Exception("Parámetros incorrectos. La oferta principal debe existir.");
+//		} else if (!Checks.esNulo(principal)) {
 
 			// Al crear una oferta Agrupada Dependiente, que compruebe que la oferta que se va a relacionar es Principal (DD_CLO_ID).
 //			principal.getClaseOferta().
 		
 			// La oferta Principal debe estar viva, es decir, oferta tramitada y expediente en tramitación o pendiente de sanción.
-			ExpedienteComercial eco = expedienteComercialApi.findOneByOferta(principal);			
-			if (!(DDEstadoOferta.CODIGO_ACEPTADA.equals(principal.getEstadoOferta().getCodigo()) &&
-				(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(eco.getEstado().getCodigo()) || DDEstadosExpedienteComercial.PTE_SANCION.equals(eco.getEstado().getCodigo())))) {
-				throw new Exception("Parámetros incorrectos. La oferta Principal debe estar viva, es decir, oferta tramitada y expediente en tramitación o pendiente de sanción.");
-			}
+//			ExpedienteComercial eco = expedienteComercialApi.findOneByOferta(principal);			
+//			if (!(DDEstadoOferta.CODIGO_ACEPTADA.equals(principal.getEstadoOferta().getCodigo()) &&
+//				(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(eco.getEstado().getCodigo()) || DDEstadosExpedienteComercial.PTE_SANCION.equals(eco.getEstado().getCodigo())))) {
+//				throw new Exception("Parámetros incorrectos. La oferta Principal debe estar viva, es decir, oferta tramitada y expediente en tramitación o pendiente de sanción.");
+//			}
+//		
+//		}else if(!Checks.esNulo(principal) && !Checks.esNulo(dependiente)) {
 		
-		}else if(!Checks.esNulo(principal) && !Checks.esNulo(dependiente)) {
-			
-			OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
-			oferAgrupa.setOfertaPrincipal(principal);
+		/**************************************************************************/
+		/** Este es solamente mientras no haya validación, después quitar **/
+		/**************************************************************************/
+		OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
+			if (Checks.esNulo(principal)) {
+				oferAgrupa.setOfertaPrincipal(dependiente);
+			}
 			oferAgrupa.setOfertaDependiente(dependiente);
+			
+			// Cuando estén las validaciones hay que dejar este
+//			OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
+//			oferAgrupa.setOfertaPrincipal(principal);
+//			oferAgrupa.setOfertaDependiente(dependiente);
 
 			Auditoria auditoria = Auditoria.getNewInstance();
 			oferAgrupa.setAuditoria(auditoria);
 			
 			ofertasAgrupadas.add(oferAgrupa);
-		}
+//		}
 
 		return ofertasAgrupadas;
 	}

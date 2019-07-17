@@ -63,9 +63,8 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 	@Column(name = "ACT_PLS_FECHA_RESPUESTA_RECURSO")
 	private Date dateRespuestaRecu;
 	
-	@ManyToOne
     @Column(name = "ACT_PLS_APERTURA_Y_SEGUIMIENTO_EXP")
-   	private DDSiNo aperturaSeguimientoExp;
+   	private Boolean aperturaSeguimientoExp;
     
     @Column(name = "ACT_PLS_IMPORTE_PAGADO")
    	private Integer importePagado;
@@ -74,17 +73,14 @@ public class ActivoPlusvalia implements Serializable, Auditable {
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor; 
     
-	@ManyToOne
     @Column(name = "ACT_PLS_MINUSVALIA")
-   	private DDSiNo minusvalia;
+   	private Boolean minusvalia;
     
-	@ManyToOne
     @Column(name = "ACT_PLS_EXENTO")
-   	private DDSiNo exento;
+   	private Boolean exento;
     
-	@ManyToOne
     @Column(name = "ACT_PLS_AUTOLIQUIDACION")
-   	private DDSiNo autoliquidacion;
+   	private Boolean autoliquidacion;
     
     @Column(name = "ACT_PLS_OBSERVACIONES")
    	private String observaciones;
@@ -159,11 +155,11 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		this.dateRespuestaRecu = dateRespuestaRecu;
 	}
 
-	public DDSiNo getAperturaSeguimientoExp() {
+	public Boolean getAperturaSeguimientoExp() {
 		return aperturaSeguimientoExp;
 	}
 
-	public void setAperturaSeguimientoExp(DDSiNo aperturaSeguimientoExp) {
+	public void setAperturaSeguimientoExp(Boolean aperturaSeguimientoExp) {
 		this.aperturaSeguimientoExp = aperturaSeguimientoExp;
 	}
 
@@ -183,27 +179,27 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		this.gastoProveedor = gastoProveedor;
 	}
 
-	public DDSiNo getMinusvalia() {
+	public Boolean getMinusvalia() {
 		return minusvalia;
 	}
 
-	public void setMinusvalia(DDSiNo minusvalia) {
+	public void setMinusvalia(Boolean minusvalia) {
 		this.minusvalia = minusvalia;
 	}
 
-	public DDSiNo getExento() {
+	public Boolean getExento() {
 		return exento;
 	}
 
-	public void setExento(DDSiNo exento) {
+	public void setExento(Boolean exento) {
 		this.exento = exento;
 	}
 
-	public DDSiNo getAutoliquidacion() {
+	public Boolean getAutoliquidacion() {
 		return autoliquidacion;
 	}
 
-	public void setAutoliquidacion(DDSiNo autoliquidacion) {
+	public void setAutoliquidacion(Boolean autoliquidacion) {
 		this.autoliquidacion = autoliquidacion;
 	}
 

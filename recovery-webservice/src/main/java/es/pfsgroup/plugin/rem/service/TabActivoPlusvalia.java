@@ -80,7 +80,6 @@ public class TabActivoPlusvalia implements TabActivoService {
 	public Activo saveTabActivo(Activo activo, WebDto dto) {
 		
 		DtoActivoPlusvalia activoPlusvaliaDto = (DtoActivoPlusvalia) dto;
-		DDSiNo codSiNo = new DDSiNo();
 		ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		
 		if(Checks.esNulo(activoPlusvalia)) {
@@ -110,9 +109,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getAperturaSeguimientoExp())) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getAperturaSeguimientoExp());
-			codSiNo = (DDSiNo) genericDao.get(DDSiNo.class, filtro);
-			activoPlusvalia.setAperturaSeguimientoExp(codSiNo);
+			activoPlusvalia.setAperturaSeguimientoExp(activoPlusvaliaDto.getAperturaSeguimientoExp());
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getImportePagado())) {
@@ -125,9 +122,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getMinusvalia())) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getMinusvalia());
-			codSiNo = (DDSiNo) genericDao.get(DDSiNo.class, filtro);
-			activoPlusvalia.setMinusvalia(codSiNo);
+			activoPlusvalia.setMinusvalia(activoPlusvaliaDto.getMinusvalia());
 		}
 	
 		

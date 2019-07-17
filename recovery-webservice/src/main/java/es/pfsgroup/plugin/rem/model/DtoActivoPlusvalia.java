@@ -20,10 +20,10 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	private Date datePresentacionPlus;
 	private Date datePresentacionRecu;
 	private Date dateRespuestaRecu;
-	private Integer aperturaSeguimientoExp;
+	private Boolean aperturaSeguimientoExp;
 	private Integer importePagado;
 	private Long idGasto;
-	private Integer minusvalia;
+	private Boolean minusvalia;
 	private Long numGastoHaya;
 	
 	public Long getIdPlusvalia() {
@@ -62,10 +62,10 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	public void setDateRespuestaRecu(Date dateRespuestaRecu) {
 		this.dateRespuestaRecu = dateRespuestaRecu;
 	}
-	public Integer getAperturaSeguimientoExp() {
+	public Boolean getAperturaSeguimientoExp() {
 		return aperturaSeguimientoExp;
 	}
-	public void setAperturaSeguimientoExp(Integer aperturaSeguimientoExp) {
+	public void setAperturaSeguimientoExp(Boolean aperturaSeguimientoExp) {
 		this.aperturaSeguimientoExp = aperturaSeguimientoExp;
 	}
 	public Integer getImportePagado() {
@@ -80,10 +80,10 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	public void setIdGasto(Long idGasto) {
 		this.idGasto = idGasto;
 	}
-	public Integer getMinusvalia() {
+	public Boolean getMinusvalia() {
 		return minusvalia;
 	}
-	public void setMinusvalia(Integer minusvalia) {
+	public void setMinusvalia(Boolean minusvalia) {
 		this.minusvalia = minusvalia;
 	}
 	

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ALBERT PASTOR
---## FECHA_CREACION=20190717
+--## FECHA_CREACION=20190716
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6985
@@ -27,7 +27,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     
-    V_TABLA VARCHAR2(27 CHAR) := 'TMP_COMISIONES_ACTIVOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLA VARCHAR2(32 CHAR) := 'CCA_COMISIONES_CALC_ACTIVOS'; -- Vble. final para almacenar el nombre de la tabla de ref.
 	  V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla final con las comisiones'; -- Vble. para los comentarios de las tablas	
     
  BEGIN 
@@ -47,7 +47,7 @@ DECLARE
 		DBMS_OUTPUT.PUT_LINE('[INICIO] ' || V_ESQUEMA || '.'||V_TABLA||'... Se va ha crear.');  		
 		--Creamos la tabla
 		V_SQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
-                COMISION_ID NUMBER(16)  
+                COMISION_ID VARCHAR2(36)  
                 ,CARTERA  VARCHAR2(20 CHAR)
                 ,SUBCARTERA VARCHAR2(20 CHAR)
                 ,TIPO_ACTIVO  VARCHAR2(20 CHAR)

@@ -9,7 +9,9 @@ Ext.define('HreRem.view.expedientes.OfertasAgrupadasTabPanel', {
     				'HreRem.view.expedientes.OfertasDependientesExpediente',
     				'HreRem.view.expedientes.ListaActivosOfertaAgrupadaExpediente'
     				],    
-
+    bind: {
+    	hidden: '{!esCarteraLiberbank}'
+    },
 	listeners	: {
     	boxready: function (tabPanel) {
     		if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {

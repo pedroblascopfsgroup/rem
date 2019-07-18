@@ -30,13 +30,5 @@ Ext.define('HreRem.model.OfertasAgrupadasModel', {
     	{
     		name : 'valorRazonable'
     	}
-    ],
-    
-    proxy: {
-		type: 'uxproxy',
-		api: {
-				remoteUrl: 'ofertas/getListOfertasAgrupadas',
-	            read: 'ofertas/getListOfertasAgrupadas'
-	    }
-    }
+    ]
 });

@@ -701,7 +701,8 @@ END IF;
                              AND AGA.ACT_ID = ' || nACT_ID  || ' AND AGA.BORRADO = 0  
                             )
                 AND TAG.DD_TAG_CODIGO = ''13''
-                AND AGR.AGR_FIN_VIGENCIA < SYSDATE ';       
+                AND AGR.AGR_FIN_VIGENCIA < SYSDATE
+				AND AGR.AGR_FECHA_BAJA IS NULL';
   
     OPEN v_cursor_aux FOR V_MSQL;
     FETCH v_cursor_aux INTO sRES;

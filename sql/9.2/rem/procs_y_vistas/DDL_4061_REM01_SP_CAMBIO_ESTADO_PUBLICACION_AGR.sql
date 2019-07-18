@@ -788,7 +788,8 @@ ELSE
                 JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG 
                     ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 
                 WHERE 1 = 1
-                AND AGR.AGR_ID = ' || nAGR_ID  || ' AND AGR.BORRADO = 0  ';       
+                AND AGR.AGR_ID = ' || nAGR_ID  || ' AND AGR.BORRADO = 0 
+				AND AGR.AGR_FECHA_BAJA IS NULL';
   
     OPEN v_cursor_aux FOR V_MSQL;
     FETCH v_cursor_aux INTO sDD_TAG_CODIGO, dAGR_FIN_VIGENCIA;

@@ -1328,24 +1328,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		/**************************************************************************/
 
 		OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
-			if (Checks.esNulo(principal)) {
-				oferAgrupa.setOfertaPrincipal(dependiente);
-			}else {
-				oferAgrupa.setOfertaPrincipal(principal);
-			}
+		
+		if (claseOferta.equals(DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE)) {
+			oferAgrupa.setOfertaPrincipal(principal);
 			oferAgrupa.setOfertaDependiente(dependiente);
-
 			
+			Auditoria auditoria = Auditoria.getNewInstance();
+			oferAgrupa.setAuditoria(auditoria);
+			ofertasAgrupadas.add(oferAgrupa);
+		}
+		
 			// Cuando estén las validaciones hay que dejar este
 //			OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
 //			oferAgrupa.setOfertaPrincipal(principal);
 //			oferAgrupa.setOfertaDependiente(dependiente);
 
-			Auditoria auditoria = Auditoria.getNewInstance();
-			oferAgrupa.setAuditoria(auditoria);
-			
-			ofertasAgrupadas.add(oferAgrupa);
-//		}
 
 		return ofertasAgrupadas;
 	}

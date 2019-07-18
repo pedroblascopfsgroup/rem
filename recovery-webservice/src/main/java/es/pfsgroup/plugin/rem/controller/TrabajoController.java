@@ -1370,7 +1370,7 @@ public class TrabajoController extends ParadiseJsonController {
 			flagParametrosANulo = true;
 		}else if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivo))){
 			flagnumActivoNoExiste = true;
-		}else if(Checks.esNulo(proveedoresDao.getProveedorById(Long.valueOf(idProveedorRem)))){
+		}else if(Checks.esNulo(proveedoresDao.getActivoProveedorContactoPorUsernameUsuario(idProveedorRem))){
 			flagidProveedorRemNoExiste = true;
 		}else{
 		

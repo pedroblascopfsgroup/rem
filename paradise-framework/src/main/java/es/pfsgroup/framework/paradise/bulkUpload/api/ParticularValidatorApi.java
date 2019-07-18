@@ -777,6 +777,8 @@ public interface ParticularValidatorApi {
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 	Boolean existeActivoAsociado(String numActivo);
+	
+	Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia);
 
 	public Boolean esActivoUA(String numActivo);
 
@@ -791,5 +793,7 @@ public interface ParticularValidatorApi {
 	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
 
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
+
+	String getActivoPlusvalia(String numActivo, String fechaPlusvalia);
 
 }

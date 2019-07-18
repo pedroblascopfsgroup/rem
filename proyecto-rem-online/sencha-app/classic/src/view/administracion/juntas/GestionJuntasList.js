@@ -1,4 +1,4 @@
-Ext.define('HreRem.view.administracion.gastos.GestionJuntasList', {
+Ext.define('HreRem.view.administracion.juntas.GestionJuntasList', {
 	extend		: 'HreRem.view.common.GridBase',
     xtype		: 'gestionjuntaslist',
     requires: ['HreRem.view.common.CheckBoxModelBase', 'HreRem.ux.plugin.PagingSelectionPersistence'],

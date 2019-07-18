@@ -4,7 +4,7 @@ Ext.define('HreRem.view.administracion.AdministracionMainMenu', {
     xtype		: 'administracionmainmenu',
     reference	: 'administracionMainMenu',
     layout		: 'fit',
-    requires	: ['HreRem.view.administracion.gastos.AdministracionGastosMain', 'HreRem.view.administracion.plusvalia.GestionPlusvalia', 'HreRem.view.administracion.gastos.AdministracionJuntasMain'],
+    requires	: ['HreRem.view.administracion.gastos.AdministracionGastosMain', 'HreRem.view.administracion.plusvalia.GestionPlusvalia', 'HreRem.view.administracion.juntas.AdministracionJuntasMain'],
 
     listeners	: {
     	boxready: function (tabPanel) {   		

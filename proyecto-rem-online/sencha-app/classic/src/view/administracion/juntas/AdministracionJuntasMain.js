@@ -1,8 +1,8 @@
-Ext.define('HreRem.view.administracion.gastos.AdministracionJuntasMain', {
+Ext.define('HreRem.view.administracion.juntas.AdministracionJuntasMain', {
 	extend		: 'Ext.tab.Panel',
 	cls			: 'panel-base shadow-panel, tabPanel-segundo-nivel',
     xtype		: 'administracionjuntasmain',
-    requires	: ['HreRem.view.administracion.gastos.GestionJuntas','HreRem.view.administracion.AdministracionModel','HreRem.view.administracion.AdministracionController'],
+    requires	: ['HreRem.view.administracion.juntas.GestionJuntas','HreRem.view.administracion.AdministracionModel','HreRem.view.administracion.AdministracionController'],
     flex		: 1,
     controller	: 'administracion',
     viewModel	: {

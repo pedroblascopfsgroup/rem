@@ -1,4 +1,4 @@
-Ext.define('HreRem.view.administracion.gastos.GestionJuntasSearch', {
+Ext.define('HreRem.view.administracion.juntas.GestionJuntasSearch', {
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'gestionjuntassearch',
     isSearchFormJuntas: true,

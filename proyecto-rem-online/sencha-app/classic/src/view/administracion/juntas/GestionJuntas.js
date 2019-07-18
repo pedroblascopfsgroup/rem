@@ -1,7 +1,7 @@
-Ext.define('HreRem.view.administracion.gastos.GestionJuntas', {
+Ext.define('HreRem.view.administracion.juntas.GestionJuntas', {
     extend		: 'Ext.panel.Panel',
     xtype		: 'gestionjuntas',    
-    requires: ['HreRem.view.administracion.gastos.GestionJuntasSearch', 'HreRem.view.administracion.gastos.GestionJuntasList'],
+    requires: ['HreRem.view.administracion.juntas.GestionJuntasSearch', 'HreRem.view.administracion.juntas.GestionJuntasList'],
     layout: {
         type: 'vbox',
         align: 'stretch'

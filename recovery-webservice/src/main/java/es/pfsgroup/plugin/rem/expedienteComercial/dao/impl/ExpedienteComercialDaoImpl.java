@@ -137,12 +137,12 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	
 		
 	@Override
-	public List<VListadoOfertasAgrupadasLbk> getListActivosOfertaPrincipal(Long idOferta) {
+	public List<VListadoOfertasAgrupadasLbk> getListActivosOfertaPrincipal(Long numOferta) {
 
 		HQLBuilder hb = new HQLBuilder(
-				" from VListadoOfertasAgrupadasLB listadoOfertas where listadoOfertas.ofertaId = " + idOferta);
+				" from VListadoOfertasAgrupadasLbk where numOfertaPrincipal = " + numOferta);
 
-		return (List<VListadoOfertasAgrupadasLbk>) getHibernateTemplate().find(hb.toString());
+		return (List<VListadoOfertasAgrupadasLbk>)  this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 
 	}
 	

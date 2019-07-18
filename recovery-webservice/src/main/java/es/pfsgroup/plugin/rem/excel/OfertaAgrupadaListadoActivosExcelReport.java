@@ -42,12 +42,43 @@ public class OfertaAgrupadaListadoActivosExcelReport extends AbstractExcelReport
 		for(VListadoOfertasAgrupadasLbk ofertasAgrupadas: listaOfertasAgrupadas){
 			
 			List<String> fila = new ArrayList<String>();
-			fila.add(ofertasAgrupadas.getNumActivo().toString());
-			fila.add(ofertasAgrupadas.getNumOfertaPrincipal().toString());
-			fila.add(ofertasAgrupadas.getImporteOfertaDependiente().toString());
-			fila.add(ofertasAgrupadas.getValorTasacionActivo().toString());
-			fila.add(ofertasAgrupadas.getValorNetoContable().toString());
-			fila.add(ofertasAgrupadas.getValorRazonable().toString());
+			
+			if(!Checks.esNulo(ofertasAgrupadas.getNumOfertaPrincipal())) {
+				fila.add(ofertasAgrupadas.getNumOfertaPrincipal().toString());
+			}else {
+				fila.add("No existe la oferta principal");
+			}
+			if(!Checks.esNulo(ofertasAgrupadas.getNumOfertaDependiente())) {
+				fila.add(ofertasAgrupadas.getNumOfertaDependiente().toString());
+			}else {
+				fila.add("No existe la oferta dependiente");
+			}
+			if(!Checks.esNulo(ofertasAgrupadas.getNumActivo())) {
+				fila.add(ofertasAgrupadas.getNumActivo().toString());
+			}else {
+				fila.add("No existe el activo");
+			}
+			if(!Checks.esNulo(ofertasAgrupadas.getImporteOfertaDependiente())) {
+				fila.add(ofertasAgrupadas.getImporteOfertaDependiente().toString());
+			}else {
+				fila.add("-");
+			}
+			
+			if(!Checks.esNulo(ofertasAgrupadas.getValorTasacionActivo())) {
+				fila.add(ofertasAgrupadas.getValorTasacionActivo().toString());
+			}else {
+				fila.add("-");
+			}
+			if(!Checks.esNulo(ofertasAgrupadas.getValorNetoContable())) {
+				fila.add(ofertasAgrupadas.getValorNetoContable().toString());
+			}else {
+				fila.add("-");
+			}
+			if(!Checks.esNulo(ofertasAgrupadas.getValorRazonable())) {
+				fila.add(ofertasAgrupadas.getValorRazonable().toString());
+			}else {
+				fila.add("-");
+			}
 			
 			valores.add(fila);
 			

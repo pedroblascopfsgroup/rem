@@ -9607,8 +9607,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta){
 		
-		
-		List<VListadoOfertasAgrupadasLbk> listaOfertasAgrupadas = expedienteComercialDao.getListActivosOfertaPrincipal(idOferta);
+		List<VListadoOfertasAgrupadasLbk> listaOfertasAgrupadas = new ArrayList<VListadoOfertasAgrupadasLbk>();
+		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		if(!Checks.esNulo(oferta)) {
+		 listaOfertasAgrupadas = expedienteComercialDao.getListActivosOfertaPrincipal(oferta.getNumOferta());
+		}
 		
 		return listaOfertasAgrupadas;
 	}

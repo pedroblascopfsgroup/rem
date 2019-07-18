@@ -68,21 +68,8 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            	handler: 'onClickGenerarHojaExcelActivos',
 			            	margin: '10 10 10 10'
 			            
-					},
-					{
-						
-		            	xtype: 'button',
-		            	reference: 'btnExportarActivosLibertyBankVenta',
-		            	bind: {
-		            		hidden: '{!expediente.esCarteraLiberbankVenta}'
-		            	},
-		            	text: HreRem.i18n('title.activo.administracion.exportar.listado.activos'),
-		            	handler: 'onClickGenerarListadoDeActivos',
-		            	margin: '10 10 10 10'
-		            
-				}
-					
-					]
+					}
+				]
 			},
 			{
 			    xtype		: 'gridBaseEditableRow',

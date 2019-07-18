@@ -392,7 +392,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
         		        		    bind: {/*hidden: '{!datosbasicosoferta.permiteProponer}'*/},
         		                	rowspan: 2,
         		                	text: HreRem.i18n('btn.propuesta.oferta'),
-        		                	handler: 'onClickGeneraOfertarHojaExcel'
+        		                	handler: 'onClickGeneraOfertarHojaExcel',
+        		                	margin: '10 10 10 10'
         		                },
         		                {
         		                	xtype: 'button',
@@ -402,8 +403,20 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
         		        		    	disabled: '{!esOfertaTramitada}'
         		        		    },
         		                	text: HreRem.i18n('btn.enviar.mail.aprobacion'),
-        		                	handler: 'onClickEnviarMailAprobacion'
-        		                }
+        		                	handler: 'onClickEnviarMailAprobacion',
+        		                	margin: '10 10 10 10'
+        		                },
+        		            	{					
+        			            	xtype: 'button',
+        			            	reference: 'btnExportarActivosLibertyBankVenta',
+        			            	bind: {
+        			            		hidden: '{!expediente.esCarteraLiberbankVenta}'
+        			            	},
+        			            	text: HreRem.i18n('title.activo.administracion.exportar.listado.activos'),
+        			            	handler: 'onClickGenerarListadoDeActivos',
+        			            	margin: '10 10 10 10'
+        			            
+        		            	}
                 			]
                 		}
 		        ]

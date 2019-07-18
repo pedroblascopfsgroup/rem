@@ -2145,13 +2145,15 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpediente);
 		Long idOferta = expedienteComercial.getOferta().getId();
 
+		if(!Checks.esNulo(idOferta)) {
+			List<VListadoOfertasAgrupadasLbk> listaActivosPorAgrupacion = expedienteComercialAdapter.getListActivosAgrupacionById(idOferta);
+	
+			if(!Checks.estaVacio(listaActivosPorAgrupacion)) {
+				ExcelReport report = new OfertaAgrupadaListadoActivosExcelReport(listaActivosPorAgrupacion);
 		
-		List<VListadoOfertasAgrupadasLbk> listaActivosPorAgrupacion = expedienteComercialAdapter.getListActivosAgrupacionById(idOferta);
-
-
-		ExcelReport report = new OfertaAgrupadaListadoActivosExcelReport(listaActivosPorAgrupacion);
-
-		excelReportGeneratorApi.generateAndSend(report, response);
+				excelReportGeneratorApi.generateAndSend(report, response);
+			}
+		}
 	}
 	
 }

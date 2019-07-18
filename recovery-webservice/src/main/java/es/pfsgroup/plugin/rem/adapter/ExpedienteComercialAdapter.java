@@ -443,6 +443,7 @@ public class ExpedienteComercialAdapter {
 	
 	public List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta){
 		
+		
 		 List<VListadoOfertasAgrupadasLbk> listaOfertasAgrupadas = expedienteComercialApi.getListActivosAgrupacionById(idOferta);
 		
 		

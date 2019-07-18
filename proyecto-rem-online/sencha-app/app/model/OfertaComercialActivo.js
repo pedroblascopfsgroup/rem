@@ -80,6 +80,9 @@ Ext.define('HreRem.model.OfertaComercialActivo', {
             },
     		{
             	name: 'claseOferta'
+            },
+    		{
+            	name: 'numOferPrincipal'
             }
     ],
     

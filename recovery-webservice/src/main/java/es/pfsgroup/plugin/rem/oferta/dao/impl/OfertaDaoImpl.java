@@ -453,6 +453,31 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		}
 		return resultado;
 	}
+
+	@Override
+	public Oferta getOfertaPrincipal(Long idferta) {
+
+//		StringBuilder hql = new StringBuilder(
+//				"SELECT ID_OFERTA_PRINCIPAL FROM OGR_OFERTAS_AGRUPADAS_LBK WHERE ID_OFERTA_DEPENDIENTE = :ID_OFERTA_DEPENDIENTE");
+//		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(hql.toString());
+//		
+//		callFunctionSql.setParameter("ID_OFERTA_DEPENDIENTE", numOferta);
+//
+//		return ((BigDecimal)callFunctionSql.uniqueResult()).longValue();
+		
+
+
+		Oferta resultado = null;
+		HQLBuilder hql = new HQLBuilder("select oferAgruLbk.ofertaPrincipal from OfertasAgrupadasLbk oferAgruLbk join oferAgruLbk.ofertaDependiente depen where depen.id ="+idferta);
+		try {
+			resultado = HibernateQueryUtils.uniqueResult(this, hql);
+		} catch (Exception e) {
+			logger.error("error obtienendo oferta principal",e);
+		}
+
+		return resultado;
+	}
+
 	
 	@Override
 	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr) {

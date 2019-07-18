@@ -289,6 +289,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 
+	@Override
+	public Oferta getOfertaPrincipalById(Long id) {
+		Oferta oferta = null;
+
+		if (id != null) {
+			try {
+	
+				oferta = ofertaDao.getOfertaPrincipal(id);
+	
+			} catch (Exception ex) {
+				logger.error("error en OfertasManager", ex);
+			}
+		}
+
+		return oferta;
+	}
+
 	/**
 	 * usa el metdodo ofertaDao.getOfertaByIdwebcom
 	 */
@@ -1302,6 +1319,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
 			if (Checks.esNulo(principal)) {
 				oferAgrupa.setOfertaPrincipal(dependiente);
+			}else {
+				oferAgrupa.setOfertaPrincipal(principal);
 			}
 			oferAgrupa.setOfertaDependiente(dependiente);
 

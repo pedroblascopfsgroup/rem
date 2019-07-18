@@ -50,6 +50,7 @@ public interface OfertaApi {
 	 */
 	public Oferta getOfertaById(Long id);
 
+	public Oferta getOfertaPrincipalById(Long id);
 	/**
 	 * Devuelve una Oferta por idOfertaWebcom.
 	 * 

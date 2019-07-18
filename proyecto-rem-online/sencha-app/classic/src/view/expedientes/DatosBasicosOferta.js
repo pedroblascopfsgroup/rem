@@ -207,7 +207,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	readOnly: true              	
 		                },
 		                {
-		                	xtype: 'fieldset',
+		                	xtype: 'fieldsettable',
 		                	title:  HreRem.i18n('title.comite.sancionador'),
 		                	xtype: 'fieldsettable',
 		                	//title:  HreRem.i18n('title.comite.sancionador'), //fieldlabel.comite.propuesto
@@ -216,13 +216,12 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	},
 		                	colspan: 2,
 		                	margin: '0 10 10 0',
-		                	height: 90,
-		                	layout: 'vbox',
 		                	items: [
 						                {
 						                	xtype: 'comboboxfieldbase',
 						                	fieldLabel:  HreRem.i18n('fieldlabel.comite.seleccionado'),
 						                	reference: 'comboComiteSeleccionado',
+						                	colspan: 3,
 						                	readOnly: false,
 						                	bind: {
 												store: '{comboComites}',
@@ -243,6 +242,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						                	fieldLabel:  HreRem.i18n('fieldlabel.comite.alquiler'),
 						                	reference: 'comboComiteSeleccionadoAlquiler',
 						                	readOnly: false,
+						                	colspan: 3,
 						                	bind: {
 												store: '{comboComitesAlquiler}',
 												value: '{datosbasicosoferta.comiteSancionadorCodigoAlquiler}',
@@ -256,6 +256,28 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 													this.bindStore(store);
 												}
 											}
+						                },
+										{
+											xtype: 'comboboxfieldbase',
+											fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
+											itemId: 'comboClaseOferta',
+											name: 'claseOferta',
+						                	readOnly: true,
+											bind: {
+												store: '{comboClaseOferta}',
+												value: '{datosbasicosoferta.claseOfertaCodigo}', 
+											},
+											displayField: 'descripcion',
+											valueField: 'codigo'
+										},
+										{
+							                xtype:'textfieldbase',
+											fieldLabel:  HreRem.i18n('fieldlabel.numOferPrincipal'),
+						                   	readOnly: true,	
+						 					bind: 		{
+												value: '{datosbasicosoferta.numOferPrincipal}'
+											}
+						                	
 						                },
 						                {
 						                	xtype: 'container',

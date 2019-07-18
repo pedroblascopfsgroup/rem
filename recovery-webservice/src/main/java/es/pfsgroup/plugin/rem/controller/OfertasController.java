@@ -710,18 +710,18 @@ public class OfertasController {
 					else {
 						idTarea[0] = tareaId.toString();
 						datosTarea.put("idTarea",idTarea);
-						try{
-							resultado = agendaAdapter.validationAndSave(datosTarea);
-						} catch(Exception e){
-							error = RestApi.REST_MSG_VALIDACION_TAREA;
-							errorDesc = e.getMessage();
-							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
-						}
+						
+						resultado = agendaAdapter.validationAndSave(datosTarea);
+						
+						if (resultado) {
+							error = null;
+							errorDesc = null;
+						}						
 						model.put("id", id);
 						model.put("ofrNumOferta", ofrNumOferta);
 						model.put("codTarea", codTarea);
 						model.put("data", resultado);
-						model.put("success", true);
+						model.put("success", resultado);
 						
 					}
 				}

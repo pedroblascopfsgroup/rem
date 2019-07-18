@@ -908,4 +908,23 @@ public class OfertasController {
 			return createModelAndViewJson(model);
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListActivosOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
+		{
+			try {
+				DtoPage page = ofertaApi.getListActivosOfertasAgrupadasLiberbank(dtoOfertasAgrupadas);
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+
+			} catch (Exception e) {
+				logger.error("Error en ofertasController", e);
+				model.put("success", false);
+			}
+			
+			
+			return createModelAndViewJson(model);
+		}
+	}
 }

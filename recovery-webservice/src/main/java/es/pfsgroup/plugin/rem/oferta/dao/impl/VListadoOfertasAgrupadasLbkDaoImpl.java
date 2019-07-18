@@ -24,12 +24,34 @@ public class VListadoOfertasAgrupadasLbkDaoImpl extends AbstractEntityDao<VLista
 		
 		HQLBuilder hb = null;
 		
+		String from = "SELECT new es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk("+
+				"vofertaagrupadas.numOfertaPrincipal,vofertaagrupadas.numOfertaDependiente,vofertaagrupadas.importeOfertaDependiente"+
+				") FROM VListadoOfertasAgrupadasLbk vofertaagrupadas ";
+		String where ="vofertaagrupadas.numOfertaPrincipal ="+dtoListadoOfertasAgrupadas.getNumOfertaPrincipal();
+					
+		hb = new HQLBuilder(from);
+		hb.appendWhere(where);
+		hb.addGroupBy("vofertaagrupadas.numOfertaPrincipal,vofertaagrupadas.numOfertaDependiente,vofertaagrupadas.importeOfertaDependiente");
+		
+		Page page = HibernateQueryUtils.page(this, hb, dtoListadoOfertasAgrupadas);
+		List<VListadoOfertasAgrupadasLbk> ofertas;
+		if(!Checks.estaVacio(page.getResults())) {
+			ofertas = (List<VListadoOfertasAgrupadasLbk>) page.getResults();
+			return new DtoPage(ofertas, page.getTotalCount());
+		}
+		return new DtoPage(new ArrayList<VListadoOfertasAgrupadasLbk>(),0);
+	}
+
+	@Override
+	public DtoPage getListActivosOfertasAgrupadasLbk(DtoVListadoOfertasAgrupadasLbk dtoListadoOfertasAgrupadas) {
+HQLBuilder hb = null;
+		
 		String from = "SELECT vofertaagrupadas FROM VListadoOfertasAgrupadasLbk vofertaagrupadas ";
 		String where ="vofertaagrupadas.numOfertaPrincipal ="+dtoListadoOfertasAgrupadas.getNumOfertaPrincipal();
 					
 		hb = new HQLBuilder(from);
 		hb.appendWhere(where);
-
+		
 		Page page = HibernateQueryUtils.page(this, hb, dtoListadoOfertasAgrupadas);
 		List<VListadoOfertasAgrupadasLbk> ofertas;
 		if(!Checks.estaVacio(page.getResults())) {

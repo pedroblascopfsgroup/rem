@@ -4101,4 +4101,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 		return ofertasAgrupadasPage;
 	}
+	
+	@Override
+	public DtoPage getListActivosOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dto) {
+		
+		DtoPage ofertasAgrupadasPage;
+		
+		Oferta oferta = genericDao.get(Oferta.class,
+				genericDao.createFilter(FilterType.EQUALS, "numOferta",dto.getNumOfertaPrincipal()));
+		
+		if(!Checks.esNulo(oferta) && !Checks.estaVacio(oferta.getActivosOferta()) && 
+				DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())){
+			ofertasAgrupadasPage = ofertasAgrupadasLbkDao.getListActivosOfertasAgrupadasLbk(dto);
+		}else {
+			ofertasAgrupadasPage = new DtoPage(new ArrayList<VListadoOfertasAgrupadasLbk>(),0);
+		}
+			
+		return ofertasAgrupadasPage;
+	}
 }

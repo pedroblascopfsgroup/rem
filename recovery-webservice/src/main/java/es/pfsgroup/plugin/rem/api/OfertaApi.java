@@ -684,5 +684,12 @@ public interface OfertaApi {
 	 */
 	DtoPage getListOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
 	
+	/**
+	 * Obtener la lista de activos de las ofertas agrupadas para Liberbank 
+	 * @param dtoVListadoOfertasAgrupadasLbk <DtoVListadoOfertasAgrupadasLbk>
+	 * @return <DtoPage> Página de valores de ofertas agrupadas Liberbank
+	 */
+	DtoPage getListActivosOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
+	
 }
 

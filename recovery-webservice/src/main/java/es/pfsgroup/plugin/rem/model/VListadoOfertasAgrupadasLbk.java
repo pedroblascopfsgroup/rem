@@ -52,6 +52,14 @@ public class VListadoOfertasAgrupadasLbk implements Serializable {
 		this.valorRazonable = valorRazonable;
 	}
 
+	public VListadoOfertasAgrupadasLbk(Long numOfertaPrincipal, Long numOfertaDependiente,
+			Double importeOfertaDependiente) {
+		super();
+		this.numOfertaPrincipal = numOfertaPrincipal;
+		this.numOfertaDependiente = numOfertaDependiente;
+		this.importeOfertaDependiente = importeOfertaDependiente;
+	}
+	
 	public Long getId() {
 		return id;
 	}

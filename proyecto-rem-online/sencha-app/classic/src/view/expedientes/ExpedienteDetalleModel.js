@@ -1174,7 +1174,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			model: 'HreRem.model.OfertasAgrupadasModel',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'ofertas/getListOfertasAgrupadas',
+				remoteUrl: 'ofertas/getListActivosOfertasAgrupadas',
 				extraParams: {numOfertaPrincipal:'{datosbasicosoferta.numOferta}'}
 			}
 		}

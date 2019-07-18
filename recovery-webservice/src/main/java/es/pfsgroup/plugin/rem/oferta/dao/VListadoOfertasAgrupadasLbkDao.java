@@ -7,4 +7,5 @@ import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 
 public interface VListadoOfertasAgrupadasLbkDao extends AbstractDao<VListadoOfertasAgrupadasLbk,Long>{
 	public DtoPage getListOfertasAgrupadasLbk(DtoVListadoOfertasAgrupadasLbk dtoListadoOfertasAgrupadas);
+	public DtoPage getListActivosOfertasAgrupadasLbk(DtoVListadoOfertasAgrupadasLbk dtoListadoOfertasAgrupadas);
 }

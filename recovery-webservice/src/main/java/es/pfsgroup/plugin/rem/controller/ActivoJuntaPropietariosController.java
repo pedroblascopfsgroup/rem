@@ -42,7 +42,7 @@ public class ActivoJuntaPropietariosController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListJuntas(DtoActivoJuntaPropietarios dtoActivoJuntaPropietarios, ModelMap model) {
 		try {
-
+			
 			DtoPage page = activoJuntaPropietariosApi.getListJuntas(dtoActivoJuntaPropietarios);
 
 			model.put("data", page.getResults());

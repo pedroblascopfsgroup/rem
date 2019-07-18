@@ -48,8 +48,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	    	},
 	    	session: true,
 	    	remoteSort: true,
-	    	remoteFilter: true,	    	
-	       
+	    	remoteFilter: true,	    		       
 	    	listeners : {
 	            beforeload : 'paramLoadingJuntas'
 	        }	        

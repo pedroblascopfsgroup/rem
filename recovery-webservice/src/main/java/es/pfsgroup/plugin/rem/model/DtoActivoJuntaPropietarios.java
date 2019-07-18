@@ -13,6 +13,8 @@ public class DtoActivoJuntaPropietarios extends WebDto {
 	private String codProveedor;
 	private String proveedor;
 	private Date fechaJunta;	
+	private String fechaDesde;	
+	private String fechaHasta;	
 	private Long comunidad;
 	private String cartera;
 	private String localizacion;
@@ -196,6 +198,18 @@ public class DtoActivoJuntaPropietarios extends WebDto {
 	}
 	public void setIndicaciones(String indicaciones) {
 		this.indicaciones = indicaciones;
+	}
+	public String getFechaDesde() {
+		return fechaDesde;
+	}
+	public void setFechaDesde(String fechaDesde) {
+		this.fechaDesde = fechaDesde;
+	}
+	public String getFechaHasta() {
+		return fechaHasta;
+	}
+	public void setFechaHasta(String fechaHasta) {
+		this.fechaHasta = fechaHasta;
 	}
 		
 	

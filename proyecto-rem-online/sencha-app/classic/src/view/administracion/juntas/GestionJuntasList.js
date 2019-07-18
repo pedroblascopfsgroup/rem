@@ -19,14 +19,12 @@ Ext.define('HreRem.view.administracion.juntas.GestionJuntasList', {
 
         me.columns= [
         
-		        {	        	
-		            //dataIndex: 'numProveedor',
+		        {	
 		        	dataIndex: 'codProveedor',
 		            text: HreRem.i18n('header.agrupacion.juntas.proveedor.numero'),
 		            flex: 0.5		        	
 		        },		        
-		        {	        	
-		        	//dataIndex: 'comunidad.nombreComercial',
+		        {	
 		            dataIndex: 'proveedor',
 		            text: HreRem.i18n('header.agrupacion.juntas.proveedor.nombre'),
 		            flex: 1.5		

@@ -10,5 +10,4 @@ public interface ActivoJuntaPropietariosApi {
 	
 	public DtoPage getListJuntas(DtoActivoJuntaPropietarios dtoActivoJuntaPropietarios);
 
-	public Object getJuntaDto(Long id);
 }

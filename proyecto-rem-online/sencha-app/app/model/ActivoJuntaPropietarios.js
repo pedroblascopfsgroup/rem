@@ -24,6 +24,16 @@ Ext.define('HreRem.model.ActivoJuntaPropietarios', {
 			type : 'date',
 			dateFormat: 'c'
 		},
+		{
+			name : 'fechaDesde',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
+			name : 'fechaHasta',
+			type : 'date',
+			dateFormat: 'c'
+		},
 		
 		{
     		name: 'comunidad'

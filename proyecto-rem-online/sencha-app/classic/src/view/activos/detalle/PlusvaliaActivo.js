@@ -89,6 +89,33 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	                value : '{plusvalia.minusvalia}'
 	            },
 	            allowBlank: false
+	        }, {
+	        	xtype : 'comboboxfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.exento'),
+	            bind : {
+	                store : '{comboSiNoPlusvalia}',
+	                value : '{plusvalia.exento}'
+	            },
+	            allowBlank: false
+	        }, {
+	        	xtype : 'comboboxfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.autoliquidacion'),
+	            bind : {
+	                store : '{comboSiNoPlusvalia}',
+	                value : '{plusvalia.autoliquidacion}'
+	            },
+	            allowBlank: false
+	        }, {
+	        	xtype: 'textareafieldbase',
+            	labelWidth: 200,
+            	rowspan: 5,
+            	height: 130,
+            	labelAlign: 'top',
+            	fieldLabel: HreRem.i18n('fieldlabel.plusvalia.observaciones'),
+            	bind:{
+            		value: '{plusvalia.observaciones}'
+            	},
+            	allowBlank: true
 	        } ]
 	    }
 

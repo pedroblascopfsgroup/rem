@@ -47,6 +47,15 @@ Ext.define('HreRem.model.PlusvaliaActivoModel', {
     		},
     		{
     			name: 'numGastoHaya'
+    		},
+    		{
+    			name: 'exento'
+    		},
+    		{
+    			name: 'autoliquidacion'
+    		},
+    		{
+    			name: 'observaciones'
     		}
     ],
     

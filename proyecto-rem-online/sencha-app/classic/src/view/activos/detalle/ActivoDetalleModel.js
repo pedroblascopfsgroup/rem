@@ -1976,8 +1976,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		comboSiNoPlusvalia: {
 			data : [
-		        {"codigo":"1", "descripcion":"Si"},
-		        {"codigo":"0", "descripcion":"No"}
+		        {"codigo":"01", "descripcion":"Si"},
+		        {"codigo":"02", "descripcion":"No"}
 		    ]
 		}
      }

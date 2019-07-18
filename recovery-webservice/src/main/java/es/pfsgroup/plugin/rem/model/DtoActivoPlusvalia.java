@@ -20,11 +20,14 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	private Date datePresentacionPlus;
 	private Date datePresentacionRecu;
 	private Date dateRespuestaRecu;
-	private Boolean aperturaSeguimientoExp;
+	private String aperturaSeguimientoExp;
 	private Integer importePagado;
 	private Long idGasto;
-	private Boolean minusvalia;
+	private String minusvalia;
 	private Long numGastoHaya;
+	private String exento;
+	private String autoliquidacion;
+	private String observaciones;
 	
 	public Long getIdPlusvalia() {
 		return idPlusvalia;
@@ -62,10 +65,10 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	public void setDateRespuestaRecu(Date dateRespuestaRecu) {
 		this.dateRespuestaRecu = dateRespuestaRecu;
 	}
-	public Boolean getAperturaSeguimientoExp() {
+	public String getAperturaSeguimientoExp() {
 		return aperturaSeguimientoExp;
 	}
-	public void setAperturaSeguimientoExp(Boolean aperturaSeguimientoExp) {
+	public void setAperturaSeguimientoExp(String aperturaSeguimientoExp) {
 		this.aperturaSeguimientoExp = aperturaSeguimientoExp;
 	}
 	public Integer getImportePagado() {
@@ -80,10 +83,10 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	public void setIdGasto(Long idGasto) {
 		this.idGasto = idGasto;
 	}
-	public Boolean getMinusvalia() {
+	public String getMinusvalia() {
 		return minusvalia;
 	}
-	public void setMinusvalia(Boolean minusvalia) {
+	public void setMinusvalia(String minusvalia) {
 		this.minusvalia = minusvalia;
 	}
 	
@@ -92,6 +95,24 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	}
 	public void setNumGastoHaya(Long numGastoHaya) {
 		this.numGastoHaya = numGastoHaya;
+	}
+	public String getExento() {
+		return exento;
+	}
+	public void setExento(String exento) {
+		this.exento = exento;
+	}
+	public String getAutoliquidacion() {
+		return autoliquidacion;
+	}
+	public void setAutoliquidacion(String autoliquidacion) {
+		this.autoliquidacion = autoliquidacion;
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
 	
 }

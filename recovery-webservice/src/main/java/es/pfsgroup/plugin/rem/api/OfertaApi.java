@@ -677,6 +677,7 @@ public interface OfertaApi {
 	 */
 	public List<OfertasAgrupadasLbk> buildListaOfertasAgrupadasLbk(Oferta principal, Oferta dependiente, String claseOferta) throws Exception;
 
+
 	/**
 	 * Obtener la lista de ofertas agrupadas para Liberbank 
 	 * @param dtoVListadoOfertasAgrupadasLbk <DtoVListadoOfertasAgrupadasLbk>
@@ -691,5 +692,9 @@ public interface OfertaApi {
 	 */
 	DtoPage getListActivosOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
 	
-}
 
+
+	boolean isOfertaPrincipal(Oferta oferta);
+
+
+}

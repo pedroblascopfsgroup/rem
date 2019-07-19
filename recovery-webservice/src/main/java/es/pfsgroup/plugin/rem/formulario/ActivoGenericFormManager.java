@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
@@ -658,7 +659,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	}
             	if(item.getType().equals(TIPO_CAMPO_COMBO_READONLY)) {
             		
-            		if(item.getNombre().equals("comite"))
+            		if(item.getNombre().equals("comite") || item.getNombre().equals("comitePropuesto"))
             		{
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
@@ -706,6 +707,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				}
             			}
             		}
+            		
             	}
             	if(item.getType().equals(TIPO_CAMPO_NUMBER))
             	{
@@ -737,6 +739,47 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				}
             			}
             		}
+            		
+					if (item.getNombre().equals("importeTotalOfertaAgrupada")) {
+
+						Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+						try {
+							if (!Checks.esNulo(ofertaAceptada) && ofertaApi.isOfertaPrincipal(ofertaAceptada)) {
+									List<OfertasAgrupadasLbk> ofertasAgrupadas = ofertaAceptada.getOfertasAgrupadas();
+									Double importeTotalOfertaAgrupada = ofertaAceptada.getImporteOferta();
+									
+									if(!Checks.esNulo(ofertasAgrupadas)) {
+										for (OfertasAgrupadasLbk ofertaAgrupada : ofertasAgrupadas) {
+											 if(ofertaAceptada.getId() != ofertaAgrupada.getOfertaDependiente().getId()) {
+												 importeTotalOfertaAgrupada += ofertaAgrupada.getOfertaDependiente().getImporteOferta();
+											 }
+										}
+									}
+									item.setValue(importeTotalOfertaAgrupada.toString());
+							}
+						} catch (Exception e) {
+							logger.error("error", e);
+						}
+
+					}
+					
+					if(item.getNombre().equals("numOfertaPrincipal")) {
+            			Oferta ofertaAceptada  = ofertaApi.tareaExternaToOferta(tareaExterna);
+						try {
+							if (!Checks.esNulo(ofertaAceptada)) {
+								Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", ofertaAceptada.getId());
+		            			OfertasAgrupadasLbk ofertaDependiente = genericDao.get(OfertasAgrupadasLbk.class, filtroOferta);
+		            			Long numOfertaPrincipal = 0l;
+		            			if(!Checks.esNulo(ofertaDependiente)) {
+		            				 numOfertaPrincipal = ofertaDependiente.getOfertaPrincipal().getNumOferta();
+		            			}
+									item.setValue(numOfertaPrincipal.toString());
+							}
+						} catch (Exception e) {
+							logger.error("error", e);
+						}
+            		}
+            		
             	}
             }
         }

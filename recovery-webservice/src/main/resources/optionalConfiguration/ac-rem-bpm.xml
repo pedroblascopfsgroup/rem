@@ -621,6 +621,10 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esYubai(tareaExterna);
 			}
+			def isOfertaDependiente = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.isOfertaDependiente(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

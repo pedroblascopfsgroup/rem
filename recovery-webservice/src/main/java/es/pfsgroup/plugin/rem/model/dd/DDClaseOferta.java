@@ -32,6 +32,10 @@ public class DDClaseOferta implements Auditable, Dictionary {
 	
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_OFERTA_PRINCIPAL = "01";
+	public static final String CODIGO_OFERTA_DEPENDIENTE = "02";
+	public static final String CODIGO_OFERTA_INDIVIDUAL = "03";
 
 	@Id
 	@Column(name = "DD_CLO_ID")

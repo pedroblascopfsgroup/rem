@@ -105,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
@@ -9615,6 +9616,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return listaOfertasAgrupadas;
 	}
+
+
+	public boolean isOfertaDependiente(TareaExterna tareaExterna) {
+   		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);	
+		boolean esOfertaDependiente = false;
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta().getClaseOferta()) &&
+				DDCartera.CODIGO_CARTERA_LIBERBANK.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+			if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(expedienteComercial.getOferta().getClaseOferta().getCodigo())) {
+				esOfertaDependiente = true;
+			}
+		}
+		return esOfertaDependiente;
+
+	}
+	
 
 
 }

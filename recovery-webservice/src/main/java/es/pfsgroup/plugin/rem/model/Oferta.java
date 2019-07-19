@@ -152,7 +152,7 @@ public class Oferta implements Serializable, Auditable {
     private List<ActivoOferta> activosOferta;
 
     @OneToMany(mappedBy = "ofertaPrincipal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFR_ID")
+    //@JoinColumn(name = "OFR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<OfertasAgrupadasLbk> ofertasAgrupadas;
 
@@ -806,9 +806,7 @@ public class Oferta implements Serializable, Auditable {
 	}
 
 	public List<OfertasAgrupadasLbk> getOfertasAgrupadas() {
-		
 		if(ofertasAgrupadas == null) ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>(); 
-		
 		return ofertasAgrupadas;
 	}
 

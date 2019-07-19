@@ -1159,10 +1159,61 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var comiteSuperior = me.down('[name=comiteSuperior]');
 		var comite = me.down('[name=comite]');
+		var comitePropuesto = me.down('[name=comitePropuesto]');
+		var importeTotalOfertaAgrupada = me.down('[name=importeTotalOfertaAgrupada]');
+		var huecoVenta = me.down('[name=huecoVenta]');
+		var numOfertaPrincipal = me.down('[name=numOfertaPrincipal]');
+		var comboConflicto = me.down('[name=comboConflicto]');
+		var comboRiesgo   = me.down('[name=comboRiesgo]');
+		var fechaEnvio = me.down('[name=fechaEnvio]');
+		var observaciones = me.down('[name=observaciones]');
+		
+		me.ocultarCampo(comiteSuperior);
+		me.ocultarCampo(comitePropuesto);
+		me.ocultarCampo(importeTotalOfertaAgrupada);
+		me.ocultarCampo(huecoVenta);
+		me.ocultarCampo(numOfertaPrincipal);
+	
 		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.desocultarCampo(comiteSuperior);
-		}else{
-			me.ocultarCampo(comiteSuperior);
+			
+		}else if(CONST.CARTERA['LIBERBANK'] == codigoCartera) {	
+			
+			var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+	        var url = $AC.getRemoteUrl('agenda/isOfertaPrincipal');
+	    	Ext.Ajax.request({
+	    			url:url,
+	    			params: {idExpediente : idExp},
+	    			success: function(response,opts){
+	    				 var ResofertaPrincipal = Ext.JSON.decode(response.responseText).ofertaPrincipal;
+	    				 if(ResofertaPrincipal == "true"){
+	    						
+	    						me.ocultarCampo(comite);
+	    						me.desocultarCampo(comitePropuesto);
+	    						me.desocultarCampo(importeTotalOfertaAgrupada);
+	    						me.desocultarCampo(huecoVenta);  	
+	    				 }
+	    			}
+	    	});	
+	    
+	    	var url = $AC.getRemoteUrl('agenda/isOfertaDependiente');
+	    	Ext.Ajax.request({
+	    			url:url,
+	    			params: {idExpediente : idExp},
+	    			success: function(response,opts){
+	    				 var ResofertaDependiente = Ext.JSON.decode(response.responseText).ofertaDependiente;
+	    				 if(ResofertaDependiente == "true"){
+	    					 me.desocultarCampo(numOfertaPrincipal); 
+	    					 me.ocultarCampo(comitePropuesto);
+	    					 me.ocultarCampo(comboConflicto);
+	    					 me.ocultarCampo(comboRiesgo);
+	    					 me.ocultarCampo(fechaEnvio);
+	    					 me.ocultarCampo(observaciones);
+	    					 me.ocultarCampo(comite);
+	    					 me.desocultarCampo(huecoVenta);
+	    				 }
+	    			}
+	    	});		
 		}
 	},
 	T013_DocumentosPostVentaValidacion: function() {

@@ -1289,11 +1289,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		/**************************************************************************/
 		/** Este es solamente mientras no haya validación, después quitar **/
 		/**************************************************************************/
+
 		OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
 			if (Checks.esNulo(principal)) {
 				oferAgrupa.setOfertaPrincipal(dependiente);
 			}
 			oferAgrupa.setOfertaDependiente(dependiente);
+
 			
 			// Cuando estén las validaciones hay que dejar este
 //			OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
@@ -4119,4 +4121,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 		return ofertasAgrupadasPage;
 	}
+
+	public boolean isOfertaPrincipal(Oferta oferta) {
+		
+		Oferta ofertaPrincipal = getOfertaById(oferta.getId());
+		if(!Checks.esNulo(ofertaPrincipal) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(ofertaPrincipal.getClaseOferta().getCodigo())){
+				return true;	
+			
+		}
+		return false;
+	}
+
+	
+
 }

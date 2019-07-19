@@ -64,40 +64,33 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
                         s = l !== 1 ? 's' : '';
                     this.up('panel').setTitle('Fotos (' + l + ' item' + s + ' seleccionado' +  s + ')');
                 },
-                itemclick: function(dataview,record) {
-                	if(this.getSelectionModel().getCount() > 1){
-                		this.up('form').getForm().findField('nombre').setRawValue("<i>(Multiselecci&oacute;n)</i>");
-                		this.up('form').getForm().findField('descripcion').setRawValue("<i>(Multiselecci&oacute;n)</i>");
-                		this.up('form').getForm().findField('fechaDocumento').setRawValue("<i>(Multiselecci&oacute;n)</i>");
-                		this.up('form').getForm().findField('orden').setRawValue("<i>(Multiselecci&oacute;n)</i>");
-                		this.up('form').getForm().findField('principal').setRawValue(false);
-                	}else{
-	                	if (record.getData().principal ==  true || record.getData().principal == "true") {
-	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].show();
-	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].show();
-	                		
-	                		if(record.getData().interiorExterior== "true" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].getValue()){
-	                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].setValue(true);
-	                		}
-	                		if(record.getData().interiorExterior== "false" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].getValue()){
-	                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].setValue(true);
-	                		}
-	                	}
-	                	else{
-	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
-	                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
-	                	}
-
-	                	if(Ext.isEmpty(record.getData().nombre)){
-	                		this.up('form').getForm().findField('nombre').setValue();
-	                	}
-	                	if(Ext.isEmpty(record.getData().descripcion)){
-	                		this.up('form').getForm().findField('descripcion').setValue();
-	                	}
-	                	if(Ext.isEmpty(record.getData().fechaDocumento)){
-	                		this.up('form').getForm().findField('fechaDocumento').setValue();
-	                	}
+                itemclick: function(dataview,record) {                	
+                	if (record.getData().principal ==  true || record.getData().principal == "true") {
+                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].show();
+                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].show();
+                		
+                		if(record.getData().interiorExterior== "true" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].getValue()){
+                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].setValue(true);
+                		}
+                		if(record.getData().interiorExterior== "false" && !this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].getValue()){
+                			this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].setValue(true);
+                		}
                 	}
+                	else{
+                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
+                		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
+                	}
+
+                	if(Ext.isEmpty(record.getData().nombre)){
+                		this.up('form').getForm().findField('nombre').setValue();
+                	}
+                	if(Ext.isEmpty(record.getData().descripcion)){
+                		this.up('form').getForm().findField('descripcion').setValue();
+                	}
+                	if(Ext.isEmpty(record.getData().fechaDocumento)){
+                		this.up('form').getForm().findField('fechaDocumento').setValue();
+                	}
+                	
                 	
                 	Ext.global.console.log(record.data);
 	        		this.up('form').setBindRecord(record.data);

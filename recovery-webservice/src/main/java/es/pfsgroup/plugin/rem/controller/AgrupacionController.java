@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -164,7 +163,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		//TODO cambiar Page por el nuevo dto.
 		//DtoEstadoDisponibilidadComercial page = adapter.getListActivosAgrupacion(filtro, id);
-		Page page = adapter.getListActivosAgrupacionById(filtro, id);
+		Page page = adapter.getListActivosAgrupacionById(filtro, id,false);
 		if(!Checks.esNulo(page)) {
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
@@ -813,7 +812,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		dtoAgrupacionFilter.setLimit(excelReportGeneratorApi.getLimit());
 
 		List<VActivosAgrupacion> listaActivosPorAgrupacion = (List<VActivosAgrupacion>) adapter
-				.getListActivosAgrupacionById(dtoAgrupacionFilter, agrID).getResults();
+				.getListActivosAgrupacionById(dtoAgrupacionFilter, agrID,false).getResults();
 
 		DtoAgrupaciones agruDto = adapter.getAgrupacionById(agrID);
 
@@ -989,6 +988,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView refreshCacheFotos(@RequestParam Long id, ModelMap model) {
 		try {

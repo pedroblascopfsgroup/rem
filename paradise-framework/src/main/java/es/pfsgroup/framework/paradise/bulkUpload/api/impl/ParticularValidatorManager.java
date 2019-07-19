@@ -3418,10 +3418,42 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_PDV_PLAN_DIN_VENTAS WHERE"
-				+ "		 	ACT_ID = '(SELECT ACT_ID FROM ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+")' "
+				+ "		 	ACT_ID = (SELECT ACT.ACT_ID FROM ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+") "
 				+ "		 	AND BORRADO = 0");
 
 		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia) {
+		if(Checks.esNulo(numActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_PLS_PLUSVALIA pls " + 
+				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " + 
+				"WHERE pls.borrado = 0 " + 
+				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " + 
+				"AND TRUNC(pls.ACT_PLS_FECHA_PRESENTACION_PLUSVALIA) = TRUNC(TO_DATE('"+fechaPlusvalia+"','dd/MM/yy'))");
+
+		return !"0".equals(resultado);
+		
+	}
+	
+	@Override
+	public String getActivoPlusvalia(String numActivo, String fechaPlusvalia) {
+		if(Checks.esNulo(numActivo)) {
+			return "";
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT ACT_PLS_ID FROM ACT_PLS_PLUSVALIA pls " + 
+				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " + 
+				"WHERE pls.borrado = 0 " + 
+				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " + 
+				"AND TRUNC(pls.ACT_PLS_FECHA_PRESENTACION_PLUSVALIA) = TRUNC(TO_DATE('"+fechaPlusvalia+"','dd/MM/yy'))");
+
+		return resultado;
+		
 	}
 
 	@Override
@@ -3528,6 +3560,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				
 		return !"0".equals(resultado);	
 	}
-	
+
 }
 

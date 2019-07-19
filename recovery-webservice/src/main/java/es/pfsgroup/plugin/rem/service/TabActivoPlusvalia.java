@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -21,7 +20,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDSiNSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
 @Component
@@ -97,7 +96,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 	public Activo saveTabActivo(Activo activo, WebDto dto) {
 		
 		DtoActivoPlusvalia activoPlusvaliaDto = (DtoActivoPlusvalia) dto;
-		DDSiNSiNo codSiNo = new DDSiNSiNo();
+		DDSinSiNo codSiNo = new DDSinSiNo();
 		ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		
 		if(Checks.esNulo(activoPlusvalia)) {
@@ -127,13 +126,15 @@ public class TabActivoPlusvalia implements TabActivoService {
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getAperturaSeguimientoExp())) {
+
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getAperturaSeguimientoExp());
-			codSiNo = (DDSiNSiNo) genericDao.get(DDSiNSiNo.class, filtro);
+			codSiNo = (DDSinSiNo) genericDao.get(DDSinSiNo.class, filtro);
 			activoPlusvalia.setAperturaSeguimientoExp(codSiNo);
+
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getImportePagado())) {
-			activoPlusvalia.setImportePagado(activoPlusvaliaDto.getImportePagado());
+			//activoPlusvalia.setImportePagado(activoPlusvaliaDto.getImportePagado());
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getNumGastoHaya())) {
@@ -142,25 +143,27 @@ public class TabActivoPlusvalia implements TabActivoService {
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getMinusvalia())) {
+
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getMinusvalia());
-				codSiNo = (DDSiNSiNo) genericDao.get(DDSiNSiNo.class, filtro);
+				codSiNo = (DDSinSiNo) genericDao.get(DDSinSiNo.class, filtro);
 				activoPlusvalia.setMinusvalia(codSiNo);
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getExento())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getExento());
-				codSiNo = (DDSiNSiNo) genericDao.get(DDSiNSiNo.class, filtro);
+				codSiNo = (DDSinSiNo) genericDao.get(DDSinSiNo.class, filtro);
 				activoPlusvalia.setExento(codSiNo);
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getAutoliquidacion())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getAutoliquidacion());
-				codSiNo = (DDSiNSiNo) genericDao.get(DDSiNSiNo.class, filtro);
+				codSiNo = (DDSinSiNo) genericDao.get(DDSinSiNo.class, filtro);
 				activoPlusvalia.setAutoliquidacion(codSiNo);
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getObservaciones())) {
 			activoPlusvalia.setObservaciones(activoPlusvaliaDto.getObservaciones());
+
 		}
 	
 		

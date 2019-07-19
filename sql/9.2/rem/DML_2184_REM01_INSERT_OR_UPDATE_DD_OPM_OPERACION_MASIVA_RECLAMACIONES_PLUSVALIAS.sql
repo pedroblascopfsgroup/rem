@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20190715
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20190718
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6822
@@ -38,7 +38,7 @@ DECLARE
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
     --			DD_OPM_CODIGO	DD_OPM_DESCRIPCION				DD_OPM_DESCRIPCION_LARGA		FUN_DESCRIPCION(FUN_FUNCIONES)	DD_OPM_VALIDACION_FORMATO
-	  T_FUNCION('MRP', 		'Reclamaciones plusvalías',	'Reclamaciones plusvalías',	'MASIVO_RECLAMACIONES_PLUSVALIAS',		'n*,f*,f*,f*,s*,n*,n,s*,s*,s*,s,s*')
+	  T_FUNCION('MRP', 		'Reclamaciones plusvalías',	'Reclamaciones plusvalías',	'MASIVO_RECLAMACIONES_PLUSVALIAS',		'n*,f*,f*,f*,f*,s*,d*,n,s*,s*,s*,s,s*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

@@ -61,11 +61,20 @@ BEGIN
         join '|| V_ESQUEMA ||'.ACT_OFG_OFERTA_GENCAT ofg on cmg.CMG_ID = ofg.CMG_ID
         join '|| V_ESQUEMA ||'.DD_TPE_TIPO_PERSONA tpe on tpe.dd_tpe_id = ofg.DD_TPE_ID and ofg.DD_TPE_ID is not null
         left join '|| V_ESQUEMA ||'.DD_SIP_SITUACION_POSESORIA sip on sip.DD_SIP_ID = ofg.dd_sip_id
+		where cmg.BORRADO=0
         order by cmg.CMG_FECHA_COMUNICACION desc';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_EXP_PREBLOQUEO_GENCAT...Creada OK');
   
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;   
 END;
 /
-
 EXIT;

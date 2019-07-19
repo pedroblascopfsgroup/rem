@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -23,7 +24,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDSiNSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
 /**
@@ -67,10 +68,10 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 	
 	@JoinColumn(name = "ACT_PLS_APERTURA_Y_SEGUIMIENTO_EXP")  
     @ManyToOne(fetch = FetchType.LAZY)
-   	private DDSiNSiNo aperturaSeguimientoExp;
+   	private DDSinSiNo aperturaSeguimientoExp;
     
     @Column(name = "ACT_PLS_IMPORTE_PAGADO")
-   	private Integer importePagado;
+   	private BigDecimal importePagado;
     
 	@ManyToOne
     @JoinColumn(name = "GPV_ID")
@@ -78,15 +79,15 @@ public class ActivoPlusvalia implements Serializable, Auditable {
     
 	@JoinColumn(name = "ACT_PLS_MINUSVALIA")  
     @ManyToOne(fetch = FetchType.LAZY)
-   	private DDSiNSiNo minusvalia;
+   	private DDSinSiNo minusvalia;
     
 	@JoinColumn(name = "ACT_PLS_EXENTO")  
     @ManyToOne(fetch = FetchType.LAZY)
-   	private DDSiNSiNo exento;
+   	private DDSinSiNo exento;
     
 	@JoinColumn(name = "ACT_PLS_AUTOLIQUIDACION")  
     @ManyToOne(fetch = FetchType.LAZY)
-   	private DDSiNSiNo autoliquidacion;
+   	private DDSinSiNo autoliquidacion;
     
     @Column(name = "ACT_PLS_OBSERVACIONES")
    	private String observaciones;
@@ -161,19 +162,19 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		this.dateRespuestaRecu = dateRespuestaRecu;
 	}
 
-	public DDSiNSiNo getAperturaSeguimientoExp() {
+	public DDSinSiNo getAperturaSeguimientoExp() {
 		return aperturaSeguimientoExp;
 	}
 
-	public void setAperturaSeguimientoExp(DDSiNSiNo aperturaSeguimientoExp) {
+	public void setAperturaSeguimientoExp(DDSinSiNo aperturaSeguimientoExp) {
 		this.aperturaSeguimientoExp = aperturaSeguimientoExp;
 	}
 
-	public Integer getImportePagado() {
+	public BigDecimal getImportePagado() {
 		return importePagado;
 	}
 
-	public void setImportePagado(Integer importePagado) {
+	public void setImportePagado(BigDecimal importePagado) {
 		this.importePagado = importePagado;
 	}
 
@@ -185,27 +186,27 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 		this.gastoProveedor = gastoProveedor;
 	}
 
-	public DDSiNSiNo getMinusvalia() {
+	public DDSinSiNo getMinusvalia() {
 		return minusvalia;
 	}
 
-	public void setMinusvalia(DDSiNSiNo minusvalia) {
+	public void setMinusvalia(DDSinSiNo minusvalia) {
 		this.minusvalia = minusvalia;
 	}
 
-	public DDSiNSiNo getExento() {
+	public DDSinSiNo getExento() {
 		return exento;
 	}
 
-	public void setExento(DDSiNSiNo exento) {
+	public void setExento(DDSinSiNo exento) {
 		this.exento = exento;
 	}
 
-	public DDSiNSiNo getAutoliquidacion() {
+	public DDSinSiNo getAutoliquidacion() {
 		return autoliquidacion;
 	}
 
-	public void setAutoliquidacion(DDSiNSiNo autoliquidacion) {
+	public void setAutoliquidacion(DDSinSiNo autoliquidacion) {
 		this.autoliquidacion = autoliquidacion;
 	}
 

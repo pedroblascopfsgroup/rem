@@ -438,7 +438,7 @@ public class OfertasController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET, value="ofertas/getOfertasVivasActGestoria")
-	public void getOfertasVivasActGestoria(@PathParam("id") Long id, @PathParam("numActivo") Long numActivo, @PathParam("codGestoria") String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+	public void getOfertasVivasActGestoria(@PathParam("id") String id, @PathParam("numActivo") String numActivo, @PathParam("codGestoria") String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 	  try {
 		Usuario usuarioGestoria = null; 
 		DtoOfertasFilter filtro = new DtoOfertasFilter();
@@ -446,77 +446,103 @@ public class OfertasController {
 		Boolean flagnumActivoNoExiste = false;
 		Boolean flagcodGestoriaNoExiste = false;
 		Boolean flagRelacionNumActivoCodGestoriaNoExiste = false;
-		
 		String error = null;
 		String errorDesc = null;
 		List<OfertaVivaRespuestaDto> ofertasList = new ArrayList<OfertaVivaRespuestaDto>();
-		
-		if(Checks.esNulo(id) || Checks.esNulo(numActivo) || Checks.esNulo(codGestoria)) {
-			flagParametrosANulo = true;
-		}else if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivo))){
-			flagnumActivoNoExiste = true;
-		}else if(Checks.esNulo(genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", codGestoria)))){
-			flagcodGestoriaNoExiste = true;
-		}else{
-		
-			usuarioGestoria  = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", codGestoria));
-			filtro.setGestoria(usuarioGestoria.getId());
-	
-			
-	
-			filtro.setNumActivo(numActivo);
-			filtro.setLimit(100);
-			
-			
-			//Gestoria, comprobar que exista en la BD
-			//Oferta relacionada que devuelva algo ofertasVivasActGestoria
-			
-			
-			DtoPage page = ofertaApi.getListOfertasGestoria(filtro);
-			
-			VOfertasActivosAgrupacion voaa;
-			
-			
-			
-			Oferta oferta;
-			OfertaVivaRespuestaDto ofr;
-			if(!Checks.esNulo(page) && !Checks.esNulo(page.getResults())) {
-				for (Object obj : page.getResults()) {
-					
-						voaa = (VOfertasActivosAgrupacion) obj;
-						oferta = ofertaApi.getOfertaById(voaa.getId());
-						if(ofertaApi.estaViva(oferta)) {			
-							ofr = new OfertaVivaRespuestaDto();
-							ofr.setNumOferta(oferta.getNumOferta()); //Número oferta
-							ofr.setCodEstadoEco(voaa.getCodigoEstadoExpediente()); //Estado expediente
-							// Activos [ini]
-							List<Long> listaIds = new ArrayList<Long>();
-							for (ActivoOferta activoOfr : oferta.getActivosOferta()) {
-								Long activoId = activoOfr.getActivoId();
-								listaIds.add(activoId);
-							}
-							List<Activo> activosLista = activoApi.getListActivosPorID(listaIds);
-							List<Long> activoNumLista = new ArrayList<Long>();
-							for (Activo activo : activosLista) {
-								activoNumLista.add(activo.getNumActivo());
-							}
-							ofr.setResultado(activoNumLista); //Activos [fin]
-							ofertasList.add(ofr);
-							
-						}
-					}
-				}
+		Long numActivoL = null;
+		Long idL = null;
+		try {
+			idL = Long.valueOf(id);
+		}catch(Exception e){
+			logger.error("Error trabajo", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", id);
+			model.put("error", RestApi.REST_MSG_FORMAT_ERROR );
+			model.put("errorDesc", "La id no tiene el formato adecuado" );
+			model.put("success", false);
 		}
-		
-		if(Checks.estaVacio(ofertasList)) {
-			flagRelacionNumActivoCodGestoriaNoExiste = true;
+		if(!Checks.esNulo(idL)) {
+			try {
+				numActivoL = Long.valueOf(numActivo);
+			}catch(Exception e){
+				logger.error("Error trabajo", e);
+				request.getPeticionRest().setErrorDesc(e.getMessage());
+				model.put("id", id);
+				model.put("error", RestApi.REST_MSG_FORMAT_ERROR );
+				model.put("errorDesc", "El numero de activo no tiene el formato adecuado" );
+				model.put("success", false);
+			}
+			if(!Checks.esNulo(numActivoL)) { 	
+			
+			
+				if(Checks.esNulo(idL) || Checks.esNulo(numActivo) || Checks.esNulo(codGestoria)) {
+					flagParametrosANulo = true;
+				}else if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivoL))){
+					flagnumActivoNoExiste = true;
+				}else if(Checks.esNulo(genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", codGestoria)))){
+					flagcodGestoriaNoExiste = true;
+				}else{
+				
+					usuarioGestoria  = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", codGestoria));
+					filtro.setGestoria(usuarioGestoria.getId());
+			
+					
+			
+					filtro.setNumActivo(numActivoL);
+					filtro.setLimit(100);
+					
+					
+					//Gestoria, comprobar que exista en la BD
+					//Oferta relacionada que devuelva algo ofertasVivasActGestoria
+					
+					
+					DtoPage page = ofertaApi.getListOfertasGestoria(filtro);
+					
+					VOfertasActivosAgrupacion voaa;
+					
+					
+					
+					Oferta oferta;
+					OfertaVivaRespuestaDto ofr;
+					if(!Checks.esNulo(page) && !Checks.esNulo(page.getResults())) {
+						for (Object obj : page.getResults()) {
+							
+								voaa = (VOfertasActivosAgrupacion) obj;
+								oferta = ofertaApi.getOfertaById(voaa.getId());
+								if(ofertaApi.estaViva(oferta)) {			
+									ofr = new OfertaVivaRespuestaDto();
+									ofr.setNumOferta(oferta.getNumOferta()); //Número oferta
+									ofr.setCodEstadoEco(voaa.getCodigoEstadoExpediente()); //Estado expediente
+									// Activos [ini]
+									List<Long> listaIds = new ArrayList<Long>();
+									for (ActivoOferta activoOfr : oferta.getActivosOferta()) {
+										Long activoId = activoOfr.getActivoId();
+										listaIds.add(activoId);
+									}
+									List<Activo> activosLista = activoApi.getListActivosPorID(listaIds);
+									List<Long> activoNumLista = new ArrayList<Long>();
+									for (Activo activo : activosLista) {
+										activoNumLista.add(activo.getNumActivo());
+									}
+									ofr.setResultado(activoNumLista); //Activos [fin]
+									ofertasList.add(ofr);
+									
+								}
+							}
+						}
+				}
+				
+				if(Checks.estaVacio(ofertasList)) {
+					flagRelacionNumActivoCodGestoriaNoExiste = true;
+				}
+			}
 		}
 		//El id, tanto en el try como en el catch, lo debe devolver siempre
 
 		try {
 			if(flagParametrosANulo) {
 				error = RestApi.REST_NO_PARAM;
-				if(Checks.esNulo(id)) {
+				if(Checks.esNulo(idL)) {
 					error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 					errorDesc = "Falta el campo id";
 					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
@@ -542,11 +568,13 @@ public class OfertasController {
 				throw new Exception(RestApi.REST_MSG_NO_RELATED_OFFER);
 			}
 
-			model.put("id", 0);
-			model.put("id", id);
-			model.put("data", ofertasList);
-			model.put("error", "null");
-			model.put("success", true);
+			if(!Checks.esNulo(idL) && !Checks.esNulo(numActivoL)) {
+				model.put("id", 0);
+				model.put("id", id);
+				model.put("data", ofertasList);
+				model.put("error", "null");
+				model.put("success", true);
+			}
 			
 		}catch(Exception e) {
 			logger.error("Error en OfertasController, metodo getOfertasVivasActGestoria", e);

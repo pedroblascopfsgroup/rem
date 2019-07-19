@@ -1202,7 +1202,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
 			isCarteraLbkVenta = true;
 		}
-		
+
 		dto.setIsCarteraLbkVenta(isCarteraLbkVenta);
 		Boolean isLbkOfertaComercialPrincipal = false;
 		Boolean muestraOfertaComercial = false;
@@ -1215,6 +1215,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		dto.setIsLbkOfertaComercialPrincipal(isLbkOfertaComercialPrincipal);
 		dto.setMuestraOfertaComercial(muestraOfertaComercial);
+
 
 		Double importeTotalAgrupada = oferta.getImporteOferta();
 		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta())) {
@@ -1240,6 +1241,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}
+
+		dto.setImporteTotal(importeTotalAgrupada);
 
 		dto.setFechaNotificacion(oferta.getFechaNotificacion());
 		dto.setFechaAlta(oferta.getFechaAlta());

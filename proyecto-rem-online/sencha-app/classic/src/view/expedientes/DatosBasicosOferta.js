@@ -217,27 +217,29 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	colspan: 2,
 		                	margin: '0 10 10 0',
 		                	items: [
-				                		{
-											xtype: 'comboboxfieldbase',
-											fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
-											itemId: 'comboClaseOferta',
-											name: 'claseOferta',
-						                	colspan: 2,
-						                	readOnly: true,
-											bind: {
-												store: '{comboClaseOferta}',
-												value: '{datosbasicosoferta.claseOfertaCodigo}', 
-												hidden: '{!datosbasicosoferta.isCarteraLbkVenta}'
-											},
-											displayField: 'descripcion',
-											valueField: 'codigo'
-										},
 										{
 											xtype:'container',
 						                	bind: { 
-						                		hidden: '{datosbasicosoferta.muestraOfertaComercial}'
+
+						                		hidden: '{!datosbasicosoferta.muestraOfertaComercial}'
 						                	},
+						                	colespan: 2,
 											items: [
+						                		{
+													xtype: 'comboboxfieldbase',
+													fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
+													itemId: 'comboClaseOferta',
+													name: 'claseOferta',
+								                	colspan: 2,
+								                	readOnly: true,
+													bind: {
+														store: '{comboClaseOferta}',
+														value: '{datosbasicosoferta.claseOfertaCodigo}', 
+														hidden: '{!datosbasicosoferta.isCarteraLbkVenta}'
+													},
+													displayField: 'descripcion',
+													valueField: 'codigo'
+												},
 												{
 									                xtype:'textfieldbase',
 													fieldLabel:  HreRem.i18n('fieldlabel.numOferPrincipal'),

@@ -299,7 +299,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return oferta;
 	}
-
+ 
 	@Override
 	public Oferta getOfertaPrincipalById(Long id) {
 		Oferta oferta = null;

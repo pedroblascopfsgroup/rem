@@ -95,8 +95,10 @@ Ext.define('HreRem.view.administracion.juntas.DatosJunta', {
 											        	bind: '{juntaactual.localizacion}'
 											        },
 											        {
+											        	xtype: 'numberfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.juntas.porcetnaje.participacion'),
 														reference: 'pparticipacion',
+														symbol: HreRem.i18n("symbol.porcentaje"),
 														name: 'pparticipacion',
 														bind: '{juntaactual.porcentaje}'
 													}
@@ -218,6 +220,7 @@ Ext.define('HreRem.view.administracion.juntas.DatosJunta', {
 														bind: '{juntaactual.otros}'
 													},
 													{
+														xtype: 'currencyfieldbase',
 												        fieldLabel: HreRem.i18n('header.importe'),
 														reference: 'importe',
 														name: 'importe',
@@ -240,18 +243,21 @@ Ext.define('HreRem.view.administracion.juntas.DatosJunta', {
 											items :
 												[
 													{
+														xtype: 'currencyfieldbase',
 												        fieldLabel: HreRem.i18n('fieldlabel.juntas.cuota.ordinaria'),
 														reference: 'ordinaria',
 														name: 'ordinaria',
 														bind: '{juntaactual.ordinaria}'
 													},
 													{
+														xtype: 'currencyfieldbase',
 												        fieldLabel: HreRem.i18n('fieldlabel.juntas.cuota.extra'),
 														reference: 'extra',
 														name: 'extra',
 														bind: '{juntaactual.extra}'
 													},
 													{
+														xtype: 'currencyfieldbase',
 												        fieldLabel: HreRem.i18n('fieldlabel.juntas.suministros'),
 														reference: 'suministros',
 														name: 'suministros',

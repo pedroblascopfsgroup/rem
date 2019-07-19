@@ -1196,10 +1196,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setTipoOfertaCodigo(oferta.getTipoOferta().getCodigo());
 		}
 
-		if (!Checks.esNulo(oferta.getClaseOferta())) {
+
+		Boolean isCarteraLbkVenta = false;
+		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+			isCarteraLbkVenta = true;
+		}
+		
+		dto.setIsCarteraLbkVenta(isCarteraLbkVenta);
+		
+		if (!Checks.esNulo(oferta.getClaseOferta()) && isCarteraLbkVenta) {
 			dto.setClaseOfertaDescripcion(oferta.getClaseOferta().getDescripcion());
 			dto.setClaseOfertaCodigo(oferta.getClaseOferta().getCodigo());
-			if ("02".equals(oferta.getClaseOferta().getCodigo())) {
+			if (DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
 				dto.setNumOferPrincipal(ofertaApi.getOfertaPrincipalById(oferta.getId()).getNumOferta());
 			}
 		}

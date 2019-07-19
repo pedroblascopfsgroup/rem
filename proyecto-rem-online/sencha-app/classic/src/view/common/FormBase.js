@@ -106,6 +106,14 @@
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
     		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelAlertas'}];
+    	}    	
+    	
+    	if (me.isSearchFormJuntas) {
+    		
+    		me.collapsible= true;
+    		me.collapsed= false;    		
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickJuntasSearch' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}];
     	}
     	
     	if (me.isSearchFormAvisos) {

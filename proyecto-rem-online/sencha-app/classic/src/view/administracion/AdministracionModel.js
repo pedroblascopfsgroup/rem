@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.administracion.AdministracionModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.administracion',
-    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision'],
+    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision', 'HreRem.model.ActivoJuntaPropietarios'],
 
     stores: {
 
@@ -20,8 +20,8 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	        listeners : {
 	            beforeload : 'paramLoading'
 	        }
-    	},
-    	
+    	},    	
+
     	plusvaliaAdministracion: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.Plusvalia',
@@ -36,6 +36,22 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	        listeners : {
 	            beforeload : 'paramLoading'
 	        }
+    	},
+
+    	juntas: {
+    		pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.ActivoJuntaPropietarios',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/activojuntapropietarios.json',
+		        remoteUrl: 'activojuntapropietarios/getListJuntas'
+	    	},
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true,	    		       
+	    	listeners : {
+	            beforeload : 'paramLoadingJuntas'
+	        }	        
     	},
 
     	provisiones: {
@@ -201,7 +217,13 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
         remoteUrl: 'generic/getDiccionario',
         extraParams: {diccionario: 'motivosAvisoGasto'}
       }
-    }
+    },
+	comboSiNoJuntas: {
+		data : [
+	        {"codigo":"1", "descripcion":"Si"},
+	        {"codigo":"2", "descripcion":"No"}
+	    ]
+	}
 
   }
 

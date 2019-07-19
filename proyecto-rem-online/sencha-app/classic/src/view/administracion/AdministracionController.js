@@ -179,6 +179,20 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		
 		
 	},
+	
+	 //Funcion que se ejecuta al hacer click en el boton buscar juntas
+	onClickJuntasSearch: function(btn) {
+		var me = this;
+		var initialData = {};
+
+		var searchForm = btn.up('formBase');
+		
+		if (searchForm.isValid()) {
+			this.lookupReference('gestionList').getStore().loadPage(1);
+        }
+		
+		
+	},
     
 	// Función que se ejecuta al hacer click en el botón de Exportar en gestión gastos.
 	onClickDescargarExcelGestionGastos: function(btn) {
@@ -327,6 +341,19 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		
 		var me = this,		
 		searchForm = this.lookupReference('provisionesSearch');
+		
+		if (searchForm.isValid()) {				
+			store.getProxy().extraParams = me.getFormCriteria(searchForm);			
+			return true;		
+		}
+		
+	},
+	
+	paramLoadingJuntas: function(store, operation, opts) {
+		//var me = this;
+		
+		var me = this,		
+		searchForm = this.lookupReference('juntasSearch');
 		
 		if (searchForm.isValid()) {				
 			store.getProxy().extraParams = me.getFormCriteria(searchForm);			
@@ -1322,8 +1349,8 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		config.url= url;
 		
 		me.fireEvent("downloadFile", config);		
-	},
-	
+	},	
+
 	 onChangeChainedCombo: function(combo) {
     	
     	var me = this, chainedCombo = me.lookupReference(combo.chainedReference);
@@ -1331,6 +1358,18 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		chainedCombo.clearValue("");
 		chainedCombo.getStore().load(); 	
     	
+    },
+    
+    onRowClickJuntasList: function(gridView, record){
+    	var me = this;
+    	
+    	Ext.create('HreRem.view.administracion.juntas.DatosJunta', { juntaactual: record }).show();
+    },
+    
+    onClickBotonCerrar: function(btn){
+		var me = this;
+		var window = btn.up("window");
+		window.hide();
     }
-
+	
 });

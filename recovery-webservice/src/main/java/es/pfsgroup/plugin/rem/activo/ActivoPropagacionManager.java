@@ -37,7 +37,7 @@ public class ActivoPropagacionManager implements ActivoPropagacionApi {
 					DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
 					filter.setLimit(1000);
 					filter.setStart(0);
-					Page page = agrupacionAdapter.getListActivosAgrupacionById(filter, agr.getId());
+					Page page = agrupacionAdapter.getListActivosAgrupacionById(filter, agr.getId(),true);
 					return page.getResults(); // "teoricamente" solo puede haber una agrupacion de esos tipos en el activo.
 				}
 			} else {
@@ -47,7 +47,7 @@ public class ActivoPropagacionManager implements ActivoPropagacionApi {
 						DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
 						filter.setLimit(1000);
 						filter.setStart(0);
-						Page page = agrupacionAdapter.getListActivosAgrupacionById(filter, activoAgrupacionActivo.getAgrupacion().getId());
+						Page page = agrupacionAdapter.getListActivosAgrupacionById(filter, activoAgrupacionActivo.getAgrupacion().getId(),true);
 						return page.getResults(); // "teoricamente" solo puede haber una agrupacion de esos tipos en el activo.
 					}
 				}

@@ -114,8 +114,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										        				},											                
 										        				change: function(){	
 										        					var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
-										        					if(this.getValue()!='' && this.getValue()>0){
-										        						
+										        					if(this.getValue()!='' && this.getValue()!=0){
 										        						if(field.getValue()!='' && field.getValue()>0){
 											        						field.validate();
 										        						}

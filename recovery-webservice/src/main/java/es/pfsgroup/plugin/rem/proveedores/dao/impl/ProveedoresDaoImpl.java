@@ -247,10 +247,12 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	@Override
 	public ActivoProveedorContacto getActivoProveedorContactoPorIdsUsuario(Long idUsuario) {
 
-		HQLBuilder hb = new HQLBuilder("from ActivoProveedorContacto pvc");
+		HQLBuilder hb = new HQLBuilder("select pvc from ActivoProveedorContacto pvc, ActivoProveedor pve ");
+		hb.appendWhere("pve.id = pvc.proveedor.id ");
 		hb.appendWhere("pvc.usuario.id = " + idUsuario);
-		hb.appendWhere("pvc.fechaBaja IS NULL");
-		hb.appendWhere("pvc.auditoria.borrado = 0");
+		hb.appendWhere("pve.fechaBaja IS NULL ");
+		hb.appendWhere("pvc.fechaBaja IS NULL ");
+		hb.appendWhere("pvc.auditoria.borrado = 0 ");
 		
 		List<ActivoProveedorContacto> listaProveedoresContacto = (List<ActivoProveedorContacto>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 		

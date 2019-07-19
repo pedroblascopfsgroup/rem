@@ -5375,7 +5375,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		List<DatosClienteProblemasVentaDto> datosClienteProblemasVentaDto = new ArrayList<DatosClienteProblemasVentaDto>();
 
 		try {
-			if(!Checks.esNulo(numeroUrsus)) {
+			if(!Checks.esNulo(numeroUrsus) && !numeroUrsus.equals("null")) {
 				Integer numURSUS = Integer.parseInt(numeroUrsus);
 			
 				if (!Checks.esNulo(idExpediente)) {
@@ -9210,7 +9210,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								return true;
 							}else{
 								String codigoRegistroEconomicoUrsus = getCodigoRegistroEconomicoMatrimonialURSUS(ejecutarDatosCliente);
-								if( (!Checks.esNulo(compradorExpediente.getRegimenMatrimonial()) && !Checks.esNulo(compradorExpediente.getRegimenMatrimonial().getCodigo())) || !Checks.esNulo(codigoRegistroEconomicoUrsus)) {
+								if( (!Checks.esNulo(compradorExpediente.getRegimenMatrimonial()) && !Checks.esNulo(codigoRegistroEconomicoUrsus))) {
 									if((DDRegimenesMatrimoniales.COD_GANANCIALES.equals(compradorExpediente.getRegimenMatrimonial().getCodigo()) && !compradorExpediente.getRegimenMatrimonial().getCodigo().equals(codigoRegistroEconomicoUrsus))
 											|| (DDRegimenesMatrimoniales.COD_GANANCIALES.equals(codigoRegistroEconomicoUrsus) && !codigoRegistroEconomicoUrsus.equals(compradorExpediente.getRegimenMatrimonial().getCodigo()))) {
 										return true;

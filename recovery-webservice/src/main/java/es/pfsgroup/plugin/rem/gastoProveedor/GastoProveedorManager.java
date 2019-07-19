@@ -115,7 +115,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -780,17 +779,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(!Checks.esNulo(gasto)) {
 					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
 					this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
-				}
-				
+					if(DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())) {
+						updaterStateApi.updaterStates(gasto, DDEstadoGasto.SUBSANADO);
+						gasto.getGastoGestion().setEstadoAutorizacionPropietario(genericDao.get(DDEstadoAutorizacionPropietario.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAutorizacionPropietario.CODIGO_PENDIENTE)));
+						gasto.getGastoGestion().setMotivoRechazoAutorizacionPropietario(null);
+						gasto.getGastoGestion().setFechaEstadoAutorizacionPropietario(null);
+						genericDao.update(GastoProveedor.class, gasto);
+					}
+				}				
 				return true;
-
-		}
-		}
-
-		
-		return false;
-
-		
+			}
+		}		
+		return false;		
 	}
 	
 	
@@ -1206,13 +1206,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return gastosActivos;
 	}
 
-	@Override
+	
 	@Transactional(readOnly = false)
 	public boolean createGastoActivo(Long idGasto, Long numActivo, Long numAgrupacion) {
 
-		GastoProveedor gasto = null;
+		if (Checks.esNulo(idGasto)) {
+			throw new JsonViewerException("El gasto debe informarse");
+		}
 
-		if (!Checks.esNulo(idGasto) && !Checks.esNulo(numActivo)) {
+		Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtroGasto);
+		
+		if (Checks.esNulo(gasto)) {
+			throw new JsonViewerException("Este gasto no existe");
+		}
+
+		if (!Checks.esNulo(numActivo)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+			Activo activo = genericDao.get(Activo.class, filtro);
+			if (Checks.esNulo(activo)) {
+				throw new JsonViewerException("Este activo no existe");
+			}
 
 			Filter filtroG = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 			Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo);
@@ -1220,51 +1234,90 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			if (Checks.esNulo(gastoActivo)) {
 
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
-				Activo activo = genericDao.get(Activo.class, filtro);
+				if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
+						&& Checks.esNulo(activo.getNumInmovilizadoBnk())) {
+					throw new JsonViewerException("El activo carece de nº inmovilizado Bankia");
+				}
 
-				if (Checks.esNulo(activo)) {
-					throw new JsonViewerException("Este activo no existe");
-				} else {
+				if (!Checks.esNulo(gasto.getPropietario())) {
 
-					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) && Checks.esNulo(activo.getNumInmovilizadoBnk())) {
-						throw new JsonViewerException("El activo carece de nº inmovilizado Bankia");
-					}
-
-					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
-					gasto = genericDao.get(GastoProveedor.class, filtroGasto);
-
-					if (!Checks.esNulo(gasto.getPropietario())) {
-
-						if (!Checks.esNulo(gasto.getPropietario().getDocIdentificativo())){
-							ActivoPropietario propietario = activo.getPropietarioPrincipal();
-							if (!Checks.esNulo(propietario)) {
-								if (!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
+					if (!Checks.esNulo(gasto.getPropietario().getDocIdentificativo())) {
+						ActivoPropietario propietario = activo.getPropietarioPrincipal();
+						if (!Checks.esNulo(propietario)) {
+							if (!gasto.getPropietario().getDocIdentificativo()
+									.equals(propietario.getDocIdentificativo())) {
 								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
-								}
 							}
-							else {
-								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
-							}				
-						}else{
-							throw new JsonViewerException("Propietario del gasto sin documento");
+						} else {
+							throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
 						}
-						
+					} else {
+						throw new JsonViewerException("Propietario del gasto sin documento");
 					}
-					
-					Filter filtroNumAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
-					Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", 1);
-					Activo actTram = genericDao.get(Activo.class, filtroNumAct, filtroTram);
-					
-					if(!Checks.esNulo(actTram)) {
-						throw new JsonViewerException("Este activo se encuentra en trámite");					
-					}else {
-						Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-						Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-						List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
 
+				}
+
+				Filter filtroNumAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+				Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", 1);
+				Activo actTram = genericDao.get(Activo.class, filtroNumAct, filtroTram);
+
+				if (!Checks.esNulo(actTram)) {
+					throw new JsonViewerException("Este activo se encuentra en trámite");
+				} else {
+					Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+					List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order,
+							filtroCatastro);
+
+					GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
+					gastoProveedorActivo.setActivo(activo);
+					gastoProveedorActivo.setGastoProveedor(gasto);
+					if (!Checks.estaVacio(activosCatastro)) {
+						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+					}
+
+					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
+					gastosActivosList.add(gastoProveedorActivo);
+
+					this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
+
+					genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+				}
+
+			} else {
+				throw new JsonViewerException("Este activo ya está asignado");
+			}
+
+		} else if (!Checks.esNulo(numAgrupacion)) {
+
+			Filter filtroAgr = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", numAgrupacion);
+			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtroAgr);
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("Esta agrupación no existe");
+			}
+
+			validarAgrupacion(agrupacion, gasto);
+
+			if (!Checks.estaVacio(agrupacion.getActivos())) {
+
+				for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+
+					filtroGasto = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+					Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",
+							activoAgrupacion.getActivo().getNumActivo());
+
+					Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id",
+							activoAgrupacion.getActivo().getId());
+					Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+					List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order,
+							filtroCatastro);
+
+					
+					List<GastoProveedorActivo> gastoProveedorActivoList= genericDao.getList(GastoProveedorActivo.class, filtroGasto, filtroA);
+
+					if (Checks.estaVacio(gastoProveedorActivoList)) {
 						GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
-						gastoProveedorActivo.setActivo(activo);
+						gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
 						gastoProveedorActivo.setGastoProveedor(gasto);
 						if (!Checks.estaVacio(activosCatastro)) {
 							gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
@@ -1275,116 +1328,56 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 						this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
 
-						genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);										
-					}				
-				}
-			} else {
-				throw new JsonViewerException("Este activo ya está asignado");
-			}
-
-		} else if (!Checks.esNulo(idGasto) && !Checks.esNulo(numAgrupacion)) {
-
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", numAgrupacion);
-			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
-
-			if (Checks.esNulo(agrupacion)) {
-				throw new JsonViewerException("Esta agrupación no existe");
-			} else {
-				
-				Integer counter = 0;
-
-				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
-				gasto = genericDao.get(GastoProveedor.class, filtroGasto);
-
-				if (!Checks.estaVacio(agrupacion.getActivos())) {
-
-					Activo activo = agrupacion.getActivos().get(0).getActivo();
-					ActivoPropietario propietario = activo.getPropietarioPrincipal();
-					if (!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(propietario)) {
-						if (!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
-							throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
-						}
-					}else {
-						throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
+						genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
 					}
 
-					for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
-						Filter filtroG = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-						Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activoAgrupacion.getActivo().getNumActivo());
-						GastoProveedorActivo gastoActivo = genericDao.get(GastoProveedorActivo.class, filtroG, filtroA);
-
-						if (Checks.esNulo(gastoActivo)) {
-
-							filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", activoAgrupacion.getActivo().getNumActivo());
-							activo = genericDao.get(Activo.class, filtro);
-
-							if (Checks.esNulo(activo)) {
-								throw new JsonViewerException("Este activo no existe");
-							} else {
-								
-								
-								Filter filtroNumAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", activoAgrupacion.getActivo().getNumActivo());
-								Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", 1);
-								Activo actTram = genericDao.get(Activo.class, filtroNumAct, filtroTram);
-								
-								
-								if(!Checks.esNulo(actTram)) {
-									counter++;
-								}
-
-							}
-						}
-					}
-					
-					if(counter > 0) {
-						throw new JsonViewerException("Esta agrupación contiene activos en trámite");
-					}else {
-						
-						for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
-																
-									filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
-									gasto = genericDao.get(GastoProveedor.class, filtroGasto);
-
-									Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
-									Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-									List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
-
-									GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
-									gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
-									gastoProveedorActivo.setGastoProveedor(gasto);
-									if (!Checks.estaVacio(activosCatastro)) {
-										gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
-									}
-
-									List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
-									gastosActivosList.add(gastoProveedorActivo);
-
-									this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
-
-									genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
-								
-							
-						}
-	
-					}					
 				}
+
 			}
+
 		} else {
-			return false;
+			throw new JsonViewerException("Se debe pasar un activo o una agrupación");
 		}
 
-		if (!Checks.esNulo(gasto)) {
-			// establecemos propietario si es necesario
-			gasto = asignarPropietarioGasto(gasto);
-			// volvemos a establecer la cuenta contable y partida;
-			gasto = asignarCuentaContableYPartidaGasto(gasto);
-			// Comprobamos si el estado del gasto cambia.
-			updaterStateApi.updaterStates(gasto, null);
+		// establecemos propietario si es necesario
+		gasto = asignarPropietarioGasto(gasto);
+		// volvemos a establecer la cuenta contable y partida;
+		gasto = asignarCuentaContableYPartidaGasto(gasto);
+		// Comprobamos si el estado del gasto cambia.
+		updaterStateApi.updaterStates(gasto, null);
 
-			genericDao.save(GastoProveedor.class, gasto);
-		}
+		genericDao.save(GastoProveedor.class, gasto);
 
 		return true;
+	}
+	
+	/**
+	 * Valida si la agr a añadir tiene algun activo en trámite
+	 * 
+	 * @param agrupacion
+	 * @param gasto
+	 */
+	private void validarAgrupacion(ActivoAgrupacion agrupacion, GastoProveedor gasto) {
+		if (!Checks.estaVacio(agrupacion.getActivos())) {
+
+			Activo activo = agrupacion.getActivos().get(0).getActivo();
+			ActivoPropietario propietario = activo.getPropietarioPrincipal();
+			if (!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(propietario)) {
+				if (!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
+					throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
+				}
+			} else {
+				throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
+			}
+
+			for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+				if (activoAgrupacion.getActivo().getEnTramite() != null
+						&& activoAgrupacion.getActivo().getEnTramite().equals(1)) {
+					throw new JsonViewerException("Esta agrupación contiene activos en trámite");
+				}
+
+			}
+		}
 	}
 	
 	/**

@@ -16,17 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
-import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
-import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
@@ -35,7 +31,6 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
@@ -46,7 +41,6 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.manager.GestorDocumentalAdapterManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
@@ -54,44 +48,26 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
-import es.pfsgroup.plugin.rem.model.ActivoBanyo;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
-import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaExterior;
-import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaInterior;
-import es.pfsgroup.plugin.rem.model.ActivoCocina;
-import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
-import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
-import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
-import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
-import es.pfsgroup.plugin.rem.model.ActivoParamentoVertical;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
-import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
-import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
@@ -111,8 +87,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	@Autowired
 	private ActivoDao activoDao;
 	
-	@Autowired
-	private MSVRawSQLDao rawDao;
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -129,11 +103,12 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
 	
-	@Autowired
-	private GestorActivoManager gestorActivoManager;
 	
 	@Autowired
 	private GestorDocumentalAdapterManager gdAdapterManager;
+	
+	
+	List<Activo> listaActivos = null;
 	
 	
 	@Override
@@ -152,6 +127,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado(); 
 		auditoria.setUsuarioCrear(usuarioLogado.getUsername());
 		auditoria.setFechaCrear(new Date());  
+		
+		listaActivos = new ArrayList<Activo>();
 		
 		//-----Nuevo Bien 
 		NMBBien bien = new NMBBien();
@@ -314,6 +291,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			return falloConexionConMaestro(fila);
 		}
 		genericDao.save(Activo.class, unidadAlquilable);
+		
 		
 		 //-- Lista propietarios 
 		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){    
@@ -900,7 +878,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		unidadAlquilable.setAdmision(activoMatriz.getAdmision());
 		genericDao.save(Activo.class, unidadAlquilable);
-		
+		listaActivos.add(unidadAlquilable);
 		return new ResultadoProcesarFila();
 	}
 	
@@ -942,5 +920,14 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		@SuppressWarnings("unused")
 		boolean result = activoAdapter.actualizarEstadoPublicacionActivo(unidadAlquilable.getId());
 	}
+	
+	@Override
+	public void postProcesado(MSVHojaExcel exc) throws Exception {
+		for(Activo activo : listaActivos){
+			updaterState.updaterStateTipoComercializacion(activo);
+		}
+		
+	}
+	
 	
 }

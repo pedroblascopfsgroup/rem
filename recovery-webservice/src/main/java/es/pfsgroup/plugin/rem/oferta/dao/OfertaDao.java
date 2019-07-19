@@ -87,4 +87,6 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public BigDecimal getImporteCalculoAlquiler(Long idOferta, String tipoComision, Long idProveedor);
 
 	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr);
+	
+	public void flush();
 }

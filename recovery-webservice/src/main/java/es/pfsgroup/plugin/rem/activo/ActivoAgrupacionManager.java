@@ -149,8 +149,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Override
 	@BusinessOperation(overrides = "activoAgrupacionManager.getListActivosAgrupacionById")
-	public Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuarioLogado) {
-		return activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado);
+	public Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuarioLogado,Boolean little) {
+		return activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado,little);
 	}
 	
 
@@ -159,7 +159,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		
 		DtoEstadoDisponibilidadComercial dtoEstadoDispcom = new DtoEstadoDisponibilidadComercial();
 		List<DtoVActivosAgrupacion> listaDto = new ArrayList<DtoVActivosAgrupacion>();
-		List<VActivosAgrupacion> lAgrupaActivos =  (List<VActivosAgrupacion>) activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado).getResults();
+		List<VActivosAgrupacion> lAgrupaActivos =  (List<VActivosAgrupacion>) activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado,true).getResults();
 		 
 		for(VActivosAgrupacion actAgrup : lAgrupaActivos) {
 			DtoVActivosAgrupacion dtoVActAgrup = new DtoVActivosAgrupacion();	

@@ -144,6 +144,16 @@ Ext.define('HreRem.view.common.DDViewModel', {
 					}
 				},
 				autoLoad: true
+			},
+			comboRegimenesMatrimoniales: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {
+							diccionario: 'regimenesMatrimoniales'
+						}
+					}
 			}
      }
 });

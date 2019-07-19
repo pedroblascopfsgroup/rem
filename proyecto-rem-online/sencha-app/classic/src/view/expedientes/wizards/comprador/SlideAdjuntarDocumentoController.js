@@ -12,78 +12,148 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 	onActivate: function() {
 		var me = this,
 			form = me.getView(),
-			wizard = form.up('wizardBase');
+			wizard = form.up('wizardBase'),
+			idExpediente = null;
 		me.firstExecution = true;
-		if(wizard.expediente){
-			wizard.mask(HreRem.i18n('msg.mask.espere'));
-			Ext.Ajax.request({
-				url: $AC.getRemoteUrl('ofertas/esCarteraInternacional'),
-				method: 'POST',
-				params: {
-					idActivo: null,
-					idAgrupacion: null,
-					idExpediente: wizard.expediente.get('id')
-				},
-				success: function(response, opts) {
-					var data = Ext.decode(response.responseText);
-					if (!Ext.isEmpty(data)) {
-						form.getForm().findField('carteraInternacional').setValue(data.carteraInternacional);
-						
-						Ext.Ajax.request({
-							url: $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador'),
-							method: 'GET',
-							params: {
-								docCliente: wizard.comprador.get('numDocumento'),
-								idExpediente: wizard.comprador.get('idExpedienteComercial')
-							},
-							success: function(response, opts) {
-								wizard.unmask();
-								var data = Ext.decode(response.responseText);
-								if (!Ext.isEmpty(data.data)) {
-									form.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-									form.lookupReference('btnBorrarDocumentoAdjunto').show();	
-									esInternacional = form.getForm().findField('carteraInternacional').getValue(),
-									transferenciasInternacionales = form.getForm().findField('transferenciasInternacionales').getValue();
-									if(!esInternacional || transferenciasInternacionales=="true"){
-										btnFinalizar = form.lookupReference('btnFinalizar');
-										btnFinalizar.enable();
-									}
-									
-								}else{
-									esInternacional = form.getForm().findField('carteraInternacional').getValue(),
-									checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
-									checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
-									checkComunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue();
-									if(!Ext.isEmpty(checkCesionDatos) || !Ext.isEmpty(checkTransInternacionales) || !Ext.isEmpty(checkComunicacionTerceros)){
-										if(!esInternacional || checkComunicacionTerceros=="true"){
-											btnFinalizar = form.lookupReference('btnFinalizar');
-											btnFinalizar.enable();
-										}
-									}
-								}
-							},
-							failure: function(record, operation) {
-								me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
-								wizard.unmask();
-							}
-						});
-					}
-				},
-				failure: function(record, operation) {
-					me.fireEvent('errorToast', HreRem.i18n('msg.comprobacion.cartera.internacional.ko'));
-				}
-			});
-			
-			if(!Ext.isEmpty(wizard.idComprador)){
-				form.getForm().findField('cesionDatos').setValue(wizard.comprador.get('cesionDatos'));
-				form.getForm().findField('comunicacionTerceros').setValue(wizard.comprador.get('comunicacionTerceros'));
-				form.getForm().findField('transferenciasInternacionales').setValue(wizard.comprador.get('transferenciasInternacionales'));
-				form.cesionHaya = wizard.comprador.get('cesionDatos');
-				form.comunicacionTerceros = wizard.comprador.get('comunicacionTerceros');
-				form.tranferenciasInternacionales = wizard.comprador.get('transferenciasInternacionales');
-			}
-			
+		if(!Ext.isEmpty(wizard.expediente)){
+			idExpediente = wizard.expediente.get('id');
 		}
+		Ext.Ajax.request({
+			url: $AC.getRemoteUrl('ofertas/checkPedirDoc'),
+			method: 'POST',
+			params: {
+				idExpediente: idExpediente,					
+				dniComprador: wizard.comprador.get('numDocumento'),
+				codtipoDoc: wizard.comprador.get('codTipoDocumento')
+			},
+			success: function(response, opts) {
+				var datos = Ext.decode(response.responseText);
+				wizard.idComprador = datos.compradorId;
+				var datos = Ext.decode(response.responseText);
+    			var pedirDoc = Ext.decode(response.responseText).data;
+    			var comprador=datos.comprador;
+    			var destinoComercial= datos.destinoComercial;
+    			var carteraInternacional = datos.carteraInternacional;
+    			var slideDatos;    			
+
+				if(!Ext.isEmpty(wizard.expediente)){
+				   slideDatos = wizard.down('slidedatoscomprador');
+				   if(!Ext.isEmpty(pedirDoc)){
+					   slideDatos.getForm().findField('pedirDoc').setValue(pedirDoc);
+       		       }
+
+				   if(!Ext.isEmpty(datos.compradorId)){
+					   slideDatos.idComprador=datos.compradorId;
+				   }				   
+
+				   if(!Ext.isEmpty(comprador)){
+					   if(!Ext.isEmpty(comprador.cesionDatos)){
+					      form.getForm().findField('cesionDatos').setValue(comprador.cesionDatos);
+					   }else{
+						   form.getForm().findField('cesionDatos').setValue();
+					   }
+					   if(!Ext.isEmpty(comprador.comunicacionTerceros)){
+						   form.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
+					   }else{
+						   form.getForm().findField('comunicacionTerceros').setValue();
+					   }
+    				   if(!Ext.isEmpty(comprador.transferenciasInternacionales)){
+    					   form.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
+    				   }else{
+    					   form.getForm().findField('transferenciasInternacionales').setValue();		
+    				   }
+				   }
+			    }
+			
+			
+    			ventanaAdjuntarDocumento = wizard.down('slideadjuntardocumento');
+    			if(!Ext.isEmpty(datos.carteraInternacional)){
+    				ventanaAdjuntarDocumento.getForm().findField('carteraInternacional').setValue(datos.carteraInternacional);
+				    }
+    			me.getView().unmask();
+    			if(wizard.expediente){
+    				wizard.mask(HreRem.i18n('msg.mask.espere'));
+    				Ext.Ajax.request({
+    					url: $AC.getRemoteUrl('ofertas/esCarteraInternacional'),
+    					method: 'POST',
+    					params: {
+    						idActivo: null,
+    						idAgrupacion: null,
+    						idExpediente: wizard.expediente.get('id')
+    					},
+    					success: function(response, opts) {
+    						var data = Ext.decode(response.responseText);
+    						if (!Ext.isEmpty(data)) {
+    							form.getForm().findField('carteraInternacional').setValue(data.carteraInternacional);
+    							
+    							Ext.Ajax.request({
+    								url: $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador'),
+    								method: 'GET',
+    								params: {
+    									docCliente: wizard.comprador.get('numDocumento'),
+    									idExpediente: wizard.comprador.get('idExpedienteComercial')
+    								},
+    								success: function(response, opts) {
+    									wizard.unmask();
+    									var data = Ext.decode(response.responseText);
+    									if (!Ext.isEmpty(data.data)) {
+    										form.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+    										form.lookupReference('btnBorrarDocumentoAdjunto').show();	
+    										esInternacional = form.getForm().findField('carteraInternacional').getValue(),
+    										transferenciasInternacionales = form.getForm().findField('transferenciasInternacionales').getValue();
+    										btnFinalizar = form.lookupReference('btnFinalizar');
+    										if(!esInternacional || transferenciasInternacionales=="true"){    											
+    											btnFinalizar.enable();
+    										}else{
+												btnFinalizar.disable();
+											}
+    										
+    									}else{
+    										form.getForm().findField('docOfertaComercial').setValue();
+    										form.lookupReference('btnBorrarDocumentoAdjunto').hide();
+    										esInternacional = form.getForm().findField('carteraInternacional').getValue(),
+    										checkCesionDatos = form.getForm().findField('cesionDatos').getValue(),
+    										checkTransInternacionales = form.getForm().findField('transferenciasInternacionales').getValue(),
+    										checkComunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue();
+    										btnFinalizar = form.lookupReference('btnFinalizar');
+    										if(!Ext.isEmpty(checkCesionDatos) || !Ext.isEmpty(checkTransInternacionales) || !Ext.isEmpty(checkComunicacionTerceros)){
+    											if(!esInternacional || checkComunicacionTerceros=="true"){    												
+    												btnFinalizar.enable();
+    											}else{
+    												btnFinalizar.disable();
+    											}
+    										}else{
+    											btnFinalizar.disable();
+    										}
+    									}
+    								},
+    								failure: function(record, operation) {
+    									me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));
+    									wizard.unmask();
+    								}
+    							});
+    						}
+    					},
+    					failure: function(record, operation) {
+    						me.fireEvent('errorToast', HreRem.i18n('msg.comprobacion.cartera.internacional.ko'));
+    					}
+    				});
+    				
+    				if(!Ext.isEmpty(wizard.idComprador)){
+    					form.getForm().findField('cesionDatos').setValue(wizard.comprador.get('cesionDatos'));
+    					form.getForm().findField('comunicacionTerceros').setValue(wizard.comprador.get('comunicacionTerceros'));
+    					form.getForm().findField('transferenciasInternacionales').setValue(wizard.comprador.get('transferenciasInternacionales'));
+    					form.cesionHaya = wizard.comprador.get('cesionDatos');
+    					form.comunicacionTerceros = wizard.comprador.get('comunicacionTerceros');
+    					form.tranferenciasInternacionales = wizard.comprador.get('transferenciasInternacionales');
+    				}
+    				
+    			}
+			},
+			failure: function(record, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		   }
+		});
 	},
 
 	onClickContinuar: function() {

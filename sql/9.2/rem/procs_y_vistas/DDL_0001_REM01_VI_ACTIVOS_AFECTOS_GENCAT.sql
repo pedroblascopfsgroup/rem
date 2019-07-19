@@ -111,17 +111,25 @@ BEGIN
         ,(''08'',''18''),(''08'',''56''),(''08'',''57''),(''08'',''58''),(''08'',''59''),(''08'',''60''),(''08'',''136''),(''08'',''64'')
         ,(''06'',''16'')
         )
-		AND NOT EXISTS (
+		MINUS
 		    SELECT AGA.ACT_ID 
 			FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
 		    JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
 		    JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = ''16'' AND TAG.BORRADO = 0
-		    WHERE AGA.AGA_PRINCIPAL = 0 AND AGA.ACT_ID = ACT.ACT_ID
-		)';
+		    WHERE AGA.AGA_PRINCIPAL = 0 
+		';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT...Creada OK');
   
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;   
 END;
 /
-
 EXIT;

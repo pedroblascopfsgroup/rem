@@ -586,8 +586,13 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				precio = !Checks.esNulo(exc.dameCelda(i, columnNumber))
-						? Double.parseDouble(exc.dameCelda(i, columnNumber)) : null;
+				String value = exc.dameCelda(i, columnNumber);
+				if(value != null && !value.isEmpty()){
+					if(value.contains(",")){
+						value = value.replace(",", ".");
+					}
+				}
+				precio = !Checks.esNulo(value) ? Double.parseDouble(value) : null;
 
 				// Si el precio no se encuentra por encima de 0.
 				if ((!Checks.esNulo(precio) && precio.compareTo(0.0D) <= 0))
@@ -706,8 +711,11 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				if (!particularValidator.existeSociedadAcreedora(exc.dameCelda(i, columnNumber)) && particularValidator.existeActivoAsociado(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
-					listaFilas.add(i);
+				if (particularValidator.existeActivoAsociado(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))) {
+					if(!particularValidator.existeSociedadAcreedora(exc.dameCelda(i, columnNumber))) {
+						listaFilas.add(i);
+					}
+				}
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage(),e);
 				e.printStackTrace();

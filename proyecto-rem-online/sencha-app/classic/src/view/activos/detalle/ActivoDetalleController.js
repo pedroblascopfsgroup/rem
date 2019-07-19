@@ -1163,7 +1163,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	downloadDocumentoAdjunto: function(grid, record) {
-		
 		var me = this,
 		config = {};
 		
@@ -1171,7 +1170,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");
-		config.params.nombreDocumento=record.get("nombre");
+		config.params.nombreDocumento=record.get("nombre").replace(",","");
 		me.fireEvent("downloadFile", config);
 	},
 
@@ -1184,7 +1183,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");
-		config.params.nombreDocumento=record.get("nombre");
+		config.params.nombreDocumento=record.get("nombre").replace(",","");
 		me.fireEvent("downloadFile", config);
 	},
 

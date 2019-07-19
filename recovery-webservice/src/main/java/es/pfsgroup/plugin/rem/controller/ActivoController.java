@@ -2829,6 +2829,7 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
 	public ModelAndView getCalificacionNegativaMotivo( Long idActivo, String idMotivo, ModelMap model) {
 
@@ -2847,6 +2848,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getIsActivoMatriz(String idActivo, ModelMap model){
 		try{
@@ -2916,6 +2918,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView propagarActivosMatriz(String idActivo, ModelMap model){
 		

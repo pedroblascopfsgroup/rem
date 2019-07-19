@@ -20,7 +20,7 @@ public interface ActivoAgrupacionDao extends AbstractDao<ActivoAgrupacion, Long>
 	
 	Page getListAgrupaciones(DtoAgrupacionFilter dto, Usuario usuLogado);
 
-	Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuLogado);
+	Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuLogado,Boolean little);
 	
 	Long getNextNumAgrupacionRemManual();
 	

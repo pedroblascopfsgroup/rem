@@ -231,7 +231,7 @@ if [[ $PACKAGE == 0 ]]; then
 	fi
 else
     echo $'\t''if [[ $RESULTADO == 33 ]] ; then' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
-    echo $'\t'"        echo \" YE : Fichero ya ejecutado en entorno previo $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
+    echo $'\t'"      echo \" YE : Fichero ya ejecutado en entorno previo $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo $'\t''  else' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo $'\t'"      echo \" KO Script no ejecutado en entorno previo : $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null
     echo $'\t''fi' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null

@@ -266,7 +266,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	}
 
 	public Date getFechaEmision() {
-		return (Date) fechaEmision.clone();
+		if(!Checks.esNulo(fechaEmision)) {
+			return (Date) fechaEmision.clone();
+		}else {
+			return null;
+		}
 	}
 
 	public void setFechaEmision(Date fechaEmision) {
@@ -274,7 +278,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	}
 
 	public Date getFechaNotificacion() {
-		return (Date) fechaNotificacion.clone();
+		if(!Checks.esNulo(fechaNotificacion)) {
+			return (Date) fechaNotificacion.clone();
+		}else {
+			return null;
+		}
 	}
 
 	public void setFechaNotificacion(Date fechaNotificacion) {
@@ -499,7 +507,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	}	
 	
 	public Date getFechaRecPropiedad() {
-		return (Date) fechaRecPropiedad.clone();
+		if(!Checks.esNulo(fechaRecPropiedad)) {
+			return (Date) fechaRecPropiedad.clone();
+		}else {
+			return null;
+		}
 	}
 
 	public void setFechaRecPropiedad(Date fechaRecPropiedad) {
@@ -507,7 +519,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	}
 
 	public Date getFechaRecGestoria() {
-		return (Date) fechaRecGestoria.clone();
+		if(!Checks.esNulo(fechaRecGestoria)) {
+			return (Date) fechaRecGestoria.clone();
+		}else {
+			return null;
+		}
 	}
 
 	public void setFechaRecGestoria(Date fechaRecGestoria) {
@@ -515,7 +531,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	}
 
 	public Date getFechaRecHaya() {
-		return (Date) fechaRecHaya.clone();
+		if(!Checks.esNulo(fechaRecHaya)) {
+			return (Date) fechaRecHaya.clone();
+		}else {
+			return null;
+		}
 	}
 
 	public void setFechaRecHaya(Date fechaRecHaya) {

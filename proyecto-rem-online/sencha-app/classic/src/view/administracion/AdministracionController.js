@@ -1358,7 +1358,18 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		chainedCombo.clearValue("");
 		chainedCombo.getStore().load(); 	
     	
+    },
+    
+    onRowClickJuntasList: function(gridView, record){
+    	var me = this;
+    	
+    	Ext.create('HreRem.view.administracion.juntas.DatosJunta', { juntaactual: record }).show();
+    },
+    
+    onClickBotonCerrar: function(btn){
+		var me = this;
+		var window = btn.up("window");
+		window.hide();
     }
 	
-
 });

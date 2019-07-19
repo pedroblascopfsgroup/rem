@@ -217,7 +217,13 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
         remoteUrl: 'generic/getDiccionario',
         extraParams: {diccionario: 'motivosAvisoGasto'}
       }
-    }
+    },
+	comboSiNoJuntas: {
+		data : [
+	        {"codigo":"1", "descripcion":"Si"},
+	        {"codigo":"2", "descripcion":"No"}
+	    ]
+	}
 
   }
 

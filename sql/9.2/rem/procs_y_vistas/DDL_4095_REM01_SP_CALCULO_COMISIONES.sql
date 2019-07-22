@@ -415,7 +415,7 @@ with comision_origen_insertar as(
     select unique comision_id from '||V_ESQUEMA||'.AUX_HASH_COMISION_ORIGEN where comision_id not in (select unique ori.comision_id from '||V_ESQUEMA||'.AUX_HASH_COMISION_ORIGEN ori 
     join '||V_ESQUEMA||'.AUX_HASH_COMISION_DESTINO des on ori.hash_com <> des.hash_com)
     )
-select  '''||generate_uuid()||'''
+select generate_uuid()
 ,tmp.CARTERA
 ,tmp.SUBCARTERA
 ,tmp.TIPO_ACTIVO

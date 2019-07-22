@@ -43,7 +43,6 @@ import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -98,10 +97,7 @@ import net.sf.json.JSONObject;
 
 @Controller
 public class TrabajoController extends ParadiseJsonController {
-	
-	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
-		
+			
 	@Autowired
 	private TrabajoApi trabajoApi;
 	

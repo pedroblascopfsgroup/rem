@@ -584,6 +584,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public HashMap<String, String> saveOferta(OfertaDto ofertaDto) throws Exception {
 		Oferta oferta = null;
 		HashMap<String, String> errorsList = null;
@@ -820,6 +821,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			Long idOferta = this.saveOferta(oferta);
+			ofertaDao.flush();
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && !Checks.estaVacio(ofertaDto.getTitularesAdicionales())) {
 				oferta.setId(idOferta);
 				oferta.setTitularesAdicionales(null);
@@ -836,12 +838,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
-
+			
 			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
+			
 		}
 
 		return errorsList;

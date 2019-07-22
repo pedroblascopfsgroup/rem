@@ -473,4 +473,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		}
 		return ofertasVivas;
 	}
+	
+	public void flush() {
+		this.getSessionFactory().getCurrentSession().flush();
+	}
 }

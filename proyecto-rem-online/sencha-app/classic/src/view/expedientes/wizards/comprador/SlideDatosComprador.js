@@ -424,8 +424,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						},
 						listeners: {
 							change: 'comprobarObligatoriedadCamposNexos'
-						},
-						disabled: true
+						}
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.num.reg.conyuge'),
@@ -433,10 +432,9 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'documentoConyuge',
 						padding: '5px',
 						listeners: {
-							change: 'comprobarObligatoriedadCamposNexos'
+							change: 'onNumeroDocumentoChange'
 						},
-						allowBlank:true,
-						disabled: true
+						allowBlank:true
 					},
 					{
 						xtype: 'comboboxfieldbase',
@@ -457,8 +455,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						queryMode: 'local',
 						autoLoadOnValue: false,
 						loadOnBind: false,
-						allowBlank:true,
-						disabled: true
+						allowBlank:true
 					},
 					{
 						xtype: 'textfieldbase',
@@ -606,7 +603,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosComprador', {
 						name: 'numDocumentoRte',
 						padding: '5px',
 		            	listeners: {
-		            		change: 'comprobarObligatoriedadCamposNexos'
+		            		change: 'onNumeroDocumentoChange'
 		            	}
 					},
 					{

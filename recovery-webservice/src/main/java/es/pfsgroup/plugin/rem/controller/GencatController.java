@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.util.List;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,24 +17,16 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GencatAdapter;
 import es.pfsgroup.plugin.rem.api.GencatApi;
-import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
-import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
-import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 
 
 @Controller
@@ -58,8 +48,6 @@ public class GencatController {
 	@Autowired
 	private UploadAdapter uploadAdapter;
 	
-	@Autowired
-	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

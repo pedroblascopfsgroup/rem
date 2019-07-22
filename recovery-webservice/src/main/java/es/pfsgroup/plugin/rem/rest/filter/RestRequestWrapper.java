@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -18,8 +20,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import net.sf.json.JSONObject;
 
@@ -109,6 +109,10 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.generateJsonSchema(clase);
+		
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		mapper.setDateFormat(df);
+		
 		Object dataJson = null;
 		try {
 			dataJson = mapper.readValue(this.body, clase);

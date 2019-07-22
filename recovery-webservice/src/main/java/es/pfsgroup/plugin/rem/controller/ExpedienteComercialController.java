@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Properties;
@@ -473,6 +474,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		FileItem fileItem = null;
 		try {
 			fileItem = dl.getFileItem(id, nombreDocumento);
+			nombreDocumento = URLDecoder.decode(nombreDocumento,"UTF-8");
 			salida = response.getOutputStream();
 			if(fileItem != null){	
 				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
@@ -509,7 +511,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void bajarAdjuntoExpedienteGDPR (HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+	public void bajarAdjuntoExpedienteGDPR(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 
 				String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 				Downloader dl = downloaderFactoryApi.getDownloader(key);

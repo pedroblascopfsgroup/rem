@@ -88,7 +88,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 	@SuppressWarnings("unchecked")
 	private DtoPage getListadoGastosCompleto(DtoGastosFilter dtoGastosFilter, HQLBuilder hb) {
-
+		
 		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
 		List<VGastosProveedor> gastos = (List<VGastosProveedor>) pageGastos.getResults();
 		if (dtoGastosFilter.getIdProvision() != null) {
@@ -302,6 +302,9 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			hb.appendWhere(motivosAvisoWhere);
 		}
 
+		if(!Checks.esNulo(dtoGastosFilter.getSort())) {
+			dtoGastosFilter.setSort("vgasto." + dtoGastosFilter.getSort());
+		}
 		return hb;
 
 	}

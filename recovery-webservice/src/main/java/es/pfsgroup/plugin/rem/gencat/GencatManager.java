@@ -278,27 +278,6 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					gencatDto.setIdLeadSF(visitaGencat.getIdLeadSF());
 				}
 				
-				//Oferta
-				gencatDto.setOfertasAsociadasEstanAnuladas(true);
-				List <OfertaGencat> resultOfertaGencatGencat = genericDao.getListOrdered(OfertaGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
-				if (resultOfertaGencatGencat != null && !resultOfertaGencatGencat.isEmpty()) {
-					OfertaGencat ofertaGencat = resultOfertaGencatGencat.get(0);
-					Oferta oferta = ofertaGencat.getOferta();
-					if (oferta != null) {
-						gencatDto.setOfertaGencat(oferta.getNumOferta());
-					}
-					for (OfertaGencat ofertGencat : resultOfertaGencatGencat) {
-						if(!Checks.esNulo(ofertGencat)) {
-							if(!Checks.esNulo(ofertGencat.getOferta())) {
-								if(!Checks.esNulo(ofertGencat.getOferta().getEstadoOferta())) {
-									if(!ofertGencat.getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
-										gencatDto.setOfertasAsociadasEstanAnuladas(false);
-									}
-								}
-							}
-						}
-					}
-				}
 				
 			}
 			catch (IllegalAccessException e) {
@@ -1255,7 +1234,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				}
 			}else {
 				comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivo));
-				if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+				if(comGencat != null && !Checks.esNulo(comGencat.getEstadoComunicacion())
 					&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
 					|| DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
 						lanzarTramiteGENCAT(idActivo, oferta, expComercial);

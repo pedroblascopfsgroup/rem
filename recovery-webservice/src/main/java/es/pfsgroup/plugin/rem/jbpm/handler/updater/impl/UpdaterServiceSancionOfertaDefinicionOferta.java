@@ -175,6 +175,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						if(!Checks.esNulo(comiteSuperior)) {
 							expediente.setComiteSuperior(comiteSuperior);
 							expediente.setComiteSancion(comiteSuperior);
+							expediente.setEstado(genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo",
+									DDEstadosExpedienteComercial.PTE_SANCION)));
 						}
 						
 					}else {

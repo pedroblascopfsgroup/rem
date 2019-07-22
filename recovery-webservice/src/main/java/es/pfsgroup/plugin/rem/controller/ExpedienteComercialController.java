@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Properties;
@@ -471,6 +472,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		String nombreDocumento = request.getParameter("nombreDocumento");
 		ServletOutputStream salida = null;
 		try {
+			nombreDocumento = URLDecoder.decode(nombreDocumento,"UTF-8");
 			FileItem fileItem = dl.getFileItem(id, nombreDocumento);
 			salida = response.getOutputStream();
 			if(fileItem != null){	
@@ -506,33 +508,34 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void bajarAdjuntoExpedienteGDPR (HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+	public void bajarAdjuntoExpedienteGDPR(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 
-				String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
-				Downloader dl = downloaderFactoryApi.getDownloader(key);
-				String nombreDocumento = request.getParameter("nombreAdjunto");
-				Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
-				
-       	try {
-	       		FileItem fileItem = dl.getFileItem( idDocRestClient , nombreDocumento);
-           		ServletOutputStream salida = response.getOutputStream(); 
-           			
-           		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
-           		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-           		response.setHeader("Cache-Control", "max-age=0");
-           		response.setHeader("Expires", "0");
-           		response.setHeader("Pragma", "public");
-           		response.setDateHeader("Expires", 0); //prevents caching at the proxy
-           		response.setContentType(fileItem.getContentType());
-           		
-           		// Write
-           		FileUtils.copy(fileItem.getInputStream(), salida);
-           		salida.flush();
-        
-    		}catch(Exception e) {
-    			logger.error("Error en ExpedienteComercialController", e);
-		    }	
-       	}
+		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+		Downloader dl = downloaderFactoryApi.getDownloader(key);
+		String nombreDocumento = request.getParameter("nombreAdjunto");
+		Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
+
+		try {
+			FileItem fileItem = dl.getFileItem(idDocRestClient, nombreDocumento);
+			ServletOutputStream salida = response.getOutputStream();
+
+			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+			response.setHeader("Cache-Control", "max-age=0");
+			response.setHeader("Expires", "0");
+			response.setHeader("Pragma", "public");
+			response.setDateHeader("Expires", 0); // prevents caching at the
+													// proxy
+			response.setContentType(fileItem.getContentType());
+
+			// Write
+			FileUtils.copy(fileItem.getInputStream(), salida);
+			salida.flush();
+
+		} catch (Exception e) {
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

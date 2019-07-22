@@ -23,7 +23,6 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
@@ -44,8 +43,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
-import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadDao;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -53,7 +50,6 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -110,7 +106,6 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
@@ -138,8 +133,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -173,8 +168,6 @@ public class AgrupacionAdapter {
 	@Autowired
 	private ActivoAdapter activoAdapter;
 
-	@Autowired
-	private ActivoAgrupacionDao activoAgrupacionDao;
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
@@ -263,9 +256,7 @@ public class AgrupacionAdapter {
 	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
 	
-	@Autowired
-	private GestorEntidadDao gestorEntidadDao;
-
+	
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
 
@@ -295,7 +286,6 @@ public class AgrupacionAdapter {
 	private static final String TIPO_COMERCIAL_ALQUILER = "Alquiler";
 	private static final String TIPO_GESTOR_COMERCIAL_VENTA = "GCOM";
 	private static final String TIPO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
-	private static final String TIPO_SUPERVISOR_COMERCIAL_ALQUILER = "SUPCOMALQ";
 	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS = "No se puede realizar el cambio de destino comercial debido a que la agrupación tiene activos alquilados con título";
 	private static final String usuarioSuper = "HAYASUPER";
 	//Errores para la validacion de una agrupacion de PROMOCION DE ALQUILER
@@ -303,7 +293,6 @@ public class AgrupacionAdapter {
 	public static final String EXISTEN_UAS_CON_TRABAJOS_NO_FINALIZADOS  = "Error: Hay Unidades Alquilables con trabajos por finalizar";
 	// Errores validacion ventaVivas
 	private static final String ACTIVO_OFERTAS_VIVAS = "Activo con ofertas vivas";
-	private static final String ACTIVO_OFERTAS_ALQUILER_VIVAS = "Activo con ofertas de alquiler vivas";
 	private static final String ACTIVO_NO_INCLUIDO_PERIMETRO_ALQUILER = "Activo NO incluido en perímetro de alquiler";
 	private static final String ACTIVO_SIN_PATRIMONIO_ACTIVO = "El activo no tiene patrimonio activo";
 	private static final String TIPO_NO_PERMITIDO_ACTIVO_MATRIZ = "Tipo de activo NO permitido como activo Activo matriz";
@@ -325,8 +314,7 @@ public class AgrupacionAdapter {
 		DtoAgrupaciones dtoAgrupacion = new DtoAgrupaciones();
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
-		ActivoAgrupacionActivo agrupacionActivo = activoAgrupacionActivoApi.get(id);
-
+		
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
 		DtoAgrupacionFilter dtoAgrupacionFilter = new DtoAgrupacionFilter();
@@ -772,7 +760,7 @@ public class AgrupacionAdapter {
 		return activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(numAgrupRem);
 	}
 
-	public Page getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id) {
+	public Page getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id,Boolean little) {
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
 		filtro.setAgrupacionId(String.valueOf(id));
@@ -790,7 +778,7 @@ public class AgrupacionAdapter {
 		}
 		
 		try {
-			Page listaActivos = activoAgrupacionApi.getListActivosAgrupacionById(filtro, usuarioLogado);
+			Page listaActivos = activoAgrupacionApi.getListActivosAgrupacionById(filtro, usuarioLogado,little);
 			
 			return listaActivos;
 		} catch (Exception e) {

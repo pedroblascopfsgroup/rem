@@ -2176,7 +2176,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			List<ActivoCondicionEspecifica> listaCondicionesEspecificas = genericDao
 					.getListOrdered(ActivoCondicionEspecifica.class, order, filter);
 			
-			List<DtoCondicionEspecifica> listaDtoCondicionesEspecificas = new ArrayList<DtoCondicionEspecifica>();
 			
 			int coincidencia = 0;
 			
@@ -5805,7 +5804,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					filter.setLimit(1000);
 					filter.setStart(0);
 					Page page = agrupacionAdapter.getListActivosAgrupacionById(filter,
-							activoAgrupacionActivo.getAgrupacion().getId());
+							activoAgrupacionActivo.getAgrupacion().getId(),true);
 					return page.getResults();
 				}
 			}
@@ -5891,7 +5890,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						|| (!(DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo())
 								&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 										|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
-					if (!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && "02".equals(conTitulo))) {
+					if (!Checks.esNulo(ocupado) && (1 == ocupado && "02".equals(conTitulo))) {
 						boolean val = compruebaSiExisteActivoBienPorMatricula(id,
 								DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
 						if (val) {

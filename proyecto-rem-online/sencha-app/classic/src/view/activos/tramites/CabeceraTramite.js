@@ -105,33 +105,22 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 																cls: 'cabecera-info-field',
 																width: 70,
 											                	bind: {
+											                		hidden:'{isEmptySrcCartera}',
 											                		src: '{getSrcCartera}',
 											                		alt: '{tramite.cartera}'
 											                	}
 											                },
-//											                {
-//																xtype:'container',
-//																defaultType: 'displayfield',
-//																layout: {
-//																    type: 'hbox',
-//																    align: 'stretch'
-//																},
-//																items: [
-//																
-//																	{ 
-//																		xtype: 'imagefield',
-//																		fieldLabel: '',
-//																		cls: 'cabecera-info-field',
-//																		width: 40,
-//																		bind: {
-//																			src: '{getSrcMultiActivo}'																				
-//																	    }
-//																	},
-//													                { 
-//																		bind: '<div style="color: #26607c;font-size: 20px">'+'{tramite.countActivos}'+'</div>'
-//																	}
-//																]
-//															},
+											                {
+																fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+																cls: 'cabecera-info-field',
+																fieldStyle: 'color: #0a94d6 !important;font-weight: bold !important',
+																width: 70,
+																bind: {
+																	hidden:'{!isEmptySrcCartera}',
+																	value: '{activo.entidadPropietariaDescripcion}'
+																}
+										
+															},
 											                { 
 																fieldLabel: HreRem.i18n('fieldlabel.estado'),
 																bind:		'{tramite.estado}'

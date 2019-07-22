@@ -10,6 +10,7 @@
 --## FINALIDAD: CALCULAR LAS COMISIONES DE LOS ACTIVOS          
 --## VERSIONES:
 --##           0.1 [HREOS-6985] Version inicial (ALBERT PASTOR)
+--##           0.2 [HREOS-7140] (ALBERT PASTOR) - Mejora de rendimiento
 --##########################################
 --*/
 
@@ -28,7 +29,7 @@ create or replace PROCEDURE SP_CALCULO_COMISIONES (P_TEXTO OUT VARCHAR2) AUTHID 
   V_SQL VARCHAR2(32000 CHAR);
   
 BEGIN
-
+--v0.2
 
 #ESQUEMA#.OPERACION_DDL.DDL_TABLE('TRUNCATE', 'TMP_OTC_OFERTA_TRAMO_COMISION');
 #ESQUEMA#.OPERACION_DDL.DDL_TABLE('TRUNCATE', 'TMP_OTT_ORIGEN_TIPO_TRAMO');
@@ -412,10 +413,12 @@ COMISION_ID
 ,CREATEUSER
 )
 with comision_origen_insertar as(
-    select unique comision_id from '||V_ESQUEMA||'.AUX_HASH_COMISION_ORIGEN where comision_id not in (select unique ori.comision_id from '||V_ESQUEMA||'.AUX_HASH_COMISION_ORIGEN ori 
-    join '||V_ESQUEMA||'.AUX_HASH_COMISION_DESTINO des on ori.hash_com <> des.hash_com)
+select unique comision_id 
+    from '||V_ESQUEMA||'.AUX_HASH_COMISION_ORIGEN ori
+   where not exists (select 1 from '||V_ESQUEMA||'.AUX_HASH_COMISION_DESTINO des 
+                        where ori.hash_com <> des.hash_com) 
     )
-select generate_uuid()
+select  '''||generate_uuid()||'''
 ,tmp.CARTERA
 ,tmp.SUBCARTERA
 ,tmp.TIPO_ACTIVO
@@ -476,11 +479,10 @@ COMMIT;
 #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','CCA_COMISIONES_CALC_ACTIVOS');
 COMMIT;
 
-P_TEXTO:='OK';
+
     DBMS_OUTPUT.PUT_LINE('[FIN] Comisiones calculadas.');
 EXCEPTION
   WHEN OTHERS THEN
-  P_TEXTO:='KO';
     DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(V_SQL));
     DBMS_OUTPUT.put_line('-----------------------------------------------------------');
     DBMS_OUTPUT.put_line(err_msg);

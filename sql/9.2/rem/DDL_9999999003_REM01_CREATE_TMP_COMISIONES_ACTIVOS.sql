@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ALBERT PASTOR
---## FECHA_CREACION=20190717
+--## FECHA_CREACION=20190721
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6985
@@ -70,17 +70,27 @@ DECLARE
   )';
 
 		EXECUTE IMMEDIATE V_SQL;
+    COMMIT;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Tabla creada');
 		
 		--Creamos comentario
 		V_SQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 		EXECUTE IMMEDIATE V_SQL;
+    COMMIT;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Comentario creado.');		
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... OK');
   		
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Creamos los indices de la tabla' );  
+
+    V_SQL := 'CREATE INDEX comision_idx
+    ON '||V_TABLA||' (COMISION_ID)
+    COMPUTE STATISTICS';
+    EXECUTE IMMEDIATE V_SQL;
+    COMMIT;
     END IF;    
 	
-COMMIT;
+
 DBMS_OUTPUT.PUT_LINE('[INFO] Proceso terminado.');
  
 EXCEPTION

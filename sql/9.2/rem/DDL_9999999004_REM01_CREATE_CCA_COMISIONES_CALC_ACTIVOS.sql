@@ -78,6 +78,12 @@ DECLARE
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Comentario creado.');		
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... OK');
   		
+
+    V_SQL := 'CREATE INDEX COMISION_ID_CCA_IDX
+    ON '||V_ESQUEMA||'.'||V_TABLA||' (COMISION_ID)
+    COMPUTE STATISTICS';
+    EXECUTE IMMEDIATE V_SQL;    
+
     END IF;    
 	
 COMMIT;

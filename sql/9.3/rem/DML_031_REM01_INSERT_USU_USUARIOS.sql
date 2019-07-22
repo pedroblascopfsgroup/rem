@@ -46,15 +46,7 @@ DECLARE
 	-- USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_APELLIDO1, USU_APELLIDO2, USU_GRUPO
 	V_USER T_USUARIOS := T_USUARIOS(
 		T_USU('grucoces', ''||V_PWD(1)||'', 'Comité CES','','','1'), 
-		T_USU('ext.mkelly', ''||V_PWD(1)||'', 'Maurice','Kelly','','0'),
-		T_USU('ext.bcunningham', ''||V_PWD(1)||'', 'Barry','Cunningham','','0'),
-		T_USU('ext.drubio', ''||V_PWD(1)||'', 'Diego','Rubio','','0'),
-		T_USU('ext.jperezb', ''||V_PWD(1)||'', 'Jesús','Pérez','','0'),
-		T_USU('ext.ibastosmendes', ''||V_PWD(1)||'', 'Íñigo','Bastos','Mendes','0'),
-		T_USU('ext.crenilla', ''||V_PWD(1)||'', 'Cristina','Renilla','','0'),
-		T_USU('ext.gcalnan', ''||V_PWD(1)||'', 'Georgia','Calnan','','0'),
-		T_USU('gruproman', ''||V_PWD(2)||'', 'Grupo Promontoria Manzana','','','1'),
-		T_USU('lgomezc', ''||V_PWD(2)||'', 'Luis',  'Gómez', '', '0')
+		T_USU('gruproman', ''||V_PWD(2)||'', 'Grupo Promontoria Manzana','','','1')
 	);
 	V_TMP_USU T_USU;
 

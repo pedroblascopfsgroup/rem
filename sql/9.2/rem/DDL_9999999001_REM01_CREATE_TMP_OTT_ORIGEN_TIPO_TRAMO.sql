@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ALBERT PASTOR
---## FECHA_CREACION=20190716
+--## FECHA_CREACION=20190717
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6985
@@ -51,7 +51,7 @@ DECLARE
               DD_TCR_ID     NUMBER(16),   
               DD_ACC_ID     NUMBER(16),
               DD_ORC_ID     NUMBER(16),   
-              CONSTRAINT TMP_OTT_ID_UNIQUE UNIQUE (DD_TCR_ID,DD_ACC_ID,DD_ORC_ID)
+              CONSTRAINT TMP_OTT_ID_UNIQUE UNIQUE (DD_TOF_ID, DD_TCR_ID,DD_ACC_ID,DD_ORC_ID)
 			)';
 
 		EXECUTE IMMEDIATE V_SQL;

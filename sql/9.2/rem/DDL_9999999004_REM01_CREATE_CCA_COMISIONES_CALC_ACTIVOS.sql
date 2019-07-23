@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ALBERT PASTOR
---## FECHA_CREACION=20190716
+--## FECHA_CREACION=20190720
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6985
@@ -50,8 +50,6 @@ DECLARE
                 COMISION_ID VARCHAR2(36)  
                 ,CARTERA  VARCHAR2(20 CHAR)
                 ,SUBCARTERA VARCHAR2(20 CHAR)
-                ,TIPO_ACTIVO  VARCHAR2(20 CHAR)
-                ,SUBTIPO_ACTIVO VARCHAR2(20 CHAR)
                 ,LEADORIGIN VARCHAR2(20 CHAR)
                 ,ASSETTYPE  VARCHAR2(20 CHAR)
                 ,ASSETSUBTYPE VARCHAR2(20 CHAR)

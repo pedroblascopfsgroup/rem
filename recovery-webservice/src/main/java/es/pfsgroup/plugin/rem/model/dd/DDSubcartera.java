@@ -59,6 +59,9 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_ZEUS_INMOBILIARIO = "133";
 	public static final String CODIGO_ZEUS_FINANCIERO = "134";
 	public static final String CODIGO_APPLE_INMOBILIARIO = "138";
+	public static final String CODIGO_THIRD_PARTIES_QUITAS_ING = "28";
+	public static final String CODIGO_THIRD_PARTIES_COMERCIAL_ING = "30";
+	public static final String CODIGO_YUBAI = "139";
 
 
 	@Id

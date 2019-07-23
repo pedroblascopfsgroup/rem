@@ -2283,7 +2283,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(condicionEspecifica)) {
 			try {
-				beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
+				String texto = dtoCondicionEspecifica.getTexto().replace("<", "");
+				texto = texto.replace(">", "");
+				beanUtilNotNull.copyProperty(condicionEspecifica, "texto", texto);
 			} catch (IllegalAccessException e) {
 				logger.error("Error en activoManager", e);
 			} catch (InvocationTargetException e) {
@@ -5421,10 +5423,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				beanUtilNotNull.copyProperty(activoCalificacionNegativa, "fechaSubsanacion", dto.getFechaSubsanacion());
 				
-				if(DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(activoCalificacionNegativa.getMotivoCalificacionNegativa().getCodigo())) {
-					beanUtilNotNull.copyProperty(activoCalificacionNegativa, "descripcion", dto.getDescripcionCalificacionNegativa());
-				}else {
-					activoCalificacionNegativa.setDescripcion(dto.getDescripcionCalificacionNegativa());
+				String descripcionCalificacionNegativa = dto.getDescripcionCalificacionNegativa();
+				if(!Checks.esNulo(descripcionCalificacionNegativa)) {
+					beanUtilNotNull.copyProperty(activoCalificacionNegativa, "descripcion", descripcionCalificacionNegativa);
 				}
 				
 				

@@ -54,18 +54,19 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
 				emptyText: HreRem.i18n('gestores.comboGestores.emptyText.combo.usuario'),
 				enableKeyEvents:true,
 			    listeners: {
-			     'keyup': function() {
-			    	   this.getStore().clearFilter();
-			    	   this.getStore().filter({
+			    	'keyup': function() {
+			    		this.getStore().clearFilter();
+			    		this.getStore().filter({
 			        	    property: 'apellidoNombre',
 			        	    value: this.getRawValue(),
 			        	    anyMatch: true,
 			        	    caseSensitive: false
 			        	})
-			     },
-			     'beforequery': function(queryEvent) {
-			           queryEvent.combo.onLoad();
-			     }
+			    	},
+			    	'beforequery': function(queryEvent) {
+			    		queryEvent.combo.onLoad();
+			    	},
+			    	select: 'disableAgregarGestores'
 			    }
             }          
 		];
@@ -73,8 +74,9 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
     	me.buttons = [
 	    	{ 
 	    		text: HreRem.i18n('gestores.comboGestores.button.botonAgregar'),
+	    		reference: 'agregarGestor',
 	    		handler: 'onAgregarGestoresClick',
-	    		bind: { disabled: '{!usuarioGestor.selection}' && '{activo.unidadAlquilable}'}
+	    		disabled: true
 	    	}
 	    ];
     	

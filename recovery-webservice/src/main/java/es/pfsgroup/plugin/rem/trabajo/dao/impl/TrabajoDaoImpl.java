@@ -48,9 +48,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		}
 		
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajos tbj");
-			
+
 		this.rellenarFiltrosBusquedaTrabajos(dto, hb, gasto);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.proveedor", dto.getProveedor(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.enOtroGasto", false );
 		if(!Checks.esNulo(dto.getIdProveedor()) && Checks.esNulo(gasto.getPropietario())){
 			return new PageHibernate();
 		}

@@ -24,21 +24,10 @@ DECLARE
     ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
    
     V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-4895'; -- Vble. para el usuario modificar.
-    V_COUNT NUMBER(16):= 0; -- Vble. para el contador de activos modificados.
     V_MSQL VARCHAR2(32000 CHAR); -- Vble. auxiliar para almacenar la sentencia a ejecutar.
-   
-    CURSOR ACTIVOS IS 
-        SELECT ACT_ID FROM REM01.ACT_ACTIVO ACT
-        JOIN REM01.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID
-        WHERE DD_SCM_CODIGO = '10';
-        
-    FILA ACTIVOS%ROWTYPE;
    
 BEGIN
     DBMS_OUTPUT.PUT_LINE('[INICIO]');
-    
-    OPEN ACTIVOS;
-    V_COUNT := 0;
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO SET DD_SCM_ID = NULL
 				WHERE DD_SCM_ID = (
@@ -48,19 +37,6 @@ BEGIN
     
     V_MSQL := 'CALL '||V_ESQUEMA||'.SP_ASC_ACT_SIT_COM_VACIOS_V2 (0)';
     EXECUTE IMMEDIATE V_MSQL;
-    
-    LOOP
-        FETCH ACTIVOS INTO FILA;
-        EXIT WHEN ACTIVOS%NOTFOUND;
-
-		V_MSQL := 'CALL '||V_ESQUEMA||'.SP_CAMBIO_ESTADO_PUBLICACION ('||FILA.ACT_ID||', 1, '''||V_USUARIOMODIFICAR||''')';
-		EXECUTE IMMEDIATE V_MSQL;
-            
-        V_COUNT := V_COUNT + 1;
-    END LOOP;
-     
-    DBMS_OUTPUT.PUT_LINE(' [INFO] Se han actualizado las situaciones comerciales y los estados de publicación de '||V_COUNT||' activos');
-    CLOSE ACTIVOS;
 
     DBMS_OUTPUT.PUT_LINE('[FIN]');
     COMMIT;

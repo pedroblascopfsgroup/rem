@@ -2258,7 +2258,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(condicionEspecifica)) {
 			try {
-				beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
+				String texto = dtoCondicionEspecifica.getTexto().replace("<", "");
+				texto = texto.replace(">", "");
+				beanUtilNotNull.copyProperty(condicionEspecifica, "texto", texto);
 			} catch (IllegalAccessException e) {
 				logger.error("Error en activoManager", e);
 			} catch (InvocationTargetException e) {

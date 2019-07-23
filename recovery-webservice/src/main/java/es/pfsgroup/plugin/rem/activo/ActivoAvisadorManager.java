@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -19,10 +20,12 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 
@@ -300,15 +303,15 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 
 		// Aviso 18: Cuando el activo esta publicado para la venta y el precio venta está oculto
-		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
-			if(!Checks.esNulo(activo.getActivoPublicacion())) {
-				if((activo.getActivoPublicacion().getCheckPublicarVenta() && activo.getActivoPublicacion().getCheckOcultarPrecioVenta())
-						|| (activo.getActivoPublicacion().getCheckOcultarPrecioAlquiler() && activo.getActivoPublicacion().getCheckPublicarAlquiler())){
-					DtoAviso dtoAviso = new DtoAviso();
-					dtoAviso.setDescripcion("Publicado con precio oculto");
-					dtoAviso.setId(String.valueOf(id));
-					listaAvisos.add(dtoAviso);
-				}
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar())
+				&& perimetroActivo.getAplicaPublicar() && !Checks.esNulo(activo.getActivoPublicacion())) {
+			ActivoPublicacion activoPublicacion = activo.getActivoPublicacion();
+			if((Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) && activoPublicacion.getCheckPublicarVenta() && activoPublicacion.getCheckOcultarPrecioVenta())
+					|| (Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo()) && activoPublicacion.getCheckOcultarPrecioAlquiler() && activoPublicacion.getCheckPublicarAlquiler())){
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Publicado con precio oculto");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
 			}
 		}
 

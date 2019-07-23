@@ -9672,7 +9672,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		List<ActivoOferta> activos = expediente.getOferta().getActivosOferta();
 		Long visitasTotales = null;
 		long visitasTotalesAux = 0;
-		try {
 		if (!Checks.estaVacio(activos)) {
 			for (ActivoOferta activoOferta : activos) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
@@ -9680,9 +9679,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				List<Visita> visitasActivo = genericDao.getList(Visita.class, filtroActivo);
 				visitasTotalesAux += visitasActivo.size();
 			}
-		}
-		}catch (Exception e) {
-			System.err.println(e.getMessage());
 		}
 		visitasTotales = new Long(visitasTotalesAux);
 		return visitasTotales;

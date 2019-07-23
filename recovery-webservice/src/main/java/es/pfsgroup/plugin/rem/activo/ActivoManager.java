@@ -5891,7 +5891,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								adj.setNombre(adjuntoAux.getNombre());
 								FileItem fileItem = null;
 								try {
-									fileItem = activoAdapter.download(adjuntoAux.getIdDocRestClient(), adjuntoAux.getNombre());
+									if(!Checks.esNulo(adjuntoAux.getIdDocRestClient())) {
+										fileItem = activoAdapter.download(adjuntoAux.getIdDocRestClient(), adjuntoAux.getNombre());
+									}
 								} catch (UserException e) {
 									e.printStackTrace();
 								} catch (Exception e) {

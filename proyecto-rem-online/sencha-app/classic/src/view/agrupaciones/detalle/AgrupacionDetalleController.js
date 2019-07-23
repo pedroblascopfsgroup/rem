@@ -184,8 +184,29 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	},
     
 	onClickBotonGuardar: function(btn) {
-		var me = this;	
-		me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());				
+		var me = this;
+		var codCartera = me.getViewModel().get("agrupacionficha.codigoCartera"),
+	  	codSubcartera = me.getViewModel().get("agrupacionficha.codSubcartera"),
+	  	pisoPiloto = me.getViewModel().get("agrupacionficha.pisoPiloto"),
+	  	existePisoPiloto = me.lookupReference("existePiloto");
+	  	debugger;
+		if ((CONST.CARTERA['THIRDPARTIES'] === codCartera && codSubcartera === CONST.SUBCARTERA['YUBAI'])
+			&& CONST.COMBO_TRUE_FALSE['FALSE'] == existePisoPiloto.getValue()) {
+        		Ext.Msg.show({
+        			   title: HreRem.i18n('title.descartar.cambios'),
+        			   msg: HreRem.i18n('title.confirmacion.guardar.cambios'), 
+        			   buttons: Ext.MessageBox.YESNO,
+        			   fn: function(buttonId) {
+        			        if (buttonId == 'yes') {
+        			        	me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());
+					            // Si la pestaña necesita botones de edición 
+        			        }
+        			   }
+    			});
+		} else{
+			me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());
+		}
+						
 	},
 	
 	onClickBotonCancelar: function(btn) {

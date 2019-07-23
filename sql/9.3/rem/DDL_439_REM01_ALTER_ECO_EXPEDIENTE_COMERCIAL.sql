@@ -71,20 +71,11 @@ BEGIN
 		-- Verificar si la columna ya existe. Si ya existe la columna, no se hace nada con esta (no tiene en cuenta si al existir los tipos coinciden)
 		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-		IF V_NUM_TABLAS = 0 THEN
-			--No existe la columna y la creamos
 
-			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
-			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
-			';
-
-			EXECUTE IMMEDIATE V_MSQL;
-			--DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
-			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna INSERTADA en tabla, con tipo '||V_T_ALTER(2));
-
+		IF V_NUM_TABLAS = 1 THEN
+		--Existe la columna y la creamos
 			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_COLUMN_NAME||'] -------------------------------------------');
-			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' DROP COLUM '||V_COLUMN_NAME;
+			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP COLUMN '||V_COLUMN_NAME;
 
 			-- Creamos comentario	
 			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		

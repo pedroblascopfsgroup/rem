@@ -191,6 +191,27 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'numOferPrincipal'	
+    		},
+    		{
+    			name: 'isCarteraLbkVenta',
+    			type: 'boolean'
+     		},
+    		{
+    			name: 'isLbkOfertaComercialPrincipal',
+    			type: 'boolean'
+     		},
+    		{
+    			name: 'muestraOfertaComercial',
+    			type: 'boolean'
+     		},
+    		{
+    			name:'importeTotal'	
+    		},
+    		{
+    			name:'ofertasTotal'
+    		},
+    		{
+    			name:'visitasTotal'
     		}
     ],
     

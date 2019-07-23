@@ -350,16 +350,31 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	title:  HreRem.i18n('title.visita'),
 		                	layout: 'vbox',
 		                	items: [
-										{ 
-											xtype: 'comboboxfieldbase',
-											reference: 'comboEstadosVisita',
-								        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
-								        	bind: {
-							            		store: '{comboEstadosVisitaOferta}',
-							            		value: '{datosbasicosoferta.estadoVisitaOfertaCodigo}'
-							            	},
-					                		listeners: {change: 'numVisitaIsEditable'}
-								        },	
+										{
+											xtype: 'container',
+		                					layout: 'hbox',
+			                				items: [
+							                	{
+							                		xtype: 'comboboxfieldbase',
+													reference: 'comboEstadosVisita',
+										        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
+										        	bind: {
+									            		store: '{comboEstadosVisitaOferta}',
+									            		value: '{datosbasicosoferta.estadoVisitaOfertaCodigo}'
+									            	},
+							                		listeners: {change: 'numVisitaIsEditable'}
+										        },
+							                	{
+							                		xtype: 'textfieldbase',
+							                		fieldLabel:  HreRem.i18n('fieldlabel.numero.visitasTotal'),
+							                		bind: {
+							                			value : '{datosbasicosoferta.visitasTotal}'
+							                		},
+										        	readOnly: true
+							                		
+							                	}			                	
+							                ]
+			                			},											
 		                				{
 		                					xtype: 'container',
 		                					layout: 'hbox',
@@ -370,7 +385,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 							                		margin: '0 10 0 0',
 							                		hidden: true
 							                		
-							                	},
+							                	},							           
 							                	{
 							                		xtype: 'numberfieldbase',
 							                		fieldLabel:  HreRem.i18n('fieldlabel.numero.visita'),
@@ -421,6 +436,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								            value: '{datosbasicosoferta.necesitaFinanciacion}'
 										},
 										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion')
+					    			},
+					    			{
+					    				xtype: 'textfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.totalOfertas'),
+										bind: {
+											value: '{datosbasicosoferta.ofertasTotal}'
+										},
+					    				readOnly: true,
+					    				width: 410,
+					    				colspan: 2
 					    			}
 					    			
 					    			

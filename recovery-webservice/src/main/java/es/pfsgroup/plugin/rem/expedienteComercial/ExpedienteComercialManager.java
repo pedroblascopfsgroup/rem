@@ -33,6 +33,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.fasterxml.jackson.databind.AnnotationIntrospector.ReferenceProperty.Type;
+import com.itextpdf.text.log.Logger;
+
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
@@ -47,6 +50,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -1354,6 +1358,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (!Checks.esNulo(expediente)) {
 			dto.setIdEco(expediente.getId());
+		}
+		
+		Long ofertasTotales = ofertasTotalesCount(expediente);
+		if (!Checks.esNulo(ofertasTotales)) {
+			dto.setOfertasTotal(ofertasTotales);
+		}
+		Long visitasTotales = visitasTotalesCount(expediente);
+		if (!Checks.esNulo(visitasTotales)) {
+			dto.setVisitasTotal(visitasTotales);
 		}
 
 		return dto;
@@ -9639,6 +9652,41 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	}
 	
+	@SuppressWarnings("null")
+	private Long ofertasTotalesCount(ExpedienteComercial expediente) {
+		List<ActivoOferta> activos = expediente.getOferta().getActivosOferta();
+		Long ofertasTotales = null;
+		long ofertasTotalesAux = 0;
+		if (!Checks.estaVacio(activos)) {
+			for (ActivoOferta activoOferta : activos) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo.getId());
+				List<ActivoOferta> ofertasActivo = genericDao.getList(ActivoOferta.class, filtroActivo);
+				ofertasTotalesAux += ofertasActivo.size();
+			}
+		}
+		ofertasTotales = new Long(ofertasTotalesAux);
+		return ofertasTotales;
+	}
+	private Long visitasTotalesCount(ExpedienteComercial expediente) {
+		List<ActivoOferta> activos = expediente.getOferta().getActivosOferta();
+		Long visitasTotales = null;
+		long visitasTotalesAux = 0;
+		try {
+		if (!Checks.estaVacio(activos)) {
+			for (ActivoOferta activoOferta : activos) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				List<Visita> visitasActivo = genericDao.getList(Visita.class, filtroActivo);
+				visitasTotalesAux += visitasActivo.size();
+			}
+		}
+		}catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		visitasTotales = new Long(visitasTotalesAux);
+		return visitasTotales;
+	}
 
 	public DDComiteSancion comitePropuestoByIdExpediente(Long idExpediente) throws Exception {
 

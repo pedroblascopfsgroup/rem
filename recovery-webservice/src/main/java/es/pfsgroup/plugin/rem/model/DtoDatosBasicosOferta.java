@@ -102,6 +102,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Date fechaResolucionCES;
 	private Date fechaRespuesta;
+	private Date fechaAprobacionProManzana;
+	
+	private Long ofertasTotal;
+	private Long visitasTotal;
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -438,6 +442,29 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setFechaRespuesta(Date fechaRespuesta) {
 		this.fechaRespuesta = fechaRespuesta;
+	}
+	public Date getFechaAprobacionProManzana() {
+		return fechaAprobacionProManzana;
+	}
+
+	public void setFechaAprobacionProManzana(Date fechaAprobacionProManzana) {
+		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
+	}
+	
+	public void setOfertasTotal(Long ofertasTotal) {
+		this.ofertasTotal = ofertasTotal;
+	}
+	
+	public Long getOfertasTotal() {
+		return ofertasTotal;
+	}
+
+	public Long getVisitasTotal() {
+		return visitasTotal;
+	}
+
+	public void setVisitasTotal(Long visitasTotal) {
+		this.visitasTotal = visitasTotal;
 	}
 
 }

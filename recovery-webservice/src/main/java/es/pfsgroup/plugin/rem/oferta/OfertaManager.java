@@ -2514,6 +2514,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			codSubtipoActivo = activo.getSubtipoActivo().getCodigo();
 		}
 		
+		String codPortfolio = null;
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getCartera().getCodigo())) {
+			codPortfolio = activo.getCartera().getCodigo();
+		}
+		
+		String codSubportfolio = null;
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && !Checks.esNulo(activo.getSubcartera().getCodigo())) {
+			codSubportfolio = activo.getSubcartera().getCodigo();
+		}
+		
 		ConsultaComisionDto consultaComisionDto = new ConsultaComisionDto();
 		consultaComisionDto.setAmount(importe);
 		consultaComisionDto.setLeadOrigin(codLeadOrigin);
@@ -2521,8 +2531,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		consultaComisionDto.setComercialType(tipoComercializar);
 		consultaComisionDto.setAssetType(codTipoActivo);
 		consultaComisionDto.setAssetSubtype(codSubtipoActivo);
-		consultaComisionDto.setPortfolio(activo.getCartera().getCodigo());
-		consultaComisionDto.setSubPortfolio(activo.getSubcartera().getCodigo());
+		consultaComisionDto.setPortfolio(codPortfolio);
+		consultaComisionDto.setSubPortfolio(codSubportfolio);
 
 			// Los honorarios de colaboración serán asignados al FDV de la oferta si
 			// existe,

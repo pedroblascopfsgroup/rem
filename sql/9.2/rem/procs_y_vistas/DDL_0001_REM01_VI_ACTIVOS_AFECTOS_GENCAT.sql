@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190410
+--## FECHA_CREACION=20190716
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.4.0
---## INCIDENCIA_LINK=HREOS-6155
+--## INCIDENCIA_LINK=REMVIP-
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Utiliza tabla ACT_EXG_EXCLUSION_GENCAT para excluir activos de la vista
 --##########################################
 --*/
 
@@ -111,6 +112,9 @@ BEGIN
         ,(''08'',''18''),(''08'',''56''),(''08'',''57''),(''08'',''58''),(''08'',''59''),(''08'',''60''),(''08'',''136''),(''08'',''64'')
         ,(''06'',''16'')
         )
+	AND NOT EXISTS ( SELECT 1
+			 FROM '|| V_ESQUEMA ||'.ACT_EXG_EXCLUSION_GENCAT EXG
+			 WHERE EXG.ACT_ID = ACT.ACT_ID ) 
 		MINUS
 		    SELECT AGA.ACT_ID 
 			FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA

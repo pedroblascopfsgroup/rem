@@ -302,7 +302,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 1,
 	            hideable: false,
 	            bind:{
-	            	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
 	            },
 	            renderer: estadoRenderer
 	            

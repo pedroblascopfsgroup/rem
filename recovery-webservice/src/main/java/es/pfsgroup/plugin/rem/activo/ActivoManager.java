@@ -41,6 +41,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
@@ -5861,9 +5862,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}else ocupado=posesoria.getOcupado();
 
 			if (!Checks.esNulo(id)) {
-				if (((DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo())
+				if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
 						&& (1 == activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion()))
-						|| (!(DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo())
+						|| (!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
 								&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 										|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
 					if (!Checks.esNulo(ocupado) && (1 == ocupado && "02".equals(conTitulo))) {
@@ -5888,6 +5889,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							if (!Checks.esNulo(adjuntoAux)) {
 								DtoAdjuntoMail adj = new DtoAdjuntoMail();
 								adj.setNombre(adjuntoAux.getNombre());
+								FileItem fileItem = null;
+								try {
+									fileItem = activoAdapter.download(adjuntoAux.getId(), adjuntoAux.getNombre());
+								} catch (UserException e) {
+									e.printStackTrace();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								if(!Checks.esNulo(fileItem)) {
+									adjuntoAux.getAdjunto().setFileItem(fileItem);
+								}
 								adj.setAdjunto(adjuntoAux.getAdjunto());
 								sendAdj.add(adj);
 							}

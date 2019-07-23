@@ -27,6 +27,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 // Resumen estado publicación.
 					{
 						xtype:'fieldsettable',
+						title: HreRem.i18n('title.datos.publicacion.informaciongeneral'),
 						items :
 							[
 								{

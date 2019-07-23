@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190703
+--## FECHA_CREACION=20190712
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4472
+--## INCIDENCIA_LINK=REMVIP-4784
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -15,6 +15,7 @@
 --##		0.3 Añadimos el numero de activo UA
 --##        0.4 Deshacemos cambios de 0.2 y 0.3
 --##		0.5 Añadimos la subcartera
+--##		0.6 Añadimos columna para saber si un trabajo está en otro gasto
 --##########################################
 --*/
 
@@ -38,7 +39,7 @@ DECLARE
     
 BEGIN
 
-  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_BUSQUEDA_TRABAJOS' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
+  /*SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_BUSQUEDA_TRABAJOS' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
   IF CUENTA>0 THEN
     DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_TRABAJOS...');
     EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_TRABAJOS';  
@@ -51,12 +52,13 @@ BEGIN
     EXECUTE IMMEDIATE 'DROP VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_TRABAJOS';  
     DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_TRABAJOS... borrada OK');
   END IF;
-
+*/
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_TRABAJOS...');
-  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_TRABAJOS 
+  EXECUTE IMMEDIATE 'CREATE OR REPLACE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_TRABAJOS 
 
 	AS
 		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) */
+			DISTINCT
 			tbj.tbj_id, 
 			act.act_id AS idactivo, 
 			1 as rango,
@@ -92,30 +94,32 @@ BEGIN
 			DECODE (tbj.tbj_fecha_cierre_economico, NULL, 0, 1) AS con_cierre_economico,
           	tbj.tbj_fecha_cierre_economico, 
 			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, DECODE(tbj.TBJ_IMPORTE_TOTAL, NULL, 1, 0, 1, 0), 1) AS facturado, 
-			ttr.dd_ttr_filtrar
-			
+			ttr.dd_ttr_filtrar,
+			DECODE (gtb.tbj_id, NULL, 0, 1) AS EN_OTRO_GASTO
 
-     	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj JOIN ' || V_ESQUEMA || '.act_tbj atj ON atj.tbj_id = tbj.tbj_id
-          LEFT JOIN ' || V_ESQUEMA || '.act_activo act ON act.act_id = atj.act_id and act.borrado = 0
-		  LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
-          LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr ON agr.agr_id = tbj.agr_id and agr.borrado = 0
-          LEFT JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac ON gac.act_id = act.act_id
-          LEFT JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee ON gac.gee_id = gee.gee_id
-          JOIN ' || V_ESQUEMA_MASTER || '.dd_tge_tipo_gestor tge ON (tge.dd_tge_id = gee.dd_tge_id AND tge.dd_tge_codigo = ''GACT'')
-          LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu ON gee.usu_id = usu.usu_id
-          LEFT JOIN ' || V_ESQUEMA || '.act_loc_localizacion loc ON (loc.act_id = NVL (tbj.act_id, agr.agr_act_principal))
-          LEFT JOIN ' || V_ESQUEMA || '.bie_localizacion bieloc ON loc.bie_loc_id = bieloc.bie_loc_id
-          LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_loc_localidad ddloc ON bieloc.dd_loc_id = ddloc.dd_loc_id
-          LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_prv_provincia ddprv ON bieloc.dd_prv_id = ddprv.dd_prv_id
-          JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr ON (ttr.dd_ttr_id = tbj.dd_ttr_id and ttr.dd_ttr_filtrar IS NULL)
-          LEFT JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str ON str.dd_str_id = tbj.dd_str_id
-          LEFT JOIN ' || V_ESQUEMA || '.dd_est_estado_trabajo est ON tbj.dd_est_id = est.dd_est_id
-          INNER JOIN ' || V_ESQUEMA || '.dd_cra_cartera cra ON cra.dd_cra_id = act.dd_cra_id
-          INNER JOIN ' || V_ESQUEMA || '.dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id
-          LEFT JOIN ' || V_ESQUEMA || '.act_pvc_proveedor_contacto pvc ON pvc.pvc_id = tbj.pvc_id
-          LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve ON pve.pve_id = pvc.pve_id
-          LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 ON pve2.pve_id = tbj.mediador_id
-          LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios solic ON solic.usu_id = tbj.usu_id
+     	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj 
+			JOIN ' || V_ESQUEMA || '.act_tbj atj 							ON atj.tbj_id = tbj.tbj_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_activo act 					ON act.act_id = atj.act_id and act.borrado = 0
+			LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr 			ON agr.agr_id = tbj.agr_id and agr.borrado = 0
+			LEFT JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac 		ON gac.act_id = act.act_id
+			LEFT JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee 			ON gac.gee_id = gee.gee_id
+			JOIN ' || V_ESQUEMA_MASTER || '.dd_tge_tipo_gestor tge 			ON (tge.dd_tge_id = gee.dd_tge_id AND tge.dd_tge_codigo = ''GACT'')
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu 			ON gee.usu_id = usu.usu_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_loc_localizacion loc 			ON (loc.act_id = NVL (tbj.act_id, agr.agr_act_principal))
+			LEFT JOIN ' || V_ESQUEMA || '.bie_localizacion bieloc 			ON loc.bie_loc_id = bieloc.bie_loc_id
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_loc_localidad ddloc 	ON bieloc.dd_loc_id = ddloc.dd_loc_id
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.dd_prv_provincia ddprv 	ON bieloc.dd_prv_id = ddprv.dd_prv_id
+			JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr 				ON (ttr.dd_ttr_id = tbj.dd_ttr_id and ttr.dd_ttr_filtrar IS NULL)
+			LEFT JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str 		ON str.dd_str_id = tbj.dd_str_id
+			LEFT JOIN ' || V_ESQUEMA || '.dd_est_estado_trabajo est 		ON tbj.dd_est_id = est.dd_est_id
+			INNER JOIN ' || V_ESQUEMA || '.dd_cra_cartera cra 				ON cra.dd_cra_id = act.dd_cra_id
+			INNER JOIN ' || V_ESQUEMA || '.dd_scr_subcartera scr 			ON scr.dd_scr_id = act.dd_scr_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_pvc_proveedor_contacto pvc 	ON pvc.pvc_id = tbj.pvc_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve 			ON pve.pve_id = pvc.pve_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 			ON pve2.pve_id = tbj.mediador_id
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios solic 		ON solic.usu_id = tbj.usu_id
+			LEFT JOIN ' || V_ESQUEMA || '.gpv_tbj gtb                       ON tbj.tbj_id = gtb.tbj_id AND GTB.BORRADO = 0
           where tbj.borrado = 0
           ';
 

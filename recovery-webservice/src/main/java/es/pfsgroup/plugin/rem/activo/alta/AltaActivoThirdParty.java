@@ -531,8 +531,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				genericDao.save(ActivoEdificio.class, activoEdificio);
 				
-				//Gestores				
-				EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GCOM");
+				// Gestores
+				EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+						.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GCOM");
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestorComercial());
 				Usuario usu = genericDao.get(Usuario.class, f1);
 				GestorEntidadDto dto = new GestorEntidadDto();
@@ -540,9 +541,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				dto.setIdUsuario(usu.getId());
 				dto.setIdTipoGestor(tipoGestorComercial.getId());
 				activoAdapter.insertarGestorAdicional(dto);
-				
-				
-				EXTDDTipoGestor tipoSupervisorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SCOM");
+		
+				EXTDDTipoGestor tipoSupervisorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+						.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SCOM");
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getSupervisorGestorComercial());
 				Usuario usu2 = genericDao.get(Usuario.class, f2);
 				GestorEntidadDto dto2 = new GestorEntidadDto();
@@ -550,10 +551,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				dto2.setIdUsuario(usu2.getId());
 				dto2.setIdTipoGestor(tipoSupervisorComercial.getId());
 				activoAdapter.insertarGestorAdicional(dto2);
-				
-				
-				if (!Checks.esNulo(dtoAATP.getGestorFormalizacion())){
-					EXTDDTipoGestor tipoGestorFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GFORM");
+		
+				if (!Checks.esNulo(dtoAATP.getGestorFormalizacion())) {
+					EXTDDTipoGestor tipoGestorFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi
+							.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GFORM");
 					Filter f3 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestorFormalizacion());
 					Usuario usu3 = genericDao.get(Usuario.class, f3);
 					GestorEntidadDto dto3 = new GestorEntidadDto();
@@ -562,9 +563,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 					dto3.setIdTipoGestor(tipoGestorFormalizacion.getId());
 					activoAdapter.insertarGestorAdicional(dto3);
 				}
-				
-				
-				EXTDDTipoGestor tipoSupervisorFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SFORM");
+		
+				EXTDDTipoGestor tipoSupervisorFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi
+						.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SFORM");
 				Filter f4 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getSupervisorGestorFormalizacion());
 				Usuario usu4 = genericDao.get(Usuario.class, f4);
 				GestorEntidadDto dto4 = new GestorEntidadDto();
@@ -572,8 +573,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				dto4.setIdUsuario(usu4.getId());
 				dto4.setIdTipoGestor(tipoSupervisorFormalizacion.getId());
 				activoAdapter.insertarGestorAdicional(dto4);
-				
-				EXTDDTipoGestor tipoGestorAdmision = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GADM");
+		
+				EXTDDTipoGestor tipoGestorAdmision = (EXTDDTipoGestor) utilDiccionarioApi
+						.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GADM");
 				Filter f5 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestorAdmision());
 				Usuario usu5 = genericDao.get(Usuario.class, f5);
 				GestorEntidadDto dto5 = new GestorEntidadDto();
@@ -581,8 +583,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				dto5.setIdUsuario(usu5.getId());
 				dto5.setIdTipoGestor(tipoGestorAdmision.getId());
 				activoAdapter.insertarGestorAdicional(dto5);
-				
-				EXTDDTipoGestor tipoGestorActivos = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GACT");
+		
+				EXTDDTipoGestor tipoGestorActivos = (EXTDDTipoGestor) utilDiccionarioApi
+						.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GACT");
 				Filter f6 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestorActivos());
 				Usuario usu6 = genericDao.get(Usuario.class, f6);
 				GestorEntidadDto dto6 = new GestorEntidadDto();
@@ -590,9 +593,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				dto6.setIdUsuario(usu6.getId());
 				dto6.setIdTipoGestor(tipoGestorActivos.getId());
 				activoAdapter.insertarGestorAdicional(dto6);
-				
-				if (!Checks.esNulo(dtoAATP.getGestoriaDeFormalizacion())){
-					EXTDDTipoGestor tipoGestoriaFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+		
+				if (!Checks.esNulo(dtoAATP.getGestoriaDeFormalizacion())) {
+					EXTDDTipoGestor tipoGestoriaFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi
+							.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
 					Filter f7 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestoriaDeFormalizacion());
 					Usuario usu7 = genericDao.get(Usuario.class, f7);
 					GestorEntidadDto dto7 = new GestorEntidadDto();

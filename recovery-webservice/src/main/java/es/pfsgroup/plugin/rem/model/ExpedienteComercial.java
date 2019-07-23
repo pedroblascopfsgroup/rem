@@ -280,10 +280,6 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column (name="ECO_DEVOL_AUTO_NUMBER")
     private Boolean devolAutoNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_COS_PROPUESTO_ID")
-	private DDComiteSancion comiteSancionPropuesto;   
-    
     @Version   
 	private Long version;
 
@@ -855,13 +851,5 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setDevolAutoNumber(Boolean devolAutoNumber) {
 		this.devolAutoNumber = devolAutoNumber;
-	}
-
-	public DDComiteSancion getComiteSancionPropuesto() {
-		return comiteSancionPropuesto;
-	}
-
-	public void setComiteSancionPropuesto(DDComiteSancion comiteSancionPropuesto) {
-		this.comiteSancionPropuesto = comiteSancionPropuesto;
 	}
 }

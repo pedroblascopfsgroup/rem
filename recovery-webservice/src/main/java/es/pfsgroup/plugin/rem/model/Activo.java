@@ -37,11 +37,13 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionApple;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -436,6 +438,23 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_FECHA_CAMBIO_TIPO_ACT")
     private Date fechaUltCambioTipoActivo;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SRA_ID")
+    private DDServicerActivo servicerActivo;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CMS_ID")
+    private DDCesionSaneamiento cesionSaneamiento;
+    
+    @Column(name = "ACT_PERIMETRO_MACC")
+    private Integer perimetroMacc;
+    
+    @Column(name = "ACT_PERIMETRO_CARTERA")
+    private Integer perimetroCartera;
+    
+    @Column(name = "ACT_NOM_CARTERA_PERIMETRO")
+    private String nombreCarteraPerimetro;
     
 	
     // Getters del activo --------------------------------------------
@@ -1760,6 +1779,46 @@ public class Activo implements Serializable, Auditable {
 	public void setFechaUltCambioTipoActivo(Date fechaUltCambioTipoActivo) {
 		this.fechaUltCambioTipoActivo = fechaUltCambioTipoActivo;
 	}
+
+	public DDServicerActivo getServicerActivo() {
+		return servicerActivo;
+	}
+
+	public void setServicerActivo(DDServicerActivo servicerActivo) {
+		this.servicerActivo = servicerActivo;
+	}
+
+	public DDCesionSaneamiento getCesionSaneamiento() {
+		return cesionSaneamiento;
+	}
+
+	public void setCesionSaneamiento(DDCesionSaneamiento cesionSaneamiento) {
+		this.cesionSaneamiento = cesionSaneamiento;
+	}
+
+	public Integer getPerimetroMacc() {
+		return perimetroMacc;
+	}
+
+	public void setPerimetroMacc(Integer perimetroMacc) {
+		this.perimetroMacc = perimetroMacc;
+	}
+
+	public Integer getPerimetroCartera() {
+		return perimetroCartera;
+	}
+
+	public void setPerimetroCartera(Integer perimetroCartera) {
+		this.perimetroCartera = perimetroCartera;
+	}
+
+	public String getNombreCarteraPerimetro() {
+		return nombreCarteraPerimetro;
+	}
+
+	public void setNombreCarteraPerimetro(String nombreCarteraPerimetro) {
+		this.nombreCarteraPerimetro = nombreCarteraPerimetro;
+	}	
 	
 	
 }

@@ -1579,6 +1579,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if (!Checks.esNulo(problemasUrsus))
 						dto.setProblemasUrsus(problemasUrsus);
 				}
+				if(!Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getFechaContabilizacionReserva())) {
+					dto.setFechaContabilizacionReserva(expediente.getReserva().getFechaContabilizacionReserva());
+				}
 			}
 		}
 
@@ -4630,6 +4633,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 					if (!Checks.esNulo(dto.getFechaReserva())) {
 						expedienteComercial.getReserva().setFechaFirma(dto.getFechaReserva());
+					}
+					
+					if (!Checks.esNulo(dto.getFechaContabilizacionReserva())) {
+						expedienteComercial.getReserva().setFechaContabilizacionReserva(dto.getFechaContabilizacionReserva());
 					}
 				}
 

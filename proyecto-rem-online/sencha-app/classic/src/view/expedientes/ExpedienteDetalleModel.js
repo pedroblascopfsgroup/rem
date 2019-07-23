@@ -90,6 +90,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	 return (CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera) || CONST.CARTERA['LIBERBANK'] == carteraCodigo;
 	     },
 	     
+	     fechaContabilizacionReservaReadOnly: function(get) {
+	    	 
+	    	 if($AU.userIsRol("HAYASUPER")){
+	    		 return false;
+	    	 }
+
+	    	 return true;
+	     },
+	     
 	     comiteSancionadorNoEditable: function(get) {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo;	

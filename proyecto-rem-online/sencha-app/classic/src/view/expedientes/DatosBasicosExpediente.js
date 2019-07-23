@@ -252,6 +252,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                		hidden: '{!esOfertaVenta}'
 	                	}		
 	                },
+	                {
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.contabilizacion.reserva'),
+	                	bind: {
+	                		value: '{expediente.fechaContabilizacionReserva}',
+	                		readOnly: '{fechaContabilizacionReservaReadOnly}',
+	                		hidden: '{!esCarteraCajamar}'
+	                	}		
+	                },
 	            	{ 
 						xtype: 'textfieldbase',
 	                	fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),

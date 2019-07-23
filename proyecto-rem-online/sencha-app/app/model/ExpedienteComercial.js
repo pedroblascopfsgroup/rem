@@ -95,6 +95,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'fechaVenta',
     			type:'date',
     			dateFormat: 'c' 
+    		}, 
+    		{
+    			name: 'fechaContabilizacionReserva',
+    			type: 'date',
+    			dateFormat: 'c'
     		},
     		{
     			name: 'mediador'

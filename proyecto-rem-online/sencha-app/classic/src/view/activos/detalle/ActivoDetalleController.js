@@ -4829,12 +4829,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    		
 	    		if(!Ext.isEmpty(datos.data)){
 	    			
-	    			if(codMotivoClicked.indexOf(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"]) >= 0){
-	    				descMotivoInput.setDisabled(false);
-	    			}else{
-	    				descMotivoInput.setDisabled(true);
-	    			}
-	    			
 	    			if(!Ext.isEmpty(datos.data.codigoEstadoMotivoCalificacionNegativa)){
 		    			comboEstadoMotivo.setValue(datos.data.codigoEstadoMotivoCalificacionNegativa);
 		    		}else{
@@ -4853,7 +4847,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    			fechaSubsanacion.setValue(null);
 		    		}
 		    		
-		    		descMotivoInput.setValue(datos.data.descripcionCalificacionNegativa);
+		    		if(!Ext.isEmpty(datos.data.descMotivoInput)){
+		    			descMotivoInput.setValue(datos.data.descMotivoInput);
+		    		}else{
+		    			descMotivoInput.setValue(null);
+		    		}
 		    		
 		    		descMotivoInput.lookupController('tituloinformacionregistralactivo').getViewModel().data.codigoMotivo= datos.data.codigoMotivoCalificacionNegativa;
 	    		
@@ -5355,8 +5353,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}else{
 			return true;
 		}
+	},
+	
+	disableAgregarGestores: function(get){
+		var me = this;
+		var usuarioGestor = me.lookupReference('usuarioGestor');
+		var agregarGestor = me.lookupReference('agregarGestor');
+		var unidadAlquilable = me.getViewModel().get('activo.unidadAlquilable');
+		
+		if(!Ext.isEmpty(usuarioGestor.getSelection()) && !unidadAlquilable)
+			agregarGestor.setDisabled(false);
 	}
-
 
 });
 

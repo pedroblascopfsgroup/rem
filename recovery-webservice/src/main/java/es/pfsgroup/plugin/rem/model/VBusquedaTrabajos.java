@@ -120,6 +120,8 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name="PROPIETARIO")
 	private Long propietario;
 	
+	@Column(name="EN_OTRO_GASTO")
+	private Boolean enOtroGasto;
 
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
@@ -373,6 +375,14 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setSubCartera(String subcartera) {
 		this.subcartera = subcartera;
+	}
+	
+	public Boolean getEnOtroGasto() {
+		return enOtroGasto;
+	}
+
+	public void setEnOtroGasto(Boolean enOtroGasto) {
+		this.enOtroGasto = enOtroGasto;
 	}
 	
 }

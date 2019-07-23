@@ -1400,7 +1400,7 @@ begin
   TAP(6).tap_field('TAP_CODIGO') := 'T017_AdvisoryNote';
   TAP(6).tap_field('TAP_VIEW') := NULL;
   TAP(6).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(6).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[existeAdjuntoUGValidacion("57","E")]';
+  TAP(6).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[existeAdjuntoUGValidacion("62","E")]';
   TAP(6).tap_field('TAP_SCRIPT_DECISION') := null;
   TAP(6).tap_field('DD_TPO_ID_BPM') := null;
   TAP(6).tap_field('TAP_SUPERVISOR') := 0;
@@ -1713,7 +1713,7 @@ begin
   TAP(9).tap_field('TAP_CODIGO') := 'T017_RecomendCES';
   TAP(9).tap_field('TAP_VIEW') := NULL;
   TAP(9).tap_field('TAP_SCRIPT_VALIDACION') := null;
-  TAP(9).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGValidacion("58","E")';
+  TAP(9).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGValidacion("63","E")';
   TAP(9).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RecomendCES''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Acepta'''': checkReservaFirmada() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReserva'''' ';
   TAP(9).tap_field('DD_TPO_ID_BPM') := null;
   TAP(9).tap_field('TAP_SUPERVISOR') := 0;

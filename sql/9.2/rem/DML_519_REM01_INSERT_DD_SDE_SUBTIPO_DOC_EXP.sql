@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=IVAN SERRANO
---## FECHA_CREACION=20190528
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20190723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6444
+--## INCIDENCIA_LINK=HREOS-7183
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_SDE_SUBTIPO_DOC_EXP los datos añadidos en T_ARRAY_DATA.
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - Ivan Serrano
+--##        0.2 Cambio de códigos - Vicente Martinez
 --##########################################
 --*/
 
@@ -32,14 +33,14 @@ DECLARE
     V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_SDE_SUBTIPO_DOC_EXP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'SDE'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-    V_USUARIO_CREAR VARCHAR2(20 CHAR) := 'HREOS-6444'; -- Vble. auxiliar para almacenar el usuario crear
+    V_USUARIO_CREAR VARCHAR2(20 CHAR) := 'HREOS-7183'; -- Vble. auxiliar para almacenar el usuario crear
     V_USUARIO_MODIFICAR VARCHAR2(20 CHAR) := 'HREOS-6520'; -- Vble. auxiliar para almacenar el usuario modificar
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('57'	,'Advisory Note'								,'Advisory Note'           ,'OP-09-ACUE-25'),
-        T_TIPO_DATA('58'	,'Advisory Note CES'							,'Advisory Note CES'     ,'OP-09-ACUE-26')
+        T_TIPO_DATA('62'	,'Advisory Note'								,'Advisory Note'           ,'OP-09-ACUE-25'),
+        T_TIPO_DATA('63'	,'Advisory Note CES'							,'Advisory Note CES'     ,'OP-09-ACUE-26')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

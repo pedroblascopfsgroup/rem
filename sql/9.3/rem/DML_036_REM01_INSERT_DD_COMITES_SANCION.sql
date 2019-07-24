@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Salvador Puertes
---## FECHA_CREACION=20190722
+--## FECHA_CREACION=20190724
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=2.16.0
 --## INCIDENCIA_LINK=HREOS-7164
@@ -39,10 +39,11 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     --        CODIGO    DESCRIPCION         DESCRIPCION_LARGA   CARTERA_CODIGO  SUBCARTERA_CODIGO
-        T_TIPO_DATA('33',   'Gestión Inmobiliaria'  ,   'Gestión Inmobiliaria',   '08','56'),
-        T_TIPO_DATA('34',   'Director de Gestión Inmobiliaria'  ,   'Director de Gestión Inmobiliaria',   '08','56'),
-        T_TIPO_DATA('35',   'Comité de Inversiones Inmobiliarias'  ,   'Comité de Inversiones Inmobiliarias',   '08','56'),
-        T_TIPO_DATA('36',   'Comité de Dirección'  ,   'Comité de Dirección',   '08','56')
+    	T_TIPO_DATA('33',   'Haya'  ,   'Haya',   '13', '41'),
+        T_TIPO_DATA('34',   'Gestión Inmobiliaria'  ,   'Gestión Inmobiliaria',   '08','56'),
+        T_TIPO_DATA('35',   'Director de Gestión Inmobiliaria'  ,   'Director de Gestión Inmobiliaria',   '08','56'),
+        T_TIPO_DATA('36',   'Comité de Inversiones Inmobiliarias'  ,   'Comité de Inversiones Inmobiliarias',   '08','56'),
+        T_TIPO_DATA('37',   'Comité de Dirección'  ,   'Comité de Dirección',   '08','56')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

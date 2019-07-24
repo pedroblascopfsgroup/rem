@@ -1212,7 +1212,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}else if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
 			muestraOfertaComercial = true;
 		
-		if (!Checks.esNulo(oferta.getClaseOferta()) && isCarteraLbkVenta) {
+		}
+		dto.setIsLbkOfertaComercialPrincipal(isLbkOfertaComercialPrincipal);
+		dto.setMuestraOfertaComercial(muestraOfertaComercial);
+
+		Double importeTotalAgrupada = oferta.getImporteOferta();
+		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta())) {
 			dto.setClaseOfertaDescripcion(oferta.getClaseOferta().getDescripcion());
 			dto.setClaseOfertaCodigo(oferta.getClaseOferta().getCodigo());
 			if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {

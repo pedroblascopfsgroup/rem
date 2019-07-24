@@ -233,15 +233,32 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 											valueField: 'codigo'
 										},
 										{
-							                xtype:'textfieldbase',
-											fieldLabel:  HreRem.i18n('fieldlabel.numOferPrincipal'),
-						                   	readOnly: true,
-						 					bind: 		{ 
-												value: '{datosbasicosoferta.numOferPrincipal}',	
-												hidden: '{!datosbasicosoferta.isCarteraLbkVenta}'
-											}
-						                	
-						                },
+											xtype:'container',
+						                	bind: { 
+						                		hidden: '{datosbasicosoferta.muestraOfertaComercial}'
+						                	},
+											items: [
+												{
+									                xtype:'textfieldbase',
+													fieldLabel:  HreRem.i18n('fieldlabel.numOferPrincipal'),
+								                   	readOnly: true,
+								 					bind: 		{ 
+														value: '{datosbasicosoferta.numOferPrincipal}',	
+														hidden: '{datosbasicosoferta.isLbkOfertaComercialPrincipal}'
+													}
+								                	
+								                },
+												{
+									                xtype:'textfieldbase',
+													fieldLabel:  HreRem.i18n('fieldlabel.importe.total'),
+								                   	readOnly: true,
+								 					bind: 		{ 
+														value: '{datosbasicosoferta.importeTotal}',	
+														hidden: '{!datosbasicosoferta.isLbkOfertaComercialPrincipal}'
+													}
+								                	
+								                }]
+										},
 						                {
 						                	xtype: 'comboboxfieldbase',
 						                	fieldLabel:  HreRem.i18n('fieldlabel.comite.seleccionado'),

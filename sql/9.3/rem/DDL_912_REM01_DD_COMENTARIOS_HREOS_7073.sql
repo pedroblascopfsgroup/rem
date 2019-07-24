@@ -1,0 +1,120 @@
+--/*
+--##########################################
+--## AUTOR=JUAN BELTRAN
+--## FECHA_CREACION=20190724
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-7073
+--## PRODUCTO=NO
+--## Finalidad: DDL creación de comentarios para la tabla y columnas.
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial - JUAN BELTRAN - 20190724 - HREOS-7073
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+    
+    err_num NUMBER; -- Número de errores.
+    err_msg VARCHAR2(2048); -- Mensaje de error.
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_MSQL VARCHAR2(4000 CHAR); 
+
+    CUENTA NUMBER;
+    
+BEGIN
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'DD_SRA_SERVICER_ACTIVO' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='TABLE';  
+  IF CUENTA>0 THEN   
+    DBMS_OUTPUT.PUT_LINE('Creando comentarios para '|| V_ESQUEMA ||'.DD_SRA_SERVICER_ACTIVO...');  
+  
+  EXECUTE IMMEDIATE 'COMMENT ON TABLE  ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO IS ''DICCIONARIO SERVICER ACTIVO''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.DD_SRA_ID IS ''ID único del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.DD_SRA_CODIGO IS ''Código único del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.DD_SRA_DESCRIPCION IS ''Descripción del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.DD_SRA_DESCRIPCION_LARGA IS ''Descripción larga del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.VERSION IS ''Indica la versión del registro''';  
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.USUARIOCREAR IS ''Indica el usuario que creó el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.FECHACREAR IS ''Indica la fecha en la que se creó el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.USUARIOBORRAR IS ''Indica el usuario que borró el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.FECHABORRAR IS ''Indica la fecha en la que se borró el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_SRA_SERVICER_ACTIVO.BORRADO IS ''Indicador de borrado''';
+
+  
+  DBMS_OUTPUT.PUT_LINE('Creados los comentarios en TABLA '|| V_ESQUEMA ||'.DD_SRA_SERVICER_ACTIVO...Creada OK');
+  COMMIT;
+
+  END IF;
+
+SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'DD_CMS_CESION_COM_SANEAMIENTO' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='TABLE';  
+  IF CUENTA>0 THEN   
+    DBMS_OUTPUT.PUT_LINE('Creando comentarios para '|| V_ESQUEMA ||'.DD_CMS_CESION_COM_SANEAMIENTO...');  
+  
+  EXECUTE IMMEDIATE 'COMMENT ON TABLE  ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO IS ''DICCIONARIO CESIÓN COMERCIAL/SANEAMIENTO''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.DD_CMS_ID IS ''ID único del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.DD_CMS_CODIGO IS ''Código único del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.DD_CMS_DESCRIPCION IS ''Descripción del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.DD_CMS_DESCRIPCION_LARGA IS ''Descripción larga del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.VERSION IS ''Indica la versión del registro''';  
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.USUARIOCREAR IS ''Indica el usuario que creó el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.FECHACREAR IS ''Indica la fecha en la que se creó el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.USUARIOBORRAR IS ''Indica el usuario que borró el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.FECHABORRAR IS ''Indica la fecha en la que se borró el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CMS_CESION_COM_SANEAMIENTO.BORRADO IS ''Indicador de borrado''';
+
+  
+  DBMS_OUTPUT.PUT_LINE('Creados los comentarios en TABLA '|| V_ESQUEMA ||'.DD_CMS_CESION_COM_SANEAMIENTO...Creada OK');
+  COMMIT;
+
+  END IF;
+
+SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'DD_CAP_CLASIFICACION_APPLE' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='TABLE';  
+  IF CUENTA>0 THEN   
+    DBMS_OUTPUT.PUT_LINE('Creando comentarios para '|| V_ESQUEMA ||'.DD_CAP_CLASIFICACION_APPLE...');  
+  
+  EXECUTE IMMEDIATE 'COMMENT ON TABLE  ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE IS ''DICCIONARIO CLASIFICACIÓN APPLE''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.DD_CAP_ID IS ''ID único del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.DD_CAP_CODIGO IS ''Código único del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.DD_CAP_DESCRIPCION IS ''Descripción del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.DD_CAP_DESCRIPCION_LARGA IS ''Descripción larga del registro del diccionario''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.VERSION IS ''Indica la versión del registro''';  
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.USUARIOCREAR IS ''Indica el usuario que creó el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.FECHACREAR IS ''Indica la fecha en la que se creó el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.USUARIOBORRAR IS ''Indica el usuario que borró el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.FECHABORRAR IS ''Indica la fecha en la que se borró el registro''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.DD_CAP_CLASIFICACION_APPLE.BORRADO IS ''Indicador de borrado''';
+
+  
+  DBMS_OUTPUT.PUT_LINE('Creados los comentarios en TABLA '|| V_ESQUEMA ||'.DD_CAP_CLASIFICACION_APPLE...Creada OK');
+  COMMIT;
+
+  END IF;
+
+EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;  
+END;
+/
+
+EXIT;

@@ -157,6 +157,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			put(DDAccionGastos.CODIGO_PRESCRIPCION, "P");
 		}
 	};
+	
+	private static final String T017 = "T017";
 
 	@Resource
 	MessageService messageServices;
@@ -3851,5 +3853,32 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			}
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Boolean esTareaFinalizada(ActivoTramite tramite, String codigoTarea) {
+		
+		Boolean resultado = false;
+		
+		if(!Checks.esNulo(codigoTarea) && !Checks.esNulo(tramite)) {
+
+			Filter filtroTRA = genericDao.createFilter(FilterType.EQUALS, "tramite", tramite);
+			
+			List<TareaActivo> listaTareas = genericDao.getList(TareaActivo.class, filtroTRA);
+			
+			if(!Checks.estaVacio(listaTareas)) {
+				for(TareaActivo tarea : listaTareas) {
+					if(codigoTarea.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						resultado = !Checks.esNulo(tarea.getTareaFinalizada()) ? tarea.getTareaFinalizada() : false;
+						
+						if(!resultado || (resultado && T017.equals(tramite.getTipoTramite().getCodigo()))) break;
+					}
+				}
+			}
+			
+		}
+		
+		return resultado;
 	}
 }

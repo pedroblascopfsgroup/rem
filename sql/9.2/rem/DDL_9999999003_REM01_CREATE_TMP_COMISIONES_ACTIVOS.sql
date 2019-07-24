@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ALBERT PASTOR
---## FECHA_CREACION=20190722
+--## FECHA_CREACION=20190725
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6985
@@ -65,6 +65,7 @@ DECLARE
                 ,CREATEUSER VARCHAR2(50 CHAR)
                 ,MODIFYDATE DATE
                 ,MODIFYUSER VARCHAR2(50 CHAR)
+                ,TRAMO VARCHAR2(10 CHAR)
   )';
 
 		EXECUTE IMMEDIATE V_SQL;

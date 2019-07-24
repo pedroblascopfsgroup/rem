@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ALBERT PASTOR
---## FECHA_CREACION=20190720
+--## FECHA_CREACION=20190725
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6985

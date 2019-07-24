@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -48,9 +46,6 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Autowired
 	private GenericABMDao genericDao;
-
-	@Autowired
-	private ActivoAdapter activoAdapterApi;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -167,17 +162,17 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
 		}
-		else if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
-			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;
-		}
-		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
-			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
-		}
 		else if (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo)) {
 			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
 		}
 		else if (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId())) {
 			codigo = DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE;
+		}
+		else if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
+			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;
+		}
+		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
+			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
 		}
 		else if(activoApi.isActivoConOfertaByEstado(activo,DDEstadoOferta.CODIGO_ACEPTADA)) {
 			if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())) {

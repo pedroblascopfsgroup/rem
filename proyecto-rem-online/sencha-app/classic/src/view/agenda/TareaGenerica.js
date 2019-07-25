@@ -2279,8 +2279,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    }
 		});
 		
-    	if((me.down('[name=fechaFirma]').getValue()!=null && me.down('[name=fechaFirma]').getValue()!="") || 
-    			(CONST.CARTERA['LIBERBANK'] == codigoCartera || (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == codigoSubcartera))){
+    	if((me.down('[name=fechaFirma]').getValue()!=null && me.down('[name=fechaFirma]').getValue()!="") /*|| 
+    			(CONST.CARTERA['LIBERBANK'] == codigoCartera || (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == codigoSubcartera))*/){ 
     		me.down('[name=fechaFirma]').setReadOnly(true);
     		me.campoObligatorio(me.down('[name=fechaFirma]'));
     	}

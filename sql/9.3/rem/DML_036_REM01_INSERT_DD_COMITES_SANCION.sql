@@ -40,7 +40,7 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     --        CODIGO    DESCRIPCION         DESCRIPCION_LARGA   CARTERA_CODIGO  SUBCARTERA_CODIGO
     	T_TIPO_DATA('33',   'Haya'  ,   'Haya',   '13', '41'),
-        T_TIPO_DATA('34',   'Gestión Inmobiliaria'  ,   'Gestión Inmobiliaria',   '08','56'),
+        T_TIPO_DATA('34',   'Gestión Inmobiliaria'  ,   'Gestión Inmobiliaria',   '08',null),
         T_TIPO_DATA('35',   'Director de Gestión Inmobiliaria'  ,   'Director de Gestión Inmobiliaria',   '08',null),
         T_TIPO_DATA('36',   'Comité de Inversiones Inmobiliarias'  ,   'Comité de Inversiones Inmobiliarias',   '08',null),
         T_TIPO_DATA('37',   'Comité de Dirección'  ,   'Comité de Dirección',   '08',null)

@@ -1359,15 +1359,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(expediente)) {
 			dto.setIdEco(expediente.getId());
 		}
-		
-		Long ofertasTotales = ofertasTotalesCount(expediente);
-		if (!Checks.esNulo(ofertasTotales)) {
-			dto.setOfertasTotal(ofertasTotales);
-		}
-		Long visitasTotales = visitasTotalesCount(expediente);
-		if (!Checks.esNulo(visitasTotales)) {
-			dto.setVisitasTotal(visitasTotales);
-		}
 
 		return dto;
 	}

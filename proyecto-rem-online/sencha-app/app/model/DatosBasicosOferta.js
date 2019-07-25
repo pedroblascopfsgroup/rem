@@ -206,12 +206,6 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
      		},
     		{
     			name:'importeTotal'	
-    		},
-    		{
-    			name:'ofertasTotal'
-    		},
-    		{
-    			name:'visitasTotal'
     		}
     ],
     

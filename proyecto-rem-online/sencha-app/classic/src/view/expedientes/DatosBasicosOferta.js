@@ -363,16 +363,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 									            		value: '{datosbasicosoferta.estadoVisitaOfertaCodigo}'
 									            	},
 							                		listeners: {change: 'numVisitaIsEditable'}
-										        },
-							                	{
-							                		xtype: 'textfieldbase',
-							                		fieldLabel:  HreRem.i18n('fieldlabel.numero.visitasTotal'),
-							                		bind: {
-							                			value : '{datosbasicosoferta.visitasTotal}'
-							                		},
-										        	readOnly: true
-							                		
-							                	}			                	
+										        }		                	
 							                ]
 			                			},											
 		                				{
@@ -436,16 +427,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								            value: '{datosbasicosoferta.necesitaFinanciacion}'
 										},
 										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion')
-					    			},
-					    			{
-					    				xtype: 'textfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.totalOfertas'),
-										bind: {
-											value: '{datosbasicosoferta.ofertasTotal}'
-										},
-					    				readOnly: true,
-					    				width: 410,
-					    				colspan: 2
 					    			}
 					    			
 					    			

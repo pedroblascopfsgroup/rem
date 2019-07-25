@@ -814,6 +814,20 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'cambioEstadoPublicacion',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'ofertasTotal'
+    		},
+    		{
+    			name: 'visitasTotal'
+    		},
+			{
+    			name: 'isSubcarteraApple',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && data.subcarteraCodigo == CONST.SUBCARTERA['APPLEINMOBILIARIO'];
+    			},
+				depends: 'subcarteraCodigo',
+				depends: 'entidadPropietariaCodigo'
     		}
     ],
     

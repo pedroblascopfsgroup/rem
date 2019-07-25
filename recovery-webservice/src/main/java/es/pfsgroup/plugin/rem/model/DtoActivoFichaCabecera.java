@@ -243,6 +243,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean cambioEstadoPublicacion;;
 	private Boolean cambioEstadoPrecio;
 	private Boolean cambioEstadoActivo; 
+	
+	//Contador de ofertas y visitas
+	private Long ofertasTotal;
+	private Long visitasTotal;
 
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -1883,6 +1887,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
+	}
+
+	public Long getOfertasTotal() {
+		return ofertasTotal;
+	}
+
+	public void setOfertasTotal(Long ofertasTotal) {
+		this.ofertasTotal = ofertasTotal;
+	}
+
+	public Long getVisitasTotal() {
+		return visitasTotal;
+	}
+
+	public void setVisitasTotal(Long visitasTotal) {
+		this.visitasTotal = visitasTotal;
 	}
 	
 }

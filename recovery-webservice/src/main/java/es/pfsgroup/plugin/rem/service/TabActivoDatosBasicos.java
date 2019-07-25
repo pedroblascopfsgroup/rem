@@ -800,6 +800,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		}
 		
+		if (activo.getOfertas() != null) {
+			BeanUtils.copyProperty(activoDto, "ofertasTotal", new Long(activo.getOfertas().size()));
+		}else {
+			BeanUtils.copyProperty(activoDto, "ofertasTotal",new Long(0));
+		}
+		if (activo.getVisitas() != null) {
+			BeanUtils.copyProperty(activoDto, "visitasTotal", new Long(activo.getVisitas().size()));
+		} else {
+			BeanUtils.copyProperty(activoDto, "visitasTotal", new Long(0));
+		}
+		
 		return activoDto;
 	}
 	

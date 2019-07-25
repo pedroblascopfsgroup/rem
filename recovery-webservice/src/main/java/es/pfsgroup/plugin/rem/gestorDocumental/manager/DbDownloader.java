@@ -64,7 +64,6 @@ public class DbDownloader implements Downloader {
 		FileItem fileItem = adjAgrupacion.getAdjunto().getFileItem();
 		fileItem.setContentType(adjAgrupacion.getContentType());
 		fileItem.setFileName(adjAgrupacion.getNombre());
-
 		return adjAgrupacion.getAdjunto().getFileItem();
 	}
 
@@ -77,5 +76,4 @@ public class DbDownloader implements Downloader {
 
 		return adjunto.getAdjunto().getFileItem();
 	}
-
 }

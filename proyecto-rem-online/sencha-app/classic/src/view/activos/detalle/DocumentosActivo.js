@@ -33,7 +33,17 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     	            	disabled: '{!activo.isCarteraSareb}'
     	            },
     	 			colspan: 3
-    	 		}
+    	 		}/*,
+    	 		{
+    	     		xtype:'documentosactivoagrupacion',
+    	 			reference: 'listadoDocumentosagrupacion',
+    	            collapsible: true,
+//    	            readOnly: true,
+    	            bind:{
+    	            	//hidden: '{visibilidadPestanyaDocumentacionAgrupacion}'
+    	            },
+    	 			colspan: 3
+    	 		}*/
     	];
 
     	me.addPlugin({ptype: 'lazyitems', items: items });

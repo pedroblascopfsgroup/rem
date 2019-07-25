@@ -317,4 +317,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<ActivoProveedor> getComboApiPrimaria();
 	
 	Long getAgrupacionYubaiByIdActivo(Long id);
+	
+	
 }

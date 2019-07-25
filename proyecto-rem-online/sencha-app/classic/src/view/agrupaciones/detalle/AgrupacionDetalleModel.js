@@ -3,10 +3,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     alias: 'viewmodel.agrupaciondetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
-    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial',
-		'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion', 'HreRem.model.ComercialAgrupacion',
-		'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion','HreRem.model.AdjuntoActivoAgrupacion'],
-    
+    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial'
+    ,'HreRem.model.ComercialAgrupacion','HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion','HreRem.model.AdjuntoActivoAgrupacion'],
     data: {
     	agrupacionficha: null,
     	ofertaRecord: null,
@@ -205,7 +203,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     	if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
 		     		return true;
 		     	} else if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION["OBRA_NUEVA"] && cartera == CONST.CARTERA["THIRDPARTIES"]  && subCartera == CONST.SUBCARTERA["YUBAI"] )) {
-		     		console.log( '%cEs yubai',"color: blue; font-size:15px;");
 		     		return true;
 		     	}else{
 		     		return false;
@@ -1085,7 +1082,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				remoteUrl: 'generic/getComboTipoDestinoComercialCreaFiltered'
 			}
 		},
-
 		comboTipoAlquiler: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

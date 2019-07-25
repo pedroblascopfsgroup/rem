@@ -1380,12 +1380,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public Long uploadDocumentoAgrupacionAdjunto(ActivoAgrupacion agrupacion, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta;
-/*TODO CAMBIAR CODIGO ESTADO DE LA MATRICULA*/
-		String codigoEstado = "31";
-
-		String idComunicacion = agrupacion.getId().toString();
-/*TODO CAMBIAR LOS CONSTANTS GESTOR DOCUMENTAL POR EL TIPO */
-		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idComunicacion, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
+		String codigoEstado = "08";
+		String idAgrupacion = agrupacion.getId().toString();
+		
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAgrupacion, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, codigoEstado);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
 		
 		RespuestaCrearDocumento respuestaCrearDocumento;
@@ -1473,18 +1471,16 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			logger.debug(gex.getMessage());
 			throw gex;
 		}
-		
-		Integer idExpediente = null;
-		
+		Integer id = null;
 		if(!Checks.esNulo(respuesta)) {
-			idExpediente = respuesta.getIdExpediente();
+			id = respuesta.getIdExpediente();
 		}
 		
-		return idExpediente;	
+		return id;	
 	}
 
 	@Override
-	public FileItem getFileItemAgrupacion(Long id, String nombreDocumento) {
-	return this.getFileItem(id, nombreDocumento);
+	public FileItem getFileItemAgrupacion(Long id, String nombreDocumento) throws Exception {
+		return this.getFileItem(id, nombreDocumento);
 	}
 }

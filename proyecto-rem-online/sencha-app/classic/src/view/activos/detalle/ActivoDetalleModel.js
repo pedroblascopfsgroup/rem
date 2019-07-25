@@ -10,6 +10,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel','HreRem.model.ListaActivoGrid','HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto'],
 
+
     data: {
     	activo: null,
     	ofertaRecord: null,
@@ -750,7 +751,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return !editable;
 		},
 		
-
 		visibilidadPestanyaDocumentacionAgrupacion : function (get)  {
 			if ( CONST.CARTERA['THIRDPARTIES'] === get('activo.entidad')
 			&& CONST.SUBCARTERA['YUBAI'] === get('activo.subCartera')){
@@ -1333,19 +1333,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	          	 groupField: 'descripcionTipo',
 	          	 autoLoad: false
     		},
-
-    		storeDocumentosActivoProyecto: {
-   			 pageSize: $AC.getDefaultPageSize(),
-   			 model: 'HreRem.model.AdjuntoActivoProyecto',
-	      	     proxy: {
-	      	        type: 'uxproxy',
-	      	        remoteUrl: 'proyecto/getListAdjuntosProyecto',
-	      	        extraParams: {id:'{activo.id}'}
-	          	 },
-	          	 groupField: 'descripcionTipo',
-	          	 autoLoad: false
-    		},
-
     		historicoTrabajos: {
 				pageSize: $AC.getDefaultPageSize(),
 		    	model: 'HreRem.model.BusquedaTrabajo',

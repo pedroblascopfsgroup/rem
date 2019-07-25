@@ -8,8 +8,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
          	cargarFotosSubdivision: 'cargarFotosSubdivision'
       },
       'documentosagrupacion': {
-    	  download: 'downloadDocumentosAgrupacion',
-    	  onClickRemove: 'borrarDocumentoAdjuntoAgrupacion'
+    	  download: 'downloadDocumentosAgrupacion'
       }
     },
 
@@ -1290,7 +1289,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	                	if(!Ext.isEmpty(me.parent)) {
 	                		me.parent.fireEvent("afterupload", me.parent);
 	                	}
-	                
 	                	me.getView().grid.getStore().load();
 	                    btn.up("window").close();
 	                },
@@ -1311,27 +1309,5 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			config.params.id=record.get('id');
 			config.params.nombreDocumento=record.get("nombre");
 			me.fireEvent("downloadFile", config);
-		},
-		
-		borrarDocumentoAdjuntoAgrupacion: function(grid, record) {
-			var me = this,
-			idActivo = me.getViewModel().get("activo.id");
-			me.getView().mask(HreRem.i18n("msg.mask.loading"));
-			record.erase({
-				params: {idEntidad: idActivo},
-	            success: function(record, operation) {
-	            	 grid.fireEvent("afterdelete", grid);
-	            	 grid.getStore().load();
-	             	 grid.disableRemoveButton(true);
-	           		 me.getView().unmask();
-	           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	            },
-	            failure: function(record, operation) {
-					 grid.fireEvent("afterdelete", grid);
-					 me.getView().unmask();
-	                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	            }
-	            
-	        });	
 		}
 });

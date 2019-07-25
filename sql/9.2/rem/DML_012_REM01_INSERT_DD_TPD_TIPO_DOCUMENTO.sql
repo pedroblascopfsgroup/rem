@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190724
+--## FECHA_CREACION=20190725
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=func-rem-SG
 --## INCIDENCIA_LINK=HREOS-7022
@@ -39,20 +39,18 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('140'	 ,'Recurso derivación de deuda'	 ,'Recurso derivación de deuda'	 ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('141'  ,'Recurso hipoteca legal tácita'   ,'Recurso hipoteca legal tácita'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('142'  ,'Respuesta recurso derivación de deuda'   ,'Respuesta recurso derivación de deuda'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('143'  ,'Respuesta recurso hipoteca legal tácita'   ,'Respuesta recurso hipoteca legal tácita'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('144'  ,'Sanción'   ,'Sanción'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('145'  ,'Multa coercitiva'   ,'Multa coercitiva'   ,'AI-01-DOCJ-29'),
+    	T_TIPO_DATA('140'	 ,'Recurso derivación de deuda'	 ,'Recurso derivación de deuda'	 ,'AI-15-FACT-AX'),
+      T_TIPO_DATA('141'  ,'Recurso hipoteca legal tácita'   ,'Recurso hipoteca legal tácita'   ,'AI-15-FACT-AY'),
+      T_TIPO_DATA('142'  ,'Respuesta recurso derivación de deuda'   ,'Respuesta recurso derivación de deuda'   ,'AI-01-DOCA-60'),
+      T_TIPO_DATA('143'  ,'Respuesta recurso hipoteca legal tácita'   ,'Respuesta recurso hipoteca legal tácita'   ,'AI-01-DOCA-61'),
       T_TIPO_DATA('146'  ,'Recurso sanción'   ,'Recurso sanción'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('147'  ,'Recurso multa coercitiva'   ,'Recurso multa coercitiva'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('148'  ,'Solicitud bonificación tributaria'   ,'Solicitud bonificación tributaria'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('149'  ,'Recurso solicitud bonificación tributaria'   ,'Recurso solicitud bonificación tributaria'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('150'  ,'Solicitud suspensión de deudas recurridas'   ,'Solicitud suspensión de deudas recurridas'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('151'  ,'Recurso suspensión de deudas recurridas'   ,'Recurso suspensión de deudas recurridas'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('152'  ,'Acta de junta'   ,'Acta de junta'   ,'AI-01-DOCJ-29'),
-      T_TIPO_DATA('153'  ,'Recepción convocatoria'   ,'Recepción convocatoria'   ,'AI-01-DOCJ-29')
+      T_TIPO_DATA('147'  ,'Recurso multa coercitiva'   ,'Recurso multa coercitiva'   ,'AI-01-DOCA-63'),
+      T_TIPO_DATA('148'  ,'Solicitud bonificación tributaria'   ,'Solicitud bonificación tributaria'   ,'AI-01-DOCA-64'),
+      T_TIPO_DATA('149'  ,'Recurso solicitud bonificación tributaria'   ,'Recurso solicitud bonificación tributaria'   ,'AI-01-DOCA-65'),
+      T_TIPO_DATA('150'  ,'Solicitud suspensión de deudas recurridas'   ,'Solicitud suspensión de deudas recurridas'   ,'AI-01-DOCA-66'),
+      T_TIPO_DATA('151'  ,'Recurso suspensión de deudas recurridas'   ,'Recurso suspensión de deudas recurridas'   ,'AI-01-DOCA-67'),
+      T_TIPO_DATA('152'  ,'Acta de junta'   ,'Acta de junta'   ,'EN-05-ACTR-01'),
+      T_TIPO_DATA('153'  ,'Recepción convocatoria'   ,'Recepción convocatoria'   ,'EN-05-ACTR-13')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

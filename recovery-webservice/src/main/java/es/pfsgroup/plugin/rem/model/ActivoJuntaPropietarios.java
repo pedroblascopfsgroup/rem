@@ -23,6 +23,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDJuntaComunidades;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Entity
 @Table(name = "ACT_JCM_JUNTA_COM_PROPIETARIOS", schema = "${entity.schema}")
@@ -47,11 +48,11 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JCM_ACT_JUDIC_CON_PROMOCION")	
-	private DDSiNo judicial;
+	private DDSinSiNo judicial;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JCM_ACTUACIONES_CONTRA_MOROSOS")
-	private DDSiNo morosos;
+	private DDSinSiNo morosos;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JCM_COMUNIDAD")
@@ -65,7 +66,7 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JCM_DERRAMA_MAYOR_5000")
-	private DDSiNo derrama;
+	private DDSinSiNo derrama;
 
 	@Column(name = "JCM_FECHA_JUNTA")
 	private Date fechaAltaJunta;
@@ -81,15 +82,15 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JCM_ITE")
-	private DDSiNo ite;
+	private DDSinSiNo ite;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JCM_MODIFICACIONES_ESTATUTOS")
-	private DDSiNo estatutos;
+	private DDSinSiNo estatutos;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JCM_MODIFICA_CUOTA")
-	private DDSiNo cuota;
+	private DDSinSiNo cuota;
 
 	@Column(name = "JCM_OTROS")
 	private String otros;
@@ -99,11 +100,11 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JCM_PROMOCION_ENTRE_20_50")
-	private DDSiNo promo20a50;
+	private DDSinSiNo promo20a50;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "JCM_PROMOCION_MAYOR_50")
-	private DDSiNo promoMayor50;
+	private DDSinSiNo promoMayor50;
 
 	@Column(name = "JCM_PROPUESTA")
 	private String propuesta;
@@ -141,19 +142,19 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 		this.junta = junta;
 	}
 
-	public DDSiNo getJudicial() {
+	public DDSinSiNo getJudicial() {
 		return judicial;
 	}
 
-	public void setJudicial(DDSiNo judicial) {
+	public void setJudicial(DDSinSiNo judicial) {
 		this.judicial = judicial;
 	}
 
-	public DDSiNo getMorosos() {
+	public DDSinSiNo getMorosos() {
 		return morosos;
 	}
 
-	public void setMorosos(DDSiNo morosos) {
+	public void setMorosos(DDSinSiNo morosos) {
 		this.morosos = morosos;
 	}
 
@@ -181,11 +182,11 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 		this.ordinaria = ordinaria;
 	}
 
-	public DDSiNo getDerrama() {
+	public DDSinSiNo getDerrama() {
 		return derrama;
 	}
 
-	public void setDerrama(DDSiNo derrama) {
+	public void setDerrama(DDSinSiNo derrama) {
 		this.derrama = derrama;
 	}
 
@@ -221,27 +222,27 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 		this.indicaciones = indicaciones;
 	}
 
-	public DDSiNo getIte() {
+	public DDSinSiNo getIte() {
 		return ite;
 	}
 
-	public void setIte(DDSiNo ite) {
+	public void setIte(DDSinSiNo ite) {
 		this.ite = ite;
 	}
 
-	public DDSiNo getEstatutos() {
+	public DDSinSiNo getEstatutos() {
 		return estatutos;
 	}
 
-	public void setEstatutos(DDSiNo estatutos) {
+	public void setEstatutos(DDSinSiNo estatutos) {
 		this.estatutos = estatutos;
 	}
 
-	public DDSiNo getCuota() {
+	public DDSinSiNo getCuota() {
 		return cuota;
 	}
 
-	public void setCuota(DDSiNo cuota) {
+	public void setCuota(DDSinSiNo cuota) {
 		this.cuota = cuota;
 	}
 
@@ -261,19 +262,19 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 		this.porcentaje = porcentaje;
 	}
 
-	public DDSiNo getPromo20a50() {
+	public DDSinSiNo getPromo20a50() {
 		return promo20a50;
 	}
 
-	public void setPromo20a50(DDSiNo promo20a50) {
+	public void setPromo20a50(DDSinSiNo promo20a50) {
 		this.promo20a50 = promo20a50;
 	}
 
-	public DDSiNo getPromoMayor50() {
+	public DDSinSiNo getPromoMayor50() {
 		return promoMayor50;
 	}
 
-	public void setPromoMayor50(DDSiNo promoMayor50) {
+	public void setPromoMayor50(DDSinSiNo promoMayor50) {
 		this.promoMayor50 = promoMayor50;
 	}
 

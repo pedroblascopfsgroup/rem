@@ -43,17 +43,16 @@ public class ActivoJuntaPropietariosDaoImpl extends AbstractEntityDao<ActivoJunt
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vjunta.numActivo", numActivo);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vjunta.codProveedor", codProveedor);
 		
-		if(!Checks.esNulo(fechaHasta) && !Checks.esNulo(fechaDesde)) {
-		hb.appendWhere(" vjunta.fechaJunta BETWEEN TO_DATE('" + fechaDesde + "','dd/MM/yy') AND TO_DATE('" + fechaHasta + "','dd/MM/yy')");
-		}else {
-			if(!Checks.esNulo(fechaHasta)) {
-				hb.appendWhere( " vjunta.fechaJunta  < TO_DATE('" + fechaHasta +"','dd/MM/yy')+1");
-			}
+		if(!Checks.esNulo(fechaDesde) && !Checks.esNulo(fechaHasta) ) {
+		hb.appendWhere(" vjunta.fechaJunta  >=  TO_DATE('" + fechaDesde + "','dd/MM/yy') AND vjunta.fechaJunta  <= TO_DATE('" + fechaHasta +"','dd/MM/yy')");
+		}else {			
 			if( !Checks.esNulo(fechaDesde)) {
-				hb.appendWhere( " vjunta.fechaJunta  >  TO_DATE('" + fechaDesde + "','dd/MM/yy')");
+				hb.appendWhere( " vjunta.fechaJunta  >=  TO_DATE('" + fechaDesde + "','dd/MM/yy')");
 			}
-		}
-		
+			if(!Checks.esNulo(fechaHasta)) {
+				hb.appendWhere( " vjunta.fechaJunta  <= TO_DATE('" + fechaHasta +"','dd/MM/yy')");
+			}
+		}		
 		return hb;
 	}
 

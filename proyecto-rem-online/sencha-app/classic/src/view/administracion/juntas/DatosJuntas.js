@@ -162,10 +162,14 @@ Ext.define('HreRem.view.administracion.juntas.DatosJunta', {
 														bind: '{juntaactual.junta}'
 													},
 													{
+														xtype: 'comboboxfieldbase',
 												        fieldLabel: HreRem.i18n('fieldlabel.juntas.act.judic'),
 														reference: 'judicial',
 														name: 'judicial',
-														bind: '{juntaactual.judicial}'
+														bind: {
+															store: '{comboSiNoJuntas}',
+															value: '{juntaactual.judicial}'
+														}
 													},
 													{
 														xtype: 'comboboxfieldbase',
@@ -198,10 +202,14 @@ Ext.define('HreRem.view.administracion.juntas.DatosJunta', {
 														}
 													},
 													{
+														xtype: 'comboboxfieldbase',
 												        fieldLabel: HreRem.i18n('fieldlabel.juntas.morosos'),
 														reference: 'morosos',
-														name: 'morosos',
-														bind: '{juntaactual.morosos}'
+														name: 'morosos',														
+														bind: {
+															store: '{comboSiNoJuntas}',
+															value: '{juntaactual.morosos}'
+														}
 													},
 													{
 														xtype: 'comboboxfieldbase',

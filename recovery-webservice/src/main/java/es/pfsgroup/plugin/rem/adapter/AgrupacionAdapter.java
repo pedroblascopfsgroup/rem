@@ -1146,6 +1146,11 @@ public class AgrupacionAdapter {
 					|| !activo.getProvincia().equals(proyecto.getProvincia().getCodigo())) {
 				throw new JsonViewerException("El activo no tiene la misma Provincia o Cartera que la agrupación");
 			}
+			if (!Checks.esNulo(numActivo)) {
+				if(particularValidator.activoEnAgrupacionProyecto(Long.toString(numActivo))) {
+					throw new JsonViewerException(AgrupacionValidator.ERROR_EN_OTRA_PROYECTO);
+				}
+			}
 		}
 
 		// En asistidas hay que hacer una serie de actualizaciones

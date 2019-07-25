@@ -919,10 +919,17 @@ public interface ParticularValidatorApi {
 	 * @param numGasto
 	 * @return true si el gasto es refacturable
 	 */
+
 	Boolean esGastoRefacturable(String numGasto);
 
 	Boolean existeGastoRefacturable(String numGasto);
 
 	Boolean esGastoDestinatarioPropietario(String numGasto);	
+	
+	/**
+	 * @param numActivo
+	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
+	 */
+	Boolean activoEnAgrupacionProyecto(String numActivo);
 
 }

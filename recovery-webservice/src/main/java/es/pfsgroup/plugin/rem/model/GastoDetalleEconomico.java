@@ -166,9 +166,8 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	@Column(name="GDE_FECHA_ANTICIPO")
     private Date fechaAnticipo;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GDE_GASTO_REFACTURABLE")
-    private DDSiNo gastoRefacturable;
+    @Column(name = "GDE_GASTO_REFACTURABLE")
+    private Boolean gastoRefacturable;
 
     
 	@Version   
@@ -484,11 +483,11 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 		this.fechaAnticipo = fechaAnticipo;
 	}
 
-	public DDSiNo getGastoRefacturable() {
+	public Boolean getGastoRefacturable() {
 		return gastoRefacturable;
 	}
 
-	public void setGastoRefacturable(DDSiNo gastoRefacturable) {
+	public void setGastoRefacturable(Boolean gastoRefacturable) {
 		this.gastoRefacturable = gastoRefacturable;
 	}
 

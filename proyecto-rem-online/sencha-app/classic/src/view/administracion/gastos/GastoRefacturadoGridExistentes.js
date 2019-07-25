@@ -85,7 +85,7 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 			    		Ext.Ajax.request({	
 					 		url: url2,
 					   		params: {
-					   					idGasto:idGasto,
+					   					idGasto:idGasto
 					   				},
 					    	success: function(response, opts) {
 						    	

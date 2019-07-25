@@ -501,6 +501,7 @@ public class AgendaController extends TareaController {
 								.equals(tarea.getTareaProcedimiento().getCodigo())) {
 							// Salto a la tarea Respuesta Bankia Anulacion
 							// Devolucion y llamada UVEM cosem1: 6
+							if(Checks.esNulo(eco.getDevolAutoNumber())) eco.setDevolAutoNumber(false);
 							
 							if (!eco.getDevolAutoNumber()) {
 								salto = adapter.saltoTareaByCodigo(tarea.getId(), ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION);

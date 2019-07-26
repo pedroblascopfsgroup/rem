@@ -138,11 +138,14 @@ public class UsuarioRemApiImpl implements UsuarioRemApi {
 	}
 	
 	public void rellenaListaCorreosPorDefecto(String codigoTipo, List<String> mailsPara){
+		String usuarioName = remUtils.obtenerUsuarioPorDefecto(codigoTipo);
 		Filter filtroUsuarioPorDefecto = null;
-		filtroUsuarioPorDefecto = genericDao.createFilter(FilterType.EQUALS ,"username", remUtils.obtenerUsuarioPorDefecto(codigoTipo));
-		Usuario usuPorDefecto = genericDao.get(Usuario.class, filtroUsuarioPorDefecto);
-		if (!Checks.esNulo(usuPorDefecto) && !Checks.esNulo(usuPorDefecto.getEmail())) {
-			mailsPara.add(usuPorDefecto.getEmail());
+		if(!Checks.esNulo(usuarioName)) {
+			filtroUsuarioPorDefecto = genericDao.createFilter(FilterType.EQUALS ,"username", usuarioName);
+			Usuario usuPorDefecto = genericDao.get(Usuario.class, filtroUsuarioPorDefecto);
+			if (!Checks.esNulo(usuPorDefecto) && !Checks.esNulo(usuPorDefecto.getEmail())) {
+				mailsPara.add(usuPorDefecto.getEmail());
+			}
 		}
 	}
 }

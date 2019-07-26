@@ -80,6 +80,7 @@ public class AgendaController extends TareaController {
 	@Autowired
 	private ActivoApi activoApi;
 
+	@Autowired
 	private GenericABMDao genericDao;
 	
 	

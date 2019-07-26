@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -58,9 +59,15 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	
 	private static final String STR_MISSING_VALUE = "---";
 	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};
+	
+	private static final String BUZON_REM = "buzonrem";
+	private static final String BUZON_PFS = "buzonpfs";
 		
 	private List<String> mailsPara 	= new ArrayList<String>();
 	private List<String> mailsCC 	= new ArrayList<String>();
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
@@ -144,8 +151,15 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR, mailsPara, mailsCC, false);
 			}					
 				
-			usuarioRemApiImpl.rellenaListaCorreosPorDefecto(GestorActivoApi.BUZON_REM, mailsPara);			
-			usuarioRemApiImpl.rellenaListaCorreosPorDefecto(GestorActivoApi.BUZON_PFS, mailsPara);
+			Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+			Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+
+			if (!Checks.esNulo(buzonRem)) {
+				mailsPara.add(buzonRem.getEmail());
+			}
+			if (!Checks.esNulo(buzonPfs)) {
+				mailsPara.add(buzonPfs.getEmail());
+			}
 
 			mailsCC.add(this.getCorreoFrom());
 			

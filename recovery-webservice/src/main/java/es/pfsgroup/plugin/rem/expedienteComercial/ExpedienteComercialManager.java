@@ -6879,7 +6879,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 	}
-
+	
+	@Override
+	public boolean checkContabilizacionReserva(TareaExterna tareaExterna) {
+		
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);	
+		boolean contabilizacionReserva;
+		
+		if(!Checks.esNulo(expedienteComercial.getCondicionante()) 
+				&& !Checks.esNulo(expedienteComercial.getCondicionante().getSolicitaReserva())
+				&& !Checks.esNulo(expedienteComercial.getCondicionante().getSolicitaReserva() == 1)
+				&& DDEstadosReserva.CODIGO_FIRMADA.equals(expedienteComercial.getReserva().getEstadoReserva().getCodigo())) {
+			if(!Checks.esNulo(expedienteComercial.getReserva()) 
+					&& !Checks.esNulo(expedienteComercial.getReserva().getFechaContabilizacionReserva())) {
+				contabilizacionReserva = true;
+			} else {
+				contabilizacionReserva = false;
+			}
+		} else {
+			contabilizacionReserva = true;
+		}
+		
+		return contabilizacionReserva;
+	}
+	
 	@Override
 	public Boolean checkInformeJuridicoFinalizado(Long idTramite) {
 

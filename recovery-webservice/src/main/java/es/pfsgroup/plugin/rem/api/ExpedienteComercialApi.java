@@ -1248,6 +1248,8 @@ public interface ExpedienteComercialApi {
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 
 	boolean esYubai(TareaExterna tareaExterna);
+	
+	boolean checkContabilizacionReserva(TareaExterna tareaExterna);
 
 	/*
 	 * Devuelve el comité propuesto a partir de un id de expediente

@@ -106,22 +106,13 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta'),
+		                	colspan: 3,
 		                	bind: {
 		                		value: '{datosbasicosoferta.fechaRespuesta}',
 		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
 		                	},
 		                	readOnly: true  
 		                	
-		                },
-		                {
-		                	xtype:'datefieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.aprobacion.pro.manzana'),
-		                	colspan: 2,
-		                	bind:{
-		                		value: '{datosbasicosoferta.fechaAprobacionProManzana}',
-		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
-		                	},
-		                	readOnly: true   
 		                },
 		                {	
 		                	xtype: 'comboboxfieldbase',

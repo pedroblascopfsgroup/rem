@@ -1232,9 +1232,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 					}
 				}
-				
-
-
+				if(!Checks.esNulo(oferta.getFechaAprobacionProManzana())) {
+					dto.setFechaAprobacionProManzana(oferta.getFechaAprobacionProManzana());
+				}
 				dto.setDefinicionOfertaScoring(false);
 
 				if (!Checks.esNulo(expediente.getTrabajo()) && !Checks.esNulo(expediente.getTrabajo().getId())) {
@@ -1407,10 +1407,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(!Checks.esNulo(oferta.getFechaRespuesta()) && isCarteraCerberusApple) {
 			dto.setFechaRespuesta(oferta.getFechaRespuesta());
-		}
-		
-		if(!Checks.esNulo(oferta.getFechaAprobacionProManzana()) && isCarteraCerberusApple) {
-			dto.setFechaAprobacionProManzana(oferta.getFechaAprobacionProManzana());
 		}
 
 		if(oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){

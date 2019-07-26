@@ -96,7 +96,6 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Date fechaResolucionCES;
 	private Date fechaRespuesta;
-	private Date fechaAprobacionProManzana;
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -409,14 +408,6 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setFechaRespuesta(Date fechaRespuesta) {
 		this.fechaRespuesta = fechaRespuesta;
-	}
-
-	public Date getFechaAprobacionProManzana() {
-		return fechaAprobacionProManzana;
-	}
-
-	public void setFechaAprobacionProManzana(Date fechaAprobacionProManzana) {
-		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
 	}
 
 }

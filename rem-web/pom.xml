@@ -1538,7 +1538,10 @@
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-rem-online</artifactId>
 				</dependency>
-
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>rem-logs</artifactId>
+				</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-webservice</artifactId>
@@ -1625,7 +1628,10 @@
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-rem-online</artifactId>
 				</dependency>
-
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>rem-logs</artifactId>
+				</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-webservice</artifactId>

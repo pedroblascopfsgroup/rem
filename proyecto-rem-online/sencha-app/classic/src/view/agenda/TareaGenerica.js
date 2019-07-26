@@ -1191,6 +1191,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	    						me.ocultarCampo(comite);
 	    						me.desocultarCampo(comitePropuesto);
 	    						me.desocultarCampo(importeTotalOfertaAgrupada);
+	    						me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
 	    						me.desocultarCampo(huecoVenta);  	
 	    				 }
 	    			}
@@ -1203,7 +1204,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	    			success: function(response,opts){
 	    				 var ResofertaDependiente = Ext.JSON.decode(response.responseText).ofertaDependiente;
 	    				 if(ResofertaDependiente == "true"){
-	    					 me.desocultarCampo(numOfertaPrincipal); 
+	    					 me.desocultarCampo(numOfertaPrincipal);
+	    					 me.bloquearCampo(me.down('[name=numOfertaPrincipal]'));
 	    					 me.ocultarCampo(comitePropuesto);
 	    					 me.ocultarCampo(comboConflicto);
 	    					 me.ocultarCampo(comboRiesgo);

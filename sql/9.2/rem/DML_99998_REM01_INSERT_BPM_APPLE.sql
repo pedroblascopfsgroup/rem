@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20190725
+--## FECHA_CREACION=20190726
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7162
@@ -646,21 +646,11 @@ begin
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">
   Ha aceptado una oferta y se ha creado un expediente comercial asociado a la misma. 
-  A continuación  debería rellenar todos los campos necesarios para definir la oferta, pudiendo darse la siguiente casuística para finalizar la tarea 
+  A continuación  debería rellenar todos los campos necesarios para definir la oferta, pudiendo darse la siguiente casuística para finalizar la tarea. La siguiente tarea será "Análisis PM". 
   </p> 
-  <p style="margin-bottom: 10px">A) Si tiene atribuciones para sancionar la oferta:<br />
-  i)  Si el activo está dentro del perímetro de formalización al pulsar el botón Aceptar finalizará esta tarea y se le lanzará a la gestoría de formalización una nueva tarea para la realización del "Informe jurídico".<br />  
-  ii) Si el activo no se encuentra dentro del perímetro de formalización, la siguiente tarea que se lanzará es "Firma por el propietario".</p> 	
-  <p style="margin-bottom: 10px"> B) Si no tiene atribuciones para sancionar la oferta, deberá preparar la propuesta y remitirla al comité sancionador, indicando  abajo la fecha de envío.</p> 
-  <p style="margin-bottom: 10px"> C) El presente expediente tiene origen en el ejercicio del derecho de tanteo y retracto administrativo, por lo que la oferta ya fue aprobada en su momento.
-  De ser así, marque el check dispuesto al efecto, identificando el nº de expediente origen, para que el trámite vaya directamente a la tarea de "Posicionamiento y firma".
-  </p> 
-  <p style="margin-bottom: 10px"> 
-  En cualquier caso, para poder finalizar la tarea, tiene que reflejar si existe riesgo reputacional y/o conflicto de intereses en la Ficha del expediente.
-  </p> 
-  <p style="margin-bottom: 10px"> 
-  En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite 
-  </p>';
+  <p style="margin-bottom: 10px">Para sancionar la oferta, deberá preparar la propuesta y remitirla al Portfolio Manager indicando abajo la fecha de envío. 
+  En cualquier caso, para poder finalizar la tarea, tiene que reflejar si existe riesgo reputacional y/o conflicto de intereses en la Ficha de expediente.</p>  
+  <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;

@@ -89,7 +89,9 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 
@@ -154,10 +156,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private GdprApi gdprManager;
-	
-	@Autowired
-	private ExpedienteComercialApi expedienteManager;
-
 
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
@@ -1772,10 +1770,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void getAdvisoryNoteExpediente(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void getAdvisoryNoteExpediente(HttpServletRequest request, HttpServletResponse response, Long idExpediente) throws Exception {
 		ServletOutputStream salida = null;
 		try {
-			FileItem fileItem = expedienteManager.getAdvisoryNote();
+			Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+			
+			List<VReportAdvisoryNotes> listaAN = expedienteComercialApi.getAdvisoryNotesByOferta(oferta);
+			
+			FileItem fileItem = expedienteComercialApi.getAdvisoryNote();
 			salida = response.getOutputStream();
 			if (fileItem != null) {
 				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());

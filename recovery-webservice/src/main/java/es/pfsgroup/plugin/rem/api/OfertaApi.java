@@ -652,5 +652,7 @@ public interface OfertaApi {
 	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
 
 	Boolean finalizarOferta(Oferta oferta);
+
+	Oferta getOfertaByIdExpediente(Long idExpediente);
 }
 

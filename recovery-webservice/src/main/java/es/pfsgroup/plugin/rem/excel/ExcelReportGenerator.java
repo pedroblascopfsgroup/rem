@@ -30,6 +30,7 @@ import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import jxl.Cell;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
@@ -605,6 +606,356 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	public int getLimit() {
 		String limite = appProperties.getProperty(EXPORTAR_EXCEL_LIMITE_ACTIVOS);
 		return (!(Checks.esNulo(limite)) ? Integer.parseInt(limite) : MAX_ROW_LIMIT);
+	}
+	
+	
+	
+	@Override
+	public File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) {
+		
+		ServletContext sc = request.getSession().getServletContext();		
+		
+		try {
+
+			File poiFile = new File(sc.getRealPath("plantillas/plugin/Propuesta_alquileres_bankia/PROPUESTA_BANKIA.xlsx"));
+			File fileOut = new File(poiFile.getAbsolutePath().replace("_BANKIA",""));
+			FileInputStream fis = new FileInputStream(poiFile);
+			FileOutputStream fileOutStream = new FileOutputStream(fileOut);
+			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis);
+		
+			XSSFSheet mySheet;
+			CellReference cellReference;
+			XSSFRow r;
+			XSSFCell c;
+			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			SimpleDateFormat anyo = new SimpleDateFormat("yyyy");
+			String descripcionDelActivo= "- ";
+			
+			// En el ultimo elemento esta el resumen por eso cogemos todos los DTO menos el ultimo
+				
+				
+			myWorkBook.setSheetName(1, "AN S0XXX-" + anyo.format(new Date()));
+			mySheet = myWorkBook.getSheetAt(1);
+			
+			cellReference = new CellReference("G2");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(!Checks.esNulo(listaAN.get(0)) && !Checks.esNulo(listaAN.get(0).getNumOferta())) {
+				c.setCellValue(listaAN.get(0).getNumOferta().toString());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("B3");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			c.setCellValue(format.format(new Date()));
+				
+			
+			int currentRow = 7;
+			for (int i = 0; i < listaAN.size(); i++) {
+					
+				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
+				
+				cellReference = new CellReference("C" + currentRow); // UNIT ID
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+					c.setCellValue(dtoPAB.getNumActivo().toString());
+				} else {
+					c.setCellValue("");
+				}
+				
+				//TODO PROPERTY ID
+				
+				cellReference = new CellReference("G" + currentRow); // PROPERTY NAME
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getDireccion())) {
+					c.setCellValue(dtoPAB.getDireccion());
+				} else {
+					c.setCellValue("");
+				}
+			
+				currentRow++;
+			}
+			
+			currentRow = currentRow + 1;
+			
+			for (int i = 0; i < listaAN.size(); i++) {
+				
+				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
+				
+				cellReference = new CellReference("C" + currentRow); // UNIT ID
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+					c.setCellValue(dtoPAB.getNumActivo().toString());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("D" + currentRow); // ¿?
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getDireccion())) {
+					c.setCellValue(dtoPAB.getDireccion());
+				} else {
+					c.setCellValue("");
+				}
+			
+				currentRow++;
+			}
+			
+			currentRow = currentRow + 2;
+			
+			Long aumulacionSuperficie = 0L;
+			Double acumulacionAskingPrice = (double) 0;
+			Long acumulacionRentaMensual = 0L;
+			
+			for (int i = 0; i < listaAN.size(); i++) {
+							
+				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
+				
+				cellReference = new CellReference("C" + currentRow); // UNIT ID
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+					c.setCellValue(dtoPAB.getNumActivo().toString());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("E" + currentRow); // SUBTIPO PROPIEDAD
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
+					c.setCellValue(dtoPAB.getTipoActivo());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("G" + currentRow); // SUPERFICIE
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
+					c.setCellValue(dtoPAB.getSuperficieConstruida().toString() + " m2");
+					aumulacionSuperficie = aumulacionSuperficie + dtoPAB.getSuperficieConstruida();
+				} else {
+					c.setCellValue("0 m2");
+				}
+				
+				cellReference = new CellReference("H" + currentRow); // ASKINGPRICE
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getImporte())) {
+					c.setCellValue(dtoPAB.getImporte().toString() + " €");
+					acumulacionAskingPrice = acumulacionAskingPrice + dtoPAB.getImporte();
+				} else {
+					c.setCellValue("0€");
+				}
+				
+				cellReference = new CellReference("D" + currentRow); // RENTAMENSUAL
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				//¿?
+					c.setCellValue("0 €");
+				
+				
+				currentRow++;
+			}
+			
+			cellReference = new CellReference("G" + currentRow); // SUPERFICIE
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			c.setCellValue(aumulacionSuperficie.toString() + " m2");
+
+			
+			cellReference = new CellReference("H" + currentRow); // ASKINGPRICE
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			c.setCellValue(acumulacionAskingPrice.toString() + " €");
+			
+			cellReference = new CellReference("D" + currentRow); // RENTAMENSUAL
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			c.setCellValue(acumulacionRentaMensual+" €");
+			
+			currentRow = currentRow+2;
+			
+			
+			for (int i = 0; i < listaAN.size(); i++) {
+				
+				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
+				
+				cellReference = new CellReference("E" + currentRow); // PUBLICADO
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getPublicado())) {
+					c.setCellValue(dtoPAB.getPublicado());
+				} else {
+					c.setCellValue("");
+				}
+				
+				currentRow++;
+				
+				cellReference = new CellReference("E" + currentRow); //FECHA DE EMISION
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getFechaEmision())) {
+					c.setCellValue(format.format(dtoPAB.getFechaEmision()));
+				} else {
+					c.setCellValue("");
+				}
+				
+				currentRow = currentRow + 2;
+				
+				cellReference = new CellReference("E" + currentRow); // Nº DE OFERTAS
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNumOfertasActivo())) {
+					c.setCellValue(dtoPAB.getNumOfertasActivo().toString());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("E" + currentRow); // NOMBRE PRESCRIPTOR (?)
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNombrePrescriptor())) {
+					c.setCellValue(dtoPAB.getNombrePrescriptor());
+				} else {
+					c.setCellValue("");
+				}
+				
+				currentRow = currentRow + 3;
+				
+				cellReference = new CellReference("E" + currentRow); // AÑO CONSTRUCCIÓN
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getAnyoConstruccion())) {
+					c.setCellValue(dtoPAB.getAnyoConstruccion());
+				} else {
+					c.setCellValue("");
+				}
+				
+				
+				cellReference = new CellReference("H" + currentRow); // AÑO CONSTRUCCIÓN
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getOcupado())) {
+					c.setCellValue(dtoPAB.getOcupado());
+				} else {
+					c.setCellValue("");
+				}
+				
+				currentRow = currentRow + 2;
+				
+				cellReference = new CellReference("E" + currentRow); // AÑO CONSTRUCCIÓN
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+					c.setCellValue(dtoPAB.getNumActivo().toString());
+				} else {
+					c.setCellValue("");
+				}
+				
+				currentRow++;
+				
+				cellReference = new CellReference("C" + currentRow); // DESCRIPCION DEL ACTIVO LINEA1
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				
+				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
+					descripcionDelActivo = descripcionDelActivo + dtoPAB.getTipoActivo();
+				}
+				if (!Checks.esNulo(dtoPAB.getDireccion())) {
+					descripcionDelActivo = descripcionDelActivo + " located in " + dtoPAB.getDireccion();
+				} 
+				if(!Checks.esNulo(dtoPAB.getLatitud()) && !Checks.esNulo(dtoPAB.getLongitud())) {
+					descripcionDelActivo = descripcionDelActivo + "( " + dtoPAB.getLatitud().toString() + ", " + dtoPAB.getLongitud().toString() + " )";
+				}
+				
+				c.setCellValue(descripcionDelActivo);
+				
+				currentRow++;
+				
+				cellReference = new CellReference("C" + currentRow); // DESCRIPCION DEL ACTIVO LINEA2
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
+					c.setCellValue("- The asset has a total surface area of "+ dtoPAB.getSuperficieConstruida().toString() + " m2");
+				}else {
+					c.setCellValue("-");
+				}
+				
+				currentRow++;
+				
+				cellReference = new CellReference("C" + currentRow); // DESCRIPCION DEL ACTIVO LINEA3
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getEstadoConservacion())) {
+					c.setCellValue("- Considered to be in " + dtoPAB.getEstadoConservacion() +"condition");
+				}else {
+					c.setCellValue("-");
+				}
+				
+				currentRow++;
+				
+				cellReference = new CellReference("C" + currentRow); // DESCRIPCION DEL ACTIVO LINEA4
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getEstadoConservacion())) {
+					c.setCellValue("- Details if " + dtoPAB.getEstadoConservacion() +"condition");
+				}else {
+					c.setCellValue("-");
+				}
+				
+				currentRow = currentRow + 2;
+				
+				cellReference = new CellReference("E" + currentRow); //MODO DE TRANSMISION
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getSegundaMano())) {	// ¿?¿¿
+					c.setCellValue(dtoPAB.getSegundaMano());
+				}else {
+					c.setCellValue("");
+				}
+				
+				currentRow = currentRow + 2;
+				
+				cellReference = new CellReference("E" + currentRow); //ESTADO CONSERVACIÓN 
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getEstadoConservacion())) {
+					c.setCellValue(dtoPAB.getEstadoConservacion());
+				}else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("I" + currentRow); //ESTADO CONSERVACIÓN 
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getImporte())) {
+					c.setCellValue(dtoPAB.getImporte().toString() + " €");
+				}else {
+					c.setCellValue("");
+				}
+				
+				
+			}
+			
+			myWorkBook.write(fileOutStream);
+			fileOutStream.close();
+			
+			return fileOut;
+			
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+		
+		
+		return null;
 	}
 
 	

@@ -81,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
@@ -1771,36 +1772,18 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void getAdvisoryNoteExpediente(HttpServletRequest request, HttpServletResponse response, Long idExpediente) throws Exception {
-		ServletOutputStream salida = null;
 		try {
 			Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
 			
 			List<VReportAdvisoryNotes> listaAN = expedienteComercialApi.getAdvisoryNotesByOferta(oferta);
+		
+			File file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request);
+			excelReportGeneratorApi.sendReport(file, response);
 			
-			FileItem fileItem = expedienteComercialApi.getAdvisoryNote();
-			salida = response.getOutputStream();
-			if (fileItem != null) {
-				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
-				response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-				response.setHeader("Cache-Control", "max-age=0");
-				response.setHeader("Expires", "0");
-				response.setHeader("Pragma", "public");
-				response.setDateHeader("Expires", 0);
-				response.setContentType(fileItem.getContentType());
-				// Write
-				FileUtils.copy(fileItem.getInputStream(), salida);	
-			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				salida.flush();			
-				salida.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
+		} 
 	}
 
 	@SuppressWarnings("unchecked")

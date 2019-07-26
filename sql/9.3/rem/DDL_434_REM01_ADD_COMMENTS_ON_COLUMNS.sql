@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190716
+--## AUTOR=Carles Molins Pascual
+--## FECHA_CREACION=20190725
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-4826
@@ -228,19 +228,11 @@ BEGIN
     FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST
       LOOP
             V_TMP_FUNCION := V_FUNCION(I);
-    
-      V_SQL := 'SELECT COUNT(1) FROM SYS.ALL_COL_COMMENTS where TABLE_NAME = '''||TRIM(V_TMP_FUNCION(1))||''' AND COLUMN_NAME = '''||TRIM(V_TMP_FUNCION(2))||''' AND COMMENTS IS NULL';
-      EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-      IF V_NUM_TABLAS > 0 THEN				
-        
-        
-        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||TRIM(V_TMP_FUNCION(1))||'.'||TRIM(V_TMP_FUNCION(2))||' IS '''||TRIM(V_TMP_FUNCION(1))||''' ';
+        V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||TRIM(V_TMP_FUNCION(1))||'.'||TRIM(V_TMP_FUNCION(2))||' IS '''||TRIM(V_TMP_FUNCION(3))||''' ';
         EXECUTE IMMEDIATE V_MSQL;
         
         DBMS_OUTPUT.PUT_LINE('[INFO]: AÑADIDO COMENTARIO PARA LA TABLA '''||TRIM(V_TMP_FUNCION(1))||''' COLUMNA '''||TRIM(V_TMP_FUNCION(2))||'''');
-              
-      END IF;
 
     END LOOP;
     

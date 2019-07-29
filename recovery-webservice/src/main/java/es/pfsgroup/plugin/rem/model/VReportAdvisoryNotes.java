@@ -50,6 +50,9 @@ public class VReportAdvisoryNotes implements Serializable {
     @Column(name = "VAL_IMPORTE")
     private Double importe;
     
+    @Column(name = "ACT_OFR_IMPORTE")
+    private Double importeParticipacionActivo;
+    
     @Column(name = "PUBLICADO")
     private String publicado;
     
@@ -79,6 +82,12 @@ public class VReportAdvisoryNotes implements Serializable {
     
     @Column(name = "NUM_VISITAS_ACT")
     private Long numVisitasActivo;
+    
+    @Column(name = "DD_EAL_DESCRIPCION")
+    private String estadoAqluiler;
+    
+    @Column(name = "DD_TAL_DESCRIPCION")
+    private String tipoAlquiler;
 
 	public String getId() {
 		return id;
@@ -160,6 +169,14 @@ public class VReportAdvisoryNotes implements Serializable {
 		this.importe = importe;
 	}
 
+	public Double getImporteParticipacionActivo() {
+		return importeParticipacionActivo;
+	}
+
+	public void setImporteParticipacionActivo(Double importeParticipacionActivo) {
+		this.importeParticipacionActivo = importeParticipacionActivo;
+	}
+
 	public String getPublicado() {
 		return publicado;
 	}
@@ -238,6 +255,22 @@ public class VReportAdvisoryNotes implements Serializable {
 
 	public void setNumVisitasActivo(Long numVisitasActivo) {
 		this.numVisitasActivo = numVisitasActivo;
+	}
+
+	public String getEstadoAqluiler() {
+		return estadoAqluiler;
+	}
+
+	public void setEstadoAqluiler(String estadoAqluiler) {
+		this.estadoAqluiler = estadoAqluiler;
+	}
+
+	public String getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(String tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
 	}
     
     

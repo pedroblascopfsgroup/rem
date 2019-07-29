@@ -259,7 +259,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	bind: {
 	                		value: '{expediente.fechaContabilizacionReserva}',
 	                		readOnly: '{fechaContabilizacionReservaReadOnly}',
-	                		hidden: '{!esCarteraCajamar}'
+	                		hidden: '{!esOfertaVentaEsCajamar}'
 	                	}		
 	                },
 	            	{ 

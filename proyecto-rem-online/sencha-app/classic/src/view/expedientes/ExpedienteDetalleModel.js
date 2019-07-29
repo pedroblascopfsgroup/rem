@@ -504,8 +504,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}else{
 				return true;
 			}			
-		}
-	 }, 
+		},
+		
+		esOfertaVentaEsCajamar: function(get){
+			var me= this;
+			var tipoOferta= get('expediente.tipoExpedienteDescripcion');
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+
+	     	if(tipoOferta=='Venta' && carteraCodigo==CONST.CARTERA['CAJAMAR']){
+	     		return true;
+	     	}
+	     	return false;
+	     }
+	 },
 
 
     stores: {

@@ -162,6 +162,7 @@ public class AgendaAdapter {
 	@Autowired
 	private AvanzaTareasGenericDao avanzaTareasGenericDao;
 	
+	@Autowired
 	private ActivoPatrimonioDao patrimonioDao;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){

@@ -99,33 +99,34 @@ public class UsuarioRemApiImpl implements UsuarioRemApi {
 	public void rellenaListaCorreos(Usuario usuarioGestor, String codigoTipo, List<String> mailsPara, List<String> mailsCC,
 			boolean addDirector) {
 		List<String> mailsConsulta = getGestorSustitutoUsuario(usuarioGestor);
-		if (!addDirector) {
-			if (!Checks.estaVacio(mailsConsulta)) {
-				mailsPara.addAll(mailsConsulta);
-				if (usuarioGestor.getEmail() != null) {
-					mailsCC.add(usuarioGestor.getEmail());
-				}
-			} else {
-				if (usuarioGestor.getEmail() != null) {
-					mailsPara.add(usuarioGestor.getEmail());
-				}
-			}
-		} else {
-			Usuario directorEquipo = gestorActivoManager.getDirectorEquipoByGestor(usuarioGestor);
-			if (directorEquipo != null) {
+		if(!Checks.esNulo(usuarioGestor)) {
+			if (!addDirector) {
 				if (!Checks.estaVacio(mailsConsulta)) {
 					mailsPara.addAll(mailsConsulta);
-					if (directorEquipo.getEmail() != null) {
-						mailsCC.add(directorEquipo.getEmail());
+					if (usuarioGestor.getEmail() != null) {
+						mailsCC.add(usuarioGestor.getEmail());
 					}
 				} else {
 					if (usuarioGestor.getEmail() != null) {
-						mailsPara.add(directorEquipo.getEmail());
+						mailsPara.add(usuarioGestor.getEmail());
+					}
+				}
+			} else {
+				Usuario directorEquipo = gestorActivoManager.getDirectorEquipoByGestor(usuarioGestor);
+				if (directorEquipo != null) {
+					if (!Checks.estaVacio(mailsConsulta)) {
+						mailsPara.addAll(mailsConsulta);
+						if (directorEquipo.getEmail() != null) {
+							mailsCC.add(directorEquipo.getEmail());
+						}
+					} else {
+						if (usuarioGestor.getEmail() != null) {
+							mailsPara.add(directorEquipo.getEmail());
+						}
 					}
 				}
 			}
 		}
-		
 	}
 	
 	public void rellenaListaCorreosPorDefecto(String codigoTipo, List<String> mailsPara){

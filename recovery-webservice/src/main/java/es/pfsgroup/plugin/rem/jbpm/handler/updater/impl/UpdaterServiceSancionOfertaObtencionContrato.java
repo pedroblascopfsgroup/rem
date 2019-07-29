@@ -151,11 +151,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				
 				//Actualizar el estado comercial de los activos de la oferta
 				ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
-				
-				/*if(!Checks.esNulo(tramite.getActivo())) {
-					activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
-				}*/
-				
 			}
 		
 		} catch (ParseException e) {

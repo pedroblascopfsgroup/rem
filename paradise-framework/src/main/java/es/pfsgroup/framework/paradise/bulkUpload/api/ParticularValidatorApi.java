@@ -795,5 +795,11 @@ public interface ParticularValidatorApi {
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
 
 	String getActivoPlusvalia(String numActivo, String fechaPlusvalia);
+	
+	Boolean existeJunta(String numActivo,  String fechaJunta);
+	
+	public Boolean existeCodJGOJE(String codJunta);
+
+	String getActivoJunta(String numActivo, String fechaJunta);
 
 }

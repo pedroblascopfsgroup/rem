@@ -3561,5 +3561,48 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);	
 	}
 
+	
+	@Override
+	public Boolean existeJunta(String numActivo,  String fechaJunta) {
+		if(Checks.esNulo(numActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_JCM_JUNTA_COM_PROPIETARIOS pls " + 
+				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " + 
+				"WHERE pls.borrado = 0 " + 
+				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " + 
+				"AND TRUNC(pls.JCM_FECHA_JUNTA) = TRUNC(TO_DATE('"+fechaJunta+"','dd/MM/yy'))");
+
+		return !"0".equals(resultado);
+		
+	}
+	
+	@Override
+	public Boolean existeCodJGOJE(String codJunta) {
+		if(Checks.esNulo(codJunta) || !StringUtils.isNumeric(codJunta))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_JCP_JUNTA_COMUNIDADES WHERE"
+				+ "		 DD_JCP_CODIGO ='"+codJunta+"'"
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public String getActivoJunta(String numActivo,  String fechaJunta) {
+		if(Checks.esNulo(numActivo)) {
+			return "";
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT pls.JCM_ID FROM ACT_JCM_JUNTA_COM_PROPIETARIOS pls " + 
+				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " + 
+				"WHERE pls.borrado = 0 " + 
+				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " + 
+				"AND TRUNC(pls.JCM_FECHA_JUNTA) = TRUNC(TO_DATE('"+fechaJunta+"','dd/MM/yy'))");
+
+		return resultado;
+	}
 }
 

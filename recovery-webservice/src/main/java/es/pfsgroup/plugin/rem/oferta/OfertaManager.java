@@ -2491,39 +2491,47 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		String codLeadOrigin = null;
-		
-		if (!Checks.esNulo(oferta)) {
-			codLeadOrigin = oferta.getOrigenComprador().getCodigo();
-			
-		}
-
+		String codTipoActivo = null;
 		String tipoComercializar = null;
+		String codSubtipoActivo = null;
+		String codPortfolio = null;
+		String codSubportfolio = null;
+		
 		if (!Checks.esNulo(activo)) {
+			
+			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
+				codLeadOrigin = oferta.getOrigenComprador().getCodigo();
+			}else if(!Checks.estaVacio(activo.getVisitas())) {
+				if(!Checks.esNulo(activo.getVisitas().get(0).getOrigenComprador()))
+					codLeadOrigin = activo.getVisitas().get(0).getOrigenComprador().getCodigo();
+			}else {
+				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
+			}
+			
 			if (!Checks.esNulo(activo.getTipoComercializar())) {
 				tipoComercializar = activo.getTipoComercializar().getCodigo();
 			}
+			
+			if(!Checks.esNulo(activo.getTipoActivo())) {
+				codTipoActivo = activo.getTipoActivo().getCodigo();
+			}
+			
+			
+			if(!Checks.esNulo(activo.getSubtipoActivo())) {
+				codSubtipoActivo = activo.getSubtipoActivo().getCodigo();
+			}
+			
+			
+			if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getCartera().getCodigo())) {
+				codPortfolio = activo.getCartera().getCodigo();
+			}
+			
+			
+			if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && !Checks.esNulo(activo.getSubcartera().getCodigo())) {
+				codSubportfolio = activo.getSubcartera().getCodigo();
+			}
 		} 
-		
-		String codTipoActivo = null;
-		if(!Checks.esNulo(activo.getTipoActivo())) {
-			codTipoActivo = activo.getTipoActivo().getCodigo();
-		}
-		
-		String codSubtipoActivo = null;
-		if(!Checks.esNulo(activo.getSubtipoActivo())) {
-			codSubtipoActivo = activo.getSubtipoActivo().getCodigo();
-		}
-		
-		String codPortfolio = null;
-		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getCartera().getCodigo())) {
-			codPortfolio = activo.getCartera().getCodigo();
-		}
-		
-		String codSubportfolio = null;
-		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && !Checks.esNulo(activo.getSubcartera().getCodigo())) {
-			codSubportfolio = activo.getSubcartera().getCodigo();
-		}
-		
+
 		ConsultaComisionDto consultaComisionDto = new ConsultaComisionDto();
 		consultaComisionDto.setAmount(importe);
 		consultaComisionDto.setLeadOrigin(codLeadOrigin);

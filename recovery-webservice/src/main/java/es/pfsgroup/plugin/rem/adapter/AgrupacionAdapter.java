@@ -3211,7 +3211,7 @@ public class AgrupacionAdapter {
 					}
 				}
 
-				if(!ofertaViva) {
+				if(!ofertaViva && !Checks.esNulo(tipoComercializacion)) {
 					List<ActivoAgrupacionActivo> listaActivos = loteComercial.getActivos();
 
 					if(!Checks.estaVacio(listaActivos)) {

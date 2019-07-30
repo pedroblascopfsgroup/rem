@@ -71,6 +71,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Boolean gastoRefacturableB;
 	private Long numeroGastoHaya;
 	private Boolean bloquearCheckRefacturado;
+	private Boolean bloquearGridRefacturados;
 
 	public Long getGastoProveedor() {
 		return gastoProveedor;
@@ -373,6 +374,12 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	}
 	public void setBloquearCheckRefacturado(Boolean bloquearCheckRefacturado) {
 		this.bloquearCheckRefacturado = bloquearCheckRefacturado;
+	}
+	public Boolean getBloquearGridRefacturados() {
+		return bloquearGridRefacturados;
+	}
+	public void setBloquearGridRefacturados(Boolean bloquearGridRefacturados) {
+		this.bloquearGridRefacturados = bloquearGridRefacturados;
 	}
 	
 		

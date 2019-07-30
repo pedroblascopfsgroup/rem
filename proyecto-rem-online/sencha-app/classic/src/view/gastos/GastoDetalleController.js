@@ -124,12 +124,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 						if (!form.saveMultiple) {
 							if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
 								// Si la API tiene metodo de escritura (create or update).
-								var chkboxActivoRefacturable = me.lookupReference("checkboxActivoRefacturable");
 								me.getView().mask(HreRem.i18n("msg.mask.loading"));
 			                    var valoresGrid = [];
-			                    var gastoRefacturable = false;
-				                 
-			                    if(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data != undefined){
+
+			                    if(me.getView().lookupReference("gastoRefacturadoGrid") != null && me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data != undefined){
 				                    for(var i = 0; i < me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data.length; i++){
 				                    	if(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == true ||
 				                    		me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == "true"){
@@ -137,11 +135,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				                    	}
 				                    }
 			                    }
-			                    if(chkboxActivoRefacturable != null && chkboxActivoRefacturable.existePropietario && chkboxActivoRefacturable.value){
-			                    	gastoRefacturable  = true;
-			                    }
-			               
-			                    form.getBindRecord().data.gastoRefacturable = gastoRefacturable;
+			                    
 				                form.getBindRecord().data.gastoRefacturadoGrid=valoresGrid;
 								
 				               
@@ -361,14 +355,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    		    }
 		    		    if(!Ext.isEmpty(nombrePropietarioGasto)) {
 		    		    	nombrePropietarioGasto.setValue(nombrePropietario);
-		    		    	
 
 			    		}
-		    		    chkboxActivoRefacturable.existePropietario=true;
+		    		    //chkboxActivoRefacturable.existePropietario=true;
 
 			    	} else {
 			    		if(!Ext.isEmpty(nombrePropietarioGasto)) {
-			    			chkboxActivoRefacturable.existePropietario=false;
+			    			//chkboxActivoRefacturable.existePropietario=false;
 		    		    	nombrePropietarioGasto.setValue('');
 		    		    }
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.propietario"));
@@ -1681,7 +1674,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	isPosibleAnyadirGastos: function(){
 		var me = this;
 		var form = me.getView().down('formBase');
-		console.log(form.getBindRecord())
 		var posible = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] && 
 			!form.down('[name=checkboxActivoRefacturable]').checked && 
 			form.down('[name=nombrePropietario]').value);

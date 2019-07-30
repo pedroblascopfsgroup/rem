@@ -282,15 +282,20 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     
 	     deshabilitarGridGastosRefacturados: function(get){
 				var me = this;
+			 
 				var isGastoRefacturable = get('detalleeconomico.gastoRefacturableB');
 				var bloquearCheckRefacturado = get('detalleeconomico.bloquearCheckRefacturado');
 				
 				
 				if(isGastoRefacturable == true || isGastoRefacturable == "true" || bloquearCheckRefacturado == true || bloquearCheckRefacturado == "true"){ 
+					
 					return true;
+					
 				}
 				return false;
 			},
+			
+			
 			
 			deshabilitarCheckEstadoAutorizado: function(get){
 				var me = this;
@@ -301,8 +306,25 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 					return true;
 				}
 				return false;
-			}
+			},
 			
+			// comprobamos comboBox destinatario si el gasto es refacturable
+			isGastoRefacturable: function(get){
+				var gastoRefacturable = get('detalleeconomico.gastoRefacturableB');
+				
+				if (gastoRefacturable != undefined && gastoRefacturable != null  && gastoRefacturable == true) {
+					return false;
+				}
+				return true;
+			}//,
+//			bloquearCheckRefacturado: function(get){
+//				var gastoRefacturable = get('detalleeconomico.gastoRefacturableB');
+//				
+//				if (gastoRefacturable == true) {
+//					return true;
+//				}
+//				return false;
+//			}
 		
 	 },
 	 

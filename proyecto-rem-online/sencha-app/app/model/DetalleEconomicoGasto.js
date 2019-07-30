@@ -203,14 +203,18 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		{
 			name:'isGastoRefacturableExistente',
 			type: 'boolean'
-		},	
+		},
 		{
-   			name: 'gastoRefacturableB',
+   			name: 'gastoRefacturableB', 
    			type: 'boolean'
    		},
    		{
    			name:'bloquearCheckRefacturado',
    			type:'boolean'
+   		},
+   		{
+   			name: 'bloquearGridRefacturados',
+   			type: 'boolean'
    		}
 	],
     

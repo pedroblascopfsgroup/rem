@@ -148,7 +148,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													name: 'checkboxActivoRefacturable',
 													disabled: true,
 													bind: {
-										           		value: '{gastoNuevo.checkboxActivoRefacturable}'										 
+										           		value: '{gastoNuevo.gastoRefacturable}'										 
 										         	}
 												},
 												////

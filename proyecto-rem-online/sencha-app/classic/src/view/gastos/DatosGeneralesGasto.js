@@ -175,10 +175,14 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										xtype: 'comboboxfieldbase',
 						               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.destinatario'),
 						               	name: 'destinatarioField',
+						               	reference: 'destGasto',
 								      	bind: {
 							           		store: '{comboDestinatarios}',
-							           		value: '{gasto.destinatario}'
+							           		value: '{gasto.destinatario}',
+							           		readOnly: '{!isGastoRefacturable}'
 							         	},
+							         	
+							         	
 							         	allowBlank: false
 							    	},								    
 									{

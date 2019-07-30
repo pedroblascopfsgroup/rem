@@ -9,7 +9,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 	recordName: "detalleeconomico",
 	recordClass: "HreRem.model.DetalleEconomicoGasto",
     refreshAfterSave: true,
-    
     requires: ['HreRem.model.DetalleEconomicoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes','HreRem.model.AdjuntoGasto', 'HreRem.model.GastoRefacturableGridExistenteStore'],
     
     listeners: {
@@ -27,6 +26,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 			else{
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(false);
 			}
+		},
+		beforeShow: function (e){
+			//var me = this;
+			//me.lookupController().visibilidadComponentesDetalleEconomico();
 		}
 	},
 	
@@ -42,6 +45,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
     initComponent: function () {
 
         var me = this;
+        
 		me.setTitle(HreRem.i18n('title.gasto.detalle.economico'));
         var items= [
        
@@ -413,7 +417,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                bind: '{detalleeconomico.irpfTipoImpositivo}',
 											                listeners:{
 										        				edit: function(){
-										        					if(this.getValue()==0)B86845179
+										        					if(this.getValue()==0)
 										        						this.setValue('');
 										        				},
 																update: function(){
@@ -875,7 +879,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
 												reference: 'checkboxActivoRefacturable',
 												colspan:4,
-												name: 'checkboxActivoRefacturableExistente',
+												name: 'gastoRefacturableB',
 												bind:{
 													value:'{detalleeconomico.gastoRefacturableB}',
 													readOnly: '{detalleeconomico.bloquearCheckRefacturado}'
@@ -888,10 +892,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												rowspan: 9,
 												reference: 'gastoRefacturadoGridExistente',
 												bind: {
-													store: '{storeGastosRefacturablesExistentes}',
-													disabled: '{deshabilitarGridGastosRefacturados}'
+													disabled: '{detalleeconomico.bloquearGridRefacturados}'
 												}
-										
 											}
 										]
 										

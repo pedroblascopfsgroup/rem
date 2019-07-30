@@ -1046,9 +1046,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
 			
 			if(detalleGasto.getGastoRefacturable() || Checks.esNulo(detalleGasto.getGastoRefacturable())) { 
-				dto.setGastoRefacturableB(true);
+				dto.setGastoRefacturableB(detalleGasto.getGastoRefacturable());
 			}else {
-				dto.setGastoRefacturableB(false );
+				dto.setGastoRefacturableB(detalleGasto.getGastoRefacturable());
 			}
 			
 			dto.setBloquearCheckRefacturado(false);
@@ -1056,13 +1056,24 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if(!Checks.esNulo(gasto.getEstadoGasto())) {
 				String estadoGasto = gasto.getEstadoGasto().getCodigo();
 				
-				if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
-					||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
-					||	DDEstadoGasto.PAGADO.equals(estadoGasto)
-					||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)
-					||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto)) {
-						dto.setBloquearCheckRefacturado(true);
+				if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())) {
+				
+					if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
+						||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
+						||	DDEstadoGasto.PAGADO.equals(estadoGasto)
+						||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)
+						||  !(gasto.getGastoDetalleEconomico().getGastoRefacturable())
+						||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto)) {
+							dto.setBloquearCheckRefacturado(false);
+					}
+				}else {
+					dto.setBloquearCheckRefacturado(true);
 				}
+			}
+			if(DDDestinatarioGasto.CODIGO_PROPIETARIO.equals(gasto.getDestinatarioGasto().getCodigo())) {
+				dto.setBloquearGridRefacturados(false);
+			}else {
+				dto.setBloquearGridRefacturados(true);
 			}
 		
 			
@@ -1227,7 +1238,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				DtoDetalleEconomicoGasto dtoFin = detalleEconomicoToDtoDetalleEconomico(gasto);
 				
 				if(!Checks.esNulo(dto.getGastoRefacturableB())) {
-					detalleGasto.setGastoRefacturable(dto.getGastoRefacturableB());
+					detalleGasto.setGastoRefacturable(dto.getGastoRefacturableB());					
+				}
+				
+				if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo()) && gasto.getGastoDetalleEconomico().getGastoRefacturable()) {
+					gasto = asignarCuentaContableYPartidaGasto(gasto);
 				}
 				
 				boolean cambios = hayCambiosGasto(dtoIni, dtoFin, gasto);

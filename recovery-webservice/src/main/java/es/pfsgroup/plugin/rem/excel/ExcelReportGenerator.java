@@ -625,11 +625,46 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			
 			XSSFCellStyle style= myWorkBook.createCellStyle();
 			XSSFCellStyle styleTitulo= myWorkBook.createCellStyle();
-			/*style.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			style.setBorderBottom(XSSFCellStyle.BORDER_THIN);
 			style.setBorderTop(XSSFCellStyle.BORDER_THIN);
 			style.setBorderRight(XSSFCellStyle.BORDER_THIN);
-			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);*/
+			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 			style.setWrapText(true);
+			
+			
+			//ESTILOS
+				//CELDA COMPLETA
+			XSSFCellStyle styleBordesCompletos= myWorkBook.createCellStyle();
+			styleBordesCompletos.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletos.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletos.setBorderRight(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletos.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletos.setWrapText(true);
+				
+				//BORDES ARRIBA Y ABAJO
+			XSSFCellStyle styleBordesArribaYAbajo= myWorkBook.createCellStyle();
+			styleBordesArribaYAbajo.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesArribaYAbajo.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBordesArribaYAbajo.setBorderRight(XSSFCellStyle.BORDER_NONE);
+			styleBordesArribaYAbajo.setBorderLeft(XSSFCellStyle.BORDER_NONE);
+			styleBordesArribaYAbajo.setWrapText(true);
+			
+			//BORDES ARRIBA Y ABAJO DERECHA
+			XSSFCellStyle styleBordesArribaAbajoDerecha= myWorkBook.createCellStyle();
+			styleBordesArribaAbajoDerecha.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesArribaAbajoDerecha.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBordesArribaAbajoDerecha.setBorderRight(XSSFCellStyle.BORDER_THIN);
+			styleBordesArribaAbajoDerecha.setBorderLeft(XSSFCellStyle.BORDER_NONE);
+			styleBordesArribaAbajoDerecha.setWrapText(true);
+			
+			//BORDES ARRIBA Y ABAJO IZQUIERDA
+			XSSFCellStyle styleBordesArribaAbajoIzquierda= myWorkBook.createCellStyle();
+			styleBordesArribaAbajoIzquierda.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesArribaAbajoIzquierda.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBordesArribaAbajoIzquierda.setBorderRight(XSSFCellStyle.BORDER_NONE);
+			styleBordesArribaAbajoIzquierda.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			styleBordesArribaAbajoIzquierda.setWrapText(true);
+	
 			
 			// En el ultimo elemento esta el resumen por eso cogemos todos los DTO menos el ultimo
 				
@@ -678,7 +713,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					c.setCellValue("");
 				}
 			
-				//if(i > 0) {
+				
 				if(i<listaAN.size()-1) {
 					mySheet.createRow(currentRow);
 					r = mySheet.getRow(currentRow);
@@ -686,21 +721,26 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						r.createCell(j);
 					}
 				}
-					//mySheet.createRow(currentRow);
-					//r = mySheet.getRow(currentRow);
-				//}
+					
 				currentRow++;
 			}
 			
 			mySheet.createRow(currentRow); //creamos la fila de:Connection Status
 			r = mySheet.getRow(currentRow);
-			for (int j = 0; j < 3; j++) {
+			for (int j = 0; j < 10; j++) {
 				r.createCell(j);
 				c = r.getCell(j);
+				if(j==0) {}else
 				if(j==1) {
 					c.setCellValue("Connection Status");
+					c.setCellStyle(styleBordesCompletos);
 				}else if(j==2) {
 					c.setCellValue("REO");
+					c.setCellStyle(styleBordesArribaYAbajo);
+				}else if(j==9){
+					c.setCellStyle(styleBordesArribaAbajoDerecha);
+				}else {
+					c.setCellStyle(styleBordesArribaYAbajo);
 				}
 			}
 			

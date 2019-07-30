@@ -618,6 +618,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		
 		ServletContext sc = request.getSession().getServletContext();		
 		
+		
 		try {
 
 			File poiFile = new File(sc.getRealPath("plantillas/plugin/AdvisoryNoteApple/AdvisoryNoteReport.xlsx"));
@@ -636,10 +637,18 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			DecimalFormat df = new DecimalFormat("#.##");
 			String descripcionDelActivo= "- ";
 			
+			XSSFCellStyle style= myWorkBook.createCellStyle();
+			XSSFCellStyle styleTitulo= myWorkBook.createCellStyle();
+			/*style.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			style.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			style.setBorderRight(XSSFCellStyle.BORDER_THIN);
+			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);*/
+			style.setWrapText(true);
+			
 			// En el ultimo elemento esta el resumen por eso cogemos todos los DTO menos el ultimo
 				
 				
-			myWorkBook.setSheetName(1, "AN S0XXX-" + anyo.format(new Date()));
+			myWorkBook.setSheetName(0, "AN S0XXX-" + anyo.format(new Date()));
 			mySheet = myWorkBook.getSheetAt(0);		// <----- NÚMERO DE LA PÁGINA
 			
 			cellReference = new CellReference("G2");
@@ -656,18 +665,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			c.setCellValue(format.format(new Date()));
-			//mySheet.shiftRows(5, 5, 3, true, true);
-			
-			//mySheet.shiftRows(5, 5, 3);
-			for(int i = 6 ; i< 9; i++) {	
-				mySheet.createRow(6);
-				r = mySheet.getRow(6);
-				
-				for (int j = 0; j < NUMERO_COLUMNAS_APPLE; j++) {
-					r.createCell(j);
-					c = r.getCell(j);
-				}
-			}
 			
 			int currentRow = 7;
 			for (int i = 0; i < listaAN.size(); i++) {
@@ -696,62 +693,186 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				}
 			
 				//if(i > 0) {
+				if(i<listaAN.size()-1) {
 					mySheet.createRow(currentRow);
 					r = mySheet.getRow(currentRow);
-					
 					for (int j = 0; j < NUMERO_COLUMNAS_APPLE; j++) {
 						r.createCell(j);
-						c = r.getCell(j);
 					}
-					
+				}
+					//mySheet.createRow(currentRow);
+					//r = mySheet.getRow(currentRow);
 				//}
 				currentRow++;
 			}
 			
-			currentRow = currentRow + 1;
+			mySheet.createRow(currentRow); //creamos la fila de:Connection Status
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 3; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				if(j==1) {
+					c.setCellValue("Connection Status");
+				}else if(j==2) {
+					c.setCellValue("REO");
+				}
+			}
 			
-			for (int i = 0; i < listaAN.size(); i++) {
-				
-				if(i > 0) {
-					mySheet.createRow(currentRow);
-					r = mySheet.getRow(currentRow);
-					
-					for (int j = 0; j < NUMERO_COLUMNAS_APPLE; j++) {
-						r.createCell(j);
-						c = r.getCell(j);
+			currentRow++;
+			
+			mySheet.createRow(currentRow); //creamos la fila de:Property Details
+			r = mySheet.getRow(currentRow);
+			r.setHeight((short)-1);
+			for (int j = 0; j < 3; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				if(j==1) {
+					c.setCellValue("Property Details");
+				}else if(j==2) {
+					//bucle por activo
+					String descripcionLocalidadActivo = "";
+					for (int i = 0; i < listaAN.size(); i++) {
+						VReportAdvisoryNotes dtoPAB = listaAN.get(i);
+						if(i>0) {
+							descripcionLocalidadActivo = descripcionLocalidadActivo + "\n";
+						}
+						
+						if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+							descripcionLocalidadActivo = descripcionLocalidadActivo + dtoPAB.getNumActivo().toString() + " ";
+						}
+			
+						if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
+							descripcionLocalidadActivo = descripcionLocalidadActivo + dtoPAB.getTipoActivo();
+						}
+						if(!Checks.esNulo(dtoPAB.getMunicipio())) {
+							descripcionLocalidadActivo = descripcionLocalidadActivo + " located in " + dtoPAB.getMunicipio();
+						}
+						if(!Checks.esNulo(dtoPAB.getProvincia())) {
+							descripcionLocalidadActivo = descripcionLocalidadActivo + "(" + dtoPAB.getProvincia() + ")";
+						}
 					}
-					
+					c.setCellValue(descripcionLocalidadActivo);
+				}
+			}
+			
+			currentRow++;
+			
+			mySheet.createRow(currentRow); //creamos la fila de:Background information
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 2; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				if(j==1) {
+					c.setCellValue("Background information");
+				}
+			}
+			
+			currentRow++;
+			
+			mySheet.createRow(currentRow);
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+				case 2:
+					c.setCellValue("Unit ID");
+					break;
+				case 3:
+					c.setCellValue("Type of property	");
+					break;
+				case 4:
+					c.setCellValue("Surface area \n (sqm)");
+					break;
+				case 5:
+					c.setCellValue("Asking Price");
+					break;
+				case 6:
+					c.setCellValue("Rental income € (monthly)");
+					break;
+				default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			
+			Long aumulacionSuperficie = 0L;
+			Double acumulacionAskingPrice = (double) 0;
+			Long acumulacionRentaMensual = 0L;
+			Boolean total = false;
+			for (int i = 0; i <= listaAN.size(); i++) {
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				VReportAdvisoryNotes dtoPAB = null;
+				if(i<listaAN.size()) {
+					dtoPAB = listaAN.get(i);
 				}
 				
-				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
-				
-				String descripcionLocalidadActivo = "";
-				
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
-					descripcionLocalidadActivo = descripcionLocalidadActivo + dtoPAB.getNumActivo().toString() + " ";
+				if(i==listaAN.size()) {
+					total=true;
 				}
-	
-				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
-					descripcionLocalidadActivo = descripcionLocalidadActivo + dtoPAB.getTipoActivo();
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+					case 2:
+						if(total) {
+							c.setCellValue("Total");
+						}else {
+							if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+								c.setCellValue(dtoPAB.getNumActivo().toString());
+							} else {
+								c.setCellValue("");
+							}
+						}
+						break;
+					case 3:
+						if(total) {
+							c.setCellValue("");
+						}else {
+							if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
+								c.setCellValue(dtoPAB.getTipoActivo());
+							} else {
+								c.setCellValue("");
+							}
+						}
+						break;
+					case 4:
+						if(total) {
+							c.setCellValue(aumulacionSuperficie.toString() + " m2");
+						}else {
+							if (!Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
+								c.setCellValue(dtoPAB.getSuperficieConstruida().toString() + " m2");
+								aumulacionSuperficie = aumulacionSuperficie + dtoPAB.getSuperficieConstruida();
+							} else {
+								c.setCellValue("0 m2");
+							}
+						}
+						break;
+					case 5:
+						if(total) {
+							c.setCellValue(acumulacionAskingPrice.toString() + " €");
+						}else {
+							if (!Checks.esNulo(dtoPAB.getImporte())) {
+								c.setCellValue(dtoPAB.getImporte().toString() + " €");
+								acumulacionAskingPrice = acumulacionAskingPrice + dtoPAB.getImporte();
+							} else {
+								c.setCellValue("0€");
+							}
+						}
+						break;
+					case 6:
+						c.setCellValue("0 €");
+						break;
+					default:
+						break;
+					}
 				}
-				if(!Checks.esNulo(dtoPAB.getMunicipio())) {
-					descripcionLocalidadActivo = descripcionLocalidadActivo + " located in " + dtoPAB.getMunicipio();
-				}
-				if(!Checks.esNulo(dtoPAB.getProvincia())) {
-					descripcionLocalidadActivo = descripcionLocalidadActivo + "(" + dtoPAB.getProvincia() + ")";
-				}
-				
-				cellReference = new CellReference("C" + currentRow); // NUMACTIVODESCRIPCIONYLOCALIDADACTIVO
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				c.setCellValue(descripcionLocalidadActivo);
-				
 				currentRow++;
 			}
 			
-			currentRow = currentRow + 2;
-			
+/*			
 			Long aumulacionSuperficie = 0L;
 			Double acumulacionAskingPrice = (double) 0;
 			Long acumulacionRentaMensual = 0L;
@@ -818,7 +939,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				
 				currentRow++;
 			}
-			
+			*///-----
+			/*--------
 			cellReference = new CellReference("G" + currentRow); // SUPERFICIE
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
@@ -861,18 +983,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
+				*///---------------
 				
-				
-				/*cellReference = new CellReference("G" + currentRow); //FECHA DE EMISION
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getFechaEmision())) {
-					c.setCellValue(format.format(dtoPAB.getFechaEmision()));
-				} else {
-					c.setCellValue("");
-				}*/
-				
-				
+				/*------------
 				currentRow++;
 				
 				cellReference = new CellReference("E" + currentRow); //FECHA DE EMISION
@@ -1111,7 +1224,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			
 			
 			
-			
+			*/
 			myWorkBook.write(fileOutStream);
 			fileOutStream.close();
 			

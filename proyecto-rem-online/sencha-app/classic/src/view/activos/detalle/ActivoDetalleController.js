@@ -3760,6 +3760,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeComboMotivoOcultacionVenta: function() {
    
     	var me = this;
+
     	var combo = me.lookupReference('comboMotivoOcultacionVenta');
     	var textArea = me.lookupReference(combo.textareaRefChained);
 
@@ -3787,11 +3788,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
+        var fechaVenta = me.lookupReference('fechaRevisionPublicacionesVenta');
+        var fechaAlquiler = me.lookupReference('fechaRevisionPublicacionesAlquiler');
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
+            fechaVenta.setDisabled(false);
+            fechaAlquiler.setDisabled(false);
         } else {
             combobox.setDisabled(true);
+            fechaVenta.setDisabled(true);
+            fechaAlquiler.setDisabled(true);
             combobox.clearValue();
         }
 

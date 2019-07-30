@@ -58,6 +58,14 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 			dto.setMotivoOcultacionVentaCodigo(entidad.getMotivoOcultacionVenta().getCodigo());
 		}
 		
+		if(!Checks.esNulo(entidad.getFechaRevisionPublicacionesVenta())) {
+			dto.setFechaRevisionPublicacionesVenta(entidad.getFechaRevisionPublicacionesVenta());
+		}
+		
+		if(!Checks.esNulo(entidad.getFechaRevisionPublicacionesAlquiler())) {
+			dto.setFechaRevisionPublicacionesAlquiler(entidad.getFechaRevisionPublicacionesAlquiler());
+		}
+		
 		dto.setMotivoOcultacionManualVenta(entidad.getMotivoOcultacionManualVenta());
 		dto.setPublicarAlquiler(entidad.getCheckPublicarAlquiler());
 		dto.setOcultarAlquiler(entidad.getCheckOcultarAlquiler());

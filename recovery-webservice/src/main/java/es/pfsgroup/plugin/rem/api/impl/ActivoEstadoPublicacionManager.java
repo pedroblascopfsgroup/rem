@@ -158,6 +158,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(!Checks.esNulo(adecuacionAlquiler)) {
 			dto.setAdecuacionAlquilerCodigo(adecuacionAlquiler.getCodigo());
 		}
+		
+		if(!Checks.esNulo(dto.getFechaRevisionPublicacionesVenta())) {
+			dto.setFechaRevisionPublicacionesVenta(dto.getFechaRevisionPublicacionesVenta());
+		}
+		
+		if(!Checks.esNulo(dto.getFechaRevisionPublicacionesAlquiler())) {
+			dto.setFechaRevisionPublicacionesAlquiler(dto.getFechaRevisionPublicacionesAlquiler());
+		}
+		
 		dto.setTotalDiasPublicadoVenta(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(idActivo));
 		dto.setTotalDiasPublicadoAlquiler(this.obtenerTotalDeDiasEnEstadoPublicadoAlquiler(idActivo));
 		dto.setTotalDiasPublicadoHistoricoVenta(this.obtenerTotalDeDiasEnEstadoPublicadoHistoricoVenta(idActivo));
@@ -770,6 +779,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					activoPublicacionHistorico.setAuditoria(null);
 					activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
 				}
+				
+				if(!Checks.esNulo(dto.getFechaRevisionPublicacionesVenta())) {
+					activoPublicacion.setFechaRevisionPublicacionesVenta(dto.getFechaRevisionPublicacionesVenta());
+				}
+				
+				if(!Checks.esNulo(dto.getFechaRevisionPublicacionesAlquiler())) {
+					activoPublicacion.setFechaRevisionPublicacionesAlquiler(dto.getFechaRevisionPublicacionesAlquiler());
+				}
+
+
 			}
 		} catch (IllegalAccessException e) {
 			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);

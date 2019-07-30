@@ -54,6 +54,8 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Integer diasCambioPublicacionAlquiler;
 	private Integer diasCambioPrecioVentaWeb;
 	private Integer diasCambioPrecioAlqWeb;
+	private Date fechaRevisionPublicacionesVenta;
+	private Date fechaRevisionPublicacionesAlquiler;
 
 	public String getTipoPublicacionVentaDescripcion() {
 		return tipoPublicacionVentaDescripcion;
@@ -412,6 +414,22 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setIsMatriz(Boolean isMatriz) {
 		this.isMatriz = isMatriz;
+	}
+
+	public Date getFechaRevisionPublicacionesVenta() {
+		return fechaRevisionPublicacionesVenta;
+	}
+
+	public void setFechaRevisionPublicacionesVenta(Date fechaRevisionPublicacionesVenta) {
+		this.fechaRevisionPublicacionesVenta = fechaRevisionPublicacionesVenta;
+	}
+
+	public Date getFechaRevisionPublicacionesAlquiler() {
+		return fechaRevisionPublicacionesAlquiler;
+	}
+
+	public void setFechaRevisionPublicacionesAlquiler(Date fechaRevisionPublicacionesAlquiler) {
+		this.fechaRevisionPublicacionesAlquiler = fechaRevisionPublicacionesAlquiler;
 	}
 	
 }

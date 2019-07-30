@@ -159,7 +159,17 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 	    },
 	    {
 	    	name:'diasCambioPrecioAlqWeb'
-	    }
+	    },
+        {
+            name:'fechaRevisionPublicacionesVenta',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+            name:'fechaRevisionPublicacionesAlquiler',
+            type:'date',
+            dateFormat: 'c'
+        }
 	],
 
 	proxy: {

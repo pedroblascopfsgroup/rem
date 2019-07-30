@@ -9652,7 +9652,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		for(ActivoOferta activoOferta: listaActivos) {
 			Activo activo = activoOferta.getPrimaryKey().getActivo();
 			String tipo = !Checks.esNulo(activo.getTipoComercializar()) ? activo.getTipoComercializar().getCodigo() : null; 
-			if(!Checks.esNulo(tipo) && tipo.equals("02")) {
+			if(!Checks.esNulo(tipo)) {
 				ventaRetail = tipo.equals("02");	
 				ventaSingular = !ventaRetail;
 			}

@@ -143,12 +143,13 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	colspan: 3,
 		                	readOnly: !$AU.userIsRol("HAYASUPER"),
 		                	fieldLabel:  HreRem.i18n('fieldlabel.gestor.comercial.prescriptor'),
-		                	
+		                	reference: 'comboGestorComercialPrescriptor',
 		                	bind:{
 		                		store:'{storeComboGestorPrescriptor}',
 		                		value:'{getGestorComercialPrescriptor}',
 		                		hidden: '{!esCarteraCajamar}'
-		                	}
+		                	},
+		                	listeners: {change: 'setGestorComercialPrescriptor'}
 		                	
 		                },
 		                {

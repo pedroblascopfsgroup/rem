@@ -3486,5 +3486,147 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 			return !"0".equals(resultado);		
 	}
+	
+	@Override
+	public Boolean esGastoEmisorHaya(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) "
+						+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
+						+ "JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
+						+ "JOIN ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR "
+						+ "JOIN DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID "
+						+ "WHERE TPR.DD_TPR_CODIGO IN ('35') "
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");
 
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoDestinatarioHaya(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) "
+						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+						+ "JOIN DD_DEG_DESTINATARIOS_GASTO DEG ON GPV.DD_DEG_ID = DEG.DD_DEG_ID "						
+						+ "WHERE DEG.DD_DEG_CODIGO IN (02) "
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");						
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numOtroGasto)
+				|| !StringUtils.isNumeric(numOtroGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) " + "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
+				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
+				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'" 
+				+ "AND PRO.DD_CRA_ID = " 
+				+ "(SELECT PRO.DD_CRA_ID "
+				+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
+				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
+				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '" + numOtroGasto + "')");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean activoEnAgrupacionProyecto(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) FROM ACT_AGR_AGRUPACION AGR " +
+				" INNER JOIN DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = '04' " +
+				" INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " +
+				" INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID AND ACT.ACT_NUM_ACTIVO = " + numActivo +
+				" WHERE AGR.AGR_FECHA_BAJA IS NULL" +
+				" AND ACT.BORRADO = 0" +
+				" AND AGR.BORRADO = 0" +
+				" AND TAG.BORRADO = 0" +
+				" AND AGA.BORRADO = 0");
+
+		return Integer.valueOf(resultado) > 0;
+	};
+	
+	@Override
+	public Boolean perteneceDDServicerActivo(String codigoServicer) {
+		if(Checks.esNulo(codigoServicer)) {
+			return false;
+		}					
+			String resultado = rawDao.getExecuteSQL("SELECT Count(*) " 
+					+ "FROM DD_SRA_SERVICER_ACTIVO "
+					+ "WHERE DD_SRA_CODIGO ='" + codigoServicer + "'");
+
+			return !"0".equals(resultado);		
+	}
+	
+	@Override
+	public Boolean perteneceDDCesionComercial(String codigoCesion) {
+		if(Checks.esNulo(codigoCesion)) {
+			return false;
+		}					
+			String resultado = rawDao.getExecuteSQL("SELECT Count(*) " 
+					+ "FROM DD_CMS_CESION_COM_SANEAMIENTO "
+					+ "WHERE DD_CMS_CODIGO ='" + codigoCesion + "'");
+
+			return !"0".equals(resultado);		
+	}
+	
+	@Override
+	public Boolean perteneceDDClasificacionApple(String codigoValorOrdinario) {
+		if(Checks.esNulo(codigoValorOrdinario)) {
+			return false;
+		}					
+			String resultado = rawDao.getExecuteSQL("SELECT Count(*) " 
+					+ "FROM DD_CAP_CLASIFICACION_APPLE "
+					+ "WHERE DD_CAP_CODIGO ='" + codigoValorOrdinario + "'");
+
+			return !"0".equals(resultado);		
+	}
+	
+	@Override
+	public Boolean esActivoApple(String numActivo){
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}			
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_ACTIVO ACT "
+				+ "JOIN DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID "
+				+ "WHERE SCR.DD_SCR_CODIGO = '138' "
+				+ "AND ACT.ACT_NUM_ACTIVO = "+numActivo+" ");
+		
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean esUnidadAlquilable(String numActivo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean esGastoRefacturado(String numGasto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean perteneceGastoBankiaSareb(String numGasto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean esGastoRefacturable(String numGasto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

@@ -1,8 +1,5 @@
 package es.pfsgroup.plugin.log.advanced.manager;
 
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -12,8 +9,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.pfsgroup.plugin.log.advanced.dto.LogAdvancedDto;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.log.advanced.dto.LogAdvancedDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 
 @Component
@@ -41,7 +38,7 @@ public class LogAdvancedManager {
 	static final String WEB_SERVICE_KO = "KO";
 	static final String TYPE_WEB_SERVICE = "WEB_SERVICE";
 	static final String WEB_SERVICE_DESCRIPTION = "Llamada Web Service";
-	static final String PREFIX_RSYSLOG = "[RCV_WEB_LOG]";
+	static final String PREFIX_RSYSLOG = "[REM_WEB_LOG]";
 
 	public void writeLog(LogAdvancedDto logDto) {
 
@@ -49,7 +46,7 @@ public class LogAdvancedManager {
 
 		if (!Checks.esNulo(rsyslogActive) && rsyslogActive.equals("true") && !Checks.esNulo(logDto)
 				&& !Checks.esNulo(logDto.getMessageRsyslog())) {
-			logger.error(PREFIX_RSYSLOG + ":" + logDto.getMessageRsyslog());
+			logger.info(PREFIX_RSYSLOG + ":" + logDto.getMessageRsyslog());
 		}
 
 	}

@@ -10,152 +10,46 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
-	<bean id="logAdvancedRemDefault" 
-		class="es.pfsgroup.plugin.log.advanced.api.LogAdvancedRemImpl" abstract="true">
-		
-		<property name="registerLogAccesDevo">
+	<bean id="logAdvancedRemDefault" class="es.pfsgroup.plugin.log.advanced.api.LogAdvancedRemImpl" abstract="true">
+		<property name="registerBrowserLog">
 			<map>
-				<entry key="HAYA">	<!-- Codigo Entidad -->
+				<entry key="/pfs/activo/getActivos.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
 					<map>
-						<entry key="/pfs/clientes/consultaClienteFast.htm">	<!-- URL Que queremos registrar, Entidad Cliente -->
-							<map>
-								<!-- Parámetros para construir el log -->
-								<entry key="PRIORITY">
-									<value>1</value>
-								</entry>
-								<entry key="ENTIDAD_CODE">	
-									<value>1</value>
-								</entry>
-								<entry key="TYPE">	
-									<value>ACCES</value>
-								</entry>
-								<entry key="NAME_ID_PARAMETER">	
-									<value>id</value>
-								</entry>
-								<entry key="DESCRIPTION">	
-									<value>Abrir la entidad cliente</value>
-								</entry>
-							</map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
 						</entry>
-						<entry key="/pfs/datosexpediente/consultaExpedienteFast.htm">	<!-- URL Que queremos registrar, Entidad Expediente -->
-							<map>
-								<!-- Parámetros para construir el log -->
-								<entry key="PRIORITY">
-									<value>1</value>
-								</entry>
-								<entry key="ENTIDAD_CODE">	
-									<value>2</value>
-								</entry>
-								<entry key="TYPE">	
-									<value>ACCES</value>
-								</entry>
-								<entry key="NAME_ID_PARAMETER">	
-									<value>id</value>
-								</entry>
-								<entry key="DESCRIPTION">	
-									<value>Abrir la entidad expediente</value>
-								</entry>
-							</map>
+						<entry key="ENTIDAD_CODE">	
+							<value>61</value>
 						</entry>
-						<entry key="/pfs/asuntos/consultaAsuntoFast.htm">	<!-- URL Que queremos registrar, Entidad Asunto -->
-							<map>
-								<!-- Parámetros para construir el log -->
-								<entry key="PRIORITY">
-									<value>1</value>
-								</entry>
-								<entry key="ENTIDAD_CODE">	
-									<value>3</value>
-								</entry>
-								<entry key="TYPE">	
-									<value>ACCES</value>
-								</entry>
-								<entry key="NAME_ID_PARAMETER">	
-									<value>id</value>
-								</entry>
-								<entry key="DESCRIPTION">	
-									<value>Abrir la entidad asunto</value>
-								</entry>
-							</map>
+						<entry key="TYPE">	
+							<value>ACCES</value>
 						</entry>
-						<entry key="/pfs/procedimiento/consultaProcedimientoFast.htm">	<!-- URL Que queremos registrar, Entidad Procedimiento -->
-							<map>
-								<!-- Parámetros para construir el log -->
-								<entry key="PRIORITY">
-									<value>1</value>
-								</entry>
-								<entry key="ENTIDAD_CODE">	
-									<value>5</value>
-								</entry>
-								<entry key="TYPE">	
-									<value>ACCES</value>
-								</entry>
-								<entry key="NAME_ID_PARAMETER">	
-									<value>id</value>
-								</entry>
-								<entry key="DESCRIPTION">	
-									<value>Abrir la entidad procedimiento</value>
-								</entry>
-							</map>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
 						</entry>
-						<entry key="/pfs/contratos/consultaContratoFast.htm">	<!-- URL Que queremos registrar, Entidad Contrato -->
-							<map>
-								<!-- Parámetros para construir el log -->
-								<entry key="PRIORITY">
-									<value>1</value>
-								</entry>
-								<entry key="ENTIDAD_CODE">	
-									<value>6</value>
-								</entry>
-								<entry key="TYPE">	
-									<value>ACCES</value>
-								</entry>
-								<entry key="NAME_ID_PARAMETER">	
-									<value>id</value>
-								</entry>
-								<entry key="DESCRIPTION">	
-									<value>Abrir la entidad contrato</value>
-								</entry>
-							</map>
+						<entry key="DESCRIPTION">	
+							<value>Búsqueda de activos</value>
 						</entry>
-						<entry key="/pfs/plugin/nuevoModeloBienes/bienes/NMBconsultaBien.htm">	<!-- URL Que queremos registrar, Entidad Bien -->
-							<map>
-								<!-- Parámetros para construir el log -->
-								<entry key="PRIORITY">
-									<value>1</value>
-								</entry>
-								<entry key="ENTIDAD_CODE">	
-									<value>8</value>
-								</entry>
-								<entry key="TYPE">	
-									<value>ACCES</value>
-								</entry>
-								<entry key="NAME_ID_PARAMETER">	
-									<value>id</value>
-								</entry>
-								<entry key="DESCRIPTION">	
-									<value>Abrir la entidad bien</value>
-								</entry>
-							</map>
+					</map>
+				</entry>
+				<entry key="/pfs/activo/getTabActivo.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
 						</entry>
-						<entry key="/pfs/editasunto/actualizarDatosPrincipalesAsunto.htm">	<!-- URL Que queremos registrar, Editar cabecera asunto -->
-							<map>
-								<!-- Parámetros para construir el log -->
-								<entry key="PRIORITY">
-									<value>1</value>
-								</entry>
-								<entry key="ENTIDAD_CODE">	
-									<value>3</value>
-								</entry>
-								<entry key="TYPE">	
-									<value>EDIT</value>
-								</entry>
-								<entry key="NAME_ID_PARAMETER">	
-									<value>idAsunto</value>
-								</entry>
-								<entry key="DESCRIPTION">	
-									<value>Editar cabecera del asunto</value>
-								</entry>
-							</map>
+						<entry key="ENTIDAD_CODE">	
+							<value>61</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>ACCES</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Abrir tab del activo</value>
 						</entry>
 					</map>
 				</entry>

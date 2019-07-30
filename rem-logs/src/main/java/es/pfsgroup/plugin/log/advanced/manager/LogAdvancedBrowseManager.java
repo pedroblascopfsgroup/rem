@@ -26,42 +26,30 @@ public class LogAdvancedBrowseManager extends LogAdvancedManager implements LogA
 	@Override
 	public void registerLog(String uri, Map<String, Object> parameters) {
 
-		HashMap<String, HashMap<String, HashMap<String, String>>> mapAccesRegistrer = logAdvanceRem
-				.getRegisterLogAccesDevo();
+		HashMap<String, HashMap<String, String>> mapAccesRegistrer = logAdvanceRem.getRegisterBrowserLog();
 
 		if (!Checks.esNulo(mapAccesRegistrer) && !mapAccesRegistrer.isEmpty()) {
-
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			UsuarioSecurity userSec = (UsuarioSecurity) authentication.getPrincipal();
-
-			HashMap<String, String> carteraEntidad = logAdvanceRem.getEntidadPadreCartera();
-
-			if (!Checks.esNulo(carteraEntidad) && !carteraEntidad.isEmpty()) {
-
-				String codigoEntidad = carteraEntidad.get(userSec.getEntidad().getCodigo());
-
-				if (!Checks.esNulo(codigoEntidad)) {
-
-					HashMap<String, HashMap<String, String>> mapEntidad = mapAccesRegistrer.get(codigoEntidad);
-					if (!Checks.esNulo(mapEntidad)) {
-						HashMap<String, String> mapDataLog = mapEntidad.get(uri);
-						if (!Checks.esNulo(mapDataLog)) {
-							String msg = mapDataLog.get(MAP_KEY_TYPE) + "|" + mapDataLog.get(MAP_KEY_ENTIDADCODE) + "|"
-									+ getIdEntidad(parameters, mapDataLog.get(MAP_KEY_NAMEID)) + "|"
-									+ userSec.getUsername() + "|" + mapDataLog.get(MAP_KEY_DESCRIPTION) + "| " + "| "
-									+ "| ";
-							// String msgSyslog = "["+mapDataLog.get(MAP_KEY_TYPE)+"]"+" El usuario
-							// "+userSec.getUsername()+" ha realizado la accion:
-							// "+mapDataLog.get(MAP_KEY_DESCRIPTION)+" ,para el identificador
-							// "+getIdEntidad(parameters,mapDataLog.get(MAP_KEY_NAMEID));
-							String msgSyslog = "[" + mapDataLog.get(MAP_KEY_TYPE) + "] |"
-									+ mapDataLog.get(MAP_KEY_ENTIDADCODE) + "|"
-									+ getIdEntidad(parameters, mapDataLog.get(MAP_KEY_NAMEID)) + "|"
-									+ userSec.getUsername() + "|" + mapDataLog.get(MAP_KEY_DESCRIPTION);
-							writeLog(new LogAdvancedDto(msg, Integer.parseInt(mapDataLog.get(MAP_KEY_PRIORITY)),
-									msgSyslog));
-						}
-					}
+			
+			int index = uri.indexOf("/pfs/");
+			if(index != -1){
+				String uriFormat = uri.substring(index,uri.length());
+				HashMap<String, String> mapDataLog = mapAccesRegistrer.get(uriFormat);
+				if (!Checks.esNulo(mapDataLog)) {
+					
+					Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+					UsuarioSecurity userSec = (UsuarioSecurity) authentication.getPrincipal();
+					
+					String msg = mapDataLog.get(MAP_KEY_TYPE) + "|" + mapDataLog.get(MAP_KEY_ENTIDADCODE) + "|"
+							+ getIdEntidad(parameters, mapDataLog.get(MAP_KEY_NAMEID)) + "|"
+							+ userSec.getUsername() + "|" + mapDataLog.get(MAP_KEY_DESCRIPTION) + "| " + "| "
+							+ "| ";
+	
+					String msgSyslog = "[" + mapDataLog.get(MAP_KEY_TYPE) + "] |"
+							+ mapDataLog.get(MAP_KEY_ENTIDADCODE) + "|"
+							+ getIdEntidad(parameters, mapDataLog.get(MAP_KEY_NAMEID)) + "|"
+							+ userSec.getUsername() + "|" + mapDataLog.get(MAP_KEY_DESCRIPTION);
+					
+					writeLog(new LogAdvancedDto(msg, Integer.parseInt(mapDataLog.get(MAP_KEY_PRIORITY)),msgSyslog));
 				}
 			}
 		}

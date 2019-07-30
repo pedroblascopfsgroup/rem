@@ -434,8 +434,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}else{
 				return true;
 			}
+		},
+		getGestorComercialPrescriptor: function(get){
+			me = this;
+			var gestorComercial = get('datosbasicosoferta.gestorComercialPrescriptor');
+			if (gestorComercial){
+				return gestorComercial;
+			}
+			return 'NA';
 		}
-	 },
+		 
+	 }, 
 
 
     stores: {
@@ -1124,6 +1133,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus',
 				extraParams: {numeroUrsus: '', idExpediente: '{expediente.id}'}
 			}
+		},
+		storeComboGestorPrescriptor:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getGestorPrescriptor',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}	  
 		}
 		
 		

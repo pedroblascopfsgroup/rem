@@ -236,6 +236,9 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name="OFR_REF_CIRCUITO_CLIENTE")
 	private String refCircuitoCliente;
     
+	@Column(name="OFR_GES_COM_PRES")
+	private Long gestorComercialPrescriptor;
+	
 	public Date getFechaAlta() {
 		return fechaAlta;
 	}
@@ -692,6 +695,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setRefCircuitoCliente(String refCircuitoCliente) {
 		this.refCircuitoCliente = refCircuitoCliente;
+	}
+
+	public Long getGestorComercialPrescriptor() {
+		return gestorComercialPrescriptor;
+	}
+
+	public void setGestorComercialPrescriptor(Long gestorComercialPrescriptor) {
+		this.gestorComercialPrescriptor = gestorComercialPrescriptor;
 	}
 
 }

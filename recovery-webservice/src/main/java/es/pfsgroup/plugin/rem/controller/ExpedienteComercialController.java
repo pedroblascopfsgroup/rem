@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
@@ -2072,6 +2073,21 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			e.printStackTrace();
 			model.put("success", false);
 			model.put("error", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestorPrescriptor(Long idExpediente, ModelMap model) {
+		try {
+			ExpedienteComercial expediente = expedienteComercialApi.findOne(idExpediente);
+			List<DtoDiccionario> list = expedienteComercialApi.calcularGestorComercialPrescriptor(expediente);
+			model.put(RESPONSE_DATA_KEY, list);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
 		}
 
 		return createModelAndViewJson(model);

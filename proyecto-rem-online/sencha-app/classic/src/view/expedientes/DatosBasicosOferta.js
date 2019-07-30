@@ -139,6 +139,19 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	}		                	
 		                },
 		                {
+		                	xtype: 'comboboxfieldbase',
+		                	colspan: 3,
+		                	readOnly: !$AU.userIsRol("HAYASUPER"),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.gestor.comercial.prescriptor'),
+		                	
+		                	bind:{
+		                		store:'{storeComboGestorPrescriptor}',
+		                		value:'{getGestorComercialPrescriptor}',
+		                		hidden: '{!esCarteraCajamar}'
+		                	}
+		                	
+		                },
+		                {
 		                	xtype: 'fieldset',
 		                	title:  HreRem.i18n('title.comite.sancionador'),
 		                	colspan: 2,

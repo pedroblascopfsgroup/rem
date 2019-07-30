@@ -48,11 +48,13 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -1387,7 +1389,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(expediente)) {
 			dto.setIdEco(expediente.getId());
 		}
-
+		if(Checks.esNulo(oferta.getGestorComercialPrescriptor())) {
+			dto.setGestorComercialPrescriptor(oferta.getGestorComercialPrescriptor());
+		}
+		
 		return dto;
 	}
 
@@ -9624,4 +9629,82 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
+	
+	public ArrayList<DtoDiccionario> calcularGestorComercialPrescriptor(ExpedienteComercial expediente){
+		
+		ArrayList<DtoDiccionario> listado = new ArrayList<DtoDiccionario>();
+		DtoDiccionario diccionario = new DtoDiccionario();
+		DtoDiccionario diccionarioAux;
+		boolean ventaRetail = false;
+		boolean prescriptorOficina;
+		boolean ventaSingular =  false; 
+		boolean llenoLista = false;
+		Oferta oferta = expediente.getOferta();
+		ActivoProveedor activoProveedor = oferta.getPrescriptor();
+		List<ActivoOferta> listaActivos=oferta.getActivosOferta();
+		
+		if (!Checks.esNulo(activoProveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
+			prescriptorOficina = activoProveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo().equals("03");
+		}else {
+			return null;
+		}
+		// Comprobamos que en la lista exista algún tipo retail, si es así cambiamos valor en las variables
+		for(ActivoOferta activoOferta: listaActivos) {
+			Activo activo = activoOferta.getPrimaryKey().getActivo();
+			String tipo = !Checks.esNulo(activo.getTipoComercializar()) ? activo.getTipoComercializar().getCodigo() : null; 
+			if(!Checks.esNulo(tipo) && tipo.equals("02")) {
+				ventaRetail = tipo.equals("02");	
+				ventaSingular = !ventaRetail;
+			}
+		}
+		
+		if(!Checks.esNulo(oferta.getGestorComercialPrescriptor())) {
+			if(ventaRetail && prescriptorOficina) {
+				
+				diccionario.setDescripcion(activoProveedor.getNombre());
+				diccionario.setId(activoProveedor.getId());
+				diccionario.setCodigo(activoProveedor.getId().toString());
+				listado.add(diccionario);
+			} else if(ventaSingular ||(ventaRetail && !prescriptorOficina)) {
+				llenoLista = true;
+				diccionario.setDescripcion("N/A-lote");
+				diccionario.setId(0l);
+				diccionario.setCodigo("NA");
+				listado.add(diccionario);
+			}
+		}else {
+			if(ventaRetail && prescriptorOficina) {
+				llenoLista=true;
+				diccionario.setDescripcion("Oficina sin gestor comercial asignado. revise la parametrizacion");
+				diccionario.setId(1l);
+				diccionario.setCodigo("NA");
+				listado.add(diccionario);
+			}else if(ventaSingular ||(ventaRetail && !prescriptorOficina)) {
+				llenoLista=true;
+				diccionario.setDescripcion("N/A-lote");
+				diccionario.setCodigo("NA");
+				diccionario.setId(1l);
+				listado.add(diccionario);
+			}
+		}
+		if (llenoLista) {
+			for(ActivoOferta activoOferta: listaActivos) {
+				
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				Usuario usuario = gestorActivoApi.getGestorByActivoYTipo(activo,GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+				if(!Checks.esNulo(usuario)) {
+					diccionarioAux = new DtoDiccionario();
+					diccionarioAux.setDescripcion(usuario.getApellidoNombre());
+					diccionarioAux.setId(usuario.getId());
+					diccionarioAux.setCodigo(usuario.getId().toString());
+					listado.add(diccionarioAux);
+				}
+				
+			}
+		}
+		
+		return listado;
+		
+	}
+	
 }

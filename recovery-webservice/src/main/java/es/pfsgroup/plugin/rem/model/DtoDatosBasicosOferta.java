@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
@@ -83,7 +84,9 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String refCircuitoCliente;
 	
 	private Boolean permiteProponer;
-
+	
+	private Long gestorComercialPrescriptor;
+	
 	public Long getIdOferta() {
 		return idOferta;
 	}
@@ -332,5 +335,15 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setIdEco(Long idEco) {
 		this.idEco = idEco;
 	}
+
+	public Long getGestorComercialPrescriptor() {
+		return gestorComercialPrescriptor;
+	}
+
+	public void setGestorComercialPrescriptor(Long gestorComercialPrescriptor) {
+		this.gestorComercialPrescriptor = gestorComercialPrescriptor;
+	}
+
+	
 
 }

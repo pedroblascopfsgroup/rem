@@ -49,7 +49,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		for (RespuestaComisionResultDto result : listaResult) {
 			if(!Checks.esNulo(result.getAmount()) && !Checks.esNulo(result.getRule()) && !Checks.esNulo(result.getRule().getCommissionType())) {
 				
-				if(accion.equals(DDAccionGastos.CODIGO_PRESCRIPCION) && result.getRule().getCommissionType().equals("PRESCRIPCIÓN")){
+				if(accion.equals(DDAccionGastos.CODIGO_PRESCRIPCION) && result.getRule().getCommissionType().equals("PRESCRIPCION")){
 					respuesta = new BigDecimal(result.getRule().getCommissionPercentage());
 					respuestaDto = result;
 					break;

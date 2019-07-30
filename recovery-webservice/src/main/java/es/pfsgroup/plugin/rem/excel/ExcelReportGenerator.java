@@ -23,8 +23,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -629,6 +631,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			style.setBorderTop(XSSFCellStyle.BORDER_THIN);
 			style.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			style.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			style.setWrapText(true);
 			
 			
@@ -639,7 +642,38 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesCompletos.setBorderTop(XSSFCellStyle.BORDER_THIN);
 			styleBordesCompletos.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			styleBordesCompletos.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletos.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesCompletos.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
 			styleBordesCompletos.setWrapText(true);
+			
+			//CELDA COMPLETA CELDAS
+			XSSFCellStyle styleBordesCompletosCelda= myWorkBook.createCellStyle();
+			styleBordesCompletosCelda.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCelda.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCelda.setBorderRight(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCelda.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCelda.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesCompletosCelda.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesCompletosCelda.setWrapText(true);
+			
+			//CELDA COMPLETA CELDAS ALINEADAS IZQUIERDA ALINEAR
+			XSSFCellStyle styleBordesCompletosCeldaAlineadasIzquierda= myWorkBook.createCellStyle();
+			styleBordesCompletosCeldaAlineadasIzquierda.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaAlineadasIzquierda.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaAlineadasIzquierda.setBorderRight(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaAlineadasIzquierda.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaAlineadasIzquierda.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesCompletosCeldaAlineadasIzquierda.setAlignment(XSSFCellStyle.ALIGN_LEFT);
+			styleBordesCompletosCeldaAlineadasIzquierda.setWrapText(true);
+			
+			//CELDA COMPLETA CELDAS
+			XSSFCellStyle styleBordesCompletosCeldaTamanyoCelda= myWorkBook.createCellStyle();
+			styleBordesCompletosCeldaTamanyoCelda.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaTamanyoCelda.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaTamanyoCelda.setBorderRight(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaTamanyoCelda.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaTamanyoCelda.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesCompletosCeldaTamanyoCelda.setWrapText(true);
 				
 				//BORDES ARRIBA Y ABAJO
 			XSSFCellStyle styleBordesArribaYAbajo= myWorkBook.createCellStyle();
@@ -647,6 +681,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesArribaYAbajo.setBorderTop(XSSFCellStyle.BORDER_THIN);
 			styleBordesArribaYAbajo.setBorderRight(XSSFCellStyle.BORDER_NONE);
 			styleBordesArribaYAbajo.setBorderLeft(XSSFCellStyle.BORDER_NONE);
+			styleBordesArribaYAbajo.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesArribaYAbajo.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
 			styleBordesArribaYAbajo.setWrapText(true);
 			
 			//BORDES ARRIBA Y ABAJO DERECHA
@@ -655,6 +691,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesArribaAbajoDerecha.setBorderTop(XSSFCellStyle.BORDER_THIN);
 			styleBordesArribaAbajoDerecha.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			styleBordesArribaAbajoDerecha.setBorderLeft(XSSFCellStyle.BORDER_NONE);
+			styleBordesArribaAbajoDerecha.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesArribaAbajoDerecha.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
 			styleBordesArribaAbajoDerecha.setWrapText(true);
 			
 			//BORDES ARRIBA Y ABAJO IZQUIERDA
@@ -663,6 +701,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesArribaAbajoIzquierda.setBorderTop(XSSFCellStyle.BORDER_THIN);
 			styleBordesArribaAbajoIzquierda.setBorderRight(XSSFCellStyle.BORDER_NONE);
 			styleBordesArribaAbajoIzquierda.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			styleBordesArribaAbajoIzquierda.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesArribaAbajoIzquierda.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
 			styleBordesArribaAbajoIzquierda.setWrapText(true);
 	
 			
@@ -693,35 +733,41 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
 				
 				
-				cellReference = new CellReference("C" + currentRow); // UNIT ID
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
-					c.setCellValue(dtoPAB.getNumActivo().toString());
-				} else {
-					c.setCellValue("");
-				}
-				
-				//TODO PROPERTY ID
-				
-				cellReference = new CellReference("G" + currentRow); // PROPERTY NAME
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getDireccion())) {
-					c.setCellValue(dtoPAB.getDireccion());
-				} else {
-					c.setCellValue("");
-				}
-			
-				
-				if(i<listaAN.size()-1) {
 					mySheet.createRow(currentRow);
 					r = mySheet.getRow(currentRow);
 					for (int j = 0; j < NUMERO_COLUMNAS_APPLE; j++) {
 						r.createCell(j);
+						c = r.getCell(j);
+						if(j==0) {}else
+						if(j==2) {
+							if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+								c.setCellValue(dtoPAB.getNumActivo().toString());
+							} else {
+								c.setCellValue("");
+							}
+							c.setCellStyle(styleBordesCompletosCelda);
+						}else if(j==4) {;
+							c.setCellStyle(styleBordesCompletosCelda);
+						}else if(j==6){
+							if (!Checks.esNulo(dtoPAB.getDireccion())) {
+								c.setCellValue(dtoPAB.getDireccion());
+							} else {
+								c.setCellValue("");
+							}	
+							c.setCellStyle(styleBordesCompletosCelda);
+						}else if(j==9) {
+							c.setCellStyle(styleBordesArribaAbajoDerecha);
+						}
 					}
-				}
-					
+					CellRangeAddress cellRangeAddress = new CellRangeAddress(currentRow, currentRow, 2,3);
+					mySheet.addMergedRegion(cellRangeAddress);
+					cellRangeAddress = new CellRangeAddress(currentRow, currentRow, 4,5);
+					mySheet.addMergedRegion(cellRangeAddress);
+					cellRangeAddress = new CellRangeAddress(currentRow, currentRow, 6,9);
+					mySheet.addMergedRegion(cellRangeAddress);
+				
+				
+				
 				currentRow++;
 			}
 			
@@ -736,24 +782,27 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					c.setCellStyle(styleBordesCompletos);
 				}else if(j==2) {
 					c.setCellValue("REO");
-					c.setCellStyle(styleBordesArribaYAbajo);
-				}else if(j==9){
+					c.setCellStyle(styleBordesCompletosCeldaAlineadasIzquierda);
+				}else if(j==9) {
 					c.setCellStyle(styleBordesArribaAbajoDerecha);
-				}else {
-					c.setCellStyle(styleBordesArribaYAbajo);
 				}
 			}
+			CellRangeAddress cellRangeAddress = new CellRangeAddress(currentRow, currentRow, 2,9);
+			mySheet.addMergedRegion(cellRangeAddress);
 			
 			currentRow++;
 			
 			mySheet.createRow(currentRow); //creamos la fila de:Property Details
 			r = mySheet.getRow(currentRow);
 			r.setHeight((short)-1);
-			for (int j = 0; j < 3; j++) {
+			for (int j = 0; j < 10; j++) {
+				
 				r.createCell(j);
+				r.setHeightInPoints(((listaAN.size()+1) * mySheet.getDefaultRowHeightInPoints()));
 				c = r.getCell(j);
 				if(j==1) {
 					c.setCellValue("Property Details");
+					c.setCellStyle(styleBordesCompletos);
 				}else if(j==2) {
 					//bucle por activo
 					String descripcionLocalidadActivo = "";
@@ -778,8 +827,14 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						}
 					}
 					c.setCellValue(descripcionLocalidadActivo);
+					c.setCellStyle(styleBordesCompletosCeldaAlineadasIzquierda);
+
+				}else if(j==9) {
+					c.setCellStyle(styleBordesArribaAbajoDerecha);
 				}
 			}
+			cellRangeAddress = new CellRangeAddress(currentRow, currentRow, 2,9);
+			mySheet.addMergedRegion(cellRangeAddress);
 			
 			currentRow++;
 			

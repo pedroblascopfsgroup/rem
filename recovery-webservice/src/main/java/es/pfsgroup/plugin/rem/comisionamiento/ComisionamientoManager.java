@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
 import es.pfsgroup.plugin.rem.microservicios.ClienteMicroservicioGenerico;
+import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
@@ -31,7 +32,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	
 	@SuppressWarnings("unused")
 	@Override
-	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
+	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros, String accion)
 			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException, HttpsClientException {
 		
 		BigDecimal respuesta = null;
@@ -46,9 +47,21 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		//El result que hay en la respuesta hay que tratarlo como una lista.
 		List<RespuestaComisionResultDto> listaResult = mapper.readValue(respuestaMSString, new TypeReference<List<RespuestaComisionResultDto>>(){});
 		for (RespuestaComisionResultDto result : listaResult) {
-			if(!Checks.esNulo(result.getAmount()) && !Checks.esNulo(result.getRule())) {
-				respuesta = new BigDecimal(result.getRule().getCommissionPercentage());
-				respuestaDto = result;
+			if(!Checks.esNulo(result.getAmount()) && !Checks.esNulo(result.getRule()) && !Checks.esNulo(result.getRule().getCommissionType())) {
+				
+				if(accion.equals(DDAccionGastos.CODIGO_PRESCRIPCION) && result.getRule().getCommissionType().equals("PRESCRIPCIÓN")){
+					respuesta = new BigDecimal(result.getRule().getCommissionPercentage());
+					respuestaDto = result;
+					break;
+				}
+				
+				if (accion.equals(DDAccionGastos.CODIGO_COLABORACION) && result.getRule().getCommissionType().equals("CUSTODIA")){
+					respuesta = new BigDecimal(result.getRule().getCommissionPercentage());
+					respuestaDto = result;
+					break;
+				}
+				
+				
 			}
 		}
 		

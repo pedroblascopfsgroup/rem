@@ -2601,7 +2601,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			/*BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion),activo.getId(), idProveedor);*/
 			RespuestaComisionResultDto calculoComision = null;
 			try {
-				calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+				calculoComision = comisionamientoApi.createCommission(consultaComisionDto,accion);
 			} catch (JsonGenerationException e) {
 				e.printStackTrace();
 			} catch (JsonMappingException e) {
@@ -2634,7 +2634,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			/*BigDecimal calculoComision = ofertaDao.getImporteCalculoAlquiler(oferta.getId(), TIPO_HONORARIOS.get(accion), idProveedor);*/
 			RespuestaComisionResultDto calculoComision = null;
 			try {
-				calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+				calculoComision = comisionamientoApi.createCommission(consultaComisionDto, accion);
 			} catch (JsonGenerationException e) {
 				e.printStackTrace();
 			} catch (JsonMappingException e) {

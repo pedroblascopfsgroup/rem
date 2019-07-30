@@ -15,7 +15,7 @@ import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 
 public interface ComisionamientoApi {
 
-	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
+	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros, String accion)
 			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException, HttpsClientException;
 
 }

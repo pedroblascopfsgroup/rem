@@ -767,6 +767,55 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				}
 			}
 			
+			
+			/////////////Lara
+			
+			
+			
+			currentRow++;
+			
+			mySheet.createRow(currentRow);
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+				case 2:
+					c.setCellValue("Proposal Background");
+					break;
+				default:
+					break;
+				}
+			}
+			
+			String numerosActivoConcatenados = "";
+					
+			for (int i = 0; i < listaAN.size(); i++) {
+				if(!Checks.esNulo(listaAN.get(i).getNumActivo())) {
+					if(numerosActivoConcatenados =="") {
+						numerosActivoConcatenados = numerosActivoConcatenados + listaAN.get(i).getNumActivo().toString();
+					}else {
+						numerosActivoConcatenados = numerosActivoConcatenados + "," + listaAN.get(i).getNumActivo().toString();
+					}
+				}
+			}
+			
+			currentRow++;
+			
+			mySheet.createRow(currentRow);
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+				case 2:
+					c.setCellValue("One offer has been negotiated to acquire "+ numerosActivoConcatenados +"  asset as follows:");
+					break;
+				default:
+					break;
+				}
+			}
+			
 			currentRow++;
 			
 			mySheet.createRow(currentRow);
@@ -796,6 +845,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			}
 			
 			currentRow++;
+			
+			
+			
 			
 			Long aumulacionSuperficie = 0L;
 			Double acumulacionAskingPrice = (double) 0;
@@ -871,6 +923,486 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				}
 				currentRow++;
 			}
+			
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			currentRow++;
+			
+
+			
+			mySheet.createRow(currentRow); //creamos la fila de:Proposal
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 3; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 2:				
+						c.setCellValue("Proposal");
+					break;
+					case 3:
+						c.setCellValue("It is recommended to accept the offer");
+					break;
+				default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); //creamos la fila de:Proposal
+			r = mySheet.getRow(currentRow);
+			currentRow++;
+			
+			mySheet.createRow(currentRow);
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+				case 2:
+					c.setCellValue("Asset ID");
+					break;
+				case 3:
+					c.setCellValue("Gross offer");
+					break;
+				case 4:
+					c.setCellValue("Offer Costs");
+					break;
+				case 5:
+					c.setCellValue("Net for Promontoria Manzana SA");
+					break;
+				default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			
+			Double importeParticipacionSumatorio = (double) 0;
+			for (int i = 0; i <= listaAN.size(); i++) {
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				VReportAdvisoryNotes dtoPAB = null;
+				if(i<listaAN.size()) {
+					dtoPAB = listaAN.get(i);
+				}
+
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					if(i==listaAN.size()) {
+						total=true;
+					}else {
+						total = false;
+					}
+					switch (j) {
+					case 2:	
+						if(total) {
+							c.setCellValue("Total");
+						}else {
+							if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+								c.setCellValue(dtoPAB.getNumActivo().toString());
+							} else {
+								c.setCellValue("");
+							}
+						}
+						break;
+					case 3:
+						if(total) {
+							c.setCellValue(importeParticipacionSumatorio + " €");
+						}else {
+							if (!Checks.esNulo(dtoPAB.getImporteParticipacionActivo())) {
+								importeParticipacionSumatorio = importeParticipacionSumatorio + dtoPAB.getImporteParticipacionActivo();
+								c.setCellValue(dtoPAB.getImporteParticipacionActivo()+ " €");
+							} else {
+								c.setCellValue("");
+							}
+						}
+						break;
+					
+					default:
+						break;
+					}
+				}
+				currentRow++;
+			}
+			
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			
+			currentRow++;
+			
+			mySheet.createRow(currentRow); //Financing needs
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 5; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 2:				
+						c.setCellValue("Financing needs (Yes/No):");
+					break;
+					
+				default:
+					break;
+				}
+			}
+			currentRow++;
+			
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			currentRow++;
+			
+			mySheet.createRow(currentRow); //Estimated time to closing
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 5; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 2:				
+						c.setCellValue("Estimated time to closing:");
+					break;
+					
+				default:
+					break;
+				}
+			}
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			currentRow++;
+			mySheet.createRow(currentRow); //Tax (Plusvalia)*
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 4; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 3:				
+						c.setCellValue("Tax (Plusvalia)*");
+					break;
+					
+				default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); //Backlog expenses (please detail type)
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 4; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 3:				
+						c.setCellValue("Backlog expenses (please detail type)");
+					break;
+					
+				default:
+					break;
+				}
+			}
+			currentRow++;
+			mySheet.createRow(currentRow); //Broker fee 
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 4; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 3:				
+						c.setCellValue("Broker fee");
+					break;
+					
+				default:
+					break;
+				}
+			}
+			currentRow++;
+			mySheet.createRow(currentRow); //Notary
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 4; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 3:				
+						c.setCellValue("Notary");
+					break;
+					
+				default:
+					break;
+				}
+			}
+			currentRow++;
+			mySheet.createRow(currentRow); //∑(MD)
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 4; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 4:				
+						c.setCellValue("∑(MD)");
+					break;
+					
+				default:
+					break;
+				}
+			}
+			currentRow++;
+			mySheet.createRow(currentRow); //*Estimated amounts until final liquidation based on the type of asset
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 3; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 2:				
+						c.setCellValue("*Estimated amounts until final liquidation based on the type of asset");
+					break;
+					
+				default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 4:				
+						c.setCellValue("UW");
+					break;
+					case 5:				
+						c.setCellValue("Rev - BP");
+					break;
+					case 6:				
+						c.setCellValue("DELTA");
+					break;
+					
+					default:
+						break;
+				}
+			}
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 2:				
+						c.setCellValue("Gross Collections");
+					break;
+					default:
+					break;
+				}
+			}
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 2:				
+						c.setCellValue("Multiple");
+					break;
+					default:
+					break;
+				}
+			}
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 2:				
+						c.setCellValue("IRR");
+					break;
+					default:
+					break;
+				}
+			}
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 2:				
+						c.setCellValue("WAL");
+					break;
+					default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			String prostexto ="";
+			prostexto = "(Manualy Modified over given text)\r\n We recommend approving the offer considering:\r\n(1) is concurs with / higher than asking price\r\n";
+			prostexto = prostexto +"(2) market fundamentals (eg. supply, demand, are of high/low commercial activity etc.)\r\n";
+			prostexto = prostexto + "(3) condition of the asset\r\n";
+			prostexto = prostexto + "(4) Sales comparisons support offer (if comparsions / average price per sq m in area are higher than recommended offer please explain";
+			prostexto = prostexto + "- ie subject asset has; inferior location/condtion/configuration/aspect etc)";
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 1:				
+						c.setCellValue("Pro's");
+					break;
+					case 2:				
+						c.setCellValue(prostexto);
+					break;
+					default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+		
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 1:				
+						c.setCellValue("Recommendation");
+					break;
+					case 2:				
+						c.setCellValue("Haya Real Estate department recommends approval as outlined ");
+					break;
+					default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+		
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 1:				
+						c.setCellValue("Authorisation");
+					break;
+					case 2:				
+						c.setCellValue("Name");
+					break;
+					case 4:				
+						c.setCellValue("Signature");
+					break;
+					case 6:				
+						c.setCellValue("Date");
+					break;
+					default:
+					break;
+				}
+			}
+			
+		
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+		
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 1:				
+						c.setCellValue("Advisor recommendation \n(CES)");
+					break;
+					default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+		
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 1:				
+						c.setCellValue("Asset Manager \n(Haya RE)");
+					break;
+					default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+		
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 1:				
+						c.setCellValue("Owner: \nPROMONTORIA MANZANA");
+					break;
+					default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+		
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 1:				
+						c.setCellValue("Comments,\nadditional requirements");
+					break;
+					default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+		
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 4:				
+						c.setCellValue("This advisory note is subject to KYC clearance through the Cerberus US office via the CES KYC team in London");
+					break;
+					default:
+					break;
+				}
+			}
+			
+			currentRow++;
+			mySheet.createRow(currentRow); 
+			r = mySheet.getRow(currentRow);
+			
 			
 /*			
 			Long aumulacionSuperficie = 0L;

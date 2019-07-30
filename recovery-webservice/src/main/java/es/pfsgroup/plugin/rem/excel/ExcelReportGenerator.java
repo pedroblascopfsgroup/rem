@@ -22,27 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hsqldb.Row;
-import org.springframework.stereotype.Component;
-
-import com.itextpdf.text.Font;
-
-import es.capgemini.devon.utils.FileUtils;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
-import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
-import jxl.Cell;
-import jxl.Workbook;
-import jxl.WorkbookSettings;
-import jxl.read.biff.BiffException;
-import jxl.write.Label;
-import jxl.write.WritableCell;
-import jxl.write.WritableCellFeatures;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-import jxl.write.WriteException;
-
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -50,6 +29,13 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
+
+import es.capgemini.devon.utils.FileUtils;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 
 
 @Component
@@ -766,8 +752,392 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					c.setCellValue("Background information");
 				}
 			}
+			currentRow++;
+
+			mySheet.createRow(currentRow);
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < 7; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+				switch (j) {
+					case 2:
+						c.setCellValue("Unit ID");
+						break;
+					case 3:
+						c.setCellValue("Type of property	");
+						break;
+					case 4:
+						c.setCellValue("Surface area \n (sqm)");
+						break;
+					case 5:
+						c.setCellValue("Asking Price");
+						break;
+					case 6:
+						c.setCellValue("Rental income € (monthly)");
+						break;
+					default:
+						break;
+				}
+			}
+
+			currentRow++;
+
+			Long aumulacionSuperficie = 0L;
+			Double acumulacionAskingPrice = (double) 0;
+			Long acumulacionRentaMensual = 0L;
+			Boolean total = false;
+			for (int i = 0; i <= listaAN.size(); i++) {
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				VReportAdvisoryNotes dtoPAB = null;
+				if (i < listaAN.size()) {
+					dtoPAB = listaAN.get(i);
+				}
+
+				if (i == listaAN.size()) {
+					total = true;
+				}
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							if (total) {
+								c.setCellValue("Total");
+							} else {
+								if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+									c.setCellValue(dtoPAB.getNumActivo().toString());
+								} else {
+									c.setCellValue("");
+								}
+							}
+							break;
+						case 3:
+							if (total) {
+								c.setCellValue("");
+							} else {
+								if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
+									c.setCellValue(dtoPAB.getTipoActivo());
+								} else {
+									c.setCellValue("");
+								}
+							}
+							break;
+						case 4:
+							if (total) {
+								c.setCellValue(aumulacionSuperficie.toString() + " m2");
+							} else {
+								if (!Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
+									c.setCellValue(dtoPAB.getSuperficieConstruida().toString() + " m2");
+									aumulacionSuperficie = aumulacionSuperficie + dtoPAB.getSuperficieConstruida();
+								} else {
+									c.setCellValue("0 m2");
+								}
+							}
+							break;
+						case 5:
+							if (total) {
+								c.setCellValue(acumulacionAskingPrice.toString() + " €");
+							} else {
+								if (!Checks.esNulo(dtoPAB.getImporte())) {
+									c.setCellValue(dtoPAB.getImporte().toString() + " €");
+									acumulacionAskingPrice = acumulacionAskingPrice + dtoPAB.getImporte();
+								} else {
+									c.setCellValue("0€");
+								}
+							}
+							break;
+						case 6:
+							c.setCellValue("0 €");
+							break;
+						default:
+							break;
+					}
+				}
+				currentRow++;
+			}
 			
-			
+			mySheet.createRow(currentRow); // creamos la fila en blanco
+			r = mySheet.getRow(currentRow);
+			currentRow++;
+
+			mySheet.createRow(currentRow); // creamos fila bloque amarillo
+			r = mySheet.getRow(currentRow);
+
+			for (int i = 0; i < listaAN.size(); i++) {
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
+
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue("Marketing Overview");
+							break;
+						case 4:
+							c.setCellValue(dtoPAB.getNumActivo());
+							break;
+						case 6:
+							c.setCellValue("Marketing comments (Manual Modified over given text):");
+							break;
+						default:
+							break;
+					}
+				}
+				currentRow++;
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue("Web Publishing");
+							break;
+						case 4:
+							if (!Checks.esNulo(dtoPAB.getPublicado())) {
+								c.setCellValue(dtoPAB.getPublicado());
+							} else {
+								c.setCellValue("");
+							}
+							break;
+						case 6:
+							break;
+						default:
+							break;
+					}
+				}
+				currentRow++;
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue("Marketing starting date:");
+							break;
+						case 4:
+							if (!Checks.esNulo(dtoPAB.getFechaEmision())) {
+								c.setCellValue(format.format(dtoPAB.getFechaEmision()));
+							} else {
+								c.setCellValue("");
+							}
+							break;
+						case 6:
+							break;
+						default:
+							break;
+					}
+				}
+				currentRow++;
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue("Number of Leads:");
+							break;
+						case 4:
+							if (!Checks.esNulo(dtoPAB.getNumOfertasActivo())) {
+								c.setCellValue(dtoPAB.getNumOfertasActivo().toString());
+							} else {
+								c.setCellValue("");
+							}
+							break;
+						case 6:
+							break;
+						default:
+							break;
+					}
+				}
+				currentRow++;
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue("Broker Name:");
+							break;
+						case 4:
+							if (!Checks.esNulo(dtoPAB.getNombrePrescriptor())) {
+								c.setCellValue(dtoPAB.getNombrePrescriptor());
+							} else {
+								c.setCellValue("");
+							}
+							break;
+						case 6:
+							break;
+						default:
+							break;
+					}
+				}
+
+				currentRow++;
+				mySheet.createRow(currentRow);
+				currentRow++;
+				mySheet.createRow(currentRow);
+				currentRow++;
+				mySheet.createRow(currentRow);
+
+				currentRow++;
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue("Construction date");
+							break;
+						case 4:
+							if (!Checks.esNulo(dtoPAB.getAnyoConstruccion())) {
+								c.setCellValue(dtoPAB.getAnyoConstruccion());
+							} else {
+								c.setCellValue("");
+							}
+							break;
+						case 6:
+							break;
+						default:
+							break;
+					}
+				}
+
+				currentRow++;
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue("Asset description:");
+							break;
+						case 4:
+							if (!Checks.esNulo(dtoPAB.getNumActivo())) {
+								c.setCellValue(dtoPAB.getNumActivo().toString());
+							} else {
+								c.setCellValue("");
+							}
+							break;
+						case 6:
+							break;
+						default:
+							break;
+					}
+				}
+
+				currentRow++;
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
+					descripcionDelActivo = descripcionDelActivo + dtoPAB.getTipoActivo();
+				}
+				if (!Checks.esNulo(dtoPAB.getDireccion())) {
+					descripcionDelActivo = descripcionDelActivo + " located in " + dtoPAB.getDireccion();
+				}
+				if (!Checks.esNulo(dtoPAB.getLatitud()) && !Checks.esNulo(dtoPAB.getLongitud())) {
+					descripcionDelActivo = descripcionDelActivo + "( " + dtoPAB.getLatitud().toString() + ", " + dtoPAB.getLongitud().toString() + " )";
+					descripcionDelActivo = descripcionDelActivo + "XXkm (AD) from X (AD)(nearest city/town) \r\n"; // DESCRIPCION Linea1
+				}
+
+				if (!Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
+					descripcionDelActivo = descripcionDelActivo + "- The asset has a total surface area of " + dtoPAB.getSuperficieConstruida().toString() + " m2 \r\n"; // DESCRIPCION linea2
+
+				}
+
+				if (!Checks.esNulo(dtoPAB.getEstadoConservacion())) {
+					descripcionDelActivo = descripcionDelActivo + "- Considered to be in " + dtoPAB.getEstadoConservacion() + " condition \r\n"; // DESCRIPCION linea3
+
+				}
+
+				if (!Checks.esNulo(dtoPAB.getEstadoAqluiler())) {
+					descripcionDelActivo = descripcionDelActivo + "- Details if " + dtoPAB.getEstadoAqluiler() + " condition."; // DESCRIPCION linea 4
+					if (!Checks.esNulo(dtoPAB.getTipoAlquiler())) {
+						descripcionDelActivo = descripcionDelActivo + " If tenanted include details of lease " + dtoPAB.getTipoActivo();
+					}
+				}
+
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue(descripcionDelActivo);
+							break;
+						default:
+							break;
+					}
+				}
+				currentRow++;
+				mySheet.createRow(currentRow);
+				currentRow++;
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue("Mode of transmission:");
+							break;
+						case 4:
+							if (!Checks.esNulo(dtoPAB.getSegundaMano())) { // ¿?¿¿
+								c.setCellValue(dtoPAB.getSegundaMano());
+							} else {
+								c.setCellValue("");
+							}
+							break;
+						case 6:
+							break;
+						default:
+							break;
+					}
+				}
+				currentRow++;
+				mySheet.createRow(currentRow);
+				currentRow++;
+				mySheet.createRow(currentRow);
+				r = mySheet.getRow(currentRow);
+				for (int j = 0; j < 7; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					switch (j) {
+						case 2:
+							c.setCellValue("Asset maintenance status:");
+							break;
+						case 4:
+							if (!Checks.esNulo(dtoPAB.getEstadoConservacion())) {
+								c.setCellValue(dtoPAB.getEstadoConservacion());
+							} else {
+								c.setCellValue("");
+							}
+							break;
+						case 6:
+							if (!Checks.esNulo(dtoPAB.getImporte()) && !Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
+								Double precioMetro = dtoPAB.getImporte() / dtoPAB.getSuperficieConstruida();
+								c.setCellValue((df.format(precioMetro)).toString() + " €");
+							} else {
+								c.setCellValue("");
+							}
+							break;
+						default:
+							break;
+					}
+				}
+				currentRow++;
+				mySheet.createRow(currentRow);
+				currentRow++;
+				mySheet.createRow(currentRow);
+			}
+
 			/////////////Lara
 			
 			
@@ -825,19 +1195,16 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(j);
 				switch (j) {
 				case 2:
-					c.setCellValue("Unit ID");
+					c.setCellValue("UV ID");
 					break;
 				case 3:
-					c.setCellValue("Type of property	");
+					c.setCellValue("Gross offer");
 					break;
 				case 4:
 					c.setCellValue("Surface area \n (sqm)");
 					break;
 				case 5:
-					c.setCellValue("Asking Price");
-					break;
-				case 6:
-					c.setCellValue("Rental income € (monthly)");
+					c.setCellValue("Offer(€/sqm)");
 					break;
 				default:
 					break;
@@ -845,15 +1212,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			}
 			
 			currentRow++;
-			
-			
-			
-			
-			Long aumulacionSuperficie = 0L;
-			Double acumulacionAskingPrice = (double) 0;
-			Long acumulacionRentaMensual = 0L;
-			Boolean total = false;
-			for (int i = 0; i <= listaAN.size(); i++) {
+				
+			for (int i = 0; i < listaAN.size(); i++) {
 				mySheet.createRow(currentRow);
 				r = mySheet.getRow(currentRow);
 				VReportAdvisoryNotes dtoPAB = null;
@@ -861,61 +1221,48 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					dtoPAB = listaAN.get(i);
 				}
 				
-				if(i==listaAN.size()) {
-					total=true;
-				}
+				
 				for (int j = 0; j < 7; j++) {
 					r.createCell(j);
 					c = r.getCell(j);
 					switch (j) {
 					case 2:
-						if(total) {
-							c.setCellValue("Total");
-						}else {
+					
 							if (!Checks.esNulo(dtoPAB.getNumActivo())) {
 								c.setCellValue(dtoPAB.getNumActivo().toString());
 							} else {
 								c.setCellValue("");
 							}
-						}
+						
 						break;
 					case 3:
-						if(total) {
-							c.setCellValue("");
-						}else {
-							if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
-								c.setCellValue(dtoPAB.getTipoActivo());
+						
+							if (!Checks.esNulo(dtoPAB.getImporteParticipacionActivo())) {
+								c.setCellValue(dtoPAB.getImporteParticipacionActivo().toString());
 							} else {
 								c.setCellValue("");
 							}
-						}
+						
 						break;
 					case 4:
-						if(total) {
-							c.setCellValue(aumulacionSuperficie.toString() + " m2");
-						}else {
+						
 							if (!Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
 								c.setCellValue(dtoPAB.getSuperficieConstruida().toString() + " m2");
-								aumulacionSuperficie = aumulacionSuperficie + dtoPAB.getSuperficieConstruida();
+								
 							} else {
 								c.setCellValue("0 m2");
 							}
-						}
+						
 						break;
 					case 5:
-						if(total) {
-							c.setCellValue(acumulacionAskingPrice.toString() + " €");
-						}else {
-							if (!Checks.esNulo(dtoPAB.getImporte())) {
-								c.setCellValue(dtoPAB.getImporte().toString() + " €");
-								acumulacionAskingPrice = acumulacionAskingPrice + dtoPAB.getImporte();
+						
+							if (!Checks.esNulo(dtoPAB.getImporteParticipacionActivo()) && !Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
+								Double importepormetro = (dtoPAB.getImporteParticipacionActivo()) / (dtoPAB.getSuperficieConstruida());
+								c.setCellValue((df.format(importepormetro)).toString() + " €");
 							} else {
 								c.setCellValue("0€");
 							}
-						}
-						break;
-					case 6:
-						c.setCellValue("0 €");
+						
 						break;
 					default:
 						break;

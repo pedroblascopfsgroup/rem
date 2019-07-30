@@ -22,7 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -625,6 +627,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			DecimalFormat df = new DecimalFormat("#.##");
 			String descripcionDelActivo= "- ";
 			
+			XSSFFont font = myWorkBook.createFont();
+		    font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			
 			XSSFCellStyle style= myWorkBook.createCellStyle();
 			XSSFCellStyle styleTitulo= myWorkBook.createCellStyle();
 			style.setBorderBottom(XSSFCellStyle.BORDER_THIN);
@@ -633,6 +638,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 			style.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			style.setWrapText(true);
+			
 			
 			
 			//ESTILOS
@@ -645,6 +651,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesCompletos.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			styleBordesCompletos.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
 			styleBordesCompletos.setWrapText(true);
+			styleBordesCompletos.setFont(font);
+			styleBordesCompletos.setFillForegroundColor(new XSSFColor(new java.awt.Color(211, 211, 211)));
+			styleBordesCompletos.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
 			
 			//CELDA COMPLETA CELDAS
 			XSSFCellStyle styleBordesCompletosCelda= myWorkBook.createCellStyle();
@@ -704,7 +713,11 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesArribaAbajoIzquierda.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			styleBordesArribaAbajoIzquierda.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
 			styleBordesArribaAbajoIzquierda.setWrapText(true);
-	
+			
+			//NEGRITA Y FONDO GRIS
+			XSSFCellStyle styleNegritaFondoGris= myWorkBook.createCellStyle();
+			styleNegritaFondoGris.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			style.setFont(font);
 			
 			// En el ultimo elemento esta el resumen por eso cogemos todos los DTO menos el ultimo
 				
@@ -845,6 +858,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(j);
 				if(j==1) {
 					c.setCellValue("Background information");
+					c.setCellStyle(styleBordesCompletos);
 				}
 			}
 			currentRow++;
@@ -1232,10 +1246,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				currentRow++;
 				mySheet.createRow(currentRow);
 			}
-
-			/////////////Lara
-			
-			
 			
 			currentRow++;
 			
@@ -1378,10 +1388,11 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r.createCell(j);
 				c = r.getCell(j);
 				switch (j) {
-					case 2:				
+					case 1:				
 						c.setCellValue("Proposal");
+						c.setCellStyle(styleBordesCompletos);
 					break;
-					case 3:
+					case 2:
 						c.setCellValue("It is recommended to accept the offer");
 					break;
 				default:
@@ -1400,6 +1411,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r.createCell(j);
 				c = r.getCell(j);
 				switch (j) {
+				case 1:
+					c.setCellValue("Details / Terms of contracts / Current rent arrears\n");
+					c.setCellStyle(styleBordesCompletos);
+				break;
 				case 2:
 					c.setCellValue("Asset ID");
 					break;
@@ -1517,6 +1532,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r.createCell(j);
 				c = r.getCell(j);
 				switch (j) {
+					case 1:
+						c.setCellValue("Costs (net +VAT+ eventual additional costs)\n");
+						c.setCellStyle(styleBordesCompletos);
+					break;
 					case 3:				
 						c.setCellValue("Tax (Plusvalia)*");
 					break;
@@ -1609,6 +1628,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r.createCell(j);
 				c = r.getCell(j);
 				switch (j) {
+					case 1:
+						c.setCellValue("Business Plan Metrics");
+						c.setCellStyle(styleBordesCompletos);
+						break;
 					case 4:				
 						c.setCellValue("UW");
 					break;
@@ -1695,6 +1718,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				switch (j) {
 					case 1:				
 						c.setCellValue("Pro's");
+						c.setCellStyle(styleBordesCompletos);
 					break;
 					case 2:				
 						c.setCellValue(prostexto);
@@ -1718,6 +1742,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				switch (j) {
 					case 1:				
 						c.setCellValue("Recommendation");
+						c.setCellStyle(styleBordesCompletos);
 					break;
 					case 2:				
 						c.setCellValue("Haya Real Estate department recommends approval as outlined ");
@@ -1741,6 +1766,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				switch (j) {
 					case 1:				
 						c.setCellValue("Authorisation");
+						c.setCellStyle(styleBordesCompletos);
 					break;
 					case 2:				
 						c.setCellValue("Name");
@@ -1767,6 +1793,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				switch (j) {
 					case 1:				
 						c.setCellValue("Advisor recommendation \n(CES)");
+						c.setCellStyle(styleBordesCompletos);
 					break;
 					default:
 					break;
@@ -1783,6 +1810,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				switch (j) {
 					case 1:				
 						c.setCellValue("Asset Manager \n(Haya RE)");
+						c.setCellStyle(styleBordesCompletos);
 					break;
 					default:
 					break;
@@ -1799,6 +1827,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				switch (j) {
 					case 1:				
 						c.setCellValue("Owner: \nPROMONTORIA MANZANA");
+						c.setCellStyle(styleBordesCompletos);
 					break;
 					default:
 					break;
@@ -1815,6 +1844,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				switch (j) {
 					case 1:				
 						c.setCellValue("Comments,\nadditional requirements");
+						c.setCellStyle(styleBordesCompletos);
 					break;
 					default:
 					break;
@@ -1845,360 +1875,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			mySheet.createRow(currentRow); 
 			r = mySheet.getRow(currentRow);
 			
-			
-/*			
-			Long aumulacionSuperficie = 0L;
-			Double acumulacionAskingPrice = (double) 0;
-			Long acumulacionRentaMensual = 0L;
-			
-			for (int i = 0; i < listaAN.size(); i++) {
-				
-				if(i > 0) {
-					mySheet.createRow(currentRow);
-					r = mySheet.getRow(currentRow);
-					
-					for (int j = 0; j < NUMERO_COLUMNAS_APPLE; j++) {
-						r.createCell(j);
-						c = r.getCell(j);
-					}
-					
-				}
-							
-				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
-				
-				cellReference = new CellReference("C" + currentRow); // UNIT ID
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
-					c.setCellValue(dtoPAB.getNumActivo().toString());
-				} else {
-					c.setCellValue("");
-				}
-				
-				cellReference = new CellReference("E" + currentRow); // SUBTIPO PROPIEDAD
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
-					c.setCellValue(dtoPAB.getTipoActivo());
-				} else {
-					c.setCellValue("");
-				}
-				
-				cellReference = new CellReference("G" + currentRow); // SUPERFICIE
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
-					c.setCellValue(dtoPAB.getSuperficieConstruida().toString() + " m2");
-					aumulacionSuperficie = aumulacionSuperficie + dtoPAB.getSuperficieConstruida();
-				} else {
-					c.setCellValue("0 m2");
-				}
-				
-				cellReference = new CellReference("H" + currentRow); // PRECIOWEB
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getImporte())) {
-					c.setCellValue(dtoPAB.getImporte().toString() + " €");
-					acumulacionAskingPrice = acumulacionAskingPrice + dtoPAB.getImporte();
-				} else {
-					c.setCellValue("0€");
-				}
-				
-				cellReference = new CellReference("I" + currentRow); // RENTAMENSUAL
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				//¿?
-					c.setCellValue("0 €");
-				
-				
-				currentRow++;
-			}
-			*///-----
-			/*--------
-			cellReference = new CellReference("G" + currentRow); // SUPERFICIE
-			r = mySheet.getRow(cellReference.getRow());
-			c = r.getCell(cellReference.getCol());
-			c.setCellValue(aumulacionSuperficie.toString() + " m2");
-
-			
-			cellReference = new CellReference("H" + currentRow); // PrecioWeb
-			r = mySheet.getRow(cellReference.getRow());
-			c = r.getCell(cellReference.getCol());
-			c.setCellValue(acumulacionAskingPrice.toString() + " €");
-			
-			cellReference = new CellReference("D" + currentRow); // RENTAMENSUAL
-			r = mySheet.getRow(cellReference.getRow());
-			c = r.getCell(cellReference.getCol());
-			c.setCellValue(acumulacionRentaMensual.toString()+" €");
-			
-			currentRow = currentRow + 3;
-			
-			
-			for (int i = 0; i < listaAN.size(); i++) {
-				
-				if(i > 0) {
-					mySheet.createRow(currentRow);
-					r = mySheet.getRow(currentRow);
-					
-					for (int j = 0; j < NUMERO_COLUMNAS_APPLE; j++) {
-						r.createCell(j);
-						c = r.getCell(j);
-					}
-					
-				}
-				
-				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
-				
-				cellReference = new CellReference("E" + currentRow); // PUBLICADO
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getPublicado())) {
-					c.setCellValue(dtoPAB.getPublicado());
-				} else {
-					c.setCellValue("");
-				}
-				*///---------------
-				
-				/*------------
-				currentRow++;
-				
-				cellReference = new CellReference("E" + currentRow); //FECHA DE EMISION
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getFechaEmision())) {
-					c.setCellValue(format.format(dtoPAB.getFechaEmision()));
-				} else {
-					c.setCellValue("");
-				}
-				
-				currentRow = currentRow + 2;
-				
-				cellReference = new CellReference("E" + currentRow); // Nº DE OFERTAS
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getNumOfertasActivo())) {
-					c.setCellValue(dtoPAB.getNumOfertasActivo().toString());
-				} else {
-					c.setCellValue("");
-				}
-				
-				currentRow++;
-				
-				cellReference = new CellReference("D" + currentRow); // NOMBRE PRESCRIPTOR
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getNombrePrescriptor())) {
-					c.setCellValue(dtoPAB.getNombrePrescriptor());
-				} else {
-					c.setCellValue("");
-				}
-				
-				currentRow = currentRow + 3;
-				
-				cellReference = new CellReference("E" + currentRow); // AÑO CONSTRUCCIÓN
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getAnyoConstruccion())) {
-					c.setCellValue(dtoPAB.getAnyoConstruccion());
-				} else {
-					c.setCellValue("");
-				}
-				
-				
-				cellReference = new CellReference("H" + currentRow); // AÑO CONSTRUCCIÓN
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getOcupado())) {
-					c.setCellValue(dtoPAB.getOcupado());
-				} else {
-					c.setCellValue("");
-				}
-				
-				currentRow = currentRow + 2;
-				
-				cellReference = new CellReference("E" + currentRow); // AÑO CONSTRUCCIÓN
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
-					c.setCellValue(dtoPAB.getNumActivo().toString());
-				} else {
-					c.setCellValue("");
-				}
-				
-				currentRow++;
-				
-				cellReference = new CellReference("C" + currentRow); 
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				
-				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
-					descripcionDelActivo = descripcionDelActivo + dtoPAB.getTipoActivo();
-				}
-				if (!Checks.esNulo(dtoPAB.getDireccion())) {
-					descripcionDelActivo = descripcionDelActivo + " located in " + dtoPAB.getDireccion();
-				} 
-				if(!Checks.esNulo(dtoPAB.getLatitud()) && !Checks.esNulo(dtoPAB.getLongitud())) {
-					descripcionDelActivo = descripcionDelActivo + "( " + dtoPAB.getLatitud().toString() + ", " + dtoPAB.getLongitud().toString() + " )";
-					descripcionDelActivo = descripcionDelActivo + "XXkm (AD) from X (AD)(nearest city/town) \r\n"; // DESCRIPCION DEL ACTIVO LINEA1
-				}
-				
-				if (!Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
-					descripcionDelActivo = descripcionDelActivo + "- The asset has a total surface area of "+ dtoPAB.getSuperficieConstruida().toString() + " m2 \r\n" ; // DESCRIPCION DEL ACTIVO LINEA2
-				} 
-				
-				if (!Checks.esNulo(dtoPAB.getEstadoConservacion())) {
-					descripcionDelActivo = descripcionDelActivo + "- Considered to be in " + dtoPAB.getEstadoConservacion() +" condition \r\n"; // DESCRIPCION DEL ACTIVO LINEA3
-				}
-				
-				if (!Checks.esNulo(dtoPAB.getEstadoAqluiler())) {
-					descripcionDelActivo = descripcionDelActivo + "- Details if " + dtoPAB.getEstadoAqluiler() +" condition.";	// DESCRIPCION DEL ACTIVO LINEA4
-					if(!Checks.esNulo(dtoPAB.getTipoAlquiler())) {
-						descripcionDelActivo = descripcionDelActivo + " If tenanted include details of lease "+ dtoPAB.getTipoActivo();
-					}
-				}
-				c.setCellValue(descripcionDelActivo);
-				
-				descripcionDelActivo = "- ";
-				
-				currentRow = currentRow + 4;
-				
-				cellReference = new CellReference("E" + currentRow); //MODO DE TRANSMISION
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getSegundaMano())) {	// ¿?¿¿
-					c.setCellValue(dtoPAB.getSegundaMano());
-				}else {
-					c.setCellValue("");
-				}
-				
-				currentRow = currentRow + 2;
-				
-				cellReference = new CellReference("E" + currentRow); //ESTADO CONSERVACIÓN 
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getEstadoConservacion())) {
-					c.setCellValue(dtoPAB.getEstadoConservacion());
-				}else {
-					c.setCellValue("");
-				}
-				
-				cellReference = new CellReference("I" + currentRow); //PRECIO/M2
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getImporte()) && !Checks.esNulo(dtoPAB.getSuperficieConstruida())){
-					Double precioMetro = dtoPAB.getImporte() / dtoPAB.getSuperficieConstruida();
-					c.setCellValue((df.format(precioMetro)).toString() + " €");
-				}else {
-					c.setCellValue("");
-				}
-
-				currentRow++;
-			}
-			String numerosActivoConcatenados = "";
-			
-			for (int i = 0; i < listaAN.size(); i++) {
-				if(!Checks.esNulo(listaAN.get(i).getNumActivo())) {
-					if(numerosActivoConcatenados =="") {
-						numerosActivoConcatenados = numerosActivoConcatenados + listaAN.get(i).getNumActivo().toString();
-					}else {
-						numerosActivoConcatenados = numerosActivoConcatenados + "," + listaAN.get(i).getNumActivo().toString();
-					}
-				}
-			}
-			
-			
-			currentRow = currentRow +2;
-			cellReference = new CellReference("C" + currentRow); // NUMEROS DE OFERTA CONCATENADOS 
-			r = mySheet.getRow(cellReference.getRow());
-			c = r.getCell(cellReference.getCol());
-			c.setCellValue("One offer has been negotiated to acquire "+ numerosActivoConcatenados +" asset as follows:");
-			
-			currentRow = currentRow +2;
-			
-			for (int i = 0; i < listaAN.size(); i++) {
-				
-				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
-				
-				cellReference = new CellReference("C" + currentRow); //NÚMERO ACTIVO
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
-				//	c.setCellValue(dtoPAB.getNumActivo().toString());
-				}else {
-					c.setCellValue("");
-				}
-				
-				
-				cellReference = new CellReference("E" + currentRow); //IMPORTE OFERTA
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getImporteParticipacionActivo())) {
-					c.setCellValue(dtoPAB.getImporteParticipacionActivo().toString() + " €");
-				}else {
-					c.setCellValue("");
-				}
-				
-				cellReference = new CellReference("G" + currentRow); // SUPERFICIE
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
-					c.setCellValue(dtoPAB.getSuperficieConstruida().toString() + " m2");
-					aumulacionSuperficie = aumulacionSuperficie + dtoPAB.getSuperficieConstruida();
-				} else {
-					c.setCellValue("0 m2");
-				}
-				
-				cellReference = new CellReference("I" + currentRow); //PRECIO/M2
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getImporteParticipacionActivo()) && !Checks.esNulo(dtoPAB.getSuperficieConstruida())){
-					Double precioMetro = dtoPAB.getImporteParticipacionActivo() / dtoPAB.getSuperficieConstruida();
-					c.setCellValue((df.format(precioMetro)).toString() + " €");
-				}else {
-					c.setCellValue("");
-				}
-				
-				currentRow++;
-			}
-			
-			currentRow = currentRow + 4;
-			
-			Double precioTotal = (double) 0;
-			for (int i = 0; i < listaAN.size(); i++) {
-
-				VReportAdvisoryNotes dtoPAB = listaAN.get(i);
-				
-				cellReference = new CellReference("C" + currentRow); //NÚMERO ACTIVO
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getNumActivo())) {
-					c.setCellValue(dtoPAB.getNumActivo().toString());
-				}else {
-					c.setCellValue("");
-				}
-				
-				cellReference = new CellReference("F" + currentRow); // IMPORTE DE LA OFERTA CAMBIAR
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getImporteParticipacionActivo())) {
-					c.setCellValue(dtoPAB.getImporteParticipacionActivo().toString() + " €");
-					precioTotal = precioTotal + dtoPAB.getImporteParticipacionActivo();
-				}else {
-					c.setCellValue("");
-				}
-				
-				currentRow++;
-				
-			}
-			
-			cellReference = new CellReference("F" + currentRow); // IMPORTE TOTAL
-			r = mySheet.getRow(cellReference.getRow());
-			c = r.getCell(cellReference.getCol());
-			c.setCellValue(precioTotal + " €");
-			
-			
-			
-			*/
 			myWorkBook.write(fileOutStream);
 			fileOutStream.close();
 			

@@ -305,7 +305,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												width: 400,
 												height: 80,
 												style:'margin-bottom:10px'
-											}
+											},
+											{
+	                                            xtype: 'datefieldbase',
+	                                            maxValue: null,
+	                                            reference: 'fechaRevisionPublicacionesVenta',
+	                                            fieldLabel: HreRem.i18n('fieldlabel.datos.revision.publicacion.fecha'),
+	                                            bind: {
+	                                            	value: '{datospublicacionactivo.fechaRevisionPublicacionesVenta}',
+	                                            	disabled: '{esGestorPublicacionVenta}'
+	                                            }
+	                                        }
 										]
 								}
 							]
@@ -569,7 +579,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												width: 400,
 												height: 80,
 												style:'margin-bottom:10px'
-											}
+											},
+											{
+	                                            xtype: 'datefieldbase',
+	                                            maxValue: null,
+	                                            reference: 'fechaRevisionPublicacionesAlquiler',
+	                                            fieldLabel: HreRem.i18n('fieldlabel.datos.revision.publicacion.fecha'),
+	                                            bind: {
+	                                            	value: '{datospublicacionactivo.fechaRevisionPublicacionesAlquiler}',
+	                                            	disabled: '{esGestorPublicacionAlquiler}'
+	                                            }
+	                                        }
 										]
 								}
 							]
@@ -889,6 +909,13 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 		var combo1 = me.down('comboboxfieldbase[reference=comboMotivoOcultacionAlquiler]');
 		combo1.setDisabled(true);
 		var combo2 = me.down('comboboxfieldbase[reference=comboMotivoOcultacionVenta]');
-		combo2.setDisabled(true);
+		combo2.setDisabled(true);	
+		
+		if(!$AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL'])){
+			var fecha1 = me.down('datefieldbase[reference=fechaRevisionPublicacionesVenta]');
+			fecha1.setDisabled(true);
+			var fecha2 = me.down('datefieldbase[reference=fechaRevisionPublicacionesAlquiler]');
+			fecha2.setDisabled(true);
+		}
 	}
 });

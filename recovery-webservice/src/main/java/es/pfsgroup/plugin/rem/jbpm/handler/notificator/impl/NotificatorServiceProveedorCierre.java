@@ -54,8 +54,10 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 			String correos = null;
 			
 			correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-					
-			Collections.addAll(mailsPara, correos.split(";"));
+			
+			if(!Checks.esNulo(correos)) {
+				Collections.addAll(mailsPara, correos.split(";"));
+			}
 				
 			mailsCC.add(this.getCorreoFrom());
 			

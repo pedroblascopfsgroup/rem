@@ -67,6 +67,7 @@ public class DtoOfertasFilter extends WebDto {
 	private Boolean ventaDirecta;
 	private Long idUvem;
 	private Long idCliente;
+	private Boolean excluirGencat;
 	
 	//HREOS-4937
 	private Boolean cesionDatos;
@@ -447,5 +448,14 @@ public class DtoOfertasFilter extends WebDto {
 	public void setSubcarteraCodigo(String subcarteraCodigo) {
 		this.subcarteraCodigo = subcarteraCodigo;
 	}
+	public Boolean getExcluirGencat() {
+		return excluirGencat;
+	}
+	public void setExcluirGencat(Boolean excluirGencat) {
+		this.excluirGencat = excluirGencat;
+	}
+	
+	
+	
 		
 }

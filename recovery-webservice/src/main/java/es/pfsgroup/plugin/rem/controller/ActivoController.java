@@ -127,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -2474,9 +2475,9 @@ public class ActivoController extends ParadiseJsonController {
 				JSONObject json = restRequest.getJsonObject();
 
 				DtoActivoFichaCabecera dto = activoApi.getActivosAgrupacionRestringida(json.getLong("id"));
-				List<VActivosAgrupacion> activos = (List<VActivosAgrupacion>) dto.getActivosAgrupacionRestringida();
+				List<VActivosAgrupacionLil> activos = (List<VActivosAgrupacionLil>) dto.getActivosAgrupacionRestringida();
 
-				for(VActivosAgrupacion act : activos) {
+				for(VActivosAgrupacionLil act : activos) {
 					json.put("id", act.getActivoId());
 					json.put("models.id", act.getActivoId());
 					dispatcher.dispatchSave(json, request);

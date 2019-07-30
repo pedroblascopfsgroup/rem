@@ -38,28 +38,24 @@ public class UsuarioRemApiImpl implements UsuarioRemApi {
 
 		List<String> mailsPara = new ArrayList<String>();
 
-		List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
-		if (!Checks.estaVacio(sustitutos)) {
-			if (!Checks.esNulo(sustitutos)) {
+		if (!Checks.esNulo(usuario)) {
+			List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class,
+					genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
+			if (!Checks.estaVacio(sustitutos)) {
 				for (GestorSustituto gestorSustituto : sustitutos) {
-					if (!Checks.esNulo(gestorSustituto)) {
-						if ((gestorSustituto.getFechaFin() == null || gestorSustituto.getFechaFin().after(new Date())
+					if (!Checks.esNulo(gestorSustituto) 
+							&& (gestorSustituto.getFechaFin() == null || gestorSustituto.getFechaFin().after(new Date())
 								|| gestorSustituto.getFechaFin().equals(new Date()))
 								&& (gestorSustituto.getFechaInicio().before(new Date())
 										|| gestorSustituto.getFechaInicio().equals(new Date()))
-								&& !gestorSustituto.getAuditoria().isBorrado()) {
-
-							if (!Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto())
+								&& !gestorSustituto.getAuditoria().isBorrado() 
+								&& !Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto())
 									|| !Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto().getEmail())) {
-								mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
-							}
-						}
+						mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
 					}
 				}
 			}
 		}
-
 		return mailsPara;
 	}
 
@@ -67,30 +63,25 @@ public class UsuarioRemApiImpl implements UsuarioRemApi {
 
 		List<String> apellidoNombreSus = new ArrayList<String>();
 
-		List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class,
-				genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
-		if (!Checks.estaVacio(sustitutos)) {
-			if (!Checks.esNulo(sustitutos)) {
+		if (!Checks.esNulo(usuario)) {
+			List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class,
+					genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
+			if (!Checks.estaVacio(sustitutos)) {
 				for (GestorSustituto gestorSustituto : sustitutos) {
-					if (!Checks.esNulo(gestorSustituto)) {
-						if ((gestorSustituto.getFechaFin() == null || gestorSustituto.getFechaFin().after(new Date())
+					if (!Checks.esNulo(gestorSustituto) 
+							&& (gestorSustituto.getFechaFin() == null || gestorSustituto.getFechaFin().after(new Date())
 								|| gestorSustituto.getFechaFin().equals(new Date()))
 								&& (gestorSustituto.getFechaInicio().before(new Date())
 										|| gestorSustituto.getFechaInicio().equals(new Date()))
-								&& !gestorSustituto.getAuditoria().isBorrado()) {
-
-							if (!Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto())
+								&& !gestorSustituto.getAuditoria().isBorrado()
+								&& !Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto())
 									|| !Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto().getEmail())) {
-								apellidoNombreSus.add(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre());
-							}
-						}
+						apellidoNombreSus.add(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre());
 					}
 				}
 			}
 		}
-
 		return apellidoNombreSus;
-
 	}
 	
 	public void rellenaListaCorreos(ExpedienteComercial expediente, String codigoTipo, List<String> mailsPara, List<String> mailsCC,
@@ -108,33 +99,34 @@ public class UsuarioRemApiImpl implements UsuarioRemApi {
 	public void rellenaListaCorreos(Usuario usuarioGestor, String codigoTipo, List<String> mailsPara, List<String> mailsCC,
 			boolean addDirector) {
 		List<String> mailsConsulta = getGestorSustitutoUsuario(usuarioGestor);
-		if (!addDirector) {
-			if (!Checks.estaVacio(mailsConsulta)) {
-				mailsPara.addAll(mailsConsulta);
-				if (usuarioGestor.getEmail() != null) {
-					mailsCC.add(usuarioGestor.getEmail());
-				}
-			} else {
-				if (usuarioGestor.getEmail() != null) {
-					mailsPara.add(usuarioGestor.getEmail());
-				}
-			}
-		} else {
-			Usuario directorEquipo = gestorActivoManager.getDirectorEquipoByGestor(usuarioGestor);
-			if (directorEquipo != null) {
+		if(!Checks.esNulo(usuarioGestor)) {
+			if (!addDirector) {
 				if (!Checks.estaVacio(mailsConsulta)) {
 					mailsPara.addAll(mailsConsulta);
-					if (directorEquipo.getEmail() != null) {
-						mailsCC.add(directorEquipo.getEmail());
+					if (usuarioGestor.getEmail() != null) {
+						mailsCC.add(usuarioGestor.getEmail());
 					}
 				} else {
 					if (usuarioGestor.getEmail() != null) {
-						mailsPara.add(directorEquipo.getEmail());
+						mailsPara.add(usuarioGestor.getEmail());
+					}
+				}
+			} else {
+				Usuario directorEquipo = gestorActivoManager.getDirectorEquipoByGestor(usuarioGestor);
+				if (directorEquipo != null) {
+					if (!Checks.estaVacio(mailsConsulta)) {
+						mailsPara.addAll(mailsConsulta);
+						if (directorEquipo.getEmail() != null) {
+							mailsCC.add(directorEquipo.getEmail());
+						}
+					} else {
+						if (usuarioGestor.getEmail() != null) {
+							mailsPara.add(directorEquipo.getEmail());
+						}
 					}
 				}
 			}
 		}
-		
 	}
 	
 	public void rellenaListaCorreosPorDefecto(String codigoTipo, List<String> mailsPara){

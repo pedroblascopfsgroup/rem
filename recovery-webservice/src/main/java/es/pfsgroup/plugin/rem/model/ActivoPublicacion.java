@@ -118,6 +118,12 @@ public class ActivoPublicacion implements Serializable, Auditable {
 	
 	@Column(name = "APU_FECHA_CAMB_PREC_ALQ")
 	private Date fechaCambioValorAlq;
+	
+	@Column(name = "APU_FECHA_REVISION_PUB_VENTA")
+	private Date fechaRevisionPublicacionesVenta;
+	
+	@Column(name = "APU_FECHA_REVISION_PUB_ALQ")
+	private Date fechaRevisionPublicacionesAlquiler;
 
 	@Version
 	private Long version;
@@ -363,6 +369,22 @@ public class ActivoPublicacion implements Serializable, Auditable {
 
 	public void setFechaCambioValorAlq(Date fechaCambioValorAlq) {
 		this.fechaCambioValorAlq = fechaCambioValorAlq;
+	}
+	
+	public Date getFechaRevisionPublicacionesVenta() {
+		return fechaRevisionPublicacionesVenta;
+	}
+
+	public void setFechaRevisionPublicacionesVenta(Date fechaRevisionPublicacionesVenta) {
+		this.fechaRevisionPublicacionesVenta = fechaRevisionPublicacionesVenta;
+	}
+	
+	public Date getFechaRevisionPublicacionesAlquiler() {
+		return fechaRevisionPublicacionesAlquiler;
+	}
+
+	public void setFechaRevisionPublicacionesAlquiler(Date fechaRevisionPublicacionesAlquiler) {
+		this.fechaRevisionPublicacionesAlquiler = fechaRevisionPublicacionesAlquiler;
 	}
 
 	

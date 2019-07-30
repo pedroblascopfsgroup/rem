@@ -9639,33 +9639,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		boolean prescriptorOficina;
 		boolean ventaSingular =  false; 
 		boolean llenoLista = false;
+		String tipo = null;
+		Activo act = null;
 		Oferta oferta = expediente.getOferta();
 		ActivoProveedor activoProveedor = oferta.getPrescriptor();
-		//List<ActivoOferta> listaActivos=oferta.getActivosOferta();
-		ActivoOferta activoOferta = oferta.getActivosOferta().get(0);
-		Activo activo = activoOferta.getPrimaryKey().getActivo();
-		String tipo = !Checks.esNulo(activo.getTipoComercializar()) ? activo.getTipoComercializar().getCodigo() : null;
+		List<ActivoOferta> listaActivos=oferta.getActivosOferta();
+		if (!Checks.esNulo(listaActivos)) {
+			act = listaActivos.get(0).getPrimaryKey().getActivo();
+		}
+		if (!Checks.esNulo(act)) {
+			tipo = !Checks.esNulo(act.getTipoComercializar()) ? act.getTipoComercializar().getCodigo() : null;
+		}
 		if(!Checks.esNulo(tipo)) {
 			ventaRetail = tipo.equals("02");	
 			ventaSingular = !ventaRetail;
 		}
-		
 		if (!Checks.esNulo(activoProveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
 			prescriptorOficina = activoProveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo().equals("03");
 		}else {
 			return null;
 		}
-		// Comprobamos que en la lista exista algún tipo retail, si es así cambiamos valor en las variables
-		/*for(ActivoOferta activoOferta: listaActivos) {
-			Activo activo = activoOferta.getPrimaryKey().getActivo();
-			String tipo = !Checks.esNulo(activo.getTipoComercializar()) ? activo.getTipoComercializar().getCodigo() : null; 
-			if(!Checks.esNulo(tipo)) {
-				ventaRetail = tipo.equals("02");	
-				ventaSingular = !ventaRetail;
-				break;
-			}
-		}*/
-		
 		if(!Checks.esNulo(oferta.getGestorComercialPrescriptor())) {
 			if(ventaRetail && prescriptorOficina) {
 				

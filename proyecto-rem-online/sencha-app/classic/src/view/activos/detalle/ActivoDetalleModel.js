@@ -738,7 +738,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return (!editable || unidadAlquilable);
 			else
 				return !editable;
-		}
+		},
+		
+		esGestorPublicacionVenta: function(get) {
+
+	    	var me = this;
+	    	var checkboxVenta = get('datospublicacionactivo.ocultarVenta');
+
+	    	if($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) && checkboxVenta){
+	    		return false;
+	    	}else{
+	    		return true;
+	    	}
+	    },
+	    
+	    esGestorPublicacionAlquiler: function(get) {
+
+	    	var me = this;
+	    	var checkboxAlquiler = get('datospublicacionactivo.ocultarAlquiler');
+	    	
+	    	if($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) && checkboxAlquiler){
+	    		return false;
+	    	}else{
+	    		return true;
+	    	}
+	    }
 		
 	 },
 	

@@ -492,7 +492,9 @@ public class ActivoPropagacionFieldTabMap {
 				    "deshabilitarCheckPublicarAlquiler",
 				    "deshabilitarCheckOcultarAlquiler",
 				    "deshabilitarCheckPublicarSinPrecioAlquiler",
-				    "deshabilitarCheckNoMostrarPrecioAlquiler"
+				    "deshabilitarCheckNoMostrarPrecioAlquiler",
+				    "fechaRevisionPublicacionesVenta",
+				    "fechaRevisionPublicacionesAlquiler"
     			));
 
 	    pmap.put(TAB_TASACION,

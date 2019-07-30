@@ -403,16 +403,6 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			activoInfoComercial.setActivo(activo);
 			activoInfoComercial.setTipoActivo(activo.getTipoActivo());
 			activoInfoComercial.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
-			if (!Checks.esNulo(dtoAAF.getNifMediador())) {
-				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
-				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
-				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1,f2);
-				if(Checks.esNulo(mediador)){
-					f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
-					mediador = genericDao.get(ActivoProveedor.class, f1, f2);
-				}
-				activoInfoComercial.setMediadorInforme(mediador);
-			}
 			beanUtilNotNull.copyProperty(activoInfoComercial, "planta", dtoAAF.getNumPlantasVivienda());
 			activoInfoComercialDos= activoInfoComercial;
 			genericDao.save(ActivoInfoComercial.class, activoInfoComercial);
@@ -640,8 +630,15 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		if (!Checks.esNulo(nifMediador) && Checks.esNulo(mediador)) {
 			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nifMediador);
 			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
-			mediador = genericDao.get(ActivoProveedor.class, f1,f2);			
+			Filter f3 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
+			mediador = genericDao.get(ActivoProveedor.class, f1,f2, f3);
+			
+			if(Checks.esNulo(mediador)){
+				f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
+				mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+			}
 		}
+		
 		return mediador;
 	}
 	private void guardarDatosPatrimonioActivo(DtoAltaActivoFinanciero dtoAAF, Activo activo) throws Exception {

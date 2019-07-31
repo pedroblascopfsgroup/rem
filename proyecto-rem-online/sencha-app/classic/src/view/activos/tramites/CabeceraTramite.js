@@ -117,7 +117,7 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 																width: 70,
 																bind: {
 																	hidden:'{!isEmptySrcCartera}',
-																	value: '{tramite.cartera}' 
+																	value: '{activo.entidadPropietariaDescripcion}'
 																}
 										
 															},

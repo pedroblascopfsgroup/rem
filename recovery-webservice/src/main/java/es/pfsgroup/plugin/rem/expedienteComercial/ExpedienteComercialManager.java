@@ -9654,8 +9654,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ventaRetail = tipo.equals("02");	
 			ventaSingular = !ventaRetail;
 		}
-		if (!Checks.esNulo(activoProveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo())) {
-			prescriptorOficina = activoProveedor.getTipoProveedor().getTipoEntidadProveedor().getCodigo().equals("03");
+		if (!Checks.esNulo(activoProveedor.getTipoProveedor().getCodigo())) {
+			prescriptorOficina = activoProveedor.getTipoProveedor().getCodigo().equals("29");
 		}else {
 			return null;
 		}

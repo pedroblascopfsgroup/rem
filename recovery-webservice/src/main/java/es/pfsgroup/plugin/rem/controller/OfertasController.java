@@ -773,6 +773,7 @@ public class OfertasController {
 				model.put("data", page.getResults());
 				model.put("totalCount", page.getTotalCount());
 				model.put("success", true);
+	
 
 			} catch (Exception e) {
 				logger.error("Error en ofertasController", e);
@@ -782,5 +783,12 @@ public class OfertasController {
 			
 			return createModelAndViewJson(model);
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelOfertaCES(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		ExcelReport report = ofertaApi.generarExcelOfertasCES(dtoOfertasFilter);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 }

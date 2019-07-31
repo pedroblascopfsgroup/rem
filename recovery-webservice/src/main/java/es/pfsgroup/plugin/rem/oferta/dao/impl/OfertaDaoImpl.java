@@ -499,6 +499,18 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		return ofertasVivas;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public DtoPage getListOfertasCES(DtoOfertasFilter dtoOfertasFilter) {
+		String from = "select vofertasces from VListOfertasCES vofertasces";
+		HQLBuilder hb = new HQLBuilder(from);
+
+		Page pageVisitas = HibernateQueryUtils.page(this, hb,dtoOfertasFilter);
+		List<VOfertasActivosAgrupacion> ofertas = (List<VOfertasActivosAgrupacion>) pageVisitas.getResults();
+
+		return new DtoPage(ofertas, pageVisitas.getTotalCount());
+	}
+	
 	public void flush() {
 		this.getSessionFactory().getCurrentSession().flush();
 	}

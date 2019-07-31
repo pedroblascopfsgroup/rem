@@ -90,4 +90,12 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public void flush();
 	
 	public Oferta getOfertaPrincipal(Long numOferta);
+
+	/**
+	 * Devuelve una lista de ofertas CES
+	 * 
+	 * @param dtoOfertasFilter
+	 * @return DtoPage
+	 */
+	DtoPage getListOfertasCES(DtoOfertasFilter dtoOfertasFilter);
 }

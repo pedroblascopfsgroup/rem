@@ -60,6 +60,9 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
+import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.ListaOfertasCESExcelReport;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -104,6 +107,7 @@ import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.VListOfertasCES;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
@@ -261,6 +265,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private VListadoOfertasAgrupadasLbkDao ofertasAgrupadasLbkDao;
 	
+	@Autowired
+	private ExcelReportGeneratorApi excelReportGeneratorApi;
+
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
 
@@ -4390,4 +4397,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ExcelReport generarExcelOfertasCES(DtoOfertasFilter dtoOfertasFilter) {
+		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
+		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
+		
+		List<VListOfertasCES> listaOfertas = (List<VListOfertasCES>) ofertaDao.getListOfertasCES(dtoOfertasFilter).getResults();
+		
+		ExcelReport report = new ListaOfertasCESExcelReport(listaOfertas);
+		return report;
+	}
+	
 }

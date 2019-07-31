@@ -8,6 +8,7 @@ import java.util.Map;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -27,7 +28,6 @@ import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -659,6 +659,13 @@ public interface OfertaApi {
 	 * @param oferta
 	 */
 	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
+	
+	/**
+	 * Genera la excel de Ofertas CES
+	 * @param dtoOfertasFilter
+	 * @return ExcelReport
+	 */
+	ExcelReport generarExcelOfertasCES(DtoOfertasFilter dtoOfertasFilter);
 
 	/**
 	 * Metodo que busca si la tarea pasada del tramite dado esta finalizada

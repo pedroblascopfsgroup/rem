@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Vicente Martinez
---## FECHA_CREACION=20190723
+--## FECHA_CREACION=20190725
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6921

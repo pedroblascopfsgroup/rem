@@ -115,7 +115,10 @@ public class UpdaterServiceSancionOfertaAnalisisPM implements UpdaterService {
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						String doubleValue = valor.getValor();
 						doubleValue = doubleValue.replace(',', '.');
-						ofertaAceptada.setImporteContraofertaPM(Double.valueOf(doubleValue));
+						Double nuevoImporte = Double.valueOf(doubleValue);
+						ofertaAceptada.setImporteContraofertaPM(nuevoImporte);
+						
+						ofertaAceptada.setImporteOferta(nuevoImporte);
 	
 						// Actualizar honorarios para el nuevo importe de contraoferta.
 						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());

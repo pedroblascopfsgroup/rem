@@ -381,7 +381,4 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setBloquearGridRefacturados(Boolean bloquearGridRefacturados) {
 		this.bloquearGridRefacturados = bloquearGridRefacturados;
 	}
-	
-		
-   	
 }

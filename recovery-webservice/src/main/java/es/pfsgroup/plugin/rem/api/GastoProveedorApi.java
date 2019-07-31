@@ -377,6 +377,9 @@ public interface GastoProveedorApi {
 
 
 		void eliminarUltimoGastoRefacturado(Long idGasto);
+		
+		/*HREOS-7241*/
+		public boolean esGastoRefacturable(GastoProveedor gasto);
 
 
 }

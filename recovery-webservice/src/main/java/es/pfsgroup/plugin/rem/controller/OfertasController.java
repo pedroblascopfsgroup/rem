@@ -740,10 +740,6 @@ public class OfertasController {
 					}
 					else {
 						idTarea[0] = tareaId.toString();
-						
-						error = RestApi.REST_MSG_VALIDACION_TAREA;
-						errorDesc = "La tarea " + codTarea + " no existe.";
-						
 						datosTarea.put("idTarea",idTarea);
 						
 						resultado = agendaAdapter.validationAndSave(datosTarea);

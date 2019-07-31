@@ -69,6 +69,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Double importeTotalPrinex;
 	private Boolean prorrata;
 	private Boolean gastoRefacturableB;
+	private Double importeGastosRefacturables;
 	private Long numeroGastoHaya;
 	private Boolean bloquearCheckRefacturado;
 	private Boolean bloquearGridRefacturados;
@@ -381,4 +382,13 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setBloquearGridRefacturados(Boolean bloquearGridRefacturados) {
 		this.bloquearGridRefacturados = bloquearGridRefacturados;
 	}
+	public Double getImporteGastosRefacturables() {
+		return importeGastosRefacturables;
+	}
+	public void setImporteGastosRefacturables(Double importeGastosRefacturables) {
+		this.importeGastosRefacturables = importeGastosRefacturables;
+	}
+	
+		
+   	
 }

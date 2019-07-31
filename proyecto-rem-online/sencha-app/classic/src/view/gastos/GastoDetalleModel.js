@@ -84,24 +84,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     esReembolsoPago: function(get){
-	     	var me= this;
-
-	     	if(get('detalleeconomico.reembolsoTercero')=="true" || get('detalleeconomico.reembolsoTercero')==true){
-	     		return true;
-	     	}
-	     	else{
-	     		return false;
-	     	}
+	     	return (get('detalleeconomico.reembolsoTercero')=="true" || get('detalleeconomico.reembolsoTercero')==true);
 	     },
 	     
 	     seleccionadoAbonar: function(get){
-	     	var me= this;
-	     	if(get('detalleeconomico.abonoCuenta')=="true" || get('detalleeconomico.abonoCuenta')==true){
-	     		return true;
-	     	}
-	     	else{
-	     		return false;
-	     	}
+	     	return (get('detalleeconomico.abonoCuenta')=="true" || get('detalleeconomico.abonoCuenta')==true);
 	     },
 	     importeRecargoVacio: function(get){
     	    var me= this;
@@ -113,45 +100,47 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     	    }
 	     },
 	     seleccionadoPagadoBankia: function(get){
-	     	var me= this;
-	     	if(get('detalleeconomico.pagadoConexionBankia')=="true" || get('detalleeconomico.pagadoConexionBankia')==true){
-	     		return true;
-	     	}
-	     	else{
-	     		return false;
-	     	}
+	     	return (get('detalleeconomico.pagadoConexionBankia')=="true" || get('detalleeconomico.pagadoConexionBankia')==true);
 
 	     },
 	     
 	     seleccionadoAnticipo: function(get)  {
-	     	var me= this;
-	     	if(get('detalleeconomico.anticipo')=="true" || get('detalleeconomico.anticipo')==true){
-	     		return true;
-	     	}
-	     	else{
-	     		return false;
-	     	}
+	     	return (get('detalleeconomico.anticipo')=="true" || get('detalleeconomico.anticipo')==true);
 	     	
 	     },
 	     
 	     sumatorioConceptosgasto: function(get) {
 
-	     	var importePrincipalSujeto = get('detalleeconomico.importePrincipalSujeto');
-			var importePricipalNoSujeto = get('detalleeconomico.importePrincipalNoSujeto');
-			var importeRecargo = get('detalleeconomico.importeRecargo');
-			var importeInteresDemora = get('detalleeconomico.importeInteresDemora');
-	     	var importeCostas = get('detalleeconomico.importeCostas');
-	     	var importeOtrosIncrementos = get('detalleeconomico.importeOtrosIncrementos')
-	     	var importeProvisionesSuplidos = get('detalleeconomico.importeProvisionesSuplidos');
+	    	var sumatorioTotal = parseFloat('0');
+	     	var importePrincipalSujeto = parseFloat(get('detalleeconomico.importePrincipalSujeto'));
+			var importePricipalNoSujeto = parseFloat(get('detalleeconomico.importePrincipalNoSujeto'));
+			var importeRecargo = parseFloat(get('detalleeconomico.importeRecargo'));
+			var importeInteresDemora = parseFloat(get('detalleeconomico.importeInteresDemora'));
+	     	var importeCostas = parseFloat(get('detalleeconomico.importeCostas'));
+	     	var importeOtrosIncrementos = parseFloat(get('detalleeconomico.importeOtrosIncrementos'));
+	     	var importeProvisionesSuplidos = parseFloat(get('detalleeconomico.importeProvisionesSuplidos'));
 	     	var impuestoIndirectoCuota = 0;   	
 	     	var cbOperacionExenta = get('detalleeconomico.impuestoIndirectoExento');  
 	     	var cbRenunciaExencion = get('detalleeconomico.renunciaExencionImpuestoIndirecto');  
 	     	if(cbOperacionExenta==false || (cbOperacionExenta==true && cbRenunciaExencion==true)){
-	     		impuestoIndirectoCuota = get('detalleeconomico.impuestoIndirectoCuota');
+	     		impuestoIndirectoCuota = parseFloat(get('detalleeconomico.impuestoIndirectoCuota'));
 	     	}
 
-	     	return importePrincipalSujeto + importePricipalNoSujeto + importeRecargo + importeInteresDemora
-	     	+ importeCostas+ importeOtrosIncrementos + importeProvisionesSuplidos + impuestoIndirectoCuota; 
+	     	if(get('esCarteraSareb')){
+	     		sumatorioTotal = sumatorioTotal + parseFloat(get('detalleeconomico.importeGastosRefacturables'));
+	     	}
+	     	
+	     	sumatorioTotal = sumatorioTotal 
+	     		+ importePrincipalSujeto 
+	     		+ importePricipalNoSujeto 
+	 			+ importeRecargo 
+	 			+ importeInteresDemora
+	 			+ importeCostas 
+	 			+ importeOtrosIncrementos 
+	 			+ importeProvisionesSuplidos 
+	 			+ impuestoIndirectoCuota;
+	     	
+	     	return sumatorioTotal; 
 	     	
 	     	
 	     },

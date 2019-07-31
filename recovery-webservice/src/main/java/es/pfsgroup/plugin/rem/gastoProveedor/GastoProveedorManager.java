@@ -20,11 +20,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.ModelAndView;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -36,7 +34,6 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -1045,10 +1042,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setTitularCuenta(detalleGasto.getTitularCuentaAbonar());
 			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
 			
+			/* Anyadimos el importe de los gastos refacturables asociados */
+			Double importeGastosRefacturables = 0.0;
+			
+			for (GastoProveedor gastoRefactu : getGastosRefacturablesGasto(gasto.getId())) {
+				importeGastosRefacturables += gastoRefactu.getGastoDetalleEconomico().getImporteTotal();
+			}
+			
+			dto.setImporteGastosRefacturables(importeGastosRefacturables);
+			
+			
 			if(detalleGasto.getGastoRefacturable() || Checks.esNulo(detalleGasto.getGastoRefacturable())) { 
 				dto.setGastoRefacturableB(detalleGasto.getGastoRefacturable());
 			}else {
-				dto.setGastoRefacturableB(detalleGasto.getGastoRefacturable());
+				dto.setGastoRefacturableB(false);
 			}
 			
 			dto.setBloquearCheckRefacturado(false);
@@ -3409,6 +3416,25 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 				
 		return listaNumGastoHayaGastosRefacurables;
+	}
+	
+	@Override
+	public List<GastoProveedor> getGastosRefacturablesGasto(Long id) {
+		List<GastoRefacturable> listaDeGastosRefacturablesDelGasto = new ArrayList<GastoRefacturable>();
+		GastoProveedor gastoProveedor = new GastoProveedor();
+		List<GastoProveedor> listaGastosRefacturables = new ArrayList<GastoProveedor>();
+		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(id);
+		
+		for (GastoRefacturable gastoRefacturable : listaDeGastosRefacturablesDelGasto) {
+			if(!Checks.esNulo(gastoRefacturable.getGastoProveedorRefacturado())) {
+				gastoProveedor = gastoDao.getGastoById(gastoRefacturable.getGastoProveedorRefacturado());
+				if(!Checks.esNulo(gastoProveedor)) {
+					listaGastosRefacturables.add(gastoProveedor);
+				}
+			}	
+		}
+				
+		return listaGastosRefacturables;
 	}
 	
 	@Override

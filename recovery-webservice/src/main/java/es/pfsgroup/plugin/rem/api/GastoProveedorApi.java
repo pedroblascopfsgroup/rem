@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
@@ -27,7 +26,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
-import es.pfsgroup.plugin.rem.model.VGastosProvision;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 
 
@@ -39,7 +37,6 @@ public interface GastoProveedorApi {
 	     * @return ExpedienteComercial
 	     */
 	    public GastoProveedor findOne(Long id);
-	    
 		
 		/**
 		 * Devuelve una lista de gastos aplicando el filtro que recibe.
@@ -368,6 +365,13 @@ public interface GastoProveedorApi {
 
 
 		List<Long> getGastosRefacturablesGastoCreado(Long id);
+		
+		/**
+		 * Devuelve los gastos refacturables asociados al Gasto
+		 * @param id
+		 * @return
+		 */
+		List<GastoProveedor> getGastosRefacturablesGasto(Long id);
 
 
 		public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista);

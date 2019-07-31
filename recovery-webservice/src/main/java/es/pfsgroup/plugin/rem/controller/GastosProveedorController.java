@@ -18,13 +18,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -62,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Controller
 public class GastosProveedorController extends ParadiseJsonController {
@@ -73,6 +75,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -351,19 +356,48 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosGastos(@RequestParam Long idGasto, ModelMap model, HttpServletRequest request) {
 		
-	try {
-		
-		List<VBusquedaGastoActivo> lista  =  gastoProveedorApi.getListActivosGastos(idGasto);
-		
-		model.put("data", lista);
-		model.put("success", true);
-		trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER);
-
-	} catch (Exception e) {
-		logger.error(e.getMessage());
-		model.put("success", false);
-		trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-	}
+		try {
+			
+			List<VBusquedaGastoActivo> listaActivos = new ArrayList<VBusquedaGastoActivo>();
+			
+			DDCartera carteraPropietario = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDCartera.CODIGO_CARTERA_SAREB));
+			
+			if(carteraPropietario.getDescripcion().equalsIgnoreCase(gastoProveedorApi.findOne(idGasto).getPropietario().getNombre())) { /* Si el propietario del gasto es SAREB */
+				List<GastoProveedor> gastosRefacturables = gastoProveedorApi.getGastosRefacturablesGasto(idGasto);
+				
+				double importeTotal = 0.0;
+				if(!Checks.estaVacio(gastosRefacturables)) {
+					for (GastoProveedor gastosRefacturable : gastosRefacturables) {
+						listaActivos.addAll(gastoProveedorApi.getListActivosGastos(gastosRefacturable.getId()));
+						importeTotal += gastosRefacturable.getGastoDetalleEconomico().getImporteTotal(); /* Se suma el importe total del gasto */
+					}
+					
+					for (VBusquedaGastoActivo activo : listaActivos) {
+						for (GastoProveedor gastoProveedor : gastosRefacturables) {
+							if(gastoProveedor.getNumGastoHaya().equals(activo.getNumGasto())) {
+								activo.setParticipacion((gastoProveedor.getGastoDetalleEconomico().getImporteTotal() / importeTotal) * 100); /* Se calcula el porcentaje en base al importe individual */
+							}
+							
+						}
+					}
+					
+				}
+				
+			}
+			
+			if(Checks.estaVacio(listaActivos)) {
+				listaActivos = gastoProveedorApi.getListActivosGastos(idGasto);
+			}
+			
+			model.put("data", listaActivos);
+			model.put("success", true);
+			trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER);
+	
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
 
 		return createModelAndViewJson(model);
 		
@@ -1039,7 +1073,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public ModelAndView getGastosRefacturablesGastoCreado(String id) {
 		ModelMap model = new ModelMap();
 		
-		List<Long> gastosRefacturables = new ArrayList<Long>();
+		List<Long> gastosRefacturables;
 		int i;
 		Long idEnLong = Long.parseLong(id);
 	

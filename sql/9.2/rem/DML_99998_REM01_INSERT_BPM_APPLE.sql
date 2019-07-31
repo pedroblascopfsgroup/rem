@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Beltrán
---## FECHA_CREACION=20190726
+--## AUTOR=Vicente Martinez
+--## FECHA_CREACION=20190731
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7162
+--## INCIDENCIA_LINK=HREOS-7249
 --## PRODUCTO=NO
 --## 
 --## Finalidad: DML
@@ -20,6 +20,7 @@
 --##        0.7 Vicente Martinez 	- HREOS-6937 - Corrección acentos
 --##	    0.8 Vicente Martinez 	- HREOS-7040 - Correccion label Observaciones
 --##	    0.9 Juan Beltrán	 	- HREOS-7162 - Correccion bloque Instrucciones
+--##		0.10 Vicente Martinez	- HREOS-7249 - Correccion subida documentos Resolucion CES
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -921,7 +922,7 @@ begin
     TAP(2).tap_field('TAP_CODIGO') := 'T017_ResolucionCES';
     TAP(2).tap_field('TAP_VIEW') := NULL;
     TAP(2).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''';
-    TAP(2).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'valores[''''T017_ResolucionCES''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? existeAdjuntoUGValidacion("22","E") : null : resolucionComiteT013()';
+    TAP(2).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
     TAP(2).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReserva'''': ''''AceptaSinReserva'''' :  valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta''''';
     TAP(2).tap_field('DD_TPO_ID_BPM') := null;
     TAP(2).tap_field('TAP_SUPERVISOR') := 0;

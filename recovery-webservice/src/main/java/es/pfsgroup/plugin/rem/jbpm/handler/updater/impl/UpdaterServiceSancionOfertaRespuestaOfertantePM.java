@@ -107,7 +107,8 @@ public class UpdaterServiceSancionOfertaRespuestaOfertantePM implements UpdaterS
 							}
 
 						} else if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
-
+							// Actualizamos la participación de los activos en la oferta;
+							expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 							expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						}
 						

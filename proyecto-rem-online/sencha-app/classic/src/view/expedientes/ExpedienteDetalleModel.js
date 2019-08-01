@@ -434,6 +434,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}else{
 				return true;
 			}
+		},
+		
+		esPerfilPMyCEs: function(get){
+			
+			var tipoOfertaDesc = get('datosbasicosoferta.estadoDescripcion');
+			 
+			 if(tipoOfertaDesc == "Tramitada"){
+				if($AU.userIsRol('HAYAGRUPOCES') || $AU.userIsRol('HAYAGESTPORTMAN') ){
+					return false;
+				}else{
+					return true;
+				} 	
+			 }else{
+			 	return false;
+			 }
+			
 		}
 	 },
 

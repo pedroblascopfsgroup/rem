@@ -91,7 +91,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.contraoferta'),
 		                	bind:		{
 		                		value: '{datosbasicosoferta.importeContraOferta}'
-		                		//,readOnly: '{esCarteraSareb}'
+		                		,readOnly: '{esPerfilPMyCEs}'
 		                	}
 		                },
 		                {	

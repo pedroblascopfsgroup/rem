@@ -68,7 +68,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
+	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
 	private static final String FECHA_FIRMA = "fechaFirma";
+	private static final String T017 = "T017";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -181,6 +183,27 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				genericDao.save(ExpedienteComercial.class, expediente);
 				
 				
+			}
+			
+			//Si es T017, revisamos GENCAT
+			if(T017.equals(tramite.getTipoTramite().getCodigo()) && ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_RESOLUCION_PRO_MANZANA)) {
+				for (ActivoOferta activoOferta : listActivosOferta) {
+					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
+					if(activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+						Oferta oferta = expediente.getOferta();	
+						OfertaGencat ofertaGencat = null;
+						if (!Checks.esNulo(comunicacionGencat)) {
+							ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
+						}
+						if(!Checks.esNulo(ofertaGencat)) {
+								if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+									gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+								}
+						}else{	
+							gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+						}					
+					}
+				}
 			}
 			
 			//Actualizar el estado comercial de los activos de la oferta

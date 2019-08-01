@@ -279,7 +279,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			        		hidden: '{!esCarteraApple}'
 			        	},
 			        	readOnly: true
-	            	 }
+	            	 },
+		             {
+		               	xtype:'datefieldbase',
+		               	fieldLabel:  HreRem.i18n('fieldlabel.fecha.aprobacion.pro.manzana'),
+		               	bind:{
+		               		value: '{expediente.fechaAprobacionProManzana}',
+		               		hidden:'{!esCarteraApple}'
+		              	},
+		             	readOnly: true   
+		             }
 				]	
            },
            {    

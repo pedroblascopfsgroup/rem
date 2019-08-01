@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
@@ -650,6 +651,14 @@ public interface OfertaApi {
 	 * @param oferta
 	 */
 	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
+
+	/**
+	 * Metodo que busca si la tarea pasada del tramite dado esta finalizada
+	 * @param tramite - TramiteActivo
+	 * @param codigoTarea - Codigo de la tabla TareaProcedimiento
+	 * @return devuelve true si esta finalizada
+	 */
+	public Boolean esTareaFinalizada(ActivoTramite tramite, String codigoTarea);
 
 	Boolean finalizarOferta(Oferta oferta);
 

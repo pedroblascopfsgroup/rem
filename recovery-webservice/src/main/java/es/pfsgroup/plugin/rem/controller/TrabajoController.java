@@ -1653,11 +1653,6 @@ public class TrabajoController extends ParadiseJsonController {
 							errorDesc = "El formato de la fecha de finalización no es correcto.";
 							throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
 						}
-						if(finalizacion.before(atprimaria)) {
-							error = RestApi.REST_MSG_VALIDACION_TAREA;
-							errorDesc = "La tarea " + codTarea + " no existe.";
-							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
-						}
 						
 						String[] idTarea = new String[1];
 						idTarea[0] = tareaId.toString();

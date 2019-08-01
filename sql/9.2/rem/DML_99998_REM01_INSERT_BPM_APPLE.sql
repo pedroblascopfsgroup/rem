@@ -1,24 +1,26 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20190712
+--## AUTOR=Vicente Martinez
+--## FECHA_CREACION=20190731
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6937
+--## INCIDENCIA_LINK=HREOS-7249
 --## PRODUCTO=NO
 --## 
 --## Finalidad: DML
 --## INSTRUCCIONES: Crear BPM Apple
 --## VERSIONES:
---##        0.1 Sergio Salt - Versión inicial 
---##	    0.2 Mariam Lliso - HREOS-6619 HREOS-6620 HREOS-6662 - Actualización validaciones T017_InstruccionesReserva, T017_ObtencionContratoReserva, T017_PosicionamientoYFirma, T017_DocsPosVenta
---##	    0.3 Alejandro Valverde - HREOS-6605 - Actualización validación T017_DefinicionOferta
---##	    0.4 David Garcia - HREOS-6663 - Actualización validación T017_AnalisisPM
---##	    0.5 Alejandro Valverde - HREOS-6605 - Corrección validación T017_DefinicionOferta
---##      0.6 Vicente Martinez - HREOS-6841 - Eliminación validacion T017_AnalisisPM
---##      0.6 Vicente Martinez - HREOS-6840 - Modificacion decisión PyF
---##      0.7 Vicente Martinez - HREOS-6937 - Corrección acentos
---##	    0.8 Vicente Martinez - HREOS-7040 - Correccion label Observaciones
+--##        0.1 Sergio Salt 	 	- Versión inicial 
+--##	    0.2 Mariam Lliso 		- HREOS-6619 HREOS-6620 HREOS-6662 - Actualización validaciones T017_InstruccionesReserva, T017_ObtencionContratoReserva, T017_PosicionamientoYFirma, T017_DocsPosVenta
+--##	    0.3 Alejandro Valverde 	- HREOS-6605 - Actualización validación T017_DefinicionOferta
+--##	    0.4 David Garcia 		- HREOS-6663 - Actualización validación T017_AnalisisPM
+--##	    0.5 Alejandro Valverde 	- HREOS-6605 - Corrección validación T017_DefinicionOferta
+--##        0.6 Vicente Martinez 	- HREOS-6841 - Eliminación validacion T017_AnalisisPM
+--##        0.6 Vicente Martinez 	- HREOS-6840 - Modificacion decisión PyF
+--##        0.7 Vicente Martinez 	- HREOS-6937 - Corrección acentos
+--##	    0.8 Vicente Martinez 	- HREOS-7040 - Correccion label Observaciones
+--##	    0.9 Juan Beltrán	 	- HREOS-7162 - Correccion bloque Instrucciones
+--##		0.10 Vicente Martinez	- HREOS-7249 - Correccion subida documentos Resolucion CES
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -645,21 +647,11 @@ begin
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">
   Ha aceptado una oferta y se ha creado un expediente comercial asociado a la misma. 
-  A continuación  debería rellenar todos los campos necesarios para definir la oferta, pudiendo darse la siguiente casuística para finalizar la tarea 
+  A continuación  debería rellenar todos los campos necesarios para definir la oferta, pudiendo darse la siguiente casuística para finalizar la tarea. La siguiente tarea será "Análisis PM". 
   </p> 
-  <p style="margin-bottom: 10px">A) Si tiene atribuciones para sancionar la oferta:<br />
-  i) Si el activo está dentro del perímetro de formalización al pulsar el botón Aceptar finalizará esta tarea y se le lanzará a la gestoría de  formalización una nueva tarea para la realización del "Informe jurídico".<br />  
-  ii) Si el activo no se encuentra dentro del perímetro de formalización, la siguiente tarea que se lanzará es "Firma por el propietario".</p> 	
-  <p style="margin-bottom: 10px"> B) Si no tiene atribuciones para sancionar la oferta, deberá preparar la propuesta y remitirla al comité sancionador, indicando  abajo la fecha de envío.</p> 
-  <p style="margin-bottom: 10px"> C) El presente expediente tiene origen en el ejercicio del derecho de tanteo y retracto administrativo, por lo que la oferta ya fue aprobada en su momento.
-  De ser así, marque el check dispuesto al efecto, identificando el nº de expediente origen, para que el trámite vaya directamente a la tarea de "Posicionamiento y firma".
-  </p> 
-  <p style="margin-bottom: 10px"> 
-  En cualquier caso, para poder finalizar la tarea, tiene que reflejar si existe riesgo reputacional y/o conflicto de intereses en la Ficha del expediente.
-  </p> 
-  <p style="margin-bottom: 10px"> 
-  En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite 
-  </p>';
+  <p style="margin-bottom: 10px">Para sancionar la oferta, deberá preparar la propuesta y remitirla al Portfolio Manager indicando abajo la fecha de envío. 
+  En cualquier caso, para poder finalizar la tarea, tiene que reflejar si existe riesgo reputacional y/o conflicto de intereses en la Ficha de expediente.</p>  
+  <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(0).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -832,15 +824,17 @@ begin
     Además:
     </p> 
     <p style="margin-bottom: 10px">
-      A) Si el comité ha rechazado la oferta, seleccione en el campo "Resolución PM " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.
+      A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Resolución PM " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.
     </p> 	
     <p style="margin-bottom: 10px">
-        B) Si el comité ha propuesto una contraoferta, suba el documento justificativo en la pestaña "documentos" del expediente. Seleccione la opción "contraoferta" e introduzca el importe propuesto en el campo "importe contraoferta PM".
+        B) Si el comité ha <b>propuesto</b> una contraoferta, suba el documento justificativo en la pestaña "documentos" del expediente. Seleccione la opción "contraoferta" e introduzca el importe propuesto en el campo "importe contraoferta PM".
         La siguiente tarea que se lanzará es "Respuesta ofertante PM".
     </p> 
     <p style="margin-bottom: 10px"> 
-    C) Si el comité ha aprobado la oferta, seleccione la opción "aprobado" en el campo "Resolución PM". La siguiente tarea se le lanzará a “resolucion de CES
-    En el campo "observaciones PM" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.
+    C) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo "Resolución PM". La siguiente tarea se le lanzará a "resolucion de CES"
+	</p>
+    <p style="margin-bottom: 10px"> 
+	En el campo "observaciones PM" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.
     </p>';
     TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(1).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
@@ -928,7 +922,7 @@ begin
     TAP(2).tap_field('TAP_CODIGO') := 'T017_ResolucionCES';
     TAP(2).tap_field('TAP_VIEW') := NULL;
     TAP(2).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''';
-    TAP(2).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'valores[''''T017_ResolucionCES''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? existeAdjuntoUGValidacion("22","E") : null : resolucionComiteT013()';
+    TAP(2).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
     TAP(2).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReserva'''': ''''AceptaSinReserva'''' :  valores[''''T017_ResolucionCES''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta''''';
     TAP(2).tap_field('DD_TPO_ID_BPM') := null;
     TAP(2).tap_field('TAP_SUPERVISOR') := 0;
@@ -980,15 +974,15 @@ begin
         Además:
     </p> 
     <p style="margin-bottom: 10px">
-        A) Si el comité ha rechazado la oferta, seleccione en el campo "Resolución CES " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.
+        A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Resolución CES " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.
     </p> 	
     <p style="margin-bottom: 10px">
-        B) Si el comité ha propuesto una contraoferta, suba el documento justificativo en la pestaña "documentos" del expediente.
+        B) Si el comité ha <b>propuesto</b> una contraoferta, suba el documento justificativo en la pestaña "documentos" del expediente.
         Seleccione la opción "contraoferta" e introduzca el importe propuesto en el campo "importe contraoferta CES".
         La siguiente tarea que se lanzará es "Respuesta ofertante CES".
     </p> 
     <p style="margin-bottom: 10px"> 
-    C) Si el comité ha aprobado la oferta, seleccione la opción "aprobado" en el campo "Resolución CES". La siguiente tarea se le lanzará a informe jurídico; creación de AN y PBC de reserva o venta según el caso.
+    C) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo "Resolución CES". La siguiente tarea se le lanzará a informe jurídico; creación de AN y PBC de reserva o venta según el caso.
     </p> 
     <p style="margin-bottom: 10px"> 
     En el campo "observaciones CES" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.
@@ -1125,7 +1119,7 @@ begin
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-  TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">La resolución del comité sancionador ha sido porponer nuevo importe como contraoferta. Para finalizar esta tarea, debe reflejar la decisión del comprador con respecto a la misma.</p> <p style="margin-bottom: 10px">Si el ofertante ha rechazado la propuesta de contraoferta, seleccione la opción "Rechaza contraoferta" en el campo "Respuesta ofertante". Con esto se dará por concluido el trámite y el expediente quedará rechazado.</p> <p style="margin-bottom: 10px">Si el ofertante ha aceptado la propuesta de contraoferta, seleccione la opción "Acepta contraoferta". Si es así, se lanzará la tarea "Informe jurídico" a la gestoría de formalización.</p> <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
+  TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">La resolución del comité sancionador ha sido porponer nuevo importe como contraoferta. Para finalizar esta tarea, debe reflejar la decisión del comprador con respecto a la misma.</p> <p style="margin-bottom: 10px">Si el ofertante ha rechazado la propuesta de contraoferta, seleccione la opción "Deniega" en el campo "Respuesta ofertante". Con esto se dará por concluido el trámite y el expediente quedará rechazado.</p> <p style="margin-bottom: 10px">Si el ofertante ha aceptado la propuesta de contraoferta, seleccione la opción "Aprueba". Si es así, se lanzará la tarea "Informe jurídico" a la gestoría de formalización.</p> <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(3).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -1241,7 +1235,7 @@ begin
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
-  TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">La resolución del comité sancionador ha sido porponer nuevo importe como contraoferta. Para finalizar esta tarea, debe reflejar la decisión del comprador con respecto a la misma.</p> <p style="margin-bottom: 10px">Si el ofertante ha rechazado la propuesta de contraoferta, seleccione la opción "Rechaza contraoferta" en el campo "Respuesta ofertante". Con esto se dará por concluido el trámite y el expediente quedará rechazado.</p> <p style="margin-bottom: 10px">Si el ofertante ha aceptado la propuesta de contraoferta, seleccione la opción "Acepta contraoferta". Si es así, se lanzará la tarea "Informe jurídico" a la gestoría de formalización.</p> <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
+  TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">La resolución del comité sancionador ha sido porponer nuevo importe como contraoferta. Para finalizar esta tarea, debe reflejar la decisión del comprador con respecto a la misma.</p> <p style="margin-bottom: 10px">Si el ofertante ha rechazado la propuesta de contraoferta, seleccione la opción "Deniega" en el campo "Respuesta ofertante". Con esto se dará por concluido el trámite y el expediente quedará rechazado.</p> <p style="margin-bottom: 10px">Si el ofertante ha aceptado la propuesta de contraoferta, seleccione la opción "Aprueba". Si es así, se lanzará la tarea "Informe jurídico" a la gestoría de formalización.</p> <p style="margin-bottom: 10px">En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(4).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -1275,7 +1269,7 @@ begin
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_ORDEN') := 2;
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_TIPO') := 'datefield';
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'fechaRespuesta';
-  TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Fecha de respuesta CES';
+  TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Fecha de respuesta ofertante CES';
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(4).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -1554,7 +1548,7 @@ begin
   TFI_MAP(7).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">En la presente tarea deberá reflejar si se ha aprobado el proceso de PBC de la reserva.</p> 
   <p style="margin-bottom: 10px">Si no se ha aprobado, el expediente quedará anulado, finalizándose el trámite</p>
   <p style="margin-bottom: 10px"> Si se ha aprobado, se lanzará al gestor la tarea de "instrucciones de reserva"</p> 
-  <p style="margin-bottom: 10px"> En el campo <span style="color:green">"observaciones"</span> puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite</p>';
+  <p style="margin-bottom: 10px"> En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite</p>';
   TFI_MAP(7).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(7).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(7).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -1659,7 +1653,7 @@ begin
   TFI_MAP(8).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">En la presente tarea deberá reflejar si se ha aprobado el proceso de PBC.</p> 
   <p style="margin-bottom: 10px">Si no se ha aprobado, el expediente quedará anulado, finalizándose el trámite</p>
   <p style="margin-bottom: 10px"> Si se ha aprobado, se lanzará a la gestoría de formalización la tarea de "Posicionamiento y firma"</p> 
-  <p style="margin-bottom: 10px"> En el campo <span style="color:green">"observaciones"</span> puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite</p>';
+  <p style="margin-bottom: 10px"> En el campo "observaciones" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite</p>';
   TFI_MAP(8).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(8).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
   TFI_MAP(8).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -1761,8 +1755,8 @@ begin
   TFI_MAP(9).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
   TFI_MAP(9).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">Ha elevado un expediente comercial al comité sancionador de la cartera.
   Para completar esta tarea es necesario esperar a la respuesta del comité, subiendo el documento de respuesta por parte del comité en la pestaña "documentos". Además:</p> 
-  <p style="margin-bottom: 10px">A) Si el comité ha rechazado la oferta, seleccione en el campo "Recomendacion CES " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.</p>
-  <p style="margin-bottom: 10px">B) Si el comité ha aprobado la oferta, seleccione la opción "aprobado" en el campo "Resolución CES".
+  <p style="margin-bottom: 10px">A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Recomendacion CES " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.</p>
+  <p style="margin-bottom: 10px">B) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo "Resolución CES".
   Se debe de incluir el documento "Advisory Note CES" para poder avanzar la tarea. La siguiente tarea se le lanzará a Resolucion Promontoria Manzana</p> 
   <p style="margin-bottom: 10px"> En el campo "observaciones Recomendación CES" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
   TFI_MAP(9).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
@@ -1882,8 +1876,8 @@ begin
   TFI_MAP(10).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
   TFI_MAP(10).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">Ha elevado un expediente comercial al comité sancionador de la cartera.
   Para completar esta tarea es necesario esperar a la respuesta del comité, subiendo el documento de respuesta por parte del comité en la pestaña "documentos". Además:</p> 
-  <p style="margin-bottom: 10px">A) Si el comité ha rechazado la oferta, seleccione en el campo "Aprobacion PRO. Manzana " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.</p>
-  <p style="margin-bottom: 10px">B) Si el comité ha aprobado la oferta, seleccione la opción "aprobado" en el campo " Aprobacion PRO. Manzana ".
+  <p style="margin-bottom: 10px">A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Aprobacion PRO. Manzana " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.</p>
+  <p style="margin-bottom: 10px">B) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo " Aprobacion PRO. Manzana ".
   La siguiente tarea se le lanzará a Posicionamiento y firma si se ha concluido el PBC de venta y el informe jurídico</p> 
   <p style="margin-bottom: 10px"> En el campo "observaciones Pro. Manzana" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
   TFI_MAP(10).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;

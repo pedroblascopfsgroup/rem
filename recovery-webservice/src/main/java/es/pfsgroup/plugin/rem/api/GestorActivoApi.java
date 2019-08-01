@@ -41,11 +41,6 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_FINANCIERO = "HAYASBOFIN";
 	public static final String CODIGO_SUPERVISOR_RESERVA_CAJAMAR = "SUPRES";
 	public static final String CODIGO_SUPERVISOR_MINUTA_CAJAMAR = "SUPMIN";
-	public static final String USU_PROVEEDOR_BANKIA_SAREB_TINSA = "proveedor.tinsa";
-	public static final String USU_PROVEEDOR_HOMESERVE = "proveedor.homeserve";
-	public static final String USU_PROVEEDOR_AESCTECTONICA = "proveedor.aesctectonica";
-	public static final String USU_CEE_BANKIA_POR_DEFECTO = "proveedor.cee.bankia";
-	public static final String USU_CEDULA_HABITABILIDAD_SAREB_POR_DEFECTO = "proveedor.cedula.habitabilidad.sareb";
 	public static final String CODIGO_TIPO_PROVEEDOR_TECNICO="PTEC";
 	public static final String CODIGO_GESTOR_GOLDEN_TREE = "GTREE";
 	public static final String CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK = "GCODI";
@@ -70,7 +65,14 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_DE_ADMINISTRACION = "GADMT";
 	public static final String CODIGO_GESTOR_FORMALIZACION_ADMINISTRACION = "GFORMADM";
 	public static final String CODIGO_GESTOR_PORTFOLIO_MANAGER = "GPM";
-	
+	public static final String USU_PROVEEDOR_BANKIA_SAREB_TINSA = "proveedor.tinsa";
+	public static final String USU_PROVEEDOR_HOMESERVE = "proveedor.homeserve";
+	public static final String USU_PROVEEDOR_AESCTECTONICA = "proveedor.aesctectonica";
+	public static final String USU_CEE_BANKIA_POR_DEFECTO = "proveedor.cee.bankia";
+	public static final String USU_CEDULA_HABITABILIDAD_SAREB_POR_DEFECTO = "proveedor.cedula.habitabilidad.sareb";
+	public static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "usuario.ficticio.oferta.cajamar";
+	public static final String BUZON_REM = "buzon.rem";
+	public static final String BUZON_PFS = "buzon.pfs";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 

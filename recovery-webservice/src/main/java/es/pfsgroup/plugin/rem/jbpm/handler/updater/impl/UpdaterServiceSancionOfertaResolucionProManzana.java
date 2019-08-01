@@ -17,13 +17,19 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -43,12 +49,22 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 	@Autowired
 	private NotificatorServiceSancionOfertaSoloRechazo notificatorRechazo;
 	
+	@Autowired
+	private GencatApi gencatApi;
+
+	@Autowired
+	private ActivoApi activoApi;
+
+	@Autowired
+	private ComunicacionGencatApi comunicacionGencatApi;
+	
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionProManzana.class);
 
 	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
 	private static final String COMBO_RESPUESTA = "comboRespuesta";
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
+	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -102,6 +118,32 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 						}
 					}
 				}
+				
+				List<ActivoOferta> listActivosOferta = ofertaAceptada.getActivosOferta();
+				
+				Boolean necesitaReserva = ofertaApi.checkReserva(ofertaAceptada);
+				
+				//Revisamos si es afecto a GENCAT para lanzar tramite
+				if(!necesitaReserva || (necesitaReserva && ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA))) {
+					for (ActivoOferta activoOferta : listActivosOferta) {
+						ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
+						if(activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+							Oferta oferta = expediente.getOferta();	
+							OfertaGencat ofertaGencat = null;
+							if (!Checks.esNulo(comunicacionGencat)) {
+								ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
+							}
+							if(!Checks.esNulo(ofertaGencat)) {
+									if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+										gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+									}
+							}else{	
+								gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+							}					
+						}
+					}
+				}
+				
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
 				genericDao.update(ExpedienteComercial.class, expediente);

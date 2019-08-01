@@ -67,6 +67,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	private static final String COMBO_RIESGO = "comboRiesgo";
 	private static final String COMBO_COMITE_SUPERIOR = "comiteSuperior";
 	private static final String CAMPO_COMITE = "comite";
+	private static final String T017 = "T017";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -79,8 +80,27 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi
 				.expedienteComercialPorOferta(ofertaAceptada.getId());
+
+		/*Integer reservaNecesaria = 0;
+		
+		if(ofertaApi.esOfertaPrincipal(ofertaAceptada)) {
+			//recorremos la lista de dependientes
+				//pillamos la tarea y la avanzamos
+			if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
+
+				reservaNecesaria = expediente.getCondicionante().getSolicitaReserva();
+			}
+			
+			
+			for ofertaDependiente
+			expediente.getCondiciona
+		}*/
+		
+		String tipoTramite = tramite.getTipoTramite().getCodigo();
+		
 		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(expediente)) {	
-			if (ofertaApi.checkAtribuciones(tramite.getTrabajo())) {
+			//Si tiene atribuciones y no es T017 podra entrar (aunque el comité de T017 no deberia entrar de por si)
+			if (ofertaApi.checkAtribuciones(tramite.getTrabajo()) && !T017.equals(tipoTramite)) {
 				List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 				for (ActivoOferta activoOferta : listActivosOferta) {
 					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());

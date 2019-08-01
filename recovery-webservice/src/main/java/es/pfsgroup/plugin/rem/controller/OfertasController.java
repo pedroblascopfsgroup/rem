@@ -77,8 +77,7 @@ public class OfertasController {
 
 	@Autowired
 	private RestApi restApi;
-	
-	
+		
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
@@ -710,13 +709,14 @@ public class OfertasController {
 					}
 					else {
 						idTarea[0] = tareaId.toString();
-						
-						error = RestApi.REST_MSG_VALIDACION_TAREA;
-						errorDesc = "La tarea " + codTarea + " no existe.";
-						
 						datosTarea.put("idTarea",idTarea);
-						
-						resultado = agendaAdapter.validationAndSave(datosTarea);
+						try{
+							resultado = agendaAdapter.validationAndSave(datosTarea);
+						} catch(Exception e){
+							error = RestApi.REST_MSG_VALIDACION_TAREA;
+							errorDesc = e.getMessage();
+							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+						}
 						model.put("id", id);
 						model.put("ofrNumOferta", ofrNumOferta);
 						model.put("codTarea", codTarea);

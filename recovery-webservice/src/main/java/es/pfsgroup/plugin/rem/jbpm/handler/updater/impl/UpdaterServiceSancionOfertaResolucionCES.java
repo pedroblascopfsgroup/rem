@@ -128,14 +128,16 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						String doubleValue = valor.getValor();
 						doubleValue = doubleValue.replace(',', '.');
-						ofertaAceptada.setImporteContraofertaCES(Double.valueOf(doubleValue));
+						Double nuevoImporte = Double.valueOf(doubleValue);
+						ofertaAceptada.setImporteContraofertaCES(nuevoImporte);
+						
+						ofertaAceptada.setImporteContraOferta(nuevoImporte);
 	
 						// Actualizar honorarios para el nuevo importe de contraoferta.
 						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
 	
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
-						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						
 					}
 				}

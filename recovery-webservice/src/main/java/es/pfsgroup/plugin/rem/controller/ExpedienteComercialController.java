@@ -1776,13 +1776,16 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
 			
 			List<VReportAdvisoryNotes> listaAN = expedienteComercialApi.getAdvisoryNotesByOferta(oferta);
-		
-			File file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request);
-			excelReportGeneratorApi.sendReport(file, response);
+			
+			if(!Checks.estaVacio(listaAN)) {
+				File file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request);
+				excelReportGeneratorApi.sendReport(file, response);
+			}
 			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		} 
 	}
 

@@ -41,7 +41,6 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -67,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -76,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -811,6 +812,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "visitasTotal", new Long(0));
 		}
 		
+		if(activo.getCesionSaneamiento() != null) {
+			BeanUtils.copyProperty(activoDto, "cesionSaneamientoCodigo", activo.getCesionSaneamiento().getCodigo());
+		}
+		
+		if(activo.getServicerActivo() != null) {
+			BeanUtils.copyProperty(activoDto, "servicerActivoCodigo", activo.getServicerActivo().getCodigo());
+		}
+		
 		return activoDto;
 	}
 	
@@ -885,6 +894,30 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDUnidadPoblacional inferiorNuevo = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setUnidadPoblacional(inferiorNuevo);
 				reiniciarPBC = true;
+			}
+			
+			if (!Checks.esNulo(dto.getCesionSaneamientoCodigo())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCesionSaneamientoCodigo());
+				DDCesionSaneamiento cesionNuevo = (DDCesionSaneamiento) genericDao.get(DDCesionSaneamiento.class, filtro);
+				activo.setCesionSaneamiento(cesionNuevo);
+			}
+			
+			if (!Checks.esNulo(dto.getServicerActivoCodigo())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getServicerActivoCodigo());
+				DDServicerActivo servicerNuevo = (DDServicerActivo) genericDao.get(DDServicerActivo.class, filtro);
+				activo.setServicerActivo(servicerNuevo);
+			}
+			
+			if(!Checks.esNulo(dto.getPerimetroMacc())) {
+				activo.setPerimetroMacc(dto.getPerimetroMacc());
+			}
+			
+			if(!Checks.esNulo(dto.getPerimetroCartera())) {
+				activo.setPerimetroCartera(dto.getPerimetroCartera());
+			}
+
+			if(!Checks.esNulo(dto.getNombreCarteraPerimetro())) {
+				activo.setNombreCarteraPerimetro(dto.getNombreCarteraPerimetro());
 			}
 			
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));

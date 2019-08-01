@@ -828,6 +828,21 @@ Ext.define('HreRem.model.Activo', {
     			},
 				depends: 'subcarteraCodigo',
 				depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'servicerActivoCodigo'
+    		},
+    		{
+    			name: 'cesionSaneamientoCodigo'
+    		},
+    		{
+    			name: 'perimetroMacc'
+    		},
+    		{
+    			name: 'perimetroCartera'
+    		},
+    		{
+    			name: 'nombreCarteraPerimetro'
     		}
     ],
     

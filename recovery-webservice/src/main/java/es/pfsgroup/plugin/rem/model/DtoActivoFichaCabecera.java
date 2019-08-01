@@ -247,6 +247,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	//Contador de ofertas y visitas
 	private Long ofertasTotal;
 	private Long visitasTotal;
+	
+	// Datos Perimetro Apple
+	private String servicerActivoCodigo;
+	private String cesionSaneamientoCodigo;	
+	private Integer perimetroMacc;
+	private Integer perimetroCartera;
+	private String nombreCarteraPerimetro;
 
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -1904,5 +1911,45 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setVisitasTotal(Long visitasTotal) {
 		this.visitasTotal = visitasTotal;
 	}
+
+	public String getServicerActivoCodigo() {
+		return servicerActivoCodigo;
+	}
+
+	public void setServicerActivoCodigo(String servicerActivoCodigo) {
+		this.servicerActivoCodigo = servicerActivoCodigo;
+	}
+
+	public String getCesionSaneamientoCodigo() {
+		return cesionSaneamientoCodigo;
+	}
+
+	public void setCesionSaneamientoCodigo(String cesionSaneamientoCodigo) {
+		this.cesionSaneamientoCodigo = cesionSaneamientoCodigo;
+	}
+
+	public Integer getPerimetroMacc() {
+		return perimetroMacc;
+	}
+
+	public void setPerimetroMacc(Integer perimetroMacc) {
+		this.perimetroMacc = perimetroMacc;
+	}
+
+	public Integer getPerimetroCartera() {
+		return perimetroCartera;
+	}
+
+	public void setPerimetroCartera(Integer perimetroCartera) {
+		this.perimetroCartera = perimetroCartera;
+	}
+
+	public String getNombreCarteraPerimetro() {
+		return nombreCarteraPerimetro;
+	}
+
+	public void setNombreCarteraPerimetro(String nombreCarteraPerimetro) {
+		this.nombreCarteraPerimetro = nombreCarteraPerimetro;
+	}	
 	
 }

@@ -1968,6 +1968,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
    				extraParams: {numActivo: '{activo.numActivo}'}
 			}
+		},
+		comboServicerActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'servicerActivo'}
+			}
+		},
+		
+		comboCesionSaneamiento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'cesionSaneamiento'}
+			}
+		},
+		comboSiNoDatosPerimetroApple: {
+			data : [	        	
+	        	{"codigo":"0", "descripcion":"No"},
+	        	{"codigo":"1", "descripcion":"Si"}
+	    	]
 		}
+		
      }
 });

@@ -162,8 +162,8 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired 
 	private MSVSuperDiscPublicacionesExcelValidator disclamerPublicaciones;
 	
-	@Autowired 
-	private MSVGastosRefacturablesExcelValidator gastosRefacturables;
+	/*@Autowired 
+	private MSVGastosRefacturablesExcelValidator gastosRefacturables;*/
 	
 	@Autowired 
 	private MSVActualizacionPerimetroAppleExcelValidator valoresPerimetroApple;
@@ -273,9 +273,9 @@ public class MSVExcelValidatorFactoryImpl {
 			return cargaMasivaFormalizacion;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION.equals(codTipoOperacion)) {
 			return disclamerPublicaciones;
-		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES.equals(codTipoOperacion)) {
+		}/* else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES.equals(codTipoOperacion)) {
 			return gastosRefacturables;
-		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALORES_PERIMETRO_APPLE.equals(codTipoOperacion)) {
+		} */else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALORES_PERIMETRO_APPLE.equals(codTipoOperacion)) {
 			return valoresPerimetroApple;
 		}
 

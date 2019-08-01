@@ -847,7 +847,72 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							}
 						]
 						
-					} //Fin activo bancario
+					}, //Fin activo bancario
+					
+		            {//Perímetro apple    
+		                
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.perimetro.apple'),
+						bind:{hidden: '{!activo.isSubcarteraApple}'},						
+						border: true,
+						colapsible: false,
+						colspan: 3,
+						items :
+							[
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.servicer'),	
+								reference: 'comboPerimetroAppleServicer',					        	
+								bind: {
+									readOnly : !$AU.userIsRol("HAYASUPER"),
+									store: '{comboServicerActivo}',
+									value: '{activo.servicerActivoCodigo}'
+								}
+	    													
+							},
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.cesion'),
+								reference: 'comboPerimetroAppleCesion',
+								bind:{
+									readOnly : !$AU.userIsRol("HAYASUPER"),
+									store: '{comboCesionSaneamiento}',									
+									value: '{activo.cesionSaneamientoCodigo}' 
+								}
+							},
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.macc.perimetro'),
+								reference: 'comboPerimetroAppleMACC',
+								bind:{
+									readOnly : !$AU.userIsRol("HAYASUPER"),
+									store: '{comboSiNoDatosPerimetroApple}',
+									value: '{activo.perimetroMacc}'	
+								}
+                            },
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.cartera.perimetro'),
+								reference: 'comboPerimetroAppleCartera',
+								bind:{
+									readOnly : !$AU.userIsRol("HAYASUPER"),
+									store: '{comboSiNoDatosPerimetroApple}',
+									value: '{activo.perimetroCartera}'	
+								}
+							},
+							{
+								xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.cartera.nombre'),
+								reference: 'comboPerimetroAppleCarteraNombre',
+								bind: {
+									readOnly : !$AU.userIsRol("HAYASUPER"),									
+									value: '{activo.nombreCarteraPerimetro}'
+								}
+							}
+						]
+						
+					} //Fin perímetro apple
 				]
 			}, //Fin perimetros
 			{	// HistÃ³rico Destino Comercial ---------------------------------------------------------

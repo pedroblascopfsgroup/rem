@@ -75,10 +75,13 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Filter filtro = null;
 			if (!Checks.esNulo(expediente)) {
+				
+				Boolean obtencionReservaFinalizada = ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA);
+				
 				for (TareaExternaValor valor : valores) {			
 					if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor())) {
-							if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva()) && expediente.getCondicionante().getSolicitaReserva() == 1) {
+							if (obtencionReservaFinalizada) {
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
 							} else {
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
@@ -124,7 +127,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 				Boolean necesitaReserva = ofertaApi.checkReserva(ofertaAceptada);
 				
 				//Revisamos si es afecto a GENCAT para lanzar tramite
-				if(!necesitaReserva || (necesitaReserva && ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA))) {
+				if(!necesitaReserva || (necesitaReserva && obtencionReservaFinalizada)) {
 					for (ActivoOferta activoOferta : listActivosOferta) {
 						ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
 						if(activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){

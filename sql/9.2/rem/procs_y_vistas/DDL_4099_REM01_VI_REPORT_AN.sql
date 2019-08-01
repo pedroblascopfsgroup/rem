@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Vicnete Martinez Cifre
---## FECHA_CREACION=20190726
+--## AUTOR= Lara Pablo Flores
+--## FECHA_CREACION=20190801
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7179
@@ -10,7 +10,8 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - AUTOR=Vicnete Martinez Cifre
+--##		0.2 Cambio en estado de conservación
 --##########################################
 --*/
 
@@ -83,7 +84,7 @@ BEGIN
         JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION ALO ON ACT.ACT_ID = ALO.ACT_ID
         JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON ACT.ACT_ID = SPS.ACT_ID
         JOIN '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL REG ON ACT.ACT_ID = REG.ACT_ID
-        JOIN '||V_ESQUEMA||'.DD_ECV_ESTADO_CONSERVACION ECV ON ICO.DD_ECV_ID = ECV.DD_ECV_ID
+        LEFT JOIN '||V_ESQUEMA||'.DD_ECV_ESTADO_CONSERVACION ECV ON ICO.DD_ECV_ID = ECV.DD_ECV_ID
         LEFT JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON ACT.ACT_ID = PTA.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.DD_EAL_ESTADO_ALQUILER EAL ON PTA.DD_EAL_ID = EAL.DD_EAL_ID
         LEFT JOIN '||V_ESQUEMA||'.DD_TAL_TIPO_ALQUILER TAL ON ACT.DD_TAL_ID = TAL.DD_TAL_ID

@@ -1797,21 +1797,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (Checks.esNulo(expedienteComercialEntrada)) {
 			expedienteComercial = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
-
-			if (fileItem.getParameter("tipo") == null) {
-				throw new Exception("Tipo no valido");
-			}
-
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-			tipoDocumento = genericDao.get(DDTipoDocumentoExpediente.class, filtro);
-
-		} else {
+		}else {
 			expedienteComercial = expedienteComercialEntrada;
-			if (!Checks.esNulo(matricula)) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
-				tipoDocumento = genericDao.get(DDTipoDocumentoExpediente.class, filtro);
-			}
+		} 
+
+		if (fileItem.getParameter("tipo") == null) {
+			throw new Exception("Tipo no valido");
 		}
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		tipoDocumento = genericDao.get(DDTipoDocumentoExpediente.class, filtro);
 
 		// Subida de adjunto al Expediente Comercial
 		ActivoAdjuntoActivo adjuntoActivo = null;
@@ -1830,8 +1825,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		// Establecer tipo y subtipo del adjunto a subir.
 		adjuntoExpediente.setTipoDocumentoExpediente(tipoDocumento);
 
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
-		adjuntoExpediente.setSubtipoDocumentoExpediente(genericDao.get(DDSubtipoDocumentoExpediente.class, filtro));
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
+		adjuntoExpediente.setSubtipoDocumentoExpediente(genericDao.get(DDSubtipoDocumentoExpediente.class, filtroSubtipo));
 
 		adjuntoExpediente.setContentType(fileItem.getFileItem().getContentType());
 		adjuntoExpediente.setTamanyo(fileItem.getFileItem().getLength());

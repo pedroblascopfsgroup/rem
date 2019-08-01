@@ -79,8 +79,10 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-		Filter filtro;
+		Filter filtro = null;
 		Activo activo = null;
+		
+		Boolean proManzanaFinalizada = ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_RESOLUCION_PRO_MANZANA);
 		
 
 		for (TareaExternaValor valor : valores) {
@@ -128,10 +130,14 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 			activo = ofertaAceptada.getActivoPrincipal();
 			
-			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
-
-			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-			expediente.setEstado(estado);
+			if(!T017.equals(tramite.getTipoTramite().getCodigo()) || (T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada)) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
+			}
+			
+			if(!Checks.esNulo(filtro)) {
+				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+				expediente.setEstado(estado);
+			}
 
 			// actualizamos el estado de la reserva a firmada
 			if (!Checks.esNulo(expediente.getReserva())) {
@@ -186,7 +192,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			}
 			
 			//Si es T017, revisamos GENCAT
-			if(T017.equals(tramite.getTipoTramite().getCodigo()) && ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_RESOLUCION_PRO_MANZANA)) {
+			if(T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada) {
 				for (ActivoOferta activoOferta : listActivosOferta) {
 					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
 					if(activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){

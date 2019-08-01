@@ -2100,7 +2100,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						c.setCellStyle(null);
 					break;
 					case 9:
-						c.setCellStyle(styleBordesAbajoDerecha);
+						c.setCellStyle(styleBordesSoloDerecha);
 						break;
 				default:
 					break;

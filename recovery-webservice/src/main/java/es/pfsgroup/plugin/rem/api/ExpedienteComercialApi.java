@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1238,5 +1239,7 @@ public interface ExpedienteComercialApi {
 	public void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial);
 
 	boolean existeComprador(String numDoc);
+
+	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 
 }

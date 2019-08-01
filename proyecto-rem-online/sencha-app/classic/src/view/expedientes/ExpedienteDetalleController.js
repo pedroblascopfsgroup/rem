@@ -2838,6 +2838,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var url =  $AC.getRemoteUrl('expedientecomercial/getAdvisoryNoteExpediente');
 
 		var config = {};
+		config.params = {};
+		config.params.idExpediente=me.getViewModel().get('expediente.id');
 		config.url= url;
 		me.fireEvent("downloadFile", config);
 

@@ -3855,6 +3855,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 
+	@Override
+	public Oferta getOfertaByIdExpediente(Long idExpediente) {
+		return genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente)).getOferta();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean esTareaFinalizada(ActivoTramite tramite, String codigoTarea) {

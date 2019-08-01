@@ -661,5 +661,7 @@ public interface OfertaApi {
 	public Boolean esTareaFinalizada(ActivoTramite tramite, String codigoTarea);
 
 	Boolean finalizarOferta(Oferta oferta);
+
+	Oferta getOfertaByIdExpediente(Long idExpediente);
 }
 

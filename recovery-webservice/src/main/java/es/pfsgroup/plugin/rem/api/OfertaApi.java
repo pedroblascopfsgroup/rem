@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -643,5 +644,11 @@ public interface OfertaApi {
 	 * @param oferta
 	 */
 	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
+	
+	/**
+	 * Devuelve el Gestor Entidad Comercial de la Oferta
+	 * @param oferta
+	 */
+	GestorEntidad getGestorEntidad(Oferta oferta);
 }
 

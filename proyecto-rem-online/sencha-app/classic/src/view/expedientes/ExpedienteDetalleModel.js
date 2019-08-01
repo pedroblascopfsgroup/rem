@@ -434,16 +434,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}else{
 				return true;
 			}
-		},
-		getGestorComercialPrescriptor: function(get){
-			me = this;
-			var gestorComercial = get('datosbasicosoferta.gestorComercialPrescriptor');
-			if (gestorComercial){
-				return gestorComercial;
-			}
-			return 'NA';
 		}
-		 
 	 }, 
 
 

@@ -146,7 +146,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	reference: 'comboGestorComercialPrescriptor',
 		                	bind:{
 		                		store:'{storeComboGestorPrescriptor}',
-		                		value:'{getGestorComercialPrescriptor}',
+		                		value:'{datosbasicosoferta.gestorComercialPrescriptor}',
 		                		hidden: '{!esCarteraCajamar}'
 		                	},
 		                	listeners: {change: 'setGestorComercialPrescriptor'}

@@ -46,6 +46,8 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.eventfactory.Gestor;
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
@@ -231,6 +233,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
@@ -821,6 +824,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(dto.getImporteOferta())) {
 			ofertaApi.resetPBC(expedienteComercial, false);
 		}
+		if(!Checks.esNulo(dto.getGestorComercialPrescriptor()) && dto.getGestorComercialPrescriptor().equals(0l)) {
+			dto.setGestorComercialPrescriptor(null);
+			oferta.setGestorComercialPrescriptor(null);
+		}
 
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
@@ -831,6 +838,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} catch (InvocationTargetException e) {
 			logger.error("error en expedienteComercialManager", e);
 		}
+		
 
 		if (!Checks.esNulo(dto.getNecesitaFinanciacion())) {
 			oferta.setNecesitaFinanciacion(dto.getNecesitaFinanciacion().equals("01") ? true : false);
@@ -1389,8 +1397,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(expediente)) {
 			dto.setIdEco(expediente.getId());
 		}
-		if(Checks.esNulo(oferta.getGestorComercialPrescriptor())) {
+		if (!Checks.esNulo(oferta.getGestorComercialPrescriptor())) {
 			dto.setGestorComercialPrescriptor(oferta.getGestorComercialPrescriptor());
+		}else {
+			dto.setGestorComercialPrescriptor(new Long(0));
 		}
 		
 		return dto;
@@ -9651,26 +9661,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			tipo = !Checks.esNulo(act.getTipoComercializar()) ? act.getTipoComercializar().getCodigo() : null;
 		}
 		if(!Checks.esNulo(tipo)) {
-			ventaRetail = tipo.equals("02");	
+			ventaRetail = DDTipoComercializar.CODIGO_RETAIL.equals(tipo);	
 			ventaSingular = !ventaRetail;
 		}
 		if (!Checks.esNulo(activoProveedor.getTipoProveedor().getCodigo())) {
-			prescriptorOficina = activoProveedor.getTipoProveedor().getCodigo().equals("29");
+			prescriptorOficina = activoProveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_OFICINA_CAJAMAR);
 		}else {
 			return null;
 		}
 		if(!Checks.esNulo(oferta.getGestorComercialPrescriptor())) {
 			if(ventaRetail && prescriptorOficina) {
-				
-				diccionario.setDescripcion(activoProveedor.getNombre());
-				diccionario.setId(activoProveedor.getId());
-				diccionario.setCodigo(activoProveedor.getId().toString());
+				GestorEntidad gestor = ofertaApi.getGestorEntidad(oferta);
+				diccionario.setDescripcion(gestor.getUsuario().getApellidoNombre());
+				diccionario.setCodigo(oferta.getGestorComercialPrescriptor().toString());
 				listado.add(diccionario);
-			} else if(ventaSingular ||(ventaRetail && !prescriptorOficina)) {
+			} else if(ventaSingular || ventaRetail) {
 				llenoLista = true;
 				diccionario.setDescripcion("N/A-lote");
 				diccionario.setId(0l);
-				diccionario.setCodigo("NA");
+				diccionario.setCodigo("0");
 				listado.add(diccionario);
 			}
 		}else {
@@ -9678,12 +9687,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				llenoLista=true;
 				diccionario.setDescripcion("Oficina sin gestor comercial asignado. revise la parametrizacion");
 				diccionario.setId(1l);
-				diccionario.setCodigo("NA");
+				diccionario.setCodigo("0");
 				listado.add(diccionario);
-			}else if(ventaSingular ||(ventaRetail && !prescriptorOficina)) {
+			}else if(ventaSingular || ventaRetail) {
 				llenoLista=true;
 				diccionario.setDescripcion("N/A-lote");
-				diccionario.setCodigo("NA");
+				diccionario.setCodigo("0");
 				diccionario.setId(1l);
 				listado.add(diccionario);
 			}
@@ -9692,12 +9701,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			for(ActivoOferta activoOferta: listaActivos) {
 				
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				Usuario usuario = gestorActivoApi.getGestorByActivoYTipo(activo,GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-				if(!Checks.esNulo(usuario)) {
+				GestorEntidad gestor = gestorActivoApi.getGestorEntidadByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+				if(!Checks.esNulo(gestor)) {
 					diccionarioAux = new DtoDiccionario();
-					diccionarioAux.setDescripcion(usuario.getApellidoNombre());
-					diccionarioAux.setId(usuario.getId());
-					diccionarioAux.setCodigo(usuario.getId().toString());
+					diccionarioAux.setDescripcion(gestor.getUsuario().getApellidoNombre());
+					diccionarioAux.setCodigo(gestor.getId().toString());
 					listado.add(diccionarioAux);
 				}
 				

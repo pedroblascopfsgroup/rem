@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -76,6 +77,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 
 	Usuario getGestorByActivoYTipo(Activo activo, Long tipo);
+	
+	GestorEntidad getGestorEntidadByActivoYTipo(Activo activo, String codigoTipo);
 	
 	Usuario getDirectorEquipoByGestor(Usuario gestor);
 	

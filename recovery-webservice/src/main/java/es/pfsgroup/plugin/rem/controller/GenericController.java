@@ -2,9 +2,11 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -12,9 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
-import com.tc.backport175.bytecode.AnnotationElement.Array;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +41,10 @@ import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
-import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.UploadApi;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
@@ -57,12 +57,8 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoDto;
 import es.pfsgroup.plugin.rem.rest.dto.DocumentoRequestDto;
-import es.pfsgroup.plugin.rem.rest.dto.File;
-import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
-import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import net.sf.json.JSONObject;
-import java.util.Properties;
 
 
 @Controller
@@ -99,6 +95,8 @@ public class GenericController extends ParadiseJsonController{
 	@Autowired
 	private GastoProveedorApi gastoProveedorApi;
 	
+	@Autowired
+	private UploadApi uploadApi;
 	
 
 	
@@ -488,6 +486,7 @@ public class GenericController extends ParadiseJsonController{
 	 * @return
 	 */
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST , value = "/generic/altaDocumento")
 	public void altaDocumento (ModelMap model, RestRequestWrapper request,HttpServletResponse response) {
 		DocumentoRequestDto jsonData = null;
@@ -501,45 +500,78 @@ public class GenericController extends ParadiseJsonController{
 		java.io.File file;
 		String id = null;
 		String descErrores = null;
-		
-		
+		Map <String, String> validaciones = new HashMap<String, String>();
+		validaciones.put("A", UploadApi.VALIDATE_WEBFILE_ACTIVO);
+		validaciones.put("O", UploadApi.VALIDATE_WEBFILE_EXPEDIENTE);
+		validaciones.put("T", UploadApi.VALIDATE_WEBFILE_TRABAJO);
+		validaciones.put("G", UploadApi.VALIDATE_WEBFILE_GASTO_PROOVEDOR);
 		try {
-			
 			jsonFields = request.getJsonObject();
 			jsonData = (DocumentoRequestDto) request.getRequestData(DocumentoRequestDto.class);
-
-			
-			if(Checks.esNulo(jsonFields)) {
+			if(jsonFields.isNullObject() || jsonFields.isEmpty() || Checks.esNulo(jsonData)) {
 				errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 				descErrores = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else if(jsonFields.isNullObject()) {
-				errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				descErrores = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				
-			}else if(jsonFields.isEmpty()) {
-				errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				descErrores = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else if(Checks.esNulo(jsonData)) {
-					errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-					descErrores = "Faltan campos";
-					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 			}else {
-				id = jsonData.getId();
-				
+				String key = null;
+				String value = null;
+				id = jsonData.getId() ;
 				if(Checks.esNulo(id)) {
 					errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 					descErrores = "Faltan campos";
 						throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				}else {
-					documentoDto = jsonData.getData();
-
-					if(documentoDto.getNombreDocumento().trim().length()<=4){
-						throw new Exception ("Error nombre incorrecto de documento ejemplo: nombre.extension");
+				}else if (!Checks.esNulo(id)){
+					try {
+						Long.valueOf(id);	 
+						Map<String, String> jsonDataFields = jsonData.getData().getDataFields(); 
+						for (Object keys : jsonFields.getJSONObject("data").keySet()) {
+							 key = String.valueOf(keys);
+							 value = jsonDataFields.get(key);
+							if (!jsonDataFields.containsKey(key) && !key.matches("subTipoDocumento")) 
+								throw new Exception(RestApi.REST_MSG_UNKNOWN_KEY);
+							if (Checks.esNulo(value))
+								throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+							if ( key.matches("tipoEntidad|nombreDocumento|descripcionDocumento|documento|tipoDocumento|subTipoDocumento")) {
+								String.valueOf(value);
+								if (key.matches("nombreDocumento") && value.trim().length() <= 4) {
+									throw new Exception (RestApi.REST_MSG_FORMAT_ERROR);
+								}
+							}else if ( key.matches("numEntidad")) {
+								Long.valueOf(value);
+							}
+						}
+						if (!Checks.esNulo(jsonDataFields.get("tipoEntidad")) 
+						&& "O".equalsIgnoreCase(jsonDataFields.get("tipoEntidad"))
+						&& Checks.esNulo(jsonDataFields.get("subTipoDocumento"))) {
+							throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS +"_SUBTIPO");
+						}
+					}catch (Exception e) {
+						if (RestApi.REST_MSG_MISSING_REQUIRED_FIELDS.equals(e.getMessage())) {
+							errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+							descErrores = "Faltan campos ["+key+"]";
+							throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);	
+						} else if(RestApi.REST_MSG_UNKNOWN_KEY.equals(e.getMessage())){
+							errores = RestApi.REST_MSG_UNKNOWN_KEY;
+							descErrores = " No se reconoce este campo. [ "+ key +" ]";
+							throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+						} else if ((RestApi.REST_MSG_MISSING_REQUIRED_FIELDS+"_SUBTIPO").equals(e.getMessage())) {
+							errores = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+							descErrores = "Faltan campos [ subtipoDocumento ]";
+							throw new Exception (RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+						}else if (RestApi.REST_MSG_FORMAT_ERROR.equals(e.getMessage())) {
+						//	Errores personalizados para error de formato
+							if (key.matches("nombreDocumento")) {
+								errores = RestApi.REST_MSG_FORMAT_ERROR;
+								descErrores = "Error nombre incorrecto de documento ejemplo: nombre.extension";
+								throw new Exception (RestApi.REST_MSG_FORMAT_ERROR);
+							}
+						}else {
+							errores = RestApi.REST_MSG_FORMAT_ERROR;
+							descErrores = "El formato del parametro [ "+key+" ] no es el correcto.";
+							throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+						}
 					}
-						
+					documentoDto = jsonData.getData();
 					tipoEntidad = documentoDto.getTipoEntidad().trim().toUpperCase();
 					byte [] fichero = DatatypeConverter.parseBase64Binary(documentoDto.getDocumento());
 					file = new java.io.File(rutaFichero+documentoDto.getNombreDocumento()); 
@@ -556,65 +588,24 @@ public class GenericController extends ParadiseJsonController{
 					webFileItem.putParameter("tipo", documentoDto.getTipoDocumento());
 					webFileItem.putParameter("subtipo", documentoDto.getSubTipoDocumento());
 					webFileItem.putParameter("descripcion", documentoDto.getDescripcionDocumento());
-						
-						
-		
-					if(tipoEntidad.equals("A")) {
 					
-						Activo activo = genericDao.get(Activo.class , genericDao.createFilter(FilterType.EQUALS,"numActivo", Long.parseLong(documentoDto.getNumEntidad().trim())));
-												
-						if(activo == null){
-							errores = RestApi.REST_MSG_UNKNOW_ENTITY;
-							descErrores = "No existe el activo " + documentoDto.getNumEntidad().trim();
-						}else{
-						webFileItem.putParameter("idEntidad", String.valueOf(activo.getId()));
-						errores = adapterActivo.upload(webFileItem);}
-											
-					}else if(tipoEntidad.equals("P")){
-	
-					}else if(tipoEntidad.equals("T")) {
-						Trabajo trabajo = genericDao.get(Trabajo.class , genericDao.createFilter(FilterType.EQUALS,"numTrabajo",  Long.parseLong(documentoDto.getNumEntidad().trim())));
-						if(trabajo == null){
-							errores = RestApi.REST_MSG_UNKNOW_ENTITY;
-							descErrores = "No existe el trabajo "+ documentoDto.getNumEntidad().trim();
-						}
-						else{
-							webFileItem.putParameter("idEntidad", String.valueOf(trabajo.getId()));
-							errores = trabajoApi.upload(webFileItem);	
-							
-						}	
-					}else if(tipoEntidad.equals("O")){
-						ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "numExpediente", Long.parseLong(documentoDto.getNumEntidad().trim())));
-						if(expedienteComercial == null){
-							errores = RestApi.REST_MSG_UNKNOW_ENTITY;
-							descErrores = "No existe el expediente " + documentoDto.getNumEntidad().trim();
-						}else{
-							webFileItem.putParameter("idEntidad", String.valueOf(expedienteComercial.getId()));
-							errores = expedienteComercialAdapter.uploadDocumento(webFileItem, null, null);
-	
-						}
-					}else if(tipoEntidad.equals("G")){
-						GastoProveedor gastoPorveedor = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(documentoDto.getNumEntidad().trim())));
-						if(gastoPorveedor == null){
-							errores = RestApi.REST_MSG_UNKNOW_ENTITY;
-							descErrores = "No existe el proveedor " + documentoDto.getNumEntidad().trim();
-						}else{
-						webFileItem.putParameter("idEntidad", String.valueOf(gastoPorveedor.getId()));
-						errores = gastoProveedorApi.upload(webFileItem);
-						}
-	
-					}else{
+					if (!tipoEntidad.matches("G|A|T|O")) {
 						errores = RestApi.REST_MSG_INVALID_ENTITY_TYPE;
 						descErrores = "El tipo de entidad especificada no existe";
-					}
-								//El id, tanto en el try como en el catch, lo debe devolver siempre
-					if(errores==null){
-						model.put("id", id);
-						model.put("data", documentoDto);
-						model.put("succes", true);
-	
-					}else{	
-						throw new Exception(errores);
+						throw new Exception(RestApi.REST_MSG_INVALID_ENTITY_TYPE);
+					}else {						
+						webFileItem.putParameter("UploadAction", validaciones.get(tipoEntidad));
+						webFileItem.putParameter("numEntidadDto", documentoDto.getNumEntidad().trim());
+						Map <String, Object > data = uploadApi.validateAndUploadWebFileItem(webFileItem);
+						if (!Checks.esNulo(data.get("error"))) {
+							errores = (String)data.get("error");
+							descErrores = (String) data.get("descError");
+							throw new Exception(errores);
+						}else {
+							model.put("id", id);
+							model.put("data", documentoDto);
+							model.put("succes", true); 
+						}
 					}
 				}
 			}
@@ -623,6 +614,10 @@ public class GenericController extends ParadiseJsonController{
 			logger.error("Error alta documento en genericController", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			errores = e.getMessage();
+			if (Checks.esNulo(errores)) { 
+				String [] splitError = e.toString().split("\\."); 
+				errores = splitError[splitError.length -1];	
+			}	
 			model.put("id", id);
 			model.put("error", errores);
 			model.put("descError", descErrores);

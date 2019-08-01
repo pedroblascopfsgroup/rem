@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -61,6 +64,16 @@ public class DocumentoDto implements Serializable {
 		this.subTipoDocumento = subTipoDocumento;
 	}
 	
-	
+	public Map<String, String> getDataFields(){
+		Map<String, String> dataFields = new HashMap<String, String>();
+		dataFields.put("tipoEntidad", this.tipoEntidad);
+		dataFields.put("numEntidad", this.numEntidad);
+		dataFields.put("tipoDocumento", this.tipoDocumento);
+		dataFields.put("nombreDocumento", this.nombreDocumento);
+		dataFields.put("descripcionDocumento", this.descripcionDocumento);
+		dataFields.put("documento", this.documento);
+		dataFields.put("subTipoDocumento", this.subTipoDocumento);
+		return dataFields;
+	}
 
 }

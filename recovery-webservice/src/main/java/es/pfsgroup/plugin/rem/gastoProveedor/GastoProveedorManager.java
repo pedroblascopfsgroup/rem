@@ -2197,7 +2197,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				try {
-					gestorDocumentalAdapterApi.uploadDocumentoGasto(gasto, fileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoGasto(gasto, fileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+					AdjuntoGasto adjuntoGasto = createAdjuntoGasto(fileItem, gasto, idDocRestClient);
+					gasto.getAdjuntos().add(adjuntoGasto);
 				} catch (GestorDocumentalException gex) {
 					// Si no existe el expediente lo creamos
 					if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
@@ -2209,7 +2211,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 
 			} else {
-				AdjuntoGasto adjuntoGasto = createAdjuntoGasto(fileItem, gasto);
+				AdjuntoGasto adjuntoGasto = createAdjuntoGasto(fileItem, gasto, null);
 				gasto.getAdjuntos().add(adjuntoGasto);
 			}
 
@@ -2235,11 +2237,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return null;
 	}
-
-	public AdjuntoGasto createAdjuntoGasto(WebFileItem fileItem, GastoProveedor gasto) throws Exception {
+	@Override
+	public AdjuntoGasto createAdjuntoGasto(WebFileItem fileItem, GastoProveedor gasto, Long idDocRestClient) throws Exception {
 
 		AdjuntoGasto adjuntoGasto = new AdjuntoGasto();
-		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		Adjunto adj = null;
+		if (Checks.esNulo(idDocRestClient))
+			adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		else {
+			adjuntoGasto.setIdDocRestClient(idDocRestClient);
+		}
 		adjuntoGasto.setAdjunto(adj);
 
 		adjuntoGasto.setGastoProveedor(gasto);

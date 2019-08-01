@@ -106,9 +106,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertantePM implements UpdaterS
 								logger.error("Error descongelando ofertas.", e);
 							}
 
-						} else if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
-
-							expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						}
 						
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

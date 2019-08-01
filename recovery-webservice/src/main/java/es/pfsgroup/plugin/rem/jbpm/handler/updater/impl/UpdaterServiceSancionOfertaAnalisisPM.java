@@ -125,6 +125,7 @@ public class UpdaterServiceSancionOfertaAnalisisPM implements UpdaterService {
 	
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
+						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						
 					}
 				}

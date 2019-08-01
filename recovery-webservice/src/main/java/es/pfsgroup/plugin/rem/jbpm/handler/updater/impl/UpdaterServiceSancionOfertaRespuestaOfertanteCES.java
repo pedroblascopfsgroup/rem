@@ -63,8 +63,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 				if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor())) {
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo" , DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
 	 					DDEstadosExpedienteComercial aprobado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
-	 					
-						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 	 					expediente.setEstado(aprobado);
 	 				}else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())) {
 	 					ofertaApi.rechazarOferta(ofertaAceptada);

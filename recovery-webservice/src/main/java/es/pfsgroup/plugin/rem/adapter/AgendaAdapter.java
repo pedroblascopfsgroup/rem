@@ -45,6 +45,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionTipoEventoRegistro;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.dto.DtoMostrarAnotacion;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
@@ -106,6 +107,7 @@ public class AgendaAdapter {
 	private static final String ERROR_TAREA_NO_PERMITIDA = "El tipo de tarea no esta permitida para avanzar";
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	private SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat ft2 = new SimpleDateFormat("yyyy-MM-dd");
 	protected static final Log logger = LogFactory.getLog(AgendaAdapter.class);
 
 	@Resource
@@ -451,7 +453,12 @@ public class AgendaAdapter {
 						try {
 							Date fecha = ft.parse(valor[0]);
 						} catch (ParseException e) {
-							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. "; 
+							try {
+								Date fecha = ft2.parse(valor[0]);
+							} catch (Exception e2) {
+								errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. "; 
+							}
+							
 						}
 					}
 				}
@@ -958,4 +965,76 @@ public class AgendaAdapter {
 		}
 		return true;
 	}
+	
+	public Boolean avanzarOfertasDependientes(Map<String,String[]> valores) {
+		String idTareaOfertaPrincipal = "";
+		List<Oferta> ofertasDependientes = null;
+		
+		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+			String key = entry.getKey();
+			if ("idTarea".equals(key)){
+				idTareaOfertaPrincipal = entry.getValue()[0];
+			}
+		}
+		
+		if (!"".equals(idTareaOfertaPrincipal)) {
+			Oferta oferta = tareaActivoApi.tareaOferta(Long.parseLong(idTareaOfertaPrincipal));
+			if (!Checks.esNulo(oferta) && ofertaApi.isOfertaPrincipal(oferta)) {
+				ofertasDependientes = ofertaApi.ofertasAgrupadasDependientes(oferta); 
+				for (Oferta avanzaOferta : ofertasDependientes) {
+					TareaActivo tarea = tareaActivoApi.tareaOfertaDependiente(avanzaOferta);
+					if (!Checks.esNulo(tarea) && !Checks.estaVacio(valores)) {
+						Map<String,String[]> valoresDependientes = tareaActivoApi.valoresTareaDependiente(valores, tarea, oferta);
+						try {
+							validationAndSave(valoresDependientes);
+						} catch (Exception e) {
+							logger.error(e.getMessage());
+							throw new JsonViewerException("pirula");
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	public Boolean retrocederOfertaPrincipalOfertasDependientes(Map<String,String[]> valores) {
+		String idTareaOfertaPrincipal = "";
+		String codigoTareaDestino = "";
+		List<Oferta> ofertas = null;
+		
+		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+			String key = entry.getKey();
+			if ("idTarea".equals(key)){
+				idTareaOfertaPrincipal = entry.getValue()[0];
+			}
+		}
+		
+		if (!"".equals(idTareaOfertaPrincipal)) {
+			Oferta oferta = tareaActivoApi.tareaOferta(Long.parseLong(idTareaOfertaPrincipal));
+			Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", Long.parseLong(idTareaOfertaPrincipal));
+			TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtroTarea);
+			codigoTareaDestino = tareaExterna.getTareaProcedimiento().getCodigo();
+			if (!Checks.esNulo(oferta) && ofertaApi.isOfertaPrincipal(oferta)) {
+				ofertas = ofertaApi.ofertasAgrupadasDependientes(oferta);
+				ofertas.add(oferta);
+				for (Oferta ofertaRetroceder : ofertas) {
+					TareaActivo tarea = tareaActivoApi.tareaOfertaDependiente(ofertaRetroceder);
+					if (!Checks.esNulo(tarea)) {
+						DtoSaltoTarea dto = new DtoSaltoTarea();
+						dto.setIdTramite(tarea.getTramite().getId());
+						dto.setCodigoTareaDestino(codigoTareaDestino);
+						try {
+							lanzarTareaAdministrativa(dto);
+						} catch (Exception e) {
+							logger.error(e.getMessage());
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+		
 }

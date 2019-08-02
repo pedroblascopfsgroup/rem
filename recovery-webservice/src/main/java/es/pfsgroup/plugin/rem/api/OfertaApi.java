@@ -705,8 +705,6 @@ public interface OfertaApi {
 	
 
 
-	boolean isOfertaPrincipal(Oferta oferta);
-
 	public boolean faltanDatosCalculo(Oferta ofertaById);
 
 	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
@@ -715,5 +713,25 @@ public interface OfertaApi {
 
 	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente);
 
+	/**
+	 * Método que comprueba si la oferta es una oferta principal
+	 * @param oferta oferta actual
+	 * @return boolean
+	 */
+	public boolean isOfertaPrincipal(Oferta oferta);
+	
+	/**
+	 * Método que comprueba si la oferta es una oferta principal
+	 * @param oferta oferta actual
+	 * @return boolean
+	 */
+	public boolean isOfertaDependiente(Oferta oferta);
+	
+	/**
+	 * Método para obtener todas las ofertas dependientes de una principal.
+	 * @param oferta oferta actual
+	 * @return lista de ofertas dependientes
+	 */
+	public List<Oferta> ofertasAgrupadasDependientes(Oferta oferta);
 
 }

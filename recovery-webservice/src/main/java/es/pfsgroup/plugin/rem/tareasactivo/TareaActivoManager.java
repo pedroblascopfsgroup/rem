@@ -38,18 +38,25 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
@@ -95,6 +102,9 @@ public class TareaActivoManager implements TareaActivoApi {
 	
 	@Autowired
     private TareaExternaValorDao tareaExternaValorDao;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Override
 	public TareaActivo get(Long id) {
@@ -487,21 +497,64 @@ public class TareaActivoManager implements TareaActivoApi {
 		}
 		return tareaCompletada.size() > 1;
 	}
-
+	
+	@Override
+	public TareaActivo tareaOfertaDependiente(Oferta oferta) {
+		TareaActivo tarea = null;
+		ExpedienteComercial expediente = expedienteComercialApi
+				.expedienteComercialPorOferta(oferta.getId());
+		if (!Checks.esNulo(expediente)) {
+			Trabajo trabajoAsociadoExpediente = expediente.getTrabajo();
+			if (!Checks.esNulo(trabajoAsociadoExpediente)) {
+				Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajoAsociadoExpediente.getId());
+				ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTrabajo);
+				if (!Checks.esNulo(tramite)) {
+					Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "tramite.id", tramite.getId());
+					Order order = new Order(OrderType.DESC, "id");
+					tarea = genericDao.getListOrdered(TareaActivo.class, order, filtroTramite).get(0);
+				}
+			}
+		}
+		return tarea;
+	}
+	
+	@Override
+	public Oferta tareaOferta(Long idTarea) {
+		Oferta oferta = null;
+		Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", idTarea);
+		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtroTarea);
+		if (!Checks.esNulo(tareaExterna)) {
+			TareaActivo tareaActivo = getByIdTareaExterna(tareaExterna.getId());
+			if (!Checks.esNulo(tareaActivo)) {
+				ActivoTramite tramite = tareaActivo.getTramite();
+				if (!Checks.esNulo(tramite)) {
+					Trabajo trabajo = tramite.getTrabajo();
+					if (!Checks.esNulo(trabajo)) {
+						Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+						ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+						if (!Checks.esNulo(expediente)) {
+							oferta = expediente.getOferta();
+						}
+					}
+				}
+			}
+		}
+		return oferta;
+	}
+	
+	@Override
+	public Map<String,String[]> valoresTareaDependiente(Map<String, String[]> valores, TareaActivo tarea, Oferta oferta) {
+		Map<String, String[]> camposFormulario = new HashMap<String,String[]>();
+		String[] idTareaToChange = new String[]{tarea.getId().toString()};
+		camposFormulario.put("idTarea", idTareaToChange);
+		String[] numOfertaPrincipal = new String[]{oferta.getNumOferta().toString()};
+		camposFormulario.put("numOfertaPrincipal", numOfertaPrincipal);
+		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+			String key = entry.getKey();
+			if (!"idTarea".equals(key) && !"numOfertaPrincipal".equals(key)){
+				camposFormulario.put(key, entry.getValue());
+			}
+		}
+		return camposFormulario;
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

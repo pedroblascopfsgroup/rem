@@ -867,6 +867,30 @@ public class AgendaController extends TareaController {
 		model.put("ofertaIndividual", esOfertaIndividual);
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView avanzarOfertasDependientes(WebRequest request, ModelMap model) {
+
+		boolean success = false;
+		try {
+			success = adapter.avanzarOfertasDependientes(request.getParameterMap());
+		} catch (InvalidDataAccessResourceUsageException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorValidacionGuardado", getMensajeInvalidDataAccessExcepcion(e));
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", jvex.getMessage());
+			throw new JsonViewerException(jvex.getMessage());
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", e.getMessage());
+		}
+
+		model.put("success", success);
+
+		return createModelAndViewJson(model);
+	}
 }
 
 

@@ -486,6 +486,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	                    			store = grid.getStore();
 	                    			store.load();
 	                    		}
+	                    	} else if(CONST.TAREAS['T013_DEFINICIONOFERTA'] == codigoTarea || CONST.TAREAS['T013_RESOLUCIONCOMITE'] == codigoTarea){
+	                    		var url = $AC.getRemoteUrl('agenda/avanzarOfertasDependientes');
+	                    		Ext.Ajax.request({
+					    			url:url,
+					    			params: parametros,
+					    			success: function(response, opts) {
+					    			}
+					    		});
 	                    	}
                     	}
                     }

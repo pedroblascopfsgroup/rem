@@ -2,10 +2,12 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 
 
@@ -73,5 +75,31 @@ public interface TareaActivoApi {
 		public void saltoResolucionExpedienteApple(Long idTareaExterna);
 
 		boolean getSiTareaHaSidoCompletada(Long idTramite, String nombreTarea);
+		
+		/**
+		 * Este método obtiene la tarea de activo mediante la oferta actual (creado para obtener la tarea de las ofertas dependientes de una principal).
+		 *
+		 * @param Oferta actual
+		 * @return TareaActivo de la tarea dependiente.
+		 */
+		public TareaActivo tareaOfertaDependiente(Oferta oferta);
+		
+		/**
+		 * Este método obtiene la oferta mediante el id de la tarea por la que entra (creado para obtener la oferta y comprobar si es o no principal).
+		 *
+		 * @param idTarea
+		 * @return Oferta
+		 */
+		public Oferta tareaOferta(Long idTarea);
+		
+		/**
+		 * Este método convierte un mapa de valores de una tarea a otro mapa de una tarea de un oferta dependiente de una principal.
+		 *
+		 * @param valores
+		 * @param tarea
+		 * @param oferta
+		 * @return Map<String,String[]> nuevo mapa
+		 */
+		public Map<String,String[]> valoresTareaDependiente(Map<String, String[]> valores, TareaActivo tarea, Oferta oferta);
 
     }

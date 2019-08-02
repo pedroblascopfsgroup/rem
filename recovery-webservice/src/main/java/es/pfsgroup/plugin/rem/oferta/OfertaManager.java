@@ -4308,10 +4308,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 	}
-	@Override
-	public Oferta getOfertaByIdExpediente(Long idExpediente) {
-		return genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente)).getOferta();
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -4388,12 +4384,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return ofertasAgrupadasPage;
 	}
 
+	@Override
 	public boolean isOfertaPrincipal(Oferta oferta) {
 		
 		Oferta ofertaPrincipal = getOfertaById(oferta.getId());
-		if(!Checks.esNulo(ofertaPrincipal) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(ofertaPrincipal.getClaseOferta().getCodigo())){
+		if(!Checks.esNulo(ofertaPrincipal) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(ofertaPrincipal.getClaseOferta().getCodigo())
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo()) 
+				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())){
 				return true;	
-			
 		}
 		return false;
 	}
@@ -4410,4 +4408,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return report;
 	}
 	
+
+	@Override
+	public Oferta getOfertaByIdExpediente(Long idExpediente) {
+		return genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente)).getOferta();
+	}
+
+	public boolean isOfertaDependiente(Oferta oferta) {
+		
+		Oferta ofertaDependiente = getOfertaById(oferta.getId());
+		if(!Checks.esNulo(ofertaDependiente) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaDependiente.getClaseOferta().getCodigo())
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo()) 
+				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())){
+				return true;	
+		}
+		return false;
+	}
+
+	@Override
+	public List<Oferta> ofertasAgrupadasDependientes(Oferta oferta) {
+		List<Oferta> listaOfertas = new ArrayList<Oferta>();
+		if (!Checks.esNulo(oferta) && isOfertaPrincipal(oferta)) { 
+			Filter ofertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());
+			List<OfertasAgrupadasLbk> listaOfertasIndividuales = genericDao.getList(OfertasAgrupadasLbk.class, ofertaPrincipal);
+			if (!Checks.estaVacio(listaOfertasIndividuales)) {
+				for (OfertasAgrupadasLbk ofertaIndividual : listaOfertasIndividuales) {
+					if (!Checks.esNulo(ofertaIndividual)) {
+						listaOfertas.add(ofertaIndividual.getOfertaDependiente());
+					}
+				}
+			}
+		}
+		return listaOfertas;
+	}
 }

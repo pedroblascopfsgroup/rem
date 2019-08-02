@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -664,7 +665,18 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			style.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			style.setWrapText(true);
 			
+			DataFormat df2 = myWorkBook.createDataFormat();
+			//CELDA COMPLETA CELDAS
+			XSSFCellStyle styleBordesCompletosCeldaEuro= myWorkBook.createCellStyle();
+			styleBordesCompletosCeldaEuro.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaEuro.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaEuro.setBorderRight(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaEuro.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletosCeldaEuro.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesCompletosCeldaEuro.setVerticalAlignment(XSSFCellStyle.ALIGN_CENTER);
+			styleBordesCompletosCeldaEuro.setWrapText(true);
 			
+			styleBordesCompletosCeldaEuro.setDataFormat(df2.getFormat("#0.00,€#"));
 			
 			//ESTILOS
 				//LETRA AZUL PEQUEÑA
@@ -1091,12 +1103,14 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 							}
 							break;
 						case 7:
+							c.setCellStyle(styleBordesCompletosCeldaEuro);
 							if (total) {
-								c.setCellValue(acumulacionAskingPrice.toString() + " €");
+								c.setCellValue(acumulacionAskingPrice);	
+								
 							} else {
 								if (!Checks.esNulo(dtoPAB.getImporte())) {
-									c.setCellValue(dtoPAB.getImporte().toString() + " €");
 									acumulacionAskingPrice = acumulacionAskingPrice + dtoPAB.getImporte();
+									c.setCellValue(dtoPAB.getImporte());
 								} else {
 									c.setCellValue("0€");
 								}
@@ -1781,9 +1795,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						
 						break;
 					case 4:
-						
+							c.setCellStyle(styleBordesCompletosCeldaEuro);
 							if (!Checks.esNulo(dtoPAB.getImporteParticipacionActivo())) {
-								c.setCellValue(dtoPAB.getImporteParticipacionActivo().toString() + " €");
+								c.setCellValue(dtoPAB.getImporteParticipacionActivo());
 							} else {
 								c.setCellValue("0 €");
 							}
@@ -1800,9 +1814,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						
 						break;
 					case 8:
+						c.setCellStyle(styleBordesCompletosCeldaEuro);
 							if (!Checks.esNulo(dtoPAB.getImporteParticipacionActivo()) && !Checks.esNulo(dtoPAB.getSuperficieConstruida())) {
 								Double importepormetro = (dtoPAB.getImporteParticipacionActivo()) / (dtoPAB.getSuperficieConstruida());
-								c.setCellValue((df.format(importepormetro)).toString() + " €");
+								c.setCellValue(importepormetro);
 							} else {
 								c.setCellValue("0€");
 							}
@@ -1969,12 +1984,13 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						}
 						break;
 					case 4:
+						c.setCellStyle(styleBordesCompletosCeldaEuro);
 						if(total) {
-							c.setCellValue(importeParticipacionSumatorio + " €");
+							c.setCellValue(importeParticipacionSumatorio);
 						}else {
 							if (!Checks.esNulo(dtoPAB.getImporteParticipacionActivo())) {
 								importeParticipacionSumatorio = importeParticipacionSumatorio + dtoPAB.getImporteParticipacionActivo();
-								c.setCellValue(dtoPAB.getImporteParticipacionActivo()+ " €");
+								c.setCellValue(importeParticipacionSumatorio);
 							} else {
 								c.setCellValue("");
 							}

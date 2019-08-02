@@ -855,6 +855,20 @@ public class AgendaController extends TareaController {
 		model.put("ofertaDependiente", esOfertaDependiente);
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView isOfertaIndividual(Long idExpediente, ModelMap model) {
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		Filter filtroOfertaIndividual = genericDao.createFilter(FilterType.EQUALS ,"id", eco.getOferta().getId());
+		Oferta ofertaIndividual = genericDao.get(Oferta.class, filtroOfertaIndividual);
+		boolean esOfertaIndividual = false;
+		if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(eco.getOferta().getClaseOferta().getCodigo()) && !Checks.esNulo(ofertaIndividual)) {
+			esOfertaIndividual = true;
+		}
+		model.put("ofertaIndividual", esOfertaIndividual);
+		return createModelAndViewJson(model);
+	}
 }
 
 

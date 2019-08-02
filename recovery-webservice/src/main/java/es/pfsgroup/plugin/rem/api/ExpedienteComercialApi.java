@@ -1246,5 +1246,20 @@ public interface ExpedienteComercialApi {
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 
 	boolean esYubai(TareaExterna tareaExterna);
+	/*
+	 * Devuelve el comité propuesto a partir de un id de expediente
+	 * @param idExpediente
+	 * @return DDComiteSancion
+	 */
+	DDComiteSancion comitePropuestoByIdExpediente(Long idExpediente) throws Exception;
+
+	/*
+	 * Devuelve el comité propuesto a partir de un id de oferta comercial. Utiliza el método comitePropuestoByIdExpediente
+	 * @param idOferta
+	 * @return DDComiteSancion
+	 */
+	DDComiteSancion comitePropuestoByIdOferta(Long idOferta) throws Exception;
+
+
 }
 

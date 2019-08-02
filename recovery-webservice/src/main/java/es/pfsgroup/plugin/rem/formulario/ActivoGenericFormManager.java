@@ -81,6 +81,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	public static final String NO_APLICA = "No aplica";
 	public static final String TIPO_CAMPO_TEXTFIELD = "textfield";
 	public static final String TIPO_CAMPO_COMBO_READONLY = "comboboxreadonly";
+	public static final String TIPO_CAMPO_COMBO = "combobox";
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
@@ -433,8 +434,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			}
             		}
             	}
-            	if(item.getType().equals(TIPO_CAMPO_TEXTFIELD))
-            	{
+            	
+            	if(item.getType().equals(TIPO_CAMPO_TEXTFIELD)) {
+            		
             		if(item.getNombre().equals("tieneReserva")){
             			Boolean reserva = ofertaApi.checkReserva(tareaExterna);
             			if(reserva){
@@ -443,7 +445,21 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				item.setValue(DDSiNo.NO);
             			}
             		}
+            		
+            		if(item.getNombre().equals("comitePropuesto")) {
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if(!Checks.esNulo(expediente)) {
+            					DDComiteSancion comitePropuesto = expedienteComercialApi.comitePropuestoByIdExpediente(expediente.getId());
+            					if(!Checks.esNulo(comitePropuesto)) {
+            						item.setValue(comitePropuesto.getDescripcion());
+            					}
+            				}
+            			}
+            		}
             	}
+            	
             	if(item.getType().equals(TIPO_CAMPO_FECHA))
             	{
             		if(item.getNombre().equals("fechaFirma") && tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_ObtencionContratoReserva")){
@@ -619,13 +635,12 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					}
             				
             			}
-            		}           		
+            		}
             			
             	}
             	if(item.getType().equals(TIPO_COMBOBOX_INICIAL_ED))
             	{
-            		if(item.getNombre().equals("comboResolucion") || item.getNombre().equals("comboRatificacion"))
-            		{
+            		if(item.getNombre().equals("comboResolucion") || item.getNombre().equals("comboRatificacion")) {
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if(!Checks.esNulo(ofertaAceptada)){
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -655,12 +670,13 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
             				}
             			}
-            		} 
+            		}
             	}
+            	
             	if(item.getType().equals(TIPO_CAMPO_COMBO_READONLY)) {
             		
-            		if(item.getNombre().equals("comite") || item.getNombre().equals("comitePropuesto"))
-            		{
+            		if(item.getNombre().equals("comite") || item.getNombre().equals("comitePropuesto")) {
+            			
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -709,8 +725,26 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             		}
             		
             	}
-            	if(item.getType().equals(TIPO_CAMPO_NUMBER))
-            	{
+
+            	if(item.getType().equals(TIPO_CAMPO_COMBO)) {
+            		
+            		if(item.getNombre().equals("comiteInternoSancionador")) {
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getComiteSancion())) {
+            					Filter filtroComiteSancionador = genericDao.createFilter(FilterType.EQUALS, "id", expediente.getComiteSancion().getId());
+            					DDComiteSancion comiteSancionador= genericDao.get(DDComiteSancion.class, filtroComiteSancionador);
+            					if(!Checks.esNulo(comiteSancionador)) {
+            						item.setValue(comiteSancionador.getDescripcion());
+            					}
+            				}
+            			}
+            		}
+            	}
+            	
+            	if(item.getType().equals(TIPO_CAMPO_NUMBER)) {
+            		
             		if(item.getNombre().equals("numImporteContra"))
             		{
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);

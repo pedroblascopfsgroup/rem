@@ -55,7 +55,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var esInvisibleEcActivo = false;
         var esInvisibleEcTrabajo = false;
         var esInvisibleEcExpediente = true;
-
         //Bucle que busca los enlaces en el array me.campos,
         // para mantener funcionalidad "TareaGenerica", los enlaces deben retirarse de me.campos
         var numEnlaces = 0;
@@ -148,6 +147,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     combo.allowBlank = me.campos[i].noObligatorio;
                     combo.blankText = me.campos[i].blankText;
                     combo.msgTarget = me.campos[i].msgTarget;
+                    if(me.campos[i].value != null){
+                    	combo.value = me.campos[i].value; 
+                    }
                     camposFiltrados.push(combo);
                     break;
 
@@ -1296,7 +1298,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T013_ResolucionComiteValidacion: function() {
         var me = this;
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-        
+        var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+        var comboResolucion = me.down('[name=comboResolucion]');
+        var comitePropuesto = me.down('[name=comitePropuesto]');
+        var importeTotalOfertaAgrupada = me.down('[name=importeTotalOfertaAgrupada]');
+
         if (me.down('[name=comboResolucion]').getValue() != '03') {
             me.deshabilitarCampo(me.down('[name=numImporteContra]'));
         }
@@ -1313,6 +1319,24 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
 			me.down('[name=fechaReunionComite]').hide();
 			me.down('[name=comiteInternoSancionador]').hide();
+			me.ocultarCampo(comitePropuesto);
+			me.ocultarCampo(importeTotalOfertaAgrupada);
+		}else{
+			me.desbloquearCampo(comboResolucion);
+			me.bloquearCampo(comitePropuesto);
+			
+			var url = $AC.getRemoteUrl('agenda/isOfertaIndividual');
+	    	Ext.Ajax.request({
+	    			url:url,
+	    			params: {idExpediente : idExp},
+	    			success: function(response,opts){
+	    				 var ResOfertaIndividual = Ext.JSON.decode(response.responseText).ofertaIndividual;
+	    				 if(ResOfertaIndividual == "true"){
+	    					 me.ocultarCampo(comitePropuesto);
+	    					 me.ocultarCampo(importeTotalOfertaAgrupada);
+	    				 }
+	    			}
+	    	});
 		}
 		if(CONST.CARTERA['GIANTS'] == codigoCartera && $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL'])){
     		if(me.down('[name=fechaRespuesta]').getValue() != null && me.down('[name=fechaRespuesta]').getValue() != ""){

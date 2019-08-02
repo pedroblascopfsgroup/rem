@@ -9632,5 +9632,37 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 
+	public DDComiteSancion comitePropuestoByIdExpediente(Long idExpediente) throws Exception {
+
+		try {
+			ExpedienteComercial expediente = findOne(idExpediente);
+			
+			return expediente.getComitePropuesto();
+
+		} catch (JsonViewerException jve) {
+			logger.info("error controlado en expedienteComercialManager.comitePropuestoByIdExpediente", jve);
+			throw jve;
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager.comitePropuestoByIdExpediente", e);
+			throw e;
+		}
+	}
+	
+	@Override
+	public DDComiteSancion comitePropuestoByIdOferta(Long idOferta) throws Exception {
+
+		try {
+			ExpedienteComercial expediente = expedienteComercialPorOferta(idOferta);
+			
+			return comitePropuestoByIdExpediente(expediente.getId());
+
+		} catch (JsonViewerException jve) {
+			logger.info("error controlado en expedienteComercialManager.comitePropuestoByIdOferta", jve);
+			throw jve;
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager.comitePropuestoByIdOferta", e);
+			throw e;
+		}
+	}
 
 }

@@ -287,6 +287,12 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 },
                 {
                 	name: 'pisoPiloto'
+                },
+                {
+                	name: 'empresaPromotora'
+                },
+                {
+                	name: 'empresaComercializadora'
                 }
     ],
     

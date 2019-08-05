@@ -362,8 +362,29 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								readOnly: false,
 								hidden: '{!esVisibleParaCartera}'
 							}
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.empresa.promotora'),
+							name: 'empresapromotora',
+							reference: 'empresapromotora',
+							bind: {
+								value: '{agrupacionficha.empresaPromotora}',
+								readOnly: false,
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
+							}
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.empresa.comercializadora'),
+							name: 'empresacomercializadora',
+							reference: 'empresacomercializadora',
+							bind: {
+								value: '{agrupacionficha.empresaComercializadora}',
+								readOnly: false,
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
+							}
 						}
-
 				]
           },
           {

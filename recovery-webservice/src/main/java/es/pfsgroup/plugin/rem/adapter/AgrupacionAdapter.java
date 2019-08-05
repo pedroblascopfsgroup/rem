@@ -3144,6 +3144,14 @@ public class AgrupacionAdapter {
 						agrupacion.setComercializableConsPlano(dto.getComercializableConsPlano());
 					}
 					
+					if(!Checks.esNulo(dto.getEmpresaPromotora())) {
+						agrupacion.setEmpresaPromotora(dto.getEmpresaPromotora());
+					}
+					
+					if(!Checks.esNulo(dto.getEmpresaComercializadora())) {
+						agrupacion.setEmpresaComercializadora(dto.getEmpresaComercializadora());
+					}
+					
 					activoAgrupacionApi.saveOrUpdate(obraNueva);
 				}
 

@@ -160,6 +160,12 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	
 	@Column(name = "AGR_VISITABLE")
 	private boolean esVisitable;
+	
+	@Column(name = "AGR_EMPRESA_PROMOTORA")
+	private String empresaPromotora;
+	
+	@Column(name = "AGR_EMPRESA_COMERCIALIZADORA")
+	private String empresaComercializadora;
 
 	public Long getId() {
 		return id;
@@ -407,6 +413,22 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 
 	public void setEsVisitable(boolean esVisitable) {
 		this.esVisitable = esVisitable;
+	}
+
+	public String getEmpresaPromotora() {
+		return empresaPromotora;
+	}
+
+	public void setEmpresaPromotora(String empresaPromotora) {
+		this.empresaPromotora = empresaPromotora;
+	}
+
+	public String getEmpresaComercializadora() {
+		return empresaComercializadora;
+	}
+
+	public void setEmpresaComercializadora(String empresaComercializadora) {
+		this.empresaComercializadora = empresaComercializadora;
 	}
 	
 

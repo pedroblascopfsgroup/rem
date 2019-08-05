@@ -74,6 +74,8 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean existePiloto;
 	private Boolean esVisitable;
 	private Long pisoPiloto;
+	private String empresaPromotora;
+	private String empresaComercializadora;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -455,5 +457,17 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setPisoPiloto(Long pisoPiloto) {
 		this.pisoPiloto = pisoPiloto;
+	}
+	public String getEmpresaPromotora() {
+		return empresaPromotora;
+	}
+	public void setEmpresaPromotora(String empresaPromotora) {
+		this.empresaPromotora = empresaPromotora;
+	}
+	public String getEmpresaComercializadora() {
+		return empresaComercializadora;
+	}
+	public void setEmpresaComercializadora(String empresaComercializadora) {
+		this.empresaComercializadora = empresaComercializadora;
 	}
 }

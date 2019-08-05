@@ -189,7 +189,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	  	codSubcartera = me.getViewModel().get("agrupacionficha.codSubcartera"),
 	  	pisoPiloto = me.getViewModel().get("agrupacionficha.pisoPiloto"),
 	  	existePisoPiloto = me.lookupReference("existePiloto");
-	  	debugger;
+
 		if ((CONST.CARTERA['THIRDPARTIES'] === codCartera && codSubcartera === CONST.SUBCARTERA['YUBAI'])
 			&& CONST.COMBO_TRUE_FALSE['FALSE'] == existePisoPiloto.getValue()) {
         		Ext.Msg.show({

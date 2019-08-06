@@ -4676,6 +4676,59 @@ comprobarFormatoModificar: function() {
 			
 		}
 			
-	}
+	},
+	onClickBtnDevolverReserva: function(btn){
+		var me = this,
+		model = me.getView().getViewModel().get('expediente');
+		var win = Ext.create('Ext.window.Window', {
+    		title: 'Devolver Reserva',
+    		height: 150,
+    		width: 700,
+    		modal: true,
+    		model: model,
+    		renderTo: me.getView().body,
+    		layout: 'fit',
+    		items:{
+    			xtype: 'form',
+    			id: 'devolucionForm',
+    			layout: {
+    				type: 'hbox', 
+    				pack: 'center', 
+    				align: 'center' 
+    			},
+    			items:[
+        			{
+        				xtype: 'datefield',
+        				id: 'fechaDevolucion',
+        				name: 'fechaDevolucion',
+        				reference: 'fechaDevolucion',
+        				fieldLabel: 'Fecha Devolución',
+        			}
+        		],
+        		border: false,
+        		buttonAlign: 'center',
+        		buttons: [
+        			  {
+        				  text: 'Aceptar',
+        				  formBind: true,
+        				  handler: function(){
+        					  var campoFecha = win.down('[reference=fechaDevolucion]');
+        					  win.model.set('estadoDevolucionCodigo', '02');
+        					  win.model.set('fechaDevolucionEntregas', campoFecha.getValue());
+        					  win.model.save();
+        					  win.close();
+        				  }
+        			  },
+        			  {
+        				  text: 'Cancelar', 
+        				  handler: function(){
+        					  win.close();
+        				  }
+        			  }
+        		]
+    		}
+    	});
 
+    	win.show();
+	}
 });

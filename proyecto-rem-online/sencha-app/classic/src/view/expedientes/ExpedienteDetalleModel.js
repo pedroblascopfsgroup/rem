@@ -449,9 +449,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 }else{
 			 	return false;
 			 }
+		},
 			
-		}
-	 },
+		esBankia: function(get) {
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	
+	     	if(CONST.CARTERA['BANKIA'] == carteraCodigo){
+	     		return true;
+	     	}else{
+	     		return false;
+	     	}
+		},
 
 
     stores: {
@@ -1144,4 +1152,4 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		
 		
     }
-});
+}});

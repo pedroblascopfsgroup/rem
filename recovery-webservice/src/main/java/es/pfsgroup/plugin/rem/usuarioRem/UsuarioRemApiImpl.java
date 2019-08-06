@@ -49,8 +49,8 @@ public class UsuarioRemApiImpl implements UsuarioRemApi {
 								&& (gestorSustituto.getFechaInicio().before(new Date())
 										|| gestorSustituto.getFechaInicio().equals(new Date()))
 								&& !gestorSustituto.getAuditoria().isBorrado() 
-								&& !Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto())
-									|| !Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto().getEmail())) {
+								&& (!Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto())
+									|| !Checks.esNulo(gestorSustituto.getUsuarioGestorSustituto().getEmail()))) {
 						mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
 					}
 				}

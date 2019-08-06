@@ -67,7 +67,7 @@ public interface ClienteComercialApi {
 	 *            con la información del clienteComercial a dar de alta
 	 * @return void
 	 */
-	public void saveClienteComercial(ClienteDto clienteDto);
+	public void saveClienteComercial(ClienteDto clienteDto) throws Exception;
 
 	/**
 	 * Actualiza un ClienteComercial a partir de la información pasada por
@@ -81,7 +81,7 @@ public interface ClienteComercialApi {
 	 *            a null
 	 * @return void
 	 */
-	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields);
+	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields)  throws Exception;
 
 	/**
 	 * Devuelve una lista de errores encontrados en los parámetros de entrada de
@@ -117,6 +117,6 @@ public interface ClienteComercialApi {
 	 * @param listaClienteDto
 	 * @return
 	 */
-	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields);
+	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) throws Exception;
 
 }

@@ -13,18 +13,25 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		var me = this,
 			form = me.getView(),
 			wizard = form.up('wizardBase'),
-			idExpediente = null;
+			idExpediente = null,
+			dniComprador = null,
+			codTipoDocumento = null;
 		me.firstExecution = true;
 		if(!Ext.isEmpty(wizard.expediente)){
 			idExpediente = wizard.expediente.get('id');
+			dniComprador = wizard.comprador.get('numDocumento');
+			codTipoDocumento = wizard.comprador.get('codTipoDocumento');
+		}else{
+			dniComprador = wizard.numDocumento;
+			codTipoDocumento = wizard.codTipoDocumento;
 		}
 		Ext.Ajax.request({
 			url: $AC.getRemoteUrl('ofertas/checkPedirDoc'),
 			method: 'POST',
 			params: {
 				idExpediente: idExpediente,					
-				dniComprador: wizard.comprador.get('numDocumento'),
-				codtipoDoc: wizard.comprador.get('codTipoDocumento')
+				dniComprador: dniComprador,
+				codtipoDoc: codTipoDocumento
 			},
 			success: function(response, opts) {
 				var datos = Ext.decode(response.responseText);

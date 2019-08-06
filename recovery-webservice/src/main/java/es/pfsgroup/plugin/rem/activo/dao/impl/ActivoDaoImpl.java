@@ -609,6 +609,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(" from ActivoHistoricoValoraciones hist");
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "hist.activo.id", Long.parseLong(dto.getIdActivo()));
+		
+		hb.orderBy("hist.tipoPrecio", HQLBuilder.ORDER_ASC);
 
 		return HibernateQueryUtils.page(this, hb, dto);
 

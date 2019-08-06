@@ -488,10 +488,18 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	                    		}
 	                    	} else if(CONST.TAREAS['T013_DEFINICIONOFERTA'] == codigoTarea || CONST.TAREAS['T013_RESOLUCIONCOMITE'] == codigoTarea){
 	                    		var url = $AC.getRemoteUrl('agenda/avanzarOfertasDependientes');
+	                    		var data;
 	                    		Ext.Ajax.request({
 					    			url:url,
 					    			params: parametros,
 					    			success: function(response, opts) {
+					    				 data = Ext.decode(response.responseText);
+					    				if ( data.success === "false" && data.msgError.length > 0 ) {
+					    					me.fireEvent("errorToast", data.msgError);
+				    						me.parent.fireEvent('aftersaveTarea', me.parent);
+					    				}else {
+					    					// Si todo va bien.
+					    				}
 					    			}
 					    		});
 	                    	}
@@ -527,7 +535,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         });
 
     },
-
     obtenerIdEnlaces: {
         //Obtiene los ids necesarios para las entidades referenciadas en los enlaces
 

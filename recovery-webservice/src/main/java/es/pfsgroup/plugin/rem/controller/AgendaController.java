@@ -878,13 +878,12 @@ public class AgendaController extends TareaController {
 		} catch (InvalidDataAccessResourceUsageException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorValidacionGuardado", getMensajeInvalidDataAccessExcepcion(e));
-		} catch (JsonViewerException jvex) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("msgError", jvex.getMessage());
-			throw new JsonViewerException(jvex.getMessage());
 		} catch (Exception e) {
+			String error = e.getMessage();
+			if ( error == null  || error.isEmpty())
+				error = e.toString();
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("msgError", e.getMessage());
+			model.put("msgError", error);
 		}
 
 		model.put("success", success);

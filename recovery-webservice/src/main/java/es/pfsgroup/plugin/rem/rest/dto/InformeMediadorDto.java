@@ -462,8 +462,8 @@ public class InformeMediadorDto implements Serializable {
 	@EntityDefinition(propertyName = "estadoConservacionEdificio", classObj = DDEstadoConservacion.class)
 	private String codEstadoConservacionEdificio;
 
-	@EntityDefinition(propertyName = "anyoRehabilitacionEdificio", transform = TRANSFORM_TYPE.DATE_TO_YEAR_INTEGER)
-	private Date anyoRehabilitacionEdificio;
+	@EntityDefinition(propertyName = "anyoRehabilitacionEdificio")
+	private Integer anyoRehabilitacionEdificio;
 
 	@EntityDefinition(propertyName = "numPlantas")
 	private Integer numeroPlantasEdificio;
@@ -1876,11 +1876,11 @@ public class InformeMediadorDto implements Serializable {
 		this.codEstadoConservacionEdificio = codEstadoConservacionEdificio;
 	}
 
-	public Date getAnyoRehabilitacionEdificio() {
+	public Integer getAnyoRehabilitacionEdificio() {
 		return anyoRehabilitacionEdificio;
 	}
 
-	public void setAnyoRehabilitacionEdificio(Date anyoRehabilitacionEdificio) {
+	public void setAnyoRehabilitacionEdificio(Integer anyoRehabilitacionEdificio) {
 		this.anyoRehabilitacionEdificio = anyoRehabilitacionEdificio;
 	}
 

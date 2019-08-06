@@ -30,7 +30,6 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
-import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -83,119 +82,22 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		Activo activo = null;
 		
 		Boolean proManzanaFinalizada = ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_RESOLUCION_PRO_MANZANA);
-		
+		try {
 
-		for (TareaExternaValor valor : valores) {
-
-			if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				Reserva reserva = expediente.getReserva();
-				if (!Checks.esNulo(reserva)) {
+			for (TareaExternaValor valor : valores) {
+				if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && !Checks.esNulo(expediente.getReserva())) {
 					//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
 					activoTramiteApi.reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
-					try {			
-						reserva.setFechaFirma(ft.parse(valor.getValor()));
-						genericDao.save(Reserva.class, reserva);
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
+					expediente.getReserva().setFechaFirma(ft.parse(valor.getValor()));
+					genericDao.save(ExpedienteComercial.class, expediente);
 				}
-			}
-			genericDao.save(ExpedienteComercial.class, expediente);
-			
-			
-		}		
-//		}
-//			genericDao.save(ExpedienteComercial.class, expediente);
-//		
+			}	
 		
-		if (!Checks.esNulo(ofertaAceptada)) {
-			List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
-			for (ActivoOferta activoOferta : listActivosOferta) {
-				ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-				if(!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
-					Oferta oferta = expediente.getOferta();	
-					OfertaGencat ofertaGencat = null;
-					if (!Checks.esNulo(comunicacionGencat)) {
-						ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
-					}
-					if(!Checks.esNulo(ofertaGencat)) {
-							if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
-								gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
-							}
-					}else{	
-						gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
-					}					
-				}
-			}
-
-			activo = ofertaAceptada.getActivoPrincipal();
-			
-			if(!T017.equals(tramite.getTipoTramite().getCodigo()) || (T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada)) {
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
-			}
-			
-			if(!Checks.esNulo(filtro)) {
-				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-				expediente.setEstado(estado);
-			}
-
-			// actualizamos el estado de la reserva a firmada
-			if (!Checks.esNulo(expediente.getReserva())) {
-				DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_FIRMADA));
-				expediente.getReserva().setEstadoReserva(estadoReserva);
-				
-				//Si ningun activo esta sujeto a tanteo, se informa el campo "Fecha vencimiento reserva" con Fecha firma + 40 dias
-				if(!Checks.esNulo(expediente.getReserva().getFechaFirma()) && !ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(expediente.getReserva().getFechaFirma());
-					if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
-						calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
-					}else {
-						calendar.add(Calendar.DAY_OF_YEAR, UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
-					}
-				    expediente.getReserva().setFechaVencimiento(calendar.getTime());
-				}
-				
-				//Si algún activo esta sujeto a tanteo y todos tienen la resolucion Renunciada, se informa el campo "Fecha vencimiento reserva" con la mayor fecha de resolucion de los tanteos
-				if(ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
-					List<TanteoActivoExpediente> tanteosExpediente= expediente.getTanteoActivoExpediente();
-					if(!Checks.estaVacio(tanteosExpediente)){
-						//HREOS-2686 Punto 2
-						expedienteComercialApi.actualizarFVencimientoReservaTanteosRenunciados(null, tanteosExpediente);
-					}
-				}
-			}
-
-			genericDao.save(ExpedienteComercial.class, expediente);
-
-
-			//Actualizar el estado comercial de los activos de la oferta y, consecuentemente, el estado de publicación.
-			for (TareaExternaValor valor : valores) {
-
-				if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					Reserva reserva = expediente.getReserva();
-					if (!Checks.esNulo(reserva)) {
-						//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
-						activoTramiteApi.reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
-						try {			
-							reserva.setFechaFirma(ft.parse(valor.getValor()));
-							genericDao.save(Reserva.class, reserva);
-						} catch (ParseException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				genericDao.save(ExpedienteComercial.class, expediente);
-				
-				
-			}
-			
-			//Si es T017, revisamos GENCAT
-			if(T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada) {
+			if (!Checks.esNulo(ofertaAceptada)) {
+				List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 				for (ActivoOferta activoOferta : listActivosOferta) {
 					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-					if(activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+					if(!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 						Oferta oferta = expediente.getOferta();	
 						OfertaGencat ofertaGencat = null;
 						if (!Checks.esNulo(comunicacionGencat)) {
@@ -210,17 +112,62 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						}					
 					}
 				}
+	
+				activo = ofertaAceptada.getActivoPrincipal();
+				
+				if(!T017.equals(tramite.getTipoTramite().getCodigo()) || (T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada)) {
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
+				}
+				
+				if(!Checks.esNulo(filtro)) {
+					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setEstado(estado);
+				}
+	
+				// actualizamos el estado de la reserva a firmada
+				if (!Checks.esNulo(expediente.getReserva())) {
+					DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_FIRMADA));
+					expediente.getReserva().setEstadoReserva(estadoReserva);
+					
+					//Si ningun activo esta sujeto a tanteo, se informa el campo "Fecha vencimiento reserva" con Fecha firma + 40 dias
+					if(!Checks.esNulo(expediente.getReserva().getFechaFirma()) && !ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(expediente.getReserva().getFechaFirma());
+						if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+							calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+						}else {
+							calendar.add(Calendar.DAY_OF_YEAR, UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
+	
+						}
+						expediente.getReserva().setFechaVencimiento(calendar.getTime());
+					}
+					//Si algún activo esta sujeto a tanteo y todos tienen la resolucion Renunciada, se informa el campo "Fecha vencimiento reserva" con la mayor fecha de resolucion de los tanteos
+					if(ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
+						List<TanteoActivoExpediente> tanteosExpediente= expediente.getTanteoActivoExpediente();
+						if(!Checks.estaVacio(tanteosExpediente)){
+							//HREOS-2686 Punto 2
+							expedienteComercialApi.actualizarFVencimientoReservaTanteosRenunciados(null, tanteosExpediente);
+						}
+					}
+		
+					genericDao.save(ExpedienteComercial.class, expediente);
+					
+					
+				}
+				
+				
+					
+				if(!Checks.esNulo(tramite.getActivo())) {
+					activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
+					//Actualizar el estado comercial de los activos de la oferta
+					ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+				}
 			}
-			
-			//Actualizar el estado comercial de los activos de la oferta
-			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
-			
-			if(!Checks.esNulo(tramite.getActivo())) {
-				activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
-			}
-			
+		
+		} catch (ParseException e) {
+			logger.error("Error en UpdaterServiceSancionOfertaObtencionContrato.java", e);
 		}
-
 	}
 
 	public String[] getCodigoTarea() {

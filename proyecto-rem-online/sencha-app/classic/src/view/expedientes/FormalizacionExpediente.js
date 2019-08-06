@@ -316,11 +316,11 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						xtype : 'currencyfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.capital.concedido'),
 						reference: 'capitalCondedidoRef',
-						readOnly : true,
 						bind : {
 							value : '{financiacion.capitalConcedido}',
 							hidden:'{!esEntidadFinancieraBankia}',
-							disabled: '{!esEntidadFinancieraBankia}'
+							disabled: '{!esEntidadFinancieraBankia}',
+							readOnly: '{esBankia}'
 						}
 					}
 

@@ -52,11 +52,6 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
 	
-	/*@Autowired
-	private OfertaApi ofertaApi;
-	
-	private final static String CLIENTE_HAYA = "HAYA";*/
-
 	@Override
 	public String managerName() {
 		return "clienteComercialManager";
@@ -73,7 +68,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			cliente = clienteComercialDao.get(id);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error clientecomercialmanager ",ex);
 		}
 
 		return cliente;
@@ -102,7 +97,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error clientecomercialmanager ",ex);
 		}
 
 		return cliente;
@@ -131,7 +126,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error clientecomercialmanager ",ex);
 		}
 
 		return cliente;
@@ -174,7 +169,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			lista = clienteComercialDao.getListaClientes(clienteDto);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error clientecomercialmanager ",ex);
 		}
 
 		return lista;
@@ -378,7 +373,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			
 			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("Error clientecomercialmanager ",e);
 		}
 
 	}
@@ -697,7 +692,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("Error clientecomercialmanager ",e);
 		}
 	}
 
@@ -724,7 +719,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error clientecomercialmanager ",e);
 			listaErrores.add("Ha ocurrido un error al validar los parámetros del cliente idClienteWebcom: "
 					+ clienteDto.getIdClienteWebcom() + ". Traza: " + e.getMessage());
 			return listaErrores;
@@ -755,7 +750,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error clientecomercialmanager ",e);
 			errorsList.add("Ha ocurrido un error en base de datos al eliminar el cliente idClienteWebcom: "
 					+ clienteDto.getIdClienteWebcom() + " e idClienteRem: " + clienteDto.getIdClienteRem() + ". Traza: "
 					+ e.getMessage());

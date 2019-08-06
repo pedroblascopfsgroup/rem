@@ -1276,7 +1276,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				idActivoActualizarPublicacion.add(activo.getId());
 			}
-			activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
+			activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
 		}
 	}
 

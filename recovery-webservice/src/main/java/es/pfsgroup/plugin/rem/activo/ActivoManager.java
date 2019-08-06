@@ -3162,7 +3162,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoId", activo.getId());
 		VActivosAgrupacion activoPisoPiloto = genericDao.get(VActivosAgrupacion.class, filtro);
 
-		if(!Checks.esNulo(activoPisoPiloto)) {
+		if(!Checks.esNulo(activoPisoPiloto) && !Checks.esNulo(activoPisoPiloto.getEsPisoPiloto()) && activoPisoPiloto.getEsPisoPiloto()) {
 			pisoPiloto = true;
 		}
 

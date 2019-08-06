@@ -176,6 +176,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	CERBERUS: '07',
     	LIBERBANK: '08',
     	TANGO: '10',
+    	THIRD: '11',
     	GIANTS: '12',
     	EGEO: '13',
     	GALEON:'15',
@@ -191,6 +192,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	'07': 'CERBERUS',
     	'08': 'LIBERBANK',
     	'10': 'TANGO',
+    	'11': 'THIRD',
     	'12': 'GIANTS',
     	'15': 'GALEON',
     	'14': 'ZEUS'
@@ -202,6 +204,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	CERBERUS: 'CERBERUS',
     	BANKIA: 'BANKIA',
     	TANGO: 'TANGO',
+    	THIRD: 'THIRD',
     	GIANTS: 'GIANTS',
     	LIBERBANK:'LIBERBANK',
     	GALEON:'GALEON',
@@ -243,7 +246,8 @@ Ext.define('HreRem.ux.util.Constants', {
     
     NOMBRE_SUBCARTERA: {
     	BANKIA_HABITAT: 'BANKIA HABITAT',
-    	CERBERUS_AGORA: 'Agora - Inmobiliario'
+    	CERBERUS_AGORA: 'Agora - Inmobiliario',
+    	YUBAI: 'YUBAI'
     },
 
     IMAGENES_CARTERA: {
@@ -455,6 +459,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMBO_SI_NO: {
 		SI: 1,
 		NO: 0
+	},
+	
+	COMBO_TRUE_FALSE: {
+		TRUE: 'true',
+		FALSE: 'false'
 	},
 
 	COMBO_ESTADO_ALQUILER: {

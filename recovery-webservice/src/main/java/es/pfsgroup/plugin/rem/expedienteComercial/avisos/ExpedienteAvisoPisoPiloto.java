@@ -40,7 +40,7 @@ public class ExpedienteAvisoPisoPiloto implements ExpedienteAvisadorApi{
 					if (!Checks.esNulo(listaActivoOferta.getActivoId())) {
 						Long activoOfertaId = listaActivoOferta.getActivoId();
 						VActivosAgrupacion activoPisoPiloto = genericDao.get(VActivosAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "activoId", activoOfertaId));
-						if (!Checks.esNulo(activoPisoPiloto)) {
+						if (!Checks.esNulo(activoPisoPiloto) && !Checks.esNulo(activoPisoPiloto.getEsPisoPiloto()) && activoPisoPiloto.getEsPisoPiloto()) {
 							dtoAviso.setId(String.valueOf(expediente.getId()));
 							dtoAviso.setDescripcion("Piso Piloto");
 						}

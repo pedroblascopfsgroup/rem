@@ -275,6 +275,24 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 {
                 	name: 'cambioEstadoActivo',
                 	type: 'boolean'
+                },
+                {
+                	name: 'comercializableConsPlano'
+                },
+                {
+                	name: 'existePiloto'
+                },
+                {
+                	name: 'esVisitable'
+                },
+                {
+                	name: 'pisoPiloto'
+                },
+                {
+                	name: 'empresaPromotora'
+                },
+                {
+                	name: 'empresaComercializadora'
                 }
     ],
     

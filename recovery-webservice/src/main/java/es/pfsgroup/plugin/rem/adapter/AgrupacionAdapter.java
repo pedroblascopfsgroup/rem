@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.beans.Service;
@@ -116,6 +118,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -310,6 +313,9 @@ public class AgrupacionAdapter {
 	private static final String ACTIVO_SIN_GESTORES = "El activo NO tiene gestores";
 	private static final String ACTIVO_SIN_GESTION = "Este activo NO está bajo su gestión";
 	private static final String ACTIVO_SIN_GESTORES_ADECUADOS = "Este activo NO tiene los gestores adecuados para añadirlo a matriz de alquiler";
+	private static final String ACTIVO_FUERA_AGRUPACION = "El activo no se encuentra dentro de la agrupación";
+	private static final String ACTIVO_NO_YUBAI = "El activo no es de Yubai";
+	private static final String ACTIVO_NO_OBRA_NUEVA = "El activo no es de obra nueva";
 
 
 	public static final String SPLIT_VALUE = ";s;";
@@ -749,6 +755,24 @@ public class AgrupacionAdapter {
 				if (agrupacion.getIsFormalizacion() == null) {
 					dtoAgrupacion.setIsFormalizacion(null);
 				}
+				
+				if(!Checks.esNulo(agrupacion.isComercializableConsPlano())){
+					dtoAgrupacion.setComercializableConsPlano(agrupacion.isComercializableConsPlano());
+				}
+				
+				if(!Checks.esNulo(agrupacion.isExistePiloto()) && agrupacion.isExistePiloto()) {
+					dtoAgrupacion.setExistePiloto(agrupacion.isExistePiloto());
+
+					Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(agrupacion.getId());
+					if(!Checks.esNulo(pisoPiloto) && !Checks.esNulo(pisoPiloto.getId()) && !Checks.esNulo(pisoPiloto.getNumActivo())) {
+						dtoAgrupacion.setPisoPiloto(pisoPiloto.getNumActivo());
+					}
+					
+				}
+				
+				if(!Checks.esNulo(agrupacion.isEsVisitable())) {
+					dtoAgrupacion.setEsVisitable(agrupacion.isEsVisitable());
+				}
 			}
 
 		} catch (IllegalAccessException e) {
@@ -1089,6 +1113,7 @@ public class AgrupacionAdapter {
 			activoAgrupacionActivo.setAgrupacion(agrupacion);
 			Date today = new Date();
 			activoAgrupacionActivo.setFechaInclusion(today);
+			activoAgrupacionActivo.setPisoPiloto(false);
 			activoAgrupacionActivoApi.save(activoAgrupacionActivo);
 		}
 
@@ -2887,7 +2912,7 @@ public class AgrupacionAdapter {
 	
 	
 
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, rollbackFor=Exception.class)
 	public String saveAgrupacion(DtoAgrupaciones dto, Long id) throws Exception {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
@@ -2901,9 +2926,7 @@ public class AgrupacionAdapter {
 
 			if (!Checks.esNulo(error)) {
 				throw new JsonViewerException(error);
-			}
-			
-			
+			}	
 		}
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			// si modificamos la vigencia nos guardamos la traza
@@ -3084,13 +3107,66 @@ public class AgrupacionAdapter {
 
 						obraNueva.setProvincia(provinciaNueva);
 					}
-
+					
+					if (!Checks.esNulo(dto.getPisoPiloto())){
+						Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(id);
+						
+						if (!Checks.esNulo(pisoPiloto)) {
+							Activo pisoPilotoOld = pisoPiloto;
+							ActivoAgrupacionActivo aga_piloto;
+							//Si se quiere definir un piso piloto pero no existe en la agrupación, mostramos mensaje de error
+							pisoPiloto = this.isActivoValido(agrupacion, dto.getPisoPiloto());
+							Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPilotoOld.getId()); 
+							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
+							aga_piloto.setPisoPiloto(false);
+							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							
+							// Anyadir piso piloto nuevo
+							filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId()); 
+							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
+							aga_piloto.setPisoPiloto(true);
+							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+						}else {
+							pisoPiloto = this.isActivoValido(agrupacion, dto.getPisoPiloto());
+							//Si no hay piso piloto definido y el seleccionado es de Yubai, procedemos a guardar los cambios
+							Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId());
+							ActivoAgrupacionActivo aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
+							aga_piloto.setPisoPiloto(true);
+							agrupacion.setExistePiloto(true);
+							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+						}
+					}
+					if(!Checks.esNulo(dto.getEsVisitable())) {
+						agrupacion.setEsVisitable(dto.getEsVisitable());
+					}
+					
+					if(!Checks.esNulo(dto.getComercializableConsPlano())) {
+						agrupacion.setComercializableConsPlano(dto.getComercializableConsPlano());
+					}
+					
+					if(!Checks.esNulo(dto.getEmpresaPromotora())) {
+						agrupacion.setEmpresaPromotora(dto.getEmpresaPromotora());
+					}
+					
+					if(!Checks.esNulo(dto.getEmpresaComercializadora())) {
+						agrupacion.setEmpresaComercializadora(dto.getEmpresaComercializadora());
+					}
+					
 					activoAgrupacionApi.saveOrUpdate(obraNueva);
 				}
 
+			} catch (JsonViewerException jsonViewerException) {
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+				return "false"+SPLIT_VALUE+jsonViewerException.getMessage();
 			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);
 				return "false";
+			}
+			
+		} else {
+			if (!Checks.esNulo(dto.getPisoPiloto())){
+				//Si se quiere definir un piso piloto pero la agrupación no es de obra nueva, mostramos mensaje de error
+				throw new JsonViewerException(ACTIVO_NO_OBRA_NUEVA);
 			}
 		}
 
@@ -4090,5 +4166,40 @@ public class AgrupacionAdapter {
 			}		
 		}
 		return true;
+	}
+	
+	/*
+	 *  @param agrupacion Objecto ActivoAgrupacion
+	 *  @param acticoNum número del activo
+	 *  @return Activo or null
+	 *  @throws Activo fuera de perímetro
+	 *  @throws Activo no pertenece a Yubai
+	 *  @throws Activo no de obtra nueva
+	 * */
+	private Activo isActivoValido(ActivoAgrupacion agrupacion, Long activoNum) throws JsonViewerException {
+		Activo nuevoPisoPiloto = null; 
+		for(ActivoAgrupacionActivo activo_aga : agrupacion.getActivos()){
+			if(activo_aga.getActivo().getNumActivo().equals(activoNum)) {
+				if(DDSubcartera.CODIGO_YUBAI.equals(activo_aga.getActivo().getSubcartera().getCodigo())){
+					String estadoAcitvo = activo_aga.getActivo().getEstadoActivo().getCodigo();
+					if(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO.equals(estadoAcitvo) || 
+							DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(estadoAcitvo) ||
+							DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO.equals(estadoAcitvo)) {
+						nuevoPisoPiloto = activo_aga.getActivo();
+						break;
+					}else {
+						throw new JsonViewerException(ACTIVO_NO_OBRA_NUEVA);
+					}
+				}else {
+					throw new JsonViewerException(ACTIVO_NO_YUBAI);
+				}
+			}
+		}
+		
+		if(Checks.esNulo(nuevoPisoPiloto)) {
+			throw new JsonViewerException(ACTIVO_FUERA_AGRUPACION);
+		}
+			
+		return nuevoPisoPiloto;
 	}
 }

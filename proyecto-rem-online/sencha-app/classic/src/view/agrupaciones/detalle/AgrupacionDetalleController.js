@@ -1164,6 +1164,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		textArea.setDisabled(true);
     	}
     },
+
     onClickActivoMatriz: function(){
 		var me = this;
 		var numActivo = me.getViewModel().get('agrupacionficha.activoMatriz');
@@ -1187,6 +1188,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
     		     }
     		 });    
+		}
+    },
+
+    onChangeComboComercializableConsPlano: function(combo){
+		var me = this;
+		if(CONST.COMBO_TRUE_FALSE['TRUE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('existePiloto').setDisabled(false);
+			me.lookupReference('pisoPiloto').setAllowBlank(false);
+		}
+		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('existePiloto').setDisabled(true);
+		}
+	},
+	
+	onChangeComboExistePisoPiloto: function(combo){
+		var me = this;
+		if(CONST.COMBO_TRUE_FALSE['TRUE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('esVisitable').setDisabled(false);
+			me.lookupReference('pisoPiloto').setDisabled(false);
+		}
+		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('esVisitable').setDisabled(true);
 		}
 	}
 });

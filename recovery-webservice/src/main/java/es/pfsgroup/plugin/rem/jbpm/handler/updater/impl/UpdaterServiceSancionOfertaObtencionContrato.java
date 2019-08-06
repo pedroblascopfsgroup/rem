@@ -83,8 +83,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		Activo activo = null;
 		
 		Boolean proManzanaFinalizada = ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_RESOLUCION_PRO_MANZANA);
-
-
 		for (TareaExternaValor valor : valores) {
 
 			if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -206,7 +204,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			if(T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada) {
 				for (ActivoOferta activoOferta : listActivosOferta) {
 					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-					if(activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+					if(!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 						Oferta oferta = expediente.getOferta();	
 						OfertaGencat ofertaGencat = null;
 						if (!Checks.esNulo(comunicacionGencat)) {
@@ -221,17 +219,66 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						}					
 					}
 				}
+
+				activo = ofertaAceptada.getActivoPrincipal();
+				
+				if(!T017.equals(tramite.getTipoTramite().getCodigo()) || (T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada)) {
+					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
+				}
+				
+				if(!Checks.esNulo(filtro)) {
+					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setEstado(estado);
+				}
+
+				// actualizamos el estado de la reserva a firmada
+				if (!Checks.esNulo(expediente.getReserva())) {
+					DDEstadosReserva estadoReserva = genericDao.get(DDEstadosReserva.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_FIRMADA));
+					expediente.getReserva().setEstadoReserva(estadoReserva);
+					
+					//Si ningun activo esta sujeto a tanteo, se informa el campo "Fecha vencimiento reserva" con Fecha firma + 40 dias
+					if(!Checks.esNulo(expediente.getReserva().getFechaFirma()) && !ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(expediente.getReserva().getFechaFirma());
+						if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+							calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+						}else {
+							calendar.add(Calendar.DAY_OF_YEAR, UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
+
+						}
+						expediente.getReserva().setFechaVencimiento(calendar.getTime());
+					}
+					//Si algún activo esta sujeto a tanteo y todos tienen la resolucion Renunciada, se informa el campo "Fecha vencimiento reserva" con la mayor fecha de resolucion de los tanteos
+					if(ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
+						List<TanteoActivoExpediente> tanteosExpediente= expediente.getTanteoActivoExpediente();
+						if(!Checks.estaVacio(tanteosExpediente)){
+							//HREOS-2686 Punto 2
+							expedienteComercialApi.actualizarFVencimientoReservaTanteosRenunciados(null, tanteosExpediente);
+						}
+					}
+		
+					genericDao.save(ExpedienteComercial.class, expediente);
+					
+					
+				}
+				
+				
+					
+				if(!Checks.esNulo(tramite.getActivo())) {
+					activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
+					//Actualizar el estado comercial de los activos de la oferta
+					ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+				}
 			}
-			
+
 			//Actualizar el estado comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
 
 			if (!Checks.esNulo(tramite.getActivo())) {
 				activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
 			}
-
 		}
-
 	}
 
 	public String[] getCodigoTarea() {

@@ -435,7 +435,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				return true;
 			}
 		},
-		
+
 		esPerfilPMyCEs: function(get){
 			
 			var tipoOfertaDesc = get('datosbasicosoferta.estadoDescripcion');
@@ -449,7 +449,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 }else{
 			 	return false;
 			 }
+		},
 			
+		esBankia: function(get) {
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	
+	     	if(CONST.CARTERA['BANKIA'] == carteraCodigo){
+	     		return true;
+	     	}else{
+	     		return false;
+	     	}
 		}
 	 },
 

@@ -339,13 +339,12 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				}
 			}
 
-			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
 			ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(ofertaAceptada);
 			if(!Checks.esNulo(activo)) {
 				activoApi.actualizarOfertasTrabajosVivos(activo);
 			}
+			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
 		}
-		
 	}
 
 	public String[] getCodigoTarea() {

@@ -2293,7 +2293,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				
-				visitaGencat.getAuditoria().setUsuarioModificar(usuarioLogado.getApellidoNombre());
+				visitaGencat.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
 				visitaGencat.getAuditoria().setFechaModificar(new Date());
 				
 				visitaGencatDao.save(visitaGencat);
@@ -2313,7 +2313,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				Auditoria auditoria = new Auditoria();
 				auditoria.setBorrado(false);
 				auditoria.setFechaCrear(new Date());
-				auditoria.setUsuarioCrear(usuarioLogado.getApellidoNombre());
+				auditoria.setUsuarioCrear(usuarioLogado.getUsername());
 				
 				visitaGencat.setVersion(new Long(0));
 				visitaGencat.setAuditoria(auditoria);

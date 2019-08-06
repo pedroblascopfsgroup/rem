@@ -477,6 +477,16 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								bind		: {
 												store: '{storeHistoricoValoresPrecios}'
 								},
+								dockedItems: [
+									{
+										xtype: 'pagingtoolbar',
+										dock: 'bottom',
+										displayInfo: true,
+										bind: {
+											store: '{storeHistoricoValoresPrecios}'
+										}
+									}
+								],
 								features: [{
 						            ftype: 'grouping',
 						            groupHeaderTpl: '{name}'

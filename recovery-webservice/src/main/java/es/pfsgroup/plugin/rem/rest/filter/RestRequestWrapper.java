@@ -117,6 +117,7 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 		try {
 			dataJson = mapper.readValue(this.body, clase);
 		}catch(Exception e) {
+			logger.error("error parseando el JSON", e);
 			dataJson = null;
 		}
 		return dataJson;

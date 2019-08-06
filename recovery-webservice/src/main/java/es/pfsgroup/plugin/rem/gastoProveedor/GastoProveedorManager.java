@@ -1184,24 +1184,24 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public List<VBusquedaGastoActivo> getListActivosGastos(Long idGasto) {
 
 		List<VBusquedaGastoActivo> gastosActivos;
-		List<GastoProveedorTrabajo> gastosTrabajosActivos;
+//		List<GastoProveedorTrabajo> gastosTrabajosActivos;
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto);
 		gastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtro);
-		Filter filtroGastosTrabajos = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-		gastosTrabajosActivos = genericDao.getList(GastoProveedorTrabajo.class, filtroGastosTrabajos);
-		for (VBusquedaGastoActivo vBusquedaGastoActivo : gastosActivos) {
-			for (GastoProveedorTrabajo gastoProveedorTrabajo : gastosTrabajosActivos) {
-				Activo activo = gastoProveedorTrabajo.getTrabajo().getActivo();
-				if (!Checks.esNulo(activo) && activoDao.isUnidadAlquilable(activo.getId()) && activoDao.isActivoMatriz(vBusquedaGastoActivo.getIdActivo())) {
-					Long idAM = activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId());
-					if (vBusquedaGastoActivo.getIdActivo().equals(idAM)) {
-						vBusquedaGastoActivo.setIdActivo(activo.getId());
-						vBusquedaGastoActivo.setNumActivo(activo.getNumActivo());
-					}
-				}
-			}
-		}
+//		Filter filtroGastosTrabajos = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+//		gastosTrabajosActivos = genericDao.getList(GastoProveedorTrabajo.class, filtroGastosTrabajos);
+//		for (VBusquedaGastoActivo vBusquedaGastoActivo : gastosActivos) {
+//			for (GastoProveedorTrabajo gastoProveedorTrabajo : gastosTrabajosActivos) {
+//				Activo activo = gastoProveedorTrabajo.getTrabajo().getActivo();
+//				if (!Checks.esNulo(activo) && activoDao.isUnidadAlquilable(activo.getId()) && activoDao.isActivoMatriz(vBusquedaGastoActivo.getIdActivo())) {
+//					Long idAM = activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId());
+//					if (vBusquedaGastoActivo.getIdActivo().equals(idAM)) {
+//						vBusquedaGastoActivo.setIdActivo(activo.getId());
+//						vBusquedaGastoActivo.setNumActivo(activo.getNumActivo());
+//					}
+//				}
+//			}
+//		}
 
 		return gastosActivos;
 	}

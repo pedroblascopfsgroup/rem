@@ -408,7 +408,7 @@ BEGIN/*Versión 0.2*/
 			JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON (GEE.DD_TGE_ID = TGE.DD_TGE_ID AND DD_TGE_CODIGO = ''HAYAGBOINM'' AND  GEE.BORRADO = 0)
 			JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = GEE.USU_ID
 		) GMO ON GMO.ACT_ID = ACT.ACT_ID
-		where act.borrado = 0 and sps.borrado = 0';
+		where act.borrado = 0 and sps.borrado = 0 and ico.borrado = 0';
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
 		

@@ -434,6 +434,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}else{
 				return true;
 			}
+		},
+		
+		esBankia: function(get) {
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	
+	     	if(CONST.CARTERA['BANKIA'] == carteraCodigo){
+	     		return true;
+	     	}else{
+	     		return false;
+	     	}
 		}
 	 }, 
 

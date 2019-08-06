@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=RLB
---## FECHA_CREACION=20190531
+--## AUTOR=Roman Romanchuk
+--## FECHA_CREACION=20190805
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-7226
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Versión Roman Romanchuk
 --##########################################
 --*/
 
@@ -125,7 +126,9 @@ BEGIN
 		CAST(NVL((SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU 
 			WHERE USU.USU_USERNAME = AGA.USUARIOCREAR),
           (SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU 
-			WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 										AS ID_USUARIO_REM_ACCION      
+			WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 										AS ID_USUARIO_REM_ACCION,
+		CAST(AGR.AGR_VISITABLE AS NUMBER(1,0))	 															AS VISITABLE,
+		CAST(AGA.PISO_PILOTO AS NUMBER(1,0))																AS PISO_PILOTO
 		FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
 		INNER JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA  ON AGA.AGR_ID = AGR.AGR_ID         
 		INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AGA.ACT_ID = ACT.ACT_ID		

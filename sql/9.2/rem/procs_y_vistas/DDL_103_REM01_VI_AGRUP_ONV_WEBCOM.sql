@@ -1,17 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina Garrido
---## FECHA_CREACION=20190411
+--## AUTOR=Roman Romanchuk
+--## FECHA_CREACION=20190805
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6082
+--## INCIDENCIA_LINK=HREOS-7226
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial RLB
---##        0.2 Versión Adrián Molina Garrido
+--##        0.2 Versión Roman Romanchuk
 --##########################################
 --*/
 
@@ -149,7 +149,9 @@ BEGIN/*Versión 0.2*/
  		CAST(NVL((SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU 
 					WHERE USU.USU_USERNAME = NVL(AGR.USUARIOMODIFICAR, AGR.USUARIOCREAR)),
                   (SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU 
-					WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 					AS ID_USUARIO_REM_ACCION
+					WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 					AS ID_USUARIO_REM_ACCION,
+		CAST(AGR.AGR_EXISTE_PISO_PILOTO AS NUMBER(1,0))										AS EXISTE_PISO_PILOTO,
+		CAST(AGR.AGR_COMERCIALIZABLE_CONS_PLANO AS NUMBER(1,0))									AS COMERCIALIZABLE_CONS_PLANO
 		FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
 		LEFT JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION DDTAG ON DDTAG.DD_TAG_ID = AGR.DD_TAG_ID 
 		LEFT JOIN INFO_ACTIVO_AGRUPACION IAG ON IAG.AGR_ID = AGR.AGR_ID

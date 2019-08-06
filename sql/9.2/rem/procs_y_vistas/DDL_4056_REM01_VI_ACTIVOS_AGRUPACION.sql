@@ -22,7 +22,8 @@
 --##        0.10 Cambiamos la vista para que calcule desde la vista gencat.
 --##	    0.11 Se añade una columna más para calcular el estado del titulo
 --##        0.12 Se añade una condición para mostrar las UAs borradas. HREOS-6767
---##		0.13 Se añade la columna de precio renta - REMVIP-4642
+--##        0.13 Se agrega el campo ES_PISO_PILOTO. HREOS-6795
+--##		0.14 Se añade la columna de precio renta - REMVIP-4642
 --##########################################
 --*/
 
@@ -116,7 +117,8 @@ BEGIN
         DECODE(GEN.ACT_ID,NULL,0,1) AS GENCAT,
         V_PUBL.COND_PUBL_VENTA,
         V_PUBL.COND_PUBL_ALQUILER,
-		ETI.DD_ETI_CODIGO AS ESTADO_TITULO
+		ETI.DD_ETI_CODIGO AS ESTADO_TITULO,
+		NVL(AGR.PISO_PILOTO,0) ES_PISO_PILOTO 
 		FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO 			AGR
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION 			AGRU 	ON AGRU.AGR_ID = AGR.AGR_ID 		 AND AGRU.BORRADO = 0
     	INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO 					ACT  	ON ACT.ACT_ID = AGR.ACT_ID 			 AND ACT.BORRADO = 0
@@ -159,7 +161,7 @@ BEGIN
 
     EXECUTE IMMEDIATE V_MSQL;
     
-    EXECUTE IMMEDIATE 'comment on column '||V_ESQUEMA||'.V_ACTIVOS_AGRUPACION.ES_PISO_PILOTO is ''Indica si es Piso piloto o no (0/1)'';'
+    EXECUTE IMMEDIATE 'comment on column '||V_ESQUEMA||'.V_ACTIVOS_AGRUPACION.ES_PISO_PILOTO is ''Indica si es Piso piloto o no (0/1)''';
     DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVOS_AGRUPACION...Creada OK');
   
 EXCEPTION
@@ -167,7 +169,7 @@ EXCEPTION
     -- Opcional: Excepciones particulares que se quieran tratar
     -- Como esta, por ejemplo:
     -- WHEN TABLE_EXISTS_EXCEPTION THEN
-        -- DBMS_OUTPUT.PUT_LINE('Ya se ha realizado la copia en la tabla TMP_MOV_'||TODAY);
+    -- DBMS_OUTPUT.PUT_LINE('Ya se ha realizado la copia en la tabla TMP_MOV_'||TODAY);
  
  
     -- SIEMPRE DEBE HABER UN OTHERS

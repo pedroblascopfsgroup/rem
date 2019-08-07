@@ -221,7 +221,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	AGORAINMOBILIARIO: '135',
 		AGORAFINANCIERO: '137',
 		APPLEINMOBILIARIO: '138',
-		YUBAI: '139',
+		YUBAI: '140',
 		SAREB: '15',
 		LBKINMOBILIARIO: '18',
 		BLUETHINV: '23',

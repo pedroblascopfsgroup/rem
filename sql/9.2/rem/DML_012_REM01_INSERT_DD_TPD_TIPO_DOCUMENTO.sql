@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190725
+--## FECHA_CREACION=20190807
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=func-rem-SG
---## INCIDENCIA_LINK=HREOS-7022
+--## INCIDENCIA_LINK=HREOS-7293
 --## PRODUCTO=NO
 --##
 --## Finalidad: INSERT TIPO DOCUMENTO
@@ -48,9 +48,7 @@ DECLARE
       T_TIPO_DATA('148'  ,'Solicitud bonificación tributaria'   ,'Solicitud bonificación tributaria'   ,'AI-01-DOCA-64'),
       T_TIPO_DATA('149'  ,'Recurso solicitud bonificación tributaria'   ,'Recurso solicitud bonificación tributaria'   ,'AI-01-DOCA-65'),
       T_TIPO_DATA('150'  ,'Solicitud suspensión de deudas recurridas'   ,'Solicitud suspensión de deudas recurridas'   ,'AI-01-DOCA-66'),
-      T_TIPO_DATA('151'  ,'Recurso suspensión de deudas recurridas'   ,'Recurso suspensión de deudas recurridas'   ,'AI-01-DOCA-67'),
-      T_TIPO_DATA('152'  ,'Acta de junta'   ,'Acta de junta'   ,'EN-05-ACTR-01'),
-      T_TIPO_DATA('153'  ,'Recepción convocatoria'   ,'Recepción convocatoria'   ,'EN-05-ACTR-13')
+      T_TIPO_DATA('151'  ,'Recurso suspensión de deudas recurridas'   ,'Recurso suspensión de deudas recurridas'   ,'AI-01-DOCA-67')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

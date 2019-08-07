@@ -76,7 +76,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 										xtype: 'button',
 										handler: 'onClickBtnDevolverReserva',
 										bind: {
-											hidden: '{ocultarBtnDevolverReserva}',
+											hidden: '{ocultarBtnDevolverReserva}'
 										},
 										reference: 'btnDevolverReserva',
 										text: 'Devolver Reserva'

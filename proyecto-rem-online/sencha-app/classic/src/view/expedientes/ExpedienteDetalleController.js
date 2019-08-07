@@ -4702,7 +4702,7 @@ comprobarFormatoModificar: function() {
         				id: 'fechaDevolucion',
         				name: 'fechaDevolucion',
         				reference: 'fechaDevolucion',
-        				fieldLabel: 'Fecha Devolución',
+        				fieldLabel: 'Fecha Devolución'
         			}
         		],
         		border: false,

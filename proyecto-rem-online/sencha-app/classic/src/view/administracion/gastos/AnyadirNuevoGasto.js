@@ -110,6 +110,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													colspan:1,
 													reference: 'buscadorNifEmisorField',	
 													readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
+													name: 'nifEmisor',
 													triggers: {														
 															buscarEmisor: {
 													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
@@ -125,9 +126,9 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 												        			field.lookupController().buscarProveedor(field);											        			
 												        		}
 												        	},
-												        	change: function(field, newvalue) {										        		
+												        	change: function(field, newvalue) {	
 												        		if(Ext.isEmpty(newvalue)) {
-												        			field.up("form").down("[reference=comboProveedores]").reset()
+												        			field.up("form").down("[reference=comboProveedores]").reset();
 												        		}
 												        	
 												        	},
@@ -179,7 +180,10 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 									            		    '<tpl for=".">',
 									            		        '{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion} - {estadoProveedorDescripcion}',
 									            		    '</tpl>'
-									            	)
+									            	),
+									            	listeners: {
+									            		change: 'isPosibleAnyadirGastos'
+									            	}
 							            	    },
 							            	    /////	columna2
 								                {

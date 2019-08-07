@@ -1676,7 +1676,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var form = me.getView().down('formBase');
 		var posible = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] && 
 			!form.down('[name=checkboxActivoRefacturable]').checked && 
-			form.down('[name=nombrePropietario]').value);
+			form.down('[name=nombrePropietario]').value &&
+			form.down('[name=nifEmisor]').value===CONST.PVE_DOCUMENTONIF['HAYA']);
 		form.down('[name=gastosArefacturar]').setDisabled(!posible);
 		form.down('[name=gastoRefacturadoGrid]').setDisabled(!posible);
 	}

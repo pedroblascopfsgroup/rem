@@ -659,6 +659,9 @@ Ext.define('HreRem.ux.util.Constants', {
 	 	PRINCIPAL:'01',
 	 	DEPENDIENTE:'02',
 	 	INDIVIDUAL:'03'
+	 },
+	 
+	 PVE_DOCUMENTONIF: {
+		 HAYA: 'A86744349'
 	 }
-
 });

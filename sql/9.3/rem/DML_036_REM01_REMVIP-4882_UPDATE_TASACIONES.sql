@@ -956,7 +956,7 @@ BEGIN
 							 0,
 							 0,
 							 TO_DATE('''||TRIM(V_TMP_TIPO_DATA(3))||''', ''DD/MM/RR''),
-							 TO_NUMBER('||TRIM(V_TMP_TIPO_DATA(4))||', ''999999999D00'')
+							 TO_NUMBER('''||TRIM(V_TMP_TIPO_DATA(4))||''', ''999999999D00'')
 					  FROM DUAL';
 			EXECUTE IMMEDIATE V_SQL;
 			

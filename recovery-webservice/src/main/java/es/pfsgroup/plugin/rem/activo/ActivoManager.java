@@ -3165,6 +3165,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		for(VActivosAgrupacion activoPisoPiloto: agrupacionesActivo) {
 			if(!Checks.esNulo(activoPisoPiloto) && !Checks.esNulo(activoPisoPiloto.getEsPisoPiloto()) && activoPisoPiloto.getEsPisoPiloto()) {
 				pisoPiloto = true;
+				break;
 			}
 		}
 

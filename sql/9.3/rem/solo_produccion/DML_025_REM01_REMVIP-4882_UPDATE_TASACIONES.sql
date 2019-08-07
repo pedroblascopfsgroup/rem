@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=GUILLEM REY
---## FECHA_CREACION=20190724
+--## FECHA_CREACION=20190725
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-4882
@@ -956,7 +956,7 @@ BEGIN
 							 0,
 							 0,
 							 TO_DATE('''||TRIM(V_TMP_TIPO_DATA(3))||''', ''DD/MM/RR''),
-							 TO_NUMBER('''||TRIM(V_TMP_TIPO_DATA(4))||''', ''999999999D00'', NLS_NUMERIC_CHARACTERS '', '')
+							 TO_NUMBER(REPLACE(REPLACE('''||TRIM(V_TMP_TIPO_DATA(4))||''',''.'',''''),'','',''.''), ''999999999D00'')
 					  FROM DUAL';
 			EXECUTE IMMEDIATE V_SQL;
 			

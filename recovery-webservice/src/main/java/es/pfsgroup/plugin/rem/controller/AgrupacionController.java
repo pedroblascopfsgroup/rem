@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -53,10 +54,14 @@ import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 
 @Controller
 public class AgrupacionController extends ParadiseJsonController {
 
+	private static final String FALTAN_DATOS = "Faltan datos para proponer";
+	
+	
 	@Autowired
 	private AgrupacionAdapter adapter;
 
@@ -72,6 +77,8 @@ public class AgrupacionController extends ParadiseJsonController {
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
+	@Autowired
+	private OfertaApi ofertaApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -430,6 +437,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView saveOfertaAgrupacion(DtoOfertaActivo dtoOferta, ModelMap model) {
 
 		try {
+			if (!Checks.esNulo(ofertaApi.getOfertaById(dtoOferta.getIdOferta()).getClaseOferta())
+				&& ofertaApi.faltanDatosCalculo(ofertaApi.getOfertaById(dtoOferta.getIdOferta()))) {
+				model.put("advertencia", FALTAN_DATOS);
+			}
 			boolean success = adapter.saveOfertaAgrupacion(dtoOferta);
 			model.put("success", success);
 		}catch (JsonViewerException jvex) {

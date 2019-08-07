@@ -2229,7 +2229,7 @@ public class AgrupacionAdapter {
 	}
 
 	//@Transactional(readOnly = false)
-	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto) throws JsonViewerException, Exception {
+	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto) throws JsonViewerException, Exception, Error {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);

@@ -154,6 +154,7 @@ public class ActivoController extends ParadiseJsonController {
 	private static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 	private static final String ERROR_CONEXION_FOTOS = "Ha habido un error al conectar con CRM";
 	private static final String ERROR_PRECIO_CERO = "No se puede realizar la operación. Está introduciendo un importe 0";
+	private static final String FALTAN_DATOS = "Faltan datos para proponer";
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -758,6 +759,10 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request) {
 		try {
+			if (!Checks.esNulo(ofertaApi.getOfertaById(ofertaActivoDto.getIdOferta()).getClaseOferta())
+					&& ofertaApi.faltanDatosCalculo(ofertaApi.getOfertaById(ofertaActivoDto.getIdOferta()))) {
+					model.put("advertencia", FALTAN_DATOS);
+				}
 			boolean success = activoApi.saveOfertaActivo(ofertaActivoDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 			trustMe.registrarSuceso(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR);

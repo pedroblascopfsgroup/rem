@@ -209,6 +209,11 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                {
 		                	xtype: 'fieldset',
 		                	title:  HreRem.i18n('title.comite.sancionador'),
+		                	xtype: 'fieldsettable',
+		                	//title:  HreRem.i18n('title.comite.sancionador'), //fieldlabel.comite.propuesto
+		                	bind: {
+		                		title: '{expediente.tituloCarteraLiberbankVenta}'
+		                	},
 		                	colspan: 2,
 		                	margin: '0 10 10 0',
 		                	height: 90,

@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -586,6 +587,8 @@ public interface OfertaApi {
 
 	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
 
+	DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente);
+
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
 	Boolean checkNifConyugueLBB(TareaExterna tareaExterna);
@@ -695,6 +698,14 @@ public interface OfertaApi {
 
 
 	boolean isOfertaPrincipal(Oferta oferta);
+
+	public boolean faltanDatosCalculo(Oferta ofertaById);
+
+	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
+
+	DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente);
+
+	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente);
 
 
 }

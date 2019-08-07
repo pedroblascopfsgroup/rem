@@ -795,7 +795,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
 
 			transactionManager.commit(transaction);
-
+			
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
 			transactionManager.rollback(transaction);
@@ -1126,10 +1126,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		// El combo "Comité seleccionado" vendrá informado para cartera
 		// Liberbank
-		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-			nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
-		}
+//		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+//				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+//				&& Checks.esNulo(oferta.getAgrupacion())) {
+//				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
+//				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLiberbank(oferta));
+//		}
 		// El combo "Comité seleccionado" vendrá informado para cartera Cajamar
 		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
@@ -1161,6 +1163,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		crearGastosExpediente(oferta, nuevoExpediente);
 
+		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente)));
+				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente)));
+		}
+		
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
 
@@ -3078,7 +3086,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		String codigoOferta = oferta.getTipoOferta().getCodigo();
 
 		acciones.add(DDAccionGastos.CODIGO_COLABORACION);
-		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION);
+		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
 
 		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
 			acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);

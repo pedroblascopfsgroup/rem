@@ -266,6 +266,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveDatosBasicosOferta(dto, id));
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "datosBasicosOferta", ACCION_CODIGO.CODIGO_MODIFICAR);
 
+		} catch (Error err) {
+			model.put(RESPONSE_MESSAGE_KEY, err.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", err);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "datosBasicosOferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+
 		} catch (JsonViewerException e) {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);

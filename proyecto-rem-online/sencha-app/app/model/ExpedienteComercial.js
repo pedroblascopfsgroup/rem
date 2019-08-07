@@ -278,7 +278,29 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 					return false;
 				},
 				depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
-			}
+			},
+    		{
+				name:'fechaAprobacionProManzana',
+				convert: function(value) {
+	    				if (!Ext.isEmpty(value)) {
+							if  ((typeof value) == 'string') {
+		    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+		    				} else {
+		    					return value;
+		    				}
+	    				}
+	    		}
+    		},
+    		{
+    			name: 'tituloCarteraLiberbankVenta',
+    			calculate: function(data) {
+    				if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
+    					return 'Comité propuesto';
+    				}
+    				return 'Comité sancionador';
+    			},
+    			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
+    		}
     ],
     formulas: {
     	esExpedienteBloqueado: function(get) {

@@ -278,7 +278,13 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					gencatDto.setIdLeadSF(visitaGencat.getIdLeadSF());
 				}
 				
-				
+				//Oferta
+				Order orderByOfertaId = new Order(OrderType.DESC, "oferta.id");
+				List<OfertaGencat> listOfertas = genericDao.getListOrdered(OfertaGencat.class, orderByOfertaId, filtroIdComunicacion, filtroBorrado);
+				if(!Checks.estaVacio(listOfertas)){
+					gencatDto.setOfertaGencat(listOfertas.get(0).getOferta().getNumOferta());
+				}		
+								
 			}
 			catch (IllegalAccessException e) {
 				logger.error("Error en gencatManager", e);

@@ -2688,7 +2688,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 												dto.setImporteCalculo(0d);
 											} else if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
 												// API Custodio - Prescripcion
-												if(result != 0 && result <= 100) {
+												if(result <= 100) {
 														dto.setHonorarios(100d);
 														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
 																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
@@ -2707,7 +2707,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
 												// API No Custodio - Colaborador
-												if(result != 0 && result <= 100) {
+												if(result <= 100) {
 														dto.setHonorarios(100d);
 														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
 																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
@@ -2720,7 +2720,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 											} else if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
 												// API No Custodio - Prescripcion
-												if(result != 0 && result <= 100) {
+												if(result <= 100) {
 														dto.setHonorarios(100d);
 														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
 																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
@@ -2737,7 +2737,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
 												// FvD - Colaboracion
-												if(result != 0 && result <= 100) {
+												if(result <= 100) {
 														dto.setHonorarios(100d);
 														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
 																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
@@ -2761,7 +2761,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
 												// Oficina - Colaboracion
-												if(result != 0 && result <= 100) {
+												if(result <= 100) {
 													dto.setHonorarios(100d);
 													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
 															DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);

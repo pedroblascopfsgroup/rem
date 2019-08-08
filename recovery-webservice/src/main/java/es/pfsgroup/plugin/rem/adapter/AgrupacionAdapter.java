@@ -2499,6 +2499,7 @@ public class AgrupacionAdapter {
 			if(!Checks.esNulo(dto.getIdUvem())){
 				oferta.setIdUvem(dto.getIdUvem());
 			}
+			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);

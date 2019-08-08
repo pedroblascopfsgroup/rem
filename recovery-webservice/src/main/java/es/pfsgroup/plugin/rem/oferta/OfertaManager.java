@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -97,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -125,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -241,6 +244,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private GencatApi gencatApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -3810,6 +3816,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 
+
 	@Override
 	public GestorEntidad getGestorEntidad(Oferta oferta) {
 		GestorActivo gestor = null;
@@ -3817,4 +3824,65 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		gestor = genericDao.get(GestorActivo.class, filtro);
  		return gestor;	
 	}
+
+	@Override
+	public Long calcularGestorComercialPrescriptorOferta(Oferta oferta) {
+			
+			ActivoProveedor activoProveedor = oferta.getPrescriptor();
+			ProveedorGestorCajamar proveedorGestorCajamar = null;
+			boolean isPreescriptorTipoOficina;
+			boolean isTipoComercializarRetail;
+			boolean isComprobarMultipleActivos = false;
+			
+			if(!DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				return null;
+			}
+			
+			List<ActivoOferta> listaActivos=oferta.getActivosOferta();
+			List<GestorEntidad> listaGestoresActivosOferta = new ArrayList<GestorEntidad>();
+			
+			if(!Checks.esNulo(listaActivos)
+					&& !Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo())
+					&& !Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar())) {
+				if(!Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo())
+						&& !Checks.esNulo(activoProveedor.getTipoProveedor().getCodigo())) {
+					isTipoComercializarRetail = DDTipoComercializar.CODIGO_RETAIL.equals(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo());
+					isPreescriptorTipoOficina = DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(activoProveedor.getTipoProveedor().getCodigo());
+					
+					if(isTipoComercializarRetail) {
+						if(isPreescriptorTipoOficina) {
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoProveedor.id", activoProveedor.getId());
+							proveedorGestorCajamar = genericDao.get(ProveedorGestorCajamar.class, filtro);
+							if(!Checks.esNulo(proveedorGestorCajamar) 
+									&& !Checks.esNulo(proveedorGestorCajamar.getUsuario())
+									&& !Checks.esNulo(proveedorGestorCajamar.getUsuario().getId())) {
+								return proveedorGestorCajamar.getUsuario().getId();
+							}
+						}else {
+							isComprobarMultipleActivos = true;
+						}
+					} else {
+						isComprobarMultipleActivos = true;
+					}
+				}
+				else {
+					return null;
+				}
+			}
+
+			if(isComprobarMultipleActivos) {
+				for(ActivoOferta activoOferta: listaActivos) {	
+					GestorEntidad gestorEntidad = gestorActivoApi.getGestorEntidadByActivoYTipo(activoOferta.getPrimaryKey().getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+					if(Checks.estaVacio(listaGestoresActivosOferta)) {
+						listaGestoresActivosOferta.add(gestorEntidad);
+					}else if(gestorEntidad.getUsuario().getId() != listaGestoresActivosOferta.get(0).getUsuario().getId()) {
+						return null;
+					}		
+				}
+				if(!Checks.estaVacio(listaGestoresActivosOferta) && listaGestoresActivosOferta.size() == 1) {
+					return listaGestoresActivosOferta.get(0).getUsuario().getId();
+				}
+			}
+			return null;		
+		}
 }

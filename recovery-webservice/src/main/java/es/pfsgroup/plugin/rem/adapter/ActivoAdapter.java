@@ -3682,6 +3682,9 @@ public class ActivoAdapter {
 					oferta.setSucursal((ActivoProveedor) proveedoresApi.searchProveedorCodigoUvem(codigoOficina+dto.getCodigoSucursal()));
 			}
 			oferta.setOfertaExpress(false);
+			
+			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
+			
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);

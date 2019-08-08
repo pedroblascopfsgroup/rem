@@ -1195,5 +1195,10 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
-
+	
+	/**
+	 * Comprueba si un activo ha superado el plazo para que sea tramitable
+	 * @param activo
+	 */
+	public boolean isTramitable(Activo activo);
 }

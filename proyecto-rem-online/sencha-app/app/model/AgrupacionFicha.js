@@ -275,6 +275,10 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 {
                 	name: 'cambioEstadoActivo',
                 	type: 'boolean'
+                },
+                {
+                	name: 'tramitable',
+                	type: 'boolean'
                 }
     ],
     

@@ -20,6 +20,17 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 
     	me.items = [
     		{
+    			xtype: 'label',
+    			cls:'x-form-item',
+    			html: HreRem.i18n('msg.oferta.activo.no.tramitable'),
+    			style: 'color: red; font-weight: bold; font-size: small;',
+    			readOnly: true,
+    			hidden: true,
+    			bind : {
+    				hidden: '{comercial.tramitable}'
+    			}
+    		},
+    		{
     			xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				collapsible: true,

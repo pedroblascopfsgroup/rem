@@ -744,6 +744,8 @@ public class AgrupacionAdapter {
 				if (agrupacion.getIsFormalizacion() == null) {
 					dtoAgrupacion.setIsFormalizacion(null);
 				}
+				
+				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
 			}
 
 		} catch (IllegalAccessException e) {

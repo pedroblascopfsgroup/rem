@@ -4174,6 +4174,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// Buscamos los campos que pueden ser propagados para esta pestaña
 			dto.setCamposPropagables(TabActivoService.TAB_COMERCIAL);
 		}
+		dto.setTramitable(this.isTramitable(activo));
+		
 		return dto;
 	}
 
@@ -6525,6 +6527,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return UAsAlquiladas;
+	}
+	
+	@Override
+	public boolean isTramitable(Activo activo) {
+		boolean tramitable = true;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
+		VTramitacionOfertaActivo activoNoTramitable = genericDao.get(VTramitacionOfertaActivo.class, filtro);
+
+		if(!Checks.esNulo(activoNoTramitable)) {
+			tramitable = false;
+		}
+
+		return tramitable;
 	}
 	
 }

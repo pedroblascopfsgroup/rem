@@ -1,44 +1,35 @@
 Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
-    extend: 'Ext.tab.Panel',
-	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
-    xtype		: 'comercialagrupacion',
-    reference	: 'comercialagrupacionref',
-    layout		: 'fit',
-    requires: ['HreRem.view.agrupacion.detalle.VisitasComercialAgrupacion','HreRem.view.agrupacion.detalle.OfertasComercialAgrupacion'],    
-
-	listeners: {
-		boxready: function (tabPanel) {   		
-    		
-			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
-				var tab = tabPanel.items.items[0];
-				tabPanel.setActiveTab(tab);
-			}			
-		}
-    	
-        
-    },
-    
-	layout: 'fit',
+	extend: 'Ext.form.Panel',
+    cls: 'panel-base shadow-panel',
+    xtype: 'comercialagrupacion',
+    reference: 'comercialagrupacionref',
+    scrollable: 'y',
+    requires: ['HreRem.view.agrupacion.detalle.ComercialAgrupacionTabs'], 
     
     initComponent: function () {
     	
     	var me = this;
     	
-    	var items = [
-			
+    	me.items = [
+    		{
+    			xtype: 'label',
+    			cls:'x-form-item',
+    			html: HreRem.i18n('msg.oferta.agrupacion.no.tramitable'),
+    			style: 'color: red; font-weight: bold; font-size: small;',
+    			readOnly: true,
+    			hidden: true,
+    			bind : {
+    				hidden: '{agrupacionficha.tramitable}'
+    			}
+    		},
 			{
-				xtype: 'ofertascomercialagrupacion'
-			},
-			{
-				xtype: 'visitascomercialagrupacion'
+				xtype: 'comercialagrupaciontabs'
 			}
-			
     	];
     	
     	
 
     	me.setTitle(HreRem.i18n('title.comercial'));
-    	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
     	
     },
@@ -46,7 +37,7 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
-		me.getActiveTab().funcionRecargar();
-    } 
+		me.up('agrupacionesdetallemain').lookupReference('comercialagrupaciontabsref').funcionRecargar();
+    },
     
 });

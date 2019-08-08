@@ -31,6 +31,10 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		{
 			name: 'puja',
 			type: 'boolean'
+		},
+		{
+			name: 'tramitable',
+			type: 'boolean'
 		}
     ],
     

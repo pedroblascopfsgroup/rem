@@ -70,6 +70,7 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean cambioEstadoPublicacion;
 	private Boolean cambioEstadoPrecio;
 	private Boolean cambioEstadoActivo; 
+	private Boolean tramitable;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -427,5 +428,11 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
+	}
+	public Boolean getTramitable() {
+		return tramitable;
+	}
+	public void setTramitable(Boolean tramitable) {
+		this.tramitable = tramitable;
 	}
 }

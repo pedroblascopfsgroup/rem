@@ -56,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
+import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
@@ -812,5 +813,18 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		return numActivos;
 
+	}
+	
+	@Override
+	public boolean isTramitable(ActivoAgrupacion agrupacion) {
+		boolean tramitable = true;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", agrupacion.getId());
+		VTramitacionOfertaAgrupacion agrupacionNoTramitable = genericDao.get(VTramitacionOfertaAgrupacion.class, filtro);
+
+		if(!Checks.esNulo(agrupacionNoTramitable)) {
+			tramitable = false;
+		}
+
+		return tramitable;
 	}
 }

@@ -154,5 +154,11 @@ public interface ActivoAgrupacionApi {
 	public int countActivosAfectoGENCAT(ActivoAgrupacion agrupacion);
 
 	Usuario getGestorComercialAgrupacion(List<ActivosLoteOfertaDto> dtoActivos);
+	
+	/**
+	 * Comprueba si una agrupación ha superado el plazo para que sea tramitable
+	 * @param agrupacion
+	 */
+	public boolean isTramitable(ActivoAgrupacion activoAgrupacion);
 
 }

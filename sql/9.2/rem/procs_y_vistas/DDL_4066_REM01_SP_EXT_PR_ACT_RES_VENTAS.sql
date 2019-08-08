@@ -104,7 +104,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN = (''08'', ''07'')
+                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
                                                             AND OFR.OFR_NUM_OFERTA = :1';
                                                             
     V_FROM_RESERVA2                VARCHAR2(2000 CHAR) := 'FROM REM01.RES_RESERVAS RES
@@ -122,7 +122,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN = (''08'', ''07'')
+                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
                                                             AND OFR.OFR_NUM_OFERTA = :1
                                                             AND ROWNUM = 1';                                                        
 
@@ -156,7 +156,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN = ('08', '07') /*LIBERBANK Y CERBERUS*/
+                                                            WHERE CAR.DD_CRA_CODIGO IN ('08', '07') /*LIBERBANK Y CERBERUS*/
                                                             AND OFR.OFR_NUM_OFERTA =  ''||IDENTIFICACION_COBRO||'';
                                                             
     CURSOR ACTIVOS IS SELECT
@@ -176,7 +176,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN = ('08', '07')
+                                                            WHERE CAR.DD_CRA_CODIGO IN ('08', '07')
                                                             AND OFR.OFR_NUM_OFERTA = ''||IDENTIFICACION_COBRO||'';
 
     V_FROM_COBRO                    VARCHAR2(2000 CHAR) := 'FROM REM01.ECO_EXPEDIENTE_COMERCIAL ECO
@@ -190,7 +190,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN = (''08'', ''07'')
+                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
                                                             AND OFR.OFR_NUM_OFERTA = '||IDENTIFICACION_COBRO||'';
 
     V_LOGAR_HDL                     VARCHAR2(1400 CHAR) := 'HLD_HIST_LANZA_PER_DETA(''SP_EXT_PR_ACT_RES_VENTA'',:1,:2,:3,:4,:5,:6,:7)'; -- 1 HLD_SP_CARGA, 2 HLD_CODIGO_REG, 3 HLD_TABLA_MODIFICAR, 4 HLD_TABLA_MODIFICAR_CLAVE, 5 HLD_TABLA_MODIFICAR_CLAVE_ID, 6 HLD_CAMPO_MODIFICAR, 7 HLD_VALOR_ORIGINAL, 8 HLD_VALOR_ACTUALIZADO
@@ -885,7 +885,7 @@ BEGIN
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN = (''08'', ''07'')
+                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
                                                             AND OFR.OFR_NUM_OFERTA = '||IDENTIFICACION_COBRO||'
                                                          )
                                         AND EOF.DD_EOF_CODIGO = ''03''
@@ -953,7 +953,7 @@ BEGIN
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN = (''08'', ''07'')
+                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
                                                             AND OFR.OFR_NUM_OFERTA = '||IDENTIFICACION_COBRO||'
                                                          )
                                             AND EOF1.DD_EOF_CODIGO = ''03'' /*CONGELADA*/

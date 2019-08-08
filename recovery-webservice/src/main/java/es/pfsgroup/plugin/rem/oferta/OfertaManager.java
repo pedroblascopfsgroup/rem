@@ -2593,7 +2593,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setTipoCalculo(tipoCalculoC.getDescripcion());
 				dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
 			}
-			
+			//HREOS-7251
 			if (DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
 				Double result = 0.0;
 				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
@@ -2651,7 +2651,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		} else if(DDTipoOferta.CODIGO_ALQUILER.equals(codigoOferta)) {
 			DDTipoCalculo tipoCalculoC = null;
-			
+			//HREOS-7251
 			if (DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
 				Double result = 0.0;
 				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {

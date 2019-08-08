@@ -36,9 +36,9 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01', 'Autorizado por entidad cliente.', 'Autorizado por entidad cliente.'),
-        T_TIPO_DATA('02', 'Tramitación anterior tuvo que ser anulada para la corrección de datos.', 'Tramitación anterior tuvo que ser anulada para la corrección de datos.'),
-        T_TIPO_DATA('03', 'Otros.', 'Otros.')
+        T_TIPO_DATA('01', 'Autorizado por entidad cliente', 'Autorizado por entidad cliente'),
+        T_TIPO_DATA('02', 'Tramitación anterior tuvo que ser anulada para la corrección de datos', 'Tramitación anterior tuvo que ser anulada para la corrección de datos'),
+        T_TIPO_DATA('03', 'Otros', 'Otros')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

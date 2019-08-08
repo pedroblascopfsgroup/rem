@@ -2276,8 +2276,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				break;
 				
 			case 'chkbxPerimetroFormalizar':
-				if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()) {
-					chkbxFormalizar.setValue(false);
+				if(!chkbxFormalizar.getValue() && chkbxPerimetroComercializar.getValue()) {
+					chkbxFormalizar.setValue(true);
 					me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
 				}
 				else {
@@ -2291,8 +2291,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		else{
 			switch(ref){
 				case 'chkbxPerimetroFormalizar':
-					if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()) {
-						chkbxFormalizar.setValue(false);
+					if(!chkbxFormalizar.getValue() && chkbxPerimetroComercializar.getValue()) {
+						chkbxFormalizar.setValue(true);
 						me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
 					}
 					else {

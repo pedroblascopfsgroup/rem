@@ -70,7 +70,7 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 	private String idPrinexHPM;
 	
 	@Column(name = "PISO_PILOTO")
-	private Boolean pisoPiloto;
+	private Boolean pisoPiloto = false;
 	
 	@Version   
 	private Long version;

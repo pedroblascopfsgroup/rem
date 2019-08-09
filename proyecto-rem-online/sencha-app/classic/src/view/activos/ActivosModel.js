@@ -227,6 +227,15 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						diccionario : 'tipoTituloActivoTPA'
 					}
 				}
+			},
+			
+			comboMotivoAutorizacionTramitacion: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'motivoAutorizacionTramitacion'}
+					}
 			}
      }
 

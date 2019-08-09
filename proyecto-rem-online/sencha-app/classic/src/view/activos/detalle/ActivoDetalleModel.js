@@ -762,7 +762,40 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	}else{
 	    		return true;
 	    	}
-	    }
+	    },
+	    
+    	esOtrosotivoAutorizacionTramitacion: function(get){
+    		
+    		var comboOtros = get('comercial.motivoAutorizacionTramitacionCodigo');
+    		
+    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == comboOtros){
+    			return true;
+    		}
+			return false;
+    	},
+    	
+    	esSelecionadoAutorizacionTramitacion: function(get){
+    		
+    		var me = this;
+    		var todoSelec = get('comercial.motivoAutorizacionTramitacionCodigo');
+    		var obsv = get('comercial.observacionesAutoTram');
+    		
+    		if(todoSelec != undefined && todoSelec != null){
+	    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == todoSelec){
+	    			if(obsv){
+	    				console.log(obsv);
+	    				return true;
+		    		}	
+	    			console.log('esta es la line 789');
+	    			return false;
+	    		} else {
+	    			console.log('esta es la line 792');
+	    			return true;
+	    		}
+    		}
+    		console.log('esta es la line 796');
+    		return false;
+    	}
 		
 	 },
 	

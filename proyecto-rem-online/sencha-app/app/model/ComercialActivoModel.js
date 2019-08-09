@@ -35,6 +35,10 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 		{
 			name: 'tramitable',
 			type: 'boolean'
+		},{
+			name: 'motivoAutorizacionTramitacionCodigo'
+		},{
+			name: 'observacionesAutoTram'
 		}
     ],
     

@@ -437,7 +437,11 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_FECHA_CAMBIO_TIPO_ACT")
     private Date fechaUltCambioTipoActivo;
     
-	
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -1759,6 +1763,15 @@ public class Activo implements Serializable, Auditable {
 
 	public void setFechaUltCambioTipoActivo(Date fechaUltCambioTipoActivo) {
 		this.fechaUltCambioTipoActivo = fechaUltCambioTipoActivo;
+	}
+
+	public ActivoAutorizacionTramitacionOfertas getActivoAutorizacionTramitacionOfertas() {
+		return activoAutorizacionTramitacionOfertas;
+	}
+
+	public void setActivoAutorizacionTramitacionOfertas(
+			ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas) {
+		this.activoAutorizacionTramitacionOfertas = activoAutorizacionTramitacionOfertas;
 	}
 	
 	

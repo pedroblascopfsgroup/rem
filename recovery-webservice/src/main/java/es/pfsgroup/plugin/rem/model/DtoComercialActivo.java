@@ -17,6 +17,8 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private Boolean ventaExterna;
 	private Boolean puja;
 	private Boolean tramitable;
+	private String motivoAutorizacionTramitacionCodigo;
+	private String observacionesAutoTram;
 
 
 	public String getId() {
@@ -82,6 +84,14 @@ public class DtoComercialActivo extends DtoTabActivo{
 	public void setPuja(Boolean puja) {
 		this.puja = puja;
 	}
+	
+	public String getMotivoAutorizacionTramitacionCodigo() {
+		return motivoAutorizacionTramitacionCodigo;
+	}
+
+	public void setMotivoAutorizacionTramitacionCodigo(String motivoAutorizacionTramitacionCodigo) {
+		this.motivoAutorizacionTramitacionCodigo = motivoAutorizacionTramitacionCodigo;
+	}
 
 	public Boolean getTramitable() {
 		return tramitable;
@@ -89,6 +99,14 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setTramitable(Boolean tramitable) {
 		this.tramitable = tramitable;
+	}
+
+	public String getObservacionesAutoTram() {
+		return observacionesAutoTram;
+	}
+
+	public void setObservacionesAutoTram(String observacionesAutoTram) {
+		this.observacionesAutoTram = observacionesAutoTram;
 	}
 
 }

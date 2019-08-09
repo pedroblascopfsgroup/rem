@@ -2939,4 +2939,20 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView insertarActAutoTram(DtoComercialActivo dto, ModelMap model, HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, activoApi.insertarActAutoTram(dto));
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorCode", "msg.operacion.ko");
+		}
+
+		return new ModelAndView("jsonView", model);
+	}
+
 }

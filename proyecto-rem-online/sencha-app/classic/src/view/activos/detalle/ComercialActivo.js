@@ -136,6 +136,47 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 						   disabled: !isLogUsuGestComerSupComerSupAdmin
 						}
 				]
+			}, 
+			{
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				collapsible: true,
+				reference: 'atorizacionTramOfertas',
+				title: HreRem.i18n('title.autorizacion.tramitacion.ofertas'),
+				items :
+					[{
+						xtype : 'comboboxfieldbase',
+			        	fieldLabel: HreRem.i18n('fieldlabel.motivo.autorizacion'),
+			        	reference: 'motivoAutorizacionTramitacionCodigo',
+			        	editable: true,
+			        	allowBlank: false,
+			        	bind : {
+						      store : '{comboMotivoAutorizacionTramitacion}',
+						      value : '{comercial.motivoAutorizacionTramitacionCodigo}'
+						      
+			        	}
+					},
+					{
+						xtype: 'textareafieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),
+			        	reference: 'observacionesAutorizacionTramite',
+						maxLength: 250,
+						bind:{
+							value: '{comercial.observacionesAutoTram}',
+							disabled: '{!esOtrosotivoAutorizacionTramitacion}'
+						}
+
+					},
+					{
+						xtype: 'button',
+						text: HreRem.i18n('btn.autorizar.tramitacion.ofertas'),
+						reference: 'insertarAutoTramOfer',
+						handler: 'onInsertarAutorizacionTramOfertas',
+						bind: {
+							disabled: '{!esSelecionadoAutorizacionTramitacion}'	
+						}
+					}
+				]
 			},
 			{
 				xtype: 'comercialactivotabpanel' 

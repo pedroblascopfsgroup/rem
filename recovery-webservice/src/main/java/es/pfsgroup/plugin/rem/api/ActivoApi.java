@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -1201,4 +1202,15 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isTramitable(Activo activo);
+	
+	/**
+	 * Devulve la fecha de inicio del bloqueo de la tramitación
+	 * @param activo
+	 */
+	public Date getFechaInicioBloqueo(Activo activo);
+	/**
+	 * Insertar en la base de datos una Autorizacion Tramitacion
+	 * @param dto
+	 */	
+	public boolean insertarActAutoTram(DtoComercialActivo dto);
 }

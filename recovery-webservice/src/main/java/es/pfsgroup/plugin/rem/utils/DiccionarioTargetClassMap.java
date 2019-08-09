@@ -223,6 +223,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
 		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
+		mapa.put("motivoAutorizacionTramitacion", DDMotivoAutorizacionTramitacion.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

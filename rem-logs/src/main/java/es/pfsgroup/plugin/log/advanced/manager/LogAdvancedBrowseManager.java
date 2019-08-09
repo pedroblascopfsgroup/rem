@@ -2,10 +2,14 @@ package es.pfsgroup.plugin.log.advanced.manager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.ui.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.pfsgroup.plugin.log.advanced.api.LogAdvancedRem;
@@ -38,16 +42,20 @@ public class LogAdvancedBrowseManager extends LogAdvancedManager implements LogA
 					
 					Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 					UsuarioSecurity userSec = (UsuarioSecurity) authentication.getPrincipal();
+					DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					Date date = new Date();
+					WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+					//userSec.getEntidad();
+					
 					
 					String msg = mapDataLog.get(MAP_KEY_TYPE) + "|" + mapDataLog.get(MAP_KEY_ENTIDADCODE) + "|"
 							+ getIdEntidad(parameters, mapDataLog.get(MAP_KEY_NAMEID)) + "|"
 							+ userSec.getUsername() + "|" + mapDataLog.get(MAP_KEY_DESCRIPTION) + "| " + "| "
 							+ "| ";
 	
-					String msgSyslog = "[" + mapDataLog.get(MAP_KEY_TYPE) + "] |"
-							+ mapDataLog.get(MAP_KEY_ENTIDADCODE) + "|"
-							+ getIdEntidad(parameters, mapDataLog.get(MAP_KEY_NAMEID)) + "|"
-							+ userSec.getUsername() + "|" + mapDataLog.get(MAP_KEY_DESCRIPTION);
+					String msgSyslog = dateFormat.format(date)+" | " + mapDataLog.get(MAP_KEY_TYPE)+": "+ mapDataLog.get(MAP_KEY_DESCRIPTION) + " | " +details.getRemoteAddress().toString()+" | "+ userSec.getUsername() + " | "+userSec.getEntidad().getDescripcion()+" | "+ ((authentication.isAuthenticated()) ? ACCES_LOGIN_OK : ACCES_LOGIN_KO)
+							+" | Nombre entidad | Nombre Cartera Entidad | IP | "+ mapDataLog.get(MAP_KEY_ENTIDADCODE) + "|"
+							+ getIdEntidad(parameters, mapDataLog.get(MAP_KEY_NAMEID));
 					
 					writeLog(new LogAdvancedDto(msg, Integer.parseInt(mapDataLog.get(MAP_KEY_PRIORITY)),msgSyslog));
 				}

@@ -22,14 +22,14 @@ public class LogAdvancedManager {
 	@Resource
 	private Properties appProperties;
 
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log logger = LogFactory.getLog(LogAdvancedManager.class);
 
 	static final String MAP_KEY_PRIORITY = "PRIORITY";
 	static final String MAP_KEY_ENTIDADCODE = "ENTIDAD_CODE";
 	static final String MAP_KEY_TYPE = "TYPE";
 	static final String MAP_KEY_NAMEID = "NAME_ID_PARAMETER";
 	static final String MAP_KEY_DESCRIPTION = "DESCRIPTION";
-	static final String LOGIN_DESCRIPTION = "Acceso a recovery";
+	static final String LOGIN_DESCRIPTION = "Acceso a REM";
 	static final String MESSENGER_DESCRIPTION = "Sincronización por mensajería";
 	static final String TYPE_LOGIN = "LOGIN";
 	static final String ACCES_LOGIN_OK = "OK";
@@ -46,7 +46,7 @@ public class LogAdvancedManager {
 
 		if (!Checks.esNulo(rsyslogActive) && rsyslogActive.equals("true") && !Checks.esNulo(logDto)
 				&& !Checks.esNulo(logDto.getMessageRsyslog())) {
-			logger.info(PREFIX_RSYSLOG + ":" + logDto.getMessageRsyslog());
+			logger.error(PREFIX_RSYSLOG + ":" + logDto.getMessageRsyslog());
 		}
 
 	}

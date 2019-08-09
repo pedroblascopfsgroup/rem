@@ -266,14 +266,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController',				{
 						var me = this;
 						tabPanel = me.getView().down("tabpanel");
 						var activeTab = tabPanel.getActiveTab();
-						if (activeTab.xtype = "activosafectadosgasto") {
+						if (activeTab.xtype = "activosafectadosgasto"
+						&& CONST.CARTERA["LIBERBANK"] === me.getViewModel().get("gasto.cartera")) {
 							me.updateGastoByPrinexLBK();
 						}
 						me.refrescarGasto(true);
 					},
 
-					refrescarGasto : function(refrescarPestañaActiva) {
-						var me = this, refrescarPestañaActiva = Ext.isEmpty(refrescarPestañaActiva) ? false	: refrescarPestañaActiva, tabPanel = me.getView().down("tabpanel");
+					refrescarGasto : function(resfrescarPestanya) {
+						var me = this, resfrescarPestanya = Ext.isEmpty(resfrescarPestanya) ? false	: resfrescarPestanya, tabPanel = me.getView().down("tabpanel");
 
 						// Marcamos todas los componentes para refrescar, de
 						// manera que se vayan actualizando conforme se vayan
@@ -288,7 +289,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController',				{
 						// recargar y el gasto si estamos guardando uno.
 						if (!Ext.isEmpty(tabPanel)) {
 							var activeTab = tabPanel.getActiveTab();
-							if (refrescarPestañaActiva) {
+							if (resfrescarPestanya) {
 								if (activeTab.funcionRecargar) {
 									activeTab.funcionRecargar();
 								}

@@ -38,6 +38,6 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
 		var me = this;
 		me.recargar = false;
 		me.up('agrupacionesdetallemain').lookupReference('comercialagrupaciontabsref').funcionRecargar();
-    },
+    }
     
 });

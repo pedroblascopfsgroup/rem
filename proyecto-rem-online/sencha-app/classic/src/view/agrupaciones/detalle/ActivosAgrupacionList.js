@@ -373,7 +373,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.valor.descuento.publicado'),
 	            flex: 1,
 	            bind: {
-	        		hidden: '{esAgrupacionPromocionAlquiler}'
+	        		hidden: '{!esAgrupacionPromocionAlquiler}'
 	        	},
 	            renderer: function(value) {
 	        		return Ext.util.Format.currency(value);

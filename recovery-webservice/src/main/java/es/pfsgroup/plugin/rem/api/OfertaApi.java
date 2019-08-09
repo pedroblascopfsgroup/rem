@@ -650,5 +650,13 @@ public interface OfertaApi {
 	 * @param oferta
 	 */
 	GestorEntidad getGestorEntidad(Oferta oferta);
+
+	/**
+	 * Calcula el gestor comercial prescriptor de la oferta
+	 * @param oferta
+	 * @return Long idGestorComercial / null
+	 */
+	public Long calcularGestorComercialPrescriptorOferta(Oferta oferta);
+
 }
 

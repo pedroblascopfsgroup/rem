@@ -1,16 +1,18 @@
 --/*
 --##########################################
 --## AUTOR=Alfonso Rodriguez
---## FECHA_CREACION=20192207
+--## FECHA_CREACION=20190722
+--## MODIFICADO=José Antonio Gigante
+--## FECHA_MODIFICACION=20190806
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=f-gestObjCajamar
---## INCIDENCIA_LINK=HREOS-7041
+--## INCIDENCIA_LINK= HREOS-7292
 --## PRODUCTO=NO
 --## Finalidad: Ampliar la tabla Oferta, con info de tanteo y retracto
---##           
+--## Observaciones: Modifico el código para adaptar la FK solicitada en HREOS-7041 al nuevo requerimiento.
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.2 Versión modificada
 --##########################################
 --*/
 
@@ -28,6 +30,8 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_TABLESPACE_IDX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Tablespace de Indices
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_SQL_CONSTRAINT VARCHAR(4000 CHAR); -- Vble. para consulta que valida la existencia de una restricion.
+    V_NUM_CONSTRAINT NUMBER(16);  -- Vble. para validar la existencia de una restriccion.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -36,7 +40,7 @@ DECLARE
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'OFR_OFERTAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-  V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
+    V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
 
     /* -- ARRAY CON NUEVAS COLUMNAS */
@@ -54,19 +58,26 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
           --NOMBRE FK                        CAMPO FK              TABLA DESTINO FK              CAMPO DESTINO FK
-      T_FK( 'FK_GEE_GESTOR_ENTIDAD',        'OFR_GES_COM_PRES',   'GEE_GESTOR_ENTIDAD',         'GEE_ID'      )
+      T_FK( 'FK_USUARIO_PRESCRIPTOR',        'OFR_GES_COM_PRES',   'USU_USUARIOS',         'USU_ID'      )
     );
     V_T_FK T_FK;
-
-
-
 
 BEGIN
   
   DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
   DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
 
-  
+  -- Verifico si existe la restriccion de HREOS-7041, de ser así la elimino
+  V_SQL_CONSTRAINT := ' SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TEXT_TABLA||''' AND CONSTRAINT_NAME = ''FK_GEE_GESTOR_ENTIDAD''';
+  EXECUTE IMMEDIATE V_SQL_CONSTRAINT INTO V_NUM_CONSTRAINT;
+  if V_NUM_CONSTRAINT >0 THEN
+    V_SQL_CONSTRAINT := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP CONSTRAINT FK_GEE_GESTOR_ENTIDAD';
+    DBMS_OUTPUT.PUT_LINE(V_SQL_CONSTRAINT);
+    EXECUTE IMMEDIATE V_SQL_CONSTRAINT;
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] ... '''||V_ESQUEMA||'.'||V_TEXT_TABLA||''' Eliminada restriccion FK_GEE_GESTOR_ENTIDAD');
+  END IF;
+
   -- Bucle que CREA las nuevas columnas 
   FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
   LOOP
@@ -79,7 +90,7 @@ BEGIN
     IF V_NUM_TABLAS = 0 THEN
       --No existe la columna y la creamos
       DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
-      V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
+      V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA|| ' 
              ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
       ';
 
@@ -116,12 +127,12 @@ BEGIN
         --No existe la FK y la creamos
         DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
         V_MSQL := '
-          ALTER TABLE '||V_TEXT_TABLA||'
+          ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
           ADD CONSTRAINT '||V_T_FK(1)||' FOREIGN KEY
           (
             '||V_T_FK(2)||'
           )
-          REFERENCES '||V_T_FK(3)||'
+          REFERENCES '||V_ESQUEMA_M||'.'||V_T_FK(3)||'
           (
             '||V_T_FK(4)||' 
           )

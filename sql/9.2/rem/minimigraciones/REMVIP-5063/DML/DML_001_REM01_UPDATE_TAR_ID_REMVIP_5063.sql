@@ -24,8 +24,8 @@ SET DEFINE OFF;
 DECLARE
 
   V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
-  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
   V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
   V_NUM_ACT NUMBER(16); -- Vble. para validar la existencia de una tabla.   
   V_COUNT1 NUMBER(16);

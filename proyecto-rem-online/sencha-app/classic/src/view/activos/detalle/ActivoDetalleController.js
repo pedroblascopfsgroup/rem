@@ -4232,6 +4232,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                     me.onClickBotonCancelarComercial(btn);
                 }
             });
+        }else{
+        	me.fireEvent("errorToast", "genericSave: " + genericSave + " \ Form: " + form + " \ Form is valid: " + form.isValid());
         }
 	},
 

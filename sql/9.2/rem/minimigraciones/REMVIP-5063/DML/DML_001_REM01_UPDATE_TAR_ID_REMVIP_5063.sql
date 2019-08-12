@@ -22,6 +22,7 @@ SET DEFINE OFF;
 
 
 DECLARE
+
   V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
@@ -50,7 +51,7 @@ BEGIN
 
        				) T2 
 		        ON (T1.TAR_ID = T2.TAREA_ID)
-			WHEN MATCHED THEN UPDATE 
+			WHEN MATCHED THEN UPDATE SET
 		 	T1.TAR_FECHA_FIN = SYSDATE, 
 			T1.TAR_TAREA_FINALIZADA = 1, 
 			T1.BORRADO = 1,

@@ -4232,7 +4232,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                     me.onClickBotonCancelarComercial(btn);
                 }
             });
-        }
+        }else{
+        	if(!Ext.isEmpty(form)){
+        		me.fireEvent("errorToast", "genericSave: " + genericSave + " \ Form: " + form + " \ Form is valid: " + form.isValid());
+        	}else{
+        		me.fireEvent("errorToast", "genericSave: " + genericSave + " \ Form: " + form);
+        	}
+       		
+       }
 	},
 
 	existeCliente: function(btn){

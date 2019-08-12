@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JINLI HU
---## FECHA_CREACION=20190412
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20190809
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3624
+--## INCIDENCIA_LINK=REMVIP-4927
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -24,6 +24,7 @@
 --##        1.1 HREOS-5838 Guillermo Llidó : se añaden las subcarteras de Agora para que pueda asignar gestores
 --##        1.2 HREOS-5838 Daniel Algaba : corrección subcarteras
 --##		1.3 REMVIP-3624 JINLI HU : añadir filtro para la asignación de gestor/supervisor de BO para los activos de sareb/bankia que tengan el tipo de comercialización a Singular 
+--##		1.4 REMVIP-4927 GUILLEM REY: no asigna gestores publicacion
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -32,7 +33,7 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
 CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
-    V_USUARIO       VARCHAR2 DEFAULT 'SP_AGA_V4',
+    V_USUARIO       VARCHAR2 DEFAULT 'SP_AGA_V3.1.4',
     PL_OUTPUT       OUT VARCHAR2,
     P_ACT_ID        IN #ESQUEMA#.act_activo.act_id%TYPE,
     P_ALL_ACTIVOS   IN NUMBER,
@@ -115,7 +116,7 @@ BEGIN
               SELECT ACT.ACT_ID,TGE.DD_TGE_CODIGO
                 FROM '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO ACT
                 JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC        ON GAC.ACT_ID    = ACT.ACT_ID
-                JOIN '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH      ON GEH.GEH_ID    = ACT.GEH_ID AND GEH.BORRADO = 0
+                JOIN '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH      ON GEH.GEH_ID    = ACT.GEH_ID AND GEH.BORRADO = 0 AND GEH.GEH_FECHA_HASTA IS NULL
                 JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE           ON GEE.GEE_ID    = GAC.GEE_ID AND GEE.BORRADO = 0
                 JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE    ON TGE.DD_TGE_ID = GEE.DD_TGE_ID
                                                                       AND TGE.DD_TGE_ID = GEH.DD_TGE_ID

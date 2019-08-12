@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Miguel Ángel Ávila Sánchez
---## FECHA_CREACION=20192506
+--## FECHA_CREACION=20191208
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6791

@@ -24,6 +24,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 			else{
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').hide();
 			}
+			
 		}
 	},
 
@@ -179,9 +180,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								      	bind: {
 							           		store: '{comboDestinatarios}',
 							           		value: '{gasto.destinatario}',
-							           		readOnly: '{!isGastoRefacturable}'
+							           		readOnly: '{gasto.bloquearDestinatario}'
 							         	},
-							         	
 							         	
 							         	allowBlank: false
 							    	},								    

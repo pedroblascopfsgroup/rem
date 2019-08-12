@@ -3,6 +3,7 @@
  */
 Ext.define('HreRem.model.GastoRefacturableGridExistenteStore', {
     extend: 'HreRem.model.Base',
+    reference: 'GastoRefacturableGridStore',
     idProperty: 'numeroGastoHaya',    
     
 

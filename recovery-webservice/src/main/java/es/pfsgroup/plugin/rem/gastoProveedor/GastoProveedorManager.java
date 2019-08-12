@@ -428,6 +428,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(gasto.getFechaRecHaya())) { 
 				dto.setFechaRecHaya(gasto.getFechaRecHaya()); 
 			}
+			dto.setBloquearDestinatario(!Checks.estaVacio(this.getGastosRefacturablesGasto(gasto.getId())));
 
 		}
 
@@ -630,6 +631,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				throw new JsonViewerException("El numero de gasto abonado no existe");
 			}
 
+		}
+		if(!Checks.esNulo(dto.getDestinatario()) && !DDDestinatarioGasto.CODIGO_HAYA.equals(dto.getDestinatario())){
+			gastoProveedor.getGastoDetalleEconomico().setGastoRefacturable(false);
 		}
 
 		if (!Checks.esNulo(dto.getGastoSinActivos())) {
@@ -1082,7 +1086,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}else {
 				dto.setBloquearGridRefacturados(true);
 			}
-		
+			
+			
+			
 			
 			if (!Checks.esNulo(detalleGasto.getPagadoConexionBankia())) {
 				dto.setPagadoConexionBankia(detalleGasto.getPagadoConexionBankia() == 1 ? true : false);

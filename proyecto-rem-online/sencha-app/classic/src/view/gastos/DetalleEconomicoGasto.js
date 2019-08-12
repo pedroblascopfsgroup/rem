@@ -884,10 +884,12 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 													value:'{detalleeconomico.gastoRefacturableB}',
 													readOnly: '{detalleeconomico.bloquearCheckRefacturado}'
 												}
+
 											},
 											 {				
 												xtype: 'gastoRefacturadoGridExistentes', 
 												width: '500px',
+												name: 'gastoRefac',
 												colspan: 3,
 												rowspan: 9,
 												reference: 'gastoRefacturadoGridExistente',

@@ -11,7 +11,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     },
     
     formulas: {   
-    	
+  		
 	     getConEmisor: function(get){
 	     	var me= this;
 	     	var gasto= me.getData().gasto;
@@ -295,25 +295,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 					return true;
 				}
 				return false;
-			},
-			
-			// comprobamos comboBox destinatario si el gasto es refacturable
-			isGastoRefacturable: function(get){
-				var gastoRefacturable = get('detalleeconomico.gastoRefacturableB');
-				
-				if (gastoRefacturable != undefined && gastoRefacturable != null  && gastoRefacturable == true) {
-					return false;
-				}
-				return true;
-			}//,
-//			bloquearCheckRefacturado: function(get){
-//				var gastoRefacturable = get('detalleeconomico.gastoRefacturableB');
-//				
-//				if (gastoRefacturable == true) {
-//					return true;
-//				}
-//				return false;
-//			}
+			}
+		
 		
 	 },
 	 

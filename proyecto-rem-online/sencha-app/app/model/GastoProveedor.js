@@ -206,6 +206,10 @@ Ext.define('HreRem.model.GastoProveedor', {
    		{
    			name: 'gastoRefacturable',
    			type: 'boolean'
+   		},
+   		{
+   			name: 'bloquearDestinatario',
+   			type: 'boolean'
    		}
     		
     ],

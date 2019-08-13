@@ -25,7 +25,6 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.recibo.model.DDMotivoRechazo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -49,7 +48,6 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfe
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ConfigTareaContrasteDeListas;
 import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;

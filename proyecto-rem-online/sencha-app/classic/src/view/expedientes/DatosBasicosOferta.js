@@ -325,11 +325,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						                	readOnly: true,					
 											bind: {
 												store: '{comboClaseOferta}',
-<<<<<<< HEAD
 												value: '{datosbasicosoferta.claseOfertaCodigo}'
-=======
-												value: '{datosbasicosoferta.claseOfertaCodigo}', 
->>>>>>> c0a5725560... HREOS-6983 - LBK Comités Ofertas - Modificación del expediente de la oferta
 											},
 											displayField: 'descripcion',
 											valueField: 'codigo'

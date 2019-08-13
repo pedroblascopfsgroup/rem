@@ -4233,12 +4233,34 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 }
             });
         }else{
-        	if(!Ext.isEmpty(form)){
-        		me.fireEvent("errorToast", "genericSave: " + genericSave + " \ Form: " + form + " \ Form is valid: " + form.isValid());
-        	}else{
-        		me.fireEvent("errorToast", "genericSave: " + genericSave + " \ Form: " + form);
+        	var fechaHoy = new Date();
+        	
+        	var mes = fechaHoy.getMonth();
+        	
+        	var dia = new Date().getDate();
+        	
+        	if(mes < 10){
+        		mes = "0" + mes;
         	}
-       		
+        	
+        	if(dia < 10){
+        		dia = "0" + dia;
+        	}
+        	
+        	//Transformamos la fecha a string para compararla
+        	var fechaString = fechaHoy.getFullYear() + "-" + mes + "-" + dia;
+        	
+        	var fechaCom = form.getValues().fechaComunicacion;
+        	
+        	if(new Date(fechaCom) > new Date(fechaString)){
+        		me.fireEvent("errorToast", HreRem.i18n("msg.fecha.com.mayor"));
+                me.onClickBotonCancelarComercial(btn);
+        	}else{
+        		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                me.onClickBotonCancelarComercial(btn);
+        	}
+        		
+        	
        }
 	},
 

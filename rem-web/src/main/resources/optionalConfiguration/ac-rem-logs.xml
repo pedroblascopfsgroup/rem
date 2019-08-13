@@ -23,7 +23,7 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>ACTIVO</value>
 						</entry>
 						<entry key="TYPE">	
 							<value>ACCES</value>
@@ -43,7 +43,7 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>ACTIVO</value>
 						</entry>
 						<entry key="TYPE">	
 							<value>ACCES</value>
@@ -63,10 +63,10 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>ACTIVO</value>
 						</entry>
 						<entry key="TYPE">	
-							<value>EDIT</value>
+							<value>SAVE</value>
 						</entry>
 						<entry key="NAME_ID_PARAMETER">	
 							<value>id</value>
@@ -88,7 +88,7 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>AGRUPACION</value>
 						</entry>
 						<entry key="TYPE">	
 							<value>ACCESS</value>
@@ -108,10 +108,10 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>AGRUPACION</value>
 						</entry>
 						<entry key="TYPE">	
-							<value>EDIT</value>
+							<value>SAVE</value>
 						</entry>
 						<entry key="NAME_ID_PARAMETER">	
 							<value>id</value>
@@ -133,7 +133,7 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>2</value>
+							<value>EXPEDIENTE</value>
 						</entry>
 						<entry key="TYPE">	
 							<value>VIEW</value>
@@ -153,10 +153,10 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>2</value>
+							<value>EXPEDIENTE</value>
 						</entry>
 						<entry key="TYPE">	
-							<value>EDIT</value>
+							<value>SAVE</value>
 						</entry>
 						<entry key="NAME_ID_PARAMETER">	
 							<value>id</value>
@@ -178,7 +178,7 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>GASTO</value>
 						</entry>
 						<entry key="TYPE">	
 							<value>VIEW</value>
@@ -198,7 +198,7 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>GASTO</value>
 						</entry>
 						<entry key="TYPE">	
 							<value>CREATE</value>
@@ -218,10 +218,10 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>GASTO</value>
 						</entry>
 						<entry key="TYPE">	
-							<value>EDIT</value>
+							<value>SAVE</value>
 						</entry>
 						<entry key="NAME_ID_PARAMETER">	
 							<value>id</value>
@@ -243,7 +243,7 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>TRABAJO</value>
 						</entry>
 						<entry key="TYPE">	
 							<value>ACCESS</value>
@@ -263,10 +263,10 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>TRABAJO</value>
 						</entry>
 						<entry key="TYPE">	
-							<value>EDIT</value>
+							<value>SAVVE</value>
 						</entry>
 						<entry key="NAME_ID_PARAMETER">	
 							<value>id</value>
@@ -288,7 +288,7 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>PROVEEDOR</value>
 						</entry>
 						<entry key="TYPE">	
 							<value>ACCESS</value>
@@ -308,10 +308,10 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>PROVEEDOR</value>
 						</entry>
 						<entry key="TYPE">	
-							<value>EDIT</value>
+							<value>SAVE</value>
 						</entry>
 						<entry key="NAME_ID_PARAMETER">	
 							<value>id</value>
@@ -328,7 +328,7 @@
 							<value>1</value>
 						</entry>
 						<entry key="ENTIDAD_CODE">	
-							<value>61</value>
+							<value>PROVEEDOR</value>
 						</entry>
 						<entry key="TYPE">	
 							<value>CREATE</value>

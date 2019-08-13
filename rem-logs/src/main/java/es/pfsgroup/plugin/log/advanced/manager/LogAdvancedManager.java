@@ -36,6 +36,8 @@ public class LogAdvancedManager {
 	static final String ACCES_LOGIN_KO = "KO";
 	static final String WEB_SERVICE_OK = "OK";
 	static final String WEB_SERVICE_KO = "KO";
+	static final String ACCES_OK = "OK";
+	static final String ACCES_KO = "KO";
 	static final String TYPE_WEB_SERVICE = "WEB_SERVICE";
 	static final String WEB_SERVICE_DESCRIPTION = "Llamada Web Service";
 	static final String PREFIX_RSYSLOG = "[REM_WEB_LOG]";

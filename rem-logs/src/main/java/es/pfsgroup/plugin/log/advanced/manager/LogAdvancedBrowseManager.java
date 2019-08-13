@@ -53,8 +53,13 @@ public class LogAdvancedBrowseManager extends LogAdvancedManager implements LogA
 							+ userSec.getUsername() + "|" + mapDataLog.get(MAP_KEY_DESCRIPTION) + "| " + "| "
 							+ "| ";
 	
-					String msgSyslog = dateFormat.format(date)+" | " + mapDataLog.get(MAP_KEY_TYPE)+": "+ mapDataLog.get(MAP_KEY_DESCRIPTION) + " | " +details.getRemoteAddress().toString()+" | "+ userSec.getUsername() + " | "+userSec.getEntidad().getDescripcion()+" | "+ ((authentication.isAuthenticated()) ? ACCES_LOGIN_OK : ACCES_LOGIN_KO)
-							+" | Nombre entidad | Nombre Cartera Entidad | IP | "+ mapDataLog.get(MAP_KEY_ENTIDADCODE) + "|"
+					String msgSyslog = dateFormat.format(date)+" | " 
+							+ mapDataLog.get(MAP_KEY_TYPE)+": "
+							+ mapDataLog.get(MAP_KEY_DESCRIPTION) + " | " 
+							+ userSec.getUsername() + " | "
+							+ details.getRemoteAddress().toString()+" | "
+							+ ACCES_OK+ "|" 
+							+ mapDataLog.get(MAP_KEY_ENTIDADCODE) + "|"
 							+ getIdEntidad(parameters, mapDataLog.get(MAP_KEY_NAMEID));
 					
 					writeLog(new LogAdvancedDto(msg, Integer.parseInt(mapDataLog.get(MAP_KEY_PRIORITY)),msgSyslog));

@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -135,6 +134,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
@@ -1204,12 +1204,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		dto.setIsCarteraLbkVenta(isCarteraLbkVenta);
+		Boolean isLbkOfertaComercialPrincipal = false;
+		Boolean muestraOfertaComercial = false;
+		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+			isLbkOfertaComercialPrincipal = true;
+			muestraOfertaComercial = true;
+		}else if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+			muestraOfertaComercial = true;
 		
 		if (!Checks.esNulo(oferta.getClaseOferta()) && isCarteraLbkVenta) {
 			dto.setClaseOfertaDescripcion(oferta.getClaseOferta().getDescripcion());
 			dto.setClaseOfertaCodigo(oferta.getClaseOferta().getCodigo());
-			if (DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+			if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
 				dto.setNumOferPrincipal(ofertaApi.getOfertaPrincipalById(oferta.getId()).getNumOferta());
+
+			}else if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+				try {
+					List <OfertasAgrupadasLbk> oferAgrupa = oferta.getOfertasAgrupadas();
+					
+					if(!Checks.esNulo(oferAgrupa)) {
+						for (OfertasAgrupadasLbk ofertaAgrupada : oferAgrupa) {
+							if (oferta.getId() != ofertaAgrupada.getOfertaDependiente().getId()) {
+								importeTotalAgrupada += ofertaAgrupada.getOfertaDependiente().getImporteOferta();
+							}
+						}
+					}
+				} catch (Exception ex) {
+					logger.error("error al recuperar la lista de ofertas agrupadas", ex);
+
+				}
 			}
 		}
 

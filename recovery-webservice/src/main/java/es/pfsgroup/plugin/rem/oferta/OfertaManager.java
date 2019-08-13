@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -228,6 +229,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
+	
+	@Autowired
+	private TareaActivoApi tareaActivoApi;
 
 
 	@Autowired
@@ -4386,12 +4390,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	public boolean isOfertaPrincipal(Oferta oferta) {
-		
-		Oferta ofertaPrincipal = getOfertaById(oferta.getId());
-		if(!Checks.esNulo(ofertaPrincipal) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(ofertaPrincipal.getClaseOferta().getCodigo())
+		if(!Checks.esNulo(oferta) && DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) 
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo()) 
-				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())){
-				return true;	
+				&& !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())){
+			return true;	
 		}
 		return false;
 	}
@@ -4415,11 +4417,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	public boolean isOfertaDependiente(Oferta oferta) {
-		
-		Oferta ofertaDependiente = getOfertaById(oferta.getId());
-		if(!Checks.esNulo(ofertaDependiente) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaDependiente.getClaseOferta().getCodigo())
+		if(!Checks.esNulo(oferta) && DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) 
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo()) 
-				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())){
+				&& !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())){
 				return true;	
 		}
 		return false;
@@ -4440,5 +4440,43 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		return listaOfertas;
+	}
+	
+	@Override
+	public Oferta tareaOferta(Long idTarea) {
+		Oferta oferta = null;
+		Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", idTarea);
+		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtroTarea);
+		if (!Checks.esNulo(tareaExterna)) {
+			TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
+			if (!Checks.esNulo(tareaActivo)) {
+				ActivoTramite tramite = tareaActivo.getTramite();
+				if (!Checks.esNulo(tramite)) {
+					Trabajo trabajo = tramite.getTrabajo();
+					if (!Checks.esNulo(trabajo)) {
+						Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+						ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+						if (!Checks.esNulo(expediente)) {
+							oferta = expediente.getOferta();
+						}
+					}
+				}
+			}
+		}
+		return oferta;
+	}
+	
+	public boolean isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String,String>> valores) {
+		Oferta oferta = tareaOferta(tareaExterna.getTareaPadre().getId());
+		if (!Checks.esNulo(oferta) && isOfertaPrincipal(oferta)) {
+			try {
+				return tareaActivoApi.validarTareaDependientes(tareaExterna, oferta, valores);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		
+		return true;
 	}
 }

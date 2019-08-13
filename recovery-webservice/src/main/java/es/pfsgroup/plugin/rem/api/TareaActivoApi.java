@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -85,14 +86,6 @@ public interface TareaActivoApi {
 		public TareaActivo tareaOfertaDependiente(Oferta oferta);
 		
 		/**
-		 * Este método obtiene la oferta mediante el id de la tarea por la que entra (creado para obtener la oferta y comprobar si es o no principal).
-		 *
-		 * @param idTarea
-		 * @return Oferta
-		 */
-		public Oferta tareaOferta(Long idTarea);
-		
-		/**
 		 * Este método convierte un mapa de valores de una tarea a otro mapa de una tarea de un oferta dependiente de una principal.
 		 *
 		 * @param valores
@@ -101,5 +94,15 @@ public interface TareaActivoApi {
 		 * @return Map<String,String[]> nuevo mapa
 		 */
 		public Map<String,String[]> valoresTareaDependiente(Map<String, String[]> valores, TareaActivo tarea, Oferta oferta);
+
+		/**
+		 * Este método valida las tareas de las ofertas dependientes
+		 *
+		 * @param tareaExterna
+		 * @param oferta
+		 * @param valores
+		 * @return boolean
+		 */
+		public boolean validarTareaDependientes(TareaExterna tareaExterna, Oferta oferta, Map<String, Map<String,String>> valores) throws Exception;
 
     }

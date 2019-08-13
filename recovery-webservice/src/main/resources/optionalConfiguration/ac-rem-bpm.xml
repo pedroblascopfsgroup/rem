@@ -625,6 +625,10 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.isOfertaDependiente(tareaExterna);
 			}
+			def isValidateOfertasDependientes = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.isValidateOfertasDependientes(tareaExterna, valores);
+			}
   			 ]]></value>
   		</list>
   	</property>

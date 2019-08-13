@@ -494,11 +494,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					    			params: parametros,
 					    			success: function(response, opts) {
 					    				 data = Ext.decode(response.responseText);
-					    				if ( data.success === "false" && data.msgError.length > 0 ) {
+					    				if (data.success === "false" && data.msgError.length > 0) {
 					    					me.fireEvent("errorToast", data.msgError);
 				    						me.parent.fireEvent('aftersaveTarea', me.parent);
-					    				}else {
-					    					// Si todo va bien.
 					    				}
 					    			}
 					    		});

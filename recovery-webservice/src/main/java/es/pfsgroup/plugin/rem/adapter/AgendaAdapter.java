@@ -45,7 +45,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionTipoEventoRegistro;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.dto.DtoMostrarAnotacion;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
@@ -503,7 +502,7 @@ public class AgendaAdapter {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
+	public DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
 		GenericForm genericForm = actGenericFormManager.get(tar.getTareaExterna().getId());
 
@@ -906,7 +905,7 @@ public class AgendaAdapter {
 		}
 	}
 
-	@Transactional
+	@Transactional(readOnly = false)
 	public boolean lanzarTareaAdministrativa(DtoSaltoTarea dto) throws Exception {
 		//Validacion de documentos de reserva si salta con reserva a ResultadoPBC o Posicionamiento y firma
 		updaterTransitionService.validarContratoYJustificanteReserva(dto);
@@ -967,42 +966,38 @@ public class AgendaAdapter {
 		return true;
 	}
 	
-	public Boolean avanzarOfertasDependientes(Map<String,String[]> valores) throws Exception {
-		String idTareaOfertaPrincipal = "";
-		List<Oferta> ofertasDependientes = null;
+	public DtoGenericForm convetirValoresToDto(Map<String,String[]> valoresDependiente) {
+		Long idTarea = 0L;
+		DtoGenericForm dto = null;
 		
-		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+		Map<String, String> camposFormulario = new HashMap<String,String>();
+		for (Map.Entry<String, String[]> entry : valoresDependiente.entrySet()) {
 			String key = entry.getKey();
-			if ("idTarea".equals(key)){
-				idTareaOfertaPrincipal = entry.getValue()[0];
+			if (!"idTarea".equals(key)){
+				camposFormulario.put(key, entry.getValue()[0]);
+			}else{
+				idTarea = Long.parseLong(entry.getValue()[0]);
 			}
 		}
 		
-		if (!"".equals(idTareaOfertaPrincipal)) {
-			Oferta oferta = tareaActivoApi.tareaOferta(Long.parseLong(idTareaOfertaPrincipal));
-			if (!Checks.esNulo(oferta) && ofertaApi.isOfertaPrincipal(oferta)) {
-				ofertasDependientes = ofertaApi.ofertasAgrupadasDependientes(oferta); 
-				for (Oferta avanzaOferta : ofertasDependientes) {
-					TareaActivo tarea = tareaActivoApi.tareaOfertaDependiente(avanzaOferta);
-					if (!Checks.esNulo(tarea) && !Checks.estaVacio(valores)) {
-						Map<String,String[]> valoresDependientes = tareaActivoApi.valoresTareaDependiente(valores, tarea, oferta);
-						try {
-							validationAndSave(valoresDependientes);
-						} catch (Exception e) {
-							logger.error(e.getMessage());
-							throw new Exception(ERROR_TAREA_DEPENDIENTE);
-						}
-					}
-				}
+		if (!Checks.esNulo(idTarea) && !Checks.estaVacio(camposFormulario)) {
+			try {
+				dto = rellenaDTO(idTarea,camposFormulario);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
 			}
 		}
-		return true;
+		
+		return dto;
 	}
 	
-	public Boolean retrocederOfertaPrincipalOfertasDependientes(Map<String,String[]> valores) {
+	public boolean avanzarOfertasDependientes(Map<String,String[]> valores) throws Exception {
 		String idTareaOfertaPrincipal = "";
-		String codigoTareaDestino = "";
-		List<Oferta> ofertas = null;
+		Oferta oferta;
+		List<Oferta> ofertasDependientes = null;
+		TareaActivo tarea;
+		Map<String,String[]> valoresDependientes;
+		DtoGenericForm dto = null;
 		
 		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
 			String key = entry.getKey();
@@ -1012,24 +1007,23 @@ public class AgendaAdapter {
 		}
 		
 		if (!"".equals(idTareaOfertaPrincipal)) {
-			Oferta oferta = tareaActivoApi.tareaOferta(Long.parseLong(idTareaOfertaPrincipal));
-			Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", Long.parseLong(idTareaOfertaPrincipal));
-			TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtroTarea);
-			codigoTareaDestino = tareaExterna.getTareaProcedimiento().getCodigo();
+			oferta = ofertaApi.tareaOferta(Long.parseLong(idTareaOfertaPrincipal));
 			if (!Checks.esNulo(oferta) && ofertaApi.isOfertaPrincipal(oferta)) {
-				ofertas = ofertaApi.ofertasAgrupadasDependientes(oferta);
-				ofertas.add(oferta);
-				for (Oferta ofertaRetroceder : ofertas) {
-					TareaActivo tarea = tareaActivoApi.tareaOfertaDependiente(ofertaRetroceder);
-					if (!Checks.esNulo(tarea)) {
-						DtoSaltoTarea dto = new DtoSaltoTarea();
-						dto.setIdTramite(tarea.getTramite().getId());
-						dto.setCodigoTareaDestino(codigoTareaDestino);
-						try {
-							lanzarTareaAdministrativa(dto);
-						} catch (Exception e) {
-							logger.error(e.getMessage());
-							return false;
+				ofertasDependientes = ofertaApi.ofertasAgrupadasDependientes(oferta); 
+				if (!Checks.estaVacio(ofertasDependientes)) {
+					for (Oferta avanzaOferta : ofertasDependientes) {
+						tarea = tareaActivoApi.tareaOfertaDependiente(avanzaOferta);
+						if (!Checks.esNulo(tarea) && !Checks.estaVacio(valores)) {
+							valoresDependientes = tareaActivoApi.valoresTareaDependiente(valores, tarea, oferta);
+							dto = convetirValoresToDto(valoresDependientes);
+							if (!Checks.esNulo(dto)) {
+								try {
+									actGenericFormManager.saveValues(dto);									
+								} catch (Exception e) {
+									logger.error(e.getMessage());
+									throw new Exception(ERROR_TAREA_DEPENDIENTE);
+								}
+							}
 						}
 					}
 				}
@@ -1037,5 +1031,4 @@ public class AgendaAdapter {
 		}
 		return true;
 	}
-		
 }

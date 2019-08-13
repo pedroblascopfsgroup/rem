@@ -734,4 +734,12 @@ public interface OfertaApi {
 	 */
 	public List<Oferta> ofertasAgrupadasDependientes(Oferta oferta);
 
+	/**
+	 * Este método obtiene la oferta mediante el id de la tarea por la que entra (creado para obtener la oferta y comprobar si es o no principal).
+	 *
+	 * @param idTarea
+	 * @return Oferta
+	 */
+	public Oferta tareaOferta(Long idTarea);
+
 }

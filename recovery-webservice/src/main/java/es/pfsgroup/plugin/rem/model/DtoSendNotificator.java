@@ -12,6 +12,8 @@ public class DtoSendNotificator extends WebDto {
 	private String direccion;
 	private Long numAgrupacion;
 	private String titulo = "Notificación encargo de trabajo en REM";
+	private String municipio;
+	private String provincia;
 
 	public Long getNumTrabajo() {
 		return numTrabajo;
@@ -63,6 +65,18 @@ public class DtoSendNotificator extends WebDto {
 	}
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
+	}
+	public String getMunicipio() {
+		return municipio;
+	}
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
+	public String getProvincia() {
+		return provincia;
+	}
+	public void setProvincia(String provincia) {
+		this.provincia = provincia;
 	}
 	
 }

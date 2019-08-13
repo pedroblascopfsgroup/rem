@@ -12,7 +12,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     data: {
     	activo: null,
     	ofertaRecord: null,
-    	activoCondicionantesDisponibilidad: null
+    	activoCondicionantesDisponibilidad: null,
+    	editingFirstLevel: null
     },
 
     formulas: {
@@ -779,22 +780,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		var me = this;
     		var todoSelec = get('comercial.motivoAutorizacionTramitacionCodigo');
     		var obsv = get('comercial.observacionesAutoTram');
-    		
-    		if(todoSelec != undefined && todoSelec != null){
-	    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == todoSelec){
-	    			if(obsv){
-	    				console.log(obsv);
-	    				return true;
-		    		}	
-	    			console.log('esta es la line 789');
-	    			return false;
-	    		} else {
-	    			console.log('esta es la line 792');
-	    			return true;
+    		var editable = get('editingFirstLevel');
+    		if(editable){
+	    		if(todoSelec != undefined && todoSelec != null){
+		    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == todoSelec){
+		    			if(obsv){
+		    				return true;
+		    			}
+		    			return false;
+		    		} else {
+		    			return true;
+		    		}
 	    		}
     		}
-    		console.log('esta es la line 796');
     		return false;
+    	},
+    	usuarioTieneFuncionTramitarOferta: function(get){
+    		var esTramitable = get('comercial.tramitable');
+    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+    			if(!esTramitable){
+    				return !funcion;
+    			}
+    		return true;
     	}
 		
 	 },

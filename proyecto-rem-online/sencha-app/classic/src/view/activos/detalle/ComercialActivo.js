@@ -142,6 +142,9 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				defaultType: 'textfieldbase',
 				collapsible: true,
 				reference: 'atorizacionTramOfertas',
+				bind:{
+					hidden: '{usuarioTieneFuncionTramitarOferta}'
+				},
 				title: HreRem.i18n('title.autorizacion.tramitacion.ofertas'),
 				items :
 					[{
@@ -149,7 +152,6 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 			        	fieldLabel: HreRem.i18n('fieldlabel.motivo.autorizacion'),
 			        	reference: 'motivoAutorizacionTramitacionCodigo',
 			        	editable: true,
-			        	allowBlank: false,
 			        	bind : {
 						      store : '{comboMotivoAutorizacionTramitacion}',
 						      value : '{comercial.motivoAutorizacionTramitacionCodigo}'

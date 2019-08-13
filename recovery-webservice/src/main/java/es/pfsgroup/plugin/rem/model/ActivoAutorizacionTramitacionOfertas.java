@@ -17,6 +17,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
@@ -33,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
  */
 @Entity
 @Table(name = "ACT_ATR_AUTO_TRAM_OFERTAS", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoAutorizacionTramitacionOfertas implements Serializable, Auditable {
 	

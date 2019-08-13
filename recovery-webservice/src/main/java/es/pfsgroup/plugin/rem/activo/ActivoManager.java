@@ -130,6 +130,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -4165,8 +4166,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "puja", activo.getEstaEnPuja());
 			}
 			if (!Checks.esNulo(activo.getActivoAutorizacionTramitacionOfertas())) {
-				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion());
-				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion());
+				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 			}
 
 		} catch (IllegalAccessException e) {
@@ -6568,8 +6569,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
+	@Transactional
 	public boolean insertarActAutoTram(DtoComercialActivo dto) {
 		
+		Usuario usuario = usuarioApi.getUsuarioLogado();
 		if (Checks.esNulo(dto.getId())) {
 			return false;
 		}
@@ -6577,15 +6580,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Activo activo = activoDao.get(Long.parseLong(dto.getId()));
 		
 		try {
-			
+			DDMotivoAutorizacionTramitacion motivoTramitacion = genericDao.get(DDMotivoAutorizacionTramitacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getMotivoAutorizacionTramitacionCodigo()));	
 			ActivoAutorizacionTramitacionOfertas activoAuto =  activo.getActivoAutorizacionTramitacionOfertas();
-			if(!Checks.esNulo(activoAuto)) {
+			if(Checks.esNulo(activoAuto)) {
 				activoAuto = new ActivoAutorizacionTramitacionOfertas();
 				beanUtilNotNull.copyProperty(activoAuto, "activo", activo);
 			}
 			beanUtilNotNull.copyProperty(activoAuto, "observacionesAutoTram", dto.getObservacionesAutoTram());
-			beanUtilNotNull.copyProperty(activoAuto, "motivoAutorizacionTramitacionCodigo", dto.getMotivoAutorizacionTramitacionCodigo());
-//			beanUtilNotNull.copyProperty(activoAuto, "usuario", usuarioApi.getUsuarioLogado());
+			beanUtilNotNull.copyProperty(activoAuto, "motivoAutorizacionTramitacion", motivoTramitacion);
+			activoAuto.setUsuario(usuario);
 			beanUtilNotNull.copyProperty(activoAuto, "fechIniBloq", this.getFechaInicioBloqueo(activo));
 			beanUtilNotNull.copyProperty(activoAuto, "fechAutoTram", new Date());
 			

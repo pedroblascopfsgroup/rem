@@ -3816,7 +3816,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 
-
 	@Override
 	public GestorEntidad getGestorEntidad(Oferta oferta) {
 		GestorActivo gestor = null;
@@ -3826,7 +3825,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public Long calcularGestorComercialPrescriptorOferta(Oferta oferta) {
+	public Usuario calcularGestorComercialPrescriptorOferta(Oferta oferta) {
 			
 			ActivoProveedor activoProveedor = oferta.getPrescriptor();
 			ProveedorGestorCajamar proveedorGestorCajamar = null;
@@ -3856,7 +3855,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							if(!Checks.esNulo(proveedorGestorCajamar) 
 									&& !Checks.esNulo(proveedorGestorCajamar.getUsuario())
 									&& !Checks.esNulo(proveedorGestorCajamar.getUsuario().getId())) {
-								return proveedorGestorCajamar.getUsuario().getId();
+								return proveedorGestorCajamar.getUsuario();
 							}
 						}else {
 							isComprobarMultipleActivos = true;
@@ -3880,9 +3879,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}		
 				}
 				if(!Checks.estaVacio(listaGestoresActivosOferta) && listaGestoresActivosOferta.size() == 1) {
-					return listaGestoresActivosOferta.get(0).getUsuario().getId();
+					return listaGestoresActivosOferta.get(0).getUsuario();
 				}
 			}
 			return null;		
 		}
+
 }

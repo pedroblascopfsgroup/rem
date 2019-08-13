@@ -654,9 +654,9 @@ public interface OfertaApi {
 	/**
 	 * Calcula el gestor comercial prescriptor de la oferta
 	 * @param oferta
-	 * @return Long idGestorComercial / null
+	 * @return Usuario GestorComercial / null
 	 */
-	public Long calcularGestorComercialPrescriptorOferta(Oferta oferta);
+	public Usuario calcularGestorComercialPrescriptorOferta(Oferta oferta);
 
 }
 

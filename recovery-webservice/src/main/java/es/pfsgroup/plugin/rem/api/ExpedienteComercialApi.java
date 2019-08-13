@@ -1237,6 +1237,6 @@ public interface ExpedienteComercialApi {
 
 	boolean existeComprador(String numDoc);
 	
-	public ArrayList<DtoDiccionario> calcularGestorComercialPrescriptor(ExpedienteComercial expediente);
+	public ArrayList<DtoDiccionario> calcularGestorComercialPrescriptor(Long idExpediente);
 
 }

@@ -221,7 +221,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  		}
  		return gestor;		
  	}
- 	
+
+ 	@Override
  	public GestorEntidad getGestorEntidadByActivoYTipo(Activo activo, String codigoTipo){
  		GestorActivo gestor = null;
  		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipo);

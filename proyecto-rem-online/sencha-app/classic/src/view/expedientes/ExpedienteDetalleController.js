@@ -1948,9 +1948,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoNumVisita.setDisabled(true);
 		}
 	},
+	 
 	setGestorComercialPrescriptor: function(){
 		var me = this;
 		if(!Ext.isEmpty(me.lookupReference('comboGestorComercialPrescriptor'))){
+			
 			var valor = me.lookupReference('comboGestorComercialPrescriptor').getValue();
 			if (valor == "NA"){
 				valor = null;

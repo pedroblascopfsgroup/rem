@@ -335,7 +335,6 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setIdEco(Long idEco) {
 		this.idEco = idEco;
 	}
-
 	public Long getGestorComercialPrescriptor() {
 		return gestorComercialPrescriptor;
 	}

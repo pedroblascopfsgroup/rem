@@ -2077,19 +2077,17 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getGestorPrescriptor(Long idExpediente, ModelMap model) {
 		try {
-			ExpedienteComercial expediente = expedienteComercialApi.findOne(idExpediente);
-			List<DtoDiccionario> list = expedienteComercialApi.calcularGestorComercialPrescriptor(expediente);
+			List<DtoDiccionario> list = expedienteComercialApi.calcularGestorComercialPrescriptor(idExpediente);
 			model.put(RESPONSE_DATA_KEY, list);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			logger.error("Error en ExpedienteComercialController", e);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
 		}
-
 		return createModelAndViewJson(model);
 	}
 }

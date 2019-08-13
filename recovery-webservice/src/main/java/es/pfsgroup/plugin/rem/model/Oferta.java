@@ -236,8 +236,9 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name="OFR_REF_CIRCUITO_CLIENTE")
 	private String refCircuitoCliente;
     
-	@Column(name="OFR_GES_COM_PRES")
-	private Long gestorComercialPrescriptor;
+	@ManyToOne
+	@JoinColumn(name = "OFR_GES_COM_PRES")
+	private Usuario gestorComercialPrescriptor;
 	
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -697,11 +698,11 @@ public class Oferta implements Serializable, Auditable {
 		this.refCircuitoCliente = refCircuitoCliente;
 	}
 
-	public Long getGestorComercialPrescriptor() {
+	public Usuario getGestorComercialPrescriptor() {
 		return gestorComercialPrescriptor;
 	}
 
-	public void setGestorComercialPrescriptor(Long gestorComercialPrescriptor) {
+	public void setGestorComercialPrescriptor(Usuario gestorComercialPrescriptor) {
 		this.gestorComercialPrescriptor = gestorComercialPrescriptor;
 	}
 

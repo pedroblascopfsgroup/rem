@@ -330,7 +330,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		        codigoCartera == CONST.CARTERA['HYT'] || 
 	        	codigoCartera == CONST.CARTERA['SAREB'] || 
 	        	codigoCartera == CONST.CARTERA['TANGO'] ||
-	        	(codigoCartera == CONST.CARTERA['THIRDPARTIES'] && 
+	        	(codigoCartera == CONST.CARTERA['THIRD'] && 
 	        		(codigoSubCartera == CONST.SUBCARTERA['QUITASBANKIA'] ||
 	        		codigoSubCartera == CONST.SUBCARTERA['COMERCIALING']) 
 	        	)

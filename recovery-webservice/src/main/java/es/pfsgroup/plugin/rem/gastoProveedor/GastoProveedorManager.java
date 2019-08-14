@@ -1523,28 +1523,28 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		}else{
 		
-		DecimalFormat df = new DecimalFormat("##.##");
-		df.setRoundingMode(RoundingMode.DOWN);
-		// Calcular porcentaje equitativo.
-		Float numActivos = (float) gastosActivosList.size();
-		
-		Float porcentaje = 100f / numActivos;
-		
-		//truncamos a dos decimales
-		porcentaje = Float.valueOf(df.format(porcentaje).replace(',', '.'));
-		
-		
-		Float resto = 100f - (porcentaje * numActivos);
-
-		for (GastoProveedorActivo gastoProveedor : gastosActivosList) {
-			gastoProveedor.setParticipacionGasto(porcentaje);
-		}
-		
-		//si la divisón de gastos no es exacta añadimos el resto a el ultimo activo
-		if(resto > 0 && gastosActivosList.size() > 0){
-			GastoProveedorActivo elUltimoActivo = gastosActivosList.get(gastosActivosList.size()-1);
-			elUltimoActivo.setParticipacionGasto(elUltimoActivo.getParticipacionGasto()+resto);
-		}
+			DecimalFormat df = new DecimalFormat("##.##");
+			df.setRoundingMode(RoundingMode.DOWN);
+			// Calcular porcentaje equitativo.
+			Float numActivos = (float) gastosActivosList.size();
+			
+			Float porcentaje = 100f / numActivos;
+			
+			//truncamos a dos decimales
+			porcentaje = Float.valueOf(df.format(porcentaje).replace(',', '.'));
+			
+			
+			Float resto = 100f - (porcentaje * numActivos);
+	
+			for (GastoProveedorActivo gastoProveedor : gastosActivosList) {
+				gastoProveedor.setParticipacionGasto(porcentaje);
+			}
+			
+			//si la divisón de gastos no es exacta añadimos el resto a el ultimo activo
+			if(resto > 0 && gastosActivosList.size() > 0){
+				GastoProveedorActivo elUltimoActivo = gastosActivosList.get(gastosActivosList.size()-1);
+				elUltimoActivo.setParticipacionGasto(elUltimoActivo.getParticipacionGasto()+resto);
+			}
 		}
 	}
 	

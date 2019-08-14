@@ -313,8 +313,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								value: '{agrupacionficha.comercializableConsPlano}',
 								store: '{comboTrueFalse}',
 								readOnly: false,
-								disabled: '{!esVisibleParaCartera}',
-								hidden: '{!esVisibleParaCartera}',
+								disabled: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
 								listeners: {
 									change: 'onChangeComboComercializableConsPlano'
 								}
@@ -331,7 +331,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								value: '{agrupacionficha.existePiloto}',
 								store: '{comboTrueFalse}',
 								readOnly: false,
-								hidden: '{!esVisibleParaCartera}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
 								listeners: {
 									change: 'onChangeComboExistePisoPiloto'
 								}
@@ -348,7 +348,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								value: '{agrupacionficha.esVisitable}',
 								store: '{comboTrueFalse}',
 								readOnly: false,
-								hidden: '{!esVisibleParaCartera}'
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
 							}
 						},
 						{
@@ -360,7 +360,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							bind: {
 								value: '{agrupacionficha.pisoPiloto}',
 								readOnly: false,
-								hidden: '{!esVisibleParaCartera}'
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
 							}
 						},
 						{

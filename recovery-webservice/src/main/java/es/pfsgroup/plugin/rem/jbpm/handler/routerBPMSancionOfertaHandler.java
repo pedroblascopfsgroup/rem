@@ -49,12 +49,13 @@ public class routerBPMSancionOfertaHandler extends ActivoBaseActionHandler{
 	
 	private String getTarget(ActivoTramite tramite, String codigo, String subCodigo, String origin) {
 		Map<String, String> target = new HashMap<String, String>();
-		target.put(DDCartera.CODIGO_CARTERA_THIRD_PARTY, getTargetThirdParties(subCodigo, origin, tramite));
+		if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(codigo) && DDSubcartera.CODIGO_YUBAI.equals(subCodigo))
+			target.put(DDCartera.CODIGO_CARTERA_THIRD_PARTY, getTargetThirdPartiesYubai(origin, tramite));
 		
 		return target.get(codigo);
 	}
 	
-	private String getTargetThirdParties(String codigoSubcartera, String origin, ActivoTramite tramite) {
+	private String getTargetThirdPartiesYubai(String origin, ActivoTramite tramite) {
 		if ( Checks.esNulo(origin) ) {
 			return INICIO_VENTA_SOBRE_PLANO;
 		}else if ( RESULTADO_PBC.equals(origin)  && !Checks.esNulo(tramite)) {

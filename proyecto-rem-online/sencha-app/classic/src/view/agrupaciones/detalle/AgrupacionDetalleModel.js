@@ -649,20 +649,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 		return get('agrupacionficha.estadoAlquilerDescripcion')
 		 	}
 		 },
-		 
-		 esVisibleParaCartera: function(get){
-		 //Si una cartera o subcartera aparece en esta función se devuelve true
-			var cartera = get('agrupacionficha.cartera');
-			var codCartera = get('agrupacion.codigoCartera');
-		 	var codSubcartera = get('agrupacion.codSubcartera')
-			if(cartera != undefined && cartera != null && codCartera != undefined && codCartera != null) {
-				if(cartera == CONST.NOMBRE_CARTERA2['THIRD'] || codCartera == CONST.NOMBRE_CARTERA['THIRD']) {
-					if(codSubcartera == CONST.SUBCARTERA['YUBAI']) {
-						return true;
-					}
-				}
-			}
-			return false;
+
+		 esAgrupacionThirdpartiesYubaiObraNueva: function () {
+		 	var me = this;
+		 	var codCartera = me.get('agrupacionficha.codigoCartera'),
+		 		codSubcartera = me.get('agrupacionficha.codSubcartera'),
+		 		codAgrupacion = me.get('agrupacionficha.tipoAgrupacionCodigo');
+		 		
+		 		if ((codCartera === undefined || codCartera === null || codCartera.lenght === 0)
+		 		|| (codSubcartera === undefined || codSubcartera === null || codSubcartera.lenght === 0)
+		 		|| (CONST.TIPOS_AGRUPACION["OBRA_NUEVA"] !== codAgrupacion)){
+		 				return false;
+		 		}else {
+			 		if ( CONST.CARTERA["THIRD"] === codCartera 
+			 		&& CONST.SUBCARTERA["YUBAI"] === codSubcartera 
+			 		&& CONST.TIPOS_AGRUPACION["OBRA_NUEVA"] === codAgrupacion)
+		 				return true
+		 		}
+		 		
+		 		return false;
 		 }
     },
     stores: {

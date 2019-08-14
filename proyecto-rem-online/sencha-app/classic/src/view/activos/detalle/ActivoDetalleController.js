@@ -4239,9 +4239,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         }else{
         	var fechaHoy = new Date();
         	
-        	var mes = fechaHoy.getMonth();
+        	var mes = fechaHoy.getMonth() + 1;
         	
-        	var dia = new Date().getDate();
+        	var dia = fechaHoy.getDate();
         	
         	if(mes < 10){
         		mes = "0" + mes;
@@ -4259,9 +4259,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         	if(new Date(fechaCom) > new Date(fechaString)){
         		me.fireEvent("errorToast", HreRem.i18n("msg.fecha.com.mayor"));
                 me.onClickBotonCancelarComercial(btn);
-        	}else{
+        	}else if(form.isValid()){
         		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                me.onClickBotonCancelarComercial(btn);
+        		me.onClickBotonCancelarComercial(btn);
         	}
         		
         	

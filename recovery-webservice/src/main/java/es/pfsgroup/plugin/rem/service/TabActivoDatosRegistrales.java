@@ -113,6 +113,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	private static final String MENSAJE_ERROR_SUPERFICIE_UTIL        = "msg.error.superficie.util.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_REPERCUSION = "msg.error.superficie.repercusion.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_PARCELA     = "msg.error.superficie.parcela.UAs";
+	//private static final String MENSAJE_ERROR_ELEMENTOS_COMUNES      = "msg.error.elementos.comunes.UAS";
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
 	
@@ -420,7 +421,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
 
 		DtoActivoDatosRegistrales dto = (DtoActivoDatosRegistrales) webDto;
-		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		boolean esPA = activoDao.isIntegradoEnAgrupacionPA(activo.getId());
+		
 		try {
 			
 			if (activo.getInfoRegistral() == null) {
@@ -447,8 +449,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			beanUtilNotNull.copyProperties(activo, dto);
 			//beanUtilNotNull.copyProperties(activo.getInfoAdministrativa(), dto);
-			if (esUA){
-				this.comprobacionSuperficieUAs(dto, activo.getId());
+			if (esPA){
+				this.comprobacionSuperficiePA(dto, activo.getId());
 				beanUtilNotNull.copyProperties(activo.getInfoRegistral(), dto);
 				beanUtilNotNull.copyProperties(activo.getInfoRegistral().getInfoRegistralBien(), dto);
 			} else {
@@ -955,14 +957,22 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		}
 	}
 	
-	public void comprobacionSuperficieUAs(DtoActivoDatosRegistrales activoDto, Long id) {
+	public void comprobacionSuperficiePA(DtoActivoDatosRegistrales activoDto, Long id) {
 		Activo activoActual = activoApi.get(id);
 		ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivoConFechaBaja(id);
+		boolean isUA = activoDao.isUnidadAlquilable(id);
 		Activo activoMatriz = null;
+		List<Activo> listaUAs = new ArrayList<Activo>();
 		if (!Checks.esNulo(agr)) {
-			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
+			if (!isUA) {
+				activoMatriz = activoActual;
+			}else {
+				activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agr.getId());
+			}
+			listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(agr.getId());
 		}
-		List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(agr.getId());
+		
+		
 		float superficie_construida = 0;
 		float superficie_util = 0;
 		float superficie_repercusion = 0;
@@ -974,18 +984,20 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		float superficieParcelaActivoMatriz = 0;
 		
 		for (Activo ua : listaUAs) {
-			if (ua.getId() == activoActual.getId()) {
-				if(!Checks.esNulo(activoDto.getSuperficieConstruida())) {
-					ua.getInfoRegistral().getInfoRegistralBien().setSuperficieConstruida(BigDecimal.valueOf(Long.parseLong(activoDto.getSuperficieConstruida())));
-				}
-				if(!Checks.esNulo(activoDto.getSuperficieUtil())) {
-					ua.getInfoRegistral().setSuperficieUtil(Float.valueOf(activoDto.getSuperficieUtil()));
-				}
-				if(!Checks.esNulo(activoDto.getSuperficieElementosComunes())) {
-					 ua.getInfoRegistral().setSuperficieElementosComunes(Float.valueOf(activoDto.getSuperficieElementosComunes()));
-				}
-				if(!Checks.esNulo(activoDto.getSuperficieParcela())) {
-					ua.getInfoRegistral().setSuperficieParcela(Float.valueOf(activoDto.getSuperficieParcela()));
+			if (isUA) {
+				if (ua.getId() == activoActual.getId()) {
+					if(!Checks.esNulo(activoDto.getSuperficieConstruida())) {
+						ua.getInfoRegistral().getInfoRegistralBien().setSuperficieConstruida(BigDecimal.valueOf(Long.parseLong(activoDto.getSuperficieConstruida())));
+					}
+					if(!Checks.esNulo(activoDto.getSuperficieUtil())) {
+						ua.getInfoRegistral().setSuperficieUtil(Float.valueOf(activoDto.getSuperficieUtil()));
+					}
+					if(!Checks.esNulo(activoDto.getSuperficieElementosComunes())) {
+						 ua.getInfoRegistral().setSuperficieElementosComunes(Float.valueOf(activoDto.getSuperficieElementosComunes()));
+					}
+					if(!Checks.esNulo(activoDto.getSuperficieParcela())) {
+						ua.getInfoRegistral().setSuperficieParcela(Float.valueOf(activoDto.getSuperficieParcela()));
+					}
 				}
 			}
 			if(!Checks.esNulo(ua.getInfoRegistral())) {
@@ -1005,7 +1017,20 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 			}
 		}
-		
+		if(!isUA) {
+			if(!Checks.esNulo(activoDto.getSuperficieConstruida())) {
+				activoMatriz.getInfoRegistral().getInfoRegistralBien().setSuperficieConstruida(BigDecimal.valueOf(Long.parseLong(activoDto.getSuperficieConstruida())));
+			}
+			if(!Checks.esNulo(activoDto.getSuperficieUtil())) {
+				activoMatriz.getInfoRegistral().setSuperficieUtil(Float.valueOf(activoDto.getSuperficieUtil()));
+			}
+			if(!Checks.esNulo(activoDto.getSuperficieElementosComunes())) {
+				activoMatriz.getInfoRegistral().setSuperficieElementosComunes(Float.valueOf(activoDto.getSuperficieElementosComunes()));
+			}
+			if(!Checks.esNulo(activoDto.getSuperficieParcela())) {
+				activoMatriz.getInfoRegistral().setSuperficieParcela(Float.valueOf(activoDto.getSuperficieParcela()));
+			}
+		}
 		if(!Checks.esNulo(activoMatriz.getInfoRegistral()) && !Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien())) {
 			if(!Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida())) {
 				superficieConstruidaActivoMatriz = activoMatriz.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().floatValue();
@@ -1028,7 +1053,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_REPERCUSION));
 		}else if(superficie_parcela > superficieParcelaActivoMatriz) {
 			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA));
+		}else if(superficie_parcela < superficie_util) {
+			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA));
 		}
 	}
-
 }

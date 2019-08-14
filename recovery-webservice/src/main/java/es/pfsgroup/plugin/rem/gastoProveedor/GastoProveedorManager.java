@@ -762,7 +762,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							Float participacionGasto = (float) ((gastoPrinexListActivos.getImporteGasto()*100)/gastoTotal);
 
 							DecimalFormat df = new DecimalFormat("##.##");
-							df.setRoundingMode(RoundingMode.DOWN);
+							df.setRoundingMode(RoundingMode.CEILING);
 							
 							//truncamos a dos decimales
 							participacionGasto = Float.valueOf(df.format(participacionGasto).replace(',', '.'));

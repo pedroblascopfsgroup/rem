@@ -3604,29 +3604,5 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
-
-	@Override
-	public Boolean esUnidadAlquilable(String numActivo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean esGastoRefacturado(String numGasto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean perteneceGastoBankiaSareb(String numGasto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean esGastoRefacturable(String numGasto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 }

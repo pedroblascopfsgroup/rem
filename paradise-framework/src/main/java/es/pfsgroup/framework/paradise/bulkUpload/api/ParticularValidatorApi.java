@@ -787,24 +787,6 @@ public interface ParticularValidatorApi {
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 	Boolean existeActivoAsociado(String numActivo);
-	
-	/**
-	 * @param numActivo
-	 * @return true si el activo es una unidad alquilable	 
-	 */
-	public Boolean esUnidadAlquilable(String numActivo);
-	
-	/** 
-	 * @param numGasto
-	 * @return true si el gasto es refacturado
-	 */
-	public Boolean esGastoRefacturado(String numGasto);
-
-	/** 
-	 * @param numGasto
-	 * @return true si el propietario del gasto es BANKIA o SAREB
-	 */
-	public Boolean perteneceGastoBankiaSareb(String numGasto);
 
 	/** 
 	 * @param numGasto
@@ -826,12 +808,6 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto);
 
-	/** 
-	 * @param numGasto
-	 * @return true si el gasto es refacturable
-	 */
-	public Boolean esGastoRefacturable(String numGasto);	
-	
 	/**
 	 * @param numActivo
 	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto

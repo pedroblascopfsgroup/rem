@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.files.WebFileItem;
-import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -76,7 +75,6 @@ public class ActivoOfertaController extends ParadiseJsonController {
 				errores =activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya, docCliente);
 				model.put("errores", errores);
 				model.put(RESPONSE_SUCCESS_KEY, errores==null);
-				FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());
 			}else{
 				throw new Exception("idPersonaHaya no puede ser null");
 			}

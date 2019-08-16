@@ -1073,7 +1073,6 @@ public class ActivoController extends ParadiseJsonController {
 				FileUtils.copy(fileItem.getInputStream(), salida);
 				salida.flush();
 				salida.close();
-				FileUtils.deleteFile(fileItem.getFile().getPath());
 
 			} catch (Exception e) {
 				logger.error("error en activoController", e);
@@ -1418,8 +1417,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
 			adapter.upload(webFileItem);
-			model.put(RESPONSE_SUCCESS_KEY, true);		
-			FileUtils.deleteFile(webFileItem.getFileItem().getFile().getPath());	
+			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
@@ -1464,7 +1462,6 @@ public class ActivoController extends ParadiseJsonController {
 
 			// Write
 			FileUtils.copy(fileItem.getInputStream(), salida);
-			FileUtils.deleteFile(fileItem.getFile().getPath());
 
 		} catch(UserException ex) {
 			try {
@@ -1541,7 +1538,7 @@ public class ActivoController extends ParadiseJsonController {
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 
 			String errores = activoApi.uploadFoto(fileItem);
-            FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());
+
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 

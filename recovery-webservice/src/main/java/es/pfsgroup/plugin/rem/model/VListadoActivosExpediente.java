@@ -21,7 +21,7 @@ public class VListadoActivosExpediente implements Serializable {
 
 	@Id
 	@Column(name = "ID_VISTA")  
-	private String id;	
+	private Long id;	
 	
 	@Column(name = "ECO_ID")
 	private Long idExpediente;
@@ -74,11 +74,11 @@ public class VListadoActivosExpediente implements Serializable {
 	@Column(name = "BIE_LOC_DIRECCION")
 	private String direccion;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

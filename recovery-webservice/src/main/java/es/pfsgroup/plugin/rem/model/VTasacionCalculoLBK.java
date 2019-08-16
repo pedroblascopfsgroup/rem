@@ -21,7 +21,7 @@ public class VTasacionCalculoLBK implements Serializable {
 
 	@Id
 	@Column(name = "ID_VISTA")  
-	private String id;	
+	private Long id;	
 	
 	@Column(name = "ACT_ID")  
 	private Long idActivo;
@@ -44,11 +44,11 @@ public class VTasacionCalculoLBK implements Serializable {
 	@Column(name="FECHA_VALOR_TASACION")
 	private Date fechaTasacion;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

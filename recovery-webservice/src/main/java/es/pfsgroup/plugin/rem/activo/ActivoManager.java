@@ -4827,18 +4827,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			if (!Checks.esNulo(activo)) {
-				Long idUsuarioGestorFormalizacion;
+				Long idUsuarioGestorFormalizacion = null;
 				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)) {
 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GFORM");
 					EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 					Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 					Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
-					idUsuarioGestorFormalizacion = genericDao.get(GestorActivo.class, f2, f3).getUsuario().getId();// flag
-
+					GestorActivo nuevoGestorF = genericDao.get(GestorActivo.class, f2, f3);					
+					if(!Checks.esNulo(nuevoGestorF) && !Checks.esNulo(nuevoGestorF.getUsuario())) {
+						idUsuarioGestorFormalizacion = nuevoGestorF.getUsuario().getId();// flag
+					}
 					f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
 					tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 					f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
-					usuarioGestorComercial = genericDao.get(GestorActivo.class, f2, f3).getUsuario();
+					GestorActivo nuevoGestorC = genericDao.get(GestorActivo.class, f2, f3);
+					if(!Checks.esNulo(nuevoGestorC) && !Checks.esNulo(nuevoGestorC.getUsuario())) {
+						usuarioGestorComercial = nuevoGestorC.getUsuario();
+					}					
 
 				} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)){
 					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
@@ -4930,7 +4935,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 
 				f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
-				usuarioSupervisorComercial = genericDao.get(GestorActivo.class, f2, f3).getUsuario();
+				GestorActivo nuevoSupervisorC = genericDao.get(GestorActivo.class, f2, f3);					
+				if(!Checks.esNulo(nuevoSupervisorC) && !Checks.esNulo(nuevoSupervisorC.getUsuario())) {
+					usuarioSupervisorComercial = nuevoSupervisorC.getUsuario();// flag
+				}
 				if (!Checks.esNulo(supervisorFormalzacion)) {
 					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 							supervisorFormalzacion.getUsuario().getUsername(), dto);

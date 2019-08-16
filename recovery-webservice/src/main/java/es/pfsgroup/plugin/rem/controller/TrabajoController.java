@@ -154,6 +154,7 @@ public class TrabajoController extends ParadiseJsonController {
 
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
+	private static final String COMBO_MODIFICACION_NO = "02";
 
 		
 	/**
@@ -1617,18 +1618,24 @@ public class TrabajoController extends ParadiseJsonController {
 					}else {
 						jsonFields.get("data");
 						jsonFields.getJSONObject("data").get("fechaAtPrimaria");
+						String comboModificacion = null;
+						if(!Checks.esNulo(jsonFields.getJSONObject("data").get("comboModificacion"))) {
+							comboModificacion = jsonFields.getJSONObject("data").get("comboModificacion").toString();
+							comboModificacion = comboModificacion.substring(2,comboModificacion.length()-2);
+						}
 					
 						if(Checks.esNulo(jsonFields.getJSONObject("data").get("fechaAtPrimaria"))){
 							error = RestApi.REST_NO_PARAM;
 							errorDesc = "Falta la fecha de at primaria.";
 							throw new Exception(RestApi.REST_NO_PARAM);
 							
-						}else if(Checks.esNulo(jsonFields.getJSONObject("data").get("fechaFinalizacion"))){
+						}else if(!Checks.esNulo(comboModificacion) && COMBO_MODIFICACION_NO.equalsIgnoreCase(comboModificacion) 
+								&& Checks.esNulo(jsonFields.getJSONObject("data").get("fechaFinalizacion"))) {
 							error = RestApi.REST_NO_PARAM;
 							errorDesc = "Falta la fecha de finalización.";
 							throw new Exception(RestApi.REST_NO_PARAM);
 							
-						}
+						}						
 						SimpleDateFormat format  = new SimpleDateFormat("dd/MM/yyyy");
 						format.setLenient(false);
 						Date atprimaria = null;
@@ -1644,16 +1651,17 @@ public class TrabajoController extends ParadiseJsonController {
 							
 						}
 						Date finalizacion = null;
-						String stringFinalizacion = jsonFields.getJSONObject("data").get("fechaFinalizacion").toString();
-						stringFinalizacion =stringFinalizacion.substring(2,stringFinalizacion.length()-2);
-						try {
-							finalizacion = format.parse(stringFinalizacion);
-						} catch (Exception ex) {
-							error = RestApi.REST_MSG_FORMAT_ERROR;
-							errorDesc = "El formato de la fecha de finalización no es correcto.";
-							throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+						if(!Checks.esNulo(jsonFields.getJSONObject("data").get("fechaFinalizacion"))) {
+							String stringFinalizacion = jsonFields.getJSONObject("data").get("fechaFinalizacion").toString();
+							stringFinalizacion =stringFinalizacion.substring(2,stringFinalizacion.length()-2);
+							try {
+								finalizacion = format.parse(stringFinalizacion);
+							} catch (Exception ex) {
+								error = RestApi.REST_MSG_FORMAT_ERROR;
+								errorDesc = "El formato de la fecha de finalización no es correcto.";
+								throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+							}
 						}
-						
 						String[] idTarea = new String[1];
 						idTarea[0] = tareaId.toString();
 						datosTarea.put("idTarea",idTarea);

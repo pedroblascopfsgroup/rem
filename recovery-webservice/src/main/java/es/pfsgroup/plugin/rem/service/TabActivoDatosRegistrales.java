@@ -113,7 +113,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	private static final String MENSAJE_ERROR_SUPERFICIE_UTIL        = "msg.error.superficie.util.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_REPERCUSION = "msg.error.superficie.repercusion.UAs";
 	private static final String MENSAJE_ERROR_SUPERFICIE_PARCELA     = "msg.error.superficie.parcela.UAs";
-	//private static final String MENSAJE_ERROR_ELEMENTOS_COMUNES      = "msg.error.elementos.comunes.UAS";
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
 	
@@ -1052,8 +1051,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		}else if(superficie_repercusion > superficieElementosComunesActivoMatriz) {
 			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_REPERCUSION));
 		}else if(superficie_parcela > superficieParcelaActivoMatriz) {
-			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA));
-		}else if(superficie_parcela < superficie_util) {
 			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA));
 		}
 	}

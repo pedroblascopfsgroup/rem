@@ -470,10 +470,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
 		String nombreDocumento = request.getParameter("nombreDocumento");
 		ServletOutputStream salida = null;
-		FileItem fileItem = null;
 		try {
-			fileItem = dl.getFileItem(id, nombreDocumento);
-			nombreDocumento = URLDecoder.decode(nombreDocumento,"UTF-8");
+
+			FileItem fileItem = dl.getFileItem(id, nombreDocumento);
 			salida = response.getOutputStream();
 			if(fileItem != null){	
 				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
@@ -486,7 +485,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 				// Write
 				FileUtils.copy(fileItem.getInputStream(), salida);	
-						
+				FileUtils.deleteFile(fileItem.getFile().getPath());			
 			}
 
 		} catch(UserException ex) {
@@ -502,7 +501,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			try {
 				salida.flush();			
 				salida.close();
-				FileUtils.deleteFile(fileItem.getFile().getPath());	
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -516,9 +514,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				Downloader dl = downloaderFactoryApi.getDownloader(key);
 				String nombreDocumento = request.getParameter("nombreAdjunto");
 				Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
-				FileItem fileItem = null;
+				
        	try {
-	       		fileItem = dl.getFileItem( idDocRestClient , nombreDocumento);
+	       		FileItem fileItem = dl.getFileItem( idDocRestClient , nombreDocumento);
            		ServletOutputStream salida = response.getOutputStream(); 
            			
            		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
@@ -535,15 +533,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				FileUtils.deleteFile(fileItem.getFile().getPath());
     		}catch(Exception e) {
     			logger.error("Error en ExpedienteComercialController", e);
-		    }finally{
-				try {
-					FileUtils.deleteFile(fileItem.getFile().getPath());
-				} catch (IOException e) {
-					
-					logger.error("errorMessage", e);
-					
-				}
-			}	
+		    }	
        	}
 	
 	@SuppressWarnings("unchecked")
@@ -621,13 +611,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDocumentoComprador(String docCliente, Long idEntidad, HttpServletRequest request) {
 		ModelMap model = new ModelMap();
-		WebFileItem fileItem = null;
 		try {
 			
 			if(!Checks.esNulo(docCliente)) {
 				String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
 	
-				fileItem = uploadAdapter.getWebFileItem(request);
+				WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 	
 				expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
 				model.put(RESPONSE_SUCCESS_KEY, true);
@@ -636,14 +625,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errores", e.getMessage());
 			logger.error("error subiendo documento persona", e);
-		}finally{
-			try {
-				FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());		
-			} catch (IOException e) 
-			{
-				logger.error("errorMessage", e);
-				
-			}
 		}
 
 		return createModelAndViewJson(model);
@@ -687,11 +668,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView upload(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
-		WebFileItem fileItem = null;
 		try {
-			 fileItem = uploadAdapter.getWebFileItem(request);
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 
 			String errores = expedienteComercialAdapter.uploadDocumento(fileItem, null, null);
+			FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 
@@ -702,14 +683,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", e.getMessage());
 			logger.error("Error en ExpedienteComercialController", e);
-		} finally{
-			try {
-				FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());
-			} catch (IOException e) {
-				model.put(RESPONSE_SUCCESS_KEY, false);
-			    model.put("errorMessage", e.getMessage());
-				
-			}
 		}
 
 		return createModelAndViewJson(model);

@@ -1,1 +1,0 @@
-create index IDX_DD_TGE_TIPO_GESTOR_BORRADO on bankmaster.DD_TGE_TIPO_GESTOR (BORRADO);

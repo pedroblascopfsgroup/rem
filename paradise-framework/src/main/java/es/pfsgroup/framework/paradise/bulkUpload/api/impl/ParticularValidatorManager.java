@@ -3730,21 +3730,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean activoEnAgrupacionProyecto(String numActivo) {
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) FROM ACT_AGR_AGRUPACION AGR " +
-				" INNER JOIN DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = '04' " +
-				" INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " +
-				" INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID AND ACT.ACT_NUM_ACTIVO = " + numActivo +
-				" WHERE AGR.AGR_FECHA_BAJA IS NULL" +
-				" AND ACT.BORRADO = 0" +
-				" AND AGR.BORRADO = 0" +
-				" AND TAG.BORRADO = 0" +
-				" AND AGA.BORRADO = 0");
-
-		return Integer.valueOf(resultado) > 0;
-	};
-	
-	@Override
 	public Boolean perteneceDDServicerActivo(String codigoServicer) {
 		if(Checks.esNulo(codigoServicer)) {
 			return false;

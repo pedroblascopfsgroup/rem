@@ -1284,7 +1284,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	                	if(!Ext.isEmpty(me.parent)) {
 	                		me.parent.fireEvent("afterupload", me.parent);
 	                	}
-	                    me.close();
+	                
+	                	me.getView().grid.getStore().load();
+	                    btn.up("window").close();
 	                },
 	                failure: function(fp, o) {
 	                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));

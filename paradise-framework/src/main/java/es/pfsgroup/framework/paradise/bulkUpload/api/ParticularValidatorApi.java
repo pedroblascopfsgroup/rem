@@ -843,12 +843,6 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto);
 
-	/**
-	 * @param numActivo
-	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
-	 */
-	Boolean activoEnAgrupacionProyecto(String numActivo);
-
 	/** 
 	 * @param codigoServicer
 	 * @return true si existe el código de Servicer Activo 

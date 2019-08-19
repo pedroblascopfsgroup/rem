@@ -1,3 +1,0 @@
-apr_wait_adresses.sh
-apr_main_adresses.sh
-apr_gen_dir_ptro.sh

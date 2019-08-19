@@ -1,2 +1,0 @@
-apr_wait_CIRBE.sh
-apr_main_CIRBE.sh

@@ -1,2 +1,0 @@
-apr_wait_drafts_per.sh
-apr_main_drafts_per.sh

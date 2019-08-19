@@ -1,3 +1,0 @@
-apr_wait_CIRBE.sh
-apr_main_CIRBE.sh
-apr_gen_cirbe_ptro.sh

@@ -1,2 +1,0 @@
-apr_wait_adresses.sh
-apr_main_adresses.sh

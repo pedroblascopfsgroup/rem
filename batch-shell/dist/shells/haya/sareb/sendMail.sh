@@ -1,1 +1,0 @@
-/usr/lib64/nagios/plugins/sendEmail -f "BA01@pfsgroup.es" -s "172.22.1.114" -u "PCR Haya FINALIZADO" -m "El PCR de Haya ha finalizado, revisa la ejecucion de sus procesos." -t "operaciones@pfsgroup.es"

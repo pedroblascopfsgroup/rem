@@ -1,2 +1,0 @@
-insert into fun_funciones (fun_id,fun_descripcion,fun_descripcion_larga,version,usuariocrear,fechacrear,borrado) values 
-(s_fun_funciones.nextval, 'GENERAR-BUROFAX', 'Generar burofax desde la ficha del cliente',0,'BUR',sysdate,0);

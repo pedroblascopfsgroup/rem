@@ -1,3 +1,0 @@
-﻿CONNECT SOURCE "Recovery_BI" USER "administrator" PASSWORD "";
-UPDATE PROJECT "Recovery BI (Bankia)"; 
-DISCONNECT SERVER;

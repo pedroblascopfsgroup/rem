@@ -1,3 +1,0 @@
-apr_wait_receipts.sh
-apr_main_receipts.sh
-apr_gen_rec_ptro.sh

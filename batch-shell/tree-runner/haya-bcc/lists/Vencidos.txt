@@ -1,2 +1,0 @@
-apr_wait_vencidos.sh
-apr_main_vencidos.sh

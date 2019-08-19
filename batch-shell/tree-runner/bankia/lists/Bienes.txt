@@ -1,2 +1,0 @@
-apr_wait_assets.sh
-apr_main_assets.sh

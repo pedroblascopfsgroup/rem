@@ -1,1 +1,0 @@
-junction src\web\jsp\plugin\ayuda\img src\web\img 

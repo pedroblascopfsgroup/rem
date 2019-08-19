@@ -1,2 +1,0 @@
-apr_wait_phones.sh
-apr_main_phones.sh

@@ -1,3 +1,0 @@
-delete from TAR_TAREAS_NOTIFICACIONES WHERE OBJ_ID IS NOT null;
-delete from OBJ_OBJETIVO;
-delete from POL_POLITICA;

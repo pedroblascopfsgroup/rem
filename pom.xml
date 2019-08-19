@@ -91,7 +91,7 @@
 			<dependency>
 				<groupId>es.pfsgroup</groupId>
 				<artifactId>pfs-testfwk</artifactId>
-				<version>${project.version}</version>
+				<version>9.1.0-REM</version>
 			</dependency>
 			<dependency>
 				<groupId>pfs</groupId>
@@ -289,12 +289,12 @@
 			<dependency>
 				<groupId>es.pfsgroup.recovery</groupId>
 				<artifactId>rec-common</artifactId>
-				<version>${project.version}</version>
+				<version>9.1.0-REM</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.recovery</groupId>
 				<artifactId>rec-encrypt</artifactId>
-				<version>${project.version}</version>
+				<version>9.1.0-REM</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfgroup.monioring</groupId>

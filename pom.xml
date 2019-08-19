@@ -86,7 +86,7 @@
 			<dependency>
 				<groupId>es.pfsgroup</groupId>
 				<artifactId>pfs-commons-java</artifactId>
-				<version>${project.version}</version>
+				<version>9.1.0-REM</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup</groupId>
@@ -96,7 +96,7 @@
 			<dependency>
 				<groupId>pfs</groupId>
 				<artifactId>plugins</artifactId>
-				<version>${project.version}</version>
+				<version>9.1.0-REM</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -456,17 +456,17 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>proyecto-rem-online</artifactId>
-				<version>${project.version}</version>
+				<version>9.1.0-REM</version>
 			</dependency>
 		    <dependency>
 		        <groupId>es.pfsgroup.plugin</groupId>
 		        <artifactId>recovery-webservice</artifactId>
-		        <version>${project.version}</version>
+		       <version>9.1.0-REM</version>
 		    </dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>paradise-framework</artifactId>
-				<version>${project.version}</version>
+				<version>9.1.0-REM</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -477,7 +477,7 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-gestordocumentalREM-plugin</artifactId>
-				<version>${project.version}</version>
+				<version>9.1.0-REM</version>
 			</dependency>
 		    <!-- EVOLUTION -->
 			<dependency>

@@ -15,6 +15,7 @@
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+ALTER SESSION SET NLS_NUMERIC_CHARACTERS = ',.';
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
@@ -53,7 +54,7 @@ BEGIN
                        USING (SELECT FFOR.FOR_ID
                                    , ECO.ECO_ID
                                    , AUX.NUM_EXPEDIENTE AS FOR_NUMEXPEDIENTE
-                                   , TO_NUMBER(AUX.IMP_FINANCIACION_VENTA)  AS FOR_CAPITALCONCEDIDO
+                                   , AUX.IMP_FINANCIACION_VENTA AS FOR_CAPITALCONCEDIDO
                               FROM REM01.OFR_OFERTAS OFR
                               INNER JOIN REM01.ECO_EXPEDIENTE_COMERCIAL ECO ON OFR.OFR_ID = ECO.OFR_ID
                               LEFT JOIN REM01.FOR_FORMALIZACION FFOR       ON ECO.ECO_ID = FFOR.ECO_ID

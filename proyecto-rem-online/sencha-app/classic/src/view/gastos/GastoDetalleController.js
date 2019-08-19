@@ -256,41 +256,45 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
      * Para que un componente sea marcado para refrescar, es necesario que implemente la funci贸n 
      * funci贸nRecargar con el c贸digo necesario para refrescar los datos.
      */
-	onClickBotonRefrescar: function (btn) {
-		var me = this;
-		tabPanel = me.getView().down("tabpanel");
-		var activeTab = tabPanel.getActiveTab();
-		if(activeTab.xtype = "activosafectadosgasto"){
-			me.updateGastoByPrinexLBK();
-		}
-		me.refrescarGasto(true);
-	},
+	onClickBotonRefrescar : function(btn) {
+						var me = this;
+						tabPanel = me.getView().down("tabpanel");
+						var activeTab = tabPanel.getActiveTab();
+						if (activeTab.xtype = "activosafectadosgasto"
+						&& CONST.CARTERA["LIBERBANK"] === me.getViewModel().get("gasto.cartera")) {
+							me.updateGastoByPrinexLBK();
+						}
+						me.refrescarGasto(true);
+					},
 	
-	refrescarGasto: function(refrescarPesta馻Activa) {	
-		var me = this,
-		refrescarPesta馻Activa = Ext.isEmpty(refrescarPesta馻Activa) ? false: refrescarPesta馻Activa,
-		tabPanel = me.getView().down("tabpanel");
+	refrescarGasto : function(resfrescarPestanya) {
+						var me = this, resfrescarPestanya = Ext.isEmpty(resfrescarPestanya) ? false	: resfrescarPestanya, tabPanel = me.getView().down("tabpanel");
 
-		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
-		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
-  			if(component.rendered) {
-  				component.recargar=true;
-  			}
-  		});
-  		
-  		// Actualizamos la pesta帽a actual si tiene funci贸n de recargar y el gasto si estamos guardando uno.
-  		if(!Ext.isEmpty(tabPanel)) {	  		
-			var activeTab = tabPanel.getActiveTab();
-			if(refrescarPesta馻Activa) {
-				if(activeTab.funcionRecargar) {
-	  				activeTab.funcionRecargar();
-				}
-			}
-			var callbackFn = function() {me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);};
-			me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
-  		}
+						// Marcamos todas los componentes para refrescar, de
+						// manera que se vayan actualizando conforme se vayan
+						// mostrando.
+						Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
+							if (component.rendered) {
+								component.recargar = true;
+							}
+						});
 
-	},
+						// Actualizamos la pesta帽a actual si tiene funci贸n de
+						// recargar y el gasto si estamos guardando uno.
+						if (!Ext.isEmpty(tabPanel)) {
+							var activeTab = tabPanel.getActiveTab();
+							if (resfrescarPestanya) {
+								if (activeTab.funcionRecargar) {
+									activeTab.funcionRecargar();
+								}
+							}
+							var callbackFn = function() {
+								me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);
+							};
+							me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
+						}
+
+					},
 	
 	buscarProveedor: function(field, e){
 		var me= this;

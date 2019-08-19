@@ -386,11 +386,10 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createGastoActivo(@RequestParam Long idGasto, @RequestParam Long numActivo, @RequestParam Long numAgrupacion,
-	        @RequestParam Boolean recalcular, ModelMap model) {
+	public ModelAndView createGastoActivo(@RequestParam Long idGasto, @RequestParam Long numActivo, @RequestParam Long numAgrupacion, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.createGastoActivo(idGasto, numActivo, numAgrupacion,recalcular);
+			boolean success = gastoProveedorApi.createGastoActivo(idGasto, numActivo, numAgrupacion);
 			model.put("success", success);
 			
 		} catch (JsonViewerException ex) {

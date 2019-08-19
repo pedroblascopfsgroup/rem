@@ -1208,7 +1208,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	
 	@Transactional(readOnly = false)
-	public boolean createGastoActivo(Long idGasto, Long numActivo, Long numAgrupacion, Boolean recalcular) {
+	public boolean createGastoActivo(Long idGasto, Long numActivo, Long numAgrupacion) {
 
 		if (Checks.esNulo(idGasto)) {
 			throw new JsonViewerException("El gasto debe informarse");
@@ -1279,10 +1279,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
 					gastosActivosList.add(gastoProveedorActivo);
 
-					if(recalcular) {
+				
 						this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);	
-					}
-					
+						
 					genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
 				}
 
@@ -1300,46 +1299,34 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			validarAgrupacion(agrupacion, gasto);
 
-			if (!Checks.estaVacio(agrupacion.getActivos())) {
+			if (!Checks.estaVacio(agrupacion.getActivos())) {	
+						for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+																
+									filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+									gasto = genericDao.get(GastoProveedor.class, filtroGasto);
 
-				for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+									Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
+									Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+									List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
 
-					filtroGasto = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-					Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",
-							activoAgrupacion.getActivo().getNumActivo());
+									GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
+									gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
+									gastoProveedorActivo.setGastoProveedor(gasto);
+									if (!Checks.estaVacio(activosCatastro)) {
+										gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+									}
 
-					Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id",
-							activoAgrupacion.getActivo().getId());
-					Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-					List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order,
-							filtroCatastro);
+									List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
+									gastosActivosList.add(gastoProveedorActivo);
 
-					
-					List<GastoProveedorActivo> gastoProveedorActivoList= genericDao.getList(GastoProveedorActivo.class, filtroGasto, filtroA);
+									this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
 
-					if (Checks.estaVacio(gastoProveedorActivoList)) {
-						GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
-						gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
-						gastoProveedorActivo.setGastoProveedor(gasto);
-						if (!Checks.estaVacio(activosCatastro)) {
-							gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+									genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+								
+							
 						}
-
-						List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
-						gastosActivosList.add(gastoProveedorActivo);
-
-						if(recalcular) {
-							this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
-						}
-						
-						genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);		
 	
 					}					
-
-				}
-
-			}
-
 		} else {
 			throw new JsonViewerException("Se debe pasar un activo o una agrupación");
 		}

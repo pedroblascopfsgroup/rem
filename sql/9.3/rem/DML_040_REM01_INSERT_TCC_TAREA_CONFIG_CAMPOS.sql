@@ -42,6 +42,8 @@ DECLARE
 		V_NUM_TAREA_T017 NUMBER(16);
 		V_TAREA_T017_2 VARCHAR2(4000 CHAR);
 		V_NUM_TAREA_T017_2 NUMBER(16);
+		V_TAREA_T013 VARCHAR2(4000 CHAR);
+		V_NUM_TAREA_T013 NUMBER(16);
 		V_TAREA VARCHAR(4000 CHAR);
 		V_TAP_ID NUMBER(16);
 		V_CAMPO VARCHAR2(4000 CHAR);
@@ -49,7 +51,7 @@ DECLARE
 
 		V_TIPO_TAREA T_ARRAY_TAREA := T_ARRAY_TAREA
     (
-			T_TIPO_TAREA('T017_PBCReserva', 'T017_PBCVenta')
+			T_TIPO_TAREA('T017_PBCReserva', 'T017_PBCVenta', 'T013_ResultadoPBC')
 		);
 
 		V_TMP_TIPO_TAREA T_TIPO_TAREA;
@@ -66,7 +68,9 @@ DECLARE
 		T_TIPO_DATA('T017_PBCReserva',					'1'	,				'comboRespuesta',				 '', 											'IS NOT NULL'),				
 		
 		T_TIPO_DATA('T017_PBCVenta',					'1'	,				'comboRespuesta',				'SELECT DD_APD_CODIGO FROM '||V_ESQUEMA||'.DD_APD_APRUEBA_DENIEGA', 			'IN'),					
-		T_TIPO_DATA('T017_PBCVenta',					'1'	,				'comboRespuesta',				 '', 											'IS NOT NULL')			
+		T_TIPO_DATA('T017_PBCVenta',					'1'	,				'comboRespuesta',				 '', 											'IS NOT NULL'),
+
+		T_TIPO_DATA('T013_ResultadoPBC',					'1'	,				'comboResultado',				 '', 											'IS NOT NULL')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -91,14 +95,18 @@ BEGIN
 							-- Recuperar TAP_ID de T004_ResultadoNoTarificada
 							V_TAREA_T017_2 := 'SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_TAREA(2))||''' AND BORRADO = 0';
 							EXECUTE IMMEDIATE V_TAREA_T017_2 INTO V_NUM_TAREA_T017_2;
+
+							-- Recuperar TAP_ID de T013_ResultadoPBC
+							V_TAREA_T013 := 'SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_TAREA(3))||''' AND BORRADO = 0';
+							EXECUTE IMMEDIATE V_TAREA_T017_2 INTO V_NUM_TAREA_T013;
                            
 							
-    					 V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TCC_TAREA_CONFIG_CAMPOS WHERE  TAP_ID = '''||V_NUM_TAREA_T017||''' OR TAP_ID = '''||V_NUM_TAREA_T017_2||'''';
+    					 V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TCC_TAREA_CONFIG_CAMPOS WHERE  TAP_ID = '''||V_NUM_TAREA_T017||''' OR TAP_ID = '''||V_NUM_TAREA_T017_2||''' OR TAP_ID = '''||V_NUM_TAREA_T013||'''';
 							 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
                              
 
 							IF V_NUM_TABLAS > 0  THEN			
-								EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.TCC_TAREA_CONFIG_CAMPOS WHERE  TAP_ID = '''||V_NUM_TAREA_T017||''' OR TAP_ID = '''||V_NUM_TAREA_T017_2||'''';
+								EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.TCC_TAREA_CONFIG_CAMPOS WHERE  TAP_ID = '''||V_NUM_TAREA_T017||''' OR TAP_ID = '''||V_NUM_TAREA_T017_2||''' OR TAP_ID = '''||V_NUM_TAREA_T013||'''';
 
 										DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS ELIMINADOS CON ÉXITO. '); 										
 								END IF;

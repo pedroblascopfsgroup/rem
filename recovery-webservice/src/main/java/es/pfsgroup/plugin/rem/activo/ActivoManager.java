@@ -835,8 +835,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	            
 			}
 			
-			if ( (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())  && 
-						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())))
+			if ( (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
+					&& expedienteComercial.getCondicionante().getSolicitaReserva() == 1)
 				tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
 			if(tipoArras != null){
 				if (Checks.esNulo(expedienteComercial.getReserva()) ) {
@@ -945,21 +946,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setPorcentajeReserva(new Double(10));
 				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(10) / 100));
 			}
-			
-			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())  && 
-					DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
-
+			if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+				if(oferta.getImporteOferta() > 6000) {
 					nuevoCondicionante.setSolicitaReserva(1);
 					DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
 					nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
-					
-					if (oferta.getImporteOferta() <= 50000) {
-						nuevoCondicionante.setImporteReserva((new Double(1000)));
-					} else {
-						nuevoCondicionante.setImporteReserva((new Double(3000)));
-					}
+					nuevoCondicionante.setImporteReserva(new Double(1000));
+				} else {
+					nuevoCondicionante.setSolicitaReserva(0);
 				}
+			}
 		}
 
 		Activo activo = oferta.getActivoPrincipal();

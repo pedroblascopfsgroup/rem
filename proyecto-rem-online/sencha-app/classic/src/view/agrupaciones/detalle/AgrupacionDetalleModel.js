@@ -650,11 +650,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 	}
 		 },
 
-		 esAgrupacionThirdpartiesYubaiObraNueva: function () {
+		 esAgrupacionThirdpartiesYubaiObraNueva: function (get) {
 		 	var me = this;
-		 	var codCartera = me.get('agrupacionficha.codigoCartera'),
-		 		codSubcartera = me.get('agrupacionficha.codSubcartera'),
-		 		codAgrupacion = me.get('agrupacionficha.tipoAgrupacionCodigo');
+		 	var codCartera = get('agrupacionficha.codigoCartera'),
+		 		codSubcartera = get('agrupacionficha.codSubcartera'),
+		 		codAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		 		
 		 		if ((codCartera === undefined || codCartera === null || codCartera.lenght === 0)
 		 		|| (codSubcartera === undefined || codSubcartera === null || codSubcartera.lenght === 0)

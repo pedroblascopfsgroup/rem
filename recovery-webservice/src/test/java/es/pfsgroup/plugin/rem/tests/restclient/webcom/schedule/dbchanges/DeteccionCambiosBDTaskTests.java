@@ -299,9 +299,8 @@ public class DeteccionCambiosBDTaskTests {
 		
 		ArgumentCaptor<RestLlamada> llamadaCaptor = ArgumentCaptor.forClass(RestLlamada.class);
 		ArgumentCaptor<DetectorCambiosBD> handler = ArgumentCaptor.forClass(DetectorCambiosBD.class);
-		Integer contError = Integer.valueOf(0);
 		 
-		Mockito.verify(registroLlamadas).guardaRegistroLlamada(llamadaCaptor.capture(), handler.capture(), any(Integer.class));
+		Mockito.verify(registroLlamadas).guardaRegistroLlamada(llamadaCaptor.capture(), handler.capture());
 
 		RestLlamada registro = llamadaCaptor.getValue();
 		return registro;

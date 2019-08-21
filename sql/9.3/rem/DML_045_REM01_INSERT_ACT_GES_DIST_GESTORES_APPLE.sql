@@ -221,8 +221,13 @@ DECLARE
 		T_TIPO_DATA('GCOM', '7', '138', '5', 'anavarroj'),
 		T_TIPO_DATA('GCOM', '7', '138', '37', 'anavarroj'),
 		T_TIPO_DATA('GCOM', '7', '138', '10', 'anavarroj'),
-		T_TIPO_DATA('GCOM', '7', '138', '6', 'anavarroj')
+		T_TIPO_DATA('GCOM', '7', '138', '6', 'anavarroj'),
 
+		--grusbackoffman
+		T_TIPO_DATA('HAYASBOINM', '7', '138', '', 'grusbackoffman'),
+
+		--gruscomman
+		T_TIPO_DATA('SCOM', '7', '138', '', 'gruscomman')
 		
 		
     ); 

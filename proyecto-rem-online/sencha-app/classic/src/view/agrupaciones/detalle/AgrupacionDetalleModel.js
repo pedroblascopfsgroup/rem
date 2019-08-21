@@ -4,7 +4,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
     'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial',
-    'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion', 'HreRem.model.ComercialAgrupacion'],
+		'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion', 'HreRem.model.ComercialAgrupacion',
+		'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion','HreRem.model.AdjuntoActivoAgrupacion'],
     
     data: {
     	agrupacionficha: null,
@@ -686,7 +687,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     	} else {
 		     		return false;
 		     	}
-
 		}/*,
 		
 		habilitaPestanyaDocumentos : function (get) {
@@ -1086,14 +1086,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			}
 		},
 
-        comboTipoAlquiler: {
-            model: 'HreRem.model.ComboBase',
-            proxy: {
-                type: 'uxproxy',
-                remoteUrl: 'generic/getDiccionario',
-                extraParams: {diccionario: 'tiposAlquilerActivo'}
-            }
-        }, 
+		comboTipoAlquiler: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'tiposAlquilerActivo'}
+				}
+		}, 
 		
 		comboMotivoAutorizacionTramitacion: {
 			model: 'HreRem.model.ComboBase',
@@ -1102,6 +1102,27 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'motivoAutorizacionTramitacion'}
 				}
+    },
+		tiposAdjuntoAgrupacion : {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario', 
+					extraParams: {diccionario: 'tipoDocumentoAgrupacion'}
+				},
+				autoLoad: true
+		},
+		storeDocumentosAgrupacion: {
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AdjuntoActivoAgrupacion',
+     	     proxy: {
+     	        type: 'uxproxy',
+     	        remoteUrl: 'agrupacion/getListAdjuntosAgrupacion',
+     	        extraParams: {idAgrupacion: '{agrupacionficha.id}'}
+         	 },
+         	 groupField: 'descripcionTipo',
+		     remoteSort: true,
+         	 autoLoad: true
 		}
-     }
+    }
 });

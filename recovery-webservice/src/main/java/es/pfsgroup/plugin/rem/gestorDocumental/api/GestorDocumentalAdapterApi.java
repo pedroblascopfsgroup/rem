@@ -115,6 +115,7 @@ public interface GestorDocumentalAdapterApi {
 
 	List<DtoAdjuntoAgrupacion> getAdjuntoAgrupacion(Long idAgrupacion) throws GestorDocumentalException;
 
-	Integer crearContenedorAdjuntoAgrupacion(ActivoAgrupacion agrupacion, String username) throws GestorDocumentalException;
+	Integer crearContenedorAdjuntoAgrupacion(Long idAgrupacion, String username) throws GestorDocumentalException;
 
+	FileItem getFileItemAgrupacion(Long id, String nombreDocumento) throws Exception;
 }

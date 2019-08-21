@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
@@ -86,10 +87,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
 	@Autowired
-	private OfertaApi ofertaApi;
+	private AgrupacionAdjuntosAdapter agrupacionAdjuntos;
 
 	@Autowired
-	private AgrupacionAdjuntosAdapter agrupacionAdjuntos;
+	private OfertaApi ofertaApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1098,11 +1099,11 @@ public class AgrupacionController extends ParadiseJsonController {
 			agrupacionAdjuntos.uploadDocumento(webFileItem);
 			model.put("success", true);
 		} catch (GestorDocumentalException e) {
-			logger.error("error en promocionController", e);
+			logger.error("error en agrupacion", e);
 			model.put("success", false);
-			model.put("errorMessage", "Gestor documental: No existe la promoción o no tiene permiso para subir el documento");
+			model.put("errorMessage", "Gestor documental: No existe la agrupacion o no tiene permiso para subir el documento");
 		} catch (Exception e) {
-			logger.error("error en promocionController", e);
+			logger.error("error en agrupacionController", e);
 			model.put("success", false);
 			model.put("errorMessage",e.getMessage());
 		}
@@ -1140,7 +1141,7 @@ public class AgrupacionController extends ParadiseJsonController {
 			}
 	
 		} catch (Exception e) {
-			logger.error("error en activoController", e);
+			logger.error("error en agrupacionController", e);
 		}finally {
 			try {
 				salida.flush();			
@@ -1151,4 +1152,37 @@ public class AgrupacionController extends ParadiseJsonController {
 		}
 	
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method= RequestMethod.POST)
+	public ModelAndView deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		ModelMap model = new ModelMap();
+		try {
+			agrupacionAdjuntos.deleteAdjunto(dtoAdjunto);
+			model.put("success", true);
+		}catch (Exception e) {
+			logger.error("error en agrupacionController", e);
+			model.put("success", false);
+			model.put("errorMessage",e.getMessage());
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getListAdjuntosAgrupacionByIdActivo(Long id) {
+		ModelMap model = new ModelMap();
+		try {
+			Long idAgrupacion = agrupacionAdjuntos.getAgrupacionYubaiByIdActivo(id);
+			if (Checks.esNulo(idAgrupacion)) throw new Exception();
+			model.put("data", agrupacionAdjuntos.getAdjuntosAgrupacion(idAgrupacion));
+			model.put("success", true);
+		}catch (Exception e) {
+			logger.error("error en agrupacionController", e);
+			model.put("success", false);
+			model.put("errorMessage",e.getMessage());
+		}
+		return createModelAndViewJson(model);
+	}
+	
 }

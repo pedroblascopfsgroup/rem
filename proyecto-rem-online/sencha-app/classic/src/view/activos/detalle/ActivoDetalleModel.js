@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
-    'HreRem.model.HistoricoTramtitacionTituloModel','HreRem.model.ListaActivoGrid'],
+    'HreRem.model.HistoricoTramtitacionTituloModel','HreRem.model.ListaActivoGrid','HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto'],
 
     data: {
     	activo: null,
@@ -750,6 +750,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return !editable;
 		},
 		
+
+		visibilidadPestanyaDocumentacionAgrupacion : function (get)  {
+			if ( CONST.CARTERA['THIRDPARTIES'] === get('activo.entidad')
+			&& CONST.SUBCARTERA['YUBAI'] === get('activo.subCartera')){
+				return false;
+			}
+			return true;
+		},
+
 		esGestorPublicacionVenta: function(get) {
 
 	    	var me = this;
@@ -1301,6 +1310,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	      	     proxy: {
 	      	        type: 'uxproxy',
 	      	        remoteUrl: 'promocion/getListAdjuntosPromocion',
+	      	        extraParams: {id:'{activo.id}'}
+	          	 },
+	          	 groupField: 'descripcionTipo',
+	          	 autoLoad: false
+    		},
+    		
+    		storeDocumentosActivoAgrupacion: {
+   			 pageSize: $AC.getDefaultPageSize(),
+   			 model: 'HreRem.model.AdjuntoActivoAgrupacion',
+	      	     proxy: {
+	      	        type: 'uxproxy',
+	      	        remoteUrl: 'agrupacion/getListAdjuntosAgrupacionByIdActivo',
+	      	        extraParams: {id:'{activo.id}'}
+	          	 },
+	          	 groupField: 'descripcionTipo',
+	          	 autoLoad: false
+    		},
+    		
+    		storeDocumentosActivoProyecto: {
+   			 pageSize: $AC.getDefaultPageSize(),
+   			 model: 'HreRem.model.AdjuntoActivoProyecto',
+	      	     proxy: {
+	      	        type: 'uxproxy',
+	      	        remoteUrl: 'proyecto/getListAdjuntosProyecto',
 	      	        extraParams: {id:'{activo.id}'}
 	          	 },
 	          	 groupField: 'descripcionTipo',

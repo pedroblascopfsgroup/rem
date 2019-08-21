@@ -33,6 +33,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						{ 
 							xtype		: 'displayfieldbase',
 							fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion'),
+							reference: 'numAgrupacionRemRef',
 			            	bind		: {
 			            		value: '{agrupacionficha.numAgrupRem}'
 			            	}		

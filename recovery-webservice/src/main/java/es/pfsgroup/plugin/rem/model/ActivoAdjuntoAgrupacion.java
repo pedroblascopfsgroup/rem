@@ -45,7 +45,7 @@ public class ActivoAdjuntoAgrupacion implements Serializable, Auditable {
 	 */
 	private static final long serialVersionUID = -7785802535778510517L;
 	@Id
-    @Column(name = "AGD_ID")
+    @Column(name = "ADG_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoAdjuntoAgrupacionGenerator")
     @SequenceGenerator(name = "ActivoAdjuntoAgrupacionGenerator", sequenceName = "S_ACT_ADG_ADJUNTO_AGRUPACION")
     private Long id;
@@ -88,13 +88,12 @@ public class ActivoAdjuntoAgrupacion implements Serializable, Auditable {
 
 	@Override
 	public Auditoria getAuditoria() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.auditoria;
 	}
 
 	@Override
-	public void setAuditoria(Auditoria arg0) {
-		// TODO Auto-generated method stub
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
 		
 	}
 	

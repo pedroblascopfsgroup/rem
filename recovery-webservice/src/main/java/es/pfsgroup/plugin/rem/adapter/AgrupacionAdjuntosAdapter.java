@@ -11,6 +11,8 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -20,22 +22,20 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoAdjuntosAgrupacionApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 
 
 @Service
@@ -43,7 +43,7 @@ public class AgrupacionAdjuntosAdapter {
 	
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";	
-	
+	protected static final Log logger = LogFactory.getLog(AgrupacionAdjuntosAdapter.class);
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
@@ -62,16 +62,14 @@ public class AgrupacionAdjuntosAdapter {
 	@Autowired
 	private ActivoAdjuntosAgrupacionApi activoAdjuntosAgrupacionApi;
 	
+	@Autowired
+	private ActivoDao activoDao;
+	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	//TODO: Revisar que se está copiando bien
 	public List<DtoAdjuntoAgrupacion> getAdjuntosAgrupacion(Long idAgrupacion)throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
 		List<DtoAdjuntoAgrupacion> listaAdjuntos = new ArrayList<DtoAdjuntoAgrupacion>();
-		
-		Filter fAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", idAgrupacion);
-		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class,fAgrupacion);
-		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-			//return null;
 			 try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntoAgrupacion(idAgrupacion);
 			} catch (GestorDocumentalException gex) {
@@ -79,14 +77,13 @@ public class AgrupacionAdjuntosAdapter {
 				if (error.length > 0 &&  (error[2].trim().contains("Error al obtener el activo, no existe"))) {
 					Usuario usuario = genericAdapter.getUsuarioLogado();
 					Integer idExp;
-				/*	try{
-						idExp = gestorDocumentalAdapterApi.crearContenedorComunicacionGencat(comunicacionGencat,usuario.getUsername());
-						logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + comunicacionGencat.getId() + "]: ID EXPEDIENTE RECIBIDO " + idExp);
+					try{ 
+						idExp = gestorDocumentalAdapterApi.crearContenedorAdjuntoAgrupacion(idAgrupacion ,usuario.getUsername());
+						logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + idAgrupacion + "]: ID EXPEDIENTE RECIBIDO " + idExp);
 					} catch (GestorDocumentalException gexc) {
 						gexc.printStackTrace();
 						logger.debug(gexc.getMessage());
-					}*/
-
+					}
 				}
 				try {
 					throw gex;
@@ -104,12 +101,21 @@ public class AgrupacionAdjuntosAdapter {
 	public List<DtoAdjuntoAgrupacion> creaListaAdjuntosAgrupacion(Long idAgrupacion, List<DtoAdjuntoAgrupacion> listaAdjuntos) throws IllegalAccessException, InvocationTargetException {
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", idAgrupacion);
-			List<ActivoAdjuntoAgrupacion> adjuntosAgrupacion = genericDao.getList(ActivoAdjuntoAgrupacion.class, filtro);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<ActivoAdjuntoAgrupacion> adjuntosAgrupacion = genericDao.getList(ActivoAdjuntoAgrupacion.class, filtro,filtroBorrado);
 
 			for (ActivoAdjuntoAgrupacion adjuntoAgrupacion : adjuntosAgrupacion) {
-				DtoAdjuntoAgrupacion dto = new DtoAdjuntoAgrupacion();
+				DtoAdjuntoAgrupacion dto = new DtoAdjuntoAgrupacion(); 
 				//TODO: REVISAR PROPIEDADES
 				BeanUtils.copyProperties(dto, adjuntoAgrupacion);
+				if (!Checks.esNulo(adjuntoAgrupacion.getAgrupacion()))
+					BeanUtils.copyProperty(dto, "idAgrupacion", adjuntoAgrupacion.getAgrupacion().getId());
+				if (!Checks.esNulo(adjuntoAgrupacion.getAdjunto()))
+					BeanUtils.copyProperty(dto, "id", adjuntoAgrupacion.getAdjunto().getId());
+				if (!Checks.esNulo(adjuntoAgrupacion.getTipoDocumentoAgrupacion())) {
+					BeanUtils.copyProperty(dto, "codigoTipo", adjuntoAgrupacion.getTipoDocumentoAgrupacion().getCodigo());
+					BeanUtils.copyProperty(dto, "descripcionTipo", adjuntoAgrupacion.getTipoDocumentoAgrupacion().getDescripcionLarga());
+				}
 				listaAdjuntos.add(dto);
 			}
 
@@ -118,17 +124,14 @@ public class AgrupacionAdjuntosAdapter {
 	
 	
 	public String uploadDocumento(WebFileItem webFileItem) throws Exception {
-			Filter fAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", Long.parseLong(webFileItem.getParameter("idAgrupacion")));
-			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class,fAgrupacion);
+			Filter fAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", Long.parseLong(webFileItem.getParameter("idAgrupacion")));
+			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class,fAgrupacion); 
 			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipoDocumentoAgrupacion"));
 			DDTipoDocumentoAgrupacion tipoDocumento = genericDao.get(DDTipoDocumentoAgrupacion.class, filtro);
 			String idDocumento = null;
-			
-		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			//return null;
-			
 			
 			if (!Checks.esNulo(tipoDocumento)) {
 				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoAgrupacionAdjunto(agrupacion, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
@@ -168,11 +171,31 @@ public class AgrupacionAdjuntosAdapter {
 	public FileItem download(Long id,String nombreDocumento) throws UserException,Exception {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
-		FileItem result = dl.getFileItemPromocion(id,nombreDocumento);
+		FileItem result = dl.getFileItemAgrupacion(id,nombreDocumento);
 		if(result == null){
 			throw new UserException("El fichero no existe");
 		}
 		return result;
+	}
+	
+	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		boolean borrado = false;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			try {
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
+			} catch (Exception e) {
+				logger.error("Error en deleteAdjunto Agrupacion adapter", e);
+			}
+		} else {
+			borrado = activoAdjuntosAgrupacionApi.deleteAdjunto(dtoAdjunto);
+		}
+		return borrado;
+	}
+	
+	
+	public Long getAgrupacionYubaiByIdActivo(Long id) {
+		return activoDao.getAgrupacionYubaiByIdActivo(id);
 	}
 
 }

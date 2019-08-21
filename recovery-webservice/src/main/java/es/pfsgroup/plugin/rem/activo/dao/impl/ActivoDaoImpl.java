@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -1635,7 +1636,25 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				.createQuery(hb.toString()).list();
 		return trabajoList;
 		
-	}	
+	}
+
+	@Override
+	public Long getAgrupacionYubaiByIdActivo(Long id) {
+		String sql = "SELECT agrupacion.AGR_ID "  
+				+" FROM ACT_AGA_AGRUPACION_ACTIVO activoAgrupacion "
+				+" INNER JOIN ACT_ACTIVO  activo ON activoAgrupacion.ACT_ID = activo.ACT_ID AND activo.ACT_ID = " +id
+				+" INNER JOIN ACT_AGR_AGRUPACION agrupacion ON activoAgrupacion.AGR_ID = agrupacion.AGR_ID "
+				+" INNER JOIN DD_TAG_TIPO_AGRUPACION tipoAgrupacion ON  agrupacion.DD_TAG_ID = tipoAgrupacion.DD_TAG_ID AND DD_TAG_CODIGO = "+DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA
+				+" INNER JOIN DD_CRA_CARTERA cartera ON activo.DD_CRA_ID = cartera.DD_CRA_ID AND cartera.DD_CRA_CODIGO = "+DDCartera.CODIGO_CARTERA_THIRD_PARTY  
+				+" INNER JOIN DD_SCR_SUBCARTERA subCartera ON activo.DD_SCR_ID = subCartera.DD_SCR_ID AND subCartera.DD_SCR_CODIGO = " +DDSubcartera.CODIGO_YUBAI;
+				
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
+		}
+		return null;
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override

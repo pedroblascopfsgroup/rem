@@ -1193,7 +1193,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		     }
     		 });    
 		}
-    },
+  },
 
     onChangeComboComercializableConsPlano: function(combo){
 		var me = this;
@@ -1260,20 +1260,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 					}
 				});
     },
-
+	
+		onClickCerrarPestanyaAnyadirNuevoDocumentoAgrupacion: function(btn){
+			var me = this,
+			window = btn.up('window');
+				window.close();
+		},
+	
 	  onClickAnyadirNuevoDocumentoAgrupacion: function(btn){
+	  		var me = this;
 	    	var idAgrupacion = me.getView().idAgrupacion;
-	    	form = me.down("form");
+	    	form = btn.up("anyadirNuevoDocumentoAgrupacion").down("form");
 	  
 	    	if(form.isValid()){
-	    		
 	            form.submit({
 	                waitMsg: HreRem.i18n('msg.mask.loading'),
 	                params: {
 	                	idAgrupacion: idAgrupacion
 	                },
 	                success: function(fp, o) {
-
 	                	if(o.result.success == "false") {
 	                		me.fireEvent("errorToast", o.result.errorMessage);
 	                	}
@@ -1289,7 +1294,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	                    btn.up("window").close();
 	                },
 	                failure: function(fp, o) {
-	                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                }
 	            });
 	        }
@@ -1300,11 +1305,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			var me = this,
 			config = {};
 			
-			config.url= $AC.getWebPath() + "gencat/bajarAdjuntoComunicacion." + $AC.getUrlPattern();
+			config.url= $AC.getWebPath() + "agrupacion/bajarAdjuntoAgrupacion." + $AC.getUrlPattern();
 			config.params = {};
 			config.params.id=record.get('id');
 			config.params.nombreDocumento=record.get("nombre");
-			
 			me.fireEvent("downloadFile", config);
 		},
 		
@@ -1329,5 +1333,4 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	            
 	        });	
 		}
-
 });

@@ -1,25 +1,26 @@
-Ext.define('HreRem.view.activos.detalle.DocumentosActivoPromocion', { 
+Ext.define('HreRem.view.activos.detalle.DocumentosActivoAgrupacion', {
     extend		: 'Ext.panel.Panel',
-    xtype		: 'documentosactivopromocion', 
-    reference	: 'documentosactivopromocionref',
+    xtype		: 'documentosactivoagrupacion', 
+    reference	: 'documentosactivoagrupacionref',
     cls			: 'panel-base shadow-panel',
     collapsed	: false,
     scrollable	: 'y',
 
     initComponent: function () {
     	 var me = this;
-        me.setTitle(HreRem.i18n('fieldlabel.documentacion.promocion'));
+        me.setTitle(HreRem.i18n('fieldlabel.documentacion.agrupacion'));
 
     	var items= [
     	         {
 				    xtype		: 'gridBase',
 				    topBar		:  true,
 				    removeButton : true,
+				    addButton: false,
 				    features: [{ftype:'grouping'}],
-				    reference: 'listadoDocumentosPromocion',
+				    reference: 'listadoDocumentosAgrupacion',
 					cls	: 'panel-base shadow-panel',
 					bind: { 
-						store: '{storeDocumentosActivoPromocion}'
+						store: '{storeDocumentosActivoAgrupacion}'
 					},
 					loadCallbackFunction: {
 					    callback: function(records, operation, success) {
@@ -71,8 +72,8 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoPromocion', {
 			            		}
 					        }]
 			    		},
-					    {   text: HreRem.i18n('header.nombre.documento'),
-				        	dataIndex: 'nombre',
+					    {   text: HreRem.i18n('header.numero.agrupacion.1'),
+				        	dataIndex: 'idAgrupacion',
 				        	flex: 1
 				        },
 				        {   text: HreRem.i18n('header.tipo'),
@@ -106,11 +107,6 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoPromocion', {
 				        	dataIndex: 'fechaDocumento',
 				        	flex: 1,
 				        	formatter: 'date("d/m/Y")'
-				        },
-				        {	
-				        	text: HreRem.i18n('header.gestor'),
-				        	dataIndex: 'gestor',
-				        	flex: 1					        	
 				        },
 				        {   text: HreRem.i18n('header.entidad.aplica'),
 				        	dataIndex: 'entidad',

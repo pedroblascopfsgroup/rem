@@ -10,8 +10,6 @@ public class DtoAdjuntoAgrupacion implements Serializable {
     private Long id;
     
     private Long idAgrupacion;
-    
-    private Long idDoc;
 
 	private String nombre;
 	
@@ -23,13 +21,13 @@ public class DtoAdjuntoAgrupacion implements Serializable {
 	
 	private Long tamanyo;
 	
-	private Date fechaSubida;
-	
 	private Date fechaDocumento;
 	
 	private String contentType;
 
 	private String matricula;
+	
+	private Long idDocRestClient;
 	
 	public Long getId() {
 		return id;
@@ -37,14 +35,6 @@ public class DtoAdjuntoAgrupacion implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Long getIdDoc() {
-		return idDoc;
-	}
-
-	public void setIdDoc(Long idDoc) {
-		this.idDoc = idDoc;
 	}
 
 	public String getnombre() {
@@ -85,14 +75,6 @@ public class DtoAdjuntoAgrupacion implements Serializable {
 
 	public void setTamanyo(Long tamanyo) {
 		this.tamanyo = tamanyo;
-	}
-
-	public Date getFechaSubida() {
-		return fechaSubida;
-	}
-
-	public void setFechaSubida(Date fechaSubida) {
-		this.fechaSubida = fechaSubida;
 	}
 
 	public Date getFechaDocumento() {
@@ -136,6 +118,14 @@ public class DtoAdjuntoAgrupacion implements Serializable {
 
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
+	}
+
+	public Long getIdDocRestClient() {
+		return idDocRestClient;
+	}
+
+	public void setIdDocRestClient(Long idDocRestClient) {
+		this.idDocRestClient = idDocRestClient;
 	}
 	
 	

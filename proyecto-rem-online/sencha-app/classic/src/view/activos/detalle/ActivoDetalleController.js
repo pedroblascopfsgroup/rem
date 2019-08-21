@@ -1281,6 +1281,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.fireEvent("downloadFile", config);
 	},
 
+	downloadDocumentoAdjuntoProyecto: function(grid, record) {
+
+		var me = this,
+		config = {};
+
+		config.url=$AC.getWebPath()+"proyecto/bajarAdjuntoActivoProyecto."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idActivo=record.get("idActivo");
+		config.params.nombreDocumento=record.get("nombre");
+		me.fireEvent("downloadFile", config);
+	},
 	updateOrdenFotosInterno: function(data, record, store) {
 
 		var me = this;

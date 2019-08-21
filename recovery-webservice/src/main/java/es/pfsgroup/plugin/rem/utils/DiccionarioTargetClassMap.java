@@ -228,6 +228,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("EstadoPresentacion", DDEstadoPresentacion.class);
 		mapa.put("fasePublicacion", DDFasePublicacion.class);
 		mapa.put("direccionTerritorial", DDDireccionTerritorial.class);
+		mapa.put("tipoDocumentoAgrupacion", DDTipoDocumentoAgrupacion.class);
 		mapa.put("claseOferta", DDClaseOferta.class);
 		mapa.put("servicerActivo", DDServicerActivo.class);
 		mapa.put("cesionSaneamiento", DDCesionSaneamiento.class);

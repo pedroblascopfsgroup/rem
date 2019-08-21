@@ -36,14 +36,14 @@ public class UploadAdapter {
 	public WebFileItem getWebFileItem (HttpServletRequest request) {
 		Boolean crear = true;
 		MultipartRequest multipartRequest = (MultipartRequest) request;
-        MultipartFile multipartFile = multipartRequest.getFile("fileUpload");
+        MultipartFile multipartFile = multipartRequest.getFile("documentoAgrupacion");
         WebFileItem webFileItem = new WebFileItem();
         FileItem fileItem = null;
 		File file;		
 		
 		try {
 			
-			String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/";
+			String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/"; 
 			if(!Checks.esNulo(multipartFile) && !Checks.esNulo(multipartFile.getOriginalFilename())) {
 				file = new File(rutaFichero+multipartFile.getOriginalFilename());
 				file.createNewFile(); 

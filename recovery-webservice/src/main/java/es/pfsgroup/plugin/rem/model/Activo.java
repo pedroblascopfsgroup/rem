@@ -1861,21 +1861,20 @@ public class Activo implements Serializable, Auditable {
 		this.adjuntosProyecto = adjuntosProyecto;
 	}
 	
-   public AdjuntosProyecto getAdjuntoProyecto(Long id) {
+  public AdjuntosProyecto getAdjuntoProyecto(Long id) {
        for (AdjuntosProyecto adj : getAdjuntosProyecto()) {
            if (adj.getId().equals(id)) { return adj; }
        }
        return null;
-   }
+  }
    
-   public void addAdjuntoProyecto(FileItem fileItem) {
+  public void addAdjuntoProyecto(FileItem fileItem) {
 	   AdjuntosProyecto adjuntosProyecto = new AdjuntosProyecto(fileItem);
 	   adjuntosProyecto.setActivo(this);
        Auditoria.save(adjuntosProyecto);
        getAdjuntosProyecto().add(adjuntosProyecto);
 
-   }
-
+  }
 	
 	public ActivoAutorizacionTramitacionOfertas getActivoAutorizacionTramitacionOfertas() {
 		return activoAutorizacionTramitacionOfertas;

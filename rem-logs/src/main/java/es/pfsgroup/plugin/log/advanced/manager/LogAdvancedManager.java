@@ -43,7 +43,7 @@ public class LogAdvancedManager {
 	static final String PREFIX_RSYSLOG = "[REM_WEB_LOG]";
 
 	public void writeLog(LogAdvancedDto logDto) {
-
+		logger.error("################################################# prueba log ################################################################");
 		String rsyslogActive = appProperties.getProperty("rsyslog.rem.active");
 
 		if (!Checks.esNulo(rsyslogActive) && rsyslogActive.equals("true") && !Checks.esNulo(logDto)

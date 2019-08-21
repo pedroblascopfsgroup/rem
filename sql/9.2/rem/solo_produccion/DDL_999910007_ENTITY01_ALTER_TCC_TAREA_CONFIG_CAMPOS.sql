@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Sergio Ortuño
---## FECHA_CREACION=20190821
+--## FECHA_CREACION=20190822
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-0000

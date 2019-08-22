@@ -3135,6 +3135,13 @@ public class AgrupacionAdapter {
 							agrupacion.setExistePiloto(true);
 							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
 						}
+					}else {
+						Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(id);
+						ActivoAgrupacionActivo aga_piloto;
+						Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId()); 
+						aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
+						aga_piloto.setPisoPiloto(false);
+						activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
 					}
 					if(!Checks.esNulo(dto.getEsVisitable())) {
 						agrupacion.setEsVisitable(dto.getEsVisitable());
@@ -4181,15 +4188,8 @@ public class AgrupacionAdapter {
 		for(ActivoAgrupacionActivo activo_aga : agrupacion.getActivos()){
 			if(activo_aga.getActivo().getNumActivo().equals(activoNum)) {
 				if(DDSubcartera.CODIGO_YUBAI.equals(activo_aga.getActivo().getSubcartera().getCodigo())){
-					String estadoAcitvo = activo_aga.getActivo().getEstadoActivo().getCodigo();
-					if(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO.equals(estadoAcitvo) || 
-							DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(estadoAcitvo) ||
-							DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO.equals(estadoAcitvo)) {
 						nuevoPisoPiloto = activo_aga.getActivo();
 						break;
-					}else {
-						throw new JsonViewerException(ACTIVO_NO_OBRA_NUEVA);
-					}
 				}else {
 					throw new JsonViewerException(ACTIVO_NO_YUBAI);
 				}

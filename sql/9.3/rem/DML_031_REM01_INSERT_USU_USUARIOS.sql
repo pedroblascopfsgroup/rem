@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=Alberto Flores
---## FECHA_CREACION=20190703
+--## FECHA_CREACION=20190822
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6882
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Actualizacion fecha vigencia pass REMVIP-5092
 --###########################################
 ----*/
 
@@ -75,14 +76,15 @@ BEGIN
 				USUARIOMODIFICAR = '''||V_USUARIOCREAR||''', 
 				FECHAMODIFICAR = SYSDATE, 
 				USU_GRUPO = '''||V_TMP_USU(6)||''', 
-				BORRADO = 0
+				BORRADO = 0, 
+				USU_FECHA_VIGENCIA_PASS = TO_DATE(''29/07/2021'',''DD/MM/YYYY'')
 				WHERE USU_USERNAME = '''||V_TMP_USU(1)||'''';
 			--DBMS_OUTPUT.PUT_LINE(''||V_SQL||'');
 			EXECUTE IMMEDIATE V_SQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO] Usuario '''||V_TMP_USU(1)||''' modificado correctamente');
 		ELSE
 			V_SQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TABLA||' 
-			(USU_ID,ENTIDAD_ID,USU_USERNAME,USU_PASSWORD,USU_NOMBRE,USU_APELLIDO1,USU_APELLIDO2,USUARIOCREAR,FECHACREAR,USU_GRUPO,BORRADO)
+			(USU_ID,ENTIDAD_ID,USU_USERNAME,USU_PASSWORD,USU_NOMBRE,USU_APELLIDO1,USU_APELLIDO2,USUARIOCREAR,FECHACREAR,USU_FECHA_VIGENCIA_PASS,USU_GRUPO,BORRADO)
 	
 			SELECT '||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL,
 			1,
@@ -93,6 +95,7 @@ BEGIN
 			'''||V_TMP_USU(5)||''',
 			'''||V_USUARIOCREAR||''',
 			SYSDATE,
+			TO_DATE(''29/07/2021'',''DD/MM/YYYY''),
 			'''||V_TMP_USU(6)||''',
 			0
 			FROM DUAL			

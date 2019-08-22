@@ -1210,6 +1210,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		}
 		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
 			me.lookupReference('esVisitable').setDisabled(true);
+			me.lookupReference('pisoPiloto').setDisabled(true);
 		}
 	}
 });

@@ -190,7 +190,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	  	pisoPiloto = me.getViewModel().get("agrupacionficha.pisoPiloto"),
 	  	existePisoPiloto = me.lookupReference("existePiloto");
 
-		if ((CONST.CARTERA['THIRDPARTIES'] === codCartera && codSubcartera === CONST.SUBCARTERA['YUBAI'])
+		if ((CONST.CARTERA['THIRD'] === codCartera && codSubcartera === CONST.SUBCARTERA['YUBAI'])
 			&& CONST.COMBO_TRUE_FALSE['FALSE'] == existePisoPiloto.getValue()) {
         		Ext.Msg.show({
         			   title: HreRem.i18n('title.descartar.cambios'),

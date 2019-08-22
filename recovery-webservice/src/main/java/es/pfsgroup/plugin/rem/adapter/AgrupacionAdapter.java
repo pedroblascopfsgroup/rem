@@ -3118,14 +3118,17 @@ public class AgrupacionAdapter {
 							pisoPiloto = this.isActivoValido(agrupacion, dto.getPisoPiloto());
 							Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPilotoOld.getId()); 
 							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
-							aga_piloto.setPisoPiloto(false);
-							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
-							
+							if(!Checks.esNulo(aga_piloto)){
+								aga_piloto.setPisoPiloto(false);
+								activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							}
 							// Anyadir piso piloto nuevo
 							filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId()); 
 							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
-							aga_piloto.setPisoPiloto(true);
-							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							if(!Checks.esNulo(aga_piloto)){
+								aga_piloto.setPisoPiloto(true);
+								activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							}
 						}else {
 							pisoPiloto = this.isActivoValido(agrupacion, dto.getPisoPiloto());
 							//Si no hay piso piloto definido y el seleccionado es de Yubai, procedemos a guardar los cambios

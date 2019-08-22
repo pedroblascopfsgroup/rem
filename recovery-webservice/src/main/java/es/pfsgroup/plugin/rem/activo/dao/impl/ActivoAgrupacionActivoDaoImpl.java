@@ -271,10 +271,10 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 	@Override
 	public Activo getPisoPilotoByIdAgrupacion(long idAgrupacion) {
 		
-		HQLBuilder hb = new HQLBuilder(" aga.activo from ActivoAgrupacionActivo aga");
+		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aga");
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.agrupacion.id", idAgrupacion);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.pisoPiloto", 1);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.pisoPiloto", true);
 		HQLBuilder.addFiltroIgualQue(hb, "aga.auditoria.borrado", false);
 		HQLBuilder.addFiltroIgualQue(hb, "aga.agrupacion.auditoria.borrado", false);
 		

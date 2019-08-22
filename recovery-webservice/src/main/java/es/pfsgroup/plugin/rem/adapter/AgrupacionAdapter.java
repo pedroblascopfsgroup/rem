@@ -3135,6 +3135,13 @@ public class AgrupacionAdapter {
 							agrupacion.setExistePiloto(true);
 							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
 						}
+					}else {
+						Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(id);
+						ActivoAgrupacionActivo aga_piloto;
+						Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId()); 
+						aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
+						aga_piloto.setPisoPiloto(false);
+						activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
 					}
 					if(!Checks.esNulo(dto.getEsVisitable())) {
 						agrupacion.setEsVisitable(dto.getEsVisitable());

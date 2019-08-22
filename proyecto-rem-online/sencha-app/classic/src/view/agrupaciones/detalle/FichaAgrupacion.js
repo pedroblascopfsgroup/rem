@@ -357,10 +357,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.piso.piloto'),
 							name: 'pisoPiloto',
 							reference: 'pisoPiloto',
-							disabled: true,
 							bind: {
 								value: '{agrupacionficha.pisoPiloto}',
 								readOnly: false,
+								disabled: '{!agrupacionficha.pisoPiloto}',
 								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
 							}
 						},

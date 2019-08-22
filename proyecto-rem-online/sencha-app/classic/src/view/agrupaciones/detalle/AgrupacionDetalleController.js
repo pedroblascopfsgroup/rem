@@ -1196,10 +1196,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		if(CONST.COMBO_TRUE_FALSE['TRUE'] == combo.getSelection().get('codigo')) {
 			me.lookupReference('existePiloto').setDisabled(false);
 			me.lookupReference('pisoPiloto').setAllowBlank(false);
-			me.lookupReference('esVisitable').setDisabled(false);
 		}
 		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
 			me.lookupReference('existePiloto').setDisabled(true);
+			me.lookupReference('esVisitable').setDisabled(true);
 		}
 	},
 	

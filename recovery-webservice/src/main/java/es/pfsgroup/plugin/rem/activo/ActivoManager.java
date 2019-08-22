@@ -3619,6 +3619,65 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return ofertaAceptada;
 	}
 
+	@Override
+	public Oferta tieneOfertaTramitadaOCongeladaConReserva(Activo activo) {
+		List<ActivoOferta> listaActivoOferta = activo.getOfertas();
+		int i = 0;
+		Oferta ofertaAux = null;
+		Oferta oferta = null;
+
+		if (!Checks.estaVacio(listaActivoOferta)) {
+			while (i < listaActivoOferta.size() && oferta == null) {
+				ActivoOferta tmp = listaActivoOferta.get(i);
+				i++;
+				ofertaAux = tmp.getPrimaryKey().getOferta();
+				if (DDEstadoOferta.CODIGO_CONGELADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+					ExpedienteComercial expediente = expedienteComercialApi
+							.expedienteComercialPorOferta(ofertaAux.getId());
+					if (!Checks.esNulo(expediente)) { 
+						Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
+						if(!Checks.esNulo(reserva) && !Checks.esNulo(reserva.getFechaFirma())) {
+							List<ComunicacionGencat> comunicacionesVivas = gencatApi.comunicacionesVivas(expediente);
+							boolean provieneOfertaGencat = gencatApi.esOfertaGencat(expediente);
+							if (!Checks.estaVacio(comunicacionesVivas) && !provieneOfertaGencat && 
+									!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) &&
+									!DDEstadosExpedienteComercial.PTE_SANCION.equals(expediente.getEstado().getCodigo()) &&
+									((!Checks.esNulo(expediente.getReserva()) && !DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()))
+										|| (Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()))
+										|| DDEstadosExpedienteComercial.ANULADO.equals(expediente.getEstado().getCodigo())
+										|| DDEstadosExpedienteComercial.ANULADO_PDTE_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+										|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()))) {
+								if (gencatApi.comprobarExpedienteAnuladoGencat(comunicacionesVivas)) {
+									oferta = ofertaAux;
+								}
+							}
+							
+						}
+							
+					}
+				}else if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+					ExpedienteComercial expediente = expedienteComercialApi
+							.expedienteComercialPorOferta(ofertaAux.getId());
+					if (!Checks.esNulo(expediente)) { // Si el expediente está
+														// aprobado (o estados
+														// posteriores).
+						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.EN_TRAMITACION
+										.equals(expediente.getEstado().getCodigo()))
+							oferta = ofertaAux;
+					}
+				}
+			}
+		}
+
+		return oferta;
+	}
 	private Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna) {
 		Trabajo trabajo = null;
 		TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
@@ -4905,10 +4964,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		PerimetroActivo perimetro = getPerimetroByIdActivo(activo.getId());
 
-		if ((Checks.esNulo(agrupacion) && !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar())
-				&& BooleanUtils.toBoolean(perimetro.getAplicaFormalizar()))
-				|| (!Checks.esNulo(agrupacion) && agrupacion.getIsFormalizacion() != null
-						&& BooleanUtils.toBoolean(agrupacion.getIsFormalizacion()))) {
+		if (!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar())
+				&& BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
 			if (!Checks.esNulo(usuarioGestorFormalizacion)) {
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION,
 						usuarioGestorFormalizacion.getUsername(), dto);

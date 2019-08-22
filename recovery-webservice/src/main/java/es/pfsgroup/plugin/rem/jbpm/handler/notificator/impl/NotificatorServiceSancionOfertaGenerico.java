@@ -82,6 +82,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_BACKOFFICE_SUS = "gestor-backoffice-sustituto";
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
 	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "gestor-comercial-backoffice-inmobiliario";
+	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS = "gestor-comercial-backoffice-inmobiliario-sustituto";
 	
 	//Variables de buzones
 	private static final String BUZON_REM = "buzonrem";
@@ -402,7 +403,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
 					|| (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
 							DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
-				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS));
 			}
 
 			if (formalizacion) {
@@ -646,6 +647,23 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				addMail(s, gestores.put(s, extractEmail(
 						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM"))),
 						gestores);
+				
+				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id",
+						gesBackInmobiliario.getId());
+				List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
+				if (!Checks.esNulo(sgsList)) {
+					for (GestorSustituto sgs : sgsList) {
+						if (!Checks.esNulo(sgs)) {
+							if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date())
+									&& !Checks.esNulo(sgs.getFechaInicio())
+									&& (sgs.getFechaInicio().before(new Date())
+											|| sgs.getFechaInicio().equals(new Date()))) {
+								addMail(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS, extractEmail(sgs.getUsuarioGestorSustituto()),
+										gestores);
+							}
+						}
+					}
+				}
 			} else if (SUPERVISOR_COMERCIAL.equals(s)) {
 				Usuario sComercial = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente,
 						"SCOM");

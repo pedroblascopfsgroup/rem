@@ -184,7 +184,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            	var value2=Ext.util.Format.number(value, '0.00');
 		            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
 		            	var style = "style= 'color: black'";
-		            	var importeTotal = Ext.util.Format.number(me.up('gastodetallemain').getViewModel().get('gasto.importeTotal'), '0.00');
+		            	var importeTotal = Ext.util.Format.number(me.store.getData().items[0].get('importeTotalGasto'), '0.00');
 		            	if(importeTotal==""){
 		            		importeTotal = Ext.util.Format.number(0, '0.00');
 		            	}

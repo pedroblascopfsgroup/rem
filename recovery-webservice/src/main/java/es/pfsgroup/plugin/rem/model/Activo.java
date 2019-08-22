@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionApple;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -436,6 +437,10 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_FECHA_CAMBIO_TIPO_ACT")
     private Date fechaUltCambioTipoActivo;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EQG_ID")
+    private DDEquipoGestion equipoGestion;
     
 	
     // Getters del activo --------------------------------------------
@@ -1759,6 +1764,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setFechaUltCambioTipoActivo(Date fechaUltCambioTipoActivo) {
 		this.fechaUltCambioTipoActivo = fechaUltCambioTipoActivo;
+	}
+
+	public DDEquipoGestion getEquipoGestion() {
+		return equipoGestion;
+	}
+
+	public void setEquipoGestion(DDEquipoGestion equipoGestion) {
+		this.equipoGestion = equipoGestion;
 	}
 	
 	

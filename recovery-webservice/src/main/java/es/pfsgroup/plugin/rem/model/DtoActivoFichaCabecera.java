@@ -242,7 +242,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean cambioEstadoPublicacion;;
 	private Boolean cambioEstadoPrecio;
-	private Boolean cambioEstadoActivo; 
+	private Boolean cambioEstadoActivo;
+	
+	private String tipoEquipoGestionCodigo;
+	private String tipoEquipoGestionDescripcion;
 
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -1884,5 +1887,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
 	}
+
+	public String getTipoEquipoGestionCodigo() {
+		return tipoEquipoGestionCodigo;
+	}
+
+	public void setTipoEquipoGestionCodigo(String tipoEquipoGestionCodigo) {
+		this.tipoEquipoGestionCodigo = tipoEquipoGestionCodigo;
+	}
+
+	public String getTipoEquipoGestionDescripcion() {
+		return tipoEquipoGestionDescripcion;
+	}
+
+	public void setTipoEquipoGestionDescripcion(String tipoEquipoGestionDescripcion) {
+		this.tipoEquipoGestionDescripcion = tipoEquipoGestionDescripcion;
+	}
+	
 	
 }

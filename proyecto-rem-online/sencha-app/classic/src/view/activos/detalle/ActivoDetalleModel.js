@@ -762,6 +762,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	}else{
 	    		return true;
 	    	}
+	    },
+	    
+	    esSuperUsuario: function(get){
+	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
 	    }
 		
 	 },
@@ -1967,6 +1971,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
    				extraParams: {numActivo: '{activo.numActivo}'}
+			}
+		},
+		
+		comboEquipoGestion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposEquipoGestion'}
 			}
 		}
      }

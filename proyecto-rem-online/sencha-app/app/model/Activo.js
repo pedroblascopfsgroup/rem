@@ -814,6 +814,9 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'cambioEstadoPublicacion',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'tipoEquipoGestionCodigo'
     		}
     ],
     

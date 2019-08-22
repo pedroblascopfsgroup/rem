@@ -659,7 +659,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 },
 		 
 		 esAgrupacionThirdpartiesYubaiObraNueva: function(get) {
-			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
+			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRD']
 			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
 			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) {
 		     		return true;

@@ -310,9 +310,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							name: 'comercializableConsPlano',
 							allowBlank:	false,
 							bind: {
-
-								disabled: '{!esVisibleParaCartera}',
-								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
 								value: '{agrupacionficha.comercializableConsPlano}',
 								store: '{comboTrueFalse}',
 								readOnly: false,

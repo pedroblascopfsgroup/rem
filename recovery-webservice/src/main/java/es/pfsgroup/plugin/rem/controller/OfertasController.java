@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
@@ -68,6 +69,9 @@ public class OfertasController {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private OfertaDao ofertaDao;
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -700,6 +704,14 @@ public class OfertasController {
 					
 				}else {
 					codTarea = jsonFields.get("codTarea").toString();
+					
+					if(!ofertaDao.tieneTareaActiva(codTarea, ofrNumOferta)) 
+					{
+						error = RestApi.REST_MSG_VALIDACION_TAREA;
+						errorDesc = "La tarea " + codTarea + " no está activa en esta oferta.";
+						throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+					}
+					
 					tareaId = ofertaApi.getIdTareaByNumOfertaAndCodTarea(Long.parseLong(ofrNumOferta.toString()), codTarea);
 					
 					if(Checks.esNulo(tareaId)) {

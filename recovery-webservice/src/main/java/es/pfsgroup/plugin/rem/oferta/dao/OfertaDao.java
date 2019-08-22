@@ -88,4 +88,6 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr);
 	
 	public void flush();
+
+	public Boolean tieneTareaActiva(String tarea, String numOferta);
 }

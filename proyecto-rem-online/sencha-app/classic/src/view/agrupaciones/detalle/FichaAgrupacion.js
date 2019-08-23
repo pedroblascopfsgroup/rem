@@ -360,7 +360,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							bind: {
 								value: '{agrupacionficha.pisoPiloto}',
 								readOnly: false,
-								disabled: '{!agrupacionficha.pisoPiloto}',
 								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
 							}
 						},

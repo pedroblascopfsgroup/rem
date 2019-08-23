@@ -191,9 +191,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	  	existePisoPiloto = me.lookupReference("existePiloto");
 
 		if ((CONST.CARTERA['THIRD'] === codCartera && codSubcartera === CONST.SUBCARTERA['YUBAI'])
-			&& CONST.COMBO_TRUE_FALSE['FALSE'] == existePisoPiloto.getValue()) {
+			&& CONST.COMBO_TRUE_FALSE['FALSE'] == existePisoPiloto.getValue() && pisoPiloto != null) {
         		Ext.Msg.show({
-        			   title: HreRem.i18n('title.descartar.cambios'),
+        			   title: HreRem.i18n('title.confirmar.eliminacion'),
         			   msg: HreRem.i18n('title.confirmacion.guardar.cambios'), 
         			   buttons: Ext.MessageBox.YESNO,
         			   fn: function(buttonId) {

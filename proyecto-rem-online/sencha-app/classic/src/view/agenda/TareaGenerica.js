@@ -835,23 +835,78 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         } else {
             
         }
-
-        me.down('[name=fechaTope]').addListener('focus', function(campo) {
-            me.down('[name=fechaConcreta]').reset();
-            me.down('[name=horaConcreta]').reset();
-            me.down('[name=fechaConcreta]').setValue('');
-            me.down('[name=horaConcreta]').setValue('');
-        });
-
-        me.down('[name=fechaConcreta]').addListener('focus', function(campo) {
-            me.down('[name=fechaTope]').reset();
-            me.down('[name=fechaTope]').setValue('');
-        });
-
-        me.down('[name=horaConcreta]').addListener('focus', function(campo) {
-            me.down('[name=fechaTope]').reset();
-            me.down('[name=fechaTope]').setValue('');
+        
+        me.down('[name=fechaTope]').addListener('change', function(combo) {
+            if (combo.value != '') {
+            	combo.allowBlank = false;
+                me.down('[name=fechaConcreta]').allowBlank = true;
+                me.down('[name=horaConcreta]').allowBlank = true;
+                me.down('[name=fechaConcreta]').reset();
+                me.down('[name=horaConcreta]').reset();
+                me.down('[name=fechaConcreta]').setValue('');
+                me.down('[name=horaConcreta]').setValue('');
+            }
+            else if(combo.value == '' && me.down('[name=fechaConcreta]').value == '' && me.down('[name=horaConcreta]').value == ''){
+            	combo.allowBlank = true;
+                me.down('[name=fechaConcreta]').allowBlank = true;
+                me.down('[name=horaConcreta]').allowBlank = true;
+            }
         })
+        
+        me.down('[name=fechaConcreta]').addListener('change', function(combo) {
+            if (combo.value != '') {
+            	combo.allowBlank = false;
+                me.down('[name=fechaTope]').allowBlank = true;
+                me.down('[name=horaConcreta]').allowBlank = false;
+                me.down('[name=fechaTope]').reset();
+                me.down('[name=fechaTope]').setValue('');
+            }
+            else if(combo.value == '' && me.down('[name=fechaTope]').value == '' && me.down('[name=horaConcreta]').value == ''){
+            	combo.allowBlank = true;
+                me.down('[name=fechaTope]').allowBlank = true;
+                me.down('[name=horaConcreta]').allowBlank = true;
+            }
+        })
+        
+        me.down('[name=horaConcreta]').addListener('change', function(combo) {
+            if (combo.value != '') {
+            	combo.allowBlank = false;
+                me.down('[name=fechaTope]').allowBlank = true;
+                me.down('[name=fechaConcreta]').allowBlank = false;
+                me.down('[name=fechaTope]').reset();
+                me.down('[name=fechaTope]').setValue('');
+            }
+            else if(combo.value == '' && me.down('[name=fechaTope]').value == '' && me.down('[name=fechaConcreta]').value == ''){
+            	combo.allowBlank = true;
+                me.down('[name=fechaTope]').allowBlank = true;
+                me.down('[name=fechaConcreta]').allowBlank = true;
+            }
+        })
+        
+        me.down('[name=fechaTope]').addListener('focus', function(combo) {
+            if (combo.value != '') {
+                me.down('[name=fechaConcreta]').reset();
+                me.down('[name=horaConcreta]').reset();
+                me.down('[name=fechaConcreta]').setValue('');
+                me.down('[name=horaConcreta]').setValue('');
+            }
+        })
+        
+        me.down('[name=fechaConcreta]').addListener('focus', function(combo) {
+            if (combo.value != '') {
+                me.down('[name=fechaTope]').reset();
+                me.down('[name=fechaTope]').setValue('');
+            }
+        })
+        
+        me.down('[name=horaConcreta]').addListener('focus', function(combo) {
+            if (combo.value != '') {
+                me.down('[name=fechaTope]').reset();
+                me.down('[name=fechaTope]').setValue('');
+            }
+        })
+        
+        
     },
 
 

@@ -399,9 +399,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
-					|| (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
-							DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
 			}
 
@@ -425,7 +423,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		clavesGestores.add(GESTOR_FORMALIZACION);
 		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
 			clavesGestores.add(SUPERVISOR_COMERCIAL);
+		
+		} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+			clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
 		}
+		clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION));
+		clavesGestores.add(SUPERVISOR_COMERCIAL);
 		return clavesGestores.toArray(new String[] {});
 	}
 

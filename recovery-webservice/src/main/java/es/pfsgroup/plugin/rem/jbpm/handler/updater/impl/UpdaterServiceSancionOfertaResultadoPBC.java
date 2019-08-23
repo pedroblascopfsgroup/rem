@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -20,12 +22,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -50,6 +55,9 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 
     @Autowired
     private UtilDiccionarioApi utilDiccionarioApi;
+    
+    @Autowired
+	private TareaActivoApi tareaActivoApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
@@ -137,8 +145,34 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							}
 							genericDao.save(ExpedienteComercial.class, expediente);
 						} else {
-							expediente.setEstadoPbc(1);
-							genericDao.save(ExpedienteComercial.class, expediente);
+							
+							if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
+									&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
+							
+								List<TareaActivo> tareasTramite = tareaActivoApi.getTareasActivoByIdTramite(tramite.getId());
+	
+								for (TareaActivo tareaActivo : tareasTramite) {
+									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaActivo.getId());
+									TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtro);
+									
+									if(CODIGO_T013_RESULTADO_PBC.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+											&& Checks.esNulo(tareaActivo.getFechaFin())) {
+										Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", tareaExterna.getId());
+										Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "nombre", COMBO_RESULTADO);
+										TareaExternaValor tareaExternaValor = genericDao.get(TareaExternaValor.class, filtro1, filtro2);
+										
+										if (DDSiNo.SI.equals(tareaExternaValor.getValor())) {
+											expediente.setEstadoPbc(1);
+											genericDao.save(ExpedienteComercial.class, expediente);
+										}
+										break;
+									}
+								}
+							} else {
+								expediente.setEstadoPbc(1);
+								genericDao.save(ExpedienteComercial.class, expediente);
+							}
+							
 							//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
 							if(!Checks.estaVacio(valores)){
 								if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 

@@ -2,10 +2,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',
 
-    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
-            'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
-
-            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController','HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 'HreRem.view.activos.detalle.InformeComercialActivo'],
+    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 
+    		'HreRem.view.activos.detalle.CargaDetalle','HreRem.view.activos.detalle.OpcionesPropagacionCambios', 
+    		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
+    		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
+    		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
+    		'HreRem.model.ActivoTributos'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -5370,6 +5372,80 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		if(!Ext.isEmpty(usuarioGestor.getSelection()) && !unidadAlquilable)
 			agregarGestor.setDisabled(false);
+	},
+	
+	descargarAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+		var me = this;
+		var grid = tableView.up('grid');
+		var existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+		
+		if(existeDocumentoTributo == "No"){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.no.existe.adjunto")); 
+		}else{
+			var nombreAdjuntoTributo = grid.store.getAt(indiceFila).get('documentoTributoNombre');	
+			if(nombreAdjuntoTributo != undefined && idAdjuntoTributo){
+				var config = {};
+				
+				config.url=$AC.getWebPath()+"tributo/bajarAdjuntoActivoTributo."+$AC.getUrlPattern();
+				config.params = {};
+				config.params.idTributo=grid.store.getAt(indiceFila).get("idTributo");
+				config.params.idActivo=me.getView().getViewModel().getData().activo.id;
+				config.params.nombreDocumento=nombreAdjuntoTributo.replace(",","");
+				me.fireEvent("downloadFile", config);
+			}else{
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			}
+			
+		}
+	},
+	
+	eliminarAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+		
+   		var me = this;
+		var grid = tableView.up('grid');
+		var existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+		
+		if(existeDocumentoTributo == "No"){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.no.existe.adjunto")); 
+		}else{
+			var idActivo = me.getViewModel().get("activo.id"),
+			idTributo = grid.store.getAt(indiceFila).get("idTributo");
+			
+			var url = $AC.getRemoteUrl('tributo/deleteAdjunto');
+			Ext.Ajax.request({
+	    		url: url,
+	    		params: {
+	    			idActivo: idActivo,
+	    			idTributo: idTributo
+	    			
+	    		},
+	    		
+	    		success: function(response, opts){
+	    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
+	    		},
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			    },
+			    callback: function(record, operation) {
+	    			me.getView().unmask();
+			    }
+	    	});
+			
+		}
+	},
+	
+	anyadirAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+		var me = this,	
+		grid = tableView.up('grid'),
+		idActivo = me.getViewModel().get("activo.id"),
+		idTributo = grid.store.getAt(indiceFila).get("idTributo"),
+		existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+		
+		if(existeDocumentoTributo == "Si"){
+			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ko.ya.existe.adjunto")); 
+		}else{
+			Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoTributo", {entidad: 'tributo', idEntidad: idActivo, parent: grid, idTributo: idTributo}).show();
+		}
 	}
 
 });

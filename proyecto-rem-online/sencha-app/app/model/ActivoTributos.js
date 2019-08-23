@@ -4,6 +4,7 @@
 Ext.define('HreRem.model.ActivoTributos', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
+    reference	: 'referenciaTributos',
 
     fields: [   
     		
@@ -54,6 +55,24 @@ Ext.define('HreRem.model.ActivoTributos', {
     		},
     		{
     			name:'numGastoHaya'	
+    		},
+    		{
+    			name:'existeDocumentoTributo',
+    			type: 'boolean',
+    			convert: function(value, record) {
+    				
+    				if (value == false || value == "false") {
+    					return "No";
+    				} else {
+    					return "Si";
+    				}
+    			}
+    		},
+    		{
+    			name:'documentoTributoNombre'
+    		},
+    		{
+    			name: 'documentoTributoId'
     		}
     ],
     

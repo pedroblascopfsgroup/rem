@@ -55,6 +55,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -3522,6 +3523,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		if(!Checks.estaVacio(listTributos)){
+			Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
 			for(ActivoTributos tributo : listTributos){
 				DtoActivoTributos dtoTributo = new DtoActivoTributos();
 				dtoTributo.setIdTributo(tributo.getId());
@@ -3540,6 +3542,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if(!Checks.esNulo(tributo.getGastoProveedor())){
 					dtoTributo.setNumGastoHaya(tributo.getGastoProveedor().getNumGastoHaya());
+				}
+				Filter filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", tributo.getId());
+				ActivoAdjuntoTributo adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroAuditoria);
+				if(!Checks.esNulo(adjuntoTributo)) {
+					
+					dtoTributo.setExisteDocumentoTributo(true);
+					dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
+					dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
+				}else {
+					
+					dtoTributo.setExisteDocumentoTributo(false);
+					dtoTributo.setDocumentoTributoNombre(null);
+					dtoTributo.setDocumentoTributoId(null);
 				}
 				tributos.add(dtoTributo);
 			}

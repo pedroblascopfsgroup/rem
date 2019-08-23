@@ -22,7 +22,6 @@ Ext.define('HreRem.view.common.WindowBase', {
     	me.close();   	
     },
     onClickBotonAdjuntarDocumento: function(btn) {
-		
     	var me = this,
     	params = {},
     	form = me.down("form");

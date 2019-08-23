@@ -120,7 +120,7 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name:'idEco'
     		},
     		{
-    			name:'gestorComercialPrescriptor'
+    			name:'idGestorComercialPrescriptor'
     		}
     ],
     

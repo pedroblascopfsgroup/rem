@@ -85,7 +85,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean permiteProponer;
 	
-	private Long gestorComercialPrescriptor;
+	private Long idGestorComercialPrescriptor;
 	
 	public Long getIdOferta() {
 		return idOferta;
@@ -335,12 +335,12 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setIdEco(Long idEco) {
 		this.idEco = idEco;
 	}
-	public Long getGestorComercialPrescriptor() {
-		return gestorComercialPrescriptor;
+	public Long getIdGestorComercialPrescriptor() {
+		return idGestorComercialPrescriptor;
 	}
 
-	public void setGestorComercialPrescriptor(Long gestorComercialPrescriptor) {
-		this.gestorComercialPrescriptor = gestorComercialPrescriptor;
+	public void setIdGestorComercialPrescriptor(Long idGestorComercialPrescriptor) {
+		this.idGestorComercialPrescriptor = idGestorComercialPrescriptor;
 	}
 
 	

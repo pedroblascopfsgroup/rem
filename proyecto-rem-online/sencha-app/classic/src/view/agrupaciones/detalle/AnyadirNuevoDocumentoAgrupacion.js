@@ -54,8 +54,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevoDocumentoAgrupacion', {
 
 						xtype: 'filefield',
 				        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
-				        reference: 'documentoAgrupacion',
-				        name: 'documentoAgrupacion',
+				        reference: 'fileUpload',
+				        name: 'fileUpload',
 				        allowBlank: false,
 				        msgTarget: 'side',
 				        width: 		'100%',

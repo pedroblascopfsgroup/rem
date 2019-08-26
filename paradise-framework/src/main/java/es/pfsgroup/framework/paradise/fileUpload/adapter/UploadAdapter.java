@@ -36,7 +36,7 @@ public class UploadAdapter {
 	public WebFileItem getWebFileItem (HttpServletRequest request) {
 		Boolean crear = true;
 		MultipartRequest multipartRequest = (MultipartRequest) request;
-        MultipartFile multipartFile = multipartRequest.getFile("documentoAgrupacion");
+        MultipartFile multipartFile = multipartRequest.getFile("fileUpload");
         WebFileItem webFileItem = new WebFileItem();
         FileItem fileItem = null;
 		File file;		

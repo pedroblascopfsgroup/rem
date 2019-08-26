@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20190805
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20190826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7039
+--## INCIDENCIA_LINK=REMVIP-5119
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -28,6 +28,7 @@
 --##    0.15 Permitir que los gestores HAYAGBOINM, HAYASBOINM, SCOM, GCOM, SUPRES, GESRES se puedan asignar con activos con DD_TCR_ID nulo
 --##    0.16 Se añade el gestor Portfolio Manager (GPM)
 --##    0.17 SBG Se añaden las restricciones y se ordena en base a la configuración de gestores.
+--##    0.18 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
 --##########################################
 --*/
 
@@ -174,16 +175,16 @@ UNION ALL
 /*Gestor de publicaciones*/
 /*Supervisor de publicaciones*/
 SELECT /*+ ALL_ROWS */  act.act_id,
-	   TO_NUMBER( COALESCE (dist13.cod_cartera, dist12.cod_cartera,dist11.cod_cartera,dist10.cod_cartera,dist9.cod_cartera,dist8.cod_cartera,dist7.cod_cartera,dist6.cod_cartera,dist5.cod_cartera,dist4.cod_cartera,dist3.cod_cartera,dist2.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO,
-	   TO_NUMBER( COALESCE (dist13.cod_subcartera, dist12.cod_subcartera,dist11.cod_subcartera,dist10.cod_subcartera,dist9.cod_subcartera,dist8.cod_subcartera,dist7.cod_subcartera,dist6.cod_subcartera,dist5.cod_subcartera,dist4.cod_subcartera,dist3.cod_subcartera,dist2.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO,
-	   TO_NUMBER (COALESCE (dist13.cod_estado_activo, dist12.cod_estado_activo,dist11.cod_estado_activo,dist10.cod_estado_activo,dist9.cod_estado_activo,dist8.cod_estado_activo,dist7.cod_estado_activo,dist6.cod_estado_activo,dist5.cod_estado_activo,dist4.cod_estado_activo,dist3.cod_estado_activo,dist2.cod_estado_activo,dist0.cod_estado_activo)) dd_eac_codigo,
-	   COALESCE(dist13.cod_tipo_comerzialzacion, dist12.cod_tipo_comerzialzacion,dist11.cod_tipo_comerzialzacion,dist10.cod_tipo_comerzialzacion,dist9.cod_tipo_comerzialzacion,dist8.cod_tipo_comerzialzacion,dist7.cod_tipo_comerzialzacion,dist6.cod_tipo_comerzialzacion, dist5.cod_tipo_comerzialzacion, dist4.cod_tipo_comerzialzacion, dist3.cod_tipo_comerzialzacion, dist2.cod_tipo_comerzialzacion, dist0.cod_tipo_comerzialzacion) DD_TCR_CODIGO,
-	   COALESCE (dist13.cod_provincia,dist12.cod_provincia,dist11.cod_provincia,dist10.cod_provincia,dist9.cod_provincia,dist8.cod_provincia, dist7.cod_provincia, dist6.cod_provincia, dist5.cod_provincia, dist4.cod_provincia, dist3.cod_provincia, dist2.cod_provincia, dist0.cod_provincia) cod_provincia,
-       COALESCE (dist13.cod_municipio,dist12.cod_municipio,dist11.cod_municipio,dist10.cod_municipio,dist9.cod_municipio,dist8.cod_municipio,dist7.cod_municipio,dist6.cod_municipio,dist5.cod_municipio,dist4.cod_municipio,dist3.cod_municipio,dist2.cod_municipio,dist0.cod_municipio) cod_municipio,
-       COALESCE (dist13.cod_postal,dist12.cod_postal,dist11.cod_postal,dist10.cod_postal,dist9.cod_postal,dist8.cod_postal,dist7.cod_postal,dist6.cod_postal,dist5.cod_postal,dist4.cod_postal,dist3.cod_postal,dist2.cod_postal,dist0.cod_postal) cod_postal,
-       COALESCE (dist13.tipo_gestor,dist12.tipo_gestor,dist11.tipo_gestor,dist10.tipo_gestor,dist9.tipo_gestor,dist8.tipo_gestor,dist7.tipo_gestor,dist6.tipo_gestor,dist5.tipo_gestor,dist4.tipo_gestor,dist3.tipo_gestor,dist2.tipo_gestor,dist0.tipo_gestor) AS tipo_gestor,
-       COALESCE (dist13.username,dist12.username,dist11.username,dist10.username,dist9.username,dist8.username,dist7.username,dist6.username,dist5.username,dist4.username,dist3.username,dist2.username,dist0.username) username,
-       COALESCE (dist13.nombre_usuario,dist12.nombre_usuario,dist11.nombre_usuario,dist10.nombre_usuario,dist9.nombre_usuario,dist8.nombre_usuario,dist7.nombre_usuario,dist6.nombre_usuario,dist5.nombre_usuario,dist4.nombre_usuario,dist3.nombre_usuario,dist2.nombre_usuario,dist0.nombre_usuario) nombre
+	   TO_NUMBER( COALESCE (dist9.cod_cartera, dist8.cod_cartera,dist3.cod_cartera,dist13.cod_cartera, dist12.cod_cartera,dist11.cod_cartera,dist10.cod_cartera,dist7.cod_cartera,dist6.cod_cartera,dist5.cod_cartera,dist4.cod_cartera,dist2.cod_cartera,dist0.cod_cartera)) DD_CRA_CODIGO,
+	   TO_NUMBER( COALESCE (dist9.cod_subcartera, dist8.cod_subcartera,dist3.cod_subcartera,dist13.cod_subcartera, dist12.cod_subcartera,dist11.cod_subcartera,dist10.cod_subcartera,dist7.cod_subcartera,dist6.cod_subcartera,dist5.cod_subcartera,dist4.cod_subcartera,dist2.cod_subcartera,dist0.cod_subcartera)) DD_SCR_CODIGO,
+	   TO_NUMBER (COALESCE (dist9.cod_estado_activo, dist8.cod_estado_activo,dist3.cod_estado_activo,dist13.cod_estado_activo, dist12.cod_estado_activo,dist11.cod_estado_activo,dist10.cod_estado_activo,dist7.cod_estado_activo,dist6.cod_estado_activo,dist5.cod_estado_activo,dist4.cod_estado_activo,dist2.cod_estado_activo,dist0.cod_estado_activo)) dd_eac_codigo,
+	   COALESCE (dist9.cod_tipo_comerzialzacion, dist8.cod_tipo_comerzialzacion,dist3.cod_tipo_comerzialzacion,dist13.cod_tipo_comerzialzacion, dist12.cod_tipo_comerzialzacion,dist11.cod_tipo_comerzialzacion,dist10.cod_tipo_comerzialzacion,dist7.cod_tipo_comerzialzacion,dist6.cod_tipo_comerzialzacion, dist5.cod_tipo_comerzialzacion, dist4.cod_tipo_comerzialzacion, dist2.cod_tipo_comerzialzacion, dist0.cod_tipo_comerzialzacion) DD_TCR_CODIGO,
+	   COALESCE (dist9.cod_provincia,dist8.cod_provincia,dist3.cod_provincia,dist13.cod_provincia,dist12.cod_provincia,dist11.cod_provincia,dist10.cod_provincia, dist7.cod_provincia, dist6.cod_provincia, dist5.cod_provincia, dist4.cod_provincia, dist2.cod_provincia, dist0.cod_provincia) cod_provincia,
+       COALESCE (dist9.cod_municipio,dist8.cod_municipio,dist3.cod_municipio,dist13.cod_municipio,dist12.cod_municipio,dist11.cod_municipio,dist10.cod_municipio,dist7.cod_municipio,dist6.cod_municipio,dist5.cod_municipio,dist4.cod_municipio,dist2.cod_municipio,dist0.cod_municipio) cod_municipio,
+       COALESCE (dist9.cod_postal,dist8.cod_postal,dist3.cod_postal,dist13.cod_postal,dist12.cod_postal,dist11.cod_postal,dist10.cod_postal,dist7.cod_postal,dist6.cod_postal,dist5.cod_postal,dist4.cod_postal,dist2.cod_postal,dist0.cod_postal) cod_postal,
+       COALESCE (dist9.tipo_gestor,dist8.tipo_gestor,dist3.tipo_gestor,dist13.tipo_gestor,dist12.tipo_gestor,dist11.tipo_gestor,dist10.tipo_gestor,dist7.tipo_gestor,dist6.tipo_gestor,dist5.tipo_gestor,dist4.tipo_gestor,dist2.tipo_gestor,dist0.tipo_gestor) AS tipo_gestor,
+       COALESCE (dist9.username,dist8.username,dist3.username,dist13.username,dist12.username,dist11.username,dist10.username,dist7.username,dist6.username,dist5.username,dist4.username,dist2.username,dist0.username) username,
+       COALESCE (dist9.nombre_usuario,dist8.nombre_usuario,dist3.nombre_usuario,dist13.nombre_usuario,dist12.nombre_usuario,dist11.nombre_usuario,dist10.nombre_usuario,dist7.nombre_usuario,dist6.nombre_usuario,dist5.nombre_usuario,dist4.nombre_usuario,dist2.nombre_usuario,dist0.nombre_usuario) nombre
   FROM '||V_ESQUEMA||'.act_activo act 
 	   JOIN '||V_ESQUEMA||'.act_loc_localizacion aloc ON act.act_id = aloc.act_id
        JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id

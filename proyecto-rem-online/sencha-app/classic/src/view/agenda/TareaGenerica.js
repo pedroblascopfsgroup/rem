@@ -2278,6 +2278,27 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	        }
         });
     },
+    T017_RatificacionComiteCESValidacion: function(){
+    	var me = this;
+    	var comboRatificacion = me.down('[name=comboRatificacion]');
+    	var importeContraoferta = me.down('[name=numImporteContra]');
+    	var importeOferta = me.down('[name=numImporteOferta]');
+    	me.deshabilitarCampo(importeContraoferta);
+    	me.bloquearCampo(importeOferta);
+		
+    	comboRatificacion.addListener('change', function(){
+	        if(comboRatificacion.value == '03'){
+	        	me.habilitarCampo(importeContraoferta);
+	        	importeContraoferta.allowBlank = false;
+	        	importeContraoferta.validate();
+	        }else{
+	        	me.deshabilitarCampo(importeContraoferta);
+	        	importeContraoferta.reset();
+	        	importeContraoferta.allowBlank = true;
+	        	importeContraoferta.validate();
+	        }
+        });
+    },
     T017_RespuestaOfertantePMValidacion: function () {
     	var me = this;
     	var comboRespuestaOfertante = me.down( '[name=comboRespuesta]' ),

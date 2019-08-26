@@ -75,6 +75,25 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="T017_RatificacionComiteCES" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T017_RatificacionComiteCESDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
   <node name="forkReservaSi" x="0" y="0" width="252" height="24">
     <edge>
       <label x="5" y="-10"/>

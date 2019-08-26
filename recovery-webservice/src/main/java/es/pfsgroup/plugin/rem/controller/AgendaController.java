@@ -396,9 +396,10 @@ public class AgendaController extends TareaController {
 								salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
 							}else {
 								for (TareaExterna tareasFin : listaTareas) {
-									salto = adapter.saltoFin(tareasFin.getId());
+									//salto = adapter.saltoFin(tareasFin.getId());
+									salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
 								} 
-								expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);
+								/*expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);
 								oferta = eco.getOferta();
 								ofertaApi.rechazarOferta(oferta);
 								ofertaApi.descongelarOfertas(eco);
@@ -417,7 +418,7 @@ public class AgendaController extends TareaController {
 								if(!Checks.esNulo(activo)) {
 									activoApi.actualizarOfertasTrabajosVivos(activo);
 									activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
-								}
+								}*/
 							}
 						}
 						

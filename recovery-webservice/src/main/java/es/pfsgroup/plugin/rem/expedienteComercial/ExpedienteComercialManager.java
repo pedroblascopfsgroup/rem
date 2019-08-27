@@ -7159,6 +7159,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
 			String asunto = "Bloqueo del expediente comercial ".concat(String.valueOf(expediente.getNumExpediente()));
 			String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
+					+ " con el Nº de Oferta ".concat(String.valueOf(expediente.getOferta().getNumOferta()))
+					+ " y el Nº de Activo ".concat(String.valueOf(expediente.getOferta().getActivoPrincipal().getNumActivo()))
 					+ " se ha posicionado correctamente para su firma el" + " día #Fecha_posicionamiento a las "
 					+ "#Hora_posicionamiento en la notaría #Notaria";
 
@@ -7185,7 +7187,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
 
 		} catch (Exception e) {
-			logger.error("No se podido notificar por correo el bloqueo del expediente", e);
+			logger.error("No se ha podido notificar por correo el bloqueo del expediente", e);
 		}
 	}
 
@@ -7241,7 +7243,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
 
 			} catch (Exception e) {
-				logger.error("No se podido notificar por correo el desbloqueo del expediente", e);
+				logger.error("No se ha podido notificar por correo el desbloqueo del expediente", e);
 			}
 		}
 	}

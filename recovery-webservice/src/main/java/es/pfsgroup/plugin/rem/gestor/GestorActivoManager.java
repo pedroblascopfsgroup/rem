@@ -493,11 +493,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		Usuario userTarea = null;
 		Filter filtro = null;
 	 if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)) {
-			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		} else if (ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) ) {
-			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		} else if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
-			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_PROMONTORIA_MANZANA);
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		}
 		if(!Checks.esNulo(filtro)) {
 			userTarea = genericDao.get(Usuario.class, filtro);

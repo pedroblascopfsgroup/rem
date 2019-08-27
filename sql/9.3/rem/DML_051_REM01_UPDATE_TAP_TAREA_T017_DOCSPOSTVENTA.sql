@@ -31,7 +31,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-	SET TAP_SCRIPT_VALIDACION_JBPM = '' checkExpedienteFechaCheque() ? existeAdjuntoUGValidacion("19,E;17,E;15,E") : ''''Es necesario informar la fecha de ingreso del cheque'''' '', 
+	SET TAP_SCRIPT_VALIDACION_JBPM = ''checkExpedienteFechaCheque() ? existeAdjuntoUGValidacion("19,E;17,E;15,E") : ''''Es necesario informar la fecha de ingreso del cheque'''''', 
 	USUARIOMODIFICAR = ''REMVIP-5128'',
 	FECHAMODIFICAR = SYSDATE
 	WHERE TAP_CODIGO = ''T017_DocsPosVenta''';

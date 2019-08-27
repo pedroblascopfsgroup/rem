@@ -39,7 +39,7 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-	SET TAP_SCRIPT_VALIDACION_JBPM = '' checkImporteParticipacion() ? (checkCompradores() ? ( checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ? existeAdjuntoUGValidacion("06,E;12,E") : ''''El estado de la poliacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' '', 
+	SET TAP_SCRIPT_VALIDACION_JBPM = ''checkImporteParticipacion() ? (checkCompradores() ? ( checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ? existeAdjuntoUGValidacion("06,E;12,E") : ''''El estado de la poliacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''''', 
 	USUARIOMODIFICAR = ''REMVIP-5105'',
 	FECHAMODIFICAR = SYSDATE
 	WHERE TAP_CODIGO = ''T017_InstruccionesReserva''';

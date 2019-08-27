@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20190808
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20190827
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-5051
+--## INCIDENCIA_LINK=REMVIP-5135
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -20,6 +20,7 @@
 --##        1.02 (20180927) - Ivan Castelló - Añadir estado o en Pendiente de devolución.
 --##		1.03 (20181001) - Marco Muñoz - Se añade la actualización de la fecha de devolucion de la reserva del Expediente en la segunda casuistica (FECHA_DEVOLUCION_RESERVA)
 --##		1.04 (20190808) - Adrián Molina - Se añade al filtro de la cartera Liberbank, la cartera Cerberus
+--##		1.05 (20190827) - Viorel Remus Ovidiu - Se desactiva la actualizacion del estado del expediente a 'RESERVADO'
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -213,6 +214,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_VALOR_ACTUAL                  VARCHAR2(50 CHAR);
     V_VALOR_NUEVO                   VARCHAR2(50 CHAR);
     V_CODIGO_TO_HLP                 VARCHAR2(50 CHAR);
+    V_ACTIVO_APPLE 		    NUMBER(16);
 
     --Excepciones
     ERR_NEGOCIO EXCEPTION;
@@ -409,37 +411,57 @@ BEGIN
                        DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||row.ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
                 END LOOP;
                 --DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
-                --PASO 1/4 Actualizar el estado del expediente a "Reservado"
-                V_MSQL := '
-                SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''06'''; /*RESERVADO*/
-                EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_NUEVO;
+		--PASO 1/4 Actualizar el estado del expediente a "Reservado" si no es de Apple
 
                 V_MSQL := '
-                UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
-                SET DD_EEC_ID = '||V_VALOR_NUEVO||', /*RESERVADO*/
-                USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                FECHAMODIFICAR = SYSDATE
-                WHERE ECO_ID = '||V_ECO_ID||'
-                AND OFR_ID = '||V_OFR_ID||'
-                ';
-                EXECUTE IMMEDIATE V_MSQL;
-
-                IF SQL%ROWCOUNT > 0 THEN
-                    DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/4 | El estado del expediente a pasado a "Reservado" para la OFERTA '||IDENTIFICACION_COBRO||'.');
+                SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||''; /*ACTIVO APPLE*/
+                EXECUTE IMMEDIATE V_MSQL INTO V_ACTIVO_APPLE;
+            
+                IF V_ACTIVO_APPLE != 323 THEN
+           
+                    V_MSQL := '
+                    SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''06'''; /*RESERVADO*/
+                    EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_NUEVO;
+    
+                    V_MSQL := '
+                    UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
+                    SET DD_EEC_ID = '||V_VALOR_NUEVO||', /*RESERVADO*/
+                    USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+                    FECHAMODIFICAR = SYSDATE
+                    WHERE ECO_ID = '||V_ECO_ID||'
+                    AND OFR_ID = '||V_OFR_ID||'
+                    ';
+                    EXECUTE IMMEDIATE V_MSQL;
+    
+                    IF SQL%ROWCOUNT > 0 THEN
+                        DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/4 | El estado del expediente a pasado a "Reservado" para la OFERTA '||IDENTIFICACION_COBRO||'.');
+                        V_PASOS := V_PASOS+1;
+                        --Logado en HLD_HIST_LANZA_PER_DETA
+                        PARAM1 := 'ECO_EXPEDIENTE_COMERCIAL';
+                        PARAM2 := 'ECO_ID';
+                        PARAM3 := 'DD_EEC_ED';
+                        HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_ECO_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
+                        --Reseteamos el V_VALOR_NUEVO
+                        V_VALOR_NUEVO := '';
+    
+                    ELSE
+                        COD_RETORNO := 1;
+                        V_ERROR_DESC := '[ERROR] No se ha podido cambiar el estado del expediente a "Reservado" para la OFERTA '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
+                        --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
+                    END IF;
+          
+            ELSE 
                     V_PASOS := V_PASOS+1;
                     --Logado en HLD_HIST_LANZA_PER_DETA
                     PARAM1 := 'ECO_EXPEDIENTE_COMERCIAL';
                     PARAM2 := 'ECO_ID';
                     PARAM3 := 'DD_EEC_ED';
+ 		    V_VALOR_NUEVO := V_VALOR_ACTUAL;
                     HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_ECO_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
                     --Reseteamos el V_VALOR_NUEVO
                     V_VALOR_NUEVO := '';
-
-                ELSE
-                    COD_RETORNO := 1;
-                    V_ERROR_DESC := '[ERROR] No se ha podido cambiar el estado del expediente a "Reservado" para la OFERTA '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
-                    --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
-                END IF;
+                    
+            END IF;
 
                 IF COD_RETORNO = 0 THEN
                     --PASO 2/4 Actualizar el campo RES_RESERVA.RES_FECHA_FIRMA con el dato de Fecha de Cobro Recibido.--Recuperamos valor actual

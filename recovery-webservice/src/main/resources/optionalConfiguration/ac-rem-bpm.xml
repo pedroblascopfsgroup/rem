@@ -621,6 +621,10 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esYubai(tareaExterna);
 			}
+			def checkExpedienteFechaCheque = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkExpedienteFechaCheque(idTramite);
+            }
   			 ]]></value>
   		</list>
   	</property>

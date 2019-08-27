@@ -9591,6 +9591,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return listaAN;
 	}
+	
+	@Override
 	public boolean esYubai(TareaExterna tareaExterna) {
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		boolean esYubai = false;
@@ -9602,5 +9604,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return esYubai;
+	}
+	
+	@Override
+	public boolean checkExpedienteFechaCheque(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (!Checks.esNulo(activoTramite) && !Checks.esNulo(activoTramite.getActivo())) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (!Checks.esNulo(trabajo)) {
+				ExpedienteComercial expediente = expedienteComercialDao
+						.getExpedienteComercialByIdTrabajo(trabajo.getId());
+				return !Checks.esNulo(expediente.getFechaContabilizacionPropietario());
+			}
+		}
+		return true;
 	}
 }

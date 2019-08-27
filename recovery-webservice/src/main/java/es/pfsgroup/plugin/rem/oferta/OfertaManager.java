@@ -3580,8 +3580,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Cuando no nos pasan la lista de gastos es porque ya existe el expediente y lo recuperamos de ahí
 			}else {
 				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
-				for (GastosExpediente gex : eco.getHonorarios()) {
-					cco += gex.getImporteFinal() * gex.getImporteCalculo();
+				if(!Checks.esNulo(eco.getHonorarios())){
+					for (GastosExpediente gex : eco.getHonorarios()) {
+						cco += gex.getImporteFinal() * gex.getImporteCalculo();
+					}
 				}
 			}
 			
@@ -3644,8 +3646,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Cuando no nos pasan la lista de gastos es porque ya existe el expediente y lo recuperamos de ahí
 			}else {
 				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
-				for (GastosExpediente gex : eco.getHonorarios()) {
-					cco += gex.getImporteFinal() * gex.getImporteCalculo();
+				if(!Checks.esNulo(eco.getHonorarios())){
+					for (GastosExpediente gex : eco.getHonorarios()) {
+						cco += gex.getImporteFinal() * gex.getImporteCalculo();
+					}
 				}
 			}
 

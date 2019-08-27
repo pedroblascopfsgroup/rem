@@ -3515,7 +3515,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			for (Oferta oferta : listaOfertas) {
 
 				ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
-
+				if (expedienteComercial == null) continue;
 				if (!Checks.esNulo(expedienteComercial) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
 					

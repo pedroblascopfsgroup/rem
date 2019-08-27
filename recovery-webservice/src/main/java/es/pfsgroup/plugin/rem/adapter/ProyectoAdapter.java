@@ -192,9 +192,14 @@ public class ProyectoAdapter {
 	}
 	
 	public FileItem download(Long id,String nombreDocumento) throws UserException,Exception {
-		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
-		Downloader dl = downloaderFactoryApi.getDownloader(key);
-		FileItem result = dl.getFileItem(id,nombreDocumento);
+		FileItem result;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+			Downloader dl = downloaderFactoryApi.getDownloader(key);
+			result = dl.getFileItem(id,nombreDocumento);
+		} else {
+			result = activoProyectoApi.download(id);
+		}
 		if(result == null){
 			throw new UserException("El fichero no existe");
 		}

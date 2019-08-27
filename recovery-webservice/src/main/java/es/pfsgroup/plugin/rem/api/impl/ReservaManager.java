@@ -104,7 +104,6 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 						DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
 						dtoOfertasFilter.setIdActivo(activo.getId());
 						dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
-						dtoOfertasFilter.setExcluirGencat(true);
 						List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
 						if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
 							Long idOferta = listaOfer.get(0).getIdOferta();
@@ -118,7 +117,7 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 					}			
 				}else{
 					//Para el resto de acciones hay que buscar la última oferta aceptada.
-					oferta = activoApi.tieneOfertaAceptada(activo);
+					oferta = activoApi.tieneOfertaTramitadaOCongeladaConReserva(activo);
 					if(Checks.esNulo(oferta)){
 						hashErrores.put("activo", "No se ha podido obtener la oferta. El activo no tiene ofertas aceptadas.");
 					}	

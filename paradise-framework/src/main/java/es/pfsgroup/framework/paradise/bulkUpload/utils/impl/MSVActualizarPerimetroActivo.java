@@ -60,6 +60,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_ACTIVO_FINANCIERO = "msg.error.masivo.actualizar.perimetro.activo.financiero";
 	public static final String VALID_ACTIVO_MATRIZ = "msg.error.masivo.actualizar.perimetro.activo.matriz";
 	public static final String VALID_ACTIVO_UA = "msg.error.masivo.actualizar.perimetro.activo.ua";
+	public static final String VALID_EQUIPO_GESTION = "msg.error.masivo.actualizar.perimetro.activo.equipo.gestion";
+
 	
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_ACTIVO_HAYA = 0;
@@ -73,6 +75,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_TIPO_ALQUILER = 9;
 	public static final int COL_NUM_CON_FORMALIZAR_SN = 10;
 	public static final int COL_NUM_CON_PUBLICAR_SN = 12;
+	public static final int COL_NUM_CON_EQUIPO_GESTION = 14;
 
 	// Codigos tipo comercializacion
 	public static final String CODIGO_VENTA = "01";
@@ -141,6 +144,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_TIPO_COMERCIALIZACION), getPerimetroTipoComerRows(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_EQUIPO_GESTION), getPerimetroEquipoGestionRows(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL), getPerimetroConComerRows(exc));
 //				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL), getPerimetroSinComerRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_RESPUESTA_SN, getPerimetroRespuestaSNRows(exc));
@@ -159,6 +163,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_COMERCIALIZACION)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_EQUIPO_GESTION)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL)).isEmpty() ||
 					// !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL)).isEmpty()
 					// ||
@@ -310,6 +315,35 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		return listaFilas;
 	}
 	
+	
+	private List<Integer> getPerimetroEquipoGestionRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		// Validacion que evalua si el registro de perimetro tiene un eqipo gestion valido.
+		// Codigos validos 00 (ninguno) 01 (Mayorista) 02 (Minorista) 
+		try{
+			String codigoEquipoGestion = null;
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_CON_EQUIPO_GESTION)))
+						codigoEquipoGestion = exc.dameCelda(i, COL_NUM_CON_EQUIPO_GESTION).substring(0, 2);
+					else 
+						codigoEquipoGestion = null;
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+				
+				if(!(Checks.esNulo(codigoEquipoGestion) || "01".equals(codigoEquipoGestion) || "02".equals(codigoEquipoGestion)) )
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
 	private List<Integer> getPerimetroConComerRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
@@ -389,7 +423,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
 					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
 					valorConPublicar = exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).trim().toUpperCase();
-
 					// Valida valores correctos de los campos S/N/<nulo>
 					if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
 							|| !("S".equals(valorConGestion) || "N".equals(valorConGestion) || "-".equals(valorConGestion))

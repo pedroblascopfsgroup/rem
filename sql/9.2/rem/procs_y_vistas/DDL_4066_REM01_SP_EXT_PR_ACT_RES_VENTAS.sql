@@ -461,7 +461,7 @@ BEGIN
                     --Reseteamos el V_VALOR_NUEVO
                     V_VALOR_NUEVO := '';
                     
-                ddEND IF;
+                END IF;
 
                 IF COD_RETORNO = 0 THEN
                     --PASO 2/4 Actualizar el campo RES_RESERVA.RES_FECHA_FIRMA con el dato de Fecha de Cobro Recibido.--Recuperamos valor actual

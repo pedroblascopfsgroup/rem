@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190813
+--## FECHA_CREACION=20190827
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.16.0
 --## INCIDENCIA_LINK=HREOS-7272
@@ -41,7 +41,7 @@ BEGIN
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
   SET 
-  TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_ResolucionComite''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? (valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? checkBankia() || checkLiberbank() || checkGiants() ? null : existeAdjuntoUGValidacion("22","E") : null : isValidateOfertasDependientes() ? resolucionComiteT013() : ''''Una o varias ofertas dependientes tienen errores'''' '' ,
+  TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_ResolucionComite''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? (valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? checkBankia() || checkLiberbank() || checkGiants() ? null : existeAdjuntoUGValidacion("22","E") : null) : isValidateOfertasDependientes() ? resolucionComiteT013() : ''''Una o varias ofertas dependientes tienen errores'''' '' ,
   USUARIOMODIFICAR = ''HREOS-7272'', 
   FECHAMODIFICAR = SYSDATE 
   WHERE TAP_CODIGO = ''T013_ResolucionComite''';

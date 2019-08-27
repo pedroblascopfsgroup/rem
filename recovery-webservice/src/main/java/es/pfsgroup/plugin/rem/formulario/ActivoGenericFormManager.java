@@ -270,7 +270,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     /** Ejecuta la validación definida en la tarea. El script debe devolver null para continuar, o un string indicando el error a mostrar
      * @param tareaExterna
      */
-    private String validacionPreviaDeLaTarea(TareaExterna tareaExterna) {
+    public String validacionPreviaDeLaTarea(TareaExterna tareaExterna) {
         String script = tareaExterna.getTareaProcedimiento().getScriptValidacion();
 
         //script = "!isEmbargosConFechaSolicitud() ? 'Antes de realizar la tarea es necesario marcar los bienes con fecha de solicitud de embargo' : null";

@@ -38,8 +38,6 @@ public class DtoDatosBasicosOferta extends WebDto {
     
     private String claseOfertaCodigo;
     
-    private Double importeTotal;
-    
     private Long nuevoNumOferPrincipal;
     
     private Date fechaNotificacion;
@@ -105,6 +103,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Boolean isCarteraCerberusApple;
 
 	private Boolean isCarteraLbkVenta;
+	private Boolean isLbkOfertaComercialPrincipal;
+	private Boolean muestraOfertaComercial;
+
+	private Double importeTotal;
 	
 	private Date fechaResolucionCES;
 	private Date fechaRespuesta;
@@ -154,6 +156,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 		return numOferPrincipal;
 	}
 
+	public void setImporteTotal(Double importeTotal) {
+		this.importeTotal = importeTotal;
+	}
+
+	public Double getImporteTotal() {
+		return importeTotal;
+	}
+
 	public void setNumOferPrincipal(Long numOferPrincipal) {
 		this.numOferPrincipal = numOferPrincipal;
 	}
@@ -166,6 +176,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.nuevoNumOferPrincipal = nuevoNumOferPrincipal;
 	}
 	
+
 	public Date getFechaNotificacion() {
 		return fechaNotificacion;
 	}
@@ -447,6 +458,22 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.isCarteraCerberusApple = isCarteraCerberusApple;
 	}
 
+	public Boolean getIsLbkOfertaComercialPrincipal() {
+		return isLbkOfertaComercialPrincipal;
+	}
+
+	public void setIsLbkOfertaComercialPrincipal(Boolean isLbkOfertaComercialPrincipal) {
+		this.isLbkOfertaComercialPrincipal = isLbkOfertaComercialPrincipal;
+	}
+
+	public Boolean getMuestraOfertaComercial() {
+		return muestraOfertaComercial;
+	}
+
+	public void setMuestraOfertaComercial(Boolean muestraOfertaComercial) {
+		this.muestraOfertaComercial = muestraOfertaComercial;
+	}
+
 	public Date getFechaRespuesta() {
 		return fechaRespuesta;
 	}
@@ -469,13 +496,5 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setIsCarteraLbkVenta(Boolean isCarteraLbkVenta) {
 		this.isCarteraLbkVenta = isCarteraLbkVenta;
-	}
-
-	public Double getImporteTotal () {
-		return importeTotal;
-	}
-	
-	public void setImporteTotal(Double importeTotal) {
-		this.importeTotal = importeTotal;
 	}
 }

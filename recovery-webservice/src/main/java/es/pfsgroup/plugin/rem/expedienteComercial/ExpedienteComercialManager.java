@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -135,6 +134,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
@@ -1281,21 +1281,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setTipoOfertaDescripcion(oferta.getTipoOferta().getDescripcion());
 			dto.setTipoOfertaCodigo(oferta.getTipoOferta().getCodigo());
 		}
-		
+
+
 		Boolean isCarteraLbkVenta = false;
 		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
 			isCarteraLbkVenta = true;
 		}
+
 		dto.setIsCarteraLbkVenta(isCarteraLbkVenta);
+		Boolean isLbkOfertaComercialPrincipal = false;
+		Boolean muestraOfertaComercial = false;
+		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+			isLbkOfertaComercialPrincipal = true;
+			muestraOfertaComercial = true;
+		}else if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+			muestraOfertaComercial = true;
+		
+		}
+		dto.setIsLbkOfertaComercialPrincipal(isLbkOfertaComercialPrincipal);
+		dto.setMuestraOfertaComercial(muestraOfertaComercial);
+
 
 		Double importeTotalAgrupada = oferta.getImporteOferta();
 		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta())) {
 			dto.setClaseOfertaDescripcion(oferta.getClaseOferta().getDescripcion());
 			dto.setClaseOfertaCodigo(oferta.getClaseOferta().getCodigo());
-			if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+			if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
 				dto.setNumOferPrincipal(ofertaApi.getOfertaPrincipalById(oferta.getId()).getNumOferta());
-			}else if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+
+			}else if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
 				try {
 					List <OfertasAgrupadasLbk> oferAgrupa = oferta.getOfertasAgrupadas();
 
@@ -1313,8 +1328,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		dto.setImporteTotal(importeTotalAgrupada);
-		
-		
+
 		dto.setFechaNotificacion(oferta.getFechaNotificacion());
 		dto.setFechaAlta(oferta.getFechaAlta());
 

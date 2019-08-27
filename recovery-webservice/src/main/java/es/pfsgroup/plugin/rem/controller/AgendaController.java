@@ -23,6 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
+import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -102,8 +104,7 @@ public class AgendaController extends TareaController {
 	private NotificatorServiceSancionOfertaSoloRechazo notificatorSoloRechazo;
 
     @Autowired
-    private ActivoAdapter activoAdapter;
-	
+    private ActivoAdapter activoAdapter;	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
@@ -865,6 +866,29 @@ public class AgendaController extends TareaController {
 			esOfertaIndividual = true;
 		}
 		model.put("ofertaIndividual", esOfertaIndividual);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView avanzarOfertasDependientes(WebRequest request, ModelMap model) {
+
+		boolean success = false;
+		try {
+			success = adapter.avanzarOfertasDependientes(request.getParameterMap());
+		} catch (InvalidDataAccessResourceUsageException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorValidacionGuardado", getMensajeInvalidDataAccessExcepcion(e));
+		} catch (Exception e) {
+			String error = e.getMessage();
+			if ( error == null  || error.isEmpty())
+				error = e.toString();
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", error);
+		}
+
+		model.put("success", success);
+
 		return createModelAndViewJson(model);
 	}
 }

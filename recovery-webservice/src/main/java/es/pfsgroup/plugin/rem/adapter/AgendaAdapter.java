@@ -104,8 +104,10 @@ public class AgendaAdapter {
 	private static final String ERROR_CAMPOS_VALIDACION ="Los campos requeridos y no requeridos no son correctos, revise las instrucciones de la tarea: ";
 	private static final String ERROR_CAMPOS_VALIDACION_FORMATO ="Los formatos de los siguientes campos requeridos y no requeridos no son correctos: ";
 	private static final String ERROR_TAREA_NO_PERMITIDA = "El tipo de tarea no esta permitida para avanzar";
+	public static final String ERROR_TAREA_DEPENDIENTE = "No se ha podido avanzar alguna oferta dependiente de la principal";
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	private SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat ft2 = new SimpleDateFormat("yyyy-MM-dd");
 	protected static final Log logger = LogFactory.getLog(AgendaAdapter.class);
 
 	@Resource
@@ -451,7 +453,12 @@ public class AgendaAdapter {
 						try {
 							Date fecha = ft.parse(valor[0]);
 						} catch (ParseException e) {
-							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. "; 
+							try {
+								Date fecha = ft2.parse(valor[0]);
+							} catch (Exception e2) {
+								errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. "; 
+							}
+							
 						}
 					}
 				}
@@ -495,7 +502,7 @@ public class AgendaAdapter {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
+	public DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
 		GenericForm genericForm = actGenericFormManager.get(tar.getTareaExterna().getId());
 
@@ -898,7 +905,7 @@ public class AgendaAdapter {
 		}
 	}
 
-	@Transactional
+	@Transactional(readOnly = false)
 	public boolean lanzarTareaAdministrativa(DtoSaltoTarea dto) throws Exception {
 		//Validacion de documentos de reserva si salta con reserva a ResultadoPBC o Posicionamiento y firma
 		updaterTransitionService.validarContratoYJustificanteReserva(dto);
@@ -955,6 +962,72 @@ public class AgendaAdapter {
 			tareaActivoApi.saltoResolucionExpedienteApple(idTareaExterna);
 		}catch(Exception e){
 			return false;
+		}
+		return true;
+	}
+	
+	public DtoGenericForm convetirValoresToDto(Map<String,String[]> valoresDependiente) {
+		Long idTarea = 0L;
+		DtoGenericForm dto = null;
+		
+		Map<String, String> camposFormulario = new HashMap<String,String>();
+		for (Map.Entry<String, String[]> entry : valoresDependiente.entrySet()) {
+			String key = entry.getKey();
+			if (!"idTarea".equals(key)){
+				camposFormulario.put(key, entry.getValue()[0]);
+			}else{
+				idTarea = Long.parseLong(entry.getValue()[0]);
+			}
+		}
+		
+		if (!Checks.esNulo(idTarea) && !Checks.estaVacio(camposFormulario)) {
+			try {
+				dto = rellenaDTO(idTarea,camposFormulario);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+		
+		return dto;
+	}
+	
+	public boolean avanzarOfertasDependientes(Map<String,String[]> valores) throws Exception {
+		String idTareaOfertaPrincipal = "";
+		Oferta oferta;
+		List<Oferta> ofertasDependientes = null;
+		TareaActivo tarea;
+		Map<String,String[]> valoresDependientes;
+		DtoGenericForm dto = null;
+		
+		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+			String key = entry.getKey();
+			if ("idTarea".equals(key)){
+				idTareaOfertaPrincipal = entry.getValue()[0];
+			}
+		}
+		
+		if (!"".equals(idTareaOfertaPrincipal)) {
+			oferta = ofertaApi.tareaOferta(Long.parseLong(idTareaOfertaPrincipal));
+			if (!Checks.esNulo(oferta) && ofertaApi.isOfertaPrincipal(oferta)) {
+				ofertasDependientes = ofertaApi.ofertasAgrupadasDependientes(oferta); 
+				if (!Checks.estaVacio(ofertasDependientes)) {
+					for (Oferta avanzaOferta : ofertasDependientes) {
+						tarea = tareaActivoApi.tareaOfertaDependiente(avanzaOferta);
+						if (!Checks.esNulo(tarea) && !Checks.estaVacio(valores)) {
+							valoresDependientes = tareaActivoApi.valoresTareaDependiente(valores, tarea, oferta);
+							dto = convetirValoresToDto(valoresDependientes);
+							if (!Checks.esNulo(dto)) {
+								try {
+									actGenericFormManager.saveValues(dto);									
+								} catch (Exception e) {
+									logger.error(e.getMessage());
+									throw new Exception(ERROR_TAREA_DEPENDIENTE);
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		return true;
 	}

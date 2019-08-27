@@ -319,7 +319,7 @@ beforeedit: 'numVisitaIsEditable'
 								xtype : 'textfieldbase',
 								fieldLabel : HreRem.i18n('fieldlabel.numOferPrincipal'),
 								name : 'numOferPrincipal',
-								readOnly : true,
+								//readOnly : true,
 								bind : {
 									value : '{datosbasicosoferta.numOferPrincipal}'
 								}

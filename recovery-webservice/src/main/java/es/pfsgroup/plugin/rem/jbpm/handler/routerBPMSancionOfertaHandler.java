@@ -63,7 +63,7 @@ public class routerBPMSancionOfertaHandler extends ActivoBaseActionHandler{
 			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
 				if (Integer.valueOf(1).equals(expediente.getCondicionante().getSolicitaReserva()) 
 				&& !tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), RESULTADO_PBC) 
-				&& Integer.valueOf(1).equals(expediente.getEstadoPbc())) {
+				&& Integer.valueOf(2).equals(expediente.getEstadoPbc())) {
 					return INSTRUCCIONES_RESERVA;
 				}else {
 					if (Integer.valueOf(1).equals(expediente.getEstadoPbc()))

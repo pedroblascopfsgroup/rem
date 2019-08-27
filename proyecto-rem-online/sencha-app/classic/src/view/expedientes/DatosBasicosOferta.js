@@ -217,7 +217,7 @@ beforeedit: 'numVisitaIsEditable'
 									listeners: {
 		    							change: function(combo, value, oldvalue) {
 		    								var me = this;
-				    								var form = combo.up('form');debugger;
+				    								var form = combo.up('form');
 			    									var checkImporteTotal = form.down('field[name=importeTotal]');
 			    									if(checkImporteTotal != null){
 				    									checkImporteTotal.setVisible(true);

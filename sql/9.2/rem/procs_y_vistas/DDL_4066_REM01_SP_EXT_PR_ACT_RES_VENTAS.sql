@@ -414,10 +414,10 @@ BEGIN
 		--PASO 1/4 Actualizar el estado del expediente a "Reservado" si no es de Apple
 
                 V_MSQL := '
-                SELECT DD_SCR_CODIGO FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||')'; /*ACTIVO APPLE*/
+		SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') AND DD_SCR_CODIGO = ''138''';
                 EXECUTE IMMEDIATE V_MSQL INTO V_ACTIVO_APPLE;
             
-                IF V_ACTIVO_APPLE != 138 THEN
+                IF V_ACTIVO_APPLE = 0 THEN
            
                     V_MSQL := '
                     SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''06'''; /*RESERVADO*/
@@ -461,7 +461,7 @@ BEGIN
                     --Reseteamos el V_VALOR_NUEVO
                     V_VALOR_NUEVO := '';
                     
-                END IF;
+                ddEND IF;
 
                 IF COD_RETORNO = 0 THEN
                     --PASO 2/4 Actualizar el campo RES_RESERVA.RES_FECHA_FIRMA con el dato de Fecha de Cobro Recibido.--Recuperamos valor actual

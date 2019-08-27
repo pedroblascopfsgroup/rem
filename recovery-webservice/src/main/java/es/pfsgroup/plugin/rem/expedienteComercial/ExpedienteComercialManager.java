@@ -622,8 +622,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					logger.error("error con la nueva oferta principal", ex);
 					return false;
 				}
-			}else {
-				return false;
 			}
 		}else if (!Checks.esNulo(dto.getClaseOfertaCodigo())){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());

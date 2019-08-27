@@ -139,8 +139,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VListadoOfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
+import es.pfsgroup.plugin.rem.oferta.dao.impl.OfertasAgrupadasLbkDaoImpl;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -202,8 +204,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private TrabajoApi trabajoApi;
 
-//	@AUTOWIRED
-//	PRIVATE OfertaApi ofertaApi;
+//	@Autowired
+//	private OfertaApi ofertaApi;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -263,7 +265,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private ActivoTareaExternaDao activoTareaExternaDao;
 	@Autowired
-	private VListadoOfertasAgrupadasLbkDao ofertasAgrupadasLbkDao;
+	private VListadoOfertasAgrupadasLbkDao vOfertasAgrupadasLbkDao;
+
+	@Autowired
+	private OfertasAgrupadasLbkDao ofertasAgrupadasLbkDao;
 	
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
@@ -312,6 +317,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return oferta;
 	}
+	 
 
 	/**
 	 * usa el metdodo ofertaDao.getOfertaByIdwebcom
@@ -1302,50 +1308,52 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			throws Exception {
 		List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
 
-		// Al crear una oferta Agrupada Dependiente, que compruebe que la oferta principal a relacionar existe.
-//		if ("02".equals(claseOferta) && Checks.esNulo(principal)) {
-//			throw new Exception("Parámetros incorrectos. La oferta principal debe existir.");
-//		} else if (!Checks.esNulo(principal)) {
-
-			// Al crear una oferta Agrupada Dependiente, que compruebe que la oferta que se va a relacionar es Principal (DD_CLO_ID).
-//			principal.getClaseOferta().
-		
-			// La oferta Principal debe estar viva, es decir, oferta tramitada y expediente en tramitación o pendiente de sanción.
-//			ExpedienteComercial eco = expedienteComercialApi.findOneByOferta(principal);			
-//			if (!(DDEstadoOferta.CODIGO_ACEPTADA.equals(principal.getEstadoOferta().getCodigo()) &&
-//				(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(eco.getEstado().getCodigo()) || DDEstadosExpedienteComercial.PTE_SANCION.equals(eco.getEstado().getCodigo())))) {
-//				throw new Exception("Parámetros incorrectos. La oferta Principal debe estar viva, es decir, oferta tramitada y expediente en tramitación o pendiente de sanción.");
-//			}
-//		
-//		}else if(!Checks.esNulo(principal) && !Checks.esNulo(dependiente)) {
-		
-		/**************************************************************************/
-		/** Este es solamente mientras no haya validación, después quitar **/
-		/**************************************************************************/
-
-		OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
-			if (Checks.esNulo(principal)) {
-				oferAgrupa.setOfertaPrincipal(dependiente);
-			}else {
-				oferAgrupa.setOfertaPrincipal(principal);
-			}
+ 		OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
+ 		if (claseOferta.equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {
+			oferAgrupa.setOfertaPrincipal(principal);
 			oferAgrupa.setOfertaDependiente(dependiente);
 
-			
-			// Cuando estén las validaciones hay que dejar este
-//			OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
-//			oferAgrupa.setOfertaPrincipal(principal);
-//			oferAgrupa.setOfertaDependiente(dependiente);
-
+ 			
 			Auditoria auditoria = Auditoria.getNewInstance();
 			oferAgrupa.setAuditoria(auditoria);
-			
 			ofertasAgrupadas.add(oferAgrupa);
-//		}
-
+ 		}
+		
 		return ofertasAgrupadas;
 	}
+	
+	public void actualizaPrincipalId (OfertasAgrupadasLbk ofertaAgrupada, Oferta nuevaOfertaPrincipal) {
 
+		ofertaAgrupada.setOfertaPrincipal(nuevaOfertaPrincipal);
+		genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupada);
+	}
+
+	/**
+	 * nuevaOfertaPrincipal es el nuevo ID al que deben ir las ofertas agrupadas
+	 * ofertasAgrupadas es el listado de ofertas al que hay que cambiarle el id principal
+	 */
+	public void actualizaListadoPrincipales (Oferta nuevaOfertaPrincipal, List<OfertasAgrupadasLbk> ofertasAgrupadas) {
+		if (!Checks.esNulo(ofertasAgrupadas)) {
+			for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
+				lisOf.setOfertaPrincipal(nuevaOfertaPrincipal);
+				genericDao.update(OfertasAgrupadasLbk.class, lisOf);
+			}
+		}
+	}
+
+	public void actualizaClaseOferta (Oferta oferta, String codigoOferta) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoOferta);
+		DDClaseOferta claseOferta = genericDao.get(DDClaseOferta.class, filtro);
+
+		oferta.setClaseOferta(claseOferta);
+		genericDao.update(Oferta.class, oferta);
+	}
+	
+	public void borradoOfertaAgrupadaDependiente(Oferta oferta) {
+		Long idOfertaLBK = ofertasAgrupadasLbkDao.getIdOfertaAgrupadaLBK(oferta.getId());
+		genericDao.deleteById(OfertasAgrupadasLbk.class, idOfertaLBK);
+	}
+	
 	@Override
 	public DDEstadoOferta getDDEstadosOfertaByCodigo(String codigo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
@@ -4362,7 +4370,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		if(!Checks.esNulo(oferta) && !Checks.estaVacio(oferta.getActivosOferta()) && 
 				DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())){
-			ofertasAgrupadasPage = ofertasAgrupadasLbkDao.getListOfertasAgrupadasLbk(dto);
+			ofertasAgrupadasPage = vOfertasAgrupadasLbkDao.getListOfertasAgrupadasLbk(dto);
 		}else {
 			ofertasAgrupadasPage = new DtoPage(new ArrayList<VListadoOfertasAgrupadasLbk>(),0);
 		}
@@ -4380,7 +4388,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		if(!Checks.esNulo(oferta) && !Checks.estaVacio(oferta.getActivosOferta()) && 
 				DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())){
-			ofertasAgrupadasPage = ofertasAgrupadasLbkDao.getListActivosOfertasAgrupadasLbk(dto);
+			ofertasAgrupadasPage = vOfertasAgrupadasLbkDao.getListActivosOfertasAgrupadasLbk(dto);
 		}else {
 			ofertasAgrupadasPage = new DtoPage(new ArrayList<VListadoOfertasAgrupadasLbk>(),0);
 		}
@@ -4408,6 +4416,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		ExcelReport report = new ListaOfertasCESExcelReport(listaOfertas);
 		return report;
+	}
+	
+	public void actualizaOfertasDependientes (Long nuevoId, Long ofertaDependiente) {
+		Oferta principal = getOfertaPrincipalById(ofertaDependiente);
+		List<OfertasAgrupadasLbk> ofertasAgrupadas = principal.getOfertasAgrupadas();
+		
+		for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
+			ofertasAgrupadasLbkDao.actualizaPrincipalId(nuevoId, lisOf.getOfertaDependiente().getId());
+		} 
+		
+		
+	}
+
+	public boolean isOfertaDependiente(Oferta oferta) {
+		if(!Checks.esNulo(oferta) && DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) 
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo()) 
+				&& !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())){
+				return true;	
+		}
+		return false;
 	}
 	
 }

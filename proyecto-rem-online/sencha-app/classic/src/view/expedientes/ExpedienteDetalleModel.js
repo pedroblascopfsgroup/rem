@@ -1177,6 +1177,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'ofertas/getListActivosOfertasAgrupadas',
 				extraParams: {numOfertaPrincipal:'{datosbasicosoferta.numOferta}'}
 			}
+		},
+		
+		comboClaseOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'claseOferta'
+				}
+			}
 		}
 		
     }

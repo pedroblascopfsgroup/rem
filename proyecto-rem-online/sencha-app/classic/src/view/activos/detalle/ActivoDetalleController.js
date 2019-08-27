@@ -4262,6 +4262,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var datosForm = form.getValues();
 			var codtipoDoc= datosForm.comboTipoDocumento;
 			var dniComprador= datosForm.numDocumentoCliente;
+			
 			Ext.Ajax.request({
 	    		url: url,
 				method : 'POST',
@@ -4274,8 +4275,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    			var ventanaWizard = null;
 	    			var carteraInternacional = datos.carteraInternacional;
 	    			var ventanaAnyadirOferta;
+    				
 
 	    			if(!Ext.isEmpty(btn.up('wizardaltaoferta'))){
+	    				
 	    				ventanaWizard = btn.up('wizardaltaoferta');
 	    				ventanaAnyadirOferta = ventanaWizard.down('anyadirnuevaofertadetalle');
 	    				ventanaWizard.getViewModel().data.destinoComercial=destinoComercial;

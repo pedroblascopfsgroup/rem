@@ -38,6 +38,10 @@ public class DtoDatosBasicosOferta extends WebDto {
     
     private String claseOfertaCodigo;
     
+    private Double importeTotal;
+    
+    private Long nuevoNumOferPrincipal;
+    
     private Date fechaNotificacion;
     
     private Date fechaAlta;
@@ -99,6 +103,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Double importeContraofertaCES;
     private Date fechaRespuestaCES;
 	private Boolean isCarteraCerberusApple;
+
+	private Boolean isCarteraLbkVenta;
 	
 	private Date fechaResolucionCES;
 	private Date fechaRespuesta;
@@ -152,6 +158,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.numOferPrincipal = numOferPrincipal;
 	}
 
+	public Long getNuevoNumOferPrincipal() {
+		return nuevoNumOferPrincipal;
+	}
+	
+	public void setNuevoNumOferPrincipal(Long nuevoNumOferPrincipal) {
+		this.nuevoNumOferPrincipal = nuevoNumOferPrincipal;
+	}
+	
 	public Date getFechaNotificacion() {
 		return fechaNotificacion;
 	}
@@ -448,4 +462,20 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
 	}
 
+
+	public Boolean getIsCarteraLbkVenta() {
+		return isCarteraLbkVenta;
+	}
+
+	public void setIsCarteraLbkVenta(Boolean isCarteraLbkVenta) {
+		this.isCarteraLbkVenta = isCarteraLbkVenta;
+	}
+
+	public Double getImporteTotal () {
+		return importeTotal;
+	}
+	
+	public void setImporteTotal(Double importeTotal) {
+		this.importeTotal = importeTotal;
+	}
 }

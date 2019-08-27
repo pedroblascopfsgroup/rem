@@ -7,8 +7,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 	formulas: {
 		isLiberbank: function(get){
 	    	this._view.down('field[name=claseOferta]').setHidden(!get('activo.isCarteraLiberbank'));
+	    	this._view.down('field[name=claseOferta]').allowBlank = !get('activo.isCarteraLiberbank');	 
 	    	this._view.down('field[name=numOferPrincipal]').setHidden(!get('activo.isCarteraLiberbank')); 
-	    	this._view.down('field[name=claseOferta]').allowBlank = !get('activo.isCarteraLiberbank')	 
+	    	this._view.down('field[name=numOferPrincipal]').allowBlank = !get('activo.isCarteraLiberbank');
+	    	this._view.down('field[name=buscadorNumOferPrincipal]').setHidden(!get('activo.isCarteraLiberbank')); 
+	    	this._view.down('field[name=buscadorNumOferPrincipal]').allowBlank = !get('activo.isCarteraLiberbank');
 		 }
 
     },

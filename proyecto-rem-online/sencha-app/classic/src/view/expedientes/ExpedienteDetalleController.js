@@ -430,10 +430,60 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 
 	},
-    
+	
 	onClickBotonGuardar: function(btn) {
 		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());	
+		if(btn.up('tabpanel').getActiveTab().xtype == "datosbasicosoferta"){
+			me.getView().mask();
+			var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');
+			var numOfertaPrin = me.getViewModel().data.datosbasicosoferta.data.numOferPrincipal;
+			var nuevoNumOferta = me.getViewModel().data.datosbasicosoferta.data.nuevoNumOferPrincipal;
+			var cloForm = me.getViewModel().data.datosbasicosoferta.data.claseOfertaCodigo;
+			var numOferta = ((numOfertaPrin != null) ? numOfertaPrin : nuevoNumOferta);
+			
+			
+			Ext.Ajax.request({
+			
+			     url: url,
+			     params: { numOferta: numOferta }
+			    ,success: function (response, opts) {
+			    	
+			         data = Ext.decode(response.responseText);
+			         if(data.success == "true"){
+				         if(cloForm == "02"){
+				    		Ext.Msg.show({
+								   title: HreRem.i18n('title.confirmar.oferta.principal'),
+								   msg: HreRem.i18n('msg.confirmar.oferta.principal'),
+								   buttons: Ext.MessageBox.YESNO,
+								   fn: function(buttonId) {
+								        if (buttonId == 'yes') {	
+								        	me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+										}else{
+											 me.getView().unmask();
+										}
+									}
+							});
+			    		
+				        } else {
+				        	me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+				        }
+			    	} else {
+			    		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+			    	}
+	            },
+	            
+	            failure: function (a, operation, context) {
+	            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					 me.getView().unmask();
+	            }
+		     
+			});
+			
+			
+		}else {
+			me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+		}
+			
 	},
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {

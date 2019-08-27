@@ -57,6 +57,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	@Autowired
 	private ActivoDao activoDao;
 
+
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
 		return getListOfertas(dtoOfertasFilter, null, null);
 	}
@@ -478,7 +479,6 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		return resultado;
 	}
 
-	
 	@Override
 	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr) {
 		List<Oferta> ofertasVivas = new ArrayList<Oferta>();

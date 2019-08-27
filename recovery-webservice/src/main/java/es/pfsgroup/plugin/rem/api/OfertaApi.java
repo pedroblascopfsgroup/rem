@@ -716,4 +716,11 @@ public interface OfertaApi {
 	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente);
 
 
+	void actualizaPrincipalId(OfertasAgrupadasLbk ofertaLbk, Oferta nuevaOfertaPrincipal);
+
+	void borradoOfertaAgrupadaDependiente(Oferta oferta);
+
+	public void actualizaListadoPrincipales(Oferta nuevaPrincipal, List<OfertasAgrupadasLbk> ofertasAgrupadas);
+
+	public void actualizaClaseOferta(Oferta principal, String codigoOfertaPrincipal);
 }

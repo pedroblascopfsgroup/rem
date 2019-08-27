@@ -2161,5 +2161,44 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			}
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView esOfertaDependiente(Long numOferta, ModelMap model) { 
+		try {
+			Oferta oferta = null;
+			if (!Checks.esNulo(numOferta)) {
+				oferta = ofertaApi.getOfertaById(numOferta);
+				if (Checks.esNulo(oferta)) {
+					oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
+				}
+			}
+			
+			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.esOfertaDependiente(oferta.getId()));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchOfertaCodigo(@RequestParam String numOferta) {
+		ModelMap model = new ModelMap();
+
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.searchOfertaCodigo(numOferta));
+
+		} catch (Exception e) {
+			logger.error("Error en expedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Álvaro Valero
---## FECHA_CREACION=20190821
+--## FECHA_CREACION=20190828
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HEROS-7348
@@ -1659,7 +1659,7 @@ begin
 
   TAP(8).tap_field('TAP_CODIGO') := 'T017_PBCVenta';
   TAP(8).tap_field('TAP_VIEW') := NULL;
-  TAP(8).tap_field('TAP_SCRIPT_VALIDACION') := null;
+  TAP(8).tap_field('TAP_SCRIPT_VALIDACION') := 'checkVieneDeRatificacionCES() ? checkInformeJuridicoYResolucionManzanaCompletadas() ? null : ''''No se han completado las tareas Informe Jur&iacute;dico y Resoluci&oacute;n Pro. Manzana'''' :  null';
   TAP(8).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := NULL;
   TAP(8).tap_field('TAP_SCRIPT_DECISION') :=  'valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Aprueba'''' :  ''''Deniega'''' ';
   TAP(8).tap_field('DD_TPO_ID_BPM') := null;

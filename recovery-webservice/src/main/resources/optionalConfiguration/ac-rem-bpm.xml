@@ -625,6 +625,14 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.isOfertaDependiente(tareaExterna);
 			}
+			def checkVieneDeRatificacionCES = {
+				def activoTramiteManager = ctx.getBean("activoTramiteManager");
+				return activoTramiteManager.checkVieneDeRatificacionCES(idTramite);
+			}
+			def checkInformeJuridicoYResolucionManzanaCompletadas = {
+				def activoTramiteManager = ctx.getBean("activoTramiteManager");
+				return activoTramiteManager.checkInformeJuridicoYResolucionManzanaCompletadas(idTramite);
+			}
   			 ]]></value>
   		</list>
   	</property>

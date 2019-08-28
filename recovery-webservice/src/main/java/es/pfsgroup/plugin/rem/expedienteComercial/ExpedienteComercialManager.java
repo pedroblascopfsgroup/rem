@@ -32,9 +32,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.fasterxml.jackson.databind.AnnotationIntrospector.ReferenceProperty.Type;
-import com.itextpdf.text.log.Logger;
-
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
@@ -49,7 +46,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -134,7 +130,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
@@ -156,7 +151,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
@@ -168,8 +162,8 @@ import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
-import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager extends BusinessOperationOverrider<ExpedienteComercialApi>
@@ -221,6 +215,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	//No existe ese código en REM
 	private static final String NO_EXISTE_CODIGO_REM = "NoExisteEseCodigoEnRem";
+	
+	//Tareas
+	private static final String T013_RESOLUCION_COMITE = "T013_ResolucionComite";
 
 	@Resource
 	private MessageService messageServices;
@@ -9764,7 +9761,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		boolean esOfertaDependiente = false;
 		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta().getClaseOferta()) &&
 				DDCartera.CODIGO_CARTERA_LIBERBANK.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-			if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(expedienteComercial.getOferta().getClaseOferta().getCodigo())) {
+			if(T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) &&
+					DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(expedienteComercial.getOferta().getClaseOferta().getCodigo())) {
+				
+				esOfertaDependiente = !permiteAvanzarOfertaDependiente(expedienteComercial, T013_RESOLUCION_COMITE);
+				
+			}else if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(expedienteComercial.getOferta().getClaseOferta().getCodigo())) {
 				esOfertaDependiente = true;
 			}
 		}
@@ -9916,5 +9918,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return false;
+	}
+	
+	private Boolean permiteAvanzarOfertaDependiente (ExpedienteComercial eco, String codigoTarea) {
+		Boolean permitir = false;
+		
+		VListadoOfertasAgrupadasLbk vis = genericDao.get(VListadoOfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "numOfertaDependiente", eco.getOferta().getNumOferta()));
+		
+		if(!Checks.esNulo(vis)) {
+			ExpedienteComercial ecoPrincipal = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", vis.getNumOfertaPrincipal()));
+			
+			if(!Checks.esNulo(ecoPrincipal)) {
+				ActivoTramite tra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo", ecoPrincipal.getTrabajo()));
+				
+				if(!Checks.esNulo(tra) && ofertaApi.esTareaFinalizada(tra, codigoTarea)) {
+					permitir = true;
+				}
+			}
+		}
+		
+		return permitir;
 	}
 }

@@ -380,7 +380,6 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    							change: function(combo, value) {
 	    								var me = this;
 	    								var form = combo.up('form');
-
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								checkNumOferPrin.reset();
 	    								checkNumOferPrin.setDisabled("02" != value);

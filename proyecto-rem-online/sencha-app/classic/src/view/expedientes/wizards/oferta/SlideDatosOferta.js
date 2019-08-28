@@ -138,7 +138,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    										
 	    								var checkBuscadorOferta = form.down('field[name=buscadorNumOferPrincipal]');
 	    								checkBuscadorOferta.reset();
-	    								checkBuscadorOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    								//checkBuscadorOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
 	    								checkBuscadorOferta.hidden ? checkBuscadorOferta.setAllowBlank(true) : checkBuscadorOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
 	    							}
 	    						},
@@ -384,10 +384,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								checkNumOferPrin.reset();
 	    								checkNumOferPrin.setDisabled("02" != value);
-
-	    								var checkNumOferPrin = form.down('field[name=buscadorNumOferPrincipal]');
-	    								checkNumOferPrin.reset();
-	    								checkNumOferPrin.setDisabled("02" != value);
+	    								var buscaNumOferPrin = form.down('field[name=buscadorNumOferPrincipal]');
+	    								buscaNumOferPrin.reset();
+    									buscaNumOferPrin.setDisabled("02" != value);
 	    							}
 	    						}
 							},

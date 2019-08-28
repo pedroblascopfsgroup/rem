@@ -3581,8 +3581,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else {
 				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
 				if(!Checks.esNulo(eco.getHonorarios())){
-					for (GastosExpediente gex : eco.getHonorarios()) {
-						cco += gex.getImporteFinal() * gex.getImporteCalculo();
+					for ( GastosExpediente gex: eco.getHonorarios()) {
+						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
+					}
+				}else {
+				
+					List<DtoGastoExpediente> honorarios = new ArrayList<DtoGastoExpediente>();
+					
+					Activo activo =  ofertaAceptada.getActivoPrincipal();
+					String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
+					for (int i = 0; i < acciones.length; i++) {
+						honorarios.add(calculaHonorario(ofertaAceptada, acciones[i], activo));
+					}
+					
+					for ( DtoGastoExpediente gex: honorarios) {
+						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
 					}
 				}
 			}
@@ -3615,8 +3632,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 
 		// Cuando son ofertas agrupadas, las recorro
-		if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) 
-				&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
+		if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
 			return calculoComiteLiberbankOfertasDependientes(ofertaAceptada, gastosExpediente, true);
 		}else {
 			for(ActivoAgrupacionActivo aga : activos) {
@@ -3647,12 +3663,32 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else {
 				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
 				if(!Checks.esNulo(eco.getHonorarios())){
-					for (GastosExpediente gex : eco.getHonorarios()) {
-						cco += gex.getImporteFinal() * gex.getImporteCalculo();
+					for ( GastosExpediente gex: eco.getHonorarios()) {
+						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
+					}
+				}else {
+				
+					List<DtoGastoExpediente> honorarios = new ArrayList<DtoGastoExpediente>();
+					
+					Activo activo =  ofertaAceptada.getActivoPrincipal();
+					String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION,DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
+					for (int i = 0; i < acciones.length; i++) {
+						honorarios.add(calculaHonorario(ofertaAceptada, acciones[i], activo));
+					}
+					
+					for ( DtoGastoExpediente gex: honorarios) {
+						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
 					}
 				}
+	
 			}
-
+			
+		
+			
 			pvn = pvb - cco;
 			
 			// Asignación del comité

@@ -3563,6 +3563,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} else if (idActivo.equals(gastoExpedienteDto.getIdActivo())) {
 				honorarios.add(gastoExpedienteDto);
 			}
+			
+			if(!Checks.esNulo(gasto.getImporteFinal())) {
+				gastoExpedienteDto.setImporteFinal(gasto.getImporteFinal());
+			}
+			
 		}
 
 		return honorarios;

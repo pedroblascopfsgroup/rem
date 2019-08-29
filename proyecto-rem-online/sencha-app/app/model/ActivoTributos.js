@@ -61,7 +61,7 @@ Ext.define('HreRem.model.ActivoTributos', {
     			type: 'boolean',
     			convert: function(value, record) {
     				
-    				if (value == false || value == "false") {
+    				if (value != true || value != "true") {
     					return "No";
     				} else {
     					return "Si";

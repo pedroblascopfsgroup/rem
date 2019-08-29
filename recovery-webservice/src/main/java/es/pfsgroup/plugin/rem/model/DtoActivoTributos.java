@@ -35,7 +35,7 @@ public class DtoActivoTributos implements Serializable{
 	
 	private Long numGastoHaya;
 	
-	private Boolean existeDocumentoTributo;
+	private String existeDocumentoTributo;
 	
 	private String documentoTributoNombre;
 	
@@ -137,11 +137,11 @@ public class DtoActivoTributos implements Serializable{
 		this.idTributo = idTributo;
 	}
 
-	public Boolean getExisteDocumentoTributo() {
+	public String getExisteDocumentoTributo() {
 		return existeDocumentoTributo;
 	}
 	
-	public void setExisteDocumentoTributo(Boolean existeDocumentoTributo) {
+	public void setExisteDocumentoTributo(String existeDocumentoTributo) {
 		this.existeDocumentoTributo = existeDocumentoTributo;
 	}
 

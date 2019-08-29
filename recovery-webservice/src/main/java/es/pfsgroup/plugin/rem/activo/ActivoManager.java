@@ -3547,12 +3547,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoAdjuntoTributo adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroAuditoria);
 				if(!Checks.esNulo(adjuntoTributo)) {
 					
-					dtoTributo.setExisteDocumentoTributo(true);
+					dtoTributo.setExisteDocumentoTributo("true");
 					dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
 					dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
 				}else {
 					
-					dtoTributo.setExisteDocumentoTributo(false);
+					dtoTributo.setExisteDocumentoTributo("false");
 					dtoTributo.setDocumentoTributoNombre(null);
 					dtoTributo.setDocumentoTributoId(null);
 				}

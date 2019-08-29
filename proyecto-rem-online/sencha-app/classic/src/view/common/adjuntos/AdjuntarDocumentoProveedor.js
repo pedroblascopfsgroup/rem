@@ -21,6 +21,40 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
      * @type 
      */
     parent: null,
+    
+    listeners: {
+		boxready: function (grid){
+			var combobox = grid.down('[name="cartera"]');
+			var check = grid.down('[name="checkboxTodasCarteras"]');
+			var idProveedor = grid.getViewModel().get('proveedor.id');
+			var checkHaya = grid.down('[name="checkboxHaya"]');
+			
+			var url =  $AC.getRemoteUrl('proveedores/getCountCarteraPorProveedor');
+    		Ext.Ajax.request({
+    			
+				url: url,
+				params: {idProveedor : idProveedor},
+				
+				success: function (response,opts) {
+					var respuesta = Ext.decode(response.responseText);
+					
+					if(respuesta.data == 0){
+						combobox.disable();
+						check.disable();
+						checkHaya.setValue(true);
+					}else{
+						combobox.enable();
+						check.enable();
+						checkHaya.setValue(false);
+						checkHaya.setDisabled(true);
+					}
+					
+				}
+    		});
+			
+			
+		}
+    },
 	
     initComponent: function() {
     	
@@ -114,8 +148,16 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 				                	name: 'descripcion',
 				                	maxLength: 256,
 				                	msgTarget: 'side',
-				                	width: '100%'				                	
-			            		}
+				                	width: '100%'
+				                	
+			            		},{
+								   	xtype:'checkboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.sin.carteras'),
+									reference: 'checkboxHaya',
+									name: 'checkboxHaya',		
+									readOnly: true,
+									width: '100%'
+								}
     					]
     				}
     	];

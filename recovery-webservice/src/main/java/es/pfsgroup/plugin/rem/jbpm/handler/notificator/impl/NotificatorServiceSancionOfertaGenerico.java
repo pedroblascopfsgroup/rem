@@ -401,7 +401,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
 					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
-				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS));
 			}
 
 			if (formalizacion) {
@@ -413,7 +413,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial,
 					GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS,
-					GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+					GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS));
 			if (formalizacion) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 				clavesGestores.addAll(Arrays.asList(GESTOR_GESTORIA_FASE_3, GESTOR_GESTORIA_FASE_3_SUS));

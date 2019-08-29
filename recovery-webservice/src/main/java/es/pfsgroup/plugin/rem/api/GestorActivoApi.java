@@ -165,4 +165,5 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 */
 	public Usuario usuarioTareaApple(String codigoTarea);
 	
+	public Usuario supervisorTareaApple(String codigoTarea);
 }

@@ -254,7 +254,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		
 		if( CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
-			return gestorActivoApi.usuarioTareaApple(codigoTarea);
+			return gestorActivoApi.supervisorTareaApple(codigoTarea);
 		} else {
 			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoSupervisor);
 			

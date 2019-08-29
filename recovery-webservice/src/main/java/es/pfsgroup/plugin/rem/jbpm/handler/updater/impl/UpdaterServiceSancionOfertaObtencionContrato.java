@@ -225,7 +225,12 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				if(!T017.equals(tramite.getTipoTramite().getCodigo()) || (T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada)) {
 					filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
 				}
-				
+				if(T017.equals(tramite.getTipoTramite().getCodigo())){
+					if(DDEstadosExpedienteComercial.APROBADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())
+							|| DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())) {
+						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA);
+					}
+				}
 				if(!Checks.esNulo(filtro)) {
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);

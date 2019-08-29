@@ -96,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoComercialAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -744,7 +745,10 @@ public class AgrupacionAdapter {
 				if (agrupacion.getIsFormalizacion() == null) {
 					dtoAgrupacion.setIsFormalizacion(null);
 				}
-				
+				if (!Checks.esNulo(agrupacion.getActivoAutorizacionTramitacionOfertas())) {
+					beanUtilNotNull.copyProperty(dtoAgrupacion, "motivoAutorizacionTramitacionCodigo", agrupacion.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
+					beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
+				}
 				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
 			}
 
@@ -4027,5 +4031,27 @@ public class AgrupacionAdapter {
 			}		
 		}
 		return true;
+	}
+
+	public DtoComercialAgrupaciones getComercialAgrupacionById(Long id) {
+		DtoComercialAgrupaciones dtoAgrupacion = new DtoComercialAgrupaciones();
+
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		try {
+			if (!Checks.esNulo(agrupacion.getActivoAutorizacionTramitacionOfertas())) {
+			
+				beanUtilNotNull.copyProperty(dtoAgrupacion, "motivoAutorizacionTramitacionCodigo", agrupacion.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
+				beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
+			}
+			
+			dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
+		
+		} catch (IllegalAccessException e) {
+			logger.error("error en agrupacionAdapter", e);
+		} catch (InvocationTargetException e) {
+			logger.error("error en agrupacionAdapter", e);
+		}
+
+		return dtoAgrupacion;
 	}
 }

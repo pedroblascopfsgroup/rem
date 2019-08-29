@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
@@ -160,5 +162,18 @@ public interface ActivoAgrupacionApi {
 	 * @param agrupacion
 	 */
 	public boolean isTramitable(ActivoAgrupacion activoAgrupacion);
+
+	/**
+	 * Insertar en la base de datos una Autorizacion Tramitacion	
+	 * @param dto
+	 * @param id
+	 */
+	public boolean insertarActAutoTram(DtoAgrupaciones dto, Long id);
+
+	/**
+	 * Devulve la fecha de inicio del bloqueo de la tramitación
+	 * @param activoAgrupacion
+	 */
+	Date getFechaInicioBloqueo(ActivoAgrupacion activoAgrupacion);
 
 }

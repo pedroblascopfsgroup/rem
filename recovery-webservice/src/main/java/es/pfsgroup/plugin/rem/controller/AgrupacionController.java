@@ -1003,4 +1003,39 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView insertarActAutoTram(DtoAgrupaciones dto, Long id, ModelMap model, HttpServletRequest request) {
+		try {
+			model.put("success", activoAgrupacionApi.insertarActAutoTram(dto, id));
+
+		} catch (Exception e) {
+			logger.error("error en agrupacionController", e);
+			model.put("success", false);
+			model.put("errorCode", "msg.operacion.ko");
+		}
+
+		return new ModelAndView("jsonView", model);
+	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComercialAgrupacionById(Long id, int pestana, ModelMap model, HttpServletRequest request) {
+
+		model.put("data", adapter.getComercialAgrupacionById(id));
+		//trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "ficha", ACCION_CODIGO.CODIGO_VER);
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveComercialAgrupacion(DtoAgrupaciones dtoAgrupacion, @RequestParam Long id, ModelMap model, HttpServletRequest request)
+	{
+		//generamos el metodo para que no de error desde la clase donde se le llama, pero de momento no debe guardar nada con este metodo
+		//puesto que por ahora todo lo que tiene que hacer la pestaña, lo guarda insertarActAutoTram
+		boolean success = true;
+		model.put("success", success);
+		return createModelAndViewJson(model);
+	}
 }

@@ -767,11 +767,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    
     	esOtrosotivoAutorizacionTramitacion: function(get){
     		
-    		var comboOtros = get('comercial.motivoAutorizacionTramitacionCodigo');
+    		var me = this;
     		
+    		var comboOtros = get('comercial.motivoAutorizacionTramitacionCodigo');
     		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == comboOtros){
     			return true;
     		}
+    		me.set('comercial.observacionesAutoTram', null);
+    			
 			return false;
     	},
     	

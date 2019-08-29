@@ -5397,6 +5397,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				    	         if(Ext.decode(response.responseText).success == "false") {
 									me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
 									// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    	         }else{
+				    	        	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				    	         }
 				    	     },
 				    	     failure: function (a, operation, context) {

@@ -654,6 +654,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			 return "true"===get('agrupacionficha.comercializableConsPlano');
 		 },
 		 
+		 comprobarExistePiloto: function(get){
+			 return "true"===get('agrupacionficha.existePiloto');
+		 },
+		 
+		 comprobarEsVisitable: function(get){
+			 return "true"===get('agrupacionficha.esVisitable');
+		 },
+		 
 		 existePisoPilotoAndcomercializableConstruccionPlano: function(get){
 			 return "true"===get('agrupacionficha.comercializableConsPlano') && "true"===get('agrupacionficha.existePiloto');
 		 },

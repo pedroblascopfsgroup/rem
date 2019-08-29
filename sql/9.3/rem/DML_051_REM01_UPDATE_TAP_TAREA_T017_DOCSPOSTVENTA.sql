@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20190823
+--## FECHA_CREACION=20190827
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-5105
+--## INCIDENCIA_LINK=REMVIP-5128
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que modifica la columna TAP_SCRIPT_VALIDACION_JBPM para las tareas T017_ObtencionContratoReserva y T017_InstruccionesReserva
+--## Finalidad: Script que modifica la columna TAP_SCRIPT_VALIDACION_JBPM para las tarea T017_DocsPosVenta
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
@@ -29,24 +29,16 @@ DECLARE
 BEGIN	
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
-	
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-	SET TAP_SCRIPT_VALIDACION_JBPM = NULL,
-	USUARIOMODIFICAR = ''REMVIP-5105'',
-	FECHAMODIFICAR = SYSDATE
-	WHERE TAP_CODIGO = ''T017_ObtencionContratoReserva''';
-
-	EXECUTE IMMEDIATE V_MSQL;
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-	SET TAP_SCRIPT_VALIDACION_JBPM = ''checkImporteParticipacion() ? (checkCompradores() ? ( checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ? existeAdjuntoUGValidacion("06,E;12,E") : ''''El estado de la poliacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''''',
-	USUARIOMODIFICAR = ''REMVIP-5105'',
+	SET TAP_SCRIPT_VALIDACION_JBPM = ''checkExpedienteFechaCheque() ? existeAdjuntoUGValidacion("19,E;17,E;15,E") : ''''Es necesario informar la fecha de ingreso del cheque'''''', 
+	USUARIOMODIFICAR = ''REMVIP-5128'',
 	FECHAMODIFICAR = SYSDATE
-	WHERE TAP_CODIGO = ''T017_InstruccionesReserva''';
+	WHERE TAP_CODIGO = ''T017_DocsPosVenta''';
 
 	EXECUTE IMMEDIATE V_MSQL;
 	      
-  	DBMS_OUTPUT.PUT_LINE('	[INFO] REGISTROS MODIFICADOS CORRECTAMENTE');
+  	DBMS_OUTPUT.PUT_LINE('	[INFO] REGISTRO MODIFICADO CORRECTAMENTE');
     
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] TABLA TAP_TAREA_PROCEDIMIENTO ACTUALIZADA CORRECTAMENTE ');

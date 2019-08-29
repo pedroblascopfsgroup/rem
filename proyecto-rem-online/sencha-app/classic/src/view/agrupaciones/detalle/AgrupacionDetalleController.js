@@ -190,10 +190,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	  	pisoPiloto = me.getViewModel().get("agrupacionficha.pisoPiloto"),
 	  	existePisoPiloto = me.lookupReference("existePiloto");
 
-		if ((CONST.CARTERA['THIRDPARTIES'] === codCartera && codSubcartera === CONST.SUBCARTERA['YUBAI'])
-			&& CONST.COMBO_TRUE_FALSE['FALSE'] == existePisoPiloto.getValue()) {
+		if ((CONST.CARTERA['THIRD'] === codCartera && codSubcartera === CONST.SUBCARTERA['YUBAI'])
+			&& CONST.COMBO_TRUE_FALSE['FALSE'] == existePisoPiloto.getValue() && pisoPiloto != null) {
         		Ext.Msg.show({
-        			   title: HreRem.i18n('title.descartar.cambios'),
+        			   title: HreRem.i18n('title.confirmar.eliminacion'),
         			   msg: HreRem.i18n('title.confirmacion.guardar.cambios'), 
         			   buttons: Ext.MessageBox.YESNO,
         			   fn: function(buttonId) {
@@ -1193,23 +1193,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
     onChangeComboComercializableConsPlano: function(combo){
 		var me = this;
-		if(CONST.COMBO_TRUE_FALSE['TRUE'] == combo.getSelection().get('codigo')) {
-			me.lookupReference('existePiloto').setDisabled(false);
-			me.lookupReference('pisoPiloto').setAllowBlank(false);
-		}
 		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
-			me.lookupReference('existePiloto').setDisabled(true);
+			me.lookupReference('existePiloto').setValue(false);
+			me.lookupReference('esVisitable').setValue(false);
+			me.lookupReference('pisoPiloto').setValue(null);
 		}
 	},
 	
 	onChangeComboExistePisoPiloto: function(combo){
 		var me = this;
+		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('esVisitable').setValue(false);
+			me.lookupReference('pisoPiloto').setValue(null);
+		}
+	},
+	
+	onChangeComboEsVisitable: function(combo){
+		var me = this;
 		if(CONST.COMBO_TRUE_FALSE['TRUE'] == combo.getSelection().get('codigo')) {
-			me.lookupReference('esVisitable').setDisabled(false);
-			me.lookupReference('pisoPiloto').setDisabled(false);
+			me.lookupReference('pisoPiloto').setAllowBlank(false);
 		}
 		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
-			me.lookupReference('esVisitable').setDisabled(true);
+			me.lookupReference('pisoPiloto').setValue(null);
 		}
 	}
 });

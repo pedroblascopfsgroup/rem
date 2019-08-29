@@ -3118,22 +3118,38 @@ public class AgrupacionAdapter {
 							pisoPiloto = this.isActivoValido(agrupacion, dto.getPisoPiloto());
 							Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPilotoOld.getId()); 
 							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
-							aga_piloto.setPisoPiloto(false);
-							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
-							
+							if(!Checks.esNulo(aga_piloto)){
+								aga_piloto.setPisoPiloto(false);
+								activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							}
 							// Anyadir piso piloto nuevo
 							filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId()); 
 							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
-							aga_piloto.setPisoPiloto(true);
-							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							if(!Checks.esNulo(aga_piloto)){
+								aga_piloto.setPisoPiloto(true);
+								activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							}
 						}else {
 							pisoPiloto = this.isActivoValido(agrupacion, dto.getPisoPiloto());
 							//Si no hay piso piloto definido y el seleccionado es de Yubai, procedemos a guardar los cambios
 							Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId());
 							ActivoAgrupacionActivo aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
-							aga_piloto.setPisoPiloto(true);
-							agrupacion.setExistePiloto(true);
-							activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							if(!Checks.esNulo(aga_piloto)){
+								aga_piloto.setPisoPiloto(true);
+								agrupacion.setExistePiloto(true);
+								activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							}
+						}
+					}else {
+						Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(id);
+						if(!Checks.esNulo(pisoPiloto)) {
+							ActivoAgrupacionActivo aga_piloto;
+							Filter filtro_piloto = genericDao.createFilter(FilterType.EQUALS, "activo.id", pisoPiloto.getId()); 
+							aga_piloto = genericDao.get(ActivoAgrupacionActivo.class, filtro_piloto);
+							if(!Checks.esNulo(aga_piloto)){
+								aga_piloto.setPisoPiloto(false);
+								activoAgrupacionActivoDao.saveOrUpdate(aga_piloto);
+							}
 						}
 					}
 					if(!Checks.esNulo(dto.getEsVisitable())) {

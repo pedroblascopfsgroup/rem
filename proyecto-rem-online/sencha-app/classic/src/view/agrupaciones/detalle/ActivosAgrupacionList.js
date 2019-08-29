@@ -408,17 +408,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        bind: {
 		        	hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}' // Agrupación Third Party - Yubai
 		        },
-		        width: 30,
+		        flex: 1,
 		        text: HreRem.i18n('header.pisoPiloto'),
 				hideable: false,
 				items: [
 				        	{ // Check si es piso piloto
 					            getClass: function(v, meta, rec) {
 					            	if (rec.get('esPisoPiloto') != 1) {
-					                	this.items[0].handler = 'onMarcarPrincipalClick';
 					                    return 'fa fa-check';
 					                } else {
-			            				this.items[0].handler = 'onMarcarPrincipalClick';
 					                    return 'fa fa-check green-color';
 					                }
 					            }

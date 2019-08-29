@@ -147,31 +147,19 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 						} else {
 							
 							if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
-									&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
-							
-								List<TareaActivo> tareasTramite = tareaActivoApi.getTareasActivoByIdTramite(tramite.getId());
-	
-								for (TareaActivo tareaActivo : tareasTramite) {
-									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaActivo.getId());
-									TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtro);
-									
-									if(CODIGO_T013_RESULTADO_PBC.equals(tareaExterna.getTareaProcedimiento().getCodigo())
-											&& Checks.esNulo(tareaActivo.getFechaFin())) {
-										Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", tareaExterna.getId());
-										Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "nombre", COMBO_RESULTADO);
-										TareaExternaValor tareaExternaValor = genericDao.get(TareaExternaValor.class, filtro1, filtro2);
-										
-										if (DDSiNo.SI.equals(tareaExternaValor.getValor())) {
-											expediente.setEstadoPbc(1);
-											genericDao.save(ExpedienteComercial.class, expediente);
-										}
-										break;
-									}
+									&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())
+									&& ofertaApi.checkReserva(ofertaAceptada)) {
+
+								if(Integer.valueOf(2).equals(expediente.getEstadoPbc())) {
+									expediente.setEstadoPbc(1);
+								} else {
+									expediente.setEstadoPbc(2);
 								}
+								
 							} else {
 								expediente.setEstadoPbc(1);
-								genericDao.save(ExpedienteComercial.class, expediente);
 							}
+							genericDao.save(ExpedienteComercial.class, expediente);
 							
 							//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
 							if(!Checks.estaVacio(valores)){

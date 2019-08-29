@@ -84,7 +84,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "gestor-comercial-backoffice-inmobiliario";
 	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS = "gestor-comercial-backoffice-inmobiliario-sustituto";
 	
-	//Variables de buzones
+	//Variables de buzones	
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_PFS = "buzonpfs";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
@@ -400,9 +400,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
-					|| (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
-							DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS));
 			}
 
@@ -415,7 +413,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial,
 					GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS,
-					GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+					GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS));
 			if (formalizacion) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 				clavesGestores.addAll(Arrays.asList(GESTOR_GESTORIA_FASE_3, GESTOR_GESTORIA_FASE_3_SUS));
@@ -426,7 +424,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		clavesGestores.add(GESTOR_FORMALIZACION);
 		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
 			clavesGestores.add(SUPERVISOR_COMERCIAL);
+		
+		} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+			clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
 		}
+		clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION));
+		clavesGestores.add(SUPERVISOR_COMERCIAL);
 		return clavesGestores.toArray(new String[] {});
 	}
 

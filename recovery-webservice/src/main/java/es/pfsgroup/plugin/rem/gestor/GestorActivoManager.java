@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	private GestorActivoHistoricoDao gestorActivoHistoricoDao;
  	
  	public static final String CODIGO_TGE_PROVEEDOR_TECNICO = "PTEC";
+ 	public static final String USERNAME = "username";
  
  	@Transactional(readOnly = false)
  	public Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto) {
@@ -492,12 +493,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	public Usuario usuarioTareaApple(String codigoTarea) {
 		Usuario userTarea = null;
 		Filter filtro = null;
-	 if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)) {
-			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);
-		} else if (ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) ) {
-			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);
+		if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)
+				|| ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) ) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_GRUPO_CES);
 		} else if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
-			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_PROMONTORIA_MANZANA);
+			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_PROMONTORIA_MANZANA);
 		}
 		if(!Checks.esNulo(filtro)) {
 			userTarea = genericDao.get(Usuario.class, filtro);
@@ -505,5 +505,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		
 		return userTarea;
 	}
- 
+ 	
+ 	@Override
+ 	@Transactional(readOnly = false)
+	public Usuario supervisorTareaApple(String codigoTarea) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		return genericDao.get(Usuario.class, filtro);
+	}
  }

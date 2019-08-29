@@ -21,7 +21,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     initComponent: function () {
 
         var me = this;
-
         me.setTitle(HreRem.i18n('title.ficha'));
 
         var items= [
@@ -326,7 +325,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							name: 'existePiloto',
 							reference: 'existePiloto',
 							allowBlank:	false,
-							disabled: 'onChangeComboComercializableConsPlano',
 							bind: {
 								value: '{agrupacionficha.existePiloto}',
 								store: '{comboTrueFalse}',
@@ -344,12 +342,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							name: 'esVisitable',
 							reference: 'esVisitable',
 							allowBlank:	false,
-							disabled: 'onChangeComboExistePisoPiloto',
 							bind: {
 								value: '{agrupacionficha.esVisitable}',
 								store: '{comboTrueFalse}',
 								readOnly: false,
-								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								disabled: '{!comprobarExistePiloto}',
+								listeners: {
+									change: 'onChangeComboEsVisitable'
+								}
 							}
 						},
 						{
@@ -357,10 +358,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.piso.piloto'),
 							name: 'pisoPiloto',
 							reference: 'pisoPiloto',
-							disabled: true,
 							bind: {
 								value: '{agrupacionficha.pisoPiloto}',
 								readOnly: false,
+								disabled: '{!comprobarEsVisitable}',
+								allowBlank: '{!comprobarEsVisitable}',
 								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
 							}
 						},

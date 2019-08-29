@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
@@ -100,7 +101,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	
 	@Autowired
 	private ActivoApi activoApi;
-	
 	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
@@ -344,6 +344,11 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				activoApi.actualizarOfertasTrabajosVivos(activo);
 			}
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+			
+			if(ofertaApi.isOfertaDependiente(ofertaAceptada)) {
+				OfertasAgrupadasLbk agrupada = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente", ofertaAceptada));
+				genericDao.deleteById(OfertasAgrupadasLbk.class, agrupada.getId());
+			}
 		}
 	}
 

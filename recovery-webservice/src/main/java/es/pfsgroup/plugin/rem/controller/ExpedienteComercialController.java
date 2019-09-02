@@ -2173,8 +2173,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 					oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
 				}
 			}
-			if(!Checks.esNulo(oferta))
-					model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.esOfertaDependiente(oferta.getId()));
+			
+			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getId())) {
+				model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.esOfertaDependiente(oferta.getId()));
+			} else {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

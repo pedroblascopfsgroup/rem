@@ -441,13 +441,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var cloForm = me.getViewModel().data.datosbasicosoferta.data.claseOfertaCodigo;
 			var numOferta = ((numOfertaPrin != null) ? numOfertaPrin : nuevoNumOferta);
 			
-			
 			Ext.Ajax.request({
 			
 			     url: url,
 			     params: { numOferta: numOferta }
 			    ,success: function (response, opts) {
-			    	
 			         data = Ext.decode(response.responseText);
 			         if(data.success == "true"){
 				         if(cloForm == "02"){
@@ -468,7 +466,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				        	me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
 				        }
 			    	} else {
-			    		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.inexistente"));
+					 	me.getView().unmask();
 			    	}
 	            },
 	            

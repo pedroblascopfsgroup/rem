@@ -1165,8 +1165,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente)));
-				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente)));
+				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente));
+				nuevoExpediente.setComiteSancion(comiteLbk);
+				nuevoExpediente.setComitePropuesto(comiteLbk);
 		}
 		
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.

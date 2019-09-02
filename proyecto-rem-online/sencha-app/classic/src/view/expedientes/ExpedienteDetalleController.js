@@ -432,8 +432,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onClickBotonGuardar: function(btn) {
-		var me = this;	
-		if(btn.up('tabpanel').getActiveTab().xtype == "datosbasicosoferta"){
+		var me = this;
+		var activeTab = btn.up('tabpanel').getActiveTab();
+		if(activeTab.xtype == "datosbasicosoferta"){
 			me.getView().mask();
 			var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');
 			var numOfertaPrin = me.getViewModel().data.datosbasicosoferta.data.numOferPrincipal;
@@ -464,18 +465,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			    		
 			    	} else if (data.success == "false" && data.error == "false") {
 			    		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+			    		activeTab.funcionRecargar();
 			    	} else if (data.success == "false" && data.error == "true") {
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.inexistente"));
 					 	me.getView().unmask();		    		
 			    	}
 			    	} else {
 				        me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+				        activeTab.funcionRecargar();
 				    }
 	            },
 	            
 	            failure: function (a, operation, context) {
 	            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 					 me.getView().unmask();
+					 activeTab.funcionRecargar();
 	            }
 		     
 			});

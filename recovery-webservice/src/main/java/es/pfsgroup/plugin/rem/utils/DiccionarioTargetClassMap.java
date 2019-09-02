@@ -222,6 +222,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("entidadFinanciera", DDEntidadFinanciera.class);
 		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
 		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
+		mapa.put("origenComprador", DDOrigenComprador.class);
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
 		mapa.put("claseOferta", DDClaseOferta.class);
 		mapa.put("servicerActivo", DDServicerActivo.class);

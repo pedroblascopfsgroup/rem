@@ -67,7 +67,11 @@ Ext.define('HreRem.model.Honorario', {
     		},
     		{
     			name: 'participacionActivo'
+    		},
+    		{
+    			name: 'origenComprador'
     		}
+
     ],
     
 	proxy: {

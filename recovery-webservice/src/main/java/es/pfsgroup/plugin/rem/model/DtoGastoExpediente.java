@@ -38,6 +38,7 @@ public class DtoGastoExpediente extends WebDto {
 	private Long codigoProveedorRem;
 	private Double participacionActivo;
 	private Double importeFinal;
+	private String origenComprador;
 	
 	public String getId() {
 		return id;
@@ -147,6 +148,7 @@ public class DtoGastoExpediente extends WebDto {
 	public void setParticipacionActivo(Double participacionActivo) {
 		this.participacionActivo = participacionActivo;
 	}
+
 	public Double getImporteFinal() {
 		return importeFinal;
 	}
@@ -154,7 +156,11 @@ public class DtoGastoExpediente extends WebDto {
 		this.importeFinal = importeFinal;
 	}
 	
+	public String getOrigenComprador() {
+		return origenComprador;
+	}
 	
-	
-   		
+	public void setOrigenComprador(String origenComprador) {
+		this.origenComprador = origenComprador;
+	} 
 }

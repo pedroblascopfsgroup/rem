@@ -3758,6 +3758,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			gastoExpedienteDto.setImporteCalculo(gasto.getImporteCalculo());
 			gastoExpedienteDto.setHonorarios(gasto.getImporteFinal());
 			gastoExpedienteDto.setObservaciones(gasto.getObservaciones());
+			
+			if (!Checks.esNulo(expediente.getOferta().getOrigenComprador())) {
+				gastoExpedienteDto.setOrigenComprador(expediente.getOferta().getOrigenComprador().getDescripcion());
+			}
 
 			if (!Checks.esNulo(gasto.getActivo())) {
 				gastoExpedienteDto.setIdActivo(gasto.getActivo().getId());

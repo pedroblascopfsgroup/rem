@@ -3699,53 +3699,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private DDComiteSancion devuelveComiteSancionador (Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr) {
 		Double importeUmbral = 500000.0;
 		Double perdida = pvn-vr;
+		Double perdidaValorAbsoluto = Math.abs(perdida);
+		Double porcentajevnc = vnc * 0.2;
+		Double umbralPerdida = 100000.0;
 		
 		if (vta== 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
 			return null;
 		} else {
-			if (vta < importeUmbral) {
-				if (pvn >= vr) {
-					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_GESTION_INMOBILIARIA); 
-					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-					return comiteSancion;
-					
-				} else if (pvn < vr) {
-					if ((perdida < 0) || (perdida <= vnc*0.1)) {
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_GESTION_INMOBILIARIA); 
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-						return comiteSancion;
-						
-					} else if (perdida > vnc*0.1 &&  perdida <= 100000) {
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_INVERSION_INMOBILIARIA);
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-						return comiteSancion;
-						
-					} else if (perdida > vnc*0.1 && perdida > 100000) {
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIRECCION); 
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-						return comiteSancion;
-						
-					}
-				} 
-				
-			}else if (vta >= importeUmbral && vta <= importeUmbral*10) {
-				if (perdida >= 0 || (perdida <= vnc*0.2 && perdida <= 100000)) {
-					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_INVERSION_INMOBILIARIA); 
-					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-					return comiteSancion;
-					
-				} else if (perdida > vnc*0.2 || perdida > 100000) {
-					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIRECCION);
-					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-					return comiteSancion;
-					
+			Filter filtroGestion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_GESTION_INMOBILIARIA);
+			
+			Filter filtroGestionDir = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_DIRECTOR_GESTION_INMOBILIARIA);
+			
+			Filter filtroInversion= genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_INVERSION_INMOBILIARIA);
+			
+			Filter filtroDireccion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIRECCION);
+			
+			if(vta > (importeUmbral * 10)) {
+				return genericDao.get(DDComiteSancion.class, filtroDireccion);
+			}else if(vta <= (importeUmbral * 10) && vta >= importeUmbral) {
+				if(perdida > 0 || perdidaValorAbsoluto <= umbralPerdida || perdidaValorAbsoluto <= porcentajevnc) {
+					return genericDao.get(DDComiteSancion.class, filtroInversion);
+				}else if(perdidaValorAbsoluto > umbralPerdida || perdidaValorAbsoluto > porcentajevnc) {
+					return genericDao.get(DDComiteSancion.class, filtroDireccion);
 				}
-				
-			}else if (vta > importeUmbral*10) {
-				Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIRECCION); 
-				DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-				return comiteSancion;
-				
+			}else if(vta < importeUmbral){
+				if(pvn < vr) {
+					if (perdida > 0 || perdidaValorAbsoluto <= (porcentajevnc / 2)) {
+						return genericDao.get(DDComiteSancion.class, filtroGestionDir);
+					}else if (perdidaValorAbsoluto <= umbralPerdida && perdidaValorAbsoluto > (porcentajevnc / 2)){
+						return genericDao.get(DDComiteSancion.class, filtroInversion);
+					}else if(perdidaValorAbsoluto > umbralPerdida && perdidaValorAbsoluto > (porcentajevnc / 2)) {
+						return genericDao.get(DDComiteSancion.class, filtroDireccion);
+					}
+				}else if(pvn >= vr) {
+					return genericDao.get(DDComiteSancion.class, filtroGestion);
+				}
 			}
 		}
 		return null;
@@ -3884,8 +3872,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// Recorremos todas las ofertas para ponerle el nuevo comité sancionador
 		for (Oferta oferta : listaOfertas) {
 			ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
-			expedienteComercial.setComiteSancion(comiteSancionador);
-			expedienteComercial.setComitePropuesto(comiteSancionador);
+			if(!Checks.esNulo(expedienteComercial)) {
+				expedienteComercial.setComiteSancion(comiteSancionador);
+				expedienteComercial.setComitePropuesto(comiteSancionador);
+			}
 		}
 		
 		return comiteSancionador;

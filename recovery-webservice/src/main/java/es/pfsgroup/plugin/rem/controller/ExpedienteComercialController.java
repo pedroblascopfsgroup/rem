@@ -2176,8 +2176,10 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			
 			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getId())) {
 				model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.esOfertaDependiente(oferta.getId()));
+				model.put(RESPONSE_ERROR_KEY, false);
 			} else {
 				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_KEY, true);
 			}
 
 		} catch (Exception e) {

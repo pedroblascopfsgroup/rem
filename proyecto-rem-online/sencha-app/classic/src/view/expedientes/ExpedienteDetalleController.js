@@ -447,8 +447,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			     params: { numOferta: numOferta }
 			    ,success: function (response, opts) {
 			         data = Ext.decode(response.responseText);
-			         if(data.success == "true"){
-				         if(cloForm == "02"){
+			         if(cloForm == "02"){
+			         if(data.success == "true" && data.error == "false"){
 				    		Ext.Msg.show({
 								   title: HreRem.i18n('title.confirmar.oferta.principal'),
 								   msg: HreRem.i18n('msg.confirmar.oferta.principal'),
@@ -462,13 +462,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 									}
 							});
 			    		
-				        } else {
-				        	me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
-				        }
-			    	} else {
+			    	} else if (data.success == "false" && data.error == "false") {
+			    		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+			    	} else if (data.success == "false" && data.error == "true") {
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.inexistente"));
-					 	me.getView().unmask();
+					 	me.getView().unmask();		    		
 			    	}
+			    	} else {
+				        me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+				    }
 	            },
 	            
 	            failure: function (a, operation, context) {

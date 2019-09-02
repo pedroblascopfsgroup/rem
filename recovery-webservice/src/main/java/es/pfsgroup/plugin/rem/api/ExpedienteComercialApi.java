@@ -13,7 +13,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -1248,6 +1247,7 @@ public interface ExpedienteComercialApi {
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 
 	boolean esYubai(TareaExterna tareaExterna);
+
 	/*
 	 * Devuelve el comité propuesto a partir de un id de expediente
 	 * @param idExpediente
@@ -1265,7 +1265,8 @@ public interface ExpedienteComercialApi {
 	boolean esOfertaDependiente(Long oferta);
 
 	DtoOferta searchOfertaCodigo(String numOferta);
-
+	
+	boolean checkExpedienteFechaCheque(Long idTramite);
 
 }
 

@@ -2283,8 +2283,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				if(!chkbxFormalizar.getValue() && chkbxPerimetroComercializar.getValue()) {
 					chkbxFormalizar.setValue(true);
 					me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
-				}
-				else {
+				}else if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()){
+					chkbxFormalizar.setValue(false);
+					me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.marcar.formalizar.con.comercializar.desactivado"));
+				}else {
 					textFieldFormalizar.reset();
 				}
 				break;
@@ -2298,8 +2300,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					if(!chkbxFormalizar.getValue() && chkbxPerimetroComercializar.getValue()) {
 						chkbxFormalizar.setValue(true);
 						me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
-					}
-					else {
+					}else if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()){
+						chkbxFormalizar.setValue(false);
+						me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.marcar.formalizar.con.comercializar.desactivado"));
+					}else {
 						textFieldFormalizar.reset();
 					}
 					break;
@@ -4236,7 +4240,36 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                     me.onClickBotonCancelarComercial(btn);
                 }
             });
-        }
+        }else{
+        	var fechaHoy = new Date();
+        	
+        	var mes = fechaHoy.getMonth() + 1;
+        	
+        	var dia = fechaHoy.getDate();
+        	
+        	if(mes < 10){
+        		mes = "0" + mes;
+        	}
+        	
+        	if(dia < 10){
+        		dia = "0" + dia;
+        	}
+        	
+        	//Transformamos la fecha a string para compararla
+        	var fechaString = fechaHoy.getFullYear() + "-" + mes + "-" + dia;
+        	
+        	var fechaCom = form.getValues().fechaComunicacion;
+        	
+        	if(new Date(fechaCom) > new Date(fechaString)){
+        		me.fireEvent("errorToast", HreRem.i18n("msg.fecha.com.mayor"));
+                me.onClickBotonCancelarComercial(btn);
+        	}else if(form.isValid()){
+        		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+        		me.onClickBotonCancelarComercial(btn);
+        	}
+        		
+        	
+       }
 	},
 
 	existeCliente: function(btn){

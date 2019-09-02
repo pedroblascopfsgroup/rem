@@ -98,4 +98,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	 * @return DtoPage
 	 */
 	DtoPage getListOfertasCES(DtoOfertasFilter dtoOfertasFilter);
+
+	public Boolean tieneTareaActiva(String tarea, String numOferta);
+
 }

@@ -11,6 +11,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -39,7 +40,16 @@ public class ExpedienteAvisoPisoPiloto implements ExpedienteAvisadorApi{
 				for (ActivoOferta listaActivoOferta : listaActivosOferta) {				
 					if (!Checks.esNulo(listaActivoOferta.getActivoId())) {
 						Long activoOfertaId = listaActivoOferta.getActivoId();
-						VActivosAgrupacion activoPisoPiloto = genericDao.get(VActivosAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "activoId", activoOfertaId));
+						ActivoAgrupacion agrupacionOferta = oferta.getAgrupacion();
+						VActivosAgrupacion activoPisoPiloto;
+						if(!Checks.esNulo(agrupacionOferta)) {
+							Long agrupacionOfertaId = oferta.getAgrupacion().getId();
+							activoPisoPiloto = genericDao.get(VActivosAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "activoId", activoOfertaId),
+								genericDao.createFilter(FilterType.EQUALS, "agrId", agrupacionOfertaId));
+						}
+						else {
+							activoPisoPiloto = genericDao.get(VActivosAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "activoId", activoOfertaId));
+						}
 						if (!Checks.esNulo(activoPisoPiloto) && !Checks.esNulo(activoPisoPiloto.getEsPisoPiloto()) && activoPisoPiloto.getEsPisoPiloto()) {
 							dtoAviso.setId(String.valueOf(expediente.getId()));
 							dtoAviso.setDescripcion("Piso Piloto");

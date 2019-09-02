@@ -330,7 +330,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		        codigoCartera == CONST.CARTERA['HYT'] || 
 	        	codigoCartera == CONST.CARTERA['SAREB'] || 
 	        	codigoCartera == CONST.CARTERA['TANGO'] ||
-	        	(codigoCartera == CONST.CARTERA['THIRDPARTIES'] && 
+	        	(codigoCartera == CONST.CARTERA['THIRD'] && 
 	        		(codigoSubCartera == CONST.SUBCARTERA['QUITASBANKIA'] ||
 	        		codigoSubCartera == CONST.SUBCARTERA['COMERCIALING']) 
 	        	)
@@ -649,21 +649,32 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 		return get('agrupacionficha.estadoAlquilerDescripcion')
 		 	}
 		 },
+
+		 comercializableConstruccionPlano: function(get){
+			 return "true"===get('agrupacionficha.comercializableConsPlano');
+		 },
 		 
-		 esVisibleParaCartera: function(get){
-		 //Si una cartera o subcartera aparece en esta función se devuelve true
-			var cartera = get('agrupacionficha.cartera');
-			var codCartera = get('agrupacion.codigoCartera');
-		 	var codSubcartera = get('agrupacion.codSubcartera')
-			if(cartera != undefined && cartera != null && codCartera != undefined && codCartera != null) {
-				if(cartera == CONST.NOMBRE_CARTERA2['THIRD'] || codCartera == CONST.NOMBRE_CARTERA['THIRD']) {
-					if(codSubcartera == CONST.SUBCARTERA['YUBAI']) {
-						return true;
-					}
-				}
-			}
-			return false;
-		 }
+		 comprobarExistePiloto: function(get){
+			 return "true"===get('agrupacionficha.existePiloto');
+		 },
+		 
+		 comprobarEsVisitable: function(get){
+			 return "true"===get('agrupacionficha.esVisitable');
+		 },
+		 
+		 existePisoPilotoAndcomercializableConstruccionPlano: function(get){
+			 return "true"===get('agrupacionficha.comercializableConsPlano') && "true"===get('agrupacionficha.existePiloto');
+		 },
+		 
+		 esAgrupacionThirdpartiesYubaiObraNueva: function(get) {
+			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRD']
+			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
+			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		}
     },
     stores: {
     	comboCartera: {

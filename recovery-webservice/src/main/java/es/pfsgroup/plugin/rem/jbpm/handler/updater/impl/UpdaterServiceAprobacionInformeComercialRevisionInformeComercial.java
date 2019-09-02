@@ -173,7 +173,8 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 		
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 		
-		if(checkAcepta && !Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
+				&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
 			activoApi.calcularRatingActivo(activo.getId());
 		}
 	}

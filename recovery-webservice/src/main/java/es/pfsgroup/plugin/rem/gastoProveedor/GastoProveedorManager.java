@@ -762,7 +762,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							Float participacionGasto = (float) ((gastoPrinexListActivos.getImporteGasto()*100)/gastoTotal);
 
 							DecimalFormat df = new DecimalFormat("##.##");
-							df.setRoundingMode(RoundingMode.DOWN);
+							df.setRoundingMode(RoundingMode.CEILING);
 							
 							//truncamos a dos decimales
 							participacionGasto = Float.valueOf(df.format(participacionGasto).replace(',', '.'));
@@ -1208,7 +1208,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	
 	@Transactional(readOnly = false)
-	public boolean createGastoActivo(Long idGasto, Long numActivo, Long numAgrupacion, Boolean recalcular) {
+	public boolean createGastoActivo(Long idGasto, Long numActivo, Long numAgrupacion) {
 
 		if (Checks.esNulo(idGasto)) {
 			throw new JsonViewerException("El gasto debe informarse");
@@ -1279,10 +1279,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
 					gastosActivosList.add(gastoProveedorActivo);
 
-					if(recalcular) {
+				
 						this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);	
-					}
-					
+						
 					genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
 				}
 
@@ -1300,46 +1299,34 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			validarAgrupacion(agrupacion, gasto);
 
-			if (!Checks.estaVacio(agrupacion.getActivos())) {
+			if (!Checks.estaVacio(agrupacion.getActivos())) {	
+						for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+																
+									filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+									gasto = genericDao.get(GastoProveedor.class, filtroGasto);
 
-				for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+									Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
+									Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+									List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
 
-					filtroGasto = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-					Filter filtroA = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",
-							activoAgrupacion.getActivo().getNumActivo());
+									GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
+									gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
+									gastoProveedorActivo.setGastoProveedor(gasto);
+									if (!Checks.estaVacio(activosCatastro)) {
+										gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+									}
 
-					Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id",
-							activoAgrupacion.getActivo().getId());
-					Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-					List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order,
-							filtroCatastro);
+									List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
+									gastosActivosList.add(gastoProveedorActivo);
 
-					
-					List<GastoProveedorActivo> gastoProveedorActivoList= genericDao.getList(GastoProveedorActivo.class, filtroGasto, filtroA);
+									this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
 
-					if (Checks.estaVacio(gastoProveedorActivoList)) {
-						GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
-						gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
-						gastoProveedorActivo.setGastoProveedor(gasto);
-						if (!Checks.estaVacio(activosCatastro)) {
-							gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+									genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+								
+							
 						}
-
-						List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
-						gastosActivosList.add(gastoProveedorActivo);
-
-						if(recalcular) {
-							this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
-						}
-						
-						genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);		
 	
 					}					
-
-				}
-
-			}
-
 		} else {
 			throw new JsonViewerException("Se debe pasar un activo o una agrupación");
 		}
@@ -1528,28 +1515,28 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		}else{
 		
-		DecimalFormat df = new DecimalFormat("##.##");
-		df.setRoundingMode(RoundingMode.DOWN);
-		// Calcular porcentaje equitativo.
-		Float numActivos = (float) gastosActivosList.size();
-		
-		Float porcentaje = 100f / numActivos;
-		
-		//truncamos a dos decimales
-		porcentaje = Float.valueOf(df.format(porcentaje).replace(',', '.'));
-		
-		
-		Float resto = 100f - (porcentaje * numActivos);
-
-		for (GastoProveedorActivo gastoProveedor : gastosActivosList) {
-			gastoProveedor.setParticipacionGasto(porcentaje);
-		}
-		
-		//si la divisón de gastos no es exacta añadimos el resto a el ultimo activo
-		if(resto > 0 && gastosActivosList.size() > 0){
-			GastoProveedorActivo elUltimoActivo = gastosActivosList.get(gastosActivosList.size()-1);
-			elUltimoActivo.setParticipacionGasto(elUltimoActivo.getParticipacionGasto()+resto);
-		}
+			DecimalFormat df = new DecimalFormat("##.##");
+			df.setRoundingMode(RoundingMode.DOWN);
+			// Calcular porcentaje equitativo.
+			Float numActivos = (float) gastosActivosList.size();
+			
+			Float porcentaje = 100f / numActivos;
+			
+			//truncamos a dos decimales
+			porcentaje = Float.valueOf(df.format(porcentaje).replace(',', '.'));
+			
+			
+			Float resto = 100f - (porcentaje * numActivos);
+	
+			for (GastoProveedorActivo gastoProveedor : gastosActivosList) {
+				gastoProveedor.setParticipacionGasto(porcentaje);
+			}
+			
+			//si la divisón de gastos no es exacta añadimos el resto a el ultimo activo
+			if(resto > 0 && gastosActivosList.size() > 0){
+				GastoProveedorActivo elUltimoActivo = gastosActivosList.get(gastosActivosList.size()-1);
+				elUltimoActivo.setParticipacionGasto(elUltimoActivo.getParticipacionGasto()+resto);
+			}
 		}
 	}
 	

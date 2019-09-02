@@ -49,7 +49,6 @@ Ext.define('HreRem.model.AgrupacionesActivo', {
     		type : 'date',
     		dateFormat: 'c'
     	}
-    	
 
     ],
     

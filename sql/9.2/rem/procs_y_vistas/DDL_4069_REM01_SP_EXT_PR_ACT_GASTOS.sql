@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190603
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20180904
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-6618
+--## INCIDENCIA_LINK=HREOS-4197
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -17,7 +17,6 @@
 --##        1.01 Se elimina la restricción para los gastos con iva. Ahora pueden actualizar la fecha de contabilización.
 --##	    1.02 Se añaden modificaciones segun el item REMVIP-1698.
 --##	    1.03 Se añaden modificaciones según el ítem REMVIP-2891.
---##	    1.04 Se añaden modificaciones según el ítem HREOS-6618.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -204,7 +203,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     END;
 
 BEGIN
---Version : 1.04
+--Version : 1.01
 
     --Iniciamos con COD_RETORNO = 0.
     COD_RETORNO := 0;
@@ -471,30 +470,27 @@ BEGIN
 	    EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
 	    EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAH_ID_ANTERIOR;
             EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = ''03'' ' INTO DD_EAH_ID_NUEVO;
-
-            IF DD_EAH_ID_ANTERIOR <> DD_EAH_ID_NUEVO THEN
-		        V_MSQL := '
-		        UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
-		        SET DD_EAH_ID = '||DD_EAH_ID_NUEVO||',
-				GGE_FECHA_EAH = SYSDATE,
-				USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-				FECHAMODIFICAR = SYSDATE
-		        WHERE GPV_ID = '||V_GPV_ID||'
-		        ';
-		        EXECUTE IMMEDIATE V_MSQL;
-		        --Comprobamos si se ha actualizado o no
-		        IF SQL%ROWCOUNT > 0 THEN
-		            DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_EAH_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
-		            --Logado en HLD_HIST_LANZA_PER_DETA
-		            PARAM1 := 'GGE_GASTOS_GESTION';
-		            PARAM2 := 'GGE_ID';
-		            PARAM3 := 'DD_EAH_ID';
-		            HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GGE_ID, PARAM3, DD_EAH_ID_ANTERIOR, DD_EAH_ID_NUEVO);
-		        ELSE
-		            COD_RETORNO := 1;
-		            V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_EAH_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
-		        END IF;
-		    END IF;
+            V_MSQL := '
+            UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
+            SET DD_EAH_ID = '||DD_EAH_ID_NUEVO||',
+			GGE_FECHA_EAH = SYSDATE,
+			USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+			FECHAMODIFICAR = SYSDATE
+            WHERE GPV_ID = '||V_GPV_ID||'
+            ';
+            EXECUTE IMMEDIATE V_MSQL;
+            --Comprobamos si se ha actualizado o no
+            IF SQL%ROWCOUNT > 0 THEN
+                DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_EAH_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
+                --Logado en HLD_HIST_LANZA_PER_DETA
+                PARAM1 := 'GGE_GASTOS_GESTION';
+                PARAM2 := 'GGE_ID';
+                PARAM3 := 'DD_EAH_ID';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GGE_ID, PARAM3, DD_EAH_ID_ANTERIOR, DD_EAH_ID_NUEVO);
+            ELSE
+                COD_RETORNO := 1;
+                V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_EAH_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
+            END IF;
     
         --------------
         -- PASO 5/7 -- OPCIONAL
@@ -836,28 +832,26 @@ BEGIN
 	    EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
 	    EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAH_ID_ANTERIOR;
             EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = ''03'' ' INTO DD_EAH_ID_NUEVO;
-            IF DD_EAH_ID_ANTERIOR <> DD_EAH_ID_NUEVO THEN
-	            V_MSQL := '
-	            UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
-	            SET DD_EAH_ID = '||DD_EAH_ID_NUEVO||',
-				GGE_FECHA_EAH = SYSDATE,
-				USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-				FECHAMODIFICAR = SYSDATE
-	            WHERE GPV_ID = '||V_GPV_ID||'
-	            ';
-	            EXECUTE IMMEDIATE V_MSQL;
-	            --Comprobamos si se ha actualizado o no
-	            IF SQL%ROWCOUNT > 0 THEN
-	                DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_EAH_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
-	                --Logado en HLD_HIST_LANZA_PER_DETA
-	                PARAM1 := 'GGE_GASTOS_GESTION';
-	                PARAM2 := 'GGE_ID';
-	                PARAM3 := 'DD_EAH_ID';
-	                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GGE_ID, PARAM3, DD_EAH_ID_ANTERIOR, DD_EAH_ID_NUEVO);
-	            ELSE
-	                COD_RETORNO := 1;
-	                V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_EAH_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
-	            END IF;
+            V_MSQL := '
+            UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
+            SET DD_EAH_ID = '||DD_EAH_ID_NUEVO||',
+			GGE_FECHA_EAH = SYSDATE,
+			USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+			FECHAMODIFICAR = SYSDATE
+            WHERE GPV_ID = '||V_GPV_ID||'
+            ';
+            EXECUTE IMMEDIATE V_MSQL;
+            --Comprobamos si se ha actualizado o no
+            IF SQL%ROWCOUNT > 0 THEN
+                DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_EAH_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
+                --Logado en HLD_HIST_LANZA_PER_DETA
+                PARAM1 := 'GGE_GASTOS_GESTION';
+                PARAM2 := 'GGE_ID';
+                PARAM3 := 'DD_EAH_ID';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GGE_ID, PARAM3, DD_EAH_ID_ANTERIOR, DD_EAH_ID_NUEVO);
+            ELSE
+                COD_RETORNO := 1;
+                V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_EAH_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
 
         --------------

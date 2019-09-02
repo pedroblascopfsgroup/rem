@@ -108,7 +108,7 @@ import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 @Controller
 public class ExpedienteComercialController extends ParadiseJsonController {
 
-	protected static final Log logger = LogFactory.getLog(ActivoController.class);
+	protected static final Log logger = LogFactory.getLog(ExpedienteComercialController.class);
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 
 	//private static final String CONSTANTE_CARTERA_HAYA = "Haya";
@@ -2173,8 +2173,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 					oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
 				}
 			}
-			
-			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.esOfertaDependiente(oferta.getId()));
+			if(!Checks.esNulo(oferta))
+					model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.esOfertaDependiente(oferta.getId()));
 
 		} catch (Exception e) {
 			e.printStackTrace();

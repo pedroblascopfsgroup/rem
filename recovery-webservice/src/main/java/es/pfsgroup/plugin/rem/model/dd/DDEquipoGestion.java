@@ -19,41 +19,39 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de tipos de comercializacion
+ * Modelo que gestiona el diccionario de equipo de gestion
  * 
- * @author jros
+ * @author Miguel Lopez
  *
  */
 @Entity
-@Table(name = "DD_TCR_TIPO_COMERCIALIZAR", schema = "${entity.schema}")
+@Table(name = "DD_EQG_EQUIPO_GESTION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoComercializar implements Auditable, Dictionary {
+public class DDEquipoGestion implements Auditable, Dictionary {
 	
-	public static final String CODIGO_SINGULAR = "01";
-    public static final String CODIGO_RETAIL = "02";
+	public static final String CODIGO_MAYORISTA = "01";
+    public static final String CODIGO_MINORISTA = "02";
     
-    public static final String DESCRIPCION_SINGULAR = "Singular";
-    public static final String DESCRIPCION_RETAIL = "Residencial";
+    public static final String DESCRIPCION_MAYORISTA = "Mayorista";
+    public static final String DESCRIPCION_MINORISTA = "Minorista";
     
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 177982694053390946L;
-
-	@Id
-	@Column(name = "DD_TCR_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoComercializarGenerator")
-	@SequenceGenerator(name = "DDTipoComercializarGenerator", sequenceName = "S_DD_TCR_TIPO_COMERCIALIZAR")
-	private Long id;
-	 
-	@Column(name = "DD_TCR_CODIGO")   
+    private static final long serialVersionUID = 1L;
+    
+    @Id
+	@Column(name = "DD_EQG_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEquipoGestionGenerator")
+	@SequenceGenerator(name = "DDEquipoGestionGenerator", sequenceName = "S_DD_EQG_EQUIPO_GESTION")
+    private Long id;
+    
+    
+    @Column(name = "DD_EQG_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TCR_DESCRIPCION")   
+	@Column(name = "DD_EQG_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TCR_DESCRIPCION_LARGA")   
+	@Column(name = "DD_EQG_DESCRIPCION_LARGA")   
 	private String descripcionLarga;  
 	
 	    

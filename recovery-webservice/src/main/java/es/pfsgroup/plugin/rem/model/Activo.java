@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionApple;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
@@ -455,6 +456,9 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_NOM_CARTERA_PERIMETRO")
     private String nombreCarteraPerimetro;
+
+    @JoinColumn(name = "DD_EQG_ID")
+    private DDEquipoGestion equipoGestion;
     
 	
     // Getters del activo --------------------------------------------
@@ -1819,6 +1823,14 @@ public class Activo implements Serializable, Auditable {
 	public void setNombreCarteraPerimetro(String nombreCarteraPerimetro) {
 		this.nombreCarteraPerimetro = nombreCarteraPerimetro;
 	}	
+
+	public DDEquipoGestion getEquipoGestion() {
+		return equipoGestion;
+	}
+
+	public void setEquipoGestion(DDEquipoGestion equipoGestion) {
+		this.equipoGestion = equipoGestion;
+	}
 	
 	
 }

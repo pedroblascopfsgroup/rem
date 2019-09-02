@@ -762,6 +762,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	}else{
 	    		return true;
 	    	}
+	    },
+	    
+	    esSuperUsuario: function(get){
+	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
 	    }
 		
 	 },
@@ -1969,6 +1973,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    				extraParams: {numActivo: '{activo.numActivo}'}
 			}
 		},
+
 		comboServicerActivo: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -1979,6 +1984,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		comboCesionSaneamiento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposEquipoGestion'}
+			}
+		},
+		
+		comboEquipoGestion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',

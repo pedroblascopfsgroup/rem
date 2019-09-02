@@ -253,7 +253,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String cesionSaneamientoCodigo;	
 	private Integer perimetroMacc;
 	private Integer perimetroCartera;
-	private String nombreCarteraPerimetro;
+	private String nombreCarteraPerimetro;;
+	
+	private String tipoEquipoGestionCodigo;
+	private String tipoEquipoGestionDescripcion;
+
 
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -1951,5 +1955,21 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNombreCarteraPerimetro(String nombreCarteraPerimetro) {
 		this.nombreCarteraPerimetro = nombreCarteraPerimetro;
 	}	
+
+	public String getTipoEquipoGestionCodigo() {
+		return tipoEquipoGestionCodigo;
+	}
+
+	public void setTipoEquipoGestionCodigo(String tipoEquipoGestionCodigo) {
+		this.tipoEquipoGestionCodigo = tipoEquipoGestionCodigo;
+	}
+
+	public String getTipoEquipoGestionDescripcion() {
+		return tipoEquipoGestionDescripcion;
+	}
+
+	public void setTipoEquipoGestionDescripcion(String tipoEquipoGestionDescripcion) {
+		this.tipoEquipoGestionDescripcion = tipoEquipoGestionDescripcion;
+	}
 	
 }

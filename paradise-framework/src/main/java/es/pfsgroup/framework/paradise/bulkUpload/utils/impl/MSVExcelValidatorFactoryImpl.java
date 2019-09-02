@@ -158,6 +158,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVActualizacionFormalizacionExcelValidator cargaMasivaFormalizacion ;
+	
+	@Autowired
+	private MSVActualizacionLPOExcelValidator cargaMasivaLPO;
 
 	@Autowired 
 	private MSVSuperDiscPublicacionesExcelValidator disclamerPublicaciones;
@@ -272,6 +275,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return disclamerPublicaciones;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALORES_PERIMETRO_APPLE.equals(codTipoOperacion)) {
 			return valoresPerimetroApple;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_LPO.equals(codTipoOperacion)) {
+			return cargaMasivaLPO;
 		}
 
 		return null;

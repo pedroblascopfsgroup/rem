@@ -9842,7 +9842,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean esOfertaDependiente(Long oferta) {
 		if (!Checks.esNulo(oferta)) {
-			return DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaApi.getOfertaById(oferta).getClaseOferta().getCodigo());
+			Oferta ofr = ofertaApi.getOfertaById(oferta);
+			if (!Checks.esNulo(ofr) && !Checks.esNulo(ofr.getClaseOferta()))
+				return DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofr.getClaseOferta().getCodigo());
+			else
+				return false;
 		}else {
 			return false;
 		}

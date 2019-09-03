@@ -1,18 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20190807
+--## AUTOR=Miguel Ángel Ávila Sánchez
+--## FECHA_CREACION=20191208
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-7306
+--## INCIDENCIA_LINK=HREOS-6791
 --## PRODUCTO=NO
 --##
 --## Finalidad: DML Aniadir subcartera Yubai en tabla DD_SCR_SUBCARTERA.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial- Miguel Ángel Ávila Sánchez - HREOS-6791
---##		0.2 Vicente Martinez - HREOS-7306 - Cambio de código para subcartera
+--##        0.1 Versión inicial
 --##########################################
 --*/
 
@@ -39,7 +38,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('******** DD_SCR_SUBCARTERA ********'); 
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_DDNAME||' ... Comprobaciones previas DD_SCR_SUBCARTERA');
 
-    V_SQL := ' SELECT count(1) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE DD_SCR_CODIGO = ''140'' ';	
+    V_SQL := ' SELECT count(1) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE DD_SCR_CODIGO = ''139'' ';	
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTROS;
 
     IF V_NUM_REGISTROS = 0 THEN
@@ -50,7 +49,7 @@ BEGIN
         V_MSQL:= 'SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''11'' ';
         EXECUTE IMMEDIATE V_MSQL INTO V_ID2;
 
-        V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_DDNAME||' (DD_SCR_ID, DD_CRA_ID, DD_SCR_CODIGO, DD_SCR_DESCRIPCION, DD_SCR_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES ('||V_ID||', '||V_ID2||', ''140'',''Yubai'', ''Yubai'', 0, ''HREOS-6791'', sysdate, 0)';
+        V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_DDNAME||' (DD_SCR_ID, DD_CRA_ID, DD_SCR_CODIGO, DD_SCR_DESCRIPCION, DD_SCR_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES ('||V_ID||', '||V_ID2||', ''139'',''Yubai'', ''Yubai'', 0, ''HREOS-6791'', sysdate, 0)';
         EXECUTE IMMEDIATE V_MSQL;
 
         DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA '||V_DDNAME||'' );

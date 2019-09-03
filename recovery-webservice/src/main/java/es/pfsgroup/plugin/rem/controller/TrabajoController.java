@@ -154,6 +154,7 @@ public class TrabajoController extends ParadiseJsonController {
 
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
+	private static final String COMBO_MODIFICACION_NO = "02";
 
 		
 	/**
@@ -1357,124 +1358,130 @@ public class TrabajoController extends ParadiseJsonController {
 		String errorDesc = null;
 		ArrayList<TrabajoRespuestaDto> actuaciones = new ArrayList<TrabajoRespuestaDto>();
 		List<ActivoTrabajo> activosTrabajo = new ArrayList<ActivoTrabajo>();
-		try {
-			idL = Long.valueOf(id);
-		}catch(Exception e){
-			logger.error("Error trabajo", e);
-			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("id", id);
-			model.put("error", RestApi.REST_MSG_FORMAT_ERROR );
-			model.put("errorDesc", "La id no tiene el formato adecuado" );
-			model.put("success", false);
-		}
-		if(!Checks.esNulo(idL)) {
+		if(Checks.esNulo(id) || Checks.esNulo(numActivo) || Checks.esNulo(idProveedorRem)) {
+			flagParametrosANulo = true;
+		}else{
 			try {
-				numActivoL = Long.valueOf(numActivo);
+				idL = Long.valueOf(id);
 			}catch(Exception e){
 				logger.error("Error trabajo", e);
 				request.getPeticionRest().setErrorDesc(e.getMessage());
 				model.put("id", id);
 				model.put("error", RestApi.REST_MSG_FORMAT_ERROR );
-				model.put("errorDesc", "El numero de activo no tiene el formato adecuado" );
+				model.put("errorDesc", "La id no tiene el formato adecuado" );
 				model.put("success", false);
 			}
-			if(!Checks.esNulo(numActivoL)) {
-				DtoTrabajoFilter filtro = new DtoTrabajoFilter();
-				filtro.setNumActivo(numActivoL);
-				filtro.setLimit(100);
-				if(Checks.esNulo(idL) || Checks.esNulo(numActivo) || Checks.esNulo(idProveedorRem)) {
-					flagParametrosANulo = true;
-				}else if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivoL))){
-					flagnumActivoNoExiste = true;
-				}else if(Checks.esNulo(proveedoresDao.getActivoProveedorContactoPorUsernameUsuario(idProveedorRem))){
-					flagidProveedorRemNoExiste = true;
-				}else{
+			if(!Checks.esNulo(idL)) {
+				try {
+					numActivoL = Long.valueOf(numActivo);
+				}catch(Exception e){
+					logger.error("Error trabajo", e);
+					request.getPeticionRest().setErrorDesc(e.getMessage());
+					model.put("id", id);
+					model.put("error", RestApi.REST_MSG_FORMAT_ERROR );
+					model.put("errorDesc", "El numero de activo no tiene el formato adecuado" );
+					model.put("success", false);
+				}
+				if(!Checks.esNulo(numActivoL)) {
+					DtoTrabajoFilter filtro = new DtoTrabajoFilter();
+					filtro.setNumActivo(numActivoL);
+					filtro.setLimit(100);
+					if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivoL))){
+						flagnumActivoNoExiste = true;
+					}else if(Checks.esNulo(proveedoresDao.getActivoProveedorContactoPorUsernameUsuario(idProveedorRem))){
+						flagidProveedorRemNoExiste = true;
+					}else{
+					
+						Page page = trabajoApi.findAll(filtro, genericAdapter.getUsuarioLogado());
 				
-					Page page = trabajoApi.findAll(filtro, genericAdapter.getUsuarioLogado());
-			
-					
-					TrabajoRespuestaDto actuacion;
-					VBusquedaTrabajos busquedaTrabajo;
-			
-					// Recuperar lista de trabajos por activo
-					for (Object obj : page.getResults()) {
-						busquedaTrabajo = (VBusquedaTrabajos) obj;
-						Trabajo trabajo = trabajoApi.findOne(busquedaTrabajo.getId());
-			
-						// Comprobación de criterios y generar listado
-						try {
-							
-							if (trabajo.getProveedorContacto().getUsuario().getUsername().equals(idProveedorRem)
-									&& DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
-			
-								activosTrabajo = trabajo.getActivosTrabajo();
-			
-								if(!Checks.estaVacio(activosTrabajo)) {
-									actuacion = new TrabajoRespuestaDto();
-									List<Long> activosLista = new ArrayList<Long>();
-			
-									for (ActivoTrabajo activoTrabajo : activosTrabajo) {
-										Activo activo = activoTrabajo.getActivo();
-			
-										if (!Checks.esNulo(activo)) {
-											activosLista.add(activo.getNumActivo());
+						
+						TrabajoRespuestaDto actuacion;
+						VBusquedaTrabajos busquedaTrabajo;
+				
+						// Recuperar lista de trabajos por activo
+						for (Object obj : page.getResults()) {
+							busquedaTrabajo = (VBusquedaTrabajos) obj;
+							Trabajo trabajo = trabajoApi.findOne(busquedaTrabajo.getId());
+				
+							// Comprobación de criterios y generar listado
+							try {
+								
+								if (trabajo.getProveedorContacto().getUsuario().getUsername().equals(idProveedorRem)
+										&& DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
+				
+									activosTrabajo = trabajo.getActivosTrabajo();
+				
+									if(!Checks.estaVacio(activosTrabajo)) {
+										actuacion = new TrabajoRespuestaDto();
+										List<Long> activosLista = new ArrayList<Long>();
+				
+										for (ActivoTrabajo activoTrabajo : activosTrabajo) {
+											Activo activo = activoTrabajo.getActivo();
+				
+											if (!Checks.esNulo(activo)) {
+												activosLista.add(activo.getNumActivo());
+											}
 										}
+				
+										actuacion.setNumActivo(activosLista);
+										actuacion.setNumTrabajo(trabajo.getNumTrabajo());
+										actuacion.setFechaRealizacion(trabajo.getFechaEjecucionReal());
+										actuacion.setFechaExacta(!Checks.esNulo(trabajo.getFechaHoraConcreta()));
+										actuacion.setUrgentePrioridadReq(trabajo.getUrgente());
+										// En la ficha HREOS-6228 indican que requiriente corresponde a Tercero y su relación con los campos
+										actuacion.setNombreRequiriente(trabajo.getTerceroNombre());
+										actuacion.setTelefonoRequiriente(trabajo.getTerceroTel1());
+										actuacion.setEmailRequiriente(trabajo.getTerceroEmail());
+										actuacion.setDescripcionRequiriente(trabajo.getTerceroContacto()); 
+										actuacion.setRiesgoPrioridadReq(trabajo.getRequerimiento());
+										actuacion.setFechaPrioridadReq(trabajo.getFechaCompromisoEjecucion());// ACT_TBJ_TRABAJO.TBJ_FECHA_FIN_COMPROMISO
+				
+										// En la ficha HREOS-6228 indican que mediador se corresponde a contacto
+										ActivoProveedorContacto mediador = trabajo.getProveedorContacto();
+										if (mediador != null) {
+											actuacion.setNombreContacto(mediador.getNombre());
+											actuacion.setTelefonoContacto(mediador.getTelefono1());
+											actuacion.setEmailContacto(mediador.getEmail());
+											actuacion.setDescripcionContacto(mediador.getObservaciones());
+				
+										}
+										actuaciones.add(actuacion);
 									}
-			
-									actuacion.setNumActivo(activosLista);
-									actuacion.setNumTrabajo(trabajo.getNumTrabajo());
-									actuacion.setFechaRealizacion(trabajo.getFechaEjecucionReal());
-									actuacion.setFechaExacta(!Checks.esNulo(trabajo.getFechaHoraConcreta()));
-									actuacion.setUrgentePrioridadReq(trabajo.getUrgente());
-									// En la ficha HREOS-6228 indican que requiriente corresponde a Tercero y su relación con los campos
-									actuacion.setNombreRequiriente(trabajo.getTerceroNombre());
-									actuacion.setTelefonoRequiriente(trabajo.getTerceroTel1());
-									actuacion.setEmailRequiriente(trabajo.getTerceroEmail());
-									actuacion.setDescripcionRequiriente(trabajo.getTerceroContacto()); 
-									actuacion.setRiesgoPrioridadReq(trabajo.getRequerimiento());
-									actuacion.setFechaPrioridadReq(trabajo.getFechaCompromisoEjecucion());// ACT_TBJ_TRABAJO.TBJ_FECHA_FIN_COMPROMISO
-			
-									// En la ficha HREOS-6228 indican que mediador se corresponde a contacto
-									ActivoProveedorContacto mediador = trabajo.getProveedorContacto();
-									if (mediador != null) {
-										actuacion.setNombreContacto(mediador.getNombre());
-										actuacion.setTelefonoContacto(mediador.getTelefono1());
-										actuacion.setEmailContacto(mediador.getEmail());
-										actuacion.setDescripcionContacto(mediador.getObservaciones());
-			
-									}
-									actuaciones.add(actuacion);
-								}
-			
-							} // fin trabajo
-			
-						} catch (NullPointerException e) {
-							logger.error("Error trabajo", e);
+				
+								} // fin trabajo
+				
+							} catch (NullPointerException e) {
+								logger.error("Error trabajo", e);
+							}
 						}
+						
+			
+					} // fin listado trabajos
+					if(Checks.estaVacio(activosTrabajo)) {
+						flagActivoProveedorRelacionNoExiste = true;
 					}
-					
-		
-				} // fin listado trabajos
-				if(Checks.estaVacio(activosTrabajo)) {
-					flagActivoProveedorRelacionNoExiste = true;
 				}
 			}
 		}
+		
 		//El id, tanto en el try como en el catch, lo debe devolver siempre
 		try {
 			if(flagParametrosANulo) {
-				error = RestApi.REST_NO_PARAM;
-				if(Checks.esNulo(idL)) {
+				if((Checks.esNulo(id)&&Checks.esNulo(numActivo)) || (Checks.esNulo(id) && Checks.esNulo(idProveedorRem)) || (Checks.esNulo(numActivo) && Checks.esNulo(idProveedorRem))) {
 					error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-					errorDesc = "Falta el campo id";
+					errorDesc = "Faltan campos necesiarios";
 					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-				}else if( Checks.esNulo(numActivo)) {
-					errorDesc = "Falta el campo numActivo";
 				}else {
-					errorDesc = "Falta el campo idProveedorRem";
+					error = RestApi.REST_NO_PARAM;
+					if(Checks.esNulo(id)) {
+						errorDesc = "Falta el campo id";
+					}else if(Checks.esNulo(numActivo)) {
+						errorDesc = "Falta el campo numActivo";
+					}else {
+						errorDesc = "Falta el campo idProveedorRem";
+					}
+					throw new Exception(RestApi.REST_NO_PARAM);
 				}
-				
-				throw new Exception(RestApi.REST_NO_PARAM);
 			}
 			if(flagnumActivoNoExiste || flagidProveedorRemNoExiste) {
 				error = RestApi.REST_MSG_UNKNOW_KEY;
@@ -1617,18 +1624,24 @@ public class TrabajoController extends ParadiseJsonController {
 					}else {
 						jsonFields.get("data");
 						jsonFields.getJSONObject("data").get("fechaAtPrimaria");
+						String comboModificacion = null;
+						if(!Checks.esNulo(jsonFields.getJSONObject("data").get("comboModificacion"))) {
+							comboModificacion = jsonFields.getJSONObject("data").get("comboModificacion").toString();
+							comboModificacion = comboModificacion.substring(2,comboModificacion.length()-2);
+						}
 					
 						if(Checks.esNulo(jsonFields.getJSONObject("data").get("fechaAtPrimaria"))){
 							error = RestApi.REST_NO_PARAM;
 							errorDesc = "Falta la fecha de at primaria.";
 							throw new Exception(RestApi.REST_NO_PARAM);
 							
-						}else if(Checks.esNulo(jsonFields.getJSONObject("data").get("fechaFinalizacion"))){
+						}else if(!Checks.esNulo(comboModificacion) && COMBO_MODIFICACION_NO.equalsIgnoreCase(comboModificacion) 
+								&& Checks.esNulo(jsonFields.getJSONObject("data").get("fechaFinalizacion"))) {
 							error = RestApi.REST_NO_PARAM;
 							errorDesc = "Falta la fecha de finalización.";
 							throw new Exception(RestApi.REST_NO_PARAM);
 							
-						}
+						}						
 						SimpleDateFormat format  = new SimpleDateFormat("dd/MM/yyyy");
 						format.setLenient(false);
 						Date atprimaria = null;
@@ -1644,16 +1657,17 @@ public class TrabajoController extends ParadiseJsonController {
 							
 						}
 						Date finalizacion = null;
-						String stringFinalizacion = jsonFields.getJSONObject("data").get("fechaFinalizacion").toString();
-						stringFinalizacion =stringFinalizacion.substring(2,stringFinalizacion.length()-2);
-						try {
-							finalizacion = format.parse(stringFinalizacion);
-						} catch (Exception ex) {
-							error = RestApi.REST_MSG_FORMAT_ERROR;
-							errorDesc = "El formato de la fecha de finalización no es correcto.";
-							throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+						if(!Checks.esNulo(jsonFields.getJSONObject("data").get("fechaFinalizacion"))) {
+							String stringFinalizacion = jsonFields.getJSONObject("data").get("fechaFinalizacion").toString();
+							stringFinalizacion =stringFinalizacion.substring(2,stringFinalizacion.length()-2);
+							try {
+								finalizacion = format.parse(stringFinalizacion);
+							} catch (Exception ex) {
+								error = RestApi.REST_MSG_FORMAT_ERROR;
+								errorDesc = "El formato de la fecha de finalización no es correcto.";
+								throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+							}
 						}
-						
 						String[] idTarea = new String[1];
 						idTarea[0] = tareaId.toString();
 						datosTarea.put("idTarea",idTarea);

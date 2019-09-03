@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.files.WebFileItem;
-import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -67,18 +65,16 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	public ModelAndView saveDocumentoAdjuntoOferta(String docCliente, String idEntidad, HttpServletRequest request) {
 		
 		ModelMap model = new ModelMap();
-		WebFileItem fileItem = null;
 		
 		try {
 			
 			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
-			fileItem = uploadAdapter.getWebFileItem(request);
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			String errores = null;
 			if(idPersonaHaya != null && !idPersonaHaya.isEmpty()){
-				errores = activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya, docCliente);
+				errores =activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya, docCliente);
 				model.put("errores", errores);
 				model.put(RESPONSE_SUCCESS_KEY, errores==null);
-				FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());
 			}else{
 				throw new Exception("idPersonaHaya no puede ser null");
 			}
@@ -87,16 +83,6 @@ public class ActivoOfertaController extends ParadiseJsonController {
 			logger.error(e.getMessage(),e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-		}finally{
-			try {
-				FileUtils.deleteFile(fileItem.getFileItem().getFile().getPath());			
-			} catch (IOException e) 
-			{
-				logger.error(e.getMessage(),e);
-				model.put(RESPONSE_SUCCESS_KEY, false);
-			    model.put("errorMessage", e.getMessage());
-				
-			}
 		}
 		
 		return createModelAndViewJson(model);

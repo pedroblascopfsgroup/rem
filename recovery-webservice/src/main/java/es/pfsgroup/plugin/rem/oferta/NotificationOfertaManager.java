@@ -104,8 +104,6 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			emailPrescriptor = oferta.getPrescriptor().getEmail();
 			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
 		} else {
-			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-			supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 			if(!Checks.esNulo(activo)) {
 				usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 				supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);

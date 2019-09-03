@@ -843,6 +843,9 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'nombreCarteraPerimetro'
+    		},
+    		{
+    			name: 'tipoEquipoGestionCodigo'
     		}
     ],
     

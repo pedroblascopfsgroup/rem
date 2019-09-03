@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
@@ -335,6 +336,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getTipoAlquiler() != null){
 			BeanUtils.copyProperty(activoDto, "tipoAlquilerCodigo", activo.getTipoAlquiler().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoAlquilerDescripcion", activo.getTipoAlquiler().getDescripcion());
+		}
+		
+		//Hace referencia a Equipo gestion
+		if(activo.getEquipoGestion() != null){
+			BeanUtils.copyProperty(activoDto, "tipoEquipoGestionCodigo", activo.getEquipoGestion().getCodigo());
+			BeanUtils.copyProperty(activoDto, "tipoEquipoGestionDescripcion", activo.getEquipoGestion().getDescripcion());
 		}
 		
 		if(!activo.getAgrupaciones().isEmpty()) {
@@ -1185,6 +1192,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
 				DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) diccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class,  dto.getTipoAlquilerCodigo());
 				activo.setTipoAlquiler(tipoAlquiler);
+			}
+			
+			//Hace referencia a Equipo de gestion
+			if (!Checks.esNulo(dto.getTipoEquipoGestionCodigo())) {
+				DDEquipoGestion tipoEquipoGestion = (DDEquipoGestion) diccionarioApi.dameValorDiccionarioByCod(DDEquipoGestion.class,  dto.getTipoEquipoGestionCodigo());
+				activo.setEquipoGestion(tipoEquipoGestion);
 			}
 
 			// --------- Perimetro --> Bloque Administración.

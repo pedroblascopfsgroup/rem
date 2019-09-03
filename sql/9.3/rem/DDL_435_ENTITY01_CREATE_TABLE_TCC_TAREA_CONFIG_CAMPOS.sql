@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE LUIS BARBA
---## FECHA_CREACION=20190529
+--## FECHA_CREACION=20190820
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HREOS-6461
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Viorel Remus Ovidiu - Modificacion tamaño campos
 --##########################################
 --*/
 
@@ -51,13 +52,13 @@ DECLARE
                 TAP_ID                     	    NUMBER(16) NOT NULL,
                 TFI_ID                          NUMBER(16,0) NOT NULL,
                 TCC_INSTANCIA                   NUMBER,
-                TCC_VALOR                       VARCHAR2(50 CHAR),
-                TCC_ACCION                      VARCHAR2(50 CHAR),
-			    USUARIOCREAR              		VARCHAR2(10 CHAR) NOT NULL,
+                TCC_VALOR                       VARCHAR2(200 CHAR),
+                TCC_ACCION                      VARCHAR2(200 CHAR),
+			    USUARIOCREAR              		VARCHAR2(50 CHAR) NOT NULL,
 			    FECHACREAR                		TIMESTAMP(6) NOT NULL,
-			    USUARIOMODIFICAR          		VARCHAR2(10 CHAR),
+			    USUARIOMODIFICAR          		VARCHAR2(50 CHAR),
 			    FECHAMODIFICAR            		TIMESTAMP(6),
-			    USUARIOBORRAR             		VARCHAR2(10 CHAR),
+			    USUARIOBORRAR             		VARCHAR2(50 CHAR),
 			    FECHABORRAR               		TIMESTAMP(6),
 			    BORRADO                   		NUMBER(1) DEFAULT 0 NOT NULL,
 			   CONSTRAINT PK_TCC_TAREA_CONFIG_CAMPOS PRIMARY KEY (TCC_ID),

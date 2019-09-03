@@ -3587,10 +3587,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			String resultado = rawDao.getExecuteSQL("SELECT Count(*) " 
 					+ "FROM DD_CAP_CLASIFICACION_APPLE "
 					+ "WHERE DD_CAP_CODIGO ='" + codigoValorOrdinario + "'");
-
-			return !"0".equals(resultado);		
+			return !"0".equals(resultado);	
 	}
 	
+	@Override
+	public Boolean noExisteEstado(String numEstado) {
+		if (Checks.esNulo(numEstado)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_EDC_ESTADO_DOCUMENTO "
+				+"			WHERE DD_EDC_CODIGO = '" + numEstado +"'");
+		return "0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esActivoProductoTerminado(String numActivo) {
+		if (Checks.esNulo(numActivo)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_ACTIVO ACT "
+				+ "			JOIN DD_EAC_ESTADO_ACTIVO EAC ON ACT.DD_EAC_ID = EAC.DD_EAC_ID"
+				+"			WHERE EAC.DD_EAC_CODIGO = 3 AND ACT.ACT_NUM_ACTIVO = " + numActivo);
+		return !"0".equals(resultado);
+	}
+
 	@Override
 	public Boolean esActivoApple(String numActivo){
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {

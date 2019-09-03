@@ -21,7 +21,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     initComponent: function () {
 
         var me = this;
-
         me.setTitle(HreRem.i18n('title.ficha'));
 
         var items= [
@@ -313,8 +312,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								value: '{agrupacionficha.comercializableConsPlano}',
 								store: '{comboTrueFalse}',
 								readOnly: false,
-								disabled: '{!esVisibleParaCartera}',
-								hidden: '{!esVisibleParaCartera}',
+								disabled: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
 								listeners: {
 									change: 'onChangeComboComercializableConsPlano'
 								}
@@ -326,12 +325,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							name: 'existePiloto',
 							reference: 'existePiloto',
 							allowBlank:	false,
-							disabled: 'onChangeComboComercializableConsPlano',
 							bind: {
 								value: '{agrupacionficha.existePiloto}',
 								store: '{comboTrueFalse}',
 								readOnly: false,
-								hidden: '{!esVisibleParaCartera}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								disabled: '{!comercializableConstruccionPlano}',
 								listeners: {
 									change: 'onChangeComboExistePisoPiloto'
 								}
@@ -343,12 +342,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							name: 'esVisitable',
 							reference: 'esVisitable',
 							allowBlank:	false,
-							disabled: 'onChangeComboExistePisoPiloto',
 							bind: {
 								value: '{agrupacionficha.esVisitable}',
 								store: '{comboTrueFalse}',
 								readOnly: false,
-								hidden: '{!esVisibleParaCartera}'
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								disabled: '{!comprobarExistePiloto}',
+								listeners: {
+									change: 'onChangeComboEsVisitable'
+								}
 							}
 						},
 						{
@@ -356,11 +358,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.piso.piloto'),
 							name: 'pisoPiloto',
 							reference: 'pisoPiloto',
-							disabled: true,
 							bind: {
 								value: '{agrupacionficha.pisoPiloto}',
 								readOnly: false,
-								hidden: '{!esVisibleParaCartera}'
+								disabled: '{!comprobarEsVisitable}',
+								allowBlank: '{!comprobarEsVisitable}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
 							}
 						},
 						{

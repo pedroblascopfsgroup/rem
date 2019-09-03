@@ -40,7 +40,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('139' ,'Caser - Inmobiliario'	,'Caser - Inmobiliario'		,'11')
+        T_TIPO_DATA('140' ,'Caser - Inmobiliario'	,'Caser - Inmobiliario'		,'11')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

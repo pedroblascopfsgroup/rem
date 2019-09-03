@@ -12,7 +12,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     data: {
     	activo: null,
     	ofertaRecord: null,
-    	activoCondicionantesDisponibilidad: null
+    	activoCondicionantesDisponibilidad: null,
+    	editingFirstLevel: null
     },
 
     formulas: {
@@ -766,8 +767,49 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    
 	    esSuperUsuario: function(get){
 	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
-	    }
-		
+	    },
+
+    	esOtrosotivoAutorizacionTramitacion: function(get){
+    		
+    		var me = this;
+    		
+    		var comboOtros = get('comercial.motivoAutorizacionTramitacionCodigo');
+    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == comboOtros){
+    			return true;
+    		}
+    		me.set('comercial.observacionesAutoTram', null);
+    			
+			return false;
+    	},
+    	
+    	esSelecionadoAutorizacionTramitacion: function(get){
+    		
+    		var me = this;
+    		var todoSelec = get('comercial.motivoAutorizacionTramitacionCodigo');
+    		var obsv = get('comercial.observacionesAutoTram');
+    		var editable = get('editingFirstLevel');
+    		if(editable){
+	    		if(todoSelec != undefined && todoSelec != null){
+		    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == todoSelec){
+		    			if(obsv){
+		    				return true;
+		    			}
+		    			return false;
+		    		} else {
+		    			return true;
+		    		}
+	    		}
+    		}
+    		return false;
+    	},
+    	usuarioTieneFuncionTramitarOferta: function(get){
+    		var esTramitable = get('comercial.tramitable');
+    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+    			if(!esTramitable){
+    				return !funcion;
+    			}
+    		return true;
+    	}		
 	 },
 	
     stores: {

@@ -17,6 +17,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -166,6 +167,11 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	
 	@Column(name = "AGR_EMPRESA_COMERCIALIZADORA")
 	private String empresaComercializadora;
+
+	@OneToOne(mappedBy = "activoAgrupacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "AGR_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
 
 	public Long getId() {
 		return id;
@@ -431,5 +437,13 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 		this.empresaComercializadora = empresaComercializadora;
 	}
 	
+	public ActivoAutorizacionTramitacionOfertas getActivoAutorizacionTramitacionOfertas() {
+		return activoAutorizacionTramitacionOfertas;
+	}
+
+	public void setActivoAutorizacionTramitacionOfertas(
+			ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas) {
+		this.activoAutorizacionTramitacionOfertas = activoAutorizacionTramitacionOfertas;
+	}
 
 }

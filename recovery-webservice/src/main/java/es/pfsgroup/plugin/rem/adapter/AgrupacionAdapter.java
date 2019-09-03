@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -99,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoComercialAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -118,7 +118,6 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -773,6 +772,13 @@ public class AgrupacionAdapter {
 				if(!Checks.esNulo(agrupacion.isEsVisitable())) {
 					dtoAgrupacion.setEsVisitable(agrupacion.isEsVisitable());
 				}
+
+				if (!Checks.esNulo(agrupacion.getActivoAutorizacionTramitacionOfertas())) {
+					beanUtilNotNull.copyProperty(dtoAgrupacion, "motivoAutorizacionTramitacionCodigo", agrupacion.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
+					beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
+				}
+				dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
+
 			}
 
 		} catch (IllegalAccessException e) {
@@ -4210,5 +4216,27 @@ public class AgrupacionAdapter {
 		}
 			
 		return nuevoPisoPiloto;
+	}
+
+	public DtoComercialAgrupaciones getComercialAgrupacionById(Long id) {
+		DtoComercialAgrupaciones dtoAgrupacion = new DtoComercialAgrupaciones();
+
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		try {
+			if (!Checks.esNulo(agrupacion.getActivoAutorizacionTramitacionOfertas())) {
+			
+				beanUtilNotNull.copyProperty(dtoAgrupacion, "motivoAutorizacionTramitacionCodigo", agrupacion.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
+				beanUtilNotNull.copyProperty(dtoAgrupacion, "observacionesAutoTram", agrupacion.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
+			}
+			
+			dtoAgrupacion.setTramitable(activoAgrupacionApi.isTramitable(agrupacion));
+		
+		} catch (IllegalAccessException e) {
+			logger.error("error en agrupacionAdapter", e);
+		} catch (InvocationTargetException e) {
+			logger.error("error en agrupacionAdapter", e);
+		}
+
+		return dtoAgrupacion;
 	}
 }

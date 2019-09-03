@@ -5410,7 +5410,45 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		if(!Ext.isEmpty(usuarioGestor.getSelection()) && !unidadAlquilable)
 			agregarGestor.setDisabled(false);
-	}
+	},
+	
+	onInsertarAutorizacionTramOfertas: function(btn){
+		
+		var me = this;	
+		Ext.Msg.confirm(
+				HreRem.i18n("title.autorizar.tramitacion.ofertas"),
+				HreRem.i18n("msg.autorizar.tramitacion.activo.ofertas"),
+				function(boton){
+					
+					if (boton == "yes"){
+
+				    	var url =  $AC.getRemoteUrl('activo/insertarActAutoTram');
+				    	var parametros = btn.up("comercialactivo").getBindRecord().getData();
+				
+				    	Ext.Ajax.request({
+				    		
+				    	     url: url,
+				    	     params: parametros,
+				
+				    	     success: function(response, opts) {
+				  
+				    	    	 btn.up("comercialactivo").funcionRecargar();
+				    	         
+				    	         if(Ext.decode(response.responseText).success == "false") {
+									me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
+									// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    	         }else{
+				    	        	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	         }
+				    	     },
+				    	     failure: function (a, operation, context) {
+				           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				           }
+				    	 });
+					}
+				});
+    }
+	
 
 });
 

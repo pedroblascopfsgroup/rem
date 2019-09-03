@@ -131,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -4225,21 +4226,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// Date fechaVenta = null;
 		Date fechaVentaExterna = null;
 		Double importeVentaExterna = null;
+		
+		
 		if (Checks.esNulo(dto.getId())) {
 			return dto;
 		}
-
+		
 		Activo activo = activoDao.get(Long.parseLong(dto.getId()));
 		dto.setExpedienteComercialVivo(false);
+		
 
 		try {
 			if (!Checks.esNulo(activo.getSituacionComercial())) {
 				beanUtilNotNull.copyProperty(dto, "situacionComercialCodigo",
 						activo.getSituacionComercial().getCodigo());
 			}
+			
 
 			// Obtener oferta aceptada. Si tiene, establecer expediente
-			// comercial vivo a true.
+			// comercial vivo a true.Qué se solicita
 			Oferta oferta = this.tieneOfertaAceptada(activo);
 			if (!Checks.esNulo(oferta)) {
 				dto.setExpedienteComercialVivo(true);
@@ -4303,6 +4308,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activo.getEstaEnPuja())) {
 				beanUtilNotNull.copyProperty(dto, "puja", activo.getEstaEnPuja());
 			}
+			if (!Checks.esNulo(activo.getActivoAutorizacionTramitacionOfertas())) {
+				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
+				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -4317,6 +4326,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// Buscamos los campos que pueden ser propagados para esta pestaña
 			dto.setCamposPropagables(TabActivoService.TAB_COMERCIAL);
 		}
+		dto.setTramitable(this.isTramitable(activo));
+		
 		return dto;
 	}
 
@@ -4369,6 +4380,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
+			
+//			if(!Checks.esNulo(dto.getMotivoAutorizacionTramitacionCodigo())) {
+//				if(DDMotivoAutorizacionTramitacion.COD_OTROS.equals(activo.getOfertas().get(0))) {
+//					
+//				}
+//			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -6688,4 +6705,72 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return listaPerimetros;
 	}
 	
+	@Override
+	public boolean isTramitable(Activo activo) {
+		boolean tramitable = true;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
+		VTramitacionOfertaActivo activoNoTramitable = genericDao.get(VTramitacionOfertaActivo.class, filtro);
+
+		if(!Checks.esNulo(activoNoTramitable)) {
+			tramitable = false;
+		}
+
+		return tramitable;
+	}
+	
+	@Override
+	public Date getFechaInicioBloqueo(Activo activo) {
+		Date fechaBloqueo = null;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
+		VTramitacionOfertaActivo activoNoTramitable = genericDao.get(VTramitacionOfertaActivo.class, filtro);
+		if(!Checks.esNulo(activoNoTramitable)) {
+			fechaBloqueo = activoNoTramitable.getFechaPublicacion();
+		}
+		return fechaBloqueo;
+	}
+	
+	@Override
+	@Transactional
+	public boolean insertarActAutoTram(DtoComercialActivo dto) {
+		
+		Usuario usuario = usuarioApi.getUsuarioLogado();
+		if (Checks.esNulo(dto.getId())) {
+			return false;
+		}
+		
+		Activo activo = activoDao.get(Long.parseLong(dto.getId()));
+		
+		try {
+			DDMotivoAutorizacionTramitacion motivoTramitacion = genericDao.get(DDMotivoAutorizacionTramitacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getMotivoAutorizacionTramitacionCodigo()));	
+			ActivoAutorizacionTramitacionOfertas activoAuto =  activo.getActivoAutorizacionTramitacionOfertas();
+			if(Checks.esNulo(activoAuto)) {
+				activoAuto = new ActivoAutorizacionTramitacionOfertas();
+				beanUtilNotNull.copyProperty(activoAuto, "activo", activo);
+			}
+			beanUtilNotNull.copyProperty(activoAuto, "observacionesAutoTram", dto.getObservacionesAutoTram());
+			beanUtilNotNull.copyProperty(activoAuto, "motivoAutorizacionTramitacion", motivoTramitacion);
+			activoAuto.setUsuario(usuario);
+			beanUtilNotNull.copyProperty(activoAuto, "fechIniBloq", this.getFechaInicioBloqueo(activo));
+			beanUtilNotNull.copyProperty(activoAuto, "fechAutoTram", new Date());
+			
+			Auditoria auditoriaActivoAuto = activoAuto.getAuditoria();
+			if (auditoriaActivoAuto != null) {
+				auditoriaActivoAuto.setFechaModificar(new Date());
+				auditoriaActivoAuto.setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+			}
+			
+			genericDao.save(ActivoAutorizacionTramitacionOfertas.class, activoAuto);
+			
+		} catch (IllegalAccessException e) {
+			logger.error("Error en activoManager", e);
+			return false;
+
+		} catch (InvocationTargetException e) {
+			logger.error("Error en activoManager", e);
+			return false;
+		}
+		
+		return true;
+	}
+
 }

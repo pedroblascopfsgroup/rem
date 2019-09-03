@@ -76,6 +76,9 @@ public class DtoAgrupaciones extends WebDto {
 	private Long pisoPiloto;
 	private String empresaPromotora;
 	private String empresaComercializadora;
+	private Boolean tramitable;
+	private String motivoAutorizacionTramitacionCodigo;
+	private String observacionesAutoTram;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -434,6 +437,7 @@ public class DtoAgrupaciones extends WebDto {
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
 	}
+
 	public Boolean getComercializableConsPlano() {
 		return comercializableConsPlano;
 	}
@@ -469,5 +473,24 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setEmpresaComercializadora(String empresaComercializadora) {
 		this.empresaComercializadora = empresaComercializadora;
+	}
+	
+	public Boolean getTramitable() {
+		return tramitable;
+	}
+	public void setTramitable(Boolean tramitable) {
+		this.tramitable = tramitable;
+	}
+	public String getMotivoAutorizacionTramitacionCodigo() {
+		return motivoAutorizacionTramitacionCodigo;
+	}
+	public void setMotivoAutorizacionTramitacionCodigo(String motivoAutorizacionTramitacionCodigo) {
+		this.motivoAutorizacionTramitacionCodigo = motivoAutorizacionTramitacionCodigo;
+	}
+	public String getObservacionesAutoTram() {
+		return observacionesAutoTram;
+	}
+	public void setObservacionesAutoTram(String observacionesAutoTram) {
+		this.observacionesAutoTram = observacionesAutoTram;
 	}
 }

@@ -1216,5 +1216,44 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
 			me.lookupReference('pisoPiloto').setValue(null);
 		}
-	}
+	},
+	
+	onInsertarAutorizacionTramOfertasAgrupacion: function(btn){
+		
+		var me = this;	
+		Ext.Msg.confirm(
+				HreRem.i18n("title.autorizar.tramitacion.ofertas"),
+				HreRem.i18n("msg.autorizar.tramitacion.activo.ofertas"),
+				function(boton){
+					
+					if (boton == "yes"){
+				    	var url =  $AC.getRemoteUrl('agrupacion/insertarActAutoTram');
+				    	var parametros = btn.up("comercialagrupacion").getBindRecord().getData();
+				    	parametros.id = me.getViewModel().get("agrupacionficha.id");
+				
+				    	Ext.Ajax.request({
+				    		
+				    	     url: url,
+				    	     params: parametros,
+				
+				    	     success: function(response, opts) {
+				  
+				    	         if(Ext.decode(response.responseText).success == "false") {
+									me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
+									// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    	         }else{
+				    	        	 btn.up("comercialagrupacion").funcionRecargar();
+				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botoneditar]").setVisible(false);
+				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botonguardar]").setVisible(false);
+				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botoncancelar]").setVisible(false);
+				    	        	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	         }
+				    	     },
+				    	     failure: function (a, operation, context) {
+				           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				           }
+				    	 });
+					}
+				});
+    }
 });

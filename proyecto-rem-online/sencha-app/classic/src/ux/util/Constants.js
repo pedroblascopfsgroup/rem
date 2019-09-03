@@ -636,7 +636,14 @@ Ext.define('HreRem.ux.util.Constants', {
 	 
 	D_ESTADOS_CIVILES:{
 	 	COD_CASADO	:'2'
-	 }
+	 },
+	
+	DD_MOTIVO_AUTORIZACION_TRAMITE: {
+		COD_AUTORIZADO_ENTIDAD_CLIENTE: '01',
+		COD_TRAMITACION_ANULADA_CORRECCION: '02',
+		COD_OTROS: '03'
+	}
+	 
 	
 
 });

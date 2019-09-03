@@ -14,9 +14,13 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			form = me.getView(),
 			wizard = form.up('wizardBase'),
 			idExpediente = null,
+			idActivo = null,
+			idAgrupacion = null,
 			dniComprador = null,
-			codTipoDocumento = null;
+			codTipoDocumento = null,
+			idActivo;
 		me.firstExecution = true;
+
 		if(!Ext.isEmpty(wizard.expediente)){
 			idExpediente = wizard.expediente.get('id');
 			dniComprador = wizard.comprador.get('numDocumento');
@@ -24,11 +28,19 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		}else{
 			dniComprador = wizard.numDocumento;
 			codTipoDocumento = wizard.codTipoDocumento;
+			idActivo = wizard.oferta.get('idActivo');
+			idAgrupacion = wizard.oferta.get('idAgrupacion');
+		}
+		if(!Ext.isEmpty(wizard.oferta)){
+			idAgrupacion = wizard.oferta.get('idAgrupacion');
+			idActivo = wizard.oferta.get('idActivo');
 		}
 		Ext.Ajax.request({
 			url: $AC.getRemoteUrl('ofertas/checkPedirDoc'),
 			method: 'POST',
 			params: {
+				idActivo: idActivo,
+				idAgrupacion: idAgrupacion,
 				idExpediente: idExpediente,					
 				dniComprador: dniComprador,
 				codtipoDoc: codTipoDocumento
@@ -735,7 +747,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				razonSocialCliente: bindRecord.razonSocialCliente,
 				deDerechoTanteo: bindRecord.dederechotanteo,
 				claseOferta: bindRecord.claseOferta,
-				numOferPrincipal: bindRecord.numOferPrincipal
+				numOferPrincipal: bindRecord.numOferPrincipal,
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -758,7 +771,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				razonSocialCliente: bindRecord.razonSocialCliente,
 				deDerechoTanteo: bindRecord.dederechotanteo,
 				claseOferta: bindRecord.claseOferta,
-				numOferPrincipal: bindRecord.numOferPrincipal
+				numOferPrincipal: bindRecord.numOferPrincipal,
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
 			});
 		}
 

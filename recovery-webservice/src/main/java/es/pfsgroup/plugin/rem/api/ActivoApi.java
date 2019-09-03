@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
@@ -689,6 +690,15 @@ public interface ActivoApi {
 	 * @return
 	 */
 	Oferta tieneOfertaAceptada(Activo activo);
+	
+	/**
+	 * Averigua si el activo tiene ofertas acpetadas // MODIFICACIÓN: Mira si el expediente está aprobado (y estados posteriores).
+	 *
+	 * @param activo
+	 * @return
+	 */
+	Oferta tieneOfertaTramitadaOCongeladaConReserva(Activo activo);
+
 
 	/**
 	 * Comprueba que los tipos de activo del activo y del informe comercial sean distintos.
@@ -1197,5 +1207,7 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
+
+	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
 
 }

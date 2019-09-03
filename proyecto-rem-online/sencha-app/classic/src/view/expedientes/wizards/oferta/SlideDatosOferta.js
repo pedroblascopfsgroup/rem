@@ -129,14 +129,17 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var lockClaseOferta = form.down('field[name=claseOferta]');
 	    								lockClaseOferta.reset();
 	    								lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    								
+	    								lockClaseOferta.hidden ? lockClaseOferta.setAllowBlank(true) : lockClaseOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    										
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								checkNumOferPrin.reset();
 	    								checkNumOferPrin.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    								var lockClaseOferta = form.down('field[name=claseOferta]');
-	    								lockClaseOferta.reset();
-	    								lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
-	    								lockClaseOferta.hidden ? lockClaseOferta.setAllowBlank(true) : lockClaseOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value)
+	    								checkNumOferPrin.hidden ? checkNumOferPrin.setAllowBlank(true) : checkNumOferPrin.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    										
+	    								var checkBuscadorOferta = form.down('field[name=buscadorNumOferPrincipal]');
+	    								checkBuscadorOferta.reset();
+	    								//checkBuscadorOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    								checkBuscadorOferta.hidden ? checkBuscadorOferta.setAllowBlank(true) : checkBuscadorOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
 	    							}
 	    						},
 			    				colspan: 2
@@ -372,15 +375,59 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									hidden: '{esLiberbank}'
 								},
 								displayField: 'descripcion',
-								valueField: 'codigo'
+								valueField: 'codigo',
+								listeners: {
+	    							change: function(combo, value) {
+	    								var me = this;
+	    								var form = combo.up('form');
+	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
+	    								checkNumOferPrin.reset();
+	    								checkNumOferPrin.setDisabled("02" != value);
+	    								var buscaNumOferPrin = form.down('field[name=buscadorNumOferPrincipal]');
+	    								buscaNumOferPrin.reset();
+    									buscaNumOferPrin.setDisabled("02" != value);
+	    							}
+	    						}
 							},
+		            	    {
+								xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.buscador.oferta'),
+								name: 'buscadorNumOferPrincipal',
+								maskRe: /[0-9.]/,
+								bind: {
+									value: '{oferta.buscadorNumOferPrincipal}',
+										hidden: '{esLiberbank}'
+								},
+								allowBlank: true,
+	    						disabled: true,
+								triggers: {
+									
+										buscarNumOferta: {
+								            cls: Ext.baseCSSPrefix + 'form-search-trigger',
+								            handler: 'buscarOferta'
+								        }
+								},
+								cls: 'searchfield-input sf-con-borde',
+								emptyText:  'Introduce el número de la oferta principal',
+								enableKeyEvents: true,
+						        listeners: {
+						        	specialKey: function(field, e) {
+						        		if (e.getKey() === e.ENTER) {
+						        			field.lookupController().buscarOferta(field);											        			
+						        		}
+						        	}
+						        }
+		                	},
 							{
+								xtype: 'textfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.numOferPrincipal'),
 								name: 		'numOferPrincipal', 
+								readOnly: true,
 								allowBlank: true,
 								bind: 		{
 									value: '{oferta.numOferPrincipal}'
-								}
+								},
+					        	colspan: 2
 							}
 						]
 				}

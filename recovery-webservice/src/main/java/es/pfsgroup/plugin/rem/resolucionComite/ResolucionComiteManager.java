@@ -365,14 +365,15 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 				genericDao.save(Oferta.class, ofr);
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
 				if (!Checks.esNulo(expediente)) {
-					// Actualizar honorarios para el nuevo importe de
-					// contraoferta.
-					expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
 
 					// Actualizamos la participación de los activos en la
 					// oferta;
 					expedienteComercialApi.updateParticipacionActivosOferta(ofr);
 					expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+					
+					// Actualizar honorarios para el nuevo importe de
+					// contraoferta.
+					expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
 				}
 			}
 			resol = genericDao.save(ResolucionComiteBankia.class, resol);

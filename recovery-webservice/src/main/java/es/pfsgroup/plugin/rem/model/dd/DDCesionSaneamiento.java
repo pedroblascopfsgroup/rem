@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -55,6 +57,10 @@ public class DDCesionSaneamiento implements Auditable, Dictionary {
 
 	@Embedded
 	private Auditoria auditoria;
+	
+	@OneToOne
+	@JoinColumn(name = "DD_SRA_ID")
+	private DDServicerActivo servicer;
 
 	public Long getId() {
 		return id;
@@ -102,6 +108,14 @@ public class DDCesionSaneamiento implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDServicerActivo getServicer() {
+		return servicer;
+	}
+
+	public void setServicer(DDServicerActivo servicer) {
+		this.servicer = servicer;
 	}
 
 }

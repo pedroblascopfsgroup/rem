@@ -23,6 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
+import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -102,8 +104,7 @@ public class AgendaController extends TareaController {
 	private NotificatorServiceSancionOfertaSoloRechazo notificatorSoloRechazo;
 
     @Autowired
-    private ActivoAdapter activoAdapter;
-	
+    private ActivoAdapter activoAdapter;	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
@@ -393,35 +394,8 @@ public class AgendaController extends TareaController {
 						String codigo = tarea.getTareaProcedimiento().getTipoProcedimiento().getCodigo();
 						if(CODIGO_T013.equals(codigo)) {
 							salto = adapter.saltoResolucionExpediente(tarea.getId());
-
 						}else if(CODIGO_T017.equals(codigo)) {
-							if(DDEstadosExpedienteComercial.RESERVADO.equals(eco.getEstado().getCodigo())) {
-								salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
-							}else {
-								for (TareaExterna tareasFin : listaTareas) {
-									salto = adapter.saltoFin(tareasFin.getId());
-								} 
-								expedienteComercialApi.updateEstadoExpedienteComercial(eco, DDEstadosExpedienteComercial.ANULADO);
-								oferta = eco.getOferta();
-								ofertaApi.rechazarOferta(oferta);
-								ofertaApi.descongelarOfertas(eco);
-								DDMotivoRechazoOferta motivoRechazo = genericDao.get(DDMotivoRechazoOferta.class, 
-										genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoOferta.CODIGO_OTROS));
-								oferta.setMotivoRechazo(motivoRechazo);
-								eco.setFechaVenta(null);
-								//Actualizar el estado comercial de los activos de la oferta
-								ofertaApi.updateStateDispComercialActivosByOferta(oferta);
-								//Actualizar el estado de la publicación de los activos de la oferta (desocultar activos)
-								ofertaApi.desocultarActivoOferta(oferta);
-								
-								ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(oferta);
-								notificatorSoloRechazo.notificatorFinTareaConValores(tramite, null);
-								Activo activo = tramite.getActivo();
-								if(!Checks.esNulo(activo)) {
-									activoApi.actualizarOfertasTrabajosVivos(activo);
-									activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
-								}
-							}
+							salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
 						}
 						
 						expedienteComercialApi.finalizarTareaValidacionClientes(eco);
@@ -865,6 +839,29 @@ public class AgendaController extends TareaController {
 			esOfertaIndividual = true;
 		}
 		model.put("ofertaIndividual", esOfertaIndividual);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView avanzarOfertasDependientes(WebRequest request, ModelMap model) {
+
+		boolean success = false;
+		try {
+			success = adapter.avanzarOfertasDependientes(request.getParameterMap());
+		} catch (InvalidDataAccessResourceUsageException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorValidacionGuardado", getMensajeInvalidDataAccessExcepcion(e));
+		} catch (Exception e) {
+			String error = e.getMessage();
+			if ( error == null  || error.isEmpty())
+				error = e.toString();
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", error);
+		}
+
+		model.put("success", success);
+
 		return createModelAndViewJson(model);
 	}
 }

@@ -118,6 +118,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -946,6 +947,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setPorcentajeReserva(new Double(10));
 				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(10) / 100));
 			}
+
 			if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
 				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
 				if(oferta.getImporteOferta() > 6000) {
@@ -1163,8 +1165,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente)));
-				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente)));
+				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente));
+				nuevoExpediente.setComiteSancion(comiteLbk);
+				nuevoExpediente.setComitePropuesto(comiteLbk);
 		}
 		
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
@@ -3625,6 +3628,65 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return ofertaAceptada;
 	}
 
+	@Override
+	public Oferta tieneOfertaTramitadaOCongeladaConReserva(Activo activo) {
+		List<ActivoOferta> listaActivoOferta = activo.getOfertas();
+		int i = 0;
+		Oferta ofertaAux = null;
+		Oferta oferta = null;
+
+		if (!Checks.estaVacio(listaActivoOferta)) {
+			while (i < listaActivoOferta.size() && oferta == null) {
+				ActivoOferta tmp = listaActivoOferta.get(i);
+				i++;
+				ofertaAux = tmp.getPrimaryKey().getOferta();
+				if (DDEstadoOferta.CODIGO_CONGELADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+					ExpedienteComercial expediente = expedienteComercialApi
+							.expedienteComercialPorOferta(ofertaAux.getId());
+					if (!Checks.esNulo(expediente)) { 
+						Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
+						if(!Checks.esNulo(reserva) && !Checks.esNulo(reserva.getFechaFirma())) {
+							List<ComunicacionGencat> comunicacionesVivas = gencatApi.comunicacionesVivas(expediente);
+							boolean provieneOfertaGencat = gencatApi.esOfertaGencat(expediente);
+							if (!Checks.estaVacio(comunicacionesVivas) && !provieneOfertaGencat && 
+									!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) &&
+									!DDEstadosExpedienteComercial.PTE_SANCION.equals(expediente.getEstado().getCodigo()) &&
+									((!Checks.esNulo(expediente.getReserva()) && !DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()))
+										|| (Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()))
+										|| DDEstadosExpedienteComercial.ANULADO.equals(expediente.getEstado().getCodigo())
+										|| DDEstadosExpedienteComercial.ANULADO_PDTE_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+										|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo()))) {
+								if (gencatApi.comprobarExpedienteAnuladoGencat(comunicacionesVivas)) {
+									oferta = ofertaAux;
+								}
+							}
+							
+						}
+							
+					}
+				}else if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+					ExpedienteComercial expediente = expedienteComercialApi
+							.expedienteComercialPorOferta(ofertaAux.getId());
+					if (!Checks.esNulo(expediente)) { // Si el expediente está
+														// aprobado (o estados
+														// posteriores).
+						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.ALQUILADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.EN_TRAMITACION
+										.equals(expediente.getEstado().getCodigo()))
+							oferta = ofertaAux;
+					}
+				}
+			}
+		}
+
+		return oferta;
+	}
 	private Trabajo tareaExternaToTrabajo(TareaExterna tareaExterna) {
 		Trabajo trabajo = null;
 		TareaActivo tareaActivo = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
@@ -4833,18 +4895,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			if (!Checks.esNulo(activo)) {
-				Long idUsuarioGestorFormalizacion;
+				Long idUsuarioGestorFormalizacion = null;
 				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)) {
 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GFORM");
 					EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 					Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 					Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
-					idUsuarioGestorFormalizacion = genericDao.get(GestorActivo.class, f2, f3).getUsuario().getId();// flag
-
+					GestorActivo nuevoGestorF = genericDao.get(GestorActivo.class, f2, f3);					
+					if(!Checks.esNulo(nuevoGestorF) && !Checks.esNulo(nuevoGestorF.getUsuario())) {
+						idUsuarioGestorFormalizacion = nuevoGestorF.getUsuario().getId();// flag
+					}
 					f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
 					tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 					f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
-					usuarioGestorComercial = genericDao.get(GestorActivo.class, f2, f3).getUsuario();
+					GestorActivo nuevoGestorC = genericDao.get(GestorActivo.class, f2, f3);
+					if(!Checks.esNulo(nuevoGestorC) && !Checks.esNulo(nuevoGestorC.getUsuario())) {
+						usuarioGestorComercial = nuevoGestorC.getUsuario();
+					}					
 
 				} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)){
 					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
@@ -4934,7 +5001,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 
 				f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
-				usuarioSupervisorComercial = genericDao.get(GestorActivo.class, f2, f3).getUsuario();
+				GestorActivo nuevoSupervisorC = genericDao.get(GestorActivo.class, f2, f3);					
+				if(!Checks.esNulo(nuevoSupervisorC) && !Checks.esNulo(nuevoSupervisorC.getUsuario())) {
+					usuarioSupervisorComercial = nuevoSupervisorC.getUsuario();// flag
+				}
 				if (!Checks.esNulo(supervisorFormalzacion)) {
 					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 							supervisorFormalzacion.getUsuario().getUsername(), dto);
@@ -6604,6 +6674,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return UAsAlquiladas;
+	}
+
+	@Override
+	public List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer) {
+		
+		List<DDCesionSaneamiento> listaPerimetros = new ArrayList<DDCesionSaneamiento>();
+		
+		if(!Checks.esNulo(codigoServicer)) {
+			listaPerimetros = genericDao.getList(DDCesionSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "servicer.codigo", codigoServicer));
+		}
+		
+		return listaPerimetros;
 	}
 	
 }

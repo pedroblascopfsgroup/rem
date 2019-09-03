@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
@@ -276,6 +277,10 @@ public class Oferta implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CLO_ID")
 	private DDClaseOferta claseOferta;  
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ORC_ID")
+	private DDOrigenComprador origenComprador;
     
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -821,4 +826,12 @@ public class Oferta implements Serializable, Auditable {
 	public void setOfertaDependiente(OfertasAgrupadasLbk ofertaDependiente) {
 		this.ofertaDependiente = ofertaDependiente;
 	}	
+
+	public DDOrigenComprador getOrigenComprador() {
+		return origenComprador;
+	}
+
+	public void setOrigenComprador(DDOrigenComprador origenComprador) {
+		this.origenComprador = origenComprador;
+	}
 }

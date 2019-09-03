@@ -787,6 +787,17 @@ public interface ParticularValidatorApi {
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 	Boolean existeActivoAsociado(String numActivo);
+	
+	/**
+	 * Devuelve el codigo del destino comercial de un activo
+	 * 
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean esActivoProductoTerminado(String numActivo);
+
+	public Boolean noExisteEstado(String numActivo);
+	
 
 	/** 
 	 * @param numGasto

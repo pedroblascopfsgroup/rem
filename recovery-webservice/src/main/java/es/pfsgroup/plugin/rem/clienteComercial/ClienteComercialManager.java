@@ -177,461 +177,450 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	
 	@Override
-	public void saveClienteComercial(ClienteDto clienteDto) {
+	public void saveClienteComercial(ClienteDto clienteDto)  throws Exception{
 		ClienteComercial cliente = null; 
 		ClienteGDPR clienteGDPR = null; //HREOS-4937
-		try {
+		cliente = new ClienteComercial();			
+		beanUtilNotNull.copyProperties(cliente, clienteDto);
+		cliente.setIdClienteRem(clienteComercialDao.getNextClienteRemId());					
 
-			cliente = new ClienteComercial();			
-			beanUtilNotNull.copyProperties(cliente, clienteDto);
-			cliente.setIdClienteRem(clienteComercialDao.getNextClienteRemId());					
+		if (!Checks.esNulo(clienteDto.getIdUsuarioRemAccion())) {
+			Usuario user = (Usuario) genericDao.get(Usuario.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdUsuarioRemAccion()));
+			if (!Checks.esNulo(user)) {
+				cliente.setUsuarioAccion(user);
+			}
+		}
+		if (!Checks.esNulo(clienteDto.getCodTipoDocumento())) {
+			DDTipoDocumento tipoDoc = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumento()));
+			if (!Checks.esNulo(tipoDoc)) {
+				cliente.setTipoDocumento(tipoDoc);
+			}
+		}
+		if (!Checks.esNulo(clienteDto.getCodTipoDocumentoRepresentante())) {
+			DDTipoDocumento tipoDocRep = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class, genericDao
+					.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumentoRepresentante()));
+			if (!Checks.esNulo(tipoDocRep)) {
+				cliente.setTipoDocumentoRepresentante(tipoDocRep);
+			}
+		}
+		if (!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())) {
+			ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemPrescriptor()));
+			if (!Checks.esNulo(prescriptor)) {
+				cliente.setProvPrescriptor(prescriptor);
+			}
+		}
+		if (!Checks.esNulo(clienteDto.getIdProveedorRemResponsable())) {
+			ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemResponsable()));
+			if (!Checks.esNulo(apiResp)) {
+				cliente.setProvApiResponsable(apiResp);
+			}
+		}
+		if (!Checks.esNulo(clienteDto.getCodTipoVia())) {
+			DDTipoVia tipovia = (DDTipoVia) genericDao.get(DDTipoVia.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoVia()));
+			if (!Checks.esNulo(tipovia)) {
+				cliente.setTipoVia(tipovia);
+			}
+		}
+		if (!Checks.esNulo(clienteDto.getCodMunicipio())) {
+			Localidad localidad = (Localidad) genericDao.get(Localidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipio()));
+			if (!Checks.esNulo(localidad)) {
+				cliente.setMunicipio(localidad);
+			}
+		}
+		if (!Checks.esNulo(clienteDto.getCodProvincia())) {
+			DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvincia()));
+			if (!Checks.esNulo(provincia)) {
+				cliente.setProvincia(provincia);
+			}
+		}
+		if (!Checks.esNulo(clienteDto.getCodPedania())) {
+			DDUnidadPoblacional pedania = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPedania()));
+			if (!Checks.esNulo(pedania)) {
+				cliente.setUnidadPoblacional(pedania);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodTipoPersona())) {
+			DDTiposPersona tipoPersona = (DDTiposPersona) genericDao.get(DDTiposPersona.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoPersona()));
+			if (!Checks.esNulo(tipoPersona)) {
+				cliente.setTipoPersona(tipoPersona);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodEstadoCivil())) {
+			DDEstadosCiviles estadoCivil = (DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodEstadoCivil()));
+			if (!Checks.esNulo(estadoCivil)) {
+				cliente.setEstadoCivil(estadoCivil);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodRegimenMatrimonial())) {
+			DDRegimenesMatrimoniales regimen = (DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodRegimenMatrimonial()));
+			if (!Checks.esNulo(regimen)) {
+				cliente.setRegimenMatrimonial(regimen);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getNombreCalle())) {
+			cliente.setDireccion(clienteDto.getNombreCalle());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getNumeroCalle())) {
+			cliente.setNumeroCalle(clienteDto.getNumeroCalle());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getEscalera())) {
+			cliente.setEscalera(clienteDto.getEscalera());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getPlanta())) {
+			cliente.setPlanta(clienteDto.getPlanta());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getPuerta())) {
+			cliente.setPuerta(clienteDto.getPuerta());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodigoPostal())) {
+			cliente.setCodigoPostal(clienteDto.getCodigoPostal());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getConyugeTipoDocumento())) {
+			DDTipoDocumento doc = genericDao.get(DDTipoDocumento.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getConyugeTipoDocumento()));
+			if (!Checks.esNulo(doc)) {
+				cliente.setTipoDocumentoConyuge(doc);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getConyugeDocumento())) {
+			cliente.setDocumentoConyuge(clienteDto.getConyugeDocumento());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodPais())) {
+			DDPaises pais = genericDao.get(DDPaises.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPais()));
+			if (!Checks.esNulo(pais)) {
+				cliente.setPais(pais);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getDireccionRepresentante())) {
+			cliente.setDireccionRepresentante(clienteDto.getDireccionRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodProvinciaRepresentante())) {
+			DDProvincia provincia = genericDao.get(DDProvincia.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaRepresentante()));
+			if (!Checks.esNulo(provincia)) {
+				cliente.setProvinciaRepresentante(provincia);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodMunicipioRepresentante())) {
+			Localidad localidad = genericDao.get(Localidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioRepresentante()));
+			if (!Checks.esNulo(localidad)) {
+				cliente.setMunicipioRepresentante(localidad);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodPaisRepresentante())) {
+			DDPaises pais = genericDao.get(DDPaises.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisRepresentante()));
+			if (!Checks.esNulo(pais)) {
+				cliente.setPaisRepresentante(pais);
+			}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
+			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
+		}
 
+		clienteComercialDao.save(cliente);
+		
+		// HREOS-4937 GDPR
+		clienteGDPR = new ClienteGDPR();
+		clienteGDPR.setCliente(cliente);
+		beanUtilNotNull.copyProperties(clienteGDPR, clienteDto);
+
+		if (!Checks.esNulo(clienteDto.getCodTipoDocumento())) {
+			DDTipoDocumento tipoDoc = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumento()));
+			if (!Checks.esNulo(tipoDoc)) {
+				clienteGDPR.setTipoDocumento(tipoDoc);
+			}
+		}
+		if (!Checks.esNulo(clienteDto.getDocumento())) {
+			clienteGDPR.setNumDocumento(clienteDto.getDocumento());
+		}
+
+		genericDao.save(ClienteGDPR.class, clienteGDPR);
+
+
+	}
+
+	@Override
+	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) throws Exception{
+
+		if (((JSONObject) jsonFields).containsKey("idClienteWebcom")) {
+			cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
+		}
+		if (((JSONObject) jsonFields).containsKey("razonSocial")) {
+			cliente.setRazonSocial(clienteDto.getRazonSocial());
+		}
+		if (((JSONObject) jsonFields).containsKey("nombre")) {
+			cliente.setNombre(clienteDto.getNombre());
+		}
+		if (((JSONObject) jsonFields).containsKey("apellidos")) {
+			cliente.setApellidos(clienteDto.getApellidos());
+		}
+		if (((JSONObject) jsonFields).containsKey("idUsuarioRem")) {
 			if (!Checks.esNulo(clienteDto.getIdUsuarioRemAccion())) {
 				Usuario user = (Usuario) genericDao.get(Usuario.class,
 						genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdUsuarioRemAccion()));
 				if (!Checks.esNulo(user)) {
 					cliente.setUsuarioAccion(user);
 				}
+			} else {
+				cliente.setUsuarioAccion(null);
 			}
+		}
+		if (((JSONObject) jsonFields).containsKey("codTipoDocumento")) {
 			if (!Checks.esNulo(clienteDto.getCodTipoDocumento())) {
 				DDTipoDocumento tipoDoc = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumento()));
 				if (!Checks.esNulo(tipoDoc)) {
 					cliente.setTipoDocumento(tipoDoc);
 				}
+			} else {
+				cliente.setTipoDocumento(null);
 			}
+		}
+		if (((JSONObject) jsonFields).containsKey("documento")) {
+			cliente.setDocumento(clienteDto.getDocumento());
+		}
+		if (((JSONObject) jsonFields).containsKey("codTipoDocumentoRepresentante")) {
 			if (!Checks.esNulo(clienteDto.getCodTipoDocumentoRepresentante())) {
-				DDTipoDocumento tipoDocRep = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class, genericDao
-						.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumentoRepresentante()));
+				DDTipoDocumento tipoDocRep = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo",
+								clienteDto.getCodTipoDocumentoRepresentante()));
 				if (!Checks.esNulo(tipoDocRep)) {
 					cliente.setTipoDocumentoRepresentante(tipoDocRep);
 				}
+			} else {
+				cliente.setTipoDocumentoRepresentante(null);
 			}
+		}
+		if (((JSONObject) jsonFields).containsKey("documentoRepresentante")) {
+			cliente.setDocumentoRepresentante(clienteDto.getDocumentoRepresentante());
+		}
+		if (((JSONObject) jsonFields).containsKey("telefono1")) {
+			cliente.setTelefono1(clienteDto.getTelefono1());
+		}
+		if (((JSONObject) jsonFields).containsKey("telefono2")) {
+			cliente.setTelefono2(clienteDto.getTelefono2());
+		}
+		if (((JSONObject) jsonFields).containsKey("email")) {
+			cliente.setEmail(clienteDto.getEmail());
+		}
+		if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
 			if (!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())) {
-				ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemPrescriptor()));
+				ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+						.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemPrescriptor()));
 				if (!Checks.esNulo(prescriptor)) {
 					cliente.setProvPrescriptor(prescriptor);
 				}
+			} else {
+				cliente.setProvPrescriptor(null);
 			}
+		}
+		if (((JSONObject) jsonFields).containsKey("idProveedorRemResponsable")) {
 			if (!Checks.esNulo(clienteDto.getIdProveedorRemResponsable())) {
-				ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemResponsable()));
+				ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+						.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemResponsable()));
 				if (!Checks.esNulo(apiResp)) {
 					cliente.setProvApiResponsable(apiResp);
 				}
+			} else {
+				cliente.setProvApiResponsable(null);
 			}
+		}
+		if (((JSONObject) jsonFields).containsKey("codTipoVia")) {
 			if (!Checks.esNulo(clienteDto.getCodTipoVia())) {
 				DDTipoVia tipovia = (DDTipoVia) genericDao.get(DDTipoVia.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoVia()));
 				if (!Checks.esNulo(tipovia)) {
 					cliente.setTipoVia(tipovia);
 				}
+			} else {
+				cliente.setTipoVia(null);
 			}
-			if (!Checks.esNulo(clienteDto.getCodMunicipio())) {
-				Localidad localidad = (Localidad) genericDao.get(Localidad.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipio()));
-				if (!Checks.esNulo(localidad)) {
-					cliente.setMunicipio(localidad);
-				}
-			}
+		}
+		if (((JSONObject) jsonFields).containsKey("nombreCalle")) {
+			cliente.setDireccion(clienteDto.getNombreCalle());
+		}
+		if (((JSONObject) jsonFields).containsKey("numeroCalle")) {
+			cliente.setNumeroCalle(clienteDto.getNumeroCalle());
+		}
+		if (((JSONObject) jsonFields).containsKey("escalera")) {
+			cliente.setEscalera(clienteDto.getEscalera());
+		}
+		if (((JSONObject) jsonFields).containsKey("planta")) {
+			cliente.setPlanta(clienteDto.getPlanta());
+		}
+		if (((JSONObject) jsonFields).containsKey("puerta")) {
+			cliente.setPuerta(clienteDto.getPuerta());
+		}
+		if (((JSONObject) jsonFields).containsKey("codigoPostal")) {
+			cliente.setCodigoPostal(clienteDto.getCodigoPostal());
+		}
+		if (((JSONObject) jsonFields).containsKey("codProvincia")) {
 			if (!Checks.esNulo(clienteDto.getCodProvincia())) {
 				DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvincia()));
 				if (!Checks.esNulo(provincia)) {
 					cliente.setProvincia(provincia);
 				}
+			} else {
+				cliente.setProvincia(null);
 			}
+		}
+		if (((JSONObject) jsonFields).containsKey("codMunicipio")) {
+			if (!Checks.esNulo(clienteDto.getCodMunicipio())) {
+				Localidad localidad = (Localidad) genericDao.get(Localidad.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipio()));
+				if (!Checks.esNulo(localidad)) {
+					cliente.setMunicipio(localidad);
+				}
+			} else {
+				cliente.setMunicipio(null);
+			}
+		}
+		if (((JSONObject) jsonFields).containsKey("codPedania")) {
 			if (!Checks.esNulo(clienteDto.getCodPedania())) {
 				DDUnidadPoblacional pedania = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPedania()));
 				if (!Checks.esNulo(pedania)) {
 					cliente.setUnidadPoblacional(pedania);
 				}
+			} else {
+				cliente.setUnidadPoblacional(null);
 			}
-			
+		}
+		if (((JSONObject) jsonFields).containsKey("rechazaPublicidad")) {
+			cliente.setRechazaPublicidad(clienteDto.getRechazaPublicidad());
+		}
+		if (((JSONObject) jsonFields).containsKey("idClienteSalesforce")) {
+			cliente.setIdClienteSalesforce(clienteDto.getIdClienteSalesforce());
+		}
+		if (((JSONObject) jsonFields).containsKey("telefonoContactoVisitas")) {
+			cliente.setTelefonoContactoVisitas(clienteDto.getTelefonoContactoVisitas());
+		}
+		
+		if (((JSONObject) jsonFields).containsKey("codTipoPersona")) {
 			if (!Checks.esNulo(clienteDto.getCodTipoPersona())) {
 				DDTiposPersona tipoPersona = (DDTiposPersona) genericDao.get(DDTiposPersona.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoPersona()));
 				if (!Checks.esNulo(tipoPersona)) {
 					cliente.setTipoPersona(tipoPersona);
 				}
+			}else{
+				cliente.setTipoPersona(null);
 			}
-			
+		}
+		
+		if (((JSONObject) jsonFields).containsKey("codEstadoCivil")) {
 			if (!Checks.esNulo(clienteDto.getCodEstadoCivil())) {
 				DDEstadosCiviles estadoCivil = (DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodEstadoCivil()));
 				if (!Checks.esNulo(estadoCivil)) {
 					cliente.setEstadoCivil(estadoCivil);
 				}
+			}else{
+				cliente.setEstadoCivil(null);
 			}
-			
+		}
+		
+		if (((JSONObject) jsonFields).containsKey("codRegimenMatrimonial")) {
 			if (!Checks.esNulo(clienteDto.getCodRegimenMatrimonial())) {
 				DDRegimenesMatrimoniales regimen = (DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodRegimenMatrimonial()));
 				if (!Checks.esNulo(regimen)) {
 					cliente.setRegimenMatrimonial(regimen);
 				}
+			}else{
+				cliente.setRegimenMatrimonial(null);
 			}
-			
-			if (!Checks.esNulo(clienteDto.getNombreCalle())) {
-				cliente.setDireccion(clienteDto.getNombreCalle());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getNumeroCalle())) {
-				cliente.setNumeroCalle(clienteDto.getNumeroCalle());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getEscalera())) {
-				cliente.setEscalera(clienteDto.getEscalera());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getPlanta())) {
-				cliente.setPlanta(clienteDto.getPlanta());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getPuerta())) {
-				cliente.setPuerta(clienteDto.getPuerta());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodigoPostal())) {
-				cliente.setCodigoPostal(clienteDto.getCodigoPostal());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getConyugeTipoDocumento())) {
-				DDTipoDocumento doc = genericDao.get(DDTipoDocumento.class, 
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getConyugeTipoDocumento()));
-				if (!Checks.esNulo(doc)) {
-					cliente.setTipoDocumentoConyuge(doc);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getConyugeDocumento())) {
-				cliente.setDocumentoConyuge(clienteDto.getConyugeDocumento());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodPais())) {
-				DDPaises pais = genericDao.get(DDPaises.class, 
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPais()));
-				if (!Checks.esNulo(pais)) {
-					cliente.setPais(pais);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getDireccionRepresentante())) {
-				cliente.setDireccionRepresentante(clienteDto.getDireccionRepresentante());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodProvinciaRepresentante())) {
-				DDProvincia provincia = genericDao.get(DDProvincia.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaRepresentante()));
-				if (!Checks.esNulo(provincia)) {
-					cliente.setProvinciaRepresentante(provincia);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodMunicipioRepresentante())) {
-				Localidad localidad = genericDao.get(Localidad.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioRepresentante()));
-				if (!Checks.esNulo(localidad)) {
-					cliente.setMunicipioRepresentante(localidad);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodPaisRepresentante())) {
-				DDPaises pais = genericDao.get(DDPaises.class, 
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisRepresentante()));
-				if (!Checks.esNulo(pais)) {
-					cliente.setPaisRepresentante(pais);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
-				cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
-			}
-
-			clienteComercialDao.save(cliente);
-			
-			// HREOS-4937 GDPR
-			clienteGDPR = new ClienteGDPR();
-			clienteGDPR.setCliente(cliente);
-			beanUtilNotNull.copyProperties(clienteGDPR, clienteDto);
-
-			if (!Checks.esNulo(clienteDto.getCodTipoDocumento())) {
-				DDTipoDocumento tipoDoc = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumento()));
-				if (!Checks.esNulo(tipoDoc)) {
-					clienteGDPR.setTipoDocumento(tipoDoc);
-				}
-			}
-			if (!Checks.esNulo(clienteDto.getDocumento())) {
-				clienteGDPR.setNumDocumento(clienteDto.getDocumento());
-			}
-
-			genericDao.save(ClienteGDPR.class, clienteGDPR);
-
-			
-			
-		} catch (Exception e) {
-			logger.error("Error clientecomercialmanager ",e);
 		}
-
-	}
-
-	@Override
-	public void updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) {
-
-		try {
-
-			if (((JSONObject) jsonFields).containsKey("idClienteWebcom")) {
-				cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
+		
+		if (!Checks.esNulo(clienteDto.getConyugeTipoDocumento())) {
+			DDTipoDocumento doc = genericDao.get(DDTipoDocumento.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getConyugeTipoDocumento()));
+			if (!Checks.esNulo(doc)) {
+				cliente.setTipoDocumentoConyuge(doc);
 			}
-/*			if (((JSONObject) jsonFields).containsKey("idClienteRem")) {
-				cliente.setIdClienteRem(clienteDto.getIdClienteRem());
-			}*/
-			if (((JSONObject) jsonFields).containsKey("razonSocial")) {
-				cliente.setRazonSocial(clienteDto.getRazonSocial());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getConyugeDocumento())) {
+			cliente.setDocumentoConyuge(clienteDto.getConyugeDocumento());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodPais())) {
+			DDPaises pais = genericDao.get(DDPaises.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPais()));
+			if (!Checks.esNulo(pais)) {
+				cliente.setPais(pais);
 			}
-			if (((JSONObject) jsonFields).containsKey("nombre")) {
-				cliente.setNombre(clienteDto.getNombre());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getDireccionRepresentante())) {
+			cliente.setDireccionRepresentante(clienteDto.getDireccionRepresentante());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodProvinciaRepresentante())) {
+			DDProvincia provincia = genericDao.get(DDProvincia.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaRepresentante()));
+			if (!Checks.esNulo(provincia)) {
+				cliente.setProvinciaRepresentante(provincia);
 			}
-			if (((JSONObject) jsonFields).containsKey("apellidos")) {
-				cliente.setApellidos(clienteDto.getApellidos());
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodMunicipioRepresentante())) {
+			Localidad localidad = genericDao.get(Localidad.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioRepresentante()));
+			if (!Checks.esNulo(localidad)) {
+				cliente.setMunicipioRepresentante(localidad);
 			}
-			if (((JSONObject) jsonFields).containsKey("idUsuarioRem")) {
-				if (!Checks.esNulo(clienteDto.getIdUsuarioRemAccion())) {
-					Usuario user = (Usuario) genericDao.get(Usuario.class,
-							genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdUsuarioRemAccion()));
-					if (!Checks.esNulo(user)) {
-						cliente.setUsuarioAccion(user);
-					}
-				} else {
-					cliente.setUsuarioAccion(null);
-				}
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodPaisRepresentante())) {
+			DDPaises pais = genericDao.get(DDPaises.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisRepresentante()));
+			if (!Checks.esNulo(pais)) {
+				cliente.setPaisRepresentante(pais);
 			}
-			if (((JSONObject) jsonFields).containsKey("codTipoDocumento")) {
-				if (!Checks.esNulo(clienteDto.getCodTipoDocumento())) {
-					DDTipoDocumento tipoDoc = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumento()));
-					if (!Checks.esNulo(tipoDoc)) {
-						cliente.setTipoDocumento(tipoDoc);
-					}
-				} else {
-					cliente.setTipoDocumento(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("documento")) {
-				cliente.setDocumento(clienteDto.getDocumento());
-			}
-			if (((JSONObject) jsonFields).containsKey("codTipoDocumentoRepresentante")) {
-				if (!Checks.esNulo(clienteDto.getCodTipoDocumentoRepresentante())) {
-					DDTipoDocumento tipoDocRep = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo",
-									clienteDto.getCodTipoDocumentoRepresentante()));
-					if (!Checks.esNulo(tipoDocRep)) {
-						cliente.setTipoDocumentoRepresentante(tipoDocRep);
-					}
-				} else {
-					cliente.setTipoDocumentoRepresentante(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("documentoRepresentante")) {
-				cliente.setDocumentoRepresentante(clienteDto.getDocumentoRepresentante());
-			}
-			if (((JSONObject) jsonFields).containsKey("telefono1")) {
-				cliente.setTelefono1(clienteDto.getTelefono1());
-			}
-			if (((JSONObject) jsonFields).containsKey("telefono2")) {
-				cliente.setTelefono2(clienteDto.getTelefono2());
-			}
-			if (((JSONObject) jsonFields).containsKey("email")) {
-				cliente.setEmail(clienteDto.getEmail());
-			}
-			if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
-				if (!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())) {
-					ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
-							.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemPrescriptor()));
-					if (!Checks.esNulo(prescriptor)) {
-						cliente.setProvPrescriptor(prescriptor);
-					}
-				} else {
-					cliente.setProvPrescriptor(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("idProveedorRemResponsable")) {
-				if (!Checks.esNulo(clienteDto.getIdProveedorRemResponsable())) {
-					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
-							.createFilter(FilterType.EQUALS, "codigoProveedorRem", clienteDto.getIdProveedorRemResponsable()));
-					if (!Checks.esNulo(apiResp)) {
-						cliente.setProvApiResponsable(apiResp);
-					}
-				} else {
-					cliente.setProvApiResponsable(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("codTipoVia")) {
-				if (!Checks.esNulo(clienteDto.getCodTipoVia())) {
-					DDTipoVia tipovia = (DDTipoVia) genericDao.get(DDTipoVia.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoVia()));
-					if (!Checks.esNulo(tipovia)) {
-						cliente.setTipoVia(tipovia);
-					}
-				} else {
-					cliente.setTipoVia(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("nombreCalle")) {
-				cliente.setDireccion(clienteDto.getNombreCalle());
-			}
-			if (((JSONObject) jsonFields).containsKey("numeroCalle")) {
-				cliente.setNumeroCalle(clienteDto.getNumeroCalle());
-			}
-			if (((JSONObject) jsonFields).containsKey("escalera")) {
-				cliente.setEscalera(clienteDto.getEscalera());
-			}
-			if (((JSONObject) jsonFields).containsKey("planta")) {
-				cliente.setPlanta(clienteDto.getPlanta());
-			}
-			if (((JSONObject) jsonFields).containsKey("puerta")) {
-				cliente.setPuerta(clienteDto.getPuerta());
-			}
-			if (((JSONObject) jsonFields).containsKey("codigoPostal")) {
-				cliente.setCodigoPostal(clienteDto.getCodigoPostal());
-			}
-			if (((JSONObject) jsonFields).containsKey("codProvincia")) {
-				if (!Checks.esNulo(clienteDto.getCodProvincia())) {
-					DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvincia()));
-					if (!Checks.esNulo(provincia)) {
-						cliente.setProvincia(provincia);
-					}
-				} else {
-					cliente.setProvincia(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("codMunicipio")) {
-				if (!Checks.esNulo(clienteDto.getCodMunicipio())) {
-					Localidad localidad = (Localidad) genericDao.get(Localidad.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipio()));
-					if (!Checks.esNulo(localidad)) {
-						cliente.setMunicipio(localidad);
-					}
-				} else {
-					cliente.setMunicipio(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("codPedania")) {
-				if (!Checks.esNulo(clienteDto.getCodPedania())) {
-					DDUnidadPoblacional pedania = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPedania()));
-					if (!Checks.esNulo(pedania)) {
-						cliente.setUnidadPoblacional(pedania);
-					}
-				} else {
-					cliente.setUnidadPoblacional(null);
-				}
-			}
-			if (((JSONObject) jsonFields).containsKey("rechazaPublicidad")) {
-				cliente.setRechazaPublicidad(clienteDto.getRechazaPublicidad());
-			}
-			if (((JSONObject) jsonFields).containsKey("idClienteSalesforce")) {
-				cliente.setIdClienteSalesforce(clienteDto.getIdClienteSalesforce());
-			}
-			if (((JSONObject) jsonFields).containsKey("telefonoContactoVisitas")) {
-				cliente.setTelefonoContactoVisitas(clienteDto.getTelefonoContactoVisitas());
-			}
-			
-			if (((JSONObject) jsonFields).containsKey("codTipoPersona")) {
-				if (!Checks.esNulo(clienteDto.getCodTipoPersona())) {
-					DDTiposPersona tipoPersona = (DDTiposPersona) genericDao.get(DDTiposPersona.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoPersona()));
-					if (!Checks.esNulo(tipoPersona)) {
-						cliente.setTipoPersona(tipoPersona);
-					}
-				}else{
-					cliente.setTipoPersona(null);
-				}
-			}
-			
-			if (((JSONObject) jsonFields).containsKey("codEstadoCivil")) {
-				if (!Checks.esNulo(clienteDto.getCodEstadoCivil())) {
-					DDEstadosCiviles estadoCivil = (DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodEstadoCivil()));
-					if (!Checks.esNulo(estadoCivil)) {
-						cliente.setEstadoCivil(estadoCivil);
-					}
-				}else{
-					cliente.setEstadoCivil(null);
-				}
-			}
-			
-			if (((JSONObject) jsonFields).containsKey("codRegimenMatrimonial")) {
-				if (!Checks.esNulo(clienteDto.getCodRegimenMatrimonial())) {
-					DDRegimenesMatrimoniales regimen = (DDRegimenesMatrimoniales) genericDao.get(DDRegimenesMatrimoniales.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodRegimenMatrimonial()));
-					if (!Checks.esNulo(regimen)) {
-						cliente.setRegimenMatrimonial(regimen);
-					}
-				}else{
-					cliente.setRegimenMatrimonial(null);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getConyugeTipoDocumento())) {
-				DDTipoDocumento doc = genericDao.get(DDTipoDocumento.class, 
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getConyugeTipoDocumento()));
-				if (!Checks.esNulo(doc)) {
-					cliente.setTipoDocumentoConyuge(doc);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getConyugeDocumento())) {
-				cliente.setDocumentoConyuge(clienteDto.getConyugeDocumento());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodPais())) {
-				DDPaises pais = genericDao.get(DDPaises.class, 
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPais()));
-				if (!Checks.esNulo(pais)) {
-					cliente.setPais(pais);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getDireccionRepresentante())) {
-				cliente.setDireccionRepresentante(clienteDto.getDireccionRepresentante());
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodProvinciaRepresentante())) {
-				DDProvincia provincia = genericDao.get(DDProvincia.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvinciaRepresentante()));
-				if (!Checks.esNulo(provincia)) {
-					cliente.setProvinciaRepresentante(provincia);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodMunicipioRepresentante())) {
-				Localidad localidad = genericDao.get(Localidad.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipioRepresentante()));
-				if (!Checks.esNulo(localidad)) {
-					cliente.setMunicipioRepresentante(localidad);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodPaisRepresentante())) {
-				DDPaises pais = genericDao.get(DDPaises.class, 
-						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPaisRepresentante()));
-				if (!Checks.esNulo(pais)) {
-					cliente.setPaisRepresentante(pais);
-				}
-			}
-			
-			if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
-				cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
-			}
-			
-			clienteComercialDao.saveOrUpdate(cliente);
-			
-			// HREOS-4937 
+		}
+		
+		if (!Checks.esNulo(clienteDto.getCodigoPostalRepresentante())) {
+			cliente.setCodigoPostalRepresentante(clienteDto.getCodigoPostalRepresentante());
+		}
+		
+		clienteComercialDao.saveOrUpdate(cliente);
+		
+		// HREOS-4937
+		if(cliente.getTipoDocumento() != null && cliente.getDocumento() != null && !cliente.getDocumento().isEmpty()){
 			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", cliente.getTipoDocumento().getId()),
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento()));
@@ -689,11 +678,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				
 				genericDao.save(ClienteGDPR.class, clienteGDPRNew);
 			}
-			
-
-		} catch (Exception e) {
-			logger.error("Error clientecomercialmanager ",e);
 		}
+
 	}
 
 	@Override
@@ -762,7 +748,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	@Override
 	@Transactional(readOnly = false)
-	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) {
+	public ArrayList<Map<String, Object>> saveOrUpdate(List<ClienteDto> listaClienteDto, JSONObject jsonFields) throws Exception  {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < listaClienteDto.size(); i++) {
 			HashMap<String, String> errorsList = null;

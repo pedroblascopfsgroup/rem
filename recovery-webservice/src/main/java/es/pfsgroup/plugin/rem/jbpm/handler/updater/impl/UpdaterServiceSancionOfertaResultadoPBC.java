@@ -137,8 +137,22 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 							}
 							genericDao.save(ExpedienteComercial.class, expediente);
 						} else {
-							expediente.setEstadoPbc(1);
+							
+							if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
+									&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())
+									&& ofertaApi.checkReserva(ofertaAceptada)) {
+
+								if(Integer.valueOf(2).equals(expediente.getEstadoPbc())) {
+									expediente.setEstadoPbc(1);
+								} else {
+									expediente.setEstadoPbc(2);
+								}
+								
+							} else {
+								expediente.setEstadoPbc(1);
+							}
 							genericDao.save(ExpedienteComercial.class, expediente);
+							
 							//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
 							if(!Checks.estaVacio(valores)){
 								if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 

@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
@@ -1246,6 +1247,7 @@ public interface ExpedienteComercialApi {
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 
 	boolean esYubai(TareaExterna tareaExterna);
+
 	/*
 	 * Devuelve el comité propuesto a partir de un id de expediente
 	 * @param idExpediente
@@ -1260,6 +1262,11 @@ public interface ExpedienteComercialApi {
 	 */
 	DDComiteSancion comitePropuestoByIdOferta(Long idOferta) throws Exception;
 
+	boolean esOfertaDependiente(Long oferta);
+
+	DtoOferta searchOfertaCodigo(String numOferta);
+	
+	boolean checkExpedienteFechaCheque(Long idTramite);
 
 }
 

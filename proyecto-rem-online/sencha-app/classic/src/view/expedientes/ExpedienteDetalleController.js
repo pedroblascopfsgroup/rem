@@ -430,10 +430,65 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 
 	},
-    
+	
 	onClickBotonGuardar: function(btn) {
-		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());	
+		var me = this;
+		var activeTab = btn.up('tabpanel').getActiveTab();
+		if(activeTab.xtype == "datosbasicosoferta"){
+			me.getView().mask();
+			var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');
+			var numOfertaPrin = me.getViewModel().data.datosbasicosoferta.data.numOferPrincipal;
+			var nuevoNumOferta = me.getViewModel().data.datosbasicosoferta.data.nuevoNumOferPrincipal;
+			var cloForm = me.getViewModel().data.datosbasicosoferta.data.claseOfertaCodigo;
+			var numOferta = ((numOfertaPrin != null) ? numOfertaPrin : nuevoNumOferta);
+			
+			Ext.Ajax.request({
+			
+			     url: url,
+			     params: { numOferta: numOferta }
+			    ,success: function (response, opts) {
+			         data = Ext.decode(response.responseText);
+			         if(cloForm == "02"){
+			         if(data.success == "true" && data.error == "false"){
+				    		Ext.Msg.show({
+								   title: HreRem.i18n('title.confirmar.oferta.principal'),
+								   msg: HreRem.i18n('msg.confirmar.oferta.principal'),
+								   buttons: Ext.MessageBox.YESNO,
+								   fn: function(buttonId) {
+								        if (buttonId == 'yes') {	
+								        	me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+										}else{
+											 me.getView().unmask();
+										}
+									}
+							});
+			    		
+			    	} else if (data.success == "false" && data.error == "false") {
+			    		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+			    		activeTab.funcionRecargar();
+			    	} else if (data.success == "false" && data.error == "true") {
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.inexistente"));
+					 	me.getView().unmask();		    		
+			    	}
+			    	} else {
+				        me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+				        activeTab.funcionRecargar();
+				    }
+	            },
+	            
+	            failure: function (a, operation, context) {
+	            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					 me.getView().unmask();
+					 activeTab.funcionRecargar();
+	            }
+		     
+			});
+			
+			
+		}else {
+			me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+		}
+			
 	},
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {
@@ -4690,6 +4745,7 @@ comprobarFormatoModificar: function() {
 		}
 			
 	},
+
 	onClickGenerarListadoDeActivos : function(btn) {
 		var me = this, config = {};
 
@@ -4698,7 +4754,60 @@ comprobarFormatoModificar: function() {
 		config.url = $AC.getRemoteUrl("expedientecomercial/exportarListadoActivosOfertaPrincipal");
 
 		me.fireEvent("downloadFile", config);
-	}
+	},
 	
+	onClickBtnDevolverReserva: function(btn){
+		var me = this,
+		model = me.getView().getViewModel().get('expediente');
+		var win = Ext.create('Ext.window.Window', {
+    		title: 'Devolver Reserva',
+    		height: 150,
+    		width: 700,
+    		modal: true,
+    		model: model,
+    		renderTo: me.getView().body,
+    		layout: 'fit',
+    		items:{
+    			xtype: 'form',
+    			id: 'devolucionForm',
+    			layout: {
+    				type: 'hbox', 
+    				pack: 'center', 
+    				align: 'center' 
+    			},
+    			items:[
+        			{
+        				xtype: 'datefield',
+        				id: 'fechaDevolucion',
+        				name: 'fechaDevolucion',
+        				reference: 'fechaDevolucion',
+        				fieldLabel: 'Fecha Devolución'
+        			}
+        		],
+        		border: false,
+        		buttonAlign: 'center',
+        		buttons: [
+        			  {
+        				  text: 'Aceptar',
+        				  formBind: true,
+        				  handler: function(){
+        					  var campoFecha = win.down('[reference=fechaDevolucion]');
+        					  win.model.set('estadoDevolucionCodigo', '02');
+        					  win.model.set('fechaDevolucionEntregas', campoFecha.getValue());
+        					  win.model.save();
+        					  win.close();
+        				  }
+        			  },
+        			  {
+        				  text: 'Cancelar', 
+        				  handler: function(){
+        					  win.close();
+        				  }
+        			  }
+        		]
+    		}
+    	});
 
+    	win.show();
+	}
 });

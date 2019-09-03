@@ -188,6 +188,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -3725,12 +3726,28 @@ public class ActivoAdapter {
 			}
 
 			List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
+
 			
+//			if(!Checks.esNulo(dto.getClaseOferta())) {
+//				if (dto.getClaseOferta().equals(DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE) && !Checks.esNulo(dto.getNumOferPrincipal())) {
+//					Oferta oferPrincipal = null;
+//					oferPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
+//
+//					// Se le pasa primero la oferta PRINCIPAL y luego la DEPENDIENTE, siendo la principal la que introduce el usuario y la dependiente la actual que estamos creando
+//					ofertasAgrupadas = ofertaApi.buildListaOfertasAgrupadasLbk(oferPrincipal, oferta, dto.getClaseOferta());
+//				}
+//			}
+
 			if (!Checks.esNulo(dto.getNumOferPrincipal()) || (Checks.esNulo(dto.getNumOferPrincipal()) && !Checks.esNulo(dto.getClaseOferta()))){
 				// Se le pasa primero la oferta PRINCIPAL y luego la DEPENDIENTE, siendo la principal la que introduce el usuario y la dependiente la actual que estamos creando
 				Oferta oferPrincipal = null;
 				if (!Checks.esNulo(dto.getNumOferPrincipal())) {
 					oferPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
+					
+					// Si la oferta que vamos a poner como principal es agrupada o individual, le cambiamos la clase
+					if (!DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferPrincipal.getClaseOferta().getCodigo())) {
+						ofertaApi.actualizaClaseOferta(oferPrincipal, DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+					}
 				}
 				ofertasAgrupadas = ofertaApi.buildListaOfertasAgrupadasLbk(oferPrincipal, oferta, dto.getClaseOferta());
 			}
@@ -3739,6 +3756,11 @@ public class ActivoAdapter {
 			
 
 			oferta.setOfertaExpress(false);
+			
+			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
+					"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
+			oferta.setOrigenComprador(origenComprador);
+			
 			genericDao.save(Oferta.class, oferta);
 			
 			

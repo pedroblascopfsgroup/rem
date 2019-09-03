@@ -206,7 +206,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
-					c.setCellValue(dtoPAB.getTipoActivo());
+					c.setCellValue(traducirDiccionarioTipoActivo(dtoPAB.getTipoActivo()));
 				} else {
 					c.setCellValue("");
 				}
@@ -374,7 +374,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getTipoActivo()))
-					c.setCellValue(dtoPAB.getTipoActivo());
+					c.setCellValue(traducirDiccionarioTipoActivo(dtoPAB.getTipoActivo()));
 				
 				cellReference = new CellReference("D" + Integer.toString(currentRow)); // TIPO OPERACION
 				r = mySheet.getRow(cellReference.getRow());
@@ -950,8 +950,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 							descripcionLocalidadActivo = descripcionLocalidadActivo + "\r\n"+dtoPAB.getNumActivo().toString() + " ";
 						}
 			
-						if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
-							descripcionLocalidadActivo = descripcionLocalidadActivo + dtoPAB.getTipoActivo();
+						if (!Checks.esNulo(dtoPAB.getSubtipoActivo())) {							
+							descripcionLocalidadActivo = descripcionLocalidadActivo + traducirDiccionarioTipoActivo(dtoPAB.getSubtipoActivo());
 						}
 						if(!Checks.esNulo(dtoPAB.getMunicipio())) {
 							descripcionLocalidadActivo = descripcionLocalidadActivo + " located in " + dtoPAB.getMunicipio();
@@ -1083,8 +1083,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 							if (total) {
 								c.setCellValue("");
 							} else {
-								if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
-									c.setCellValue(dtoPAB.getTipoActivo());
+								if (!Checks.esNulo(dtoPAB.getSubtipoActivo())) {
+									c.setCellValue(traducirDiccionarioTipoActivo(dtoPAB.getSubtipoActivo()));
 								} else {
 									c.setCellValue("");
 								}
@@ -1480,8 +1480,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(currentRow);
 				r.setHeightInPoints((6 * mySheet.getDefaultRowHeightInPoints()));
 				descripcionDelActivo = "\r\n\n" +descripcionDelActivo;
-				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
-					descripcionDelActivo = descripcionDelActivo + dtoPAB.getTipoActivo();
+				if (!Checks.esNulo(dtoPAB.getSubtipoActivo())) {
+					descripcionDelActivo = descripcionDelActivo + traducirDiccionarioTipoActivo(dtoPAB.getSubtipoActivo());
 				}
 				if (!Checks.esNulo(dtoPAB.getDireccion())) {
 					descripcionDelActivo = descripcionDelActivo + " located in " + dtoPAB.getDireccion();
@@ -1497,14 +1497,14 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				}
 
 				if (!Checks.esNulo(dtoPAB.getEstadoConservacion())) {
-					descripcionDelActivo = descripcionDelActivo + "- Considered to be in " + dtoPAB.getEstadoConservacion() + " condition \r\n"; // DESCRIPCION linea3
+					descripcionDelActivo = descripcionDelActivo + "- Considered to be in " + traducirDiccionarioCondicion(dtoPAB.getEstadoConservacion()) + " condition \r\n"; // DESCRIPCION linea3
 
 				}
 
 				if (!Checks.esNulo(dtoPAB.getEstadoAqluiler())) {
 					descripcionDelActivo = descripcionDelActivo + "- Details if " + dtoPAB.getEstadoAqluiler() + " condition."; // DESCRIPCION linea 4
 					if (!Checks.esNulo(dtoPAB.getTipoAlquiler())) {
-						descripcionDelActivo = descripcionDelActivo + " If tenanted include details of lease " + dtoPAB.getTipoActivo();
+						descripcionDelActivo = descripcionDelActivo + " If tenanted include details of lease " + traducirDiccionarioTipoActivo(dtoPAB.getSubtipoActivo());
 					}
 				}
 
@@ -1603,7 +1603,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 							break;
 						case 4:
 							if (!Checks.esNulo(dtoPAB.getEstadoConservacion())) {
-								c.setCellValue(dtoPAB.getEstadoConservacion());
+								c.setCellValue(traducirDiccionarioCondicion(dtoPAB.getEstadoConservacion()));
 								c.setCellStyle(fontSubSinNegritaE);
 							} else {
 								c.setCellValue("");
@@ -2754,6 +2754,42 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		return null;
 	}
 
-	
-
+	private String traducirDiccionarioTipoActivo(String tipoActivo) {
+		if(!Checks.esNulo(tipoActivo) || !"".equals(tipoActivo)) {
+			if ("suelo".equalsIgnoreCase(tipoActivo)) {
+				return "Ground";
+			} else if ("vivienda".equalsIgnoreCase(tipoActivo)) {
+				return "Apartment";
+			} else if ("comercial y terciario".equalsIgnoreCase(tipoActivo)) {
+				return "Commercial and tertiary";
+			} else if ("industrial".equalsIgnoreCase(tipoActivo)) {
+				return "Industrial";
+			} else if ("edificio completo".equalsIgnoreCase(tipoActivo)) {
+				return "Complete building";
+			} else if ("en construcción".equalsIgnoreCase(tipoActivo)) {
+				return "In construction";
+			} else if ("otros".equalsIgnoreCase(tipoActivo)) {
+				return "Others";
+			} else {
+				return tipoActivo;
+			}
+		}
+		return null;
+	}
+	private String traducirDiccionarioCondicion(String condicion) {
+		if(!Checks.esNulo(condicion) || !"".equals(condicion)) {
+			if ("bueno".equalsIgnoreCase(condicion)) {
+				return "Good";
+			} else if ("malo".equalsIgnoreCase(condicion)) {
+				return "Bad";
+			} else if ("muy bueno".equalsIgnoreCase(condicion)) {
+				return "Very good";
+			} else if ("muy malo".equalsIgnoreCase(condicion)) {
+				return "Very bad";
+			} else {
+				return condicion;
+			}
+		}
+		return null;
+	}
 }

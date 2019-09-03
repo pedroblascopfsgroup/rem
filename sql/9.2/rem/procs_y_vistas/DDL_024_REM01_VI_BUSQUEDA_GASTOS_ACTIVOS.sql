@@ -171,7 +171,7 @@ SELECT
   
   
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_ACTIVOS...Creada OK');
- 
+
 EXCEPTION
 
    WHEN OTHERS THEN
@@ -184,7 +184,6 @@ EXCEPTION
 
         ROLLBACK;
         RAISE; 
-
 END;
 /
 

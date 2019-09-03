@@ -849,4 +849,28 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esActivoApple(String numActivo);
 
+	Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia);
+
+	public Boolean esActivoUA(String numActivo);
+
+	public Boolean esAccionValido(String codAccion);
+
+	public Boolean esResultadoValido(String codResultado);
+
+	public Boolean esSolicitudValido(String codSolicitud);
+
+	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+
+	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+
+	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
+
+	String getActivoPlusvalia(String numActivo, String fechaPlusvalia);
+	
+	Boolean existeJunta(String numActivo,  String fechaJunta);
+	
+	public Boolean existeCodJGOJE(String codJunta);
+
+	String getActivoJunta(String numActivo, String fechaJunta);
+
 }

@@ -153,7 +153,24 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														},
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
-											                bind: '{detalleeconomico.importeRecargo}'
+														               bind: '{detalleeconomico.importeRecargo}',
+														               listeners:{
+														            	   change: function(){
+															               	var me = this;
+															               	if (me.up('gastodetallemain').getViewModel().get('gasto').get('cartera') == CONST.CARTERA['BANKIA'] && 
+															               	(me.getValue() == null || me.getValue() == 0)){
+															                me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = true;
+																               	if (me.up('gastodetallemain').lookupReference('destinatariosPago').getValue() == null){
+																               		me.up('gastodetallemain').lookupReference('destinatariosPago')  == true;
+																               		
+																               	} else {
+																               		me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = false;
+																               		me.up('gastodetallemain').lookupReference('destinatariosPago').isValid() == false;
+																               		
+																               	}
+															               	}        	   
+														            	   	}
+														               	}
 														},
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.interes.demora'),
@@ -532,7 +549,9 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											    reference: 'destinatariosPago',
 												bind: {
 													store: '{comboDestinatarioPago}',
-												    value: '{detalleeconomico.destinatariosPagoCodigo}'
+												    value: '{detalleeconomico.destinatariosPagoCodigo}',
+												    allowBlank: '{!importeRecargoVacio}'
+
 												},
 												allowBlank: true,
 												colspan: 2

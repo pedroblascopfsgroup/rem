@@ -168,6 +168,14 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired 
 	private MSVActualizacionPerimetroAppleExcelValidator valoresPerimetroApple;
 		
+	@Autowired
+	private MSVControlTributosExcelValidator controlTributos;
+	
+	@Autowired
+	private MSVReclamacionesPlusvaliasExcelValidator reclamacionesPlusvalia;
+	
+	@Autowired
+	private MSVJuntasOrdinariaExtraExcelValidator juntasOrdinariasExtraordinarias;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -277,6 +285,12 @@ public class MSVExcelValidatorFactoryImpl {
 			return valoresPerimetroApple;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_LPO.equals(codTipoOperacion)) {
 			return cargaMasivaLPO;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CONTROL_TRIBUTOS.equals(codTipoOperacion)) {
+			return controlTributos;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES_PLUSVALIAS.equals(codTipoOperacion)) {
+			return reclamacionesPlusvalia;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_JUNTAS.equals(codTipoOperacion)) {
+			return juntasOrdinariasExtraordinarias;
 		}
 
 		return null;

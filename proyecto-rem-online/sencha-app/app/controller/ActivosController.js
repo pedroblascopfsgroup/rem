@@ -79,6 +79,7 @@ Ext.define('HreRem.controller.ActivosController', {
         	abrirDetalleActivo: 'abrirDetalleActivoById',
         	abrirDetalleProveedor: 'abrirDetalleProveedor',
         	abrirDetalleExpedienteById: 'abrirDetalleExpedienteById',
+        	abrirDetallePlusvalia: 'abrirDetallePlusvalia',
         	abrirDetalleGasto: 'abrirDetalleGasto'
     	},
 
@@ -209,6 +210,9 @@ Ext.define('HreRem.controller.ActivosController', {
     	},
     	'administraciongastosmain': {
     		abrirDetalleGasto: 'abrirDetalleGasto'
+    	},
+    	'gestionplusvalia': {
+    		abrirDetallePlusvalia: 'abrirDetallePlusvalia'
     	},
     	'gastodetallemain': {
     		abrirDetalleActivo: 'abrirDetalleActivoGastosActivos',
@@ -1145,6 +1149,14 @@ Ext.define('HreRem.controller.ActivosController', {
 		me.redirectTo('activos', true);    	
     	me.abrirDetalleGastoById(id, titulo, refLinks);    	
     	
+    },
+    
+    abrirDetallePlusvalia: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PLUSVALIA']);
     },
     
     abrirDetalleGastoById: function(id, titulo, refLinks) {

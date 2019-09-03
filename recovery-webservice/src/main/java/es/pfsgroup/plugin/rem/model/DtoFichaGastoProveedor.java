@@ -64,6 +64,9 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String nombreGestoria;
    	private String codigoImpuestoIndirecto;
    	private String cartera;
+   	private Date fechaRecPropiedad;
+	private Date fechaRecGestoria;
+	private Date fechaRecHaya;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -325,6 +328,24 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
+	}
+	public Date getFechaRecPropiedad() {
+		return fechaRecPropiedad;
+	}
+	public void setFechaRecPropiedad(Date fechaRecPropiedad) {
+		this.fechaRecPropiedad = fechaRecPropiedad;
+	}
+	public Date getFechaRecGestoria() {
+		return fechaRecGestoria;
+	}
+	public void setFechaRecGestoria(Date fechaRecGestoria) {
+		this.fechaRecGestoria = fechaRecGestoria;
+	}
+	public Date getFechaRecHaya() {
+		return fechaRecHaya;
+	}
+	public void setFechaRecHaya(Date fechaRecHaya) {
+		this.fechaRecHaya = fechaRecHaya;
 	}
 	
 }

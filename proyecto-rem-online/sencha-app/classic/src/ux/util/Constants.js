@@ -133,7 +133,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		VISITAS:		'comercialactivo.visitascomercialactivo',
 		GENCAT:			'comercialactivo.gencatactivo',
 		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
-		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo'
+		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo',
+		PLUSVALIA:		'plusvaliaactivo'
 //		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace		
 	},
 
@@ -278,7 +279,10 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTOR_FORM: 'HAYAGESTFORM',
 		SUPERVISOR_FORM: 'HAYASUPFORM',
 		GESTOR_COMERCIAL_BO_INM: 'HAYAGBOINM',
-		SUPERVISOR_COMERCIAL_BO_INM: 'HAYASBOINM'
+		SUPERVISOR_COMERCIAL_BO_INM: 'HAYASBOINM',
+		HAYAGESTFORM: 'HAYAGESTFORM',
+		GESOR_ADMINISTRACION: 'HAYAADM',
+		SUPERVISOR_ADMINISTRACION: 'HAYASADM'
     },
     
     TIPOS_OFERTA: {

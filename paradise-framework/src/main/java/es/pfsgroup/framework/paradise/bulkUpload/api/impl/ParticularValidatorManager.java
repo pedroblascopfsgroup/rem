@@ -3447,7 +3447,173 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia) {
+		if(Checks.esNulo(numActivo)) {
+			return false;
+		}
 
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_PLS_PLUSVALIA pls " + 
+				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " + 
+				"WHERE pls.borrado = 0 " + 
+				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " + 
+				"AND TRUNC(pls.ACT_PLS_FECHA_PRESENTACION_PLUSVALIA) = TRUNC(TO_DATE('"+fechaPlusvalia+"','dd/MM/yy'))");
+
+		return !"0".equals(resultado);
+		
+	}
+	
+	@Override
+	public String getActivoPlusvalia(String numActivo, String fechaPlusvalia) {
+		if(Checks.esNulo(numActivo)) {
+			return "";
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT ACT_PLS_ID FROM ACT_PLS_PLUSVALIA pls " + 
+				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " + 
+				"WHERE pls.borrado = 0 " + 
+				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " + 
+				"AND TRUNC(pls.ACT_PLS_FECHA_PRESENTACION_PLUSVALIA) = TRUNC(TO_DATE('"+fechaPlusvalia+"','dd/MM/yy'))");
+
+		return resultado;
+		
+	}
+
+	@Override
+	public Boolean esActivoUA(String numActivo) {
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ACT_ACTIVO ACT "
+				+ "LEFT JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID "
+				+ "WHERE TTA.DD_TTA_CODIGO = '05' "
+				+ "AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "'");
+	
+		return !"0".equals(resultado);		
+	}
+	
+	@Override
+	public Boolean esAccionValido(String codAccion) {
+		if(Checks.esNulo(codAccion) || !StringUtils.isNumeric(codAccion)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM DD_ACM_ACCION_MASIVA ACM "
+				+ "WHERE ACM.DD_ACM_CODIGO ='" + codAccion + "'");
+				
+		return !"0".equals(resultado);	
+	}
+	
+	@Override
+	public Boolean esResultadoValido(String codResultado) {
+		if(Checks.esNulo(codResultado) || !StringUtils.isNumeric(codResultado)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM REMMASTER.DD_FAV_FAVORABLE FAV "
+				+ "WHERE FAV.DD_FAV_CODIGO ='" + codResultado + "'");
+				
+		return !"0".equals(resultado);	
+	}
+	
+	@Override
+	public Boolean esSolicitudValido(String codSolicitud){
+		if(Checks.esNulo(codSolicitud) || !StringUtils.isNumeric(codSolicitud)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM DD_TST_TIPO_SOLICITUD_TRIB TST "
+				+ "WHERE TST.DD_TST_CODIGO ='" + codSolicitud + "'");
+				
+		return !"0".equals(resultado);	
+	}
+	
+	@Override
+	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(*) " 
+				+ "FROM ACT_TRI_TRIBUTOS TRI " 
+				+ "JOIN DD_TST_TIPO_SOLICITUD_TRIB TST ON TST.DD_TST_ID = TRI.DD_TST_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = TRI.ACT_ID "
+				+ "WHERE TST.DD_TST_CODIGO = '" + tipoSolicitud + "' "
+				+ "AND TRI.BORRADO = 0 "
+				+ "AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "' "
+				+ "AND TRI.ACT_TRI_FECHA_PRESENTACION_RECURSO = TO_DATE('"+ fechaRecurso + "','dd/MM/yy') "
+				);
+				
+		return !"0".equals(resultado);	
+	}	
+	
+	@Override
+	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud)) {
+			return null;
+		}
+		
+		return rawDao.getExecuteSQL(
+				"SELECT TRI.ACT_TRI_ID " 
+				+ "FROM ACT_TRI_TRIBUTOS TRI " 
+				+ "JOIN DD_TST_TIPO_SOLICITUD_TRIB TST ON TST.DD_TST_ID = TRI.DD_TST_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = TRI.ACT_ID "
+				+ "WHERE TST.DD_TST_CODIGO = '" + tipoSolicitud + "' "
+				+ "AND TRI.BORRADO = 0 "
+				+ "AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "' "
+				+ "AND TRI.ACT_TRI_FECHA_PRESENTACION_RECURSO = TO_DATE('"+ fechaRecurso + "','dd/MM/yy') "
+				);				
+	
+	}	
+
+	@Override
+	public Boolean esNumHayaVinculado(Long numGasto, String numActivo){		
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;		
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+				+ "JOIN GPV_ACT GPA ON GPV.GPV_ID = GPA.GPV_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = GPA.ACT_ID "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = " + numGasto  
+				+ " AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "'"
+				);
+				
+		return !"0".equals(resultado);	
+	}
+
+	
+	@Override
+	public Boolean existeJunta(String numActivo,  String fechaJunta) {
+		if(Checks.esNulo(numActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_JCM_JUNTA_COM_PROPIETARIOS pls " + 
+				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " + 
+				"WHERE pls.borrado = 0 " + 
+				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " + 
+				"AND TRUNC(pls.JCM_FECHA_JUNTA) = TRUNC(TO_DATE('"+fechaJunta+"','dd/MM/yy'))");
+
+		return !"0".equals(resultado);
+		
+	}
+	
+	@Override
+	public Boolean existeCodJGOJE(String codJunta) {
+		if(Checks.esNulo(codJunta) || !StringUtils.isNumeric(codJunta))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_JCP_JUNTA_COMUNIDADES WHERE"
+				+ "		 DD_JCP_CODIGO ='"+codJunta+"'"
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
 	@Override
 	public Boolean conTituloOcupadoSi(String codigoTituloTPA) {
 		if (!Checks.esNulo(codigoTituloTPA)) {
@@ -3605,6 +3771,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			JOIN DD_EAC_ESTADO_ACTIVO EAC ON ACT.DD_EAC_ID = EAC.DD_EAC_ID"
 				+"			WHERE EAC.DD_EAC_CODIGO = 3 AND ACT.ACT_NUM_ACTIVO = " + numActivo);
 		return !"0".equals(resultado);
+	}
+
+	public String getActivoJunta(String numActivo,  String fechaJunta) {
+		if(Checks.esNulo(numActivo)) {
+			return "";
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT pls.JCM_ID FROM ACT_JCM_JUNTA_COM_PROPIETARIOS pls " + 
+				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " + 
+				"WHERE pls.borrado = 0 " + 
+				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " + 
+				"AND TRUNC(pls.JCM_FECHA_JUNTA) = TRUNC(TO_DATE('"+fechaJunta+"','dd/MM/yy'))");
+
+		return resultado;
 	}
 
 	@Override

@@ -636,6 +636,12 @@ Ext.define('HreRem.ux.util.Constants', {
 	 
 	D_ESTADOS_CIVILES:{
 	 	COD_CASADO	:'2'
+	 },
+	 
+	 DD_CLASE_OFERTA:{
+	 	PRINCIPAL:'01',
+	 	DEPENDIENTE:'02',
+	 	INDIVIDUAL:'03'
 	 }
 	
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Juan Beltrán
---## FECHA_CREACION=20190722
+--## FECHA_CREACION=20190902
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7073
@@ -36,14 +36,14 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        --T_TIPO_DATA('DD_CMS_CODIGO',			'DD_CMS_DESCRIPCION',								'DD_CMS_DESCRIPCION_LARGA')
-        T_TIPO_DATA('AAM_C',					'Activo comercializado por Altamira', 				'Activo comercializado por Altamira'),
-        T_TIPO_DATA('AAM_S',					'Activo saneados por Altamira', 					'Activo saneados por Altamira'),
-        T_TIPO_DATA('AAM_CS',					'Activo comercializado y saneado por Altamira',		'Activo comercializado y saneado por Altamira'),
-        T_TIPO_DATA('INTRUM_C',					'Activo comercializado por Intrum',					'Activo comercializado por Intrum'),
-        T_TIPO_DATA('INTRUM_S',					'Activo saneado por Intrum',						'Activo saneado por Intrum'),
-        T_TIPO_DATA('INTRUM_CS',				'Activo comercializado y saneado por Intrum',		'Activo comercializado y saneado por Intrum'),
-        T_TIPO_DATA('HAYA',						'Activo comercializado y saneado por Haya',			'Activo comercializado y saneado por Haya')
+        --T_TIPO_DATA('DD_CMS_CODIGO',			'DD_CMS_DESCRIPCION',								'DD_CMS_DESCRIPCION_LARGA',                               'CODIGO')
+        T_TIPO_DATA('AAM_C',					'Activo comercializado por Altamira', 				'Activo comercializado por Altamira',                  'AAM'),
+        T_TIPO_DATA('AAM_S',					'Activo saneados por Altamira', 					'Activo saneados por Altamira',                            'AAM'),
+        T_TIPO_DATA('AAM_CS',					'Activo comercializado y saneado por Altamira',		'Activo comercializado y saneado por Altamira',    'AAM'),
+        T_TIPO_DATA('INTRUM_C',					'Activo comercializado por Intrum',					'Activo comercializado por Intrum',                    'INTRUM'),
+        T_TIPO_DATA('INTRUM_S',					'Activo saneado por Intrum',						'Activo saneado por Intrum',                               'INTRUM'),
+        T_TIPO_DATA('INTRUM_CS',				'Activo comercializado y saneado por Intrum',		'Activo comercializado y saneado por Intrum',      'INTRUM'),
+        T_TIPO_DATA('HAYA',						'Activo comercializado y saneado por Haya',			'Activo comercializado y saneado por Haya',          'HAYA')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -69,7 +69,9 @@ BEGIN
                     'SET DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
           ', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
           ', USUARIOMODIFICAR = '''|| V_USUARIO_MODIFICAR ||''' , FECHAMODIFICAR = SYSDATE '||
+          ', DD_SRA_ID = (SELECT DD_SRA_ID FROM '||V_ESQUEMA||'.DD_SRA_SERVICER_ACTIVO WHERE DD_SRA_CODIGO = '''||V_TMP_TIPO_DATA(4)||''')'||
           ' WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+          DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
 
@@ -80,8 +82,9 @@ BEGIN
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;
           
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
-                      'DD_'||V_TEXT_CHARS||'_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ', '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''', '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''','''|| TRIM(V_TMP_TIPO_DATA(3)) ||''', 0, '''|| V_USUARIO_CREAR ||''',SYSDATE, 0 FROM DUAL';
+                      'DD_'||V_TEXT_CHARS||'_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_SRA_ID) ' ||
+                      'SELECT '|| V_ID || ', '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''', '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''','''|| TRIM(V_TMP_TIPO_DATA(3)) ||''', 0, '''|| V_USUARIO_CREAR ||''',SYSDATE, 0, (SELECT DD_SRA_ID FROM '||V_ESQUEMA||'.DD_SRA_SERVICER_ACTIVO WHERE DD_SRA_CODIGO = '''||V_TMP_TIPO_DATA(4)||''') FROM DUAL';
+          DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
        END IF;

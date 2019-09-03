@@ -872,12 +872,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype:'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.servicer'),	
-								reference: 'comboPerimetroAppleServicer',					        	
+								reference: 'comboPerimetroAppleServicer',
+								chainedStore: 'comboCesionSaneamiento',
+								chainedReference: 'comboPerimetroAppleCesion',					        	
 								bind: {
 									readOnly : !$AU.userIsRol("HAYASUPER"),
 									store: '{comboServicerActivo}',
 									value: '{activo.servicerActivoCodigo}'
-								}
+								},
+								publishes: 'value',									
+		    					listeners: {
+									select: 'onChangeChainedCombo'
+		    					}
 	    													
 							},
 							{

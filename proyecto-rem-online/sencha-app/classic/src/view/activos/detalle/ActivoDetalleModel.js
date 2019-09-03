@@ -1987,8 +1987,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposEquipoGestion'}
+				remoteUrl: 'activo/getPerimetroAppleCesion',
+				extraParams: {codigoServicer: '{comboPerimetroAppleServicer.value}'}
 			}
 		},
 		
@@ -1997,9 +1997,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'cesionSaneamiento'}
+				extraParams: {diccionario: 'tiposEquipoGestion'}
 			}
 		},
+		
 		comboSiNoDatosPerimetroApple: {
 			data : [	        	
 	        	{"codigo":"0", "descripcion":"No"},

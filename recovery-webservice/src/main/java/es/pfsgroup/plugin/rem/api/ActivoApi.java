@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
@@ -1206,5 +1207,7 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
+
+	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
 
 }

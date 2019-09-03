@@ -118,6 +118,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -6675,6 +6676,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return UAsAlquiladas;
+	}
+
+	@Override
+	public List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer) {
+		
+		List<DDCesionSaneamiento> listaPerimetros = new ArrayList<DDCesionSaneamiento>();
+		
+		if(!Checks.esNulo(codigoServicer)) {
+			listaPerimetros = genericDao.getList(DDCesionSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "servicer.codigo", codigoServicer));
+		}
+		
+		return listaPerimetros;
 	}
 	
 }

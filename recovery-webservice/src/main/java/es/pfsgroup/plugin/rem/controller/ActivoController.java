@@ -126,11 +126,11 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
@@ -2942,6 +2942,24 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPerimetroAppleCesion(ModelMap model,String codigoServicer) {
+		
+		try {
+			List <DDCesionSaneamiento> dto= activoApi.getPerimetroAppleCesion(codigoServicer);
+
+			model.put("data", dto);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
 		return createModelAndViewJson(model);
 	}
 }

@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20190829
+--## FECHA_CREACION=20190901
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-5092
@@ -38,7 +38,9 @@ DECLARE
 	TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
 	TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
 	V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-		T_FUNCION( 'portfolioman' , 'pgarciafraile')
+		T_FUNCION( 'portfolioman' , 'pgarciafraile'),
+		T_FUNCION( 'portfolioman' , 'jguarch'),
+		T_FUNCION( 'portfolioman' , 'omora')
 	); 
 	V_TMP_FUNCION T_FUNCION;
     

@@ -457,6 +457,7 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_NOM_CARTERA_PERIMETRO")
     private String nombreCarteraPerimetro;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EQG_ID")
     private DDEquipoGestion equipoGestion;
     

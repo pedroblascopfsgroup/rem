@@ -646,8 +646,11 @@ Ext.define('HreRem.ux.util.Constants', {
 		COD_AUTORIZADO_ENTIDAD_CLIENTE: '01',
 		COD_TRAMITACION_ANULADA_CORRECCION: '02',
 		COD_OTROS: '03'
-	}
+	},
 	 
-	
-
+	 DD_CLASE_OFERTA:{
+	 	PRINCIPAL:'01',
+	 	DEPENDIENTE:'02',
+	 	INDIVIDUAL:'03'
+	 }
 });

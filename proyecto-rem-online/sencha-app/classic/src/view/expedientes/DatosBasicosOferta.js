@@ -215,100 +215,54 @@ beforeedit: 'numVisitaIsEditable'
 									displayField: 'descripcion',
 									valueField: 'codigo',
 									listeners: {
-		    							change: function(combo, value, oldvalue) {
+		    							change: function(combo, value, oldValue) {
 		    								var me = this;
-				    								var form = combo.up('form');
-			    									var checkImporteTotal = form.down('field[name=importeTotal]');
-			    									if(checkImporteTotal != null){
-				    									checkImporteTotal.setVisible(true);
-			    									}
-			    									var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
-			    									if(checkNumOferPrin != null){
-				    									checkNumOferPrin.setVisible(true);
-			    									}
-		    										var checkNuevoNumOferPrin = form.down('field[name=nuevoNumOferPrincipal]');
-			    									if(checkNuevoNumOferPrin != null){
-		    											checkNuevoNumOferPrin.setVisible(false);
-			    									}
-		    										
-			    									
-			    									if(checkImporteTotal != null){
-			    										checkImporteTotal.setVisible("01" == value);
-			    									}
-			    									if(checkNumOferPrin != null){
-				    									checkNumOferPrin.setVisible("02" == value);
-			    									}
+	
+		    								var form = combo.up('form');
+		    								var numOferPrincipal = form.getBindRecord().data.numOferPrincipal;
+	    									var checkImporteTotal = form.down('field[name=importeTotal]');
+	    									var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
+    										var checkNuevoNumOferPrin = form.down('field[name=nuevoNumOferPrincipal]');	    									
+		    								
+    										if(CONST.DD_CLASE_OFERTA['PRINCIPAL'] == value){
+    											checkImporteTotal.setVisible(true);
+    											checkNumOferPrin.setVisible(false);
+    											checkNuevoNumOferPrin.setVisible(false);
+    											
+    										} else if(CONST.DD_CLASE_OFERTA['DEPENDIENTE'] == value){
+    											
+    											if(CONST.DD_CLASE_OFERTA['DEPENDIENTE'] != oldValue){
+    												
+    												if(!Ext.isEmpty(numOferPrincipal) && Ext.isEmpty(oldValue)){
+    													
+    													checkNumOferPrin.setVisible(true);
+    													checkNuevoNumOferPrin.setVisible(false);
+    												}else{
+													
+														if(!Ext.isEmpty(numOferPrincipal)){
+															checkNumOferPrin.setVisible(true);
+															checkNuevoNumOferPrin.setVisible(false);
+    													}else{
+    														checkNumOferPrin.setVisible(false);
+    														checkNuevoNumOferPrin.setVisible(true);
+    													}		
+    													
+    												}
+    												checkImporteTotal.setVisible(false);
+    											} else{
+    												checkImporteTotal.setVisible(false);
+    												checkNumOferPrin.setVisible(false);
+    												checkNuevoNumOferPrin.setVisible(true);
+    											}
+    										} else{
+    											checkImporteTotal.setVisible(false);
+    											checkNumOferPrin.setVisible(false);
+    											checkNuevoNumOferPrin.setVisible(false);
+    										}
 
-				    								if (value == "01"){
-				    									if(checkNuevoNumOferPrin != null){
-				    										checkNuevoNumOferPrin.setVisible(false);
-				    										checkNuevoNumOferPrin.reset();
-				    									}
-			    										
-				    									if (oldvalue == "02"){
-			    											if(checkNumOferPrin != null){
-				    											checkNumOferPrin.setVisible(false);
-						    									checkNumOferPrin.reset();
-			    											}
-				    									}
-				    								}
-				    								
-				    								else if (value == "02"){
-			    										if(checkImporteTotal != null){
-				    										checkImporteTotal.setVisible(false);
-			    										}
-				    									if (oldvalue == "01"){
-				    										if(checkNuevoNumOferPrin != null){
-				    											checkNuevoNumOferPrin.setVisible(true);
-				    										}
-			    											if(checkNumOferPrin != null){
-				    											checkNumOferPrin.setVisible(false);
-						    									checkNumOferPrin.reset();
-			    											}
-				    									} else {
-			    											if(checkNuevoNumOferPrin != null){
-					    										checkNuevoNumOferPrin.setVisible(false);
-					    										checkNuevoNumOferPrin.reset();
-			    											}
-				    									}
-				    								}
-				    								
-
-			    									else if (value == "03"){
-		    											if(checkNuevoNumOferPrin != null){
-			    											checkNuevoNumOferPrin.setVisible(false);
-			    											checkNuevoNumOferPrin.reset();
-		    											}
-			    										if(checkImporteTotal != null){
-			    											checkImporteTotal.setVisible(false);
-				    										checkImporteTotal.reset();
-			    										}
-				    									if (oldvalue != "01"){
-			    											if(checkNumOferPrin != null){
-				    											checkNumOferPrin.setVisible(false);
-						    									checkNumOferPrin.reset();
-			    											}
-				    									}
-				    									if (oldvalue == "01"){
-			    											if(checkNuevoNumOferPrin != null){
-				    											checkNuevoNumOferPrin.setVisible(true);
-			    											}
-			    											if(checkNumOferPrin != null){
-						    									checkNumOferPrin.reset();
-			    											}
-				    									}
-			    									}
-				    								
-			    									else{
-			    										if(checkNuevoNumOferPrin != null){
-			    											checkNuevoNumOferPrin.setVisible(false);
-			    										}
-			    										if(checkImporteTotal != null){
-			    											checkImporteTotal.setVisible(false);
-			    										}
-			    									}
-				    							}
-				    						}
+		    							
+				    					}
+				    				}
 							},
 							{
 							xtype : 'container',

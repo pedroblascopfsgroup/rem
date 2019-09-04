@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez
---## FECHA_CREACION=20190731
+--## FECHA_CREACION=20190904
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7249
@@ -1305,7 +1305,7 @@ begin
 ----------------------------TAP TAREA PROCEDIMIENTO-------------------------
   TAP(5).tap_field('TAP_CODIGO') := 'T017_InformeJuridico';
   TAP(5).tap_field('TAP_VIEW') := NULL;
-  TAP(5).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''';
+  TAP(5).tap_field('TAP_SCRIPT_VALIDACION') := '!tieneTramiteGENCATVigenteByIdActivo() ? checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''El activo tiene un tr&aacute;mite GENCAT en curso.''''';
   TAP(5).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkFechaEmisionInformeJuridico() ? mismoNumeroAdjuntosComoActivosExpedienteUGValidacion("10", "E") : "No todos los activos tienen fecha de emisi&oacute;n de informe en el listado de activos del expediente comercial"';
   TAP(5).tap_field('TAP_SCRIPT_DECISION') := null;
   TAP(5).tap_field('DD_TPO_ID_BPM') := null;
@@ -1602,7 +1602,7 @@ begin
 
   TAP(8).tap_field('TAP_CODIGO') := 'T017_PBCVenta';
   TAP(8).tap_field('TAP_VIEW') := NULL;
-  TAP(8).tap_field('TAP_SCRIPT_VALIDACION') := null;
+  TAP(8).tap_field('TAP_SCRIPT_VALIDACION') := '!tieneTramiteGENCATVigenteByIdActivo() ? null : ''''El activo tiene un tr&aacute;mite GENCAT en curso.''''';
   TAP(8).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := NULL;
   TAP(8).tap_field('TAP_SCRIPT_DECISION') :=  'valores[''''T017_PBCVenta''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Aprueba'''' :  ''''Deniega'''' ';
   TAP(8).tap_field('DD_TPO_ID_BPM') := null;

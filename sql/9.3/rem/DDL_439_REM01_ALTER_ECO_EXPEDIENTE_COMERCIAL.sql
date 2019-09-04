@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Salvador Puertes
---## FECHA_CREACION=20190722
+--## FECHA_CREACION=20190905
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.16.0
 --## INCIDENCIA_LINK=HREOS-7164
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade a uno varios perfiles, las funciones añadidas en T_ARRAY_FUNCION
+--## Finalidad: Eliminar columna DD_COS_PROPUESTO_ID
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -31,6 +31,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
+	V_COLUMN_NAME VARCHAR(30):= 'DD_COS_PROPUESTO_ID';
  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ECO_EXPEDIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
@@ -45,16 +46,6 @@ DECLARE
     	T_ALTER(  'DD_COS_PROPUESTO_ID',		 		'NUMBER(16,0)',						'ID Comité propuesto para la sanción.'	)
 		);
     V_T_ALTER T_ALTER;
-    
-    
-	-- ARRAY CON NUEVAS FOREIGN KEYS
-    TYPE T_FK IS TABLE OF VARCHAR2(4000);
-    TYPE T_ARRAY_FK IS TABLE OF T_FK;
-    V_FK T_ARRAY_FK := T_ARRAY_FK(
-	--NOMBRE FK 		 CAMPO FK 			TABLA DESTINO FK 		CAMPO DESTINO FK
-	T_FK('FK_DD_COS_PROPUESTO_ID',	'DD_COS_PROPUESTO_ID',	V_ESQUEMA||'.DD_COS_COMITES_SANCION',	'DD_COS_ID')
-    );
-    V_T_FK T_FK;
 
 BEGIN
 	
@@ -76,57 +67,13 @@ BEGIN
 		--Existe la columna y la creamos
 			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_COLUMN_NAME||'] -------------------------------------------');
 			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP COLUMN '||V_COLUMN_NAME;
-
-			-- Creamos comentario	
-			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		
 			EXECUTE IMMEDIATE V_MSQL;
-			--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
-			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
+			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_COLUMN_NAME||']... Columna borrada.');
 		END IF;
 
 	END LOOP;
-
-
 	
-	-- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
-	IF V_CREAR_FK = 'SI' THEN
-
-		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
-		FOR I IN V_FK.FIRST .. V_FK.LAST
-		LOOP
-
-			V_T_FK := V_FK(I);	
-
-			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
-			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_FK(1)||'''';
-			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-			IF V_NUM_TABLAS = 0 THEN
-				--No existe la FK y la creamos
-				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
-				V_MSQL := '
-					ALTER TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-					ADD CONSTRAINT '||V_T_FK(1)||' FOREIGN KEY
-					(
-					  '||V_T_FK(2)||'
-					)
-					REFERENCES '||V_T_FK(3)||'
-					(
-					  '||V_T_FK(4)||' 
-					)
-					ON DELETE SET NULL ENABLE
-				';
-
-				EXECUTE IMMEDIATE V_MSQL;
-				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
-				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
-
-			END IF;
-
-		END LOOP;
-
-	END IF;
-	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKs ... OK *************************************************');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' SIN DD_COS_PROPUESTA_ID ... OK *************************************************');
 	COMMIT;
 	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
 	

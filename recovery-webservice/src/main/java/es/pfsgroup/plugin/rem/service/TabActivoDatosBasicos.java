@@ -1364,6 +1364,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				perimetroActivo.setFechaAplicaFormalizar(new Date());
 
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+				updaterState.updaterStateDisponibilidadComercial(activos.getActivo());
 			}
 		}
 	}

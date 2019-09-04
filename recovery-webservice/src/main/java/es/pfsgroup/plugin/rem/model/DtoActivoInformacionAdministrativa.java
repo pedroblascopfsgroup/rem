@@ -44,6 +44,19 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	private String maxPrecioVenta;
 	private String observaciones;
 	
+	private Date vigencia;
+	private Integer comunicarAdquisicion;
+	private Integer necesarioInscribirVpo;
+	private Integer libertadCesion;
+	private Integer renunciaTanteoRetrac;
+	private Integer visaContratoPriv;
+	private Integer venderPersonaJuridica;
+	private Integer minusvalia;
+	private Integer inscripcionRegistroDemVpo;
+	private Integer ingresosInfNivel;
+	private Integer residenciaComAutonoma;
+	private Integer noTitularOtraVivienda;
+	
 	private String tipoVpoId;
 	private String tipoVpoCodigo;    
 	private String tipoVpoDescripcion;
@@ -180,6 +193,79 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	public void setObservacionesExpropiacion(String observacionesExpropiacion) {
 		this.observacionesExpropiacion = observacionesExpropiacion;
 	}
+	public Date getVigencia() {
+		return vigencia;
+	}
+	public void setVigencia(Date vigencia) {
+		this.vigencia = vigencia;
+	}
+	public Integer getComunicarAdquisicion() {
+		return comunicarAdquisicion;
+	}
+	public void setComunicarAdquisicion(Integer comunicarAdquisicion) {
+		this.comunicarAdquisicion = comunicarAdquisicion;
+	}
+	public Integer getNecesarioInscribirVpo() {
+		return necesarioInscribirVpo;
+	}
+	public void setNecesarioInscribirVpo(Integer necesarioInscribirVpo) {
+		this.necesarioInscribirVpo = necesarioInscribirVpo;
+	}
+	public Integer getLibertadCesion() {
+		return libertadCesion;
+	}
+	public void setLibertadCesion(Integer libertadCesion) {
+		this.libertadCesion = libertadCesion;
+	}
+	public Integer getRenunciaTanteoRetrac() {
+		return renunciaTanteoRetrac;
+	}
+	public void setRenunciaTanteoRetrac(Integer renunciaTanteoRetrac) {
+		this.renunciaTanteoRetrac = renunciaTanteoRetrac;
+	}
+	public Integer getVisaContratoPriv() {
+		return visaContratoPriv;
+	}
+	public void setVisaContratoPriv(Integer visaContratoPriv) {
+		this.visaContratoPriv = visaContratoPriv;
+	}
+	public Integer getVenderPersonaJuridica() {
+		return venderPersonaJuridica;
+	}
+	public void setVenderPersonaJuridica(Integer venderPersonaJuridica) {
+		this.venderPersonaJuridica = venderPersonaJuridica;
+	}
+	public Integer getMinusvalia() {
+		return minusvalia;
+	}
+	public void setMinusvalia(Integer minusvalia) {
+		this.minusvalia = minusvalia;
+	}
+	public Integer getInscripcionRegistroDemVpo() {
+		return inscripcionRegistroDemVpo;
+	}
+	public void setInscripcionRegistroDemVpo(Integer inscripcionRegistroDemVpo) {
+		this.inscripcionRegistroDemVpo = inscripcionRegistroDemVpo;
+	}
+	public Integer getIngresosInfNivel() {
+		return ingresosInfNivel;
+	}
+	public void setIngresosInfNivel(Integer ingresosInfNivel) {
+		this.ingresosInfNivel = ingresosInfNivel;
+	}
+	public Integer getResidenciaComAutonoma() {
+		return residenciaComAutonoma;
+	}
+	public void setResidenciaComAutonoma(Integer residenciaComAutonoma) {
+		this.residenciaComAutonoma = residenciaComAutonoma;
+	}
+	public Integer getNoTitularOtraVivienda() {
+		return noTitularOtraVivienda;
+	}
+	public void setNoTitularOtraVivienda(Integer noTitularOtraVivienda) {
+		this.noTitularOtraVivienda = noTitularOtraVivienda;
+	}
+	
 
 	
 }

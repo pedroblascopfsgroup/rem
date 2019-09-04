@@ -216,7 +216,6 @@ beforeedit: 'numVisitaIsEditable'
 									valueField: 'codigo',
 									listeners: {
 		    							change: function(combo, value, oldValue) {
-		    								debugger;
 		    								var me = this;
 	
 		    								var form = combo.up('form');

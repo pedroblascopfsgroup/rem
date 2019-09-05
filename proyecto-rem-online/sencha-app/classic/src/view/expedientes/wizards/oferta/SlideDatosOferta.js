@@ -123,7 +123,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var lockClaseOferta = form.down('field[name=claseOferta]');
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								var checkBuscadorOferta = form.down('field[name=buscadorNumOferPrincipal]');
-	    								if(this.up("slidedatosoferta").viewModel.data.esAgrupacionLiberbank) {
+	    								var viewModelSlide = this.up("slidedatosoferta").viewModel;
+	    								debugger;
+	    								if(viewModelSlide.data.esAgrupacionLiberbank || viewModelSlide.data.isCarteraLiberbank) {
 	    									lockClaseOferta.reset();
 	    									lockClaseOferta.setHidden(false);
 	    									lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
@@ -133,7 +135,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 		    								checkNumOferPrin.hidden ? checkNumOferPrin.setAllowBlank(true) : checkNumOferPrin.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
 		    								checkBuscadorOferta.reset();
 		    								checkBuscadorOferta.hidden ? checkBuscadorOferta.setAllowBlank(true) : checkBuscadorOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    								}else{
+	    								} else {
 	    									lockClaseOferta.setHidden(true);
 	    								}
 	    							}

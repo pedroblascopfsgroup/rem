@@ -120,26 +120,22 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    							change: function(combo, value) {
 	    								var me = this;
 	    								var form = combo.up('form');
-	    								
-	    								//Este check de tanteo ha sido suprimido por otro compañero
-//	    								var checkTanteo = form.down('field[name=dederechotanteo]');
-//	    								checkTanteo.reset();
-//	    								checkTanteo.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    								
 	    								var lockClaseOferta = form.down('field[name=claseOferta]');
-	    								lockClaseOferta.reset();
-	    								lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    								lockClaseOferta.hidden ? lockClaseOferta.setAllowBlank(true) : lockClaseOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    										
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
-	    								checkNumOferPrin.reset();
-	    								checkNumOferPrin.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    								checkNumOferPrin.hidden ? checkNumOferPrin.setAllowBlank(true) : checkNumOferPrin.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    										
 	    								var checkBuscadorOferta = form.down('field[name=buscadorNumOferPrincipal]');
-	    								checkBuscadorOferta.reset();
-	    								//checkBuscadorOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    								checkBuscadorOferta.hidden ? checkBuscadorOferta.setAllowBlank(true) : checkBuscadorOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    								if(this.up("slidedatosoferta").viewModel.data.esAgrupacionLiberbank) {
+	    									lockClaseOferta.reset();
+	    									lockClaseOferta.setHidden(false);
+	    									lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    									lockClaseOferta.hidden ? lockClaseOferta.setAllowBlank(true) : lockClaseOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+		    								checkNumOferPrin.reset();
+		    								checkNumOferPrin.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+		    								checkNumOferPrin.hidden ? checkNumOferPrin.setAllowBlank(true) : checkNumOferPrin.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+		    								checkBuscadorOferta.reset();
+		    								checkBuscadorOferta.hidden ? checkBuscadorOferta.setAllowBlank(true) : checkBuscadorOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    								}else{
+	    									lockClaseOferta.setHidden(true);
+	    								}
 	    							}
 	    						},
 			    				colspan: 2
@@ -371,9 +367,9 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								allowBlank: true,
 								bind: {
 									store: '{comboClaseOferta}',
-									value: '{oferta.claseOferta}',
-									hidden: '{esLiberbank}'
+									value: '{oferta.claseOferta}'
 								},
+								disabled: '{isLiberbank}',
 								displayField: 'descripcion',
 								valueField: 'codigo',
 								listeners: {

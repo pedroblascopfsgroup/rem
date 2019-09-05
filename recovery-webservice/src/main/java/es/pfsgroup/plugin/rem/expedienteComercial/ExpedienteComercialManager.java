@@ -10085,6 +10085,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DtoOferta dtoOferta = new DtoOferta();
 			Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numeroOferta);
 			beanUtilNotNull.copyProperties(dtoOferta, oferta);
+			
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				throw new JsonViewerException("La oferta seleccionada es de alquiler, no se puede agrupar con este tipo de ofertas");
+			}
 
 			if(!Checks.esNulo(oferta)){
 				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());

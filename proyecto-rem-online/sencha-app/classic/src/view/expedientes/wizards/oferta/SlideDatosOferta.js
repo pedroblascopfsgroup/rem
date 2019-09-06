@@ -124,7 +124,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								var checkBuscadorOferta = form.down('field[name=buscadorNumOferPrincipal]');
 	    								var viewModelSlide = this.up("slidedatosoferta").viewModel;
-	    								debugger;
+	    								
 	    								if(viewModelSlide.data.esAgrupacionLiberbank || viewModelSlide.data.isCarteraLiberbank) {
 	    									lockClaseOferta.reset();
 	    									lockClaseOferta.setHidden(false);

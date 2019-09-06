@@ -6579,59 +6579,34 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public Boolean bloquearChecksComercializacionActivo(Activo activo, Integer action) {
-		Boolean sePuedeEditar = true;
-		if(activoDao.isActivoMatriz(activo.getId())) {
-			ActivoAgrupacion agrupacionPa= activoDao.getAgrupacionPAByIdActivo(activo.getId());
-			List<ActivoAgrupacionActivo> activosAgrupacion = agrupacionPa.getActivos();
-				
-			for (ActivoAgrupacionActivo activoAgrupacionActivo : activosAgrupacion) {
-				Activo activoUa = activoAgrupacionActivo.getActivo();
-				PerimetroActivo perimetroActivoUA = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activoUa.getId()));
-				
-				if(!Checks.esNulo(perimetroActivoUA) && !Checks.esNulo(perimetroActivoUA.getTrabajosVivos()) && !Checks.esNulo(perimetroActivoUA.getOfertasVivas())) {
-					if((perimetroActivoUA.getTrabajosVivos() && action == 1) || (perimetroActivoUA.getOfertasVivas() && action == 3)) {
-						sePuedeEditar = false;
-						break;
-					}
-				}
-					
+	public void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto) {
+		if(aga.getPrincipal() == 1) {			
+			Boolean ofertasVivas = activoDao.existenUAsconOfertasVivas(aga.getAgrupacion().getId());
+			Boolean trabajosVivos = activoDao.existenUAsconTrabajos(aga.getAgrupacion().getId());
+			if(!Checks.esNulo(ofertasVivas) && ofertasVivas) {
+				activoDto.setCheckComercializarReadOnly(false);					
 			}
-		}else if(activoDao.isUnidadAlquilable(activo.getId())) {
-			Long idAM = activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId());
-			
-			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id",idAM));
-			
+			if(!Checks.esNulo(trabajosVivos) && trabajosVivos) {
+				activoDto.setCheckGestionarReadOnly(false);
+			}			
+		}else {
+			Long idAM = aga.getAgrupacion().getActivoPrincipal().getId();			
+			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id",idAM));			
 			if(!Checks.esNulo(perimetroActivoAM)) {
-				switch(action){
-					case 1: 
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 0 ) {
-							sePuedeEditar = false;
-						}
-					break;
-					case 2:
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaPublicar()) && !perimetroActivoAM.getAplicaPublicar()){
-							sePuedeEditar = false;
-						} 
-					break;
-					case 3:
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaComercializar()) && perimetroActivoAM.getAplicaComercializar() == 0) {
-							sePuedeEditar = false;
-						}
-					break;
-					case 4: 
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaFormalizar()) && perimetroActivoAM.getAplicaFormalizar() == 0) {
-							sePuedeEditar = false;
-						} 
-					break;
-					
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 0 ) {
+					activoDto.setCheckGestionarReadOnly(false);
 				}
-				
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaPublicar()) && !perimetroActivoAM.getAplicaPublicar()){
+					activoDto.setCheckPublicacionReadOnly(false);
+				} 
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaComercializar()) && perimetroActivoAM.getAplicaComercializar() == 0) {
+					activoDto.setCheckComercializarReadOnly(false);
+				}
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaFormalizar()) && perimetroActivoAM.getAplicaFormalizar() == 0) {
+					activoDto.setCheckFormalizarReadOnly(false);
+				}				
 			}
-
 		}
-		
-		return sePuedeEditar;
 	}
 	
 	@Override

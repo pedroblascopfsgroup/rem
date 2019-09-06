@@ -75,7 +75,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertantePM implements UpdaterS
 							&& !Checks.esNulo(valor.getValor())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
 						
-						if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
+						/*if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTANTE_PM);
 
 							expediente.setFechaVenta(null);
@@ -106,7 +106,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertantePM implements UpdaterS
 								logger.error("Error descongelando ofertas.", e);
 							}
 
-						}
+						}*/
 						
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);

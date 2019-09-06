@@ -472,14 +472,21 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 	   						numOferPrincipalField.setValue(numeroOfertaPrincipal);
 		   				}else{
 		    		    	nombrePrescriptorField.setValue('');
-		    				me.fireEvent("errorToast", "El número de oferta introducido no existe");
+		    				me.fireEvent("errorToast", HreRem.i18n("msg.error.oferta.inexistente"));
 		   				}
 		   			} else {
 			    		if(!Ext.isEmpty(numOferPrincipalField)) {
 			    			numOferPrincipalField.setValue('');
 		    		    }
-			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.numero.oferta"));
-			    		numOferPrincipalField.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.numero.oferta"));		    		    
+		    		    
+		    		    if(data.errorMessage != null){
+		    		    	me.fireEvent("errorToast", data.errorMessage);
+		    		    	
+		    		    }else{
+		    		    	me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.numero.oferta"));
+			    			numOferPrincipalField.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.numero.oferta"));	
+		    		    }
+			    			    		    
 			    	}	
 		   		},
 		   		failure: function(response) {

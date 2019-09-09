@@ -204,6 +204,7 @@ beforeedit: 'numVisitaIsEditable'
 									xtype: 'comboboxfieldbase',
 									fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
 									itemId: 'comboClaseOferta',
+									reference: 'claseOferta',
 									name: 'claseOferta',
 				                	colspan: 2,
 				                	readOnly: false,
@@ -215,53 +216,7 @@ beforeedit: 'numVisitaIsEditable'
 									displayField: 'descripcion',
 									valueField: 'codigo',
 									listeners: {
-		    							change: function(combo, value, oldValue) {
-		    								var me = this;
-	
-		    								var form = combo.up('form');
-		    								var numOferPrincipal = form.getBindRecord().data.numOferPrincipal;
-	    									var checkImporteTotal = form.down('field[name=importeTotal]');
-	    									var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
-    										var checkNuevoNumOferPrin = form.down('field[name=nuevoNumOferPrincipal]');	    									
-		    								
-    										if(CONST.DD_CLASE_OFERTA['PRINCIPAL'] == value){
-    											checkImporteTotal.setVisible(true);
-    											checkNumOferPrin.setVisible(false);
-    											checkNuevoNumOferPrin.setVisible(false);
-    											
-    										} else if(CONST.DD_CLASE_OFERTA['DEPENDIENTE'] == value){
-    											
-    											if(CONST.DD_CLASE_OFERTA['DEPENDIENTE'] != oldValue){
-    												
-    												if(!Ext.isEmpty(numOferPrincipal) && Ext.isEmpty(oldValue)){
-    													
-    													checkNumOferPrin.setVisible(true);
-    													checkNuevoNumOferPrin.setVisible(false);
-    												}else{
-													
-														if(!Ext.isEmpty(numOferPrincipal)){
-															checkNumOferPrin.setVisible(true);
-															checkNuevoNumOferPrin.setVisible(false);
-    													}else{
-    														checkNumOferPrin.setVisible(false);
-    														checkNuevoNumOferPrin.setVisible(true);
-    													}		
-    													
-    												}
-    												checkImporteTotal.setVisible(false);
-    											} else{
-    												checkImporteTotal.setVisible(false);
-    												checkNumOferPrin.setVisible(false);
-    												checkNuevoNumOferPrin.setVisible(true);
-    											}
-    										} else{
-    											checkImporteTotal.setVisible(false);
-    											checkNumOferPrin.setVisible(false);
-    											checkNuevoNumOferPrin.setVisible(false);
-    										}
-
-		    							
-				    					}
+		    							change: 'changeOfrPrincipalOrDep'
 				    				}
 							},
 							{

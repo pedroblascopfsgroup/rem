@@ -671,7 +671,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				// Si estoy en una oferta individual que pasa a ser dependiente
 				else if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(dto.getClaseOfertaCodigo())) {
 					try {							
-						Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
+						Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNuevoNumOferPrincipal());
 						if(!Checks.esNulo(nuevaOfertaPrincipal)) {
 							// Si la nueva oferta principal es Individual, la cambio a principal.
 							if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {

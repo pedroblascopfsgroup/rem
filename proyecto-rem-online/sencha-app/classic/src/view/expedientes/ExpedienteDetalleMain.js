@@ -45,6 +45,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
     	me.down('reservaexpediente').setDisabled(reservaDisabled);
 		if(me.down('expedientedetalle').getActiveTab().getConfig().reference != "ofertaexpedienteref"){
 			me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
+		}else{
+			var comboClaseOferta = me.down('ofertaexpediente').down('[name="claseOferta"]');
+			comboClaseOferta.events.change.fire(comboClaseOferta, comboClaseOferta.getValue(), comboClaseOferta.getValue());
 		}
 		me.down('ofertaexpediente').bloquearExpediente(me.down('ofertaexpediente'),bloqueado);
 

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JORGE ROS
---## FECHA_CREACION=20161021
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20190906
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-983
+--## INCIDENCIA_LINK=HREOS-7484
 --## PRODUCTO=NO
 --## Finalidad: Ampliar la tabla que contiene la información de un gasto
 --##           

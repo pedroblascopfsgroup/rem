@@ -4,6 +4,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
     cls	: 'panel-base shadow-panel',
     collapsed: false,
     disableValidation: true,
+    refreshAfterSave: true,
     reference: 'datosbasicosexpediente',
     scrollable	: 'y',
 	recordName: "expediente",
@@ -258,12 +259,37 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			        		value:'{expediente.numContratoAlquiler}',
 			        		hidden: '{esOfertaVenta}'	
 			        	}
-			        }
-			       
-
-				]
-				
-				
+	            	 },
+				        {
+				        	xtype: 'datefieldbase',
+				        	formatter: 'date("d/m/Y")',
+				        	fieldLabel: HreRem.i18n('fieldlabel.fecha.envio.advisory.note'),
+				        	bind: {
+				        		value: '{expediente.fechaEnvioAdvisoryNote}',
+		                		readOnly: true,
+				        		hidden: '{!esCarteraApple}'
+				        	}
+			        },
+			        {
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.recomendacion.ces'),
+			        	bind: {
+			        		value:'{expediente.fechaRecomendacionCes}',
+			        		hidden: '{!esCarteraApple}'
+			        	},
+			        	readOnly: true
+	            	 },
+		             {
+		               	xtype:'datefieldbase',
+		               	fieldLabel:  HreRem.i18n('fieldlabel.fecha.aprobacion.pro.manzana'),
+		               	bind:{
+		               		value: '{expediente.fechaAprobacionProManzana}',
+		               		hidden:'{!esCarteraApple}'
+		              	},
+		             	readOnly: true   
+		             }
+				]	
            },
            {    
                 xtype:'fieldsettable',
@@ -375,6 +401,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			            		store: '{comboSiNoRem}',
 			            		value: '{expediente.riesgoReputacional}'
 			            	}
+						},
+						{
+		                	xtype: 'comboboxfieldbase',
+							reference: 'comboEstadoPBCreserva',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc.reserva'),
+				        	bind: {
+			            		store: '{comboSiNoRem}',
+								value: '{expediente.estadoPbcR}',
+								hidden:'{!expediente.isSubcarteraApple}'
+			            	}
 		                },
 		                {
 		                	xtype: 'comboboxfieldbase',
@@ -382,7 +418,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc'),
 				        	bind: {
 			            		store: '{comboAceptadoRechazado}',
-			            		value: '{expediente.estadoPbc}'
+								value: '{expediente.estadoPbc}'
 			            	}
 		                }
 		        ]

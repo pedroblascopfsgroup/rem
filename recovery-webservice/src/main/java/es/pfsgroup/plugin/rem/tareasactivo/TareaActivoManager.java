@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.tareasactivo;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -463,6 +464,30 @@ public class TareaActivoManager implements TareaActivoApi {
 	public List<TareaActivo> getTareasActivo(Long idActivo, String codigoTipoTramite) {
 		return tareaActivoDao.getTareasActivoPorIdActivoAndTramite(idActivo, codigoTipoTramite);
 	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoResolucionExpedienteApple(Long idTareaExterna){
+		saltoDesdeTareaExterna(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_RESOLUCION_APPLE);
+	}
+	
+	
+	@Override
+	public boolean getSiTareaHaSidoCompletada(Long idTramite, String nombreTarea) {
+		List<TareaActivo> tareasTramite = getTareasActivoByIdTramite(idTramite);
+		List <String>  tareaCompletada = new ArrayList<String>() ;
+		for (TareaActivo tareaActivo : tareasTramite) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaActivo.getId());
+			TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtro);
+			if (!Checks.esNulo(tareaExterna) 
+					&& !Checks.esNulo(tareaExterna.getTareaProcedimiento())
+					&& nombreTarea.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& (!Checks.esNulo(tareaActivo.getFechaVenc()) || !Checks.esNulo(tareaActivo.getFechaFin())))
+				tareaCompletada.add(tareaExterna.getTareaProcedimiento().getCodigo());
+		}
+		return tareaCompletada.size() > 1;
+	}
+
 }
 
 

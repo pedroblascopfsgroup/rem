@@ -16,7 +16,7 @@ public class VFacturasProveedores implements Serializable{
 	
 	@Id
 	@Column(name = "ID_VISTA")  
-	private Long id;
+	private String id;
 	
 	@Column(name = "SOCIEDAD")
 	private String sociedad;
@@ -941,4 +941,13 @@ public class VFacturasProveedores implements Serializable{
 	public void setEtapa(String etapa) {
 		this.etapa = etapa;
 	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 }

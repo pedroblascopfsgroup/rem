@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -62,6 +63,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -96,105 +98,8 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
-import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
-import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.BloqueoActivoFormalizacion;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
-import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
-import es.pfsgroup.plugin.rem.model.Comprador;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
-import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.CondicionesActivo;
-import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
-import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
-import es.pfsgroup.plugin.rem.model.DtoComparecienteVendedor;
-import es.pfsgroup.plugin.rem.model.DtoCondiciones;
-import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
-import es.pfsgroup.plugin.rem.model.DtoDiccionario;
-import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteDocumentos;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
-import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
-import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
-import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
-import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
-import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
-import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
-import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
-import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
-import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
-import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
-import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
-import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
-import es.pfsgroup.plugin.rem.model.DtoReserva;
-import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
-import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
-import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
-import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
-import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
-import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
-import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
-import es.pfsgroup.plugin.rem.model.DtoUsuario;
-import es.pfsgroup.plugin.rem.model.EntidadProveedor;
-import es.pfsgroup.plugin.rem.model.EntregaReserva;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Formalizacion;
-import es.pfsgroup.plugin.rem.model.GastosExpediente;
-import es.pfsgroup.plugin.rem.model.GestorSustituto;
-import es.pfsgroup.plugin.rem.model.HistoricoCondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.HistoricoScoringAlquiler;
-import es.pfsgroup.plugin.rem.model.HistoricoSeguroRentasAlquiler;
-import es.pfsgroup.plugin.rem.model.InformeJuridico;
-import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.OfertaGencat;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.PlusvaliaVentaExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Posicionamiento;
-import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.ScoringAlquiler;
-import es.pfsgroup.plugin.rem.model.SeguroRentasAlquiler;
-import es.pfsgroup.plugin.rem.model.Subsanaciones;
-import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
-import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.TextosOferta;
-import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VActivoOfertaImporte;
-import es.pfsgroup.plugin.rem.model.VActivosAfectosGencat;
-import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VActivosSubdivision;
-import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpedienteDecorator;
-import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpedienteDecoratorException;
-import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
-import es.pfsgroup.plugin.rem.model.VListadoActivosExpediente;
-import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
-import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
@@ -257,6 +162,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 
 @Service("expedienteComercialManager")
@@ -430,6 +336,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public ExpedienteComercial findOneByNumExpediente(Long numExpediente) {
 		return expedienteComercialDao.getExpedienteComercialByNumeroExpediente(numExpediente);
+	}
+	
+	@Override
+	public FileItem getAdvisoryNote() {
+		FileItem advisoryNote = FileItemUtils.fromResource("docs/AN_Template_Modificada_MO.xlsx");
+		advisoryNote.setFileName("AN_Template_Modificada_MO.xlsx");
+		advisoryNote.setContentType(ExcelRepoApi.TIPO_EXCEL);
+
+		return advisoryNote;
 	}
 
 	@Override
@@ -1018,6 +933,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaAlta(expediente.getFechaAlta());
 				dto.setFechaAltaOferta(oferta.getFechaAlta());
 				dto.setFechaSancion(expediente.getFechaSancion());
+				dto.setFechaEnvioAdvisoryNote(expediente.getFechaEnvioAdvisoryNote());
+				
+				if(!Checks.esNulo(expediente.getFechaRecomendacionCes())) {
+					dto.setFechaRecomendacionCes(expediente.getFechaRecomendacionCes());
+				}
 
 				if (!Checks.esNulo(expediente.getReserva())) {
 					dto.setFechaReserva(expediente.getReserva().getFechaFirma());
@@ -1156,9 +1076,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expediente.getRiesgoReputacional())) {
 					dto.setRiesgoReputacional(expediente.getRiesgoReputacional());
 				}
+				
 
 				if (!Checks.esNulo(expediente.getEstadoPbc())) {
 					dto.setEstadoPbc(expediente.getEstadoPbc());
+				}
+				if (!Checks.esNulo(expediente.getEstadoPbcR())) {
+					dto.setEstadoPbcR(expediente.getEstadoPbcR());
 				}
 
 				if (!Checks.esNulo(expediente.getFechaVenta())) {
@@ -1211,9 +1135,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 					}
 				}
-				
-
-
+				if(!Checks.esNulo(oferta.getFechaAprobacionProManzana())) {
+					dto.setFechaAprobacionProManzana(oferta.getFechaAprobacionProManzana());
+				}
 				dto.setDefinicionOfertaScoring(false);
 
 				if (!Checks.esNulo(expediente.getTrabajo()) && !Checks.esNulo(expediente.getTrabajo().getId())) {
@@ -1351,7 +1275,42 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else {
 			dto.setRefCircuitoCliente(null);
 		}
+		Boolean isCarteraCerberusApple = false;
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
+		&& (!Checks.esNulo(oferta.getActivoPrincipal().getCartera()) 
+		&& !Checks.esNulo(oferta.getActivoPrincipal().getSubcartera()))
+		&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
+		DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+			isCarteraCerberusApple = true;
+		}
+		dto.setIsCarteraCerberusApple(isCarteraCerberusApple);
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getFechaRespuestaCES()) && isCarteraCerberusApple) {
+			dto.setFechaRespuestaCES(oferta.getFechaRespuestaCES());
+		}
 		
+		if(!Checks.esNulo(oferta.getImporteContraofertaPM()) && isCarteraCerberusApple) {
+			dto.setImporteContraofertaPM(oferta.getImporteContraofertaPM());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaRespuestaPM()) && isCarteraCerberusApple) {
+			dto.setFechaRespuestaPM(oferta.getFechaRespuestaPM());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaRespuestaOfertantePM()) && isCarteraCerberusApple) {
+			dto.setFechaRespuestaOfertantePM(oferta.getFechaRespuestaOfertantePM());
+		}
+		
+		if(!Checks.esNulo(oferta.getImporteContraofertaCES()) && isCarteraCerberusApple) {
+			dto.setImporteContraofertaCES(oferta.getImporteContraofertaCES());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaResolucionCES()) && isCarteraCerberusApple) {
+			dto.setFechaResolucionCES(oferta.getFechaResolucionCES());
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaRespuesta()) && isCarteraCerberusApple) {
+			dto.setFechaRespuesta(oferta.getFechaRespuesta());
+		}
 
 		if(oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			///Comprobamos si la tarea Elevar a Sanción está activa
@@ -1838,21 +1797,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (Checks.esNulo(expedienteComercialEntrada)) {
 			expedienteComercial = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
-
-			if (fileItem.getParameter("tipo") == null) {
-				throw new Exception("Tipo no valido");
-			}
-
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-			tipoDocumento = genericDao.get(DDTipoDocumentoExpediente.class, filtro);
-
-		} else {
+		}else {
 			expedienteComercial = expedienteComercialEntrada;
-			if (!Checks.esNulo(matricula)) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
-				tipoDocumento = genericDao.get(DDTipoDocumentoExpediente.class, filtro);
-			}
+		} 
+
+		if (fileItem.getParameter("tipo") == null) {
+			throw new Exception("Tipo no valido");
 		}
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		tipoDocumento = genericDao.get(DDTipoDocumentoExpediente.class, filtro);
 
 		// Subida de adjunto al Expediente Comercial
 		ActivoAdjuntoActivo adjuntoActivo = null;
@@ -1871,8 +1825,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		// Establecer tipo y subtipo del adjunto a subir.
 		adjuntoExpediente.setTipoDocumentoExpediente(tipoDocumento);
 
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
-		adjuntoExpediente.setSubtipoDocumentoExpediente(genericDao.get(DDSubtipoDocumentoExpediente.class, filtro));
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
+		adjuntoExpediente.setSubtipoDocumentoExpediente(genericDao.get(DDSubtipoDocumentoExpediente.class, filtroSubtipo));
 
 		adjuntoExpediente.setContentType(fileItem.getFileItem().getContentType());
 		adjuntoExpediente.setTamanyo(fileItem.getFileItem().getLength());
@@ -5758,8 +5712,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Transactional(readOnly = false)
 	public boolean updateParticipacionActivosOferta(Oferta oferta) {
+		
 		Double importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta()
-				: oferta.getImporteOferta();
+					: oferta.getImporteOferta();		 
 
 		try {
 			List<ActivoOferta> activosOferta = oferta.getActivosOferta();
@@ -7204,6 +7159,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ArrayList<String> mailsPara = this.obtnerEmailsBloqueoExpediente(expediente);
 			String asunto = "Bloqueo del expediente comercial ".concat(String.valueOf(expediente.getNumExpediente()));
 			String cuerpo = "El expediente ".concat(String.valueOf(expediente.getNumExpediente()))
+					+ " con el Nº de Oferta ".concat(String.valueOf(expediente.getOferta().getNumOferta()))
+					+ " y el Nº de Activo ".concat(String.valueOf(expediente.getOferta().getActivoPrincipal().getNumActivo()))
 					+ " se ha posicionado correctamente para su firma el" + " día #Fecha_posicionamiento a las "
 					+ "#Hora_posicionamiento en la notaría #Notaria";
 
@@ -7230,7 +7187,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
 
 		} catch (Exception e) {
-			logger.error("No se podido notificar por correo el bloqueo del expediente", e);
+			logger.error("No se ha podido notificar por correo el bloqueo del expediente", e);
 		}
 	}
 
@@ -7286,7 +7243,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericAdapter.sendMail(mailsPara, new ArrayList<String>(), asunto, cuerpo);
 
 			} catch (Exception e) {
-				logger.error("No se podido notificar por correo el desbloqueo del expediente", e);
+				logger.error("No se ha podido notificar por correo el desbloqueo del expediente", e);
 			}
 		}
 	}
@@ -9031,6 +8988,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return esApple;
 	}
 	
+	
 	@Override
 	public Boolean checkPaseDirectoPendDevol(TareaExterna tareaExterna) {
 		
@@ -9623,5 +9581,42 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}			
 		}
 		return false;
+	}
+	
+	@Override
+	public List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta){
+		List<VReportAdvisoryNotes> listaAN = new ArrayList<VReportAdvisoryNotes>();
+		
+		listaAN = genericDao.getList(VReportAdvisoryNotes.class, genericDao.createFilter(FilterType.EQUALS, "numOferta", oferta.getNumOferta()));
+		
+		return listaAN;
+	}
+	
+	@Override
+	public boolean esYubai(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esYubai = false;
+		if ( !Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) ) {
+			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
+			if ( !Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera())) {
+				esYubai = ( DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo()) 
+							&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo()) );
+			}
+		}
+		return esYubai;
+	}
+	
+	@Override
+	public boolean checkExpedienteFechaCheque(Long idTramite) {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (!Checks.esNulo(activoTramite) && !Checks.esNulo(activoTramite.getActivo())) {
+			Trabajo trabajo = activoTramite.getTrabajo();
+			if (!Checks.esNulo(trabajo)) {
+				ExpedienteComercial expediente = expedienteComercialDao
+						.getExpedienteComercialByIdTrabajo(trabajo.getId());
+				return !Checks.esNulo(expediente.getFechaContabilizacionPropietario());
+			}
+		}
+		return true;
 	}
 }

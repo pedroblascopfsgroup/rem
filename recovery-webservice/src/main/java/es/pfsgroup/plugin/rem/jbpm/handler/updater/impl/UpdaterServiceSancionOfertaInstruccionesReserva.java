@@ -15,7 +15,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -41,13 +40,10 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     @Autowired
     private UvemManagerApi uvemManagerApi;
     
-    @Autowired
-    private GencatApi gencatApi;
-    
     private static final String FECHA_ENVIO = "fechaEnvio";
     private static final String TIPO_ARRAS = "tipoArras";
    	public static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
-
+   	public static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaInstruccionesReserva.class);
@@ -96,17 +92,14 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 					uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
 				}
 			}
-			
-			//TODO COMPROBACION PRE BLOQUEO GENCAT 
-			//Creemos que no hay que llamar ya que no se cambia el estado del expediente.
-			//gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);  
+
 		}
 
 	}
 	
 	
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_INSTRUCCIONES_RESERVA};
+		return new String[]{CODIGO_T013_INSTRUCCIONES_RESERVA,CODIGO_T017_INSTRUCCIONES_RESERVA};
 	}
 
 	public String[] getKeys() {

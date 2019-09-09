@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
     disableValidation: true,
     reference: 'datosbasicosoferta',
     scrollable	: 'y',
-
+	refreshAfterSave: true,
 	recordName: "datosbasicosoferta",
 	
 	recordClass: "HreRem.model.DatosBasicosOferta",
@@ -91,7 +91,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.contraoferta'),
 		                	bind:		{
 		                		value: '{datosbasicosoferta.importeContraOferta}'
-		                		//,readOnly: '{esCarteraSareb}'
+		                		,readOnly: '{esPerfilPMyCEs}'
 		                	}
 		                },
 		                {	
@@ -102,6 +102,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                		,readOnly: 'true',
 		                		hidden: '{esTipoAlquiler}'
 		                	}		                	
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta'),
+		                	colspan: 3,
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuesta}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true  
+		                	
 		                },
 		                {	
 		                	xtype: 'comboboxfieldbase',
@@ -137,6 +148,62 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                		value: '{datosbasicosoferta.refCircuitoCliente}',
 		                		hidden: '{!esTipoAlquiler}'
 		                	}		                	
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.respuesta.pm'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuestaPM}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true
+		                },
+		                {
+		                	xtype:'currencyfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.pm'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.importeContraofertaPM}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true
+		                },
+		                {
+		                	xtype: 'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.ofertante.pm'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuestaOfertantePM}',
+		                		hidden: '{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+							readOnly: true
+		                },
+		                {
+		                	xtype:'datefieldbase',
+							formatter: 'date("d/m/Y")',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.resolucion.ces'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaResolucionCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true
+		                },
+		                {
+		                	xtype:'currencyfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.ces'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.importeContraofertaCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},
+		                	readOnly: true
+		                },
+		                {
+		                	xtype:'datefieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.CES'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.fechaRespuestaCES}',
+		                		hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
+		                	},		                	
+		                	readOnly: true              	
 		                },
 		                {
 		                	xtype: 'fieldset',

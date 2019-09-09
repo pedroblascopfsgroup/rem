@@ -47,7 +47,8 @@ public class VGestoresActivo implements Serializable {
 	@Column(name = "NOMBRE")
 	private String nombreUsuario;
 
-	
+	@Column(name = "DD_SCR_CODIGO")
+	private Long subCarteraCodigo;
 	
 	public Long getActivoId() {
 		return activoId;
@@ -127,6 +128,14 @@ public class VGestoresActivo implements Serializable {
 
 	public void setNombreUsuario(String nombreUsuario) {
 		this.nombreUsuario = nombreUsuario;
+	}
+
+	public Long getSubCarteraCodigo() {
+		return subCarteraCodigo;
+	}
+
+	public void setSubCarteraCodigo(Long subCarteraCodigo) {
+		this.subCarteraCodigo = subCarteraCodigo;
 	}
 	
 	

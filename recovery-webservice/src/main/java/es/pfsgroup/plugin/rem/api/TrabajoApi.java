@@ -852,8 +852,14 @@ public interface TrabajoApi {
 	boolean checkJaipur(Trabajo trabajo);
 
 	boolean checkGaleon(Trabajo trabajo);
+
+	/**
+	 * @param tbjNumTrabajo
+	 * @param codTarea
+	 * @return devuelve el id de la tarea activa.
+	 */
+	public Long getIdTareaBytbjNumTrabajoAndCodTarea(Long tbjNumTrabajo, String codTarea);
 	
 	@BusinessOperationDefinition("trabajoManager.getListActivoMatrizPresupuesto")
 	Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto);
-
 }

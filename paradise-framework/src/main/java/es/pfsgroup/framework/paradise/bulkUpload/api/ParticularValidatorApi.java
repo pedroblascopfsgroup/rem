@@ -735,6 +735,16 @@ public interface ParticularValidatorApi {
 
 	Boolean isActivoOfGiants(String numActivo);
 	
+	Boolean perteneceDDEstadoActivo(String codigoEstadoActivo);
+
+	Boolean perteneceDDTipoTituloTPA(String codigoTituloTPA);
+
+	Boolean conTituloOcupadoSi(String codigoTituloTPA);	
+	
+	Boolean conPosesion(String numActivo);
+	
+	Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal);
+
 	/**
 	 * @param numActivo
 	 * @return true si el activo es un activo Matriz de una PA
@@ -772,7 +782,7 @@ public interface ParticularValidatorApi {
 	 * @return true si el activo pertenece a un activo de venta.
 	 */
 	
-	public Boolean activosVendidos(String numExpedienteComercial);
+	public Boolean activosVendidos(String numExpedienteComercial);	
 
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 

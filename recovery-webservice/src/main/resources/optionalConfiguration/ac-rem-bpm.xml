@@ -26,6 +26,8 @@
 
 	<bean id="activarProrroga" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoProrrogarTareasActionHandler"/>
 	<bean id="tramiteActuacionTecnicaNodoOcultoHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.TramiteActuacionTecnicaNodoOcultoHandler"/>
+	<bean id="tramiteSancionOfertaNodoOcultoHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.TramiteSancionOfertaNodoOcultoHandler"/>
+	<bean id="routerBPMSancionOfertaHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.routerBPMSancionOfertaHandler"/>
 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAdmision.xml" p:version="2033"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumental.xml" p:version="2034"/>
@@ -40,9 +42,10 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionEstados.xml" p:version="2037"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAprobacionInformeComercial.xml" p:version="255"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="2042"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="2059"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComunicacionGENCAT.xml" p:version="-1"/>
+    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaApple.xml" p:version="-1"/>
 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">
@@ -610,6 +613,18 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkDiscrepanciasUrsus(idTramite);
             }
+            def existeEnTablaDeConfiguracion = { 
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.existeEnTablaDeConfiguracion(tareaExterna);
+            }
+            def esYubai = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.esYubai(tareaExterna);
+			}
+			def checkExpedienteFechaCheque = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkExpedienteFechaCheque(idTramite);
+            }
   			 ]]></value>
   		</list>
   	</property>
@@ -630,6 +645,7 @@
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDResolucionComite</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDRespuestaOfertante</value>
 		      <value>es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva</value>
+		      <value>es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega</value>
         </list>
     </property>
    </bean>

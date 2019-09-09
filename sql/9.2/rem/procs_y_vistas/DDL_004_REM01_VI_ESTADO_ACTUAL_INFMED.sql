@@ -62,15 +62,23 @@ BEGIN
         on hic.act_id = act.act_id
 			  INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = HIC.ACT_ID
 			  INNER JOIN '||V_ESQUEMA||'.DD_AIC_ACCION_INF_COMERCIAL DDAIC ON DDAIC.DD_AIC_ID = HIC.DD_AIC_ID
-			  WHERE DDAIC.DD_AIC_CODIGO = ''02'' OR DDAIC.DD_AIC_CODIGO = ''04''
+			  WHERE (DDAIC.DD_AIC_CODIGO = ''02'' OR DDAIC.DD_AIC_CODIGO = ''04'')
         and act.borrado = 0
 			  ) AUX
 			WHERE AUX.REF = 1';
 
 
   	DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
-
 	  
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;   
 END;
 /
 

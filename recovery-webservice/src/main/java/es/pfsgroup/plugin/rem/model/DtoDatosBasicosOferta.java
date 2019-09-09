@@ -83,6 +83,19 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String refCircuitoCliente;
 	
 	private Boolean permiteProponer;
+	
+	private Double importeContraofertaPM;
+	
+	private Date fechaRespuestaPM;
+	
+	private Date fechaRespuestaOfertantePM;
+	
+	private Double importeContraofertaCES;
+    private Date fechaRespuestaCES;
+	private Boolean isCarteraCerberusApple;
+	
+	private Date fechaResolucionCES;
+	private Date fechaRespuesta;
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -331,6 +344,70 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setIdEco(Long idEco) {
 		this.idEco = idEco;
+	}
+
+	public Double getImporteContraofertaPM() {
+		return importeContraofertaPM;
+	}
+
+	public void setImporteContraofertaPM(Double importeContraofertaPM) {
+		this.importeContraofertaPM = importeContraofertaPM;
+	}
+
+	public Date getFechaRespuestaPM() {
+		return fechaRespuestaPM;
+	}
+
+	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
+		this.fechaRespuestaPM = fechaRespuestaPM;
+	}
+	
+	public Date getFechaRespuestaOfertantePM() {
+		return fechaRespuestaOfertantePM;
+	}
+
+	public void setFechaRespuestaOfertantePM(Date fechaRespuestaOfertantePM) {
+		this.fechaRespuestaOfertantePM = fechaRespuestaOfertantePM;
+	}
+
+	public Double getImporteContraofertaCES() {
+		return importeContraofertaCES;
+	}
+
+	public void setImporteContraofertaCES(Double importeContraofertaCES) {
+		this.importeContraofertaCES = importeContraofertaCES;
+	}
+
+	public Date getFechaResolucionCES() {
+		return fechaResolucionCES;
+	}
+
+	public void setFechaResolucionCES(Date fechaResolucionCES) {
+		this.fechaResolucionCES = fechaResolucionCES;
+	}
+
+	public Date getFechaRespuestaCES() {
+		return fechaRespuestaCES;
+	}
+
+	public void setFechaRespuestaCES(Date fechaRespuestaCES) {
+		this.fechaRespuestaCES = fechaRespuestaCES;
+	}
+
+	public Boolean getIsCarteraCerberusApple() {
+		return isCarteraCerberusApple;
+	}
+
+	public void setIsCarteraCerberusApple(Boolean isCarteraCerberusApple) {
+		this.isCarteraCerberusApple = isCarteraCerberusApple;
+	}
+
+	public Date getFechaRespuesta() {
+		return fechaRespuesta;
+	}
+
+	public void setFechaRespuesta(Date fechaRespuesta) {
+		this.fechaRespuesta = fechaRespuesta;
 	}
 
 }

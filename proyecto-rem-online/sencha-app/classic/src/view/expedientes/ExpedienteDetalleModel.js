@@ -435,7 +435,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				return true;
 			}
 		},
-		
+
+		esPerfilPMyCEs: function(get){
+			
+			var tipoOfertaDesc = get('datosbasicosoferta.estadoDescripcion');
+			 
+			 if(tipoOfertaDesc == "Tramitada"){
+				if($AU.userIsRol('HAYAGRUPOCES') || $AU.userIsRol('HAYAGESTPORTMAN') ){
+					return false;
+				}else{
+					return true;
+				} 	
+			 }else{
+			 	return false;
+			 }
+		},
+			
 		esBankia: function(get) {
 			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	
@@ -444,6 +459,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}else{
 	     		return false;
 	     	}
+		},
+		ocultarBtnDevolverReserva: function(get){
+			var me = this;
+			var url =  $AC.getRemoteUrl('expedientecomercial/getIsExpedienteGencat');
+			if(get('expediente.tieneReserva') && get('expediente.codigoEstado') == '16'){
+				Ext.Ajax.request({
+				     url: url,
+				     method: 'POST',
+				     params: {idExpediente: get('expediente.id')},
+				     success: function(response, opts) {
+				    	data = Ext.decode(response.responseText);
+				    	if(!Ext.isEmpty(data) && data.success == 'true'){
+					    	if(data.data == "false"){
+					    		return true;
+					    	}else{
+					    		return false;
+					    	}
+				     	}else{
+				     		return false;
+				     	}
+				     },
+				     failure: function(){
+				    	 return false;
+				     }
+				});
+			}else{
+				return true;
+			}			
 		}
 	 },
 

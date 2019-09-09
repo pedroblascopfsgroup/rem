@@ -315,6 +315,16 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			}
 		}
 
+		// Aviso 19: Es Piso Piloto
+		if(!Checks.esNulo(activo)) {
+			DtoAviso dtoAviso = new DtoAviso();
+			if (activoApi.isPisoPiloto(activo)) {
+				dtoAviso.setDescripcion("Piso Piloto");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			} 
+		}
+
 		return listaAvisos;
 	}
 }

@@ -163,6 +163,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
@@ -2063,7 +2064,8 @@ public class ActivoAdapter {
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo()) || isProveedor) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre", true);
 				}
-				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo())) {
+				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo()) 
+						&& !ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucion", true);
 				}
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
@@ -3476,6 +3478,44 @@ public class ActivoAdapter {
 
 	}
 	}
+	
+	
+	// Metodo que actualize el responsable del trabajo para el activo
+	@Transactional(readOnly = false)
+	public void cambiarResponsableTrabajosActivos(Activo activo) {
+		if (!Checks.esNulo(activo)) {
+			List<ActivoTrabajo> listaTrabajos = activo.getActivoTrabajos();
+			if (DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())) {
+				if (!Checks.estaVacio(listaTrabajos)) {
+					for (ActivoTrabajo activoTrabajo : listaTrabajos) {
+						//System.out.println(activoTrabajo.getTrabajo().getNumTrabajo());
+						Usuario usuResponsable = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
+						String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
+						Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo,
+								GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+						if (DDEstadoTrabajo.ESTADO_SOLICITADO.equals(estadoTrabajo)
+								|| DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(estadoTrabajo)
+								|| DDEstadoTrabajo.ESTADO_IMPOSIBLE_OBTENCION.equals(estadoTrabajo)
+								|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(estadoTrabajo)
+								|| DDEstadoTrabajo.ESTADO_FINALIZADO_PENDIENTE_VALIDACION.equals(estadoTrabajo)
+								|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(estadoTrabajo)
+								|| DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo)) {
+							if (!Checks.esNulo(gestorActivo) && !gestorActivo.equals(usuResponsable)) {
+								Trabajo trabajo = activoTrabajo.getTrabajo();
+								trabajo.setUsuarioResponsableTrabajo(gestorActivo);
+								trabajoDao.saveOrUpdate(trabajo);
+							}
+						} else {
+							Trabajo trabajo = activoTrabajo.getTrabajo();
+							trabajo.setUsuarioResponsableTrabajo(usuResponsable);
+							trabajoDao.saveOrUpdate(trabajo);
+						}
+					}
+				}
+			}
+		}
+	}
+ 
 
 
 

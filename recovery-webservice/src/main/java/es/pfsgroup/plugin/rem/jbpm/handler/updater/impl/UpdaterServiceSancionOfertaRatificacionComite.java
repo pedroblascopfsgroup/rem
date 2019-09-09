@@ -140,6 +140,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 
 							//Rechaza la oferta y descongela el resto
 							ofertaApi.rechazarOferta(ofertaAceptada);
+							ofertaApi.finalizarOferta(ofertaAceptada);
 							try {
 								ofertaApi.descongelarOfertas(expediente);
 							} catch (Exception e) {
@@ -156,12 +157,12 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 						ofertaAceptada.setImporteContraOferta(Double.valueOf(valor.getValor().replace(',', '.')));
 						genericDao.save(Oferta.class, ofertaAceptada);
 	
-						// Actualizar honorarios para el nuevo importe de contraoferta.
-						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
-	
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+						
+						// Actualizar honorarios para el nuevo importe de contraoferta.
+						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
 						
 //						ResolucionComiteBankiaDto resolDto = null;
 //						List<ResolucionComiteBankia> listaResol = null;

@@ -90,4 +90,10 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 
 	List<ActivoAgrupacionActivo> getListActivoAgrupacionActivoByAgrupacionID(Long idAgrupacion);
 
+	/**
+	 * Este método devuelve un objeto de tipo Activo a partir de un id de agrupación para obtener su piso piloto
+	 * @param idAgrupacion : idAgrupacion
+	 * @return Activo
+	 */
+	public Activo getPisoPilotoByIdAgrupacion(long idAgrupacion);
 }

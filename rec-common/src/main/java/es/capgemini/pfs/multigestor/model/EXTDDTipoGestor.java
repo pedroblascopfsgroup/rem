@@ -49,6 +49,7 @@ public class EXTDDTipoGestor implements Dictionary, Auditable{
 	public static String CODIGO_TIPO_GESTOR_VALIDADOR_ACUERDO="VALIACU";
 	public static String CODIGO_TIPO_GESTOR_DECISOR_ACUERDO="DECIACU";
 	public static String CODIGO_TIPO_LETRADO = "LETR";
+	public static String CODIGO_TIPO_PORTFOLIO_MANAGER = "GPM";
 	public static final String CODIGO_TIPO_PREPARADOR_DOCUMENTAL_PCO = "PREDOC";
 	public static final String CODIGO_TIPO_GESTOR_COMERCIAL = "GCOM";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL = "SCOM";
@@ -244,7 +245,7 @@ public class EXTDDTipoGestor implements Dictionary, Auditable{
 			CODIGO_TIPO_SUPERVISOR_AGENCIA_RECOBRO = projectContext.getTipoGestor("CODIGO_TIPO_SUPERVISOR_AGENCIA_RECOBRO");
 			CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO = projectContext.getTipoGestor("CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO");
 			CODIGO_TIPO_LETRADO = projectContext.getTipoGestor("CODIGO_TIPO_LETRADO");
-			
+			CODIGO_TIPO_PORTFOLIO_MANAGER = projectContext.getTipoGestor("CODIGO_TIPO_PORTFOLIO_MANAGER");
 		}			
 	}
 }

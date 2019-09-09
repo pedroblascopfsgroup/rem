@@ -25,7 +25,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		},
 
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {
-        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
+        	tabPanel.down("[itemId=botoneditar]").setVisible(false);
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null)
         	{

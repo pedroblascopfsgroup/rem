@@ -9,9 +9,10 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.ActivoInformacionComercial','HreRem.model.Tramite','HreRem.model.FichaTrabajo', 'HreRem.model.ActivoAviso', 
     'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.model.ExpedienteAviso','HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
     'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu',
-    'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleMain', 
-    'HreRem.view.gastos.GastoDetalleMain', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso'],
+    'HreRem.model.FichaProveedorModel', 'HreRem.model.PerfilDetalleModel','HreRem.model.FichaPerfilModel', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso'],
 
+    requires: ['HreRem.view.configuracion.administracion.perfiles.detalle.DetallePerfil', 'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.view.gastos.GastoDetalleMain', 
+    	'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleMain'],
     
     refs: [
 				{
@@ -204,7 +205,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	},
     	
     	'configuracionmain': {
-    		abrirDetalleProveedor: 'abrirDetalleProveedor'
+    		abrirDetalleProveedor: 'abrirDetalleProveedor',
+    		abrirDetallePerfil: 'abrirDetallePerfil'
     	},
     	'administraciongastosmain': {
     		abrirDetalleGasto: 'abrirDetalleGasto'
@@ -578,7 +580,7 @@ Ext.define('HreRem.controller.ActivosController', {
     refrescarDetalleTrabajo: function (detalle) {
     	
     	var me = this,
-    	id = detalle.getViewModel().get("trabajo.id");	;
+    	id = detalle.getViewModel().get("trabajo.id");
     	
     	HreRem.model.FichaTrabajo.load(id, {
     		scope: this,
@@ -668,8 +670,7 @@ Ext.define('HreRem.controller.ActivosController', {
     refrescarExpedienteComercial: function (detalle) {
     	
     	var me = this,
-    	id = detalle.getViewModel().get("expediente.id");	;
-    	
+    	id = detalle.getViewModel().get("expediente.id");
     	HreRem.model.ExpedienteComercial.load(id, {
     		scope: this,
 		    success: function(expediente) {
@@ -1079,6 +1080,53 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	
 		    	tab.getViewModel().set("proveedor", proveedor);
 		    	tab.configCmp(proveedor);
+
+				tab.unmask();
+
+		    	me.logTime("Fin Set values"); 
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
+		});
+
+    },
+    
+    abrirDetallePerfil: function(record, refLinks) {
+    	console.log(record);
+    	var me = this,
+    	id = record.get("pefId"),
+    	titulo = "Perfil " + id;
+    	console.log(record.get("pefId"));
+		me.redirectTo('activos', true); 	
+    	me.abrirDetallePerfilById(id, titulo, refLinks);    	
+    },
+    
+    abrirDetallePerfilById: function(id, titulo, refLinks) {
+    	var me = this,
+    	cfg = {}, 
+    	tab=null;
+
+    	cfg.title = titulo;
+    	tab = me.createTab(me.getActivosMain(), 'perfil', 'detalleperfil',  id, cfg);
+    	tab.mask(HreRem.i18n('msg.mask.loading'));
+    	me.setLogTime();
+    	
+    	HreRem.model.FichaPerfilModel.load(id, {
+    		scope: this,
+		    success: function(perfil) {
+		    	me.logTime("Load perfil success"); 
+		    	me.setLogTime();
+		    			    	
+		    	console.log(perfil);
+		    	if(Ext.isEmpty(titulo)) {		    		
+		    		titulo = "Perfil " + perfil.get("pefId");
+		    		tab.setTitle(titulo);
+		    	}
+		    	
+		    	tab.getViewModel().set("perfil", perfil);
+		    	tab.configCmp(perfil);
 
 				tab.unmask();
 

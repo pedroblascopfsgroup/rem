@@ -225,7 +225,7 @@ beforeedit: 'numVisitaIsEditable'
 								hidden : '{!datosbasicosoferta.isCarteraLbkVenta}' 
 							},
 							items : [{
-								xtype : 'currencyfieldbase',
+								xtype : 'numberfieldbase',
 								fieldLabel : HreRem.i18n('fieldlabel.numOferPrincipal'),
 								name : 'numOferPrincipal',
 								//readOnly : true,
@@ -244,7 +244,7 @@ beforeedit: 'numVisitaIsEditable'
 
 							},
 			                {
-				                xtype:'currencyfieldbase',
+				                xtype:'numberfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.nuevoNumOferPrincipal'),
 								name: 		'nuevoNumOferPrincipal', 
 			 					bind: 		{ 

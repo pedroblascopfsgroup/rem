@@ -133,8 +133,8 @@ SELECT
 				GGE.GGE_OBSERVACIONES,
 				GPV.GPV_NUM_GASTO_HAYA,
 				GDE.GDE_FECHA_PAGO,
-                		NVL(GDE.GDE_IMPORTE_TOTAL,0)+NVL((SELECT SUM(GPL.GPL_IMPORTE_GASTO)
-                                    FROM  '||V_ESQUEMA||'.GPL_GASTOS_PRINEX_LBK GPL
+                		NVL(NVL(GDE.GDE_PRINCIPAL_SUJETO,GDE.GDE_PRINCIPAL_NO_SUJETO),0)+NVL((SELECT SUM(GPL.GPL_IMPORTE_GASTO)
+                                    FROM '||V_ESQUEMA||'.GPL_GASTOS_PRINEX_LBK GPL
                                      WHERE GPL.GPV_ID = GPVACT.GPV_ID
                                      AND GPL.ACT_ID IS NOT NULL
                                      AND GPL.GPL_IMPORTE_GASTO IS NOT NULL
@@ -171,7 +171,20 @@ SELECT
   
   
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_ACTIVOS...Creada OK');
-  
+ 
+EXCEPTION
+
+   WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+        DBMS_OUTPUT.put_line(err_msg);
+
+        ROLLBACK;
+        RAISE; 
+
 END;
 /
 

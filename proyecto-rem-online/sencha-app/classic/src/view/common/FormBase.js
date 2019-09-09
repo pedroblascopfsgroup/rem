@@ -170,6 +170,20 @@
     		me.buttons = [ { text: HreRem.i18n('btn.saveBtnText'), handler: 'onSaveEditClick' }];
     		
     	}
+    	
+    	if (me.isSearchProveedoresForm) {
+    		me.collapsible= true;
+    		me.collapsed= false;    		
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchProveedoresClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}];
+    	}
+    	
+    	if (me.isSearchPerfilesForm) {
+    		me.collapsible= true;
+    		me.collapsed= false;    		
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchPerfilesClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}];
+    	}
 
     	
     	me.callParent();

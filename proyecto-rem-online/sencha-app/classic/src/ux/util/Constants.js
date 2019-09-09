@@ -176,6 +176,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	CERBERUS: '07',
     	LIBERBANK: '08',
     	TANGO: '10',
+    	THIRD: '11',
     	GIANTS: '12',
     	EGEO: '13',
     	GALEON:'15',
@@ -191,6 +192,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	'07': 'CERBERUS',
     	'08': 'LIBERBANK',
     	'10': 'TANGO',
+    	'11': 'THIRDPARTIES',
     	'12': 'GIANTS',
     	'15': 'GALEON',
     	'14': 'ZEUS'
@@ -202,6 +204,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	CERBERUS: 'CERBERUS',
     	BANKIA: 'BANKIA',
     	TANGO: 'TANGO',
+    	THIRD: 'THIRD',
     	GIANTS: 'GIANTS',
     	LIBERBANK:'LIBERBANK',
     	GALEON:'GALEON',
@@ -209,16 +212,42 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     SUBCARTERA: {
+    	SAREBINMOBILIARIO: '04',
     	BH: '06',
+    	BFA: '07',
+    	BANKIA: '08',
+    	ZEUSINMOBILIARIO: '133',
+    	ZEUSFINANCIERO: '134',
     	AGORAINMOBILIARIO: '135',
 		AGORAFINANCIERO: '137',
 		APPLEINMOBILIARIO: '138',
-		SAREBINMOBILIARIO: '04'
+		YUBAI: '139',
+		SAREB: '15',
+		LBKINMOBILIARIO: '18',
+		BLUETHINV: '23',
+		TIFIOS: '24',
+		QUITASBANKIA: '25',
+		COMERCIALING: '30',
+		QUITASCAJAMAR: '032',
+		GOLDENTREE: '32',
+		GGIANTSREOI: '33',
+		GGIANTSREOII: '34',
+		GGIANTSREOIII: '35',
+		GGIANTSREOIV: '36',
+		JAIPURINMOBILIARIO: '37',
+		JAIPURFINANCIERO: '38',
+		EGEO: '39',
+		ZEUS: '41',
+		LIBERBANK: '56',
+		MOSCATA: '57',
+		BEYOSPONGA: '59',
+		RETAMAR: '60'
     },
     
     NOMBRE_SUBCARTERA: {
     	BANKIA_HABITAT: 'BANKIA HABITAT',
-    	CERBERUS_AGORA: 'Agora - Inmobiliario'
+    	CERBERUS_AGORA: 'Agora - Inmobiliario',
+    	YUBAI: 'YUBAI'
     },
 
     IMAGENES_CARTERA: {
@@ -243,11 +272,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTEDI: 'GESTEDI',
 		HAYAGESTFORMADM: 'HAYAGESTFORMADM',
 		GESTIAFORM:'GESTIAFORM',
-		GESTOR_COMERCIAL: 'HAYAGESTCOM',
 		USUARIO_CONSULTA: 'HAYACONSU',
-		GESTOR_COMERCIAL:'HAYAGESTCOM',
+		GESTOR_COMERCIAL: 'HAYAGESTCOM',
 		SUPERVISOR_COMERCIAL:'HAYASUPCOM',
-		HAYAGESTFORM: 'HAYAGESTFORM'
+		GESTOR_FORM: 'HAYAGESTFORM',
+		SUPERVISOR_FORM: 'HAYASUPFORM',
+		GESTOR_COMERCIAL_BO_INM: 'HAYAGBOINM',
+		SUPERVISOR_COMERCIAL_BO_INM: 'HAYASBOINM'
     },
     
     TIPOS_OFERTA: {
@@ -282,7 +313,11 @@ Ext.define('HreRem.ux.util.Constants', {
     	DENEGADO: '12',
     	PTE_DOBLE_FIRMA: '13',
     	RPTA_OFERTANTE: '14',
-    	EN_DEVOLUCION: '16'
+    	EN_DEVOLUCION: '16',
+    	AP_CES_PTE_MAN: '36',
+    	CONT_CES: '38',
+    	RES_PTE_MAN: '39',
+    	AP_PTE_MAN : '40'
     },
     
     ESTADOS_GASTO: {
@@ -426,6 +461,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMBO_SI_NO: {
 		SI: 1,
 		NO: 0
+	},
+	
+	COMBO_TRUE_FALSE: {
+		TRUE: 'true',
+		FALSE: 'false'
 	},
 
 	COMBO_ESTADO_ALQUILER: {

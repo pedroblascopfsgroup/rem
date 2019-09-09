@@ -89,5 +89,7 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	 */
 	public ActivoProveedorContacto getActivoProveedorContactoPorIdsUsuario(Long idUsuario);
 
+	public ActivoProveedorContacto getActivoProveedorContactoPorUsernameUsuario(String username);
+
 
 }

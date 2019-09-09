@@ -140,6 +140,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 								// Rechaza la oferta y descongela el resto
 								ofertaApi.rechazarOferta(ofertaAceptada);
+								ofertaApi.finalizarOferta(ofertaAceptada);
 								
 								// Tipo rechazo y motivo rechazo ofertas cajamar
 								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi
@@ -175,12 +176,12 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						ofertaAceptada.setImporteContraOferta(Double.valueOf(doubleValue));
 						genericDao.save(Oferta.class, ofertaAceptada);
 	
-						// Actualizar honorarios para el nuevo importe de contraoferta.
-						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
-	
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+						
+						// Actualizar honorarios para el nuevo importe de contraoferta.
+						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
 						
 					}
 				}

@@ -8,85 +8,102 @@ import es.capgemini.devon.dto.WebDto;
 
 /**
  * Dto que gestiona la informacion de los datos básicos de una oferta.
- *  
+ *
  * @author Jose Villel
  *
  */
 public class DtoDatosBasicosOferta extends WebDto {
-	
-	
-  
+
+
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3574353502838449106L;
-	
 
-	
-    private Long idOferta;
-    
-    private Long idEco;
-    
-    private Long numOferta;
-    
-    private String tipoOfertaDescripcion;
-    
-    private String tipoOfertaCodigo;
-    
-    private Date fechaNotificacion;
-    
-    private Date fechaAlta;
-    
-    private String estadoDescripcion;
-    
-    private String estadoCodigo;
-    
-    private String prescriptor;
-        
-    private Double importeOferta;
-    
-    private Double importeContraOferta;
-    
-    private String comite;
-    
-    private String numVisita;   
-    
-    private String estadoVisitaOfertaCodigo;
-    
-    private String estadoVisitaOfertaDescripcion;
-    
-    private String canalPrescripcionCodigo;
-    
-    private String canalPrescripcionDescripcion;
-    
-    private String comiteSancionadorCodigo;
-    
-    private String comiteSancionadorCodigoAlquiler;
-    
-    private String comitePropuestoDescripcion;
-    
-    private String comitePropuestoCodigo;
-   
+
+
+  private Long idOferta;
+
+  private Long idEco;
+
+  private Long numOferta;
+
+  private String tipoOfertaDescripcion;
+
+  private String tipoOfertaCodigo;
+
+  private Date fechaNotificacion;
+
+  private Date fechaAlta;
+
+  private String estadoDescripcion;
+
+  private String estadoCodigo;
+
+  private String prescriptor;
+
+  private Double importeOferta;
+
+  private Double importeContraOferta;
+
+  private String comite;
+
+  private String numVisita;
+
+  private String estadoVisitaOfertaCodigo;
+
+  private String estadoVisitaOfertaDescripcion;
+
+  private String canalPrescripcionCodigo;
+
+  private String canalPrescripcionDescripcion;
+
+  private String comiteSancionadorCodigo;
+
+  private String comiteSancionadorCodigoAlquiler;
+
+  private String comitePropuestoDescripcion;
+
+  private String comitePropuestoCodigo;
+
 	private String ofertaExpress;
-	
+
 	private String necesitaFinanciacion;
-	
+
 	private String observaciones;
-	
+
 	private String ventaCartera;
-	
+
 	private String tipoAlquilerCodigo;
-	
+
 	private String tipoInquilinoCodigo;
 
 	private String numContratoPrinex;
-	
+
 	private String refCircuitoCliente;
-	
+
 	private Boolean permiteProponer;
-	
+
 	private Long idGestorComercialPrescriptor;
-	
+
+	private Double importeContraofertaPM;
+
+	private Date fechaRespuestaPM;
+
+	private Date fechaRespuestaOfertantePM;
+
+	private Double importeContraofertaCES;
+
+  private Date fechaRespuestaCES;
+
+	private Boolean isCarteraCerberusApple;
+
+	private Date fechaResolucionCES;
+
+	private Date fechaRespuesta;
+
+
 	public Long getIdOferta() {
 		return idOferta;
 	}
@@ -287,7 +304,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setPermiteProponer(Boolean permiteProponer) {
 		this.permiteProponer = permiteProponer;
 	}
-	
+
 	public String getTipoAlquilerCodigo() {
 		return tipoAlquilerCodigo;
 	}
@@ -343,6 +360,68 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.idGestorComercialPrescriptor = idGestorComercialPrescriptor;
 	}
 
-	
+	public Double getImporteContraofertaPM() {
+		return importeContraofertaPM;
+	}
+
+	public void setImporteContraofertaPM(Double importeContraofertaPM) {
+		this.importeContraofertaPM = importeContraofertaPM;
+	}
+
+	public Date getFechaRespuestaPM() {
+		return fechaRespuestaPM;
+	}
+
+	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
+		this.fechaRespuestaPM = fechaRespuestaPM;
+	}
+
+	public Date getFechaRespuestaOfertantePM() {
+		return fechaRespuestaOfertantePM;
+	}
+
+	public void setFechaRespuestaOfertantePM(Date fechaRespuestaOfertantePM) {
+		this.fechaRespuestaOfertantePM = fechaRespuestaOfertantePM;
+	}
+
+	public Double getImporteContraofertaCES() {
+		return importeContraofertaCES;
+	}
+
+	public void setImporteContraofertaCES(Double importeContraofertaCES) {
+		this.importeContraofertaCES = importeContraofertaCES;
+	}
+
+	public Date getFechaResolucionCES() {
+		return fechaResolucionCES;
+	}
+
+	public void setFechaResolucionCES(Date fechaResolucionCES) {
+		this.fechaResolucionCES = fechaResolucionCES;
+	}
+
+	public Date getFechaRespuestaCES() {
+		return fechaRespuestaCES;
+	}
+
+	public void setFechaRespuestaCES(Date fechaRespuestaCES) {
+		this.fechaRespuestaCES = fechaRespuestaCES;
+	}
+
+	public Boolean getIsCarteraCerberusApple() {
+		return isCarteraCerberusApple;
+	}
+
+	public void setIsCarteraCerberusApple(Boolean isCarteraCerberusApple) {
+		this.isCarteraCerberusApple = isCarteraCerberusApple;
+	}
+
+	public Date getFechaRespuesta() {
+		return fechaRespuesta;
+	}
+
+	public void setFechaRespuesta(Date fechaRespuesta) {
+		this.fechaRespuesta = fechaRespuesta;
+	}
 
 }

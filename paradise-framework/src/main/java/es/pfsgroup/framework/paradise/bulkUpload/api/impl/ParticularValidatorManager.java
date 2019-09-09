@@ -3308,6 +3308,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 
 	@Override
+
 	public Boolean compararNumeroFilasTrabajo(String numTrabajo, int numeroFilas) {
 		if(Checks.esNulo(numTrabajo))
 			return true;
@@ -3410,6 +3411,29 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "0".equals(resultado);
 	}
 	
+	public Boolean perteneceDDEstadoActivo(String codigoEstadoActivo) {
+		if(!Checks.esNulo(codigoEstadoActivo)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+ "FROM DD_EAC_ESTADO_ACTIVO "
+					+ "WHERE DD_EAC_CODIGO =" + codigoEstadoActivo );
+		
+			return  !"0".equals(resultado);
+		}
+		return false;
+	}
+	
+	@Override
+	public Boolean perteneceDDTipoTituloTPA(String codigoTituloTPA) {
+		if (!Checks.esNulo(codigoTituloTPA)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) " 
+					+ "FROM DD_TPA_TIPO_TITULO_ACT "
+					+ "WHERE DD_TPA_CODIGO ='" + codigoTituloTPA + "'");
+
+			return !"0".equals(resultado);
+		}
+		return false;
+	}
+		
 	@Override
 	public Boolean existeActivoAsociado(String numActivo) {
 		if(Checks.esNulo(numActivo)) {
@@ -3424,5 +3448,43 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
-}
+	@Override
+	public Boolean conTituloOcupadoSi(String codigoTituloTPA) {
+		if (!Checks.esNulo(codigoTituloTPA)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) " 
+					+ "FROM DD_TPA_TIPO_TITULO_ACT "
+					+ "WHERE DD_TPA_CODIGO IN ('01','02','03') " 
+					+ "AND DD_TPA_CODIGO ='" + codigoTituloTPA + "'");
 
+			return !"0".equals(resultado);
+		}
+		return false;
+	}
+		
+	@Override
+	public Boolean conPosesion(String numActivo) {
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT Count(*) "
+				+ "FROM ACT_SPS_SIT_POSESORIA SPS "
+				+ "JOIN ACT_ACTIVO ACT ON SPS.ACT_ID = ACT.ACT_ID "
+				+ "WHERE SPS_FECHA_TOMA_POSESION IS NOT NULL "
+				+ "AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "'");
+
+		return !"0".equals(resultado);		
+	}
+
+	@Override
+	public Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal) {
+		if(Checks.esNulo(codigoEstadoDivHorizontal)) {
+			return false;
+		}					
+			String resultado = rawDao.getExecuteSQL("SELECT Count(*) " 
+					+ "FROM DD_EDH_ESTADO_DIV_HORIZONTAL "
+					+ "WHERE DD_EDH_CODIGO ='" + codigoEstadoDivHorizontal + "'");
+
+			return !"0".equals(resultado);		
+	}
+
+}

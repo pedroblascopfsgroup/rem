@@ -13,6 +13,7 @@ public class NotificatorServiceSancionOfertaAceptacionYRechazo extends Notificat
 
 	private static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
 	private static final String CODIGO_T013_RATIFICACION_COMITE_EXTERNO = "T013_RatificacionComite";
+	private static final String CODIGO_T017_RESPUESTA_OFERTANTE_CES = "T017_RespuestaOfertanteCES";
 
 	@Override
 	public String[] getKeys() {
@@ -23,13 +24,14 @@ public class NotificatorServiceSancionOfertaAceptacionYRechazo extends Notificat
 	public String[] getCodigoTarea() {
 		return new String[] { 
 			CODIGO_T013_RESPUESTA_OFERTANTE, 
-			CODIGO_T013_RATIFICACION_COMITE_EXTERNO
+			CODIGO_T013_RATIFICACION_COMITE_EXTERNO,
+			CODIGO_T017_RESPUESTA_OFERTANTE_CES
 		};
 	}
 
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		this.generaNotificacion(tramite, true, true);
+		this.generaNotificacion(tramite, true, true, false, null);
 	}
 
 	public void notificatorFinSinTramite(Long idOferta) {

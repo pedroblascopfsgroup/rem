@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1225,6 +1226,8 @@ public interface ExpedienteComercialApi {
 
 	boolean checkInquilinos(TareaExterna tareaExterna);
 
+	FileItem getAdvisoryNote();
+
 	boolean checkAmConUasConOfertasVivas(TareaExterna tareaExterna);
 
 	boolean hayDiscrepanciasClientesURSUS(Long idExpediente);
@@ -1239,4 +1242,10 @@ public interface ExpedienteComercialApi {
 	
 	public ArrayList<DtoDiccionario> calcularGestorComercialPrescriptor(Long idExpediente);
 
+	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
+
+	boolean esYubai(TareaExterna tareaExterna);
+	
+	boolean checkExpedienteFechaCheque(Long idTramite);
 }
+

@@ -14,7 +14,6 @@ public class OfertaVivaRespuestaDto implements Serializable{
 	private static final long serialVersionUID = -2134861518576629540L;
 	
 	private Long numOferta;
-	private Long idTarea;
 	private String codEstadoEco;
 	private List<Long> resultado;	
 	
@@ -23,12 +22,6 @@ public class OfertaVivaRespuestaDto implements Serializable{
 	}
 	public void setNumOferta(Long numOferta) {
 		this.numOferta = numOferta;
-	}
-	public Long getIdTarea() {
-		return idTarea;
-	}
-	public void setIdTarea(Long idTarea) {
-		this.idTarea = idTarea;
 	}
 	public String getCodEstadoEco() {
 		return codEstadoEco;

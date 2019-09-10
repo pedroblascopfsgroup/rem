@@ -97,9 +97,9 @@ V_MSQL :=
 	                  TPD.DD_TPD_CODIGO IN (''12'')		                 	AND          	--TODOS LOS ACTIVOS CON LPO
 	                  EDC.DD_EDC_CODIGO = ''01''
 	                )
-                  )  '||V_WHERE||'
+                  )  
           GROUP BY ACT.ACT_ID
-)';
+) '||V_WHERE||'';
 --DBMS_OUTPUT.PUT_LINE(V_MSQL);
 EXECUTE IMMEDIATE V_MSQL;
 DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' Activos actualizados como singulares');
@@ -140,9 +140,9 @@ V_MSQL :=
 	                  	TPD.DD_TPD_CODIGO IN (''12'')		                AND          	--TODOS LOS ACTIVOS CON LPO
 	                  	EDC.DD_EDC_CODIGO = ''01''
 	                )
-                ) '||V_WHERE||'
+                ) 
           GROUP BY ACT.ACT_ID
-)';
+) '||V_WHERE||'';
 --DBMS_OUTPUT.PUT_LINE(V_MSQL);
 EXECUTE IMMEDIATE V_MSQL;
 DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' Activos actualizados como retail');

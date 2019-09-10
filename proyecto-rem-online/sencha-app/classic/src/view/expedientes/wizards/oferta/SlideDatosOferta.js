@@ -366,6 +366,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								itemId: 'comboClaseOferta',
 								name: 'claseOferta',
 								flex:	1,
+					        	colspan: 2,
 								allowBlank: true,
 								bind: {
 									store: '{comboClaseOferta}',

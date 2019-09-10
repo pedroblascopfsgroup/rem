@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 
 
@@ -51,35 +52,33 @@ public class TributoAdapter {
 	public String uploadDocumento(WebFileItem webFileItem, String matricula) throws Exception {
 		ActivoTributos activoTributo = activoTributoApi.getTributo(Long.parseLong(webFileItem.getParameter("idTributo")));
 		
-			if (Checks.esNulo(activoTributo)) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+		DDTipoDocumentoTributos tipoDocumento = genericDao.get(DDTipoDocumentoTributos.class, filtro);
+		if(!Checks.esNulo(tipoDocumento)) {
+			matricula = tipoDocumento.getMatricula();
+		}
+		
+		if (Checks.esNulo(activoTributo)) {
 				
-				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-					
-					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-	
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-					DDTipoDocumentoTributos tipoDocumento = genericDao.get(DDTipoDocumentoTributos.class, filtro);
-					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoTributo(webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
-					activoTributoApi.upload2(webFileItem, idDocRestClient);
-				} else {
-					activoTributoApi.upload(webFileItem);
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoTributo(webFileItem, usuarioLogado.getUsername(), matricula);
+				activoTributoApi.upload2(webFileItem, idDocRestClient);
+			} else {
+				activoTributoApi.upload(webFileItem);
+			}
+		} else {
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				if (!Checks.esNulo(tipoDocumento)) {
+					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoTributo(webFileItem, usuarioLogado.getUsername(), matricula);
+					activoTributoApi.uploadDocumento(webFileItem, idDocRestClient, activoTributo, matricula);
 				}
 			} else {
-				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-					
-	
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
-					DDTipoDocumentoTributos tipoDocumento = genericDao.get(DDTipoDocumentoTributos.class, filtro);
-	
-					if (!Checks.esNulo(tipoDocumento)) {
-						Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoTributo(webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
-						activoTributoApi.uploadDocumento(webFileItem, idDocRestClient, activoTributo, matricula);
-					}
-				} else {
-					activoTributoApi.uploadDocumento(webFileItem, null, activoTributo, matricula);
-				}
+				activoTributoApi.uploadDocumento(webFileItem, null, activoTributo, matricula);
 			}
+		}
 		
 		return null;
 	}

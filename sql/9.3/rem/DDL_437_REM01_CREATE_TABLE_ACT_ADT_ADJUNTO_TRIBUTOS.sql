@@ -52,7 +52,7 @@ DECLARE
         ARRAY_TABLE('ADT_LENGTH', 	    			'NUMBER(16,0) NOT NULL',		            'Tamaño del archivo'),
         ARRAY_TABLE('ADT_DESCRIPCION', 	    		'VARCHAR2(1024 CHAR) NULL',               	'Descripción del archivo'),
 		ARRAY_TABLE('ADT_FECHA_DOCUMENTO', 			'DATE NOT NULL',              				'Fech de subida.'),
-		ARRAY_TABLE('ADT_ID_DOCUMENTO_REST', 		'NUMBER(16,0) NOT NULL',              		'ID Rest.')
+		ARRAY_TABLE('ADT_ID_DOCUMENTO_REST', 		'NUMBER(16,0) NULL',              			'ID Rest.')
 	);
 
 	V_FK_MATRIX MATRIX_TABLE := MATRIX_TABLE(

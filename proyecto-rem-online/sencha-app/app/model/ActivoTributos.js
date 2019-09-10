@@ -60,8 +60,7 @@ Ext.define('HreRem.model.ActivoTributos', {
     			name:'existeDocumentoTributo',
     			type: 'boolean',
     			convert: function(value, record) {
-    				
-    				if (value != true || value != "true") {
+    				if (value != "true") {
     					return "No";
     				} else {
     					return "Si";

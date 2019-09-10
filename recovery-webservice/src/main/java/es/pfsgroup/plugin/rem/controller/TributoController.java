@@ -68,8 +68,12 @@ public class TributoController extends ParadiseJsonController {
 
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
-			tributoAdapter.upload(webFileItem);
-			model.put("success", true);
+			if(activoTributoApi.comprobarSiExisteActivoTributo(webFileItem)) {
+				tributoAdapter.upload(webFileItem);
+				model.put("success", true);
+			}else {
+				model.put("success", false);
+			}
 		} catch (GestorDocumentalException e) {
 			logger.error("error en tributoController", e);
 			model.put("success", false);
@@ -91,16 +95,15 @@ public class TributoController extends ParadiseJsonController {
 	public void bajarAdjuntoActivoTributo(HttpServletRequest request, HttpServletResponse response) {
 		ServletOutputStream salida = null;
 		Long idTributo = null;
-		Long idActivo = null;
 		Long id = null;
 		try {
 			idTributo = Long.parseLong(request.getParameter("idTributo"));
-			idActivo = Long.parseLong(request.getParameter("idActivo"));
 
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
-			Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "id", idTributo);
+			Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", idTributo);
+			Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+
 			
-			ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroActivo);
+			ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo,filtroAuditoria);
 			
 			if(!Checks.esNulo(activoAdjuntoTributo)) {
 				id = activoAdjuntoTributo.getId();
@@ -145,9 +148,9 @@ public class TributoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteAdjunto(Long idActivo,Long idTributo, ModelMap model) {
-		DtoAdjunto dtoAdjunto = activoTributoApi.getAdjuntoTributo(idActivo, idTributo);
+	
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, adapter.deleteAdjunto(dtoAdjunto));
+			model.put(RESPONSE_SUCCESS_KEY, activoTributoApi.deleteAdjuntoDeTributo(idTributo));
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

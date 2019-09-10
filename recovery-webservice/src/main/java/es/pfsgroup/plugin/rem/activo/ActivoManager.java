@@ -100,6 +100,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
@@ -336,6 +337,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
+	
+	@Autowired
+	private ActivoTributoApi activoTributoApi;
 
 
 	@Override
@@ -6667,6 +6671,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			tributo.getAuditoria().setBorrado(true);
 			genericDao.update(ActivoTributos.class, tributo);
+			
+			activoTributoApi.deleteAdjuntoDeTributo(tributo.getId());
 			
 			return true;
 		}else {

@@ -61,7 +61,11 @@ public interface  ActivoTributoApi {
 
 	ActivoTributos getTributo(Long id);
 
-	public DtoAdjunto getAdjuntoTributo(Long idActivo, Long idTributo);
+	public DtoAdjunto getAdjuntoTributo(Long idTributo);
+
+	public Boolean deleteAdjuntoDeTributo(Long idTributo);
+
+	public Boolean comprobarSiExisteActivoTributo(WebFileItem webFileItem);
 
 	
 

@@ -44,8 +44,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoTributo', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionarioTiposDocumento',
-				extraParams: {diccionario: 'tiposDocumento', entidad: me.entidad}
+				remoteUrl: 'generic/getDiccionarioTiposDocumentoTributo'
 			}
     	});
 		

@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
 
@@ -50,6 +51,7 @@ public class GenericController extends ParadiseJsonController{
 	
 	private static final String DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO = "activo";
 
+	private static final String DICCIONARIO_TIPO_DOCUMENTO_TRIBUTO = "tiposDocumentoTributo";
 
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -403,5 +405,10 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getComboTipoTituloActivoTPA(Long numActivo){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoTituloActivoTPA(numActivo)));	
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioTiposDocumentoTributo(String diccionario, String entidad) {	
 
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioTiposDocumentoTributo()));
+	}
 }

@@ -460,7 +460,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					        	{
 						            tooltip:'Eliminar',
 						            getClass: function(v, metadata, record ) {
-						            		return 'fa-user blue-medium-color'
+						            		return 'ico-download'
 						            },
 						            handler: 'eliminarAdjuntoTributo'
 						        },

@@ -93,6 +93,10 @@ public class DtoActivoFilter extends WebDto {
 	private String codigoPromocionPrinex;
 	private String tipoTituloPosesorio;
 	private String estadoComunicacionGencatCodigo;
+	private Boolean usuarioGestoria;
+	private String gestoriaAdmision;
+	private String gestoriaAdministracion;
+	private String gestoriaFormalizacion;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -591,5 +595,29 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setEstadoComunicacionGencatCodigo(String estadoComunicacionGencatCodigo) {
 		this.estadoComunicacionGencatCodigo = estadoComunicacionGencatCodigo;
+	}
+	public Boolean getUsuarioGestoria() {
+		return usuarioGestoria;
+	}
+	public void setUsuarioGestoria(Boolean usuarioGestoria) {
+		this.usuarioGestoria = usuarioGestoria;
+	}
+	public String getGestoriaAdministracion() {
+		return gestoriaAdministracion;
+	}
+	public void setGestoriaAdministracion(String gestoriaAdministracion) {
+		this.gestoriaAdministracion = gestoriaAdministracion;
+	}
+	public String getGestoriaAdmision() {
+		return gestoriaAdmision;
+	}
+	public void setGestoriaAdmision(String gestoriaAdmision) {
+		this.gestoriaAdmision = gestoriaAdmision;
+	}
+	public String getGestoriaFormalizacion() {
+		return gestoriaFormalizacion;
+	}
+	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
+		this.gestoriaFormalizacion = gestoriaFormalizacion;
 	}	
 }

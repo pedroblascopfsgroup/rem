@@ -46,7 +46,6 @@ import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -57,7 +56,6 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -213,6 +211,31 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat",
 				dto.getEstadoComunicacionGencatCodigo());
+		
+		if (!Checks.esNulo(dto.getUsuarioGestoria())) {
+			String orGestorias = "";
+			if (!Checks.esNulo(dto.getGestoriaAdmision())) {
+				orGestorias += " bag.gestoriaAdmision = '" + dto.getGestoriaAdmision() + "'";
+			}
+			
+			if (Checks.esNulo(dto.getGestoriaAdmision()) && !Checks.esNulo(dto.getGestoriaAdministracion())) {
+				orGestorias += " bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
+			} else if (!Checks.esNulo(dto.getGestoriaAdmision()) && !Checks.esNulo(dto.getGestoriaAdministracion())) {
+				orGestorias += "  OR bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
+			}
+			
+			if (Checks.esNulo(dto.getGestoriaAdmision()) && Checks.esNulo(dto.getGestoriaAdministracion()) && !Checks.esNulo(dto.getGestoriaFormalizacion())) {
+				orGestorias += " bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
+			} else if (!Checks.esNulo(dto.getGestoriaAdmision()) || !Checks.esNulo(dto.getGestoriaAdministracion())) {
+				orGestorias += "  OR bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
+			}
+			
+			if (!"".equals(orGestorias)) {
+				hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where (" + orGestorias + ") AND bag.id = act.id)");
+			}
+			
+
+		}
 
 		return HibernateQueryUtils.page(this, hb, dto);
 
@@ -267,7 +290,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			sb.append(" join act.gestoresActivo ga ");
 			sb.append(" join ga.usuario gausu ");
 		}
-
+		
 		return sb.toString();
 	}
 
@@ -473,7 +496,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			return null;
 		}
 	}
-    
     @Override
    	public Long getUltimoHistoricoPresupuesto(Long id) {
        	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "

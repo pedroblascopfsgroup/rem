@@ -4647,4 +4647,63 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		return true;
 	}
+	
+	@Override
+	public boolean ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(Oferta ofertaDependiente, Oferta ofertaPrincipal) 
+	{
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", ofertaPrincipal.getId());	
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+		
+		// En esta lista insertaré todos los activos que pertenecen a las ofertas dependientes.
+		List<Activo> activosEnLaAgrupacion = new ArrayList<Activo>();		
+		for(OfertasAgrupadasLbk ogrLbk : ofertasAgrupadasLbk) {
+			List<ActivoOferta> actOfrDependList = ogrLbk.getOfertaDependiente().getActivosOferta();
+			for(ActivoOferta actOfr : actOfrDependList) {
+				activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+			}
+		}
+		// Tambien incluyo los activos relacionados con la oferta principal.
+		List<ActivoOferta> actOfrPrincList = ofertaPrincipal.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrPrincList) {
+			activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+		}
+		
+		List<ActivoOferta> actOfrNuevaDependList = ofertaDependiente.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrNuevaDependList) {
+			for(Activo act : activosEnLaAgrupacion) {
+				if(actOfr.getActivoId().equals(act.getId()))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean activoYaIncluidoEnOfertaAgrupadaLbk(Long idActivo, Oferta ofertaPrincipal) 
+	{
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", ofertaPrincipal.getId());	
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+		
+		// En esta lista insertaré todos los activos que pertenecen a las ofertas dependientes.
+		List<Activo> activosEnLaAgrupacion = new ArrayList<Activo>();		
+		for(OfertasAgrupadasLbk ogrLbk : ofertasAgrupadasLbk) {
+			List<ActivoOferta> actOfrDependList = ogrLbk.getOfertaDependiente().getActivosOferta();
+			for(ActivoOferta actOfr : actOfrDependList) {
+				activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+			}
+		}
+		// Tambien incluyo los activos relacionados con la oferta principal.
+		List<ActivoOferta> actOfrPrincList = ofertaPrincipal.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrPrincList) {
+			activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+		}
+		
+		for(Activo act : activosEnLaAgrupacion) {
+			if(idActivo.equals(act.getId()))
+				return true;
+		}
+		return false;
+	}
 }

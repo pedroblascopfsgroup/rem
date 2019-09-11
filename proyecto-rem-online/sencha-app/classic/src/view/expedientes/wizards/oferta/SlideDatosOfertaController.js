@@ -452,13 +452,15 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
 		var me= this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/searchOfertaCodigo');
 		var numeroOferta = field.getValue();
+		var numIdActivo = me.getViewModel().data.activo.id;
 		var data;
 		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$))|^((37$))|^((30$))|^((35$))|^((23$))|^((38$)).*$");
-		
+
 		Ext.Ajax.request({
 		    			
 		 		url: url,
-		   		params: {numOferta : numeroOferta},
+		   		params: {numOferta : numeroOferta,
+		   				 idActivo: numIdActivo},
 		    	
 		   		success: function(response, opts) {
 		   			data = Ext.decode(response.responseText);

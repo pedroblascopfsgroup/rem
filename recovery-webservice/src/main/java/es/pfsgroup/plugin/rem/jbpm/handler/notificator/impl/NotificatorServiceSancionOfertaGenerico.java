@@ -1030,15 +1030,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				// ADJUNTOS SI ES CERBERUS APPLE
 			} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)
 					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
-				f1 = FileItemUtils.fromResource("docs/Vfinal_instrucciones_reserva_y_formalizacion_APPLE.pdf");
 				f2 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_APPLE.docx");
-				if (f1 != null) {
-					adjuntos.add(createAdjunto(f1, "Vfinal_instrucciones_reserva_y_formalizacion_APPLE.pdf"));
-				}
 				if ( f2 != null ) {
 					adjuntos.add(createAdjunto(f2, "instrucciones_reserva_y_formalizacion_APPLE.docx"));
 				}
-
 			}
 		}
 		List<String> mailsPara = new ArrayList<String>();

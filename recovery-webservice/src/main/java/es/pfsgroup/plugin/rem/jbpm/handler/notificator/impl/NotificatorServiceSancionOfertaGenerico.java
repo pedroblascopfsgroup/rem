@@ -182,6 +182,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
 		Usuario buzonFormApple = usuarioManager.getByUsername(BUZON_FOR_APPLE);
 		Usuario usuarioBackOffice = null;
+		Usuario supervisorComercial = null;
 
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
@@ -234,6 +235,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 							destinatarios.add(usuarioBackOffice.getEmail());
 						}	
 					}
+				}
+				
+				supervisorComercial = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+				
+				if(!Checks.esNulo(supervisorComercial)) {
+					destinatarios.add(supervisorComercial.getEmail());
 				}
 
 				this.enviaNotificacionAceptar(tramite, oferta, expediente, destinatarios.toArray(new String[] {}));

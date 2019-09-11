@@ -5403,6 +5403,85 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		if(!Ext.isEmpty(usuarioGestor.getSelection()) && !unidadAlquilable)
 			agregarGestor.setDisabled(false);
+	},
+	
+	validarEdicionHistoricoTitulo: function(editor, grid, record) {
+    	var me = this;
+    	return grid.rowIdx == 0;
+    },
+    
+    onChangeEstadoHistoricoTramitacionTitulo: function(combo, newValue, oldValue, eOps){
+		var me = this;
+		var items = combo.up().items.items,
+		fechas = [];
+		for( item in items ) {
+			fechas[items[item].dataIndex] = items[item];
+		}
+		var storeGridCalificacionNegativa = combo.up().up().up().up().up().down('[reference=calificacionnegativagrid]').getStore();
+		if(storeGridCalificacionNegativa.data.length > 0){
+			var noSubsanado = false;
+    		for(var iterador in storeGridCalificacionNegativa.data.items){
+    			if(storeGridCalificacionNegativa.data[iterador].data.estadoMotivoCalificacionNegativa != CONST.COMBO_ESTADO_CALIFICACION_NEGATIVA['COD_SUBSANADO']){
+    				noSubsanado = true;
+    			}
+    		}
+    		if(noSubsanado && newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
+    			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.calificado.negativamente"));
+    			combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']);
+    			return;
+    		};
+		}
+		switch(newValue){
+		
+		case CONST.DD_ESP_ESTADO_PRESENTACION['PRESENTACION_EN_REGISTRO']:
+			fechas['fechaPresentacionRegistro'].setDisabled(false);
+			fechas['fechaPresentacionRegistro'].allowBlank = false;
+			fechas['fechaCalificacion'].setDisabled(true);
+			fechas['fechaCalificacion'].setValue();
+			fechas['fechaInscripcion'].setDisabled(true);
+			fechas['fechaInscripcion'].setValue();
+			break;
+			
+		case CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']: 
+			fechas['fechaPresentacionRegistro'].setDisabled(false)
+			fechas['fechaPresentacionRegistro'].allowBlank = false;
+			fechas['fechaCalificacion'].setDisabled(false);
+			fechas['fechaCalificacion'].allowBlank = false;
+			fechas['fechaInscripcion'].setDisabled(true);
+			fechas['fechaInscripcion'].setValue();
+			break;
+	
+		case CONST.DD_ESP_ESTADO_PRESENTACION['INNSCRITO']:
+			fechas['fechaPresentacionRegistro'].setDisabled(false)
+			fechas['fechaPresentacionRegistro'].allowBlank = false;
+			fechas['fechaCalificacion'].setDisabled(true);
+			fechas['fechaCalificacion'].setValue();
+			fechas['fechaInscripcion'].setDisabled(false);
+			fechas['fechaInscripcion'].allowBlank = false;
+			break;
+		}
+		me.usuarioLogadoPuedeEditar();
+	},
+	checkDateInterval: function (obj) {
+		if (!obj.readOnly && !obj.disabled){
+			var me = this;
+			var dateStamp = me.lookupReference("fechaPresentacionRegistro").getValue().getTime();
+			obj.setMinValue(new Date(dateStamp));
+			if ( obj.isExpanded){
+				obj.collapse();
+			}else{
+				obj.expand();
+			}
+		}
+	},
+	
+	usuarioLogadoPuedeEditar: function(){
+		var me = this;
+		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
+		if(!usuariosValidos){
+			me.lookupReference("fechaInscripcion").setDisabled(true);
+		}
+		
 	}
 
 });

@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
@@ -1206,5 +1207,33 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
+	
+	/**
+	 * Devuelve una lista del Historico de tramitacion de titulo
+	 * @param id 
+	 * @return List<DtoHistoricoTramitacionTitulo>
+	 */
+	List<DtoHistoricoTramitacionTitulo> getHistoricoTramitacionTitulo(Long id);
+
+	/**
+	 * Guarda el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 */
+	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo);
+	
+	/**
+	 * actualiza el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 */
+	boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto);
+	
+	/**
+	 * borra el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 */
+	Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto);
 
 }

@@ -123,6 +123,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
@@ -6668,4 +6669,128 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return UAsAlquiladas;
 	}
 	
+	@Override
+	public List<DtoHistoricoTramitacionTitulo> getHistoricoTramitacionTitulo(Long id){
+		List<DtoHistoricoTramitacionTitulo> listaDto = new ArrayList<DtoHistoricoTramitacionTitulo>();
+		try {
+			ActivoTitulo titulo = activoAdapter.getActivoById(id).getTitulo();
+			if(!Checks.esNulo(titulo)) {
+				List<HistoricoTramitacionTitulo> listaObjeto = genericDao.getList(HistoricoTramitacionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "titulo", titulo));
+				if(!Checks.esNulo(listaObjeto) && !Checks.estaVacio(listaObjeto)) {
+					for(HistoricoTramitacionTitulo htt: listaObjeto) {
+						
+						DtoHistoricoTramitacionTitulo aux = new DtoHistoricoTramitacionTitulo();
+						beanUtilNotNull.copyProperty(aux, "idActivo", id);
+						beanUtilNotNull.copyProperty(aux, "titulo", htt.getTitulo().getId());
+						
+						beanUtilNotNull.copyProperty(aux, "estadoPresentacion", htt.getEstadoPresentacion().getDescripcion());
+						beanUtilNotNull.copyProperty(aux, "codigoEstadoPresentacion", htt.getEstadoPresentacion().getCodigo());
+						beanUtilNotNull.copyProperty(aux, "fechaPresentacionRegistro", htt.getFechaPresentacionRegistro());
+						beanUtilNotNull.copyProperty(aux, "idHistorico", htt.getId());
+						if(!Checks.esNulo(htt.getFechaCalificacion())){
+							beanUtilNotNull.copyProperty(aux, "fechaCalificacion", htt.getFechaCalificacion());
+						}
+						if(!Checks.esNulo(htt.getFechaInscripcion())){
+							beanUtilNotNull.copyProperty(aux, "fechaInscripcion", htt.getFechaInscripcion());
+						}
+						if(!Checks.esNulo(htt.getObservaciones())){
+							beanUtilNotNull.copyProperty(aux, "observaciones", htt.getObservaciones());
+						}
+						
+						listaDto.add(aux);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			logger.error("Error en getHistoricoTramitacionTitulo", ex);
+		}
+		return listaDto;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,Long idActivo) {
+		
+		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
+		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
+		
+			try {
+				beanUtilNotNull.copyProperty(htt, "titulo", titulo);
+				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
+					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro", tramitacionDto.getFechaPresentacionRegistro());
+				}
+				if(!Checks.esNulo(tramitacionDto.getEstadoPresentacion())) {
+					DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
+					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
+					beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+					beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
+				}
+				if(!Checks.esNulo(tramitacionDto.getObservaciones())) {
+					beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());
+				}
+				
+			} catch (IllegalAccessException e) {
+				logger.error("Error en activoManager", e);
+				return false;
+
+			} catch (InvocationTargetException e) {
+				logger.error("Error en activoManager", e);
+				return false;
+			}
+			
+		genericDao.save(HistoricoTramitacionTitulo.class, htt);
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) {
+		
+		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
+		
+		try {
+				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
+					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro", tramitacionDto.getFechaPresentacionRegistro());
+				}
+				if(!Checks.esNulo(tramitacionDto.getEstadoPresentacion())) {
+					DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
+					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
+					beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+					beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
+				}
+				if(!Checks.esNulo(tramitacionDto.getObservaciones())) {
+					beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());
+				}
+				
+			} catch (IllegalAccessException e) {
+				logger.error("Error en activoManager", e);
+				return false;
+
+			} catch (InvocationTargetException e) {
+				logger.error("Error en activoManager", e);
+				return false;
+			}
+			
+		genericDao.save(HistoricoTramitacionTitulo.class, htt);
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) {
+		if(!Checks.esNulo(tramitacionDto.getIdHistorico())) {
+			genericDao.deleteById(HistoricoTramitacionTitulo.class, tramitacionDto.getIdHistorico());
+		}
+		return true;
+	}
 }

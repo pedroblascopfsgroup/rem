@@ -205,7 +205,7 @@ public class MSVActualizacionLPOExcelValidator extends MSVExcelValidatorAbstract
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
 					if (particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO))){
-						if(!Checks.esNulo(exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO)) && particularValidator.esActivoProductoTerminado(exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO)))
+						if(!Checks.esNulo(exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO)) && !particularValidator.esActivoProductoTerminado(exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO)))
 							listaFilas.add(i);
 					}
 				} catch (ParseException e) {

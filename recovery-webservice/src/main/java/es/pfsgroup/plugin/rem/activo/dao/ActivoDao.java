@@ -308,4 +308,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public ActivoPlusvalia getPlusvaliaByIdActivo(Long idActivo);
 
 	DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
+
+	ActivoAgrupacionActivo getActivoAgrupacionActivoObraNuevaPorActivoID(Long id);
+
 }

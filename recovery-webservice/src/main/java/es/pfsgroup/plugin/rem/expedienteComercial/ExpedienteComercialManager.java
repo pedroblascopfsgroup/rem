@@ -603,16 +603,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				try {				
 					Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
 					if(!Checks.esNulo(nuevaOfertaPrincipal)) {	
-						// Si la nueva oferta principal es Individual, la cambio a principal.
-						if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
-							Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
-							DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
-							nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
-							genericDao.update(Oferta.class, nuevaOfertaPrincipal);
-						}					
-						// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
-						else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {
-							Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId());	
+						if(!activoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
+						{
+							// Si la nueva oferta principal es Individual, la cambio a principal.
+							if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
+								Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+								DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+								nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+								genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+							}					
+							// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
+							else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {
+								Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId());	
+								Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+								OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+								Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+								auditoria.setBorrado(true);
+								auditoria.setFechaBorrar(new Date());
+								auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+								ofertaAgrupadaLbk.setAuditoria(auditoria);					
+								genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);							
+								
+								Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+								DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+								nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+								genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+							}
+	
+							// Ponemos borrado a 1 en la tabla relacional para sacarla de la agrupacion actual.
+							Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
 							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
 							OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
 							Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
@@ -620,30 +639,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							auditoria.setFechaBorrar(new Date());
 							auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 							ofertaAgrupadaLbk.setAuditoria(auditoria);					
-							genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);							
-							
-							Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
-							DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
-							nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
-							genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+							genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
+	
+							// Creamos el nuevo registro en la tabla relacional para insertar la oferta a la otra agrupación.
+							OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
+							nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
+							nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);						
+							genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
 						}
-
-						// Ponemos borrado a 1 en la tabla relacional para sacarla de la agrupacion actual.
-						Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
-						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
-						OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
-						Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
-						auditoria.setBorrado(true);
-						auditoria.setFechaBorrar(new Date());
-						auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
-						ofertaAgrupadaLbk.setAuditoria(auditoria);					
-						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
-
-						// Creamos el nuevo registro en la tabla relacional para insertar la oferta a la otra agrupación.
-						OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
-						nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
-						nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);						
-						genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
+						else {
+							logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
+							return false;
+						}
 					} else {
 						logger.error("La oferta introducida no existe.");
 						return false;
@@ -673,37 +680,44 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					try {							
 						Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNuevoNumOferPrincipal());
 						if(!Checks.esNulo(nuevaOfertaPrincipal)) {
-							// Si la nueva oferta principal es Individual, la cambio a principal.
-							if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
-								Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
-								DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
-								nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
-								genericDao.update(Oferta.class, nuevaOfertaPrincipal);
-							}					
-							// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
-							else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {
-								Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId());	
-								Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
-								OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
-								Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
-								auditoria.setBorrado(true);
-								auditoria.setFechaBorrar(new Date());
-								auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
-								ofertaAgrupadaLbk.setAuditoria(auditoria);					
-								genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);							
+							if(!activoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
+							{
+								// Si la nueva oferta principal es Individual, la cambio a principal.
+								if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
+									Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+									DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+									genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+								}					
+								// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
+								else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {
+									Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId());	
+									Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+									OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+									Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+									auditoria.setBorrado(true);
+									auditoria.setFechaBorrar(new Date());
+									auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+									ofertaAgrupadaLbk.setAuditoria(auditoria);					
+									genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);							
+									
+									Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+									DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+									genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+								}
 								
-								Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
-								DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
-								nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
-								genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+								// Creamos el nuevo registro en la tabla relacional para insertar la oferta a la otra agrupación.
+								oferta.setClaseOferta(dtoClaseOferta);
+								OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
+								nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
+								nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);							
+								genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
 							}
-							
-							// Creamos el nuevo registro en la tabla relacional para insertar la oferta a la otra agrupación.
-							oferta.setClaseOferta(dtoClaseOferta);
-							OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
-							nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
-							nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);							
-							genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
+							else {
+								logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
+								return false;
+							}
 						} else {
 							logger.error("La oferta introducida no existe.");
 							return false;
@@ -791,45 +805,52 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							
 							// Si la oferta que va a pasar a dependiente no tiene ninguna oferta que dependa de ella, la hacemos dependiente de la nueva oferta principal.
 							if(ofertasAgrupadasLbk.size() == 0){
-								// Si la nueva oferta principal es Individual, la cambio a principal.
-								if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
-									Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
-									DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
-									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
-									genericDao.update(Oferta.class, nuevaOfertaPrincipal);	
-																		
-									oferta.setClaseOferta(dtoClaseOferta);
-								}					
-								// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
-								else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {									
-									OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, 
-											genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId()), 
-											genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-									Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
-									auditoria.setBorrado(true);
-									auditoria.setFechaBorrar(new Date());
-									auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
-									ofertaAgrupadaLbk.setAuditoria(auditoria);					
-									genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);							
+								if(!activoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
+								{
+									// Si la nueva oferta principal es Individual, la cambio a principal.
+									if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
+										Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+										DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+										nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+										genericDao.update(Oferta.class, nuevaOfertaPrincipal);	
+																			
+										oferta.setClaseOferta(dtoClaseOferta);
+									}					
+									// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
+									else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {									
+										OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, 
+												genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId()), 
+												genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+										Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+										auditoria.setBorrado(true);
+										auditoria.setFechaBorrar(new Date());
+										auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+										ofertaAgrupadaLbk.setAuditoria(auditoria);					
+										genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);							
+										
+										Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+										DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+										nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+										genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+										
+										oferta.setClaseOferta(dtoClaseOferta);
+									}
+									// Si la nueva oferta principal es principal, cambiamos la antigua principal a dependiente.
+									else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL)) {
+		
+										oferta.setClaseOferta(dtoClaseOferta);
+									}
 									
-									Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
-									DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
-									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
-									genericDao.update(Oferta.class, nuevaOfertaPrincipal);
-									
-									oferta.setClaseOferta(dtoClaseOferta);
+									// Insertamos el nuevo registro de las dos ofertas cambiadas de "rol".
+									OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
+									nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
+									nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);					
+									genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
 								}
-								// Si la nueva oferta principal es principal, cambiamos la antigua principal a dependiente.
-								else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL)) {
-
-									oferta.setClaseOferta(dtoClaseOferta);
+								else {
+									logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
+									return false;
 								}
-								
-								// Insertamos el nuevo registro de las dos ofertas cambiadas de "rol".
-								OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
-								nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
-								nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);					
-								genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
 							}
 							// En caso de que la antigua oferta principal tenga ofertas que dependan de el. 
 							else {
@@ -10183,5 +10204,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return true;
+	}
+	
+	private boolean activoYaIncluidoEnOfertaAgrupadaLbk(Oferta ofertaDependiente, Oferta ofertaPrincipal) 
+	{
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", ofertaPrincipal.getId());	
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+		
+		// En esta lista insertaré todos los activos que pertenecen a las ofertas dependientes.
+		List<Activo> activosEnLaAgrupacion = new ArrayList<Activo>();		
+		for(OfertasAgrupadasLbk ogrLbk : ofertasAgrupadasLbk) {
+			List<ActivoOferta> actOfrDependList = ogrLbk.getOfertaDependiente().getActivosOferta();
+			for(ActivoOferta actOfr : actOfrDependList) {
+				activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+			}
+		}
+		// Tambien incluyo los activos relacionados con la oferta principal.
+		List<ActivoOferta> actOfrPrincList = ofertaPrincipal.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrPrincList) {
+			activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+		}
+		
+		List<ActivoOferta> actOfrNuevaDependList = ofertaDependiente.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrNuevaDependList) {
+			for(Activo act : activosEnLaAgrupacion) {
+				if(actOfr.getActivoId().equals(act.getId()))
+					return true;
+			}
+		}
+		return false;
 	}
 }

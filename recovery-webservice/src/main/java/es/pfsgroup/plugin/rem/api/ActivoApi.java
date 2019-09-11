@@ -692,6 +692,15 @@ public interface ActivoApi {
 	 * @return
 	 */
 	Oferta tieneOfertaAceptada(Activo activo);
+	
+	/**
+	 * Averigua si el activo tiene ofertas acpetadas // MODIFICACIÓN: Mira si el expediente está aprobado (y estados posteriores).
+	 *
+	 * @param activo
+	 * @return
+	 */
+	Oferta tieneOfertaTramitadaOCongeladaConReserva(Activo activo);
+
 
 	/**
 	 * Comprueba que los tipos de activo del activo y del informe comercial sean distintos.
@@ -1135,7 +1144,9 @@ public interface ActivoApi {
 
 	public boolean isActivoBloqueadoGencat(Activo activo);
 
-	
+
+	public boolean isPisoPiloto(Activo activo);
+
 	/**
 	 * Devuelve la calificacion negativa de un activo a partir de un motivo
 	 * @param idActivo

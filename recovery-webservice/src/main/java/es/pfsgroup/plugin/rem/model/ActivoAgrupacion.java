@@ -151,7 +151,21 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TAL_ID")
     private DDTipoAlquiler tipoAlquiler;
-		
+	
+	@Column(name = "AGR_COMERCIALIZABLE_CONS_PLANO")
+	private boolean comercializableConsPlano;
+	
+	@Column(name = "AGR_EXISTE_PISO_PILOTO")
+	private boolean existePiloto;
+	
+	@Column(name = "AGR_VISITABLE")
+	private boolean esVisitable;
+	
+	@Column(name = "AGR_EMPRESA_PROMOTORA")
+	private String empresaPromotora;
+	
+	@Column(name = "AGR_EMPRESA_COMERCIALIZADORA")
+	private String empresaComercializadora;
 
 	public Long getId() {
 		return id;
@@ -375,6 +389,46 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 
 	public void setNumAgrupPrinexHPM(String numAgrupPrinexHPM) {
 		this.numAgrupPrinexHPM = numAgrupPrinexHPM;
+	}
+
+	public boolean isComercializableConsPlano() {
+		return comercializableConsPlano;
+	}
+
+	public void setComercializableConsPlano(boolean comercializableConsPlano) {
+		this.comercializableConsPlano = comercializableConsPlano;
+	}
+
+	public boolean isExistePiloto() {
+		return existePiloto;
+	}
+
+	public void setExistePiloto(boolean existePiloto) {
+		this.existePiloto = existePiloto;
+	}
+
+	public boolean isEsVisitable() {
+		return esVisitable;
+	}
+
+	public void setEsVisitable(boolean esVisitable) {
+		this.esVisitable = esVisitable;
+	}
+
+	public String getEmpresaPromotora() {
+		return empresaPromotora;
+	}
+
+	public void setEmpresaPromotora(String empresaPromotora) {
+		this.empresaPromotora = empresaPromotora;
+	}
+
+	public String getEmpresaComercializadora() {
+		return empresaComercializadora;
+	}
+
+	public void setEmpresaComercializadora(String empresaComercializadora) {
+		this.empresaComercializadora = empresaComercializadora;
 	}
 	
 

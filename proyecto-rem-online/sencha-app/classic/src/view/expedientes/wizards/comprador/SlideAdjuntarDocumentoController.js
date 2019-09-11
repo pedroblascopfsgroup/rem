@@ -14,9 +14,12 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			form = me.getView(),
 			wizard = form.up('wizardBase'),
 			idExpediente = null,
+			idActivo = null,
+			idAgrupacion = null,
 			dniComprador = null,
 			codTipoDocumento = null;
 		me.firstExecution = true;
+
 		if(!Ext.isEmpty(wizard.expediente)){
 			idExpediente = wizard.expediente.get('id');
 			dniComprador = wizard.comprador.get('numDocumento');
@@ -24,11 +27,15 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		}else{
 			dniComprador = wizard.numDocumento;
 			codTipoDocumento = wizard.codTipoDocumento;
+			idActivo = wizard.oferta.get('idActivo');
+			idAgrupacion = wizard.oferta.get('idAgrupacion');
 		}
 		Ext.Ajax.request({
 			url: $AC.getRemoteUrl('ofertas/checkPedirDoc'),
 			method: 'POST',
 			params: {
+				idActivo: idActivo,
+				idAgrupacion: idAgrupacion,
 				idExpediente: idExpediente,					
 				dniComprador: dniComprador,
 				codtipoDoc: codTipoDocumento
@@ -210,16 +217,16 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		checkComunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue(),
 		documentoAdjunto = form.getForm().findField('docOfertaComercial').getValue(),
 		btnFinalizar = form.lookupReference('btnFinalizar');
-		btnSubirDoc = form.lookupReference('btnSubirDocumento'),
+		btnSubirDoc = form.lookupReference('btnSubirDocumento');
 
-			btnFinalizar.disable();	
+				btnFinalizar.disable();	
 			if(!Ext.isEmpty(checkCesionDatos) && !Ext.isEmpty(checkTransInternacionales) && !Ext.isEmpty(checkComunicacionTerceros)){
 				if(checkCesionDatos && btnSubirDoc.isDisabled()){
 					if(esInternacional){
 						if(checkTransInternacionales == "true"){
 							btnFinalizar.enable();
 						}else{
-							btnFinalizar.disable();
+							btnFinalizar.disable();	
 						}
 					}else{
 						btnFinalizar.enable();
@@ -283,7 +290,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 		}
 		isDirty = me.hayCambios();
 		if(Ext.isEmpty(oldVal)){
-			me.oriComunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue()
+			me.oriComunicacionTerceros = form.getForm().findField('comunicacionTerceros').getValue();
 			me.activarFinalizar(form,isDirty);
 		}else{
 			if(me.oriComunicacionTerceros != newVal || 
@@ -318,7 +325,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 
 		isDirty = me.hayCambios();
 		if(Ext.isEmpty(oldVal)){
-			me.oriTransferenciasInternacionales = form.getForm().findField('transferenciasInternacionales').getValue()
+			me.oriTransferenciasInternacionales = form.getForm().findField('transferenciasInternacionales').getValue();
 			me.activarFinalizar(form,isDirty);
 		}else{
 			if(me.oriTransferenciasInternacionales != newVal || 

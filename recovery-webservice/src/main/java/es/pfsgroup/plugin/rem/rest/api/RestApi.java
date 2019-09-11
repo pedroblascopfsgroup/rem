@@ -68,7 +68,15 @@ public interface RestApi {
 	public static final String REST_API_ENVIAR_CAMBIOS = "CAMBIOS";
 	public static final String REST_MSG_TAREA_INVALIDA = "INVALID";
 	public static final String REST_MSG_VALIDACION_TAREA = "VALIDACION_TAREA_ERROR";
-
+	public static final String REST_MSG_INVALID_ENTITY_TYPE = "ENTIDAD INCORRECTA";
+	public static final String REST_MSG_UNKNOW_KEY = "UNKNOW_KEY";
+	public static final String REST_MSG_NO_RELATED_OFFER = "NO_RELATED_OFFER";
+	public static final String REST_MSG_UNKNOW_ENTITY = "UNKNOW_ENTITY";
+	public static final String REST_MSG_UNKNOW_JOB = "UNKNOW_JOB";
+	public static final String REST_MSG_UNKNOW_OFFER = "UNKNOW_OFFER";
+	public static final String REST_MSG_NO_RELATED_AT = "NO_RELATED_AT";
+	public static final String REST_NO_PARAM = "MISSING_PARAMS";
+	public static final String REST_MSG_FORMAT_ERROR = "FORMAT_ERROR";
 	/**
 	 * Valida la firma
 	 * 

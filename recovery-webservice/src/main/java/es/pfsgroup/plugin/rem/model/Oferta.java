@@ -147,6 +147,9 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "OFR_ID")
     private List<ActivoOferta> activosOferta;
     
+   	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_CES")
+   	private Date fechaRespuestaCES;	
+    
     @Column(name = "OFR_ORIGEN")
     private String origen;
    
@@ -170,7 +173,7 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "DD_CAP_ID")
 	private DDCanalPrescripcion canalPrescripcion;
     
-    // Datos de Tanteo y Retracto +-+-+-+-+-+ TR
+    // Datos de Tanteo y Retracto ----- TR
 	@Column(name="OFR_DESDE_TANTEO")
 	private Boolean desdeTanteo;
 
@@ -201,7 +204,7 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_FECHA_MAX_FORMALIZACION")
 	private Date plazoMaxFormalizacion;	
-	//+-+-+-+-+-+ TR
+	//----- TR
 	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_SUCURSAL")
@@ -235,6 +238,27 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_REF_CIRCUITO_CLIENTE")
 	private String refCircuitoCliente;
+	
+	@Column(name="OFR_IMP_CONTRAOFERTA_PM")
+	private Double importeContraofertaPM;
+	
+	@Column(name="OFR_FECHA_RESPUESTA_PM")
+	private Date fechaRespuestaPM;
+	
+	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_PM")
+	private Date fechaRespuestaOfertantePM;
+	
+	@Column(name="OFR_IMP_CONTRAOFERTA_CES")
+	private Double importeContraofertaCES;
+	
+	@Column(name="OFR_FECHA_RESOLUCIÓN_CES")
+	private Date fechaResolucionCES;
+	
+   	@Column(name="OFR_FECHA_RESPUESTA")
+   	private Date fechaRespuesta;	
+   	
+   	@Column(name="OFR_FECHA_APROBACION_PRO_MANZANA")
+   	private Date fechaAprobacionProManzana;	
     
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -692,6 +716,69 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setRefCircuitoCliente(String refCircuitoCliente) {
 		this.refCircuitoCliente = refCircuitoCliente;
+	}
+
+	public Double getImporteContraofertaPM() {
+		return importeContraofertaPM;
+	}
+
+	public void setImporteContraofertaPM(Double importeContraofertaPM) {
+		this.importeContraofertaPM = importeContraofertaPM;
+	}
+
+	public Date getFechaRespuestaPM() {
+		return fechaRespuestaPM;
+	}
+
+	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
+		this.fechaRespuestaPM = fechaRespuestaPM;
+	}
+
+	public Date getFechaRespuestaOfertantePM() {
+		return fechaRespuestaOfertantePM;
+	}
+
+	public void setFechaRespuestaOfertantePM(Date fechaRespuestaOfertantePM) {
+		this.fechaRespuestaOfertantePM = fechaRespuestaOfertantePM;
+	}
+
+	public Double getImporteContraofertaCES() {
+		return importeContraofertaCES;
+	}
+
+	public void setImporteContraofertaCES(Double importeContraofertaCES) {
+		this.importeContraofertaCES = importeContraofertaCES;
+	}
+
+	public Date getFechaResolucionCES() {
+		return fechaResolucionCES;
+	}
+
+	public void setFechaResolucionCES(Date fechaResolucionCES) {
+		this.fechaResolucionCES = fechaResolucionCES;
+	}
+	
+	public Date getFechaRespuestaCES() {
+			return fechaRespuestaCES;
+	}
+	public void setFechaRespuestaCES(Date fechaRespuestaCES) {
+		this.fechaRespuestaCES = fechaRespuestaCES;
+	}
+
+	public Date getFechaRespuesta() {
+		return fechaRespuesta;
+	}
+
+	public void setFechaRespuesta(Date fechaRespuesta) {
+		this.fechaRespuesta = fechaRespuesta;
+	}
+
+	public Date getFechaAprobacionProManzana() {
+		return fechaAprobacionProManzana;
+	}
+
+	public void setFechaAprobacionProManzana(Date fechaAprobacionProManzana) {
+		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
 	}
 
 }

@@ -215,7 +215,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onSaveFormularioCompleto: function(btn, form) {
 		var me = this;
-
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() || form.disableValidation) {
 
@@ -589,7 +588,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 	    activeTab = null,
 	    refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false : refrescarTabActiva;
-
 	    if(!Ext.isEmpty(me.getView().down("tabpanel"))){
 	         activeTab = me.getView().down("tabpanel").getActiveTab();
 	    }else {
@@ -598,8 +596,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
-  			if(component.rendered) {
+  			if(component.rendered && "datosbasicosexpediente".indexOf(component.reference) <0) {
   				component.recargar=true;
+  			}else {
+  				component.recargar=false;
   			}
   		});
   		
@@ -2831,6 +2831,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		me.fireEvent("downloadFile", config);
 	},
+	
+	onClickAdvisoryNoteExpediente : function(btn) {
+		var me = this;
+
+		var url =  $AC.getRemoteUrl('expedientecomercial/getAdvisoryNoteExpediente');
+
+		var config = {};
+		config.params = {};
+		config.params.idExpediente=me.getViewModel().get('expediente.id');
+		config.url= url;
+		me.fireEvent("downloadFile", config);
+
+	},
 
 	validarFechaPosicionamiento : function(value) {
 		/*
@@ -4676,6 +4689,59 @@ comprobarFormatoModificar: function() {
 			
 		}
 			
-	}
+	},
+	onClickBtnDevolverReserva: function(btn){
+		var me = this,
+		model = me.getView().getViewModel().get('expediente');
+		var win = Ext.create('Ext.window.Window', {
+    		title: 'Devolver Reserva',
+    		height: 150,
+    		width: 700,
+    		modal: true,
+    		model: model,
+    		renderTo: me.getView().body,
+    		layout: 'fit',
+    		items:{
+    			xtype: 'form',
+    			id: 'devolucionForm',
+    			layout: {
+    				type: 'hbox', 
+    				pack: 'center', 
+    				align: 'center' 
+    			},
+    			items:[
+        			{
+        				xtype: 'datefield',
+        				id: 'fechaDevolucion',
+        				name: 'fechaDevolucion',
+        				reference: 'fechaDevolucion',
+        				fieldLabel: 'Fecha Devolución'
+        			}
+        		],
+        		border: false,
+        		buttonAlign: 'center',
+        		buttons: [
+        			  {
+        				  text: 'Aceptar',
+        				  formBind: true,
+        				  handler: function(){
+        					  var campoFecha = win.down('[reference=fechaDevolucion]');
+        					  win.model.set('estadoDevolucionCodigo', '02');
+        					  win.model.set('fechaDevolucionEntregas', campoFecha.getValue());
+        					  win.model.save();
+        					  win.close();
+        				  }
+        			  },
+        			  {
+        				  text: 'Cancelar', 
+        				  handler: function(){
+        					  win.close();
+        				  }
+        			  }
+        		]
+    		}
+    	});
 
+    	win.show();
+	}
 });

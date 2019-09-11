@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -80,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
@@ -88,9 +90,11 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
-
 
 
 @Controller
@@ -467,7 +471,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		String nombreDocumento = request.getParameter("nombreDocumento");
 		ServletOutputStream salida = null;
 		try {
-			nombreDocumento = URLDecoder.decode(nombreDocumento,"UTF-8");
+
 			FileItem fileItem = dl.getFileItem(id, nombreDocumento);
 			salida = response.getOutputStream();
 			if(fileItem != null){	
@@ -505,32 +509,31 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoExpedienteGDPR(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 
-		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
-		Downloader dl = downloaderFactoryApi.getDownloader(key);
-		String nombreDocumento = request.getParameter("nombreAdjunto");
-		Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
-
-		try {
-			FileItem fileItem = dl.getFileItem(idDocRestClient, nombreDocumento);
-			ServletOutputStream salida = response.getOutputStream();
-
-			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
-			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-			response.setHeader("Cache-Control", "max-age=0");
-			response.setHeader("Expires", "0");
-			response.setHeader("Pragma", "public");
-			response.setDateHeader("Expires", 0); // prevents caching at the
-													// proxy
-			response.setContentType(fileItem.getContentType());
-
-			// Write
-			FileUtils.copy(fileItem.getInputStream(), salida);
-			salida.flush();
-
-		} catch (Exception e) {
-			logger.error("Error en ExpedienteComercialController", e);
-		}
-	}
+				String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+				Downloader dl = downloaderFactoryApi.getDownloader(key);
+				String nombreDocumento = request.getParameter("nombreAdjunto");
+				Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
+				
+       	try {
+	       		FileItem fileItem = dl.getFileItem( idDocRestClient , nombreDocumento);
+           		ServletOutputStream salida = response.getOutputStream(); 
+           			
+           		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+           		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+           		response.setHeader("Cache-Control", "max-age=0");
+           		response.setHeader("Expires", "0");
+           		response.setHeader("Pragma", "public");
+           		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+           		response.setContentType(fileItem.getContentType());
+           		
+           		// Write
+           		FileUtils.copy(fileItem.getInputStream(), salida);
+           		salida.flush();
+        
+    		}catch(Exception e) {
+    			logger.error("Error en ExpedienteComercialController", e);
+		    }	
+       	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -1736,6 +1739,25 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		} catch (IOException e) {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void getAdvisoryNoteExpediente(HttpServletRequest request, HttpServletResponse response, Long idExpediente) throws Exception {
+		try {
+			Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+			
+			List<VReportAdvisoryNotes> listaAN = expedienteComercialApi.getAdvisoryNotesByOferta(oferta);
+			
+			if(!Checks.estaVacio(listaAN)) {
+				File file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request);
+				excelReportGeneratorApi.sendReport(file, response);
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} 
 	}
 
 	@SuppressWarnings("unchecked")

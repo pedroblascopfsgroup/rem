@@ -184,8 +184,29 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	},
     
 	onClickBotonGuardar: function(btn) {
-		var me = this;	
-		me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());				
+		var me = this;
+		var codCartera = me.getViewModel().get("agrupacionficha.codigoCartera"),
+	  	codSubcartera = me.getViewModel().get("agrupacionficha.codSubcartera"),
+	  	pisoPiloto = me.getViewModel().get("agrupacionficha.pisoPiloto"),
+	  	existePisoPiloto = me.lookupReference("existePiloto");
+
+		if ((CONST.CARTERA['THIRD'] === codCartera && codSubcartera === CONST.SUBCARTERA['YUBAI'])
+			&& CONST.COMBO_TRUE_FALSE['FALSE'] == existePisoPiloto.getValue() && pisoPiloto != null) {
+        		Ext.Msg.show({
+        			   title: HreRem.i18n('title.confirmar.eliminacion'),
+        			   msg: HreRem.i18n('title.confirmacion.guardar.cambios'), 
+        			   buttons: Ext.MessageBox.YESNO,
+        			   fn: function(buttonId) {
+        			        if (buttonId == 'yes') {
+        			        	me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());
+					            // Si la pestaña necesita botones de edición 
+        			        }
+        			   }
+    			});
+		} else{
+			me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());
+		}
+						
 	},
 	
 	onClickBotonCancelar: function(btn) {
@@ -1143,6 +1164,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		textArea.setDisabled(true);
     	}
     },
+
     onClickActivoMatriz: function(){
 		var me = this;
 		var numActivo = me.getViewModel().get('agrupacionficha.activoMatriz');
@@ -1166,6 +1188,33 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
     		     }
     		 });    
+		}
+    },
+
+    onChangeComboComercializableConsPlano: function(combo){
+		var me = this;
+		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('existePiloto').setValue(false);
+			me.lookupReference('esVisitable').setValue(false);
+			me.lookupReference('pisoPiloto').setValue(null);
+		}
+	},
+	
+	onChangeComboExistePisoPiloto: function(combo){
+		var me = this;
+		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('esVisitable').setValue(false);
+			me.lookupReference('pisoPiloto').setValue(null);
+		}
+	},
+	
+	onChangeComboEsVisitable: function(combo){
+		var me = this;
+		if(CONST.COMBO_TRUE_FALSE['TRUE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('pisoPiloto').setAllowBlank(false);
+		}
+		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('pisoPiloto').setValue(null);
 		}
 	}
 });

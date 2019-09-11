@@ -25,22 +25,28 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.recibo.model.DDMotivoRechazo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaSoloRechazo;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
@@ -49,6 +55,9 @@ import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
@@ -82,6 +91,15 @@ public class AgendaController extends TareaController {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private NotificatorServiceSancionOfertaSoloRechazo notificatorSoloRechazo;
+
+    @Autowired
+    private ActivoAdapter activoAdapter;
 	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -337,8 +355,11 @@ public class AgendaController extends TareaController {
 	public ModelAndView saltoResolucionExpedienteByIdExp(Long idExpediente, ModelMap model) {
 
 		ExpedienteComercial eco = null;
+		Oferta oferta;
 		List<ActivoTramite> listaTramites = null;
 		Boolean salto = false;
+		final String CODIGO_T013 = "T013";
+		final String CODIGO_T017 = "T017";
 
 		try {
 
@@ -350,7 +371,7 @@ public class AgendaController extends TareaController {
 				if (Checks.esNulo(eco)) {
 					throw new JsonViewerException("No existe el expediente comercial.");
 				}
-
+				
 				listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId());
 				if (Checks.esNulo(listaTramites)
 						|| (!Checks.esNulo(listaTramites) && listaTramites.size() == 0 || (!Checks.esNulo(listaTramites)
@@ -360,14 +381,27 @@ public class AgendaController extends TareaController {
 
 				List<TareaExterna> listaTareas = activoTramiteApi
 						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
+				
+				ActivoTramite tramite = listaTramites.get(0);
 				for (int i = 0; i < listaTareas.size(); i++) {
 					TareaExterna tarea = listaTareas.get(i);
 					if (!Checks.esNulo(tarea)) {
+
+						String codigo = tarea.getTareaProcedimiento().getTipoProcedimiento().getCodigo();
+						if(CODIGO_T013.equals(codigo)) {
+							salto = adapter.saltoResolucionExpediente(tarea.getId());
+						}else if(CODIGO_T017.equals(codigo)) {
+							salto = adapter.saltoResolucionExpedienteApple(tarea.getId());
+						}
+						
 						expedienteComercialApi.finalizarTareaValidacionClientes(eco);
-						salto = adapter.saltoResolucionExpediente(tarea.getId());
+						if(!salto) {
+							salto = adapter.saltoResolucionExpediente(tarea.getId());
+						}
+						
 						break;
 					}
-				}
+				}								
 			}
 			model.put("success", salto);
 

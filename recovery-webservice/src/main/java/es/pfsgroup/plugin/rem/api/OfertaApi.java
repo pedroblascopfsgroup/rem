@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
@@ -92,7 +93,7 @@ public interface OfertaApi {
 	public DtoPage getListOfertasUsuario(DtoOfertasFilter dtoOfertasFilter);
 	
 	/**
-	 * Devuelve un Page de Ofertas aplicando el filtro que recibe teniendo en cuenta si se filtra por gestoria.
+	 * Devuelve un Page de Ofertas filtrando por usuario gestoria y número de activo.
 	 * @param dtoOfertasFilter
 	 * @return
 	 */
@@ -639,9 +640,30 @@ public interface OfertaApi {
 	public boolean esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente);
 	
 	/**
+	 * @param ofrNumOferta
+	 * @param codTarea
+	 * @return devuelve el id de la tarea activa.
+	 */
+	public Long getIdTareaByNumOfertaAndCodTarea(Long ofrNumOferta, String codTarea);
+
+	/**
 	 * Anula la oferta si viene de un lote crm
 	 * @param oferta
 	 */
 	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
+
+	/**
+	 * Metodo que busca si la tarea pasada del tramite dado esta finalizada
+	 * @param tramite - TramiteActivo
+	 * @param codigoTarea - Codigo de la tabla TareaProcedimiento
+	 * @return devuelve true si esta finalizada
+	 */
+	public Boolean esTareaFinalizada(ActivoTramite tramite, String codigoTarea);
+
+	Boolean finalizarOferta(Oferta oferta);
+
+	Oferta getOfertaByIdExpediente(Long idExpediente);
+
+	boolean checkEsYubai(TareaExterna tareaExterna);
 }
 

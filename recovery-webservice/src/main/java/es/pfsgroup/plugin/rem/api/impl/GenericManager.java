@@ -881,25 +881,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDComiteSancion> getComitesByCartera(String carteraCodigo, String subcarteraCodigo) {
 		List<DDComiteSancion> listaComites = null;
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
-		Filter filter = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
-		Filter comitecerberusappleagora = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS);
-		Filter comitecerberushaya = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS);
-		Filter comitecerberusexterno = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_EXTERNO_CERBERUS);
-		DDComiteSancion comiteexterno = genericDao.get(DDComiteSancion.class, filter, comitecerberusexterno);
-		
-		if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(carteraCodigo)) {
-			if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(subcarteraCodigo)||
-			DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcarteraCodigo)||
-			DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcarteraCodigo)) {
-				listaComites = genericDao.getList(DDComiteSancion.class, filter, comitecerberusappleagora);
-				return listaComites;
-			} else {
-				listaComites = genericDao.getList(DDComiteSancion.class, filter, comitecerberushaya);				
-				listaComites.add(comiteexterno);
-				return listaComites;
-			}
+		Filter filtro,filtroCartera;
+		if(!Checks.esNulo(subcarteraCodigo)){
+			filtro = genericDao.createFilter(FilterType.EQUALS,"Subcartera.codigo", subcarteraCodigo);
+			filtroCartera = genericDao.createFilter(FilterType.EQUALS,"cartera.codigo", carteraCodigo);
+			listaComites = genericDao.getList(DDComiteSancion.class,filtro,filtroCartera);
+
 		}
-		listaComites = genericDao.getListOrdered(DDComiteSancion.class, order, filter);
+		if(Checks.esNulo(subcarteraCodigo) || listaComites.size() == 0){
+			filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
+			listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
+			List<DDComiteSancion> copiaListaComites =  genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
+			for (DDComiteSancion comite : copiaListaComites) {
+				if(comite.getSubcartera()!=null){
+					listaComites.remove(comite);
+				}
+			}
+
+
+		}
 		return listaComites;
 
 	}

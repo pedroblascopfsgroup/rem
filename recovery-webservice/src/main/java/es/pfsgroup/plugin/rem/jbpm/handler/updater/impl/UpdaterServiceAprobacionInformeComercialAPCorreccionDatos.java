@@ -17,6 +17,8 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -124,6 +126,11 @@ public class UpdaterServiceAprobacionInformeComercialAPCorreccionDatos implement
 			activoApi.saveOrUpdate(activo);
 		}
 		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
+		
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())
+				&& !Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getFechaAceptacion())){
+			activoApi.calcularRatingActivo(activo.getId());
+		}
 	}
 
 

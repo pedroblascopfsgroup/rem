@@ -257,8 +257,8 @@ function check_ddl() {
 						[file]=$file 
 						[problem]="Se ha detectado un fichero DDL.sql fuera de la carpeta producto."
 						[solution]="Mueva este fichero a la carpeta producto. Sólo se permiten scripts de creación de tablas TMP o AUX fuera de la carpeta de producto" )
-	creates_totales=`cat $file | grep -iE "create" | wc -l`
-	creates_ok=`cat $file | grep -iE "create .*(aux|tmp)" | wc -l`
+	creates_totales=`cat $file | grep -iE "create table " | wc -l`
+	creates_ok=`cat $file | grep -iE "create table .*(aux|tmp)" | wc -l`
 	echo $creates_totales $creates_ok
 	if [ $creates_totales -gt $creates_ok ]; then
 		paint_error rule

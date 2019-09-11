@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ActuacionTecnicaUserAssigna
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -141,6 +142,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
@@ -265,6 +267,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private UsuarioDao usuarioDao;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	@Autowired
+	private ActivoTareaExternaDao activoTareaExternaDao;
 	
 	@Override
 	public String managerName() {
@@ -1508,7 +1513,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		// Módulo de Expediente comercial ----------
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
-			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
+			boolean esApple = false;
+			if ( !Checks.esNulo(expedienteComercial)) {
+				for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+					Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+					esApple=false;
+					if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
+						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+						esApple = true;
+					}
+					if (!esApple) {
+						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
+					}else {
+						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE);
+					}
+				}
+					
+			}
+
 		}
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);
@@ -4144,5 +4167,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return genericDao.get(Trabajo.class, filter);
 	}
 
-
+	public Long getIdTareaBytbjNumTrabajoAndCodTarea(Long tbjNumTrabajo, String codTarea) {
+		Long idTarea =null;
+		List<Long> tareasTramite = activoTareaExternaDao.getTareasBytbjNumTrabajoCodigoTarea(tbjNumTrabajo,codTarea);
+        if(!Checks.esNulo(tareasTramite) && !tareasTramite.isEmpty()) {
+        	idTarea = tareasTramite.get(0);
+        }
+		return idTarea;
+	}
 }

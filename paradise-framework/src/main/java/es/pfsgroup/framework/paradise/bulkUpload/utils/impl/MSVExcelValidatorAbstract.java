@@ -424,8 +424,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 	protected List<String> recuperarFormato(Long idTipoOperacion) {
 		MSVDDOperacionMasiva tipoOperacion = getTipoOperacion(idTipoOperacion);
 		String stringValidacion = tipoOperacion.getValidacionFormato();
-		List<String> lista = Arrays.asList(stringValidacion.split(","));
-		return lista;
+		return Arrays.asList(stringValidacion.split(","));		
 	}
 
 	private int obtenerLongitudMax(String validacion) {
@@ -437,6 +436,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 			try {
 				result = Integer.parseInt(strLong);
 			} catch (Exception e) {
+				e.getMessage();
 			}
 		}
 

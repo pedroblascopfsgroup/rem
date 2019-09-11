@@ -34,6 +34,12 @@ public class DtoActivoTributos implements Serializable{
 	private String resultadoSolicitud;
 	
 	private Long numGastoHaya;
+	
+	private String existeDocumentoTributo;
+	
+	private String documentoTributoNombre;
+	
+	private Long documentoTributoId;
 
 	public String getNumActivo() {
 		return numActivo;
@@ -130,6 +136,34 @@ public class DtoActivoTributos implements Serializable{
 	public void setIdTributo(Long idTributo) {
 		this.idTributo = idTributo;
 	}
+
+	public String getExisteDocumentoTributo() {
+		return existeDocumentoTributo;
+	}
+	
+	public void setExisteDocumentoTributo(String existeDocumentoTributo) {
+		this.existeDocumentoTributo = existeDocumentoTributo;
+	}
+
+	public String getDocumentoTributoNombre() {
+		return documentoTributoNombre;
+	}
+
+	public void setDocumentoTributoNombre(String documentoTributoNombre) {
+		this.documentoTributoNombre = documentoTributoNombre;
+	}
+
+	public Long getDocumentoTributoId() {
+		return documentoTributoId;
+	}
+
+	public void setDocumentoTributoId(Long documentoTributoId) {
+		this.documentoTributoId = documentoTributoId;
+	}
+
+	
+
+	
 
 	
 	

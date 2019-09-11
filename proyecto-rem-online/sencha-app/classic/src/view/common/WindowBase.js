@@ -22,7 +22,6 @@ Ext.define('HreRem.view.common.WindowBase', {
     	me.close();   	
     },
     onClickBotonAdjuntarDocumento: function(btn) {
-		
     	var me = this,
     	params = {},
     	form = me.down("form");
@@ -63,7 +62,10 @@ Ext.define('HreRem.view.common.WindowBase', {
      		                 		}
 	            	 			
     		                 	
-    		                 	}else{
+    		                 	}else{  		                 	
+    		                 		if(me.parent != undefined && me.parent.getStore() != undefined){
+    		                 			me.parent.getStore().load();
+    		                 		} 
     		                 		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
     		                 	}
     		                 	if(!Ext.isEmpty(me.parent)) {

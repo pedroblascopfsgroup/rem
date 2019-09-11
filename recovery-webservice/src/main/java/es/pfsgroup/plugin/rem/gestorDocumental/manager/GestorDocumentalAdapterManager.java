@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
@@ -768,6 +769,11 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public FileItem getFileItemPromocion(Long idDocumento, String nombreDocumento) throws Exception {
 		return this.getFileItem(idDocumento, nombreDocumento);
 	}
+	
+	@Override
+	public FileItem getFileItemTributo(Long idDocumento, String nombreDocumento)  throws Exception {
+		return this.getFileItem(idDocumento, nombreDocumento);
+	}
 
 	@Override
 	public List<DtoAdjunto> getAdjuntosComunicacionGencat(ComunicacionGencat comunicacionGencat) throws GestorDocumentalException  {
@@ -969,4 +975,21 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		return mgd.getClienteMaestroActivos();
 	}
+	
+	@Override
+	public Long uploadDocumentoTributo(WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(webFileItem.getParameter("idTributo"), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, GestorDocumentalConstants.CODIGO_CLASE_TRIBUTOS);
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+
+		if(!Checks.esNulo(respuestaCrearDocumento) && !Checks.esNulo(respuestaCrearDocumento.getCodigoError())) {
+			logger.debug(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+			throw new GestorDocumentalException(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+		}
+
+		return new Long(respuestaCrearDocumento.getIdDocumento());
+	
+	}
+	
 }

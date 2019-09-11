@@ -4431,5 +4431,19 @@ public class ActivoAdapter {
 	public boolean isUnidadAlquilable (Long idActivo) {
 		return activoDao.isUnidadAlquilable(idActivo);
 	}
-
+	
+	public Boolean deleteAdjuntoTributo(Long idRestTributo) {
+		boolean borrado = false;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			try {
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(idRestTributo, usuarioLogado.getUsername());
+			} catch (Exception e) {
+				logger.error("Error en ActivoAdapter", e);
+			}
+		}else {
+			borrado = true;
+		}
+		return borrado;
+	}
 }

@@ -433,7 +433,57 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 			        			keyNavEnable: false,
 			        			mouseWheelEnable: false		   				        		
 			   				}
-					   	}
+					   	},
+					   	{	  
+				            text: 'ExisteDocumento',
+				            reference: 'existeDocumentoTributo',
+				            dataIndex: 'existeDocumentoTributo',
+				            flex: 0.5,
+				            editor: {
+				        		xtype:'textarea',
+				        		readOnly: true
+			        		}
+					   	},
+					   	{
+				        	xtype: 'actioncolumn',
+				            dataIndex: 'documentoTributoNombre',
+				            reference: 'existeDocumentoTributoPorNombre',
+				            text: 'Documento',
+				            flex: 1.5,
+				            items: [{
+						            tooltip:'Añadir',
+						            getClass: function(v, metadata, record ) {
+						            		return 'fa-user blue-medium-color'
+						            },
+						            handler: 'anyadirAdjuntoTributo'
+					        	},
+					        	{
+						            tooltip:'Eliminar',
+						            getClass: function(v, metadata, record ) {
+						            		return 'ico-download'
+						            },
+						            handler: 'eliminarAdjuntoTributo'
+						        },
+						        {
+						            tooltip:'Descargar',
+						            getClass: function(v, metadata, record ) {
+						            		return 'fa-user blue-medium-color'
+						            },
+						            handler: 'descargarAdjuntoTributo'
+						        }
+					        ],
+					        renderer: function(value, metadata, record) {
+					        	
+					        	if(value != undefined){
+					        		return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';
+					        	}
+					        	return null;
+					        },
+				            flex     : 1,            
+				            align: 'left',
+				            hideable: false,
+				            sortable: true
+				       }
 					   	],
 					   	dockedItems: [
 				        {

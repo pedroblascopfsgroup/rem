@@ -3838,7 +3838,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(vta > (importeUmbral * 10)) {
 				return genericDao.get(DDComiteSancion.class, filtroDireccion);
 			}else if(vta <= (importeUmbral * 10) && vta >= importeUmbral) {
-				if(perdida > 0 || perdidaValorAbsoluto <= umbralPerdida || perdidaValorAbsoluto <= porcentajevnc) {
+				if(perdida > 0 || (perdidaValorAbsoluto <= umbralPerdida && perdidaValorAbsoluto <= porcentajevnc)) {
 					return genericDao.get(DDComiteSancion.class, filtroInversion);
 				}else if(perdidaValorAbsoluto > umbralPerdida || perdidaValorAbsoluto > porcentajevnc) {
 					return genericDao.get(DDComiteSancion.class, filtroDireccion);

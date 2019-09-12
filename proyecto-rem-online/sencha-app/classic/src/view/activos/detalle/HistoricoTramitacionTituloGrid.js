@@ -34,7 +34,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 //				},
 		        {
 		            dataIndex: 'fechaPresentacionRegistro',
-		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.fechapresentacion'), //PORHACER cambiar el label de las columnas en los properties
+		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.fechapresentacion'),
 		            editor: {
 		        		xtype: 'datefield',
 		        		reference: 'fechaPresentacionRegistro',
@@ -46,7 +46,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 		        },
 		        {	
 		            dataIndex: 'fechaCalificacion',
-		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.fechacalificacion'), //PORHACER cambiar el label de las columnas en los properties
+		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.fechacalificacion'), 
 		            editor: {
 		        		xtype: 'datefield',
 		        		cls: 'grid-no-seleccionable-field-editor',
@@ -61,7 +61,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 		        },
 		        {
 		            dataIndex: 'fechaInscripcion',
-		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.fechainscripcion'), //PORHACER cambiar el label de las columnas en los properties
+		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.fechainscripcion'),
 		            editor: {
 		        		xtype: 'datefield',
 		        		cls: 'grid-no-seleccionable-field-editor',
@@ -80,7 +80,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 		        
 		        {
 		            dataIndex: 'estadoPresentacion',
-		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.estado'), //PORHACER cambiar el label de las columnas en los properties
+		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.estado'), 
 		            editor: {
 						xtype: 'combobox',								        		
 						store: new Ext.data.Store({
@@ -103,7 +103,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 		        },		        
 		        {
 		            dataIndex: 'observaciones',
-		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.observaciones'), //PORHACER cambiar el label de las columnas en los properties
+		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.observaciones'), 
 		            editor: {
 		        		xtype: 'textareafield'
 		        	},

@@ -749,4 +749,22 @@ public interface OfertaApi {
 	public void actualizaListadoPrincipales(Oferta nuevaPrincipal, List<OfertasAgrupadasLbk> ofertasAgrupadas);
 
 	public void actualizaClaseOferta(Oferta principal, String codigoOfertaPrincipal);
+	
+	/**
+	 * Este método comprueba si en la agrupación de la ofertaPrincipal ya está incluido algun activo de la nueva ofertaDependiente
+	 *
+	 * @param ofertaDependiente
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public boolean ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(Oferta ofertaDependiente, Oferta ofertaPrincipal);
+	
+	/**
+	 * Este método comprueba si en la agrupación de la ofertaPrincipal ya está incluido un activo en concreto. Se usa para hacer las comprobaciones de ofertas nuevas (cuando se están creando y aun no existen).
+	 *
+	 * @param idActivo
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public boolean activoYaIncluidoEnOfertaAgrupadaLbk(Long idActivo, Oferta ofertaPrincipal);
 }

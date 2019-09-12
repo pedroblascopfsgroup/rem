@@ -603,7 +603,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				try {				
 					Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
 					if(!Checks.esNulo(nuevaOfertaPrincipal)) {	
-						if(!activoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
+						if(!ofertaApi.ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
 						{
 							// Si la nueva oferta principal es Individual, la cambio a principal.
 							if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
@@ -680,7 +680,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					try {							
 						Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNuevoNumOferPrincipal());
 						if(!Checks.esNulo(nuevaOfertaPrincipal)) {
-							if(!activoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
+							if(!ofertaApi.ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
 							{
 								// Si la nueva oferta principal es Individual, la cambio a principal.
 								if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
@@ -805,7 +805,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							
 							// Si la oferta que va a pasar a dependiente no tiene ninguna oferta que dependa de ella, la hacemos dependiente de la nueva oferta principal.
 							if(ofertasAgrupadasLbk.size() == 0){
-								if(!activoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
+								if(!ofertaApi.ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
 								{
 									// Si la nueva oferta principal es Individual, la cambio a principal.
 									if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
@@ -10097,11 +10097,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public DtoOferta searchOfertaCodigo(String numOferta) {
+	public DtoOferta searchOfertaCodigo(String numOferta, String numIdActivo) {
 		
-		long numeroOferta;
+		long numeroOferta, idActivo;
 		try {
 			numeroOferta = Long.parseLong(numOferta);
+			idActivo = Long.parseLong(numIdActivo);
 			
 			DtoOferta dtoOferta = new DtoOferta();
 			Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numeroOferta);
@@ -10118,6 +10119,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) &&
 						(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(eco.getEstado().getCodigo()) || DDEstadosExpedienteComercial.PTE_SANCION.equals(eco.getEstado().getCodigo()))) {
 				
+					if(ofertaApi.activoYaIncluidoEnOfertaAgrupadaLbk(idActivo, oferta)) {
+						throw new JsonViewerException("La oferta que estás intentando crear tiene un activo ya contenido en la agrupación.");
+					}
+					
 					Long idTareaPadre = activoTareaExternaApi.getActivasByIdTramiteTodas(activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId()).get(0).getId()).get(0).getTareaPadre().getId();
 					
 					Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", idTareaPadre);
@@ -10204,35 +10209,5 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return true;
-	}
-	
-	private boolean activoYaIncluidoEnOfertaAgrupadaLbk(Oferta ofertaDependiente, Oferta ofertaPrincipal) 
-	{
-		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", ofertaPrincipal.getId());	
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
-		List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
-		
-		// En esta lista insertaré todos los activos que pertenecen a las ofertas dependientes.
-		List<Activo> activosEnLaAgrupacion = new ArrayList<Activo>();		
-		for(OfertasAgrupadasLbk ogrLbk : ofertasAgrupadasLbk) {
-			List<ActivoOferta> actOfrDependList = ogrLbk.getOfertaDependiente().getActivosOferta();
-			for(ActivoOferta actOfr : actOfrDependList) {
-				activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
-			}
-		}
-		// Tambien incluyo los activos relacionados con la oferta principal.
-		List<ActivoOferta> actOfrPrincList = ofertaPrincipal.getActivosOferta();
-		for(ActivoOferta actOfr : actOfrPrincList) {
-			activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
-		}
-		
-		List<ActivoOferta> actOfrNuevaDependList = ofertaDependiente.getActivosOferta();
-		for(ActivoOferta actOfr : actOfrNuevaDependList) {
-			for(Activo act : activosEnLaAgrupacion) {
-				if(actOfr.getActivoId().equals(act.getId()))
-					return true;
-			}
-		}
-		return false;
-	}
+	}	
 }

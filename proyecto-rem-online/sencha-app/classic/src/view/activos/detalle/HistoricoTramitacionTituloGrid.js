@@ -136,6 +136,12 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 	        	me.evaluarBotonRemove(grid, records);
 	        	me.evaluarBotonAdd();
 	        });
+	        
+	        me.saveSuccessFn = function() {
+		    	var me = this;
+		    	me.up('tituloinformacionregistralactivo').funcionRecargar();
+		    	return true;
+		    };
    },
    
    editFuncion: function(editor, context){

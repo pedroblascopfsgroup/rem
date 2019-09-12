@@ -6720,6 +6720,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
 		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
+		String estadoTitulo = null;
 		
 			try {
 				beanUtilNotNull.copyProperty(htt, "titulo", titulo);
@@ -6730,6 +6731,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
 					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
+					if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+					}
+					
+					if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo()) && !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+						htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+						estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
+					}
+					
+					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+					}
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
 					beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
@@ -6750,6 +6763,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				return false;
 			}
 			
+			DDEstadoTitulo ddEstadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoTitulo));
+			if (!Checks.esNulo(ddEstadoTitulo)) {
+				htt.getTitulo().setEstado(ddEstadoTitulo);
+			}
+			
 		genericDao.save(HistoricoTramitacionTitulo.class, htt);
 		return true;
 	}
@@ -6759,6 +6777,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) {
 		
 		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
+		String estadoTitulo = null;
 		
 		try {
 				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
@@ -6768,6 +6787,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
 					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
+					if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+						htt.setFechaInscripcion(null);
+						htt.setFechaCalificacion(null);
+					}
+					
+					if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo()) && !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+						htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+						estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
+						htt.setFechaCalificacion(null);
+					}
+					
+					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+						htt.setFechaInscripcion(null);
+					}
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
 					beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
@@ -6787,6 +6822,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				logger.error("Error en activoManager", e);
 				return false;
 			}
+		
+		DDEstadoTitulo ddEstadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoTitulo));
+		if (!Checks.esNulo(ddEstadoTitulo)) {
+			htt.getTitulo().setEstado(ddEstadoTitulo);
+		}
 			
 		genericDao.save(HistoricoTramitacionTitulo.class, htt);
 		return true;

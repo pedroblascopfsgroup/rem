@@ -834,10 +834,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{ 
 				        	xtype: 'comboboxfieldbase',				        	
 					 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo'),
+					 		readOnly: true,
 				        	bind: {
 			            		store: '{comboEstadoTitulo}',
-			            		value: '{datosRegistrales.estadoTitulo}',
-			            		readOnly: '{datosRegistrales.unidadAlquilable}'
+			            		value: '{datosRegistrales.estadoTitulo}'
 
 			            	},
 
@@ -890,9 +890,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.registro'),
+		                	readOnly: true,
 					 		bind: {
-					 			value: '{datosRegistrales.fechaInscripcionReg}', 
-					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 			value: '{datosRegistrales.fechaInscripcionReg}'
 					 		},
 					 		listeners: {
 					 			change: function () {

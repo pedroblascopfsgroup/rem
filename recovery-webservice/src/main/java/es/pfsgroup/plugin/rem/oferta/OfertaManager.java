@@ -3819,7 +3819,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	private DDComiteSancion devuelveComiteSancionador (Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr) {
 		Double importeUmbral = 500000.0;
-		Double perdida = pvn-vr;
+		Double perdida = pvn-vnc;
 		Double perdidaValorAbsoluto = Math.abs(perdida);
 		Double porcentajevnc = vnc * 0.2;
 		Double umbralPerdida = 100000.0;

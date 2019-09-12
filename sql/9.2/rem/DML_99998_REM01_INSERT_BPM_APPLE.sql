@@ -1,29 +1,31 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez
---## FECHA_CREACION=20190904
+--## AUTOR=MIGUEL LOPEZ
+--## FECHA_CREACION=20190822
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HEROS-7348
+--## INCIDENCIA_LINK=HREOS-7349
 --## PRODUCTO=NO
 --## 
 --## Finalidad: DML
 --## INSTRUCCIONES: Crear BPM Apple
 --## VERSIONES:
---##        0.1 Sergio Salt 	 	- Versión inicial 
---##	    0.2 Mariam Lliso 		- HREOS-6619 HREOS-6620 HREOS-6662 - Actualización validaciones T017_InstruccionesReserva, T017_ObtencionContratoReserva, T017_PosicionamientoYFirma, T017_DocsPosVenta
---##	    0.3 Alejandro Valverde 	- HREOS-6605 - Actualización validación T017_DefinicionOferta
---##	    0.4 David Garcia 		- HREOS-6663 - Actualización validación T017_AnalisisPM
---##	    0.5 Alejandro Valverde 	- HREOS-6605 - Corrección validación T017_DefinicionOferta
---##      0.6 Vicente Martinez 	  - HREOS-6841 - Eliminación validacion T017_AnalisisPM
---##      0.6 Vicente Martinez 	  - HREOS-6840 - Modificacion decisión PyF
---##      0.7 Vicente Martinez 	  - HREOS-6937 - Corrección acentos
---##	    0.8 Vicente Martinez 	  - HREOS-7040 - Correccion label Observaciones
---##	    0.9 Juan Beltrán	 	    - HREOS-7162 - Correccion bloque Instrucciones
---##		  0.10 Vicente Martinez	  - HREOS-7249 - Correccion subida documentos Resolucion CES
---##      0.11 Álvaro Valero      - HEROS-7348 - Añadida tarea Ratificación Comité CES
+--##        0.1 Sergio Salt 	 	    - Versión inicial 
+--##	      0.2 Mariam Lliso 		    - HREOS-6619 HREOS-6620 HREOS-6662 - Actualización validaciones T017_InstruccionesReserva, T017_ObtencionContratoReserva, T017_PosicionamientoYFirma, T017_DocsPosVenta
+--##	      0.3 Alejandro Valverde 	- HREOS-6605 - Actualización validación T017_DefinicionOferta
+--##	      0.4 David Garcia 		    - HREOS-6663 - Actualización validación T017_AnalisisPM
+--##	      0.5 Alejandro Valverde 	- HREOS-6605 - Corrección validación T017_DefinicionOferta
+--##        0.6 Vicente Martinez 	  - HREOS-6841 - Eliminación validacion T017_AnalisisPM
+--##        0.6 Vicente Martinez 	  - HREOS-6840 - Modificacion decisión PyF
+--##        0.7 Vicente Martinez 	  - HREOS-6937 - Corrección acentos
+--##	      0.8 Vicente Martinez 	  - HREOS-7040 - Correccion label Observaciones
+--##	      0.9 Juan Beltrán	 	    - HREOS-7162 - Correccion bloque Instrucciones
+--##		    0.10 Vicente Martinez	  - HREOS-7249 - Correccion subida documentos Resolucion CES
+--##        0.11 Álvaro Valero      - HEROS-7348 - Añadida tarea Ratificación Comité CES
+--##		    0.12 Miguel Lopez 		  - HREOS-7349 - Añadir nuevo campo "Importe contraoferta ofertante" y cambiar el diccionario
 --##########################################
 --*/
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
@@ -75,7 +77,7 @@ SCOPE_TAREA NUMBER(16,0) := 0; --Vble. para seleccionar una tarea o todas
   **  17-   CIERRE ECONOMICO
   **  18-   RATIFICACION COMITE CES
   ************************************/
-  USUARIOCREAR VARCHAR(1000) := 'HEROS-7348';
+  USUARIOCREAR VARCHAR(1000) := 'HEROS-7349';
   
 -----------------DECLARACION DE LA TPO--------------------------
   type tpo_field is table of varchar(5000) index by VARCHAR2(64);
@@ -1247,7 +1249,7 @@ begin
   TAP(4).tap_field('TAP_VIEW') := NULL;
   TAP(4).tap_field('TAP_SCRIPT_VALIDACION') := q'[checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''El activo est&aacute; vendido'' : (checkComercializable() ? (checkPoliticaCorporativa() ? null : ''El estado de la pol%iacute;tica corporativa no es el correcto para poder avanzar.'') : ''El activo debe ser comercializable'') ) : ''Los compradores deben sumar el 100%'') : ''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'']';
   TAP(4).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[valores[''T017_RespuestaOfertanteCES''][''comboRespuesta''] == DDRespuestaOfertante.CODIGO_RECHAZA ? null : respuestaOfertanteT013(valores[''T017_RespuestaOfertanteCES''][''importeOfertante''])]';
-  TAP(4).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RespuestaOfertanteCES''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReserva'''':  ''''AceptaSinReserva'''' : ''''Deniega'''' ';
+  TAP(4).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RespuestaOfertanteCES''''][''''comboRespuesta''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReserva'''':  ''''AceptaSinReserva'''' : valores[''''T017_RespuestaOfertanteCES''''][''''comboRespuesta''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta''''';
   TAP(4).tap_field('DD_TPO_ID_BPM') := null;
   TAP(4).tap_field('TAP_SUPERVISOR') := 0;
   TAP(4).tap_field('TAP_DESCRIPCION') := 'Respuesta ofertante CES';
@@ -1313,7 +1315,7 @@ begin
   TFI_MAP(4).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(4).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(4).tfi_field_row(1).tfi_field('TFI_VALOR_INICIAL') := NULL;
-  TFI_MAP(4).tfi_field_row(1).tfi_field('TFI_BUSINESS_OPERATION') := 'DDApruebaDeniega';
+  TFI_MAP(4).tfi_field_row(1).tfi_field('TFI_BUSINESS_OPERATION') := 'DDResolucionComite';
   TFI_MAP(4).tfi_field_row(1).tfi_field('VERSION') := 1;
   TFI_MAP(4).tfi_field_row(1).tfi_field('USUARIOCREAR') := USUARIOCREAR;
   TFI_MAP(4).tfi_field_row(1).tfi_field('FECHACREAR') := SYSDATE;
@@ -1340,7 +1342,7 @@ begin
   TFI_MAP(4).tfi_field_row(2).tfi_field('FECHABORRAR') := NULL;
   TFI_MAP(4).tfi_field_row(2).tfi_field('BORRADO') := 0;
   
-  TFI_MAP(4).tfi_field_row(3).tfi_field('TFI_ORDEN') := 3;
+  TFI_MAP(4).tfi_field_row(3).tfi_field('TFI_ORDEN') := 4;
   TFI_MAP(4).tfi_field_row(3).tfi_field('TFI_TIPO') := 'textarea';
   TFI_MAP(4).tfi_field_row(3).tfi_field('TFI_NOMBRE') := 'observaciones';
   TFI_MAP(4).tfi_field_row(3).tfi_field('TFI_LABEL') :=  'Observaciones';
@@ -1356,6 +1358,23 @@ begin
   TFI_MAP(4).tfi_field_row(3).tfi_field('USUARIOBORRAR') := NULL;
   TFI_MAP(4).tfi_field_row(3).tfi_field('FECHABORRAR') := NULL;
   TFI_MAP(4).tfi_field_row(3).tfi_field('BORRADO') := 0;
+
+  TFI_MAP(4).tfi_field_row(4).tfi_field('TFI_ORDEN') := 3;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('TFI_TIPO') := 'numberfield';
+  TFI_MAP(4).tfi_field_row(4).tfi_field('TFI_NOMBRE') := 'importeContraofertaOfertante';
+  TFI_MAP(4).tfi_field_row(4).tfi_field('TFI_LABEL') :=  'Importe contraoferta ofertante';
+  TFI_MAP(4).tfi_field_row(4).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('TFI_VALIDACION') := 'false';
+  TFI_MAP(4).tfi_field_row(4).tfi_field('TFI_VALOR_INICIAL') := NULL;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('VERSION') := 1;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('FECHACREAR') := SYSDATE;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('USUARIOMODIFICAR') := NULL;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('FECHAMODIFICAR') := NULL;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('USUARIOBORRAR') := NULL;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('FECHABORRAR') := NULL;
+  TFI_MAP(4).tfi_field_row(4).tfi_field('BORRADO') := 0;
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
 ---------------------------T017_InformeJuridico-----------------------------

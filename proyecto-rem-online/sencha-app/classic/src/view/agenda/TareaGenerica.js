@@ -2363,7 +2363,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T017_RespuestaOfertanteCESValidacion: function() {
     	var me = this;
     	var comboRespuestaOfertante = me.down( '[name=comboRespuesta]' ),
-    		comboFechaRespuesta = me.down ( '[name=fechaRespuesta]' );
+    		comboFechaRespuesta = me.down ( '[name=fechaRespuesta]' ),
+    		numImporteContraOfertaOfertante = me.down( '[name=importeContraofertaOfertante]' );
+    		
     		console.log(comboRespuestaOfertante);
     		console.log(comboFechaRespuesta);
     		comboRespuestaOfertante.allowBlank = false;
@@ -2372,6 +2374,19 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     		me.campoObligatorio(comboFechaRespuesta);
     		comboFechaRespuesta.validate();
     		me.desbloquearCampo(comboFechaRespuesta);
+    		me.campoObligatorio(numImporteContraOfertaOfertante);
+    		
+    		if (comboRespuestaOfertante.getValue() != '03') {
+	            me.deshabilitarCampo(numImporteContraOfertaOfertante);
+	        }
+	    	comboRespuestaOfertante.addListener('change', function(combo) {
+	            if (combo.value == '03') {
+	                me.habilitarCampo(numImporteContraOfertaOfertante);
+	            } else {
+	                me.deshabilitarCampo(numImporteContraOfertaOfertante);
+	                numImporteContraOfertaOfertante.reset();
+	            }
+	        });
     },
     T017_AdvisoryNoteValidacion: function () {
     	var me = this;

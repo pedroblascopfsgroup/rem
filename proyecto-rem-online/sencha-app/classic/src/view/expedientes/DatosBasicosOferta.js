@@ -193,10 +193,7 @@ beforeedit: 'numVisitaIsEditable'
 						readOnly : true
 					}, {
 						xtype : 'fieldsettable',
-						//title:  HreRem.i18n('title.comite.sancionador'), //fieldlabel.comite.propuesto
-						bind : {
-							title : '{expediente.tituloCarteraLiberbankVenta}'
-						},
+						title:  HreRem.i18n('header.oferta.comite'),
 						colspan : 2,
 						margin : '0 10 10 0',
 						items : [
@@ -255,7 +252,7 @@ beforeedit: 'numVisitaIsEditable'
 						}, {
 							xtype : 'comboboxfieldbase',
 							fieldLabel : HreRem
-									.i18n('fieldlabel.comite.seleccionado'),
+									.i18n('combolabel.salto.tarea.definicion.oferta.comite.sancionador'),
 							reference : 'comboComiteSeleccionado',
 							colspan : 3,
 							readOnly : false,
@@ -265,6 +262,23 @@ beforeedit: 'numVisitaIsEditable'
 								readOnly : '{comiteSancionadorNoEditable}',
 								hidden : '{esOfertaAlquiler}'
 
+							},
+							// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
+							setStore : function(store) {
+								if (!Ext.isEmpty(store)) {
+									this.bindStore(store);
+								}
+							}
+						}, {
+							xtype : 'comboboxfieldbase',
+							fieldLabel : HreRem
+									.i18n('fieldlabel.comite.propuesto'),
+							reference : 'comboComitePropuesto',
+							readOnly : true,
+							bind : {
+								store : '{comboComitesPropuestos}',
+								value : '{datosbasicosoferta.comitePropuestoCodigo}',
+								disabled : '{!esCarteraLiberbank}'
 							},
 							// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
 							setStore : function(store) {

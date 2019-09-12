@@ -6705,4 +6705,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return listaPerimetros;
 	}
 	
+	@Override
+	public boolean isActivoPerteneceAgrupacionRestringida(Activo activo) {
+		for(ActivoAgrupacionActivo agrupacion: activo.getAgrupaciones()){
+			if(Checks.esNulo(agrupacion.getAgrupacion().getFechaBaja())) {
+				if(!Checks.esNulo(agrupacion.getAgrupacion().getTipoAgrupacion())
+						&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

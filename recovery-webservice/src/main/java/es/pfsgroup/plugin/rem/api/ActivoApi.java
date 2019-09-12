@@ -1210,4 +1210,6 @@ public interface ActivoApi {
 
 	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
 
+	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
+
 }

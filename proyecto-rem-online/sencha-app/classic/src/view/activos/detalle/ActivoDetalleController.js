@@ -5451,7 +5451,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			fechas['fechaInscripcion'].setValue();
 			break;
 	
-		case CONST.DD_ESP_ESTADO_PRESENTACION['INNSCRITO']:
+		case CONST.DD_ESP_ESTADO_PRESENTACION['INSCRITO']:
 			fechas['fechaPresentacionRegistro'].setDisabled(false)
 			fechas['fechaPresentacionRegistro'].allowBlank = false;
 			fechas['fechaCalificacion'].setDisabled(true);

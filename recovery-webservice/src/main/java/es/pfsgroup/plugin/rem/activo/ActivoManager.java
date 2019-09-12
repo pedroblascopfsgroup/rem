@@ -6697,6 +6697,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							beanUtilNotNull.copyProperty(aux, "observaciones", htt.getObservaciones());
 						}
 						
+						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
+						Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "estadoMotivoCalificacioNegativa.codigo",DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO);
+						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false);
+						List<ActivoCalificacionNegativa> actCalNeg = genericDao.getList(ActivoCalificacionNegativa.class, filtroActivo,filtroMotivo,filtroBorrado);
+						
+						beanUtilNotNull.copyProperty(aux, "tieneCalificacionNoSubsanada", actCalNeg.isEmpty() ? 0 : 1);
+						
 						listaDto.add(aux);
 					}
 				}

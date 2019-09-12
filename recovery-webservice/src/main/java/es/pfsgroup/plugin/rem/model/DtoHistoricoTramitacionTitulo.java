@@ -24,6 +24,7 @@ public class DtoHistoricoTramitacionTitulo extends WebDto {
 	private String estadoPresentacion;
 	private String codigoEstadoPresentacion;
 	private String observaciones;
+	private Integer tieneCalificacionNoSubsanada;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -78,6 +79,12 @@ public class DtoHistoricoTramitacionTitulo extends WebDto {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public Integer getTieneCalificacionNoSubsanada() {
+		return tieneCalificacionNoSubsanada;
+	}
+	public void setTieneCalificacionNoSubsanada(Integer tieneCalificacionNoSubsanada) {
+		this.tieneCalificacionNoSubsanada = tieneCalificacionNoSubsanada;
 	}
 	
 	

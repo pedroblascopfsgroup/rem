@@ -33,6 +33,9 @@ Ext.define('HreRem.model.HistoricoTramtitacionTituloModel', {
     		},
     		{
     			name:'observaciones'
+    		},
+    		{
+    			name:'tieneCalificacionNoSubsanada'
     		}
     ],
 

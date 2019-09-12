@@ -5421,7 +5421,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(storeGridCalificacionNegativa.data.length > 0){
 			var noSubsanado = false;
     		for(var iterador in storeGridCalificacionNegativa.data.items){
-    			if(storeGridCalificacionNegativa.data[iterador].data.estadoMotivoCalificacionNegativa != CONST.COMBO_ESTADO_CALIFICACION_NEGATIVA['COD_SUBSANADO']){
+    			if(storeGridCalificacionNegativa.data.items[iterador].data.codigoEstadoMotivoCalificacionNegativa != CONST.COMBO_ESTADO_CALIFICACION_NEGATIVA['COD_SUBSANADO']){
     				noSubsanado = true;
     			}
     		}

@@ -246,19 +246,13 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
    	var me = this;
    	var tieneDatosStore = me.store.data.length > 0;
    	if(tieneDatosStore){
-	    	var CalificacionNegativa = me.getUltimoRegistro().codigoEstadoPresentacion;
+	    	var CalificacionNegativa = me.getUltimoRegistro().data.codigoEstadoPresentacion;
 	    	if(CalificacionNegativa == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
-	    		var storeGridCalificacionNegativa = me.up().up().down("[reference=calificacionnegativagrid]").getStore();
-	    		if(storeGridCalificacionNegativa.data.length > 0){
-	    			var noSubsanado = false;
-		    		for(var iterador in storeGridCalificacionNegativa.data.items){
-		    			if(storeGridCalificacionNegativa.data[iterador].data.estadoMotivoCalificacionNegativa != CONST.COMBO_ESTADO_CALIFICACION_NEGATIVA['COD_SUBSANADO']){
-		    				noSubsanado = true;
-		    			}
-		    		}
-		    		return noSubsanado;
+	    		if(me.getUltimoRegistro().data.tieneCalificacionNoSubsanada == 1 ){
+	    			return true;
+	    		} else {
+	    			return false;
 	    		}
-	    		return true;
 	    	}
 	    	return true;
     }else{

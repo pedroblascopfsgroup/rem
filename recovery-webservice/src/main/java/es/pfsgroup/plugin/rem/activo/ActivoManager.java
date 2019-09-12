@@ -524,27 +524,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
 
 		}
-		
-		// Si el activo pertenece a la subcartera Apple y tiene precio aprobado de venta
-		if (oferta.getActivoPrincipal().getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)) {	
-			String[] numActivo = {String.valueOf(oferta.getActivoPrincipal().getNumActivo())};
-			
-			if (!Checks.estaVacio(oferta.getActivoPrincipal().getValoracion())) {
-				List<ActivoValoraciones> valoraciones = oferta.getActivoPrincipal().getValoracion();
-				
-				boolean existe = false;
-				for (ActivoValoraciones valoracion : valoraciones) {		
-					if (valoracion != null &&  valoracion.getTipoPrecio() != null && valoracion.getTipoPrecio().getCodigo().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA)) {
-						existe = true;
-					}		
-				}	 
-				if (!existe) {
-					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE, numActivo));
-				}
-			} else {
-				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE, numActivo));
-			}				
-		}
 
 		// Si el activo esta marcado como ocupado sin titulo no permitiremos
 		// tramitar ofertas de alquiler

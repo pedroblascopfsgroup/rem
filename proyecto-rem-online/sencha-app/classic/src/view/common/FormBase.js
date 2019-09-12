@@ -138,7 +138,7 @@
     		me.collapsible= true;
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.expediente'), handler: 'onSearchBusquedaDirectaExpediente', reference: 'btnExp', disabled: true, hidden: true},{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.ofertas.ces'), handler: 'onClickDescargarExcelOfertaCES', hidden: !($AU.userIsRol('HAYAGESTPORTMAN') || $AU.userIsRol('HAYAGBOINM') || $AU.userIsRol('HAYAGRUPOCES')) }];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.expediente'), handler: 'onSearchBusquedaDirectaExpediente', reference: 'btnExp', disabled: true, hidden: true},{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.ofertas.ces'), handler: 'onClickDescargarExcelOfertaCES', hidden: !($AU.userIsRol('HAYASUPER') || $AU.userIsRol('HAYAGESTPORTMAN') || $AU.userIsRol('HAYAGBOINM') || $AU.userIsRol('HAYAGRUPOCES')) }];
     	}
 
     	if (me.isSearchFormGastos) {

@@ -1268,5 +1268,7 @@ public interface ExpedienteComercialApi {
 	
 	boolean checkExpedienteFechaCheque(Long idTramite);
 
+	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta);
+
 }
 

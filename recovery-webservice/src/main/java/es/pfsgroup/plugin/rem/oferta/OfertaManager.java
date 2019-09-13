@@ -2690,13 +2690,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		String codSubportfolio = null;
 		
 		if (!Checks.esNulo(activo)) {
-			
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
 				codLeadOrigin = oferta.getOrigenComprador().getCodigo();
-			}else if(!Checks.estaVacio(activo.getVisitas())) {
-				if(!Checks.esNulo(activo.getVisitas().get(0).getOrigenComprador()))
-					codLeadOrigin = activo.getVisitas().get(0).getOrigenComprador().getCodigo();
-			}else {
+			} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
+				codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
+			} else {
 				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
 			}
 			

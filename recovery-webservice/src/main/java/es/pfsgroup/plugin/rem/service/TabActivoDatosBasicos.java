@@ -1179,14 +1179,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
 			if (!Checks.esNulo(dto.getTipoComercializacionCodigo()) && !Checks.esNulo(activo.getActivoPublicacion())) {
-
-				// Hace throws en caso de inflingir alguna valdiacion con el cambio de TipoComercializacion a realizar
-				validarCambiosTipoComercializacion(activo,dto);
-
-				activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
-
-				// Actualizar registros del Historico Destino Comercial
-				activoApi.updateHistoricoDestinoComercial(activo, null);
+				if (activoApi.isActivoPerteneceAgrupacionRestringida(activo)) {
+					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
+					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
+						validarCambiosTipoComercializacion(activo,dto);
+						activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(agrupacionActivo.getActivo(), dto.getTipoComercializacionCodigo());
+						// Actualizar registros del Historico Destino Comercial
+						activoApi.updateHistoricoDestinoComercial(agrupacionActivo.getActivo(), null);
+					}
+				} else {
+					// Hace throws en caso de inflingir alguna valdiacion con el cambio de TipoComercializacion a realizar
+					validarCambiosTipoComercializacion(activo,dto);
+					activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
+					// Actualizar registros del Historico Destino Comercial
+					activoApi.updateHistoricoDestinoComercial(activo, null);
+				}
 			}
 			
 			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {

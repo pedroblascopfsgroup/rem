@@ -3819,7 +3819,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	private DDComiteSancion devuelveComiteSancionador (Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr) {
 		Double importeUmbral = 500000.0;
-		Double perdida = pvn-vr;
+		Double perdida = pvn-vnc;
 		Double perdidaValorAbsoluto = Math.abs(perdida);
 		Double porcentajevnc = vnc * 0.2;
 		Double umbralPerdida = 100000.0;
@@ -3838,7 +3838,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(vta > (importeUmbral * 10)) {
 				return genericDao.get(DDComiteSancion.class, filtroDireccion);
 			}else if(vta <= (importeUmbral * 10) && vta >= importeUmbral) {
-				if(perdida > 0 || perdidaValorAbsoluto <= umbralPerdida || perdidaValorAbsoluto <= porcentajevnc) {
+				if(perdida > 0 || (perdidaValorAbsoluto <= umbralPerdida && perdidaValorAbsoluto <= porcentajevnc)) {
 					return genericDao.get(DDComiteSancion.class, filtroInversion);
 				}else if(perdidaValorAbsoluto > umbralPerdida || perdidaValorAbsoluto > porcentajevnc) {
 					return genericDao.get(DDComiteSancion.class, filtroDireccion);

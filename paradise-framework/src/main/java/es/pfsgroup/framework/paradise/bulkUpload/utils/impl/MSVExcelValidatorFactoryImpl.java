@@ -20,7 +20,7 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVAgrupacionLoteComercialExcelValidator agrupacionLoteComercialExcelValidator;
-	
+
 	@Autowired
 	private MSVAgrupacionLoteComercialAlquilerExcelValidator agrupacionLoteComercialAlquilerExcelValidator;
 
@@ -107,13 +107,13 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVExclusionDwh excluirDwh;
-	
+
 	@Autowired
 	private MSVCargaMasivaSancionExcelValidator cargaMasivaSancionValidator;
 
 	@Autowired
 	private MSVValidatorCargaMasivaReclamacion ValidatorNombreCargaMasiva;
-	
+
 	@Autowired
 	private MSVValidatorCargaMasivaComunicaciones validatorCargaMasivaComunicaciones;
 
@@ -134,7 +134,7 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVValidadorCargaMasivaAdecuacion adecuacion;
-	
+
 	@Autowired
 	private MSVValidatorAgrupacionPromocionAlquiler promocionAlquiler;
 
@@ -149,16 +149,16 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVOfertasGTAMExcelValidator ofertasGtam;
-	
+
 	@Autowired
 	private MSVActualizacionSuperficieExcelValidator actualizadorSuperficie;
 
 	@Autowired
 	private MSVActualizadorFechaIngresoChequeExcelValidator fechaIngresoCheque;
-	
+
 	@Autowired
 	private MSVActualizacionFormalizacionExcelValidator cargaMasivaFormalizacion ;
-	
+
 	@Autowired
 	private MSVActualizacionLPOExcelValidator cargaMasivaLPO;
 
@@ -170,12 +170,13 @@ public class MSVExcelValidatorFactoryImpl {
 		
 	@Autowired
 	private MSVControlTributosExcelValidator controlTributos;
-	
+
 	@Autowired
 	private MSVReclamacionesPlusvaliasExcelValidator reclamacionesPlusvalia;
-	
+
 	@Autowired
 	private MSVJuntasOrdinariaExtraExcelValidator juntasOrdinariasExtraordinarias;
+
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 

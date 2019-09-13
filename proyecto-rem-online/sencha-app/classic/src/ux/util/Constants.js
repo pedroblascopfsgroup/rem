@@ -3,10 +3,10 @@
  * @author Jose Villel
  *
  * Clase para implementar constantes globales.
- * 
- * Ejemplo de uso: * 
+ *
+ * Ejemplo de uso: *
  * CONST.ENTITY_TYPES
- * 
+ *
  * @singleton
  */
 Ext.define('HreRem.ux.util.Constants', {
@@ -32,7 +32,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		SOLO_ALQUILER: '03',
 		ALQUILER_OPCION_COMPRA: '04'
 	},
-	
+
 	TIPO_COMERCIALIZACION_ACTIVO: {
 		VENTA:'Venta',
 		ALQUILER: 'Alquiler',
@@ -127,7 +127,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTION:		'gestionactivo',
 		HISTORICO:		'gestionactivo.historicopeticionesactivo',
 		PRESUPUESTO:	'gestionactivo.presupuestoasignadosactivo',
-		PUBLICACION:	'publicacionactivo', 
+		PUBLICACION:	'publicacionactivo',
 		PUBLICACION_DATOS:		'publicacionactivo.datospublicacionactivo',
 		OFERTAS:		'comercialactivo.ofertascomercialactivo',
 		VISITAS:		'comercialactivo.visitascomercialactivo',
@@ -135,7 +135,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
 		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo',
 		PLUSVALIA:		'plusvaliaactivo'
-//		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace		
+//		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
 	},
 
 	MAP_TAB_TRABAJO_XTYPE: {
@@ -211,7 +211,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	GALEON:'GALEON',
     	ZEUS :'ZEUS'
     },
-    
+
     SUBCARTERA: {
     	SAREBINMOBILIARIO: '04',
     	BH: '06',
@@ -244,7 +244,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		BEYOSPONGA: '59',
 		RETAMAR: '60'
     },
-    
+
     NOMBRE_SUBCARTERA: {
     	BANKIA_HABITAT: 'BANKIA HABITAT',
     	CERBERUS_AGORA: 'Agora - Inmobiliario',
@@ -256,8 +256,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	SAREB: 'logo_sareb.svg',
     	BANKIA: 'logo_bankia.svg'
     },
-    
-    PERFILES: {   	
+
+    PERFILES: {
     	PROVEEDOR: 'HAYAPROV',
     	GESTOR_ACTIVOS: 'HAYAGESACT',
     	GESTOR_ADMISION: 'GESTADM',
@@ -283,25 +283,26 @@ Ext.define('HreRem.ux.util.Constants', {
 		HAYAGESTFORM: 'HAYAGESTFORM',
 		GESOR_ADMINISTRACION: 'HAYAADM',
 		SUPERVISOR_ADMINISTRACION: 'HAYASADM'
+
     },
-    
+
     TIPOS_OFERTA: {
     	VENTA : '01',
     	ALQUILER: '02'
     },
-    
+
     TIPOS_PROVEEDOR_EXPEDIENTE: {
     	CAT : '28',
     	MEDIADOR_OFICINA: '29'
     },
-    
+
     ESTADOS_OFERTA: {
     	ACEPTADA : '01',
     	RECHAZADA: '02',
     	CONGELADA: '03',
     	PENDIENTE: '04'
     },
-    
+
     ESTADOS_EXPEDIENTE: {
     	EN_TRAMITACION: '01',
     	ANULADO: '02',
@@ -323,7 +324,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	RES_PTE_MAN: '39',
     	AP_PTE_MAN : '40'
     },
-    
+
     ESTADOS_GASTO: {
     	PAGADO_SIN_JUSTIFICANTE: '13',
     	INCOMPLETO: '12',
@@ -337,17 +338,17 @@ Ext.define('HreRem.ux.util.Constants', {
     	CONTABILIZADO: '04',
     	AUTORIZADO: '03',
     	RECHAZADO: '02',
-    	PENDIENTE: '01'    	
+    	PENDIENTE: '01'
     },
-    
+
     ESTADOS_AUTORIZACION_HAYA: {
     	AUTORIZADO: '03',
     	RECHAZADO: '02',
-    	PENDIENTE: '01'    	
+    	PENDIENTE: '01'
     },
-    
+
     ESTADOS_PROVISION: {
-    	RECHAZADA_SUBSANABLE: '03'	
+    	RECHAZADA_SUBSANABLE: '03'
     },
 
     ESTADOS_PUBLICACION: {
@@ -359,7 +360,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	NO_PUBLICADO: '06',
     	PUBLICADO_FORZADO_PRECIO_OCULTO: '07'
     },
-    
+
     SITUACION_COMERCIAL: {
     	NO_COMERCIALIZABLE: '01',
     	DISPONIBLE_VENTA: '02',
@@ -389,14 +390,14 @@ Ext.define('HreRem.ux.util.Constants', {
     	OFICINA_CAJAMAR: '29',
     	CAT: '31'
     },
-    
+
     SITUACION_CARGA: {
     	VIEGENTE: 'VIG',
     	NO_CANCELABLE: 'NCN',
     	CANCELADA: 'CAN',
     	EN_SANEAMIENTO: 'SAN'
     },
-    
+
     CLASE_ACTIVO: {
     	FINANCIERO: '01',
     	INMOBILIARIO: '02'
@@ -438,7 +439,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		JUDICIAL: '01',
 		NO_JUDICIAL: '02',
 		PDV: '03',
-		UNIDAD_ALQUILABLE: '05'		
+		UNIDAD_ALQUILABLE: '05'
 	},
 
 	TIPO_RESOLUCION_COMITE: {
@@ -466,7 +467,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		SI: 1,
 		NO: 0
 	},
-	
+
 	COMBO_TRUE_FALSE: {
 		TRUE: 'true',
 		FALSE: 'false'
@@ -536,8 +537,8 @@ Ext.define('HreRem.ux.util.Constants', {
 	ESTADOS_MOTIVOS_CAL_NEGATIVA:{
 		PENDIENTE: '01',
 		SUBSANADO: '02'
-	}, 
-    
+	},
+
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
     	T015_VERIFICARSCORING : 'T015_VerificarScoring',
@@ -575,7 +576,7 @@ Ext.define('HreRem.ux.util.Constants', {
  		COD_PENDIENTE: '01',
  		COD_SUBSANADO: '02'
 
- 	}, 
+ 	},
  	COMBO_ENTIDAD_FINANCIERA:{
  		BANKIA: '01'
  	},
@@ -595,12 +596,12 @@ Ext.define('HreRem.ux.util.Constants', {
 		DIVORCIADO: '03',
 		VIUDO: '04'
 	},
-	
+
 	TIPOS_REG_ECONOMICO_MATRIMONIAL:{
 		GANANCIALES: '01',
 		SEPARACION_DE_BIENES: '02',
 		PARTICIPACION: '03'
-	},	
+	},
 
 	TIPO_PERSONA: {
 		FISICA: '1',
@@ -637,7 +638,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		COD_GANANCIALES:'1',
 	 	COD_SEPARACION_BIENES:'2'
 	},
-	 
+
 	D_ESTADOS_CIVILES:{
 	 	COD_CASADO	:'2'
 	 },
@@ -653,4 +654,5 @@ Ext.define('HreRem.ux.util.Constants', {
 	 	DEPENDIENTE:'02',
 	 	INDIVIDUAL:'03'
 	 }
+
 });

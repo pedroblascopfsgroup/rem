@@ -2991,8 +2991,20 @@ public class ActivoAdapter {
 
 		if (this.saveTabActivoTransactional(dto, id, tab)) {
 			if(tab != null && tab.equals("datosbasicos")){
-				this.updateGestoresTabActivoTransactional(dto, id);
-				this.actualizarEstadoPublicacionActivo(id);
+				DtoActivoFichaCabecera dtofichacabecera = (DtoActivoFichaCabecera) dto;
+				Activo activo = activoApi.get(id);
+				if ((dto instanceof DtoActivoFichaCabecera) 
+						&& !Checks.esNulo(dtofichacabecera.getTipoComercializacionCodigo())
+						&& activoApi.isActivoPerteneceAgrupacionRestringida(activo)) {
+					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
+					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
+						this.updateGestoresTabActivoTransactional(dto, agrupacionActivo.getActivo().getId());
+						this.actualizarEstadoPublicacionActivo(agrupacionActivo.getActivo().getId());
+					}
+				} else {
+					this.updateGestoresTabActivoTransactional(dto, id);
+					this.actualizarEstadoPublicacionActivo(id);
+				}
 			}
 
 		}
@@ -3093,13 +3105,32 @@ public class ActivoAdapter {
 			if (!tieneAgrupVenta) {
 				//si el activo viene de destino comercial = venta y pasa a "alquiler" o "alquiler y venta"
 				//en la pestaña patromonio, se desmarca el check de perimetro y el estado alquiler, pasa a libre
-				guardamosPatrimonio(activo, dto);
+				if (activoApi.isActivoPerteneceAgrupacionRestringida(activo)
+						&& (tabActivoService instanceof TabActivoDatosBasicos)
+						&& !Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoComercializacionCodigo())) {
+					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
+					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
+						guardamosPatrimonio(agrupacionActivo.getActivo(), dto);
+					}
+				} else {
+					guardamosPatrimonio(activo, dto);
+				}
 				//-----------------------------------------------------------
 				activo = tabActivoService.saveTabActivo(activo, dto);
 				activoApi.saveOrUpdate(activo);
-
-				// Metodo que recoge funciones que requieren el guardado previo de los datos
-				afterSaveTabActivo(dto, activo, tabActivoService);
+				
+				if (activoApi.isActivoPerteneceAgrupacionRestringida(activo)
+						&& (tabActivoService instanceof TabActivoDatosBasicos)
+						&& !Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoComercializacionCodigo())) {
+					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
+					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
+						// Metodo que recoge funciones que requieren el guardado previo de los datos
+						afterSaveTabActivo(dto, agrupacionActivo.getActivo(), tabActivoService);
+					}
+				} else {
+					// Metodo que recoge funciones que requieren el guardado previo de los datos
+					afterSaveTabActivo(dto, activo, tabActivoService);
+				}
 
 				return true;
 

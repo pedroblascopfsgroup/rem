@@ -12,7 +12,17 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaModel', {
 	    	this._view.down('field[name=numOferPrincipal]').allowBlank = !get('activo.isCarteraLiberbank');
 	    	this._view.down('field[name=buscadorNumOferPrincipal]').setHidden(!get('activo.isCarteraLiberbank')); 
 	    	this._view.down('field[name=buscadorNumOferPrincipal]').allowBlank = !get('activo.isCarteraLiberbank');
-		 }
+		 },
+		 
+		 mostrarCamposLiberbank: function(){						
+			var tipoOferta = this._view.getForm().findField('tipoOferta').getSelection();
+			
+			if (tipoOferta ==null || tipoOferta == undefined){
+				this._view.down('field[name=claseOferta]').setHidden(true);	    			 
+	    		this._view.down('field[name=numOferPrincipal]').setHidden(true);	    		
+	    		this._view.down('field[name=buscadorNumOferPrincipal]').setHidden(true);
+				}			
+		}
 
     },
 

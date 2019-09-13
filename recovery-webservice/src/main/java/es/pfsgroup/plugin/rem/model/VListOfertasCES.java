@@ -49,7 +49,7 @@ public class VListOfertasCES implements Serializable {
 	@Column(name = "BIE_DREG_NUM_FINCA")
 	private String fincaRegistral;
 	
-	@Column(name = "BIE_DREG_REFERENCIA_CATASTRAL")
+	@Column(name = "CAT_REF_CATASTRAL")
 	private String referenciaCatastral;
 	
 	@Column(name = "BIE_LOC_DIRECCION")

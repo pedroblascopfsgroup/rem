@@ -123,6 +123,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
@@ -1170,13 +1171,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
-		crearGastosExpediente(oferta, nuevoExpediente);
+		if (!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			crearGastosExpediente(oferta, nuevoExpediente);
+		}
 
 		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente));
 				nuevoExpediente.setComiteSancion(comiteLbk);
 				nuevoExpediente.setComitePropuesto(comiteLbk);
+				
+				if (DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+					Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
+					Filter deletedFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
+					Oferta nuevaOfertaPrincipal = oALbk.getOfertaPrincipal();
+					ExpedienteComercial nuevoEcoPrincipal = expedienteComercialApi.findOneByOferta(nuevaOfertaPrincipal);
+					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+					nuevoEcoPrincipal.setComitePropuesto(comiteLbkPrincipal);
+					genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
+				}
 		}
 		
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
@@ -6933,6 +6947,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return true;
+	}
+
+	@Override
+	public boolean isActivoPerteneceAgrupacionRestringida(Activo activo) {
+		for(ActivoAgrupacionActivo agrupacion: activo.getAgrupaciones()){
+			if(Checks.esNulo(agrupacion.getAgrupacion().getFechaBaja())) {
+				if(!Checks.esNulo(agrupacion.getAgrupacion().getTipoAgrupacion())
+						&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

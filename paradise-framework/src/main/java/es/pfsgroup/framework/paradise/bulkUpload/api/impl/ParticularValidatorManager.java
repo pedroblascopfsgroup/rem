@@ -3771,13 +3771,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean esActivoProductoTerminado(String numActivo) {
 		if (Checks.esNulo(numActivo)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_ACTIVO ACT "
-				+ "			JOIN DD_EAC_ESTADO_ACTIVO EAC ON ACT.DD_EAC_ID = EAC.DD_EAC_ID"
-				+"			WHERE (EAC.DD_EAC_CODIGO = 3 "
-				+"			OR EAC.DD_EAC_CODIGO = 7"
-				+"			OR EAC.DD_EAC_CODIGO = 8"
-				+"			OR EAC.DD_EAC_CODIGO = 10"
-				+"			OR EAC.DD_EAC_CODIGO = 11"
-				+"			) AND ACT.ACT_NUM_ACTIVO = " + numActivo);
+				+"			JOIN DD_EAC_ESTADO_ACTIVO EAC ON ACT.DD_EAC_ID = EAC.DD_EAC_ID"
+				+"			WHERE EAC.DD_EAC_CODIGO IN ('03', '07','08','04','10','11')"
+				+"			AND ACT.ACT_NUM_ACTIVO = " + numActivo);
 		return !"0".equals(resultado);
 	}
 

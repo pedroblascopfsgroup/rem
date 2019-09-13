@@ -1214,7 +1214,6 @@ public interface ActivoApi {
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
 
 	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
-
 	
 	/**
 	 * Comprueba si un activo ha superado el plazo para que sea tramitable
@@ -1245,5 +1244,7 @@ public interface ActivoApi {
 	 * @return DtoPage 
 	 */
 	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
+
+	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
 
 }

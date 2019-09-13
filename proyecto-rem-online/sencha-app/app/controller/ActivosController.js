@@ -9,7 +9,10 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.ActivoInformacionComercial','HreRem.model.Tramite','HreRem.model.FichaTrabajo', 'HreRem.model.ActivoAviso', 
     'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.model.ExpedienteAviso','HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
     'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu',
-    'HreRem.model.FichaProveedorModel', 'HreRem.model.PerfilDetalleModel','HreRem.model.FichaPerfilModel', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso'],
+    'HreRem.model.FichaProveedorModel', 'HreRem.model.PerfilDetalleModel','HreRem.model.FichaPerfilModel', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso',
+    'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleMain', 
+    'HreRem.view.gastos.GastoDetalleMain', 'HreRem.model.GastoProveedor', 'HreRem.model.GastoAviso', 'HreRem.view.administracion.juntas.JuntasDetalleMain','HreRem.view.administracion.juntas.GestionJuntas'],
+
 
     requires: ['HreRem.view.configuracion.administracion.perfiles.detalle.DetallePerfil', 'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.view.gastos.GastoDetalleMain', 
     	'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleMain'],
@@ -213,6 +216,10 @@ Ext.define('HreRem.controller.ActivosController', {
     	},
     	'gestionplusvalia': {
     		abrirDetallePlusvalia: 'abrirDetallePlusvalia'
+    	},
+    	'administracionjuntasmain': {
+    		abrirDetalleJunta: 'abrirDetalleJunta'
+    		
     	},
     	'gastodetallemain': {
     		abrirDetalleActivo: 'abrirDetalleActivoGastosActivos',
@@ -1232,6 +1239,53 @@ Ext.define('HreRem.controller.ActivosController', {
 		    }
 		});
     	
+    },
+    
+    
+    abrirDetalleJunta: function(record, refLinks) {
+    	console.log(record);
+    	var me = this,
+    	titulo = "Junta " + record.get("activo"),
+    	id = record.get("id");
+		me.redirectTo('activos', true);    	
+    	me.abrirDetalleJuntaById(id, titulo, refLinks);    	
+    	
+    },
+    
+    abrirDetalleJuntaById: function(id, titulo, refLinks) {
+    	var me = this,
+    	cfg = {}, 
+    	tab=null;
+
+    	cfg.title = titulo;
+    	tab = me.createTab (me.getActivosMain(), 'junta', "juntasdetallemain",  id, cfg);
+    	tab.mask(HreRem.i18n('msg.mask.loading'));
+    	me.setLogTime(); 
+    	
+    	HreRem.model.JuntasPropietarios.load(id, {
+    		scope: this,
+		    success: function(junta) {
+		    	me.logTime("Load junta success"); 
+		    	me.setLogTime();
+		    			    	
+		    	if(Ext.isEmpty(titulo)) {		    		
+		    		titulo = "Junta " + junta.get("id");
+		    		tab.setTitle(titulo);
+		    	}
+		    	if (tab != null && tab.getViewModel() != null){
+		    		tab.getViewModel().set("junta", junta);
+		    		tab.configCmp(junta);
+		    	}
+		    	tab.unmask();
+
+		    	me.logTime("Fin Set values"); 
+		    },
+		    failure: function (a, operation) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				tab.unmask();
+	       	}
+		});
+
     }
     
 });

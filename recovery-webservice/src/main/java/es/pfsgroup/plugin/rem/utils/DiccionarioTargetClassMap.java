@@ -224,6 +224,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
 		mapa.put("tipoSolicitudTributo", DDTipoSolicitudTributo.class);
+		mapa.put("tipoDocJunta", DDTipoDocJuntas.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

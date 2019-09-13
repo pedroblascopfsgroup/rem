@@ -7,7 +7,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
@@ -42,10 +42,16 @@ public interface GestorDocumentalAdapterApi {
 	List<DtoAdjunto> getAdjuntosGasto(String numGasto) throws GestorDocumentalException;
 
 	List<DtoAdjunto> getAdjuntosExpedienteComercial(ExpedienteComercial expedienteComercial) throws GestorDocumentalException;
+	
+	List<DtoAdjunto> getAdjuntosJunta(ActivoJuntaPropietarios activoJunta) throws GestorDocumentalException;
 
 	Long uploadDocumentoExpedienteComercial(ExpedienteComercial expedienteComercialEntrada, WebFileItem webFileItem, String username, String matricula) throws GestorDocumentalException;
 
+	Long uploadDocumentoJunta(ActivoJuntaPropietarios activoJuntaEntrada, WebFileItem webFileItem, String username, String matricula) throws GestorDocumentalException;
+	
 	Integer crearExpedienteComercial(ExpedienteComercial expedienteComercial, String username) throws GestorDocumentalException;
+	
+	Integer crearJunta(ActivoJuntaPropietarios activoJunta, String username) throws GestorDocumentalException;
 	
 	Integer crearExpedienteComercialTransactional(Long idEco, String username) throws GestorDocumentalException;
 	
@@ -78,5 +84,7 @@ public interface GestorDocumentalAdapterApi {
 
 	FileItem getFileItemTributo(Long idDocumento, String nombreDocumento) throws Exception;
 
+	void crearRelacionJuntas(ActivoJuntaPropietarios activoJunta, Long idDocRestClient, String activos, String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
+	
 
 }

@@ -35,8 +35,8 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	private StringDataType codSubCartera;
 	
 	//Petición HREOS-7226
-	private LongDataType existePiloto;
-	private LongDataType comercializableConsPlano;
+	private LongDataType agrExistePisoPiloto;
+	private LongDataType agrComercializableConsPlano;
 
 	
 	public DateDataType getFechaAccion() {
@@ -147,16 +147,16 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	public void setCodSubCartera(StringDataType codSubCartera) {
 		this.codSubCartera = codSubCartera;
 	}
-	public LongDataType getExistePiloto() {
-		return existePiloto;
+	public LongDataType getAgrExistePisoPiloto() {
+		return agrExistePisoPiloto;
 	}
-	public void setExistePiloto(LongDataType existePiloto) {
-		this.existePiloto = existePiloto;
+	public void setAgrExistePisoPiloto(LongDataType agrExistePisoPiloto) {
+		this.agrExistePisoPiloto = agrExistePisoPiloto;
 	}
-	public LongDataType getComercializableConsPlano() {
-		return comercializableConsPlano;
+	public LongDataType getAgrComercializableConsPlano() {
+		return agrComercializableConsPlano;
 	}
-	public void setComercializableConsPlano(LongDataType comercializableConsPlano) {
-		this.comercializableConsPlano = comercializableConsPlano;
+	public void setAgrComercializableConsPlano(LongDataType agrComercializableConsPlano) {
+		this.agrComercializableConsPlano = agrComercializableConsPlano;
 	}
 }

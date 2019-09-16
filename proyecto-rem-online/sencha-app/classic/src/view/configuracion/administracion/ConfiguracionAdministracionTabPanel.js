@@ -18,7 +18,7 @@ Ext.define('HreRem.view.configuracion.administracion.ConfiguracionAdministracion
 
         var items = [];
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionproveedores', reference: 'configuracionProveedores'})}, ['TAB_PROVEEDORES']);
-        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionperfiles', reference: 'configuracionPerfiles'})}, ['TAB_ADMINISTRACION_CONFIGURACION']);
+        //$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'configuracionperfiles', reference: 'configuracionPerfiles'})}, ['TAB_ADMINISTRACION_CONFIGURACION']);
 
         me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent();

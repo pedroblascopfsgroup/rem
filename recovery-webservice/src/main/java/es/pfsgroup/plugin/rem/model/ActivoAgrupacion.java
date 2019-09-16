@@ -154,13 +154,13 @@ public class ActivoAgrupacion implements Serializable, Auditable {
     private DDTipoAlquiler tipoAlquiler;
 	
 	@Column(name = "AGR_COMERCIALIZABLE_CONS_PLANO")
-	private boolean comercializableConsPlano;
+	private Boolean comercializableConsPlano;
 	
 	@Column(name = "AGR_EXISTE_PISO_PILOTO")
-	private boolean existePiloto;
+	private Boolean existePiloto;
 	
 	@Column(name = "AGR_VISITABLE")
-	private boolean esVisitable;
+	private Boolean esVisitable;
 	
 	@Column(name = "AGR_EMPRESA_PROMOTORA")
 	private String empresaPromotora;
@@ -397,27 +397,27 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 		this.numAgrupPrinexHPM = numAgrupPrinexHPM;
 	}
 
-	public boolean isComercializableConsPlano() {
+	public Boolean isComercializableConsPlano() {
 		return comercializableConsPlano;
 	}
 
-	public void setComercializableConsPlano(boolean comercializableConsPlano) {
+	public void setComercializableConsPlano(Boolean comercializableConsPlano) {
 		this.comercializableConsPlano = comercializableConsPlano;
 	}
 
-	public boolean isExistePiloto() {
+	public Boolean isExistePiloto() {
 		return existePiloto;
 	}
 
-	public void setExistePiloto(boolean existePiloto) {
+	public void setExistePiloto(Boolean existePiloto) {
 		this.existePiloto = existePiloto;
 	}
 
-	public boolean isEsVisitable() {
+	public Boolean isEsVisitable() {
 		return esVisitable;
 	}
 
-	public void setEsVisitable(boolean esVisitable) {
+	public void setEsVisitable(Boolean esVisitable) {
 		this.esVisitable = esVisitable;
 	}
 

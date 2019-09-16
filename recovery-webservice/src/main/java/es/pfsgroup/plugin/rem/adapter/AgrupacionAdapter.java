@@ -474,7 +474,37 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "estadoObraNuevaCodigo",
 								agrupacionTemp.getEstadoObraNueva().getCodigo());
 					}
+					Boolean esYubai = false;
+					if ( ((agrupacion.getActivoPrincipal() != null)  
+						&& DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(agrupacion.getActivoPrincipal().getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_YUBAI.equals(agrupacion.getActivoPrincipal().getSubcartera().getCodigo()))){
+						esYubai = true;
+					} else if  (!Checks.estaVacio((agrupacion.getActivos())) 
+					&& !Checks.esNulo(agrupacion.getActivos().get(0).getActivo())
+					&& !Checks.esNulo(agrupacion.getActivos().get(0).getActivo().getCartera()) 
+					&& !Checks.esNulo(!Checks.esNulo(agrupacion.getActivos().get(0).getActivo().getSubcartera()))
+					&& DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(agrupacion.getActivos().get(0).getActivo().getCartera().getCodigo())
+					&& DDSubcartera.CODIGO_YUBAI.equals(agrupacion.getActivos().get(0).getActivo().getSubcartera().getCodigo())) {
+							esYubai = true;
+					}
+						
+					if (esYubai) {
+						if(!Checks.esNulo(agrupacion.isComercializableConsPlano())){
+							dtoAgrupacion.setComercializableConsPlano(agrupacion.isComercializableConsPlano());
+						}
+						
+						if(!Checks.esNulo(agrupacion.isExistePiloto()) && agrupacion.isExistePiloto()) {
+							dtoAgrupacion.setExistePiloto(agrupacion.isExistePiloto());
 
+							Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(agrupacion.getId());
+							if(!Checks.esNulo(pisoPiloto) && !Checks.esNulo(pisoPiloto.getId()) && !Checks.esNulo(pisoPiloto.getNumActivo())) {
+								dtoAgrupacion.setPisoPiloto(pisoPiloto.getNumActivo());
+							}
+						}
+						if(!Checks.esNulo(agrupacion.isEsVisitable())) {
+							dtoAgrupacion.setEsVisitable(agrupacion.isEsVisitable());
+						}
+					}
 					// SI ES TIPO RESTRINGIDA
 				} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 					ActivoRestringida agrupacionTemp = (ActivoRestringida) agrupacion;
@@ -754,24 +784,6 @@ public class AgrupacionAdapter {
 				// Para permitir un nulo en isFormalizacion
 				if (agrupacion.getIsFormalizacion() == null) {
 					dtoAgrupacion.setIsFormalizacion(null);
-				}
-				
-				if(!Checks.esNulo(agrupacion.isComercializableConsPlano())){
-					dtoAgrupacion.setComercializableConsPlano(agrupacion.isComercializableConsPlano());
-				}
-				
-				if(!Checks.esNulo(agrupacion.isExistePiloto()) && agrupacion.isExistePiloto()) {
-					dtoAgrupacion.setExistePiloto(agrupacion.isExistePiloto());
-
-					Activo pisoPiloto = activoAgrupacionActivoApi.getPisoPilotoByIdAgrupacion(agrupacion.getId());
-					if(!Checks.esNulo(pisoPiloto) && !Checks.esNulo(pisoPiloto.getId()) && !Checks.esNulo(pisoPiloto.getNumActivo())) {
-						dtoAgrupacion.setPisoPiloto(pisoPiloto.getNumActivo());
-					}
-					
-				}
-				
-				if(!Checks.esNulo(agrupacion.isEsVisitable())) {
-					dtoAgrupacion.setEsVisitable(agrupacion.isEsVisitable());
 				}
 
 				if (!Checks.esNulo(agrupacion.getActivoAutorizacionTramitacionOfertas())) {

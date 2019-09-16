@@ -496,7 +496,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				return true;
 			}			
 		}
-	 },
+	 }, 
 
 
     stores: {
@@ -1212,6 +1212,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'ofertas/getListActivosOfertasAgrupadas',
 				extraParams: {numOfertaPrincipal:'{datosbasicosoferta.numOferta}'}
 			}
+		},
+		storeComboGestorPrescriptor:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getGestorPrescriptor',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}	  
 		},
 		
 		comboClaseOferta: {

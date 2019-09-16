@@ -2565,6 +2565,7 @@ public class AgrupacionAdapter {
 				oferta.setClaseOferta(genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOferta())));
 			}
 			
+			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);

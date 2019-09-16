@@ -35,7 +35,7 @@ DECLARE
 BEGIN
 
 -- Modificación de la vista V_TASACION_CALCULO_LBK de Fase1.
-sql/9.2/rem/procs_y_vistas/DDL_4078_REM01_VI_V_TASACION_CALCULO_LBK.sql
+
   SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_TASACION_CALCULO_LBK' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';
   IF CUENTA>0 THEN
     DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_TASACION_CALCULO_LBK...');
@@ -70,15 +70,14 @@ sql/9.2/rem/procs_y_vistas/DDL_4078_REM01_VI_V_TASACION_CALCULO_LBK.sql
 
 
   EXCEPTION
-  WHEN OTHERS THEN
-    ERR_NUM := SQLCODE;
-    ERR_MSG := SQLERRM;
-    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
-    DBMS_OUTPUT.put_line('');
-    DBMS_OUTPUT.put_line(ERR_MSG);
-    ROLLBACK;
-    RAISE;
+    WHEN OTHERS THEN
+      ERR_NUM := SQLCODE;
+      ERR_MSG := SQLERRM;
+      DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+      DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+      DBMS_OUTPUT.put_line(ERR_MSG);
+      ROLLBACK;
+      RAISE;
   END;
   /
-
   EXIT;

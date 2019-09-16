@@ -22,7 +22,7 @@ DECLARE
     seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
     v_column_count number(3); -- Vble. para validar la existencia de las Columnas.
-    v_constraint_count number(3); -- Vble. para validar la existensql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sqlcia de las Constraints.
+    v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
     err_num NUMBER; -- Número de errores.
     err_msg VARCHAR2(2048); -- Mensaje de error.
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
@@ -47,7 +47,7 @@ BEGIN
   END IF;
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_PROVEEDOR_E...');
-  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTsql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sqlOS_PROVEEDOR_E
+  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E
 	AS
 		SELECT
 			GPV.GPV_ID,
@@ -68,7 +68,7 @@ BEGIN
 			EGA.DD_EGA_CODIGO,
 			EGA.DD_EGA_DESCRIPCION,
 			TPE.DD_TPE_DESCRIPCION,
-			TPE.DD_TPE_CODIGO,sql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sql
+			TPE.DD_TPE_CODIGO,
 			DEG.DD_DEG_DESCRIPCION,
 			DEG.DD_DEG_CODIGO,
 			GDE.GDE_ID,
@@ -95,7 +95,7 @@ BEGIN
 			PRO.PRO_DOCIDENTIF,
 			MRH.DD_MRH_DESCRIPCION AS MOTIVO_RECHAZO,
       GGE.GGE_MOTIVO_RECHAZO_PROP,
-	        CRA.DD_CRA_CODIGO,sql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sql
+	        CRA.DD_CRA_CODIGO,
 	        CRA.DD_CRA_DESCRIPCION,
 			PVEG.PVE_ID AS PVE_ID_GESTORIA,
 	        PVEG.PVE_NOMBRE AS PVE_NOMBRE_GESTORIA,
@@ -128,14 +128,14 @@ BEGIN
 
   EXECUTE IMMEDIATE 'COMMENT ON TABLE ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E IS ''VISTA PARA RECOGER LOS GASTOS DE PROVEEDORES''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GPV_ID IS ''Código identificador único del gasto''';
-  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQsql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sqlUEDA_GASTOS_PROVEEDOR_E.PRG_ID IS ''Código identificador único de la provisión''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.PRG_ID IS ''Código identificador único de la provisión''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GPV_REF_EMISOR IS ''Número de factura/referencia/liquidación del gasto''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_TGA_DESCRIPCION IS ''Tipo de gasto Descripción''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_TGA_CODIGO IS ''Tipo de gasto Código''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_STG_DESCRIPCION IS ''Subtipo de gasto descripción''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_STG_CODIGO IS ''Subtipo de gasto código''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GPV_CONCEPTO IS ''Concepto del gasto''';
-  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSsql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sqlQUEDA_GASTOS_PROVEEDOR_E.PVE_ID_EMISOR IS ''Proveedor del gasto''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.PVE_ID_EMISOR IS ''Proveedor del gasto''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GPV_FECHA_EMISION IS ''Fecha emisión del gasto''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_TPE_DESCRIPCION IS ''Tipo de periodicidad del gasto descripción''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_TPE_CODIGO IS ''Tipo de periodicidad del gasto código''';
@@ -144,7 +144,7 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.PVE_COD_UVEM IS ''Código de Proveedor''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GDE_ID IS ''Código identificador único del detalle del gasto''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GDE_IMPORTE_TOTAL IS ''Importe total del gasto''';
-  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSsql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sqlQUEDA_GASTOS_PROVEEDOR_E.GDE_FECHA_PAGO IS ''Fecha de pago del gasto''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GDE_FECHA_PAGO IS ''Fecha de pago del gasto''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GDE_FECHA_TOPE_PAGO IS ''Fecha tope de pago del gasto''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_EAH_CODIGO IS ''Estado autorización Haya código''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_EAH_DESCRIPCION IS ''Estado autorización Haya descripción''';
@@ -169,7 +169,7 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_CRA_DESCRIPCION IS ''Descripción de la cartera del activo.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GPV_EXISTE_DOCUMENTO IS ''Indica si existe documento.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.PVE_ID_GESTORIA IS ''ID de proveedor de tipo gestoría asociado al gasto.''';
-  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSsql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sqlsql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sqlsql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sqlsql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sqlQUEDA_GASTOS_PROVEEDOR_E.PVE_NOMBRE_GESTORIA IS ''Nombre de proveedor de tipo gestoría asociado al gasto.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.PVE_NOMBRE_GESTORIA IS ''Nombre de proveedor de tipo gestoría asociado al gasto.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.SUJETO_IMPUESTO_INDIRECTO IS ''Indica si el gasto está sujeto a impuestos indirectos.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_EGA_CODIGO IS ''Código de estado del gasto.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_EGA_DESCRIPCION IS ''Descripcion de estado del gasto.''';
@@ -177,17 +177,15 @@ BEGIN
 
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_PROVEEDOR_E...Creada OK');
 
-
-EXCEPTION
-WHEN OTHERS THEN
-  ERR_NUM := SQLCODE;
-  ERR_MSG := SQLERRM;
-  DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
-  DBMS_OUTPUT.put_line('----sql/9.2/rem/procs_y_vistas/DDL_144_REM01_VI_BUSQUEDA_GASTOS_PROVEEDOR_E.sql-------------------------------------------------------');
-  DBMS_OUTPUT.put_line(ERR_MSG);
-  ROLLBACK;
-  RAISE;
-END;
-/
-
-EXIT;
+  EXCEPTION
+    WHEN OTHERS THEN
+      ERR_NUM := SQLCODE;
+      ERR_MSG := SQLERRM;
+      DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+      DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+      DBMS_OUTPUT.put_line(ERR_MSG);
+      ROLLBACK;
+      RAISE;
+  END;
+  /
+  EXIT;

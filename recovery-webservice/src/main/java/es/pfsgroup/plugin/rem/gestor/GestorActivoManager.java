@@ -233,6 +233,19 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  		}
  		return gestor;		
  	}
+
+ 	@Override
+ 	public GestorEntidad getGestorEntidadByActivoYTipo(Activo activo, String codigoTipo){
+ 		GestorActivo gestor = null;
+ 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipo);
+ 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtro);
+ 		if(tipoGestor != null){
+ 			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
+ 			Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "activo.id",activo.getId());
+ 			gestor = genericDao.get(GestorActivo.class, filtro2,filtro3);
+ 		}
+ 		return gestor;		
+ 	}
  	
  	public Boolean isGestorActivo(Activo activo, Usuario usuario){
  

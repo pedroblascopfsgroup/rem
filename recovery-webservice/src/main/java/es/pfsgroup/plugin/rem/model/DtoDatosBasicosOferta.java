@@ -1,22 +1,23 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
 
 /**
  * Dto que gestiona la informacion de los datos básicos de una oferta.
- *  
+ *
  * @author Jose Villel
  *
  */
 public class DtoDatosBasicosOferta extends WebDto {
-	
-	
-  
+
+
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3574353502838449106L;
 	
@@ -75,31 +76,35 @@ public class DtoDatosBasicosOferta extends WebDto {
     private String comitePropuestoCodigo;
    
 	private String ofertaExpress;
-	
+
 	private String necesitaFinanciacion;
-	
+
 	private String observaciones;
-	
+
 	private String ventaCartera;
-	
+
 	private String tipoAlquilerCodigo;
-	
+
 	private String tipoInquilinoCodigo;
 
 	private String numContratoPrinex;
-	
+
 	private String refCircuitoCliente;
-	
+
 	private Boolean permiteProponer;
-	
+
+	private Long idGestorComercialPrescriptor;
+
 	private Double importeContraofertaPM;
-	
+
 	private Date fechaRespuestaPM;
-	
+
 	private Date fechaRespuestaOfertantePM;
-	
+
 	private Double importeContraofertaCES;
-    private Date fechaRespuestaCES;
+
+  private Date fechaRespuestaCES;
+
 	private Boolean isCarteraCerberusApple;
 
 	private Boolean isCarteraLbkVenta;
@@ -109,8 +114,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Double importeTotal;
 	
 	private Date fechaResolucionCES;
+
 	private Date fechaRespuesta;
 	private Date fechaAprobacionProManzana;
+
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -353,7 +360,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setPermiteProponer(Boolean permiteProponer) {
 		this.permiteProponer = permiteProponer;
 	}
-	
+
 	public String getTipoAlquilerCodigo() {
 		return tipoAlquilerCodigo;
 	}
@@ -401,6 +408,13 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setIdEco(Long idEco) {
 		this.idEco = idEco;
 	}
+	public Long getIdGestorComercialPrescriptor() {
+		return idGestorComercialPrescriptor;
+	}
+
+	public void setIdGestorComercialPrescriptor(Long idGestorComercialPrescriptor) {
+		this.idGestorComercialPrescriptor = idGestorComercialPrescriptor;
+	}
 
 	public Double getImporteContraofertaPM() {
 		return importeContraofertaPM;
@@ -417,7 +431,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
 		this.fechaRespuestaPM = fechaRespuestaPM;
 	}
-	
+
 	public Date getFechaRespuestaOfertantePM() {
 		return fechaRespuestaOfertantePM;
 	}

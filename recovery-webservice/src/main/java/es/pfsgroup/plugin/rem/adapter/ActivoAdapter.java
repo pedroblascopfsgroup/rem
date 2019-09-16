@@ -3791,6 +3791,7 @@ public class ActivoAdapter {
 			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
 					"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
 			oferta.setOrigenComprador(origenComprador);
+			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
 			genericDao.save(Oferta.class, oferta);
 			

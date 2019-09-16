@@ -295,9 +295,19 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'tituloCarteraLiberbankVenta',
     			calculate: function(data) {
     				if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
-    					return 'Comité propuesto';
+    					return 'Comité';
     				}
     				return 'Comité sancionador';
+    			},
+    			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
+    		},
+    		{
+    			name: 'comiteComboboxLabel',
+    			calculate: function(data) {
+    				if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
+    					return 'Comité sancionador';
+    				}
+    				return 'Comité seleccionado';
     			},
     			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
     		}

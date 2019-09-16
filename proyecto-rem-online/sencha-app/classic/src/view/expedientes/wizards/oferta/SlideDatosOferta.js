@@ -122,19 +122,25 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var lockClaseOferta = form.down('field[name=claseOferta]');
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								var checkBuscadorOferta = form.down('field[name=buscadorNumOferPrincipal]');
-	    								var viewModelSlide = this.up("slidedatosoferta").viewModel;	    								
+	    								var viewModelSlide = this.up("slidedatosoferta").viewModel;
 	    								
 	    								if((viewModelSlide.data.esAgrupacionLiberbank || viewModelSlide.data.isCarteraLiberbank)
 	    										&& CONST.TIPOS_OFERTA['VENTA'] == value ) {	    										
 	    										    											    										
 	    									lockClaseOferta.setHidden(false);
 	    									checkNumOferPrin.setHidden(false);
-	    									checkBuscadorOferta.setHidden(false);	
-	    											
+	    									checkBuscadorOferta.setHidden(false);
+	    									lockClaseOferta.setDisabled(false);	
 	    								} else {
 	    									lockClaseOferta.setHidden(true);
 	    									checkNumOferPrin.setHidden(true);
-	    									checkBuscadorOferta.setHidden(true);	    										    									 
+	    									checkBuscadorOferta.setHidden(true);
+	    									lockClaseOferta.reset();
+	    									lockClaseOferta.setDisabled(true);
+	    									checkBuscadorOferta.reset();
+	    									checkBuscadorOferta.setDisabled(true);
+	    									checkNumOferPrin.reset();
+	    									checkNumOferPrin.setDisabled(true);
 	    								}	    									    								
 	    							}
 	    						},

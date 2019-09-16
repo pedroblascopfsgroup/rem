@@ -1,6 +1,6 @@
 --/*
 --###########################################
---## AUTOR=VIOREL REMUS OVIDIU
+--## AUTOR=GUILLEM REY
 --## FECHA_CREACION=20190916
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3

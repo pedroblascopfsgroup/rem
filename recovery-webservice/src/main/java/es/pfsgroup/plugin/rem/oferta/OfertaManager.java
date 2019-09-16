@@ -1598,8 +1598,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 				Set<TareaActivo> tareasTramite = tramite.getTareas();
 				for (TareaActivo tarea : tareasTramite) {
-					tarea.setFechaFin(new Date());
-					tarea.getAuditoria().setBorrado(true);
+					if (Checks.esNulo(tarea.getFechaFin())) {
+						tarea.setFechaFin(new Date());
+						tarea.getAuditoria().setBorrado(true);
+					}
 				}
 			}
 			descongelarOfertas(expediente);

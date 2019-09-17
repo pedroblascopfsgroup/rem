@@ -2818,7 +2818,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(dto, "codigoResponsableSubsanar", activo.getResponsableSubsanar().getCodigo());
 				}
 				beanUtilNotNull.copyProperty(dto, "fechaSubsanacion", activo.getFechaSubsanacion());
-				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());				
+				existeCalificacionNegativa(getHistoricoTramitacionTitulo(idActivo), dto);
 				
 				activoCNListDto.add(dto);
 			}
@@ -6839,5 +6840,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			genericDao.deleteById(HistoricoTramitacionTitulo.class, tramitacionDto.getIdHistorico());
 		}
 		return true;
+	}
+	
+	public void existeCalificacionNegativa(List<DtoHistoricoTramitacionTitulo> listaDto, DtoActivoDatosRegistrales dto) {
+		try {
+			if (!listaDto.isEmpty()) {
+				for(DtoHistoricoTramitacionTitulo item: listaDto) {
+					if (item.getCodigoEstadoPresentacion().equals(DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE)) {
+						beanUtilNotNull.copyProperty(dto, "fechaPresentacionRegistroCN", item.getFechaPresentacionRegistro());
+						if (item.getFechaInscripcion()!=null) {
+							beanUtilNotNull.copyProperty(dto, "fechaCalificacionNegativa", item.getFechaInscripcion());
+						}else if (item.getFechaCalificacion()!=null) {
+							beanUtilNotNull.copyProperty(dto, "fechaCalificacionNegativa", item.getFechaCalificacion());
+						}
+						break;
+					}
+				}
+			}
+		}catch (Exception e) {
+			logger.error("Error en Activo Manager (existeCalificacionNegativa)", e);
+		}
 	}
 }

@@ -21,7 +21,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 				{
 					text: 'Id Activo',
 					dataIndex: 'idActivo',
-					hidden: true,
+					//hidden: true,
 					hideable: false
 				},
 		        {
@@ -102,6 +102,18 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 		        	},
 		            flex: 1
 		         
+		        },
+		        {
+		            dataIndex: 'fechaPresentacionRegistroCN',
+		            text: HreRem.i18n('fieldlabel.calificacion.fechaPresentacionRegistro'),
+		            flex: 1,
+		            formatter: 'date("d/m/Y")'
+		        },
+		        {
+		            dataIndex: 'fechaCalificacionNegativa',
+		            text: HreRem.i18n('fieldlabel.calificacion.fechaCalificacionNegativa'),
+		            flex: 1,
+		            formatter: 'date("d/m/Y")'
 		        }
 		    ];
 		

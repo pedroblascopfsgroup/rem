@@ -10,16 +10,12 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.Comprador;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Service("expedienteAvisoPisoPiloto")
 public class ExpedienteAvisoPisoPiloto implements ExpedienteAvisadorApi{
@@ -42,15 +38,27 @@ public class ExpedienteAvisoPisoPiloto implements ExpedienteAvisadorApi{
 						Long activoOfertaId = listaActivoOferta.getActivoId();
 						ActivoAgrupacion agrupacionOferta = oferta.getAgrupacion();
 						VActivosAgrupacion activoPisoPiloto;
+						List<VActivosAgrupacion> activosAgrupaciones;
+						boolean pisoPiloto = false;
 						if(!Checks.esNulo(agrupacionOferta)) {
 							Long agrupacionOfertaId = oferta.getAgrupacion().getId();
 							activoPisoPiloto = genericDao.get(VActivosAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "activoId", activoOfertaId),
 								genericDao.createFilter(FilterType.EQUALS, "agrId", agrupacionOfertaId));
+							if (!Checks.esNulo(activoPisoPiloto) && !Checks.esNulo(activoPisoPiloto.getEsPisoPiloto()) && activoPisoPiloto.getEsPisoPiloto()) {
+								pisoPiloto = true;
+							}
 						}
 						else {
-							activoPisoPiloto = genericDao.get(VActivosAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "activoId", activoOfertaId));
+							activosAgrupaciones = genericDao.getList(VActivosAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "activoId", activoOfertaId));
+							if(!Checks.estaVacio(activosAgrupaciones)) {
+								for(VActivosAgrupacion activoAgrupacion : activosAgrupaciones) {
+									if (!Checks.esNulo(activoAgrupacion) && !Checks.esNulo(activoAgrupacion.getEsPisoPiloto()) && activoAgrupacion.getEsPisoPiloto()) {
+										pisoPiloto = true;
+									}
+								}
+							}
 						}
-						if (!Checks.esNulo(activoPisoPiloto) && !Checks.esNulo(activoPisoPiloto.getEsPisoPiloto()) && activoPisoPiloto.getEsPisoPiloto()) {
+						if (pisoPiloto) {
 							dtoAviso.setId(String.valueOf(expediente.getId()));
 							dtoAviso.setDescripcion("Piso Piloto");
 						}

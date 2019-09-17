@@ -3611,8 +3611,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean faltanDatosCalculo (Oferta ofertaAceptada) {
 		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
 
-		vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
-		
+		if(!Checks.estaVacio(ofertaAceptada.getActivoPrincipal().getTasacion())) {
+			vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+		}
 		pvb = ofertaAceptada.getImporteOferta();
 
 		
@@ -3691,7 +3692,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 		// Si la oferta es individual o principal (aún no tiene dependientes) el cálculo se hace sobre si misma
 		}else {
-			vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+			if(!Checks.estaVacio(ofertaAceptada.getActivoPrincipal().getTasacion())) {
+				vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+			}
 			
 			pvb = ofertaAceptada.getImporteOferta();
 
@@ -3761,7 +3764,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			for(ActivoAgrupacionActivo aga : activos) {
 				Activo activo = aga.getActivo();
 				
-				vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				if(!Checks.estaVacio(activo.getTasacion())) {
+					vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				}
 				
 				List<ActivoValoraciones> valoraciones = activo.getValoracion();
 				

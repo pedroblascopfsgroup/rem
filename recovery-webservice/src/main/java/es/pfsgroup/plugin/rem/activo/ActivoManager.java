@@ -5130,6 +5130,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return listaOfertasVivas;
 	}
+	
+	@Override
+	public List<Oferta> getOfertasTramitadasByActivo(Activo activo) {
+		List<Oferta> listaOfertasTramitadas = new ArrayList<Oferta>();
+
+		if (!Checks.estaVacio(activo.getOfertas())) {
+			for (ActivoOferta actOfr : activo.getOfertas()) {
+				Oferta oferta = actOfr.getPrimaryKey().getOferta();
+				if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
+						&& DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+					listaOfertasTramitadas.add(oferta);
+				}
+			}
+		}
+
+		return listaOfertasTramitadas;
+	}
 
 	@Override
 	public Long getNextNumActivoRem() {

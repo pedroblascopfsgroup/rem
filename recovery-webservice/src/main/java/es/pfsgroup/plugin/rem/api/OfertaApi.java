@@ -760,7 +760,7 @@ public interface OfertaApi {
 	public boolean ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(Oferta ofertaDependiente, Oferta ofertaPrincipal);
 	
 	/**
-	 * Este método comprueba si en la agrupación de la ofertaPrincipal ya está incluido un activo en concreto. Se usa para hacer las comprobaciones de ofertas nuevas (cuando se están creando y aun no existen).
+	 * Este método comprueba si en la oferta agrupada de la ofertaPrincipal ya está incluido un activo en concreto. Se usa para hacer las comprobaciones de ofertas nuevas sobre activos (cuando se están creando y aun no existen).
 	 *
 	 * @param idActivo
 	 * @param ofertaPrincipal
@@ -776,4 +776,13 @@ public interface OfertaApi {
 	 * @return boolean
 	 */
 	public String isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String, String>> valores);
+	
+	/*
+	 * Este método comprueba si en la oferta agrupada de la ofertaPrincipal ya está incluido alguno de los activos que contiene la agrupación sobre la que se está intentando crear una oferta. Se usa para hacer las comprobaciones de ofertas nuevas sobre agrupaciones (cuando se están creando y aun no existen).
+	 *
+	 * @param idAgrupacion
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public boolean agrupacionConActivoYaIncluidoEnOfertaAgrupadaLbk(Long idAgrupacion, Oferta ofertaPrincipal);
 }

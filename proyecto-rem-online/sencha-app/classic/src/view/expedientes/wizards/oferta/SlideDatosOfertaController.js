@@ -448,19 +448,29 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOfertaController', 
     },
     
 	buscarOferta: function(field, e){
-		
 		var me= this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/searchOfertaCodigo');
 		var numeroOferta = field.getValue();
-		var numIdActivo = me.getViewModel().data.activo.id;
+		var numId;
 		var data;
 		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$))|^((37$))|^((30$))|^((35$))|^((23$))|^((38$)).*$");
-
+		var esAgrupacion;
+		
+		if(me.getViewModel().data.agrupacionficha != null){
+			numId = me.getViewModel().data.agrupacionficha.id;
+			esAgrupacion = true;
+		}
+		else if(me.getViewModel().data.activo != null){
+			numId = me.getViewModel().data.activo.id;
+			esAgrupacion = false;
+		}
+		
 		Ext.Ajax.request({
 		    			
 		 		url: url,
 		   		params: {numOferta : numeroOferta,
-		   				 idActivo: numIdActivo},
+		   				 id: numId,
+   				 		 esAgrupacion: esAgrupacion},
 		    	
 		   		success: function(response, opts) {
 		   			data = Ext.decode(response.responseText);

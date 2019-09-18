@@ -4714,4 +4714,45 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean agrupacionConActivoYaIncluidoEnOfertaAgrupadaLbk(Long idAgrupacion, Oferta ofertaPrincipal) 
+	{
+		Filter filtroIdOferta = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", ofertaPrincipal.getId());	
+		Filter filtroBorradoOferta = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroIdOferta, filtroBorradoOferta);
+		
+		// En esta lista insertaré todos los activos que pertenecen a las ofertas dependientes.
+		List<Activo> activosEnLaOfertaAgrupada = new ArrayList<Activo>();		
+		for(OfertasAgrupadasLbk ogrLbk : ofertasAgrupadasLbk) {
+			List<ActivoOferta> actOfrDependList = ogrLbk.getOfertaDependiente().getActivosOferta();
+			for(ActivoOferta actOfr : actOfrDependList) {
+				activosEnLaOfertaAgrupada.add(actOfr.getPrimaryKey().getActivo());
+			}
+		}
+		// Tambien incluyo los activos relacionados con la oferta principal.
+		List<ActivoOferta> actOfrPrincList = ofertaPrincipal.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrPrincList) {
+			activosEnLaOfertaAgrupada.add(actOfr.getPrimaryKey().getActivo());
+		}
+		
+		Filter filtroIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion);	
+		Filter filtroBorradoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtroIdAgrupacion, filtroBorradoAgrupacion);
+		
+		List<Activo> activosEnAgrupacion = new ArrayList<Activo>();
+		
+		for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+			activosEnAgrupacion.add(aga.getActivo());
+		}
+		
+		for(Activo actOfr : activosEnLaOfertaAgrupada) {
+			for(Activo actAgr : activosEnAgrupacion)
+			{
+				if(actAgr.getId().equals(actOfr.getId()))
+					return true;
+			}
+		}
+		return false;
+	}
 }

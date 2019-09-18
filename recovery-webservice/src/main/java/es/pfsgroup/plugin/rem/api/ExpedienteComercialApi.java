@@ -1264,7 +1264,7 @@ public interface ExpedienteComercialApi {
 
 	boolean esOfertaDependiente(Long oferta);
 
-	DtoOferta searchOfertaCodigo(String numOferta, String numIdActivo);
+	DtoOferta searchOfertaCodigo(String numOferta, String id, String esAgrupacion);
 	
 	boolean checkExpedienteFechaCheque(Long idTramite);
 

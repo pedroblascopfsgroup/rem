@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190828
+--## FECHA_CREACION=20190918
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.16.0
---## INCIDENCIA_LINK=HREOS-7272
+--## INCIDENCIA_LINK=HREOS-7708
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -32,8 +32,8 @@ BEGIN
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
 	SET 
-  TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI  ?  ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : comprobarComiteLiberbankPlantillaPropuesta() ? existeAdjuntoUGCarteraValidacion("36", "E", "08") : isValidateOfertasDependientes() ? definicionOfertaT013(valores[''''T013_DefinicionOferta''''][''''comiteSuperior'''']) : ''''Una o varias ofertas dependientes tienen errores'''' : existeAdjuntoUGCarteraValidacion("36", "E", "01")'' ,
-	USUARIOMODIFICAR = ''HREOS-7272'', 
+  TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI  ?  ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : comprobarComiteLiberbankPlantillaPropuesta() ? existeAdjuntoUGCarteraValidacion("36", "E", "08") : definicionOfertaT013(valores[''''T013_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01")'' ,
+	USUARIOMODIFICAR = ''HREOS-7708'', 
 	FECHAMODIFICAR = SYSDATE 
 	WHERE TAP_CODIGO = ''T013_DefinicionOferta''';
 
@@ -41,8 +41,8 @@ BEGIN
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
   SET 
-  TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_ResolucionComite''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? (valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? checkBankia() || checkLiberbank() || checkGiants() ? null : existeAdjuntoUGValidacion("22","E") : null) : isOfertaDependiente() ? ''''Para resolver esta oferta, hay que acceder a su Oferta Agrupada (Principal)'''' : isValidateOfertasDependientes() ? resolucionComiteT013() : ''''Una o varias ofertas dependientes tienen errores'''' '' ,
-  USUARIOMODIFICAR = ''HREOS-7272'', 
+  TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_ResolucionComite''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? (valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? checkBankia() || checkLiberbank() || checkGiants() ? null : existeAdjuntoUGValidacion("22","E") : null) : resolucionComiteT013() '' ,
+  USUARIOMODIFICAR = ''HREOS-7708'', 
   FECHAMODIFICAR = SYSDATE 
   WHERE TAP_CODIGO = ''T013_ResolucionComite''';
 

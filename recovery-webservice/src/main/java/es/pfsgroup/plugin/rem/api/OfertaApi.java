@@ -767,4 +767,13 @@ public interface OfertaApi {
 	 * @return boolean
 	 */
 	public boolean activoYaIncluidoEnOfertaAgrupadaLbk(Long idActivo, Oferta ofertaPrincipal);
+
+	/**
+	 * Este método comprueba si alguna oferta dependiente no pasa alguna validación de la tareas
+	 *
+	 * @param idActivo
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public String isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String, String>> valores);
 }

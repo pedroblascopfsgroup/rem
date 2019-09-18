@@ -4641,7 +4641,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 	
-	public boolean isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String,String>> valores) {
+	@Override
+	public String isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String,String>> valores) {
 		Oferta oferta = tareaOferta(tareaExterna.getTareaPadre().getId());
 		if (!Checks.esNulo(oferta) && isOfertaPrincipal(oferta)) {
 			try {
@@ -4652,7 +4653,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		return true;
+		return null;
 	}
 	
 	@Override

@@ -103,6 +103,6 @@ public interface TareaActivoApi {
 		 * @param valores
 		 * @return boolean
 		 */
-		public boolean validarTareaDependientes(TareaExterna tareaExterna, Oferta oferta, Map<String, Map<String,String>> valores) throws Exception;
+		public String validarTareaDependientes(TareaExterna tareaExterna, Oferta oferta, Map<String, Map<String,String>> valores) throws Exception;
 
     }

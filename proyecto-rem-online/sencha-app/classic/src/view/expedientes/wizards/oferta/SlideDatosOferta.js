@@ -130,17 +130,10 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    									lockClaseOferta.setHidden(false);
 	    									checkNumOferPrin.setHidden(false);
 	    									checkBuscadorOferta.setHidden(false);
-	    									lockClaseOferta.setDisabled(false);	
 	    								} else {
 	    									lockClaseOferta.setHidden(true);
 	    									checkNumOferPrin.setHidden(true);
 	    									checkBuscadorOferta.setHidden(true);
-	    									lockClaseOferta.reset();
-	    									lockClaseOferta.setDisabled(true);
-	    									checkBuscadorOferta.reset();
-	    									checkBuscadorOferta.setDisabled(true);
-	    									checkNumOferPrin.reset();
-	    									checkNumOferPrin.setDisabled(true);
 	    								}	    									    								
 	    							}
 	    						},

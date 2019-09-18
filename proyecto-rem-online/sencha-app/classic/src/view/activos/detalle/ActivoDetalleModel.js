@@ -2003,6 +2003,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        {"codigo":"01", "descripcion":"Si"},
 		        {"codigo":"02", "descripcion":"No"}
 		    ]
+		},    		
+		
+		storeAdjuntosPlusvalias: {
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AdjuntosPlusvalias',
+      	     proxy: {
+      	        type: 'uxproxy',
+      	        remoteUrl: 'activo/getListAdjuntosPlusvalia',
+      	        extraParams: {id: '{activo.id}'}
+          	 }
 		}
      }
 });

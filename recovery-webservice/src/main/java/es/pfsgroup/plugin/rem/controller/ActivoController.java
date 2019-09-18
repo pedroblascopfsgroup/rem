@@ -3030,4 +3030,100 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAdjuntosPlusvalia(Long id, ModelMap model, HttpServletRequest request) {
+		try {
+			model.put(RESPONSE_DATA_KEY, adapter.getAdjuntosActivoPlusvalia(id));
+
+		} catch (GestorDocumentalException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "admisionDocumento", ACCION_CODIGO.CODIGO_MODIFICAR);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "admisionDocumento", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+    public ModelAndView deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto) {
+		
+		boolean success= false;
+		
+		try {
+			success = activoApi.deleteAdjuntoPlusvalia(dtoAdjunto);
+		} catch(Exception ex) {
+			logger.error(ex.getMessage());
+		}
+    	
+    	return createModelAndViewJson(new ModelMap("success", success));
+
+    }
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView uploadPlusvalia(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+
+			String errores = activoApi.uploadDocumentoPlusvalia(fileItem, null, null);
+			model.put("errores", errores);
+			model.put(RESPONSE_SUCCESS_KEY, errores == null);
+
+		} catch (GestorDocumentalException eGd) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", eGd.getMessage());
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
+			logger.error("Error en uploadPlusvalia", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoPlusvalia (HttpServletRequest request, HttpServletResponse response) {
+        
+		DtoAdjunto dtoAdjunto = new DtoAdjunto();
+		
+		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
+		dtoAdjunto.setIdEntidad(Long.parseLong(request.getParameter("idActivo")));
+		String nombreDocumento = request.getParameter("nombreDocumento");
+		dtoAdjunto.setNombre(nombreDocumento);
+		
+       	FileItem fileItem = activoApi.getFileItemPlusvalia(dtoAdjunto);
+		
+       	try { 
+
+       		if(!Checks.esNulo(fileItem)) {
+	       		ServletOutputStream salida = response.getOutputStream();
+
+	       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+	       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+	       		response.setHeader("Cache-Control", "max-age=0");
+	       		response.setHeader("Expires", "0");
+	       		response.setHeader("Pragma", "public");
+	       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+	       		response.setContentType(fileItem.getContentType());
+
+	       		// Write
+	       		FileUtils.copy(fileItem.getInputStream(), salida);
+	       		salida.flush();
+	       		salida.close();
+       		}
+       		
+       	} catch (Exception e) { 
+       		logger.error(e.getMessage(),e);
+       	}
+
+	}
 }

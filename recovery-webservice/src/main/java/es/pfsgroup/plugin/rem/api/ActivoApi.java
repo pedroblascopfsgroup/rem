@@ -26,7 +26,9 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -1223,5 +1225,13 @@ public interface ActivoApi {
 	 * @return DtoPage 
 	 */
 	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
+
+	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
+	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
+
+	@BusinessOperationDefinition("activoManager.uploadDocumentoPlusvalia")
+	String uploadDocumentoPlusvalia(WebFileItem webFileItem,ActivoPlusvalia activoPlusvaliaEntrada, String matricula) throws Exception;
+
+	FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto);
 
 }

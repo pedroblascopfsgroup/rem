@@ -8,6 +8,8 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedient
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
@@ -22,6 +24,8 @@ public interface GestorDocumentalAdapterApi {
 	List<DtoAdjunto> getAdjuntosActivo (Activo activo) throws GestorDocumentalException;
 	
 	List<DtoAdjunto> getAdjuntosActuacionesTecnicas (Trabajo trabajo) throws GestorDocumentalException;
+	
+	public List<DtoAdjunto> getAdjuntosPlusvalia(ActivoPlusvalia activoPlusvalia) throws GestorDocumentalException;
 
 	FileItem getFileItem(Long idDocumento, String nombreDocumento) throws Exception;
 	
@@ -36,6 +40,8 @@ public interface GestorDocumentalAdapterApi {
 	boolean modoRestClientActivado();
 
 	Integer crearGasto(GastoProveedor gasto,  String usuarioLogado) throws GestorDocumentalException;
+	
+	Integer crearPlusvalia(ActivoPlusvalia activoPlusvalia,  String usuarioLogado) throws GestorDocumentalException;
 
 	Integer crearActuacionTecnica(Trabajo trabajo, String usuarioLogado) throws GestorDocumentalException;
 
@@ -85,6 +91,11 @@ public interface GestorDocumentalAdapterApi {
 	FileItem getFileItemTributo(Long idDocumento, String nombreDocumento) throws Exception;
 
 	void crearRelacionJuntas(ActivoJuntaPropietarios activoJunta, Long idDocRestClient, String activos, String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
+
+	Long UploadDocumentoPlusvalia(ActivoPlusvalia activoPlusvalia, WebFileItem webFileItem, String username, String matricula) throws GestorDocumentalException;
+
+	void crearRelacionPlusvalia(ActivoPlusvalia activoPlusvalia, Long idDocRestClient, String activo, String username,
+			CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
 	
 
 }

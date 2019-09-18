@@ -361,7 +361,6 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 				Auditoria.save(adjuntoJunta);
 				
 				activoJunta.getAdjuntos().add(adjuntoJunta);
-				activoJunta.getAdjuntos().add(adjuntoJunta);
 
 				activoJuntaPropietariosDao.save(activoJunta);
 			}

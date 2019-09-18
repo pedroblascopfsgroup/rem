@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDt
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearJuntaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPlusvaliaDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
@@ -311,6 +312,51 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearActuacionTecnicaDto.getTipoClase());
 		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearActuacionTecnicaDto.getCodClase());
 		return sb.toString();
+	}
+
+	@Override
+	public RespuestaCrearExpediente crearPlusvalia(CrearPlusvaliaDto crearPlusvaliaDto) throws GestorDocumentalException {
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setPath(getPathCrearPlusvalia(crearPlusvaliaDto));
+		serverRequest.setMultipart(getMultipartCrearPlusvalia(crearPlusvaliaDto));
+		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
+		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+
+		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+		}
+		if (Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);			
+		}
+		
+		return respuesta;
+	}
+	
+	private String getPathCrearPlusvalia(CrearPlusvaliaDto crearPlusvaliaDto) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/CrearContenedor");
+		sb.append("?").append(USUARIO_PATH).append(crearPlusvaliaDto.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(crearPlusvaliaDto.getPassword());
+		sb.append("&").append(DESCRIPCION_EXPEDIENTE_PATH).append(UriComponent.encode(crearPlusvaliaDto.getDescripcionPlusvalia(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearPlusvaliaDto.getCodClase());
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearPlusvaliaDto.getTipoClase());
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearPlusvaliaDto.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearPlusvaliaDto.getUsuarioOperacional());
+
+		return sb.toString();
+	}
+	
+	@SuppressWarnings("resource")
+	private MultiPart getMultipartCrearPlusvalia(CrearPlusvaliaDto crearPlusvaliaDto){
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearPlusvaliaDto.getUsuario())
+				.field(PASSWORD,  crearPlusvaliaDto.getPassword())
+				.field(DESCRIPCION_EXPEDIENTE, crearPlusvaliaDto.getDescripcionPlusvalia())
+				.field(COD_CLASE, crearPlusvaliaDto.getCodClase().toString())
+				.field(GASTO_METADATOS, crearPlusvaliaDto.getOperacionMetadatos());
+		return multipart;
 	}
 
 }

@@ -144,12 +144,10 @@ public class RecoveryToGestorExpAssembler {
 		return sb.toString();
 	}
 	
-	
 	// --------------------------------------------------- JUNTAS -------------------------------------------------------------------
 		
 	public CrearJuntaDto getCrearJuntaDto(String idJunta, String descripcionJunta, String username, String cliente, String idSistemaOrigen, String codClase, String tipoTrabajo) {
 		CrearJuntaDto doc = new CrearJuntaDto();
-
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
 		doc.setCodClase(codClase);
@@ -157,10 +155,19 @@ public class RecoveryToGestorExpAssembler {
 		doc.setUsuarioOperacional(username);
 		doc.setDescripcionJunta(descripcionJunta);
 		doc.setOperacionMetadatos(rellenarJuntaMetadatos(idJunta, idJunta, idSistemaOrigen, cliente));
-
 		return doc;
 	}
-
+	public CrearPlusvaliaDto getCrearPlusvaliaDto(String idPlusvalia, String descripcionPlusvalia,String username,String cliente,String idSistemaOrigen,String codClase,String tipoTrabajo) {
+		CrearPlusvaliaDto doc = new CrearPlusvaliaDto();
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(codClase);
+		doc.setTipoClase(tipoTrabajo);
+		doc.setUsuarioOperacional(username);
+		doc.setDescripcionPlusvalia(descripcionPlusvalia);
+		doc.setOperacionMetadatos(rellenarPlusvaliaMetadatos(idPlusvalia, idPlusvalia, idSistemaOrigen, cliente));
+		return doc;
+	}
 	private static String rellenarJuntaMetadatos (String id, String idExterno, String idSistemaOrigen, String cliente) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
@@ -174,5 +181,16 @@ public class RecoveryToGestorExpAssembler {
 		return sb.toString();
 	}
 
-
+	private static String rellenarPlusvaliaMetadatos (String id, String idExterno, String idSistemaOrigen, String cliente) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.OPERACION).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
+		sb.append("}");
+		return sb.toString();
+	}
 }

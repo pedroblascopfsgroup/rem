@@ -258,12 +258,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
      */
 	onClickBotonRefrescar : function(btn) {
 						var me = this;
-						tabPanel = me.getView().down("tabpanel");
-						var activeTab = tabPanel.getActiveTab();
-						if (activeTab.xtype = "activosafectadosgasto"
-						&& CONST.CARTERA["LIBERBANK"] === me.getViewModel().get("gasto.cartera")) {
-							me.updateGastoByPrinexLBK();
-						}
+//						tabPanel = me.getView().down("tabpanel");
+//						var activeTab = tabPanel.getActiveTab();
+//						if (activeTab.xtype = "activosafectadosgasto"
+//						&& CONST.CARTERA["LIBERBANK"] === me.getViewModel().get("gasto.cartera")) {
+//							me.updateGastoByPrinexLBK();
+//						}
 						me.refrescarGasto(true);
 					},
 	

@@ -4541,46 +4541,48 @@ public class ActivoAdapter {
 			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id", id);
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false);
 			ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, filtroActivo, filtroBorrado);
-			try {
-				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosPlusvalia(activoPlusvalia);
-	
-				for (DtoAdjunto adj : listaAdjuntos) {
-					AdjuntoPlusvalias adjunto = activoPlusvalia.getAdjunto(adj.getId());
-					if (!Checks.esNulo(adjunto)) {
-						if(!Checks.esNulo(activo.getId())) {
-							adj.setIdEntidad(activo.getId());
-						}
-						if(!Checks.esNulo(adjunto.getNombre())) {
-							adj.setNombre(adjunto.getNombre());
-						}
-						if(!Checks.esNulo(adjunto.getTipoDocPlusvalias())) {
-							adj.setDescripcionTipo(adjunto.getTipoDocPlusvalias().getDescripcion());
-						}
-						if(!Checks.esNulo(adjunto.getFechaDocumento())) {
-							adj.setFechaDocumento(adjunto.getFechaDocumento());
-						}
-						if(!Checks.esNulo(adjunto.getTamanyo())) {
-							adj.setTamanyo(adjunto.getTamanyo());
-						}
-						if(!Checks.esNulo(activo.getAuditoria().getUsuarioCrear())) {
-							adj.setGestor(activo.getAuditoria().getUsuarioCrear());
+			if(!Checks.esNulo(activoPlusvalia)) {
+				try {
+					listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosPlusvalia(activoPlusvalia);
+		
+					for (DtoAdjunto adj : listaAdjuntos) {
+						AdjuntoPlusvalias adjunto = activoPlusvalia.getAdjunto(adj.getId());
+						if (!Checks.esNulo(adjunto)) {
+							if(!Checks.esNulo(activo.getId())) {
+								adj.setIdEntidad(activo.getId());
+							}
+							if(!Checks.esNulo(adjunto.getNombre())) {
+								adj.setNombre(adjunto.getNombre());
+							}
+							if(!Checks.esNulo(adjunto.getTipoDocPlusvalias())) {
+								adj.setDescripcionTipo(adjunto.getTipoDocPlusvalias().getDescripcion());
+							}
+							if(!Checks.esNulo(adjunto.getFechaDocumento())) {
+								adj.setFechaDocumento(adjunto.getFechaDocumento());
+							}
+							if(!Checks.esNulo(adjunto.getTamanyo())) {
+								adj.setTamanyo(adjunto.getTamanyo());
+							}
+							if(!Checks.esNulo(activo.getAuditoria().getUsuarioCrear())) {
+								adj.setGestor(activo.getAuditoria().getUsuarioCrear());
+							}
 						}
 					}
-				}
-			} catch (GestorDocumentalException gex) {
-				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
-	
-					Integer idPlusvalia;
-					try{
-						idPlusvalia = gestorDocumentalAdapterApi.crearPlusvalia(activoPlusvalia,usuario.getUsername());
-						logger.debug("GESTOR DOCUMENTAL [ crearPlusvalia para " + activoPlusvalia.getId() + "]: ID PLUSVALIA RECIBIDO " + idPlusvalia);
-					} catch (GestorDocumentalException gexc) {
-						logger.error(gexc.getMessage(),gexc);
+				} catch (GestorDocumentalException gex) {
+					if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
+		
+						Integer idPlusvalia;
+						try{
+							idPlusvalia = gestorDocumentalAdapterApi.crearPlusvalia(activoPlusvalia,usuario.getUsername());
+							logger.debug("GESTOR DOCUMENTAL [ crearPlusvalia para " + activoPlusvalia.getId() + "]: ID PLUSVALIA RECIBIDO " + idPlusvalia);
+						} catch (GestorDocumentalException gexc) {
+							logger.error(gexc.getMessage(),gexc);
+						}
+		
 					}
-	
+					throw gex;
 				}
-				throw gex;
-			}	
+			}
 
 		} else {
 			listaAdjuntos = getAdjuntosActivoPlusvalia(id, listaAdjuntos);

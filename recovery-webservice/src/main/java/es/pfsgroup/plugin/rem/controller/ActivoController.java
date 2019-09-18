@@ -3077,8 +3077,9 @@ public class ActivoController extends ParadiseJsonController {
 
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("errorMessage", e.getMessage());
+			model.put("errorMessage", "Ha habido un problema con el gestor documental");
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "admisionDocumento", ACCION_CODIGO.CODIGO_MODIFICAR);
+			logger.error("error en activoController (Gestor Documental)", e);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

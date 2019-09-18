@@ -44,14 +44,6 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 		Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 		tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 		
-		if (!Checks.esNulo(tramite.getTrabajo())) {
-			Filter filtroExp = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tramite.getTrabajo().getId());
-			ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, filtroExp);
-			if (!Checks.esNulo(exp.getOferta()))
-			ofertaApi.finalizarOferta(exp.getOferta());	
-		}
-			
-		
 		genericDao.save(ActivoTramite.class, tramite);
 		
 		activoApi.actualizarOfertasTrabajosVivos(tramite.getActivo());

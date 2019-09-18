@@ -1033,7 +1033,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					adjuntos.add(createAdjunto(f1, "Vfinal_instrucciones_reserva_y_formalizacion_APPLE.pdf"));
 				}
 				if ( f2 != null ) {
-					adjuntos.add(createAdjunto(f2, "docs/instrucciones_reserva_y_formalizacion_APPLE.docx"));
+					adjuntos.add(createAdjunto(f2, "instrucciones_reserva_y_formalizacion_APPLE.docx"));
 				}
 
 			}

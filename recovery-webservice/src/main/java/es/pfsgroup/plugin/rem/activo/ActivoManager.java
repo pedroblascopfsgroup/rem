@@ -842,9 +842,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(tipoArras != null){
 				if (Checks.esNulo(expedienteComercial.getReserva()) ) {
 					Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
-					reservaExpediente.setTipoArras(tipoArras);
-
-					genericDao.save(Reserva.class, reservaExpediente);
+					if(!Checks.esNulo(reservaExpediente)) {
+						reservaExpediente.setTipoArras(tipoArras);	
+						genericDao.save(Reserva.class, reservaExpediente);
+					}
 
 				} else {
 					expedienteComercial.getReserva().setTipoArras(tipoArras);

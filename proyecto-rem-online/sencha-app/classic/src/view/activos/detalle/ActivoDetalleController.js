@@ -1117,7 +1117,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    		parent: grid
 			}).show();
 		} else {
-			me.fireEvent("errorToast", HreRem.i18n("No se puede adjuntar un documento si el activo no tiene plusvalia"));
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activo.sin.plusvalia"));
 		}
 	},
 

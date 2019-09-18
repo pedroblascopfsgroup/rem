@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -70,6 +70,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
           
           'informecomercialactivo historicomediadorgrid': {
            	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          },
+           
+           'adjuntosplusvalias gridBase': {
+               abrirFormulario: 'abrirFormularioAdjuntarDocumentosPlusvalia',
+               onClickRemove: 'borrarDocumentoAdjuntoPlusvalia', 
+               download: 'downloadDocumentoAdjuntoPlusvalia', 
+               afterupload: function(grid) {
+               	grid.getStore().load();
+               },
+               afterdelete: function(grid) {
+               	grid.getStore().load();
+               }
            }
     },
     
@@ -1093,6 +1105,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto", {entidad: 'promocion', idEntidad: idActivo, parent: grid}).show();
 
 	},
+	
+	abrirFormularioAdjuntarDocumentosPlusvalia: function(grid) {
+		
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+		if(me.getViewModel().get("plusvalia.idPlusvalia")!= undefined){
+	    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoPlusvalia", {
+	    		entidad: 'activo', 
+	    		idEntidad: idActivo,
+	    		parent: grid
+			}).show();
+		} else {
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activo.sin.plusvalia"));
+		}
+	},
 
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this,
@@ -1163,6 +1190,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			});
 		}
 	},
+	
+	borrarDocumentoAdjuntoPlusvalia: function(grid, record) {
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id"), 
+		id = grid.getSelection()[0].data.id,
+		url = $AC.getRemoteUrl('activo/deleteAdjuntoPlusvalia');
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		Ext.Ajax.request({
+			url : url,
+			params: {idEntidad: idActivo, id: id},
+			success: function(record, operation) {
+          		 grid.fireEvent("afterdelete", grid);
+          		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+          		 me.getView().unmask();
+           },
+           failure: function(record, operation) {
+                 grid.fireEvent("afterdelete", grid);
+                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                 me.getView().unmask();
+           }
+            
+        });	
+	},
 
 	downloadDocumentoAdjunto: function(grid, record) {
 		var me = this,
@@ -1186,6 +1236,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");
 		config.params.nombreDocumento=record.get("nombre").replace(",","");
+		me.fireEvent("downloadFile", config);
+	},
+	
+	downloadDocumentoAdjuntoPlusvalia: function(grid, record) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"activo/bajarAdjuntoPlusvalia."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idActivo=me.getViewModel().get("activo.id");
+		config.params.nombreDocumento=record.get("nombre");
 		me.fireEvent("downloadFile", config);
 	},
 

@@ -36,9 +36,15 @@ Ext.define('HreRem.view.common.WindowBase', {
     		    		 
     		    		 var limite = data.limite;
     		    		 params = {idEntidad: me.idEntidad};
+    		    		
     		     		if(Ext.isDefined(me.down('gridBase')) && me.down('gridBase') != null){
     		     			var comboSubtipoDocumento = form.down("[name=subtipo]"); 
-    		         		var subtipoDocumento = comboSubtipoDocumento.findRecordByValue(comboSubtipoDocumento.getValue());
+    		     			 if(subtipoDocumento!=null){
+    		    		 	    		    		 
+    		         			var subtipoDocumento = comboSubtipoDocumento.findRecordByValue(comboSubtipoDocumento.getValue());
+    		     			 }else{
+    		     			 	var subtipoDocumento="";
+    		     			 }
     		         		var activosSeleccionados = [];
     		 	    		Ext.Array.each(me.down('gridBase').getSelection(), function(selected, index) {
     		 	    		 	activosSeleccionados.push(selected.get("numActivo"));

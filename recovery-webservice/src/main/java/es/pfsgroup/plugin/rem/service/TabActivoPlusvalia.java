@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -134,7 +135,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getImportePagado())) {
-			//activoPlusvalia.setImportePagado(activoPlusvaliaDto.getImportePagado());
+			activoPlusvalia.setImportePagado(new BigDecimal(activoPlusvaliaDto.getImportePagado()));
 		}
 		
 		if(!Checks.esNulo(activoPlusvaliaDto.getNumGastoHaya())) {

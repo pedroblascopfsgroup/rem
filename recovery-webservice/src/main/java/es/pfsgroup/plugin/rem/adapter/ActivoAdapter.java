@@ -3726,11 +3726,6 @@ public class ActivoAdapter {
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 
-			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
-				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
-			}else {
-				notificationOfertaManager.sendNotification(oferta);
-			}					
 			// HREOS-4937 -- 'General Data Protection Regulation'
 
 			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
@@ -3798,6 +3793,13 @@ public class ActivoAdapter {
 			}			
 			
 			this.actualizarEstadoPublicacionActivo(activo.getId());
+			
+			// El envío de correos siempre al final del método
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
+			}else {
+				notificationOfertaManager.sendNotification(oferta);
+			}
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);

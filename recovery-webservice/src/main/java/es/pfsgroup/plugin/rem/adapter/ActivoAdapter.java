@@ -109,6 +109,7 @@ import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -118,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.AdjuntoPlusvalias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
@@ -4527,4 +4529,103 @@ public class ActivoAdapter {
 		}
 		return borrado;
 	}
+
+	public List<DtoAdjunto> getAdjuntosActivoPlusvalia(Long id)
+			throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
+		
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		Usuario usuario = genericAdapter.getUsuarioLogado();
+
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Activo activo = activoApi.get(id);
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id", id);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false);
+			ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, filtroActivo, filtroBorrado);
+			try {
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosPlusvalia(activoPlusvalia);
+	
+				for (DtoAdjunto adj : listaAdjuntos) {
+					AdjuntoPlusvalias adjunto = activoPlusvalia.getAdjunto(adj.getId());
+					if (!Checks.esNulo(adjunto)) {
+						if(!Checks.esNulo(activo.getId())) {
+							adj.setIdEntidad(activo.getId());
+						}
+						if(!Checks.esNulo(adjunto.getNombre())) {
+							adj.setNombre(adjunto.getNombre());
+						}
+						if(!Checks.esNulo(adjunto.getTipoDocPlusvalias())) {
+							adj.setDescripcionTipo(adjunto.getTipoDocPlusvalias().getDescripcion());
+						}
+						if(!Checks.esNulo(adjunto.getFechaDocumento())) {
+							adj.setFechaDocumento(adjunto.getFechaDocumento());
+						}
+						if(!Checks.esNulo(adjunto.getTamanyo())) {
+							adj.setTamanyo(adjunto.getTamanyo());
+						}
+						if(!Checks.esNulo(activo.getAuditoria().getUsuarioCrear())) {
+							adj.setGestor(activo.getAuditoria().getUsuarioCrear());
+						}
+					}
+				}
+			} catch (GestorDocumentalException gex) {
+				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
+	
+					Integer idPlusvalia;
+					try{
+						idPlusvalia = gestorDocumentalAdapterApi.crearPlusvalia(activoPlusvalia,usuario.getUsername());
+						logger.debug("GESTOR DOCUMENTAL [ crearPlusvalia para " + activoPlusvalia.getId() + "]: ID PLUSVALIA RECIBIDO " + idPlusvalia);
+					} catch (GestorDocumentalException gexc) {
+						logger.error(gexc.getMessage(),gexc);
+					}
+	
+				}
+				throw gex;
+			}	
+
+		} else {
+			listaAdjuntos = getAdjuntosActivoPlusvalia(id, listaAdjuntos);
+		}
+		return listaAdjuntos;
+	}
+
+	private List<DtoAdjunto> getAdjuntosActivoPlusvalia(Long id, List<DtoAdjunto> listaAdjuntos)
+			throws IllegalAccessException, InvocationTargetException {
+		Activo activo = activoApi.get(id);
+		if(!Checks.esNulo(activo)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, filtro);
+			if(!Checks.esNulo(activoPlusvalia)) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "plusvalia", activoPlusvalia);
+		
+				for (AdjuntoPlusvalias adjunto : genericDao.getList(AdjuntoPlusvalias.class, filtro)) {
+					DtoAdjunto dto = new DtoAdjunto();
+					if(!Checks.esNulo(adjunto)) {
+						
+						BeanUtils.copyProperties(dto, adjunto);
+						if(!Checks.esNulo(activo.getId())) {
+							dto.setIdEntidad(activo.getId());
+						}
+						if(!Checks.esNulo(adjunto.getNombre())) {
+							dto.setNombre(adjunto.getNombre());
+						}
+						if(!Checks.esNulo(adjunto.getTipoDocPlusvalias())) {
+							dto.setDescripcionTipo(adjunto.getTipoDocPlusvalias().getDescripcion());
+						}
+						if(!Checks.esNulo(adjunto.getFechaDocumento())) {
+							dto.setFechaDocumento(adjunto.getFechaDocumento());
+						}
+						if(!Checks.esNulo(adjunto.getTamanyo())) {
+							dto.setTamanyo(adjunto.getTamanyo());
+						}
+						if(!Checks.esNulo(activo.getAuditoria().getUsuarioCrear())) {
+							dto.setGestor(activo.getAuditoria().getUsuarioCrear());
+						}
+						listaAdjuntos.add(dto);
+					}
+				}
+			}
+		}
+		return listaAdjuntos;
+	}
+
 }

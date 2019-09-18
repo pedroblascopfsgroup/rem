@@ -2,12 +2,15 @@ package es.pfsgroup.plugin.rem.gasto.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+
+import org.apache.velocity.runtime.directive.Foreach;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -22,11 +25,15 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
+import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
@@ -369,5 +376,38 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		GastoProveedor gastoProveedor = HibernateUtils.castObject(GastoProveedor.class, criteria.uniqueResult());
 
 		return gastoProveedor;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VGastosRefacturados> getGastosRefacturados(String listaGastos) {
+
+		String from = "select vGastosRefacturados from VGastosRefacturados vGastosRefacturados";
+		
+		HQLBuilder hb = new HQLBuilder(from);		
+		String whereCondition = "vGastosRefacturados.numGastoHaya in (" + listaGastos + ")";
+		hb.appendWhere(whereCondition);
+		
+		
+		return (List<VGastosRefacturados>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GastoRefacturable> getGastosRefacturablesDelGasto(Long id) {
+		List<GastoRefacturable> gastorefacturable = new ArrayList<GastoRefacturable>();
+		
+		HQLBuilder hb = new HQLBuilder(" from GastoRefacturable gas");
+		
+		String whereCondition1 = "gas.idGastoProveedor = " + id + ")";
+		String whereCondition2 = "gas.borrado = 0)";
+		hb.appendWhere(whereCondition1);
+		hb.appendWhere(whereCondition2);
+		
+		gastorefacturable = (List<GastoRefacturable>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	
+	
+		return gastorefacturable;
 	}
 }

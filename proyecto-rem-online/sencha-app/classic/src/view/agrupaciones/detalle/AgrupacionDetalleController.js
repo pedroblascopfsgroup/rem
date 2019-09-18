@@ -702,7 +702,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	window.close();
 	},
 
-	// Método que es llamado cuando se solicita exportar losa ctivos de la agrupación tipo 'lote comercial'.
+	// M�todo que es llamado cuando se solicita exportar losa ctivos de la agrupaci�n tipo 'lote comercial'.
     onClickExportarActivosLoteComercial: function() {
 	  	var me = this;
 	  	var config = {};

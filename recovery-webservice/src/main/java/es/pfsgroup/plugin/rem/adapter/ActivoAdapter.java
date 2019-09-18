@@ -2573,7 +2573,18 @@ public class ActivoAdapter {
 						adj.setGestor(adjuntoActivo.getAuditoria().getUsuarioCrear());
 					}
 					adj.setTamanyo(adjuntoActivo.getTamanyo());
+				}else {
+					//Si en un adjunto que se ha subido al GD desde fuera de REM el tipo de documento es nulo, lo obtenemos a través de la matrícula
+					Filter filtroVisible = genericDao.createFilter(FilterType.EQUALS, "visible", true);
+					Filter filtroMatricula = genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula());
+					List <DDTipoDocumentoActivo> tipoDocumento = (List<DDTipoDocumentoActivo>) genericDao.getList(DDTipoDocumentoActivo.class, filtroVisible, filtroMatricula); 
+
+					if (!Checks.estaVacio(tipoDocumento)) {
+						DDTipoDocumentoActivo tipoDoc = tipoDocumento.get(0);
+						adj.setDescripcionTipo(tipoDoc.getDescripcion());
+					}
 				}
+				
 			}
 
 		} else {

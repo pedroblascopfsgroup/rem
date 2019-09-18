@@ -174,6 +174,42 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
    		{
    			name: 'devengoPosteriorTraspaso'
+   		},
+   		{
+   			name: 'numeroDeGastoRefacturable'
+   		},
+   		{
+   			name:'isGastoRefacturable'
+   		},
+   		{
+   			name: 'checkboxActivoRefacturable'
+   		},
+   		{
+   			name: 'gastoRefacturadoGrid'
+   		},
+   		{
+   			name: 'listaTotalGastosRefacturados'
+   		},
+   		{
+   			name: 'gastoRefacturable',
+			type: 'boolean'
+		}, 
+		{
+   			name: 'idGastoRefacturable'
+   		},
+   		{
+   			name: 'gastosRefacturadosGasto'
+   		},
+   		{
+   			name:'numeroGastoRefacturableExistente'
+   		},
+   		{
+   			name: 'gastoRefacturable',
+   			type: 'boolean'
+   		},
+   		{
+   			name: 'bloquearDestinatario',
+   			type: 'boolean'
    		}
     		
     ],

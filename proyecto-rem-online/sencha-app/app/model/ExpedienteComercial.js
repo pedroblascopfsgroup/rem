@@ -262,18 +262,6 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			type:'date', 
         		dateFormat: 'c'
     		},
-    		{
-			name:'fechaAprobacionProManzana',
-			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
-    		},
 			{
 				name: 'esCarteraLiberbankVenta',
 				calculate: function(data) { 

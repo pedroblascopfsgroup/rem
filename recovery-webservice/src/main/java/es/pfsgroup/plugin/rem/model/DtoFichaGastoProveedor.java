@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
@@ -67,6 +68,9 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private Date fechaRecPropiedad;
 	private Date fechaRecGestoria;
 	private Date fechaRecHaya;
+   	private Boolean gastoRefacturable;
+   	private List<String> gastoRefacturadoGrid;
+   	private Boolean bloquearDestinatario;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -347,5 +351,22 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setFechaRecHaya(Date fechaRecHaya) {
 		this.fechaRecHaya = fechaRecHaya;
 	}
-	
+	public List<String> getGastoRefacturadoGrid() {
+		return gastoRefacturadoGrid;
+	}
+	public void setGastoRefacturadoGrid(List<String> gastoRefacturadoGrid) {
+		this.gastoRefacturadoGrid = gastoRefacturadoGrid;
+	}
+	public Boolean getGastoRefacturable() {
+		return gastoRefacturable;
+	}
+	public void setGastoRefacturable(Boolean gastoRefacturable) {
+		this.gastoRefacturable = gastoRefacturable;
+	}
+	public Boolean getBloquearDestinatario() {
+		return bloquearDestinatario;
+	}
+	public void setBloquearDestinatario(Boolean bloquearDestinatario) {
+		this.bloquearDestinatario = bloquearDestinatario;
+	}
 }

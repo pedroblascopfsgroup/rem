@@ -278,7 +278,6 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					}
 					gencatDto.setIdLeadSF(visitaGencat.getIdLeadSF());
 				}
-
 				if(!Checks.esNulo(gencatDto.getSancion()) && DDSancionGencat.COD_EJERCE.equals(gencatDto.getSancion())) {
 					List<OfertaGencat> ofertasGencatActivo = genericDao.getList(OfertaGencat.class, filtroIdComunicacion);
 					

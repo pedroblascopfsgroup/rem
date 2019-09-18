@@ -132,6 +132,21 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_VISITAS_DETALLE.DD_CRA_ID IS ''Id de la cartera del activo relacionado con la visita''';
  
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_VISITAS_DETALLE...Creada OK');
+
+  COMMIT;
+
+  EXCEPTION
+	     WHEN OTHERS THEN
+	          err_num := SQLCODE;
+	          err_msg := SQLERRM;
+	
+	          DBMS_OUTPUT.PUT_LINE('KO no modificada');
+	          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+	          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+	          DBMS_OUTPUT.put_line(err_msg);
+	
+	          ROLLBACK;
+	          RAISE;   
   
 END;
 /

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -119,6 +120,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -4219,15 +4221,19 @@ public class AgrupacionAdapter {
 	 * */
 	private Activo isActivoValido(ActivoAgrupacion agrupacion, Long activoNum) throws JsonViewerException {
 		Activo nuevoPisoPiloto = null; 
-		for(ActivoAgrupacionActivo activo_aga : agrupacion.getActivos()){
-			if(activo_aga.getActivo().getNumActivo().equals(activoNum)) {
-				if(DDSubcartera.CODIGO_YUBAI.equals(activo_aga.getActivo().getSubcartera().getCodigo())){
+		if(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			for(ActivoAgrupacionActivo activo_aga : agrupacion.getActivos()){
+				if(activo_aga.getActivo().getNumActivo().equals(activoNum)) {
+					if(DDSubcartera.CODIGO_YUBAI.equals(activo_aga.getActivo().getSubcartera().getCodigo())){
 						nuevoPisoPiloto = activo_aga.getActivo();
 						break;
-				}else {
-					throw new JsonViewerException(ACTIVO_NO_YUBAI);
+					}else {
+						throw new JsonViewerException(ACTIVO_NO_YUBAI);
+					}
 				}
 			}
+		}else {
+			throw new JsonViewerException(ACTIVO_NO_OBRA_NUEVA);
 		}
 		
 		if(Checks.esNulo(nuevoPisoPiloto)) {

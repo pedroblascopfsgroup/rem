@@ -372,7 +372,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.valor.descuento.publicado'),
 	            flex: 1,
 	            bind: {
-	        		hidden: '{!esAgrupacionPromocionAlquiler}'
+	        		hidden: '{esAgrupacionPromocionAlquiler}'
 	        	},
 	            renderer: function(value) {
 	        		return Ext.util.Format.currency(value);
@@ -409,14 +409,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        	hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}' // Agrupación Third Party - Yubai
 		        },
 		        flex: 1,
+		        width: 30,
 		        text: HreRem.i18n('header.pisoPiloto'),
 				hideable: false,
 				items: [
 				        	{ // Check si es piso piloto
 					            getClass: function(v, meta, rec) {
 					            	if (rec.get('esPisoPiloto') != 1) {
+					                	this.items[0].handler = 'onMarcarPrincipalClick';
 					                    return 'fa fa-check';
 					                } else {
+			            				this.items[0].handler = 'onMarcarPrincipalClick';
 					                    return 'fa fa-check green-color';
 					                }
 					            }

@@ -178,6 +178,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	LIBERBANK: '08',
     	TANGO: '10',
     	THIRD: '11',
+    	THIRDPARTIES: '11',
     	GIANTS: '12',
     	EGEO: '13',
     	GALEON:'15',
@@ -467,6 +468,11 @@ Ext.define('HreRem.ux.util.Constants', {
 		SI: 1,
 		NO: 0
 	},
+	
+	COMBO_TRUE_FALSE: {
+		TRUE: 'true',
+		FALSE: 'false'
+	},
 
 	COMBO_TRUE_FALSE: {
 		TRUE: 'true',
@@ -653,6 +659,9 @@ Ext.define('HreRem.ux.util.Constants', {
 	 	PRINCIPAL:'01',
 	 	DEPENDIENTE:'02',
 	 	INDIVIDUAL:'03'
+	 },
+	 
+	 PVE_DOCUMENTONIF: {
+		 HAYA: 'A86744349'
 	 }
-
 });

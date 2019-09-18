@@ -437,7 +437,6 @@ public class DtoAgrupaciones extends WebDto {
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
 	}
-
 	public Boolean getComercializableConsPlano() {
 		return comercializableConsPlano;
 	}

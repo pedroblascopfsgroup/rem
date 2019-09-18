@@ -2,7 +2,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gastodetalle',
     
-    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto','HreRem.view.common.adjuntos.AdjuntarDocumentoGasto'],
+    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto','HreRem.view.common.adjuntos.AdjuntarDocumentoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGrid'],
     
     control: {
     	
@@ -125,7 +125,20 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 							if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
 								// Si la API tiene metodo de escritura (create or update).
 								me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			                    var valoresGrid = [];
+
+			                    if(me.getView().lookupReference("gastoRefacturadoGrid") != null && me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data != undefined){
+				                    for(var i = 0; i < me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data.length; i++){
+				                    	if(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == true ||
+				                    		me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].gastoRefacturable == "true"){
+				                    			valoresGrid.push(me.getView().lookupReference("gastoRefacturadoGrid").getStore().initialConfig.data[i].idGasto);
+				                    	}
+				                    }
+			                    }
+			                    
+				                form.getBindRecord().data.gastoRefacturadoGrid=valoresGrid;
 								
+				               
 								form.getBindRecord().save({
 									success: success,				            
 						            failure: function (a, operation) {
@@ -311,7 +324,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 
 	},
-	
+
 	buscarPropietario: function(field, e){
 		
 		var me= this;
@@ -326,9 +339,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    		
 		    	success: function(response, opts) {
 			    	data = Ext.decode(response.responseText);
+			    	
 			    	//var propietarioGastoField = field.up('formBase').down('[name=nifPropietario]')
 		    		var buscadorNifPropietario = field.up('formBase').down('[name=buscadorNifPropietarioField]'),
-		    		nombrePropietarioGasto = field.up('formBase').down('[name=nombrePropietario]');
+		    		nombrePropietarioGasto = field.up('formBase').down('[name=nombrePropietario]'),
+		    		chkboxActivoRefacturable = me.lookupReference("checkboxActivoRefacturable");
 		    		
 			    	if(!Utils.isEmptyJSON(data.data)){
 						var id= data.data.id;
@@ -336,13 +351,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 		    		    if(!Ext.isEmpty(buscadorNifPropietario)) {
 		    		    	buscadorNifPropietario.setValue(nifPropietario);
+		    		    	
 		    		    }
 		    		    if(!Ext.isEmpty(nombrePropietarioGasto)) {
 		    		    	nombrePropietarioGasto.setValue(nombrePropietario);
 
 			    		}
+		    		    //chkboxActivoRefacturable.existePropietario=true;
+
 			    	} else {
 			    		if(!Ext.isEmpty(nombrePropietarioGasto)) {
+			    			//chkboxActivoRefacturable.existePropietario=false;
 		    		    	nombrePropietarioGasto.setValue('');
 		    		    }
 			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.propietario"));
@@ -1539,6 +1558,127 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	
     	return false;
-    }
+    },
+    
+    buscarGastosRefacturables: function(field, e){
+		var me= this;
+		var url = $AC.getRemoteUrl('gastosproveedor/getGastosRefacturados');
+		
+		var gastos= field.getValue();
+		var nifPropietario = me.lookupReference("buscadorNifPropietarioField").getValue();
+		var destinatarioGastoCodigo = me.getView().down('[name=destinatarioGastoCodigo]');
+		
+		Ext.Ajax
+		.request({
+			url : url,
+			params : {
+				gastos : gastos,
+				nifPropietario : nifPropietario
+			},
+			success : function(response, opts) {
+				var data = Ext.decode(response.responseText);
+				var gastosRefacturables = data.refacturable;
+				var gastosNoRefacturables= data.noRefacturable;
+			
+				var grid = me.lookupReference("gastoRefacturadoGrid");
+				
 
+				var arrayCodVal= new Array();
+				
+				for(j=0;j < gastosRefacturables.length;j++){				
+					var ArrayvaloresCombo=  gastosRefacturables[j].split(',');
+					
+					var idCombo = j;
+					var idGasto= ArrayvaloresCombo[0];
+					var gastoRefacturable= true;
+					
+					arrayCodVal.push({idCombo:idCombo, gastoRefacturable: gastoRefacturable, idGasto: idGasto});
+					
+				}
+				
+				var myStore = new Ext.data.Store({
+					    fields: ['idCombo','gastoRefacturable', 'idGasto'],
+					    idIndex: 0,
+					    data: arrayCodVal
+					    
+				});
+				
+				grid.setStore(myStore);
+				
+				destinatarioGastoCodigo.setReadOnly(arrayCodVal.length!=0);
+			},
+			failure : function(response) {
+				me.fireEvent("errorToast", HreRem
+						.i18n("msg.operacion.ko"));
+			},
+			callback : function(options, success,
+					response) {
+			}
+
+		});
+	},
+	
+	  onClickGuardarGastoRefacturado: function(){
+	    	var me = this;
+	    	var gastosRefacturables = me.lookupReference('anyadirGastoRefacturado').getValue();	    	
+	    	var idGasto = me.getView().idGasto;
+	    	var url = $AC.getRemoteUrl('gastosproveedor/anyadirGastoRefacturable');
+	    	
+	    	
+	    	
+	    	if(gastosRefacturables == ""){
+	    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anyadir.gastos.refacturados")); 
+	    	}else{
+	    	
+	    		Ext.Ajax.request({
+	    			
+			 		url: url,
+			   		params: {
+			   					idGasto:idGasto,
+			   					gastosRefacturables : gastosRefacturables
+			   				},
+			    		
+			    	success: function(response, opts) {
+				    	data = Ext.decode(response.responseText);
+				    	    	 
+			    	},
+			    	failure: function(response) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	},
+			    	callback: function(options, success, response){
+			    		me.getView().grid.getStore().reload();
+				    	me.closeView();
+					}
+			    		     
+			  });
+	    		
+	    	}
+	    	
+	    },
+	   disableGridGastosRefacturados: function (combo, newValue, oldValue, eOps) {
+	    	var me = this;
+	    	me.lookupReference("gastoRefacturadoGridExistente").setDisabled(newValue);
+
+	    
+	    }, 
+	onChangeDestinatarioGastoCodigo: function(combo, newValue){
+		var me = this;
+		var isHaya = CONST.TIPOS_DESTINATARIO_GASTO['HAYA'] === newValue;
+		var checkboxRefacturable = combo.up('form').down('[name=checkboxActivoRefacturable]')
+		checkboxRefacturable.setDisabled(!isHaya);
+		if(!isHaya) {
+			checkboxRefacturable.reset();
+		}
+		me.isPosibleAnyadirGastos();
+	},
+	isPosibleAnyadirGastos: function(){
+		var me = this;
+		var form = me.getView().down('formBase');
+		var posible = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] && 
+			!form.down('[name=checkboxActivoRefacturable]').checked && 
+			form.down('[name=nombrePropietario]').value &&
+			form.down('[name=nifEmisor]').value===CONST.PVE_DOCUMENTONIF['HAYA']);
+		form.down('[name=gastosArefacturar]').setDisabled(!posible);
+		form.down('[name=gastoRefacturadoGrid]').setDisabled(!posible);
+	}
 });

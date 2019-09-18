@@ -24,6 +24,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 			else{
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').hide();
 			}
+			
 		}
 	},
 
@@ -175,10 +176,13 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										xtype: 'comboboxfieldbase',
 						               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.destinatario'),
 						               	name: 'destinatarioField',
+						               	reference: 'destGasto',
 								      	bind: {
 							           		store: '{comboDestinatarios}',
-							           		value: '{gasto.destinatario}'
+							           		value: '{gasto.destinatario}',
+							           		readOnly: '{gasto.bloquearDestinatario}'
 							         	},
+							         	
 							         	allowBlank: false
 							    	},								    
 									{

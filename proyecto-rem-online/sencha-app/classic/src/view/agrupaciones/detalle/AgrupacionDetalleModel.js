@@ -646,10 +646,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 		
 		 		return '<a href="' + HreRem.i18n('fieldlabel.link.web.haya').replace("vivienda",tipoActivo) + get('agrupacionficha.idNumActivoPrincipal')+'?utm_source=rem&utm_medium=aplicacion&utm_campaign=activo " target="_blank">' + get('agrupacionficha.estadoAlquilerDescripcion') + '</a>'
 		 	}else {
-		 		return get('agrupacionficha.estadoAlquilerDescripcion')
+		 		return get('agrupacionficha.estadoAlquilerDescripcion');
 		 	}
 		 },
-
 		 comercializableConstruccionPlano: function(get){
 			 return "true"===get('agrupacionficha.comercializableConsPlano');
 		 },
@@ -667,7 +666,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 },
 		 
 		 esAgrupacionThirdpartiesYubaiObraNueva: function(get) {
-			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRD']
+			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
 			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
 			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) {
 		     		return true;

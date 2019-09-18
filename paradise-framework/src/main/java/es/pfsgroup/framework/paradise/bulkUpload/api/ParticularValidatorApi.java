@@ -872,5 +872,29 @@ public interface ParticularValidatorApi {
 	public Boolean existeCodJGOJE(String codJunta);
 
 	String getActivoJunta(String numActivo, String fechaJunta);
+	
+	/**
+	 * @param numActivo
+	 * @return true si el activo es una unidad alquilable	 
+	 */
+	Boolean esUnidadAlquilable(String numActivo);
+	
+	/** 
+	 * @param numGasto
+	 * @return true si el gasto es refacturado
+	 */
+	Boolean esGastoRefacturado(String numGasto);
+
+	/** 
+	 * @param numGasto
+	 * @return true si el propietario del gasto es BANKIA o SAREB
+	 */
+	Boolean perteneceGastoBankiaSareb(String numGasto);
+
+	/** 
+	 * @param numGasto
+	 * @return true si el gasto es refacturable
+	 */
+	Boolean esGastoRefacturable(String numGasto);	
 
 }

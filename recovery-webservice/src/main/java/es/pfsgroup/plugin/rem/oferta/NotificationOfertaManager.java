@@ -87,6 +87,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario buzonOfertaApple = null;
 		Activo activo = oferta.getActivoPrincipal();
 		Usuario usuarioBackOffice = null;
+		List<String> mailsSustituto = null;
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) 
 		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
@@ -159,6 +160,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						}
 					}	
 				}
+			}
+
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);	
+
 			}
 			
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
@@ -324,6 +332,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		ActivoProveedor prescriptor = null;
 		ActivoProveedor custodio = null;
 		Usuario usuarioBackOffice = null;
+		List<String> mailsSustituto = null;
 		
 		for (String codigoGestor: DESTINATARIOS_CORREO_APROBACION) {
 			usuarioRemApiImpl.rellenaListaCorreos(activo, codigoGestor, mailsPara, mailsCC, false);		

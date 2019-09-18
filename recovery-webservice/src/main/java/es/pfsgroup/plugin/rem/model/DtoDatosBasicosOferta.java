@@ -116,7 +116,6 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Date fechaResolucionCES;
 
 	private Date fechaRespuesta;
-	private Date fechaAprobacionProManzana;
 
 
 	public Long getIdOferta() {
@@ -471,6 +470,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setIsCarteraCerberusApple(Boolean isCarteraCerberusApple) {
 		this.isCarteraCerberusApple = isCarteraCerberusApple;
 	}
+	
+	public Boolean getIsCarteraLbkVenta() {
+		return isCarteraLbkVenta;
+	}
+
+	public void setIsCarteraLbkVenta(Boolean isCarteraLbkVenta) {
+		this.isCarteraLbkVenta = isCarteraLbkVenta;
+	}
 
 	public Boolean getIsLbkOfertaComercialPrincipal() {
 		return isLbkOfertaComercialPrincipal;
@@ -494,21 +501,5 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setFechaRespuesta(Date fechaRespuesta) {
 		this.fechaRespuesta = fechaRespuesta;
-	}
-	public Date getFechaAprobacionProManzana() {
-		return fechaAprobacionProManzana;
-	}
-
-	public void setFechaAprobacionProManzana(Date fechaAprobacionProManzana) {
-		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
-	}
-
-
-	public Boolean getIsCarteraLbkVenta() {
-		return isCarteraLbkVenta;
-	}
-
-	public void setIsCarteraLbkVenta(Boolean isCarteraLbkVenta) {
-		this.isCarteraLbkVenta = isCarteraLbkVenta;
 	}
 }

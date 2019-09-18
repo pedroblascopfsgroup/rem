@@ -177,6 +177,9 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVJuntasOrdinariaExtraExcelValidator juntasOrdinariasExtraordinarias;
 
+	@Autowired
+	private MSVGastosRefacturablesExcelValidator gastosRefacturables;
+		
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -292,6 +295,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return reclamacionesPlusvalia;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_JUNTAS.equals(codTipoOperacion)) {
 			return juntasOrdinariasExtraordinarias;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES.equals(codTipoOperacion)) {
+			return gastosRefacturables;
 		}
 
 		return null;

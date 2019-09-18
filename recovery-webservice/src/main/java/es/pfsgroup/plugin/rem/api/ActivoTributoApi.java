@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -65,7 +66,7 @@ public interface  ActivoTributoApi {
 
 	public Boolean deleteAdjuntoDeTributo(Long idTributo);
 
-	public Boolean comprobarSiExisteActivoTributo(WebFileItem webFileItem);
+	public Boolean comprobarSiExisteActivoTributo(WebFileItem webFileItem)throws GestorDocumentalException;
 
 	
 

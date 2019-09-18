@@ -24,7 +24,9 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercia
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearJuntaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPlusvaliaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearTributoDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
 
@@ -315,6 +317,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 	}
 
 	@Override
+
 	public RespuestaCrearExpediente crearPlusvalia(CrearPlusvaliaDto crearPlusvaliaDto) throws GestorDocumentalException {
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_POST);
@@ -333,6 +336,28 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		
 		return respuesta;
 	}
+
+	@Override
+	public RespuestaCrearExpediente crearTributo(CrearTributoDto crearTributo) throws GestorDocumentalException {
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setPath(getPathCrearTributo(crearTributo));
+		serverRequest.setMultipart(getMultipartCrearTributo(crearTributo));
+
+		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
+		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+
+		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+		}
+		if (Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);			
+		}
+		
+		return respuesta;
+	}
+
 	
 	private String getPathCrearPlusvalia(CrearPlusvaliaDto crearPlusvaliaDto) {
 		StringBuilder sb = new StringBuilder();
@@ -344,6 +369,21 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearPlusvaliaDto.getTipoClase());
 		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearPlusvaliaDto.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
 		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearPlusvaliaDto.getUsuarioOperacional());
+		
+		return sb.toString();
+	}
+
+	private String getPathCrearTributo(CrearTributoDto crearTributo) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/CrearContenedor");
+		sb.append("?").append(USUARIO_PATH).append(crearTributo.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(crearTributo.getPassword());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearTributo.getCodClase());
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearTributo.getUsuarioOperacional());
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearTributo.getTributoMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		
+
 
 		return sb.toString();
 	}
@@ -356,6 +396,17 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 				.field(DESCRIPCION_EXPEDIENTE, crearPlusvaliaDto.getDescripcionPlusvalia())
 				.field(COD_CLASE, crearPlusvaliaDto.getCodClase().toString())
 				.field(GASTO_METADATOS, crearPlusvaliaDto.getOperacionMetadatos());
+		return multipart;
+	}
+
+
+	private MultiPart getMultipartCrearTributo(CrearTributoDto crearTributo){
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearTributo.getUsuario())
+				.field(PASSWORD,  crearTributo.getPassword())
+				.field(COD_CLASE, crearTributo.getCodClase().toString())
+				.field(EXPEDIENTE_COMERCIAL_METADATOS, crearTributo.getTributoMetadatos())
+				.field(DESCRIPCION_EXPEDIENTE, crearTributo.getTributoDescripcion());
 		return multipart;
 	}
 

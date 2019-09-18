@@ -79,6 +79,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedient
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
 import es.pfsgroup.plugin.gestorDocumental.manager.RestClientManager;
+import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
@@ -3620,7 +3621,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto) {
+	public List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto) throws GestorDocumentalException {
 		List<DtoActivoTributos> tributos = new ArrayList<DtoActivoTributos>();
 		List<ActivoTributos> listTributos = new ArrayList<ActivoTributos>();
 
@@ -3651,19 +3652,45 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(tributo.getGastoProveedor())){
 					dtoTributo.setNumGastoHaya(tributo.getGastoProveedor().getNumGastoHaya());
 				}
-				Filter filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", tributo.getId());
-				ActivoAdjuntoTributo adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroAuditoria);
-				if(!Checks.esNulo(adjuntoTributo)) {
+				
+				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 					
-					dtoTributo.setExisteDocumentoTributo("true");
-					dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
-					dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
+					try {
+						DtoAdjunto adjuntoTributo = gestorDocumentalAdapterApi.getAdjuntoTributo(tributo);
+						if(!Checks.esNulo(adjuntoTributo)) {
+							dtoTributo.setExisteDocumentoTributo("true");
+							dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
+							dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
+							 
+						}else {
+							dtoTributo.setExisteDocumentoTributo("false");
+							dtoTributo.setDocumentoTributoNombre(null);
+							dtoTributo.setDocumentoTributoId(null);
+						}
+
+					}catch(GestorDocumentalException gex){
+						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+						if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
+							gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+						}
+					}
 				}else {
-					
-					dtoTributo.setExisteDocumentoTributo("false");
-					dtoTributo.setDocumentoTributoNombre(null);
-					dtoTributo.setDocumentoTributoId(null);
+				
+					Filter filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", tributo.getId());
+					ActivoAdjuntoTributo adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroAuditoria);
+					if(!Checks.esNulo(adjuntoTributo)) {
+						
+						dtoTributo.setExisteDocumentoTributo("true");
+						dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
+						dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
+					}else {
+						
+						dtoTributo.setExisteDocumentoTributo("false");
+						dtoTributo.setDocumentoTributoNombre(null);
+						dtoTributo.setDocumentoTributoId(null);
+					}
 				}
+				
 				tributos.add(dtoTributo);
 			}
 		}

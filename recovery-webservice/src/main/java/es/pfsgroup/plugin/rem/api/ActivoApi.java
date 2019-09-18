@@ -1232,7 +1232,7 @@ public interface ActivoApi {
 	 */	
 	public boolean insertarActAutoTram(DtoComercialActivo dto);
 
-	List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto);
+	List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto) throws GestorDocumentalException;
 	
 	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo);
 	

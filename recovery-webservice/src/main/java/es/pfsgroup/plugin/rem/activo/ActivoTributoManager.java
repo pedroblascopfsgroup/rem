@@ -23,10 +23,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
@@ -57,6 +59,9 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 
 	@Autowired
 	private ActivoAdapter adapter;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
 	@Override
 	@BusinessOperation(overrides = "activoTributoManager.get")
@@ -253,19 +258,31 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 	}
 	
 	@Override
-	public Boolean comprobarSiExisteActivoTributo(WebFileItem webFileItem) {
+	public Boolean comprobarSiExisteActivoTributo(WebFileItem webFileItem) throws GestorDocumentalException {
 		ActivoTributos activoTributo = getTributo(Long.parseLong(webFileItem.getParameter("idTributo")));
-		Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", activoTributo.getId());
 		
-		Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-
-		ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroAuditoria);
 		
-		if(Checks.esNulo(activoAdjuntoTributo)) {
-			return true;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+		DtoAdjunto adjuntoTributo = gestorDocumentalAdapterApi.getAdjuntoTributo(activoTributo);
+		
+			if(Checks.esNulo(adjuntoTributo)) {
+				return true;
+			}else {
+				return false;
+			}
 		}else {
-			return false;
-		}
 		
+			Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", activoTributo.getId());
+			
+			Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+	
+			ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroAuditoria);
+			
+			if(Checks.esNulo(activoAdjuntoTributo)) {
+				return true;
+			}else {
+				return false;
+			}
+		}
 	}
 }

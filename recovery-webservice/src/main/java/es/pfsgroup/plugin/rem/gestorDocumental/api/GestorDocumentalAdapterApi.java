@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
+import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
@@ -96,6 +97,10 @@ public interface GestorDocumentalAdapterApi {
 
 	void crearRelacionPlusvalia(ActivoPlusvalia activoPlusvalia, Long idDocRestClient, String activo, String username,
 			CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
-	
+
+	DtoAdjunto getAdjuntoTributo(ActivoTributos adjuntoTributo) throws GestorDocumentalException;
+
+	void crearTributo(ActivoTributos activoTributo, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
+
 
 }

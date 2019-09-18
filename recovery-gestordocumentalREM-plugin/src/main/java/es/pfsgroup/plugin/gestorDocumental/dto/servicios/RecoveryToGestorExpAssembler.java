@@ -144,6 +144,7 @@ public class RecoveryToGestorExpAssembler {
 		return sb.toString();
 	}
 	
+
 	// --------------------------------------------------- JUNTAS -------------------------------------------------------------------
 		
 	public CrearJuntaDto getCrearJuntaDto(String idJunta, String descripcionJunta, String username, String cliente, String idSistemaOrigen, String codClase, String tipoTrabajo) {
@@ -180,6 +181,22 @@ public class RecoveryToGestorExpAssembler {
 		sb.append("}");
 		return sb.toString();
 	}
+
+	public CrearTributoDto getCrearTributoDto(String id,  String userLogin, String tipoExpediente, String cliente) {
+		CrearTributoDto doc = new CrearTributoDto();
+	
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(GestorDocumentalConstants.CODIGO_CLASE_TRIBUTOS);
+		doc.setCodTipo(tipoExpediente);
+		doc.setUsuarioOperacional(userLogin);
+		doc.setTributoMetadatos(rellenarExpedienteComercialMetadatos(id, id, id, null, cliente));
+		doc.setTributoDescripcion(id);
+		
+		return doc;
+	}
+
+
 
 	private static String rellenarPlusvaliaMetadatos (String id, String idExterno, String idSistemaOrigen, String cliente) {
 		StringBuilder sb = new StringBuilder();

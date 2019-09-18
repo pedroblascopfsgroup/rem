@@ -453,21 +453,21 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            items: [{
 						            tooltip:'Añadir',
 						            getClass: function(v, metadata, record ) {
-						            		return 'fa-user blue-medium-color'
+						            		return 'ico-upload-documento'
 						            },
 						            handler: 'anyadirAdjuntoTributo'
 					        	},
 					        	{
 						            tooltip:'Eliminar',
 						            getClass: function(v, metadata, record ) {
-						            		return 'ico-download'
+						            		return 'ico-delete-documento'
 						            },
 						            handler: 'eliminarAdjuntoTributo'
 						        },
 						        {
 						            tooltip:'Descargar',
 						            getClass: function(v, metadata, record ) {
-						            		return 'fa-user blue-medium-color'
+						            		return 'ico-download'
 						            },
 						            handler: 'descargarAdjuntoTributo'
 						        }

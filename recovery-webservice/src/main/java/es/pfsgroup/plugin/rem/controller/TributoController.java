@@ -106,7 +106,7 @@ public class TributoController extends ParadiseJsonController {
 			ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo,filtroAuditoria);
 			
 			if(!Checks.esNulo(activoAdjuntoTributo)) {
-				id = activoAdjuntoTributo.getId();
+				id = activoAdjuntoTributo.getIdDocRestClient();
 				
 				String nombreDocumento = request.getParameter("nombreDocumento");
 				salida = response.getOutputStream();
@@ -144,6 +144,7 @@ public class TributoController extends ParadiseJsonController {
 		}
 
 	}
+
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

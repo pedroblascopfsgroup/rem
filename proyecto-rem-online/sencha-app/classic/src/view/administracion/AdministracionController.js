@@ -50,6 +50,23 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     
     control: {
     	
+    	
+        'documentosjuntas gridBase': {
+        	abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
+            onClickRemove: 'borrarDocumentoAdjunto',
+            download: 'downloadDocumentoAdjunto',
+            afterupload: function(grid) {
+            	grid.getStore().load();
+            	grid.up('form').funcionRecargar();
+            	grid.fireEvent("refreshComponent", "documentosjuntas");
+            },
+            
+             afterdelete: function(grid) {
+            	grid.getStore().load();
+            }
+            
+        },
+    	
     	'gestiongastoslist' : {
     		
     		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
@@ -150,6 +167,89 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	}
 
     },
+    
+        refrescarJuntas: function(detalle, callbackFn) {
+    	
+    	var me = this,
+    	id = detalle.getViewModel().get("junta.id");
+    	
+    	HreRem.model.GastoProveedor.load(id, {
+    		scope: this,
+		    success: function(junta) {
+		    	
+		    	detalle.getViewModel().set("junta", junta);		    	
+		    	detalle.configCmp(junta);
+		    	callbackFn();
+		    	HreRem.model.GastoAviso.load(id, {
+		    		scope: this,
+				    success: function(avisos) {
+			    		detalle.getViewModel().set("avisos", avisos);				    	
+				    }
+				});
+		    }
+		});
+    	
+    },
+    
+    abrirFormularioAdjuntarDocumentos: function(grid) {
+		var me = this,
+		idJunta = me.getViewModel().get("junta.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoJuntas", {entidad: 'activojuntapropietarios', idEntidad: idJunta, parent: grid}).show();
+		
+	},
+    
+	cargarTabData: function (form) {
+		var me = this,
+		model = form.getModelInstance(),
+		id = me.getViewModel().get("junta.id");
+		
+		form.up("tabpanel").mask(HreRem.i18n('msg.mask.loading'));	
+		model.setId(id);
+		model.load({
+		    success: function(record) {
+		    	
+		    	form.setBindRecord(record);		    	
+		    	form.up("tabpanel").unmask();
+		    },
+		    failure: function(operation) {		    	
+		    	form.up("tabpanel").unmask();
+		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    }
+		});
+	},
+	
+    borrarDocumentoAdjunto: function(grid, record) {
+		var me = this;
+		idJunta = me.getViewModel().get("junta.id");
+		id = grid.getSelection()[0].data.id;
+		url = $AC.getRemoteUrl('activojuntapropietarios/deleteAdjunto');
+		Ext.Ajax.request({
+			url : url,
+			params: {idEntidad: idJunta, id: id},
+            success: function(record, operation) {
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 grid.fireEvent("afterdelete", grid);
+            },
+            failure: function(record, operation) {
+                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                  grid.fireEvent("afterdelete", grid);
+            }
+            
+        });	
+	},
+	
+	downloadDocumentoAdjunto: function(grid, record) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"activojuntapropietarios/bajarAdjuntoJunta."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idJunta=me.getViewModel().get("junta.id");
+		config.params.nombreDocumento=record.get("nombre")
+		
+		me.fireEvent("downloadFile", config);
+	},
 
     //Funcion que se ejecuta al hacer click en el botón buscar gastos
 	onClickGastosSearch: function(btn) {
@@ -309,7 +409,6 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	
 	onClickAbrirPlusvalia: function(grid, record){
 		var me = this;
-		
     	me.getView().fireEvent('abrirDetallePlusvalia', record);
 		
 	},
@@ -1362,9 +1461,9 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     
     onRowClickJuntasList: function(gridView, record){
     	var me = this;
-    	
-    	Ext.create('HreRem.view.administracion.juntas.DatosJunta', { juntaactual: record }).show();
+    	me.getView().fireEvent('abrirDetalleJunta', record);
     },
+	
     
     onClickBotonCerrar: function(btn){
 		var me = this;

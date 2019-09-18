@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -12,16 +14,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDJuntaComunidades;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
@@ -111,6 +115,11 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 
 	@Column(name = "JCM_SUMINISTROS")
 	private Double suministros;
+	
+    @OneToMany(mappedBy = "activoJuntaPropietario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "JCM_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<ActivoAdjuntoJuntas> adjuntos;
 
 	@Version
 	private Long version;
@@ -308,6 +317,38 @@ public class ActivoJuntaPropietarios implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}	
+	}
+	
+	public List<ActivoAdjuntoJuntas> getAdjuntos() {
+		return adjuntos;
+	}
+
+	public void setAdjuntos(List<ActivoAdjuntoJuntas> adjuntos) {
+		this.adjuntos = adjuntos;
+	}
+    
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public ActivoAdjuntoJuntas getAdjunto(Long id) {
+        for (ActivoAdjuntoJuntas adj : getAdjuntos()) {
+            if (adj.getId().equals(id)) { return adj; }
+        }
+        return null;
+    }
+    
+    /**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public ActivoAdjuntoJuntas getAdjuntoGD(Long idDocRestClient) {
+    	for (ActivoAdjuntoJuntas adj : getAdjuntos()) {
+    		if(!Checks.esNulo(adj.getDocumento_Rest()) && adj.getDocumento_Rest().equals(idDocRestClient)) { return adj; }
+        }
+        return null;
+    }
 
 }

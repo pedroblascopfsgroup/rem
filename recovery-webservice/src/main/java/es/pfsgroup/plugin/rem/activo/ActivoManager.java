@@ -75,6 +75,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
 import es.pfsgroup.plugin.gestorDocumental.manager.RestClientManager;
@@ -155,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocPlusvalias;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
@@ -207,6 +209,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String URL_GDPR="gdpr.data.url";
 	private static final String AVISO_MENSAJE_MOTIVO_CALIFICACION = "activo.aviso.motivo.calificacion.duplicado";
 	private static final String AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE = "activo.aviso.precio.aprobado.apple";
+	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
+	private static final String OPERACION_ALTA = "Alta";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -6892,6 +6896,136 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return tramitable;
+	}
+
+	@Override
+	@BusinessOperation(overrides = "activoManager.deleteAdjuntoPlusvalia")
+	@Transactional(readOnly = false)
+	public boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto) {
+		boolean borrado = false;
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id", dtoAdjunto.getIdEntidad());
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false);
+		ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, filtroActivo, filtroBorrado);
+		
+		try {
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
+				
+				AdjuntoPlusvalias adjuntoPlusvaliasGD = activoPlusvalia.getAdjuntoGD(dtoAdjunto.getId());
+				if (adjuntoPlusvaliasGD == null) {
+					borrado = false;
+				}
+				activoPlusvalia.getAdjuntos().remove(adjuntoPlusvaliasGD);
+				genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
+
+
+			}else {
+				AdjuntoPlusvalias adjuntoPlusvalias = activoPlusvalia.getAdjunto(dtoAdjunto.getId());
+				if (adjuntoPlusvalias == null) {
+					borrado = false;
+				}
+				activoPlusvalia.getAdjuntos().remove(adjuntoPlusvalias);
+				genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
+			}
+		}catch(Exception ex) {
+			logger.debug(ex.getMessage());
+			borrado = false;
+		}
+		return borrado;
+	}
+
+	@Override
+	@BusinessOperation(overrides = "activoManager.uploadDocumentoPlusvalia")
+	@Transactional(readOnly = false)
+	public String uploadDocumentoPlusvalia(WebFileItem webFileItem, ActivoPlusvalia activoPlusvaliaEntrada,
+			String matricula) throws Exception {
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id", Long.parseLong(webFileItem.getParameter("idEntidad")));
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false);
+		ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, filtroActivo, filtroBorrado);
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+		DDTipoDocPlusvalias tipoDocumento = genericDao.get(DDTipoDocPlusvalias.class, filtro);
+		
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				Long idDocRestClient = gestorDocumentalAdapterApi.UploadDocumentoPlusvalia(activoPlusvalia, webFileItem,
+						usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+				CrearRelacionExpedienteDto crearRelacionExpedienteDto = new CrearRelacionExpedienteDto();
+				crearRelacionExpedienteDto.setTipoRelacion(RELACION_TIPO_DOCUMENTO_EXPEDIENTE);
+				String mat = tipoDocumento.getMatricula();
+				if (!Checks.esNulo(mat)) {
+					String[] matSplit = mat.split("-");
+					crearRelacionExpedienteDto.setCodTipoDestino(matSplit[0]);
+					crearRelacionExpedienteDto.setCodClaseDestino(matSplit[1]);
+				}
+				crearRelacionExpedienteDto.setOperacion(OPERACION_ALTA);
+				gestorDocumentalAdapterApi.crearRelacionPlusvalia(activoPlusvalia, idDocRestClient, activoPlusvalia.getActivo().getNumActivo().toString(),
+						usuarioLogado.getUsername(), crearRelacionExpedienteDto);
+				
+				AdjuntoPlusvalias adjuntoPlusvalia = new AdjuntoPlusvalias();
+				adjuntoPlusvalia.setPlusvalia(activoPlusvalia);
+				adjuntoPlusvalia.setTipoDocPlusvalias(tipoDocumento);
+				adjuntoPlusvalia.setContentType(webFileItem.getFileItem().getContentType());
+				adjuntoPlusvalia.setTamanyo(webFileItem.getFileItem().getLength());
+				adjuntoPlusvalia.setNombre(webFileItem.getFileItem().getFileName());
+				adjuntoPlusvalia.setDescripcion(webFileItem.getParameter("descripcion"));
+				adjuntoPlusvalia.setFechaDocumento(new Date());
+				adjuntoPlusvalia.setDocumentoRest(idDocRestClient);
+				Auditoria.save(adjuntoPlusvalia);
+				activoPlusvalia.getAdjuntos().add(adjuntoPlusvalia);
+				genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
+			} catch (GestorDocumentalException gex) {
+				logger.error(gex.getMessage());
+				return gex.getMessage();
+			}
+		}else {
+			
+			AdjuntoPlusvalias adjuntoPlusvalia = new AdjuntoPlusvalias();
+			
+			Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+			adjuntoPlusvalia.setAdjunto(adj);
+			
+			adjuntoPlusvalia.setPlusvalia(activoPlusvalia);
+			adjuntoPlusvalia.setTipoDocPlusvalias(tipoDocumento);
+			adjuntoPlusvalia.setContentType(webFileItem.getFileItem().getContentType());
+			adjuntoPlusvalia.setTamanyo(webFileItem.getFileItem().getLength());
+			adjuntoPlusvalia.setNombre(webFileItem.getFileItem().getFileName());
+			adjuntoPlusvalia.setDescripcion(webFileItem.getParameter("descripcion"));
+			adjuntoPlusvalia.setFechaDocumento(new Date());
+			
+			Auditoria.save(adjuntoPlusvalia);
+			activoPlusvalia.getAdjuntos().add(adjuntoPlusvalia);
+			genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
+		}
+		return null;
+	}
+
+	@Override
+	@BusinessOperationDefinition("activoManager.getFileItemPlusvalia")
+	public FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto) {
+		
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id", dtoAdjunto.getIdEntidad());
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false);
+		ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, filtroActivo, filtroBorrado);
+		AdjuntoPlusvalias adjunto = null;
+		FileItem fileItem = null;
+		
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId(),dtoAdjunto.getNombre());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		} else {
+			adjunto = activoPlusvalia.getAdjunto(dtoAdjunto.getId());
+			fileItem = adjunto.getAdjunto().getFileItem();
+			fileItem.setContentType(adjunto.getContentType());
+			fileItem.setFileName(adjunto.getNombre());
+		}
+		return fileItem;
 	}
 	
 	@Override

@@ -1,8 +1,12 @@
 Ext.define('HreRem.view.administracion.AdministracionModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.administracion',
-    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision', 'HreRem.model.ActivoJuntaPropietarios'],
+    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision', 'HreRem.model.ActivoJuntaPropietarios', 'HreRem.model.ComboBase', 'HreRem.model.JuntasPropietarios', 
+    	'HreRem.model.TipoDocumentoExpediente', 'HreRem.model.AdjuntoJuntas'],
 
+    data: {
+    	junta: null
+    },
     stores: {
 
     	gastosAdministracion: {
@@ -40,7 +44,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 
     	juntas: {
     		pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.ActivoJuntaPropietarios',
+	    	model: 'HreRem.model.JuntasPropietarios',
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/activojuntapropietarios.json',
@@ -81,6 +85,18 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 		        extraParams: {idProvision: '{provisionSeleccionada.id}'}
 	    	}
 
+    	},
+    	
+    	// STORE PESTAÑA DOCUMENTOS TIPO DE JUNTA
+    	comboTipoDocumento: {
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+	    		type: 'uxproxy', 
+	    		remoteUrl: 'generic/getDiccionario',
+	    		extraParams: {diccionario: 'tipoDocJunta'}
+	    	},
+	    	autoLoad: true,
+    		sorters: 'descripcion'
     	},
 
     	comboEstadosProvision: {
@@ -223,6 +239,28 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	        {"codigo":"1", "descripcion":"Si"},
 	        {"codigo":"2", "descripcion":"No"}
 	    ]
+	},
+	
+	storeActivos: {
+			model: 'HreRem.model.ActivosExpediente',
+	    	proxy: {
+	    		type: 'uxproxy', 
+	    		remoteUrl: 'expedientecomercial/getActivosExpediente',
+	    		extraParams: {idExpediente: '{expediente.id}'}
+	    	},
+	    	autoLoad: false
+    	},
+
+	
+	storeDocumentosJuntas: {
+		 pageSize: $AC.getDefaultPageSize(),
+		 model: 'HreRem.model.JuntasPropietarios',
+ 	     proxy: {
+ 	        type: 'uxproxy',
+ 	        remoteUrl: 'activojuntapropietarios/getListAdjuntos',
+ 	        extraParams: {idJunta: '{junta.id}'}
+     	 },
+     	 groupField: 'descripcionTipo'
 	}
 
   }

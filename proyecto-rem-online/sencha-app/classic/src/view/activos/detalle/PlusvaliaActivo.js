@@ -117,8 +117,20 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
             	},
             	allowBlank: true
 	        } ]
-	    }
-
+	    },{
+	    	
+	    xtype : 'fieldsettable',
+        defaultType : 'textfieldbase',
+        title : HreRem.i18n('title.documentos'),
+        collapsible : true,
+        items : [ 
+        		{
+	        		xtype:'adjuntosplusvalias',
+	        		reference: 'listadoadjuntosplusvalias',
+					colspan: 3
+        		}
+        	]
+    	}
 	    ];
 
 	    me.addPlugin({

@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -38,7 +39,6 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -1246,5 +1246,13 @@ public interface ActivoApi {
 	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
 
 	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
+
+	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
+	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
+
+	@BusinessOperationDefinition("activoManager.uploadDocumentoPlusvalia")
+	String uploadDocumentoPlusvalia(WebFileItem webFileItem,ActivoPlusvalia activoPlusvaliaEntrada, String matricula) throws Exception;
+
+	FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto);
 
 }

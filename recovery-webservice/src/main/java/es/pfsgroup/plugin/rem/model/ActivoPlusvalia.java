@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -20,10 +23,12 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
@@ -91,6 +96,11 @@ public class ActivoPlusvalia implements Serializable, Auditable {
     
     @Column(name = "ACT_PLS_OBSERVACIONES")
    	private String observaciones;
+    
+   @OneToMany(mappedBy = "plusvalia", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+   @JoinColumn(name = "PLS_ID")
+   @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+   private List<AdjuntoPlusvalias> adjuntos;
 	
 	@Version
 	private Long version;
@@ -217,6 +227,39 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
+	
+
+	public List<AdjuntoPlusvalias> getAdjuntos() {
+	return adjuntos;
+	}
+
+	public void setAdjuntos(List<AdjuntoPlusvalias> adjuntos) {
+	this.adjuntos = adjuntos;
+	}
+	   
+	/**
+	    * devuelve el adjunto por Id.
+	    * @param id id
+	    * @return adjunto
+	    */
+	   public AdjuntoPlusvalias getAdjunto(Long id) {
+	       for (AdjuntoPlusvalias adj : getAdjuntos()) {
+	           if (adj.getId().equals(id)) { return adj; }
+	       }
+	       return null;
+	   }
+	   
+	   /**
+	    * devuelve el adjunto por Id.
+	    * @param id id
+	    * @return adjunto
+	    */
+	   public AdjuntoPlusvalias getAdjuntoGD(Long idDocRestClient) {
+	   	for (AdjuntoPlusvalias adj : getAdjuntos()) {
+	    if(!Checks.esNulo(adj.getDocumentoRest()) && adj.getDocumentoRest().equals(idDocRestClient)) { return adj; }
+	       }
+	       return null;
+	   }
 	
 }
 	

@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.jbpm.ValidateJbpmApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
@@ -82,6 +83,7 @@ public class TareaActivoManager implements TareaActivoApi {
 	private static final String T013_DEFINICIONOFERTA = "T013_DefinicionOferta";
 	private static final String T013_RESOLUCIONCOMITE = "T013_ResolucionComite";
 	private static final String MENSAJE_OFERTAS_DEPENDIENTES = "Para sancionar esta oferta, hay que acceder a su Oferta Agrupada (Principal), cuyo enlace se muestra m&aacute;s abajo";
+	private static final String COMITE_SUPERIOR = "comiteSuperior";
 	
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;	
@@ -122,6 +124,9 @@ public class TareaActivoManager implements TareaActivoApi {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ValidateJbpmApi validateJbpmApi;
 	
 	@Override
 	public TareaActivo get(Long id) {
@@ -552,11 +557,12 @@ public class TareaActivoManager implements TareaActivoApi {
 	}
 	
 	@Override
-	public boolean validarTareaDependientes(TareaExterna tareaExterna, Oferta oferta, Map<String, Map<String,String>> valoresTareas) throws Exception {
+	public String validarTareaDependientes(TareaExterna tareaExterna, Oferta oferta, Map<String, Map<String,String>> valoresTareas) throws Exception {
 		List<Oferta> ofertasDependientes = null;
 		DtoGenericForm dto;
 		String validacionPrevia;
 		Map<String,String[]> valores = new HashMap<String,String[]>();
+		String comiteSuperior = "";
 		
 		TareaActivo tareaActivoPrincipal = getByIdTareaExterna(tareaExterna.getId());
 		
@@ -576,26 +582,46 @@ public class TareaActivoManager implements TareaActivoApi {
 				if (!Checks.esNulo(tareaDependiente) && !Checks.estaVacio(valores)) {
 					Map<String,String[]> valoresDependientes = valoresTareaDependiente(valores, tareaDependiente, oferta);
 					dto = agendaAdapter.convetirValoresToDto(valoresDependientes);
+					String errorSalida = "La oferta " + comprobarOferta.getNumOferta() + " tiene el siguiente error: ";
+					String errorValidacionTarea;
+					for (Map.Entry<String, String[]> entry : valoresDependientes.entrySet()) {
+						String key = entry.getKey();
+						if (COMITE_SUPERIOR.equals(key)){
+							comiteSuperior = entry.getValue()[0];
+						}
+					}
 					
 					validacionPrevia = agendaAdapter.getValidacionPrevia(dto.getForm().getTareaExterna().getTareaPadre().getId());
 					if (!Checks.esNulo(validacionPrevia) && !MENSAJE_OFERTAS_DEPENDIENTES.equals(validacionPrevia)) {
-						return false;
+						return errorSalida += validacionPrevia;
 					}
 					
 					TareaActivo tareaActivo = getByIdTareaExterna(dto.getForm().getTareaExterna().getId());
+					
+					if (T013_DEFINICIONOFERTA.equals(dto.getForm().getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						errorValidacionTarea = validateJbpmApi.definicionOfertaT013(dto.getForm().getTareaExterna(), comiteSuperior, valoresTareas);
+						if (!Checks.esNulo(errorValidacionTarea)) {
+							return errorSalida += errorValidacionTarea;
+						}
+					} else if (T013_RESOLUCIONCOMITE.equals(dto.getForm().getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						errorValidacionTarea = validateJbpmApi.resolucionComiteT013(dto.getForm().getTareaExterna(), valoresTareas);
+						if (!Checks.esNulo(errorValidacionTarea)) {
+							return errorSalida += errorValidacionTarea;
+						}
+					}
 					
 					String scriptValidacion = dto.getForm().getTareaExterna().getTareaProcedimiento().getScriptValidacionJBPM();
 					Object result = jbpmMActivoScriptExecutorApi.evaluaScript(tareaActivo.getTramite().getId(), dto.getForm().getTareaExterna().getId(), dto.getForm().getTareaExterna().getTareaProcedimiento().getId(),
 							null, scriptValidacion);
 					
 					if (!Checks.esNulo(result)) {
-						return false;
+						return errorSalida += result.toString();
 					}
 				}
 			}
 		}
 		
-		return true;
+		return null;
 	}
 	
 }

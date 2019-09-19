@@ -10313,12 +10313,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public DtoOferta searchOfertaCodigo(String numOferta, String numIdActivo) {
+	public DtoOferta searchOfertaCodigo(String numOferta, String id, String esAgrupacion) {
 		
-		long numeroOferta, idActivo;
+		long numeroOferta, idEntidad;
+		Boolean esUnaAgrupacion;
 		try {
+			esUnaAgrupacion = Boolean.parseBoolean(esAgrupacion);
+			
 			numeroOferta = Long.parseLong(numOferta);
-			idActivo = Long.parseLong(numIdActivo);
+			idEntidad = Long.parseLong(id);
 			
 			DtoOferta dtoOferta = new DtoOferta();
 			Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numeroOferta);
@@ -10335,7 +10338,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) &&
 						(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(eco.getEstado().getCodigo()) || DDEstadosExpedienteComercial.PTE_SANCION.equals(eco.getEstado().getCodigo()))) {
 				
-					if(ofertaApi.activoYaIncluidoEnOfertaAgrupadaLbk(idActivo, oferta)) {
+					if(!esUnaAgrupacion && ofertaApi.activoYaIncluidoEnOfertaAgrupadaLbk(idEntidad, oferta)) {
 						throw new JsonViewerException("La oferta que estás intentando crear tiene un activo ya contenido en la agrupación.");
 					}
 					

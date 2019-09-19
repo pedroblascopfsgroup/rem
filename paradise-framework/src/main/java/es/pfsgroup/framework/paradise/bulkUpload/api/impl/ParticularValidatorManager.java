@@ -3818,8 +3818,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
 						+ "JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
 						+ "JOIN ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR "
-						+ "JOIN DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID "
-						+ "WHERE TPR.DD_TPR_CODIGO IN ('35') "
+						+ "WHERE PVE.PVE_DOCIDENTIF IN ('A86744349') "
 						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");
 
 		return !"0".equals(resultado);

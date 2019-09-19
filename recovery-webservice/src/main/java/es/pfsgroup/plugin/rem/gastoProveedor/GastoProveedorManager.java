@@ -1056,7 +1056,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setImporteGastosRefacturables(importeGastosRefacturables);
 			
 			
-			if(detalleGasto.getGastoRefacturable() || Checks.esNulo(detalleGasto.getGastoRefacturable())) { 
+			if(Checks.esNulo(detalleGasto.getGastoRefacturable()) || (!Checks.esNulo(detalleGasto.getGastoRefacturable()) && detalleGasto.getGastoRefacturable())) { 
+ 
 				dto.setGastoRefacturableB(detalleGasto.getGastoRefacturable());
 			}else {
 				dto.setGastoRefacturableB(false);

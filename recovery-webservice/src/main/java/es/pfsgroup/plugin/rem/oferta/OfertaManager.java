@@ -3783,7 +3783,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			pvb += ofertaAceptada.getImporteOferta();
 
 			// Cuando es una oferta que se está creando no tienen que pasar los honorarios
-			if (!Checks.esNulo(gastosExpediente)) {
+			if (!Checks.estaVacio(gastosExpediente)) {
 				for (GastosExpediente gex : gastosExpediente) {
 					cco += gex.getImporteFinal() * gex.getImporteCalculo();
 				}

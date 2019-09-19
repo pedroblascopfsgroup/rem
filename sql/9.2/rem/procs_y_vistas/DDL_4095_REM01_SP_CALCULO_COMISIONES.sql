@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=ALBERT PASTOR
---## FECHA_CREACION=20190912
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20190919
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2 
---## INCIDENCIA_LINK=HREOS-6985
+--## INCIDENCIA_LINK=HREOS-7623
 --## PRODUCTO=NO
 --## 
 --## FINALIDAD: CALCULAR LAS COMISIONES DE LOS ACTIVOS          
@@ -15,6 +15,7 @@
 --##           0.4 [HREOS-7140] (ALBERT PASTOR) - Borrado de reglas no contempladas.
 --##		   0.5 [HREOS-7239] (ALBERT PASTOR) - Cambiamos el literal PRESCRIPCION por PRESCRIPCION
 --##		   0.6 [HREOS-7623] (Oscar Diestre) - Añadir campo CLASSTYPE
+--##		   0.6 [HREOS-7623] (Adrian Molina) - Arreglar condicionantes del delete
 --##########################################
 --*/
 
@@ -344,6 +345,9 @@ COMMIT;
 /*Borrado de casos de financieros y de alquiler*/
 
 V_SQL:='DELETE FROM '||V_ESQUEMA||'.TMP_COMISIONES_ACTIVOS WHERE CLASSTYPE = ''01'' AND OFFERTYPE = ''02'' ';
+EXECUTE IMMEDIATE V_SQL;
+
+V_SQL:='DELETE FROM '||V_ESQUEMA||'.TMP_COMISIONES_ACTIVOS WHERE CLASSTYPE = ''01'' AND SUBCARTERA <> ''139'' AND (STRECHMAX <> 99999999999999 OR STRECHMIN <> 0)';
 EXECUTE IMMEDIATE V_SQL;
 
 

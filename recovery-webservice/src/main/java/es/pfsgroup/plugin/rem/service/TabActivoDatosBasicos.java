@@ -721,7 +721,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}else {
 					activoDto.setPorcentajeParticipacion(aga.getParticipacionUA());
 					activoDto.setIdPrinexHPM(aga.getIdPrinexHPM());
-					activoDto.setNumActivoMatriz(aga.getAgrupacion().getActivoPrincipal().getNumActivo());
+					
+					Long idAM = activoDao.getIdActivoMatriz(aga.getAgrupacion().getId());
+					Activo activoMatriz = activoApi.get(idAM);
+					if (!Checks.esNulo(activoMatriz)) {
+						activoDto.setNumActivoMatriz(activoMatriz.getNumActivo());
+					}
+					
 					activoDto.setUnidadAlquilable(!isActivoMatriz);
 				}
 				activoApi.bloquearChecksComercializacionActivo(aga, activoDto);

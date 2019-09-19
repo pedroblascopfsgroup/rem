@@ -82,7 +82,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 		            dataIndex: 'estadoPresentacion',
 		            text: HreRem.i18n('fieldlabel.historico.tramitacion.titulo.estado'), 
 		            editor: {
-						xtype: 'combobox',								        		
+						xtype: 'combobox',
+						allowBlank: false,
 						store: new Ext.data.Store({
 							model: 'HreRem.model.ComboBase',
 							proxy: {
@@ -134,6 +135,17 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 		    me.addListener('selectionchange', function(grid, records) {
 	        	me.onGridBaseSelectionChange(grid, records);
 	        	me.evaluarBotonRemove(grid, records);
+	        	me.evaluarBotonAdd();
+	        });
+		    
+		    me.addListener('canceledit', function(editor){
+				me.disableAddButton(false);
+				me.disablePagingToolBar(false);
+	        	me.getSelectionModel().deselectAll();
+	        	if(editor.isNew) {
+	        		me.getStore().remove(me.getStore().getAt(me.editPosition));
+	        		editor.isNew = false;
+	        	}
 	        	me.evaluarBotonAdd();
 	        });
 	        

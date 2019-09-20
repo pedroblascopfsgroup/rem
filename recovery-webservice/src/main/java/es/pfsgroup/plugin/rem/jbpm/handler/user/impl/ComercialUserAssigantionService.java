@@ -146,7 +146,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			boolean isLiberbankTerciaria = false;
 			Oferta oferta = ofertaApi.getOfertaAceptadaByActivo(tareaActivo.getActivo());
 
-			DDComiteSancion comiteSancion = ofertaApi.calculoComiteLiberbank(oferta);
+			DDComiteSancion comiteSancion = ofertaApi.calculoComiteLiberbank(oferta, null);
 			String codigoCalculo = (!Checks.esNulo(comiteSancion) ? comiteSancion.getCodigo() : null);
 
 				if (!Checks.esNulo(codigoCalculo)) {

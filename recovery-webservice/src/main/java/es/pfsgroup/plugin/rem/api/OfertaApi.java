@@ -586,9 +586,9 @@ public interface OfertaApi {
 
 	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 
-	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
+	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
 
-	DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente);
+	DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
 
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
@@ -709,9 +709,9 @@ public interface OfertaApi {
 
 	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
 
-	DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente);
+	DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
 
-	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente);
+	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
 
 	/**
 	 * Método que comprueba si la oferta es una oferta principal

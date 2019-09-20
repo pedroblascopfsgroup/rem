@@ -1171,7 +1171,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente));
+				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente), null);
 				nuevoExpediente.setComiteSancion(comiteLbk);
 				nuevoExpediente.setComitePropuesto(comiteLbk);
 				
@@ -1181,7 +1181,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
 					Oferta nuevaOfertaPrincipal = oALbk.getOfertaPrincipal();
 					ExpedienteComercial nuevoEcoPrincipal = expedienteComercialApi.findOneByOferta(nuevaOfertaPrincipal);
-					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
 					nuevoEcoPrincipal.setComitePropuesto(comiteLbkPrincipal);
 					genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 				}

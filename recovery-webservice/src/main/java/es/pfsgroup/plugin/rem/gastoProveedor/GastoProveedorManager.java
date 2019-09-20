@@ -1050,7 +1050,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Double importeGastosRefacturables = 0.0;
 			
 			for (GastoProveedor gastoRefactu : getGastosRefacturablesGasto(gasto.getId())) {
-				importeGastosRefacturables += gastoRefactu.getGastoDetalleEconomico().getImporteTotal();
+				if(!Checks.esNulo(gastoRefactu.getGastoDetalleEconomico()) && !Checks.esNulo(gastoRefactu.getGastoDetalleEconomico().getImporteTotal())) {
+					importeGastosRefacturables += gastoRefactu.getGastoDetalleEconomico().getImporteTotal();
+				}
 			}
 			
 			dto.setImporteGastosRefacturables(importeGastosRefacturables);
@@ -1070,13 +1072,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				
 				if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())) {
 				
-					if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
+					if((!Checks.esNulo(gasto.getGastoDetalleEconomico()) && !Checks.esNulo(gasto.getGastoDetalleEconomico().getGastoRefacturable()) && !gasto.getGastoDetalleEconomico().getGastoRefacturable()) 
+						||	(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
 						||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
 						||	DDEstadoGasto.PAGADO.equals(estadoGasto)
-						||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)
-						||  !(gasto.getGastoDetalleEconomico().getGastoRefacturable())
-						||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto)) {
+						||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)  
+						||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto))) {
 							dto.setBloquearCheckRefacturado(false);
+					}
+					if (!Checks.esNulo(gasto.getCartera())
+							&& (!DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getCartera().getCodigo())
+									|| !DDCartera.CODIGO_CARTERA_SAREB.equals(gasto.getCartera().getCodigo()))) {
+						dto.setBloquearCheckRefacturado(true);
 					}
 				}else {
 					dto.setBloquearCheckRefacturado(true);

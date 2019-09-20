@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -2527,6 +2528,25 @@ public class AgrupacionAdapter {
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 
+			List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
+		
+
+			if (!Checks.esNulo(dto.getNumOferPrincipal()) || (Checks.esNulo(dto.getNumOferPrincipal()) && !Checks.esNulo(dto.getClaseOferta()))){
+				// Se le pasa primero la oferta PRINCIPAL y luego la DEPENDIENTE, siendo la principal la que introduce el usuario y la dependiente la actual que estamos creando
+				Oferta oferPrincipal = null;
+				if (!Checks.esNulo(dto.getNumOferPrincipal())) {
+					oferPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
+					
+					// Si la oferta que vamos a poner como principal es agrupada o individual, le cambiamos la clase
+					if (!DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferPrincipal.getClaseOferta().getCodigo())) {
+						ofertaApi.actualizaClaseOferta(oferPrincipal, DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+					}
+				}
+				ofertasAgrupadas = ofertaApi.buildListaOfertasAgrupadasLbk(oferPrincipal, oferta, dto.getClaseOferta());
+			}
+			
+			oferta.setOfertasAgrupadas(ofertasAgrupadas);
+			
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 
 			oferta.setActivosOferta(listaActOfr);

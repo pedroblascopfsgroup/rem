@@ -302,7 +302,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			activo.setTieneOkTecnico(dto.getTieneOkTecnico());
 		}
 		//HREOS-7085 - establecer campo “Servicer”
-		String codCS = activo.getCesionSaneamiento().getCodigo();
+		String codCS = (!Checks.esNulo(activo.getCesionSaneamiento())) ? activo.getCesionSaneamiento().getCodigo() : null;
 		String codTitulo = null;
 		
 		if(activo.getSituacionPosesoria().getConTitulo() != null) {

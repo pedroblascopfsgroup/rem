@@ -2164,12 +2164,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView searchOfertaCodigo(@RequestParam String numOferta, @RequestParam String idActivo) {
+	public ModelAndView searchOfertaCodigo(@RequestParam String numOferta, @RequestParam String id, @RequestParam String esAgrupacion) {
 		ModelMap model = new ModelMap();
 
 		try {
 			model.put(RESPONSE_SUCCESS_KEY, true);
-			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.searchOfertaCodigo(numOferta, idActivo));
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.searchOfertaCodigo(numOferta, id, esAgrupacion));
 
 		} catch(JsonViewerException jve) {
 			logger.error("Error en expedienteComercialController", jve);

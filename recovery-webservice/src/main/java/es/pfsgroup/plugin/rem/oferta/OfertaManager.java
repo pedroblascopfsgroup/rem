@@ -3615,8 +3615,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean faltanDatosCalculo (Oferta ofertaAceptada) {
 		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
 
-		vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
-		
+		if(!Checks.estaVacio(ofertaAceptada.getActivoPrincipal().getTasacion())) {
+			vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+		}
 		pvb = ofertaAceptada.getImporteOferta();
 
 		
@@ -3695,7 +3696,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 		// Si la oferta es individual o principal (aún no tiene dependientes) el cálculo se hace sobre si misma
 		}else {
-			vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+			if(!Checks.estaVacio(ofertaAceptada.getActivoPrincipal().getTasacion())) {
+				vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+			}
 			
 			pvb = ofertaAceptada.getImporteOferta();
 
@@ -3765,7 +3768,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			for(ActivoAgrupacionActivo aga : activos) {
 				Activo activo = aga.getActivo();
 				
-				vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				if(!Checks.estaVacio(activo.getTasacion())) {
+					vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				}
 				
 				List<ActivoValoraciones> valoraciones = activo.getValoracion();
 				
@@ -3782,7 +3787,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			pvb += ofertaAceptada.getImporteOferta();
 
 			// Cuando es una oferta que se está creando no tienen que pasar los honorarios
-			if (!Checks.esNulo(gastosExpediente)) {
+			if (!Checks.estaVacio(gastosExpediente)) {
 				for (GastosExpediente gex : gastosExpediente) {
 					cco += gex.getImporteFinal() * gex.getImporteCalculo();
 				}
@@ -3825,7 +3830,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	private DDComiteSancion devuelveComiteSancionador (Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr) {
 		Double importeUmbral = 500000.0;
-		Double perdida = pvn-vr;
+		Double perdida = pvn-vnc;
 		Double perdidaValorAbsoluto = Math.abs(perdida);
 		Double porcentajevnc = vnc * 0.2;
 		Double umbralPerdida = 100000.0;
@@ -3844,7 +3849,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(vta > (importeUmbral * 10)) {
 				return genericDao.get(DDComiteSancion.class, filtroDireccion);
 			}else if(vta <= (importeUmbral * 10) && vta >= importeUmbral) {
-				if(perdida > 0 || perdidaValorAbsoluto <= umbralPerdida || perdidaValorAbsoluto <= porcentajevnc) {
+				if(perdida > 0 || (perdidaValorAbsoluto <= umbralPerdida && perdidaValorAbsoluto <= porcentajevnc)) {
 					return genericDao.get(DDComiteSancion.class, filtroInversion);
 				}else if(perdidaValorAbsoluto > umbralPerdida || perdidaValorAbsoluto > porcentajevnc) {
 					return genericDao.get(DDComiteSancion.class, filtroDireccion);
@@ -3875,70 +3880,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<Oferta> listaOfertas = new ArrayList<Oferta>();
 		DDComiteSancion comiteSancionador = null;
 
-		// Añado la oferta principal
-		listaOfertas.add(principal); 
-		
-		// Añado las dependientes
-		for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
-			if (!lisOf.getOfertaDependiente().getId().equals(ofertaNueva.getId())){
-				listaOfertas.add(lisOf.getOfertaDependiente());
-			}
-		} 
-		
-		
-		// Recorro todas las ofertas que tiene la agrupación y sumamos los valores
-		for (Oferta oferta : listaOfertas) {
-			if (esLote) {
-				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
-				
-				for(ActivoAgrupacionActivo aga : activos) {
-					Activo activo = aga.getActivo();
-					
-					vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
-
-					// Cálculo del VNC y VR
-					List<ActivoValoraciones> valoraciones = activo.getValoracion();
-					for (ActivoValoraciones valoracion : valoraciones) {
-						String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-						if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-							vnc += valoracion.getImporte();
-						}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-							vr  += valoracion.getImporte();
-						}
-					}
-				}
-			}else {
-				vta += oferta.getActivoPrincipal().getTasacion().get(oferta.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
-				
-				// Cálculo del VNC y VR
-				List<ActivoValoraciones> valoraciones = oferta.getActivoPrincipal().getValoracion();
-				for (ActivoValoraciones valoracion : valoraciones) {
-					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-						vnc += valoracion.getImporte();
-					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-						vr  += valoracion.getImporte();
-					}
-				}
-			}
-			
-			pvb += oferta.getImporteOferta();
-			
-			ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
-
-			if (!Checks.esNulo(expedienteComercial) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-				List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
-				
-				if (!Checks.esNulo(listaHonorarios)) {
-					for (GastosExpediente gex : listaHonorarios) {
-						cco += gex.getImporteFinal() * gex.getImporteCalculo();
-					}
-				}
-			}
-			
-		}
-		
 		// La oferta actual que estamos creando la suma por separado a la agrupación
 		
 		if (esLote) {
@@ -3948,7 +3889,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			for(ActivoAgrupacionActivo aga : activos) {
 				Activo activo = aga.getActivo();
 				
-				vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				if(!Checks.estaVacio(activo.getTasacion())) {
+					vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				}
 
 				// Cálculo del VNC y VR
 				List<ActivoValoraciones> valoraciones = activo.getValoracion();
@@ -3962,8 +3905,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}else {
-			vta += ofertaNueva.getActivoPrincipal().getTasacion().get(ofertaNueva.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
-
+			if(!Checks.estaVacio(ofertaNueva.getActivoPrincipal().getTasacion())) {
+				vta += ofertaNueva.getActivoPrincipal().getTasacion().get(ofertaNueva.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+			}
 			List<ActivoValoraciones> valoraciones = ofertaNueva.getActivoPrincipal().getValoracion();
 			for (ActivoValoraciones valoracion : valoraciones) {
 				String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
@@ -4640,7 +4584,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return oferta;
 	}
 	
-	public boolean isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String,String>> valores) {
+	@Override
+	public String isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String,String>> valores) {
 		Oferta oferta = tareaOferta(tareaExterna.getTareaPadre().getId());
 		if (!Checks.esNulo(oferta) && isOfertaPrincipal(oferta)) {
 			try {
@@ -4651,7 +4596,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		return true;
+		return null;
 	}
 	
 	@Override
@@ -4709,6 +4654,47 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		for(Activo act : activosEnLaAgrupacion) {
 			if(idActivo.equals(act.getId()))
 				return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean agrupacionConActivoYaIncluidoEnOfertaAgrupadaLbk(Long idAgrupacion, Oferta ofertaPrincipal) 
+	{
+		Filter filtroIdOferta = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", ofertaPrincipal.getId());	
+		Filter filtroBorradoOferta = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroIdOferta, filtroBorradoOferta);
+		
+		// En esta lista insertaré todos los activos que pertenecen a las ofertas dependientes.
+		List<Activo> activosEnLaOfertaAgrupada = new ArrayList<Activo>();		
+		for(OfertasAgrupadasLbk ogrLbk : ofertasAgrupadasLbk) {
+			List<ActivoOferta> actOfrDependList = ogrLbk.getOfertaDependiente().getActivosOferta();
+			for(ActivoOferta actOfr : actOfrDependList) {
+				activosEnLaOfertaAgrupada.add(actOfr.getPrimaryKey().getActivo());
+			}
+		}
+		// Tambien incluyo los activos relacionados con la oferta principal.
+		List<ActivoOferta> actOfrPrincList = ofertaPrincipal.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrPrincList) {
+			activosEnLaOfertaAgrupada.add(actOfr.getPrimaryKey().getActivo());
+		}
+		
+		Filter filtroIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion);	
+		Filter filtroBorradoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtroIdAgrupacion, filtroBorradoAgrupacion);
+		
+		List<Activo> activosEnAgrupacion = new ArrayList<Activo>();
+		
+		for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+			activosEnAgrupacion.add(aga.getActivo());
+		}
+		
+		for(Activo actOfr : activosEnLaOfertaAgrupada) {
+			for(Activo actAgr : activosEnAgrupacion)
+			{
+				if(actAgr.getId().equals(actOfr.getId()))
+					return true;
+			}
 		}
 		return false;
 	}

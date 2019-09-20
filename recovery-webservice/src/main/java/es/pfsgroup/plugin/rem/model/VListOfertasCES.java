@@ -49,7 +49,7 @@ public class VListOfertasCES implements Serializable {
 	@Column(name = "BIE_DREG_NUM_FINCA")
 	private String fincaRegistral;
 	
-	@Column(name = "BIE_DREG_REFERENCIA_CATASTRAL")
+	@Column(name = "CAT_REF_CATASTRAL")
 	private String referenciaCatastral;
 	
 	@Column(name = "BIE_LOC_DIRECCION")
@@ -67,6 +67,9 @@ public class VListOfertasCES implements Serializable {
 	@Column(name = "VAL_IMPORTE")
 	private String importeVentaActivo;
 	
+	@Column(name = "N_LEADS")
+	private String numeroLeadsActivo;
+
 	@Column(name = "N_OFERTAS")
 	private String numeroOfertasActivo;
 	
@@ -204,6 +207,14 @@ public class VListOfertasCES implements Serializable {
 		this.importeVentaActivo = importeVentaActivo;
 	}
 
+	public String getNumeroLeadsActivo() {
+		return numeroLeadsActivo;
+	}
+
+	public void setNumeroLeadsActivo(String numeroLeadsActivo) {
+		this.numeroLeadsActivo = numeroLeadsActivo;
+	}
+	
 	public String getNumeroOfertasActivo() {
 		return numeroOfertasActivo;
 	}
@@ -227,10 +238,5 @@ public class VListOfertasCES implements Serializable {
 	public void setCompradoresExpediente(String compradoresExpediente) {
 		this.compradoresExpediente = compradoresExpediente;
 	}
-	
-
-
-
-
 
 }

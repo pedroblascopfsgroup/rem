@@ -36,8 +36,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
     		handler: 'onClickCrearOferta'}];
 
 		me.items = [
-			{
-				
+			{				
 						xtype:'fieldset',
 						cls	: 'panel-base shadow-panel',
 						title: HreRem.i18n('title.nueva.oferta'),
@@ -45,7 +44,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 					        type: 'table',
 					        // The total column count must be specified here
 					        columns: 2,
-					        trAttrs: {height: '45px', width: '50%'},
+					        //trAttrs: {height: '45px', width: '50%'},
 					        tdAttrs: {width: '50%'},
 					        tableAttrs: {
 					            style: {
@@ -115,29 +114,27 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 				            		value: '{oferta.tipoOferta}'
 				            	},
 				            	displayField: 'descripcion',
-	    						valueField: 'codigo',
+	    						valueField: 'codigo',	    						
 	    						listeners: {
 	    							change: function(combo, value) {
-	    								var me = this;
+	    								var me = this;	    								
 	    								var form = combo.up('form');
 	    								var lockClaseOferta = form.down('field[name=claseOferta]');
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								var checkBuscadorOferta = form.down('field[name=buscadorNumOferPrincipal]');
 	    								var viewModelSlide = this.up("slidedatosoferta").viewModel;
 	    								
-	    								if(viewModelSlide.data.esAgrupacionLiberbank || viewModelSlide.data.isCarteraLiberbank) {
-	    									lockClaseOferta.reset();
+	    								if((viewModelSlide.data.esAgrupacionLiberbank || viewModelSlide.data.isCarteraLiberbank)
+	    										&& CONST.TIPOS_OFERTA['VENTA'] == value ) {	    										
+	    										    											    										
 	    									lockClaseOferta.setHidden(false);
-	    									lockClaseOferta.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-	    									lockClaseOferta.hidden ? lockClaseOferta.setAllowBlank(true) : lockClaseOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-		    								checkNumOferPrin.reset();
-		    								checkNumOferPrin.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-		    								checkNumOferPrin.hidden ? checkNumOferPrin.setAllowBlank(true) : checkNumOferPrin.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
-		    								checkBuscadorOferta.reset();
-		    								checkBuscadorOferta.hidden ? checkBuscadorOferta.setAllowBlank(true) : checkBuscadorOferta.setAllowBlank(CONST.TIPOS_OFERTA['ALQUILER'] == value);
+	    									checkNumOferPrin.setHidden(false);
+	    									checkBuscadorOferta.setHidden(false);
 	    								} else {
 	    									lockClaseOferta.setHidden(true);
-	    								}
+	    									checkNumOferPrin.setHidden(true);
+	    									checkBuscadorOferta.setHidden(true);
+	    								}	    									    								
 	    							}
 	    						},
 			    				colspan: 2
@@ -150,8 +147,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									value: '{oferta.nombreCliente}',
 									disabled: '{oferta.razonSocialCliente}',
 									allowBlank: '{oferta.razonSocialCliente}'
-								}
-								
+								}								
 		            	    },
 		            	    {
 		            	    	fieldLabel: HreRem.i18n('fieldlabel.apellidos.cliente'),
@@ -286,8 +282,7 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 									value: '{oferta.codigoPrescriptor}'
 								},
 								allowBlank: false,
-								triggers: {
-									
+								triggers: {									
 										buscarEmisor: {
 								            cls: Ext.baseCSSPrefix + 'form-search-trigger',
 								            handler: 'buscarPrescriptor'
@@ -364,15 +359,14 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								xtype: 'comboboxfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
 								itemId: 'comboClaseOferta',
-								name: 'claseOferta',
+								name: 'claseOferta',								
 								flex:	1,
 					        	colspan: 2,
 								allowBlank: true,
-								bind: {
+								bind: {											
 									store: '{comboClaseOferta}',
 									value: '{oferta.claseOferta}'
-								},
-								disabled: '{isLiberbank}',
+								},							
 								displayField: 'descripcion',
 								valueField: 'codigo',
 								listeners: {
@@ -382,9 +376,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								checkNumOferPrin.reset();
 	    								checkNumOferPrin.setDisabled("02" != value);
+	    								checkNumOferPrin.setAllowBlank("02" != value);
 	    								var buscaNumOferPrin = form.down('field[name=buscadorNumOferPrincipal]');
 	    								buscaNumOferPrin.reset();
     									buscaNumOferPrin.setDisabled("02" != value);
+    									buscaNumOferPrin.setAllowBlank("02" != value);
 	    							}
 	    						}
 							},
@@ -393,12 +389,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 								fieldLabel: HreRem.i18n('fieldlabel.buscador.oferta'),
 								name: 'buscadorNumOferPrincipal',
 								maskRe: /[0-9.]/,
-								bind: {
-									value: '{oferta.buscadorNumOferPrincipal}',
-										hidden: '{esLiberbank}'
-								},
-								allowBlank: true,
-	    						disabled: true,
+								bind: {									
+									value: '{oferta.buscadorNumOferPrincipal}'										
+								},								
+								allowBlank: true,								
+	    						disabled: true,	    						
 								triggers: {
 									
 										buscarNumOferta: {
@@ -420,12 +415,12 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 							{
 								xtype: 'textfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.numOferPrincipal'),
-								name: 		'numOferPrincipal', 
-								readOnly: true,
+								name: 		'numOferPrincipal',								
+								readOnly: true,								
 								allowBlank: true,
-								bind: 		{
+								bind: {
 									value: '{oferta.numOferPrincipal}'
-								},
+								},								
 					        	colspan: 2
 							}
 						]

@@ -557,7 +557,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return true;
 	}
-
+	
+	@Override
+	public List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		List<GastosExpediente> gastosExpediente = genericDao.getList(GastosExpediente.class, filtro);
+		
+		return gastosExpediente;
+	}
+	
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente) {
@@ -607,6 +615,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getNumOferPrincipal())) {
 				try {				
 					Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
+					Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
+					Filter deletedFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
+					Oferta antiguoOfertaPrincipal = oALbk.getOfertaPrincipal();
+					
 					if(!Checks.esNulo(nuevaOfertaPrincipal)) {	
 						if(!ofertaApi.ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
 						{
@@ -651,6 +664,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
 							nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);						
 							genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
+							
+							//Re calculo de comité
+							//Dependiente de una oferta princiapl -> Dependiente de otra oferta princiapl
+							//La antigua oferta principal
+							ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(antiguoOfertaPrincipal);
+							DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(antiguoOfertaPrincipal, getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()));
+							antiguoEcoPrincipal.setComitePropuesto(comiteLbkA);
+							genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
+							
+							//El nuevo ofertaprincipal
+							ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
+							DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+							nuevoEcoPrincipal.setComitePropuesto(comiteLbkB);
+							genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
+							
 						}
 						else {
 							logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
@@ -718,6 +746,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
 								nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);							
 								genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
+								
+								ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
+								DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+								nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
+								genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 							}
 							else {
 								logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
@@ -751,6 +784,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						ofertaAgrupadaLbk.setAuditoria(auditoria);					
 						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
 						
+						ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
+						DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()));
+						antiguoEcoPrincipal.setComitePropuesto(comiteLbk);
+						genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
+						
 					} catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta dependiente a individual.", ex);
 						return false;
@@ -771,6 +809,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 						ofertaAgrupadaLbk.setAuditoria(auditoria);					
 						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
+						
+						ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
+						DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()));
+						antiguoEcoPrincipal.setComitePropuesto(comiteLbkA);
+						genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
+						
+						ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(oferta);
+						DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(oferta, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+						expedienteComercial.setComitePropuesto(comiteLbkB);
 						
 					} catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta dependiente a principal.", ex);
@@ -831,7 +878,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										auditoria.setFechaBorrar(new Date());
 										auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 										ofertaAgrupadaLbk.setAuditoria(auditoria);					
-										genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);							
+										genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
+										
+										ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
+										DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()));
+										antiguoEcoPrincipal.setComitePropuesto(comiteLbk);
+										genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
 										
 										Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
 										DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
@@ -851,6 +903,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
 									nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);					
 									genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
+									
+									ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
+									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+									nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
+									genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 								}
 								else {
 									logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
@@ -902,6 +959,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);
 									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
 									genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+									
+									ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
+									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+									nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
+									genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 									
 								} 
 								// Si la oferta principal tiene ofertas dependientes, no puede pasar a ser dependiente de otra agrupacion que no sea la suya.
@@ -10110,12 +10172,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public DtoOferta searchOfertaCodigo(String numOferta, String numIdActivo) {
+	public DtoOferta searchOfertaCodigo(String numOferta, String id, String esAgrupacion) {
 		
-		long numeroOferta, idActivo;
+		long numeroOferta, idEntidad;
+		Boolean esUnaAgrupacion;
 		try {
+			esUnaAgrupacion = Boolean.parseBoolean(esAgrupacion);
+			
 			numeroOferta = Long.parseLong(numOferta);
-			idActivo = Long.parseLong(numIdActivo);
+			idEntidad = Long.parseLong(id);
 			
 			DtoOferta dtoOferta = new DtoOferta();
 			Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numeroOferta);
@@ -10132,7 +10197,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) &&
 						(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(eco.getEstado().getCodigo()) || DDEstadosExpedienteComercial.PTE_SANCION.equals(eco.getEstado().getCodigo()))) {
 				
-					if(ofertaApi.activoYaIncluidoEnOfertaAgrupadaLbk(idActivo, oferta)) {
+					if(!esUnaAgrupacion && ofertaApi.activoYaIncluidoEnOfertaAgrupadaLbk(idEntidad, oferta)) {
 						throw new JsonViewerException("La oferta que estás intentando crear tiene un activo ya contenido en la agrupación.");
 					}
 					

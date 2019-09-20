@@ -90,7 +90,7 @@ public class ListaOfertasCESExcelReport extends AbstractExcelReport implements E
 			fila.add(fechaPrevista);//Fecha Prevista firma
 			fila.add(ofertaCES.getImporteOferta());//OFFER (€)
 			fila.add(ofertaCES.getImporteVentaActivo());//ASKING PRICE
-			fila.add("");//LEADS NUMBER
+			fila.add(ofertaCES.getNumeroLeadsActivo());//LEADS NUMBER
 			fila.add(ofertaCES.getNumeroVisitasActivo());//VISITS NUMBER
 			fila.add(ofertaCES.getNumeroOfertasActivo());//OFFERS NUMBER
 			

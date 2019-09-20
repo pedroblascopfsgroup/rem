@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20190829
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7516
+--## INCIDENCIA_LINK=HREOS-7708
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -29,11 +29,20 @@ DECLARE
 BEGIN	
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+	
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
+	SET 
+  TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI  ?  ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : comprobarComiteLiberbankPlantillaPropuesta() ? existeAdjuntoUGCarteraValidacion("36", "E", "08") : definicionOfertaT013(valores[''''T013_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01")'' ,
+	USUARIOMODIFICAR = ''HREOS-7708'', 
+	FECHAMODIFICAR = SYSDATE 
+	WHERE TAP_CODIGO = ''T013_DefinicionOferta''';
+
+  EXECUTE IMMEDIATE V_MSQL;
 
   V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
   SET 
-  TAP_SCRIPT_VALIDACION = ''isOfertaDependiente() ? ''''Para sancionar esta oferta, hay que acceder a su Oferta Agrupada (Principal), cuyo enlace se muestra m&aacute;s abajo'''' : checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' '',
-  USUARIOMODIFICAR = ''HREOS-7516'', 
+  TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''T013_ResolucionComite''''][''''comboResolucion''''] != DDResolucionComite.CODIGO_APRUEBA ? (valores[''''T013_ResolucionComite''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_CONTRAOFERTA ? checkBankia() || checkLiberbank() || checkGiants() ? null : existeAdjuntoUGValidacion("22","E") : null) : resolucionComiteT013() '' ,
+  USUARIOMODIFICAR = ''HREOS-7708'', 
   FECHAMODIFICAR = SYSDATE 
   WHERE TAP_CODIGO = ''T013_ResolucionComite''';
 

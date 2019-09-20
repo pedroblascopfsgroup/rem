@@ -1954,6 +1954,10 @@ public class AgrupacionAdapter {
 			obraNueva.setFechaAlta(new Date());
 			obraNueva.setNumAgrupRem(numAgrupacionRem);
 			obraNueva.setDireccion(dtoAgrupacion.getDireccion());
+			
+			obraNueva.setComercializableConsPlano(false);
+			obraNueva.setExistePiloto(false);
+			obraNueva.setEsVisitable(false);
 
 		    genericDao.save(ActivoObraNueva.class, obraNueva);
 
@@ -1970,6 +1974,11 @@ public class AgrupacionAdapter {
 			restringida.setFechaAlta(new Date());
 			restringida.setNumAgrupRem(numAgrupacionRem);
 			restringida.setDireccion(dtoAgrupacion.getDireccion());
+			
+			restringida.setComercializableConsPlano(false);
+			restringida.setExistePiloto(false);
+			restringida.setEsVisitable(false);
+			
 			genericDao.save(ActivoRestringida.class, restringida);
 
 			dtoAgrupacion.setId(restringida.getId().toString());
@@ -1984,6 +1993,11 @@ public class AgrupacionAdapter {
 			proyecto.setFechaAlta(new Date());
 			proyecto.setNumAgrupRem(numAgrupacionRem);
 			proyecto.setDireccion(dtoAgrupacion.getDireccion());
+			
+			proyecto.setComercializableConsPlano(false);
+			proyecto.setExistePiloto(false);
+			proyecto.setEsVisitable(false);
+			
 			genericDao.save(ActivoProyecto.class, proyecto);
 			
 			dtoAgrupacion.setId(proyecto.getId().toString());
@@ -2001,6 +2015,11 @@ public class AgrupacionAdapter {
 			asistida.setFechaFinVigencia(dtoAgrupacion.getFechaFinVigencia());
 			asistida.setNumAgrupRem(numAgrupacionRem);
 			asistida.setDireccion(dtoAgrupacion.getDireccion());
+			
+			asistida.setComercializableConsPlano(false);
+			asistida.setExistePiloto(false);
+			asistida.setEsVisitable(false);
+			
 			genericDao.save(ActivoAsistida.class, asistida);
 			
 			dtoAgrupacion.setId(asistida.getId().toString());
@@ -2024,6 +2043,11 @@ public class AgrupacionAdapter {
 				DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAlquiler.CODIGO_NO_DEFINIDO));
 				loteComercial.setTipoAlquiler(tipoAlquiler);
 			}
+			
+			loteComercial.setComercializableConsPlano(false);
+			loteComercial.setExistePiloto(false);
+			loteComercial.setEsVisitable(false);
+			
 			genericDao.save(ActivoLoteComercial.class, loteComercial);
 
 			dtoAgrupacion.setId(loteComercial.getId().toString());
@@ -2039,6 +2063,10 @@ public class AgrupacionAdapter {
 			promocionAlquiler.setFechaAlta(new Date());
 			promocionAlquiler.setNumAgrupRem(numAgrupacionRem);
 			promocionAlquiler.setDireccion(dtoAgrupacion.getDireccion());
+			
+			promocionAlquiler.setComercializableConsPlano(false);
+			promocionAlquiler.setExistePiloto(false);
+			promocionAlquiler.setEsVisitable(false);
 
 		    genericDao.save(ActivoPromocionAlquiler.class, promocionAlquiler);
 

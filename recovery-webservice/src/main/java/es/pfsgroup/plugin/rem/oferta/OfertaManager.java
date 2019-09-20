@@ -3876,7 +3876,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<Oferta> listaOfertas = new ArrayList<Oferta>();
 		DDComiteSancion comiteSancionador = null;
 
-		// Añado la oferta principal
+		/*// Añado la oferta principal
 		listaOfertas.add(principal); 
 		
 		// Añado las dependientes
@@ -3939,7 +3939,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			
 		}
-		
+		*/
 		// La oferta actual que estamos creando la suma por separado a la agrupación
 		
 		if (esLote) {
@@ -3949,7 +3949,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			for(ActivoAgrupacionActivo aga : activos) {
 				Activo activo = aga.getActivo();
 				
-				vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				if(!Checks.estaVacio(activo.getTasacion())) {
+					vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				}
 
 				// Cálculo del VNC y VR
 				List<ActivoValoraciones> valoraciones = activo.getValoracion();
@@ -3963,8 +3965,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}else {
-			vta += ofertaNueva.getActivoPrincipal().getTasacion().get(ofertaNueva.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
-
+			if(!Checks.estaVacio(ofertaNueva.getActivoPrincipal().getTasacion())) {
+				vta += ofertaNueva.getActivoPrincipal().getTasacion().get(ofertaNueva.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+			}
 			List<ActivoValoraciones> valoraciones = ofertaNueva.getActivoPrincipal().getValoracion();
 			for (ActivoValoraciones valoracion : valoraciones) {
 				String codigoValoracion = valoracion.getTipoPrecio().getCodigo();

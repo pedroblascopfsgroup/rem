@@ -3448,32 +3448,35 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Transactional(readOnly = false)
 	public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista) {
 		try {
-			Long id = Long.valueOf(idGasto);
-			Long idGastoRfLong;
-			Filter filterGastoId = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", id);
-			GastoDetalleEconomico gastoDetalleEconomico = genericDao.get(GastoDetalleEconomico.class, filterGastoId);
+			Long idPadre = Long.valueOf(idGasto);
+			Long idGastoRf;
+			Filter filterGastoIdPadre = genericDao.createFilter(FilterType.EQUALS, "id", idPadre);
+			GastoProveedor gastoProveedorPadre = genericDao.get(GastoProveedor.class, filterGastoIdPadre);
+			boolean mismoPropietario = false;
 			
-			if(!Checks.esNulo(gastoDetalleEconomico)) {
-				gastoDetalleEconomico.setGastoRefacturable(true);
-				genericDao.update(GastoDetalleEconomico.class, gastoDetalleEconomico);
-				
+			if(!Checks.esNulo(gastoProveedorPadre)) {		
 				for (String gasto : gastosRefacturablesLista) {
-					GastoRefacturable gastoRefacturableNuevo = new GastoRefacturable();
-					gastoRefacturableNuevo.setGastoProveedor(id);
-					idGastoRfLong = Long.valueOf(gasto);
-					filterGastoId = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", idGastoRfLong);
-					GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filterGastoId);
-					gastoRefacturableNuevo.setGastoProveedorRefacturado(gastoProveedor.getId());
-					
-					Auditoria auditoria = new Auditoria();
-					auditoria.setBorrado(false);
-					auditoria.setFechaCrear(new Date());
-					
-					auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
-					gastoRefacturableNuevo.setAuditoria(auditoria);
-					
-					genericDao.save(GastoRefacturable.class, gastoRefacturableNuevo);
-					
+					idGastoRf = Long.valueOf(gasto);
+					Filter filterNumGastoHayaRefacturable = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", idGastoRf);
+					GastoProveedor gastoProveedorRefacturable = genericDao.get(GastoProveedor.class, filterNumGastoHayaRefacturable);
+					if (!Checks.esNulo(gastoProveedorPadre.getPropietario())) {
+						if (!Checks.esNulo(gastoProveedorRefacturable) && !Checks.esNulo(gastoProveedorRefacturable.getPropietario())) {
+							mismoPropietario = gastoProveedorPadre.getPropietario().equals(gastoProveedorRefacturable.getPropietario());
+							if (mismoPropietario) {
+								GastoRefacturable gastoRefacturableNuevo = new GastoRefacturable();
+								gastoRefacturableNuevo.setGastoProveedor(gastoProveedorPadre.getId());									
+								gastoRefacturableNuevo.setGastoProveedorRefacturado(gastoProveedorRefacturable.getId());
+								
+								Auditoria auditoria = new Auditoria();
+								auditoria.setBorrado(false);
+								auditoria.setFechaCrear(new Date());								
+								auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
+								gastoRefacturableNuevo.setAuditoria(auditoria);
+								
+								genericDao.save(GastoRefacturable.class, gastoRefacturableNuevo);
+							}
+						}
+					}
 				}
 			}
 		}catch(Exception e) {

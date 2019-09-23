@@ -2928,21 +2928,6 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView bloquearChecksComercializacion(String idActivo, Integer action, ModelMap model) {
-		Activo activo = activoDao.getActivoById(Long.parseLong(idActivo));
-		try{
-			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo, action));
-		} catch (Exception e) {
-			logger.error("error en activoController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-		}
-		
-		return createModelAndViewJson(model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoTramitacionTitulo(Long id, ModelMap model) {
 		try {
 			model.put(RESPONSE_DATA_KEY, activoApi.getHistoricoTramitacionTitulo(id));
@@ -2998,18 +2983,4 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-//	@SuppressWarnings("unchecked")
-//	@RequestMapping(method = RequestMethod.GET)
-//	public ModelAndView bloquearChecksComercializacion(String idActivo, Integer action, ModelMap model) {
-//		Activo activo = activoDao.getActivoById(Long.parseLong(idActivo));
-//		try{
-//			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo, action));
-//		} catch (Exception e) {
-//			logger.error("error en activoController", e);
-//			model.put(RESPONSE_SUCCESS_KEY, false);
-//			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-//		}
-//		
-//		return createModelAndViewJson(model);
-//	}
 }

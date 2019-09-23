@@ -66,7 +66,7 @@ BEGIN
 			DBMS_OUTPUT.PUT_LINE('[ OK ]: 	Existe.');
 			DBMS_OUTPUT.PUT_LINE('[INFO]: 	Borrando relación '''||V_TMP_FUNCION(1)||''' - '''||V_TMP_FUNCION(2)||'''.');
 
-			V_MSQL := 	'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+			V_MSQL := 	'UPDATE '||V_ESQUEMA_M||'.'||V_TABLA||' 
 					SET BORRADO = 1,
 					USUARIOBORRAR = ''REMVIP-5294'',
 					FECHABORRAR = SYSDATE

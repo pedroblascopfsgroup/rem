@@ -354,9 +354,15 @@ public abstract class AbstractNotificatorService {
 			dtoSendNotificator.setNumTrabajo(tramite.getTrabajo().getNumTrabajo());
 			dtoSendNotificator.setFechaFinalizacion(this.generateFechaTrabajo(tramite.getTrabajo()));
 			dtoSendNotificator.setNumActivo(tramite.getActivo().getNumActivo());
-			dtoSendNotificator.setDireccion(tramite.getActivo().getDireccionCompleta());
-			dtoSendNotificator.setMunicipio(tramite.getActivo().getLocalidad().getDescripcion());
-			dtoSendNotificator.setProvincia(tramite.getActivo().getLocalizacionActual().getProvincia().getDescripcion());
+			if(!Checks.esNulo(tramite.getActivo().getDireccionCompleta())) {
+				dtoSendNotificator.setDireccion(tramite.getActivo().getDireccionCompleta());
+			}
+			if(!Checks.esNulo(tramite.getActivo().getLocalidad())) {
+				dtoSendNotificator.setMunicipio(tramite.getActivo().getLocalidad().getDescripcion());
+			}
+			if(!Checks.esNulo(tramite.getActivo().getLocalizacionActual().getProvincia())) {
+				dtoSendNotificator.setProvincia(tramite.getActivo().getLocalizacionActual().getProvincia().getDescripcion());
+			}
 		}
 
 		

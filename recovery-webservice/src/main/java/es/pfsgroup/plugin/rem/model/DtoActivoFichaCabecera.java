@@ -243,6 +243,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean cambioEstadoPublicacion;;
 	private Boolean cambioEstadoPrecio;
 	private Boolean cambioEstadoActivo; 
+	
+	private Boolean checkGestionarReadOnly;
+	private Boolean checkPublicacionReadOnly;
+	private Boolean checkComercializarReadOnly;
+	private Boolean checkFormalizarReadOnly;
 
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -1884,5 +1889,38 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
 	}
+
+	public Boolean getCheckGestionarReadOnly() {
+		return checkGestionarReadOnly;
+	}
+
+	public void setCheckGestionarReadOnly(Boolean checkGestionarReadOnly) {
+		this.checkGestionarReadOnly = checkGestionarReadOnly;
+	}
+
+	public Boolean getCheckPublicacionReadOnly() {
+		return checkPublicacionReadOnly;
+	}
+
+	public void setCheckPublicacionReadOnly(Boolean checkPublicacionReadOnly) {
+		this.checkPublicacionReadOnly = checkPublicacionReadOnly;
+	}
+
+	public Boolean getCheckComercializarReadOnly() {
+		return checkComercializarReadOnly;
+	}
+
+	public void setCheckComercializarReadOnly(Boolean checkComercializarReadOnly) {
+		this.checkComercializarReadOnly = checkComercializarReadOnly;
+	}
+
+	public Boolean getCheckFormalizarReadOnly() {
+		return checkFormalizarReadOnly;
+	}
+
+	public void setCheckFormalizarReadOnly(Boolean checkFormalizarReadOnly) {
+		this.checkFormalizarReadOnly = checkFormalizarReadOnly;
+	}
+	
 	
 }

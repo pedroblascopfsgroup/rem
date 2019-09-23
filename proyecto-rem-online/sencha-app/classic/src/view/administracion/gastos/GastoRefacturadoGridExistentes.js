@@ -11,7 +11,7 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		store:'{storeGastosRefacturablesExistentes}'
 	},
 	
-    initComponent: function () {
+    initComponent: function () { 
  
      	var me = this;
      	
@@ -29,7 +29,7 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		    
 		 me.selModel = {
 		          selType: 'checkboxmodel',
-		          mode: 'SINGLE'
+		          mode: 'MULTI'
 		      	}; 
 		 
 	    me.dockedItems = [
@@ -59,23 +59,26 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
     
     onDeleteClick: function(btn){
     	var me = this;
-    	var numGastoRefacturado = me.getSelectionModel().getSelection()[0].getData().numeroGastoHaya;
     	var idGasto = me.lookupController().getViewModel().getData().gasto.id;
     	var url = $AC.getRemoteUrl('gastosproveedor/eliminarGastoRefacturado');
-    	
-    	if( numGastoRefacturado== undefined || numGastoRefacturado == ""){
+ 
+		var numerosGasto = '';
+		for(var i = 0; i < me.getSelection().length; i++){
+			numerosGasto = numerosGasto + me.getSelection()[i].id + '/';
+    	}
+    	if(numerosGasto == ''){
     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
     	}else{
     		Ext.Ajax.request({	
 		 		url: url,
 		   		params: {
 		   					idGasto:idGasto,
-		   					numGastoRefacturado : numGastoRefacturado
+		   					numerosGasto: numerosGasto
 		   				},
 		    	success: function(response, opts) {
 			    	data = Ext.decode(response.responseText);  
 			
-			    	var checkGastosRefacturados = me.getView().up("[reference=detalleeconomicogastoref]").down("[name=checkboxActivoRefacturableExistente]");
+			    	var checkGastosRefacturados = me.getView().up("[reference=detalleeconomicogastoref]").down("[name=gastoRefacturableB]");
 			    	var idGasto = me.lookupController().getViewModel().getData().gasto.id;
 			    	var url2 = $AC.getRemoteUrl('gastosproveedor/eliminarUltimoGastoRefacturado');
 			    	me.getStore().reload();

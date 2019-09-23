@@ -10,14 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -1127,11 +1130,16 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView eliminarGastoRefacturado(@RequestParam Long idGasto, Long numGastoRefacturado) {
+	public ModelAndView eliminarGastoRefacturado(@RequestParam Long idGasto, String numerosGasto) {
 		ModelMap model = new ModelMap();
+		List<String> gastosRefacturados = Arrays.asList(numerosGasto.split("/"));
 		Boolean noTieneGastosRefacturados = false;	
-		if(!Checks.esNulo(idGasto) && !Checks.esNulo(numGastoRefacturado)) {
-			noTieneGastosRefacturados = gastoProveedorApi.eliminarGastoRefacturado(idGasto, numGastoRefacturado);
+		
+		if(!Checks.esNulo(idGasto) && !Checks.estaVacio(gastosRefacturados)) {
+			for (String numGastoRefacturado : gastosRefacturados) {
+				noTieneGastosRefacturados = gastoProveedorApi.eliminarGastoRefacturado(idGasto, Long.valueOf(numGastoRefacturado));
+			}
+			
 		}
 		
 		try {	

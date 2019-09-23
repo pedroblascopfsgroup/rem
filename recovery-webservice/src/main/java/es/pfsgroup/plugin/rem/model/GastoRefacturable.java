@@ -35,6 +35,14 @@ public class GastoRefacturable implements Serializable, Auditable {
 	@SequenceGenerator(name = "GastoRefacturableGenerator", sequenceName = "S_GRG_REFACTURACION_GASTOS")
 	private Long id;
 	
+	/*
+	 * 
+	 * Se han mapeado ids en vez objetos ya que tanto
+	 * GRG_GPV_ID como GRG_GPV_ID_REFACTURADO apuntan a
+	 * GPV_ID de GPV_GASTOS_PROVEEDOR (GastoProveedor)
+	 *
+	 */
+	
 	@Column(name = "GRG_GPV_ID")
 	private Long idGastoProveedor;
 	

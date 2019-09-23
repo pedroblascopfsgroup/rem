@@ -43,4 +43,6 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
     List<VGastosRefacturados> getGastosRefacturados(String listaGastos);
 
 	List<GastoRefacturable> getGastosRefacturablesDelGasto(Long id);
+
+	Boolean updateGastosRefacturablesSiExiste(Long id, String usuario);
 }

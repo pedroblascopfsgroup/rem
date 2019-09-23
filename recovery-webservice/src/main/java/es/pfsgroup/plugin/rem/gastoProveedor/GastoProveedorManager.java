@@ -1059,7 +1059,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			
 			if(Checks.esNulo(detalleGasto.getGastoRefacturable()) || (!Checks.esNulo(detalleGasto.getGastoRefacturable()) && detalleGasto.getGastoRefacturable())) { 
- 
 				dto.setGastoRefacturableB(detalleGasto.getGastoRefacturable());
 			}else {
 				dto.setGastoRefacturableB(false);
@@ -3456,31 +3455,22 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista) {
 		try {
 			Long idPadre = Long.valueOf(idGasto);
-			Long idGastoRf;
-			Filter filterGastoIdPadre = genericDao.createFilter(FilterType.EQUALS, "id", idPadre);
-			GastoProveedor gastoProveedorPadre = genericDao.get(GastoProveedor.class, filterGastoIdPadre);
+			GastoProveedor gastoProveedorPadre = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", idPadre));
 			boolean mismoPropietario = false;
-			
+
 			if(!Checks.esNulo(gastoProveedorPadre)) {		
 				for (String gasto : gastosRefacturablesLista) {
-					idGastoRf = Long.valueOf(gasto);
-					Filter filterNumGastoHayaRefacturable = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", idGastoRf);
-					GastoProveedor gastoProveedorRefacturable = genericDao.get(GastoProveedor.class, filterNumGastoHayaRefacturable);
+					GastoProveedor gastoProveedorRefacturable = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(gasto)));
 					if (!Checks.esNulo(gastoProveedorPadre.getPropietario())) {
 						if (!Checks.esNulo(gastoProveedorRefacturable) && !Checks.esNulo(gastoProveedorRefacturable.getPropietario())) {
 							mismoPropietario = gastoProveedorPadre.getPropietario().equals(gastoProveedorRefacturable.getPropietario());
 							if (mismoPropietario) {
-								GastoRefacturable gastoRefacturableNuevo = new GastoRefacturable();
-								gastoRefacturableNuevo.setGastoProveedor(gastoProveedorPadre.getId());									
-								gastoRefacturableNuevo.setGastoProveedorRefacturado(gastoProveedorRefacturable.getId());
-								
-								Auditoria auditoria = new Auditoria();
-								auditoria.setBorrado(false);
-								auditoria.setFechaCrear(new Date());								
-								auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
-								gastoRefacturableNuevo.setAuditoria(auditoria);
-								
-								genericDao.save(GastoRefacturable.class, gastoRefacturableNuevo);
+								if(!gastoDao.updateGastosRefacturablesSiExiste(gastoProveedorRefacturable.getId(), usuarioApi.getUsuarioLogado().getUsername())) {
+									GastoRefacturable gastoRefacturableNuevo = new GastoRefacturable();
+									gastoRefacturableNuevo.setGastoProveedor(idPadre);
+									gastoRefacturableNuevo.setGastoProveedorRefacturado(gastoProveedorRefacturable.getId());
+									genericDao.save(GastoRefacturable.class, gastoRefacturableNuevo);
+								}
 							}
 						}
 					}

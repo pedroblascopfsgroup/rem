@@ -7,71 +7,162 @@
 --## INCIDENCIA_LINK=HREOS-7358
 --## PRODUCTO=NO
 --##
---## FINALIDAD: Creación de una tabla de pruebas
---##
---## INSTRUCCIONES:
---##	1. Especificar el esquema de la tabla en la variable 'V_TABLE_SCHEME' apuntando a la variables 'V_SCHEME' o 'V_MASTER_SCHEME'.
---##	2. Especificar el nombre de la tabla a crear o modificar en la variable 'V_TABLE_NAME'.
---##	3. Especificar el comentario aclarativo de la tabla en la variable 'V_TABLE_COMMENT'.
---##	4. Configurar las columnas a crear o modificar en la matriz 'V_COLUMNS_MATRIX'. No especificar la columna de ID único, se genera automáticamente al crear la tabla.
---##	5. Configurar las foreign keys (opcional) en la variable 'V_FK_MATRIX'. Puede quedarse vacía para no crear nada.
---##	6. Configurar los índices (opcional) en la variable 'V_INDEX_MATRIX'. Puede quedarse vacía para no crear nada.
---##
---##	** No modificar las zonas entre BEGIN -> EXIT, la lógica implementada lleva a cabo las operaciones necesarias con las variables en el DECLARE **
---##	Más información: http://bit.ly/pitertul-api
---##
 --## VERSIONES:
 --##	0.1 Versión inicial
 --#########################################
 --*/
-WHENEVER SQLERROR EXIT SQL.SQLCODE
-SET SERVEROUTPUT ON
-SET DEFINE OFF
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
 
 DECLARE
-    -- Pitertul constants.
-    V_SCHEME VARCHAR2(25 CHAR)          := '#ESQUEMA#'; -- Configuración de esquema. Asignada por Pitertul.
-	V_MASTER_SCHEME VARCHAR2(25 CHAR)   := '#ESQUEMA_MASTER#'; -- Configuración de esquema master. Asignada por Pitertul.
-    V_TABLESPACE_IDX VARCHAR2(25 CHAR)  := '#TABLESPACE_INDEX#'; -- Configuración tablespace de índices. Asignada por Pitertul.
-    V_VERBOSITY_LEVEL NUMBER(1)         := OUTPUT_LEVEL.INFO; -- Configuración de nivel de verbosidad en el output log.
 
-    -- User defined variables.
-    V_TABLE_SCHEME VARCHAR2(25 CHAR)    := V_SCHEME; -- Indica el esquema de la tabla de referencia.
-    V_TABLE_NAME VARCHAR2(125 CHAR)     := 'ACT_ADT_ADJUNTO_TRIBUTOS'; -- Indica el nombre de la tabla de referencia.
-	V_TABLE_COMMENT VARCHAR2(250 CHAR)  := 'Relacion adjuntos y activos para tributos'; -- Indica el comentario de la tabla de referencia.
-    V_TABLE_HAS_AUDIT BOOLEAN           := TRUE; -- Indica si la tabla debe contener las columnas estándar de auditoría.
-
-	V_COLUMNS_MATRIX MATRIX_TABLE := MATRIX_TABLE(
-	--				    NOMBRE							TIPO COLUMNA		               			 COMENTARIO
-		ARRAY_TABLE('ACT_TRI_ID', 					'NUMBER(16,0) NOT NULL',               		'FK con la tabla de ACT_TRI_TRIBUTOS.'),
-        ARRAY_TABLE('DD_TDT_ID', 	    			'NUMBER (16,0) NOT NULL',		      	    'FK con el diccionario DD_TDT_TIPO_DOC_TRIBUTOS.'),
-        ARRAY_TABLE('ADT_ID', 	    				'NUMBER(16, 0) NOT NULL',              		'FK con la tabla ADJ_ADJUNTO.'),
-        
-		ARRAY_TABLE('ADT_NOMBRE', 					'VARCHAR2(255 CHAR) NOT NULL',              'Nombre del adjunto.'),
-		ARRAY_TABLE('ADT_CONTENT_TYPE', 	   	 	'VARCHAR2(100 CHAR) NOT NULL',              'Contenido.'),
-        ARRAY_TABLE('ADT_LENGTH', 	    			'NUMBER(16,0) NOT NULL',		            'Tamaño del archivo'),
-        ARRAY_TABLE('ADT_DESCRIPCION', 	    		'VARCHAR2(1024 CHAR) NULL',               	'Descripción del archivo'),
-		ARRAY_TABLE('ADT_FECHA_DOCUMENTO', 			'DATE NOT NULL',              				'Fech de subida.'),
-		ARRAY_TABLE('ADT_ID_DOCUMENTO_REST', 		'NUMBER(16,0) NULL',              			'ID Rest.')
-	);
-
-	V_FK_MATRIX MATRIX_TABLE := MATRIX_TABLE(
-	--                ESQUEMA_ORIGEN            TABLA_ORIGEN          	CAMPO_ORIGEN     ESQUEMA_DESTINO        TABLA_DESTINO           	CAMPO_DESTINO
-		ARRAY_TABLE(''||V_TABLE_SCHEME||'',    ''||V_TABLE_NAME||'',    'ACT_TRI_ID',   ''||V_SCHEME||'',      'ACT_TRI_TRIBUTOS',   		'ACT_TRI_ID'),
-		ARRAY_TABLE(''||V_TABLE_SCHEME||'',    ''||V_TABLE_NAME||'',    'DD_TDT_ID',    ''||V_SCHEME||'',      'DD_TDT_TIPO_DOC_TRIBUTOS',  'DD_TDT_ID'),
-		ARRAY_TABLE(''||V_TABLE_SCHEME||'',    ''||V_TABLE_NAME||'',    'ADT_ID',       ''||V_SCHEME||'',      'ADJ_ADJUNTOS',   			'ADJ_ID')
-	);
-	
-	 V_INDEX_MATRIX MATRIX_TABLE := MATRIX_TABLE(
-    );
+V_MSQL VARCHAR2(32000 CHAR);
+TABLE_COUNT NUMBER(1,0) := 0;
+V_ESQUEMA VARCHAR2(20 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_M VARCHAR2(20 CHAR) := '#ESQUEMA_MASTER#';
+V_TABLA VARCHAR2(40 CHAR) := 'ACT_ADT_ADJUNTO_TRIBUTOS';
+V_NUM_TABLAS NUMBER(16);
 
 BEGIN
-    pitertul.create_or_modify_common_table(V_TABLE_SCHEME, V_TABLESPACE_IDX, V_TABLE_NAME, V_TABLE_COMMENT, V_COLUMNS_MATRIX, V_TABLE_HAS_AUDIT, V_FK_MATRIX, V_INDEX_MATRIX, V_VERBOSITY_LEVEL);
+
+SELECT COUNT(1) INTO TABLE_COUNT FROM ALL_TABLES WHERE TABLE_NAME = ''||V_TABLA||'' AND OWNER= ''||V_ESQUEMA||'';
+
+IF TABLE_COUNT > 0 THEN
+    DBMS_OUTPUT.PUT_LINE('[INFO] TABLA '||V_ESQUEMA||'.'||V_TABLA||' YA EXISTENTE. SE PROCEDE A BORRAR Y CREAR DE NUEVO.');
+    EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||' CASCADE CONSTRAINTS';
+    
+END IF;
+
+V_MSQL := '
+CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
+(
+    ACT_ADT_ID                      NUMBER(16,0) NOT NULL,
+    ACT_TRI_ID                      NUMBER(16,0) NOT NULL,
+    DD_TDT_ID                   	NUMBER(16,0) NOT NULL,
+    ADT_ID                       	NUMBER(16,0) NOT NULL,
+
+    ADT_NOMBRE                 		VARCHAR2(255 CHAR) NOT NULL,
+    ADT_CONTENT_TYPE    			VARCHAR2(100 CHAR) NOT NULL,
+    ADT_LENGTH          			NUMBER(16,0) NOT NULL,
+    ADT_DESCRIPCION       			VARCHAR2(1024 CHAR) NULL,
+    ADT_FECHA_DOCUMENTO     		DATE NOT NULL,
+    ADT_ID_DOCUMENTO_REST          	NUMBER(16,0) NULL,
+    USUARIOCREAR    	            VARCHAR2(10),
+    FECHACREAR          	        DATE NOT NULL,
+    USUARIOMODIFICAR    	        VARCHAR2(10),
+    FECHAMODIFICAR      	        DATE,	 
+    VERSION                   	    NUMBER(38,0) DEFAULT 0 NOT NULL,
+    USUARIOBORRAR             	    VARCHAR2(50),
+    FECHABORRAR               	    DATE,
+    BORRADO                  	    NUMBER(1, 0) DEFAULT 0 NOT NULL
+)';
+
+EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');
+
+V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TABLA||''' AND SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
+EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
+IF V_NUM_TABLAS = 0 THEN
+    V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';		
+    EXECUTE IMMEDIATE V_MSQL;		
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||'... Secuencia creada');
+END IF;
+
+V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (ACT_ADT_ID))';
+EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'_PK creada.');
+
+V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_ACT_ADT_ACT_TRI_ID FOREIGN KEY (ACT_TRI_ID) REFERENCES '||V_ESQUEMA||'.ACT_TRI_TRIBUTOS (ACT_TRI_ID))';
+EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] FK_ACT_ADT_ACT_TRI_ID creada.');
+
+V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_ACT_ADT_DD_TDT_ID FOREIGN KEY (DD_TDT_ID) REFERENCES '||V_ESQUEMA||'.DD_TDT_TIPO_DOC_TRIBUTOS (DD_TDT_ID))';
+EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] FK_ACT_ADT_DD_TDT_ID creada.');
+
+V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_ACT_ADT_ADT_ID FOREIGN KEY (ADT_ID) REFERENCES '||V_ESQUEMA||'.ADJ_ADJUNTOS (ADT_ID))';
+EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] FK_ACT_ADT_ADT_ID creada.');
+
+
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ACT_ADT_ID IS ''Indica el código identificador único del registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ACT_TRI_ID IS ''FK con la tabla de ACT_TRI_TRIBUTOS.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_TDT_ID IS ''FK con el diccionario DD_TDT_TIPO_DOC_TRIBUTOS.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ACT_ID IS ''FK con la tabla de ACT_ACTIVO.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ADT_ID IS ''FK con la tabla ADJ_ADJUNTO.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ADT_NOMBRE IS ''Nombre del adjunto.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ADT_CONTENT_TYPE IS ''Contenido.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ADT_LENGTH IS ''Tamaño del archivo''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ADT_DESCRIPCION IS ''Tamaño del archivo''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ADT_FECHA_DOCUMENTO IS ''Fech de subida.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.ADT_ID_DOCUMENTO_REST IS ''ID Rest.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Indica la versión de la modificación del registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.USUARIOCREAR IS ''Indica el usuario que ha creado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se ha creado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que ha modificado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se ha modificado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que ha borrado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se ha borrado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.BORRADO IS ''Indica la fecha en la que se ha borrado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+DBMS_OUTPUT.PUT_LINE('[INFO] COMENTARIOS CREADOS');
+
+COMMIT;
+
 EXCEPTION
-	WHEN OTHERS THEN
-	DBMS_OUTPUT.PUT_LINE(SQLERRM);
-	ROLLBACK;
-	RAISE;
+
+WHEN OTHERS THEN
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+    DBMS_OUTPUT.put_line(SQLERRM);
+    ROLLBACK;
+    RAISE;
+
 END;
 /
-EXIT
+
+EXIT;
+
+
+
+

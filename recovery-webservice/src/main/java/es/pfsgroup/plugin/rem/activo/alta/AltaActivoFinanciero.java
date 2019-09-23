@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo.alta;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -288,14 +289,23 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
 
 		// ActivoPropietarioActivo.
-		ActivoPropietario activoPropietario = genericDao.get(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifPropietario()),
-				genericDao.createFilter(FilterType.EQUALS, "cartera", activo.getCartera()));
+		List<ActivoPropietario> activoPropietarios = genericDao.getList(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifPropietario()));
+		ActivoPropietario activoPropietario = null;
+		if(!Checks.estaVacio(activoPropietarios)) {
+			if(activoPropietarios.size() > 1) {
+				activoPropietario = genericDao.get(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifPropietario()), 
+						genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", activo.getCartera().getCodigo()));
+			}else {
+				activoPropietario = activoPropietarios.get(0);
+			}
+		}
 		if(Checks.esNulo(activoPropietario)) {
 			// Si el propietario no existe se crea uno nuevo con el NIF recibido.
 			activoPropietario = new ActivoPropietario();
 			activoPropietario.setDocIdentificativo(dtoAAF.getNifPropietario());
 			DDTipoDocumento tipoDocumento = genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "15"));
 			activoPropietario.setTipoDocIdentificativo(tipoDocumento);
+			activoPropietario.setCartera(activo.getCartera());
 			activoPropietario= genericDao.save(ActivoPropietario.class, activoPropietario);
 		}
 		ActivoPropietarioActivo activoPropietarioActivo = new ActivoPropietarioActivo();

@@ -1236,4 +1236,8 @@ public interface ActivoApi {
 
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
 
+	boolean esPopietarioRemaining(TareaExterna tareaExterna);
+
+	boolean esPopietarioArrow(TareaExterna tareaExterna);
+
 }

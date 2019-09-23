@@ -394,6 +394,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean isActivoIntegradoAgrupacionComercial(Long idActivo) {
 		return activoDao.isIntegradoAgrupacionComercial(idActivo) >= 1;
 	}
+	
+	@Override
+	public boolean esPopietarioRemaining(TareaExterna tareaExterna) {
+		Activo activo = tareaExternaToActivo(tareaExterna);
+		ActivoPropietario propietario = activo.getPropietarioPrincipal();
+		if (!Checks.esNulo(propietario) && ("Remaining").equals(propietario.getNombre())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean esPopietarioArrow(TareaExterna tareaExterna) {
+		Activo activo = tareaExternaToActivo(tareaExterna);
+		ActivoPropietario propietario = activo.getPropietarioPrincipal();
+		if (!Checks.esNulo(propietario) && ("Arrow").equals(propietario.getNombre())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	@Override
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id) {

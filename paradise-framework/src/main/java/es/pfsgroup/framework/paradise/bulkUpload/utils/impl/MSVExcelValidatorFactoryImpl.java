@@ -161,6 +161,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired 
 	private MSVSuperDiscPublicacionesExcelValidator disclamerPublicaciones;
+	
+	@Autowired
+	private MSVActualizacionDistribucionPreciosExcelValidator cargaDistribucionPrecios;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -266,8 +269,9 @@ public class MSVExcelValidatorFactoryImpl {
 			return cargaMasivaFormalizacion;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION.equals(codTipoOperacion)) {
 			return disclamerPublicaciones;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_DISTRIBUCION_PRECIOS.equals(codTipoOperacion)) {
+			return cargaDistribucionPrecios;
 		}
-
 		return null;
 	}
 }

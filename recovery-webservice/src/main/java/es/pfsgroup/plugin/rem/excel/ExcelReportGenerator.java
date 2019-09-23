@@ -877,7 +877,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 								c.setCellValue("");
 							}
 							c.setCellStyle(styleBordesCompletosCelda);
-						}else if(j==4) {;
+						}else if(j==4) {
+							if (!Checks.esNulo(dtoPAB.getIdSantander())) {
+								c.setCellValue(dtoPAB.getIdSantander());
+							} else {
+								c.setCellValue("");
+							}
 							c.setCellStyle(styleBordesCompletosCelda);
 						}else if(j==6){
 							if (!Checks.esNulo(dtoPAB.getDireccion())) {

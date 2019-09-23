@@ -10245,10 +10245,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private Boolean permiteAvanzarOfertaDependiente (ExpedienteComercial eco, String codigoTarea) {
 		Boolean permitir = false;
 		
-		VListadoOfertasAgrupadasLbk vis = genericDao.get(VListadoOfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "numOfertaDependiente", eco.getOferta().getNumOferta()));
+		List<VListadoOfertasAgrupadasLbk> vis = genericDao.getList(VListadoOfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "numOfertaDependiente", eco.getOferta().getNumOferta()));
 		
-		if(!Checks.esNulo(vis)) {
-			ExpedienteComercial ecoPrincipal = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", vis.getNumOfertaPrincipal()));
+		if(!Checks.estaVacio(vis)) {
+			ExpedienteComercial ecoPrincipal = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", vis.get(0).getNumOfertaPrincipal()));
 			
 			if(!Checks.esNulo(ecoPrincipal)) {
 				ActivoTramite tra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo", ecoPrincipal.getTrabajo()));

@@ -144,7 +144,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			boolean permiteNotificarAprobacion, boolean correoLlegadaTarea, String codTareaActual) {
 
 		if (tramite.getActivo() != null && tramite.getTrabajo() != null) {
-			sendNotification(tramite, permiteRechazar, getExpComercial(tramite), permiteNotificarAprobacion, correoLlegadaTarea, codTareaActual);
+			sendNotification(tramite, permiteRechazar, getExpComercial(tramite).getOferta(), permiteNotificarAprobacion, correoLlegadaTarea, codTareaActual);
 		}
 
 	}
@@ -172,7 +172,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		return expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
 	}
 
-	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, ExpedienteComercial expediente,
+	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Oferta oferta,
 			boolean permiteNotificarAprobacion, boolean correoLlegadaTarea, String codTareaActual) {
 
 		ArrayList<String> destinatarios = new ArrayList<String>();
@@ -182,13 +182,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
 		Usuario buzonFormApple = usuarioManager.getByUsername(BUZON_FOR_APPLE);
 		Usuario usuarioBackOffice = null;
-		Oferta oferta = null;
-		
-		if (expediente != null) {
-			oferta = expediente.getOferta();
-		}
+		Usuario supervisorComercial = null;
 
 		if (!Checks.esNulo(oferta)) {
+			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
 			Activo activo = oferta.getActivoPrincipal();
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
@@ -238,6 +235,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 							destinatarios.add(usuarioBackOffice.getEmail());
 						}	
 					}
+				}
+				
+				supervisorComercial = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+				
+				if(!Checks.esNulo(supervisorComercial)) {
+					destinatarios.add(supervisorComercial.getEmail());
 				}
 
 				this.enviaNotificacionAceptar(tramite, oferta, expediente, destinatarios.toArray(new String[] {}));
@@ -350,8 +353,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		// como si viniera de un tramite
 		ActivoTramite tramiteSimulado = new ActivoTramite();
 		tramiteSimulado.setActivo(activo);
-		ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(idOferta);
-		sendNotification(tramiteSimulado, true, eco, true, false, null);
+		
+		sendNotification(tramiteSimulado, true, oferta, true, false, null);
 	}
 
 	private String getPrescriptor(Activo activo, Oferta ofertaAceptada) {
@@ -1029,15 +1032,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				// ADJUNTOS SI ES CERBERUS APPLE
 			} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)
 					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
-				f1 = FileItemUtils.fromResource("docs/Vfinal_instrucciones_reserva_y_formalizacion_APPLE.pdf");
 				f2 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_APPLE.docx");
-				if (f1 != null) {
-					adjuntos.add(createAdjunto(f1, "Vfinal_instrucciones_reserva_y_formalizacion_APPLE.pdf"));
-				}
 				if ( f2 != null ) {
 					adjuntos.add(createAdjunto(f2, "instrucciones_reserva_y_formalizacion_APPLE.docx"));
 				}
-
 			}
 		}
 		List<String> mailsPara = new ArrayList<String>();

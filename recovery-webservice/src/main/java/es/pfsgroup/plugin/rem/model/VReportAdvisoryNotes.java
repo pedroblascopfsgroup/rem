@@ -32,8 +32,8 @@ public class VReportAdvisoryNotes implements Serializable {
 	@Column(name = "ACT_NUM_ACTIVO")
 	private Long numActivo;
 	
-	@Column(name = "DD_TPA_DESCRIPCION")
-	private String tipoActivo;
+	@Column(name = "DD_SAC_DESCRIPCION_TRADUCIDA")
+	private String subtipoActivo;
 	
 	@Column(name = "BIE_LOC_DIRECCION")
 	private String direccion;
@@ -74,7 +74,7 @@ public class VReportAdvisoryNotes implements Serializable {
     @Column(name = "SEGUNDA_MANO")
     private String segundaMano;
     
-    @Column(name = "DD_ECV_DESCRIPCION")
+    @Column(name = "DD_ECV_DESCRIPCION_TRADUCIDA")
     private String estadoConservacion;
     
     @Column(name = "NUM_OFERTAS_ACT")
@@ -121,12 +121,12 @@ public class VReportAdvisoryNotes implements Serializable {
 		this.numActivo = numActivo;
 	}
 
-	public String getTipoActivo() {
-		return tipoActivo;
+	public String getSubtipoActivo() {
+		return subtipoActivo;
 	}
 
-	public void setTipoActivo(String tipoActivo) {
-		this.tipoActivo = tipoActivo;
+	public void setSubtipoActivo(String subtipoActivo) {
+		this.subtipoActivo = subtipoActivo;
 	}
 
 	public String getDireccion() {

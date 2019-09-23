@@ -697,7 +697,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
-			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada);
+			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada, null);
 			            				if(!Checks.esNulo(comite)) {
 			            					codigoComite = comite.getCodigo();
 			            				}

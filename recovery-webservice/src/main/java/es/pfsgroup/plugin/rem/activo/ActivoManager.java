@@ -539,27 +539,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
 
 		}
-		
-		// Si el activo pertenece a la subcartera Apple y tiene precio aprobado de venta
-		if (oferta.getActivoPrincipal().getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)) {	
-			String[] numActivo = {String.valueOf(oferta.getActivoPrincipal().getNumActivo())};
-			
-			if (!Checks.estaVacio(oferta.getActivoPrincipal().getValoracion())) {
-				List<ActivoValoraciones> valoraciones = oferta.getActivoPrincipal().getValoracion();
-				
-				boolean existe = false;
-				for (ActivoValoraciones valoracion : valoraciones) {		
-					if (valoracion != null &&  valoracion.getTipoPrecio() != null && valoracion.getTipoPrecio().getCodigo().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA)) {
-						existe = true;
-					}		
-				}	 
-				if (!existe) {
-					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE, numActivo));
-				}
-			} else {
-				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE, numActivo));
-			}				
-		}
 
 		// Si el activo esta marcado como ocupado sin titulo no permitiremos
 		// tramitar ofertas de alquiler
@@ -1182,7 +1161,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente));
+				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente), null);
 				nuevoExpediente.setComiteSancion(comiteLbk);
 				nuevoExpediente.setComitePropuesto(comiteLbk);
 				
@@ -1192,7 +1171,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
 					Oferta nuevaOfertaPrincipal = oALbk.getOfertaPrincipal();
 					ExpedienteComercial nuevoEcoPrincipal = expedienteComercialApi.findOneByOferta(nuevaOfertaPrincipal);
-					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
 					nuevoEcoPrincipal.setComitePropuesto(comiteLbkPrincipal);
 					genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 				}
@@ -3216,41 +3195,56 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		boolean tieneAdjunto = false;
 		if(!Checks.esNulo(activoSitPos) && (!Checks.esNulo(activoSitPos.getOcupado()) && !Checks.esNulo(activoSitPos.getConTitulo()) && (1 == activoSitPos.getOcupado() && DDTipoTituloActivoTPA.tipoTituloNo.equals(activoSitPos.getConTitulo().getCodigo()))))
 		{
-			List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
+			
+			List<DtoAdjunto> listAdjuntos;
+			try {
+				listAdjuntos = activoAdapter.getAdjuntosActivo(activo.getId());
+				if(!Checks.estaVacio(listAdjuntos))
+				{
+					// Buscamos el adjunto de tipo ocupacionDesocupacion mas reciente
+					DtoAdjunto adjuntoAux = null;
+					for (DtoAdjunto adjunto : listAdjuntos) {
 
-			if(!Checks.estaVacio(listAdjuntos))
-			{
-				// Buscamos el adjunto de tipo ocupacionDesocupacion mas reciente
-				ActivoAdjuntoActivo adjuntoAux = null;
-				for (ActivoAdjuntoActivo adjunto : listAdjuntos) {
+						boolean esOcupacionDesocupacion = DDTipoDocumentoActivo.MATRICULA_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getMatricula());
+						Date adjuntoFecha = adjunto.getFechaDocumento();
 
-					boolean esOcupacionDesocupacion = DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo());
-					Date adjuntoFecha = adjunto.getFechaDocumento();
+						if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion) || (!Checks.esNulo(adjuntoAux) && !Checks.esNulo(adjuntoFecha) && adjuntoFecha.after(adjuntoAux.getFechaDocumento()))) {
+							adjuntoAux = adjunto;
+						}
 
-					if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion) || (!Checks.esNulo(adjuntoAux) && adjuntoFecha.after(adjuntoAux.getFechaDocumento()))) {
-						adjuntoAux = adjunto;
 					}
 
+					long diffInMillies = 0;
+					int diff = 0;
+
+					if (!Checks.esNulo(adjuntoAux)) {
+						diffInMillies = Math.abs(System.currentTimeMillis() - adjuntoAux.getFechaDocumento().getTime());
+					    diff = (int)TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+					}
+
+					// Si no existe ningun adjunto de tipo ocupacionDesocupacion o si lo hay y tiene una fecha superior a los 30 dias se ha de mostrar el disclaimer
+					if (Checks.esNulo(adjuntoAux)) {
+						tieneAdjunto = true;
+					} else tieneAdjunto = diff >= 30;
+
 				}
-
-				long diffInMillies = 0;
-				int diff = 0;
-
-				if (!Checks.esNulo(adjuntoAux)) {
-					diffInMillies = Math.abs(System.currentTimeMillis() - adjuntoAux.getFechaDocumento().getTime());
-				    diff = (int)TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-				}
-
-				// Si no existe ningun adjunto de tipo ocupacionDesocupacion o si lo hay y tiene una fecha superior a los 30 dias se ha de mostrar el disclaimer
-				if (Checks.esNulo(adjuntoAux)) {
+				else
+				{
 					tieneAdjunto = true;
-				} else tieneAdjunto = diff >= 30;
+				}
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (GestorDocumentalException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-			}
-			else
-			{
-				tieneAdjunto = true;
-			}
+
+			
 		}
 		return tieneAdjunto;
 	}
@@ -6125,8 +6119,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		String conTitulo = "";
 		if(activoDto.getConTitulo() != null) {
 			conTitulo=activoDto.getConTitulo();
-		}else if(!Checks.esNulo(posesoria.getConTitulo())){
-			conTitulo = posesoria.getConTitulo().getCodigo();
 		}
 		if(activoDto.getOcupado() != null) {
 			ocupado=activoDto.getOcupado();
@@ -6138,67 +6130,86 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						|| (!DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
 								&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 										|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
-					if (!Checks.esNulo(ocupado) && (1 == ocupado && "02".equals(conTitulo))) {
+					if (!Checks.esNulo(ocupado) && (1 == ocupado && DDTipoTituloActivoTPA.tipoTituloNo.equals(conTitulo))) {
 						boolean val = compruebaSiExisteActivoBienPorMatricula(id,
 								DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
 						if (val) {
-							// falta enviar el mensaje
-							ActivoAdjuntoActivo adjuntoAux = null;
-							List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
-							for (ActivoAdjuntoActivo adjunto : activo.getAdjuntos()) {
-								if (!Checks.esNulo(adjunto.getTipoDocumentoActivo())
-										&& DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION
-												.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
-									Date adjuntoFecha = adjunto.getFechaDocumento();
-									if (Checks.esNulo(adjuntoAux)
-											|| adjuntoFecha.after(adjuntoAux.getFechaDocumento())) {
-										adjuntoAux = adjunto;
+							
+							List<DtoAdjunto> listAdjuntos;
+							DtoAdjunto adjuntoAux = null;
+							try {
+								listAdjuntos = activoAdapter.getAdjuntosActivo(activo.getId());
+								if(!Checks.estaVacio(listAdjuntos))
+								{
+									// Buscamos el adjunto de tipo ocupacionDesocupacion mas reciente
+									
+									for (DtoAdjunto adjunto : listAdjuntos) {
+
+										boolean esOcupacionDesocupacion = DDTipoDocumentoActivo.MATRICULA_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getMatricula());
+										Date adjuntoFecha = adjunto.getFechaDocumento();
+
+										if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion)) {
+											adjuntoAux = adjunto;
+										}
+
 									}
 								}
-							}
-
-							if (!Checks.esNulo(adjuntoAux)) {
-								DtoAdjuntoMail adj = new DtoAdjuntoMail();
-								adj.setNombre(adjuntoAux.getNombre());
-								FileItem fileItem = null;
-								try {
-									if(!Checks.esNulo(adjuntoAux.getIdDocRestClient())) {
-										fileItem = activoAdapter.download(adjuntoAux.getIdDocRestClient(), adjuntoAux.getNombre());
+								List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
+								
+								if (!Checks.esNulo(adjuntoAux)) {
+									DtoAdjuntoMail adj = new DtoAdjuntoMail();
+									adj.setNombre(adjuntoAux.getNombre());
+									FileItem fileItem = null;
+									try {
+										if(!Checks.esNulo(adjuntoAux.getId())) {
+											fileItem = activoAdapter.download(adjuntoAux.getId(), adjuntoAux.getNombre());
+										}
+									} catch (UserException e) {
+										e.printStackTrace();
+									} catch (Exception e) {
+										e.printStackTrace();
 									}
-								} catch (UserException e) {
-									e.printStackTrace();
-								} catch (Exception e) {
-									e.printStackTrace();
+									if(!Checks.esNulo(fileItem)) {
+										adj.setAdjunto(new Adjunto(fileItem));
+									}
+									
+									sendAdj.add(adj);
 								}
-								if(!Checks.esNulo(fileItem)) {
-									adjuntoAux.getAdjunto().setFileItem(fileItem);
-								}
-								adj.setAdjunto(adjuntoAux.getAdjunto());
-								sendAdj.add(adj);
-							}
 
-							Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
-							if (!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail())) {
-								List<String> para = new ArrayList<String>();
-								para.add(usu.getEmail());
-								String activoS = activo.getNumActivo() + "";
-								String carteraS = activo.getCartera().getDescripcion();
-								StringBuilder cuerpo = new StringBuilder(
-										"<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
-								cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
-								cuerpo.append(activoS);
-								cuerpo.append(" de la cartera ");
-								cuerpo.append(carteraS);
-								cuerpo.append(
-										"</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
-								genericAdapter.sendMail(para, null,
-										"Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS,
-										cuerpo.toString(), sendAdj);
+								Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
+								if (!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail())) {
+									List<String> para = new ArrayList<String>();
+									para.add(usu.getEmail());
+									String activoS = activo.getNumActivo() + "";
+									String carteraS = activo.getCartera().getDescripcion();
+									StringBuilder cuerpo = new StringBuilder(
+											"<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
+									cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
+									cuerpo.append(activoS);
+									cuerpo.append(" de la cartera ");
+									cuerpo.append(carteraS);
+									cuerpo.append(
+											"</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
+									genericAdapter.sendMail(para, null,
+											"Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS,
+											cuerpo.toString(), sendAdj);
+								}
+								// se envia un true, por que ya hemos mandado el
+								// correo
+								// y tiene que guardar los cambios
+								return true;
+								
+							} catch (IllegalAccessException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (InvocationTargetException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (GestorDocumentalException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-							// se envia un true, por que ya hemos mandado el
-							// correo
-							// y tiene que guardar los cambios
-							return true;
+							
 						} else
 							return false;
 						// devolvemos un false por que no esta adjuntado el
@@ -6236,7 +6247,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}catch (GestorDocumentalException e) {
-				e.printStackTrace();
+				logger.error("Error comprobando el documento de okupación " + e.getMessage());
 			}
 		}
 		return false;
@@ -6709,59 +6720,34 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public Boolean bloquearChecksComercializacionActivo(Activo activo, Integer action) {
-		Boolean sePuedeEditar = true;
-		if(activoDao.isActivoMatriz(activo.getId())) {
-			ActivoAgrupacion agrupacionPa= activoDao.getAgrupacionPAByIdActivo(activo.getId());
-			List<ActivoAgrupacionActivo> activosAgrupacion = agrupacionPa.getActivos();
-				
-			for (ActivoAgrupacionActivo activoAgrupacionActivo : activosAgrupacion) {
-				Activo activoUa = activoAgrupacionActivo.getActivo();
-				PerimetroActivo perimetroActivoUA = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activoUa.getId()));
-				
-				if(!Checks.esNulo(perimetroActivoUA) && !Checks.esNulo(perimetroActivoUA.getTrabajosVivos()) && !Checks.esNulo(perimetroActivoUA.getOfertasVivas())) {
-					if((perimetroActivoUA.getTrabajosVivos() && action == 1) || (perimetroActivoUA.getOfertasVivas() && action == 3)) {
-						sePuedeEditar = false;
-						break;
-					}
-				}
-					
+	public void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto) {
+		if(aga.getPrincipal() == 1) {			
+			Boolean ofertasVivas = activoDao.existenUAsconOfertasVivas(aga.getAgrupacion().getId());
+			Boolean trabajosVivos = activoDao.existenUAsconTrabajos(aga.getAgrupacion().getId());
+			if(!Checks.esNulo(ofertasVivas) && ofertasVivas) {
+				activoDto.setCheckComercializarReadOnly(false);					
 			}
-		}else if(activoDao.isUnidadAlquilable(activo.getId())) {
-			Long idAM = activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId());
-			
-			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id",idAM));
-			
+			if(!Checks.esNulo(trabajosVivos) && trabajosVivos) {
+				activoDto.setCheckGestionarReadOnly(false);
+			}			
+		}else {
+			Long idAM = activoDao.getIdActivoMatriz(aga.getAgrupacion().getId());
+			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id",idAM));			
 			if(!Checks.esNulo(perimetroActivoAM)) {
-				switch(action){
-					case 1: 
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 0 ) {
-							sePuedeEditar = false;
-						}
-					break;
-					case 2:
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaPublicar()) && !perimetroActivoAM.getAplicaPublicar()){
-							sePuedeEditar = false;
-						} 
-					break;
-					case 3:
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaComercializar()) && perimetroActivoAM.getAplicaComercializar() == 0) {
-							sePuedeEditar = false;
-						}
-					break;
-					case 4: 
-						if(!Checks.esNulo(perimetroActivoAM.getAplicaFormalizar()) && perimetroActivoAM.getAplicaFormalizar() == 0) {
-							sePuedeEditar = false;
-						} 
-					break;
-					
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 0 ) {
+					activoDto.setCheckGestionarReadOnly(false);
 				}
-				
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaPublicar()) && !perimetroActivoAM.getAplicaPublicar()){
+					activoDto.setCheckPublicacionReadOnly(false);
+				} 
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaComercializar()) && perimetroActivoAM.getAplicaComercializar() == 0) {
+					activoDto.setCheckComercializarReadOnly(false);
+				}
+				if(!Checks.esNulo(perimetroActivoAM.getAplicaFormalizar()) && perimetroActivoAM.getAplicaFormalizar() == 0) {
+					activoDto.setCheckFormalizarReadOnly(false);
+				}				
 			}
-
 		}
-		
-		return sePuedeEditar;
 	}
 	
 	@Override

@@ -1190,8 +1190,6 @@ public interface ActivoApi {
 	void actualizarMotivoOcultacionUAs(DtoActivoPatrimonio patrimonioDto, Long id);
 	
 	void actualizarOfertasTrabajosVivos(Activo activo);
-
-	Boolean bloquearChecksComercializacionActivo(Activo activo, Integer action);
 	
 	boolean isActivoMatriz(Long idActivo);
 
@@ -1246,6 +1244,9 @@ public interface ActivoApi {
 	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
 
 	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
+	
+	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
+
 
 	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
 	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);

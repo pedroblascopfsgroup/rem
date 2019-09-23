@@ -1311,7 +1311,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 
-	@Override
+	@Override 
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo) {
+
+		HQLBuilder hb = new HQLBuilder("select act from ActivoAgrupacionActivo act where act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER + " and act.agrupacion.fechaBaja is null");
+
+		List<ActivoAgrupacionActivo> lista = getHibernateTemplate().find(hb.toString());
+		
+		if (!Checks.estaVacio(lista)) {
+			return lista.get(0);
+		} else {
+			return null;
+		}
+	}
+	
+	@Override 
 	public ActivoAgrupacion getAgrupacionPAByIdActivoConFechaBaja(Long idActivo) {
 
 		HQLBuilder hb = new HQLBuilder("select act.agrupacion	 from ActivoAgrupacionActivo act where act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);

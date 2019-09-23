@@ -376,9 +376,11 @@ Ext.define('HreRem.view.expedientes.wizards.oferta.SlideDatosOferta', {
 	    								var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
 	    								checkNumOferPrin.reset();
 	    								checkNumOferPrin.setDisabled("02" != value);
+	    								checkNumOferPrin.setAllowBlank("02" != value);
 	    								var buscaNumOferPrin = form.down('field[name=buscadorNumOferPrincipal]');
 	    								buscaNumOferPrin.reset();
     									buscaNumOferPrin.setDisabled("02" != value);
+    									buscaNumOferPrin.setAllowBlank("02" != value);
 	    							}
 	    						}
 							},

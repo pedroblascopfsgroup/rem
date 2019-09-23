@@ -232,6 +232,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     me.campos[i].allowBlank = me.campos[i].noObligatorio;
                     camposFiltrados.push(me.campos[i]);
                     break;
+                    
+                case 'numberfield2':
+                	me.campos[i].xtype = 'numberfield';
+                    me.campos[i].hideTrigger = true;
+                    me.campos[i].minValue = 0;
+                    me.campos[i].maxValue = 99;
+                    me.campos[i].allowBlank = me.campos[i].noObligatorio;
+                    camposFiltrados.push(me.campos[i]);
+                    break;
 
                 case 'datemaxtoday':
                     me.campos[i].xtype = 'datefield';
@@ -1785,7 +1794,19 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	me.campoNoObligatorio(me.down('[name=documento]'));
     		}        	
     	});
- 
+    	
+    	me.down('[name=tipoImpuesto]').addListener('change', function(){
+    		
+    		var tipoImpuesto = me.down('[name=tipoImpuesto]');
+    		
+    		if(tipoImpuesto.value){
+    			me.down('[name=porcentajeImpuesto]').noObligatorio=false;
+    		} else {
+    			me.down('[name=porcentajeImpuesto]').noObligatorio=true;
+    		}
+    		
+    		me.campoObligatorio(me.down('[name=porcentajeImpuesto]'));
+    	});
     },
     
     T015_FirmaValidacion: function(){

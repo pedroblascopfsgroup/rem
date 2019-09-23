@@ -673,13 +673,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							//Dependiente de una oferta princiapl -> Dependiente de otra oferta princiapl
 							//La antigua oferta principal
 							ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(antiguoOfertaPrincipal);
-							DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(antiguoOfertaPrincipal, getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()));
+							DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(antiguoOfertaPrincipal, getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), nuevaOfertaAgrupadaLbk);
 							antiguoEcoPrincipal.setComitePropuesto(comiteLbkA);
 							genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
 							
 							//El nuevo ofertaprincipal
 							ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
-							DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+							DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
 							nuevoEcoPrincipal.setComitePropuesto(comiteLbkB);
 							genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 							
@@ -752,7 +752,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
 								
 								ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
-								DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+								DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), nuevaOfertaAgrupadaLbk);
 								nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
 								genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 							}
@@ -789,7 +789,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
 						
 						ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
-						DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()));
+						DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), null);
 						antiguoEcoPrincipal.setComitePropuesto(comiteLbk);
 						genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
 						
@@ -815,12 +815,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
 						
 						ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
-						DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()));
+						DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), ofertaAgrupadaLbk);
 						antiguoEcoPrincipal.setComitePropuesto(comiteLbkA);
 						genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
 						
 						ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(oferta);
-						DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(oferta, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+						DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(oferta, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
 						expedienteComercial.setComitePropuesto(comiteLbkB);
 						
 					} catch (Exception ex) {
@@ -885,7 +885,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
 										
 										ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
-										DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()));
+										DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), null);
 										antiguoEcoPrincipal.setComitePropuesto(comiteLbk);
 										genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
 										
@@ -909,7 +909,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
 									
 									ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
-									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), nuevaOfertaAgrupadaLbk);
 									nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
 									genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 								}
@@ -965,7 +965,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									genericDao.update(Oferta.class, nuevaOfertaPrincipal);
 									
 									ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
-									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()));
+									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
 									nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
 									genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 									
@@ -1161,7 +1161,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(dto.getImporteOferta())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
-			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
+			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta, null));
 		}
 
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);

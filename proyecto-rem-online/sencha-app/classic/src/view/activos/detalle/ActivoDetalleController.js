@@ -5355,42 +5355,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			finalVal = false;
 		}
 		switch(ref){
-			case 'chkbxPerimetroGestion': action = 1; break;
-			case 'chkbxPerimetroPublicar': action = 2; break;
-			case 'chkbxPerimetroComercializar': action = 3; break;
-			case 'chkbxPerimetroFormalizar': action = 4; break;
+			case 'chkbxPerimetroGestion': if(me.getViewModel().get('activo.checkGestionarReadOnly') === 'false'){checkBox.setRawValue(finalVal)}else{isOk = true;}; break;
+			case 'chkbxPerimetroPublicar': if(me.getViewModel().get('activo.checkPublicacionReadOnly') === 'false'){checkBox.setRawValue(finalVal)}else{isOk = true;}; break;
+			case 'chkbxPerimetroComercializar': if(me.getViewModel().get('activo.checkComercializarReadOnly') === 'false'){checkBox.setRawValue(finalVal)}else{isOk = true;}; break;
+			case 'chkbxPerimetroFormalizar': if(me.getViewModel().get('activo.checkFormalizarReadOnly') === 'false'){checkBox.setRawValue(finalVal)}else{isOk = true;}; break;
 			
 		}
 		
 		if ((me.getViewModel().get('activo.activoMatriz')  || me.getViewModel().get('activo.unidadAlquilable'))){
-			
-			Ext.Ajax.request({
-				async: false,
-	    		url: url,
-	    		 method : 'GET',
-	    		params: {
-	    			idActivo: idActivo, 
-	    			action:action
-	    		}, 
-	    		success: function(response, opts){
-	    			var result = Ext.decode(response.responseText);
-	    				if (result.data === 'false'){ 
-	    					checkBox.setRawValue(finalVal);
-	    					me.fireEvent("errorToast", HreRem.i18n("msg.no.modificar.los.checks"));
-	    					isOk = false;
-	    				}else{
-	    					isOk = true;
-	    				}
-	    		},
-			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-			    }
-	    	});
-			
-
 			return isOk;
 		}
-
 	},
 	
 	validateDocOfertante: function(value){

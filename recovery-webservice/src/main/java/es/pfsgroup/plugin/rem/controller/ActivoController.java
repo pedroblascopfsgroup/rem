@@ -129,7 +129,6 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -2980,22 +2979,7 @@ public class ActivoController extends ParadiseJsonController {
 	public List<DtoActivoDatosRegistrales> getCalificacionNegativabyId(Long id) {
 		return activoApi.getActivoCalificacionNegativaCodigos(id);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView bloquearChecksComercializacion(String idActivo, Integer action, ModelMap model) {
-		Activo activo = activoDao.getActivoById(Long.parseLong(idActivo));
-		try{
-			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo, action));
-		} catch (Exception e) {
-			logger.error("error en activoController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-		}
 		
-		return createModelAndViewJson(model);
-	}
-	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPerimetroAppleCesion(ModelMap model,String codigoServicer) {
@@ -3166,4 +3150,5 @@ public class ActivoController extends ParadiseJsonController {
        	}
 
 	}
+
 }

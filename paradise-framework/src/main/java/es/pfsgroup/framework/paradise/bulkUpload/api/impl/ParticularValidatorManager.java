@@ -3778,6 +3778,22 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "1".equals(resultado);
 	}
 
+	public Boolean existeGastoRefacturable(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) " 
+						+ "FROM GRG_REFACTURACION_GASTOS GRG "
+						+ "LEFT JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GRG.GRG_GPV_ID_REFACTURADO "
+						+ "WHERE GPV.GPV_NUM_GASTO_HAYA ='" + numGasto + "'");
+
+		return "1".equals(resultado);
+	}
+	
+	
+	
+	
 	@Override
 	public Boolean esGastoRefacturable(String numGasto) {
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
@@ -3789,6 +3805,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						+ "WHERE VGR.NUM_GASTO_HAYA = '" + numGasto + "'");
 
 		return !"0".equals(resultado);
+	}	
+	
+	
+	@Override
+	public Boolean esGastoRefacturableEnGasto(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		if(!esGastoRefacturable(numGasto)) {
+			String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*)  " 
+						+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "	
+						+ "LEFT JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
+						+ "WHERE GDE.GDE_GASTO_REFACTURABLE =1 "
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");
+		
+			return !"0".equals(resultado);
+		}else return false;
 	}	
 	
 	@Override

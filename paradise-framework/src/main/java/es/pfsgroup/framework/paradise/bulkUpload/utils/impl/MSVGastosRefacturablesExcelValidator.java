@@ -49,7 +49,7 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 	private static final String GASTO_HIJO_NO_PERTENECE_BANKIA_SAREB = "msg.error.masivo.gasto.refacturable.validator.hijo.no.pertenece.bankia.sareb";
 	private static final String GASTO_HIJO_NO_DESTINATARIO_HAYA = "msg.error.masivo.gasto.refacturable.validator.hijo.no.destinatario.haya";
 	private static final String GASTO_HIJO_DIFERENTE_CARTERA = "msg.error.masivo.gasto.refacturable.validator.hijo.diferente.cartera";
-
+	private static final String GASTO_HIJO_EXISTE = "msg.error.masivo.gasto.refacturable.validator.hijo.existe";
 	private static final int FILA_CABECERA = 0;
 	private static final int FILA_DATOS = 1;
 
@@ -118,10 +118,11 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_NO_EMISOR_HAYA), esGastoEmisorHaya(exc, COL_GASTO_PADRE));
 			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_NO_PERTENECE_BANKIA_SAREB), perteneceGastoBankiaSareb(exc, COL_GASTO_PADRE));
 
+			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_EXISTE), existeGastoRefacturable(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_NO_EXISTE), existeGasto(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_NO_REFACTURABLE), esGastoRefacturable(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_NO_PERTENECE_BANKIA_SAREB), perteneceGastoBankiaSareb(exc, COL_GASTO_HIJO));
-			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_EN_GASTO_REFACTURABLE), esGastoRefacturable(exc, COL_GASTO_PADRE));
+			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_EN_GASTO_REFACTURABLE), esGastoRefacturableEnGasto(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_NO_DESTINATARIO_HAYA), esGastoDestinatarioHaya(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_DIFERENTE_CARTERA), esGastoMismaCartera(exc, COL_GASTO_PADRE, COL_GASTO_HIJO));
 
@@ -182,6 +183,50 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 		return null;
 	}
 
+	
+	private List<Integer> existeGastoRefacturable(MSVHojaExcel exc, int colGasto) {
+
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
+			try {
+				if (particularValidator.existeGastoRefacturable(exc.dameCelda(i, colGasto)))
+					listaFilas.add(i);
+				// numero gasto refacturable' ya existe
+			} catch (ParseException e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			} catch (Exception e) {
+				listaFilas.add(0);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> esGastoRefacturableEnGasto(MSVHojaExcel exc, int colGasto) {
+
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
+			try {
+				if (particularValidator.esGastoRefacturableEnGasto(exc.dameCelda(i, colGasto)))
+					listaFilas.add(i);
+				// mun gasto refacturable incluido en gasto refacturable
+			} catch (ParseException e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			} catch (Exception e) {
+				listaFilas.add(0);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+	
+	
+	
 	/**
 	 * Comprueba si existe el gasto 
 	 * @param exc

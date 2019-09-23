@@ -3173,7 +3173,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						boolean esOcupacionDesocupacion = DDTipoDocumentoActivo.MATRICULA_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getMatricula());
 						Date adjuntoFecha = adjunto.getFechaDocumento();
 
-						if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion) || (!Checks.esNulo(adjuntoAux) && adjuntoFecha.after(adjuntoAux.getFechaDocumento()))) {
+						if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion) || (!Checks.esNulo(adjuntoAux) && !Checks.esNulo(adjuntoFecha) && adjuntoFecha.after(adjuntoAux.getFechaDocumento()))) {
 							adjuntoAux = adjunto;
 						}
 
@@ -6602,7 +6602,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoDto.setCheckGestionarReadOnly(false);
 			}			
 		}else {
-			Long idAM = aga.getAgrupacion().getActivoPrincipal().getId();			
+			Long idAM = activoDao.getIdActivoMatriz(aga.getAgrupacion().getId());
 			PerimetroActivo perimetroActivoAM = genericDao.get(PerimetroActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id",idAM));			
 			if(!Checks.esNulo(perimetroActivoAM)) {
 				if(!Checks.esNulo(perimetroActivoAM.getAplicaGestion()) && perimetroActivoAM.getAplicaGestion() == 0 ) {

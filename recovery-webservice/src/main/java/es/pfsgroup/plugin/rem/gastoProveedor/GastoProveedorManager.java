@@ -41,6 +41,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -184,7 +185,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private ProvisionGastosDao provisionGastosDao;
 	
 	@Autowired
-	private ActivoDao activoDao;
+	private MSVRawSQLDao rawDao;
 
 	@Override
 	public GastoProveedor findOne(Long id) {
@@ -741,55 +742,63 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				List<GastoPrinex> listGastoPrinex = new ArrayList<GastoPrinex>();
 				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",idGasto);
 				listGastoPrinex = genericDao.getList(GastoPrinex.class, filtro3);
-				if(!Checks.estaVacio(listGastoPrinex)) {
-					GastoPrinex gastoPrinex = listGastoPrinex.get(0);
-					if(!Checks.esNulo(gastoPrinex)) {
-						if(!Checks.esNulo(gastoPrinex.getDiario1())) {							
-							if(!Checks.esNulo(gastoPrinex.getDiario1Base())) {
-								detalleGasto.setImportePrincipalSujeto(gastoPrinex.getDiario1Base());
-							}							
-						}						
-						if(!Checks.esNulo(gastoPrinex.getDiario1()) || !Checks.esNulo(gastoPrinex.getDiario2())) {							
-							if(!Checks.esNulo(gastoPrinex.getDiario1())) {
-								if(!("60").equals(gastoPrinex.getDiario1())){									
-									detalleGasto.setImportePrincipalNoSujeto(gastoPrinex.getDiario2Base());									
-								}
-							}
-						}						
-						if(!Checks.esNulo(gastoPrinex.getDiario1Tipo())) {
-							detalleGasto.setImpuestoIndirectoTipoImpositivo(gastoPrinex.getDiario1Tipo());
-						}
-						if(!Checks.esNulo(gastoPrinex.getDiario1Cuota())) {
-							detalleGasto.setImpuestoIndirectoCuota(gastoPrinex.getDiario1Cuota());
-						}									
-					}
-					for (GastoPrinex gastoPrinexList : listGastoPrinex) {
-						
-						if(!Checks.esNulo(gastoPrinexList.getIdActivo())  && !Checks.esNulo(gastoPrinexList.getImporteGasto())) {
-							gastoTotal+=gastoPrinexList.getImporteGasto();
-						}
-					}					
-					for (GastoPrinex gastoPrinexListActivos : listGastoPrinex) {
-						if(!Checks.esNulo(gastoPrinexListActivos.getIdActivo())) {
+
+				if(!Checks.estaVacio(listGastoPrinex)) {					
+					
+					String result = rawDao.getExecuteSQL("SELECT SUM(GPL_IMPORTE_GASTO) FROM GPL_GASTOS_PRINEX_LBK WHERE GPV_ID = " + idGasto);	
+					gastoTotal = Double.valueOf(result);
+					for (GastoPrinex gastoPrinex : listGastoPrinex) {
+						if(!Checks.esNulo(gastoPrinex.getIdActivo())) {
 							GastoProveedorActivo gastoProveedorActivos = new GastoProveedorActivo();
 							
 							Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id",idGasto);
-							Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "activo.id",gastoPrinexListActivos.getIdActivo());
+							Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "activo.id",gastoPrinex.getIdActivo());
 
 							gastoProveedorActivos = genericDao.get(GastoProveedorActivo.class, filtro2,filtro4);
-							Float participacionGasto = (float) ((gastoPrinexListActivos.getImporteGasto()*100)/gastoTotal);
+							Float participacionGasto = (float) ((gastoPrinex.getImporteGasto()*100)/gastoTotal);
 
 							DecimalFormat df = new DecimalFormat("##.##");
 							df.setRoundingMode(RoundingMode.CEILING);
 							
 							//truncamos a dos decimales
-							participacionGasto = Float.valueOf(df.format(participacionGasto).replace(',', '.'));
+							participacionGasto = Float.valueOf(df.format(participacionGasto));
 							
 							if(!Checks.esNulo(gastoProveedorActivos)) {
 								gastoProveedorActivos.setParticipacionGasto(participacionGasto);
 								genericDao.update(GastoProveedorActivo.class, gastoProveedorActivos);
 							}
 						}
+						if(!Checks.esNulo(gastoPrinex.getDiario1())) {
+							Double diarioBase = gastoPrinex.getDiario1Base();
+							Double diarioTipo = gastoPrinex.getDiario1Tipo();
+							Double diarioCuota = gastoPrinex.getDiario1Cuota();
+							Double diario2Base = gastoPrinex.getDiario2Base();
+							detalleGasto.setImpuestoIndirectoTipoImpositivo(diarioTipo);
+							detalleGasto.setImpuestoIndirectoCuota(diarioCuota);
+							detalleGasto.setIrpfTipoImpositivo(gastoPrinex.getPorcentajeIrpf());
+							detalleGasto.setIrpfCuota(gastoPrinex.getImporteIrpf());
+							if("1".equals(gastoPrinex.getDiario1()) || "20".equals(gastoPrinex.getDiario1())) {							
+								detalleGasto.setImportePrincipalSujeto(diarioBase);								
+								detalleGasto.setImporteTotal(diarioBase + diarioCuota);
+								if("60".equals(gastoPrinex.getDiario2())) {	
+									detalleGasto.setImportePrincipalNoSujeto(diario2Base);
+									detalleGasto.setImporteTotal(diarioBase + diarioCuota + diario2Base);
+								}								
+							}else {
+								detalleGasto.setImportePrincipalNoSujeto(diarioBase);								
+								if("60".equals(gastoPrinex.getDiario1())) {
+									detalleGasto.setImpuestoIndirectoExento(1);
+									detalleGasto.setImporteTotal(diarioBase);
+								}else {
+									detalleGasto.setImporteTotal(diarioBase + diarioCuota);
+								}
+								if("60".equals(gastoPrinex.getDiario2())) {
+									detalleGasto.setImportePrincipalNoSujeto(diarioBase + diario2Base);
+									detalleGasto.setImporteTotal(diarioBase + diarioCuota + diario2Base);
+								}
+							}							
+							genericDao.update(GastoDetalleEconomico.class, detalleGasto);
+						}	
 					}
 				}
 				GastoProveedor gasto = new GastoProveedor();

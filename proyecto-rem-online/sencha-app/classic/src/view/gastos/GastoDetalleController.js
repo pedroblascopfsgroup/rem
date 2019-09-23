@@ -223,8 +223,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 		if (!activeTab.saveMultiple) {
 			if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
-				/*activeTab.getForm().clearInvalid();
-				activeTab.getBindRecord().reject();*/
+//				activeTab.getForm().clearInvalid();
+//				activeTab.getBindRecord().reject();
 				me.onClickBotonRefrescar();
 				
 			}

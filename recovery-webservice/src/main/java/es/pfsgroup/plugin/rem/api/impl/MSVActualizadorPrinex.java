@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +46,9 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	private GastoProveedorApi gastoProveedorApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
-
+	
+	private List<Long> gastos = new ArrayList<Long>();
+	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK;
@@ -53,7 +57,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
-
+		
 		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		Long gpvNumGasto = Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPV_NUM_GASTO_HAYA));
 		Long numActivo = null;
@@ -107,7 +111,15 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		} else {
 			genericDao.update(GastoPrinex.class, gasto);
 		}
-		gastoProveedorApi.updateGastoByPrinexLBK(gastoProveedor.getId());
+		
+		if(!gastos.contains(gastoProveedor.getId())) {
+			gastos.add(gastoProveedor.getId());
+		}
+		if(exc.getNumeroFilas()-1 == fila) {
+			for(Long id : gastos) {
+				gastoProveedorApi.updateGastoByPrinexLBK(id);
+			}
+		}
 		return resultado;
 	}
 	

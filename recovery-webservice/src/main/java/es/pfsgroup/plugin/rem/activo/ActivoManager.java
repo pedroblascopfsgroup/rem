@@ -6685,7 +6685,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			ActivoTitulo titulo = activoAdapter.getActivoById(id).getTitulo();
 			if(!Checks.esNulo(titulo)) {
-				List<HistoricoTramitacionTitulo> listaObjeto = genericDao.getList(HistoricoTramitacionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "titulo", titulo));
+				Order order  = new Order(OrderType.DESC, "id");
+				List<HistoricoTramitacionTitulo> listaObjeto = genericDao.getListOrdered(HistoricoTramitacionTitulo.class, order, genericDao.createFilter(FilterType.EQUALS, "titulo", titulo));
 				if(!Checks.esNulo(listaObjeto) && !Checks.estaVacio(listaObjeto)) {
 					for(HistoricoTramitacionTitulo htt: listaObjeto) {
 						
@@ -6708,11 +6709,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						}
 						
 						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
-						Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "estadoMotivoCalificacioNegativa.codigo",DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO);
-						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false);
-						List<ActivoCalificacionNegativa> actCalNeg = genericDao.getList(ActivoCalificacionNegativa.class, filtroActivo,filtroMotivo,filtroBorrado);
+						List<ActivoCalificacionNegativa> ActivoTieneCalificacionNegativa = genericDao.getList(ActivoCalificacionNegativa.class, filtroActivo);
+						if(ActivoTieneCalificacionNegativa.isEmpty()) {
+							beanUtilNotNull.copyProperty(aux, "tieneCalificacionNoSubsanada",1);
+						}else {
+							Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "estadoMotivoCalificacioNegativa.codigo",DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO);
+							List<ActivoCalificacionNegativa> actCalNeg = genericDao.getList(ActivoCalificacionNegativa.class, filtroActivo,filtroMotivo);
 						
-						beanUtilNotNull.copyProperty(aux, "tieneCalificacionNoSubsanada", actCalNeg.isEmpty() ? 0 : 1);
+							beanUtilNotNull.copyProperty(aux, "tieneCalificacionNoSubsanada", actCalNeg.isEmpty() ? 0 : 1);
+						}
 						
 						listaDto.add(aux);
 					}

@@ -5,12 +5,21 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 	targetGrid	: 'historicoTramitacionTitulo',
 	editOnSelect: true,
 	disabledDeleteBtn: false,
+	sortableColumns: false,
 	requires	: ['HreRem.model.HistoricoTramtitacionTituloModel'],
     bind: {
         store: '{storeHistoricoTramitacionTitulo}'
     },
     listeners:{
-    	beforeEdit: 'validarEdicionHistoricoTitulo'
+    	beforeEdit: 'validarEdicionHistoricoTitulo',
+    	containermouseover: function () {
+    		var me = this;
+    		me.evaluarBotonAdd();
+    	},
+    	itemmouseenter: function () {
+    		var me = this;
+    		me.evaluarBotonAdd();
+    	} 
     },
 
     initComponent: function () {

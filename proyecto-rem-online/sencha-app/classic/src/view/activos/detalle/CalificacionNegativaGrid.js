@@ -13,6 +13,17 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
     },
     requires: ['HreRem.view.common.CheckBoxModelBase'],
 
+    listeners: {
+		containermouseover: function () {
+    		var me = this;
+    		me.up('tituloinformacionregistralactivo').down('historicotramitaciontitulogrid').evaluarBotonAdd();
+    	},
+    	itemmouseenter: function () {
+    		var me = this;
+    		me.up('tituloinformacionregistralactivo').down('historicotramitaciontitulogrid').evaluarBotonAdd();
+    	} 
+    },
+    
     initComponent: function () {
     	
      	var me = this;
@@ -135,7 +146,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 
 		    me.saveSuccessFn = function() {
 		    	var me = this;
-		    	me.up('informecomercialactivo').funcionRecargar();
+		    	me.up('tituloinformacionregistralactivo').funcionRecargar();
 		    	return true;
 		    };
 

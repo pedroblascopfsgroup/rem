@@ -1992,11 +1992,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoTramitacionTitulo',
 				extraParams: {id: '{activo.id}'}
 			},
-			sorters: {
-				property: 'idHistorico',
-				direction: 'DESC'
-				
-			},
+
 			autoLoad: true
 		}
      }

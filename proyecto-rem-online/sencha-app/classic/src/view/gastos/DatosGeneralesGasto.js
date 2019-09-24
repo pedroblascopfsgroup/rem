@@ -190,7 +190,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.propietario'),
 										name: 'buscadorNifPropietarioField',
 										bind: {
-											value: '{gasto.buscadorNifPropietario}'
+											value: '{gasto.buscadorNifPropietario}',
+											readOnly: '{gasto.tieneGastosRefacturables}'
 										},
 										allowBlank: false,
 										triggers: {

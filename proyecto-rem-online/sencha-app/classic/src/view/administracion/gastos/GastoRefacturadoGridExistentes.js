@@ -106,6 +106,9 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 							}		     
 					  });
 			    	}
+			    	var datosGeneralesGastos = me.up("gastodetalle").down("[reference=datosgeneralesgastoref]");
+			    	me.lookupController().cargarTabData(datosGeneralesGastos);
+			    	
 		    	},
 		    	failure: function(response) {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

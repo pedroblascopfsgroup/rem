@@ -46,7 +46,13 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 	    ];
 
 
-		    me.callParent();
+		me.callParent();
+		        
+		me.saveSuccessFn = function() {
+			var me = this;
+			me.up('detalleeconomicogasto').funcionRecargar();
+			return true;
+	    }
     },
     
 	onAddClick: function(btn){

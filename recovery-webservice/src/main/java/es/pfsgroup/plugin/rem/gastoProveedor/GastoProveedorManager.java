@@ -1064,38 +1064,28 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setGastoRefacturableB(false);
 			}
 			
-			dto.setBloquearCheckRefacturado(false);
+			dto.setBloquearCheckRefacturado(true);
 			
 			if(!Checks.esNulo(gasto.getEstadoGasto())) {
 				String estadoGasto = gasto.getEstadoGasto().getCodigo();
+				DDCartera cartera = gasto.getCartera();
+				GastoRefacturable gastoPadre = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedor", gasto.getId()));
+				GastoRefacturable gastoRefacturado = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gasto.getId()));
 				
-				if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())) {
-				
-					if((!Checks.esNulo(gasto.getGastoDetalleEconomico()) && !Checks.esNulo(gasto.getGastoDetalleEconomico().getGastoRefacturable()) && !gasto.getGastoDetalleEconomico().getGastoRefacturable()) 
-						||	(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
-						||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
-						||	DDEstadoGasto.PAGADO.equals(estadoGasto)
-						||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)  
-						||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto))) {
-							dto.setBloquearCheckRefacturado(false);
+				if (!Checks.esNulo(cartera) 
+						&& (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
+					if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())) {
+						if(!(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
+							||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
+							||	DDEstadoGasto.PAGADO.equals(estadoGasto)
+							||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)  
+							||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto))
+							&& Checks.esNulo(gastoPadre) && Checks.esNulo(gastoRefacturado)) {
+								dto.setBloquearCheckRefacturado(false);
+						}
 					}
-					if (!Checks.esNulo(gasto.getCartera())
-							&& (!DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getCartera().getCodigo())
-									|| !DDCartera.CODIGO_CARTERA_SAREB.equals(gasto.getCartera().getCodigo()))) {
-						dto.setBloquearCheckRefacturado(true);
-					}
-				}else {
-					dto.setBloquearCheckRefacturado(true);
 				}
 			}
-			if(DDDestinatarioGasto.CODIGO_PROPIETARIO.equals(gasto.getDestinatarioGasto().getCodigo())) {
-				dto.setBloquearGridRefacturados(false);
-			}else {
-				dto.setBloquearGridRefacturados(true);
-			}
-			
-			
-			
 			
 			if (!Checks.esNulo(detalleGasto.getPagadoConexionBankia())) {
 				dto.setPagadoConexionBankia(detalleGasto.getPagadoConexionBankia() == 1 ? true : false);

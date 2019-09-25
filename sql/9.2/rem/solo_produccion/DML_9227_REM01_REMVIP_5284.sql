@@ -192,7 +192,7 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Ejecutándose SP cambio estado de publicación en caso de agrupaciones asistidas ');
      
-     	-- Busca los activos que no están en una agrupación asistida ni restringida:
+     	-- Busca los activos que sí están en una agrupación asistida ni restringida:
     	V_SQL := ' SELECT AGR.AGR_ID
 		   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT,
 			'||V_ESQUEMA||'.AUX_REMVIP_5284 AUX,

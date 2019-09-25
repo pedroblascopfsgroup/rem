@@ -160,11 +160,13 @@ BEGIN
 		   AND AUX.ACT_NUM_ACTIVO_UVEM = ACT.ACT_NUM_ACTIVO_UVEM
 		   AND ACT.BORRADO = 0 
 		   AND NOT EXISTS ( SELECT 1 
-				    FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA,
-					 '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI_AGR AGR
+				    FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA
 				    WHERE 1 = 1
-				    AND AGR.AGR_ID = AGA.AGR_ID
 				    AND AGA.ACT_ID = ACT.ACT_ID
+                    		    AND EXISTS ( SELECT 1 FROM '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI_AGR AGR
+                                 		 WHERE 1 = 1
+                                 		 AND AGR.AGR_ID = AGA.AGR_ID
+                               			)  
 				    AND AGA.BORRADO = 0
 				  )		
 		 ' ;

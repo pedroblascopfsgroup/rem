@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.TributoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 
@@ -59,6 +60,8 @@ public class TributoController extends ParadiseJsonController {
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -73,6 +76,7 @@ public class TributoController extends ParadiseJsonController {
 				model.put("success", true);
 			}else {
 				model.put("success", false);
+				model.put("errorMessage", "Ya existe un documento para este tributo");
 			}
 		} catch (GestorDocumentalException e) {
 			logger.error("error en tributoController", e);
@@ -98,12 +102,17 @@ public class TributoController extends ParadiseJsonController {
 		Long id = null;
 		try {
 			idTributo = Long.parseLong(request.getParameter("idTributo"));
-
 			Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", idTributo);
 			Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Filter filtroRest = null;
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				filtroRest = genericDao.createFilter(FilterType.NOTNULL, "idDocRestClient");
+			}else {
+				filtroRest = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
+			}
 
 			
-			ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo,filtroAuditoria);
+			ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo,filtroRest, filtroAuditoria);
 			
 			if(!Checks.esNulo(activoAdjuntoTributo)) {
 				id = activoAdjuntoTributo.getIdDocRestClient();

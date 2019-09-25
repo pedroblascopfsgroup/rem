@@ -45,7 +45,7 @@ public class ActivoAdjuntoTributo implements Serializable, Auditable {
 	private static final long serialVersionUID = -7785802535778510517L;
 
 	@Id
-    @Column(name = "ACT_ID")
+    @Column(name = "ADT_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoAdjuntoTributoGenerator")
     @SequenceGenerator(name = "ActivoAdjuntoTributoGenerator", sequenceName = "S_ACT_ADT_ADJUNTO_TRIBUTOS")
     private Long id;
@@ -59,7 +59,7 @@ public class ActivoAdjuntoTributo implements Serializable, Auditable {
     private DDTipoDocumentoTributos tipoDocumentoTributo;   
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ADT_ID")
+    @JoinColumn(name = "ADJ_ID")
     private Adjunto adjunto;  
 	
 	@Column(name = "ADT_NOMBRE")

@@ -137,6 +137,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -1288,7 +1289,7 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertasActivos(Long id, Boolean incluirOfertasAnuladas, WebDto webDto, ModelMap model) {
 		if (incluirOfertasAnuladas) {
-			model.put("data", adapter.getListOfertasActivos(id));
+			model.put("data", adapter.getListOfertasActivos(id)); 
 		}
 		else {
 			model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
@@ -3151,4 +3152,18 @@ public class ActivoController extends ParadiseJsonController {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDatosActivo(@RequestParam Long idActivo, ModelMap model) {
+
+		try {
+			model.put("data", activoApi.getDatosActivo(idActivo));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en activoController", e);
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

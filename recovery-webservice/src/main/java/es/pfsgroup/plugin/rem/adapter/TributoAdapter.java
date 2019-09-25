@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.adapter;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -15,10 +19,15 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
+import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
@@ -27,6 +36,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 @Service
 public class TributoAdapter {
 	
+	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
+	private static final String OPERACION_ALTA = "Alta";	
 	
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
@@ -39,6 +50,9 @@ public class TributoAdapter {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	@Resource
 	private Properties appProperties;
@@ -54,27 +68,53 @@ public class TributoAdapter {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
 		DDTipoDocumentoTributos tipoDocumento = genericDao.get(DDTipoDocumentoTributos.class, filtro);
+
+		
 		if(!Checks.esNulo(tipoDocumento)) {
 			matricula = tipoDocumento.getMatricula();
 		}
 		
-		if (Checks.esNulo(activoTributo)) {
+		if(!Checks.esNulo(activoTributo)) {
 				
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				
+								
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoTributo(webFileItem, usuarioLogado.getUsername(), matricula);
-				activoTributoApi.upload2(webFileItem, idDocRestClient);
-			} else {
-				activoTributoApi.upload(webFileItem);
-			}
-		} else {
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				if (!Checks.esNulo(tipoDocumento)) {
-					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoTributo(webFileItem, usuarioLogado.getUsername(), matricula);
-					activoTributoApi.uploadDocumento(webFileItem, idDocRestClient, activoTributo, matricula);
+				activoTributoApi.uploadDocumento(webFileItem, idDocRestClient, activoTributo, matricula);
+				
+				String activos = webFileItem.getParameter("activos");
+				String[] arrayActivos = null;
+				
+				if (!Checks.esNulo(activos) && !Checks.esNulo(tipoDocumento.getVinculable()) && tipoDocumento.getVinculable() ) {
+					
+					CrearRelacionExpedienteDto crearRelacionExpedienteDto = new CrearRelacionExpedienteDto();
+					
+					crearRelacionExpedienteDto.setTipoRelacion(RELACION_TIPO_DOCUMENTO_EXPEDIENTE);
+					crearRelacionExpedienteDto.setCodTipoDestino(GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+					crearRelacionExpedienteDto.setCodClaseDestino(GestorDocumentalConstants.CODIGO_CLASE_TRIBUTOS);
+					crearRelacionExpedienteDto.setOperacion(OPERACION_ALTA);
+					
+					gestorDocumentalAdapterApi.crearRelacionActivoTributo(activoTributo, idDocRestClient, activos, usuarioLogado.getUsername(),crearRelacionExpedienteDto);
+					arrayActivos = activos.split(",");
+					
+					
+					for(int i = 0; i < arrayActivos.length; i++){
+						Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i],10));
+						File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
+						BufferedWriter out = new BufferedWriter(new FileWriter(file));
+					    out.write("pfs");
+					    out.close();					    
+					    FileItem fileItem = new FileItem();
+						fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
+						fileItem.setFile(file);
+						fileItem.setLength(file.length());			
+						webFileItem.setFileItem(fileItem);
+						activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+						file.delete();
+						
+					}
 				}
+				
 			} else {
 				activoTributoApi.uploadDocumento(webFileItem, null, activoTributo, matricula);
 			}

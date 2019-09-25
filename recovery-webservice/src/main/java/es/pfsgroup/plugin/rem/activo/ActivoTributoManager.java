@@ -128,11 +128,12 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 		try {
 			if (!Checks.esNulo(activoTributo) && !Checks.esNulo(tipoDocumento)) {
 
-				Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
-
 				ActivoAdjuntoTributo activoAdjuntoTributo = new ActivoAdjuntoTributo();
 				
-				activoAdjuntoTributo.setAdjunto(adj);
+				if (!gestorDocumentalAdapterApi.modoRestClientActivado()) {
+					Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem()); 
+					activoAdjuntoTributo.setAdjunto(adj);
+				}
 				
 				activoAdjuntoTributo.setActivoTributo(activoTributo);
 				
@@ -232,35 +233,50 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean deleteAdjuntoDeTributo(Long idTributo) {
-		
-		Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", idTributo);
-		Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-
-		ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroAuditoria);
-		
-	
-		if(adapter.deleteAdjuntoTributo(activoAdjuntoTributo.getIdDocRestClient()))
-		
-		if (Checks.esNulo(activoAdjuntoTributo)) {
-			return false;
-		}
-		
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
-		activoAdjuntoTributo.getAuditoria().setUsuarioBorrar(usuarioLogado.getNombre());
-		activoAdjuntoTributo.getAuditoria().setFechaBorrar(new Date());
-		activoAdjuntoTributo.getAuditoria().setBorrado(true);
+		Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", idTributo);
+		ActivoAdjuntoTributo activoAdjuntoTributo = null;
+		Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			
+			
+			Filter filtroDocRest = genericDao.createFilter(FilterType.NOTNULL, "idDocRestClient");
+	
+			activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroDocRest,filtroAuditoria);
+			
+			if(!Checks.esNulo(activoAdjuntoTributo)) {
+				if(adapter.deleteAdjuntoTributo(activoAdjuntoTributo.getIdDocRestClient())) {
+					activoAdjuntoTributo.getAuditoria().setUsuarioBorrar(usuarioLogado.getNombre());
+					activoAdjuntoTributo.getAuditoria().setFechaBorrar(new Date());
+					activoAdjuntoTributo.getAuditoria().setBorrado(true);
+				}
+			}else{
+				return false;
+			}
+		}else {
+			 
+			 Filter filtroDocRestNull = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
+	
+			 activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroDocRestNull,filtroAuditoria);
+			 if(!Checks.esNulo(activoAdjuntoTributo)) {
+			 	activoAdjuntoTributo.getAuditoria().setUsuarioBorrar(usuarioLogado.getNombre());
+				activoAdjuntoTributo.getAuditoria().setFechaBorrar(new Date());
+				activoAdjuntoTributo.getAuditoria().setBorrado(true);
+			 }else {
+				 return false;
+			 }
+		}
+		
 		genericDao.update(ActivoAdjuntoTributo.class, activoAdjuntoTributo);
-		
-		
-
+	
 		return true;
 	}
 	
 	@Override
 	public Boolean comprobarSiExisteActivoTributo(WebFileItem webFileItem) throws GestorDocumentalException {
 		ActivoTributos activoTributo = getTributo(Long.parseLong(webFileItem.getParameter("idTributo")));
-		
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 		DtoAdjunto adjuntoTributo = gestorDocumentalAdapterApi.getAdjuntoTributo(activoTributo);

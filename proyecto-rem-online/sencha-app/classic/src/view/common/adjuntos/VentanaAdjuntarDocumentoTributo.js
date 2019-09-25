@@ -2,8 +2,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoTributo', {
 	extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'adjuntardocumentowindowTributo',
     layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() /3,
-   /* height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50 ,*/
+    width	: Ext.Element.getViewportWidth() /1.5,
 	reference: 'adjuntarDocumentoWindowRef',
     /**
      * Parámetro para construir la url que sibirá el documento
@@ -52,81 +51,121 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoTributo', {
     	
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 
+    	
+    	
     	me.items = [
-    				{
-	    				xtype: 'formBase',
-	    				url: $AC.getRemoteUrl(me.entidad + "/upload"),
-	    				reference: 'adjuntarDocumentoFormRef',
-	    				collapsed: false,
-	   			 		scrollable	: 'y',
-	   			 		layout: {
-	   			 			type: 'vbox'
-	   			 		},
-	    				cls:'formbase_no_shadow',
-	    				items: [
-	    						{
+			{
+				xtype: 'formBase', 
+				url: $AC.getRemoteUrl(me.entidad + "/upload"),
+				reference: 'adjuntarDocumentoFormRef',
+				collapsed: false,
+				layout: {
+					type: 'table',
+			        // The total column count must be specified here
+			        columns: 2,
+			        trAttrs: {height: '30px', width: '100%'},
+			        tdAttrs: {width: '20%'},
+			        tableAttrs: {
+			            style: {
+			                width: '100%'
+							}
+			        }
+				},
+			 		cls:'formbase_no_shadow',
+			 		defaults: {
+			 			columnWidth: '50%',
+			 			width: '100%',
+			 			labelWidth: 100,
+			 			msgTarget: 'side',
+			 			addUxReadOnlyEditFieldPlugin: false,
+			 			labelWidth: 100
+			 		},
+						items: [{
+		                	xtype: 'textarea',
+		                	name: 'idTributo',
+		                	hidden:true,
+		                	value: idTributo
+		        		},
+						{
 
- 									xtype: 'filefield',
-							        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
-							        name: 'fileUpload',
-							        anchor: '100%',
-							        width: '100%',
-							        allowBlank: false,
-							        msgTarget: 'side',
-							        buttonConfig: {
-							        	iconCls: 'ico-search-white',
-							        	text: ''
-							        },
-							        align: 'right',
-							        listeners: {
-				                        change: function(fld, value) {
-				                        	
-				                        	var lastIndex = null,
-				                        	fileName = null;
-				                        	if(!Ext.isEmpty(value)) {
-					                        	lastIndex = value.lastIndexOf('\\');
-										        if (lastIndex == -1) return;
-										        fileName = value.substring(lastIndex + 1);
-					                            fld.setRawValue(fileName);
-				                        	}
-				                        }
-				                    } 
-					    		},
-					    		{
-									xtype: 'combobox',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
-						        	name: 'tipo',
-						        	editable: false,
-						        	msgTarget: 'side',
-					            	store: comboTipoDocumentoTributo,
-					            	displayField	: 'descripcion',
-
-								    valueField		: 'codigo',
-									allowBlank: false,
-									width: '100%'
-						        },
-						        {
-				                	xtype: 'textarea',
-				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
-				                	name: 'descripcion',
-				                	maxLength: 256,
-				                	msgTarget: 'side',
-				                	width: '100%'
-			            		},
-						        {
-				                	xtype: 'textarea',
-				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
-				                	name: 'idTributo',
-				                	hidden:true,
-				                	maxLength: 256,
-				                	msgTarget: 'side',
-				                	width: '100%',
-				                	value: idTributo
-			            		}
-    					]
-    				}
-    	];
+							xtype: 'filefield',
+					        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
+					        name: 'fileUpload',							        
+					        allowBlank: false,
+					        maxWidth: 400,
+					        buttonConfig: {
+					        	iconCls: 'ico-search-white',
+					        	text: ''
+					        },
+					        align: 'right',
+					        listeners: {
+		                        change: function(fld, value) {
+		                        	var lastIndex = null,
+		                        	fileName = null;
+		                        	if(!Ext.isEmpty(value)) {
+			                        	lastIndex = value.lastIndexOf('\\');
+								        if (lastIndex == -1) return;
+								        fileName = value.substring(lastIndex + 1);
+			                            fld.setRawValue(fileName);
+		                        	}
+		                        }
+		                    }
+			    		},
+			    		 { 
+							xtype: 'comboboxfieldbase',
+				        	fieldLabel:   HreRem.i18n('fieldlabel.tipo'),
+				        	reference: 'tipoDocumentoTributo',
+				        	name: 'tipo',
+				        	editable: false,
+				        	forceSelection: true,
+				        	displayField	: 'descripcion',
+						    valueField		: 'codigo',	
+				        	store: comboTipoDocumentoTributo,
+							allowBlank: false,
+							listeners: {
+								select: function(combo, record) {
+									if (record.getData().vinculable == "true") {
+										
+											me.down("gridBase").setDisabled(false);
+											me.down("gridBase").getSelectionModel().deselectAll();
+											if(!me.down("gridBase").getStore().isLoaded()) {
+												me.down("gridBase").getStore().load();
+											
+										}
+										
+									} else {
+										me.down("gridBase").setDisabled(true);
+										me.down("gridBase").getSelectionModel().deselectAll();
+									}
+								}
+							}
+				        },
+				        {
+		                	xtype: 'textareafieldbase',
+		                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),				                	
+		                	name: 'descripcion',
+		                	maxLength: 256			                	
+	            		}
+				       
+				]
+			},
+			
+    		{		
+				xtype: 'listaActivoGrid',
+				width: '100%',
+				name: 'listaActivos',
+				margin: '0 0 120 0',
+				maxHeight: 250
+    		}
+			
+];
 
     	me.callParent();
     }
 });
+
+
+
+	
+   	
+

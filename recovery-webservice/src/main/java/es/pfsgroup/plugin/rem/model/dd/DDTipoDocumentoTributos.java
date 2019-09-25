@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -31,12 +33,8 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoDocumentoTributos implements Auditable, Dictionary {
 	
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;	
-
 	
+	private static final long serialVersionUID = 1L;	
 
 	@Id
 	@Column(name = "DD_TDT_ID")
@@ -55,6 +53,13 @@ public class DDTipoDocumentoTributos implements Auditable, Dictionary {
 	
 	@Column(name = "DD_TDT_MATRICULA_GD")   
 	private String matricula;
+	
+	@Column(name = "DD_TDT_VINCULABLE")
+	private Boolean vinculable;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_TDT_TPD_ID")
+	private DDTipoDocumentoActivo tipoDocumentoActivo;
 	        
 	@Version   
 	private Long version;
@@ -103,6 +108,22 @@ public class DDTipoDocumentoTributos implements Auditable, Dictionary {
 
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
+	}
+
+	public Boolean getVinculable() {
+		return vinculable;
+	}
+
+	public void setVinculable(Boolean vinculable) {
+		this.vinculable = vinculable;
+	}
+
+	public DDTipoDocumentoActivo getTipoDocumentoActivo() {
+		return tipoDocumentoActivo;
+	}
+
+	public void setTipoDocumentoActivo(DDTipoDocumentoActivo tipoDocumentoActivo) {
+		this.tipoDocumentoActivo = tipoDocumentoActivo;
 	}
 
 	public Long getVersion() {

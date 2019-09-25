@@ -102,5 +102,8 @@ public interface GestorDocumentalAdapterApi {
 
 	void crearTributo(ActivoTributos activoTributo, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
 
+	public void crearRelacionActivoTributo(ActivoTributos activoTributo, Long idDocRestClient, String activo, String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto)
+			throws GestorDocumentalException;
+
 
 }

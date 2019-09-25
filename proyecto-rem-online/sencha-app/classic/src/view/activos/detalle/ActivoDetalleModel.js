@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
-    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel'],
+    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
+    'HreRem.model.ListaActivoGrid'],
 
     data: {
     	activo: null,
@@ -2094,6 +2095,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
       	        remoteUrl: 'activo/getListAdjuntosPlusvalia',
       	        extraParams: {id: '{activo.id}'}
           	 }
+		},
+		
+		storeDatosActivo: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ListaActivoGrid',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getDatosActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			},
+			autoLoad: true
 		}
 		
      }

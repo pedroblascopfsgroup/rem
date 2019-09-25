@@ -1306,4 +1306,30 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 	}
 	
+	@Override
+	public void crearRelacionActivoTributo(ActivoTributos activoTributo, Long idDocRestClient, String activo,
+			String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException {
+		
+		String codigoEstado = "03";
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		CredencialesUsuarioDto credUsu = recoveryToGestorDocAssembler.getCredencialesDto(username);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo,getTipoExpediente(activoTributo.getActivo()),codigoEstado);
+		cabecera.setIdDocumento(idDocRestClient);
+
+		StringBuilder errorMessage = new StringBuilder();
+		
+			cabecera.setIdExpedienteHaya(activo);
+
+			try {
+				gestorDocumentalApi.crearRelacionExpediente(cabecera, credUsu, crearRelacionExpedienteDto);
+			} catch (GestorDocumentalException gex) {
+				logger.debug(gex.getMessage());
+				errorMessage.append("[").append(activo).append("] ").append(gex.getMessage()).append("\n");
+			}
+		
+		if (errorMessage.length()!=0) {
+			throw new GestorDocumentalException(errorMessage.toString());
+		}	
+		
+	}
 }

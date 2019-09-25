@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
@@ -1255,5 +1256,7 @@ public interface ActivoApi {
 	String uploadDocumentoPlusvalia(WebFileItem webFileItem,ActivoPlusvalia activoPlusvaliaEntrada, String matricula) throws Exception;
 
 	FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto);
+
+	ActivoDto getDatosActivo(Long activoId);
 
 }

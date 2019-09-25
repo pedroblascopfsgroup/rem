@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Lara Pablo
---## FECHA_CREACION=201908911
+--## FECHA_CREACION=20190927
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-7474
@@ -46,23 +46,23 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     
-    				--CODIGO			DESCRIPCION														DESCRIPCION LARGA										MATRICULAS
-        T_TIPO_DATA('RDDJP', 	'Recurso derivación de deuda (Justificante de pago)', 		'Recurso derivación de deuda (Justificante de pago)', 			'OP-32-CERA-DF'),
-        T_TIPO_DATA('RDDR', 	'Recurso derivación de deuda (Recibo)', 					'Recurso derivación de deuda (Recibo)', 						'OP-32-FACT-AX'),
-        T_TIPO_DATA('RHLTJP', 	'Recurso hipoteca legal tácita (Justificante de pago)', 	'Recurso hipoteca legal tácita (Justificante de pago)', 		'OP-32-CERA-DG'),
-        T_TIPO_DATA('RHLTR', 	'Recurso hipoteca legal tácita (Recibo)', 					'Recurso hipoteca legal tácita (Recibo)', 						'OP-32-FACT-AY'),
-        T_TIPO_DATA('RRDD', 	'Respuesta recurso derivación de deuda', 					'Respuesta recurso derivación de deuda', 						'OP-32-DOCA-60'),
-        T_TIPO_DATA('RRHLT', 	'Respuesta recurso hipoteca legal tácita', 					'Respuesta recurso hipoteca legal tácita', 						'OP-32-DOCA-61'),
-        T_TIPO_DATA('RSJP', 	'Resto de sanciones (Justificante de pago)', 				'Resto de sanciones (Justificante de pago)', 					'OP-32-CERA-DH'),
-        T_TIPO_DATA('RSR', 		'Resto de sanciones (Recibo)', 								'Resto de sanciones (Recibo)', 									'OP-32-FACT-AZ'),
-        T_TIPO_DATA('SMCJP',	'Sanción: Multa coercitiva (Justificante de pago)', 		'Sanción: Multa coercitiva (Justificante de pago)', 			'OP-32-CERA-AA'),
-        T_TIPO_DATA('SMCR', 	'Sanción: Multa coercitiva (Recibo)', 						'Sanción: Multa coercitiva (Recibo)', 							'OP-32-FACT-45'),
-        T_TIPO_DATA('RST', 		'Recurso sanción tributaria', 								'Recurso sanción tributaria', 									'OP-32-DOCA-62'),
-        T_TIPO_DATA('RMC', 		'Recurso multa coercitiva', 								'Recurso multa coercitiva', 									'OP-32-DOCA-63'),
-        T_TIPO_DATA('SBT', 		'Solicitud bonificación tributaria', 						'Solicitud bonificación tributaria', 							'OP-32-DOCA-64'),
-        T_TIPO_DATA('RSBT', 	'Recurso solicitud bonificación tributaria', 				'Recurso solicitud bonificación tributaria', 					'OP-32-DOCA-65'),
-        T_TIPO_DATA('SSDR', 	'Solicitud suspensión de deudas recurridas', 				'Solicitud suspensión de deudas recurridas', 					'OP-32-DOCA-66'),
-        T_TIPO_DATA('RSDR', 	'Recurso suspensión de deudas recurridas', 					'Recurso suspensión de deudas recurridas', 						'OP-32-DOCA-67')
+    				--CODIGO			DESCRIPCION														DESCRIPCION LARGA										MATRICULAS		DD_TDT_VINCULABLE		CODIGO DD_TPD_TIPO_DOCUMENTO
+        T_TIPO_DATA('RDDJP', 	'Recurso derivación de deuda (Justificante de pago)', 		'Recurso derivación de deuda (Justificante de pago)', 			'OP-32-CERA-DF',			'1',				'RDDJP'		),
+        T_TIPO_DATA('RDDR', 	'Recurso derivación de deuda (Recibo)', 					'Recurso derivación de deuda (Recibo)', 						'OP-32-FACT-AX',			'1',				'RDDR'		),
+        T_TIPO_DATA('RHLTJP', 	'Recurso hipoteca legal tácita (Justificante de pago)', 	'Recurso hipoteca legal tácita (Justificante de pago)', 		'OP-32-CERA-DG',			'1',				'RHLTJP'	),
+        T_TIPO_DATA('RHLTR', 	'Recurso hipoteca legal tácita (Recibo)', 					'Recurso hipoteca legal tácita (Recibo)', 						'OP-32-FACT-AY',			'1',				'RHLTR'		),
+        T_TIPO_DATA('RRDD', 	'Respuesta recurso derivación de deuda', 					'Respuesta recurso derivación de deuda', 						'OP-32-DOCA-60',			'1',				'RRDD'		),
+        T_TIPO_DATA('RRHLT', 	'Respuesta recurso hipoteca legal tácita', 					'Respuesta recurso hipoteca legal tácita', 						'OP-32-DOCA-61',			'1',				'RRHLT'		),
+        T_TIPO_DATA('RSJP', 	'Resto de sanciones (Justificante de pago)', 				'Resto de sanciones (Justificante de pago)', 					'OP-32-CERA-DH',			'0',				'RSJP'		),
+        T_TIPO_DATA('RSR', 		'Resto de sanciones (Recibo)', 								'Resto de sanciones (Recibo)', 									'OP-32-FACT-AZ',			'0',				'RSR'		),
+        T_TIPO_DATA('SMCJP',	'Sanción: Multa coercitiva (Justificante de pago)', 		'Sanción: Multa coercitiva (Justificante de pago)', 			'OP-32-CERA-AA',			'0',				'SMCJP'		),
+        T_TIPO_DATA('SMCR', 	'Sanción: Multa coercitiva (Recibo)', 						'Sanción: Multa coercitiva (Recibo)', 							'OP-32-FACT-45',			'0',				'SMCR'		),
+        T_TIPO_DATA('RST', 		'Recurso sanción tributaria', 								'Recurso sanción tributaria', 									'OP-32-DOCA-62',			'1',				'RST'		),
+        T_TIPO_DATA('RMC', 		'Recurso multa coercitiva', 								'Recurso multa coercitiva', 									'OP-32-DOCA-63',			'1',				'RMC'		),
+        T_TIPO_DATA('SBT', 		'Solicitud bonificación tributaria', 						'Solicitud bonificación tributaria', 							'OP-32-DOCA-64',			'1',				'SBT'		),
+        T_TIPO_DATA('RSBT', 	'Recurso solicitud bonificación tributaria', 				'Recurso solicitud bonificación tributaria', 					'OP-32-DOCA-65',			'1',				'RSBT'		),
+        T_TIPO_DATA('SSDR', 	'Solicitud suspensión de deudas recurridas', 				'Solicitud suspensión de deudas recurridas', 					'OP-32-DOCA-66',			'1',				'SSDR'		),
+        T_TIPO_DATA('RSDR', 	'Recurso suspensión de deudas recurridas', 					'Recurso suspensión de deudas recurridas', 						'OP-32-DOCA-67',			'1',				'RSDR'		)
         
             
            
@@ -93,8 +93,9 @@ BEGIN
          EXECUTE IMMEDIATE V_MSQL INTO V_ID;
          
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_TDT_TIPO_DOC_TRIBUTOS (' ||
-                     'DD_TDT_ID, DD_TDT_CODIGO, DD_TDT_DESCRIPCION, DD_TDT_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TDT_MATRICULA_GD) ' ||
-                     'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''HREOS-7474'',SYSDATE,0, '''||TRIM(V_TMP_TIPO_DATA(4))||''' FROM DUAL';
+                     'DD_TDT_ID, DD_TDT_CODIGO, DD_TDT_DESCRIPCION, DD_TDT_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TDT_MATRICULA_GD, DD_TDT_VINCULABLE, DD_TDT_TPD_ID ) ' ||
+                     'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''HREOS-7474'',SYSDATE,0, '''||TRIM(V_TMP_TIPO_DATA(4))||''', ' ||
+					 ''''||TRIM(V_TMP_TIPO_DATA(5))||''', (SELECT DD_TPD_ID FROM DD_TPD_TIPO_DOCUMENTO WHERE DD_TPD_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''') FROM DUAL';
          EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         

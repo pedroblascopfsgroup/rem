@@ -24,6 +24,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 	private static final String CAB_SUJETO_IMPUESTO_INDIRECTO = "Sujeto Impuesto Indirecto";
 	private static final String CAB_NOMBRE_GESTORIA = "Nombre Gestoría";
 	private static final String CAB_CARTERA = "Cartera";
+	private static final String CAB_SUBCARTERA = "Subcartera";
 	private static final String CAB_NUM_ACTIVO = "Nº Activo";
 	private static final String CAB_MOTIVO_RECHAZO_PROP = "Motivo Rechazo Prop.";
 	private List<VGastosProveedorExcel> listaGastosProveedor;
@@ -53,6 +54,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 		listaCabeceras.add(CAB_SUJETO_IMPUESTO_INDIRECTO);
 		listaCabeceras.add(CAB_NOMBRE_GESTORIA);
 		listaCabeceras.add(CAB_CARTERA);
+		listaCabeceras.add(CAB_SUBCARTERA);
 		listaCabeceras.add(CAB_MOTIVO_RECHAZO_PROP);
 		
 		return listaCabeceras;
@@ -82,6 +84,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(this.getBooleanStringValue(gastoProveedor.getSujetoImpuestoIndirecto()));
 			fila.add(gastoProveedor.getNombreGestoria());
 			fila.add(gastoProveedor.getEntidadPropietariaDescripcion());
+			fila.add(gastoProveedor.getSubentidadPropietariaDescripcion());
 			fila.add(gastoProveedor.getMotivoRechazoProp());
 
 			valores.add(fila);

@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=ALFONSO RODRIGUEZ VERDERA
---## FECHA_CREACION=20190909
+--## FECHA_CREACION=20190923
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7487
+--## INCIDENCIA_LINK=HREOS-7645
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_TDJ_TIPO_DOC_JUNTAS los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadir campos nuevos para vincular una junta con un activo
 --##########################################
 --*/
 
@@ -35,7 +36,7 @@ DECLARE
 
     V_TABLA VARCHAR2(30 CHAR) := 'DD_TDJ_TIPO_DOC_JUNTAS';  -- Tabla a modificar
     V_TABLA_SEQ VARCHAR2(30 CHAR) := 'S_DD_TDJ_TIPO_DOC_JUNTAS';  -- Tabla a modificar   
-    V_USR VARCHAR2(30 CHAR) := 'HREOS-7487'; -- USUARIOCREAR/USUARIOMODIFICAR
+    V_USR VARCHAR2(30 CHAR) := 'HREOS-7645'; -- USUARIOCREAR/USUARIOMODIFICAR
     V_CDG VARCHAR2(30 CHAR) := 'TDJ';
     
     
@@ -43,15 +44,15 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 
-        T_TIPO_DATA('01', 'Comunidad de propietarios: Cuota extraordinaria (derrama) (Justificante de pago)', 'Comunidad de propietarios: Cuota extraordinaria (derrama) (Justificante de pago)', 'OP-33-CERA-AB'),
-        T_TIPO_DATA('02', 'Comunidad de propietarios: Cuota extraordinaria (derrama) (Recibo)', 'Comunidad de propietarios: Cuota extraordinaria (derrama) (Recibo)', 'OP-33-FACT-46'),
-        T_TIPO_DATA('03', 'Comunidad de propietarios: Cuota ordinaria (Justificante de pago)', 'Comunidad de propietarios: Cuota ordinaria (Justificante de pago)', 'OP-33-CERA-AD'),
-        T_TIPO_DATA('04', 'Comunidad de propietarios: Cuota ordinaria (Recibo)', 'Comunidad de propietarios: Cuota ordinaria (Recibo)', 'OP-33-FACT-48'),
-        T_TIPO_DATA('05', 'Junta de compensacion: Cuotas y derramas (Justificante de pago)', 'Junta de compensacion: Cuotas y derramas (Justificante de pago)', 'OP-33-CERA-AH'),
-        T_TIPO_DATA('06', 'Junta de compensacion: Cuotas y derramas (Recibo)', 'Junta de compensacion: Cuotas y derramas (Recibo)', 'OP-33-FACT-52'),
-        T_TIPO_DATA('07', 'Junta de compensacion / EUC: Gastos generales (Justificante de pago)', 'Junta de compensacion / EUC: Gastos generales (Justificante de pago)', 'OP-33-CERA-AG'),
-        T_TIPO_DATA('08', 'Junta de compensacion / EUC: Gastos generales (Recibo)', 'Junta de compensacion / EUC: Gastos generales (Recibo)', 'OP-33-FACT-51'),
-        T_TIPO_DATA('09', 'Recepcion convocatoria', 'Recepcion convocatoria', 'OP-33-ACTR-13')
+        T_TIPO_DATA('01', 'Comunidad de propietarios: Cuota extraordinaria (derrama) (Justificante de pago)', 'Comunidad de propietarios: Cuota extraordinaria (derrama) (Justificante de pago)', 'OP-33-CERA-AB', '0', null),
+        T_TIPO_DATA('02', 'Comunidad de propietarios: Cuota extraordinaria (derrama) (Recibo)', 'Comunidad de propietarios: Cuota extraordinaria (derrama) (Recibo)', 'OP-33-FACT-46', '0', null),
+        T_TIPO_DATA('03', 'Comunidad de propietarios: Cuota ordinaria (Justificante de pago)', 'Comunidad de propietarios: Cuota ordinaria (Justificante de pago)', 'OP-33-CERA-AD', '0', null),
+        T_TIPO_DATA('04', 'Comunidad de propietarios: Cuota ordinaria (Recibo)', 'Comunidad de propietarios: Cuota ordinaria (Recibo)', 'OP-33-FACT-48', '0', null),
+        T_TIPO_DATA('05', 'Junta de compensacion: Cuotas y derramas (Justificante de pago)', 'Junta de compensacion: Cuotas y derramas (Justificante de pago)', 'OP-33-CERA-AH', '0', null),
+        T_TIPO_DATA('06', 'Junta de compensacion: Cuotas y derramas (Recibo)', 'Junta de compensacion: Cuotas y derramas (Recibo)', 'OP-33-FACT-52', '0', null),
+        T_TIPO_DATA('07', 'Junta de compensacion / EUC: Gastos generales (Justificante de pago)', 'Junta de compensacion / EUC: Gastos generales (Justificante de pago)', 'OP-33-CERA-AG', '0', null),
+        T_TIPO_DATA('08', 'Junta de compensacion / EUC: Gastos generales (Recibo)', 'Junta de compensacion / EUC: Gastos generales (Recibo)', 'OP-33-FACT-51', '0', null),
+        T_TIPO_DATA('09', 'Recepcion convocatoria', 'Recepcion convocatoria', 'OP-33-ACTR-13', '1', '153')
 	    
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -81,7 +82,9 @@ BEGIN
 					   	DD_'||V_CDG||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
 					   	USUARIOMODIFICAR = '''||V_USR||''', 
               DD_'||V_CDG||'_MATRICULA_GD = '''||TRIM(V_TMP_TIPO_DATA(4))||''',
-                        FECHAMODIFICAR = SYSDATE 
+                        FECHAMODIFICAR = SYSDATE,
+                        DD_'||V_CDG||'_VINCULABLE = '''||TRIM(V_TMP_TIPO_DATA(5))||''',
+                        DD_'||V_CDG||'_TPD_ID = (SELECT DD_TPD_ID FROM DD_TPD_TIPO_DOCUMENTO WHERE DD_TPD_CODIGO ='''||TRIM(V_TMP_TIPO_DATA(6))||''')
 					WHERE DD_'||V_CDG||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
                    
           EXECUTE IMMEDIATE V_MSQL;
@@ -101,7 +104,9 @@ BEGIN
                     USUARIOCREAR, 
                     FECHACREAR, 
                     BORRADO,
-                    DD_'||V_CDG||'_MATRICULA_GD
+                    DD_'||V_CDG||'_MATRICULA_GD,
+                    DD_'||V_CDG||'_VINCULABLE,
+                    DD_'||V_CDG||'_TPD_ID
                   ) 
                   SELECT '||V_ESQUEMA||'.'||V_TABLA_SEQ||'.NEXTVAL,
                   '''||TRIM(V_TMP_TIPO_DATA(1))||''',
@@ -111,7 +116,11 @@ BEGIN
                   '''||V_USR||''',
                   SYSDATE,
                   0,
-                  '''||TRIM(V_TMP_TIPO_DATA(4))||''' FROM DUAL';
+                  '''||TRIM(V_TMP_TIPO_DATA(4))||''',
+                  '''||TRIM(V_TMP_TIPO_DATA(5))||''',
+                  (SELECT DD_TPD_ID FROM DD_TPD_TIPO_DOCUMENTO WHERE DD_TPD_CODIGO ='''||TRIM(V_TMP_TIPO_DATA(6))||''')
+                  FROM DUAL';
+
 
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');

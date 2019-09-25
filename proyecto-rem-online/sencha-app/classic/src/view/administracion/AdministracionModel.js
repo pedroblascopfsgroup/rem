@@ -2,7 +2,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.administracion',
     requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision', 'HreRem.model.ActivoJuntaPropietarios', 'HreRem.model.ComboBase', 'HreRem.model.JuntasPropietarios', 
-    	'HreRem.model.TipoDocumentoExpediente', 'HreRem.model.AdjuntoJuntas'],
+    	'HreRem.model.TipoDocumentoExpediente', 'HreRem.model.AdjuntoJuntas', 'HreRem.model.Activo'],
 
     data: {
     	junta: null
@@ -87,19 +87,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 
     	},
     	
-    	// STORE PESTAÑA DOCUMENTOS TIPO DE JUNTA
-    	comboTipoDocumento: {
-			model: 'HreRem.model.ComboBase',
-	    	proxy: {
-	    		type: 'uxproxy', 
-	    		remoteUrl: 'generic/getDiccionario',
-	    		extraParams: {diccionario: 'tipoDocJunta'}
-	    	},
-	    	autoLoad: true,
-    		sorters: 'descripcion'
-    	},
-
-    	comboEstadosProvision: {
+     	comboEstadosProvision: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -241,12 +229,26 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	    ]
 	},
 	
-	storeActivos: {
-			model: 'HreRem.model.ActivosExpediente',
+	// STORE PESTAÑA DOCUMENTOS TIPO DE JUNTA
+    	comboTipoDocumento: {
+			model: 'HreRem.model.ComboBase',
 	    	proxy: {
 	    		type: 'uxproxy', 
-	    		remoteUrl: 'expedientecomercial/getActivosExpediente',
-	    		extraParams: {idExpediente: '{expediente.id}'}
+	    		remoteUrl: 'generic/getDiccionario',
+	    		extraParams: {diccionario: 'tipoDocJunta'}
+	    		
+	    	},
+	    	autoLoad: false,
+    		sorters: 'descripcion'
+    	},
+    	
+	storeActivos: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.JuntasPropietarios',
+	    	proxy: {
+	    		type: 'uxproxy', 
+	    		remoteUrl: 'activojuntapropietarios/getActivosJuntas',
+	    		extraParams: {idJunta: '{junta.id}'}
 	    	},
 	    	autoLoad: false
     	},

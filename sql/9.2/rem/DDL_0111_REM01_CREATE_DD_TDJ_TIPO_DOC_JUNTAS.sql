@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Alfonso Rodriguez
---## FECHA_CREACION=20190909
+--## FECHA_CREACION=20190920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7487
+--## INCIDENCIA_LINK=HREOS-7645
 --## PRODUCTO=NO
 --## Finalidad: DDL Creación de la tabla DD_TDJ_TIPO_DOC_JUNTAS
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadir campos nuevos para vincular una junta con un activo
 --##########################################
 --*/
 
@@ -64,6 +65,8 @@ DECLARE
 				  , FECHABORRAR TIMESTAMP(6)
 				  , BORRADO NUMBER(1,0) DEFAULT 0
 				  , DD_TDJ_MATRICULA_GD VARCHAR2(20 CHAR)
+				  , DD_TDJ_VINCULABLE NUMBER(1,0)
+				  , DD_TDJ_TPD_ID NUMBER(16,0)
 			  )';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Tabla creada');
@@ -77,6 +80,12 @@ DECLARE
 			EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_TDJ_ID)';
 			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 		END IF;
+
+		-- Creamos foreign key JCM_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_TDJ_TIPO_JUNTA_TPD_TIPO_DOC FOREIGN KEY (DD_TDJ_TPD_ID) REFERENCES '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO (DD_TPD_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_TDJ_TIPO_JUNTA_TPD_TIPO_DOC... Foreign key creada.');
+
 
 		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 		EXECUTE IMMEDIATE V_MSQL;
@@ -95,6 +104,8 @@ DECLARE
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro''';
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado''';
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TDJ_MATRICULA_GD IS ''ID de matricula''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TDJ_VINCULABLE IS ''Si se vincula a los activos o no''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TDJ_TPD_ID IS ''Campo que relaciona los tipos de documentos vinculables''';
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Comentarios añadidos corerctamente.');
 		

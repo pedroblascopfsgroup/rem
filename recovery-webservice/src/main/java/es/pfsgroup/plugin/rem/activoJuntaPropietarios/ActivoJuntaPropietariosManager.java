@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.activoJuntaPropietarios;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,8 +23,10 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.DtoPagination;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -28,14 +34,19 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activoJuntaPropietarios.dao.ActivoJuntaPropietariosDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoJuntaPropietariosApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoJuntas;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
@@ -45,22 +56,24 @@ import es.pfsgroup.plugin.rem.model.DtoActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VListadoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocJuntas;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 
 
 @Service("activoJuntaPropietariosManager")
 public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosApi {
 	
 	private static final String PESTANA_FICHA = "ficha";
-	//private static final String PESTANA_DOCUMENTOS = "documentos";
-	
-	//private static final String EXCEPTION_DOCUMENTO_SUBTIPO = "Error, solo se puede insertar 1 documento de este subtipo";
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";
-	//private static final String ERROR_CREACION_CONTENEDOR = "Error creando el contenedor de la persona";
-	//private static final String CREANDO_CONTENEDOR = "Creando contenedor...";
 
+	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
@@ -73,15 +86,9 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 	@Autowired
 	private UploadAdapter uploadAdapter;
 	
-	/*@Autowired
-	private ActivoApi activoApi;
-	
 	@Autowired
-	private ActivoJuntaPropietariosApi activoJuntaPropietariosApi;
+	private ActivoManager activoManager;
 	
-	@Autowired
-	private ActivoManager activoManager;*/
-
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -195,6 +202,44 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 		return dto;
 	}
 	
+	// obtener activo para una junta
+	
+	@Override
+	public ActivoDto getActivosJuntasVista(Long idJunta) {
+		
+		ActivoJuntaPropietarios listaActivo = genericDao.get(ActivoJuntaPropietarios.class,
+				genericDao.createFilter(FilterType.EQUALS, "id", idJunta));
+		ActivoDto dto = new ActivoDto();
+		Activo activo = listaActivo.getActivo();
+		try {
+			
+			beanUtilNotNull.copyProperty(dto, "numActivo", activo.getNumActivo());
+			if (!Checks.esNulo(activo.getInfoRegistral())
+					&& !Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien())) {
+				beanUtilNotNull.copyProperty(dto, "fincaRegistral", activo.getInfoRegistral().getInfoRegistralBien().getNumFinca());
+			}
+			beanUtilNotNull.copyProperty(dto, "tipoActivo", activo.getTipoActivo().getDescripcion());
+			
+			if (activo.getMunicipio() != null) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getMunicipio());
+				Localidad localidad = genericDao.get(Localidad.class, filtro);
+				beanUtilNotNull.copyProperty(dto, "municipio", localidad.getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "provincia", localidad.getProvincia().getDescripcion());
+			}
+			
+
+			
+		}catch (IllegalAccessException e) {
+			logger.error("Error en activoManager", e);
+
+		}catch (InvocationTargetException e) {
+			logger.error("Error en activoManager", e);
+		}
+
+		return dto;
+	
+	}
+	
 	
 	// GESTOR DOCUMENTAL
 	// asociamos el documento al id de junta
@@ -302,29 +347,54 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-
 		DDTipoDocJuntas tipoDocumento = genericDao.get(DDTipoDocJuntas.class, filtro);
 
+		String activos = webFileItem.getParameter("activos");
+		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
 				// subida al gestor documental
 				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoJunta(activoJunta, webFileItem,
 						usuarioLogado.getUsername(), tipoDocumento.getMatriculaGD());
+				
 				// Subida del registro del adjunto a juntas
 				CrearRelacionExpedienteDto crearRelacionExpedienteDto = new CrearRelacionExpedienteDto();
 				crearRelacionExpedienteDto.setTipoRelacion(RELACION_TIPO_DOCUMENTO_EXPEDIENTE);
 				String mat = tipoDocumento.getMatriculaGD();
-
 				if (!Checks.esNulo(mat)) {
-					String[] matSplit = mat.split("-");
-					crearRelacionExpedienteDto.setCodTipoDestino(matSplit[0]);
-					crearRelacionExpedienteDto.setCodClaseDestino(matSplit[1]);
+					crearRelacionExpedienteDto.setCodTipoDestino(GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+					crearRelacionExpedienteDto.setCodClaseDestino(GestorDocumentalConstants.CODIGO_CLASE_JUNTA);	
 				}
 				crearRelacionExpedienteDto.setOperacion(OPERACION_ALTA);
 
 				gestorDocumentalAdapterApi.crearRelacionJuntas(activoJunta, idDocRestClient, activoJunta.getActivo().getNumActivo().toString(),
-						usuarioLogado.getUsername(), crearRelacionExpedienteDto);
+						usuarioLogado.getUsername(), crearRelacionExpedienteDto);		
 				
+				if(!Checks.esNulo(tipoDocumento.getTipoDocumentoActivo())) {
+					webFileItem.putParameter("tipo", tipoDocumento.getTipoDocumentoActivo().getCodigo());
+				}
+			
+					//Según item HREOS-2379:
+					//Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el documento realmente, sólo insertando la fila.
+					
+				if(!Checks.esNulo(activos)) {
+					Filter filtroAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", Long.parseLong(webFileItem.getParameter("activos")));
+					if(!Checks.esNulo(filtroAct.getPropertyValue())) {
+					
+						Activo activoEntrada = genericDao.get(Activo.class, filtroAct);
+					
+						File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
+						BufferedWriter out = new BufferedWriter(new FileWriter(file));
+						out.write("pfs");
+						out.close();					    
+						FileItem fileItem = new FileItem();
+						fileItem.setFile(file);
+						fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
+						fileItem.setLength(webFileItem.getFileItem().getLength());			
+						webFileItem.setFileItem(fileItem);
+						activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+					}
+				}
 				ActivoAdjuntoJuntas adjuntoJunta = new ActivoAdjuntoJuntas();
 				adjuntoJunta.setActivoJuntaPropietario(activoJunta);
 				adjuntoJunta.setTipoDocumento(tipoDocumento);

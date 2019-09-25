@@ -4,9 +4,11 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.DtoActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 
 public interface ActivoJuntaPropietariosApi {
 
@@ -30,5 +32,7 @@ public interface ActivoJuntaPropietariosApi {
 	public String uploadDocumento(WebFileItem webFileItem, ActivoJuntaPropietarios activoJuntaEntrada, String matricula) throws Exception;
 
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto);
+	
+	public ActivoDto getActivosJuntasVista(Long idJunta);
 
 }

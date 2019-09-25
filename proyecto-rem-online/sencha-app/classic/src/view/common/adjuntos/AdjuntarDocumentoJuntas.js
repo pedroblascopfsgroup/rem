@@ -97,8 +97,10 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoJuntas', {
 					    		{ 
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
+						        	reference: 'filtroComboTipoDocumentoJunta',
 						        	name: 'tipo',
 						        	editable: false,
+						        	forceSelection: true,
 						        	msgTarget: 'side',
 						        	bind: {
 					            		store: '{comboTipoDocumento}'
@@ -106,7 +108,34 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoJuntas', {
 					            	displayField	: 'descripcion',
 								    							
 								    valueField		: 'codigo',
-									allowBlank: false
+									allowBlank: false,
+									listeners: {
+										select: function(combo, record) {
+											if (record.getData().vinculable == 1) {
+												if(combo.value == CONST.TIPO_DOCUMENTO_JUNTAS ['RECEPCION_CONVOCATORIA']){
+												
+													me.down("gridBase").setDisabled(true);
+													me.down("gridBase").getStore().load(function (){
+														me.down("gridBase").getSelectionModel().selectAll();
+													});		
+													
+												
+												}else{
+													me.down("gridBase").setDisabled(false);
+													me.down("gridBase").getSelectionModel().deselectAll();
+													if(!me.down("gridBase").getStore().isLoaded()) {
+														me.down("gridBase").getStore().load();
+													}
+												}
+												
+											} else {
+												me.down("gridBase").setDisabled(true);
+												me.down("gridBase").getSelectionModel().deselectAll();
+											}
+										}
+									}
+									
+									
 					    		},
 						        {
 				                	xtype: 'textareafieldbase',
@@ -159,12 +188,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoJuntas', {
 			       						{
 								            text: HreRem.i18n("fieldlabel.tipo.activo"),
 								            dataIndex: 'tipoActivo',
-								            flex:1
-								            
-								       	},
-									   	{
-								            text: HreRem.i18n("fieldlabel.subtipo.activo"),
-								            dataIndex: 'subtipoActivo',
 								            flex:1
 								            
 								       	},

@@ -27,8 +27,10 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 
 @Controller
 public class ActivoJuntaPropietariosController extends ParadiseJsonController {
@@ -38,6 +40,7 @@ public class ActivoJuntaPropietariosController extends ParadiseJsonController {
 	private static final String RESPONSE_DATA_KEY = "data";
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_ERROR_KEY = "error";
+	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 	
 	@Autowired
 	private ActivoJuntaPropietariosApi activoJuntaPropietariosApi;
@@ -108,7 +111,24 @@ public class ActivoJuntaPropietariosController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}	
 	
-	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivosJuntas(ModelMap model, Long idJunta, HttpServletRequest request) {
+		try {
+			model.put("data", activoJuntaPropietariosApi.getActivosJuntasVista(idJunta));
+//			model.put(RESPONSE_DATA_KEY, dto.getResults());
+//			model.put(RESPONSE_TOTALCOUNT_KEY, dto.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			trustMe.registrarSuceso(request, idJunta, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ActivoJuntaPropietariosController", e);
+			trustMe.registrarError(request, idJunta, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+	}
 	
 	
 	

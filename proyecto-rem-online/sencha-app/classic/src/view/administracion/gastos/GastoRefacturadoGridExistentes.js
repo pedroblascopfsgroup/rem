@@ -55,13 +55,20 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 	    }
     },
     
-	onAddClick: function(btn){
+    onAddClick: function(btn){
 		var me = this;
 		var gasto = me.lookupController().getViewModel().getData().gasto.data;
 		var detalleEconomico = me.lookupController().getViewModel().getData().detalleeconomico.data;
 
-		Ext.create('HreRem.view.gastos.AnyadirNuevoGastoRefacturado',{idGasto: gasto.id, grid:this, nifPropietario: gasto.nifPropietario}).show();    
-
+		if (detalleEconomico.gastoRefacturableB) {
+			me.fireEvent("errorToast", HreRem.i18n("msg.refacturar.refacturable.ko"));
+		} else if (gasto.destinatario != CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO']) {
+			me.fireEvent("errorToast", HreRem.i18n("msg.refacturar.destinatario.ko"));
+		} else if (gasto.nifEmisor != CONST.PVE_DOCUMENTONIF['HAYA']) {
+			me.fireEvent("errorToast", HreRem.i18n("msg.refacturar.emisor.ko"));
+		} else {
+			Ext.create('HreRem.view.gastos.AnyadirNuevoGastoRefacturado',{idGasto: gasto.id, grid:this, nifPropietario: gasto.nifPropietario}).show();  
+		}
     },
     
     onDeleteClick: function(btn){
@@ -83,30 +90,8 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		   					numerosGasto: numerosGasto
 		   				},
 		    	success: function(response, opts) {
-			    	data = Ext.decode(response.responseText);  
-			
-			    	var checkGastosRefacturados = me.getView().up("[reference=detalleeconomicogastoref]").down("[name=gastoRefacturableB]");
-			    	var idGasto = me.lookupController().getViewModel().getData().gasto.id;
-			    	var url2 = $AC.getRemoteUrl('gastosproveedor/eliminarUltimoGastoRefacturado');
+			    	data = Ext.decode(response.responseText); 
 			    	me.getStore().reload();
-			    	
-			    	if(data.noTieneGastosRefacturados == true || data.noTieneGastosRefacturados == "true" ){
-			    		checkGastosRefacturados.setValue(true);
-			    		Ext.Ajax.request({	
-					 		url: url2,
-					   		params: {
-					   					idGasto:idGasto
-					   				},
-					    	success: function(response, opts) {
-						    	
-					    	},
-					    	failure: function(response) {
-								me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					    	},
-					    	callback: function(options, success, response){
-							}		     
-					  });
-			    	}
 			    	var datosGeneralesGastos = me.up("gastodetalle").down("[reference=datosgeneralesgastoref]");
 			    	me.lookupController().cargarTabData(datosGeneralesGastos);
 			    	

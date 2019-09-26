@@ -875,7 +875,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 									items :
 										[
 											{
-							                	xtype:'checkboxfield',
+							                	xtype:'checkboxfieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
 												reference: 'checkboxActivoRefacturable',
 												colspan:4,
@@ -892,10 +892,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												name: 'gastoRefac',
 												colspan: 3,
 												rowspan: 9,
-												reference: 'gastoRefacturadoGridExistente',
-												bind: {
-													disabled: '{detalleeconomico.bloquearGridRefacturados}'
-												}
+												reference: 'gastoRefacturadoGridExistente'
 											}
 										]
 										

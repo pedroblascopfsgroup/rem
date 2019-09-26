@@ -152,12 +152,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			                            } else {
 			                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			                            }
-										me.getView().unmask();
-										if(form)
+										var comboEmisor = me.getView().lookupReference("comboProveedores");
+										var nifEmisor = me.getViewModel().data.gasto.data.nifEmisor;
+										comboEmisor.getStore().getProxy().extraParams.nifProveedor = nifEmisor;	
+										comboEmisor.getStore().load();
 										me.refrescarGasto(form.refreshAfterSave);
-										Ext.Array.each(form.query('field[isReadOnlyEdit]'),
-											function (field, index){field.fireEvent('edit');}
-										);
+										me.getView().unmask();
 						            }
 								});
 							}
@@ -233,7 +233,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickBotonCancelar: function(btn) {
 		var me = this,
 		activeTab = btn.up('tabpanel').getActiveTab();
-
+		var comboEmisor = me.getView().lookupReference("comboProveedores");
+		var nifEmisor = me.getViewModel().data.gasto.data.nifEmisor;
+		comboEmisor.getStore().getProxy().extraParams.nifProveedor = nifEmisor;	
+		comboEmisor.getStore().load();
+		
 		if (!activeTab.saveMultiple) {
 			if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
 				/*activeTab.getForm().clearInvalid();
@@ -1643,7 +1647,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			    		
 			    	success: function(response, opts) {
 				    	data = Ext.decode(response.responseText);
-				    	    	 
+				    	if(data.success == 'false') {
+				    		me.fireEvent("errorToast", data.error);
+				    	}	 
 			    	},
 			    	failure: function(response) {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

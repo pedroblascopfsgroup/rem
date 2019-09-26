@@ -26,6 +26,7 @@ import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -57,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
@@ -1105,23 +1107,32 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView anyadirGastoRefacturable(@RequestParam String idGasto, String gastosRefacturables, String nifPropietario) {
 		ModelMap model = new ModelMap();
-		
-		if(!Checks.esNulo(idGasto)) {
-			List<String> gastosRefacturablesLista = new ArrayList<String>();
-			
-			if(!Checks.esNulo(gastosRefacturables)) {
-				gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario);
-			}
-			if(!Checks.estaVacio(gastosRefacturablesLista)){
-				gastoProveedorApi.anyadirGastosRefacturadosAGastoExistente(idGasto, gastosRefacturablesLista);
-			}
-		}
-		try {		
+
+		try {
+			if(!Checks.esNulo(idGasto)) {
+				List<String> gastosRefacturablesLista = new ArrayList<String>();
+				
+				//Esta línea de código sirve para validar los gastos a anyadir,
+				//en caso de no cumplir, lanza excepciones visuales para front.
+				gastoProveedorApi.validarGastosARefactorar(idGasto, gastosRefacturables);
+				
+				if(!Checks.esNulo(gastosRefacturables)) {
+					gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario);
+				}
+				
+				if(!Checks.estaVacio(gastosRefacturablesLista)){
+					gastoProveedorApi.anyadirGastosRefacturadosAGastoExistente(idGasto, gastosRefacturablesLista);
+				}
+			}		
 			model.put("success", true);			
+		} catch (JsonViewerException jve) {
+			logger.error(jve.getMessage());
+			model.put("error", jve.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			model.put("success", false);		
-		}
+		} 
 
 		return createModelAndViewJson(model);
 	}
@@ -1150,23 +1161,5 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView eliminarUltimoGastoRefacturado(@RequestParam Long idGasto) {
-		ModelMap model = new ModelMap();	
-		if(!Checks.esNulo(idGasto)){
-			gastoProveedorApi.eliminarUltimoGastoRefacturado(idGasto);
-		}
-		try {	
-			model.put("success", true);			
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			model.put("success", false);		
-		}
-
-		return createModelAndViewJson(model);
-	}
-	
 	
 }

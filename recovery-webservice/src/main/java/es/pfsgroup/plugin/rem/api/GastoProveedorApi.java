@@ -378,9 +378,6 @@ public interface GastoProveedorApi {
 
 
 		public Boolean eliminarGastoRefacturado(Long idGasto, Long numGastoRefacturado);
-
-
-		void eliminarUltimoGastoRefacturado(Long idGasto);
 		
 		/*HREOS-7241*/
 		public boolean esGastoRefacturable(GastoProveedor gasto);
@@ -391,5 +388,8 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		public boolean isPosibleRefacturable(GastoProveedor gasto);
+
+		void validarGastosARefactorar(String idGasto, String listaGastos);
+
 }
 

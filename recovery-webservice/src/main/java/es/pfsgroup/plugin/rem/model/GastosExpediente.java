@@ -105,6 +105,9 @@ public class GastosExpediente implements Serializable, Auditable {
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private Activo activo;    
+	
+	@Column(name="GEX_EDITADO")
+    private Integer editado;
     
 	@Version   
 	private Long version;
@@ -260,7 +263,11 @@ public class GastosExpediente implements Serializable, Auditable {
 		this.activo = activo;
 	}
 
-     
-    
-   
+	public Integer getEditado() {
+		return editado;
+	}
+
+	public void setEditado(Integer editado) {
+		this.editado = editado;
+	}
 }

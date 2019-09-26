@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
@@ -1282,6 +1283,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}		
+			
+			if (!Checks.esNulo(activo) && !Checks.esNulo(dto.getTipoComercializarCodigo()) || !Checks.esNulo(dto.getTipoActivoCodigo()) || !Checks.esNulo(dto.getSubtipoActivoCodigo())) {
+				List <Oferta> ofertas = activoApi.getOfertasTramitadasByActivo(activo);
+				
+				for (Oferta oferta : ofertas) {
+					ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+					if(!Checks.esNulo(expedienteComercial)) {
+						expedienteComercialApi.actualizarGastosExpediente(expedienteComercial, oferta);
+					}
+				}
+			}
 
 		} catch(JsonViewerException jve) {
 			throw jve;

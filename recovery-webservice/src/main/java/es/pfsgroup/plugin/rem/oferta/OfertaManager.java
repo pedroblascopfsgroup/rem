@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
@@ -2675,6 +2676,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		DtoGastoExpediente dto = new DtoGastoExpediente();
 		ActivoProveedor proveedor = null;
 		String codigoOferta = null;
+		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		
 		Double importe = null;
 		if (!Checks.esNulo(oferta)) {
@@ -2690,15 +2692,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		String codSubtipoActivo = null;
 		String codPortfolio = null;
 		String codSubportfolio = null;
+		String classType = null;
 		
 		if (!Checks.esNulo(activo)) {
-			
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
 				codLeadOrigin = oferta.getOrigenComprador().getCodigo();
-			}else if(!Checks.estaVacio(activo.getVisitas())) {
-				if(!Checks.esNulo(activo.getVisitas().get(0).getOrigenComprador()))
-					codLeadOrigin = activo.getVisitas().get(0).getOrigenComprador().getCodigo();
-			}else {
+			} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
+				codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
+			} else {
 				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
 			}
 			
@@ -2715,14 +2716,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				codSubtipoActivo = activo.getSubtipoActivo().getCodigo();
 			}
 			
-			
 			if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getCartera().getCodigo())) {
 				codPortfolio = activo.getCartera().getCodigo();
 			}
 			
-			
 			if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && !Checks.esNulo(activo.getSubcartera().getCodigo())) {
 				codSubportfolio = activo.getSubcartera().getCodigo();
+			}
+			
+			if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
+				classType = activoBancario.getClaseActivo().getCodigo();
 			}
 		} 
 
@@ -2735,6 +2738,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		consultaComisionDto.setAssetSubtype(codSubtipoActivo);
 		consultaComisionDto.setPortfolio(codPortfolio);
 		consultaComisionDto.setSubPortfolio(codSubportfolio);
+		consultaComisionDto.setClassType(classType);
 
 			// Los honorarios de colaboración serán asignados al FDV de la oferta si
 			// existe,

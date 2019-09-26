@@ -2929,7 +2929,7 @@ public class ActivoController extends ParadiseJsonController {
 	public List<DtoActivoDatosRegistrales> getCalificacionNegativabyId(Long id) {
 		return activoApi.getActivoCalificacionNegativaCodigos(id);
 	}
-		
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPerimetroAppleCesion(ModelMap model,String codigoServicer) {
@@ -2947,5 +2947,4 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
 }

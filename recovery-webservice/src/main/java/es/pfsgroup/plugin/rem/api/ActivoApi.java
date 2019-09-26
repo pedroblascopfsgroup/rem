@@ -933,6 +933,14 @@ public interface ActivoApi {
 	 * @return
 	 */
 	List<Oferta> getOfertasPendientesOTramitadasByActivoAgrupacion(ActivoAgrupacion activoAgrupacion);
+	
+	/**
+	 * Devuelve un lista con las ofertas en estado "Tramitada" de un activo
+	 *
+	 * @param activo
+	 * @return
+	 */
+	List<Oferta> getOfertasTramitadasByActivo(Activo activo);
 
 	/**
 	 * Este método llama al api del ActivoDao el cual obtiene el siguiente número de la secuencia para el campo de 'ACT_NUM_ACTIVO_REM'.
@@ -1211,6 +1219,4 @@ public interface ActivoApi {
 	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
-
-
 }

@@ -296,9 +296,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return boolean true or false
 	 */
 	Boolean existeActivo(Long numActivo);
-
+	
 	ActivoAgrupacionActivo getActivoAgrupacionActivoObraNuevaPorActivoID(Long id);
 	
 	ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo);
-
 }

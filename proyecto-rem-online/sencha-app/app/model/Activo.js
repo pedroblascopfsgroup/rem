@@ -825,7 +825,7 @@ Ext.define('HreRem.model.Activo', {
     			name: 'isSubcarteraApple',
     			calculate: function(data) { 
     				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && data.subcarteraCodigo == CONST.SUBCARTERA['APPLEINMOBILIARIO'];
-    			},				
+    			},
 				depends: ['subcarteraCodigo', 'entidadPropietariaCodigo']
     		},
     		{

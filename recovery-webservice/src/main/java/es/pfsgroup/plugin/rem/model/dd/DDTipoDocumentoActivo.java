@@ -133,7 +133,6 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
-
 	public Long getVersion() {
 		return version;
 	}

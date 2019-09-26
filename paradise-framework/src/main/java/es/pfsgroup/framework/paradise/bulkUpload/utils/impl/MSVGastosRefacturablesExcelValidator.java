@@ -42,10 +42,10 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 	private static final String GASTO_PADRE_REFACTURADO = "msg.error.masivo.gasto.refacturable.validator.padre.refacturado";
 	private static final String GASTO_PADRE_NO_PERTENECE_BANKIA_SAREB = "msg.error.masivo.gasto.refacturable.validator.padre.no.pertenece.bankia.sareb";
 	private static final String GASTO_PADRE_NO_EMISOR_HAYA = "msg.error.masivo.gasto.refacturable.validator.padre.no.emisor.haya";
+	private static final String GASTO_PADRE_NO_DESTINATARIO_PROPIETARIO = "msg.error.masivo.gasto.refacturable.validator.padre.no.destinatario.propietario";
 
 	private static final String GASTO_HIJO_NO_EXISTE = "msg.error.masivo.gasto.refacturable.validator.hijo.no.existe";
 	private static final String GASTO_HIJO_NO_REFACTURABLE = "msg.error.masivo.gasto.refacturable.validator.hijo.no.refacturable";
-	private static final String GASTO_HIJO_EN_GASTO_REFACTURABLE = "msg.error.masivo.gasto.refacturable.validator.hijo.en.gasto.refacturable";
 	private static final String GASTO_HIJO_NO_PERTENECE_BANKIA_SAREB = "msg.error.masivo.gasto.refacturable.validator.hijo.no.pertenece.bankia.sareb";
 	private static final String GASTO_HIJO_NO_DESTINATARIO_HAYA = "msg.error.masivo.gasto.refacturable.validator.hijo.no.destinatario.haya";
 	private static final String GASTO_HIJO_DIFERENTE_CARTERA = "msg.error.masivo.gasto.refacturable.validator.hijo.diferente.cartera";
@@ -117,12 +117,12 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_REFACTURADO), esGastoRefacturado(exc, COL_GASTO_PADRE));
 			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_NO_EMISOR_HAYA), esGastoEmisorHaya(exc, COL_GASTO_PADRE));
 			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_NO_PERTENECE_BANKIA_SAREB), perteneceGastoBankiaSareb(exc, COL_GASTO_PADRE));
+			mapaErrores.put(messageServices.getMessage(GASTO_PADRE_NO_DESTINATARIO_PROPIETARIO), esGastoDestinatarioPropietario(exc, COL_GASTO_PADRE));
 
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_EXISTE), existeGastoRefacturable(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_NO_EXISTE), existeGasto(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_NO_REFACTURABLE), esGastoRefacturable(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_NO_PERTENECE_BANKIA_SAREB), perteneceGastoBankiaSareb(exc, COL_GASTO_HIJO));
-			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_EN_GASTO_REFACTURABLE), esGastoRefacturableEnGasto(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_NO_DESTINATARIO_HAYA), esGastoDestinatarioHaya(exc, COL_GASTO_HIJO));
 			mapaErrores.put(messageServices.getMessage(GASTO_HIJO_DIFERENTE_CARTERA), esGastoMismaCartera(exc, COL_GASTO_PADRE, COL_GASTO_HIJO));
 
@@ -202,29 +202,7 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 			}
 		}
 		return listaFilas;
-	}
-	
-	
-	private List<Integer> esGastoRefacturableEnGasto(MSVHojaExcel exc, int colGasto) {
-
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
-			try {
-				if (particularValidator.esGastoRefacturableEnGasto(exc.dameCelda(i, colGasto)))
-					listaFilas.add(i);
-				// mun gasto refacturable incluido en gasto refacturable
-			} catch (ParseException e) {
-				listaFilas.add(i);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
-	}
-	
+	}	
 	
 	
 	/**
@@ -345,6 +323,31 @@ public class MSVGastosRefacturablesExcelValidator extends MSVExcelValidatorAbstr
 		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
 			try {
 				if (!particularValidator.esGastoDestinatarioHaya(exc.dameCelda(i, colGasto)))
+					listaFilas.add(i);
+			} catch (ParseException e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			} catch (Exception e) {
+				listaFilas.add(0);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+	
+	/**
+	 * Comprueba si el gasto tiene como destinatario HAYA	 
+	 * @param exc
+	 * @param colGasto número de columna con los gastos a comprobar
+	 * @return listado con el número de fila en las que el gasto NO tiene
+	 *         destinatario HAYA
+	 */
+	private List<Integer> esGastoDestinatarioPropietario(MSVHojaExcel exc, int colGasto) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
+			try {
+				if (!particularValidator.esGastoDestinatarioPropietario(exc.dameCelda(i, colGasto)))
 					listaFilas.add(i);
 			} catch (ParseException e) {
 				listaFilas.add(i);

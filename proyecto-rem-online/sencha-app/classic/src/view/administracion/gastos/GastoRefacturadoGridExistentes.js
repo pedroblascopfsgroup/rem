@@ -57,9 +57,10 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
     
 	onAddClick: function(btn){
 		var me = this;
-		var idGasto = me.lookupController().getViewModel().getData().gasto.id;
-		
-		Ext.create('HreRem.view.gastos.AnyadirNuevoGastoRefacturado',{idGasto: idGasto, grid:this}).show();    
+		var gasto = me.lookupController().getViewModel().getData().gasto.data;
+		var detalleEconomico = me.lookupController().getViewModel().getData().detalleeconomico.data;
+
+		Ext.create('HreRem.view.gastos.AnyadirNuevoGastoRefacturado',{idGasto: gasto.id, grid:this, nifPropietario: gasto.nifPropietario}).show();    
 
     },
     

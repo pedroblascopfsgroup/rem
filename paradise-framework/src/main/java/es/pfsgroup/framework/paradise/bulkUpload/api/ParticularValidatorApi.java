@@ -899,6 +899,6 @@ public interface ParticularValidatorApi {
 
 	Boolean existeGastoRefacturable(String numGasto);
 
-	Boolean esGastoRefacturableEnGasto(String numGasto);	
+	Boolean esGastoDestinatarioPropietario(String numGasto);	
 
 }

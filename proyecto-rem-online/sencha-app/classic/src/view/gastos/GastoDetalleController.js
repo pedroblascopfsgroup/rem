@@ -339,13 +339,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    		
 		    	success: function(response, opts) {
 			    	data = Ext.decode(response.responseText);
-			    	
 			    	//var propietarioGastoField = field.up('formBase').down('[name=nifPropietario]')
 		    		var buscadorNifPropietario = field.up('formBase').down('[name=buscadorNifPropietarioField]'),
 		    		nombrePropietarioGasto = field.up('formBase').down('[name=nombrePropietario]'),
 		    		chkboxActivoRefacturable = me.lookupReference("checkboxActivoRefacturable");
 		    		
 			    	if(!Utils.isEmptyJSON(data.data)){
+			    		me.getViewModel().set('controlPestanyaGastoRefacturable', data.data);
 						var id= data.data.id;
 		    		    var nombrePropietario= data.data.nombre;
 
@@ -1620,8 +1620,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	  onClickGuardarGastoRefacturado: function(){
 	    	var me = this;
+
 	    	var gastosRefacturables = me.lookupReference('anyadirGastoRefacturado').getValue();	    	
 	    	var idGasto = me.getView().idGasto;
+	    	var nifPropietario = me.getView().nifPropietario;
 	    	var url = $AC.getRemoteUrl('gastosproveedor/anyadirGastoRefacturable');
 	    	
 	    	
@@ -1635,7 +1637,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			 		url: url,
 			   		params: {
 			   					idGasto:idGasto,
-			   					gastosRefacturables : gastosRefacturables
+			   					gastosRefacturables : gastosRefacturables,
+			   					nifPropietario : nifPropietario
 			   				},
 			    		
 			    	success: function(response, opts) {
@@ -1648,6 +1651,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			    	callback: function(options, success, response){
 			    		me.getView().grid.getStore().reload();
 			    		var datosGeneralesGastos = me.getView().grid.up("gastodetalle").down("[reference=datosgeneralesgastoref]");
+			    		me.getViewModel().set("gasto.id",me.getView().idGasto);
 			    		me.cargarTabData(datosGeneralesGastos);
 				    	me.closeView();
 					}
@@ -1663,24 +1667,30 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 	    
 	    }, 
-	onChangeDestinatarioGastoCodigo: function(combo, newValue){
-		var me = this;
-		var isHaya = CONST.TIPOS_DESTINATARIO_GASTO['HAYA'] === newValue;
-		var checkboxRefacturable = combo.up('form').down('[name=checkboxActivoRefacturable]')
-		checkboxRefacturable.setDisabled(!isHaya);
-		if(!isHaya) {
-			checkboxRefacturable.reset();
-		}
-		me.isPosibleAnyadirGastos();
-	},
-	isPosibleAnyadirGastos: function(){
+	mostrarGastosRefacturables: function() {
 		var me = this;
 		var form = me.getView().down('formBase');
-		var posible = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] && 
-			!form.down('[name=checkboxActivoRefacturable]').checked && 
-			form.down('[name=nombrePropietario]').value &&
-			form.down('[name=nifEmisor]').value===CONST.PVE_DOCUMENTONIF['HAYA']);
-		form.down('[name=gastosArefacturar]').setDisabled(!posible);
-		form.down('[name=gastoRefacturadoGrid]').setDisabled(!posible);
+		var propietario = form.down('[name=nombrePropietario]').getValue();
+		if (propietario != "") {
+			var control = me.getViewModel().get("controlPestanyaGastoRefacturable");
+			var cartera = control.cartera.codigo;
+			if (cartera === CONST.CARTERA['SAREB'] || cartera === CONST.CARTERA['BANKIA']) {
+				var isGastoPadre = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO'] && 
+						form.down('[name=nifEmisor]').value===CONST.PVE_DOCUMENTONIF['HAYA']);
+				var isGastoRefacturable = (form.down('[name=destinatarioGastoCodigo]').value===CONST.TIPOS_DESTINATARIO_GASTO['HAYA']);
+				form.down('[name=gastosArefacturar]').setDisabled(!isGastoPadre);
+				form.down('[name=gastoRefacturadoGrid]').setDisabled(!isGastoPadre);
+				form.down('[name=checkboxActivoRefacturable]').setDisabled(!isGastoRefacturable);
+				if (isGastoPadre) {
+					form.down('[name=checkboxActivoRefacturable]').setValue(false);
+				}
+			} else {
+				form.down('[name=gastosArefacturar]').setDisabled(true);
+				form.down('[name=gastoRefacturadoGrid]').setDisabled(true);
+				form.down('[name=checkboxActivoRefacturable]').setDisabled(true);
+				form.down('[name=checkboxActivoRefacturable]').setValue(false);
+			}
+		}
 	}
+	
 });

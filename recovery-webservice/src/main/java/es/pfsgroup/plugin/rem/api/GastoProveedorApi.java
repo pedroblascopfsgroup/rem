@@ -355,7 +355,7 @@ public interface GastoProveedorApi {
 
 		AdjuntoGasto createAdjuntoGasto(WebFileItem fileItem, GastoProveedor gasto, Long idDocRestClient)
 				throws Exception;
-		public List<String> getGastosRefacturados(String listaGastos);
+		public List<String> getGastosRefacturados(String listaGastos, String nifPropietario);
 
 
 		List<String> getGastosNoRefacturados(String listaGastos, List<String> gastosRefacturables);
@@ -385,6 +385,11 @@ public interface GastoProveedorApi {
 		/*HREOS-7241*/
 		public boolean esGastoRefacturable(GastoProveedor gasto);
 
-
+		/**
+		 * Devuelve si el gasto es posible refacturable, es decir, cumple las condiciones para serlo
+		 * @param id
+		 * @return
+		 */
+		public boolean isPosibleRefacturable(GastoProveedor gasto);
 }
 

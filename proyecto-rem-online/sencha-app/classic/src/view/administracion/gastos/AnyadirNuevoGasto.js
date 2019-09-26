@@ -182,7 +182,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 									            		    '</tpl>'
 									            	),
 									            	listeners: {
-									            		change: 'isPosibleAnyadirGastos'
+									            		change: 'mostrarGastosRefacturables'
 									            	}
 							            	    },
 							            	    /////	columna2
@@ -294,7 +294,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 				    				            				combo.up('form').getBindRecord().set('destinatarioGastoCodigo', CONST.TIPOS_DESTINATARIO_GASTO['PROPIETARIO']);				    				            				
 				    				            			}
 				    				            		},
-				    				            		change: 'onChangeDestinatarioGastoCodigo'
+				    				            		change: 'mostrarGastosRefacturables'
 				    				            	},
 				    				            	allowBlank: false
 												},
@@ -328,9 +328,8 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 											        		if(!Ext.isEmpty(field.getValue())) {
 											        			field.lookupController().buscarPropietario(field);
 											        		}
-											        	}
-											        	
-											        	
+											        	},
+											        	change: 'mostrarGastosRefacturables'								        	
 											        }
 							                	},
 							                	{
@@ -342,7 +341,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													readOnly: true,
 													allowBlank: true,
 													listeners: {
-														change: 'isPosibleAnyadirGastos'
+														change: 'mostrarGastosRefacturables'
 													}
 													
 												}

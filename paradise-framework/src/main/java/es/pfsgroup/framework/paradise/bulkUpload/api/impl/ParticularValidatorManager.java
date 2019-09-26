@@ -3786,7 +3786,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				.getExecuteSQL("SELECT COUNT(*) " 
 						+ "FROM GRG_REFACTURACION_GASTOS GRG "
 						+ "LEFT JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GRG.GRG_GPV_ID_REFACTURADO "
-						+ "WHERE GPV.GPV_NUM_GASTO_HAYA ='" + numGasto + "'");
+						+ "WHERE GPV.GPV_NUM_GASTO_HAYA ='" + numGasto + "' AND GRG.BORRADO = 0");
 
 		return "1".equals(resultado);
 	}
@@ -3805,24 +3805,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						+ "WHERE VGR.NUM_GASTO_HAYA = '" + numGasto + "'");
 
 		return !"0".equals(resultado);
-	}	
-	
-	
-	@Override
-	public Boolean esGastoRefacturableEnGasto(String numGasto) {
-		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
-			return false;
-		if(!esGastoRefacturable(numGasto)) {
-			String resultado = rawDao
-				.getExecuteSQL("SELECT COUNT(*)  " 
-						+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "	
-						+ "LEFT JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
-						+ "WHERE GDE.GDE_GASTO_REFACTURABLE =1 "
-						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");
-		
-			return !"0".equals(resultado);
-		}else return false;
-	}	
+	}
 	
 	@Override
 	public Boolean perteneceGastoBankiaSareb(String numGasto) {
@@ -3873,6 +3856,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean esGastoDestinatarioPropietario(String numGasto) {
+		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		
+		String resultado = rawDao
+				.getExecuteSQL("SELECT COUNT(*) "
+						+ "FROM GPV_GASTOS_PROVEEDOR GPV "
+						+ "JOIN DD_DEG_DESTINATARIOS_GASTO DEG ON GPV.DD_DEG_ID = DEG.DD_DEG_ID "						
+						+ "WHERE DEG.DD_DEG_CODIGO IN ('01') "
+						+ "AND GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'");						
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
 	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto) {
 		if (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numOtroGasto)
 				|| !StringUtils.isNumeric(numOtroGasto))
@@ -3883,8 +3881,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
 				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "
 				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = '" + numGasto + "'" 
-				+ "AND PRO.DD_CRA_ID = " 
-				+ "(SELECT PRO.DD_CRA_ID "
+				+ "AND PRO.PRO_DOCIDENTIF = " 
+				+ "(SELECT PRO.PRO_DOCIDENTIF "
 				+ "FROM GDE_GASTOS_DETALLE_ECONOMICO GDE "
 				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GDE.GPV_ID "
 				+ "INNER JOIN ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID "

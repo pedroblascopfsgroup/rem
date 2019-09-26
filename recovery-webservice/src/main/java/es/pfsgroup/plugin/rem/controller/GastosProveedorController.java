@@ -10,14 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -1055,7 +1053,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		List<String> gastosRefacturables = new ArrayList<String>();
 		List<String> gastosNoRefacturables = new ArrayList<String>();
 		if(!Checks.esNulo(gastos)) {
-			gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos);
+			gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos, nifPropietario);
 			gastosNoRefacturables = gastoProveedorApi.getGastosNoRefacturados(gastos, gastosRefacturables);
 		}
 		try {			
@@ -1105,14 +1103,14 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView anyadirGastoRefacturable(@RequestParam String idGasto, String gastosRefacturables) {
+	public ModelAndView anyadirGastoRefacturable(@RequestParam String idGasto, String gastosRefacturables, String nifPropietario) {
 		ModelMap model = new ModelMap();
 		
 		if(!Checks.esNulo(idGasto)) {
 			List<String> gastosRefacturablesLista = new ArrayList<String>();
 			
 			if(!Checks.esNulo(gastosRefacturables)) {
-				gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables);
+				gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario);
 			}
 			if(!Checks.estaVacio(gastosRefacturablesLista)){
 				gastoProveedorApi.anyadirGastosRefacturadosAGastoExistente(idGasto, gastosRefacturablesLista);

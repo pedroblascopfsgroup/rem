@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.gasto.dao.impl;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,9 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
-
-import org.apache.velocity.runtime.directive.Foreach;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -26,14 +22,13 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
-import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
@@ -427,7 +422,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 		if(!Checks.esNulo(gastoRefacturableBorradoString)) {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-			Timestamp timestamp = new Timestamp(new Date().getTime());
 			existeGasto = true;
 			Session session = this.getSessionFactory().getCurrentSession();
 			Query query = session.createSQLQuery("UPDATE GRG_REFACTURACION_GASTOS SET BORRADO = 0, USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')) WHERE GRG_ID = "+ gastoRefacturableBorradoString);

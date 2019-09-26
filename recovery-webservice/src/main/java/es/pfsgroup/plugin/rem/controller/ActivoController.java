@@ -2980,7 +2980,21 @@ public class ActivoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
-
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboApiPrimaria(ModelMap model) {
+				
+		try{
+			model.put(RESPONSE_DATA_KEY, activoApi.getComboApiPrimaria());
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+		
 		return createModelAndViewJson(model);
 	}
 }

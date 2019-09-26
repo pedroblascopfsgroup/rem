@@ -223,7 +223,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		        },
 		        {
 					dataIndex: 'selloCalidad',
-		            text     : HreRem.i18n('header.dpto.calidad'),
+		            text     : HreRem.i18n('header.sello.calidad'),
 		            flex     : 0.5,            
 		            align: 'center',
 		            renderer: function(value) {
@@ -240,6 +240,16 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            	if(!Ext.isEmpty(value) && value != 0) 
 		            	return '<div> <img src="resources/images/rating_'+value+'_listado.svg" alt="Rating" width="20px"></div>';	
 		            }
+		        },
+		        {
+		            dataIndex: 'gestorPublicacionUsername',
+		            text: HreRem.i18n('header.gestor.publicacion'),
+		            flex: 0.5           
+		        },
+		        {
+		            dataIndex: 'fasePublicacionDescripcion',
+		            text: HreRem.i18n('header.fase.publicacion'),
+		            flex: 0.5           
 		        }
 		
 		    ];

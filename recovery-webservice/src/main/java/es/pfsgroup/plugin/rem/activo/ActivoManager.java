@@ -6875,4 +6875,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en Activo Manager (existeCalificacionNegativa)", e);
 		}
 	}
+	
+	@Override
+	public List<ActivoProveedor> getComboApiPrimaria() {
+		
+		return activoDao.getComboApiPrimaria();
+	}	
 }

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
@@ -13,6 +14,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -301,4 +303,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Boolean existeActivo(Long numActivo);
 	
 	ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo);
+	
+	List<ActivoProveedor> getComboApiPrimaria();
 }

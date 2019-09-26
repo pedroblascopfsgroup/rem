@@ -334,6 +334,7 @@ public class GenericController extends ParadiseJsonController{
 		tipoGestorCodigos.add("GACT"); // Gestor de activos
 		tipoGestorCodigos.add("GCOM"); // Gestor comercial
 		tipoGestorCodigos.add("GGADM"); // Gestoría de Admisión
+		tipoGestorCodigos.add("GPUBL"); // Gestor de publicaciones
 
 		model.put("data", genericApi.getComboTipoGestorFiltrado(tipoGestorCodigos));
 

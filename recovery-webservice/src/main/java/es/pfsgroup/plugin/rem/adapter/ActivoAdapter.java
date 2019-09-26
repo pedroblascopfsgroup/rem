@@ -4449,6 +4449,5 @@ public class ActivoAdapter {
 	
 	public boolean isUnidadAlquilable (Long idActivo) {
 		return activoDao.isUnidadAlquilable(idActivo);
-	}
-
+	}	
 }

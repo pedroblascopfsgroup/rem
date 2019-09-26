@@ -3910,7 +3910,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Cuando no nos pasan la lista de gastos es porque ya existe el expediente y lo recuperamos de ahí
 			}else {
 				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
-				if(!Checks.esNulo(eco.getHonorarios())){
+				if(!Checks.esNulo(eco) && !Checks.esNulo(eco.getHonorarios())){
 					for ( GastosExpediente gex: eco.getHonorarios()) {
 						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
 							cco += gex.getImporteFinal() * gex.getImporteCalculo();

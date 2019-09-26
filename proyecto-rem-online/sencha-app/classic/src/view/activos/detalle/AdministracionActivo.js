@@ -14,7 +14,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
     			me.lookupController().lookupReference('tributos').hide(); 
     		}
     		
-    		if (!$AU.userIsRol(CONST.PERFILES['GESOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION'])){
+    		if (!$AU.userIsRol(CONST.PERFILES['GESOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
     			me.lookupController().lookupReference('tributosGrid').setEditOnSelect(false);
     			me.lookupController().lookupReference('tributosGrid').setTopBar(false);
     		}

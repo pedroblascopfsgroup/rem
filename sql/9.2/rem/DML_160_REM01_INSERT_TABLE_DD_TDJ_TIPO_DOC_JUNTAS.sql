@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ALFONSO RODRIGUEZ VERDERA
---## FECHA_CREACION=20190923
+--## FECHA_CREACION=20190926
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7645
@@ -52,7 +52,7 @@ DECLARE
         T_TIPO_DATA('06', 'Junta de compensacion: Cuotas y derramas (Recibo)', 'Junta de compensacion: Cuotas y derramas (Recibo)', 'OP-33-FACT-52', '0', null),
         T_TIPO_DATA('07', 'Junta de compensacion / EUC: Gastos generales (Justificante de pago)', 'Junta de compensacion / EUC: Gastos generales (Justificante de pago)', 'OP-33-CERA-AG', '0', null),
         T_TIPO_DATA('08', 'Junta de compensacion / EUC: Gastos generales (Recibo)', 'Junta de compensacion / EUC: Gastos generales (Recibo)', 'OP-33-FACT-51', '0', null),
-        T_TIPO_DATA('09', 'Recepcion convocatoria', 'Recepcion convocatoria', 'OP-33-ACTR-13', '1', '153')
+        T_TIPO_DATA('09', 'Recepcion convocatoria', 'Recepcion convocatoria', 'OP-33-ACTR-13', '0', null)
 	    
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

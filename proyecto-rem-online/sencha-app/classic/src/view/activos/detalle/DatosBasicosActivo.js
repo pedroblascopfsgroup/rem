@@ -191,9 +191,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								layout: {
 								        type: 'table',
 								        // The total column count must be specified here
-								        columns: 2,
+								        columns: 1,
 								        trAttrs: {height: '30px', width: '100%'},
-								        tdAttrs: {width: '50%'},
+								        tdAttrs: {width: '100%'},
 								        tableAttrs: {
 								            style: {
 								                width: '100%'
@@ -215,9 +215,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							        	bind: {
 						            		store: '{comboEstadoActivo}',
 						            		value: '{activo.estadoActivoCodigo}'
-						            	},
-						            	labelWidth: 130,
-						            	width: 300
+							        	}
 							        },
 					                {
 					                	xtype: 'textfieldbase',
@@ -228,9 +226,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					                		value: '{activo.diasCambioEstadoActivo}',
 					                		hidden: '{!activo.isCarteraBankia}',
 					                		readOnly: true
-					                	},
-						            	labelWidth: 90,
-						            	width: 60
+					                	}
 					                }
 								]
 							}
@@ -858,7 +854,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						
 					}, //Fin activo bancario
 					
-		            {//Perímetro apple    
+		            {//Perï¿½metro apple    
 		                
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
@@ -927,7 +923,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							}
 						]
 						
-					} //Fin perímetro apple
+					} //Fin perï¿½metro apple
 				]
 			}, //Fin perimetros
 			{	// HistÃ³rico Destino Comercial ---------------------------------------------------------

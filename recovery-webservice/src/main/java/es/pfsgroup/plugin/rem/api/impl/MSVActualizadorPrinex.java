@@ -349,7 +349,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	private Double dameNumero(MSVHojaExcel exc, int fila, Integer columna)
 			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 		Double resultado = null;
-		if(exc.dameCelda(fila, columna) != null && !exc.dameCelda(fila, columna).isEmpty())
+		if(exc.dameCelda(fila, columna) != null && exc.dameCelda(fila, columna).trim().length() != 0)
 			resultado = Double.valueOf(exc.dameCelda(fila, columna));
 		return resultado;
 	}
@@ -357,7 +357,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	private Long dameLong(MSVHojaExcel exc, int fila, Integer columna)
 			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 		Long resultado = null;
-		if(exc.dameCelda(fila, columna) != null && !exc.dameCelda(fila, columna).isEmpty())
+		if(exc.dameCelda(fila, columna) != null && exc.dameCelda(fila, columna).trim().length() != 0)
 			resultado = Long.valueOf(exc.dameCelda(fila, columna));
 		return resultado;
 	}

@@ -2,7 +2,6 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'calificacionnegativagrid',
 	topBar		: true,
-	propagationButton: true,
 	targetGrid	: 'calificacionNegativa',
 	idPrincipal : 'idMotivo',
 	idSecundaria: 'activo.id',
@@ -17,11 +16,12 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 		containermouseover: function () {
     		var me = this;
     		me.up('tituloinformacionregistralactivo').down('historicotramitaciontitulogrid').evaluarBotonAdd();
+		   
     	},
     	itemmouseenter: function () {
     		var me = this;
     		me.up('tituloinformacionregistralactivo').down('historicotramitaciontitulogrid').evaluarBotonAdd();
-    	} 
+    	}
     },
     
     initComponent: function () {
@@ -151,8 +151,9 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 		    };
 
 		    me.callParent();
+
    },
-   
+
    editFuncion: function(editor, context){
  		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));

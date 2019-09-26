@@ -4730,6 +4730,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             descMotivoInput.setDisabled(true);
             fechaSubsanacion.setDisabled(true);
         }
+
     },
 
 	 onEnlaceAbrirOferta: function(button) {
@@ -5399,12 +5400,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     				noSubsanado = true;
     			}
     		}
+    		
     		if(noSubsanado && newValue != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
     			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.calificado.negativamente"));
     			combo.setValue(CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']);
     			return;
     		};
 		}
+		me.lookupReference('calificacionnegativagrid').disableAddButton(true);
+		if (combo.getValue() == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) 
+			me.lookupReference('calificacionnegativagrid').disableAddButton(false);
 		switch(newValue){
 		
 		case CONST.DD_ESP_ESTADO_PRESENTACION['PRESENTACION_EN_REGISTRO']:

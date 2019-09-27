@@ -147,7 +147,6 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													reference: 'checkboxActivoRefacturable',
 													colspan:1,
 													name: 'checkboxActivoRefacturable',
-													disabled: true,
 													bind: {
 										           		value: '{gastoNuevo.gastoRefacturable}'										 
 										         	}
@@ -217,7 +216,6 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 												    bind: {
 														value: '{gastoNuevo.listaTotalGastosRefacturados}'
 													},
-													disabled: true,
 												    publishes: 'value'
 												},
 												////
@@ -245,8 +243,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													colspan: 1,
 													rowspan: 9,
 													reference: 'gastoRefacturadoGrid',
-													name: 'gastoRefacturadoGrid',
-													disabled: true											
+													name: 'gastoRefacturadoGrid'									
 												},
 												////
 											    { 

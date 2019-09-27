@@ -3578,8 +3578,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		boolean isPosibleRefacturable = false;
 		
 		if (!Checks.esNulo(gasto) && !Checks.esNulo(gasto.getEstadoGasto()) && !Checks.esNulo(gasto.getEstadoGasto().getCodigo()) 
-				&& !Checks.esNulo(gasto.getCartera()) && !Checks.esNulo(gasto.getCartera().getCodigo())) {
-			DDCartera cartera = gasto.getCartera();
+				&& !Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
+			DDCartera cartera = gasto.getPropietario().getCartera(); 
 			String estadoGasto = gasto.getEstadoGasto().getCodigo();
 			GastoRefacturable gastoPadre = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedor", gasto.getId()));
 			GastoRefacturable gastoRefacturado = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gasto.getId()));

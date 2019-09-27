@@ -1687,7 +1687,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				form.down('[name=gastosArefacturar]').setDisabled(!isGastoPadre);
 				form.down('[name=gastoRefacturadoGrid]').setDisabled(!isGastoPadre);
 				form.down('[name=checkboxActivoRefacturable]').setDisabled(!isGastoRefacturable);
-				if (isGastoPadre) {
+				if (!isGastoRefacturable) {
 					form.down('[name=checkboxActivoRefacturable]').setValue(false);
 				}
 			} else {
@@ -1696,6 +1696,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				form.down('[name=checkboxActivoRefacturable]').setDisabled(true);
 				form.down('[name=checkboxActivoRefacturable]').setValue(false);
 			}
+		} else {
+			form.down('[name=gastosArefacturar]').setDisabled(true);
+			form.down('[name=gastoRefacturadoGrid]').setDisabled(true);
+			form.down('[name=checkboxActivoRefacturable]').setDisabled(true);
+			form.down('[name=checkboxActivoRefacturable]').setValue(false);
 		}
 	}
 	

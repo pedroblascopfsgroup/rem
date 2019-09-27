@@ -3,6 +3,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoTributo', {
     xtype		: 'adjuntardocumentowindowTributo',
     layout	: 'fit',
     width	: Ext.Element.getViewportWidth() /1.5,
+    resizable: false,
 	reference: 'adjuntarDocumentoWindowRef',
     /**
      * Parámetro para construir la url que sibirá el documento

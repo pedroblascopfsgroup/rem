@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteSancionOfertaApple" width="1209" height="862">
+<root-container name="activo_tramiteSancionOfertaApple" width="1513" height="895">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

@@ -883,8 +883,17 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												bind:{
 													value:'{detalleeconomico.gastoRefacturableB}',
 													readOnly: '{detalleeconomico.bloquearCheckRefacturado}'
-												}
-
+												},
+												listeners:{						                
+							        				change: function(){
+							        					var me = this;
+							        					if (me.getValue == true) {
+							        						me.up('gastodetallemain').lookupReference('gastoRefacturadoGridExistente').setDisabled(true);
+							        					} else {
+							        						me.up('gastodetallemain').lookupReference('gastoRefacturadoGridExistente').setDisabled(false);
+							        					}
+							        				}
+								                }
 											},
 											 {				
 												xtype: 'gastoRefacturadoGridExistentes', 
@@ -892,7 +901,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												name: 'gastoRefac',
 												colspan: 3,
 												rowspan: 9,
-												reference: 'gastoRefacturadoGridExistente'
+												reference: 'gastoRefacturadoGridExistente',
+												bind: {
+													disabled: '{detalleeconomico.gastoRefacturableB}'
+												}
 											}
 										]
 										

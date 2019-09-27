@@ -16,6 +16,8 @@ public class RespuestaComisionReglaDto {
 	private String commissionPercentage;
 	private String maxCommissionAmount;
 	private String minCommissionAmount;
+	private String classType;
+	
 	public String get_id() {
 		return _id;
 	}
@@ -105,6 +107,12 @@ public class RespuestaComisionReglaDto {
 	}
 	public void setPortfolio(String portfolio) {
 		this.portfolio = portfolio;
+	}
+	public String getClassType() {
+		return classType;
+	}
+	public void setClassType(String classType) {
+		this.classType = classType;
 	}
 	
 	

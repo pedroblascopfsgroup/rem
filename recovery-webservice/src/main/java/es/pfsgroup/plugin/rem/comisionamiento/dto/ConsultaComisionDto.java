@@ -61,6 +61,7 @@ public class ConsultaComisionDto {
 	private String assetSubtype;
 	private String portfolio;
 	private String subPortfolio;
+	private String classType;
 
 	public String getLeadOrigin() {
 		return leadOrigin;
@@ -109,6 +110,12 @@ public class ConsultaComisionDto {
 	}
 	public void setSubPortfolio(String subPortfolio) {
 		this.subPortfolio = subPortfolio;
+	}
+	public String getClassType() {
+		return classType;
+	}
+	public void setClassType(String classType) {
+		this.classType = classType;
 	}
 	
 }

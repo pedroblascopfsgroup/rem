@@ -1903,7 +1903,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
 	}
-
+	
 	public Long getOfertasTotal() {
 		return ofertasTotal;
 	}
@@ -2007,5 +2007,4 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCheckFormalizarReadOnly(Boolean checkFormalizarReadOnly) {
 		this.checkFormalizarReadOnly = checkFormalizarReadOnly;
 	}
-	
 }

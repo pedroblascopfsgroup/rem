@@ -137,4 +137,4 @@ END;
 
 /
 
-EXIT
+EXIT;

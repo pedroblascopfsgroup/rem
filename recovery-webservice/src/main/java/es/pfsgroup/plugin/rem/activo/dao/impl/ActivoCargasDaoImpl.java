@@ -14,25 +14,22 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoCargasDao;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 
 @Repository("activoCargasDao")
 public class ActivoCargasDaoImpl extends AbstractEntityDao<ActivoCargas, Long> implements ActivoCargasDao {
 
 	@Resource
 	private PaginationManager paginationManager;
-	
-	private static final String VIGENTE = "VIG";
-	private static final String NOCANCELABLE = "NCN";
-	private static final String ENSANEAMIENTO = "SAN";
 
 	@Override
 	public Boolean esActivoConCargasNoCanceladas(Long idActivo) {
 
-		HQLBuilder hb = new HQLBuilder(" from ActivoCargas ac join ac.cargaBien cb left join cb.situacionCargaEconomica sce left join cb.situacionCarga sc");
+		HQLBuilder hb = new HQLBuilder(" from ActivoCargas ac join ac.estadoCarga ec");
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ac.activo.id", idActivo);
-		hb.appendWhere("cb.auditoria.borrado = 0 AND ac.auditoria.borrado = 0 AND(sce.codigo = '" + VIGENTE + "' OR sc.codigo = '" + VIGENTE + "' "
-				+ "OR sce.codigo = '" + NOCANCELABLE + "' OR sc.codigo = '" + NOCANCELABLE + "' OR sce.codigo = '" + ENSANEAMIENTO + "' OR sc.codigo = '" + ENSANEAMIENTO + "'))");
+		hb.appendWhere("ec.auditoria.borrado = 0 AND ac.auditoria.borrado = 0 AND(ec.codigo = '" + DDEstadoCarga.CODIGO_VIGENTE + "' "
+				+ "OR ec.codigo = '" + DDEstadoCarga.CODIGO_NO_REQUIERE_GESTION + "'))");
 
 		List<ActivoCargas> lista = HibernateQueryUtils.list(this, hb);
 		

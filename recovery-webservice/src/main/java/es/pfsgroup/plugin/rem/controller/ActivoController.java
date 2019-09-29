@@ -2985,10 +2985,10 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboApiPrimaria(ModelMap model) {
+	public ModelAndView getComboApiPrimario(ModelMap model) {
 				
 		try{
-			model.put(RESPONSE_DATA_KEY, activoApi.getComboApiPrimaria());
+			model.put(RESPONSE_DATA_KEY, activoApi.getComboApiPrimario());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

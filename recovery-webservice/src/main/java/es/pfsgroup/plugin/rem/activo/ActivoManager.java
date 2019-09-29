@@ -6877,8 +6877,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public List<ActivoProveedor> getComboApiPrimaria() {
+	public List<ActivoProveedor> getComboApiPrimario() {
 		
-		return activoDao.getComboApiPrimaria();
+		return activoDao.getComboApiPrimario();
 	}	
 }

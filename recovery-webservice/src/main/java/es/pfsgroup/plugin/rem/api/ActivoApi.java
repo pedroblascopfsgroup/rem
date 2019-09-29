@@ -1241,5 +1241,5 @@ public interface ActivoApi {
 
 	boolean esPopietarioArrow(TareaExterna tareaExterna);
 
-	List<ActivoProveedor> getComboApiPrimaria();
+	List<ActivoProveedor> getComboApiPrimario();
 }

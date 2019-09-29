@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 
@@ -96,6 +97,10 @@ public class ActivoCargas implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "DD_ECG_ID")
     private DDEstadoCarga estadoCarga;
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_SCG_ID")
+    private DDSubestadoCarga subestadoCarga;
 
 	@Version   
 	private Long version;
@@ -224,6 +229,14 @@ public class ActivoCargas implements Serializable, Auditable {
 
 	public void setEstadoCarga(DDEstadoCarga estadoCarga) {
 		this.estadoCarga = estadoCarga;
+	}
+
+	public DDSubestadoCarga getSubestadoCarga() {
+		return subestadoCarga;
+	}
+
+	public void setSubestadoCarga(DDSubestadoCarga subestadoCarga) {
+		this.subestadoCarga = subestadoCarga;
 	}
 	
 }

@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20190927
+--## FECHA_CREACION=20190930
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5326
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en USD_USUARIOS_DESPACHOS los datos añadidos en T_ARRAY_FUNCION.
+--## Finalidad: Actualización campo ACT_VENTA_EXTERNA_OBSERVACION
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -32,58 +32,30 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-    
-    TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
-    TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
-    V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-    --		   USU_USERNAME		DES_DESPACHO
-      	  T_FUNCION('elopezg',	'GESTCOMBACKOFF')
-    ); 
-    V_TMP_FUNCION T_FUNCION;
-    V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
-    V_MSQL_1 VARCHAR2(4000 CHAR);
-    
+    V_SEQ_GEH NUMBER(16);
+	V_TIPO_ID NUMBER(16); --Vle para el id DD_TTR_TIPO_TRABAJO
+           
 BEGIN	
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
-	
 	 
-    -- LOOP para insertar los valores en USD_USUARIOS_DESPACHOS -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN USD_USUARIOS_DESPACHOS] ');
-     FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST
-      LOOP
-            V_TMP_FUNCION := V_FUNCION(I);
-			
-			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS 
-			WHERE DES_ID = 
-				(SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO 
-				WHERE DES_DESPACHO = '''||TRIM(V_TMP_FUNCION(2))||''') 
-				AND USU_ID = 
-					(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS 
-					WHERE USU_USERNAME = '''||TRIM(V_TMP_FUNCION(1))||''')';
-			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-			
-			-- Si existe la FUNCION
-			IF V_NUM_TABLAS > 0 THEN	  
-				DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS...no se modifica nada.');
-				
-			ELSE
-				V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS' ||
-							' (USD_ID, DES_ID, USU_ID, USD_GESTOR_DEFECTO, USD_SUPERVISOR, USUARIOCREAR, FECHACREAR, BORRADO)' || 
-							' SELECT '||V_ESQUEMA||'.S_USD_USUARIOS_DESPACHOS.NEXTVAL,' ||
-							' (SELECT DES_ID FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO WHERE DES_DESPACHO = '''||TRIM(V_TMP_FUNCION(2))||'''),' ||
-							' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_FUNCION(1))||'''),' ||
-							' 1,1,''DML'',SYSDATE,0 FROM DUAL';
-		    	
-				EXECUTE IMMEDIATE V_MSQL_1;
-				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS insertados correctamente.');
-				
-		    END IF;	
-      END LOOP;
+    -- Updatear los valores en ACT_ACTIVO -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE EN ACT_ACTIVO] ');
+         
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO]: Modificamos el campo DD_TCO_ID');
+			V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO ACT
+						SET DD_TCO_ID = ''1'',
+						USUARIOMODIFICAR = ''REMVIP-3433'',
+						FECHAMODIFICAR = SYSDATE
+						WHERE ACT.ACT_NUM_ACTIVO IN (7043420, 7043421, 7075545, 7075556)
+						';
+	EXECUTE IMMEDIATE V_MSQL;		
+	DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' ACTIVO ACTUALIZADO');
+          
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: USD_USUARIOS_DESPACHOS ACTUALIZADO CORRECTAMENTE ');
-   
+    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA '||V_ESQUEMA||'.ACT_ACTIVO ACTUALIZADA CORRECTAMENTE');   
 
 EXCEPTION
      WHEN OTHERS THEN

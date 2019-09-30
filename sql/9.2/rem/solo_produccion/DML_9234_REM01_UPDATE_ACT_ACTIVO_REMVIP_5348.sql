@@ -38,6 +38,36 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ACT_ACTIVO - Núm. activo HAYA y SAREB ');
 										
 	 V_SQL := ' UPDATE '||V_ESQUEMA||'.ACT_ACTIVO 
+		    SET ACT_NUM_ACTIVO = ''99999107032'',
+			ACT_NUM_ACTIVO_SAREB = ''99999816245'',
+	    		USUARIOMODIFICAR = ''' || V_USUARIOMODIFICAR || ''',
+		    	FECHAMODIFICAR   = SYSDATE
+		    WHERE ACT_RECOVERY_ID = ''1000000000279201'' ';	
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_ACTIVO ');  
+
+-----------------------------------------------------------------------------------------------------------------
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ACT_ACTIVO - Núm. activo HAYA y SAREB ');
+										
+	 V_SQL := ' UPDATE '||V_ESQUEMA||'.ACT_ACTIVO 
+		    SET ACT_NUM_ACTIVO = ''99999181541'',
+			ACT_NUM_ACTIVO_SAREB = ''999991071209'',
+	    		USUARIOMODIFICAR = ''' || V_USUARIOMODIFICAR || ''',
+		    	FECHAMODIFICAR   = SYSDATE
+		    WHERE ACT_RECOVERY_ID = ''1000000000271835'' ';	
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_ACTIVO ');  
+
+-----------------------------------------------------------------------------------------------------------------
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ACT_ACTIVO - Núm. activo HAYA y SAREB ');
+										
+	 V_SQL := ' UPDATE '||V_ESQUEMA||'.ACT_ACTIVO 
 		    SET ACT_NUM_ACTIVO = ''107032'',
 			ACT_NUM_ACTIVO_SAREB = ''816245'',
 	    		USUARIOMODIFICAR = ''' || V_USUARIOMODIFICAR || ''',

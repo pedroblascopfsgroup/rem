@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -1241,5 +1242,5 @@ public interface ActivoApi {
 
 	boolean esPopietarioArrow(TareaExterna tareaExterna);
 
-	List<ActivoProveedor> getComboApiPrimario();
+	List<DtoProveedorMediador> getComboApiPrimario();
 }

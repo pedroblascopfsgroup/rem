@@ -256,7 +256,9 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'activo/getComboApiPrimario'
-				}
+				},
+			    displayField: 'nombre',
+				valueField: 'id'
 			}
      }
 

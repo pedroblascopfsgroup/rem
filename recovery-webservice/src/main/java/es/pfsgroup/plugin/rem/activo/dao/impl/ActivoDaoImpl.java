@@ -1625,11 +1625,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public List<ActivoProveedor> getComboApiPrimario() {
 		HQLBuilder hb = new HQLBuilder(" from ActivoProveedor pve");
-		hb.appendWhere(" pve.tipoProveedor.codigo = '" + DDTipoProveedor.COD_MEDIADOR + "' and pve.auditoria.borrado = 0 and pve.nombre is not null ");
+		hb.appendWhere(" pve.tipoProveedor.codigo = '" + DDTipoProveedor.COD_MEDIADOR + "' and pve.auditoria.borrado = 0 and pve.nombre is not null and pve.fechaBaja is null ");
 		hb.orderBy("pve.nombre", "asc");
 		
-		List<ActivoProveedor> mediadores = (List<ActivoProveedor>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hb.toString()).list();
+		List<ActivoProveedor> mediadores = (List<ActivoProveedor>) getHibernateTemplate().find(hb.toString());
 		
 		return mediadores;
 	}

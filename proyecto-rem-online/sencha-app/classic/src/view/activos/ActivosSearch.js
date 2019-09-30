@@ -553,12 +553,12 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		xtype: 'comboboxfieldbase',
 							    		fieldLabel: HreRem.i18n('fieldlabel.api.primario'),
 							    		name: 'apiPrimarioId',
-							    		editable: true,
 							    		valueField : 'id',
 										displayField : 'nombre',
 							    		enableKeyEvents:true,
 							    		mode: 'local',
 							    		forceSelection	: false,
+							    		editable: true,
 							    		emptyText: 'Introduzca nombre mediador',
 										listeners: {
 											'change': function() {

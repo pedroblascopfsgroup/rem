@@ -280,7 +280,7 @@ public class VBusquedaActivos implements Serializable {
 	private String direccionTerritorialCodigo;
 
 	@Column(name = "ICO_MEDIADOR_ID")
-	private Long apiPrimariaId;
+	private Long apiPrimarioId;
 
 	@Column(name = "DD_TAL_DESCRIPCION")
 	private String tipoAlquilerDescripcion;
@@ -678,11 +678,11 @@ public class VBusquedaActivos implements Serializable {
 	}
 
 	public Long getApiPrimariaId() {
-		return apiPrimariaId;
+		return apiPrimarioId;
 	}
 
-	public void setApiPrimariaId(Long apiPrimariaId) {
-		this.apiPrimariaId = apiPrimariaId;
+	public void setApiPrimariaId(Long apiPrimarioId) {
+		this.apiPrimarioId = apiPrimarioId;
 	}
 
 	public String getTipoAlquilerDescripcion() {

@@ -3696,7 +3696,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<Double> listaImportesAcumulados = new ArrayList<Double>();
 		//Acumular pvb, cco de las ofertas dependientes
 		//A nivel de expediente
-		if (DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
+		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(ofertaAceptada.getClaseOferta()) && !Checks.esNulo(ofertaAceptada.getClaseOferta().getCodigo()) &&  DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
 			List <OfertasAgrupadasLbk> listaOfertasAgrupadas = ofertaAceptada.getOfertasAgrupadas();
 			if (!Checks.esNulo(nuevafertaAgrupadaLbk)) {
 				if (nuevafertaAgrupadaLbk.getAuditoria().isBorrado() && listaOfertasAgrupadas.contains(nuevafertaAgrupadaLbk)) {
@@ -3713,7 +3713,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						pvb += ofertaDependiente.getImporteOferta();
 						//Acumular cco
 						ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaDependiente.getId());
-						if(!Checks.esNulo(eco.getHonorarios())){
+						if(!Checks.esNulo(eco) && Checks.esNulo(eco.getHonorarios())){
 							for ( GastosExpediente gex: eco.getHonorarios()) {
 								if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
 									cco += gex.getImporteFinal() * gex.getImporteCalculo();
@@ -3739,7 +3739,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 		//Acumular vta, vn, vr de las ofertas dependeintes
 		//A nievl de activos
-		if (DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
+		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(ofertaAceptada.getClaseOferta()) && !Checks.esNulo(DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
 			List <OfertasAgrupadasLbk> listaOfertasAgrupadas = ofertaAceptada.getOfertasAgrupadas();
 			if(!Checks.estaVacio(listaOfertasAgrupadas)) {
 				//Recorrer las fertas dependientes de la principal

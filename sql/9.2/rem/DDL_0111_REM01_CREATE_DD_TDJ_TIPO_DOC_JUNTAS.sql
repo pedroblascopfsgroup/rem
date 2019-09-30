@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alfonso Rodriguez
---## FECHA_CREACION=20190920
+--## FECHA_CREACION=20190930
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7645

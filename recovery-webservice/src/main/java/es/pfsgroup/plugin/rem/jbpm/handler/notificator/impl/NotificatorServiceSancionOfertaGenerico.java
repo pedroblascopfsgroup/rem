@@ -431,8 +431,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
 			clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
 		}
+
 		clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION));
 		clavesGestores.add(SUPERVISOR_COMERCIAL);
+
 		return clavesGestores.toArray(new String[] {});
 	}
 

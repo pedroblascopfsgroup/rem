@@ -118,7 +118,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -798,7 +800,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
 
 			transactionManager.commit(transaction);
-
+			
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
 			transactionManager.rollback(transaction);
@@ -1131,10 +1133,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		// El combo "Comité seleccionado" vendrá informado para cartera
 		// Liberbank
-		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-			nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
-		}
+//		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+//				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+//				&& Checks.esNulo(oferta.getAgrupacion())) {
+//				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
+//				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLiberbank(oferta));
+//		}
 		// El combo "Comité seleccionado" vendrá informado para cartera Cajamar
 		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
@@ -1164,8 +1168,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
-		crearGastosExpediente(oferta, nuevoExpediente);
+		if (!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			crearGastosExpediente(oferta, nuevoExpediente);
+		}
 
+		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente), null);
+				nuevoExpediente.setComiteSancion(comiteLbk);
+				nuevoExpediente.setComitePropuesto(comiteLbk);
+				
+				if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+					Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
+					Filter deletedFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
+					Oferta nuevaOfertaPrincipal = oALbk.getOfertaPrincipal();
+					ExpedienteComercial nuevoEcoPrincipal = expedienteComercialApi.findOneByOferta(nuevaOfertaPrincipal);
+					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
+					nuevoEcoPrincipal.setComitePropuesto(comiteLbkPrincipal);
+					genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
+				}
+		}
+		
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
 
@@ -3084,7 +3108,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		String codigoOferta = oferta.getTipoOferta().getCodigo();
 
 		acciones.add(DDAccionGastos.CODIGO_COLABORACION);
-		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION);
+		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
 
 		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
 			acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
@@ -5139,6 +5163,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return listaOfertasVivas;
 	}
+	
+	@Override
+	public List<Oferta> getOfertasTramitadasByActivo(Activo activo) {
+		List<Oferta> listaOfertasTramitadas = new ArrayList<Oferta>();
+
+		if (!Checks.estaVacio(activo.getOfertas())) {
+			for (ActivoOferta actOfr : activo.getOfertas()) {
+				Oferta oferta = actOfr.getPrimaryKey().getOferta();
+				if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
+						&& DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+					listaOfertasTramitadas.add(oferta);
+				}
+			}
+		}
+
+		return listaOfertasTramitadas;
+	}
 
 	@Override
 	public Long getNextNumActivoRem() {
@@ -6679,6 +6720,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return UAsAlquiladas;
 	}
+
+	@Override
+	public List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer) {
+		
+		List<DDCesionSaneamiento> listaPerimetros = new ArrayList<DDCesionSaneamiento>();
+		
+		if(!Checks.esNulo(codigoServicer)) {
+			listaPerimetros = genericDao.getList(DDCesionSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "servicer.codigo", codigoServicer));
+		}
+		
+		return listaPerimetros;
+	}
 	
 	@Override
 	public List<DtoHistoricoTramitacionTitulo> getHistoricoTramitacionTitulo(Long id){
@@ -6882,4 +6935,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return activoDao.getComboApiPrimario();
 	}	
+	public boolean isActivoPerteneceAgrupacionRestringida(Activo activo) {
+		for(ActivoAgrupacionActivo agrupacion: activo.getAgrupaciones()){
+			if(Checks.esNulo(agrupacion.getAgrupacion().getFechaBaja())) {
+				if(!Checks.esNulo(agrupacion.getAgrupacion().getTipoAgrupacion())
+						&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

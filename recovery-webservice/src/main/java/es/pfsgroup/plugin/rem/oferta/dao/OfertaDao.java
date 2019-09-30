@@ -88,6 +88,17 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr);
 	
 	public void flush();
+	
+	public Oferta getOfertaPrincipal(Long numOferta);
+
+	/**
+	 * Devuelve una lista de ofertas CES
+	 * 
+	 * @param dtoOfertasFilter
+	 * @return DtoPage
+	 */
+	DtoPage getListOfertasCES(DtoOfertasFilter dtoOfertasFilter);
 
 	public Boolean tieneTareaActiva(String tarea, String numOferta);
+
 }

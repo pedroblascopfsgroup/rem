@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 
 @Repository("ExpedienteComercialDao")
 public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteComercial, Long> implements ExpedienteComercialDao {
@@ -133,4 +134,16 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 			return null;
 		}
 	}
+	
+		
+	@Override
+	public List<VListadoOfertasAgrupadasLbk> getListActivosOfertaPrincipal(Long numOferta) {
+
+		HQLBuilder hb = new HQLBuilder(
+				" from VListadoOfertasAgrupadasLbk where numOfertaPrincipal = " + numOferta);
+
+		return (List<VListadoOfertasAgrupadasLbk>)  this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+
+	}
+	
 }

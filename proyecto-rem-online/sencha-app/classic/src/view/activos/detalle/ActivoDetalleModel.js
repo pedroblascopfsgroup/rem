@@ -774,10 +774,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    },
 	    
 	    esSubcarteraDivarian: function(get){
-	    	return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIAN'];
-	    }
-		
-	 },
+			return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIAN'];
+		},
+
+	    esSuperUsuario: function(get){
+	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
+		}
+
+	},
 	
     stores: {
     		
@@ -1994,6 +1998,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			},
 
 			autoLoad: true
+		},
+
+		comboServicerActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'servicerActivo'}
+			}
+		},
+		
+		comboCesionSaneamiento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getPerimetroAppleCesion',
+				extraParams: {codigoServicer: '{comboPerimetroAppleServicer.value}'}
+			}
+		},
+		
+		comboEquipoGestion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposEquipoGestion'}
+			}
+		},
+		
+		comboSiNoDatosPerimetroApple: {
+			data : [	        	
+	        	{"codigo":"0", "descripcion":"No"},
+	        	{"codigo":"1", "descripcion":"Si"}
+	    	]
 		}
+		
      }
 });

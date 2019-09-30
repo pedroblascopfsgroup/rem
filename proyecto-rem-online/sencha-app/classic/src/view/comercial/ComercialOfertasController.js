@@ -299,6 +299,32 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
     		comboVenta.setDisabled(true);
     	}
     	
+    },
+    
+    onClickDescargarExcelOfertaCES: function(btn) {
+		
+    	var me = this,
+		config = {};
+
+		var initialData = {};
+
+		var searchForm = btn.up('formBase');
+		if (searchForm.isValid()) {
+			var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+			
+			Ext.Object.each(params, function(key, val) {
+				if (Ext.isEmpty(val)) {
+					delete params[key];
+				}
+			});
+        }
+		
+		config.params = params;
+		config.url= $AC.getRemoteUrl("ofertas/generateExcelOfertaCES");
+		
+		me.fireEvent("downloadFile", config);		
+    	
+    	
     }
 
 });

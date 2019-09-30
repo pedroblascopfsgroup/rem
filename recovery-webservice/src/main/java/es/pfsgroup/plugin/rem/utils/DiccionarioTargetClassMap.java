@@ -223,10 +223,15 @@ public class DiccionarioTargetClassMap{
 		mapa.put("entidadFinanciera", DDEntidadFinanciera.class);
 		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
 		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
+		mapa.put("origenComprador", DDOrigenComprador.class);
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
 		mapa.put("EstadoPresentacion", DDEstadoPresentacion.class);
 		mapa.put("fasePublicacion", DDFasePublicacion.class);
 		mapa.put("direccionTerritorial", DDDireccionTerritorial.class);
+		mapa.put("claseOferta", DDClaseOferta.class);
+		mapa.put("servicerActivo", DDServicerActivo.class);
+		mapa.put("cesionSaneamiento", DDCesionSaneamiento.class);
+		mapa.put("tiposEquipoGestion", DDEquipoGestion.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

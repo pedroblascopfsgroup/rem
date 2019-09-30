@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
 import net.sf.json.JSONObject;
@@ -40,6 +41,12 @@ public interface GastosExpedienteApi {
      */
     public ArrayList<Map<String, Object>> updateAceptacionesGasto(List<ComisionDto> listaComisionDto, JSONObject jsonFields);
     
-	
-
+    /**
+     * Devuelve una GastosExpediente por activo y accion
+     * @param idActivo
+     * @param idExpediente
+     * @param accion
+     * @return GastosExpediente
+     */
+    public GastosExpediente getGastoExpedienteByActivoYAccion(Long idActivo, Long idExpediente, String accion);
 }

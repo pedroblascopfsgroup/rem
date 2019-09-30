@@ -57,7 +57,7 @@ public class VisitasController {
 	 * "2016-01-01T10:10:10", "idUsuarioRemAccion": "1",
 	 * "idProveedorRemPrescriptor": "5045", "idProveedorRemCustodio": "1010",
 	 * "idProveedorRemResponsable": "1010", "idProveedorRemFdv": "1010" ,
-	 * "idProveedorRemVisita": "1010", "observaciones": "Observaciones" }]}
+	 * "idProveedorRemVisita": "1010","codOrigenComprador":"02", "observaciones": "Observaciones" }]}
 	 * 
 	 * @param model
 	 * @param request

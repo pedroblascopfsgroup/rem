@@ -17,7 +17,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			idActivo = null,
 			idAgrupacion = null,
 			dniComprador = null,
-			codTipoDocumento = null;
+			codTipoDocumento = null,
+			idActivo;
 		me.firstExecution = true;
 
 		if(!Ext.isEmpty(wizard.expediente)){
@@ -29,6 +30,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			codTipoDocumento = wizard.codTipoDocumento;
 			idActivo = wizard.oferta.get('idActivo');
 			idAgrupacion = wizard.oferta.get('idAgrupacion');
+		}
+		if(!Ext.isEmpty(wizard.oferta)){
+			idAgrupacion = wizard.oferta.get('idAgrupacion');
+			idActivo = wizard.oferta.get('idActivo');
 		}
 		Ext.Ajax.request({
 			url: $AC.getRemoteUrl('ofertas/checkPedirDoc'),
@@ -740,7 +745,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				intencionFinanciar: bindRecord.intencionfinanciar,
 				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
-				deDerechoTanteo: bindRecord.dederechotanteo
+				deDerechoTanteo: bindRecord.dederechotanteo,
+				claseOferta: bindRecord.claseOferta,
+				numOferPrincipal: bindRecord.numOferPrincipal,
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -761,7 +769,10 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 				intencionFinanciar: bindRecord.intencionfinanciar,
 				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
-				deDerechoTanteo: bindRecord.dederechotanteo
+				deDerechoTanteo: bindRecord.dederechotanteo,
+				claseOferta: bindRecord.claseOferta,
+				numOferPrincipal: bindRecord.numOferPrincipal,
+				buscadorNumOferPrincipal: bindRecord.buscadorNumOferPrincipal
 			});
 		}
 

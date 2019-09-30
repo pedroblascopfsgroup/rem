@@ -159,6 +159,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -179,6 +180,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -186,6 +188,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -2988,8 +2991,20 @@ public class ActivoAdapter {
 
 		if (this.saveTabActivoTransactional(dto, id, tab)) {
 			if(tab != null && tab.equals("datosbasicos")){
-				this.updateGestoresTabActivoTransactional(dto, id);
-				this.actualizarEstadoPublicacionActivo(id);
+				DtoActivoFichaCabecera dtofichacabecera = (DtoActivoFichaCabecera) dto;
+				Activo activo = activoApi.get(id);
+				if ((dto instanceof DtoActivoFichaCabecera) 
+						&& !Checks.esNulo(dtofichacabecera.getTipoComercializacionCodigo())
+						&& activoApi.isActivoPerteneceAgrupacionRestringida(activo)) {
+					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
+					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
+						this.updateGestoresTabActivoTransactional(dto, agrupacionActivo.getActivo().getId());
+						this.actualizarEstadoPublicacionActivo(agrupacionActivo.getActivo().getId());
+					}
+				} else {
+					this.updateGestoresTabActivoTransactional(dto, id);
+					this.actualizarEstadoPublicacionActivo(id);
+				}
 			}
 
 		}
@@ -3090,13 +3105,32 @@ public class ActivoAdapter {
 			if (!tieneAgrupVenta) {
 				//si el activo viene de destino comercial = venta y pasa a "alquiler" o "alquiler y venta"
 				//en la pestaña patromonio, se desmarca el check de perimetro y el estado alquiler, pasa a libre
-				guardamosPatrimonio(activo, dto);
+				if (activoApi.isActivoPerteneceAgrupacionRestringida(activo)
+						&& (tabActivoService instanceof TabActivoDatosBasicos)
+						&& !Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoComercializacionCodigo())) {
+					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
+					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
+						guardamosPatrimonio(agrupacionActivo.getActivo(), dto);
+					}
+				} else {
+					guardamosPatrimonio(activo, dto);
+				}
 				//-----------------------------------------------------------
 				activo = tabActivoService.saveTabActivo(activo, dto);
 				activoApi.saveOrUpdate(activo);
-
-				// Metodo que recoge funciones que requieren el guardado previo de los datos
-				afterSaveTabActivo(dto, activo, tabActivoService);
+				
+				if (activoApi.isActivoPerteneceAgrupacionRestringida(activo)
+						&& (tabActivoService instanceof TabActivoDatosBasicos)
+						&& !Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoComercializacionCodigo())) {
+					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
+					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
+						// Metodo que recoge funciones que requieren el guardado previo de los datos
+						afterSaveTabActivo(dto, agrupacionActivo.getActivo(), tabActivoService);
+					}
+				} else {
+					// Metodo que recoge funciones que requieren el guardado previo de los datos
+					afterSaveTabActivo(dto, activo, tabActivoService);
+				}
 
 				return true;
 
@@ -3721,11 +3755,63 @@ public class ActivoAdapter {
 				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR))
 					oferta.setSucursal((ActivoProveedor) proveedoresApi.searchProveedorCodigoUvem(codigoOficina+dto.getCodigoSucursal()));
 			}
+
+			List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
+
+			
+//			if(!Checks.esNulo(dto.getClaseOferta())) {
+//				if (dto.getClaseOferta().equals(DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE) && !Checks.esNulo(dto.getNumOferPrincipal())) {
+//					Oferta oferPrincipal = null;
+//					oferPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
+//
+//					// Se le pasa primero la oferta PRINCIPAL y luego la DEPENDIENTE, siendo la principal la que introduce el usuario y la dependiente la actual que estamos creando
+//					ofertasAgrupadas = ofertaApi.buildListaOfertasAgrupadasLbk(oferPrincipal, oferta, dto.getClaseOferta());
+//				}
+//			}
+
+			if (!Checks.esNulo(dto.getNumOferPrincipal()) || (Checks.esNulo(dto.getNumOferPrincipal()) && !Checks.esNulo(dto.getClaseOferta()))){
+				// Se le pasa primero la oferta PRINCIPAL y luego la DEPENDIENTE, siendo la principal la que introduce el usuario y la dependiente la actual que estamos creando
+				Oferta oferPrincipal = null;
+				if (!Checks.esNulo(dto.getNumOferPrincipal())) {
+					oferPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
+					
+					// Si la oferta que vamos a poner como principal es agrupada o individual, le cambiamos la clase
+					if (!DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferPrincipal.getClaseOferta().getCodigo())) {
+						ofertaApi.actualizaClaseOferta(oferPrincipal, DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+					}
+				}
+				ofertasAgrupadas = ofertaApi.buildListaOfertasAgrupadasLbk(oferPrincipal, oferta, dto.getClaseOferta());
+			}
+			
+			oferta.setOfertasAgrupadas(ofertasAgrupadas);
+			
+
 			oferta.setOfertaExpress(false);
+			
+			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
+					"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
+			oferta.setOrigenComprador(origenComprador);
+			
 			genericDao.save(Oferta.class, oferta);
+			
+			
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 
+			if (!Checks.esNulo(dto.getClaseOferta())) {
+				DDClaseOferta claseOferta = (DDClaseOferta) genericDao.get(DDClaseOferta.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOferta()));
+				if (!Checks.esNulo(claseOferta)) {
+					oferta.setClaseOferta(claseOferta);
+				}
+			}
+			
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
+			}else {
+				notificationOfertaManager.sendNotification(oferta);
+			}
+			
 			// HREOS-4937 -- 'General Data Protection Regulation'
 
 			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo

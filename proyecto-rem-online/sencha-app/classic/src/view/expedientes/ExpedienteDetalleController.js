@@ -102,7 +102,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     },
     
     cargarTabData: function (form) {
-		var me = this,
+    	var me = this,
 		model = null,
 		models = null,
 		nameModels = null,
@@ -430,10 +430,65 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 
 	},
-    
+	
 	onClickBotonGuardar: function(btn) {
-		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());	
+		var me = this;
+		var activeTab = btn.up('tabpanel').getActiveTab();
+		if(activeTab.xtype == "datosbasicosoferta"){
+			me.getView().mask();
+			var url =  $AC.getRemoteUrl('expedientecomercial/esOfertaDependiente');
+			var numOfertaPrin = me.getViewModel().data.datosbasicosoferta.data.numOferPrincipal;
+			var nuevoNumOferta = me.getViewModel().data.datosbasicosoferta.data.nuevoNumOferPrincipal;
+			var cloForm = me.getViewModel().data.datosbasicosoferta.data.claseOfertaCodigo;
+			var numOferta = ((numOfertaPrin != null) ? numOfertaPrin : nuevoNumOferta);
+			
+			Ext.Ajax.request({
+			
+			     url: url,
+			     params: { numOferta: numOferta }
+			    ,success: function (response, opts) {
+			         data = Ext.decode(response.responseText);
+			         if(cloForm == "02"){
+			         if(data.success == "true" && data.error == "false"){
+				    		Ext.Msg.show({
+								   title: HreRem.i18n('title.confirmar.oferta.principal'),
+								   msg: HreRem.i18n('msg.confirmar.oferta.principal'),
+								   buttons: Ext.MessageBox.YESNO,
+								   fn: function(buttonId) {
+								        if (buttonId == 'yes') {	
+								        	me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+										}else{
+											 me.getView().unmask();
+										}
+									}
+							});
+			    		
+			    	} else if (data.success == "false" && data.error == "false") {
+			    		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+			    		activeTab.funcionRecargar();
+			    	} else if (data.success == "false" && data.error == "true") {
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.inexistente"));
+					 	me.getView().unmask();		    		
+			    	}
+			    	} else {
+				        me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+				        activeTab.funcionRecargar();
+				    }
+	            },
+	            
+	            failure: function (a, operation, context) {
+	            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					 me.getView().unmask();
+					 activeTab.funcionRecargar();
+	            }
+		     
+			});
+			
+			
+		}else {
+			me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+		}
+			
 	},
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {
@@ -1539,6 +1594,54 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		labelNumeroExpediente.setValue("");
     		comboTipoFinanciacion.reset();
     	}
+	},
+	
+	changeOfrPrincipalOrDep: function (combo, value, oldValue, eOpts, recarga){
+		var me = this;
+			
+		var form = combo.up('form');
+		var numOferPrincipal = form.getBindRecord().data.numOferPrincipal;
+		var checkImporteTotal = form.down('field[name=importeTotal]');
+		var checkNumOferPrin = form.down('field[name=numOferPrincipal]');
+		var checkNuevoNumOferPrin = form.down('field[name=nuevoNumOferPrincipal]');
+		
+		if(recarga) oldValue = value;
+		
+		if(CONST.DD_CLASE_OFERTA['PRINCIPAL'] == value){
+			checkImporteTotal.setVisible(true);
+			checkNumOferPrin.setVisible(false);
+			checkNuevoNumOferPrin.setVisible(false);
+			
+		} else if(CONST.DD_CLASE_OFERTA['DEPENDIENTE'] == value){
+			
+			if(CONST.DD_CLASE_OFERTA['DEPENDIENTE'] != oldValue){
+				
+				if(!Ext.isEmpty(numOferPrincipal) && Ext.isEmpty(oldValue)){
+					
+					checkNumOferPrin.setVisible(true);
+					checkNuevoNumOferPrin.setVisible(false);
+				}else{
+				
+					if(!Ext.isEmpty(numOferPrincipal)){
+						checkNumOferPrin.setVisible(true);
+						checkNuevoNumOferPrin.setVisible(false);
+					}else{
+						checkNumOferPrin.setVisible(false);
+						checkNuevoNumOferPrin.setVisible(true);
+					}		
+					
+				}
+				checkImporteTotal.setVisible(false);
+			} else{
+				checkImporteTotal.setVisible(false);
+				checkNumOferPrin.setVisible(true);
+				checkNuevoNumOferPrin.setVisible(false);
+			}
+		} else{
+			checkImporteTotal.setVisible(false);
+			checkNumOferPrin.setVisible(false);
+			checkNuevoNumOferPrin.setVisible(false);
+		}	
 	},
 
 	onChangeComboProvincia: function(combo) {
@@ -4690,6 +4793,17 @@ comprobarFormatoModificar: function() {
 		}
 			
 	},
+
+	onClickGenerarListadoDeActivos : function(btn) {
+		var me = this, config = {};
+
+		config.params = {};
+		config.params.idExpediente = me.getViewModel().get("expediente.id");
+		config.url = $AC.getRemoteUrl("expedientecomercial/exportarListadoActivosOfertaPrincipal");
+
+		me.fireEvent("downloadFile", config);
+	},
+	
 	onClickBtnDevolverReserva: function(btn){
 		var me = this,
 		model = me.getView().getViewModel().get('expediente');

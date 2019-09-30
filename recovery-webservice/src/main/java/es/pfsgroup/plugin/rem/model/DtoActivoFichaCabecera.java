@@ -244,6 +244,20 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean cambioEstadoPrecio;
 	private Boolean cambioEstadoActivo; 
 	
+	//Contador de ofertas y visitas
+	private Long ofertasTotal;
+	private Long visitasTotal;
+	
+	// Datos Perimetro Apple
+	private String servicerActivoCodigo;
+	private String cesionSaneamientoCodigo;	
+	private Integer perimetroMacc;
+	private Integer perimetroCartera;
+	private String nombreCarteraPerimetro;;
+	
+	private String tipoEquipoGestionCodigo;
+	private String tipoEquipoGestionDescripcion;
+
 	private Boolean checkGestionarReadOnly;
 	private Boolean checkPublicacionReadOnly;
 	private Boolean checkComercializarReadOnly;
@@ -1889,6 +1903,78 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
 	}
+	
+	public Long getOfertasTotal() {
+		return ofertasTotal;
+	}
+
+	public void setOfertasTotal(Long ofertasTotal) {
+		this.ofertasTotal = ofertasTotal;
+	}
+
+	public Long getVisitasTotal() {
+		return visitasTotal;
+	}
+
+	public void setVisitasTotal(Long visitasTotal) {
+		this.visitasTotal = visitasTotal;
+	}
+
+	public String getServicerActivoCodigo() {
+		return servicerActivoCodigo;
+	}
+
+	public void setServicerActivoCodigo(String servicerActivoCodigo) {
+		this.servicerActivoCodigo = servicerActivoCodigo;
+	}
+
+	public String getCesionSaneamientoCodigo() {
+		return cesionSaneamientoCodigo;
+	}
+
+	public void setCesionSaneamientoCodigo(String cesionSaneamientoCodigo) {
+		this.cesionSaneamientoCodigo = cesionSaneamientoCodigo;
+	}
+
+	public Integer getPerimetroMacc() {
+		return perimetroMacc;
+	}
+
+	public void setPerimetroMacc(Integer perimetroMacc) {
+		this.perimetroMacc = perimetroMacc;
+	}
+
+	public Integer getPerimetroCartera() {
+		return perimetroCartera;
+	}
+
+	public void setPerimetroCartera(Integer perimetroCartera) {
+		this.perimetroCartera = perimetroCartera;
+	}
+
+	public String getNombreCarteraPerimetro() {
+		return nombreCarteraPerimetro;
+	}
+
+	public void setNombreCarteraPerimetro(String nombreCarteraPerimetro) {
+		this.nombreCarteraPerimetro = nombreCarteraPerimetro;
+	}	
+
+	public String getTipoEquipoGestionCodigo() {
+		return tipoEquipoGestionCodigo;
+	}
+
+	public void setTipoEquipoGestionCodigo(String tipoEquipoGestionCodigo) {
+		this.tipoEquipoGestionCodigo = tipoEquipoGestionCodigo;
+	}
+
+	public String getTipoEquipoGestionDescripcion() {
+		return tipoEquipoGestionDescripcion;
+	}
+
+	public void setTipoEquipoGestionDescripcion(String tipoEquipoGestionDescripcion) {
+		this.tipoEquipoGestionDescripcion = tipoEquipoGestionDescripcion;
+	}
 
 	public Boolean getCheckGestionarReadOnly() {
 		return checkGestionarReadOnly;
@@ -1921,6 +2007,4 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCheckFormalizarReadOnly(Boolean checkFormalizarReadOnly) {
 		this.checkFormalizarReadOnly = checkFormalizarReadOnly;
 	}
-	
-	
 }

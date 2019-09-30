@@ -787,5 +787,66 @@ public interface ParticularValidatorApi {
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 	Boolean existeActivoAsociado(String numActivo);
+	
+	/**
+	 * Devuelve el codigo del destino comercial de un activo
+	 * 
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean esActivoProductoTerminado(String numActivo);
+
+	public Boolean noExisteEstado(String numActivo);
+	
+
+	/** 
+	 * @param numGasto
+	 * @return true si el emisor del gasto es HAYA
+	 */
+	public Boolean esGastoEmisorHaya(String numGasto);
+	
+	/** 
+	 * @param numGasto
+	 * @return true si el destinatario del gasto es HAYA
+	 */
+	public Boolean esGastoDestinatarioHaya(String numGasto);
+	
+	/** 
+	 * Comprueba si dos gastos son de la misma cartera
+	 * @param numGasto
+	 * @param numOtroGasto
+	 * @return true si ambos gastos son de la misma cartera
+	 */
+	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto);
+
+	/**
+	 * @param numActivo
+	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
+	 */
+	Boolean activoEnAgrupacionProyecto(String numActivo);
+
+	/** 
+	 * @param codigoServicer
+	 * @return true si existe el código de Servicer Activo 
+	 */
+	public Boolean perteneceDDServicerActivo(String codigoServicer);
+
+	/** 
+	 * @param codigoCesion
+	 * @return true si existe el código de Cesión Comercial/Saneamiento
+	 */
+	public Boolean perteneceDDCesionComercial(String codigoCesion);
+
+	/** 
+	 * @param codigoValorOrdinario
+	 * @return true si existe el código de Clasificación Apple
+	 */
+	public Boolean perteneceDDClasificacionApple(String codigoValorOrdinario);
+
+	/** 
+	 * @param numActivo
+	 * @return true si el Activo pertenece a la subcartera Apple
+	 */
+	public Boolean esActivoApple(String numActivo);
 
 }

@@ -266,7 +266,7 @@
             }
             def definicionOfertaT013(String codigo) {
             	def validateJbpmManager = ctx.getBean("validateJbpmManager");
-            	return validateJbpmManager.definicionOfertaT013(tareaExterna, codigo);
+            	return validateJbpmManager.definicionOfertaT013(tareaExterna, codigo, valores);
             }
             def tieneTramiteGENCATVigenteByIdActivo = {
             	def activoTramiteManager = ctx.getBean("activoTramiteManager");
@@ -278,7 +278,7 @@
             }  
             def resolucionComiteT013 = {
             	def validateJbpmManager = ctx.getBean("validateJbpmManager");
-            	return validateJbpmManager.resolucionComiteT013(tareaExterna);
+            	return validateJbpmManager.resolucionComiteT013(tareaExterna, valores);
             }            
             def ratificacionComiteT013 = {
             	def validateJbpmManager = ctx.getBean("validateJbpmManager");
@@ -620,6 +620,14 @@
             def esYubai = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esYubai(tareaExterna);
+			}
+			def isOfertaDependiente = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.isOfertaDependiente(tareaExterna);
+			}
+			def isValidateOfertasDependientes = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.isValidateOfertasDependientes(tareaExterna, valores);
 			}
 			def checkExpedienteFechaCheque = {
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");

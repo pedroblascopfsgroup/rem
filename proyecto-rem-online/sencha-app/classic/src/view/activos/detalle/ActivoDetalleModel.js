@@ -762,6 +762,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	}else{
 	    		return true;
 	    	}
+	    },
+	    
+	    esSuperUsuario: function(get){
+	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
 	    }
 		
 	 },
@@ -1968,6 +1972,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
    				extraParams: {numActivo: '{activo.numActivo}'}
 			}
+		},
+
+		comboServicerActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'servicerActivo'}
+			}
+		},
+		
+		comboCesionSaneamiento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getPerimetroAppleCesion',
+				extraParams: {codigoServicer: '{comboPerimetroAppleServicer.value}'}
+			}
+		},
+		
+		comboEquipoGestion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposEquipoGestion'}
+			}
+		},
+		
+		comboSiNoDatosPerimetroApple: {
+			data : [	        	
+	        	{"codigo":"0", "descripcion":"No"},
+	        	{"codigo":"1", "descripcion":"Si"}
+	    	]
 		}
+		
      }
 });

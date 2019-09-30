@@ -32,6 +32,7 @@ Ext.define('HreRem.model.Oferta', {
     	'codigoPrescriptor',
     	'codigoSucursal',
     	'tipoSucursal',
+    	'numOferPrincipal',
     	{
     		name : 'intencionFinanciar',
     		type : 'boolean'

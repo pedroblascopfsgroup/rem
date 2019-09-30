@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -85,6 +84,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
@@ -105,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
@@ -162,8 +163,8 @@ import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
-import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager extends BusinessOperationOverrider<ExpedienteComercialApi>
@@ -215,10 +216,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	//No existe ese código en REM
 	private static final String NO_EXISTE_CODIGO_REM = "NoExisteEseCodigoEnRem";
+	
+	//Tareas
+	private static final String T013_RESOLUCION_COMITE = "T013_ResolucionComite";
 
 	@Resource
 	private MessageService messageServices;
-
+	
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -311,6 +315,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GenericaRestDaoImp genericaRestDaoImp;
+	
+	@Autowired
+	private GastosExpedienteApi gastosExpedienteApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -550,12 +557,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return true;
 	}
-
+	
+	@Override
+	public List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		List<GastosExpediente> gastosExpediente = genericDao.getList(GastosExpediente.class, filtro);
+		
+		return gastosExpediente;
+	}
+	
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente) {
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		Oferta oferta = expedienteComercial.getOferta();
+		Visita visitaOferta = oferta.getVisita();
 
 		if (!Checks.esNulo(dto.getEstadoCodigo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo());
@@ -588,12 +604,386 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
 						agrupacion.setFechaBaja(new Date());
 						activoAgrupacionApi.saveOrUpdate(agrupacion);
-					}
+					} 
 				}
 
 			}
 		}
-
+		
+		// Si estoy en una oferta dependiente que pasa a ser dependiente de otra oferta.
+		if (Checks.esNulo(dto.getClaseOfertaCodigo())) {			
+			if (!Checks.esNulo(dto.getNumOferPrincipal())) {
+				try {				
+					Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
+					Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
+					Filter deletedFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
+					Oferta antiguoOfertaPrincipal = oALbk.getOfertaPrincipal();
+					
+					if(!Checks.esNulo(nuevaOfertaPrincipal)) {	
+						if(!ofertaApi.ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
+						{
+							// Si la nueva oferta principal es Individual, la cambio a principal.
+							if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
+								Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+								DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+								nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+								genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+							}					
+							// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
+							else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {
+								Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId());	
+								Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+								OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+								Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+								auditoria.setBorrado(true);
+								auditoria.setFechaBorrar(new Date());
+								auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+								ofertaAgrupadaLbk.setAuditoria(auditoria);					
+								genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);							
+								
+								Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+								DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+								nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+								genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+							}
+	
+							// Ponemos borrado a 1 en la tabla relacional para sacarla de la agrupacion actual.
+							Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
+							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+							OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+							Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+							auditoria.setBorrado(true);
+							auditoria.setFechaBorrar(new Date());
+							auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+							ofertaAgrupadaLbk.setAuditoria(auditoria);					
+							genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
+	
+							// Creamos el nuevo registro en la tabla relacional para insertar la oferta a la otra agrupación.
+							OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
+							nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
+							nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);						
+							genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
+							
+							//Re calculo de comité
+							//Dependiente de una oferta princiapl -> Dependiente de otra oferta princiapl
+							//La antigua oferta principal
+							ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(antiguoOfertaPrincipal);
+							DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(antiguoOfertaPrincipal, getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), nuevaOfertaAgrupadaLbk);
+							antiguoEcoPrincipal.setComitePropuesto(comiteLbkA);
+							genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
+							
+							//El nuevo ofertaprincipal
+							ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
+							DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
+							nuevoEcoPrincipal.setComitePropuesto(comiteLbkB);
+							genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
+							
+						}
+						else {
+							logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
+							return false;
+						}
+					} else {
+						logger.error("La oferta introducida no existe.");
+						return false;
+						}
+				} catch (Exception ex) {
+					logger.error("Error al intentar cambiar la oferta principal.", ex);
+					return false;
+				}
+			}
+		}else if (!Checks.esNulo(dto.getClaseOfertaCodigo())){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
+			DDClaseOferta dtoClaseOferta = genericDao.get(DDClaseOferta.class, filtro);
+			
+			// Si estoy en una oferta individual
+			if (DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(oferta.getClaseOferta().getCodigo())) {
+				// Si estoy en una oferta individual que pasa a ser a principal
+				if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(dto.getClaseOfertaCodigo())) {
+					try {
+						oferta.setClaseOferta(dtoClaseOferta);						
+					} catch (Exception ex) {
+						logger.error("Error al intentar cambiar una oferta individual a principal.", ex);
+						return false;
+					}
+				}
+				// Si estoy en una oferta individual que pasa a ser dependiente
+				else if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(dto.getClaseOfertaCodigo())) {
+					try {							
+						Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNuevoNumOferPrincipal());
+						if(!Checks.esNulo(nuevaOfertaPrincipal)) {
+							if(!ofertaApi.ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
+							{
+								// Si la nueva oferta principal es Individual, la cambio a principal.
+								if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
+									Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+									DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+									genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+								}					
+								// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
+								else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {
+									Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId());	
+									Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+									OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+									Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+									auditoria.setBorrado(true);
+									auditoria.setFechaBorrar(new Date());
+									auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+									ofertaAgrupadaLbk.setAuditoria(auditoria);					
+									genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);							
+									
+									Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+									DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+									genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+								}
+								
+								// Creamos el nuevo registro en la tabla relacional para insertar la oferta a la otra agrupación.
+								oferta.setClaseOferta(dtoClaseOferta);
+								OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
+								nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
+								nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);							
+								genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
+								
+								ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
+								DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), nuevaOfertaAgrupadaLbk);
+								nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
+								genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
+							}
+							else {
+								logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
+								return false;
+							}
+						} else {
+							logger.error("La oferta introducida no existe.");
+							return false;
+							}
+					} catch (Exception ex) {
+						logger.error("Error al intentar cambiar una oferta individual a dependiente.", ex);
+						return false;
+					}
+				}			
+			} 
+			// Si estoy en una oferta dependiente
+			else if (DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+				//Si estoy en una oferta dependiente que pasa a ser individual
+				if(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(dto.getClaseOfertaCodigo())) {
+					try {
+						oferta.setClaseOferta(dtoClaseOferta);
+						
+						// Ponemos borrado a 1 en la tabla relacional para sacarla de la agrupacion actual.
+						Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
+						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+						OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+						Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+						auditoria.setBorrado(true);
+						auditoria.setFechaBorrar(new Date());
+						auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+						ofertaAgrupadaLbk.setAuditoria(auditoria);					
+						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
+						
+						ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
+						DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), null);
+						antiguoEcoPrincipal.setComitePropuesto(comiteLbk);
+						genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
+						
+					} catch (Exception ex) {
+						logger.error("Error al intentar cambiar una oferta dependiente a individual.", ex);
+						return false;
+					} 
+				}
+				//Si estoy en una oferta dependiente que pasa a ser principal
+				else if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(dto.getClaseOfertaCodigo())) {
+					try {
+						oferta.setClaseOferta(dtoClaseOferta);
+						
+						// Ponemos borrado a 1 en la tabla relacional para sacarla de la agrupacion actual.
+						Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
+						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+						OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+						Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+						auditoria.setBorrado(true);
+						auditoria.setFechaBorrar(new Date());
+						auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+						ofertaAgrupadaLbk.setAuditoria(auditoria);					
+						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
+						
+						ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
+						DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), ofertaAgrupadaLbk);
+						antiguoEcoPrincipal.setComitePropuesto(comiteLbkA);
+						genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
+						
+						ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(oferta);
+						DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(oferta, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
+						expedienteComercial.setComitePropuesto(comiteLbkB);
+						
+					} catch (Exception ex) {
+						logger.error("Error al intentar cambiar una oferta dependiente a principal.", ex);
+						return false;
+					} 
+				}
+			} 
+			// Si estoy en una oferta principal
+			else if (DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+				//Si estoy en una oferta principal que pasa a ser individual
+				if (DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(dto.getClaseOfertaCodigo())) {
+					try {	
+						// Comprobamos que la oferta no tenga ofertas dependientes
+						Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());	
+						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+						List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+						
+						if(ofertasAgrupadasLbk.size() > 0) {
+							throw new JsonViewerException("La oferta no puede cambiar a individual si tiene ofertas dependientes.");
+						}
+						
+						oferta.setClaseOferta(dtoClaseOferta);						
+					}catch (Exception ex) {
+						logger.error("Error al intentar cambiar una oferta principal a individual.", ex);
+						return false;
+					}
+				}
+				//Si estoy en una oferta principal que pasa a ser dependiente
+				else if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(dto.getClaseOfertaCodigo())) {
+					try {											
+						Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNuevoNumOferPrincipal());
+						if(!Checks.esNulo(nuevaOfertaPrincipal)) {
+							//Comprobamos si la oferta principal que va a pasar a dependiente tiene ofertas que dependan de esta o no.
+							Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());	
+							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+							List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);						
+							
+							// Si la oferta que va a pasar a dependiente no tiene ninguna oferta que dependa de ella, la hacemos dependiente de la nueva oferta principal.
+							if(ofertasAgrupadasLbk.size() == 0){
+								if(!ofertaApi.ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
+								{
+									// Si la nueva oferta principal es Individual, la cambio a principal.
+									if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)) {
+										Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+										DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+										nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+										genericDao.update(Oferta.class, nuevaOfertaPrincipal);	
+																			
+										oferta.setClaseOferta(dtoClaseOferta);
+									}					
+									// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
+									else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {									
+										OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, 
+												genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId()), 
+												genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+										Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+										auditoria.setBorrado(true);
+										auditoria.setFechaBorrar(new Date());
+										auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+										ofertaAgrupadaLbk.setAuditoria(auditoria);					
+										genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
+										
+										ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
+										DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), null);
+										antiguoEcoPrincipal.setComitePropuesto(comiteLbk);
+										genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
+										
+										Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+										DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
+										nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+										genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+										
+										oferta.setClaseOferta(dtoClaseOferta);
+									}
+									// Si la nueva oferta principal es principal, cambiamos la antigua principal a dependiente.
+									else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL)) {
+		
+										oferta.setClaseOferta(dtoClaseOferta);
+									}
+									
+									// Insertamos el nuevo registro de las dos ofertas cambiadas de "rol".
+									OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
+									nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
+									nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);					
+									genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
+									
+									ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
+									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), nuevaOfertaAgrupadaLbk);
+									nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
+									genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
+								}
+								else {
+									logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
+									return false;
+								}
+							}
+							// En caso de que la antigua oferta principal tenga ofertas que dependan de el. 
+							else {
+								// Comprobamos si la nueva oferta principal forma parte de la misma agrupación.
+								boolean ofertaEnLaMismaAgrupacion = false;
+								
+								for(OfertasAgrupadasLbk ofr : ofertasAgrupadasLbk) {
+									if(nuevaOfertaPrincipal.getId().equals(ofr.getOfertaDependiente().getId())) {
+										ofertaEnLaMismaAgrupacion = true;
+										break;
+									}
+								}
+								// En caso de que pertenezca a la misma, se permutan los roles.
+								if(ofertaEnLaMismaAgrupacion) {									
+									// Ponemos borrado a 1 en la tabla relacional para hacer el cambio.
+									Filter filtroIdPrincipal = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());	
+									Filter filtroIdDependiente = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId());	
+									OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroIdPrincipal, filtroIdDependiente, filtroBorrado);
+									Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
+									auditoria.setBorrado(true);
+									auditoria.setFechaBorrar(new Date());
+									auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+									ofertaAgrupadaLbk.setAuditoria(auditoria);					
+									genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
+									
+									// Volvemos a recoger la lista sin el valor que hemos borrado.
+									ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+									
+									// Hacemos update cambiando el Id de la nueva oferta principal.
+									for(OfertasAgrupadasLbk ofr : ofertasAgrupadasLbk) {
+										ofr.setOfertaPrincipal(nuevaOfertaPrincipal);
+										genericDao.update(OfertasAgrupadasLbk.class, ofr);
+									}
+									
+									// Insertamos el nuevo registro de las dos ofertas cambiadas de "rol" entre sí.
+									OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
+									nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
+									nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);									
+									genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
+									
+									// Actualizamos la clase de oferta de ambas.
+									oferta.setClaseOferta(dtoClaseOferta);
+									Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
+									DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);
+									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
+									genericDao.update(Oferta.class, nuevaOfertaPrincipal);
+									
+									ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
+									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
+									nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
+									genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
+									
+								} 
+								// Si la oferta principal tiene ofertas dependientes, no puede pasar a ser dependiente de otra agrupacion que no sea la suya.
+								else {
+									throw new JsonViewerException("La oferta no puede cambiar a dependiente si tiene ofertas dependientes.");
+								}
+							}							
+						} else {
+							logger.error("La oferta introducida no existe.");
+							return false;
+							}
+					}catch (Exception ex) {
+						logger.error("Error al intentar cambiar una oferta principal a dependiente.", ex);
+						return false;
+					}
+				}				
+			}
+		}
+				
+		
 		if (!Checks.esNulo(dto.getTipoOfertaCodigo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoOfertaCodigo());
 			DDTipoOferta tipoOferta = genericDao.get(DDTipoOferta.class, filtro);
@@ -755,7 +1145,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(dto.getImporteOferta())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
-			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
+			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta, null));
 		}
 
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
@@ -770,6 +1160,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			this.updateParticipacionActivosOferta(oferta);
 			this.actualizarImporteReservaPorExpediente(expedienteComercial);
 			this.actualizarHonorariosPorExpediente(expedienteComercial.getId());
+		}
+		
+		if ((!Checks.esNulo(dto.getNumVisita()) && ((!Checks.esNulo(visitaOferta) && Long.parseLong(dto.getNumVisita()) != visitaOferta.getNumVisitaRem()) || Checks.esNulo(visitaOferta)))
+				|| !Checks.esNulo(dto.getImporteOferta())) {
+			this.actualizarGastosExpediente(expedienteComercial, oferta);
 		}
 
 		return true;
@@ -1191,6 +1586,53 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setTipoOfertaCodigo(oferta.getTipoOferta().getCodigo());
 		}
 
+
+		Boolean isCarteraLbkVenta = false;
+		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+			isCarteraLbkVenta = true;
+		}
+
+		dto.setIsCarteraLbkVenta(isCarteraLbkVenta);
+		Boolean isLbkOfertaComercialPrincipal = false;
+		Boolean muestraOfertaComercial = false;
+		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+			isLbkOfertaComercialPrincipal = true;
+			muestraOfertaComercial = true;
+		}else if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+			muestraOfertaComercial = true;
+		
+		}
+		dto.setIsLbkOfertaComercialPrincipal(isLbkOfertaComercialPrincipal);
+		dto.setMuestraOfertaComercial(muestraOfertaComercial);
+
+
+		Double importeTotalAgrupada = oferta.getImporteOferta();
+		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta())) {
+			dto.setClaseOfertaDescripcion(oferta.getClaseOferta().getDescripcion());
+			dto.setClaseOfertaCodigo(oferta.getClaseOferta().getCodigo());
+			if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+				dto.setNumOferPrincipal(ofertaApi.getOfertaPrincipalById(oferta.getId()).getNumOferta());
+
+			}else if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+				try {
+					List <OfertasAgrupadasLbk> oferAgrupa = oferta.getOfertasAgrupadas();
+
+					if(!Checks.esNulo(oferAgrupa)) {
+						for (OfertasAgrupadasLbk ofertaAgrupada : oferAgrupa) {
+							if (oferta.getId() != ofertaAgrupada.getOfertaDependiente().getId()) {
+								importeTotalAgrupada += ofertaAgrupada.getOfertaDependiente().getImporteOferta();
+							}
+						}
+					}
+				} catch (Exception ex) {
+					logger.error("error al recuperar la lista de ofertas agrupadas", ex);
+				}
+			}
+		}
+
+		dto.setImporteTotal(importeTotalAgrupada);
+
 		dto.setFechaNotificacion(oferta.getFechaNotificacion());
 		dto.setFechaAlta(oferta.getFechaAlta());
 
@@ -1275,6 +1717,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else {
 			dto.setRefCircuitoCliente(null);
 		}
+
 		Boolean isCarteraCerberusApple = false;
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
 		&& (!Checks.esNulo(oferta.getActivoPrincipal().getCartera()) 
@@ -3408,6 +3851,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			gastoExpedienteDto.setImporteCalculo(gasto.getImporteCalculo());
 			gastoExpedienteDto.setHonorarios(gasto.getImporteFinal());
 			gastoExpedienteDto.setObservaciones(gasto.getObservaciones());
+			
+			if (!Checks.esNulo(expediente.getOferta().getOrigenComprador())) {
+				gastoExpedienteDto.setOrigenComprador(expediente.getOferta().getOrigenComprador().getDescripcion());
+			}
 
 			if (!Checks.esNulo(gasto.getActivo())) {
 				gastoExpedienteDto.setIdActivo(gasto.getActivo().getId());
@@ -3426,6 +3873,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} else if (idActivo.equals(gastoExpedienteDto.getIdActivo())) {
 				honorarios.add(gastoExpedienteDto);
 			}
+			
+			if(!Checks.esNulo(gasto.getImporteFinal())) {
+				gastoExpedienteDto.setImporteFinal(gasto.getImporteFinal());
+			}
+			
 		}
 
 		return honorarios;
@@ -4036,6 +4488,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		gastoExpediente.setObservaciones(dtoGastoExpediente.getObservaciones());
+		gastoExpediente.setEditado(1);
 
 		if (!Checks.esNulo(dtoGastoExpediente.getIdActivo())) {
 			Activo activo = null;
@@ -5424,6 +5877,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		gastoExpediente.setObservaciones(dto.getObservaciones());
 		gastoExpediente.setExpediente(expediente);
+		gastoExpediente.setEditado(0);
 
 		if (!Checks.esNulo(dto.getIdActivo())) {
 			Activo activo = null;
@@ -6348,6 +6802,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
 		gastoExpediente.setExpediente(expediente);
 		gastoExpediente.setActivo(activo);
+		gastoExpediente.setEditado(0);
 
 		genericDao.save(GastosExpediente.class, gastoExpediente);
 
@@ -9582,6 +10037,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
+
 	
 	@Override
 	public List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta){
@@ -9605,6 +10061,219 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return esYubai;
 	}
+
+	@Override
+	public List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta){
+		
+		List<VListadoOfertasAgrupadasLbk> listaOfertasAgrupadas = new ArrayList<VListadoOfertasAgrupadasLbk>();
+		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		if(!Checks.esNulo(oferta)) {
+		 listaOfertasAgrupadas = expedienteComercialDao.getListActivosOfertaPrincipal(oferta.getNumOferta());
+		}
+		
+		return listaOfertasAgrupadas;
+	}
+
+
+	public boolean isOfertaDependiente(TareaExterna tareaExterna) {
+   		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);	
+		boolean esOfertaDependiente = false;
+		if(!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta().getClaseOferta()) &&
+				DDCartera.CODIGO_CARTERA_LIBERBANK.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+			if(T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) &&
+					DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(expedienteComercial.getOferta().getClaseOferta().getCodigo())) {
+				
+				esOfertaDependiente = !permiteAvanzarOfertaDependiente(expedienteComercial, T013_RESOLUCION_COMITE);
+				
+			}else if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(expedienteComercial.getOferta().getClaseOferta().getCodigo())) {
+				esOfertaDependiente = true;
+			}
+		}
+		return esOfertaDependiente;
+
+	}
+	
+	@SuppressWarnings("null")
+	private Long ofertasTotalesCount(ExpedienteComercial expediente) {
+		List<ActivoOferta> activos = expediente.getOferta().getActivosOferta();
+		Long ofertasTotales = null;
+		long ofertasTotalesAux = 0;
+		if (!Checks.estaVacio(activos)) {
+			for (ActivoOferta activoOferta : activos) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo.getId());
+				List<ActivoOferta> ofertasActivo = genericDao.getList(ActivoOferta.class, filtroActivo);
+				ofertasTotalesAux += ofertasActivo.size();
+			}
+		}
+		ofertasTotales = new Long(ofertasTotalesAux);
+		return ofertasTotales;
+	}
+	private Long visitasTotalesCount(ExpedienteComercial expediente) {
+		List<ActivoOferta> activos = expediente.getOferta().getActivosOferta();
+		Long visitasTotales = null;
+		long visitasTotalesAux = 0;
+		if (!Checks.estaVacio(activos)) {
+			for (ActivoOferta activoOferta : activos) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				List<Visita> visitasActivo = genericDao.getList(Visita.class, filtroActivo);
+				visitasTotalesAux += visitasActivo.size();
+			}
+		}
+		visitasTotales = new Long(visitasTotalesAux);
+		return visitasTotales;
+	}
+
+	public DDComiteSancion comitePropuestoByIdExpediente(Long idExpediente) throws Exception {
+
+		try {
+			ExpedienteComercial expediente = findOne(idExpediente);
+			
+			return expediente.getComitePropuesto();
+
+		} catch (JsonViewerException jve) {
+			logger.info("error controlado en expedienteComercialManager.comitePropuestoByIdExpediente", jve);
+			throw jve;
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager.comitePropuestoByIdExpediente", e);
+			throw e;
+		}
+	}
+	
+	@Override
+	public DDComiteSancion comitePropuestoByIdOferta(Long idOferta) throws Exception {
+
+		try {
+			ExpedienteComercial expediente = expedienteComercialPorOferta(idOferta);
+			
+			return comitePropuestoByIdExpediente(expediente.getId());
+
+		} catch (JsonViewerException jve) {
+			logger.info("error controlado en expedienteComercialManager.comitePropuestoByIdOferta", jve);
+			throw jve;
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialManager.comitePropuestoByIdOferta", e);
+			throw e;
+		}
+	}
+
+	@Override
+	public boolean esOfertaDependiente(Long oferta) {
+		if (!Checks.esNulo(oferta)) {
+			Oferta ofr = ofertaApi.getOfertaById(oferta);
+			if (!Checks.esNulo(ofr) && !Checks.esNulo(ofr.getClaseOferta()))
+				return DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofr.getClaseOferta().getCodigo());
+			else
+				return false;
+		}else {
+			return false;
+		}
+	}
+
+	@Override
+	public DtoOferta searchOfertaCodigo(String numOferta, String id, String esAgrupacion) {
+		
+		long numeroOferta, idEntidad;
+		Boolean esUnaAgrupacion;
+		try {
+			esUnaAgrupacion = Boolean.parseBoolean(esAgrupacion);
+			
+			numeroOferta = Long.parseLong(numOferta);
+			idEntidad = Long.parseLong(id);
+			
+			DtoOferta dtoOferta = new DtoOferta();
+			Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numeroOferta);
+			beanUtilNotNull.copyProperties(dtoOferta, oferta);
+			
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				throw new JsonViewerException("La oferta seleccionada es de alquiler, no se puede agrupar con este tipo de ofertas");
+			}
+
+			if(!Checks.esNulo(oferta)){
+				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+				
+				if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
+						DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) &&
+						(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(eco.getEstado().getCodigo()) || DDEstadosExpedienteComercial.PTE_SANCION.equals(eco.getEstado().getCodigo()))) {
+				
+					if(!esUnaAgrupacion && ofertaApi.activoYaIncluidoEnOfertaAgrupadaLbk(idEntidad, oferta)) {
+						throw new JsonViewerException("La oferta que estás intentando crear tiene un activo ya contenido en la agrupación.");
+					}
+					
+					Long idTareaPadre = activoTareaExternaApi.getActivasByIdTramiteTodas(activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId()).get(0).getId()).get(0).getTareaPadre().getId();
+					
+					Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", idTareaPadre);
+					TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtroTarea);
+	
+					if (!Checks.esNulo(tareaExterna)) {
+						TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
+						if (tareaActivo.getDescripcionTarea().equals("Definición oferta")) {
+							return dtoOferta;
+						}
+					}
+				}
+			}
+
+		}catch(NumberFormatException ex){
+			return null;
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return null;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
+	private boolean validaOfertaPrincipal(Long numeroOferta) {
+		
+		Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numeroOferta);
+
+		if(!Checks.esNulo(oferta)){
+			ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+			
+			if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
+					DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) &&
+					(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(eco.getEstado().getCodigo()) || DDEstadosExpedienteComercial.PTE_SANCION.equals(eco.getEstado().getCodigo()))) {
+			
+				Long idTareaPadre = activoTareaExternaApi.getActivasByIdTramiteTodas(activoTramiteApi.getTramitesActivoTrabajoList(eco.getTrabajo().getId()).get(0).getId()).get(0).getTareaPadre().getId();
+				
+				Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", idTareaPadre);
+				TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtroTarea);
+
+				if (!Checks.esNulo(tareaExterna)) {
+					TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
+					if (tareaActivo.getDescripcionTarea().equals("Definición oferta")) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	private Boolean permiteAvanzarOfertaDependiente (ExpedienteComercial eco, String codigoTarea) {
+		Boolean permitir = false;
+		
+		List<VListadoOfertasAgrupadasLbk> vis = genericDao.getList(VListadoOfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "numOfertaDependiente", eco.getOferta().getNumOferta()));
+		
+		if(!Checks.estaVacio(vis)) {
+			ExpedienteComercial ecoPrincipal = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.numOferta", vis.get(0).getNumOfertaPrincipal()));
+			
+			if(!Checks.esNulo(ecoPrincipal)) {
+				ActivoTramite tra = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo", ecoPrincipal.getTrabajo()));
+				
+				if(!Checks.esNulo(tra) && ofertaApi.esTareaFinalizada(tra, codigoTarea)) {
+					permitir = true;
+				}
+			}
+		}
+		
+		return permitir;
+	}
 	
 	@Override
 	public boolean checkExpedienteFechaCheque(Long idTramite) {
@@ -9617,6 +10286,76 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				return !Checks.esNulo(expediente.getFechaContabilizacionPropietario());
 			}
 		}
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) {
+		String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION,
+				DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
+		
+		for(ActivoOferta activoOferta : oferta.getActivosOferta()) {
+			Activo activo = activoOferta.getPrimaryKey().getActivo();
+			
+			for (String accion : acciones) {
+				GastosExpediente gastoExpediente = gastosExpedienteApi.getGastoExpedienteByActivoYAccion(activo.getId(), expedienteComercial.getId(), accion);
+				
+				if(!Checks.esNulo(gastoExpediente) && gastoExpediente.getEditado() == 0) {
+					DtoGastoExpediente dtoGastoExpediente = ofertaApi.calculaHonorario(oferta, accion, activo);
+	
+					DDAccionGastos acciongasto = (DDAccionGastos) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDAccionGastos.class, accion);
+	
+					if (!Checks.esNulo(acciongasto)) {
+						gastoExpediente.setAccionGastos(acciongasto);
+					}
+	
+					if (!Checks.esNulo(dtoGastoExpediente.getCodigoTipoCalculo())) {
+						DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+								.dameValorDiccionarioByCod(DDTipoCalculo.class, dtoGastoExpediente.getCodigoTipoCalculo());
+						gastoExpediente.setTipoCalculo(tipoCalculo);
+					}
+	
+					if (!Checks.esNulo(dtoGastoExpediente.getIdProveedor())) {
+						Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+								dtoGastoExpediente.getIdProveedor());
+						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroProveedor);
+						gastoExpediente.setProveedor(proveedor);
+	
+						DDTipoProveedorHonorario tipoProveedor = null;
+	
+						if (!Checks.esNulo(proveedor) && !Checks.esNulo(proveedor.getTipoProveedor())) {
+							if (proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_MEDIADOR)) {
+								tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
+										DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_MEDIADOR);
+							} else if (proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_FVD)) {
+								tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
+										DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_FVD);
+							} else if (proveedor.getTipoProveedor().getCodigo()
+									.equals(DDTipoProveedorHonorario.CODIGO_OFICINA_BANKIA)) {
+								tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
+										DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_BANKIA);
+							} else if (proveedor.getTipoProveedor().getCodigo()
+									.equals(DDTipoProveedorHonorario.CODIGO_OFICINA_CAJAMAR)) {
+								tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
+										DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_CAJAMAR);
+							}
+	
+							gastoExpediente.setTipoProveedor(tipoProveedor);
+						}
+					}
+	
+					gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
+					gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+					gastoExpediente.setExpediente(expedienteComercial);
+					gastoExpediente.setActivo(activo);
+	
+					genericDao.update(GastosExpediente.class, gastoExpediente);
+				}
+			}
+		}
+		
 		return true;
 	}
 }

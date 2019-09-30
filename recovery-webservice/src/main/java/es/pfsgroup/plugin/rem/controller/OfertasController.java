@@ -48,10 +48,13 @@ import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
@@ -752,4 +755,52 @@ public class OfertasController {
 		restApi.sendResponse(response, model, request);
 	}
 
+
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
+		{
+			try {
+
+				DtoPage page = ofertaApi.getListOfertasAgrupadasLiberbank(dtoOfertasAgrupadas);
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+
+			} catch (Exception e) {
+				logger.error("Error en ofertasController", e);
+				model.put("success", false);
+			}
+			
+			
+			return createModelAndViewJson(model);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListActivosOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
+		{
+			try {
+				DtoPage page = ofertaApi.getListActivosOfertasAgrupadasLiberbank(dtoOfertasAgrupadas);
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+	
+
+			} catch (Exception e) {
+				logger.error("Error en ofertasController", e);
+				model.put("success", false);
+			}
+			
+			
+			return createModelAndViewJson(model);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelOfertaCES(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		ExcelReport report = ofertaApi.generarExcelOfertasCES(dtoOfertasFilter);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
 }

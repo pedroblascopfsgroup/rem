@@ -310,8 +310,85 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 						var comite = me.down('[name=comite]');
 					},
 					
+					T013_ResolucionComiteValidacion: function() {
+						
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+						var comboResolucion = me.down('[name=comboResolucion]');
+						var comitePropuesto = me.down('[name=comitePropuesto]');
+						var importeTotalOfertaAgrupada = me.down('[name=importeTotalOfertaAgrupada]');
+						var fechaReunionComite = me.down('[name=fechaReunionComite]');
+
+						if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
+							me.ocultarCampo(fechaReunionComite);
+							me.ocultarCampo(comiteInternoSancionador);
+							me.ocultarCampo(comitePropuesto);
+							me.ocultarCampo(importeTotalOfertaAgrupada);
+						}else{
+							me.bloquearCampo(comboResolucion);
+							var url = $AC.getRemoteUrl('agenda/isOfertaIndividual');
+							Ext.Ajax.request({
+								url:url,
+								params: {idExpediente : idExp},
+								success: function(response,opts){
+									var ResOfertaIndividual = Ext.JSON.decode(response.responseText).ofertaIndividual;
+									if(ResOfertaIndividual == "true"){
+										me.ocultarCampo(comitePropuesto);
+										me.ocultarCampo(importeTotalOfertaAgrupada);
+									}
+								}
+							});
+						}
+						
+					},
+					
 					ocultarCampo: function(campo) {
 				        var me = this;
 				        campo.setHidden(true);
-				    }
+					},
+					habilitarCampo: function(campo) {
+						var me = this;
+						campo.setDisabled(false);
+						me.campoObligatorio(campo);
+					},
+					deshabilitarCampo: function(campo) {
+						var me = this;
+						campo.setDisabled(true);
+						me.campoNoObligatorio(campo);
+					},
+					bloquearCampo: function(campo) {
+						var me = this;
+						campo.setReadOnly(true);
+						me.campoNoObligatorio(campo);
+					},
+					desbloquearCampo: function(campo) {
+						var me = this;
+						campo.setReadOnly(false);
+						me.campoObligatorio(campo);
+					},
+					borrarCampo: function(campo) {
+						campo.setValue(null);
+					},
+					campoObligatorio: function(campo) {
+						var me = this;
+						if (campo.noObligatorio) {
+							campo.allowBlank = true;
+						} else {
+							campo.allowBlank = false;
+						}
+					},
+					campoNoObligatorio: function(campo) {
+						var me = this;
+						campo.allowBlank = true;
+					},
+					desocultarCampo: function(campo) {
+						var me = this;
+						campo.setHidden(false);
+					},
+					
+					setFechaActual: function(campo){
+						var fecha = new Date();
+						campo.setValue(Ext.Date.format(fecha, 'd/m/Y'));
+					}
 			});

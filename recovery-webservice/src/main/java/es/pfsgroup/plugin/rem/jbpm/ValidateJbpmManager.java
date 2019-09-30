@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +33,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Override
-	public String definicionOfertaT013(TareaExterna tareaExterna, String codigo) {
+	public String definicionOfertaT013(TareaExterna tareaExterna, String codigo, Map<String, Map<String,String>> valores) {
 		//HREOS-2161
 		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
 		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna) &&
@@ -48,16 +50,20 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 				}
 			}
 		}		
+		if (trabajoApi.checkLiberbank(tareaExterna)) {
+			return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
+		}
 		return null;
 	}
 	
 	@Override
-	public String resolucionComiteT013(TareaExterna tareaExterna) {
+	public String resolucionComiteT013(TareaExterna tareaExterna, Map<String, Map<String, String>> valores) {
 		//HREOS-2161
 		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna)) return FALTA_MARCAR_RESERVA_NECESARIA;
 		if (trabajoApi.checkBankia(tareaExterna) || trabajoApi.checkLiberbank(tareaExterna)
-				|| trabajoApi.checkGiants(tareaExterna))
-			return null;
+				|| trabajoApi.checkGiants(tareaExterna)) {
+			return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
+		}
 		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDSubtipoDocumentoExpediente.CODIGO_APROBACION,"E");
 
 	}	

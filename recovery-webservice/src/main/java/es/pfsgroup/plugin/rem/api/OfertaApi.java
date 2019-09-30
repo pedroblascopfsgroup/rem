@@ -8,6 +8,7 @@ import java.util.Map;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -21,8 +22,11 @@ import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -46,6 +50,7 @@ public interface OfertaApi {
 	 */
 	public Oferta getOfertaById(Long id);
 
+	public Oferta getOfertaPrincipalById(Long id);
 	/**
 	 * Devuelve una Oferta por idOfertaWebcom.
 	 * 
@@ -503,6 +508,7 @@ public interface OfertaApi {
 	 * @return List<ActivoOferta> 
 	 */
 	public List<ActivoOferta> buildListaActivoOferta(Activo activo, ActivoAgrupacion agrupacion, Oferta oferta) throws Exception;
+	
 
 	/**
 	 * 
@@ -580,7 +586,9 @@ public interface OfertaApi {
 
 	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 
-	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
+	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+
+	DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
 
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
@@ -651,6 +659,13 @@ public interface OfertaApi {
 	 * @param oferta
 	 */
 	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
+	
+	/**
+	 * Genera la excel de Ofertas CES
+	 * @param dtoOfertasFilter
+	 * @return ExcelReport
+	 */
+	ExcelReport generarExcelOfertasCES(DtoOfertasFilter dtoOfertasFilter);
 
 	/**
 	 * Metodo que busca si la tarea pasada del tramite dado esta finalizada
@@ -665,5 +680,109 @@ public interface OfertaApi {
 	Oferta getOfertaByIdExpediente(Long idExpediente);
 
 	boolean checkEsYubai(TareaExterna tareaExterna);
-}
+	/**
+	 * Este método construye una lista de OfertasAgrupadasLbk para la creación de ofertas.
+	 * @param idOfertaPrincipal a incluir en la oferta
+	 * @param oferta con la información de la oferta
+	 * @return List<OfertasAgrupadasLbk> 
+	 */
+	public List<OfertasAgrupadasLbk> buildListaOfertasAgrupadasLbk(Oferta principal, Oferta dependiente, String claseOferta) throws Exception;
 
+
+	/**
+	 * Obtener la lista de ofertas agrupadas para Liberbank 
+	 * @param dtoVListadoOfertasAgrupadasLbk <DtoVListadoOfertasAgrupadasLbk>
+	 * @return <DtoPage> Página de valores de ofertas agrupadas Liberbank
+	 */
+	DtoPage getListOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
+	
+	/**
+	 * Obtener la lista de activos de las ofertas agrupadas para Liberbank 
+	 * @param dtoVListadoOfertasAgrupadasLbk <DtoVListadoOfertasAgrupadasLbk>
+	 * @return <DtoPage> Página de valores de ofertas agrupadas Liberbank
+	 */
+	DtoPage getListActivosOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
+	
+
+
+	public boolean faltanDatosCalculo(Oferta ofertaById);
+
+	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
+
+	DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+
+	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+
+	/**
+	 * Método que comprueba si la oferta es una oferta principal
+	 * @param oferta oferta actual
+	 * @return boolean
+	 */
+	public boolean isOfertaPrincipal(Oferta oferta);
+	
+	/**
+	 * Método que comprueba si la oferta es una oferta principal
+	 * @param oferta oferta actual
+	 * @return boolean
+	 */
+	public boolean isOfertaDependiente(Oferta oferta);
+	
+	/**
+	 * Método para obtener todas las ofertas dependientes de una principal.
+	 * @param oferta oferta actual
+	 * @return lista de ofertas dependientes
+	 */
+	public List<Oferta> ofertasAgrupadasDependientes(Oferta oferta);
+
+	/**
+	 * Este método obtiene la oferta mediante el id de la tarea por la que entra (creado para obtener la oferta y comprobar si es o no principal).
+	 *
+	 * @param idTarea
+	 * @return Oferta
+	 */
+	public Oferta tareaOferta(Long idTarea);
+
+	void actualizaPrincipalId(OfertasAgrupadasLbk ofertaLbk, Oferta nuevaOfertaPrincipal);
+
+	void borradoOfertaAgrupadaDependiente(Oferta oferta);
+
+	public void actualizaListadoPrincipales(Oferta nuevaPrincipal, List<OfertasAgrupadasLbk> ofertasAgrupadas);
+
+	public void actualizaClaseOferta(Oferta principal, String codigoOfertaPrincipal);
+	
+	/**
+	 * Este método comprueba si en la agrupación de la ofertaPrincipal ya está incluido algun activo de la nueva ofertaDependiente
+	 *
+	 * @param ofertaDependiente
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public boolean ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(Oferta ofertaDependiente, Oferta ofertaPrincipal);
+	
+	/**
+	 * Este método comprueba si en la oferta agrupada de la ofertaPrincipal ya está incluido un activo en concreto. Se usa para hacer las comprobaciones de ofertas nuevas sobre activos (cuando se están creando y aun no existen).
+	 *
+	 * @param idActivo
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public boolean activoYaIncluidoEnOfertaAgrupadaLbk(Long idActivo, Oferta ofertaPrincipal);
+
+	/**
+	 * Este método comprueba si alguna oferta dependiente no pasa alguna validación de la tareas
+	 *
+	 * @param idActivo
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public String isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String, String>> valores);
+	
+	/*
+	 * Este método comprueba si en la oferta agrupada de la ofertaPrincipal ya está incluido alguno de los activos que contiene la agrupación sobre la que se está intentando crear una oferta. Se usa para hacer las comprobaciones de ofertas nuevas sobre agrupaciones (cuando se están creando y aun no existen).
+	 *
+	 * @param idAgrupacion
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public boolean agrupacionConActivoYaIncluidoEnOfertaAgrupadaLbk(Long idAgrupacion, Oferta ofertaPrincipal);
+}

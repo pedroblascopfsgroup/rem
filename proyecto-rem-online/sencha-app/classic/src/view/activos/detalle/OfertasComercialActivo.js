@@ -40,6 +40,17 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivo', {
 				items :
 					[
 					// Fila 0
+		    			{
+							xtype: 'textfield',
+							fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.totalOfertas'),
+							bind: {
+								value: '{activo.ofertasTotal}',
+								hidden:'{!activo.isSubcarteraApple}'
+							},
+							width: 410,
+		    				readOnly: true,
+		    				colspan: 3
+						},
 						{
 		    				xtype: "textfield",
 		    				fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.usuAlta'),

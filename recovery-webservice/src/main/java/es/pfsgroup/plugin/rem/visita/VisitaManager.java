@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -338,6 +339,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				}
 			}
 			
+			if(!Checks.esNulo(visitaDto.getCodOrigenComprador())) {
+				DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS, "codigo",visitaDto.getCodOrigenComprador()));
+				visita.setOrigenComprador(origenComprador);
+			}
+			
 			visitaDao.save(visita);
 			
 			//Si Webcom nos envia el idSalesforce despues de crear la visita la asociaremos a su comunicacion de GENCAT
@@ -499,6 +505,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 			if (((JSONObject) jsonFields).containsKey("telefonoContactoVisitas")) {
 				visita.setTelefonoContactoVisitas(visitaDto.getTelefonoContactoVisitas());
+			}
+			
+			if(!Checks.esNulo(visitaDto.getCodOrigenComprador())) {
+				DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS, "codigo",visitaDto.getCodOrigenComprador()));
+				visita.setOrigenComprador(origenComprador);
 			}
 			
 			visitaDao.saveOrUpdate(visita);

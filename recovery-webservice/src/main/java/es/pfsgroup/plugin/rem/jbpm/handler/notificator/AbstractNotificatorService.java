@@ -364,9 +364,6 @@ public abstract class AbstractNotificatorService {
 				dtoSendNotificator.setProvincia(tramite.getActivo().getLocalizacionActual().getProvincia().getDescripcion());
 			}
 		}
-
-		
-
 		return dtoSendNotificator;
 	}
 

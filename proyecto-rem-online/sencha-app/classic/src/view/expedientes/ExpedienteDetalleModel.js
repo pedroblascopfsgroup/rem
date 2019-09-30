@@ -6,7 +6,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
-				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones'],
+				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones',
+				'HreRem.model.OfertasAgrupadasModel'],
     
     data: {
     },
@@ -156,6 +157,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo;
+		 },
+		 
+		 esCarteraLiberbankVenta: function(get) {
+		     	
+		     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+		     	var tipoExpediente = get('expediente.tipoExpedienteCodigo');
+		     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo && CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpediente;
 		 },
 		 
 		 esReadOnly: function(get) {
@@ -697,6 +705,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
           	 },
           	 groupField: 'descripcionTipo'
 		},
+		// @TO-DO Store Activos Ofetas Agrupados
+		/*storeActivosAgrupadosLbk:{
+			model:'HreRem.model.ActivosOfertaAgrupadaLbk',
+			proxy:{
+				type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getActivosOfertaAgrupados',
+		        extraParams: {idExpediente: '{expediente.id}'}
+			}
+		},*/
 		
 		tareasTramiteExpediente: {
 			pageSize: $AC.getDefaultPageSize(),
@@ -1177,8 +1194,36 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'expedientecomercial/buscarProblemasVentaClienteUrsus',
 				extraParams: {numeroUrsus: '', idExpediente: '{expediente.id}'}
 			}
-		}
+		},
+		storeOfertasAgrupadas: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.OfertasAgrupadasModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'ofertas/getListOfertasAgrupadas',
+				extraParams: {numOfertaPrincipal:'{datosbasicosoferta.numOferta}'}
+			}
+		},
+		storeActivosOfertasAgrupadas:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.OfertasAgrupadasModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'ofertas/getListActivosOfertasAgrupadas',
+				extraParams: {numOfertaPrincipal:'{datosbasicosoferta.numOferta}'}
+			}
+		},
 		
+		comboClaseOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'claseOferta'
+				}
+			}
+		}
 		
     }
 });

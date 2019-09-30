@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
@@ -59,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1239,11 +1241,36 @@ public interface ExpedienteComercialApi {
 	public void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial);
 
 	boolean existeComprador(String numDoc);
+	
+	List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta);
 
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 
 	boolean esYubai(TareaExterna tareaExterna);
+
+	/*
+	 * Devuelve el comité propuesto a partir de un id de expediente
+	 * @param idExpediente
+	 * @return DDComiteSancion
+	 */
+	DDComiteSancion comitePropuestoByIdExpediente(Long idExpediente) throws Exception;
+
+	/*
+	 * Devuelve el comité propuesto a partir de un id de oferta comercial. Utiliza el método comitePropuestoByIdExpediente
+	 * @param idOferta
+	 * @return DDComiteSancion
+	 */
+	DDComiteSancion comitePropuestoByIdOferta(Long idOferta) throws Exception;
+
+	boolean esOfertaDependiente(Long oferta);
+
+	DtoOferta searchOfertaCodigo(String numOferta, String id, String esAgrupacion);
 	
 	boolean checkExpedienteFechaCheque(Long idTramite);
+
+	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta);
+
+	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
+
 }
 

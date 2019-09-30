@@ -126,11 +126,11 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
@@ -154,6 +154,7 @@ public class ActivoController extends ParadiseJsonController {
 	private static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 	private static final String ERROR_CONEXION_FOTOS = "Ha habido un error al conectar con CRM";
 	private static final String ERROR_PRECIO_CERO = "No se puede realizar la operación. Está introduciendo un importe 0";
+	private static final String FALTAN_DATOS = "Faltan datos para proponer";
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -758,6 +759,10 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request) {
 		try {
+			if (!Checks.esNulo(ofertaApi.getOfertaById(ofertaActivoDto.getIdOferta()).getClaseOferta())
+					&& ofertaApi.faltanDatosCalculo(ofertaApi.getOfertaById(ofertaActivoDto.getIdOferta()))) {
+					model.put("advertencia", FALTAN_DATOS);
+				}
 			boolean success = activoApi.saveOfertaActivo(ofertaActivoDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 			trustMe.registrarSuceso(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR);
@@ -2924,19 +2929,22 @@ public class ActivoController extends ParadiseJsonController {
 	public List<DtoActivoDatosRegistrales> getCalificacionNegativabyId(Long id) {
 		return activoApi.getActivoCalificacionNegativaCodigos(id);
 	}
-	
-//	@SuppressWarnings("unchecked")
-//	@RequestMapping(method = RequestMethod.GET)
-//	public ModelAndView bloquearChecksComercializacion(String idActivo, Integer action, ModelMap model) {
-//		Activo activo = activoDao.getActivoById(Long.parseLong(idActivo));
-//		try{
-//			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo, action));
-//		} catch (Exception e) {
-//			logger.error("error en activoController", e);
-//			model.put(RESPONSE_SUCCESS_KEY, false);
-//			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-//		}
-//		
-//		return createModelAndViewJson(model);
-//	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPerimetroAppleCesion(ModelMap model,String codigoServicer) {
+		
+		try {
+			List <DDCesionSaneamiento> dto= activoApi.getPerimetroAppleCesion(codigoServicer);
+
+			model.put("data", dto);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

@@ -515,4 +515,13 @@ public class HQLBuilder {
 		return count;
 	}
 
+	/**
+	 * Add simple group by
+	 * @param groupBy <String> field which group
+	 * @return
+	 */
+	public void addGroupBy(final String groupBy) {
+		this.stringBuilder.append(" GROUP BY "+groupBy);
+	}
+	
 }

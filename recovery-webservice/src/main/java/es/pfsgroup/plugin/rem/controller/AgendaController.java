@@ -23,11 +23,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
+import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.recibo.model.DDMotivoRechazo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -56,8 +58,11 @@ import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
@@ -99,8 +104,7 @@ public class AgendaController extends TareaController {
 	private NotificatorServiceSancionOfertaSoloRechazo notificatorSoloRechazo;
 
     @Autowired
-    private ActivoAdapter activoAdapter;
-	
+    private ActivoAdapter activoAdapter;	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
@@ -786,4 +790,81 @@ public class AgendaController extends TareaController {
 		model.put("idAgrTarea", adapter.getIdAgrByNumAgr(idNumAgr));
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getOpcionCompraByIdExpediente(Long idExpediente, ModelMap model) {
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		boolean opcionCompra = !Checks.esNulo(eco) && DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(eco.getTipoAlquiler().getCodigo());
+		model.put("opcionCompra", opcionCompra);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView isOfertaPrincipal(Long idExpediente, ModelMap model) {
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		//Filter filtroOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS ,"ofertaPrincipal.id", eco.getOferta().getId());
+		//OfertasAgrupadasLbk ofertaPrincipal = genericDao.get(OfertasAgrupadasLbk.class, filtroOfertaPrincipal);
+		boolean esOfertaPrincipal = false;
+		if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(eco.getOferta().getClaseOferta().getCodigo())) {
+			esOfertaPrincipal = true;
+		}
+		model.put("ofertaPrincipal", esOfertaPrincipal);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView isOfertaDependiente(Long idExpediente, ModelMap model) {
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		Filter filtroOfertaOfertaDependiente = genericDao.createFilter(FilterType.EQUALS ,"ofertaDependiente.id", eco.getOferta().getId());
+		OfertasAgrupadasLbk ofertaDependiente = genericDao.get(OfertasAgrupadasLbk.class, filtroOfertaOfertaDependiente);
+		boolean esOfertaDependiente = false;
+		if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(eco.getOferta().getClaseOferta().getCodigo()) && !Checks.esNulo(ofertaDependiente)  ) {
+			esOfertaDependiente = true;
+		}
+		model.put("ofertaDependiente", esOfertaDependiente);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView isOfertaIndividual(Long idExpediente, ModelMap model) {
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		Filter filtroOfertaIndividual = genericDao.createFilter(FilterType.EQUALS ,"id", eco.getOferta().getId());
+		Oferta ofertaIndividual = genericDao.get(Oferta.class, filtroOfertaIndividual);
+		boolean esOfertaIndividual = false;
+		if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(eco.getOferta().getClaseOferta().getCodigo()) && !Checks.esNulo(ofertaIndividual)) {
+			esOfertaIndividual = true;
+		}
+		model.put("ofertaIndividual", esOfertaIndividual);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView avanzarOfertasDependientes(WebRequest request, ModelMap model) {
+
+		boolean success = false;
+		try {
+			success = adapter.avanzarOfertasDependientes(request.getParameterMap());
+		} catch (InvalidDataAccessResourceUsageException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorValidacionGuardado", getMensajeInvalidDataAccessExcepcion(e));
+		} catch (Exception e) {
+			String error = e.getMessage();
+			if ( error == null  || error.isEmpty())
+				error = e.toString();
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", error);
+		}
+
+		model.put("success", success);
+
+		return createModelAndViewJson(model);
+	}
 }
+
+
+

@@ -539,7 +539,9 @@ Ext.define('HreRem.ux.util.Constants', {
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
     	T015_VERIFICARSCORING : 'T015_VerificarScoring',
-    	T015_VERIFICARSEGURORENTAS : 'T015_VerificarSeguroRentas'
+    	T015_VERIFICARSEGURORENTAS : 'T015_VerificarSeguroRentas',
+    	T013_DEFINICIONOFERTA : 'T013_DefinicionOferta',
+    	T013_RESOLUCIONCOMITE: 'T013_ResolucionComite'
     },
 
     TIPO_INQUILINO: {
@@ -642,6 +644,12 @@ Ext.define('HreRem.ux.util.Constants', {
 		 PRESENTACION_EN_REGISTRO:'01',
 		 CALIFICADO_NEGATIVAMENTE:'02',
 		 INSCRITO:'03'
+	 },
+	 
+	 DD_CLASE_OFERTA:{
+	 	PRINCIPAL:'01',
+	 	DEPENDIENTE:'02',
+	 	INDIVIDUAL:'03'
 	 }
 	
 

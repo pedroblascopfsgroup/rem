@@ -65,6 +65,7 @@ public class OfertaDto implements Serializable {
 	private Boolean ofertaLote;
 	private Long idAgrupacionComercialWebcom;
 	private Long codigoAgrupacionComercialRem;
+	private String origenLeadProveedor;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -246,5 +247,11 @@ public class OfertaDto implements Serializable {
 	}
 	public void setCodigoAgrupacionComercialRem(Long codigoAgrupacionComercialRem) {
 		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
+	}
+	public String getOrigenLeadProveedor() {
+		return origenLeadProveedor;
+	}
+	public void setOrigenLeadProveedor(String origenLeadProveedor) {
+		this.origenLeadProveedor = origenLeadProveedor;
 	}
 }

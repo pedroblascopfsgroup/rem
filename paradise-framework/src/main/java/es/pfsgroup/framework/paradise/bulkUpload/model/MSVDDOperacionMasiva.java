@@ -95,6 +95,9 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_PUBLICACION = "CMEP";
 	public static final String CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION = "SUFDP";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_DISTRIBUCION_PRECIOS = "CDP";
+	public static final String CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES = "SUPGR";
+	public static final String CODE_FILE_BULKUPLOAD_VALORES_PERIMETRO_APPLE = "VALPA";	
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_LPO="CML";
 	
 	private static final long serialVersionUID = 5938440720826995243L;
 

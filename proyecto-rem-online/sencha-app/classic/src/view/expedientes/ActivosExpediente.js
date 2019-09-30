@@ -2,7 +2,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 	extend: 'Ext.panel.Panel',
     xtype: 'activosexpediente', 
     cls	: 'panel-base shadow-panel',
-    requires: ['HreRem.view.expedientes.ActivoExpedienteTabPanel'],
+    requires: ['HreRem.view.expedientes.ActivoExpedienteTabPanel','HreRem.view.expedientes.DatosBasicosExpediente'],
     collapsed: false,
     reference: 'activosexpedienteref',
     layout: {
@@ -76,7 +76,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            	handler: 'onClickDescargaPlantillaExcel',
 							margin: '10 10 10 10'
 					}
-					]
+				]
 			},
 			{
 			    xtype		: 'gridBaseEditableRow',

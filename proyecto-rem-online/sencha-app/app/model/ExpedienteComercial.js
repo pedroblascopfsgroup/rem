@@ -268,6 +268,48 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 	    				}
     				}
     			}
+    		},
+			{
+				name: 'esCarteraLiberbankVenta',
+				calculate: function(data) { 
+					if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
+						return true;
+					}
+					return false;
+				},
+				depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
+			},
+    		{
+				name:'fechaAprobacionProManzana',
+				convert: function(value) {
+	    				if (!Ext.isEmpty(value)) {
+							if  ((typeof value) == 'string') {
+		    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+		    				} else {
+		    					return value;
+		    				}
+	    				}
+	    		}
+    		},
+    		{
+    			name: 'tituloCarteraLiberbankVenta',
+    			calculate: function(data) {
+    				if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
+    					return 'Comité';
+    				}
+    				return 'Comité sancionador';
+    			},
+    			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
+    		},
+    		{
+    			name: 'comiteComboboxLabel',
+    			calculate: function(data) {
+    				if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
+    					return 'Comité sancionador';
+    				}
+    				return 'Comité seleccionado';
+    			},
+    			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
     		}
     ],
     formulas: {

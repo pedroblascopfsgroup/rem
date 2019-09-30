@@ -331,6 +331,10 @@ Ext.define('HreRem.controller.AuthenticationController', {
     		tipoGestor = "GIAFORM";
     	}else if(me.userIsRol("HAYAGESTFORM")){
     		tipoGestor = "GFORM";
+    	}else if(me.userIsRol("HAYAGESTPORTMAN")){
+    		tipoGestor = "GPM";
+    	}else if(me.userIsRol("HAYAGBOINM")){
+    		tipoGestor = "GCBOINM";
     	}
     	return tipoGestor;
     }, 

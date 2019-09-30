@@ -16,6 +16,7 @@ public class DtoDetalleOferta {
 	private String ofertaExpress;
 	private String necesitaFinanciacion;
 	private String observaciones;
+	
 
 
 	public String getId() {
@@ -90,6 +91,5 @@ public class DtoDetalleOferta {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	
 	
 }

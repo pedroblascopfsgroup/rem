@@ -4,6 +4,7 @@ package es.pfsgroup.plugin.rem.excel;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,14 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -118,7 +127,50 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		hojaExcel.crearNuevoExcel(rutaFichero+report.getReportName(), report.getCabeceras(), report.getData());
 		File file = hojaExcel.getFile();
 		
-		return file;
+		FileInputStream fis = null;
+		File fileOut = file;
+		if("LISTA_OFERTAS_CES.xls".equals(report.getReportName())) {
+			
+			try {
+				fis = new FileInputStream(file.getAbsolutePath());
+				HSSFWorkbook myWorkBook = new HSSFWorkbook(fis);
+				fileOut = new File(file.getAbsolutePath());
+				FileOutputStream fileOutStream = new FileOutputStream(file);
+				HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+				
+				HSSFRow r = mySheet.getRow(0);
+				HSSFCell c;
+				HSSFCellStyle style = myWorkBook.createCellStyle();
+				HSSFFont font = myWorkBook.createFont();
+				font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+				style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+				style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+				style.setWrapText(true);
+				style.setFont(font);
+				style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+				style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+				style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+				style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+				style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+				style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+				r.setHeight((short) 1000);
+				for(int i = 0; i <= 26; i++ ) {
+					c = r.getCell(i);
+					c.setCellStyle(style);
+					mySheet.setColumnWidth(i, 8000);
+				}
+
+				myWorkBook.write(fileOutStream);
+				fileOutStream.close();
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return fileOut;
 		
 	}
 	

@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
@@ -935,6 +936,14 @@ public interface ActivoApi {
 	 * @return
 	 */
 	List<Oferta> getOfertasPendientesOTramitadasByActivoAgrupacion(ActivoAgrupacion activoAgrupacion);
+	
+	/**
+	 * Devuelve un lista con las ofertas en estado "Tramitada" de un activo
+	 *
+	 * @param activo
+	 * @return
+	 */
+	List<Oferta> getOfertasTramitadasByActivo(Activo activo);
 
 	/**
 	 * Este método llama al api del ActivoDao el cual obtiene el siguiente número de la secuencia para el campo de 'ACT_NUM_ACTIVO_REM'.
@@ -1236,11 +1245,15 @@ public interface ActivoApi {
 	 */
 	Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto);
 
-	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
+	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
 
 	boolean esPopietarioRemaining(TareaExterna tareaExterna);
 
 	boolean esPopietarioArrow(TareaExterna tareaExterna);
 
 	List<DtoProveedorMediador> getComboApiPrimario();
+
+	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
+	
+	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
 }

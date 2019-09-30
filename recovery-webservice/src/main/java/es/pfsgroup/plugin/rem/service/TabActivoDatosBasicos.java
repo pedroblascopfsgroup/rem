@@ -41,7 +41,6 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -62,13 +61,16 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
@@ -76,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -338,6 +341,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getTipoAlquiler() != null){
 			BeanUtils.copyProperty(activoDto, "tipoAlquilerCodigo", activo.getTipoAlquiler().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoAlquilerDescripcion", activo.getTipoAlquiler().getDescripcion());
+		}
+		
+		//Hace referencia a Equipo gestion
+		if(activo.getEquipoGestion() != null){
+			BeanUtils.copyProperty(activoDto, "tipoEquipoGestionCodigo", activo.getEquipoGestion().getCodigo());
+			BeanUtils.copyProperty(activoDto, "tipoEquipoGestionDescripcion", activo.getEquipoGestion().getDescripcion());
 		}
 		
 		if(!activo.getAgrupaciones().isEmpty()) {
@@ -792,6 +801,25 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}
 		
+		if (activo.getOfertas() != null) {
+			BeanUtils.copyProperty(activoDto, "ofertasTotal", new Long(activo.getOfertas().size()));
+		}else {
+			BeanUtils.copyProperty(activoDto, "ofertasTotal",new Long(0));
+		}
+		if (activo.getVisitas() != null) {
+			BeanUtils.copyProperty(activoDto, "visitasTotal", new Long(activo.getVisitas().size()));
+		} else {
+			BeanUtils.copyProperty(activoDto, "visitasTotal", new Long(0));
+		}
+		
+		if(activo.getCesionSaneamiento() != null) {
+			BeanUtils.copyProperty(activoDto, "cesionSaneamientoCodigo", activo.getCesionSaneamiento().getCodigo());
+		}
+		
+		if(activo.getServicerActivo() != null) {
+			BeanUtils.copyProperty(activoDto, "servicerActivoCodigo", activo.getServicerActivo().getCodigo());
+		}
+		
 		return activoDto;
 	}
 	
@@ -866,6 +894,30 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDUnidadPoblacional inferiorNuevo = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, filtro);
 				activo.getLocalizacion().getLocalizacionBien().setUnidadPoblacional(inferiorNuevo);
 				reiniciarPBC = true;
+			}
+			
+			if (!Checks.esNulo(dto.getCesionSaneamientoCodigo())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCesionSaneamientoCodigo());
+				DDCesionSaneamiento cesionNuevo = (DDCesionSaneamiento) genericDao.get(DDCesionSaneamiento.class, filtro);
+				activo.setCesionSaneamiento(cesionNuevo);
+			}
+			
+			if (!Checks.esNulo(dto.getServicerActivoCodigo())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getServicerActivoCodigo());
+				DDServicerActivo servicerNuevo = (DDServicerActivo) genericDao.get(DDServicerActivo.class, filtro);
+				activo.setServicerActivo(servicerNuevo);
+			}
+			
+			if(!Checks.esNulo(dto.getPerimetroMacc())) {
+				activo.setPerimetroMacc(dto.getPerimetroMacc());
+			}
+			
+			if(!Checks.esNulo(dto.getPerimetroCartera())) {
+				activo.setPerimetroCartera(dto.getPerimetroCartera());
+			}
+
+			if(!Checks.esNulo(dto.getNombreCarteraPerimetro())) {
+				activo.setNombreCarteraPerimetro(dto.getNombreCarteraPerimetro());
 			}
 			
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
@@ -1088,19 +1140,32 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
 			if (!Checks.esNulo(dto.getTipoComercializacionCodigo()) && !Checks.esNulo(activo.getActivoPublicacion())) {
-
-				// Hace throws en caso de inflingir alguna valdiacion con el cambio de TipoComercializacion a realizar
-				validarCambiosTipoComercializacion(activo,dto);
-
-				activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
-
-				// Actualizar registros del Historico Destino Comercial
-				activoApi.updateHistoricoDestinoComercial(activo, null);
+				if (activoApi.isActivoPerteneceAgrupacionRestringida(activo)) {
+					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
+					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
+						validarCambiosTipoComercializacion(activo,dto);
+						activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(agrupacionActivo.getActivo(), dto.getTipoComercializacionCodigo());
+						// Actualizar registros del Historico Destino Comercial
+						activoApi.updateHistoricoDestinoComercial(agrupacionActivo.getActivo(), null);
+					}
+				} else {
+					// Hace throws en caso de inflingir alguna valdiacion con el cambio de TipoComercializacion a realizar
+					validarCambiosTipoComercializacion(activo,dto);
+					activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
+					// Actualizar registros del Historico Destino Comercial
+					activoApi.updateHistoricoDestinoComercial(activo, null);
+				}
 			}
 			
 			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
 				DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) diccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class,  dto.getTipoAlquilerCodigo());
 				activo.setTipoAlquiler(tipoAlquiler);
+			}
+			
+			//Hace referencia a Equipo de gestion
+			if (!Checks.esNulo(dto.getTipoEquipoGestionCodigo())) {
+				DDEquipoGestion tipoEquipoGestion = (DDEquipoGestion) diccionarioApi.dameValorDiccionarioByCod(DDEquipoGestion.class,  dto.getTipoEquipoGestionCodigo());
+				activo.setEquipoGestion(tipoEquipoGestion);
 			}
 
 			// --------- Perimetro --> Bloque Administración.
@@ -1222,6 +1287,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}		
+			
+			if (!Checks.esNulo(activo) && !Checks.esNulo(dto.getTipoComercializarCodigo()) || !Checks.esNulo(dto.getTipoActivoCodigo()) || !Checks.esNulo(dto.getSubtipoActivoCodigo())) {
+				List <Oferta> ofertas = activoApi.getOfertasTramitadasByActivo(activo);
+				
+				for (Oferta oferta : ofertas) {
+					ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+					if(!Checks.esNulo(expedienteComercial)) {
+						expedienteComercialApi.actualizarGastosExpediente(expedienteComercial, oferta);
+					}
+				}
+			}
 
 		} catch(JsonViewerException jve) {
 			throw jve;

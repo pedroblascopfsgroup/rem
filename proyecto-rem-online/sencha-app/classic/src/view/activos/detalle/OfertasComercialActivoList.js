@@ -356,8 +356,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
                 params: {
                     idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
                 },
-                success: function (a, operation, c) {																	
-					me.saveSuccessFn();
+                success: function (a, operation, c) {
+					me.saveSuccessFn(operation);
 				},
                 
 				failure: function (a, operation) {
@@ -431,10 +431,21 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		
 		return true;			
 	},
-    saveSuccessFn: function () {
+    saveSuccessFn: function (operation) {
    		var me = this;
         me.unmask();	
-        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+
+        try {
+    		var response = Ext.JSON.decode(operation.getResponse().responseText)
+    		
+    	}catch(err) {}
+    	
+        if(!Ext.isEmpty(response) && !Ext.isEmpty(response.advertencia)) {
+    		me.fireEvent("warnToast", response.advertencia);
+    	}else{
+    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    	}
+        
         me.up('activosdetalle').lookupController().refrescarActivo(true);
 		return true;
 	},

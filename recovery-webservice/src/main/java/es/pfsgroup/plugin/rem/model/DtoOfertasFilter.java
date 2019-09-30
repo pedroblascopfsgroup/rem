@@ -68,6 +68,10 @@ public class DtoOfertasFilter extends WebDto {
 	private Long idUvem;
 	private Long idCliente;
 	private Boolean excluirGencat;
+	private Long numOferPrincipal; 
+	
+	//HREOS-6905
+	private String claseOferta;
 	
 	//HREOS-4937
 	private Boolean cesionDatos;
@@ -440,6 +444,14 @@ public class DtoOfertasFilter extends WebDto {
 	public void setIdCliente(Long idCliente) {
 		this.idCliente = idCliente;
 	}
+	public Long getNumOferPrincipal() {
+		return numOferPrincipal;
+	}
+	public void setNumOferPrincipal(Long numOferPrincipal) {
+		this.numOferPrincipal = numOferPrincipal;
+	}
+	
+	
 	
 	//REMVIP-4116
 	public String getSubcarteraCodigo() {
@@ -458,4 +470,12 @@ public class DtoOfertasFilter extends WebDto {
 	
 	
 		
+	//HREOS-6905 
+	public String getClaseOferta() {
+		return claseOferta;
+	}
+	public void setClaseOferta(String claseOferta) {
+		this.claseOferta = claseOferta;
+	}
+	
 }

@@ -80,7 +80,6 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi
 				.expedienteComercialPorOferta(ofertaAceptada.getId());
-
 		/*Integer reservaNecesaria = 0;
 		
 		if(ofertaApi.esOfertaPrincipal(ofertaAceptada)) {
@@ -130,7 +129,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 				for (Oferta oferta : listaOfertas) {
 					if (!oferta.getId().equals(ofertaAceptada.getId())
-							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo()) && !ofertaApi.isOfertaPrincipal(oferta) && !ofertaApi.isOfertaDependiente(oferta)) {
 						ofertaApi.congelarOferta(oferta);
 					}
 				}
@@ -215,6 +214,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setComiteSancion(comite);
 			}
 		}
+
+		
+		
 	}
 
 	public String[] getCodigoTarea() {

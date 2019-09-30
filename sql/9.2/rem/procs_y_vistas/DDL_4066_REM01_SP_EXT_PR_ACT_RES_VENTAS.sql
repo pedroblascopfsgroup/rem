@@ -19,6 +19,7 @@
 --##        0.5 (20180920) - Marco Muñoz - Se ajusta el SP para actuar también sobre agrupaciones de activos en los pasos 2.1 y 2.2.
 --##        1.02 (20180927) - Ivan Castelló - Añadir estado o en Pendiente de devolución.
 --##		1.03 (20181001) - Marco Muñoz - Se añade la actualización de la fecha de devolucion de la reserva del Expediente en la segunda casuistica (FECHA_DEVOLUCION_RESERVA)
+--##		1.04 (20190709) - Alejandro Valverde - Se añade comprobacion de la cartera Cerberus y la subcartera Apple para la obtencion de la fecha de firma de la tarea Obtención de contrato de reserva.
 --##		1.04 (20190808) - Adrián Molina - Se añade al filtro de la cartera Liberbank, la cartera Cerberus
 --##		1.05 (20190827) - Viorel Remus Ovidiu - Se desactiva la actualizacion del estado del expediente a 'RESERVADO'
 --##########################################
@@ -105,7 +106,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138''))
                                                             AND OFR.OFR_NUM_OFERTA = :1';
                                                             
     V_FROM_RESERVA2                VARCHAR2(2000 CHAR) := 'FROM REM01.RES_RESERVAS RES
@@ -123,7 +124,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138''))
                                                             AND OFR.OFR_NUM_OFERTA = :1
                                                             AND ROWNUM = 1';                                                        
 

@@ -17,7 +17,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 	  recordName: "datosComunidad",
       recordClass: "HreRem.model.ActivoComunidadPropietarios",
       
-      requires : ['HreRem.model.ActivoComunidadPropietarios'],
+      requires : ['HreRem.model.ActivoComunidadPropietarios', 'HreRem.model.HistoricoGestionGrid'],
 
       initComponent : function() {
 
@@ -212,7 +212,18 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 										}
 									  }
 						]
-				}
+				},
+				{
+					xtype:'fieldsettable',
+							title: HreRem.i18n('title.diario.de.gestion'),
+							collapsible: false,
+							items :	[
+								{
+									xtype: 'historicoDiarioGestionGrid'
+									
+								}
+							]
+					}
 			]
 			
 			me.addPlugin({ptype: 'lazyitems', items: items });

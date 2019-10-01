@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
-    'HreRem.model.HistoricoTramtitacionTituloModel'],
+    'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid'],
 
     data: {
     	activo: null,
@@ -1623,6 +1623,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				},
 				autoLoad: true
 			},
+			
+			storeHistoricoDiarioDeGestion:{
+    			pageSize: $AC.getDefaultPageSize(),
+    			model: 'HreRem.model.HistoricoGestionGrid',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getHistoricoDiarioGestion',
+    				extraParams: {id: '{activo.id}'}
+    			}
+    		},
 			
 		comboSituacionComercial: {
 			model: 'HreRem.model.DDBase',

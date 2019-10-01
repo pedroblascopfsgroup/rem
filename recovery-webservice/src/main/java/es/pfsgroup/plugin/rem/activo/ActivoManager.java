@@ -6945,7 +6945,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return listaDto;
-	}	
+	}
+	
+	@Override
 	public boolean isActivoPerteneceAgrupacionRestringida(Activo activo) {
 		for(ActivoAgrupacionActivo agrupacion: activo.getAgrupaciones()){
 			if(Checks.esNulo(agrupacion.getAgrupacion().getFechaBaja())) {
@@ -6957,4 +6959,30 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
+
+	
+	
+	@Override
+	public List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Order order = new Order(OrderType.DESC, "id");
+		List<ActivoInformeComercialHistoricoMediador> listaHistoricoDiarioGestion = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, filtro);
+
+		List<DtoHistoricoDiarioGestion> listaDtoHistoricoDiarioGestion = new ArrayList<DtoHistoricoDiarioGestion>();
+		
+		for (ActivoInformeComercialHistoricoMediador historicoDiarioGestion : listaHistoricoDiarioGestion) {
+			DtoHistoricoDiarioGestion dtoHistoricoDiarioGestion = new DtoHistoricoDiarioGestion();
+				
+			dtoHistoricoDiarioGestion.setEstadoLocDesc(historicoDiarioGestion.getMediadorInforme().getNombre());
+			dtoHistoricoDiarioGestion.setSubEstadoDesc(historicoDiarioGestion.getMediadorInforme().getNombre());
+			dtoHistoricoDiarioGestion.setNombreGestorDesc(historicoDiarioGestion.getMediadorInforme().getNombre());
+			dtoHistoricoDiarioGestion.setFechaCambioEstado(historicoDiarioGestion.getFechaDesde());
+			
+
+			listaDtoHistoricoDiarioGestion.add(dtoHistoricoDiarioGestion);
+		}
+
+		return listaDtoHistoricoDiarioGestion;
+	}
+
 }

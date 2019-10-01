@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoCargasDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -338,6 +339,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
+	
+	@Autowired
+	private ActivoCargasDao activoCargasDao;
 
 
 	@Override
@@ -4539,6 +4543,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		activoCargasApi.saveOrUpdate(cargaSeleccionada);
+		
+		if (!Checks.esNulo(cargaSeleccionada) && !Checks.esNulo(cargaSeleccionada.getActivo()) && !Checks.esNulo(cargaSeleccionada.getActivo().getId())) {
+			activoCargasDao.calcularEstadoCargaActivo(cargaSeleccionada.getActivo().getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+		}
 
 		return true;
 	}
@@ -4877,7 +4885,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean deleteCarga(DtoActivoCargas dto) {
-		genericDao.deleteById(ActivoCargas.class, dto.getIdActivoCarga());
+		ActivoCargas carga = null;
+		if (!Checks.esNulo(dto.getIdActivoCarga())) {
+			carga = genericDao.get(ActivoCargas.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivoCarga()));
+			if (!Checks.esNulo(carga)) {
+				genericDao.deleteById(ActivoCargas.class, carga.getId());
+				if (!Checks.esNulo(carga.getActivo()) && !Checks.esNulo(carga.getActivo().getId())) {
+					activoCargasDao.calcularEstadoCargaActivo(carga.getActivo().getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+				}
+			} else {
+				return false;
+			}
+		}
 
 		return true;
 	}

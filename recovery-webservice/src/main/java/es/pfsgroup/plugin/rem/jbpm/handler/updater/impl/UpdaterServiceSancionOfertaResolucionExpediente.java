@@ -23,6 +23,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -39,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -50,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -109,6 +112,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
     public static final String MOTIVO_ANULACION_RESERVA = "comboMotivoAnulacionReserva";
     private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
     private static final String CODIGO_T017_RESOLUCION_EXPEDIENTE = "T017_ResolucionExpediente";
+    private static final String CHECK_ANULAR_Y_CLONAR = "clonarYAnular";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -127,6 +131,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			String peticionario = null;
 			Activo activo = expediente.getOferta().getActivoPrincipal();
 			boolean checkFormalizar = false;
+			boolean clonarYAnular = false;
 			if(!Checks.esNulo(activo)){
 				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
 				checkFormalizar = pac.getAplicaFormalizar() != 0;
@@ -194,6 +199,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						ofertaAceptada.setMotivoRechazo(motivoRechazo);
 						genericDao.save(Oferta.class, ofertaAceptada);
 						genericDao.save(ExpedienteComercial.class, expediente);
+					}
+					if(CHECK_ANULAR_Y_CLONAR.equals(valor.getNombre())) {
+						clonarYAnular = valor.getValor().equals("on");
 					}
 				}
 				
@@ -349,6 +357,35 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				OfertasAgrupadasLbk agrupada = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente", ofertaAceptada));
 				genericDao.deleteById(OfertasAgrupadasLbk.class, agrupada.getId());
 			}
+			
+			if(clonarYAnular) {
+				boolean esAgrupacion = !Checks.esNulo(expediente.getOferta().getAgrupacion());
+				
+				List<ActivoOferta> ofertasActivo = activo.getOfertas();
+				
+				boolean sePuedeClonarExpediente = true;
+				
+				for (ActivoOferta activoOferta : ofertasActivo) {
+					Filter ofertaId = genericDao.createFilter(FilterType.EQUALS, "id", activoOferta.getOferta());
+					Oferta ofr = genericDao.get(Oferta.class, ofertaId);
+					
+					if (ofr.getEstadoOferta().equals(DDEstadoOferta.CODIGO_ACEPTADA) && !ofr.getId().equals(ofertaAceptada.getId())) {
+						sePuedeClonarExpediente = false;
+						break;
+					}
+				}
+				
+				if (!sePuedeClonarExpediente) {
+					throw new UserException("No se puede anular y clonar el expediente porque existen más ofertas en estado \"Tramitada\"");
+				}
+				
+				if(esAgrupacion) {
+					genericAdapter.clonateOferta("" + expediente.getOferta().getId(), true);
+				}else {
+					genericAdapter.clonateOferta("" + expediente.getOferta().getId(), false);
+				}
+			}
+			
 		}
 	}
 

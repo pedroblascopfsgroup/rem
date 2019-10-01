@@ -1216,5 +1216,48 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
 			me.lookupReference('pisoPiloto').setValue(null);
 		}
-	}
+	},
+	
+	onSelectedRow: function(grid, record, index){
+		me = this;
+		if(!Ext.isEmpty(record)){
+			idOferta = record.data.idOferta;
+			if (idOferta && !Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
+				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'];
+	    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(hideButton); 
+			}	
+		}
+	},
+	
+	onDeselectedRow: function(grid, record, index){
+		me = this;
+		if(!Ext.isEmpty(record)){
+			idOferta = record.get("idOferta");
+		}
+		if (!Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
+    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(true); 
+		}	
+	},
+	
+	clonateOferta: function(numIdOferta, ofertasGrid)
+	{
+    	var url = $AC.getRemoteUrl('agrupacion/clonateOferta');
+		Ext.Ajax.request({
+  		     url: url,
+  		     params: {idOferta : numIdOferta},
+  		
+  		     success: function(response, opts) {
+  		    	data = Ext.decode(response.responseText);
+  		    	var id= data.data;
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	 			ofertasGrid.unmask();
+    			me.onClickBotonRefrescar();
+	    	},
+ 		    failure: function (a, operation) {
+ 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+ 				ofertasGrid.unmask();
+    			me.onClickBotonRefrescar();
+ 		    }
+		});
+	}	
 });

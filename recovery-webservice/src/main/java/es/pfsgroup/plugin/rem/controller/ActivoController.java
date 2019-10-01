@@ -1964,7 +1964,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			//solo son venta directa desde masivo
 			dtoOferta.setVentaDirecta(false);
-			boolean success = adapter.createOfertaActivo(dtoOferta);
+			boolean success = !Checks.esNulo(adapter.createOfertaActivo(dtoOferta));
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -3018,6 +3018,25 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 		
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView clonateOferta(String idOferta, ModelMap model) {
+		try {
+			boolean success = !Checks.esNulo(adapter.clonateOfertaActivo(idOferta));
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			if (e.getMessage().equals(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG)) {
+				model.put(RESPONSE_MESSAGE_KEY, ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			} else {
+				logger.error("error en activoController", e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+		}
+
 		return createModelAndViewJson(model);
 	}
 }

@@ -46,6 +46,9 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
+		if(me.up('agrupacionesdetallemain').lookupReference('ofertascomercialagrupacionlistref')){
+			me.up('agrupacionesdetallemain').lookupReference('ofertascomercialagrupacionlistref').calcularMostrarBotonClonarExpediente();
+		}
 		me.getActiveTab().funcionRecargar();
     } 
     

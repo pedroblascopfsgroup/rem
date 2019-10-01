@@ -6957,4 +6957,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
+	
+	public void deleteActOfr(Long idActivo, Long idOferta) {
+		activoDao.deleteActOfr(idActivo, idOferta);
+	}
+	
 }

@@ -18,7 +18,10 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
@@ -121,6 +124,9 @@ import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -147,6 +153,7 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoNumPlantas;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
@@ -346,6 +353,9 @@ public class ActivoAdapter {
 	@Autowired
 	private PresupuestoApi presupuestoManager;
 
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
@@ -3626,7 +3636,9 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createOfertaActivo(DtoOfertasFilter dto) throws Exception {
+	public Oferta createOfertaActivo(DtoOfertasFilter dto) throws Exception {
+		Oferta ofertaCreada = null;
+		
 		List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 
 		Activo activo = activoApi.get(dto.getIdActivo());
@@ -3813,10 +3825,8 @@ public class ActivoAdapter {
 			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
 					"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
 			oferta.setOrigenComprador(origenComprador);
-			
-			genericDao.save(Oferta.class, oferta);
-			
-			
+						
+			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 			
@@ -3903,10 +3913,10 @@ public class ActivoAdapter {
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
-			return false;
+			return ofertaCreada;
 		}
 
-		return true;
+		return ofertaCreada;
 	}
 
 	@Transactional(readOnly = false)
@@ -4533,4 +4543,9 @@ public class ActivoAdapter {
 	public boolean isUnidadAlquilable (Long idActivo) {
 		return activoDao.isUnidadAlquilable(idActivo);
 	}	
+	
+	@Transactional(readOnly = false)
+	public Oferta clonateOfertaActivo(String idOferta) {
+		return genericAdapter.clonateOferta(idOferta, false);		
+	}
 }

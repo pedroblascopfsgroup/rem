@@ -26,6 +26,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -60,6 +61,8 @@ import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 public class AgrupacionController extends ParadiseJsonController {
 
 	private static final String FALTAN_DATOS = "Faltan datos para proponer";
+	private static final String RESPONSE_SUCCESS_KEY = "success";
+	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	
 	
 	@Autowired
@@ -739,7 +742,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createOferta(DtoOfertasFilter dtoOferta, ModelMap model) throws Exception {
 		try {
-			boolean success = adapter.createOfertaAgrupacion(dtoOferta);// trabajoApi.createPresupuestoTrabajo(presupuestoDto,
+			boolean success = !Checks.esNulo(adapter.createOfertaAgrupacion(dtoOferta));// trabajoApi.createPresupuestoTrabajo(presupuestoDto,
 																		// idTrabajo);
 			model.put("success", success);
 
@@ -1019,4 +1022,24 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView clonateOferta(String idOferta, ModelMap model) {
+		try {
+			boolean success = !Checks.esNulo(adapter.clonateOfertaAgrupacion(idOferta));
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			if (e.getMessage().equals(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG)) {
+				model.put(RESPONSE_MESSAGE_KEY, ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			} else {
+				logger.error("error en activoController", e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
 }

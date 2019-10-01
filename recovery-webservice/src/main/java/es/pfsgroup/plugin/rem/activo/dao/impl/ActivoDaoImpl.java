@@ -1642,4 +1642,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return mediadores;
 	}
+	
+	@Override
+	public void deleteActOfr(Long idActivo, Long idOferta) {
+		StringBuilder sb = new StringBuilder("delete from ActivoOferta actofr where actofr.activo = " + idActivo + " and actofr.oferta = " + idOferta);
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+	}
 }

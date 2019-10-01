@@ -1260,4 +1260,6 @@ public interface ActivoApi {
 
 	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo);
 
+	Boolean crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
+
 }

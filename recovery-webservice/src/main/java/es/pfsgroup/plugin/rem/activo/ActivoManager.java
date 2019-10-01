@@ -124,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
@@ -143,6 +144,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -6962,27 +6964,78 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	
 	
+
 	@Override
 	public List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		Order order = new Order(OrderType.DESC, "id");
-		List<ActivoInformeComercialHistoricoMediador> listaHistoricoDiarioGestion = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, filtro);
-
+		Activo activo = activoDao.getActivoById(idActivo);
 		List<DtoHistoricoDiarioGestion> listaDtoHistoricoDiarioGestion = new ArrayList<DtoHistoricoDiarioGestion>();
-		
-		for (ActivoInformeComercialHistoricoMediador historicoDiarioGestion : listaHistoricoDiarioGestion) {
-			DtoHistoricoDiarioGestion dtoHistoricoDiarioGestion = new DtoHistoricoDiarioGestion();
-				
-			dtoHistoricoDiarioGestion.setEstadoLocDesc(historicoDiarioGestion.getMediadorInforme().getNombre());
-			dtoHistoricoDiarioGestion.setSubEstadoDesc(historicoDiarioGestion.getMediadorInforme().getNombre());
-			dtoHistoricoDiarioGestion.setNombreGestorDesc(historicoDiarioGestion.getMediadorInforme().getNombre());
-			dtoHistoricoDiarioGestion.setFechaCambioEstado(historicoDiarioGestion.getFechaDesde());
+		if(!Checks.esNulo(activo.getComunidadPropietarios())) {
+			Long idComunidadPropietarios = activo.getComunidadPropietarios().getId();
+			List<GestionCCPP> listaHistoricoDiarioGestion = genericDao.getList(GestionCCPP.class, genericDao.createFilter(FilterType.EQUALS, "comunidadPropietarios.id",idComunidadPropietarios));
 			
-
-			listaDtoHistoricoDiarioGestion.add(dtoHistoricoDiarioGestion);
+			for (GestionCCPP historicoDiarioGestion : listaHistoricoDiarioGestion) {
+				DtoHistoricoDiarioGestion dtoHistoricoDiarioGestion = new DtoHistoricoDiarioGestion();
+				
+				if(!Checks.esNulo(historicoDiarioGestion.getEstadoLocalizacion())) {
+					dtoHistoricoDiarioGestion.setEstadoLocDesc(historicoDiarioGestion.getEstadoLocalizacion().getDescripcion());
+				}
+				if(!Checks.esNulo(historicoDiarioGestion.getSubestadoGestion())) {
+					dtoHistoricoDiarioGestion.setSubEstadoDesc(historicoDiarioGestion.getSubestadoGestion().getDescripcion());
+				}
+				if(!Checks.esNulo(historicoDiarioGestion.getUsuario())) {
+					dtoHistoricoDiarioGestion.setNombreGestorDesc(historicoDiarioGestion.getUsuario().getNombre());
+				}
+				dtoHistoricoDiarioGestion.setFechaCambioEstado(historicoDiarioGestion.getFechaInicio());
+				
+	
+				listaDtoHistoricoDiarioGestion.add(dtoHistoricoDiarioGestion);
+			}
+	
 		}
-
 		return listaDtoHistoricoDiarioGestion;
+
+	}
+
+	@Override
+	public Boolean crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo) {
+		Activo activo = activoDao.getActivoById(idActivo);
+		
+		if(!Checks.esNulo(activo.getComunidadPropietarios())) {
+			
+			
+			GestionCCPP gestion = new GestionCCPP();
+			
+			gestion.setComunidadPropietarios(activo.getComunidadPropietarios());
+			if(Checks.esNulo(activoDto.getSituacion())){
+				return false;
+			}
+			DDEstadoLocalizacion estado = genericDao.get(DDEstadoLocalizacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getSituacion() ));
+			gestion.setEstadoLocalizacion(estado);
+			
+			//if(Checks.esNulo(activoDto.getSubSituacion())){
+				//return false;
+			//}
+			//DDSubestadoGestion subEstado = genericDao.get(DDEstadoLocalizacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getSubSituacion() ));
+			//gestion.setSubestadoGestion(subEstado);
+			
+			
+			//gestion.setFechaInicio(activoDto.getFechaInicio());
+			
+			Auditoria auditoria = new Auditoria();
+			auditoria.setFechaCrear(new Date());
+			auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
+			auditoria.setBorrado(false);
+			
+			gestion.setAuditoria(auditoria);
+			
+			genericDao.save(GestionCCPP.class, gestion);
+			
+			return true;
+			
+	
+		}
+		return false;
+
 	}
 
 }

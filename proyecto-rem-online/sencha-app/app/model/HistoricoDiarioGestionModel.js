@@ -24,7 +24,6 @@ Ext.define('HreRem.model.HistoricoGestionGrid', {
 		type: 'uxproxy',
 		api: {
             read: 'activo/getHistoricoDiarioGestion'
-            //create: 'activo/createHistoricoMediador'  =>> Se va a poder crear ¿?
         }
     }
 });

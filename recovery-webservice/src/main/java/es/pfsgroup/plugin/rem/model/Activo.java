@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -474,6 +475,11 @@ public class Activo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ECA_ID")
+    private DDEstadoCargaActivo estadoCargaActivo;
+	
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -1875,6 +1881,14 @@ public class Activo implements Serializable, Auditable {
        getAdjuntosProyecto().add(adjuntosProyecto);
 
   }
+
+	public DDEstadoCargaActivo getEstadoCargaActivo() {
+		return estadoCargaActivo;
+	}
+
+	public void setEstadoCargaActivo(DDEstadoCargaActivo estadoCargaActivo) {
+		this.estadoCargaActivo = estadoCargaActivo;
+	}
 	
 	public ActivoAutorizacionTramitacionOfertas getActivoAutorizacionTramitacionOfertas() {
 		return activoAutorizacionTramitacionOfertas;

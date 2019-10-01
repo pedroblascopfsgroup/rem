@@ -51,7 +51,16 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
                       readOnly: true
                     },
                     readOnly : true
-                  }, {
+                  },
+                  {
+                      xtype : 'textfieldbase',
+                      fieldLabel : HreRem.i18n('fieldlabel.cargas.estado.cargas'),
+                      name : 'estadoCargas',
+                      bind : { 
+                        value : '{cargaTab.estadoCargas}'
+                      },
+                      readOnly : true
+                    },{
                     xtype : 'datefieldbase',
                     fieldLabel : HreRem.i18n('fieldlabel.fecha.revision.cargas'),
                     bind : {

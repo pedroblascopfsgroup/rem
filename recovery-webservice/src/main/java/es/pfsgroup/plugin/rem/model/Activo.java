@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -460,7 +461,10 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EQG_ID")
     private DDEquipoGestion equipoGestion;
-    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ECA_ID")
+    private DDEstadoCargaActivo estadoCargaActivo;
 	
     // Getters del activo --------------------------------------------
     
@@ -1831,6 +1835,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setEquipoGestion(DDEquipoGestion equipoGestion) {
 		this.equipoGestion = equipoGestion;
+	}
+
+	public DDEstadoCargaActivo getEstadoCargaActivo() {
+		return estadoCargaActivo;
+	}
+
+	public void setEstadoCargaActivo(DDEstadoCargaActivo estadoCargaActivo) {
+		this.estadoCargaActivo = estadoCargaActivo;
 	}
 	
 	

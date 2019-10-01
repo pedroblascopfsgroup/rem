@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
@@ -61,6 +62,27 @@ public class ActivoCargasDaoImpl extends AbstractEntityDao<ActivoCargas, Long> i
 		List<ActivoCargas> lista = HibernateQueryUtils.list(this, hb);
 
 		return !Checks.estaVacio(lista);
+	}
+	
+	@Override
+	public Boolean calcularEstadoCargaActivo(Long idActivo, String username, boolean doFlush) {
+		if(doFlush){
+			getHibernateTemplate().flush();
+		}
+		
+		return this.calcularEstadoCargaActivo(idActivo, username);
+	}
+	
+	private Boolean calcularEstadoCargaActivo(Long idActivo, String username) {
+		String procedureHQL = "BEGIN SP_CALCULO_ESTADO_CARGA_ACTIVO(:idActivoParam, :usernameParam);  END;";
+
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("idActivoParam", idActivo);
+		callProcedureSql.setParameter("usernameParam", username);
+
+		int resultado = callProcedureSql.executeUpdate();
+
+		return resultado == 1;
 	}
 
 }

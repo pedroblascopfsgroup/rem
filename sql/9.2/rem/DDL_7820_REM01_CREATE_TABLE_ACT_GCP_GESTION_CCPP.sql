@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JULIAN DOLZ
---## FECHA_CREACION=20191030
+--## FECHA_CREACION=20191001
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7820
@@ -49,23 +49,23 @@ DECLARE
     ELSE  
     	 --Creamos la tabla
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'|| V_TABLE_NAME ||' (
-        GCP_ID                        NUMBER(16,0)            NOT NULL ENABLE, 
-				CPR_ID                        NUMBER(16,0)            NOT NULL ENABLE,
+        GCP_ID                        NUMBER(16,0)            NOT NULL, 
+				CPR_ID                        NUMBER(16,0)            NOT NULL,
         DD_ELO_ID                     NUMBER(16,0)            ,
         DD_SEG_ID                     NUMBER(16,0)            ,
-        USU_ID                        NUMBER(16,0)            NOT NULL ENABLE,
+        USU_ID                        NUMBER(16,0)            NOT NULL,
 
-        GCP_FECHA_INI                 DATE                    NOT NULL ENABLE,
+        GCP_FECHA_INI                 DATE                    NOT NULL,
         GCP_FECHA_FIN                 DATE                    , 
         
-				VERSION                       NUMBER(*,0)             DEFAULT 0 NOT NULL ENABLE, 
-				USUARIOCREAR                  VARCHAR2(10 CHAR)       NOT NULL ENABLE, 
-				FECHACREAR                    TIMESTAMP (6)           NOT NULL ENABLE, 
+				VERSION                       NUMBER(*,0)             DEFAULT 0 NOT NULL, 
+				USUARIOCREAR                  VARCHAR2(10 CHAR)       NOT NULL, 
+				FECHACREAR                    TIMESTAMP (6)           NOT NULL, 
 				USUARIOMODIFICAR              VARCHAR2(10 CHAR)       , 
 				FECHAMODIFICAR                TIMESTAMP (6)           , 
 				USUARIOBORRAR                 VARCHAR2(10 CHAR)       ,   
 				FECHABORRAR                   TIMESTAMP (6)           , 
-				BORRADO                       NUMBER(1,0)             DEFAULT 0 NOT NULL ENABLE)';
+				BORRADO                       NUMBER(1,0)             DEFAULT 0 NOT NULL)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'|| V_TABLE_NAME ||'... Tabla creada');
 		
@@ -83,23 +83,23 @@ DECLARE
 
     -- Creamos constraints
     V_MSQL :='ALTER TABLE '|| V_ESQUEMA || '.'|| V_TABLE_NAME ||' ADD CONSTRAINT PK_'|| V_TABLE_NAME ||' PRIMARY KEY (GCP_ID)';
-    EXECUTE IMMEDIATE V_SQL;
+    EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'|| V_TABLE_NAME ||'... Constraint PK creado');
 
-    V_MSQL :='ALTER TABLE '|| V_ESQUEMA || '.'|| V_TABLE_NAME ||' ADD CONSTRAINT FK_ACT_CPR_COM_PROPIETARIOS FOREIGN KEY (CPR_ID) REFERENCES '|| V_ESQUEMA ||'.ACT_CPR_COM_PROPIETARIOS';
-    EXECUTE IMMEDIATE V_SQL;
+    V_MSQL :='ALTER TABLE '|| V_ESQUEMA || '.'|| V_TABLE_NAME ||' ADD CONSTRAINT FK_ACT_CPR_COM_PROPIETARIOS FOREIGN KEY (CPR_ID) REFERENCES '|| V_ESQUEMA ||'.ACT_CPR_COM_PROPIETARIOS (CPR_ID)';
+    EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'|| V_TABLE_NAME ||'... Constraint FK creado');
 
-    V_MSQL :='ALTER TABLE '|| V_ESQUEMA || '.'|| V_TABLE_NAME ||' ADD CONSTRAINT FK_DD_ELO_ESTADO_LOCALIZACION FOREIGN KEY (DD_ELO_ID) REFERENCES '|| V_ESQUEMA ||'.DD_ELO_ESTADO_LOCALIZACION';
-    EXECUTE IMMEDIATE V_SQL;
+    V_MSQL :='ALTER TABLE '|| V_ESQUEMA || '.'|| V_TABLE_NAME ||' ADD CONSTRAINT FK_DD_ELO_ESTADO_LOCALIZACION FOREIGN KEY (DD_ELO_ID) REFERENCES '|| V_ESQUEMA ||'.DD_ELO_ESTADO_LOCALIZACION (DD_ELO_ID)';
+    EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'|| V_TABLE_NAME ||'... Constraint FK creado');
 
-    V_MSQL :='ALTER TABLE '|| V_ESQUEMA || '.'|| V_TABLE_NAME ||' ADD CONSTRAINT FK_DD_SEG_SUBESTADO_GESTION FOREIGN KEY (DD_SEG_ID) REFERENCES '|| V_ESQUEMA ||'.DD_SEG_SUBESTADO_GESTION';
-    EXECUTE IMMEDIATE V_SQL;
+    V_MSQL :='ALTER TABLE '|| V_ESQUEMA || '.'|| V_TABLE_NAME ||' ADD CONSTRAINT FK_DD_SEG_SUBESTADO_GESTION FOREIGN KEY (DD_SEG_ID) REFERENCES '|| V_ESQUEMA ||'.DD_SEG_SUBESTADO_GESTION (DD_SEG_ID)';
+    EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'|| V_TABLE_NAME ||'... Constraint FK creado');
 
-    V_MSQL :='ALTER TABLE '|| V_ESQUEMA || '.'|| V_TABLE_NAME ||' ADD CONSTRAINT FK_USU_USUARIOS FOREIGN KEY (USU_ID) REFERENCES '|| V_ESQUEMA_M ||'.USU_USUARIOS';
-    EXECUTE IMMEDIATE V_SQL;
+    V_MSQL :='ALTER TABLE '|| V_ESQUEMA || '.'|| V_TABLE_NAME ||' ADD CONSTRAINT FK_USU_USUARIOS FOREIGN KEY (USU_ID) REFERENCES '|| V_ESQUEMA_M ||'.USU_USUARIOS (USU_ID)';
+    EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'|| V_TABLE_NAME ||'... Constraint FK creado');
 
 

@@ -761,7 +761,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							df.setRoundingMode(RoundingMode.CEILING);
 							
 							//truncamos a dos decimales
-							participacionGasto = Float.valueOf(df.format(participacionGasto));
+							participacionGasto = Float.valueOf(df.format(participacionGasto).replace(',', '.'));
 							
 							if(!Checks.esNulo(gastoProveedorActivos)) {
 								gastoProveedorActivos.setParticipacionGasto(participacionGasto);

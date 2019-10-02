@@ -364,7 +364,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					        }
 					   	},
 					   	{	  
-				            text: HreRem.i18n('fieldlabel.administracion.activo.fecha.recepcion.recurso.propietario'),		            
+				            text: HreRem.i18n('fieldlabel.administracion.activo.fecha.recepcion.recurso.bankia'),		            
 				            dataIndex: 'fechaRecRecursoPropietario',
 				            flex: 1,
 				            formatter: 'date("d/m/Y")',

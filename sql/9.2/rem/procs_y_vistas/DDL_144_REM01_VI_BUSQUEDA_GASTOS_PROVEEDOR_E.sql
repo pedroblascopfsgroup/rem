@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Victor Olivares
---## FECHA_CREACION=20190304
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190924
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5384
+--## INCIDENCIA_LINK=REMVIP-5295
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_GASTOS_PROVEEDOR_E.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - Sergio Ortuño - 20180904 - REMVIP-1699
 --##        0.2 Añadido campo GGE.GGE_MOTIVO_RECHAZO_PROP para motivo de rechazo bankia
+--##		0.3 Carles Molins - Campo subcartera
 --##########################################
 --*/
 
@@ -97,6 +98,8 @@ BEGIN
       GGE.GGE_MOTIVO_RECHAZO_PROP,
 	        CRA.DD_CRA_CODIGO,
 	        CRA.DD_CRA_DESCRIPCION,
+			SCR.DD_SCR_CODIGO,
+	        SCR.DD_SCR_DESCRIPCION,
 			PVEG.PVE_ID AS PVE_ID_GESTORIA,  
 	        PVEG.PVE_NOMBRE AS PVE_NOMBRE_GESTORIA,
 	        ACT.ACT_NUM_ACTIVO,
@@ -120,6 +123,7 @@ BEGIN
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TEP_TIPO_ENTIDAD_PROVEEDOR TEP ON TPR.DD_TEP_ID = TEP.DD_TEP_ID
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
 	    LEFT JOIN ' || V_ESQUEMA || '.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
+		LEFT JOIN ' || V_ESQUEMA || '.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_MRH_MOTIVOS_RECHAZO_HAYA MRH ON GGE.DD_MRH_ID = MRH.DD_MRH_ID 
 		WHERE GPV.BORRADO = 0 ';
     
@@ -167,6 +171,8 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.PRO_DOCIDENTIF IS ''Documento identificativo del propietario.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_CRA_CODIGO IS ''Código de la cartera del activo.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_CRA_DESCRIPCION IS ''Descripción de la cartera del activo.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_SCR_CODIGO IS ''Código de la subcartera del activo.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.DD_SCR_DESCRIPCION IS ''Descripción de la subcartera del activo.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.GPV_EXISTE_DOCUMENTO IS ''Indica si existe documento.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.PVE_ID_GESTORIA IS ''ID de proveedor de tipo gestoría asociado al gasto.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR_E.PVE_NOMBRE_GESTORIA IS ''Nombre de proveedor de tipo gestoría asociado al gasto.''';
@@ -177,6 +183,19 @@ BEGIN
   
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_PROVEEDOR_E...Creada OK');
   
+EXCEPTION
+
+   WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+        DBMS_OUTPUT.put_line(err_msg);
+
+        ROLLBACK;
+        RAISE;          
+
 END;
 /
 

@@ -204,7 +204,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 		        						},
 									    bind : {
 										      store : '{comboEstadoLocalizacion}',
-										      readOnly: '{false}'
+										      value : '{datosComunidad.estadoLocalizacion}'
 										    }
 										   
 									},
@@ -216,7 +216,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 		        						},
 									    bind : {
 										      store : '{comboSubestadoGestion}',
-										      readOnly: '{false}'
+										      value : '{datosComunidad.subestadoGestion}'
 										    }	
 									},
 									{

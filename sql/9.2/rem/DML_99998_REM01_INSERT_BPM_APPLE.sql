@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JIN LI HU
---## FECHA_CREACION=20190915
+--## FECHA_CREACION=20190906
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7497
@@ -2898,8 +2898,8 @@ begin
   TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
   TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">Ha elevado un expediente comercial al comité sancionador de la cartera.
   Para completar esta tarea es necesario esperar a la respuesta del comité, subiendo el documento de respuesta por parte del comité en la pestaña "documentos". Además:</p> 
-  <p style="margin-bottom: 10px">A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Aprobacion Divarian " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.</p>
-  <p style="margin-bottom: 10px">B) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo " Aprobacion Divarian ".
+  <p style="margin-bottom: 10px">A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Aprobacion PRO. Manzana " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.</p>
+  <p style="margin-bottom: 10px">B) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo " Aprobacion PRO. Manzana ".
   La siguiente tarea se le lanzará a Posicionamiento y firma si se ha concluido el PBC de venta y el informe jurídico</p> 
   <p style="margin-bottom: 10px"> En el campo "observaciones Pro. Manzana" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
   TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
@@ -2918,7 +2918,7 @@ begin
   TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_ORDEN') := 1;
   TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_TIPO') := 'comboboxinicialedi';
   TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'comboRespuesta';
-  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Aprobación Divarian ';
+  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Aprobación Pro. Manzana ';
   TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := NULL;
   TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'false';
   TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -3023,18 +3023,18 @@ begin
         Además:
     </p> 
     <p style="margin-bottom: 10px">
-        A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Resolución Arrow " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.
+        A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Resolución CES " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.
     </p> 	
     <p style="margin-bottom: 10px">
         B) Si el comité ha <b>propuesto</b> una contraoferta, suba el documento justificativo en la pestaña "documentos" del expediente.
-        Seleccione la opción "contraoferta" e introduzca el importe propuesto en el campo "importe contraoferta Arrow".
-        La siguiente tarea que se lanzará es "Respuesta ofertante Arrow".
+        Seleccione la opción "contraoferta" e introduzca el importe propuesto en el campo "importe contraoferta CES".
+        La siguiente tarea que se lanzará es "Respuesta ofertante CES".
     </p> 
     <p style="margin-bottom: 10px"> 
-    C) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo "Resolución Arrow". La siguiente tarea se le lanzará a informe jurídico; creación de AN y PBC de reserva o venta según el caso.
+    C) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo "Resolución CES". La siguiente tarea se le lanzará a informe jurídico; creación de AN y PBC de reserva o venta según el caso.
     </p> 
     <p style="margin-bottom: 10px"> 
-    En el campo "observaciones Arrow" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.
+    En el campo "observaciones CES" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.
     </p>';
     TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
@@ -3052,7 +3052,7 @@ begin
     TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_ORDEN') := 1;
     TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_TIPO') := 'comboboxinicialedi';
     TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'comboResolucion';
-    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Resolución Arrow ';
+    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Resolución CES ';
     TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -3069,7 +3069,7 @@ begin
     TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_ORDEN') := 2;
     TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_TIPO') := 'numberfield';
     TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'numImporteContra';
-    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Importe Contraoferta Arrow';
+    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Importe Contraoferta CES';
     TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_VALIDACION') := NULL;
     TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
@@ -3086,7 +3086,7 @@ begin
     TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_ORDEN') := 3;
     TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_TIPO') := 'datefield';
     TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_NOMBRE') := 'fechaRespuesta';
-    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_LABEL') :=  'Fecha de respuesta Arrow';
+    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_LABEL') :=  'Fecha de respuesta CES';
     TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_ERROR_VALIDACION') := NULL;
     TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_VALIDACION') := 'false';
     TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_VALOR_INICIAL') := NULL;

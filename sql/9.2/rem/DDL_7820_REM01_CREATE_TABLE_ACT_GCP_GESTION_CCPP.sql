@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JULIAN DOLZ
---## FECHA_CREACION=20191001
+--## FECHA_CREACION=20191002
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7820
@@ -59,11 +59,11 @@ DECLARE
         GCP_FECHA_FIN                 DATE                    , 
         
 				VERSION                       NUMBER(*,0)             DEFAULT 0 NOT NULL, 
-				USUARIOCREAR                  VARCHAR2(10 CHAR)       NOT NULL, 
+				USUARIOCREAR                  VARCHAR2(50 CHAR)       NOT NULL, 
 				FECHACREAR                    TIMESTAMP (6)           NOT NULL, 
-				USUARIOMODIFICAR              VARCHAR2(10 CHAR)       , 
+				USUARIOMODIFICAR              VARCHAR2(50 CHAR)       , 
 				FECHAMODIFICAR                TIMESTAMP (6)           , 
-				USUARIOBORRAR                 VARCHAR2(10 CHAR)       ,   
+				USUARIOBORRAR                 VARCHAR2(50 CHAR)       ,   
 				FECHABORRAR                   TIMESTAMP (6)           , 
 				BORRADO                       NUMBER(1,0)             DEFAULT 0 NOT NULL)';
 		EXECUTE IMMEDIATE V_MSQL;

@@ -1938,7 +1938,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 				}
 		},
-
+		comboEstadoLocalizacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoEstadoLoc'}
+			}
+		},
+		comboSubestadoGestion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoSubestadoGestion'}
+			}
+		},
+		
+		
 		comboAdecuacionAlquiler: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

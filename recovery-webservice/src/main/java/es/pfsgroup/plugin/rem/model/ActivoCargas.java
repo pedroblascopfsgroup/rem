@@ -23,7 +23,6 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -92,10 +91,6 @@ public class ActivoCargas implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "DD_ECA_ID")
     private DDEstadoCargaActivo estadoCargaActivo;
-
-    @ManyToOne
-    @JoinColumn(name = "DD_ECG_ID")
-    private DDEstadoCarga estadoCarga;
 
 	@Version   
 	private Long version;
@@ -218,12 +213,7 @@ public class ActivoCargas implements Serializable, Auditable {
 		this.estadoCargaActivo = estadoCargaActivo;
 	}
 	
-	public DDEstadoCarga getEstadoCarga() {
-		return estadoCarga;
-	}
+	
 
-	public void setEstadoCarga(DDEstadoCarga estadoCarga) {
-		this.estadoCarga = estadoCarga;
-	}
 	
 }

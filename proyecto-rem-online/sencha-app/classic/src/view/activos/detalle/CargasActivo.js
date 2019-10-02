@@ -88,7 +88,7 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
                     flex : 1,
                     dataIndex : 'subtipoCargaDescripcion'
                   }, {
-                    text : HreRem.i18n('header.estado.carga'),
+                    text : 'Estado carga registral',
                     flex : 1,
                     dataIndex : 'estadoDescripcion'
                   }, {

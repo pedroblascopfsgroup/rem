@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20191001
+--## FECHA_CREACION=20190928
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-7795
@@ -61,8 +61,7 @@ DECLARE
 	T_TIPO_DATA('19','Cancelada la carga','Cancelada la carga'),
 	T_TIPO_DATA('20','Asume comprador','Asume comprador'),
 	T_TIPO_DATA('21','No cancelable','No cancelable'),
-	T_TIPO_DATA('22','Caducada pendiente','Caducada pendiente'),
-	T_TIPO_DATA('23','Recibida escritura de cancelación por Gestoría','Recibida escritura de cancelación por Gestoría')
+	T_TIPO_DATA('22','Caducada pendiente','Caducada pendiente')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

@@ -46,6 +46,10 @@ public class HistoricoFasePublicacionActivo implements Serializable, Auditable {
     private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ACT_ID")
+	private Activo activo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_FSP_ID")
 	private DDFasePublicacion fasePublicacion;
 	
@@ -140,6 +144,14 @@ public class HistoricoFasePublicacionActivo implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
 	}
 
 

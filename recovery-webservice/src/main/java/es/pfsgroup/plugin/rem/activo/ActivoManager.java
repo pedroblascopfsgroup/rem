@@ -6939,7 +6939,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public List<DtoProveedorMediador> getComboApiPrimario() {
 		
-		List<ActivoProveedor> comboApiPrimario = activoDao.getComboApiPrimario();
+		List<ActivoProveedor> comboApiPrimario = activoDao.getComboApiPrimaria();
 		
 		List<DtoProveedorMediador> listaDto = new ArrayList<DtoProveedorMediador>();
 		

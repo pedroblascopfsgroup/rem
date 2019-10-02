@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoDiarioGestion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
@@ -1256,4 +1257,9 @@ public interface ActivoApi {
 	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
+
+	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo);
+
+	Boolean crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
+
 }

@@ -105,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoDiarioGestion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -483,9 +484,18 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoComunidadPropietarios(DtoComunidadpropietariosActivo activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
+		Boolean creadoDiarioGestion;
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
-			if (success) adapter.actualizarEstadoPublicacionActivo(id);
+			if (success) {
+				adapter.actualizarEstadoPublicacionActivo(id);
+				/*
+				if(condicionesCrearDiarioGestion) {
+					creadoDiarioGestion = activoApi.crearHistoricoDiarioGestion(activoDto,id);
+				}
+				*/
+				
+			}
 
 			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
@@ -3019,5 +3029,17 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoDiarioGestion(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoApi.getHistoricoDiarioGestion(id));
+
+		return createModelAndViewJson(model);
+	}
+
+	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long id) {
+		return activoApi.getHistoricoDiarioGestion(id);
 	}
 }

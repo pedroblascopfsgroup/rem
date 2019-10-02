@@ -1170,7 +1170,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");
-		config.params.nombreDocumento=record.get("nombre").replace(",","");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
 	},
 
@@ -1183,7 +1183,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");
-		config.params.nombreDocumento=record.get("nombre").replace(",","");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
 	},
 

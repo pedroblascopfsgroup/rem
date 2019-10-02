@@ -439,7 +439,10 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_FECHA_CAMBIO_TIPO_ACT")
     private Date fechaUltCambioTipoActivo;
-    
+
+    @Column(name = "ACT_NUM_ACTIVO_SAN")
+    private String idSantander;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SRA_ID")
     private DDServicerActivo servicerActivo;
@@ -460,7 +463,6 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EQG_ID")
     private DDEquipoGestion equipoGestion;
-    
 	
     // Getters del activo --------------------------------------------
     
@@ -1785,6 +1787,14 @@ public class Activo implements Serializable, Auditable {
 		this.fechaUltCambioTipoActivo = fechaUltCambioTipoActivo;
 	}
 
+	public String getIdSantander() {
+		return idSantander;
+	}
+
+	public void setIdSantander(String idSantander) {
+		this.idSantander = idSantander;
+	}
+	
 	public DDServicerActivo getServicerActivo() {
 		return servicerActivo;
 	}
@@ -1823,7 +1833,7 @@ public class Activo implements Serializable, Auditable {
 
 	public void setNombreCarteraPerimetro(String nombreCarteraPerimetro) {
 		this.nombreCarteraPerimetro = nombreCarteraPerimetro;
-	}	
+	}
 
 	public DDEquipoGestion getEquipoGestion() {
 		return equipoGestion;
@@ -1832,6 +1842,4 @@ public class Activo implements Serializable, Auditable {
 	public void setEquipoGestion(DDEquipoGestion equipoGestion) {
 		this.equipoGestion = equipoGestion;
 	}
-	
-	
 }

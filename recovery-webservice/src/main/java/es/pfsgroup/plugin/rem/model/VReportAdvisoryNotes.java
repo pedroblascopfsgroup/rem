@@ -32,6 +32,9 @@ public class VReportAdvisoryNotes implements Serializable {
 	@Column(name = "ACT_NUM_ACTIVO")
 	private Long numActivo;
 	
+	@Column(name = "ACT_NUM_ACTIVO_SAN")
+	private String idSantander;
+	
 	@Column(name = "DD_SAC_DESCRIPCION_TRADUCIDA")
 	private String subtipoActivo;
 	
@@ -271,6 +274,14 @@ public class VReportAdvisoryNotes implements Serializable {
 
 	public void setTipoAlquiler(String tipoAlquiler) {
 		this.tipoAlquiler = tipoAlquiler;
+	}
+
+	public String getIdSantander() {
+		return idSantander;
+	}
+
+	public void setIdSantander(String idSantander) {
+		this.idSantander = idSantander;
 	}
     
     

@@ -463,7 +463,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idTrabajo=record.get("idTrabajo");
-		config.params.nombreDocumento=record.get("nombre").replace(",","");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
 	},
 	

@@ -31,6 +31,7 @@ public class ActivoGenerarSaltoImpl extends ActivoBaseActionHandler implements G
 	public static final String CODIGO_FIN = "Fin";
 	public static final String CODIGO_SALTO_PBC = "T013_ResultadoPBC";
 	public static final String CODIGO_SALTO_INSTRUCCIONES_RESERVA= "T013_InstruccionesReserva";
+	public static final String CODIGO_SALTO_VALIDACION_CLIENTES = "T013_ValidacionClientes";
 
 
 	@Override

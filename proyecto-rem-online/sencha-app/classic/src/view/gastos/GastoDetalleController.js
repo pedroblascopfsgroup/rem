@@ -223,8 +223,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 		if (!activeTab.saveMultiple) {
 			if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
-				/*activeTab.getForm().clearInvalid();
-				activeTab.getBindRecord().reject();*/
+//				activeTab.getForm().clearInvalid();
+//				activeTab.getBindRecord().reject();
 				me.onClickBotonRefrescar();
 				
 			}
@@ -257,44 +257,45 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
      * funciónRecargar con el código necesario para refrescar los datos.
      */
 	onClickBotonRefrescar : function(btn) {
-						var me = this;
-						tabPanel = me.getView().down("tabpanel");
-						var activeTab = tabPanel.getActiveTab();
-						if (activeTab.xtype == "activosafectadosgasto"
-						&& CONST.CARTERA["LIBERBANK"] === me.getViewModel().get("gasto.cartera")) {
-							me.updateGastoByPrinexLBK();
-						}
-						me.refrescarGasto(true);
-					},
+		var me = this;
+
+		tabPanel = me.getView().down("tabpanel");
+		var activeTab = tabPanel.getActiveTab();
+		if (activeTab.xtype == "activosafectadosgasto"
+		&& CONST.CARTERA["LIBERBANK"] === me.getViewModel().get("gasto.cartera")) {
+			me.updateGastoByPrinexLBK();
+		}
+		me.refrescarGasto(true);
+	},
 	
 	refrescarGasto : function(resfrescarPestanya) {
-						var me = this, resfrescarPestanya = Ext.isEmpty(resfrescarPestanya) ? false	: resfrescarPestanya, tabPanel = me.getView().down("tabpanel");
+		var me = this, resfrescarPestanya = Ext.isEmpty(resfrescarPestanya) ? false	: resfrescarPestanya, tabPanel = me.getView().down("tabpanel");
 
-						// Marcamos todas los componentes para refrescar, de
-						// manera que se vayan actualizando conforme se vayan
-						// mostrando.
-						Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
-							if (component.rendered) {
-								component.recargar = true;
-							}
-						});
+		// Marcamos todas los componentes para refrescar, de
+		// manera que se vayan actualizando conforme se vayan
+		// mostrando.
+		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
+			if (component.rendered) {
+				component.recargar = true;
+			}
+		});
 
-						// Actualizamos la pestaña actual si tiene función de
-						// recargar y el gasto si estamos guardando uno.
-						if (!Ext.isEmpty(tabPanel)) {
-							var activeTab = tabPanel.getActiveTab();
-							if (resfrescarPestanya) {
-								if (activeTab.funcionRecargar) {
-									activeTab.funcionRecargar();
-								}
-							}
-							var callbackFn = function() {
-								me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);
-							};
-							me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
-						}
+		// Actualizamos la pestaña actual si tiene función de
+		// recargar y el gasto si estamos guardando uno.
+		if (!Ext.isEmpty(tabPanel)) {
+			var activeTab = tabPanel.getActiveTab();
+			if (resfrescarPestanya) {
+				if (activeTab.funcionRecargar) {
+					activeTab.funcionRecargar();
+				}
+			}
+			var callbackFn = function() {
+				me.getView().down("tabpanel").evaluarBotonesEdicion(activeTab);
+			};
+			me.getView().fireEvent("refrescarGasto", me.getView(), callbackFn);
+		}
 
-					},
+	},
 	
 	buscarProveedor: function(field, e){
 		var me= this;

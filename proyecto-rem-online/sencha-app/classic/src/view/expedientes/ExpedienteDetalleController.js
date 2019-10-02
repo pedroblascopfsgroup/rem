@@ -736,7 +736,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idExpediente=record.get("idExpediente");
-		config.params.nombreDocumento=record.get("nombre").replace(",","");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
 	},
 
@@ -745,7 +745,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var idPersonaHaya = record.get("idPersonaHaya");
 		var idDocAdjunto =  record.get("idDocAdjunto");
 		var idDocRestClient = record.get("idDocRestClient");
-		var nombreAdjunto = record.get("nombreAdjunto").replace(",","");
+		var nombreAdjunto = record.get("nombreAdjunto").replace(/,/g, "");
 		var data;
 		var me = this;
 

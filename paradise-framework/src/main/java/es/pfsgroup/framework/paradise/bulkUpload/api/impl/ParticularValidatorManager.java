@@ -1901,7 +1901,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		  JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0"
 				+ "       JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID"
 				+ " 	  WHERE ACT.ACT_NUM_ACTIVO =" + numActivo + " "
-				+ "       AND AGR.DD_TAG_ID = 2");
+				+ "       AND AGR.DD_TAG_ID = 2"
+				+ "       AND AGR_FECHA_BAJA IS NULL");
 	}
 
 	@Override

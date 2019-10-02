@@ -345,6 +345,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setDestinatario(gasto.getDestinatarioGasto().getCodigo());
 			}
 
+			if (!Checks.esNulo(gasto.getIdentificadorUnico())) {
+				dto.setIdentificadorUnico(gasto.getIdentificadorUnico());
+			}
+			
 			dto.setFechaEmision(gasto.getFechaEmision());
 
 			if (!Checks.esNulo(gasto.getTipoPeriocidad())) {
@@ -518,6 +522,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtipoGastoCodigo());
 			gastoProveedor.setSubtipoGasto(subtipoGasto);
 		}
+		
+		if (!Checks.esNulo(dto.getIdentificadorUnico())) {
+			gastoProveedor.setIdentificadorUnico(dto.getIdentificadorUnico());
+		}
 
 		gastoProveedor.setFechaEmision(dto.getFechaEmision());
 		gastoProveedor.setReferenciaEmisor(dto.getReferenciaEmisor());
@@ -596,6 +604,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		if (!Checks.esNulo(dto.getGastoSinActivos())) {
 			gastoProveedor.setGastoSinActivos(BooleanUtils.toIntegerObject(dto.getGastoSinActivos()));
+		}
+		
+		if (!Checks.esNulo(dto.getIdentificadorUnico())) {
+			gastoProveedor.setIdentificadorUnico(dto.getIdentificadorUnico());
 		}
 		
 		updateEjercicio(gastoProveedor);

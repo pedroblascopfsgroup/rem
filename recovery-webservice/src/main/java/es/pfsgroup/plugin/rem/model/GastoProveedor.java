@@ -186,6 +186,8 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_EXISTE_DOCUMENTO")
 	private Integer existeDocumento;
 	
+	@Column(name="GPV_IDENTIFICADOR_UNICO")
+	private String identificadorUnico;
 	
     
 	@Version   
@@ -489,5 +491,13 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 		return subcartera;
 	
+	}
+
+	public String getIdentificadorUnico() {
+		return identificadorUnico;
+	}
+
+	public void setIdentificadorUnico(String identificadorUnico) {
+		this.identificadorUnico = identificadorUnico;
 	}	
 }

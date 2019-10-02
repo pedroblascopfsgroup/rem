@@ -173,7 +173,6 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     @JoinColumn(name = "DD_TRG_ID")
     private DDTipoRecargoGasto tipoRecargoGasto;
 
-    
 	@Version   
 	private Long version;
 
@@ -502,6 +501,6 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	public void setTipoRecargoGasto(DDTipoRecargoGasto tipoRecargoGasto) {
 		this.tipoRecargoGasto = tipoRecargoGasto;
 	}
-	
 
+	
 }

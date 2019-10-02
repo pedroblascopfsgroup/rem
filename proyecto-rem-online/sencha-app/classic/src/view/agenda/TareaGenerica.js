@@ -906,17 +906,84 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T004_ResultadoNoTarificadaValidacion: function() {
         var me = this;
 
-        me.deshabilitarCampo(me.down('[name=fechaFinalizacion]'));
+        var fechaFinalizacion = me.down('[name=fechaFinalizacion]');
+        var motivoNoRealizacion = me.down('[name=motivoNoRealizacion]');
+        var comboModificacion = me.down('[name=comboModificacion]');
+        var fechaAtPrimaria = me.down('[name=fechaAtPrimaria]');
+        var comboRealizacion = me.down('[name=comboRealizacion]');
+        var observaciones = me.down('[name=observaciones]');
+        
+        me.deshabilitarCampo(fechaFinalizacion);
+        me.deshabilitarCampo(motivoNoRealizacion);
 
-        me.down('[name=comboModificacion]').addListener('change', function(combo) {
+        comboModificacion.addListener('change', function(combo) {
             if (combo.value == '01') {
-                me.deshabilitarCampo(me.down('[name=fechaFinalizacion]'));
-            } else {
-                me.habilitarCampo(me.down('[name=fechaFinalizacion]'));
+                me.deshabilitarCampo(fechaFinalizacion);
+            } else if (combo.value == '02') {
+                me.habilitarCampo(fechaFinalizacion);
             }
-        })
+        });
+        comboRealizacion.addListener('change', function(combo) {
+        	 if (combo.value == '02') {
+        		 
+        		me.deshabilitarCampo(comboModificacion);
+              	me.deshabilitarCampo(fechaFinalizacion);
+              	me.deshabilitarCampo(fechaAtPrimaria);
+              	me.deshabilitarCampo(observaciones);
+              	
+              	me.borrarCampo(comboModificacion);
+              	me.borrarCampo(fechaFinalizacion);
+              	me.borrarCampo(fechaAtPrimaria);
+              	me.borrarCampo(observaciones);
+              	
+              	me.habilitarCampo(motivoNoRealizacion);
 
+        	 }else if (combo.value == '01'){
+        		me.habilitarCampo(comboModificacion);
+              	me.habilitarCampo(fechaAtPrimaria);
+              	me.habilitarCampo(observaciones);
+              	
+              	me.deshabilitarCampo(motivoNoRealizacion);
+              	me.borrarCampo(motivoNoRealizacion);
+        	 }
+        });
 
+    },
+    
+    T004_ResultadoTarificadaValidacion: function() {
+    	var me = this;
+    	
+    	var fechaFinalizacion = me.down('[name=fechaFinalizacion]');
+    	var fechaAtPrimaria = me.down('[name=fechaAtPrimaria]');
+    	var comboRealizacion = me.down('[name=comboRealizacion]');
+    	var motivoNoRealizacion = me.down('[name=motivoNoRealizacion]');
+    	var observaciones = me.down('[name=observaciones]');
+    	
+    	me.deshabilitarCampo(motivoNoRealizacion);
+    	
+    	comboRealizacion.addListener('change', function(combo) {
+       	 if (combo.value == '02') {
+       		 
+             me.deshabilitarCampo(fechaFinalizacion);
+             me.deshabilitarCampo(fechaAtPrimaria);
+             me.deshabilitarCampo(observaciones);
+             	
+             me.borrarCampo(fechaFinalizacion);
+             me.borrarCampo(fechaAtPrimaria);
+             me.borrarCampo(observaciones);
+             	
+             me.habilitarCampo(motivoNoRealizacion);
+
+       	 }else if (combo.value == '01'){
+       		 
+       		 me.habilitarCampo(fechaAtPrimaria);
+       		 me.habilitarCampo(observaciones);
+             me.habilitarCampo(fechaFinalizacion);
+       		 
+       		 me.deshabilitarCampo(motivoNoRealizacion);
+       		 me.borrarCampo(motivoNoRealizacion);
+       	 }
+       	}); 
     },
 
     T004_ValidacionTrabajoValidacion: function() {

@@ -220,14 +220,14 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
     
     deleteSuccessFn: function() {
     	var me = this; 
-    	me.lookupController().updateGastoByPrinexLBK();	
+    	//me.lookupController().updateGastoByPrinexLBK();	
     	me.up('form').funcionRecargar();
     	
     },
 					    
    	saveSuccessFn: function () {
 		var me = this;
-		me.lookupController().updateGastoByPrinexLBK();	
+		//me.lookupController().updateGastoByPrinexLBK();	
 		me.up('form').funcionRecargar();
 		return true;
 	},

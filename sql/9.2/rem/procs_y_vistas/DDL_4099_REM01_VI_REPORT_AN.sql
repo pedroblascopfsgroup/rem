@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR= GUILLEM REY
---## FECHA_CREACION=20190902
+--## AUTOR= Carles Molins
+--## FECHA_CREACION=20190920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5159
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial - AUTOR=Vicnete Martinez Cifre
 --##		0.2 Cambio en estado de conservación
 --##		0.3 GUILLEM REY - traducir descripciones diccionario
+--##		0.4 Carles Molins - campo idSantander
 --##########################################
 --*/
 
@@ -54,7 +55,7 @@ BEGIN
             FROM '||V_ESQUEMA||'.VIS_VISITAS VIS
             GROUP BY VIS.ACT_ID
         )
-        SELECT ACT.ACT_ID||OFR.OFR_ID AS ID_VISTA, SYSDATE AS FECHA_EMISION, OFR.OFR_NUM_OFERTA, ACT.ACT_NUM_ACTIVO, SAC.DD_SAC_DESCRIPCION_TRADUCIDA, LOC.BIE_LOC_DIRECCION, DDLOC.DD_LOC_DESCRIPCION
+        SELECT ACT.ACT_ID||OFR.OFR_ID AS ID_VISTA, SYSDATE AS FECHA_EMISION, OFR.OFR_NUM_OFERTA, ACT.ACT_NUM_ACTIVO, ACT.ACT_NUM_ACTIVO_SAN, SAC.DD_SAC_DESCRIPCION_TRADUCIDA, LOC.BIE_LOC_DIRECCION, DDLOC.DD_LOC_DESCRIPCION
         , PRV.DD_PRV_DESCRIPCION, REG.BIE_DREG_SUPERFICIE_CONSTRUIDA, VPV.VAL_IMPORTE, AOFR.ACT_OFR_IMPORTE,
         CASE WHEN EPV.DD_EPV_CODIGO = ''03'' THEN ''Yes''
              WHEN EPA.DD_EPA_CODIGO = ''03'' THEN ''Yes''

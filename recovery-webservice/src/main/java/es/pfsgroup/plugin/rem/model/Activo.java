@@ -469,11 +469,7 @@ public class Activo implements Serializable, Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ECA_ID")
-    private DDEstadoCargaActivo estadoCargaActivo;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_SPG_ID")
-    private DDSociedadPagoAnterior sociedadPagoAnterior;        
+    private DDEstadoCargaActivo estadoCargaActivo;  
     
 	
     // Getters del activo --------------------------------------------
@@ -1861,14 +1857,6 @@ public class Activo implements Serializable, Auditable {
 
 	public void setEstadoCargaActivo(DDEstadoCargaActivo estadoCargaActivo) {
 		this.estadoCargaActivo = estadoCargaActivo;
-	}
-	
-	public DDSociedadPagoAnterior getSociedadPagoAnterior() {
-		return sociedadPagoAnterior;
-	}
-
-	public void setSociedadPagoAnterior(DDSociedadPagoAnterior sociedadPagoAnterior) {
-		this.sociedadPagoAnterior = sociedadPagoAnterior;
 	}
 	
 }

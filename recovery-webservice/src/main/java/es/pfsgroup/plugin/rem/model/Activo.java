@@ -159,7 +159,11 @@ public class Activo implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SCM_ID")
-    private DDSituacionComercial situacionComercial;       
+    private DDSituacionComercial situacionComercial;     
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SPG_ID")
+    private DDSociedadPagoAnterior sociedadPagoAnterior;
     
     @Column(name = "ACT_VPO")
     private Integer vpo;
@@ -762,6 +766,14 @@ public class Activo implements Serializable, Auditable {
 		this.bien.setSarebId(sarebId);
 	}
     
+	public DDSociedadPagoAnterior getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+
+	public void setSociedadPagoAnterior(DDSociedadPagoAnterior sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
+
 	public String getPoblacion() {
 		if (bien.getLocalizaciones() != null) {
 			return bien.getLocalizaciones().get(0).getPoblacion();

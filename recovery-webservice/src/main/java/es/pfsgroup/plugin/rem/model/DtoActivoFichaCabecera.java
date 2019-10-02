@@ -263,7 +263,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean checkComercializarReadOnly;
 	private Boolean checkFormalizarReadOnly;
 
-	private String nombreMediador; 
+	private String nombreMediador;
+	private String sociedadPagoAnterior; 
 
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;

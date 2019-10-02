@@ -49,6 +49,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Long acreedorNumExp;
 	private String numReferencia;
 	private Integer vpo;
+	private String sociedadPagoAnterior;
 	
 	private Date fechaEntregaGestoria;
 	private Date fechaPresHacienda;
@@ -308,6 +309,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setSuperficieUtil(String superficieUtil) {
 		this.superficieUtil = superficieUtil;
+	}
+	public String getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
 	}
 	public String getSuperficieElementosComunes() {
 		return superficieElementosComunes;

@@ -374,6 +374,13 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	allowBlank: true
 			        },
 			        {
+			        	xtype: 'textfieldbase',
+			        	colspan: 4,
+			        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
+			        	bind: '{datosRegistrales.sociedadPagoAnterior}',
+			        	readOnly: true
+			        },
+			        {
 						title: 'Listado de Propietarios',
 						itemId: 'listadoPropietarios',
 					    xtype: 'gridBaseEditableRow',

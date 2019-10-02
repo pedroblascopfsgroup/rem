@@ -9,11 +9,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
     	boxready: function() {
     		var me = this;
     		me.lookupController().cargarTabData(me);
-    		
-    		if(!me.up().lookupController().getViewModel().get('activo.isCarteraBankia')){
-    			me.lookupController().lookupReference('tributos').hide(); 
-    		}
-    		
+    	
     		if (!$AU.userIsRol(CONST.PERFILES['GESOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
     			me.lookupController().lookupReference('tributosGrid').setEditOnSelect(false);
     			me.lookupController().lookupReference('tributosGrid').setTopBar(false);

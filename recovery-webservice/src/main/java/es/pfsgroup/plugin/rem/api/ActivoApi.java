@@ -1247,15 +1247,10 @@ public interface ActivoApi {
 
 	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
 
-	boolean esPopietarioRemaining(TareaExterna tareaExterna);
-
-	boolean esPopietarioArrow(TareaExterna tareaExterna);
-
-	List<DtoProveedorMediador> getComboApiPrimario();
-
 	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
 
 	List<ActivoProveedor> getComboApiPrimaria();
+
 }

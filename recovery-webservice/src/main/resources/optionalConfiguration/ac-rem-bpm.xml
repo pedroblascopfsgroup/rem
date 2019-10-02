@@ -481,14 +481,6 @@
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.isActivoIntegradoAgrupacionComercial(idActivo);
             }
-            def esPopietarioRemaining = {
-            	def activoManager = ctx.getBean("activoManager");
-            	return activoManager.esPopietarioRemaining(tareaExterna);
-            }
-            def esPopietarioArrow = {
-            	def activoManager = ctx.getBean("activoManager");
-            	return activoManager.esPopietarioArrow(tareaExterna);
-            }
             def checkReservaFirmada = {
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkReservaFirmada(tareaExterna);

@@ -1515,7 +1515,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
 			boolean esApple = false;
-			boolean esDivarian = false;
 			if ( !Checks.esNulo(expedienteComercial)) {
 				for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
 					Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
@@ -1524,12 +1523,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
 						esApple = true;
 					}
-					esDivarian = false;
-					if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
-							DDSubcartera.CODIGO_DIVARIAN.equals(activo.getSubcartera().getCodigo())) {
-						esDivarian = true;
-					}
-					if (!esApple && !esDivarian) {
+					if (!esApple) {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 					}else {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE);

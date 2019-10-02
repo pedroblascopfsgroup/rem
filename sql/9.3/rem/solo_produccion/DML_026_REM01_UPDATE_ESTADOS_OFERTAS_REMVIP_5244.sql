@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20190912
+--## FECHA_CREACION=20190917
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5244
+--## INCIDENCIA_LINK=REMVIP-5263
 --## PRODUCTO=NO
 --##
 --## INSTRUCCIONES: 
@@ -30,7 +30,7 @@ DECLARE
     V_NUM_FILAS_5 NUMBER(16); -- Vble. para validar la existencia de un registro.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USR VARCHAR2(30 CHAR) := 'REMVIP-5244'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-5263'; -- USUARIOCREAR/USUARIOMODIFICAR.
     V_ECO_ID NUMBER(16); 
     
     TRA_ID NUMBER(16);
@@ -214,7 +214,7 @@ BEGIN
 					  DD_EOF_ID = (SELECT EOF.DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF WHERE EOF.DD_EOF_CODIGO = ''01'')
 					  , USUARIOMODIFICAR = '''||V_USR||''' 
 					  , FECHAMODIFICAR = SYSDATE 
-					WHERE OFR_NUM_OFERTA = '||OFR_ID; 
+					WHERE OFR_NUM_OFERTA = '||OFR_ID||' AND DD_EOF_ID = 2'; 
 	
 
 		EXECUTE IMMEDIATE V_MSQL;

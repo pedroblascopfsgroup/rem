@@ -123,7 +123,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
@@ -402,28 +401,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public boolean isActivoIntegradoAgrupacionComercial(Long idActivo) {
 		return activoDao.isIntegradoAgrupacionComercial(idActivo) >= 1;
-	}
-	
-	@Override
-	public boolean esPopietarioRemaining(TareaExterna tareaExterna) {
-		Activo activo = tareaExternaToActivo(tareaExterna);
-		ActivoPropietario propietario = activo.getPropietarioPrincipal();
-		if (!Checks.esNulo(propietario) && ("Remaining").equals(propietario.getNombre())) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	public boolean esPopietarioArrow(TareaExterna tareaExterna) {
-		Activo activo = tareaExternaToActivo(tareaExterna);
-		ActivoPropietario propietario = activo.getPropietarioPrincipal();
-		if (!Checks.esNulo(propietario) && ("Arrow").equals(propietario.getNombre())) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	@Override
@@ -4507,9 +4484,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperties(cargaSeleccionada.getCargaBien(), cargaDto);
 
 			if (!Checks.esNulo(cargaDto.getEstadoCodigo())) {
-				DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDEstadoCarga.class, cargaDto.getEstadoCodigo());
-				cargaSeleccionada.setEstadoCarga(estadoCarga);
+				DDSituacionCarga situacionCarga = (DDSituacionCarga) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDSituacionCarga.class, cargaDto.getEstadoCodigo());
+				cargaSeleccionada.getCargaBien().setSituacionCarga(situacionCarga);
 			}
 
 			if (!Checks.esNulo(cargaDto.getEstadoEconomicaCodigo())) {
@@ -6952,22 +6929,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public List<DtoProveedorMediador> getComboApiPrimario() {
+	public List<ActivoProveedor> getComboApiPrimaria() {
 		
-		List<ActivoProveedor> comboApiPrimario = activoDao.getComboApiPrimario();
-		
-		List<DtoProveedorMediador> listaDto = new ArrayList<DtoProveedorMediador>();
-		
-		for (ActivoProveedor activoProveedor : comboApiPrimario) {
-			DtoProveedorMediador dto = new DtoProveedorMediador();
-			dto.setNombre(activoProveedor.getNombre());
-			dto.setId(activoProveedor.getId());
-			listaDto.add(dto);
-		}
-		
-		return listaDto;
+		return activoDao.getComboApiPrimaria();
 	}
-	
+
 	@Override
 	public boolean isActivoPerteneceAgrupacionRestringida(Activo activo) {
 		for(ActivoAgrupacionActivo agrupacion: activo.getAgrupaciones()){

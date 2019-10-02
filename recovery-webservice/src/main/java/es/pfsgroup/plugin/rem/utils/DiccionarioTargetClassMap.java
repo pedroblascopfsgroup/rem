@@ -78,8 +78,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposCarga", DDTipoCargaActivo.class);
 		mapa.put("subtiposCarga", DDSubtipoCarga.class);
 		mapa.put("tiposHabitaculo", DDTipoHabitaculo.class);
-		mapa.put("situacionCarga", DDSituacionCarga.class);
-		mapa.put("estadosCarga", DDEstadoCarga.class);
+		mapa.put("estadosCarga", DDSituacionCarga.class);
 		mapa.put("estadosAdjudicacion", DDEstadoAdjudicacion.class);
 		mapa.put("tiposJuzgado", TipoJuzgado.class);
 		mapa.put("entidadesAdjudicacion", DDEntidadAdjudicataria.class);

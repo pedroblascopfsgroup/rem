@@ -251,14 +251,12 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 				}
 			},			
 
-			comboApiPrimario: {
+			comboApiPrimaria: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
-					remoteUrl: 'activo/getComboApiPrimario'
-				},
-			    displayField: 'nombre',
-				valueField: 'id'
+					remoteUrl: 'activo/getComboApiPrimaria'
+				}
 			}
      }
 

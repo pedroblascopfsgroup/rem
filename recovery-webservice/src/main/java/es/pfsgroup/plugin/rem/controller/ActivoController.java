@@ -3014,10 +3014,10 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboApiPrimario(ModelMap model) {
+	public ModelAndView getComboApiPrimaria(ModelMap model) {
 				
 		try{
-			model.put(RESPONSE_DATA_KEY, activoApi.getComboApiPrimario());
+			model.put(RESPONSE_DATA_KEY, activoApi.getComboApiPrimaria());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -3038,4 +3038,20 @@ public class ActivoController extends ParadiseJsonController {
 	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long id) {
 		return activoApi.getHistoricoDiarioGestion(id);
 	}
+
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping(method = RequestMethod.GET)
+//	public ModelAndView bloquearChecksComercializacion(String idActivo, Integer action, ModelMap model) {
+//		Activo activo = activoDao.getActivoById(Long.parseLong(idActivo));
+//		try{
+//			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo, action));
+//		} catch (Exception e) {
+//			logger.error("error en activoController", e);
+//			model.put(RESPONSE_SUCCESS_KEY, false);
+//			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+//		}
+//		
+//		return createModelAndViewJson(model);
+//	}
+
 }

@@ -307,15 +307,6 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 						extraParams: {diccionario: 'estadosCarga'}
 					}
     		},
-    		
-    		comboSituacionCarga: {
-				model: 'HreRem.model.ComboBase',
-					proxy: {
-						type: 'uxproxy',
-						remoteUrl: 'generic/getDiccionario',
-						extraParams: {diccionario: 'situacionCarga'}
-					}
-    		},
 
     		comboEstadoAdjudicacion: {
 				model: 'HreRem.model.ComboBase',

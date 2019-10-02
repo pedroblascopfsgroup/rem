@@ -182,7 +182,6 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -734,11 +733,11 @@ public class ActivoAdapter {
 										.equals(activoCarga.getTipoCargaActivo().getCodigo())
 								&& (!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion())
 										|| !Checks.esNulo(activoCarga.getFechaCancelacionRegistral()))) {
-							DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
-									.dameValorDiccionarioByCod(DDEstadoCarga.class, DDEstadoCarga.CODIGO_CANCELADA);
+							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi
+									.dameValorDiccionarioByCod(DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
 							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-									estadoCarga.getDescripcion());
-							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", estadoCarga.getCodigo());
+									situacionCancelada.getDescripcion());
+							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", situacionCancelada.getCodigo());
 
 							// Fecha de cancelacion de una carga registral
 							if (Checks.esNulo(activoCarga.getFechaCancelacionRegistral())) {
@@ -754,11 +753,11 @@ public class ActivoAdapter {
 							}
 							cargaDto.setFechaCancelacionEconomica(null);
 						} else {
-							if (activoCarga.getEstadoCarga() != null) {
+							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-										activoCarga.getEstadoCarga().getDescripcion());
+										activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-										activoCarga.getEstadoCarga().getCodigo());
+										activoCarga.getCargaBien().getSituacionCarga().getCodigo());
 							}
 						}
 
@@ -809,11 +808,9 @@ public class ActivoAdapter {
 										|| !Checks.esNulo(activoCarga.getFechaCancelacionRegistral()))) {
 							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
-							DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
-									.dameValorDiccionarioByCod(DDEstadoCarga.class, DDEstadoCarga.CODIGO_CANCELADA);
 							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-									estadoCarga.getDescripcion());
-							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", estadoCarga.getCodigo());
+									situacionCancelada.getDescripcion());
+							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", situacionCancelada.getCodigo());
 							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
 									situacionCancelada.getDescripcion());
 							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",
@@ -837,11 +834,11 @@ public class ActivoAdapter {
 							}
 
 						} else {
-							if (activoCarga.getEstadoCarga() != null) {
+							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-										activoCarga.getEstadoCarga().getDescripcion());
+										activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-										activoCarga.getEstadoCarga().getCodigo());
+										activoCarga.getCargaBien().getSituacionCarga().getCodigo());
 							}
 							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
@@ -3819,7 +3816,7 @@ public class ActivoAdapter {
 			
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
-			
+
 			if (!Checks.esNulo(dto.getClaseOferta())) {
 				DDClaseOferta claseOferta = (DDClaseOferta) genericDao.get(DDClaseOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOferta()));
@@ -3832,7 +3829,8 @@ public class ActivoAdapter {
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
-			}					
+			}
+			
 			// HREOS-4937 -- 'General Data Protection Regulation'
 
 			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
@@ -3900,6 +3898,13 @@ public class ActivoAdapter {
 			}			
 			
 			this.actualizarEstadoPublicacionActivo(activo.getId());
+			
+			// El envío de correos siempre al final del método
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
+			}else {
+				notificationOfertaManager.sendNotification(oferta);
+			}
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);

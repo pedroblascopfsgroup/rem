@@ -143,12 +143,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.referencia.catastral'),
 				        	name: 'refCatastral'
-				        },
-				    	{ 
-				    		xtype: 'currencyfieldbase',
-				    		fieldLabel: HreRem.i18n('fieldlabel.numero.de.agrupacion'),
-				    		name: 'numAgrupacion'
-				    	}
+				        }
 				    ]}
 			    ]
     		},
@@ -548,36 +543,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 												queryEvent.combo.onLoad();
 											}
 		    						    }
-								    },
-							    	{ 
-							    		xtype: 'comboboxfieldbase',
-							    		fieldLabel: HreRem.i18n('fieldlabel.api.primario'),
-							    		name: 'apiPrimarioId',
-							    		valueField : 'id',
-										displayField : 'nombre',
-							    		enableKeyEvents:true,
-							    		mode: 'local',
-							    		forceSelection	: false,
-							    		editable: true,
-							    		emptyText: 'Introduzca nombre mediador',
-										listeners: {
-											'change': function() {
-												this.getStore().clearFilter();
-											   	this.getStore().filter({
-												    property: 'nombre',
-												    value: this.getRawValue(),
-												    anyMatch: true,
-												    caseSensitive: false
-												})
-											},
-											'beforequery': function(queryEvent) {
-											 	queryEvent.combo.onLoad();
-											}
-										},
-							    		bind: {
-							    			store: '{comboApiPrimario}'
-							    		}
-							    	}
+								    }
 								]
 			            }
 		            ]},
@@ -659,6 +625,40 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		name: 'fasePublicacionCodigo',
 							    		bind: {
 							    			store: '{comboFasePublicacion}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'currencyfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.numero.de.agrupacion'),
+							    		name: 'numAgrupacion'
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.api.primaria'),
+							    		name: 'apiPrimariaId',
+							    		editable: true,
+							    		valueField : 'id',
+										displayField : 'nombre',
+							    		enableKeyEvents:true,
+							    		mode: 'local',
+							    		forceSelection	: false,
+							    		emptyText: 'Introduzca nombre mediador',
+										listeners: {
+											'change': function() {
+												this.getStore().clearFilter();
+											   	this.getStore().filter({
+												    property: 'nombre',
+												    value: this.getRawValue(),
+												    anyMatch: true,
+												    caseSensitive: false
+												})
+											},
+											'beforequery': function(queryEvent) {
+											 	queryEvent.combo.onLoad();
+											}
+										},
+							    		bind: {
+							    			store: '{comboApiPrimaria}'
 							    		}
 							    	}
 								]

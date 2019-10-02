@@ -54,7 +54,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	//En el caso de Apple existen varias tareas en que no se asignan a gestores si no a usuario de grupo
 	public static final String USERNAME_GRUPO_CES ="grucoces";
 	public static final String USERNAME_PROMONTORIA_MANZANA ="gruproman";
-	public static final String USERNAME_COMITE_ARROW = "grucoarrow";
  	
  	@Autowired
  	private GenericABMDao genericDao;
@@ -516,13 +515,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		return genericDao.get(Usuario.class, filtro);
 	}
- 	
- 	@Override
- 	@Transactional(readOnly = false)
-	public Usuario supervisorTareaDivarian(String codigoTarea) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-		return genericDao.get(Usuario.class, filtro);
-	}
 	
  	@Override
 	public List<Usuario> getUsuariosGestorias() {
@@ -597,20 +589,5 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 			}
 		}
 		return null;
- 	}	
- 	
- 	@Override
- 	@Transactional(readOnly = false)
- 	public Usuario usuarioTareaDivarian(String codigoTarea) {
-		Usuario userTarea = null;
-		Filter filtro = null;
-		if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_ARROW.equals(codigoTarea)) {
-			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_COMITE_ARROW);
-		}
-		if(!Checks.esNulo(filtro)) {
-			userTarea = genericDao.get(Usuario.class, filtro);
-		}
-		
-		return userTarea;
 	}
  }

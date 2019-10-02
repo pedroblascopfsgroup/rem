@@ -906,84 +906,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T004_ResultadoNoTarificadaValidacion: function() {
         var me = this;
 
-        var fechaFinalizacion = me.down('[name=fechaFinalizacion]');
-        var motivoNoRealizacion = me.down('[name=motivoNoRealizacion]');
-        var comboModificacion = me.down('[name=comboModificacion]');
-        var fechaAtPrimaria = me.down('[name=fechaAtPrimaria]');
-        var comboRealizacion = me.down('[name=comboRealizacion]');
-        var observaciones = me.down('[name=observaciones]');
-        
-        me.deshabilitarCampo(fechaFinalizacion);
-        me.deshabilitarCampo(motivoNoRealizacion);
+        me.deshabilitarCampo(me.down('[name=fechaFinalizacion]'));
 
-        comboModificacion.addListener('change', function(combo) {
+        me.down('[name=comboModificacion]').addListener('change', function(combo) {
             if (combo.value == '01') {
-                me.deshabilitarCampo(fechaFinalizacion);
-            } else if (combo.value == '02') {
-                me.habilitarCampo(fechaFinalizacion);
+                me.deshabilitarCampo(me.down('[name=fechaFinalizacion]'));
+            } else {
+                me.habilitarCampo(me.down('[name=fechaFinalizacion]'));
             }
-        });
-        comboRealizacion.addListener('change', function(combo) {
-        	 if (combo.value == '02') {
-        		 
-        		me.deshabilitarCampo(comboModificacion);
-              	me.deshabilitarCampo(fechaFinalizacion);
-              	me.deshabilitarCampo(fechaAtPrimaria);
-              	me.deshabilitarCampo(observaciones);
-              	
-              	me.borrarCampo(comboModificacion);
-              	me.borrarCampo(fechaFinalizacion);
-              	me.borrarCampo(fechaAtPrimaria);
-              	me.borrarCampo(observaciones);
-              	
-              	me.habilitarCampo(motivoNoRealizacion);
+        })
 
-        	 }else if (combo.value == '01'){
-        		me.habilitarCampo(comboModificacion);
-              	me.habilitarCampo(fechaAtPrimaria);
-              	me.habilitarCampo(observaciones);
-              	
-              	me.deshabilitarCampo(motivoNoRealizacion);
-              	me.borrarCampo(motivoNoRealizacion);
-        	 }
-        });
 
-    },
-    
-    T004_ResultadoTarificadaValidacion: function() {
-    	var me = this;
-    	
-    	var fechaFinalizacion = me.down('[name=fechaFinalizacion]');
-    	var fechaAtPrimaria = me.down('[name=fechaAtPrimaria]');
-    	var comboRealizacion = me.down('[name=comboRealizacion]');
-    	var motivoNoRealizacion = me.down('[name=motivoNoRealizacion]');
-    	var observaciones = me.down('[name=observaciones]');
-    	
-    	me.deshabilitarCampo(motivoNoRealizacion);
-    	
-    	comboRealizacion.addListener('change', function(combo) {
-       	 if (combo.value == '02') {
-       		 
-             me.deshabilitarCampo(fechaFinalizacion);
-             me.deshabilitarCampo(fechaAtPrimaria);
-             me.deshabilitarCampo(observaciones);
-             	
-             me.borrarCampo(fechaFinalizacion);
-             me.borrarCampo(fechaAtPrimaria);
-             me.borrarCampo(observaciones);
-             	
-             me.habilitarCampo(motivoNoRealizacion);
-
-       	 }else if (combo.value == '01'){
-       		 
-       		 me.habilitarCampo(fechaAtPrimaria);
-       		 me.habilitarCampo(observaciones);
-             me.habilitarCampo(fechaFinalizacion);
-       		 
-       		 me.deshabilitarCampo(motivoNoRealizacion);
-       		 me.borrarCampo(motivoNoRealizacion);
-       	 }
-       	}); 
     },
 
     T004_ValidacionTrabajoValidacion: function() {
@@ -2416,25 +2349,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	        }
         });
     },
-    T017_ResolucionArrowValidacion: function(){
-    	var me = this;
-    	var comboResolucion = me.down('[name=comboResolucion]');
-    	var comboContraoferta = me.down('[name=numImporteContra]');
-    	me.deshabilitarCampo(comboContraoferta);
-		
-    	comboResolucion.addListener('change', function(){
-	        if(comboResolucion.value == '03'){
-	        	me.habilitarCampo(comboContraoferta);
-	        	comboContraoferta.allowBlank = false;
-	        	comboContraoferta.validate();
-	        }else{
-	        	me.deshabilitarCampo(comboContraoferta);
-	        	comboContraoferta.reset();
-	        	comboContraoferta.allowBlank = true;
-	        	comboContraoferta.validate();
-	        }
-        });
-    },
     T017_RespuestaOfertantePMValidacion: function () {
     	var me = this;
     	var comboRespuestaOfertante = me.down( '[name=comboRespuesta]' ),
@@ -2482,17 +2396,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			fechaRespuesta.validate();
     },
     T017_ResolucionPROManzanaValidacion: function () {
-    	var me = this ;
-    	var comboRespuesta = me.down('[name=comboRespuesta]'),
-    		fechaRespuesta = me.down('[name=fechaRespuesta]');
-    	
-    		me.campoObligatorio(comboRespuesta);
-    		comboRespuesta.validate();
-    		me.campoObligatorio(fechaRespuesta);
-    		me.desbloquearCampo(fechaRespuesta);
-    		fechaRespuesta.validate();
-    },
-    T017_ResolucionDivarianValidacion: function () {
     	var me = this ;
     	var comboRespuesta = me.down('[name=comboRespuesta]'),
     		fechaRespuesta = me.down('[name=fechaRespuesta]');

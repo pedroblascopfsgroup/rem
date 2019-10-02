@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20190929
+--## FECHA_CREACION=20190928
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-7795
@@ -35,43 +35,43 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 
-	T_TIPO_DATA('1' ,'16','Com. Propietarios','Com. Propietarios'),
-	T_TIPO_DATA('1' ,'17','Impuesto','Impuesto'),
-	T_TIPO_DATA('1' ,'18','Otros','Otros'),
-	T_TIPO_DATA('1' ,'19','Embargo','Embargo'),
-	T_TIPO_DATA('1' ,'20','Hipoteca','Hipoteca'),
-	T_TIPO_DATA('1' ,'21','Certificación de cargas','Certificación de cargas'),
-	T_TIPO_DATA('1' ,'22','Afección fiscal','Afección fiscal'),
-	T_TIPO_DATA('1' ,'23','Afección urbanística','Afección urbanística'),
-	T_TIPO_DATA('1' ,'24','Condición resolutoria','Condición resolutoria'),
-	T_TIPO_DATA('1' ,'25','Anotación concurso','Anotación concurso'),
-	T_TIPO_DATA('1' ,'26','Censo','Censo'),
-	T_TIPO_DATA('1' ,'27','Arrendamiento financiero','Arrendamiento financiero'),
-	T_TIPO_DATA('1' ,'28','Condición suspensiva','Condición suspensiva'),
-	T_TIPO_DATA('1' ,'29','Proyecto de reparcelación (afección, nota marginal..)','Proyecto de reparcelación (afección, nota marginal..)'),
-	T_TIPO_DATA('1' ,'30','Servidumbre','Servidumbre'),
-	T_TIPO_DATA('1' ,'31','Derecho adquisición preferente/tanteo y retracto','Derecho adquisición preferente/tanteo y retracto'),
-	T_TIPO_DATA('1' ,'32','Derecho reversión','Derecho reversión'),
-	T_TIPO_DATA('1' ,'33','Prohibición de disponibilidad','Prohibición de disponibilidad'),
-	T_TIPO_DATA('1' ,'34','Opción de compra','Opción de compra'),
-	T_TIPO_DATA('1' ,'35','Arrendamiento inscrito','Arrendamiento inscrito'),
-	T_TIPO_DATA('2' ,'36','Com. Propietarios','Com. Propietarios'),
-	T_TIPO_DATA('2' ,'37','Impuesto','Impuesto'),
-	T_TIPO_DATA('2' ,'38','Otros','Otros'),
-	T_TIPO_DATA('3' ,'39','Com. Propietarios','Com. Propietarios'),
-	T_TIPO_DATA('3' ,'40','Impuesto','Impuesto'),
-	T_TIPO_DATA('3' ,'41','Otros','Otros'),
-	T_TIPO_DATA('3' ,'42','Embargo','Embargo'),
-	T_TIPO_DATA('3' ,'43','Hipoteca','Hipoteca'),
-	T_TIPO_DATA('3' ,'44','Certificación de cargas','Certificación de cargas'),
-	T_TIPO_DATA('3' ,'45','Afección fiscal','Afección fiscal'),
-	T_TIPO_DATA('3' ,'46','Afección Urbanística','Afección Urbanística'),
-	T_TIPO_DATA('3' ,'47','Condición resolutoria','Condición resolutoria'),
-	T_TIPO_DATA('3' ,'48','Anotación Concurso','Anotación Concurso'),
-	T_TIPO_DATA('3' ,'49','Censo','Censo'),
-	T_TIPO_DATA('3' ,'50','Arrendamiento financiero','Arrendamiento financiero'),
-	T_TIPO_DATA('3' ,'51','Condición suspensiva','Condición suspensiva'),
-	T_TIPO_DATA('3' ,'52','Proyecto de reparcelación (afección, nota marginal..)','Proyecto de reparcelación (afección, nota marginal..)')
+	T_TIPO_DATA('1' ,'016','Com. Propietarios','Com. Propietarios'),
+	T_TIPO_DATA('1' ,'017','Impuesto','Impuesto'),
+	T_TIPO_DATA('1' ,'018','Otros','Otros'),
+	T_TIPO_DATA('1' ,'019','Embargo','Embargo'),
+	T_TIPO_DATA('1' ,'020','Hipoteca','Hipoteca'),
+	T_TIPO_DATA('1' ,'021','Certificación de cargas','Certificación de cargas'),
+	T_TIPO_DATA('1' ,'022','Afección fiscal','Afección fiscal'),
+	T_TIPO_DATA('1' ,'023','Afección urbanística','Afección urbanística'),
+	T_TIPO_DATA('1' ,'024','Condición resolutoria','Condición resolutoria'),
+	T_TIPO_DATA('1' ,'025','Anotación concurso','Anotación concurso'),
+	T_TIPO_DATA('1' ,'026','Censo','Censo'),
+	T_TIPO_DATA('1' ,'027','Arrendamiento financiero','Arrendamiento financiero'),
+	T_TIPO_DATA('1' ,'028','Condición suspensiva','Condición suspensiva'),
+	T_TIPO_DATA('1' ,'029','Proyecto de reparcelación (afección, nota marginal..)','Proyecto de reparcelación (afección, nota marginal..)'),
+	T_TIPO_DATA('1' ,'030','Servidumbre','Servidumbre'),
+	T_TIPO_DATA('1' ,'031','Derecho adquisición preferente/tanteo y retracto','Derecho adquisición preferente/tanteo y retracto'),
+	T_TIPO_DATA('1' ,'032','Derecho reversión','Derecho reversión'),
+	T_TIPO_DATA('1' ,'033','Prohibición de disponibilidad','Prohibición de disponibilidad'),
+	T_TIPO_DATA('1' ,'034','Opción de compra','Opción de compra'),
+	T_TIPO_DATA('1' ,'035','Arrendamiento inscrito','Arrendamiento inscrito'),
+	T_TIPO_DATA('2' ,'036','Com. Propietarios','Com. Propietarios'),
+	T_TIPO_DATA('2' ,'037','Impuesto','Impuesto'),
+	T_TIPO_DATA('2' ,'038','Otros','Otros'),
+	T_TIPO_DATA('3' ,'039','Com. Propietarios','Com. Propietarios'),
+	T_TIPO_DATA('3' ,'040','Impuesto','Impuesto'),
+	T_TIPO_DATA('3' ,'041','Otros','Otros'),
+	T_TIPO_DATA('3' ,'042','Embargo','Embargo'),
+	T_TIPO_DATA('3' ,'043','Hipoteca','Hipoteca'),
+	T_TIPO_DATA('3' ,'044','Certificación de cargas','Certificación de cargas'),
+	T_TIPO_DATA('3' ,'045','Afección fiscal','Afección fiscal'),
+	T_TIPO_DATA('3' ,'046','Afección Urbanística','Afección Urbanística'),
+	T_TIPO_DATA('3' ,'047','Condición resolutoria','Condición resolutoria'),
+	T_TIPO_DATA('3' ,'048','Anotación Concurso','Anotación Concurso'),
+	T_TIPO_DATA('3' ,'049','Censo','Censo'),
+	T_TIPO_DATA('3' ,'050','Arrendamiento financiero','Arrendamiento financiero'),
+	T_TIPO_DATA('3' ,'051','Condición suspensiva','Condición suspensiva'),
+	T_TIPO_DATA('3' ,'052','Proyecto de reparcelación (afección, nota marginal..)','Proyecto de reparcelación (afección, nota marginal..)')
 
     ); 
 

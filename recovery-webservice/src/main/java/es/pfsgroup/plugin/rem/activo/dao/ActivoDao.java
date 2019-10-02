@@ -303,5 +303,5 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo);
 	
-	List<ActivoProveedor> getComboApiPrimario();
+	List<ActivoProveedor> getComboApiPrimaria();
 }

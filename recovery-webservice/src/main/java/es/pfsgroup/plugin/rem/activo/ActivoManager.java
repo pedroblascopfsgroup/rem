@@ -6931,6 +6931,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
+	public List<ActivoProveedor> getComboApiPrimaria() {
+		
+		return activoDao.getComboApiPrimaria();
+	}
+
+	@Override
 	public List<DtoProveedorMediador> getComboApiPrimario() {
 		
 		List<ActivoProveedor> comboApiPrimario = activoDao.getComboApiPrimario();
@@ -6946,6 +6952,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return listaDto;
 	}	
+
+	@Override
 	public boolean isActivoPerteneceAgrupacionRestringida(Activo activo) {
 		for(ActivoAgrupacionActivo agrupacion: activo.getAgrupaciones()){
 			if(Checks.esNulo(agrupacion.getAgrupacion().getFechaBaja())) {

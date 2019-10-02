@@ -115,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -136,6 +137,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
 	private static final String COD_PEF_GESTORIA_POSTVENTA = "GTOPOSTV";
 	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
+	
+	private static final String COD_SI = "1";
+	private static final String COD_NO = "0";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -1016,6 +1020,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setOptaCriterioCaja(BooleanUtils.toBooleanObject(gasto.getProveedor().getCriterioCajaIVA()));
 			}
 
+			if (!Checks.esNulo(detalleGasto.getImporteRecargo()) &&  detalleGasto.getImporteRecargo() != 0.0) {
+				
+				if(!Checks.esNulo(detalleGasto.getExisteRecargo()) && detalleGasto.getExisteRecargo() && !Checks.esNulo(detalleGasto.getTipoRecargoGasto())){
+					dto.setExisteRecargo(COD_SI);
+					dto.setTipoRecargo(detalleGasto.getTipoRecargoGasto().getCodigo());
+				}else {
+					dto.setExisteRecargo(COD_NO);
+					dto.setTipoRecargo(null);
+				}
+			}else {
+				dto.setExisteRecargo(null);
+				dto.setTipoRecargo(null);
+			}
 		}
 
 		return dto;
@@ -1167,6 +1184,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					//updaterStateApi.updaterStates(gasto, gasto.getEstadoGasto().getCodigo());
 				}else {
 					updaterStateApi.updaterStates(gasto, null);
+				}
+				
+				if(!Checks.esNulo(dto.getExisteRecargo()) && COD_SI.equals(dto.getExisteRecargo())) {			
+					detalleGasto.setExisteRecargo(true);
+				}else {
+					detalleGasto.setExisteRecargo(false);
+					detalleGasto.setTipoRecargoGasto(null);
+				}
+				
+				if(!Checks.esNulo(dto.getTipoRecargo())) {
+					
+					DDTipoRecargoGasto tipoRecargo = genericDao.get(DDTipoRecargoGasto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoRecargo()));
+					if(!Checks.esNulo(tipoRecargo)) {
+						detalleGasto.setTipoRecargoGasto(tipoRecargo);
+					}
 				}
 
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);

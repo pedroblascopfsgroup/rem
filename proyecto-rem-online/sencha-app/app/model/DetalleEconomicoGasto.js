@@ -193,6 +193,12 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		},
 		{
 			name: 'prorrata'
+		},
+		{
+			name: 'existeRecargo'
+		},
+		{
+			name:'tipoRecargo'
 		}
 	],
     

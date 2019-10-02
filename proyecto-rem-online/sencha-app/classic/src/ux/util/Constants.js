@@ -650,7 +650,15 @@ Ext.define('HreRem.ux.util.Constants', {
 	 	PRINCIPAL:'01',
 	 	DEPENDIENTE:'02',
 	 	INDIVIDUAL:'03'
-	 }
+	 },
+	 
+	 DD_TIPO_RECARGO:{
+	 	NO_EVITABLE:'NO_EVI'
+	 },
 	
+	 DD_SINO:{
+		 NO:'0',
+		 SI:'1'
+	 }
 
 });

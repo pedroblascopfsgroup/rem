@@ -497,16 +497,24 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
     	},
     	
     	storeDocumentosGasto: {
-    			 pageSize: $AC.getDefaultPageSize(),
-    			 model: 'HreRem.model.AdjuntoGasto',
-	      	     proxy: {
-	      	        type: 'uxproxy',
-	      	        remoteUrl: 'gastosproveedor/getListAdjuntos',
-	      	        extraParams: {idGasto: '{gasto.id}'}
-	          	 },
-	          	 groupField: 'descripcionTipo'
-    		}
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AdjuntoGasto',
+      	     proxy: {
+      	        type: 'uxproxy',
+      	        remoteUrl: 'gastosproveedor/getListAdjuntos',
+      	        extraParams: {idGasto: '{gasto.id}'}
+          	 },
+          	 groupField: 'descripcionTipo'
+		},
+    		
+    		
+		comboTipoRecargo: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposDeRecargo'}
+			}
     	}
-
-  
+    }
 });

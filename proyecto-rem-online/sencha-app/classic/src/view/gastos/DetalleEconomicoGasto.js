@@ -51,129 +51,209 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 									items :
 										[
 											{   
-												xtype:'fieldset',
+												xtype:'fieldsettable',
 												border: false,
 												height: 250,
-				        						margin: '10 0 10 0',
-				        						defaultType: 'currencyfieldbase',
-				        						defaults: {
-				        							style: 'text-align: right',
-											        fieldStyle:'text-align:right;',
-											        labelStyle: 'text-align:left;',
-											        symbol: HreRem.i18n("symbol.euro"),
-											        listeners:{
-								        				edit: function(){
-								        					Ext.global.console.log(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'));
-								        					if(!me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
-									        					if(this.getValue()==0)
-									        						this.setValue('');
-								        					if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos') || me.editableSoloPago())
-								        						this.setReadOnly(true);
-								        					else
-								        						this.setReadOnly(false);
-								        				},
-								        				
-														update: function(){
-															if(Ext.isEmpty(this.getValue()))
-																this.setValue(0);
-														},																		        						
-						        						afterrender: function(){							        					
-								        					if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
-								        						this.setReadOnly(true);
-								        					else
-								        						this.setReadOnly(false);
-								        				}
-								        			}
-				        						},
-				        						listeners:{
-				        							edit: function(){
-							        					if(this.getValue()==0)
-							        						this.setValue('');								        					
-							        				},							        				
-													update: function(){
-														if(Ext.isEmpty(this.getValue()))
-															this.setValue(0);
-													}
-				        						},
+												margin: '10 0 10 0',
+												defaultType: 'currencyfieldbase',
+												collapsible: false,
+												
 												items :
 													[
-														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.principal.sujeto'),
-											                bind: '{detalleeconomico.importePrincipalSujeto}',
-											                reference: 'importePrincipalSujeto',
-											                allowBlank: false,
-											                readOnly: me.editableSoloPago(),
-											                listeners:{
-											                	edit: function(){
-											                		if(this.getValue()==0)
-											                			this.setValue('');
-											                		if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos') || me.editableSoloPago())
-										        						this.setReadOnly(true);
-										        					else
-										        						this.setReadOnly(false);
-										        				},											                
-										        				change: function(){	
-										        					var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
-										        					if(this.getValue()!='' && (this.getValue()>0 || this.getValue()<0)){
-										        						if(field.getValue()!='' && field.getValue()>0){
-											        						field.validate();
-										        						}
-										        						else {
-										        							field.clearInvalid();
-										        						}
-										        						me.up('gastodetallemain').lookupReference('impuestoindirecto').setDisabled(false);
-											                			me.up('gastodetallemain').lookupReference('impuestodirecto').setDisabled(false);
-											        				}
-										        					else{
-										        						field.clearInvalid();
-										        						me.up('gastodetallemain').lookupReference('cbOperacionExenta').setValue(0);
-										        						//me.up('gastodetallemain').lookupReference('impuestoindirecto').setDisabled(true);
-										        						me.up('gastodetallemain').lookupReference('impuestodirecto').setDisabled(true);
-										        						//field.setValue(0);
-										        						me.up('gastodetallemain').lookupReference('tipoImpositivoIRPF').setValue('');
-										        					}
-										        				},																		        						
-								        						afterrender: function(){							        					
-										        					if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
-										        						this.setReadOnly(true);
-										        					else
-										        						this.setReadOnly(false);
-										        				},							        				
+														{   
+															xtype:'fieldset',
+															border: false,
+															height: 250,
+															margin: '10 0 10 0',
+															defaultType: 'currencyfieldbase',
+															defaults: {
+																style: 'text-align: right',
+																fieldStyle:'text-align:right;',
+																labelStyle: 'text-align:left;',
+																symbol: HreRem.i18n("symbol.euro"),
+																listeners:{
+																	edit: function(){
+																		Ext.global.console.log(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'));
+																		if(!me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
+																			if(this.getValue()==0)
+																				this.setValue('');
+																		if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos') || me.editableSoloPago())
+																			this.setReadOnly(true);
+																		else
+																			this.setReadOnly(false);
+																	},
+																	
+																	update: function(){
+																		if(Ext.isEmpty(this.getValue()))
+																			this.setValue(0);
+																	},																		        						
+																	afterrender: function(){							        					
+																		if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
+																			this.setReadOnly(true);
+																		else
+																			this.setReadOnly(false);
+																	}
+																}
+															},
+															listeners:{
+																edit: function(){
+																	if(this.getValue()==0)
+																		this.setValue('');								        					
+																},							        				
 																update: function(){
 																	if(Ext.isEmpty(this.getValue()))
 																		this.setValue(0);
-																	
 																}
-											                }
+															},
+															items :
+																[
+																	{ 
+																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.principal.sujeto'),
+																		bind: '{detalleeconomico.importePrincipalSujeto}',
+																		reference: 'importePrincipalSujeto',
+																		allowBlank: false,
+																		readOnly: me.editableSoloPago(),
+																		listeners:{
+																			edit: function(){
+																				if(this.getValue()==0)
+																					this.setValue('');
+																				if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos') || me.editableSoloPago())
+																					this.setReadOnly(true);
+																				else
+																					this.setReadOnly(false);
+																			},											                
+																			change: function(){	
+																				var field=me.up('gastodetallemain').lookupReference('tipoImpositivo');
+																				if(this.getValue()!='' && (this.getValue()>0 || this.getValue()<0)){
+																					if(field.getValue()!='' && field.getValue()>0){
+																						field.validate();
+																					}
+																					else {
+																						field.clearInvalid();
+																					}
+																					me.up('gastodetallemain').lookupReference('impuestoindirecto').setDisabled(false);
+																					me.up('gastodetallemain').lookupReference('impuestodirecto').setDisabled(false);
+																				}
+																				else{
+																					field.clearInvalid();
+																					me.up('gastodetallemain').lookupReference('cbOperacionExenta').setValue(0);
+																					//me.up('gastodetallemain').lookupReference('impuestoindirecto').setDisabled(true);
+																					me.up('gastodetallemain').lookupReference('impuestodirecto').setDisabled(true);
+																					//field.setValue(0);
+																					me.up('gastodetallemain').lookupReference('tipoImpositivoIRPF').setValue('');
+																				}
+																			},																		        						
+																			afterrender: function(){							        					
+																				if(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'))
+																					this.setReadOnly(true);
+																				else
+																					this.setReadOnly(false);
+																			},							        				
+																			update: function(){
+																				if(Ext.isEmpty(this.getValue()))
+																					this.setValue(0);
+																				
+																			}
+																		}
+																	},
+																	{ 
+																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.principal.no.sujeto'),
+																		reference: 'importePrincipalNoSujeto',
+																		bind: '{detalleeconomico.importePrincipalNoSujeto}'											                
+																	},
+																	{ 
+																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
+																		bind: '{detalleeconomico.importeRecargo}',
+																		listeners:{
+														        			change: function(){	
+														        				var me = this;
+														        				
+														        				var existeRecargo = me.up('gastodetallemain').lookupReference('existeRecargo');
+														        				var tipoRecargo = me.up('gastodetallemain').lookupReference('tipoRecargo');
+														        				
+														        				if(me.getValue() !='' || me.getValue() !=0){
+														        					existeRecargo.setDisabled(false);
+														        					if(existeRecargo.getValue() == null || existeRecargo.getValue() =='' || existeRecargo.getValue() == CONST.DD_SINO['NO']){
+														        						tipoRecargo.setValue('');
+														        						tipoRecargo.setDisabled(true);
+																        				
+														        					}
+															        			}else{
+															        				existeRecargo.setDisabled(true);
+															        				existeRecargo.setValue('');
+															        				tipoRecargo.setValue('');
+															        				tipoRecargo.setDisabled(true);
+															        			}
+														        			
+														        			}
+														        		}
+																	},
+																	{ 
+																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.interes.demora'),
+																		bind: '{detalleeconomico.importeInteresDemora}'
+																	},
+																	{ 
+																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.costas'),
+																		bind: '{detalleeconomico.importeCostas}'
+																	},
+																	{ 
+																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.otros.incrementos'),
+																		bind: '{detalleeconomico.importeOtrosIncrementos}'
+																	},
+																	{ 
+																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.provisiones.suplidos'),
+																		bind: '{detalleeconomico.importeProvisionesSuplidos}'
+																	}
+																	
+																]
 														},
-														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.principal.no.sujeto'),
-															reference: 'importePrincipalNoSujeto',
-											                bind: '{detalleeconomico.importePrincipalNoSujeto}'											                
-														},
-														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
-											                bind: '{detalleeconomico.importeRecargo}'
-														},
-														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.interes.demora'),
-											                bind: '{detalleeconomico.importeInteresDemora}'
-														},
-														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.costas'),
-											                bind: '{detalleeconomico.importeCostas}'
-														},
-														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.otros.incrementos'),
-											                bind: '{detalleeconomico.importeOtrosIncrementos}'
-														},
-														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.provisiones.suplidos'),
-											                bind: '{detalleeconomico.importeProvisionesSuplidos}'
+														{   
+															xtype:'fieldset',
+															border: false,
+															height: 250,
+															margin: '10 0 10 0',
+															defaultType: 'currencyfieldbase',
+															items :
+															[
+																{ 
+																	xtype: 'comboboxfieldbase',
+																	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
+																	reference: 'existeRecargo',
+																	
+													               	bind: {
+														           		store: '{comboSiNoRem}',
+														           		value: '{detalleeconomico.existeRecargo}'	
+														         	},
+														         	listeners:{
+													        			change: function(){	
+													        				var me = this;
+													        				
+													        				var tipoRecargo = me.up('gastodetallemain').lookupReference('tipoRecargo');
+													        				if(me.getValue() =='' || me.getValue() == CONST.DD_SINO['NO']){
+													        					tipoRecargo.setDisabled(true);
+														        				tipoRecargo.setValue('');
+														        			}else{	
+														        				tipoRecargo.setDisabled(false);
+													        					tipoRecargo.setValue(CONST.DD_TIPO_RECARGO['NO_EVITABLE']);
+														        			}
+													        			
+													        			}
+														         	}
+																},
+																{ 
+																	xtype: 'comboboxfieldbase',
+																	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.recargo'),
+																	reference: 'tipoRecargo',
+													               	bind: {
+														           		store: '{comboTipoRecargo}',
+														           		value: '{detalleeconomico.tipoRecargo}'	
+														         	}
+																}
+																
+															]
 														}
-													
-													]
-											},
+													]	
+												},
 											{   
 												xtype:'fieldset',
 												border: false,

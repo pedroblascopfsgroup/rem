@@ -232,6 +232,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("servicerActivo", DDServicerActivo.class);
 		mapa.put("cesionSaneamiento", DDCesionSaneamiento.class);
 		mapa.put("tiposEquipoGestion", DDEquipoGestion.class);
+		mapa.put("tiposDeRecargo", DDTipoRecargoGasto.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

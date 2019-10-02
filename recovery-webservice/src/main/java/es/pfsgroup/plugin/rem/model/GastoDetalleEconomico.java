@@ -28,6 +28,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPago;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 
@@ -164,6 +165,13 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     
 	@Column(name="GDE_FECHA_ANTICIPO")
     private Date fechaAnticipo;
+	
+	@Column (name= "GDE_EXISTE_RECARGO")
+	private Boolean existeRecargo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TRG_ID")
+    private DDTipoRecargoGasto tipoRecargoGasto;
 
     
 	@Version   
@@ -479,5 +487,21 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 		this.fechaAnticipo = fechaAnticipo;
 	}
 
+	public Boolean getExisteRecargo() {
+		return existeRecargo;
+	}
+
+	public void setExisteRecargo(Boolean existeRecargo) {
+		this.existeRecargo = existeRecargo;
+	}
+
+	public DDTipoRecargoGasto getTipoRecargoGasto() {
+		return tipoRecargoGasto;
+	}
+
+	public void setTipoRecargoGasto(DDTipoRecargoGasto tipoRecargoGasto) {
+		this.tipoRecargoGasto = tipoRecargoGasto;
+	}
+	
 
 }

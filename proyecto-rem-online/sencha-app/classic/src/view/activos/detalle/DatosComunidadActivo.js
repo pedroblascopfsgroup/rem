@@ -195,15 +195,31 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									      value : '{datosComunidad.burofax}',
 									      readOnly: '{datosComunidad.unidadAlquilable}'
 									    }
-									}, {xtype : 'comboboxfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.situacion'),
+									}, 
+									{	xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.estado.localizacion'),
+										reference: 'estadoLocalizacion',
+		        						listeners:{
+		        								afterrender: 'usuarioLogadoEditar'
+		        						},
 									    bind : {
-										      store : '{comboSituacionActivo}',
-										      value : '{datosComunidad.situacionCodigo}',
-										      readOnly: '{datosComunidad.unidadAlquilable}'
+										      store : '{comboEstadoLocalizacion}',
+										      readOnly: '{false}'
+										    }
+										   
+									},
+									{	xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.subestado.gestion'),
+										reference: 'subestadoGestion',
+										listeners:{
+		        								afterrender: 'usuarioLogadoEditar'
+		        						},
+									    bind : {
+										      store : '{comboSubestadoGestion}',
+										      readOnly: '{false}'
 										    }	
-									},							
-										{
+									},
+									{
 										xtype : 'datefieldbase',
 									    fieldLabel : HreRem.i18n('fieldlabel.fechaEnvioCarta'),
 										bind : {

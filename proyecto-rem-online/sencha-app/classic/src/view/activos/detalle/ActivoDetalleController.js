@@ -5468,7 +5468,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.lookupReference("fechaInscripcion").setDisabled(true);
 		}
 		
-	}
+	},
+
+	usuarioLogadoEditar: function() {
+
+    	var me = this;
+    	var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYASADM']) || $AU.userIsRol(CONST.PERFILES['HAYAADM']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTADMT'])
+		if(usuariosValidos){
+			me.lookupReference("subestadoGestion").readOnly = false;
+			me.lookupReference("estadoLocalizacion").readOnly = false;
+    	}
+    	else{
+    		me.lookupReference("subestadoGestion").readOnly = true;
+    		me.lookupReference("estadoLocalizacion").readOnly = true;
+    	}
+    }
 
 });
 

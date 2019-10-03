@@ -188,7 +188,15 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="GPV_IDENTIFICADOR_UNICO")
 	private String identificadorUnico;
+
+	@Column(name="GPV_FECHA_REC_PROP")
+	private Date fechaRecPropiedad;
+
+	@Column(name="GPV_FECHA_REC_GEST")
+	private Date fechaRecGestoria;
 	
+	@Column(name="GPV_FECHA_REC_HAYA")
+	private Date fechaRecHaya;
     
 	@Version   
 	private Long version;
@@ -261,7 +269,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	}
 
 	public Date getFechaEmision() {
-		return (Date) fechaEmision.clone();
+		if(!Checks.esNulo(fechaEmision)) {
+			return (Date) fechaEmision.clone();
+		}else {
+			return null;
+		}
 	}
 
 	public void setFechaEmision(Date fechaEmision) {
@@ -269,7 +281,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	}
 
 	public Date getFechaNotificacion() {
-		return (Date) fechaNotificacion.clone();
+		if(!Checks.esNulo(fechaNotificacion)) {
+			return (Date) fechaNotificacion.clone();
+		}else {
+			return null;
+		}
 	}
 
 	public void setFechaNotificacion(Date fechaNotificacion) {
@@ -500,4 +516,40 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setIdentificadorUnico(String identificadorUnico) {
 		this.identificadorUnico = identificadorUnico;
 	}	
+	
+	public Date getFechaRecPropiedad() {
+		if(!Checks.esNulo(fechaRecPropiedad)) {
+			return (Date) fechaRecPropiedad.clone();
+		}else {
+			return null;
+		}
+	}
+
+	public void setFechaRecPropiedad(Date fechaRecPropiedad) {
+		this.fechaRecPropiedad = (Date) fechaRecPropiedad.clone();
+	}
+
+	public Date getFechaRecGestoria() {
+		if(!Checks.esNulo(fechaRecGestoria)) {
+			return (Date) fechaRecGestoria.clone();
+		}else {
+			return null;
+		}
+	}
+
+	public void setFechaRecGestoria(Date fechaRecGestoria) {
+		this.fechaRecGestoria = (Date) fechaRecGestoria.clone();
+	}
+
+	public Date getFechaRecHaya() {
+		if(!Checks.esNulo(fechaRecHaya)) {
+			return (Date) fechaRecHaya.clone();
+		}else {
+			return null;
+		}
+	}
+
+	public void setFechaRecHaya(Date fechaRecHaya) {
+		this.fechaRecHaya = (Date) fechaRecHaya.clone();
+	}
 }

@@ -50,7 +50,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposUsoDestino", DDTipoUsoDestino.class);
 		mapa.put("acabadosCarpinteria", DDAcabadoCarpinteria.class);
 		mapa.put("estadosActivo", DDEstadoActivo.class);
-		mapa.put("paises", DDCicCodigoIsoCirbeBKP.class);
 		mapa.put("tiposCuota", DDTipoCuota.class);
 		mapa.put("tiposVpo", DDTipoVpo.class);
 		mapa.put("tiposPosesorio", DDTipoTituloPosesorio.class);
@@ -221,8 +220,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("clasificacionApple", DDClasificacionApple.class);
 		mapa.put("entidadFinanciera", DDEntidadFinanciera.class);
-		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
-		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("origenComprador", DDOrigenComprador.class);
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
 		mapa.put("EstadoPresentacion", DDEstadoPresentacion.class);
@@ -235,6 +232,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposDeRecargo", DDTipoRecargoGasto.class);
 		mapa.put("tipoEstadoLoc", DDEstadoLocalizacion.class);
 		mapa.put("tipoSubestadoGestion", DDSubestadoGestion.class);
+		mapa.put("motivoAutorizacionTramitacion", DDMotivoAutorizacionTramitacion.class);
+		mapa.put("tipoSolicitudTributo", DDTipoSolicitudTributo.class);
+		mapa.put("tipoDocJunta", DDTipoDocJuntas.class);
+		mapa.put("tipoDocumentoPlusvalia", DDTipoDocPlusvalias.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

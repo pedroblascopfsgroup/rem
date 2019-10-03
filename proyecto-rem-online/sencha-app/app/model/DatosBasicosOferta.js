@@ -5,8 +5,8 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     extend: 'HreRem.model.Base',
     alias: 'viewmodel.datosBasicosOferta',
 
-    fields: [ 
-    		
+    fields: [
+
 		    {
 		    	name: 'idOferta'
 		    },
@@ -60,9 +60,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'numVisita'
-    		}, 
+    		},
     		{
-    			name: 'estadoVisitaOfertaCodigo'	
+    			name: 'estadoVisitaOfertaCodigo'
     		},
     		{
     			name:'estadoVisitaOfertaDescripcion'
@@ -80,7 +80,7 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name: 'comitePropuestoCodigo'
     		},
     		{
-    			name: 'ventaCartera' 
+    			name: 'ventaCartera'
     		},
      		{
 			name:'fechaRespuestaCES',
@@ -148,7 +148,10 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name:'idEco'
     		},
     		{
-    			name:'importeContraofertaPM'	
+    			name:'idGestorComercialPrescriptor'
+        },
+        {
+    			name:'importeContraofertaPM'
     		},
     		{
     			name:'fechaRespuestaPM',
@@ -175,7 +178,7 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			}
     		},
     		{
-    			name:'importeContraofertaCES'	
+    			name:'importeContraofertaCES'
     		},
     		{
     			name:'fechaResolucionCES',
@@ -214,17 +217,17 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name:'claseOfertaCodigo'	
     		}
     ],
-    
+
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'expedienteComercial.json',
-		
+
 		api: {
             read: 'expedientecomercial/getTabExpediente',
             update: 'expedientecomercial/saveDatosBasicosOferta'
         },
-		
+
         extraParams: {tab: 'datosbasicosoferta'}
-    }    
+    }
 
 });

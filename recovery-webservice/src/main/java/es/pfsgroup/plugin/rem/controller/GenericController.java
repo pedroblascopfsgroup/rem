@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
@@ -105,6 +106,7 @@ public class GenericController extends ParadiseJsonController{
 	private static final String DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO = "activo";
 	private final Log logger = LogFactory.getLog(getClass());
 
+	private static final String DICCIONARIO_TIPO_DOCUMENTO_TRIBUTO = "tiposDocumentoTributo";
 
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -459,6 +461,12 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getComboTipoTituloActivoTPA(Long numActivo){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoTituloActivoTPA(numActivo)));	
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioTiposDocumentoTributo(String diccionario, String entidad) {	
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioTiposDocumentoTributo()));
+	}
+
 
 		/**
 	 * Inserta un documento a la entidad correspondiente  Ejem: IP:8080/pfs/rest/generic/altaDocumento
@@ -629,3 +637,4 @@ public class GenericController extends ParadiseJsonController{
 		restApi.sendResponse(response, model,request);
 	}
  }
+

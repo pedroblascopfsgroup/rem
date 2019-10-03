@@ -126,6 +126,14 @@ Ext.define('HreRem.view.common.DDViewModel', {
 					}
 				}
 			},
+			comboMunicipio: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboMunicipio',
+					extraParams: {codigoProvincia: '{plusvalia.provinciaCodigo}'}
+				},autoLoad: true
+			},
 			comboTipoPersona: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

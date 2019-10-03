@@ -64,6 +64,21 @@ Ext.define('HreRem.model.GastoProveedor', {
 			dateFormat: 'c'
 		},
 		{
+			name : 'fechaRecPropiedad',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
+			name : 'fechaRecGestoria',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
+			name : 'fechaRecHaya',
+			type : 'date',
+			dateFormat: 'c'
+		},
+		{
 			name : 'importe'
 		},
 		{
@@ -162,7 +177,43 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
 		{
 			name: 'identificadorUnico'
-		}
+		},
+   		{
+   			name: 'numeroDeGastoRefacturable'
+   		},
+   		{
+   			name:'isGastoRefacturable'
+   		},
+   		{
+   			name: 'checkboxActivoRefacturable'
+   		},
+   		{
+   			name: 'gastoRefacturadoGrid'
+   		},
+   		{
+   			name: 'listaTotalGastosRefacturados'
+   		},
+   		{
+   			name: 'gastoRefacturable',
+			type: 'boolean'
+		}, 
+		{
+   			name: 'idGastoRefacturable'
+   		},
+   		{
+   			name: 'gastosRefacturadosGasto'
+   		},
+   		{
+   			name:'numeroGastoRefacturableExistente'
+   		},
+   		{
+   			name: 'gastoRefacturable',
+   			type: 'boolean'
+   		},
+   		{
+   			name: 'bloquearDestinatario',
+   			type: 'boolean'
+   		}
     		
     ],
     

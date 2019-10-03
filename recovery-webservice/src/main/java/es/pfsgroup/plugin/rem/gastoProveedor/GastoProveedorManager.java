@@ -33,6 +33,7 @@ import es.capgemini.devon.message.MessageService;
 //import es.capgemini.devon.utils.PropertyUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -55,7 +56,6 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.excel.ActivosGastoExcelReport;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
@@ -89,6 +89,7 @@ import es.pfsgroup.plugin.rem.model.GastoPrinex;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
+import es.pfsgroup.plugin.rem.model.GastoRefacturable;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -97,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -188,6 +190,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Autowired
 	private ProvisionGastosDao provisionGastosDao;
 	
+	@Autowired
+	private ActivoDao activoDao;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
+
 	@Autowired
 	private MSVRawSQLDao rawDao;
 
@@ -420,6 +428,28 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo())) {
 				dto.setCodigoImpuestoIndirecto(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo().getCodigo());
 			}
+				
+			if (!Checks.esNulo(gasto.getFechaRecPropiedad())) { 
+				dto.setFechaRecPropiedad(gasto.getFechaRecPropiedad());	
+			}
+			
+			if (!Checks.esNulo(gasto.getFechaRecGestoria())) { 
+				dto.setFechaRecGestoria(gasto.getFechaRecGestoria()); 
+			}			
+			
+			if (!Checks.esNulo(gasto.getFechaRecHaya())) { 
+				dto.setFechaRecHaya(gasto.getFechaRecHaya()); 
+			}
+ 			List<GastoRefacturable> listaGastosRefacturables = gastoDao.getGastosRefacturablesDelGasto(gasto.getId());
+			
+			if (!Checks.esNulo(listaGastosRefacturables) && listaGastosRefacturables.size() > 0) {
+				if (!Checks.esNulo(dto.getCartera())
+						&& (DDCartera.CODIGO_CARTERA_SAREB.equals(dto.getCartera())
+								|| DDCartera.CODIGO_CARTERA_BANKIA.equals(dto.getCartera()))) {
+					dto.setTieneGastosRefacturables(true);
+				}
+			}
+			dto.setBloquearDestinatario(!Checks.estaVacio(this.getGastosRefacturablesGasto(gasto.getId())));
 
 		}
 
@@ -445,6 +475,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if(Checks.esNulo(gastoProveedor.getGestoria())) {
 			Filter filtroTipoImpuestoIndirecto = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTiposImpuesto.TIPO_IMPUESTO_IVA);
 			detalleEconomico.setImpuestoIndirectoTipo(genericDao.get(DDTiposImpuesto.class, filtroTipoImpuestoIndirecto));
+		
+			if(!Checks.esNulo(dto.getGastoRefacturable())) {
+				detalleEconomico.setGastoRefacturable(dto.getGastoRefacturable());		
+			}
+			
 		}
 		genericDao.save(GastoDetalleEconomico.class, detalleEconomico);
 
@@ -473,6 +508,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoProveedor.setGastoGestion(gestion);
 		gastoProveedor.setGastoInfoContabilidad(contabilidad);
 		
+		if(DDDestinatarioGasto.CODIGO_HAYA.equals(gastoProveedor.getDestinatarioGasto().getCodigo()) && gastoProveedor.getGastoDetalleEconomico().getGastoRefacturable()) {
+			gastoProveedor = asignarCuentaContableYPartidaGasto(gastoProveedor);
+		}
+		
 		//creamos el contenedor en el gestor documental
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Integer idExpediente;
@@ -481,6 +520,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				logger.debug("GESTOR DOCUMENTAL [ crearGasto para " + gastoProveedor.getNumGastoHaya() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
 			} catch (GestorDocumentalException gexc) {
 				logger.error("error creando el contenedor del gasto",gexc);
+			}
+		}
+		
+		if(!Checks.estaVacio(dto.getGastoRefacturadoGrid())){
+			for (String numGasto : dto.getGastoRefacturadoGrid()) {				
+			
+				Filter FiltraGastos = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.valueOf(numGasto));
+				GastoProveedor gastoRefacturableHaya = genericDao.get(GastoProveedor.class, FiltraGastos);
+				
+				if(!Checks.esNulo(gastoRefacturableHaya)) {
+					GastoRefacturable gastoRefacturable = new GastoRefacturable();
+					gastoRefacturable.setGastoProveedor(gastoProveedor.getId());
+					gastoRefacturable.setGastoProveedorRefacturado(gastoRefacturableHaya.getId());
+					genericDao.save(GastoRefacturable.class, gastoRefacturable);
+				}	
 			}
 		}
 
@@ -543,6 +597,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
 		DtoFichaGastoProveedor dtoIni = gastoToDtoFichaGasto(gastoProveedor);
 		
+		Filter facturadosGastoId = genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", id);
+		GastoRefacturable gastoRefacturable = genericDao.get(GastoRefacturable.class, facturadosGastoId);
+		Boolean esGastoHijo = false;
+		Long idGastoPadre = null;
+		Long numGastoPadre = null;
+		if (!Checks.esNulo(gastoRefacturable)) {
+			esGastoHijo = true;
+			idGastoPadre = gastoRefacturable.getGastoProveedor();
+			if (!Checks.esNulo(idGastoPadre)) {
+				Filter gastoProveedorId = genericDao.createFilter(FilterType.EQUALS, "id", idGastoPadre);
+				GastoProveedor gastoPadre = genericDao.get(GastoProveedor.class, gastoProveedorId);
+				numGastoPadre = gastoPadre.getNumGastoHaya();
+			}
+		}
+		
 		try {
 			beanUtilNotNull.copyProperties(gastoProveedor, dto);
 
@@ -551,15 +620,23 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 
 		if (!Checks.esNulo(dto.getCodigoProveedorRem())) {
-			Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getCodigoProveedorRem());
-			ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroCodigoEmisorRem);
-			gastoProveedor.setProveedor(proveedor);
+			if (!esGastoHijo) {
+				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getCodigoProveedorRem());
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroCodigoEmisorRem);
+				gastoProveedor.setProveedor(proveedor);
+			} else {
+				throw new JsonViewerException("No se puede cambiar el emisor, este gasto refacturable está incluido en el gasto: "+numGastoPadre);
+			}
 		}
 
 		if (!Checks.esNulo(dto.getBuscadorNifPropietario())) {
-			Filter filtroNifPropietario = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifPropietario());
-			ActivoPropietario propietario = genericDao.get(ActivoPropietario.class, filtroNifPropietario);
-			gastoProveedor.setPropietario(propietario);
+			if (!esGastoHijo) {
+				Filter filtroNifPropietario = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dto.getBuscadorNifPropietario());
+				ActivoPropietario propietario = genericDao.get(ActivoPropietario.class, filtroNifPropietario);
+				gastoProveedor.setPropietario(propietario);
+			} else {
+				throw new JsonViewerException("No se puede cambiar el propietario, este gasto refacturable está incluido en el gasto: "+numGastoPadre);
+			}
 		}
 
 		if (!Checks.esNulo(dto.getTipoGastoCodigo())) {
@@ -602,6 +679,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				throw new JsonViewerException("El numero de gasto abonado no existe");
 			}
 
+		}
+		if(!Checks.esNulo(dto.getDestinatario()) && !DDDestinatarioGasto.CODIGO_HAYA.equals(dto.getDestinatario())){
+			if (!esGastoHijo) {
+				gastoProveedor.getGastoDetalleEconomico().setGastoRefacturable(false);
+			} else {
+				throw new JsonViewerException("No se puede cambiar el destinatario, este gasto refacturable está incluido en el gasto: "+numGastoPadre);
+			}
 		}
 
 		if (!Checks.esNulo(dto.getGastoSinActivos())) {
@@ -1021,7 +1105,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setIban(detalleGasto.getIbanAbonar());
 			dto.setTitularCuenta(detalleGasto.getTitularCuentaAbonar());
 			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
-
+			
+			/* Anyadimos el importe de los gastos refacturables asociados */
+			Double importeGastosRefacturables = 0.0;
+			
+			for (GastoProveedor gastoRefactu : getGastosRefacturablesGasto(gasto.getId())) {
+				if(!Checks.esNulo(gastoRefactu.getGastoDetalleEconomico()) && !Checks.esNulo(gastoRefactu.getGastoDetalleEconomico().getImporteTotal())) {
+					importeGastosRefacturables += gastoRefactu.getGastoDetalleEconomico().getImporteTotal();
+				}
+			}
+			
+			dto.setImporteGastosRefacturables(importeGastosRefacturables);
+			
+			
+			if(Checks.esNulo(detalleGasto.getGastoRefacturable()) || (!Checks.esNulo(detalleGasto.getGastoRefacturable()) && detalleGasto.getGastoRefacturable())) { 
+				dto.setGastoRefacturableB(detalleGasto.getGastoRefacturable());
+			}else {
+				dto.setGastoRefacturableB(false);
+			}
+			
+			dto.setBloquearCheckRefacturado(!isPosibleRefacturable(gasto));
+			
 			if (!Checks.esNulo(detalleGasto.getPagadoConexionBankia())) {
 				dto.setPagadoConexionBankia(detalleGasto.getPagadoConexionBankia() == 1 ? true : false);
 			}
@@ -1194,6 +1298,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				}
 				DtoDetalleEconomicoGasto dtoFin = detalleEconomicoToDtoDetalleEconomico(gasto);
+				
+				if(!Checks.esNulo(dto.getGastoRefacturableB())) {
+					detalleGasto.setGastoRefacturable(dto.getGastoRefacturableB());					
+				}
+				
+				if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo()) && gasto.getGastoDetalleEconomico().getGastoRefacturable()) {
+					gasto = asignarCuentaContableYPartidaGasto(gasto);
+				}
 				
 				boolean cambios = hayCambiosGasto(dtoIni, dtoFin, gasto);
 				if(!cambios && (DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) 
@@ -2934,15 +3046,35 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 1);
 			Filter filtroCuentaNoArrendamiento= genericDao.createFilter(FilterType.EQUALS, "cuentaArrendamiento", 0);
 			
+			/*HREOS-7241. Calculamos si tenemos que filtrar por REFACTURABLE 0 (si el gasto no es refacturable) /1 (si el gasto es facturable)*/
+			int filtrarRefacturar = 0;
+			if(this.esGastoRefacturable(gasto)) {
+				filtrarRefacturar = 1;
+			} 
+			
+			Filter filtroRefacturablePP = genericDao.createFilter(FilterType.EQUALS, "partidaRefacturable", filtrarRefacturar);
+			Filter filtroRefacturableCC = genericDao.createFilter(FilterType.EQUALS, "cuentaRefacturable", filtrarRefacturar);
+			/*HREOS*/
+			
+			/* HREOS-7241 Se quita el filtro propietario a peticion de Daniel Albert (39/07/19)
+			 * Filter filtroPropietario =  genericDao.createFilter(FilterType.NULL, "propietario.id");
+			if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo()) && gasto.getGastoDetalleEconomico().getGastoRefacturable()) {
+				if(DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))
+					filtroPropietario =  genericDao.createFilter(FilterType.EQUALS, "propietario.nombre", "Refacturación Sareb");
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))
+					filtroPropietario =  genericDao.createFilter(FilterType.EQUALS, "propietario.nombre", "Central técnica Bankia");
+			}*/
+			
 			todosActivoAlquilados = estanTodosActivosAlquilados(gasto);
-				
+			
 				//Obtener la configuracion de la Partida Presupuestaria a nivel de subcartera
-				ConfigPdaPresupuestaria partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento,filtroBorrado);
-				ConfigPdaPresupuestaria partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento,filtroBorrado);
-				
+				//A raiz de HREOS-7241, se anyade un nuevo filtro en el caso que sea gasto refacturable. CPP_REFACTURABLE = 1
+				ConfigPdaPresupuestaria partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/ ,filtroBorrado, filtroRefacturablePP);
+				ConfigPdaPresupuestaria partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturablePP);
+			
 				if(!Checks.esNulo(gasto.getSubcartera())) {
-					partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado);
-					partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,filtroBorrado);
+					partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento/*,filtroPropietario*/ ,filtroBorrado, filtroRefacturablePP);
+					partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturablePP);
 				}
 				
 				if(!Checks.esNulo(partidaArrendada) || !Checks.esNulo(partidaNoArrendada)){
@@ -2959,7 +3091,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					if(Checks.esNulo(partidaArrendada) || Checks.esNulo(partidaNoArrendada)){
 						if(!todosActivoAlquilados){
 							if(Checks.esNulo(partidaNoArrendada)){
-								partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento,filtroBorrado);
+								partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento, /*filtroPropietario,*/filtroBorrado, filtroRefacturablePP);
 								if(!Checks.esNulo(partidaNoArrendada)){
 									gastoInfoContabilidad.setPartidaPresupuestaria(partidaNoArrendada.getPartidaPresupuestaria());	
 								} else {
@@ -2968,7 +3100,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							}
 						} else {
 							if(Checks.esNulo(partidaArrendada)){
-								partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento,filtroBorrado);
+								partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento, /*filtroPropietario,*/filtroBorrado, filtroRefacturablePP);
 								if(!Checks.esNulo(partidaArrendada)){
 									gastoInfoContabilidad.setPartidaPresupuestaria(partidaArrendada.getPartidaPresupuestaria());		
 								} else {
@@ -2979,12 +3111,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				}
 				//Obtener la configuracion de la Cuenta Contable a nivel de subcartera
-				ConfigCuentaContable cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento,filtroBorrado);
-				ConfigCuentaContable cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento,filtroBorrado);
-				
+				//A raiz de HREOS-7241, se anyade un nuevo filtro en el caso que sea gasto refacturable. CCC_REFACTURABLE = 1
+				ConfigCuentaContable cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
+				ConfigCuentaContable cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
+					
 				if(!Checks.esNulo(gasto.getSubcartera())) {
-					cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado);
-					cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,filtroBorrado);
+					cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,/*filtroPropietario,*/filtroBorrado, filtroRefacturableCC);
+					cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,/*filtroPropietario,*/filtroBorrado, filtroRefacturableCC);
 				}
 				
 				if(!Checks.esNulo(cuentaArrendada) || !Checks.esNulo(cuentaNoArrendada)){
@@ -3001,7 +3134,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					if(Checks.esNulo(cuentaArrendada) || Checks.esNulo(cuentaNoArrendada)){
 						if(!todosActivoAlquilados){
 							if(Checks.esNulo(cuentaNoArrendada)){
-								cuentaNoArrendada = genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento,filtroBorrado);
+								cuentaNoArrendada = genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
 								if(!Checks.esNulo(cuentaNoArrendada)){
 									gastoInfoContabilidad.setCuentaContable(cuentaNoArrendada.getCuentaContable());	
 								} else {
@@ -3010,7 +3143,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							}
 						} else {
 							if(Checks.esNulo(cuentaArrendada)){
-								cuentaArrendada = genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento,filtroBorrado);
+								cuentaArrendada = genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
 								if(!Checks.esNulo(cuentaArrendada)){
 									gastoInfoContabilidad.setCuentaContable(cuentaArrendada.getCuentaContable());
 								} else {
@@ -3291,5 +3424,231 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		List<VTasasImpuestos>  listTasasImpuestos = new ArrayList<VTasasImpuestos>();
 		listTasasImpuestos = genericDao.getList(VTasasImpuestos.class);
 		return listTasasImpuestos;
+	}
+
+	@Override
+	public List<String> getGastosRefacturados(String listaGastos, String nifPropietario) {
+		List<VGastosRefacturados>  listaVistaGastos = new ArrayList<VGastosRefacturados>();
+		List<String> listaGastosFinales = new ArrayList<String>();
+
+		if(!Checks.esNulo(listaGastos)) {
+			listaVistaGastos = gastoDao.getGastosRefacturados(listaGastos);
+			if(!Checks.estaVacio(listaVistaGastos)) {
+				for (VGastosRefacturados vGastosRefacturado : listaVistaGastos) {
+					GastoProveedor gastoProveedorRefacturable = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(vGastosRefacturado.getNumGastoHaya())));
+					if (this.gastoMismoPropietario(nifPropietario, gastoProveedorRefacturable)) {
+						listaGastosFinales.add(vGastosRefacturado.getNumGastoHaya());
+					}
+				}
+			}
+		}
+		
+		return listaGastosFinales;
+	}
+	@Override
+	public List<String> getGastosNoRefacturados(String gastos, List<String> gastosRefacturables) {
+		List<String> gastosTotales = new ArrayList<String>();
+		List<String> gastosNoRefacturables = new ArrayList<String>();
+			gastosTotales= Arrays.asList(gastos.split(","));
+			for (String gasto : gastosTotales) {
+				 if(!gastosRefacturables.contains(gasto)){
+					 gastosNoRefacturables.add(gasto);
+				 }
+			}
+
+		return gastosNoRefacturables;
+	}
+	
+	
+	@Override
+	public Boolean isCarteraPropietarioBankiaSareb(ActivoPropietario propietario) {
+		Boolean isCarteraPropietarioBankiaSareb = false;
+		if(!Checks.esNulo(propietario) && !Checks.esNulo(propietario.getCartera())) {
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(propietario.getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_SAREB.equals(propietario.getCartera().getCodigo())) {
+				isCarteraPropietarioBankiaSareb = true;
+			}
+		}
+		return isCarteraPropietarioBankiaSareb;
+	}
+	
+	@Override
+	public List<Long> getGastosRefacturablesGastoCreado(Long id) {
+		List<GastoRefacturable> listaDeGastosRefacturablesDelGasto = new ArrayList<GastoRefacturable>();
+		GastoProveedor gastoProveedor = new GastoProveedor();
+		List<Long> listaNumGastoHayaGastosRefacurables = new ArrayList<Long>();
+		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(id);
+		
+		for (GastoRefacturable gastoRefacturable : listaDeGastosRefacturablesDelGasto) {
+			if(!Checks.esNulo(gastoRefacturable.getGastoProveedorRefacturado())) {
+				gastoProveedor = gastoDao.getGastoById(gastoRefacturable.getGastoProveedorRefacturado());
+				if(!Checks.esNulo(gastoProveedor)) {
+					listaNumGastoHayaGastosRefacurables.add(gastoProveedor.getNumGastoHaya());
+				}
+			}	
+		}
+				
+		return listaNumGastoHayaGastosRefacurables;
+	}
+	
+	@Override
+	public List<GastoProveedor> getGastosRefacturablesGasto(Long id) {
+		List<GastoRefacturable> listaDeGastosRefacturablesDelGasto = new ArrayList<GastoRefacturable>();
+		GastoProveedor gastoProveedor = new GastoProveedor();
+		List<GastoProveedor> listaGastosRefacturables = new ArrayList<GastoProveedor>();
+		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(id);
+		
+		for (GastoRefacturable gastoRefacturable : listaDeGastosRefacturablesDelGasto) {
+			if(!Checks.esNulo(gastoRefacturable.getGastoProveedorRefacturado())) {
+				gastoProveedor = gastoDao.getGastoById(gastoRefacturable.getGastoProveedorRefacturado());
+				if(!Checks.esNulo(gastoProveedor)) {
+					listaGastosRefacturables.add(gastoProveedor);
+				}
+			}	
+		}
+				
+		return listaGastosRefacturables;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista) {
+		try {
+			Long idPadre = Long.valueOf(idGasto);
+
+			for (String gasto : gastosRefacturablesLista) {
+				GastoProveedor gastoProveedorRefacturable = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(gasto)));
+				if (!Checks.esNulo(gastoProveedorRefacturable)) {
+					if(!gastoDao.updateGastosRefacturablesSiExiste(gastoProveedorRefacturable.getId(), usuarioApi.getUsuarioLogado().getUsername())) {
+						GastoRefacturable gastoRefacturableNuevo = new GastoRefacturable();
+						gastoRefacturableNuevo.setGastoProveedor(idPadre);
+						gastoRefacturableNuevo.setGastoProveedorRefacturado(gastoProveedorRefacturable.getId());
+						genericDao.save(GastoRefacturable.class, gastoRefacturableNuevo);
+					}
+				}
+			}
+		}catch(Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean eliminarGastoRefacturado(Long idGasto, Long numGastoRefacturado) {
+		List<GastoRefacturable> listaDeGastosRefacturablesDelGasto = new ArrayList<GastoRefacturable>();
+		Boolean noTieneGastosRefacturados = false;
+		
+		Filter gastoRefacturadoNum = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", numGastoRefacturado);
+		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, gastoRefacturadoNum);
+		
+		Filter gastoId = genericDao.createFilter(FilterType.EQUALS, "idGastoProveedor", idGasto);
+		Filter gastoRefacturadoId = genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gastoProveedor.getId());
+		GastoRefacturable gastoRefacturable = genericDao.get(GastoRefacturable.class, gastoId, gastoRefacturadoId);
+		
+		gastoRefacturable.getAuditoria().setBorrado(true);
+		genericDao.update(GastoRefacturable.class, gastoRefacturable);
+		
+		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(idGasto);
+		if(Checks.estaVacio(listaDeGastosRefacturablesDelGasto)) {
+			noTieneGastosRefacturados = true;
+			
+			Filter filterGastoId = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+			GastoDetalleEconomico gastoDetalleEconomico = genericDao.get(GastoDetalleEconomico.class, filterGastoId);
+			
+			gastoDetalleEconomico.setGastoRefacturable(false);
+			
+			genericDao.update(GastoDetalleEconomico.class, gastoDetalleEconomico);
+		}
+		
+		return noTieneGastosRefacturados;
+		
+	}
+	
+	/*HREOS-7241*/
+	public boolean esGastoRefacturable(GastoProveedor gasto) {
+		
+		if(!Checks.esNulo(gasto.getGastoDetalleEconomico())) {
+			if(!Checks.esNulo(gasto.getGastoDetalleEconomico().getGastoRefacturable())) {
+				return gasto.getGastoDetalleEconomico().getGastoRefacturable();//Devolvemos el valor del campo, ya que puede ser true o false
+			} else { //No tiene informado el campo gasto refacturable en el detalle del gasto
+				return false;
+			}
+		} else { //No tiene detalle de gasto
+			return false;
+		}
+		
+	}
+	
+	private boolean gastoMismoPropietario(String nifPropietario, GastoProveedor gastoProveedorRefacturable) {
+		boolean mismoPropietario = false;
+		if(!Checks.esNulo(nifPropietario)) {	
+			if (!Checks.esNulo(gastoProveedorRefacturable) && !Checks.esNulo(gastoProveedorRefacturable.getPropietario())) {
+				mismoPropietario = nifPropietario.equals(gastoProveedorRefacturable.getPropietario().getDocIdentificativo());
+			}
+		}
+		return mismoPropietario;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public void validarGastosARefactorar(String idGasto, String listaGastos) {
+		List<String> listaGastosRefacturables = Arrays.asList(listaGastos.split("\\s*,\\s*"));
+		Filter gastoPadreId = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idGasto));
+		GastoProveedor gastoPadre = genericDao.get(GastoProveedor.class, gastoPadreId);
+		
+		for (String numGastoRefacturable : listaGastosRefacturables) {
+			Filter gastoHijoId = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.valueOf(numGastoRefacturable));
+			GastoProveedor gastoHijo = genericDao.get(GastoProveedor.class, gastoHijoId);
+			
+			Filter detalleEconomicoGastoId = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gastoHijo.getId());
+			GastoDetalleEconomico gastoDetalleEconomico = genericDao.get(GastoDetalleEconomico.class, detalleEconomicoGastoId);
+			
+			Filter facturadosGastoId = genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gastoHijo.getId());
+			GastoRefacturable gastoRefacturable = genericDao.get(GastoRefacturable.class, facturadosGastoId);
+			
+			if (!Checks.esNulo(gastoDetalleEconomico) && !gastoDetalleEconomico.getGastoRefacturable()) {
+				throw new JsonViewerException("El gasto "+numGastoRefacturable+" no es refacturable, por favor corrija el listado de gastos");
+			}
+			
+			if (!Checks.esNulo(gastoRefacturable)) {
+				Filter gastoPadreActualId = genericDao.createFilter(FilterType.EQUALS, "id", gastoRefacturable.getGastoProveedor());
+				GastoProveedor gastoPadreActual = genericDao.get(GastoProveedor.class, gastoPadreActualId);
+				
+				throw new JsonViewerException("El gasto "+gastoHijo.getNumGastoHaya()+" ya está refacturado en el gasto "+gastoPadreActual.getNumGastoHaya()+", por favor corrija el listado de gastos");
+			}
+			
+			if (!Checks.esNulo(gastoPadre) && !Checks.esNulo(gastoHijo)
+					&& !gastoPadre.getPropietario().equals(gastoHijo.getPropietario())) {
+				throw new JsonViewerException("El gasto "+numGastoRefacturable+" no tiene el mismo propietario que el gasto "+gastoPadre.getNumGastoHaya());
+			}
+		}
+		
+	}
+	
+	@Override
+	public boolean isPosibleRefacturable(GastoProveedor gasto) {
+		boolean isPosibleRefacturable = false;
+		
+		if (!Checks.esNulo(gasto) && !Checks.esNulo(gasto.getEstadoGasto()) && !Checks.esNulo(gasto.getEstadoGasto().getCodigo()) 
+				&& !Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
+			DDCartera cartera = gasto.getPropietario().getCartera(); 
+			String estadoGasto = gasto.getEstadoGasto().getCodigo();
+			GastoRefacturable gastoPadre = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedor", gasto.getId()));
+			GastoRefacturable gastoRefacturado = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gasto.getId()));
+			if (!Checks.esNulo(cartera) 
+					&& (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
+				if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())) {
+					if(!(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
+						||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
+						||	DDEstadoGasto.PAGADO.equals(estadoGasto)
+						||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)  
+						||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto))
+						&& Checks.esNulo(gastoPadre) && Checks.esNulo(gastoRefacturado)) {
+						isPosibleRefacturable = true;
+					}
+				}
+			}
+		}
+		return isPosibleRefacturable;
 	}
 }

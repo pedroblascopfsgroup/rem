@@ -474,7 +474,11 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_ECA_ID")
     private DDEstadoCargaActivo estadoCargaActivo;  
     
-	
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
+
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -1868,6 +1872,15 @@ public class Activo implements Serializable, Auditable {
 
 	public void setEstadoCargaActivo(DDEstadoCargaActivo estadoCargaActivo) {
 		this.estadoCargaActivo = estadoCargaActivo;
+	}
+	
+	public ActivoAutorizacionTramitacionOfertas getActivoAutorizacionTramitacionOfertas() {
+		return activoAutorizacionTramitacionOfertas;
+	}
+
+	public void setActivoAutorizacionTramitacionOfertas(
+			ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas) {
+		this.activoAutorizacionTramitacionOfertas = activoAutorizacionTramitacionOfertas;
 	}
 	
 }

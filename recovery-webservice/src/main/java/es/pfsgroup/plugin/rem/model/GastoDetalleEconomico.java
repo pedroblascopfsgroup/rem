@@ -173,6 +173,9 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     @JoinColumn(name = "DD_TRG_ID")
     private DDTipoRecargoGasto tipoRecargoGasto;
 
+    @Column(name = "GDE_GASTO_REFACTURABLE")
+    private Boolean gastoRefacturable;
+
 	@Version   
 	private Long version;
 
@@ -492,6 +495,14 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 
 	public void setExisteRecargo(Boolean existeRecargo) {
 		this.existeRecargo = existeRecargo;
+	}
+
+	public Boolean getGastoRefacturable() {
+		return gastoRefacturable;
+	}
+
+	public void setGastoRefacturable(Boolean gastoRefacturable) {
+		this.gastoRefacturable = gastoRefacturable;
 	}
 
 	public DDTipoRecargoGasto getTipoRecargoGasto() {

@@ -8,12 +8,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
-    'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid'],
+    'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid'],
 
     data: {
     	activo: null,
     	ofertaRecord: null,
-    	activoCondicionantesDisponibilidad: null
+    	activoCondicionantesDisponibilidad: null,
+    	editingFirstLevel: null
     },
 
     formulas: {
@@ -779,9 +780,50 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	    esSuperUsuario: function(get){
 	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
-		}
+	    },
 
-	},
+    	esOtrosotivoAutorizacionTramitacion: function(get){
+    		
+    		var me = this;
+    		
+    		var comboOtros = get('comercial.motivoAutorizacionTramitacionCodigo');
+    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == comboOtros){
+    			return true;
+    		}
+    		me.set('comercial.observacionesAutoTram', null);
+    			
+			return false;
+    	},
+    	
+    	esSelecionadoAutorizacionTramitacion: function(get){
+    		
+    		var me = this;
+    		var todoSelec = get('comercial.motivoAutorizacionTramitacionCodigo');
+    		var obsv = get('comercial.observacionesAutoTram');
+    		var editable = get('editingFirstLevel');
+    		if(editable){
+	    		if(todoSelec != undefined && todoSelec != null){
+		    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == todoSelec){
+		    			if(obsv){
+		    				return true;
+		    			}
+		    			return false;
+		    		} else {
+		    			return true;
+		    		}
+	    		}
+    		}
+    		return false;
+    	},
+    	usuarioTieneFuncionTramitarOferta: function(get){
+    		var esTramitable = get('comercial.tramitable');
+    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+    			if(!esTramitable){
+    				return !funcion;
+    			}
+    		return true;
+    	}		
+	 },
 	
     stores: {
     		
@@ -1448,6 +1490,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
     		},
     		
+    		comboTipoSolicitud: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoSolicitudTributo'}
+				},
+				autoLoad: true
+    		},
+    		
+    		comboResultadoSolicitud: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'favorableDesfavorable'}
+				},
+				autoLoad: true
+    		},
+    		
     		comboMotivoNoAplicaComercializarActivo: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -1788,6 +1850,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    autoLoad: false
 		},
 		
+		storeActivoTributos: {
+			model: 'HreRem.model.ActivoTributos', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getActivoTributosById',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
 		comboTipoComercializarActivo: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -2059,6 +2130,34 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	        	{"codigo":"0", "descripcion":"No"},
 	        	{"codigo":"1", "descripcion":"Si"}
 	    	]
+		},
+		
+		comboSiNoPlusvalia: {
+			data : [
+		        {"codigo":"01", "descripcion":"Si"},
+		        {"codigo":"02", "descripcion":"No"}
+		    ]
+		},    		
+		
+		storeAdjuntosPlusvalias: {
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AdjuntosPlusvalias',
+      	     proxy: {
+      	        type: 'uxproxy',
+      	        remoteUrl: 'activo/getListAdjuntosPlusvalia',
+      	        extraParams: {id: '{activo.id}'}
+          	 }
+		},
+		
+		storeDatosActivo: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ListaActivoGrid',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getDatosActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			},
+			autoLoad: true
 		}
 		
      }

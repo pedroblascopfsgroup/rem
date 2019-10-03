@@ -102,6 +102,8 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON ACT.ACT_ID = OFA.ACT_ID
                                                             INNER JOIN REM01.DD_CRA_CARTERA CAR
                                                             ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
+															INNER JOIN REM01.DD_SCR_SUBCARTERA SCR
+															ON SCR.DD_CRA_ID = CAR.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
@@ -120,6 +122,8 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON ACT.ACT_ID = OFA.ACT_ID
                                                             INNER JOIN REM01.DD_CRA_CARTERA CAR
                                                             ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
+															INNER JOIN REM01.DD_SCR_SUBCARTERA SCR
+															ON SCR.DD_CRA_ID = CAR.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
@@ -306,7 +310,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     END;
 
 BEGIN
---v1.03
+--v1.04
 
     COD_RETORNO := 0;
     DBMS_OUTPUT.PUT_LINE('[INICIO] Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación.');
@@ -1223,6 +1227,7 @@ EXCEPTION
           RAISE;*/
      WHEN OTHERS THEN
 		  ROLLBACK;
+		  RAISE;
           DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
           DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
           DBMS_OUTPUT.PUT_LINE(SQLERRM);

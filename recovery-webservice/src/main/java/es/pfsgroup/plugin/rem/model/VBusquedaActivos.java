@@ -675,10 +675,10 @@ public class VBusquedaActivos implements Serializable {
 	}
 
 	public Long getApiPrimariaId() {
-		return apiPrimariaId;
+		return apiPrimarioId;
 	}
 
-	public void setApiPrimariaId(Long apiPrimariaId) {
-		this.apiPrimariaId = apiPrimariaId;
+	public void setApiPrimariaId(Long apiPrimarioId) {
+		this.apiPrimarioId = apiPrimarioId;
 	}
 }

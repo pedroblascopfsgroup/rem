@@ -515,8 +515,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     		return true;
 	     	}
 	     	return false;
-	     }
+	     },
+	     
+	 	
+	 	mostrarPrescriptorCajamar: function(get){
+	 		var me = this;
+	 		var esCajamar = me.getView().getViewModel().get('esCarteraCajamar');
+	 		var esTipoAlquiler = me.getView().getViewModel().get('esTipoAlquiler');
+	 		
+	 		if(esCajamar && !esTipoAlquiler){
+	 			return true;
+	 		}
+	 		
+	 		return false;
+	 	}
 	 },
+	 
 
 
     stores: {

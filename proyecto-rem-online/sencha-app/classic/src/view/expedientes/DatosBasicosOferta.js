@@ -148,7 +148,7 @@ beforeedit: 'numVisitaIsEditable'
 						bind:{
 							store:'{storeComboGestorPrescriptor}',
 							value:'{datosbasicosoferta.idGestorComercialPrescriptor}',
-							hidden: '{!esCarteraCajamar}'
+							hidden: '{!mostrarPrescriptorCajamar}'
 						}
 					}, {
 						xtype:'datefieldbase',

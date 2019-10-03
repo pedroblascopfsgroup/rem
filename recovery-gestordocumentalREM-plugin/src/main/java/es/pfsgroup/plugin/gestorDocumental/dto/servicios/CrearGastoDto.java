@@ -31,6 +31,7 @@ public class CrearGastoDto {
 	 * Objeto constituido por los metadatos para un expediente de gasto
 	 */
 	private String gastoMetadatos;
+	private Boolean gastoRefacturable;
 	
 
 	public String getUsuario() {
@@ -80,4 +81,13 @@ public class CrearGastoDto {
 	public void setGastoMetadatos(String gastoMetadatos) {
 		this.gastoMetadatos = gastoMetadatos;
 	}
+
+	public Boolean getGastoRefacturable() {
+		return gastoRefacturable;
+	}
+
+	public void setGastoRefacturable(Boolean gastoRefacturable) {
+		this.gastoRefacturable = gastoRefacturable;
+	}
+	
 }

@@ -34,7 +34,10 @@
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>paradise-framework</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>rem-logs</artifactId>
+		</dependency>
 		<!-- <dependency> <groupId>es.pfsgroup.plugin</groupId> <artifactId>recovery-message-broker</artifactId> 
 			</dependency> -->
 

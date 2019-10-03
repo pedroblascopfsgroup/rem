@@ -300,6 +300,20 @@ public interface ActivoTramiteApi {
 			String uGestion, Long idTareaProcedimiento);
 
 	ExpedienteComercial findOne(Long id);
+	
 
+	/*
+	 * Devuelve true si la tarea viene de RatificacionComiteCES, en caso contrario False
+	 * @param idTramite
+	 * @return Boolean
+	 */
+	Boolean checkVieneDeRatificacionCES(Long idTramite);
+	
+	/*
+	 * Devuelve true si el tramite tiene las tareas Informe Juridico y Resolución Pro Manzana completadas, en caso contrario False
+	 * @param idTramite
+	 * @return Boolean
+	 */
+	Boolean checkInformeJuridicoYResolucionManzanaCompletadas(Long idTramite);
 }
 

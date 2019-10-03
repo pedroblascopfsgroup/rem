@@ -95,6 +95,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'fechaVenta',
     			type:'date',
     			dateFormat: 'c' 
+    		}, 
+    		{
+    			name: 'fechaContabilizacionReserva',
+    			type: 'date',
+    			dateFormat: 'c'
     		},
     		{
     			name: 'mediador'
@@ -256,18 +261,6 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'fechaRecomendacionCes',
     			type:'date', 
         		dateFormat: 'c'
-    		},
-    		{
-			name:'fechaAprobacionProManzana',
-			convert: function(value) {
-    				if (!Ext.isEmpty(value)) {
-						if  ((typeof value) == 'string') {
-	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-	    				} else {
-	    					return value;
-	    				}
-    				}
-    			}
     		},
 			{
 				name: 'esCarteraLiberbankVenta',

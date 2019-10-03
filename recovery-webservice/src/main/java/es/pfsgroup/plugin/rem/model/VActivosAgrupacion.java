@@ -124,7 +124,7 @@ public class VActivosAgrupacion implements Serializable {
 
 	@Column(name = "ESTADO_TITULO")
 	private String estadoTitulo;
-
+	
 	@Column(name = "ES_PISO_PILOTO")
 	private Boolean esPisoPiloto;
 

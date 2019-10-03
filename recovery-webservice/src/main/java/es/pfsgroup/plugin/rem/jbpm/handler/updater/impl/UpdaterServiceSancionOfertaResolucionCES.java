@@ -118,7 +118,7 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 								}
 	
 							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) 
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO_CES);
+								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES);
 						}
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

@@ -2416,6 +2416,25 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	        }
         });
     },
+    T017_ResolucionArrowValidacion: function(){
+    	var me = this;
+    	var comboResolucion = me.down('[name=comboResolucion]');
+    	var comboContraoferta = me.down('[name=numImporteContra]');
+    	me.deshabilitarCampo(comboContraoferta);
+		
+    	comboResolucion.addListener('change', function(){
+	        if(comboResolucion.value == '03'){
+	        	me.habilitarCampo(comboContraoferta);
+	        	comboContraoferta.allowBlank = false;
+	        	comboContraoferta.validate();
+	        }else{
+	        	me.deshabilitarCampo(comboContraoferta);
+	        	comboContraoferta.reset();
+	        	comboContraoferta.allowBlank = true;
+	        	comboContraoferta.validate();
+	        }
+        });
+    },
     T017_RespuestaOfertantePMValidacion: function () {
     	var me = this;
     	var comboRespuestaOfertante = me.down( '[name=comboRespuesta]' ),
@@ -2463,6 +2482,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			fechaRespuesta.validate();
     },
     T017_ResolucionPROManzanaValidacion: function () {
+    	var me = this ;
+    	var comboRespuesta = me.down('[name=comboRespuesta]'),
+    		fechaRespuesta = me.down('[name=fechaRespuesta]');
+    	
+    		me.campoObligatorio(comboRespuesta);
+    		comboRespuesta.validate();
+    		me.campoObligatorio(fechaRespuesta);
+    		me.desbloquearCampo(fechaRespuesta);
+    		fechaRespuesta.validate();
+    },
+    T017_ResolucionDivarianValidacion: function () {
     	var me = this ;
     	var comboRespuesta = me.down('[name=comboRespuesta]'),
     		fechaRespuesta = me.down('[name=fechaRespuesta]');

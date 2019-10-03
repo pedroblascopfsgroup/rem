@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
-    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel'],
+    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
+    'HreRem.model.HistoricoTramtitacionTituloModel'],
 
     data: {
     	activo: null,
@@ -664,6 +665,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 },
+		 
+		 isCarteraDivarian: function(get){
+			 var isDivarian = get('activo.isCarteraDivarian');
+			 if(isDivarian){
+				 return true;
+			 }
+			 return false;
+		 },
 		 getTiposOfertasUAs: function (get) {
 			var unidadAlquilable = get('activo.unidadAlquilable');
 		 	tiposDeOferta = new Ext.data.Store({
@@ -764,11 +773,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	}
 	    },
 	    
+	    esSubcarteraDivarian: function(get){
+			return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIAN'];
+		},
+
 	    esSuperUsuario: function(get){
 	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
-	    }
-		
-	 },
+		}
+
+	},
 	
     stores: {
     		
@@ -1962,7 +1975,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getCalificacionNegativa',
 				extraParams: {id: '{activo.id}'}
-			}
+			},
+			autoLoad: true
 		},
 		
    		comboDDTipoTituloActivoTPA: {
@@ -1972,6 +1986,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
    				extraParams: {numActivo: '{activo.numActivo}'}
 			}
+		},
+		
+		storeHistoricoTramitacionTitulo:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoTramtitacionTituloModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoTramitacionTitulo',
+				extraParams: {id: '{activo.id}'}
+			},
+
+			autoLoad: true
 		},
 
 		comboServicerActivo: {

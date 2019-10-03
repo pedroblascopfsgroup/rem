@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -74,6 +76,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String BUZON_REM = "buzon.rem";
 	public static final String BUZON_PFS = "buzon.pfs";
 	public static final String USU_PROVEEDOR_ELECNOR = "proveedor.elecnor";
+	public static final String CODIGO_GESTORIA_ADMINISTRACION = "GIAADMT";
 	
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
@@ -166,4 +169,26 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public Usuario usuarioTareaApple(String codigoTarea);
 	
 	public Usuario supervisorTareaApple(String codigoTarea);
+
+	/**
+	 * Obtiene la lista de usuarios de gestorías
+	 * @param tipoGestor
+	 * @return
+	 */
+	public List<Usuario> getUsuariosGestorias();
+
+	/**
+	 * Mediante el usario logado obtenemos si el grupo de este es o no una gestoría
+	 * @param usuario
+	 * @return
+	 */
+	public Usuario isGestoria(Usuario usuario);
+
+	/**
+	 * Devuelve el usuario de gestoria por el tipo de gestor
+	 * @param usuario
+	 * @return
+	 */
+	public Usuario usuarioGestoria(Usuario grupoUsuario, String tipoGestor);
+
 }

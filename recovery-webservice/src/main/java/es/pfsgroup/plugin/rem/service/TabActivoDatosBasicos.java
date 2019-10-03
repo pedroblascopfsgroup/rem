@@ -227,6 +227,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}
 		
+		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+			BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
+		}
+			
 		if (activo.getMotivoActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "motivoActivo", activo.getMotivoActivo());
 		}

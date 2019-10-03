@@ -93,6 +93,16 @@ public class DtoActivoFilter extends WebDto {
 	private String codigoPromocionPrinex;
 	private String tipoTituloPosesorio;
 	private String estadoComunicacionGencatCodigo;
+	private Boolean usuarioGestoria;
+	private String gestoriaAdmision;
+	private String gestoriaAdministracion;
+	private String gestoriaFormalizacion;
+	private String fasePublicacionCodigo;
+	private String fasePublicacionDescripcion;
+	private String gestorPublicacionUsername;
+	private Long numAgrupacion;
+	private String direccionTerritorialCodigo;
+	private Long apiPrimariaId;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -591,5 +601,65 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setEstadoComunicacionGencatCodigo(String estadoComunicacionGencatCodigo) {
 		this.estadoComunicacionGencatCodigo = estadoComunicacionGencatCodigo;
-	}	
+	}
+	public Boolean getUsuarioGestoria() {
+		return usuarioGestoria;
+	}
+	public void setUsuarioGestoria(Boolean usuarioGestoria) {
+		this.usuarioGestoria = usuarioGestoria;
+	}
+	public String getGestoriaAdministracion() {
+		return gestoriaAdministracion;
+	}
+	public void setGestoriaAdministracion(String gestoriaAdministracion) {
+		this.gestoriaAdministracion = gestoriaAdministracion;
+	}
+	public String getGestoriaAdmision() {
+		return gestoriaAdmision;
+	}
+	public void setGestoriaAdmision(String gestoriaAdmision) {
+		this.gestoriaAdmision = gestoriaAdmision;
+	}
+	public String getGestoriaFormalizacion() {
+		return gestoriaFormalizacion;
+	}
+	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
+		this.gestoriaFormalizacion = gestoriaFormalizacion;
+	}
+	public String getFasePublicacionCodigo() {
+		return fasePublicacionCodigo;
+	}
+	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
+		this.fasePublicacionCodigo = fasePublicacionCodigo;
+	}
+	public String getFasePublicacionDescripcion() {
+		return fasePublicacionDescripcion;
+	}
+	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
+		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
+	}
+	public String getGestorPublicacionUsername() {
+		return gestorPublicacionUsername;
+	}
+	public void setGestorPublicacionUsername(String gestorPublicacionUsername) {
+		this.gestorPublicacionUsername = gestorPublicacionUsername;
+	}
+	public Long getNumAgrupacion() {
+		return numAgrupacion;
+	}
+	public void setNumAgrupacion(Long numAgrupacion) {
+		this.numAgrupacion = numAgrupacion;
+	}
+	public String getDireccionTerritorialCodigo() {
+		return direccionTerritorialCodigo;
+	}
+	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
+		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
+	}
+	public Long getApiPrimariaId() {
+		return apiPrimariaId;
+	}
+	public void setApiPrimariaId(Long apiPrimariaId) {
+		this.apiPrimariaId = apiPrimariaId;
+	}
 }

@@ -79,6 +79,47 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		{
     			name:'tipoVpoDescripcionLarga'
     		},
+    		// Informacion relacionada con VPO
+    		{
+    			name:'vigencia',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'comunicarAdquisicion'
+    		},
+    		{
+    			name:'necesarioInscribirVpo'
+    		},
+    		{
+    			name:'libertadCesion'
+    		},
+    		{
+    			name:'renunciaTanteoRetrac'
+    		},
+    		{
+    			name:'visaContratoPriv'
+    		},
+    		{
+    			name:'venderPersonaJuridica'
+    		},
+    		{
+    			name:'minusvalia'
+    		},
+    		{
+    			name:'inscripcionRegistroDemVpo'
+    		},
+    		{
+    			name:'ingresosInfNivel'
+    		},
+    		{
+    			name:'residenciaComAutonoma'
+    		},
+    		{
+    			name:'noTitularOtraVivienda'
+    		},    		
+    		
+    		
     		{
     			name:'vpo',
     			convert: function(value) {

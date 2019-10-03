@@ -83,6 +83,12 @@ Ext.define('HreRem.model.BusquedaActivo', {
     		{
     			name: 'longitud',
     			type: 'number'
+    		},
+    		{
+    			name: 'gestorPublicacionUsername'
+    		},
+    		{
+    			name: 'fasePublicacionDescripcion'
     		}
     		
         

@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
@@ -2929,6 +2930,49 @@ public class ActivoController extends ParadiseJsonController {
 	public List<DtoActivoDatosRegistrales> getCalificacionNegativabyId(Long id) {
 		return activoApi.getActivoCalificacionNegativaCodigos(id);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoTramitacionTitulo(Long id, ModelMap model) {
+		try {
+			model.put(RESPONSE_DATA_KEY, activoApi.getHistoricoTramitacionTitulo(id));
+			} catch (Exception e) {
+				logger.error("error en activoController", e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, @RequestParam Long idActivo, ModelMap model) {
+		try {
+			boolean success = activoApi.createHistoricoTramtitacionTitulo(tramitacionDto, idActivo);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, ModelMap model) {
+		try {
+			boolean success = activoApi.updateHistoricoTramtitacionTitulo(tramitacionDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2947,4 +2991,47 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, ModelMap model) {
+		try {
+			boolean success = activoApi.destroyHistoricoTramtitacionTitulo(tramitacionDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboApiPrimaria(ModelMap model) {
+				
+		try{
+			model.put(RESPONSE_DATA_KEY, activoApi.getComboApiPrimaria());
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping(method = RequestMethod.GET)
+//	public ModelAndView bloquearChecksComercializacion(String idActivo, Integer action, ModelMap model) {
+//		Activo activo = activoDao.getActivoById(Long.parseLong(idActivo));
+//		try{
+//			model.put(RESPONSE_DATA_KEY, activoApi.bloquearChecksComercializacionActivo(activo, action));
+//		} catch (Exception e) {
+//			logger.error("error en activoController", e);
+//			model.put(RESPONSE_SUCCESS_KEY, false);
+//			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+//		}
+//		
+//		return createModelAndViewJson(model);
+//	}
 }

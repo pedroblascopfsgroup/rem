@@ -610,6 +610,56 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		bind: {
 							    			store: '{comboEstadoComunicacionGencat}'
 							    		}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.direccion.territorial'),
+							    		name: 'direccionTerritorialCodigo',
+							    		bind: {
+							    			store: '{comboDireccionTerritorial}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.fase.de.publicacion'),
+							    		name: 'fasePublicacionCodigo',
+							    		bind: {
+							    			store: '{comboFasePublicacion}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'currencyfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.numero.de.agrupacion'),
+							    		name: 'numAgrupacion'
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.api.primaria'),
+							    		name: 'apiPrimariaId',
+							    		editable: true,
+							    		valueField : 'id',
+										displayField : 'nombre',
+							    		enableKeyEvents:true,
+							    		mode: 'local',
+							    		forceSelection	: false,
+							    		emptyText: 'Introduzca nombre mediador',
+										listeners: {
+											'change': function() {
+												this.getStore().clearFilter();
+											   	this.getStore().filter({
+												    property: 'nombre',
+												    value: this.getRawValue(),
+												    anyMatch: true,
+												    caseSensitive: false
+												})
+											},
+											'beforequery': function(queryEvent) {
+											 	queryEvent.combo.onLoad();
+											}
+										},
+							    		bind: {
+							    			store: '{comboApiPrimaria}'
+							    		}
 							    	}
 								]
 			            }

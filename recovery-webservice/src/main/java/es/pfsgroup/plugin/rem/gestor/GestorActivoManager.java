@@ -1,6 +1,7 @@
  package es.pfsgroup.plugin.rem.gestor;
  
- import java.util.Date;
+ import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,10 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
+import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  
@@ -511,5 +514,80 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	public Usuario supervisorTareaApple(String codigoTarea) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		return genericDao.get(Usuario.class, filtro);
+	}
+	
+ 	@Override
+	public List<Usuario> getUsuariosGestorias() {
+		List<ConfiguracionAccesoGestoria> usuarios = genericDao.getList(ConfiguracionAccesoGestoria.class);
+		List<Usuario> listaUsuariosGestorias = new ArrayList<Usuario>();
+		String username;
+		Usuario usuarioGestoria;
+		for (ConfiguracionAccesoGestoria cag : usuarios) {
+			if (!Checks.esNulo(cag.getGestoriaAdmision())) {
+				username = cag.getGestoriaAdmision();
+				usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));
+				if (!Checks.esNulo(usuarioGestoria)) {
+					listaUsuariosGestorias.add(usuarioGestoria);
+				}
+			}
+			
+			if (!Checks.esNulo(cag.getGestoriaAdministracion())) {
+				username = cag.getGestoriaAdministracion();
+				usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));
+				if (!Checks.esNulo(usuarioGestoria)) {
+					listaUsuariosGestorias.add(usuarioGestoria);
+				}
+			}
+			
+			if (!Checks.esNulo(cag.getGestoriaFormalizacion())) {
+				username = cag.getGestoriaFormalizacion();
+				usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));
+				if (!Checks.esNulo(usuarioGestoria)) {
+					listaUsuariosGestorias.add(usuarioGestoria);
+				}
+			}
+		}
+		return listaUsuariosGestorias;
+	}
+ 	
+	private ConfiguracionAccesoGestoria getConfGestoria(Usuario grupoUsuario) {
+		ConfiguracionAccesoGestoria usuariosGestorias = genericDao.get(ConfiguracionAccesoGestoria.class, genericDao.createFilter(FilterType.EQUALS, "gestoriaAdmision", grupoUsuario.getUsername()));
+		if (Checks.esNulo(usuariosGestorias)) {
+			usuariosGestorias = genericDao.get(ConfiguracionAccesoGestoria.class, genericDao.createFilter(FilterType.EQUALS, "gestoriaAdministracion", grupoUsuario.getUsername()));
+			if (Checks.esNulo(usuariosGestorias)) {
+				usuariosGestorias = genericDao.get(ConfiguracionAccesoGestoria.class, genericDao.createFilter(FilterType.EQUALS, "gestoriaFormalizacion", grupoUsuario.getUsername()));
+			}
+		}
+		return usuariosGestorias;
+	}
+ 	
+ 	@Override
+ 	public Usuario usuarioGestoria(Usuario grupoUsuario, String tipoGestor) {
+ 		Usuario usuarioGestoria = null;
+ 		ConfiguracionAccesoGestoria usuariosGestoria = getConfGestoria(grupoUsuario);
+		if (GestorActivoApi.CODIGO_GESTORIA_ADMISION.equals(tipoGestor)) {
+			usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usuariosGestoria.getGestoriaAdmision()));
+		} else if(GestorActivoApi.CODIGO_GESTORIA_ADMINISTRACION.equals(tipoGestor)) {
+			usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usuariosGestoria.getGestoriaAdministracion()));
+		} else if(GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(tipoGestor)) {
+			usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usuariosGestoria.getGestoriaFormalizacion()));
+		}
+		return usuarioGestoria;
+ 	}
+ 	
+ 	@Override
+	public Usuario isGestoria(Usuario usuario) {
+		List<GrupoUsuario> grupos = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+		List<Usuario> listaUsuariosGestorias = getUsuariosGestorias();
+		if (!Checks.estaVacio(grupos) && !Checks.estaVacio(listaUsuariosGestorias)) {
+			for (GrupoUsuario grupo : grupos) {
+				for (Usuario usuarioGestoria : listaUsuariosGestorias) {
+					if (grupo.getGrupo().getUsername().equals(usuarioGestoria.getUsername())) {
+						return grupo.getUsuario();
+					}
+				}
+			}
+		}
+		return null;
 	}
  }

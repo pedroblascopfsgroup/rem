@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -45,8 +46,8 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -57,7 +58,6 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
 
@@ -93,7 +94,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
 
 		HQLBuilder hb = new HQLBuilder(buildFrom(dto));
-
+		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
 		if (dto.getEntidadPropietariaCodigo() != null)
@@ -173,7 +174,19 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad",
 					dto.getComboSelloCalidad().equals(Integer.valueOf(1)) ? true : false);
 		}
-
+		
+		if (dto.getFasePublicacionCodigo() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
+		}
+		
+		if (dto.getDireccionTerritorialCodigo() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.direccionTerritorialCodigo", dto.getDireccionTerritorialCodigo());
+		}
+		
+		if (dto.getApiPrimariaId() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimariaId", dto.getApiPrimariaId());
+		}
+		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigoAvanzado());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoActivoCodigo", dto.getTipoActivoCodigo());
@@ -213,14 +226,41 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat",
 				dto.getEstadoComunicacionGencatCodigo());
-
+		
+		if (!Checks.esNulo(dto.getUsuarioGestoria())) {
+			String orGestorias = "";
+			if (!Checks.esNulo(dto.getGestoriaAdmision())) {
+				orGestorias += " bag.gestoriaAdmision = '" + dto.getGestoriaAdmision() + "'";
+			}
+			
+			if (Checks.esNulo(dto.getGestoriaAdmision()) && !Checks.esNulo(dto.getGestoriaAdministracion())) {
+				orGestorias += " bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
+			} else if (!Checks.esNulo(dto.getGestoriaAdmision()) && !Checks.esNulo(dto.getGestoriaAdministracion())) {
+				orGestorias += "  OR bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
+			}
+			
+			if (Checks.esNulo(dto.getGestoriaAdmision()) && Checks.esNulo(dto.getGestoriaAdministracion()) && !Checks.esNulo(dto.getGestoriaFormalizacion())) {
+				orGestorias += " bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
+			} else if (!Checks.esNulo(dto.getGestoriaAdmision()) || !Checks.esNulo(dto.getGestoriaAdministracion())) {
+				orGestorias += "  OR bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
+			}
+			
+			if (!"".equals(orGestorias)) {
+				hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where (" + orGestorias + ") AND bag.id = act.id)");
+			}
+		}
+		
+		if(!Checks.esNulo(dto.getNumAgrupacion())) {
+			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and act.id = aga.activo.id)");
+		}
+		
 		return HibernateQueryUtils.page(this, hb, dto);
 
 	}
 
 	private String buildFrom(DtoActivoFilter dto) {
-		StringBuilder sb = new StringBuilder("select act from VBusquedaActivos act ");
-
+		StringBuilder sb = new StringBuilder("select act from VBusquedaActivos act "); 
+		
 		if (!Checks.esNulo(dto.getSubcarteraCodigo()) || !Checks.esNulo(dto.getSubcarteraCodigoAvanzado())) {
 			sb.append(" join act.subcartera scr ");
 		}
@@ -228,7 +268,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
 			sb.append(" join act.tipoUsoDestino tud ");
 		}
-
+		
+		
+		
 		if (!Checks.esNulo(dto.getClaseActivoBancarioCodigo())
 				|| !Checks.esNulo(dto.getSubClaseActivoBancarioCodigo())) {
 			sb.append(" join act.activoBancario ab");
@@ -267,7 +309,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			sb.append(" join act.gestoresActivo ga ");
 			sb.append(" join ga.usuario gausu ");
 		}
-
+		
 		return sb.toString();
 	}
 
@@ -483,7 +525,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			return null;
 		}
 	}
-    
     @Override
    	public Long getUltimoHistoricoPresupuesto(Long id) {
        	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
@@ -1592,7 +1633,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				.createQuery(hb.toString()).list();
 		return trabajoList;
 		
+	}	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoProveedor> getComboApiPrimaria() {
+		HQLBuilder hb = new HQLBuilder(" from ActivoProveedor pve");
+		hb.appendWhere(" pve.tipoProveedor.codigo = '" + DDTipoProveedor.COD_MEDIADOR + "' and pve.auditoria.borrado = 0 and pve.nombre is not null and pve.fechaBaja is null ");
+		hb.orderBy("pve.nombre", "asc");
+		
+		List<ActivoProveedor> mediadores = (List<ActivoProveedor>) getHibernateTemplate().find(hb.toString());
+		
+		return mediadores;
 	}
-	
-	
 }

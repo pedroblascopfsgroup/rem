@@ -241,7 +241,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		LIBERBANK: '56',
 		MOSCATA: '57',
 		BEYOSPONGA: '59',
-		RETAMAR: '60'
+		RETAMAR: '60',
+		DIVARIAN: '150'
     },
     
     NOMBRE_SUBCARTERA: {
@@ -261,6 +262,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	GESTOR_ACTIVOS: 'HAYAGESACT',
     	GESTOR_ADMISION: 'GESTADM',
     	HAYASUPER: 'HAYASUPER',
+    	SUPERUSUARO_ADMISION: 'SUPERADMIN',
     	GESTOPDV: 'GESTOPDV',
     	SUPERVISOR_ACTIVO: 'HAYASUPACT',
     	HAYACAL: 'HAYACAL',
@@ -636,6 +638,12 @@ Ext.define('HreRem.ux.util.Constants', {
 	 
 	D_ESTADOS_CIVILES:{
 	 	COD_CASADO	:'2'
+	 },
+	 
+	 DD_ESP_ESTADO_PRESENTACION:{
+		 PRESENTACION_EN_REGISTRO:'01',
+		 CALIFICADO_NEGATIVAMENTE:'02',
+		 INSCRITO:'03'
 	 },
 	 
 	 DD_CLASE_OFERTA:{

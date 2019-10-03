@@ -2,7 +2,10 @@ package es.pfsgroup.framework.paradise.bulkUpload.api;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
+
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 
 public interface ParticularValidatorApi {
 
@@ -782,8 +785,29 @@ public interface ParticularValidatorApi {
 	 * @return true si el activo pertenece a un activo de venta.
 	 */
 	
-	public Boolean activosVendidos(String numExpedienteComercial);	
-
+	public Boolean activosVendidos(String numExpedienteComercial);
+	
+	/**
+	 * @param importe Suma de la columna de importes en la hoja
+	 * @param numExpedienteComercial
+	 * @return true si el total de la oferta es distinto a la suma de los activos en la hoja.
+	 */
+	public Boolean isTotalOfertaDistintoSumaActivos(Double importe, String numExpedienteComercial);
+	
+	/**
+	 * 
+	 * @param numExpedienteComercial
+	 * @return true si existe un activo en el Expediente Comercial con importe nulo
+	 */
+	public Boolean isNullImporteActivos(String numExpedienteComercial);
+	
+	/**
+	 * @param numExpedienteComercial
+	 * @param List <activos> contiene una lista con los activos que se supone componen la oferta 
+	 * @return false si el nº de los activos de la oferta no coincide con los de la lista 
+	 */
+	public Boolean isAllActivosEnOferta(String numExpedienteComercial, Hashtable <String, Integer> activos); 
+	
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 	Boolean existeActivoAsociado(String numActivo);

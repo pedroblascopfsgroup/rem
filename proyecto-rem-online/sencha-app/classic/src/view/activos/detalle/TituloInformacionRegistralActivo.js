@@ -19,7 +19,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 	recordClass: "HreRem.model.ActivoDatosRegistrales",
 
     requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.model.ActivoPropietario',
-    	'HreRem.view.activos.detalle.CalificacionNegativaGrid'],
+    	'HreRem.view.activos.detalle.CalificacionNegativaGrid', 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid'],
 
     initComponent: function () {
         var me = this;   
@@ -834,10 +834,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{ 
 				        	xtype: 'comboboxfieldbase',				        	
 					 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo'),
+					 		readOnly: true,
 				        	bind: {
 			            		store: '{comboEstadoTitulo}',
-			            		value: '{datosRegistrales.estadoTitulo}',
-			            		readOnly: '{datosRegistrales.unidadAlquilable}'
+			            		value: '{datosRegistrales.estadoTitulo}'
 
 			            	},
 
@@ -865,7 +865,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.registro'),
 					 		bind: {
 					 			value: '{datosRegistrales.fechaPres1Registro}',
-					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 			readOnly: '{datosRegistrales.unidadAlquilable}',
+					 			hidden: '{esSubcarteraDivarian}'
 					 		}
 						},
 						{
@@ -873,7 +874,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.envio.auto.adicion'),
 					 		bind: {
 					 			value: '{datosRegistrales.fechaEnvioAuto}',
-					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 			readOnly: '{datosRegistrales.unidadAlquilable}',
+					 			hidden: '{esSubcarteraDivarian}'
 					 		}
 						},
 						{
@@ -881,15 +883,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.segunda.presentacion.registro'),
 					 		bind: {
 					 			value: '{datosRegistrales.fechaPres2Registro}',
-					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 			readOnly: '{datosRegistrales.unidadAlquilable}',
+					 			hidden: '{esSubcarteraDivarian}'
 					 		}
 						},
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.registro'),
+		                	readOnly: true,
 					 		bind: {
-					 			value: '{datosRegistrales.fechaInscripcionReg}', 
-					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 			value: '{datosRegistrales.fechaInscripcionReg}'
 					 		},
 					 		listeners: {
 					 			change: function () {
@@ -920,6 +923,25 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 			readOnly: '{datosRegistrales.unidadAlquilable}'
 					 		}
 						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							reference:'historicotramitaciontitulo',
+							hidden: false, 
+							title: HreRem.i18n("title.historico.presentacion.registros"),
+							bind:{
+					 			hidden: '{!esSubcarteraDivarian}'
+							},
+							items :
+							[
+								{
+									xtype: "historicotramitaciontitulogrid", 
+									reference: "historicotramitaciontituloref", 
+									colspan: 3
+								}
+							]
+		           		},
 						{
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
@@ -1038,6 +1060,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		me.recargar = false;
 		me.getViewModel().data.nClicks=0;
 		me.lookupController().cargarTabData(me);
-		me.down('grid').getStore().load();
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+		});
    }
 });

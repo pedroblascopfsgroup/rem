@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +18,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 
 @Service
 @Transactional()
@@ -3487,6 +3490,64 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ "WHERE DD_EDH_CODIGO ='" + codigoEstadoDivHorizontal + "'");
 
 			return !"0".equals(resultado);		
+	}
+	
+	@Override
+	public Boolean isTotalOfertaDistintoSumaActivos(Double importe, String numExpedienteComercial ) {
+		if (!Checks.esNulo(numExpedienteComercial) && !Checks.esNulo(importe)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT (*) "
+					+ "				FROM ECO_EXPEDIENTE_COMERCIAL EXP " 
+					+ "				JOIN OFR_OFERTAS OFR " 
+					+ "				ON OFR.OFR_ID = EXP.OFR_ID "
+					+ "				WHERE EXP.ECO_NUM_EXPEDIENTE='" + numExpedienteComercial+"'"
+					+ "				AND OFR.BORRADO = 0 "
+					+ "				AND OFR.OFR_IMPORTE = "+importe);
+			return "0".equals(resultado);
+		}
+		return true;
+	}
+
+	@Override
+	public Boolean isNullImporteActivos(String numExpedienteComercial) {
+		if (Checks.esNulo(numExpedienteComercial)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT	COUNT(*) "  
+				+ "		FROM ECO_EXPEDIENTE_COMERCIAL EXP "  
+				+ "		JOIN OFR_OFERTAS OFR "  
+				+ "		ON OFR.OFR_ID = EXP.OFR_ID "  
+				+ "		JOIN ACT_OFR AXO " 
+				+ "		ON AXO.OFR_ID = OFR.OFR_ID " 
+				+ "		JOIN ACT_ACTIVO ACT " 
+				+ "		ON AXO.ACT_ID = ACT.ACT_ID "  
+				+ "		WHERE EXP.ECO_NUM_EXPEDIENTE= '" + numExpedienteComercial +"'" 
+				+ "		AND AXO.ACT_OFR_IMPORTE IS NULL"  
+				+ "		AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean isAllActivosEnOferta(String numExpedienteComercial, Hashtable <String, Integer> activos) {
+		if (Checks.esNulo(numExpedienteComercial) || Checks.estaVacio(activos)) return false; 
+		String sql = "	SELECT COUNT(*) "
+					+"			FROM ECO_EXPEDIENTE_COMERCIAL EXP " 
+					+"			JOIN OFR_OFERTAS OFR "
+					+"			ON OFR.OFR_ID = EXP.OFR_ID "
+					+"			JOIN ACT_OFR AXO "
+					+"			ON AXO.OFR_ID = OFR.OFR_ID "
+					+"			JOIN ACT_ACTIVO ACT "
+					+"			ON AXO.ACT_ID = ACT.ACT_ID "
+					+"			WHERE EXP.ECO_NUM_EXPEDIENTE='"+numExpedienteComercial+"'"
+					+"			AND OFR.BORRADO = 0 ";
+		String resultado = rawDao.getExecuteSQL(sql);
+		Enumeration <String> claves = activos.keys();
+		String condicion = "AND (";
+		while (claves.hasMoreElements()) {
+			sql += condicion + " ACT.ACT_NUM_ACTIVO='"+claves.nextElement()+"' ";
+			condicion = " OR ";
+		}
+		if (condicion.equals(" OR ")) {
+			sql += ")";
+		}
+		return resultado.equals(rawDao.getExecuteSQL(sql));
 	}
 	
 	@Override

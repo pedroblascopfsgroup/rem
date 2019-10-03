@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
@@ -57,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -1213,10 +1216,41 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
+	
+	/**
+	 * Devuelve una lista del Historico de tramitacion de titulo
+	 * @param id 
+	 * @return List<DtoHistoricoTramitacionTitulo>
+	 */
+	List<DtoHistoricoTramitacionTitulo> getHistoricoTramitacionTitulo(Long id);
+
+	/**
+	 * Guarda el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 */
+	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo);
+	
+	/**
+	 * actualiza el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 */
+	boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto);
+	
+	/**
+	 * borra el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 */
+	Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto);
 
 	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
 
 	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
+
+	List<ActivoProveedor> getComboApiPrimaria();
+
 }

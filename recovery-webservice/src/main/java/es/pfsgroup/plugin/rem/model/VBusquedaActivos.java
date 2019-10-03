@@ -272,7 +272,22 @@ public class VBusquedaActivos implements Serializable {
 	
 	@Column(name = "DD_ECG_CODIGO")
 	private String estadoComunicacionGencat;
-		
+
+	@Column(name = "DD_FSP_CODIGO")
+	private String fasePublicacionCodigo;
+	
+	@Column(name = "DD_FSP_DESCRIPCION")
+	private String fasePublicacionDescripcion;
+	
+	@Column(name = "GPUBL_USU_USERNAME")
+	private String gestorPublicacionUsername;
+
+	@Column(name = "DD_DRT_CODIGO")
+	private String direccionTerritorialCodigo;
+	
+	@Column(name = "ICO_MEDIADOR_ID")
+	private Long apiPrimariaId;
+			
 	public Long getId() {
 		return id;
 	}
@@ -626,5 +641,44 @@ public class VBusquedaActivos implements Serializable {
 	public void setEstadoComunicacionGencat(String estadoComunicacionGencat) {
 		this.estadoComunicacionGencat = estadoComunicacionGencat;
 	}
-	
+
+	public String getFasePublicacionCodigo() {
+		return fasePublicacionCodigo;
+	}
+
+	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
+		this.fasePublicacionCodigo = fasePublicacionCodigo;
+	}
+
+	public String getFasePublicacionDescripcion() {
+		return fasePublicacionDescripcion;
+	}
+
+	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
+		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
+	}
+
+	public String getGestorPublicacionUsername() {
+		return gestorPublicacionUsername;
+	}
+
+	public void setGestorPublicacionUsername(String gestorPublicacionUsername) {
+		this.gestorPublicacionUsername = gestorPublicacionUsername;
+	}
+
+	public String getDireccionTerritorialCodigo() {
+		return direccionTerritorialCodigo;
+	}
+
+	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
+		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
+	}
+
+	public Long getApiPrimariaId() {
+		return apiPrimariaId;
+	}
+
+	public void setApiPrimariaId(Long apiPrimariaId) {
+		this.apiPrimariaId = apiPrimariaId;
+	}
 }

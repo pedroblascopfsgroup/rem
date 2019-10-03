@@ -1529,6 +1529,25 @@ public class ActivoAdapter {
 			}
 		}
 		
+		Usuario usuarioGestoria = gestorActivoApi.isGestoria(usuarioLogado);
+		if (!Checks.esNulo(usuarioGestoria)) {
+			dtoActivoFiltro.setUsuarioGestoria(true);
+			Usuario usernameAdmision = gestorActivoApi.usuarioGestoria(usuarioGestoria, GestorActivoApi.CODIGO_GESTORIA_ADMISION);
+			if (!Checks.esNulo(usernameAdmision)) {
+				dtoActivoFiltro.setGestoriaAdmision(usernameAdmision.getUsername());
+			}
+			
+			Usuario usernameAdministracion = gestorActivoApi.usuarioGestoria(usuarioGestoria, GestorActivoApi.CODIGO_GESTORIA_ADMINISTRACION);
+			if (!Checks.esNulo(usernameAdministracion)) {
+				dtoActivoFiltro.setGestoriaAdministracion(usernameAdministracion.getUsername());
+			}
+			
+			Usuario usernameFormalizacion = gestorActivoApi.usuarioGestoria(usuarioGestoria, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
+			if (!Checks.esNulo(usernameFormalizacion)) {
+				dtoActivoFiltro.setGestoriaFormalizacion(usernameFormalizacion.getUsername());
+			}
+		}
+		
 		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
 	}
 
@@ -4518,6 +4537,5 @@ public class ActivoAdapter {
 	
 	public boolean isUnidadAlquilable (Long idActivo) {
 		return activoDao.isUnidadAlquilable(idActivo);
-	}
-
+	}	
 }

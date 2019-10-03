@@ -8,10 +8,11 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	saveMultiple: true,
 	refreshAfterSave: true,
 	disableValidation: false,
-	records		: ['datospublicacionactivo', 'activoCondicionantesDisponibilidad'],
-	recordsClass: ['HreRem.model.DatosPublicacionActivo', 'HreRem.model.ActivoCondicionantesDisponibilidad'],
+	records		: ['datospublicacionactivo', 'activoCondicionantesDisponibilidad', 'activoAdmision'],
+	recordsClass: ['HreRem.model.DatosPublicacionActivo', 'HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.Activo'],
 	requires	: ['HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.DatosPublicacionActivo', 'HreRem.model.CondicionEspecifica',
-					'HreRem.view.activos.detalle.HistoricoCondicionesList', 'HreRem.model.HistoricoEstadosPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList'],
+					'HreRem.view.activos.detalle.HistoricoCondicionesList', 'HreRem.model.HistoricoEstadosPublicacion',
+					'HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', 'HreRem.model.Activo'],
 	listeners	: {
 		boxready:'cargarTabData',
         activate:'onActivateTabDatosPublicacion'
@@ -23,7 +24,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 
 		var isCarteraLiberbank = me.lookupViewModel().get('activo.isCarteraLiberbank');
 
-		me.items = [
+		me.items = [			
 // Resumen estado publicación.
 					{
 						xtype:'fieldsettable',
@@ -48,6 +49,49 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								}
 							]
 					},
+					// Calidad
+					{
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						
+						title: HreRem.i18n('title.admision.calidad'),
+						items :
+							[
+					            {
+									xtype:'checkboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.admision.revision.calidad'),
+									bind: '{activoAdmision.selloCalidad}',
+									reference: 'chkbxRevisionDeptoCalidad',
+									secFunPermToEdit: 'EDITAR_SELLO_CALIDAD',
+									listeners: {
+										change: 'onChkbxRevisionDeptoCalidadChange'
+									}
+								},
+								{
+									xtype: 'displayfieldbase',
+					            	fieldLabel:  HreRem.i18n('fieldlabel.admision.gestor.calidad'),
+					            	reference: 'nomGestorCalidad',
+					            	bind:	{
+			            				value: '{activoAdmision.nombreGestorSelloCalidad}',
+			            				disabled: '{activo.unidadAlquilable}'
+					            		
+					            	}
+					 
+					            },  
+								{ 
+									xtype: 'datefieldbase',
+									formatter: 'date("d/m/Y")',
+									fieldLabel:  HreRem.i18n('fieldlabel.admision.fecha.revision'),
+									reference: 'fechaRevisionCalidad',
+									bind:		{
+										value: '{activoAdmision.fechaRevisionSelloCalidad}',
+										disabled: '{activo.unidadAlquilable}'
+									},
+									readOnly: true
+									
+								}
+							]
+					}, 
 // Estados de Publicación Venta.
 					{
 						xtype: 'fieldsettable',

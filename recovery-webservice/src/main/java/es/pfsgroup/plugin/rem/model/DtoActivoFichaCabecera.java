@@ -263,6 +263,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean checkComercializarReadOnly;
 	private Boolean checkFormalizarReadOnly;
 
+	private String nombreMediador; 
+
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2007,4 +2009,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCheckFormalizarReadOnly(Boolean checkFormalizarReadOnly) {
 		this.checkFormalizarReadOnly = checkFormalizarReadOnly;
 	}
+	
+	public String getNombreMediador() {
+		return nombreMediador;
+	}
+
+	public void setNombreMediador(String nombreMediador) {
+		this.nombreMediador = nombreMediador;
+	}
+	
 }

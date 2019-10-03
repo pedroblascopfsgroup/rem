@@ -861,6 +861,9 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'checkFormalizarReadOnly',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'nombreMediador'
     		}
     ],
     

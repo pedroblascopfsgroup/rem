@@ -68,6 +68,13 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            	handler: 'onClickGenerarHojaExcelActivos',
 			            	margin: '10 10 10 10'
 			            
+					},
+					{
+			            	xtype: 'button',
+			            	reference: 'btnDescargaPantillaCDP',
+			            	text: HreRem.i18n('title.activo.administracion.descargar.plantilla'),
+			            	handler: 'onClickDescargaPlantillaExcel',
+							margin: '10 10 10 10'
 					}
 				]
 			},

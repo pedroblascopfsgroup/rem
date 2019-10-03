@@ -103,6 +103,42 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	
 	@Column(name = "ADM_OBS_EXPROPIACION")
 	private String observacionesExpropiacion;
+	
+	@Column(name = "ADM_VIGENCIA")
+	private Date vigencia;
+	
+	@Column(name = "ADM_COMUNICAR_ADQUISICION")
+	private Integer comunicarAdquisicion;
+	
+	@Column(name = "ADM_NECESARIO_INSCR_VPO")
+	private Integer necesarioInscribirVpo;
+	
+	@Column(name = "ADM_LIBERTAD_CESION")
+	private Integer libertadCesion;
+	
+	@Column(name = "ADM_RENUNCIA_TANTEO_RETRAC")
+	private Integer renunciaTanteoRetrac;
+	
+	@Column(name = "ADM_VISA_CONTRATO_PRIVADO")
+	private Integer visaContratoPriv;
+	
+	@Column(name = "ADM_VENDER_PER_JURIDICA")
+	private Integer venderPersonaJuridica;
+	
+	@Column(name = "ADM_MINUSVALIA")
+	private Integer minusvalia;
+	
+	@Column(name = "ADM_INSCR_REGISTRO_DEMANDA")
+	private Integer inscripcionRegistroDemVpo;
+	
+	@Column(name = "ADM_INGRESOS_INF_NIVEL")
+	private Integer ingresosInfNivel;
+	
+	@Column(name = "ADM_RESIDENCIA_CM_AUTONOMA")
+	private Integer residenciaComAutonoma;
+	
+	@Column(name = "ADM_NO_TITULAR_VIVIENDA")
+	private Integer noTitularOtraVivienda;
     
     
 	
@@ -275,6 +311,102 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public Date getVigencia() {
+		return vigencia;
+	}
+
+	public void setVigencia(Date vigencia) {
+		this.vigencia = vigencia;
+	}
+
+	public Integer getComunicarAdquisicion() {
+		return comunicarAdquisicion;
+	}
+
+	public void setComunicarAdquisicion(Integer comunicarAdquisicion) {
+		this.comunicarAdquisicion = comunicarAdquisicion;
+	}
+
+	public Integer getNecesarioInscribirVpo() {
+		return necesarioInscribirVpo;
+	}
+
+	public void setNecesarioInscribirVpo(Integer necesarioInscribirVpo) {
+		this.necesarioInscribirVpo = necesarioInscribirVpo;
+	}
+
+	public Integer getLibertadCesion() {
+		return libertadCesion;
+	}
+
+	public void setLibertadCesion(Integer libertadCesion) {
+		this.libertadCesion = libertadCesion;
+	}
+
+	public Integer getRenunciaTanteoRetrac() {
+		return renunciaTanteoRetrac;
+	}
+
+	public void setRenunciaTanteoRetrac(Integer renunciaTanteoRetrac) {
+		this.renunciaTanteoRetrac = renunciaTanteoRetrac;
+	}
+
+	public Integer getVisaContratoPriv() {
+		return visaContratoPriv;
+	}
+
+	public void setVisaContratoPriv(Integer visaContratoPriv) {
+		this.visaContratoPriv = visaContratoPriv;
+	}
+
+	public Integer getVenderPersonaJuridica() {
+		return venderPersonaJuridica;
+	}
+
+	public void setVenderPersonaJuridica(Integer venderPersonaJuridica) {
+		this.venderPersonaJuridica = venderPersonaJuridica;
+	}
+
+	public Integer getMinusvalia() {
+		return minusvalia;
+	}
+
+	public void setMinusvalia(Integer minusvalia) {
+		this.minusvalia = minusvalia;
+	}
+
+	public Integer getInscripcionRegistroDemVpo() {
+		return inscripcionRegistroDemVpo;
+	}
+
+	public void setInscripcionRegistroDemVpo(Integer inscripcionRegistroDemVpo) {
+		this.inscripcionRegistroDemVpo = inscripcionRegistroDemVpo;
+	}
+
+	public Integer getIngresosInfNivel() {
+		return ingresosInfNivel;
+	}
+
+	public void setIngresosInfNivel(Integer ingresosInfNivel) {
+		this.ingresosInfNivel = ingresosInfNivel;
+	}
+
+	public Integer getResidenciaComAutonoma() {
+		return residenciaComAutonoma;
+	}
+
+	public void setResidenciaComAutonoma(Integer residenciaComAutonoma) {
+		this.residenciaComAutonoma = residenciaComAutonoma;
+	}
+
+	public Integer getNoTitularOtraVivienda() {
+		return noTitularOtraVivienda;
+	}
+
+	public void setNoTitularOtraVivienda(Integer noTitularOtraVivienda) {
+		this.noTitularOtraVivienda = noTitularOtraVivienda;
+	}
+	
 }	
 
 

@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20190928
+--## FECHA_CREACION=20191001
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-7795
 --## PRODUCTO=NO
---## Finalidad: Añadir nuevos campos en la tabla ACT_CRG_CARGA
+--## Finalidad: Añadir nuevos campos en la tabla ACT_ACTIVO
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -30,7 +30,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
-    V_TABLA VARCHAR2(50 CHAR):= 'ACT_CRG_CARGAS'; -- Nombre de la tabla 
+    V_TABLA VARCHAR2(50 CHAR):= 'ACT_ACTIVO'; -- Nombre de la tabla 
     
     --Tipos de campo
     V_TIPO_NUM_LONG VARCHAR2(250 CHAR):= 'NUMBER(16,0)';
@@ -70,7 +70,7 @@ BEGIN
                 EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT '||V_KEY_NAME_SRA||' FOREIGN KEY ('||V_COL_ECA||')
 	  								REFERENCES '||V_ESQUEMA||'.'||V_TABLA_REF_SRA||' ('||V_COL_ECA||') ON DELETE SET NULL ENABLE';
 	  	-- Añadimos el comentario al campo
-                EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COL_ECA||' IS ''Código identificador único del diccionario.'''; 					
+                EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COL_ECA||' IS ''Estado carga activo'''; 					
             ELSE
                 DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA||'.'||V_COL_ECA||'... YA existe.');
             END IF;    

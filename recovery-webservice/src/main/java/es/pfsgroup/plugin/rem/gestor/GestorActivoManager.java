@@ -505,11 +505,4 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		
 		return userTarea;
 	}
- 	
- 	@Override
- 	@Transactional(readOnly = false)
-	public Usuario supervisorTareaApple(String codigoTarea) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-		return genericDao.get(Usuario.class, filtro);
-	}
  }

@@ -6966,7 +6966,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return listaDto;
-	}	
+	}
+	
+	@Override
 	public boolean isActivoPerteneceAgrupacionRestringida(Activo activo) {
 		for(ActivoAgrupacionActivo agrupacion: activo.getAgrupaciones()){
 			if(Checks.esNulo(agrupacion.getAgrupacion().getFechaBaja())) {
@@ -6978,9 +6980,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
-
-	
-	
 
 	@Override
 	public List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo) {

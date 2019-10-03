@@ -3185,6 +3185,13 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboImpideVenta(String codEstadoCarga, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, adapter.getComboImpideVenta(codEstadoCarga));
+		return new ModelAndView("jsonView", model);
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoPlusvalia (HttpServletRequest request, HttpServletResponse response) {

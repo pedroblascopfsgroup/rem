@@ -500,9 +500,16 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     			remoteUrl: 'activo/getComboUsuarios',
     			extraParams: {idTipoGestor: '{tipoGestorSupervisor.selection.id}'}
     			}
-    		}
-	    
+    		},
     		
+    		storeComboImpideVenta: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+	    			type: 'uxproxy',
+	    			remoteUrl: 'activo/getComboImpideVenta',
+	    			extraParams: {codEstadoCarga: '{comboestadocargaref.value}'}
+    			}
+    		}
 			
      }    
 });

@@ -3344,6 +3344,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				fechaCancelacionRegistral.setValue('');
 			}
 		}
+		me.onChangeChainedCombo(combo);
 	},
 	
 

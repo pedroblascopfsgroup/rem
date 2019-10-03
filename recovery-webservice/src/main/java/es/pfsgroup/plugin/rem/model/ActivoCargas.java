@@ -22,6 +22,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
@@ -101,15 +102,16 @@ public class ActivoCargas implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "DD_SCG_ID")
     private DDSubestadoCarga subestadoCarga;
+    
+    @ManyToOne
+    @JoinColumn(name = "CRG_IMPIDE_VENTA")
+    private DDSiNo impideVenta;
 
 	@Version   
 	private Long version;
-
 	
 	@Embedded
 	private Auditoria auditoria;
-	
-	
 
 	public Long getId() {
 		return id;
@@ -237,6 +239,14 @@ public class ActivoCargas implements Serializable, Auditable {
 
 	public void setSubestadoCarga(DDSubestadoCarga subestadoCarga) {
 		this.subestadoCarga = subestadoCarga;
+	}
+
+	public DDSiNo getImpideVenta() {
+		return impideVenta;
+	}
+
+	public void setImpideVenta(DDSiNo impideVenta) {
+		this.impideVenta = impideVenta;
 	}
 	
 }

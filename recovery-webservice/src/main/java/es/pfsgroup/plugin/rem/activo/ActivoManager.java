@@ -55,6 +55,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -4600,6 +4601,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDEstadoCarga.class, cargaDto.getEstadoCodigo());
 				cargaSeleccionada.setEstadoCarga(estadoCarga);
+			}
+			
+			if(!Checks.esNulo(cargaDto.getCodigoImpideVenta())) {
+				DDSiNo dd = genericDao.get(DDSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", cargaDto.getCodigoImpideVenta()));
+				cargaSeleccionada.setImpideVenta(dd);
 			}
 
 			if (!Checks.esNulo(cargaDto.getEstadoEconomicaCodigo())) {

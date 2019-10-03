@@ -4,12 +4,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
     'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial',
-    'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion'],
+    'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion', 'HreRem.model.ComercialAgrupacion'],
     
     data: {
     	agrupacionficha: null,
-    	ofertaRecord: null
-    	
+    	ofertaRecord: null,
+    	editing: null
     },
     
     formulas: {
@@ -659,10 +659,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 		
 		 		return '<a href="' + HreRem.i18n('fieldlabel.link.web.haya').replace("vivienda",tipoActivo) + get('agrupacionficha.idNumActivoPrincipal')+'?utm_source=rem&utm_medium=aplicacion&utm_campaign=activo " target="_blank">' + get('agrupacionficha.estadoAlquilerDescripcion') + '</a>'
 		 	}else {
-		 		return get('agrupacionficha.estadoAlquilerDescripcion')
+		 		return get('agrupacionficha.estadoAlquilerDescripcion');
 		 	}
 		 },
-
 		 comercializableConstruccionPlano: function(get){
 			 return "true"===get('agrupacionficha.comercializableConsPlano');
 		 },
@@ -680,19 +679,63 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 },
 		 
 		 esAgrupacionThirdpartiesYubaiObraNueva: function(get) {
-			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRD']
+			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
 			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
 			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) {
 		     		return true;
 		     	} else {
 		     		return false;
 		     	}
+
 		}/*,
 		
 		habilitaPestanyaDocumentos : function (get) {
 				if (get('agrupacionficha'))
 		}*/
-    },
+
+		},
+		    
+		esOtrosotivoAutorizacionTramitacion: function(get){
+			var me = this;
+			
+			var comboOtros = get('comercialagrupacion.motivoAutorizacionTramitacionCodigo');
+			
+			if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == comboOtros){
+				return true;
+			}
+			me.set('comercialagrupacion.observacionesAutoTram', null);
+		return false;
+		},
+		
+		esSelecionadoAutorizacionTramitacion: function(get){
+			var me = this;
+			var editing = get('editing');
+			var todoSelec = get('comercialagrupacion.motivoAutorizacionTramitacionCodigo');
+			var obsv = get('comercialagrupacion.observacionesAutoTram');
+			if(editing){
+				if(todoSelec != undefined && todoSelec != null){
+					if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == todoSelec){
+						if(obsv){
+							return true;
+						}
+						return false;
+					} else {
+						return true;
+					}
+				}
+			}
+			return false;
+		},
+		
+		usuarioTieneFuncionTramitarOferta: function(get){
+			var esTramitable = get('comercialagrupacion.tramitable');
+			var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+				if(!esTramitable){
+					return !funcion;
+				}
+			return true;
+		},
+				
     stores: {
     	comboCartera: {
 			model: 'HreRem.model.ComboBase',
@@ -1050,6 +1093,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
                 remoteUrl: 'generic/getDiccionario',
                 extraParams: {diccionario: 'tiposAlquilerActivo'}
             }
-        }
+        }, 
+		
+		comboMotivoAutorizacionTramitacion: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'motivoAutorizacionTramitacion'}
+				}
+		}
      }
 });

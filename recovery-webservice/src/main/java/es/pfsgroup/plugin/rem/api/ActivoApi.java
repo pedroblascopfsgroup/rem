@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -39,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
@@ -55,11 +57,11 @@ import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -74,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
@@ -850,6 +853,7 @@ public interface ActivoApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	boolean saveComercialActivo(DtoComercialActivo dto);
+	
 
 	/**
 	 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo Obra Nueva ó Asistida (PDV)
@@ -1246,11 +1250,51 @@ public interface ActivoApi {
 	Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto);
 
 	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
+	
+	/**
+	 * Comprueba si un activo ha superado el plazo para que sea tramitable
+	 * @param activo
+	 */
+	public boolean isTramitable(Activo activo);
+	
+	/**
+	 * Devulve la fecha de inicio del bloqueo de la tramitación
+	 * @param activo
+	 */
+	public Date getFechaInicioBloqueo(Activo activo);
+	/**
+	 * Insertar en la base de datos una Autorizacion Tramitacion
+	 * @param dto
+	 */	
+	public boolean insertarActAutoTram(DtoComercialActivo dto);
+
+	List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto) throws GestorDocumentalException;
+	
+	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo);
+	
+	boolean deleteActivoTributo(DtoActivoTributos dto);
+	
+	/**
+	 * Devuelve una lista de plusvalias aplicando el filtro que recibe.
+	 * @param dtoPlusvaliaFilter con los parametros de filtro
+	 * @return DtoPage 
+	 */
+	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
 
 	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
 
 	List<ActivoProveedor> getComboApiPrimaria();
+
+	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
+	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
+
+	@BusinessOperationDefinition("activoManager.uploadDocumentoPlusvalia")
+	String uploadDocumentoPlusvalia(WebFileItem webFileItem,ActivoPlusvalia activoPlusvaliaEntrada, String matricula) throws Exception;
+
+	FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto);
+
+	ActivoDto getDatosActivo(Long activoId);
 
 }

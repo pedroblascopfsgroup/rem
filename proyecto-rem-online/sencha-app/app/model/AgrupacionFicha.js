@@ -293,6 +293,10 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 },
                 {
                 	name: 'empresaComercializadora'
+                },
+                {
+                	name: 'tramitable',
+                	type: 'boolean'
                 }
     ],
     

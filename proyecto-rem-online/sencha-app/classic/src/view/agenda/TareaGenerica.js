@@ -2349,6 +2349,27 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	        }
         });
     },
+    T017_RatificacionComiteCESValidacion: function(){
+    	var me = this;
+    	var comboRatificacion = me.down('[name=comboRatificacion]');
+    	var importeContraoferta = me.down('[name=numImporteContra]');
+    	var importeOferta = me.down('[name=numImporteOferta]');
+    	me.deshabilitarCampo(importeContraoferta);
+    	me.bloquearCampo(importeOferta);
+		
+    	comboRatificacion.addListener('change', function(){
+	        if(comboRatificacion.value == '03'){
+	        	me.habilitarCampo(importeContraoferta);
+	        	importeContraoferta.allowBlank = false;
+	        	importeContraoferta.validate();
+	        }else{
+	        	me.deshabilitarCampo(importeContraoferta);
+	        	importeContraoferta.reset();
+	        	importeContraoferta.allowBlank = true;
+	        	importeContraoferta.validate();
+	        }
+        });
+    },
     T017_RespuestaOfertantePMValidacion: function () {
     	var me = this;
     	var comboRespuestaOfertante = me.down( '[name=comboRespuesta]' ),
@@ -2363,7 +2384,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T017_RespuestaOfertanteCESValidacion: function() {
     	var me = this;
     	var comboRespuestaOfertante = me.down( '[name=comboRespuesta]' ),
-    		comboFechaRespuesta = me.down ( '[name=fechaRespuesta]' );
+    		comboFechaRespuesta = me.down ( '[name=fechaRespuesta]' ),
+    		numImporteContraOfertaOfertante = me.down( '[name=importeContraofertaOfertante]' );
+    		
     		console.log(comboRespuestaOfertante);
     		console.log(comboFechaRespuesta);
     		comboRespuestaOfertante.allowBlank = false;
@@ -2372,6 +2395,19 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     		me.campoObligatorio(comboFechaRespuesta);
     		comboFechaRespuesta.validate();
     		me.desbloquearCampo(comboFechaRespuesta);
+    		me.campoObligatorio(numImporteContraOfertaOfertante);
+    		
+    		if (comboRespuestaOfertante.getValue() != '03') {
+	            me.deshabilitarCampo(numImporteContraOfertaOfertante);
+	        }
+	    	comboRespuestaOfertante.addListener('change', function(combo) {
+	            if (combo.value == '03') {
+	                me.habilitarCampo(numImporteContraOfertaOfertante);
+	            } else {
+	                me.deshabilitarCampo(numImporteContraOfertaOfertante);
+	                numImporteContraOfertaOfertante.reset();
+	            }
+	        });
     },
     T017_AdvisoryNoteValidacion: function () {
     	var me = this;

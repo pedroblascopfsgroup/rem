@@ -78,17 +78,15 @@ public class ConfigPdaPresupuestaria implements Serializable, Auditable {
     
     @Column(name="CPP_ARRENDAMIENTO")
     private Integer cuentaArrendamiento;
-
     
-	@Version   
+    @Column(name="CPP_REFACTURABLE")
+    private Integer partidaRefacturable;
+
+    @Version   
 	private Long version;
-	
 	
 	@Embedded
 	private Auditoria auditoria;		
-	
-	
-	
 	
 	public Long getId() {
 		return id;
@@ -178,5 +176,12 @@ public class ConfigPdaPresupuestaria implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public Integer getPartidaRefacturable() {
+		return partidaRefacturable;
+	}
+
+	public void setPartidaRefacturable(Integer partidaRefacturable) {
+		this.partidaRefacturable = partidaRefacturable;
+	}
 	
 }

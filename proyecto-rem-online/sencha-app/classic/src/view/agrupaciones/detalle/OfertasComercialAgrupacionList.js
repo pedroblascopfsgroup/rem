@@ -374,6 +374,11 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			}
 		}
 		
+		if(!me.up('agrupacionesdetallemain').down('fichaagrupacion').getBindRecord().data.tramitable && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.oferta.no.tramitable"));
+			return false
+		}
+		
 		return true;		
 	},
 	

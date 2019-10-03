@@ -5,6 +5,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
     	type:'fit'
     },
     width: Ext.Element.getViewportWidth() / 1.5,
+    resizable: false,
 	reference: 'adjuntarDocumentoExpedienteWindowRef',
 	requires: ['HreRem.view.common.adjuntos.AdjuntarDocumentoExpedienteModel'],
 	controller: 'expedientedetalle',

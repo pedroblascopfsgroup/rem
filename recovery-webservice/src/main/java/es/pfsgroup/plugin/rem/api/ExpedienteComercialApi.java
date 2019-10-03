@@ -1243,10 +1243,13 @@ public interface ExpedienteComercialApi {
 	boolean existeComprador(String numDoc);
 	
 	List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta);
+	public ArrayList<DtoDiccionario> calcularGestorComercialPrescriptor(Long idExpediente);
 
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 
 	boolean esYubai(TareaExterna tareaExterna);
+	
+	boolean checkContabilizacionReserva(TareaExterna tareaExterna);
 
 	/*
 	 * Devuelve el comité propuesto a partir de un id de expediente

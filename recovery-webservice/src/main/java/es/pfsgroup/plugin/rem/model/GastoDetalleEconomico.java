@@ -25,6 +25,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPago;
@@ -164,6 +165,9 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     
 	@Column(name="GDE_FECHA_ANTICIPO")
     private Date fechaAnticipo;
+	
+    @Column(name = "GDE_GASTO_REFACTURABLE")
+    private Boolean gastoRefacturable;
 
     
 	@Version   
@@ -479,5 +483,15 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 		this.fechaAnticipo = fechaAnticipo;
 	}
 
+	public Boolean getGastoRefacturable() {
+		return gastoRefacturable;
+	}
+
+	public void setGastoRefacturable(Boolean gastoRefacturable) {
+		this.gastoRefacturable = gastoRefacturable;
+	}
+
+	
+	
 
 }

@@ -182,6 +182,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -733,11 +734,11 @@ public class ActivoAdapter {
 										.equals(activoCarga.getTipoCargaActivo().getCodigo())
 								&& (!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion())
 										|| !Checks.esNulo(activoCarga.getFechaCancelacionRegistral()))) {
-							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi
-									.dameValorDiccionarioByCod(DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+							DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
+									.dameValorDiccionarioByCod(DDEstadoCarga.class, DDEstadoCarga.CODIGO_CANCELADA);
 							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-									situacionCancelada.getDescripcion());
-							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", situacionCancelada.getCodigo());
+									estadoCarga.getDescripcion());
+							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", estadoCarga.getCodigo());
 
 							// Fecha de cancelacion de una carga registral
 							if (Checks.esNulo(activoCarga.getFechaCancelacionRegistral())) {
@@ -753,11 +754,11 @@ public class ActivoAdapter {
 							}
 							cargaDto.setFechaCancelacionEconomica(null);
 						} else {
-							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
+							if (activoCarga.getEstadoCarga() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-										activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
+										activoCarga.getEstadoCarga().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-										activoCarga.getCargaBien().getSituacionCarga().getCodigo());
+										activoCarga.getEstadoCarga().getCodigo());
 							}
 						}
 
@@ -808,9 +809,11 @@ public class ActivoAdapter {
 										|| !Checks.esNulo(activoCarga.getFechaCancelacionRegistral()))) {
 							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+							DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
+									.dameValorDiccionarioByCod(DDEstadoCarga.class, DDEstadoCarga.CODIGO_CANCELADA);
 							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-									situacionCancelada.getDescripcion());
-							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", situacionCancelada.getCodigo());
+									estadoCarga.getDescripcion());
+							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", estadoCarga.getCodigo());
 							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
 									situacionCancelada.getDescripcion());
 							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",
@@ -834,11 +837,11 @@ public class ActivoAdapter {
 							}
 
 						} else {
-							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
+							if (activoCarga.getEstadoCarga() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-										activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
+										activoCarga.getEstadoCarga().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-										activoCarga.getCargaBien().getSituacionCarga().getCodigo());
+										activoCarga.getEstadoCarga().getCodigo());
 							}
 							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",

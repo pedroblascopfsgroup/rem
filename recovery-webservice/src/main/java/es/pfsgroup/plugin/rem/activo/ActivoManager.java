@@ -123,6 +123,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
@@ -4506,9 +4507,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperties(cargaSeleccionada.getCargaBien(), cargaDto);
 
 			if (!Checks.esNulo(cargaDto.getEstadoCodigo())) {
-				DDSituacionCarga situacionCarga = (DDSituacionCarga) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDSituacionCarga.class, cargaDto.getEstadoCodigo());
-				cargaSeleccionada.getCargaBien().setSituacionCarga(situacionCarga);
+				DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoCarga.class, cargaDto.getEstadoCodigo());
+				cargaSeleccionada.setEstadoCarga(estadoCarga);
 			}
 
 			if (!Checks.esNulo(cargaDto.getEstadoEconomicaCodigo())) {

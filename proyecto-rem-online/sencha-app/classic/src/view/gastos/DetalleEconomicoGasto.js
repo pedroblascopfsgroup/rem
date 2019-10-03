@@ -157,6 +157,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														},
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
+															reference: 'importerecargoref',
 														               bind: '{detalleeconomico.importeRecargo}',
 														               listeners:{
 														            	   change: function(){
@@ -264,7 +265,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															xtype: 'comboboxfieldbase',
 											               	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.tipo.impuesto.indirecto'),
 													      	reference: 'cbTipoImpuesto',
-													      	allowBlank: false,
+													      	allowBlank: me.editableSoloPago(),
 													      	readOnly: me.editableSoloPago(),
 											               	bind: {
 												           		store: '{comboTipoImpuesto}',

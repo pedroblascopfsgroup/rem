@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Dean Ibañez Viño
---## FECHA_CREACION=20191001
+--## FECHA_CREACION=20191003
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7839
@@ -112,7 +112,13 @@ BEGIN
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
+
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EGP_ID IS ''Código identificador único del diccionario.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EGP_CODIGO IS ''Código identificador del diccionario.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EGP_DESCRIPCION IS ''Descripcion del codigo del diccionario.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EGP_DESCRIPCION_LARGA IS ''Descripcion larga del codigo del diccionario.''';
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentarios creados.');
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
 

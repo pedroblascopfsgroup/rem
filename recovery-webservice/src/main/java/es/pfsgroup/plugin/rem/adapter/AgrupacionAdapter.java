@@ -1394,7 +1394,7 @@ public class AgrupacionAdapter {
 	 * @param agrupacion
 	 *            ActivoAgrupacion
 	 */
-	private void activoAgrupacionValidate(Activo activo, ActivoAgrupacion agrupacion) {
+	public void activoAgrupacionValidate(Activo activo, ActivoAgrupacion agrupacion) {
 
 		NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();
 
@@ -1421,7 +1421,7 @@ public class AgrupacionAdapter {
 		}
 	}
 
-	private ActivoAgrupacion updateAgrupacionPrimerActivo(Activo activo, ActivoAgrupacion agrupacion) {
+	public ActivoAgrupacion updateAgrupacionPrimerActivo(Activo activo, ActivoAgrupacion agrupacion) {
 
 		NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();
 

@@ -54,6 +54,9 @@ public class DtoActivoCargas {
     //HREOS-2733
     private String origenDatoCodigo;
     private String origenDatoDescripcion;
+    
+    //HREOS-7783
+    private String codigoImpideVenta;
  
 
     
@@ -219,6 +222,12 @@ public class DtoActivoCargas {
 	}
 	public void setCargasPropias(Integer cargasPropias) {
 		this.cargasPropias = cargasPropias;
+	}
+	public String getCodigoImpideVenta() {
+		return codigoImpideVenta;
+	}
+	public void setCodigoImpideVenta(String codigoImpideVenta) {
+		this.codigoImpideVenta = codigoImpideVenta;
 	}
 	
 	

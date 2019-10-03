@@ -3034,9 +3034,13 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboImpideVenta(String codEstadoCarga, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, adapter.getComboImpideVenta(codEstadoCarga));
 
-	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long id) {
-		return activoApi.getHistoricoDiarioGestion(id);
+		return new ModelAndView("jsonView", model);
 	}
 
 //	@SuppressWarnings("unchecked")

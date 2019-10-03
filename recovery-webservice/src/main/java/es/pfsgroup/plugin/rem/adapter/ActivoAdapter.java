@@ -33,6 +33,7 @@ import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -723,6 +724,10 @@ public class ActivoAdapter {
 					if(!Checks.esNulo(activoCarga.getOrigenDato())) {
 						beanUtilNotNull.copyProperty(cargaDto, "origenDatoCodigo", activoCarga.getOrigenDato().getCodigo());
 						beanUtilNotNull.copyProperty(cargaDto, "origenDatoDescripcion", activoCarga.getOrigenDato().getDescripcion());
+					}
+					
+					if(!Checks.esNulo(activoCarga.getImpideVenta())) {
+						beanUtilNotNull.copyProperty(cargaDto, "codigoImpideVenta", activoCarga.getImpideVenta().getCodigo());
 					}
 					
 					if (activoCarga.getCargaBien() != null) {
@@ -4540,5 +4545,17 @@ public class ActivoAdapter {
 	
 	public boolean isUnidadAlquilable (Long idActivo) {
 		return activoDao.isUnidadAlquilable(idActivo);
-	}	
+	}
+	
+	public List<DDSiNo> getComboImpideVenta(String codEstadoCarga) {
+		List<DDSiNo> listaCombo = new ArrayList<DDSiNo>();
+		
+		if(Checks.esNulo(codEstadoCarga) || DDEstadoCarga.CODIGO_VIGENTE.equals(codEstadoCarga)) {
+			listaCombo = genericDao.getList(DDSiNo.class);
+		} else {
+			listaCombo = genericDao.getList(DDSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO));
+		}
+		
+		return listaCombo;
+	}
 }

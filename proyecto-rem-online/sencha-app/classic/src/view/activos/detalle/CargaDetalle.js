@@ -168,6 +168,8 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 													},
 													{ 
 											        	xtype: 'comboboxfieldbase',
+											        	reference: 'comboestadocargaref',
+											        	name: 'comboestadocargaref',
 											        	editable: false,
 														fieldLabel: HreRem.i18n('header.estado.carga'),
 											        	bind: {
@@ -176,27 +178,26 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 										            	},
 										            	listeners: {
 										            		select: 'onChangeEstadoCargaCombo'
-										            	}
+										            	},
+					    								publishes: 'value',
+					    								chainedStore: 'storeComboImpideVenta',
+														chainedReference: 'comboImpideVenta'
 											        },													
 													{ 
 														xtype:'currencyfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.importe.registral'),
 									                	bind:		'{carga.importeRegistral}'
 									                },
-									                /*{ 
+									                {
 											        	xtype: 'comboboxfieldbase',
+											        	reference: 'comboImpideVenta',
+											        	name: 'comboImpideVenta',
 											        	editable: false,
-												 		fieldLabel: HreRem.i18n('fieldlabel.estado.economico'),
+														fieldLabel: HreRem.i18n('header.impide.venta'),
 											        	bind: {
-										            		store: '{comboSituacionCarga}',
-										            		value: '{carga.estadoEconomicaCodigo}'
-										            	},
-										            	listeners: {
-										            		select: 'onChangeEstadoEconomicoCombo'
+															store: '{storeComboImpideVenta}',
+										            		value: '{carga.codigoImpideVenta}'
 										            	}
-											        }*/
-											        {
-											        	hidden: true
 											        }
 										]
 				    			},

@@ -191,4 +191,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 */
 	public Usuario usuarioGestoria(Usuario grupoUsuario, String tipoGestor);
 
+	public Usuario usuarioTareaDivarian(String codigoTarea);
+
+	Usuario supervisorTareaDivarian(String codigoTarea);
+
 }

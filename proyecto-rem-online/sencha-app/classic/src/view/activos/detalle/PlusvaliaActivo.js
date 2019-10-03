@@ -115,7 +115,7 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
             	bind:{
             		value: '{plusvalia.observaciones}'
             	},
-            	allowBlank: true
+            	allowBlank: false
 	        } ]
 	    },{
 	    	

@@ -295,8 +295,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 					return true;
 				}
 				return false;
-			}
+			},
 		
+			deshabilitarCheckGastoRefacturable: function(get){
+				var me = this;
+				var user = $AU.userIsRol("HAYASUPER") || $AU.userIsRol("HAYAADM") || $AU.userIsRol("HAYASADM");
+				var isGastoRefacturable = get('detalleeconomico.bloquearCheckRefacturado');
+				if(!user || isGastoRefacturable){
+					return true;
+				}
+				return false;
+			}
+			
 		
 	 },
 	 

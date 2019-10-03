@@ -272,22 +272,41 @@ public class VBusquedaActivos implements Serializable {
 	
 	@Column(name = "DD_ECG_CODIGO")
 	private String estadoComunicacionGencat;
-
-	@Column(name = "DD_FSP_CODIGO")
-	private String fasePublicacionCodigo;
-	
-	@Column(name = "DD_FSP_DESCRIPCION")
-	private String fasePublicacionDescripcion;
 	
 	@Column(name = "GPUBL_USU_USERNAME")
 	private String gestorPublicacionUsername;
 
 	@Column(name = "DD_DRT_CODIGO")
 	private String direccionTerritorialCodigo;
-	
+
 	@Column(name = "ICO_MEDIADOR_ID")
-	private Long apiPrimariaId;
-			
+	private Long apiPrimarioId;
+
+	@Column(name = "DD_TAL_DESCRIPCION")
+	private String tipoAlquilerDescripcion;
+
+	@Column(name = "APU_FECHA_INI_VENTA")
+	private Date fechaPublicacionVenta;
+
+	@Column(name = "APU_FECHA_INI_ALQUILER")
+	private Date fechaPublicacionAlquiler;
+	
+	/*
+	  La variable tipoComercializacionCodigoAuxiliar es utilizada el listado de activos del filtro para saber si tiene que mostrar la
+	  fecha de publicacion venta o de alquiler.
+	  No se puede nombrar tipoComercializacionCodigo porque en el Dto ya hay una variable que se llama así y se utiliza para filtrar
+	  por tipo de comercializacion.
+	*/
+	@Column(name = "DD_TCO_CODIGO")
+	private String tipoComercializacionCodigoAuxiliar; 
+	
+	@Column(name = "TAS_IMPORTE_TAS_FIN")
+	private Long precioTasacionActivo; 
+		
+	@Column(name = "DD_EPU_CODIGO")
+	private String estadoPublicacionActivoListadoCodigo; 
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -642,22 +661,6 @@ public class VBusquedaActivos implements Serializable {
 		this.estadoComunicacionGencat = estadoComunicacionGencat;
 	}
 
-	public String getFasePublicacionCodigo() {
-		return fasePublicacionCodigo;
-	}
-
-	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
-		this.fasePublicacionCodigo = fasePublicacionCodigo;
-	}
-
-	public String getFasePublicacionDescripcion() {
-		return fasePublicacionDescripcion;
-	}
-
-	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
-		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
-	}
-
 	public String getGestorPublicacionUsername() {
 		return gestorPublicacionUsername;
 	}
@@ -680,5 +683,53 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setApiPrimariaId(Long apiPrimarioId) {
 		this.apiPrimarioId = apiPrimarioId;
+	}
+
+	public String getTipoAlquilerDescripcion() {
+		return tipoAlquilerDescripcion;
+	}
+
+	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
+		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
+	}
+
+	public Date getFechaPublicacionVenta() {
+		return fechaPublicacionVenta;
+	}
+
+	public void setFechaPublicacionVenta(Date fechaPublicacionVenta) {
+		this.fechaPublicacionVenta = fechaPublicacionVenta;
+	}
+
+	public Date getFechaPublicacionAlquiler() {
+		return fechaPublicacionAlquiler;
+	}
+
+	public void setFechaPublicacionAlquiler(Date fechaPublicacionAlquiler) {
+		this.fechaPublicacionAlquiler = fechaPublicacionAlquiler;
+	}
+
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigoAuxiliar;
+	}
+
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigoAuxiliar = tipoComercializacionCodigo;
+	}
+
+	public Long getPrecioTasacionActivo() {
+		return precioTasacionActivo;
+	}
+
+	public void setPrecioTasacionActivo(Long precioTasacionActivo) {
+		this.precioTasacionActivo = precioTasacionActivo;
+	}
+
+	public String getEstadoPublicacionActivoListadoCodigo() {
+		return estadoPublicacionActivoListadoCodigo;
+	}
+
+	public void setEstadoPublicacionActivoListadoCodigo(String estadoPublicacionActivoListadoCodigo) {
+		this.estadoPublicacionActivoListadoCodigo = estadoPublicacionActivoListadoCodigo;
 	}
 }

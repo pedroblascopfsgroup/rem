@@ -175,16 +175,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 					dto.getComboSelloCalidad().equals(Integer.valueOf(1)) ? true : false);
 		}
 		
-		if (dto.getFasePublicacionCodigo() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
-		}
-		
 		if (dto.getDireccionTerritorialCodigo() != null) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.direccionTerritorialCodigo", dto.getDireccionTerritorialCodigo());
 		}
 		
-		if (dto.getApiPrimariaId() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimariaId", dto.getApiPrimariaId());
+		if (dto.getApiPrimarioId() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimarioId", dto.getApiPrimarioId());
 		}
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
@@ -1637,7 +1633,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ActivoProveedor> getComboApiPrimaria() {
+	public List<ActivoProveedor> getComboApiPrimario() {
 		HQLBuilder hb = new HQLBuilder(" from ActivoProveedor pve");
 		hb.appendWhere(" pve.tipoProveedor.codigo = '" + DDTipoProveedor.COD_MEDIADOR + "' and pve.auditoria.borrado = 0 and pve.nombre is not null and pve.fechaBaja is null ");
 		hb.orderBy("pve.nombre", "asc");

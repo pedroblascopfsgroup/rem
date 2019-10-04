@@ -1,15 +1,16 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20190610
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20191004
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6681
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-7933
 --## PRODUCTO=NO
 --##
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Modificar nombre del campo OFR_FECHA_RESOLUCION_CES
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -23,13 +24,13 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USR VARCHAR2(30 CHAR) := 'HREOS-6681'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_USR VARCHAR2(30 CHAR) := 'HREOS-7933'; -- USUARIOCREAR/USUARIOMODIFICAR.
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('OFR_IMP_CONTRAOFERTA_CES', 'NUMBER(16,2)', 'Campo con el importe de la contraoferta introducida en la tarea Resolución CES'),
-        T_TIPO_DATA('OFR_FECHA_RESOLUCIÓN_CES', 'DATE', 'Campo con la fecha de respuesta de la tarea Analisis PM')
+        T_TIPO_DATA('OFR_FECHA_RESOLUCION_CES', 'DATE', 'Campo con la fecha de respuesta de la tarea Analisis PM')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -66,7 +67,8 @@ BEGIN
 		
 	END LOOP;
 	
-	DBMS_OUTPUT.PUT_LINE('[FIN] ACTUALIZADA COE_CONDICIONANTES_EXPEDIENTE');
+	DBMS_OUTPUT.PUT_LINE('[FIN] ACTUALIZADA OFR_OFERTAS');
+	
 	
 EXCEPTION
      WHEN OTHERS THEN

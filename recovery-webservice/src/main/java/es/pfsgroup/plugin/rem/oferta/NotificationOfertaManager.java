@@ -336,7 +336,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		ActivoProveedor prescriptor = null;
 		ActivoProveedor custodio = null;
 		Usuario usuarioBackOffice = null;
-		List<String> mailsSustituto = null;
+		List<String> mailsSustituto = new ArrayList<String>();
 		
 		for (String codigoGestor: DESTINATARIOS_CORREO_APROBACION) {
 			usuarioRemApiImpl.rellenaListaCorreos(activo, codigoGestor, mailsPara, mailsCC, false);		

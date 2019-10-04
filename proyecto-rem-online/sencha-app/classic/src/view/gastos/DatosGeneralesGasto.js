@@ -315,6 +315,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recPropiedad')+' *',
 									       	bind: '{gasto.fechaRecPropiedad}',
 									       	maxValue: null,
+									       	readOnly: true,
 									       	allowBlank: false
 									    },
 									    {
@@ -324,6 +325,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recGestoria')+' *',
 									       	bind: '{gasto.fechaRecGestoria}',
 									       	maxValue: null,
+									       	readOnly: true,
 									       	allowBlank: false
 									    },
 									    {
@@ -333,6 +335,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recHaya')+' *',
 									       	bind: '{gasto.fechaRecHaya}',
 									       	maxValue: null,
+									       	readOnly: true,
 									       	allowBlank: false
 									    }										
 									]

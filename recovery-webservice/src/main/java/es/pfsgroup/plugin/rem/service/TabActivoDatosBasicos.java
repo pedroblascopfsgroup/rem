@@ -819,6 +819,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getServicerActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "servicerActivoCodigo", activo.getServicerActivo().getCodigo());
 		}
+
+		Boolean visualizarTabFasesPublicacion = activoApi.getVisibilidadTabFasesPublicacion(activo);
+		
+		activoDto.setVisualizarTabFasesPublicacion(visualizarTabFasesPublicacion);
 		
 		return activoDto;
 	}

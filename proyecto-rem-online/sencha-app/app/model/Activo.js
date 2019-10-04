@@ -864,6 +864,10 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'nombreMediador'
+    		},
+    		{
+    			name: 'visualizarTabFasesPublicacion',
+    			type: 'boolean'
     		}
     ],
     

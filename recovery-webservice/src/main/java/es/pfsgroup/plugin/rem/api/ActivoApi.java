@@ -1307,4 +1307,5 @@ public interface ActivoApi {
 
 	ActivoDto getDatosActivo(Long activoId);
 
+	Boolean getVisibilidadTabFasesPublicacion(Activo activo);
 }

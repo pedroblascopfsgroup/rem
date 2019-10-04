@@ -413,21 +413,31 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		return gastorefacturable;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public Boolean updateGastosRefacturablesSiExiste(Long id, String usuario) {
+	public Boolean updateGastosRefacturablesSiExiste(Long id,Long idGastoPadre, String usuario) {
 		Boolean existeGasto = false;
 	
-		String gastoRefacturableBorradoString = rawDao.getExecuteSQL("SELECT GRG_ID FROM GRG_REFACTURACION_GASTOS where GRG_GPV_ID_REFACTURADO = "+ id +" and BORRADO = 1 ");
+		String gastoRefacturableBorradoString = rawDao.getExecuteSQL("SELECT GRG_ID FROM GRG_REFACTURACION_GASTOS where GRG_GPV_ID_REFACTURADO = "+ id +" and GRG_GPV_ID ="+idGastoPadre+" AND BORRADO = 1 ");
 
 		if(!Checks.esNulo(gastoRefacturableBorradoString)) {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 			existeGasto = true;
 			Session session = this.getSessionFactory().getCurrentSession();
-			Query query = session.createSQLQuery("UPDATE GRG_REFACTURACION_GASTOS SET BORRADO = 0, USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')) WHERE GRG_ID = "+ gastoRefacturableBorradoString);
+			Query query = session.createSQLQuery("UPDATE GRG_REFACTURACION_GASTOS SET BORRADO = 0,"
+					+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')) WHERE GRG_ID = "+ gastoRefacturableBorradoString);
 					
 			query.executeUpdate();
-		
+		} else {
+			gastoRefacturableBorradoString = rawDao.getExecuteSQL("SELECT GRG_ID FROM GRG_REFACTURACION_GASTOS where GRG_GPV_ID_REFACTURADO = "+ id +" and BORRADO = 1");
+			if(!Checks.esNulo(gastoRefacturableBorradoString)) {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+				existeGasto = true;
+				Session session = this.getSessionFactory().getCurrentSession();
+				Query query = session.createSQLQuery("UPDATE GRG_REFACTURACION_GASTOS SET BORRADO = 0, "
+						+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = (TO_DATE('"+ sdf.format(new Date()) + "', 'dd/MM/yyyy hh:mi:ss')), GRG_GPV_ID ="+idGastoPadre+" WHERE GRG_ID = "+ gastoRefacturableBorradoString);
+						
+				query.executeUpdate();
+			}
 		}
 		
 		return existeGasto;

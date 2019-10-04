@@ -3498,7 +3498,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			for (String gasto : gastosRefacturablesLista) {
 				GastoProveedor gastoProveedorRefacturable = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(gasto)));
 				if (!Checks.esNulo(gastoProveedorRefacturable)) {
-					if(!gastoDao.updateGastosRefacturablesSiExiste(gastoProveedorRefacturable.getId(), usuarioApi.getUsuarioLogado().getUsername())) {
+					if(!gastoDao.updateGastosRefacturablesSiExiste(gastoProveedorRefacturable.getId(),idPadre, usuarioApi.getUsuarioLogado().getUsername())) {
 						GastoRefacturable gastoRefacturableNuevo = new GastoRefacturable();
 						gastoRefacturableNuevo.setGastoProveedor(idPadre);
 						gastoRefacturableNuevo.setGastoProveedorRefacturado(gastoProveedorRefacturable.getId());
@@ -3570,7 +3570,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public void validarGastosARefactorar(String idGasto, String listaGastos) {
+	public void validarGastosARefacturar(String idGasto, String listaGastos) {
 		List<String> listaGastosRefacturables = Arrays.asList(listaGastos.split("\\s*,\\s*"));
 		Filter gastoPadreId = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idGasto));
 		GastoProveedor gastoPadre = genericDao.get(GastoProveedor.class, gastoPadreId);
@@ -3612,8 +3612,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				&& !Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 			DDCartera cartera = gasto.getPropietario().getCartera(); 
 			String estadoGasto = gasto.getEstadoGasto().getCodigo();
-			GastoRefacturable gastoPadre = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedor", gasto.getId()));
-			GastoRefacturable gastoRefacturado = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gasto.getId()));
+			List<GastoRefacturable> gastosPadres = genericDao.getList(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedor", gasto.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			GastoRefacturable gastoPadre = null;
+			if(!Checks.estaVacio(gastosPadres)) {
+				gastoPadre = gastosPadres.get(0);
+			}
+			
+			GastoRefacturable gastoRefacturado = genericDao.get(GastoRefacturable.class, genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gasto.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 			if (!Checks.esNulo(cartera) 
 					&& (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
 				if(DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())) {

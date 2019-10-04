@@ -1114,7 +1114,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 				
 				//Esta línea de código sirve para validar los gastos a anyadir,
 				//en caso de no cumplir, lanza excepciones visuales para front.
-				gastoProveedorApi.validarGastosARefactorar(idGasto, gastosRefacturables);
+				gastoProveedorApi.validarGastosARefacturar(idGasto, gastosRefacturables);
 				
 				if(!Checks.esNulo(gastosRefacturables)) {
 					gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario);

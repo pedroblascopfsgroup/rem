@@ -1784,7 +1784,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
 
 			// Volvemos a establecer propietario.
-			//gasto = asignarPropietarioGasto(gasto);  HREOS-7939 se solicita que no se recalcule el propietario al borrar un activo afectado.
+			gasto = asignarPropietarioGasto(gasto);  
 			// Volvemos a establecer la cuenta contable y partida.
 			gasto = asignarCuentaContableYPartidaGasto(gasto);
 

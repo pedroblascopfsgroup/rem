@@ -149,9 +149,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-					if(!Checks.esNulo(usuarioBackOffice)){
-						mailsSustituto.clear();
-						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+					if(!Checks.esNulo(usuarioBackOffice)){						
+						if(Checks.estaVacio(mailsSustituto)){
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+						}else {
+							mailsSustituto.clear();
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);	
+						}						
 						if (!Checks.estaVacio(mailsSustituto)){
 							mailsPara.addAll(mailsSustituto);
 							mailsCC.add(usuarioBackOffice.getEmail());

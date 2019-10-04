@@ -2826,6 +2826,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Transactional(readOnly = false)
 	public boolean rechazarGasto(Long idGasto, String motivoRechazo) {
 
+		
+		
 		DDEstadoAutorizacionHaya estadoAutorizacionHaya = (DDEstadoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionHaya.class,
 				DDEstadoAutorizacionHaya.CODIGO_RECHAZADO);
 		DDMotivoRechazoAutorizacionHaya motivo = null;
@@ -2833,6 +2835,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			motivo = (DDMotivoRechazoAutorizacionHaya) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAutorizacionHaya.class, motivoRechazo);
 		}
 		GastoProveedor gasto = findOne(idGasto);
+		
+		Filter filtroBorrado= genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		GastoRefacturable gastoRefacturado = genericDao.get(GastoRefacturable.class,filtroBorrado,  genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", idGasto));
+		if(!Checks.esNulo(gastoRefacturado)) {
+			GastoProveedor gastoPadre = findOne(gastoRefacturado.getGastoProveedor());
+			
+			throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar: Hay que desvincularlo primero del gasto" + gastoPadre.getNumGastoHaya());
+		}
 		
 		String error = updaterStateApi.validarCamposMinimos(gasto);
 		if (!Checks.esNulo(error)) {

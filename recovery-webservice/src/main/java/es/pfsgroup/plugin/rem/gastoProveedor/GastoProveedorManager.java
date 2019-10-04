@@ -1141,6 +1141,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(gasto.getProveedor().getCriterioCajaIVA())) {
 				dto.setOptaCriterioCaja(BooleanUtils.toBooleanObject(gasto.getProveedor().getCriterioCajaIVA()));
 			}
+			
+			if(!Checks.esNulo(gasto.getEstadoGasto())) {
+					String estadoGasto = gasto.getEstadoGasto().getCodigo();
+				if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto)
+ 					||	DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto)
+ 					||	DDEstadoGasto.PAGADO.equals(estadoGasto)
+					||	DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto)
+					||	DDEstadoGasto.CONTABILIZADO.equals(estadoGasto)) {
+ 						dto.setNoAnyadirEliminarGastosRefacturados(true);
+ 				}else {
+ 					dto.setNoAnyadirEliminarGastosRefacturados(false);
+ 				}
+			}
 
 			if (!Checks.esNulo(detalleGasto.getImporteRecargo()) &&  detalleGasto.getImporteRecargo() != 0.0) {
 				

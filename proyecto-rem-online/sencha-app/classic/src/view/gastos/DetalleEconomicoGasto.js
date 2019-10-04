@@ -327,7 +327,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															xtype: 'comboboxfieldbase',
 											               	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.tipo.impuesto.indirecto'),
 													      	reference: 'cbTipoImpuesto',
-													      	allowBlank: false,
+													      	allowBlank: me.editableSoloPago(),
 													      	readOnly: me.editableSoloPago(),
 											               	bind: {
 												           		store: '{comboTipoImpuesto}',
@@ -942,10 +942,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
 												reference: 'checkboxActivoRefacturable',
 												colspan:4,
-												name: 'gastoRefacturableB',
+												name: 'gastoRefacturableB', 
 												bind:{
 													value:'{detalleeconomico.gastoRefacturableB}',
-													readOnly: '{detalleeconomico.bloquearCheckRefacturado}'
+													readOnly: '{deshabilitarCheckGastoRefacturable}'
 												},
 												listeners:{						                
 							        				change: function(){

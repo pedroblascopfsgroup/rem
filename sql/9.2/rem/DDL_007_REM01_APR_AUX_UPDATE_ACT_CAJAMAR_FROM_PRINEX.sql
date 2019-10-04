@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190704
+--## FECHA_CREACION=20190712
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.2.0
---## INCIDENCIA_LINK=HREOS-6827
+--## INCIDENCIA_LINK=HREOS-6984
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Creación de tabla auxiliar para la carga de datos del DWH de Haya a la hora de actualizar el ACT_RECOVERY_ID para los activos de la cartera CAJAMAR
@@ -30,7 +30,7 @@ DECLARE
 	V_NUM NUMBER(16);
 	ERR_NUM NUMBER(25);  
 	ERR_MSG VARCHAR2(1024 CHAR); 
-	V_TABLA VARCHAR2(50 CHAR):= 'APR_AUX_UPT_ACT_CAJAMAR_FROM_PRINEX';
+	V_TABLA VARCHAR2(50 CHAR):= 'APR_AUX_CAJ_PRINEX';
 
 
 BEGIN	

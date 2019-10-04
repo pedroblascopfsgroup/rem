@@ -221,6 +221,10 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
    		{
    			name: 'bloquearGridRefacturados',
    			type: 'boolean'
+   		},
+   		{
+   			name:'noAnyadirEliminarGastosRefacturados',
+   			type:'boolean'
    		}
 	],
     

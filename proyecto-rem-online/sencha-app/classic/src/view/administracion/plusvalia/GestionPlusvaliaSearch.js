@@ -34,6 +34,7 @@ Ext.define('HreRem.view.administracion.plusvalia.GestionPlusvaliaSearch', {
 								xtype: 'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 								reference: 'provinciaCombo',
+								name: 'provinciaCombo',
 								chainedStore: 'comboMunicipio',
 								chainedReference: 'municipioCombo',
 			            		bind: {
@@ -48,6 +49,7 @@ Ext.define('HreRem.view.administracion.plusvalia.GestionPlusvaliaSearch', {
 								xtype: 'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 								reference: 'municipioCombo',
+								name: 'municipioCombo',
 								chainedStore: 'comboInferiorMunicipio',
 								chainedReference: 'inferiorMunicipioCombo',
 			            		bind: {

@@ -315,10 +315,11 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recPropiedad')+' *',
 									       	bind: {
 									       		value: '{gasto.fechaRecPropiedad}',
-									       		readOnly: '{gasto.bloquearEdicionFechasRecepcion}',
-									       		allowBlank: '{gasto.bloquearEdicionFechasRecepcion}'
+									       		allowBlank: '{!gasto.bloquearEdicionFechasRecepcion}'
 									       	},
-									       	maxValue: null
+									       	maxValue: null,
+									       	readOnly: true
+									       	
 									    },
 									    {
 								        	xtype:'datefieldbase',
@@ -327,10 +328,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recGestoria')+' *',
 									       	bind: {
 									       		value: '{gasto.fechaRecGestoria}',
-									       		readOnly: '{gasto.bloquearEdicionFechasRecepcion}',
-									       		allowBlank: '{gasto.bloquearEdicionFechasRecepcion}'
+									       		allowBlank: '{!gasto.bloquearEdicionFechasRecepcion}'
 									       	},
-									       	maxValue: null
+									       	maxValue: null,
+									       	readOnly: true
 									    },
 									    {
 								        	xtype:'datefieldbase',
@@ -339,10 +340,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recHaya')+' *',
 									       	bind: {
 									       		value: '{gasto.fechaRecHaya}',
-									       		readOnly: '{gasto.bloquearEdicionFechasRecepcion}',
-									       		allowBlank: '{gasto.bloquearEdicionFechasRecepcion}'
+									       		allowBlank: '{!gasto.bloquearEdicionFechasRecepcion}'
 									       	},
-									       	maxValue: null
+									       	maxValue: null,
+									       	readOnly: true
 									    }										
 									]
 								}

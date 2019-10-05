@@ -313,30 +313,36 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaRecPropiedad',
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recPropiedad')+' *',
-									       	bind: '{gasto.fechaRecPropiedad}',
-									       	maxValue: null,
-									       	readOnly: true,
-									       	allowBlank: false
+									       	bind: {
+									       		value: '{gasto.fechaRecPropiedad}',
+									       		readOnly: '{gasto.bloquearEdicionFechasRecepcion}',
+									       		allowBlank: '{gasto.bloquearEdicionFechasRecepcion}'
+									       	},
+									       	maxValue: null
 									    },
 									    {
 								        	xtype:'datefieldbase',
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaRecGestoria',
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recGestoria')+' *',
-									       	bind: '{gasto.fechaRecGestoria}',
-									       	maxValue: null,
-									       	readOnly: true,
-									       	allowBlank: false
+									       	bind: {
+									       		value: '{gasto.fechaRecGestoria}',
+									       		readOnly: '{gasto.bloquearEdicionFechasRecepcion}',
+									       		allowBlank: '{gasto.bloquearEdicionFechasRecepcion}'
+									       	},
+									       	maxValue: null
 									    },
 									    {
 								        	xtype:'datefieldbase',
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaRecHaya',
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recHaya')+' *',
-									       	bind: '{gasto.fechaRecHaya}',
-									       	maxValue: null,
-									       	readOnly: true,
-									       	allowBlank: false
+									       	bind: {
+									       		value: '{gasto.fechaRecHaya}',
+									       		readOnly: '{gasto.bloquearEdicionFechasRecepcion}',
+									       		allowBlank: '{gasto.bloquearEdicionFechasRecepcion}'
+									       	},
+									       	maxValue: null
 									    }										
 									]
 								}

@@ -72,6 +72,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private List<String> gastoRefacturadoGrid;
    	private Boolean bloquearDestinatario;
    	private Boolean tieneGastosRefacturables;
+   	private Boolean bloquearEdicionFechasRecepcion;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -375,5 +376,11 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setTieneGastosRefacturables(Boolean tieneGastosRefacturables) {
 		this.tieneGastosRefacturables = tieneGastosRefacturables;
+	}
+	public Boolean getBloquearEdicionFechasRecepcion() {
+		return bloquearEdicionFechasRecepcion;
+	}
+	public void setBloquearEdicionFechasRecepcion(Boolean bloquearEdicionFechasRecepcion) {
+		this.bloquearEdicionFechasRecepcion = bloquearEdicionFechasRecepcion;
 	}
 }

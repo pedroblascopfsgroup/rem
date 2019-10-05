@@ -442,6 +442,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 			}
 			dto.setBloquearDestinatario(!Checks.estaVacio(this.getGastosRefacturablesGasto(gasto.getId())));
+			
+			if (!Checks.esNulo(gasto.getNumGastoGestoria())) {
+				dto.setBloquearEdicionFechasRecepcion(true);
+			} else {
+				dto.setBloquearEdicionFechasRecepcion(false);
+			}
 
 		}
 

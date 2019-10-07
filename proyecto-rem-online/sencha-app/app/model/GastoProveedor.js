@@ -207,11 +207,11 @@ Ext.define('HreRem.model.GastoProveedor', {
    			name:'numeroGastoRefacturableExistente'
    		},
    		{
-   			name: 'gastoRefacturable',
+   			name: 'bloquearDestinatario',
    			type: 'boolean'
    		},
    		{
-   			name: 'bloquearDestinatario',
+   			name: 'bloquearEdicionFechasRecepcion',
    			type: 'boolean'
    		}
     		

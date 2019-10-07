@@ -342,7 +342,8 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            	return descripcion;
 				        	},
 			        		editor: {
-				        		xtype:'combobox',
+			        			xtype: 'comboboxfieldbase',
+								addUxReadOnlyEditFieldPlugin: false,
 				        		   labelWidth: '25%',
 						            width: '15%',
 				            		allowBlank: false,
@@ -406,7 +407,8 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            	return descripcion;
 				        	},
 				            editor: {
-				        		xtype:'combobox',
+				            	xtype: 'comboboxfieldbase',
+								addUxReadOnlyEditFieldPlugin: false,
 				        		   labelWidth: '25%',
 						            width: '15%',
 				            		allowBlank: false,

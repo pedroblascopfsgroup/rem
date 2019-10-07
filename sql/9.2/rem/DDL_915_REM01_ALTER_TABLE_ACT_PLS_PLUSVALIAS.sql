@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Dean Ibañez Viño
---## FECHA_CREACION=20191002
+--## FECHA_CREACION=20191007
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7855
@@ -42,7 +42,7 @@ DECLARE
 	V_KEY_NAME_SRA VARCHAR2(50 CHAR):= 'FK_ACT_DD_EGP_ID';
 	
     --Nombre de las columnas
-        V_COL_EGP VARCHAR2(50 CHAR):= 'DD_EGP_ID'; 
+    V_COL_EGP VARCHAR2(50 CHAR):= 'DD_EGP_ID'; 
 	
     
 BEGIN   
@@ -69,13 +69,25 @@ BEGIN
                 -- Añadimos LA CLAVE AJENA
                 EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT '||V_KEY_NAME_SRA||' FOREIGN KEY ('||V_COL_EGP||')
 	  								REFERENCES '||V_ESQUEMA||'.'||V_TABLA_REF_SRA||' ('||V_COL_EGP||') ON DELETE SET NULL ENABLE';
-	  	-- Añadimos el comentario al campo
+				-- Añadimos el comentario al campo
                 EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COL_EGP||' IS ''Código identificador único del diccionario.'''; 					
             ELSE
                 DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA||'.'||V_COL_EGP||'... YA existe.');
+                
+                --Comprobacion de la FK
+                V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TABLA||''' AND CONSTRAINT_NAME = '''||V_KEY_NAME_SRA||'''';
+				EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+				
+				IF V_NUM_TABLAS = 0 THEN
+					DBMS_OUTPUT.PUT_LINE('  [INFO] Insertamos FK '||V_KEY_NAME_SRA||' FOREIGN KEY ('||V_COL_EGP||')');  
+					-- Añadimos LA CLAVE AJENA
+					EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT '||V_KEY_NAME_SRA||' FOREIGN KEY ('||V_COL_EGP||')
+										REFERENCES '||V_ESQUEMA||'.'||V_TABLA_REF_SRA||' ('||V_COL_EGP||') ON DELETE SET NULL ENABLE';
+				ELSE 
+					DBMS_OUTPUT.PUT_LINE('  [INFO] FK '||V_KEY_NAME_SRA||' FOREIGN KEY ('||V_COL_EGP||') ya existe.');
+				END IF;
+				
             END IF;    
-
-    
   ELSE
       DBMS_OUTPUT.PUT_LINE(' [INFO] '''||V_TABLA||'''... No existe.');  
   END IF;

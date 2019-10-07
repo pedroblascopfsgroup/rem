@@ -1131,6 +1131,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", false);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			model.put("error", e.getMessage());
 			model.put("success", false);		
 		} 
 

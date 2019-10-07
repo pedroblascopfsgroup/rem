@@ -105,6 +105,10 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		    	},
 		    	callback: function(options, success, response){
+		    		var datosGeneralesGastos = me.getView().grid.up("gastodetalle").down("[reference=datosgeneralesgastoref]");
+		    		var datosDetalleEconomico = me.getView().grid.up("gastodetalle").down("[reference=detalleeconomicogastoref]");
+		    		datosGeneralesGastos.funcionRecargar();
+		    		datosDetalleEconomico.funcionRecargar();
 				}		     
 		  });		
     	}

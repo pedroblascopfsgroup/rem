@@ -51,9 +51,11 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -802,5 +804,24 @@ public class OfertasController {
 		ExcelReport report = ofertaApi.generarExcelOfertasCES(dtoOfertasFilter);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getClaseOferta(Long idExpediente, ModelMap model) {
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		Filter filtroOfertaOfertaDependiente = genericDao.createFilter(FilterType.EQUALS ,"ofertaDependiente.id", eco.getOferta().getId());
+		OfertasAgrupadasLbk ofertaDependiente = genericDao.get(OfertasAgrupadasLbk.class, filtroOfertaOfertaDependiente);
+		
+		String claseOferta = "";
+		if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(eco.getOferta().getClaseOferta().getCodigo())) {
+			claseOferta = DDClaseOferta.CODIGO_OFERTA_PRINCIPAL;
+		}else if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(eco.getOferta().getClaseOferta().getCodigo()) && !Checks.esNulo(ofertaDependiente)  ) {
+			claseOferta = DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE;
+		}else if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(eco.getOferta().getClaseOferta().getCodigo())) {
+			claseOferta = DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL;
+		}
+		model.put("claseOferta", claseOferta);
+		return createModelAndViewJson(model);
 	}
 }

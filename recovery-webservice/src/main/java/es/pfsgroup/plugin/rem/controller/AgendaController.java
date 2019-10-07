@@ -802,48 +802,6 @@ public class AgendaController extends TareaController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView isOfertaPrincipal(Long idExpediente, ModelMap model) {
-		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
-		//Filter filtroOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS ,"ofertaPrincipal.id", eco.getOferta().getId());
-		//OfertasAgrupadasLbk ofertaPrincipal = genericDao.get(OfertasAgrupadasLbk.class, filtroOfertaPrincipal);
-		boolean esOfertaPrincipal = false;
-		if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(eco.getOferta().getClaseOferta().getCodigo())) {
-			esOfertaPrincipal = true;
-		}
-		model.put("ofertaPrincipal", esOfertaPrincipal);
-		return createModelAndViewJson(model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView isOfertaDependiente(Long idExpediente, ModelMap model) {
-		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
-		Filter filtroOfertaOfertaDependiente = genericDao.createFilter(FilterType.EQUALS ,"ofertaDependiente.id", eco.getOferta().getId());
-		OfertasAgrupadasLbk ofertaDependiente = genericDao.get(OfertasAgrupadasLbk.class, filtroOfertaOfertaDependiente);
-		boolean esOfertaDependiente = false;
-		if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(eco.getOferta().getClaseOferta().getCodigo()) && !Checks.esNulo(ofertaDependiente)  ) {
-			esOfertaDependiente = true;
-		}
-		model.put("ofertaDependiente", esOfertaDependiente);
-		return createModelAndViewJson(model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView isOfertaIndividual(Long idExpediente, ModelMap model) {
-		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
-		Filter filtroOfertaIndividual = genericDao.createFilter(FilterType.EQUALS ,"id", eco.getOferta().getId());
-		Oferta ofertaIndividual = genericDao.get(Oferta.class, filtroOfertaIndividual);
-		boolean esOfertaIndividual = false;
-		if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(eco.getOferta().getClaseOferta().getCodigo()) && !Checks.esNulo(ofertaIndividual)) {
-			esOfertaIndividual = true;
-		}
-		model.put("ofertaIndividual", esOfertaIndividual);
-		return createModelAndViewJson(model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView avanzarOfertasDependientes(WebRequest request, ModelMap model) {
 
 		boolean success = false;

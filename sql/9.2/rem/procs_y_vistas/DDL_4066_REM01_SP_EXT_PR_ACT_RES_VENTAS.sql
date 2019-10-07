@@ -22,7 +22,7 @@
 --##		1.04 (20190709) - Alejandro Valverde - Se añade comprobacion de la cartera Cerberus y la subcartera Apple para la obtencion de la fecha de firma de la tarea Obtención de contrato de reserva.
 --##		1.04 (20190808) - Adrián Molina - Se añade al filtro de la cartera Liberbank, la cartera Cerberus
 --##		1.05 (20190827) - Viorel Remus Ovidiu - Se desactiva la actualizacion del estado del expediente a 'RESERVADO'
---##		1.06 (20191007) - Viorel Remus Ovidiu - Se spluciona error de dubcartera
+--##		1.06 (20191007) - Viorel Remus Ovidiu - Se soluciona error de subcartera
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -122,9 +122,9 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             INNER JOIN REM01.ACT_ACTIVO ACT
                                                             ON ACT.ACT_ID = OFA.ACT_ID
                                                             INNER JOIN REM01.DD_CRA_CARTERA CAR
+                                                            ON CAR.DD_CRA_ID = ACT.DD_CRA_ID 
 							    INNER JOIN REM01.DD_SCR_SUBCARTERA SCR 
                                                             ON SCR.DD_SCR_ID = ACT.DD_SCR_ID 
-                                                            ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE

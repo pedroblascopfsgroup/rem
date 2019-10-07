@@ -2495,7 +2495,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		gasto = calcularParticipacionActivosGasto(gasto);
 
-		gasto = asignarPropietarioGasto(gasto);
+		//gasto = asignarPropietarioGasto(gasto);
 
 		gasto = asignarCuentaContableYPartidaGasto(gasto);
 

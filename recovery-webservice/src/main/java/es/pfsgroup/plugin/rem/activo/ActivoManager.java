@@ -7537,7 +7537,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		Filter vigenteFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
 		Order order = new Order(OrderType.DESC, "id");
-		ActivoInformeComercialHistoricoMediador mediadorVigente = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoFilter, vigenteFilter).get(0);
+		
+		List<ActivoInformeComercialHistoricoMediador> listaMediadores = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoFilter, vigenteFilter);
+		ActivoInformeComercialHistoricoMediador mediadorVigente = null;
+		if (!Checks.estaVacio(listaMediadores)) {
+			mediadorVigente = listaMediadores.get(0);
+		}
 		
 		if (!Checks.esNulo(gestorPublicacionActivo) && logedUser.equals(gestorPublicacionActivo)) {
 			return true;
@@ -7556,8 +7561,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			Filter pvcFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
 			List<ActivoProveedorContacto> listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, pvcFilter);
 			if (!Checks.estaVacio(listaProveedorContacto)) {
-				//Puede a ver más de un registro en PVC con el mismo PVE_ID
-				//pero por lo que he visto entre esos registro solo puede a ver uno con DocIdentificativo
+				//Puede haber más de un registro en PVC con el mismo PVE_ID
+				//pero por lo que he visto entre esos registro solo puede haber uno con DocIdentificativo
 				//y ese seria el mediador
 				for (ActivoProveedorContacto proveedorContacto : listaProveedorContacto) {
 					if (!Checks.esNulo(proveedorContacto) && !Checks.esNulo(proveedorContacto.getDocIdentificativo())) {

@@ -1658,8 +1658,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			    	callback: function(options, success, response){
 			    		me.getView().grid.getStore().reload();
 			    		var datosGeneralesGastos = me.getView().grid.up("gastodetalle").down("[reference=datosgeneralesgastoref]");
+			    		var datosDetalleEconomico = me.getView().grid.up("gastodetalle").down("[reference=detalleeconomicogastoref]");
 			    		me.getViewModel().set("gasto.id",me.getView().idGasto);
 			    		me.cargarTabData(datosGeneralesGastos);
+			    		me.cargarTabData(datosDetalleEconomico);
 				    	me.closeView();
 					}
 			    		     

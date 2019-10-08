@@ -2540,7 +2540,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		gasto = calcularParticipacionActivosGasto(gasto);
 
-		gasto = asignarPropietarioGasto(gasto);
+		//gasto = asignarPropietarioGasto(gasto);
 
 		gasto = asignarCuentaContableYPartidaGasto(gasto);
 
@@ -3636,7 +3636,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter facturadosGastoId = genericDao.createFilter(FilterType.EQUALS, "idGastoProveedorRefacturado", gastoHijo.getId());
 			GastoRefacturable gastoRefacturable = genericDao.get(GastoRefacturable.class, facturadosGastoId);
 			
-			if (!Checks.esNulo(gastoDetalleEconomico) && !gastoDetalleEconomico.getGastoRefacturable()) {
+			if (!Checks.esNulo(gastoDetalleEconomico) && (!Checks.esNulo(gastoDetalleEconomico.getGastoRefacturable()) && !gastoDetalleEconomico.getGastoRefacturable())) {
 				throw new JsonViewerException("El gasto "+numGastoRefacturable+" no es refacturable, por favor corrija el listado de gastos");
 			}
 			

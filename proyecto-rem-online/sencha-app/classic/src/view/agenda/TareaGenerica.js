@@ -1232,7 +1232,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			var claseOferta;
 			if(!Ext.isEmpty(expedienteMain)){
 				claseOferta = expedienteMain.getViewModel().get('datosbasicosoferta.claseOfertaCodigo');
-
 				if(claseOferta == '01'){
 					me.ocultarCampo(comite);
 					me.campoNoObligatorio(comite);
@@ -1242,15 +1241,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
 					me.desocultarCampo(huecoVenta);  	
 				}else if(claseOferta == '02'){
-					me.ocultarCampo(comite);
-				 	me.campoNoObligatorio(comite);
-					me.desocultarCampo(comitePropuesto);
-					me.campoNoObligatorio(comitePropuesto);
-					me.desocultarCampo(importeTotalOfertaAgrupada);
-					me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
-					me.desocultarCampo(huecoVenta);
-				}else{
-					me.desocultarCampo(numOfertaPrincipal);
+					 me.desocultarCampo(numOfertaPrincipal);
 					 me.bloquearCampo(me.down('[name=numOfertaPrincipal]'));
 					 me.ocultarCampo(comitePropuesto);
 					 me.ocultarCampo(comboConflicto);
@@ -1258,6 +1249,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 					 me.ocultarCampo(fechaEnvio);
 					 me.ocultarCampo(observaciones);
 					 me.ocultarCampo(comite);
+					 me.desocultarCampo(huecoVenta);
+					 
+				}else{					
+					 me.ocultarCampo(comite);
+					 me.campoNoObligatorio(comite);
+					 me.desocultarCampo(comitePropuesto);
+					 me.campoNoObligatorio(comitePropuesto);
+					 me.desocultarCampo(importeTotalOfertaAgrupada);
+					 me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
 					 me.desocultarCampo(huecoVenta);
 				}
 			}else{
@@ -1276,15 +1276,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    						me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
 		    						me.desocultarCampo(huecoVenta);  	
 		    					}else if(claseOferta == '02'){
-		    						me.ocultarCampo(comite);
-		    					 	me.campoNoObligatorio(comite);
-		    						me.desocultarCampo(comitePropuesto);
-		    						me.campoNoObligatorio(comitePropuesto);
-		    						me.desocultarCampo(importeTotalOfertaAgrupada);
-		    						me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
-		    						me.desocultarCampo(huecoVenta);
-		    					}else{
-		    						me.desocultarCampo(numOfertaPrincipal);
+		    						 me.desocultarCampo(numOfertaPrincipal);
 		    						 me.bloquearCampo(me.down('[name=numOfertaPrincipal]'));
 		    						 me.ocultarCampo(comitePropuesto);
 		    						 me.ocultarCampo(comboConflicto);
@@ -1292,6 +1284,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		    						 me.ocultarCampo(fechaEnvio);
 		    						 me.ocultarCampo(observaciones);
 		    						 me.ocultarCampo(comite);
+		    						 me.desocultarCampo(huecoVenta);
+		    						 
+		    					}else{					
+		    						 me.ocultarCampo(comite);
+		    						 me.campoNoObligatorio(comite);
+		    						 me.desocultarCampo(comitePropuesto);
+		    						 me.campoNoObligatorio(comitePropuesto);
+		    						 me.desocultarCampo(importeTotalOfertaAgrupada);
+		    						 me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
 		    						 me.desocultarCampo(huecoVenta);
 		    					}
 		    			}

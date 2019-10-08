@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20190929
+--## FECHA_CREACION=20191008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-7795
@@ -65,7 +65,7 @@ DECLARE
 	T_TIPO_DATA('3' ,'43','Hipoteca','Hipoteca'),
 	T_TIPO_DATA('3' ,'44','Certificación de cargas','Certificación de cargas'),
 	T_TIPO_DATA('3' ,'45','Afección fiscal','Afección fiscal'),
-	T_TIPO_DATA('3' ,'46','Afección Urbanística','Afección Urbanística'),
+	T_TIPO_DATA('3' ,'46','Afección urbanística','Afección urbanística'),
 	T_TIPO_DATA('3' ,'47','Condición resolutoria','Condición resolutoria'),
 	T_TIPO_DATA('3' ,'48','Anotación Concurso','Anotación Concurso'),
 	T_TIPO_DATA('3' ,'49','Censo','Censo'),
@@ -90,19 +90,12 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
         --Comprobar el dato a insertar.
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_TCA_ID = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND DD_STC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_TCA_ID = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND DD_STC_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
         IF V_NUM_TABLAS > 0 THEN				
-          -- Si existe se modifica.
-          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' - '''|| TRIM(V_TMP_TIPO_DATA(2))||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-                    'SET DD_STC_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
-					', DD_STC_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
-					', USUARIOMODIFICAR = ''HREOS-7795'' , FECHAMODIFICAR = SYSDATE '||
-					' WHERE DD_TCA_ID = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND DD_STC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
-          EXECUTE IMMEDIATE V_MSQL;
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+ 
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO YA EXISTE');
 
        ELSE
        	-- Si no existe se inserta.

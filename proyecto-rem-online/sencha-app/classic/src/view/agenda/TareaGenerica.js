@@ -265,7 +265,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     checkbox.uncheckedValue = false;
                     camposFiltrados.push(checkbox);
                     break;
-
                 default:
                     camposFiltrados.push(me.campos[i]);
                     break;
@@ -1375,6 +1374,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var comboResolucion = me.down('[name=comboResolucion]');
         var comitePropuesto = me.down('[name=comitePropuesto]');
         var importeTotalOfertaAgrupada = me.down('[name=importeTotalOfertaAgrupada]');
+        var comboResolucionComite = me.down('[name=comiteSancionador]');
 
         if (me.down('[name=comboResolucion]').getValue() != '03') {
             me.deshabilitarCampo(me.down('[name=numImporteContra]'));
@@ -1397,6 +1397,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		}else{
 			me.desbloquearCampo(comboResolucion);
 			me.bloquearCampo(comitePropuesto);
+			
+			var filters = comboResolucionComite.getStore().getFilters();
+			filters.add({ property: 'carteraCodigo', value: '08' });
 			
 			var url = $AC.getRemoteUrl('ofertas/getClaseOferta');
 	    	Ext.Ajax.request({

@@ -1404,7 +1404,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	    			params: {idExpediente : idExp},
 	    			success: function(response,opts){
 	    				 var claseOferta = Ext.JSON.decode(response.responseText).claseOferta;
-	    				 if(claseOferta == '01'){
+	    				 if(claseOferta == '03'){
 	    					 me.ocultarCampo(comitePropuesto);
 	    					 me.ocultarCampo(importeTotalOfertaAgrupada);
 	    				 }

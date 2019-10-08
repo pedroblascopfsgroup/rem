@@ -586,8 +586,10 @@ public interface OfertaApi {
 
 	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 
-	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
-
+//	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+	
+	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
+	
 	DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
 
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);

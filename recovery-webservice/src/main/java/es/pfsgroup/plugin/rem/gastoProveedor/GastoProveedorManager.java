@@ -777,25 +777,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							detalleGasto.setImpuestoIndirectoCuota(diarioCuota);
 							detalleGasto.setIrpfTipoImpositivo(gastoPrinex.getPorcentajeIrpf());
 							detalleGasto.setIrpfCuota(gastoPrinex.getImporteIrpf());
-							if("1".equals(gastoPrinex.getDiario1()) || "20".equals(gastoPrinex.getDiario1())) {							
-								detalleGasto.setImportePrincipalSujeto(diarioBase);								
+							if("1".equals(gastoPrinex.getDiario1()) || "20".equals(gastoPrinex.getDiario1()) || "2".equals(gastoPrinex.getDiario1())) {							
+								detalleGasto.setImportePrincipalSujeto(diarioBase);
 								detalleGasto.setImporteTotal(diarioBase + diarioCuota);
 								if("60".equals(gastoPrinex.getDiario2())) {	
 									detalleGasto.setImportePrincipalNoSujeto(diario2Base);
 									detalleGasto.setImporteTotal(diarioBase + diarioCuota + diario2Base);
 								}								
 							}else {
-								detalleGasto.setImportePrincipalNoSujeto(diarioBase);								
-								if("60".equals(gastoPrinex.getDiario1())) {
-									detalleGasto.setImpuestoIndirectoExento(1);
-									detalleGasto.setImporteTotal(diarioBase);
-								}else {
-									detalleGasto.setImporteTotal(diarioBase + diarioCuota);
-								}
-								if("60".equals(gastoPrinex.getDiario2())) {
-									detalleGasto.setImportePrincipalNoSujeto(diarioBase + diario2Base);
-									detalleGasto.setImporteTotal(diarioBase + diarioCuota + diario2Base);
-								}
+								detalleGasto.setImportePrincipalNoSujeto(diarioBase);							
+								detalleGasto.setImpuestoIndirectoExento(1);
+								detalleGasto.setImporteTotal(diarioBase);								
 							}							
 							genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 						}	
@@ -858,27 +850,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						Double diarioCuota = 0.0;
 						Double diario2Base = 0.0;
 						
-						if(!Checks.esNulo(gastoPrinex.getDiario1())) {
-							if(("20").equals(gastoPrinex.getDiario1())){
-								dto.setProrrata(true);
-							}else {
-								dto.setProrrata(false);
-							}
-						}
-						
-						if(!Checks.esNulo(gastoPrinex.getDiario1()) || !Checks.esNulo(gastoPrinex.getDiario2())) {
-							
-							if(!Checks.esNulo(gastoPrinex.getDiario1())) {
-								if(("60").equals(gastoPrinex.getDiario1())){									
-									dto.setExencionlbk(gastoPrinex.getDiario1Base());									
-								}else {									
-									if(!Checks.esNulo(gastoPrinex.getDiario2())) {
-										if(("60").equals(gastoPrinex.getDiario2())){
-											dto.setExencionlbk(gastoPrinex.getDiario2Base());
-										}										
-									}
+						if(!Checks.esNulo(gastoPrinex.getDiario2())) {
+							if(("60").equals(gastoPrinex.getDiario2())){
+								dto.setExencionlbk(gastoPrinex.getDiario2Base());
+								if("20".equals(gastoPrinex.getDiario1())){
+									dto.setProrrata(true);
+								}else {
+									dto.setProrrata(false);
 								}
-							}
+							}										
 						}						
 						for (GastoProveedorActivo gastoActivo : gasto.getGastoProveedorActivos()) {
 							if(!Checks.esNulo(gastoActivo.getParticipacionGasto()) && Checks.esNulo(gastoActivo.getActivo())) {

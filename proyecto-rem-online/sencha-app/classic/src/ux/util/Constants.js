@@ -684,5 +684,11 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	 PVE_DOCUMENTONIF: {
 		 HAYA: 'A86744349'
+	 },
+	 
+	 DD_ESTADO_GEST_PLUVS: {
+		 EN_CURSO:'EN_CURSO',
+		 FINALIZADO:'FINALIZADO',
+		 RECHAZADO:'RECHAZADO'
 	 }
 });

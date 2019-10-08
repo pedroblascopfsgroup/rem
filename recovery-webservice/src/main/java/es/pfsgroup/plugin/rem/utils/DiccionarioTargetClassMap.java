@@ -236,6 +236,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoSolicitudTributo", DDTipoSolicitudTributo.class);
 		mapa.put("tipoDocJunta", DDTipoDocJuntas.class);
 		mapa.put("tipoDocumentoPlusvalia", DDTipoDocPlusvalias.class);
+		mapa.put("estadoGestionPlusvalia", DDEstadoGestionPlusv.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

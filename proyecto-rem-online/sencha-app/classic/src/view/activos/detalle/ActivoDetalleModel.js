@@ -822,8 +822,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				return !funcion;
     			}
     		return true;
-    	}		
-	 },
+    	}, 
+    	checkEditEstadoGestionPlusvalia: function(get) {
+    		var estadoGestion = get('plusvalia.estadoGestion');    	
+    		
+    		if(Ext.isEmpty(estadoGestion)){    			
+    			return true;
+    		} else {
+    			if(estadoGestion == CONST.DD_ESTADO_GEST_PLUVS["EN_CURSO"]) {
+         			return false;
+         		} else {
+         			return true;
+         		}
+    		}
+    	}
+    	    
+	 }, 
 	
     stores: {
     		
@@ -2122,6 +2136,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposEquipoGestion'}
+			}
+		},
+		
+		comboEstadoGestionPlusvalia: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoGestionPlusvalia'}
 			}
 		},
 		

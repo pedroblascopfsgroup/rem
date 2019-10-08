@@ -56,6 +56,9 @@ Ext.define('HreRem.model.PlusvaliaActivoModel', {
     		},
     		{
     			name: 'observaciones'
+    		},
+    		{
+    			name: 'estadoGestion'
     		}
     ],
     

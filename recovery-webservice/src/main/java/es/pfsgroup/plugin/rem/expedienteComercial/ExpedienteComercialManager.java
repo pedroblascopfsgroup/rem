@@ -10358,4 +10358,53 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return true;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean clonarOferta(Long idTramite, String clonar) {
+		
+		/*  se debe insertar:  valores['T017_ResolucionExpediente']['clonarYAnular']?null:'ERROR' en  TAP_SCRIPT_VALIDACION_JBPM de la TAP_TAREA_PROCEDIMIENTO
+		 *       
+		BigDecimal totalImporteParticipacionActivos = new BigDecimal(0);
+
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		if (activoTramite == null) {
+			return false;
+		}
+
+		Trabajo trabajo = activoTramite.getTrabajo();
+		if (trabajo == null) {
+			return false;
+		}
+
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
+		if (expediente == null) {
+			return false;
+		}
+
+		Oferta oferta = expediente.getOferta();
+		if (oferta == null) {
+			return false;
+		}
+
+		List<VActivoOfertaImporte> activosOfertas = this.getListActivosOfertaImporte(oferta.getId());
+
+		Double importeExpediente = oferta.getImporteContraOferta() != null ? oferta.getImporteContraOferta()
+				: oferta.getImporteOferta();
+		if (importeExpediente == null) {
+			return false;
+		}
+
+		for (VActivoOfertaImporte activoOferta : activosOfertas) {
+			if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
+				totalImporteParticipacionActivos = totalImporteParticipacionActivos
+						.add(BigDecimal.valueOf(activoOferta.getImporteActivoOferta()));
+			}
+		}
+
+		return importeExpediente.equals(totalImporteParticipacionActivos.doubleValue());
+		*/
+		return true;
+	}
+	
 }

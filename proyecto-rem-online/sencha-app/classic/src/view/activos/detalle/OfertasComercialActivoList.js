@@ -537,11 +537,18 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.clonar.mas.ofertas.tramitadas"));
 		} else {
 			var ofertasGrid = btn.up().up();
-			ofertasGrid.mask(HreRem.i18n("msg.mask.loading"));
 
-			me.lookupController().clonateOferta(ofertaSeleccionadaData.id, ofertasGrid);
+			Ext.Msg.confirm(
+				HreRem.i18n("msg.info.clonar.expediente"),
+				HreRem.i18n("msg.confirm.clonar.oferta"),
+				function(btnConfirm){
+					if (btnConfirm == "yes"){
+						ofertasGrid.mask(HreRem.i18n("msg.mask.loading"));
+						me.lookupController().clonateOferta(ofertaSeleccionadaData.id, ofertasGrid);
+					}
+				}
+			);
 		}
-
 	},
 	
 	calcularMostrarBotonClonarExpediente: function(){

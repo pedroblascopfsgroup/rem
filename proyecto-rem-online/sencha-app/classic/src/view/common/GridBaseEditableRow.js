@@ -198,7 +198,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClick', scope: this, hidden: !me.addButton  };
 			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteClick', scope: this, disabled: true, hidden: !me.removeButton };
 			var configPropagationButton = {iconCls:'x-fa fa-th-list', itemId:'propagationButton', handler: 'onClickPropagationButton', scope: this, disabled: true, hidden: !me.propagationButton };
-			var configCloneExpedienteButton = {iconCls:'fa fa-files-o', itemId:'cloneExpedienteButton', reference: 'cloneExpedienteButton', handler: 'onClickCloneExpedienteButton', tooltip: HreRem.i18n("msg.info.clonar.expediente"), tooltipType: 'title', scope: this, disabled: true, hidden: !me.cloneExpedienteButton };
+			var configCloneExpedienteButton = {iconCls:'copiar-expediente-icon', itemId:'cloneExpedienteButton', reference: 'cloneExpedienteButton', handler: 'onClickCloneExpedienteButton', tooltip: HreRem.i18n("msg.info.clonar.expediente"), tooltipType: 'title', scope: this, disabled: true, hidden: !me.cloneExpedienteButton };
 			
 			if(!Ext.isEmpty(me.buttonSecurity)) {
 				

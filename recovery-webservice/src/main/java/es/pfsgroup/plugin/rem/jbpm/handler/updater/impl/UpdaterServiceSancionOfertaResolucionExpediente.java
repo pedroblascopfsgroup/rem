@@ -147,7 +147,35 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 									DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO.equals(expediente.getReserva().getEstadoReserva().getCodigo()) || 
 									DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION.equals(expediente.getReserva().getEstadoReserva().getCodigo()));
 				}
-
+				for(TareaExternaValor valor :  valores) {
+					if(CHECK_ANULAR_Y_CLONAR.equals(valor.getNombre())) {
+						clonarYAnular = !Checks.esNulo(valor.getValor()) && valor.getValor().equals("on");
+					}
+				}
+				if(clonarYAnular) { // Aqui solo se comprueba que cumple las condiciones para clonar la oferta.  Se clona al final del metodo si el resto de partes han ido correctamente.
+					if(tieneReserva) {
+						throw new UserException("No es posible clonar el expediente porque el activo se encuentra \"Reservado\"");
+					}
+					
+					List<ActivoOferta> ofertasActivo = activo.getOfertas();
+					
+					boolean sePuedeClonarExpediente = true;
+					
+					for (ActivoOferta activoOferta : ofertasActivo) {
+						Filter ofertaId = genericDao.createFilter(FilterType.EQUALS, "id", activoOferta.getOferta());
+						Oferta ofr = genericDao.get(Oferta.class, ofertaId);
+						
+						if (ofr.getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA) && !ofr.getId().equals(ofertaAceptada.getId())) {
+							sePuedeClonarExpediente = false;
+							break;
+						}
+					}
+					
+					if (!sePuedeClonarExpediente) {
+						throw new UserException("No se puede anular y clonar el expediente porque existen más ofertas en estado \"Tramitada\"");
+					}
+				}
+				
 				for(TareaExternaValor valor :  valores) {
 					
 					if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
@@ -199,9 +227,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						ofertaAceptada.setMotivoRechazo(motivoRechazo);
 						genericDao.save(Oferta.class, ofertaAceptada);
 						genericDao.save(ExpedienteComercial.class, expediente);
-					}
-					if(CHECK_ANULAR_Y_CLONAR.equals(valor.getNombre())) {
-						clonarYAnular = valor.getValor().equals("on");
 					}
 				}
 				
@@ -345,6 +370,15 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						genericDao.save(Trabajo.class, trabajo);
 					}
 				}
+				if(clonarYAnular) { // Si no han dado error las comprobaciones anteriores y se quiere clonar, se cloan la oferta.
+					boolean esAgrupacion = !Checks.esNulo(expediente.getOferta().getAgrupacion());
+					
+					if(esAgrupacion) {
+						genericAdapter.clonateOferta("" + expediente.getOferta().getId(), true);
+					}else {
+						genericAdapter.clonateOferta("" + expediente.getOferta().getId(), false);
+					}
+				}
 			}
 
 			ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(ofertaAceptada);
@@ -357,35 +391,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				OfertasAgrupadasLbk agrupada = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente", ofertaAceptada));
 				genericDao.deleteById(OfertasAgrupadasLbk.class, agrupada.getId());
 			}
-			
-			if(clonarYAnular) {
-				boolean esAgrupacion = !Checks.esNulo(expediente.getOferta().getAgrupacion());
-				
-				List<ActivoOferta> ofertasActivo = activo.getOfertas();
-				
-				boolean sePuedeClonarExpediente = true;
-				
-				for (ActivoOferta activoOferta : ofertasActivo) {
-					Filter ofertaId = genericDao.createFilter(FilterType.EQUALS, "id", activoOferta.getOferta());
-					Oferta ofr = genericDao.get(Oferta.class, ofertaId);
-					
-					if (ofr.getEstadoOferta().equals(DDEstadoOferta.CODIGO_ACEPTADA) && !ofr.getId().equals(ofertaAceptada.getId())) {
-						sePuedeClonarExpediente = false;
-						break;
-					}
-				}
-				
-				if (!sePuedeClonarExpediente) {
-					throw new UserException("No se puede anular y clonar el expediente porque existen más ofertas en estado \"Tramitada\"");
-				}
-				
-				if(esAgrupacion) {
-					genericAdapter.clonateOferta("" + expediente.getOferta().getId(), true);
-				}else {
-					genericAdapter.clonateOferta("" + expediente.getOferta().getId(), false);
-				}
-			}
-			
 		}
 	}
 

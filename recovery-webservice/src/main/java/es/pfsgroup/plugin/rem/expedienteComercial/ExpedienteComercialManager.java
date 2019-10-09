@@ -10359,7 +10359,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return true;
 	}
 	
-	@Override
+	/*@Override
 	@Transactional(readOnly = false)
 	public Boolean clonarOferta(Long idTramite, String clonar) {
 		
@@ -10403,8 +10403,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return importeExpediente.equals(totalImporteParticipacionActivos.doubleValue());
-		*/
+		
 		return true;
 	}
-	
+	*/
 }

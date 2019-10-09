@@ -508,6 +508,13 @@ public class GenericAdapter {
 							
 				logger.error("Oferta clonada sin problemas.");
 				
+				try {
+					ofertaApi.congelarOfertasPendientes(expedienteOfertaNueva);
+					logger.error("Las ofertas pendientes han sido congeladas.");
+				} catch (Exception e) {
+					logger.error("Error descongelando ofertas.", e);
+				}
+				
 			}catch(Exception ex) {
 				logger.error("Error al intentar clonar la oferta. Es posible que se haya cambiado la forma de crear ofertas y la funcion de clonarlas este obsoleta.", ex);
 				if(!Checks.esNulo(ofertaCreada)) {

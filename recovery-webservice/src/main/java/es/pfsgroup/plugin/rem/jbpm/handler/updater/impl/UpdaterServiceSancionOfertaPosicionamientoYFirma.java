@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -62,6 +63,9 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired
+    private NotificationPlusvaliaManager notificationPlusvaliaManager;
 
     @Resource
     private MessageService messageServices;
@@ -125,6 +129,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 								Filter filtroEstadoGestionPlusc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGestionPlusv.COD_EN_CURSO);
 								activoPlusvalia.setEstadoGestion(genericDao.get(DDEstadoGestionPlusv.class, filtroEstadoGestionPlusc));								
 								genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
+								
+								notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo);
 								}
 								
 	
@@ -171,6 +177,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							Filter filtroEstadoGestionPlusc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGestionPlusv.COD_EN_CURSO);
 							activoPlusvalia.setEstadoGestion(genericDao.get(DDEstadoGestionPlusv.class, filtroEstadoGestionPlusc));								
 							genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
+							
+							notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo);
 							}
 							
 							activo.setBloqueoPrecioFechaIni(new Date());

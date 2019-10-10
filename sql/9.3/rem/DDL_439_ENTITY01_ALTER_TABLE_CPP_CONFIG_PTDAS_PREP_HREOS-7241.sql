@@ -1,6 +1,6 @@
 --/*
 --#########################################
---## AUTOR=David Gonzalez
+--## AUTOR=Jose Antonio Gigante
 --## FECHA_CREACION=20190729
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.15.0
@@ -43,7 +43,7 @@ DECLARE
 
 	V_COLUMNS_MATRIX MATRIX_TABLE := MATRIX_TABLE(
 	--				    NOMBRE						TIPO COLUMNA		                COMENTARIO
-		ARRAY_TABLE('CPP_REFACTURABLE', 		'NUMBER(1) DEFAULT 0 NOT NULL',     'HREOS-7241')
+		ARRAY_TABLE('CPP_REFACTURABLE', 		'NUMBER(1) DEFAULT 0 NOT NULL',     'Indica si es un gasto refacturable')
 	);
 
 	V_FK_MATRIX MATRIX_TABLE := MATRIX_TABLE(

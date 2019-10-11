@@ -641,10 +641,6 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkExpedienteFechaCheque(idTramite);
             }
-            def checkClonarOferta(String clonar) {
-            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");            	     	
-            	return expedienteComercialManager.clonarOferta(idTramite,clonar);
-            }
   			 ]]></value>
   		</list>
   	</property>

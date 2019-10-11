@@ -1272,7 +1272,5 @@ public interface ExpedienteComercialApi {
 
 	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
 
-	//Boolean clonarOferta(Long idTramite, String clonar);
-
 }
 

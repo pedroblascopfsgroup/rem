@@ -7314,9 +7314,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public List<ActivoProveedor> getComboApiPrimaria() {
+	public List<ActivoProveedor> getComboApiPrimario() {
 		
-		return activoDao.getComboApiPrimaria();
+		return activoDao.getComboApiPrimario();
 	}
 
 	@Override
@@ -7377,4 +7377,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activoDto;
 	}
 
+	public void deleteActOfr(Long idActivo, Long idOferta) {
+		activoDao.deleteActOfr(idActivo, idOferta);
+	}
 }

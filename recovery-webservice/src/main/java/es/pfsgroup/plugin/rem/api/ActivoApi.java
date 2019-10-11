@@ -1285,7 +1285,8 @@ public interface ActivoApi {
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
 
-	List<ActivoProveedor> getComboApiPrimaria();
+
+	List<ActivoProveedor> getComboApiPrimario();
 
 	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
 	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);

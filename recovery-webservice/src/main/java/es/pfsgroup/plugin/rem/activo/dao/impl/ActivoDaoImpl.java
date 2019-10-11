@@ -1639,7 +1639,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ActivoProveedor> getComboApiPrimaria() {
+	public List<ActivoProveedor> getComboApiPrimario() {
 		HQLBuilder hb = new HQLBuilder(" from ActivoProveedor pve");
 		hb.appendWhere(" pve.tipoProveedor.codigo = '" + DDTipoProveedor.COD_MEDIADOR + "' and pve.auditoria.borrado = 0 and pve.nombre is not null and pve.fechaBaja is null ");
 		hb.orderBy("pve.nombre", "asc");
@@ -1704,6 +1704,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		List<VPlusvalia> plusvalias = (List<VPlusvalia>) pagePlusvalia.getResults();
 
 		return new DtoPage(plusvalias, pagePlusvalia.getTotalCount());
+	}
+
+	
+	@Override
+	public void deleteActOfr(Long idActivo, Long idOferta) {
+		StringBuilder sb = new StringBuilder("delete from ActivoOferta actofr where actofr.activo = " + idActivo + " and actofr.oferta = " + idOferta);
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 	}
 
 }

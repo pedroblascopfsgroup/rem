@@ -273,12 +273,6 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "DD_ECG_CODIGO")
 	private String estadoComunicacionGencat;
 
-	@Column(name = "DD_FSP_CODIGO")
-	private String fasePublicacionCodigo;
-	
-	@Column(name = "DD_FSP_DESCRIPCION")
-	private String fasePublicacionDescripcion;
-	
 	@Column(name = "GPUBL_USU_USERNAME")
 	private String gestorPublicacionUsername;
 
@@ -640,22 +634,6 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setEstadoComunicacionGencat(String estadoComunicacionGencat) {
 		this.estadoComunicacionGencat = estadoComunicacionGencat;
-	}
-
-	public String getFasePublicacionCodigo() {
-		return fasePublicacionCodigo;
-	}
-
-	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
-		this.fasePublicacionCodigo = fasePublicacionCodigo;
-	}
-
-	public String getFasePublicacionDescripcion() {
-		return fasePublicacionDescripcion;
-	}
-
-	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
-		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
 	}
 
 	public String getGestorPublicacionUsername() {

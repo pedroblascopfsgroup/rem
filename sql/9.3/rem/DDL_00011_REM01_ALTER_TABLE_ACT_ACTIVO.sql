@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20191001
+--## FECHA_CREACION=20191008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-7795
@@ -67,8 +67,6 @@ BEGIN
                 
                 -- Añadimos el campo
                 EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD '||V_COL_ECA||' '||V_TIPO_NUM_LONG||'';   
-
-
                 
 		 V_MSQL := 'SELECT COUNT (1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TABLA||''' AND CONSTRAINT_NAME = '''||V_KEY_NAME_SRA||'''';
  		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS_2; 
@@ -77,14 +75,15 @@ BEGIN
 
 		-- Añadimos LA CLAVE AJENA
                 EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT '||V_KEY_NAME_SRA||' FOREIGN KEY ('||V_COL_ECA||')
-	  								REFERENCES '||V_ESQUEMA||'.'||V_TABLA_REF_SRA||' ('||V_COL_ECA||') ON DELETE SET NULL ENABLE';
+							REFERENCES '||V_ESQUEMA||'.'||V_TABLA_REF_SRA||' ('||V_COL_ECA||') ON DELETE SET NULL ENABLE';
+
+ 		ELSE
+               	 DBMS_OUTPUT.PUT_LINE('  [INFO] YA EXISTE ESA FOREIGN-KEY');
+            	END IF;  
+
 	  	-- Añadimos el comentario al campo
                 EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COL_ECA||' IS ''Estado carga activo'''; 	
-
-	    ELSE
-                DBMS_OUTPUT.PUT_LINE('  [INFO] YA EXISTE ESA FOREIGN-KEY');
-            END IF;  
-
+ 
 				
     ELSE
         DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA||'.'||V_COL_ECA||'... YA existe.');

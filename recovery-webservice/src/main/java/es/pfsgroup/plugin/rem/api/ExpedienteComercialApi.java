@@ -1275,5 +1275,7 @@ public interface ExpedienteComercialApi {
 
 	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
 
+	boolean esDivarian(TareaExterna tareaExterna);
+
 }
 

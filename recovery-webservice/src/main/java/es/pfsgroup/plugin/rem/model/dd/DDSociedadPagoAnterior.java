@@ -32,9 +32,7 @@ public class DDSociedadPagoAnterior implements Auditable, Dictionary {
 	private static final long serialVersionUID = -6617347056146459295L;
 
 	@Id
-	@Column(name = "DD_SPG_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDSociedadPagoAnteriorGenerator")
-	@SequenceGenerator(name = "DDSociedadPagoAnteriorGenerator", sequenceName = "S_DD_SPG_SOCIEDAD_PAGO_ANTERIOR")
+	@Column(name = "DD_SPG_ID")	
     private Long id;
     
     @Column(name = "DD_SPG_CODIGO")   

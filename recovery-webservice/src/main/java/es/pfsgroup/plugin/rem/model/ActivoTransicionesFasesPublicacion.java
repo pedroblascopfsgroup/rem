@@ -29,9 +29,7 @@ public class ActivoTransicionesFasesPublicacion implements Serializable, Auditab
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @Column(name = "TFP_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoTransicionesFasesPublicacionGenerator")
-    @SequenceGenerator(name = "ActivoTransicionesFasesPublicacionGenerator", sequenceName = "S_ACT_TFP_TRANSICIONES_FASESP")
+    @Column(name = "TFP_ID")    
     private Long id;
 
     @Column(name = "TFP_ORIGEN")

@@ -27,7 +27,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
     			readOnly: true,
     			hidden: true,
     			bind : {
-    				hidden: '{comercial.tramitable}'
+    				//hidden: '{comercial.tramitable}'
+    				hidden: '{usuarioTieneFuncionTramitarOferta}'
     			}
     		},
     		{

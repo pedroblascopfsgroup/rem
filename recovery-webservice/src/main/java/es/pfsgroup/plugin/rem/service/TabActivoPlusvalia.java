@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
@@ -87,6 +88,10 @@ public class TabActivoPlusvalia implements TabActivoService {
 			if(!Checks.esNulo(activoPlusvalia.getAutoliquidacion())) {
 				activoPlusvaliaDto.setAutoliquidacion(activoPlusvalia.getAutoliquidacion().getCodigo());
 			}
+			
+			if(!Checks.esNulo(activoPlusvalia.getEstadoGestion())) {
+				activoPlusvaliaDto.setEstadoGestion(activoPlusvalia.getEstadoGestion().getCodigo());
+			}
 		}
 		
 		return activoPlusvaliaDto;
@@ -98,7 +103,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 		
 		DtoActivoPlusvalia activoPlusvaliaDto = (DtoActivoPlusvalia) dto;
 		DDSinSiNo codSiNo = new DDSinSiNo();
-		ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(activo.getId());
 		
 		if(Checks.esNulo(activoPlusvalia)) {
 			activoPlusvalia = new ActivoPlusvalia();			
@@ -166,6 +171,12 @@ public class TabActivoPlusvalia implements TabActivoService {
 			activoPlusvalia.setObservaciones(activoPlusvaliaDto.getObservaciones());
 
 		}
+		
+ 		if(!Checks.esNulo(activoPlusvaliaDto.getEstadoGestion())) {			
+ 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getEstadoGestion());
+			DDEstadoGestionPlusv codEstadoGest = (DDEstadoGestionPlusv) genericDao.get(DDEstadoGestionPlusv.class, filtro);
+			activoPlusvalia.setEstadoGestion(codEstadoGest);
+ 		}
 	
 		
 		genericDao.save(ActivoPlusvalia.class, activoPlusvalia);

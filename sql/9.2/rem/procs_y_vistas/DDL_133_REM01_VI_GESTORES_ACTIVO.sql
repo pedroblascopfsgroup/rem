@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20190826
+--## FECHA_CREACION=20191003
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5119
+--## INCIDENCIA_LINK=REMVIP-5383
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -29,6 +29,7 @@
 --##    0.16 Se añade el gestor Portfolio Manager (GPM)
 --##    0.17 SBG Se añaden las restricciones y se ordena en base a la configuración de gestores.
 --##    0.18 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
+--##	0.19 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
 --##########################################
 --*/
 
@@ -199,7 +200,7 @@ SELECT /*+ ALL_ROWS */  act.act_id,
 																					,''GCOIN'',''GCOINM'',''GCODI'',''SUPCOMALQ''
                                                                                     ,''SUPACT'',''HAYASBOINM'',''GGADM'',''GIAADMT'',''GIAFORM''
                                                                                     ,''GFORM'',''SFORM'',''GESTCOMALQ'',''PTEC''
-                                                                                    ,''GCOM'',''SCOM'',''GPUBL'',''SPUBL'', ''GPM''
+                                                                                    ,''GCOM'',''SCOM'',''GPUBL'',''SPUBL'', ''GPM'',''GCCLBK''
                                                                                     )
             left JOIN REM01.act_ges_dist_gestores dist0
                ON (dist0.cod_estado_activo IS NULL

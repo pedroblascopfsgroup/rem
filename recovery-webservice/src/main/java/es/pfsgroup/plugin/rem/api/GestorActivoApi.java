@@ -50,6 +50,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK = "GCOIN";
 	public static final String CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK = "GCOINM";
 	public static final String CODIGO_GESTOR_LIBERBANK_RESIDENCIAL = "GLIBRES";
+	public static final String CODIGO_GESTOR_CAPA_CONTROL_LIBERBANK = "GCCLBK";
 	public static final String CODIGO_GESTOR_COMERCIAL_ALQUILERES = "GESTCOMALQ";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES = "SUPCOMALQ";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK= "SBACKOFFICEINMLIBER";
@@ -167,6 +168,4 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 * @return
 	 */
 	public Usuario usuarioTareaApple(String codigoTarea);
-	
-	public Usuario supervisorTareaApple(String codigoTarea);
 }

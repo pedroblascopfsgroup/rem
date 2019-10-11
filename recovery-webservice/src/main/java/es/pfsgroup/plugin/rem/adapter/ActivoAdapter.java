@@ -3820,12 +3820,6 @@ public class ActivoAdapter {
 				}
 			}
 			
-			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
-				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
-			}else {
-				notificationOfertaManager.sendNotification(oferta);
-			}
-			
 			// HREOS-4937 -- 'General Data Protection Regulation'
 
 			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo

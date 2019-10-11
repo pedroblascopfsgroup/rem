@@ -1121,12 +1121,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		// El combo "Comité seleccionado" vendrá informado para cartera
 		// Liberbank
-//		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-//				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-//				&& Checks.esNulo(oferta.getAgrupacion())) {
-//				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
-//				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLiberbank(oferta));
-//		}
+		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				&& Checks.esNulo(oferta.getAgrupacion())) {
+				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
+				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLiberbank(oferta));
+		}
 		// El combo "Comité seleccionado" vendrá informado para cartera Cajamar
 		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
@@ -1156,27 +1156,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
-		if (!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+		//if (!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 			crearGastosExpediente(oferta, nuevoExpediente);
-		}
+		//}
 
-		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente), null);
-				nuevoExpediente.setComiteSancion(comiteLbk);
-				nuevoExpediente.setComitePropuesto(comiteLbk);
-				
-				if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
-					Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
-					Filter deletedFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
-					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
-					Oferta nuevaOfertaPrincipal = oALbk.getOfertaPrincipal();
-					ExpedienteComercial nuevoEcoPrincipal = expedienteComercialApi.findOneByOferta(nuevaOfertaPrincipal);
-					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
-					nuevoEcoPrincipal.setComitePropuesto(comiteLbkPrincipal);
-					genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
-				}
-		}
+//		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+//				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+//				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente), null);
+//				nuevoExpediente.setComiteSancion(comiteLbk);
+//				nuevoExpediente.setComitePropuesto(comiteLbk);
+//				
+//				if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+//					Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
+//					Filter deletedFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+//					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
+//					Oferta nuevaOfertaPrincipal = oALbk.getOfertaPrincipal();
+//					ExpedienteComercial nuevoEcoPrincipal = expedienteComercialApi.findOneByOferta(nuevaOfertaPrincipal);
+//					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
+//					nuevoEcoPrincipal.setComitePropuesto(comiteLbkPrincipal);
+//					genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
+//				}
+//		}
 		
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);

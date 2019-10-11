@@ -140,6 +140,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import net.minidev.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -1149,18 +1150,29 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateFotosById(DtoFoto dtoFoto, ModelMap model) {
+	public ModelAndView updateFotosById(DtoFoto dto, ModelMap model, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			boolean success = adapter.saveFoto(dtoFoto);
+			boolean success = true;
+			String[] data = request.getParameterValues("data");
+			if(!Checks.esNulo(data)) {
+				String[] fotos = data[0].substring(1, data[0].length()-1).split(",");
+				DtoFoto dtoFoto = null;
+				for(String foto: fotos) {
+					String[] datosFoto = foto.split(":");				
+					dtoFoto = new DtoFoto();
+					dtoFoto.setId(Long.valueOf(datosFoto[0].substring(1,datosFoto[0].length()-1)));
+					dtoFoto.setOrden(Integer.valueOf(datosFoto[1]) + 1);
+					adapter.saveFoto(dtoFoto);
+				}
+			}else {
+				success = adapter.saveFoto(dto);
+			}			
 			model.put(RESPONSE_SUCCESS_KEY, success);
-
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
-
 		model.put(RESPONSE_SUCCESS_KEY, true);
-
 		return createModelAndViewJson(model);
 	}
 

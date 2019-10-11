@@ -18,11 +18,11 @@
 --##    0.4  (20180724) - Pablo Meseguer - Se deja de utilizar el numero de reserva y se añade tratamiento para los expedientes economicos en "En devolucion"
 --##    0.5  (20180920) - Marco Muñoz - Se ajusta el SP para actuar también sobre agrupaciones de activos en los pasos 2.1 y 2.2.
 --##    1.02 (20180927) - Ivan Castelló - Añadir estado o en Pendiente de devolución.
---##		1.03 (20181001) - Marco Muñoz - Se añade la actualización de la fecha de devolucion de la reserva del Expediente en la segunda casuistica (FECHA_DEVOLUCION_RESERVA)
---##		1.04 (20190709) - Alejandro Valverde - Se añade comprobacion de la cartera Cerberus y la subcartera Apple para la obtencion de la fecha de firma de la tarea Obtención de contrato de reserva.
+--##	1.03 (20181001) - Marco Muñoz - Se añade la actualización de la fecha de devolucion de la reserva del Expediente en la segunda casuistica (FECHA_DEVOLUCION_RESERVA)
+--##	1.04 (20190709) - Alejandro Valverde - Se añade comprobacion de la cartera Cerberus y la subcartera Apple para la obtencion de la fecha de firma de la tarea Obtención de contrato de reserva.
 --##    1.05 (20190724) - Cristian Hernández - Se añade nuevo parámetro 'Cartera' y comprobación del mismo en el paso de registrar 'fecha de contabilización'/'fecha de firma' dependiendo del mismo.
---##		1.05 (20190808) - Adrián Molina - Se añade al filtro de la cartera Liberbank, la cartera Cerberus
---##		1.06 (20190827) - Viorel Remus Ovidiu - Se desactiva la actualizacion del estado del expediente a 'RESERVADO'
+--##	1.05 (20190808) - Adrián Molina - Se añade al filtro de la cartera Liberbank, la cartera Cerberus
+--##	1.06 (20190827) - Viorel Remus Ovidiu - Se desactiva la actualizacion del estado del expediente a 'RESERVADO'
 --##	1.07 (20191010) - Jin Li Hu - Se añade el código de la caretra Cajamar para todas la queries donde se filtra por cartera, y se ha modificado una query según la descripción del item - HREOS-7988
 --##########################################
 --*/

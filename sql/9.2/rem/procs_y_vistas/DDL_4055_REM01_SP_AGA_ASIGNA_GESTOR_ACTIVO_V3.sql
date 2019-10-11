@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=GUILLEM REY
---## FECHA_CREACION=20190809
+--## FECHA_CREACION=20191003
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-4927
@@ -26,6 +26,7 @@
 --##		1.3 REMVIP-3624 JINLI HU : añadir filtro para la asignación de gestor/supervisor de BO para los activos de sareb/bankia que tengan el tipo de comercialización a Singular 
 --##        1.4 HREOS-7039 Se añade el gestor Portfolio Manager (GPM)
 --##		1.5 REMVIP-4927 GUILLEM REY: no asigna gestores publicacion
+--##	    1.6 REMVIP-5383 VIOREL REMUS OVIDIU: añadimos tipo gestor Capa de control Liberbank
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -51,8 +52,8 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     V_CLASE_ACTIVO VARCHAR (500 CHAR);
     V_CLASE_ACTIVO_NULL VARCHAR (500 CHAR);
 
-    V_GESTOR_FINANCIERO VARCHAR2(4000 CHAR) := ' (''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''GESRES'',''SUPRES'',''HAYAGBOINM'',''HAYASBOINM'') ';
-    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''HAYASBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'',''GESTCOMALQ'',''SUPCOMALQ'',''GFORMADM'',''GPM'')';
+    V_GESTOR_FINANCIERO VARCHAR2(4000 CHAR) := ' (''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''GESRES'',''SUPRES'',''HAYAGBOINM'',''HAYASBOINM'',''GCCLBK'') ';
+    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''HAYASBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'',''GESTCOMALQ'',''SUPCOMALQ'',''GFORMADM'',''GPM'',''GCCLBK'')';
     V_GESTOR            VARCHAR2(4000 CHAR);
 
     CURSOR C_LOG IS

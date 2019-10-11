@@ -265,7 +265,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     checkbox.uncheckedValue = false;
                     camposFiltrados.push(checkbox);
                     break;
-
                 default:
                     camposFiltrados.push(me.campos[i]);
                     break;
@@ -1228,62 +1227,76 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		}else if(CONST.CARTERA['LIBERBANK'] == codigoCartera) {	
 			
 			var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
-	        var url = $AC.getRemoteUrl('agenda/isOfertaPrincipal');
-	    	Ext.Ajax.request({
-	    			url:url,
-	    			params: {idExpediente : idExp},
-	    			success: function(response,opts){
-	    				 var ResofertaPrincipal = Ext.JSON.decode(response.responseText).ofertaPrincipal;
-	    				 if(ResofertaPrincipal == "true"){
-	    						
-	    						me.ocultarCampo(comite);
-	    						me.campoNoObligatorio(comite);
-	    						me.desocultarCampo(comitePropuesto);
-	    						me.campoNoObligatorio(comitePropuesto);
-	    						me.desocultarCampo(importeTotalOfertaAgrupada);
-	    						me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
-	    						me.desocultarCampo(huecoVenta);  	
-	    				 }
-	    			}
-	    	});	
-	    	
-	    	var url = $AC.getRemoteUrl('agenda/isOfertaIndividual');
-	    	Ext.Ajax.request({
-	    			url:url,
-	    			params: {idExpediente : idExp},
-	    			success: function(response,opts){
-	    				 var ResofertaIndividual = Ext.JSON.decode(response.responseText).ofertaIndividual;
-	    				 if(ResofertaIndividual == "true"){
-	    					 	me.ocultarCampo(comite);
-	    					 	me.campoNoObligatorio(comite);
-	    						me.desocultarCampo(comitePropuesto);
-	    						me.campoNoObligatorio(comitePropuesto);
-	    						me.desocultarCampo(importeTotalOfertaAgrupada);
-	    						me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
-	    						me.desocultarCampo(huecoVenta);
-	    				 }
-	    			}
-	    	});
-	    	
-	    	var url = $AC.getRemoteUrl('agenda/isOfertaDependiente');
-	    	Ext.Ajax.request({
-	    			url:url,
-	    			params: {idExpediente : idExp},
-	    			success: function(response,opts){
-	    				 var ResofertaDependiente = Ext.JSON.decode(response.responseText).ofertaDependiente;
-	    				 if(ResofertaDependiente == "true"){
-	    					 me.desocultarCampo(numOfertaPrincipal);
-	    					 me.bloquearCampo(me.down('[name=numOfertaPrincipal]'));
-	    					 me.ocultarCampo(comitePropuesto);
-	    					 me.ocultarCampo(comboConflicto);
-	    					 me.ocultarCampo(comboRiesgo);
-	    					 me.ocultarCampo(fechaEnvio);
-	    					 me.ocultarCampo(observaciones);
-	    					 me.ocultarCampo(comite);
-	    					 me.desocultarCampo(huecoVenta);
-	    				 }
-	    			}
-	    	});		
+			var expedienteMain = Ext.ComponentQuery.query('[itemId="expediente_'+idExp+'"]')[0];
+			var claseOferta;
+			if(!Ext.isEmpty(expedienteMain)){
+				claseOferta = expedienteMain.getViewModel().get('datosbasicosoferta.claseOfertaCodigo');
+				if(claseOferta == '01'){
+					me.ocultarCampo(comite);
+					me.campoNoObligatorio(comite);
+					me.desocultarCampo(comitePropuesto);
+					me.campoNoObligatorio(comitePropuesto);
+					me.desocultarCampo(importeTotalOfertaAgrupada);
+					me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
+					me.desocultarCampo(huecoVenta);  	
+				}else if(claseOferta == '02'){
+					 me.desocultarCampo(numOfertaPrincipal);
+					 me.bloquearCampo(me.down('[name=numOfertaPrincipal]'));
+					 me.ocultarCampo(comitePropuesto);
+					 me.ocultarCampo(comboConflicto);
+					 me.ocultarCampo(comboRiesgo);
+					 me.ocultarCampo(fechaEnvio);
+					 me.ocultarCampo(observaciones);
+					 me.ocultarCampo(comite);
+					 me.desocultarCampo(huecoVenta);
+					 
+				}else{					
+					 me.ocultarCampo(comite);
+					 me.campoNoObligatorio(comite);
+					 me.desocultarCampo(comitePropuesto);
+					 me.campoNoObligatorio(comitePropuesto);
+					 me.desocultarCampo(importeTotalOfertaAgrupada);
+					 me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
+					 me.desocultarCampo(huecoVenta);
+				}
+			}else{
+				var url = $AC.getRemoteUrl('ofertas/getClaseOferta');
+		    	Ext.Ajax.request({
+		    			url:url,
+		    			params: {idExpediente : idExp},
+		    			success: function(response,opts){
+		    				 var claseOferta = Ext.JSON.decode(response.responseText).claseOferta;
+		    				 if(claseOferta == '01'){
+		    						me.ocultarCampo(comite);
+		    						me.campoNoObligatorio(comite);
+		    						me.desocultarCampo(comitePropuesto);
+		    						me.campoNoObligatorio(comitePropuesto);
+		    						me.desocultarCampo(importeTotalOfertaAgrupada);
+		    						me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
+		    						me.desocultarCampo(huecoVenta);  	
+		    					}else if(claseOferta == '02'){
+		    						 me.desocultarCampo(numOfertaPrincipal);
+		    						 me.bloquearCampo(me.down('[name=numOfertaPrincipal]'));
+		    						 me.ocultarCampo(comitePropuesto);
+		    						 me.ocultarCampo(comboConflicto);
+		    						 me.ocultarCampo(comboRiesgo);
+		    						 me.ocultarCampo(fechaEnvio);
+		    						 me.ocultarCampo(observaciones);
+		    						 me.ocultarCampo(comite);
+		    						 me.desocultarCampo(huecoVenta);
+		    						 
+		    					}else{					
+		    						 me.ocultarCampo(comite);
+		    						 me.campoNoObligatorio(comite);
+		    						 me.desocultarCampo(comitePropuesto);
+		    						 me.campoNoObligatorio(comitePropuesto);
+		    						 me.desocultarCampo(importeTotalOfertaAgrupada);
+		    						 me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
+		    						 me.desocultarCampo(huecoVenta);
+		    					}
+		    			}
+		    	});
+			}			
 		}
 	},
 	T013_DocumentosPostVentaValidacion: function() {
@@ -1361,6 +1374,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var comboResolucion = me.down('[name=comboResolucion]');
         var comitePropuesto = me.down('[name=comitePropuesto]');
         var importeTotalOfertaAgrupada = me.down('[name=importeTotalOfertaAgrupada]');
+        var comboResolucionComite = me.down('[name=comiteSancionador]');
 
         if (me.down('[name=comboResolucion]').getValue() != '03') {
             me.deshabilitarCampo(me.down('[name=numImporteContra]'));
@@ -1384,13 +1398,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.desbloquearCampo(comboResolucion);
 			me.bloquearCampo(comitePropuesto);
 			
-			var url = $AC.getRemoteUrl('agenda/isOfertaIndividual');
+			var filters = comboResolucionComite.getStore().getFilters();
+			filters.add({ property: 'carteraCodigo', value: '08' });
+			
+			var url = $AC.getRemoteUrl('ofertas/getClaseOferta');
 	    	Ext.Ajax.request({
 	    			url:url,
 	    			params: {idExpediente : idExp},
 	    			success: function(response,opts){
-	    				 var ResOfertaIndividual = Ext.JSON.decode(response.responseText).ofertaIndividual;
-	    				 if(ResOfertaIndividual == "true"){
+	    				 var claseOferta = Ext.JSON.decode(response.responseText).claseOferta;
+	    				 if(claseOferta == '03'){
 	    					 me.ocultarCampo(comitePropuesto);
 	    					 me.ocultarCampo(importeTotalOfertaAgrupada);
 	    				 }

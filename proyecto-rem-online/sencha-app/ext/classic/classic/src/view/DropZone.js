@@ -62,7 +62,6 @@ Ext.define('Ext.view.DropZone', {
 
     getIndicator: function() {
         var me = this;
-
         if (!me.indicator) {
             me.indicator = new Ext.Component({
                 ariaRole: 'presentation',
@@ -77,11 +76,11 @@ Ext.define('Ext.view.DropZone', {
     },
 
     getPosition: function(e, node) {
-        var y      = e.getXY()[1],
+        var x = e.getXY()[0],
             region = Ext.fly(node).getRegion(),
             pos;
 
-        if ((region.bottom - y) >= (region.bottom - region.top) / 2) {
+        if ((region.right - x) >= (region.right - region.left) / 2) {
             pos = "before";
         } else {
             pos = "after";
@@ -115,7 +114,8 @@ Ext.define('Ext.view.DropZone', {
             pos = me.getPosition(e, node),
             overRecord = view.getRecord(node),
             draggingRecords = data.records,
-            indicatorY;
+            indicatorY = 0,
+            indicatorX = 0;
 
         if (!Ext.Array.contains(draggingRecords, overRecord) && (
             pos === 'before' && !me.containsRecordAtOffset(draggingRecords, overRecord, -1) ||
@@ -125,16 +125,18 @@ Ext.define('Ext.view.DropZone', {
 
             if (me.overRecord !== overRecord || me.currentPosition !== pos) {
 
-                indicatorY = Ext.fly(node).getY() - view.el.getY() - 1;
+            	indicatorY = Ext.fly(node).getY() - view.el.getY() - 1;
+                indicatorX = Ext.fly(node).getX() - view.el.getX() - 1;
                 if (pos === 'after') {
-                    indicatorY += Ext.fly(node).getHeight();
+                    indicatorX += Ext.fly(node).getWidth();
                 }
                 // If view is scrolled using CSS translate, account for then when positioning the indicator
                 if (view.touchScroll === 2) {
                     indicatorY += view.getScrollY();
                 }
-                me.getIndicator().setWidth(Ext.fly(view.el).getWidth()).showAt(0, indicatorY);
 
+                me.getIndicator().setHeight(Ext.fly(node).getHeight()).showAt(indicatorX, indicatorY);
+                
                 // Cache the overRecord and the 'before' or 'after' indicator.
                 me.overRecord = overRecord;
                 me.currentPosition = pos;

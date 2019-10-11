@@ -1260,54 +1260,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var orden = 1;
 		var modificados = new Array();
 		var contadorModificados = 0;
-		for (i=0; i<record.store.getData().items.length;i++) {
-			
-			if (store.getData().items[i].data.orden != orden) {
-				store.getAt(i).data.orden = orden;
-				
-				// FIXME: Â¿Poner mÃ¡scara?
-				// me.getView().mask(HreRem.i18n("msg.mask.loading"));
-				var url =  $AC.getRemoteUrl('activo/updateFotosById');
-    			Ext.Ajax.request({
-    			
-	    		     url: url,
-	    		     params: {
-	    		     			id: store.getAt(i).data.id,
-	    		     			orden: store.getAt(i).data.orden 	
-	    		     		}
-	    			
-	    		    ,success: function (a, operation, context) {
-
-	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
-	                    	me.storeGuardado.load();
-	                    	me.refrescarGuardado = false;
-	                    	/*
-							 * //FIXME: Â¿Poner mÃ¡scara? Ext.toast({ html: 'LA OPERACIÃN SE HA
-							 * REALIZADO CORRECTAMENTE', width: 360, height: 100, align: 't' });
-							 */
-							// me.getView().unmask();
-	                    }
-
-	                },
-	                
-	                failure: function (a, operation, context) {
-	                	  Ext.toast({
-						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
-						     width: 360,
-						     height: 100,
-						     align: 't'									     
-						 });
-						 me.unmask();
-	                }
-    		     
-				});
-				
-				
-			}
-			orden++;
-			me.ordenGuardado++;
-		}
+		// FIXME: Â¿Poner mÃ¡scara?
+		// me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		var url =  $AC.getRemoteUrl('activo/updateFotosById');
+		Ext.Ajax.request({
 		
+		     url: url,
+		     params: {
+		     			data: Ext.encode(store.getData().getIndices())	
+		     		}
+			
+		    ,success: function (a, operation, context) {
+                	me.storeGuardado.load();
+                	/*
+					 * //FIXME: Â¿Poner mÃ¡scara? Ext.toast({ html: 'LA OPERACIÃN SE HA
+					 * REALIZADO CORRECTAMENTE', width: 360, height: 100, align: 't' });
+					 */
+					// me.getView().unmask();
+
+            },
+            
+            failure: function (a, operation, context) {
+            	  Ext.toast({
+				     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
+				     width: 360,
+				     height: 100,
+				     align: 't'									     
+				 });
+				 me.unmask();
+            }
+	     
+		});		
 	},
 	
 	onAddFotoClick: function(grid) {

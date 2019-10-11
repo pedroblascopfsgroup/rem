@@ -815,13 +815,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		}
     		return false;
     	},
+    	// añadimos tipo comercial y tipo restringida no tramitar oferta
     	usuarioTieneFuncionTramitarOferta: function(get){
-    		var esTramitable = get('comercial.tramitable');
+    		var me = this;
+    		var esTramitable = me.get('activo.isActivoEnTramite');
+    		var comercial =	me.get('activo.pertenceAgrupacionComercial');
+    		var restringida = me.get('activo.pertenceAgrupacionRestringida');
     		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+    		if(comercial || restringida){
+    			return true;
+    			
+    		}else{
     			if(!esTramitable){
     				return !funcion;
     			}
-    		return true;
+    			
+    		}
     	}		
 	 },
 	

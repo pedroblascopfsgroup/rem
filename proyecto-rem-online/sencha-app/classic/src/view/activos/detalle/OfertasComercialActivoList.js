@@ -233,7 +233,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        
 		];
 		
-		me.cloneExpedienteButton = true;
+		me.cloneExpedienteButton = true; // No modificar este, la logica de mostrar o no el botón está en el metodo calcularMostrarBotonClonarExpediente
 		
         me.callParent(); 
         
@@ -554,11 +554,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	calcularMostrarBotonClonarExpediente: function(){
 		var me = this;
 		
-		mostrarCloneButtonExpediente = ($AU.userIsRol('HAYASUPER') 
+		mostrarCloneButtonExpediente = ($AU.userIsRol('HAYASUPER') /*
 										&& (me.lookupController().getViewModel().data.activo.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['VENTA']
 											|| me.lookupController().getViewModel().data.activo.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
 	        							&& (me.lookupController().getViewModel().get('activo').data.subcarteraCodigo === CONST.SUBCARTERA['APPLEINMOBILIARIO']
-	        								|| me.lookupController().getViewModel().get('activo').data.subcarteraCodigo === CONST.SUBCARTERA['DIVARIAN'])
+	        								|| me.lookupController().getViewModel().get('activo').data.subcarteraCodigo === CONST.SUBCARTERA['DIVARIAN'])*/
 	    								);
 		me.mostrarBotonClonarExpediente(mostrarCloneButtonExpediente);
 	}

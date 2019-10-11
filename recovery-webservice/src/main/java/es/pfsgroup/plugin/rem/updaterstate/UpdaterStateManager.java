@@ -162,17 +162,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
 		}
-		else if (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo)) {
-			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
-		}
-		else if (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId())) {
-			codigo = DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE;
+		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
+			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
 		}
 		else if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
 			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;
-		}
-		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
-			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
 		}
 		else if(activoApi.isActivoConOfertaByEstado(activo,DDEstadoOferta.CODIGO_ACEPTADA)) {
 			if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())) {
@@ -193,6 +187,12 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			} else {
 				codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
 			}			
+		}
+		else if (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo)) {
+			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
+		}
+		else if (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId())) {
+			codigo = DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE;
 		}
 		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).getIsCondicionado()) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;

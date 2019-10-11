@@ -5,14 +5,15 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
     collapsed: false,
     disableValidation: true,
     refreshAfterSave: true,
+    saveMultiple: true,
     reference: 'datosbasicosexpediente',
     scrollable	: 'y',
-	recordName: "expediente",
-	
-	recordClass: "HreRem.model.ExpedienteComercial",
-    
-    requires: ['HreRem.model.ExpedienteComercial'],
-    
+    records: ['expediente','datosbasicosoferta'],	
+    recordsClass: ['HreRem.model.ExpedienteComercial','HreRem.model.DatosBasicosOferta'],    
+    requires: ['HreRem.model.ExpedienteComercial','HreRem.model.DatosBasicosOferta'],
+    listeners: {
+    	boxready:'cargarTabData'
+    	},
     initComponent: function () {
 
         var me = this;

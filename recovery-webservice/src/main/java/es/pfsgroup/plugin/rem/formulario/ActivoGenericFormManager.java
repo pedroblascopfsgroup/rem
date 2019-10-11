@@ -697,7 +697,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
-			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada, null);
+//			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada, null);
+			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada);
+
 			            				if(!Checks.esNulo(comite)) {
 			            					codigoComite = comite.getCodigo();
 			            				}
@@ -728,13 +730,14 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
             	if(item.getType().equals(TIPO_CAMPO_COMBO)) {
             		
-            		if(item.getNombre().equals("comiteInternoSancionador")) {
+            		if(item.getNombre().equals("comiteInternoSancionador") || item.getNombre().equals("comiteSancionador")) {
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getComiteSancion())) {
             					Filter filtroComiteSancionador = genericDao.createFilter(FilterType.EQUALS, "id", expediente.getComiteSancion().getId());
-            					DDComiteSancion comiteSancionador= genericDao.get(DDComiteSancion.class, filtroComiteSancionador);
+            					Filter filtroComiteSancionadorBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+            					DDComiteSancion comiteSancionador= genericDao.get(DDComiteSancion.class, filtroComiteSancionador, filtroComiteSancionadorBorrado);
             					if(!Checks.esNulo(comiteSancionador)) {
             						item.setValue(comiteSancionador.getDescripcion());
             					}

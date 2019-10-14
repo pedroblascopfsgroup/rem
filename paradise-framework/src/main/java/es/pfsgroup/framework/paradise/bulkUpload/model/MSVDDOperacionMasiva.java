@@ -97,6 +97,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES = "SUPGR";
 	public static final String CODE_FILE_BULKUPLOAD_VALORES_PERIMETRO_APPLE = "VALPA";	
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_LPO="CML";
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_DOCUMENTACION_ADMINISTRATIVA="MSDOCADM";
 	
 	private static final long serialVersionUID = 5938440720826995243L;
 

@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190606
+--## FECHA_CREACION=20191014
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4446
+--## INCIDENCIA_LINK=REMVIP-5473
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP SP_EXT_MODIFICACION_ESTADOS
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1-Oscar Diestre-Versión inicial (20190412)
 --##        0.2-Oscar Diestre-Corrección error. No actualiza DD_EAP_ID y permitir nulos
+--##        0.3-Viorel Remus Ovidiu-REMVIP-5473-Corrección error, tamaño de linea en historico
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -159,7 +160,7 @@ V_GPV_ID NUMBER( 25 );
 		''' || V_NOMBRE_SP || ''',
 		 SYSDATE,
 		 1,
-		 '''||GPV_NUM_GASTO_HAYA||''',
+		 SUBSTR('''||GPV_NUM_GASTO_HAYA||''', 1, 50),
 		 '''||AERROR||'''
 		 )';
 		  EXECUTE IMMEDIATE V_SQL;
@@ -189,7 +190,7 @@ V_GPV_ID NUMBER( 25 );
 		''' || V_NOMBRE_SP || ''',
 		 SYSDATE,
 		 0,
-		 '''||GPV_NUM_GASTO_HAYA||''',
+		 SUBSTR('''||GPV_NUM_GASTO_HAYA||''', 1, 50),
 		 '''||AMSG||'''
 		 )';
 		  EXECUTE IMMEDIATE V_SQL;
@@ -267,7 +268,7 @@ V_GPV_ID NUMBER( 25 );
       -- DD_EAP_CODIGO Busca el valor que debe actualizar:
     IF ( DD_EAP_CODIGO IS NOT NULL ) THEN
 
-    	V_SQL := ' SELECT DD_EAP_ID FROM  ' || V_ESQUEMA || '.DD_EAH_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = ''' || DD_EAP_CODIGO || ''' ';
+    	V_SQL := ' SELECT DD_EAP_ID FROM  ' || V_ESQUEMA || '.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = ''' || DD_EAP_CODIGO || ''' ';
     	EXECUTE IMMEDIATE V_SQL INTO V_DD_EAP_ID;
     ELSE
 	V_DD_EAP_ID := 'NULL';

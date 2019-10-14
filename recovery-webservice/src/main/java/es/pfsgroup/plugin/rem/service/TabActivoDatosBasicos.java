@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -819,6 +820,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getServicerActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "servicerActivoCodigo", activo.getServicerActivo().getCodigo());
 		}
+		if (activo.getCartera() != null
+				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()))
+			BeanUtils.copyProperty(activoDto, "tramitable", isTramitable(activo));
 		
 		return activoDto;
 	}
@@ -1460,7 +1464,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	public void validarCambiosTipoComercializacion(Activo activo, DtoActivoFichaCabecera dto) {
 
 		// Si intentamos cambiar de venta a alquiler
-		// o de Alquiler y venta a alquiler
+		// o de Alquiler y venta a alquilerisTramitable
 		// Se validará que no exista ninguna oferta viva de tipo venta
 
 		if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dto.getTipoComercializacionCodigo())
@@ -1486,6 +1490,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 
+	}
+	
+	private boolean isTramitable(Activo activo) {
+		boolean tramitable = true;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
+		VTramitacionOfertaActivo activoNoTramitable = genericDao.get(VTramitacionOfertaActivo.class, filtro);
+
+		if(!Checks.esNulo(activoNoTramitable)) {
+			tramitable = false;
+		}
+
+		return tramitable;
 	}
 
 }

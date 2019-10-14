@@ -2442,10 +2442,11 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception {
+	public Oferta createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
-
+		
+		Oferta ofertaNueva = null;
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
 		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(agrupacion.getTipoAgrupacion())) {
@@ -2615,8 +2616,11 @@ public class AgrupacionAdapter {
 				oferta.setClaseOferta(genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOferta())));
 			}
 			
+
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
-			genericDao.save(Oferta.class, oferta);
+
+			ofertaNueva = genericDao.save(Oferta.class, oferta);
+
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 
@@ -2711,10 +2715,10 @@ public class AgrupacionAdapter {
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);
-			return false;
+			return null;
 		}
 
-		return true;
+		return ofertaNueva;
 	}
 
 	// public List<DtoActivoAviso> getAvisosActivoById(Long id) {
@@ -4311,5 +4315,10 @@ public class AgrupacionAdapter {
 		}
 
 		return dtoAgrupacion;
+	}
+	
+	@Transactional(readOnly = false)
+	public Oferta clonateOfertaAgrupacion(String idOferta) {
+		return genericAdapter.clonateOferta(idOferta, true);
 	}
 }

@@ -195,6 +195,10 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 		me.lookupController().cargarTabData(me);
 		me.up('activosdetallemain').lookupReference('comercialactivotabpanelref').funcionRecargar();
 		me.evaluarEdicion();
+		
+		if(me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref')){
+			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').calcularMostrarBotonClonarExpediente();
+		}
     },
     
    evaluarEdicion: function() {
@@ -218,7 +222,6 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 		}
 		else{
 			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').setTopBar(true);
-		}
-		
+		}		
    }
 });

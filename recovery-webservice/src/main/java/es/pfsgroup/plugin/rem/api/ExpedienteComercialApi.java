@@ -1243,7 +1243,8 @@ public interface ExpedienteComercialApi {
 	boolean existeComprador(String numDoc);
 	
 	List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta);
-	public ArrayList<DtoDiccionario> calcularGestorComercialPrescriptor(Long idExpediente);
+	
+	public List<DtoDiccionario> calcularGestorComercialPrescriptor(Long idExpediente);
 
 	List<VReportAdvisoryNotes> getAdvisoryNotesByOferta(Oferta oferta);
 

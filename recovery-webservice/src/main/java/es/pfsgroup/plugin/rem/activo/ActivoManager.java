@@ -7524,7 +7524,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return activoDto;
 	}
-
+	
 	@Override
 	public Boolean getVisibilidadTabFasesPublicacion(Activo activo) {
 		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -7576,5 +7576,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return false;
+	}
+	
+	public void deleteActOfr(Long idActivo, Long idOferta) {
+		activoDao.deleteActOfr(idActivo, idOferta);
 	}
 }

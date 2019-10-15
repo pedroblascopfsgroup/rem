@@ -49,7 +49,7 @@ Ext.define('HreRem.view.administracion.juntas.FichaJuntas', {
            											        	fieldLabel: HreRem.i18n('title.comunidad'),
            														reference: 'comunidad',
            														name: 'comunidad',
-           											        	bind: '{junta.comunidad}'
+           											        	bind: '{junta.codProveedor}'
            							                		},
            													{
            											        	fieldLabel:  HreRem.i18n('fieldlabel.entidad.propietaria'),

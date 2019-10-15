@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 
 
 @Component
@@ -39,6 +40,9 @@ public class TabActivoPlusvalia implements TabActivoService {
 	@Autowired
 	private GastoDao gastoDao; 
 	
+	@Autowired
+	private NotificationPlusvaliaManager notificationPlusvaliaManager;
+
 	@Override
 	public String[] getKeys() {
 		return this.getCodigoTab();
@@ -176,6 +180,10 @@ public class TabActivoPlusvalia implements TabActivoService {
  			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getEstadoGestion());
 			DDEstadoGestionPlusv codEstadoGest = (DDEstadoGestionPlusv) genericDao.get(DDEstadoGestionPlusv.class, filtro);
 			activoPlusvalia.setEstadoGestion(codEstadoGest);
+			
+			if(activoPlusvaliaDto.getEstadoGestion().equals(DDEstadoGestionPlusv.COD_RECHAZADO)) {
+				notificationPlusvaliaManager.sendNotificationPlusvaliaRechazado(activoPlusvalia.getActivo());
+			}
  		}
 	
 		

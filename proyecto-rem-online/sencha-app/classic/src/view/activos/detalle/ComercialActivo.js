@@ -144,7 +144,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				collapsible: true,
 				reference: 'atorizacionTramOfertas',
 				bind:{
-					hidden: '{usuarioTieneFuncionTramitarOferta}'
+					hidden: '{usuarioTieneFuncionPermitirTramitarOferta}'
 				},
 				title: HreRem.i18n('title.autorizacion.tramitacion.ofertas'),
 				items :

@@ -187,7 +187,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
 		}
 			
-		if(CODIGO_T017_ANALISIS_PM.equals(codigoTarea) ||CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
+		if(CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea) || CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)) {
 			return gestorActivoApi.usuarioTareaApple(codigoTarea);
 		} else {

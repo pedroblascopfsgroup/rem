@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20191016
+--## FECHA_CREACION=20191017
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5473

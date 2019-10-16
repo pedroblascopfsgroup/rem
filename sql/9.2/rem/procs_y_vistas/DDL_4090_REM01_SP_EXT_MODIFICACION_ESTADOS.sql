@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20191014
+--## FECHA_CREACION=20191016
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5473
@@ -14,6 +14,7 @@
 --##        0.1-Oscar Diestre-Versión inicial (20190412)
 --##        0.2-Oscar Diestre-Corrección error. No actualiza DD_EAP_ID y permitir nulos
 --##        0.3-Viorel Remus Ovidiu-REMVIP-5473-Corrección error, tamaño de linea en historico
+--##        0.3-Oscar Diestre-REMVIP-5473-Corrección error
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -261,7 +262,7 @@ V_GPV_ID NUMBER( 25 );
     	V_SQL := ' SELECT DD_EAH_ID FROM  ' || V_ESQUEMA || '.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = ''' || DD_EAH_CODIGO || ''' ';
     	EXECUTE IMMEDIATE V_SQL INTO V_DD_EAH_ID;
     ELSE
-	V_DD_EAH_ID := 'NULL';
+	V_DD_EAH_ID := 0;
     END IF;
 
       -- 	
@@ -271,7 +272,7 @@ V_GPV_ID NUMBER( 25 );
     	V_SQL := ' SELECT DD_EAP_ID FROM  ' || V_ESQUEMA || '.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = ''' || DD_EAP_CODIGO || ''' ';
     	EXECUTE IMMEDIATE V_SQL INTO V_DD_EAP_ID;
     ELSE
-	V_DD_EAP_ID := 'NULL';
+	V_DD_EAP_ID := 0;
     END IF;
 
      -- Busca las provisiones que actualizará y crea registro en HLD:
@@ -332,7 +333,7 @@ V_GPV_ID NUMBER( 25 );
 		END IF;
 
 		-- Actualiza FECHA_EAP ?
-		IF ( UPDATE_FECHA_EAH = 1 ) THEN
+		IF ( UPDATE_FECHA_EAP = 1 ) THEN
 
       		 PLP$CREAR_REGISTRO_HLD(
 			     	 	 V_GPV_NUM_GASTO_HAYA,

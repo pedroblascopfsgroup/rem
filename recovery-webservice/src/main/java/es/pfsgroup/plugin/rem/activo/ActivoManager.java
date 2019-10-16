@@ -3667,7 +3667,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}catch(GestorDocumentalException gex){
 						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 						if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
-							gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+							Thread hilo = new Thread(gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES));
+							hilo.run();
 						}
 					}
 				}else {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20190930
+--## FECHA_CREACION=20191016
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7805
@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	     T_FUNCION('CMFP', 'Carga Masiva Fases de Publicación', 'Carga Masiva Fases de Publicación','CARGA_FASES_PUBLICACION','*n,*s,*s,*s')
+	     T_FUNCION('CMFP', 'Carga Masiva Fases de Publicación', 'Carga Masiva Fases de Publicación','CARGA_FASES_PUBLICACION','n*,s*,s*,s*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     

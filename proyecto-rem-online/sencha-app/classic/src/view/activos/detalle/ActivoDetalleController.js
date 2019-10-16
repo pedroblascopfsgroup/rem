@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias', 'HreRem.model.ComercialActivoModel'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -5453,15 +5453,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				    	     params: parametros,
 				
 				    	     success: function(response, opts) {
-				  
-				    	    	 btn.up("comercialactivo").funcionRecargar();
-				    	         
+			    	         
 				    	         if(Ext.decode(response.responseText).success == "false") {
 									me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
-									// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				    	         }else{
 				    	        	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	        	 me.getViewModel().set('comercial.tramitable', true);
+				    	        	 btn.up('activosdetallemain').lookupReference('comercialactivotabpanelref').funcionRecargar();
 				    	         }
+				    	         
+				    	         btn.up("comercialactivo").funcionRecargar();
 				    	     },
 				    	     failure: function (a, operation, context) {
 				           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -5542,8 +5543,99 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}else{
 			Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoTributo", {entidad: 'tributo', idEntidad: idActivo, parent: grid, idTributo: idTributo}).show();
 		}
-	}
+	},
+	
+	usuarioTieneFuncionPermitirTramitarOfertaC: function(get){
+		var me = this;
+		var comercial =	me.getViewModel().get('activo.pertenceAgrupacionComercial');
+		var restringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
 
+		if (!comercial && !restringida && me.getViewModel().get('activo.isCarteraBankia')){
+			var tramitar = me.getView().lookupReference('labelActivoNoTramitable').hidden; 
+    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+    		if (!tramitar){
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(!funcion);
+    		}else{
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+    		}
+		}else{
+			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+		}
+	},
+	
+	usuarioTieneFuncionPermitirTramitarOferta: function(get){
+		var me = this;
+		var comercial =	me.getViewModel().get('activo.pertenceAgrupacionComercial');
+		var restringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
+		var tramitar = true;
+		
+		if (!comercial && !restringida && me.getViewModel().get('activo.isCarteraBankia')){
+			
+			var esTramitable = me.getViewModel().get('comercial');
+			if(esTramitable == null || esTramitable == undefined){
+				esTramitable = me.getViewModel().get('activo.tramitable');
+				if(esTramitable == "false"){
+					tramitar = false;
+				}
+			}else{
+				if(esTramitable.data.tramitable != undefined || esTramitable.data.tramitable != null ){
+					tramitar = esTramitable.data.tramitable;
+				}
+			}
+			
+    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+    		if (!tramitar){
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(!funcion);
+    		}else{
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+    		}
+		}else{
+			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+		}
+
+	},
+	
+	cargarTabDataComercial: function (form) {
+		var me = this,
+		model = null,
+		models = null,
+		nameModels = null,
+		id = me.getViewModel().get("activo.id");
+
+		form.mask(HreRem.i18n("msg.mask.loading"));
+		if(!form.saveMultiple) {	
+			model = form.getModelInstance(),
+			model.setId(id);
+			if(Ext.isDefined(model.getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				model.load({
+				    success: function(record,b,c,d) {
+				    	form.setBindRecord(record);			    	
+				    	
+				    	if(Ext.isFunction(form.afterLoad)) {
+				    		form.afterLoad();
+				    	}
+				    	me.usuarioTieneFuncionPermitirTramitarOferta();
+				    	form.unmask();
+				    },
+				    failure: function(operation) {		    	
+				    	form.up("tabpanel").unmask();
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+				    }
+				});
+			} else {
+				// Si la API no contiene metodo de lectura (read).
+				form.setBindRecord(model);			    	
+		    	form.unmask();
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
+			}
+		} else {
+			models = form.getModelsInstance();
+			me.cargarTabDataMultiple(form, 0, models, form.records);
+		}
+	}
 
 });
 

@@ -6208,15 +6208,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		Double importeOferta = null;
 		
-		if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(act.getCartera().getCodigo())
-				&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(act.getSubcartera().getCodigo())) {
-			importeOferta = !Checks.esNulo(oferta.getImporteContraofertaCES()) ? oferta.getImporteContraofertaCES()
-					: !Checks.esNulo(oferta.getImporteContraofertaPM()) ? oferta.getImporteContraofertaPM()
-					: oferta.getImporteOferta();
-		}else {
-			importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta()
-					: oferta.getImporteOferta();
-		}
+		importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta()
+				: oferta.getImporteOferta();
 		
 		 
 

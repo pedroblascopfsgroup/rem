@@ -814,22 +814,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		}
     		}
     		return false;
-    	},
-    	// a�adimos tipo comercial y tipo restringida no tramitar oferta
-    	usuarioTieneFuncionTramitarOferta: function(get){
-    		var me = this;
-    		if ( CONST.CARTERA['BANKIA'] === me.get('activo.cartera')){
-    			var esTramitable = me.get('activo.tramitable');
-        		var comercial =	me.get('activo.pertenceAgrupacionComercial');
-        		var restringida = me.get('activo.pertenceAgrupacionRestringida');
-        		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
-        		if (comercial || restringida || !funcion )	
-        			return true;
-    		}else{
-    			return true;
-    		}
-    		return false;
-		}
+    	}
+
     
 	 },
 		

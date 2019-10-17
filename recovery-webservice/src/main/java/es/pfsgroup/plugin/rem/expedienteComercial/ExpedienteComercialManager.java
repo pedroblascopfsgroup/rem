@@ -1812,9 +1812,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(expediente)) {
 			dto.setIdEco(expediente.getId());
 		}
-		if (!Checks.esNulo(oferta.getGestorComercialPrescriptor()) && !Checks.esNulo(oferta.getGestorComercialPrescriptor().getId())) {
-			dto.setIdGestorComercialPrescriptor(oferta.getGestorComercialPrescriptor().getId());
-		}else {
+		
+		Usuario gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		if (!Checks.esNulo(gestorComercialPrescriptor)) {
+			if (!Checks.esNulo(oferta.getAgrupacion()) && DDTipoComercializar.CODIGO_SINGULAR.equals(oferta.getActivoPrincipal().getTipoComercializar().getCodigo()))
+				dto.setIdGestorComercialPrescriptor(0l);
+			else
+				dto.setIdGestorComercialPrescriptor(gestorComercialPrescriptor.getId());
+		} else {
 			dto.setIdGestorComercialPrescriptor(0l);
 		}
 
@@ -6203,15 +6208,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		Double importeOferta = null;
 		
-		if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(act.getCartera().getCodigo())
-				&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(act.getSubcartera().getCodigo())) {
-			importeOferta = !Checks.esNulo(oferta.getImporteContraofertaCES()) ? oferta.getImporteContraofertaCES()
-					: !Checks.esNulo(oferta.getImporteContraofertaPM()) ? oferta.getImporteContraofertaPM()
-					: oferta.getImporteOferta();
-		}else {
-			importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta()
-					: oferta.getImporteOferta();
-		}
+		importeOferta = !Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteContraOferta()
+				: oferta.getImporteOferta();
 		
 		 
 
@@ -10130,9 +10128,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if (listadoActivos.get(0).getPrimaryKey() != null) {
 						Activo act = listadoActivos.get(0).getPrimaryKey().getActivo();
 						if (act != null)
-							if (act.getTipoComercializar() != null
-									&& DDTipoComercializar.CODIGO_RETAIL.equals(act.getTipoComercializar().getCodigo()))
+							if (act.getTipoComercializar() != null && DDTipoComercializar.CODIGO_RETAIL.equals(act.getTipoComercializar().getCodigo())) {
 								return calcularGestorComercialPrescriptorResidencial(expediente, listadoActivos);
+							} else if (act.getTipoComercializar() != null && DDTipoComercializar.CODIGO_SINGULAR.equals(act.getTipoComercializar().getCodigo()) 
+									&& Checks.esNulo(ofr.getAgrupacion())) {
+								List<DtoDiccionario> listado= new ArrayList<DtoDiccionario>();
+								DtoDiccionario diccionario = new DtoDiccionario();
+								diccionario = new DtoDiccionario();
+								Usuario gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(act, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+								diccionario.setDescripcion(gestorComercialPrescriptor.getApellidoNombre());
+								diccionario.setCodigo(gestorComercialPrescriptor.getId().toString());
+								listado.add(diccionario);
+								return listado;
+							}
 					}
 				}
 			}

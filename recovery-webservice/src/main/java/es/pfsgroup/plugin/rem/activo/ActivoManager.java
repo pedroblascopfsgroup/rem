@@ -3665,10 +3665,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						
 
 					}catch(GestorDocumentalException gex){
-						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-						if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
-							gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+						try {
+							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+							if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
+								gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							dtoTributo.setExisteDocumentoTributo("false");
+							dtoTributo.setDocumentoTributoNombre("No existe acceso al Gestor Documental");
+							
 						}
+						
 					}
 				}else {
 				
@@ -3682,7 +3690,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
 					dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
 					 
-				}else {
+				}else if(Checks.esNulo(dtoTributo.getExisteDocumentoTributo())){
 					dtoTributo.setExisteDocumentoTributo("false");
 					dtoTributo.setDocumentoTributoNombre(null);
 					dtoTributo.setDocumentoTributoId(null);

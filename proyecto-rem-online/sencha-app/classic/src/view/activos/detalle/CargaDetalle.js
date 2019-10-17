@@ -182,12 +182,27 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 					    								publishes: 'value',
 					    								chainedStore: 'storeComboImpideVenta',
 														chainedReference: 'comboImpideVenta'
-											        },													
+											        },	
+											        									            											
 													{ 
 														xtype:'currencyfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.importe.registral'),
 									                	bind:		'{carga.importeRegistral}'
 									                },
+													{ 
+											        	xtype: 'comboboxfieldbase',
+											        	reference: 'combosubestadocargaref',
+											        	name: 'combosubestadocargaref',
+											        	editable: false,
+														fieldLabel: HreRem.i18n('header.subestado.carga'),
+											        	bind: {
+										            		store: '{comboSubEstadoCarga}',
+										            		value: '{carga.subestadoCodigo}'
+										            	}
+										            },
+													{
+										            	readOnly: true
+													},												
 									                {
 											        	xtype: 'comboboxfieldbase',
 											        	reference: 'comboImpideVenta',

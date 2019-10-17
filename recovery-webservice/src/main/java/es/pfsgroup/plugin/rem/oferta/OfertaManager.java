@@ -3193,6 +3193,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return false;
 	}
+	
+	
 
 	@Override
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedorCanal() {
@@ -4914,6 +4916,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(actAgr.getId().equals(actOfr.getId()))
 					return true;
 			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkTipoImpuesto(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(ofertaAceptada);
+			if (!Checks.esNulo(expediente)) {
+				CondicionanteExpediente condicionante = expediente.getCondicionante();
+				if (!Checks.esNulo(condicionante)) {
+					DDTiposImpuesto tipoImpuesto = condicionante.getTipoImpuesto();
+					if (!Checks.esNulo(tipoImpuesto)) {
+						if (!Checks.esNulo(tipoImpuesto.getCodigo())) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+	
+	@Override
+	public boolean checkReservaInformada(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
+			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
+				return true;
+			}
+
 		}
 		return false;
 	}

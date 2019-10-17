@@ -633,6 +633,14 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkExpedienteFechaCheque(idTramite);
             }
+            def checkTipoImpuesto = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkTipoImpuesto(tareaExterna);
+			}
+			def checkReservaInformada = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkReservaInformada(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

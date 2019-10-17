@@ -787,4 +787,8 @@ public interface OfertaApi {
 	 * @return boolean
 	 */
 	public boolean agrupacionConActivoYaIncluidoEnOfertaAgrupadaLbk(Long idAgrupacion, Oferta ofertaPrincipal);
+
+	boolean checkTipoImpuesto(TareaExterna tareaExterna);
+
+	boolean checkReservaInformada(TareaExterna tareaExterna);
 }

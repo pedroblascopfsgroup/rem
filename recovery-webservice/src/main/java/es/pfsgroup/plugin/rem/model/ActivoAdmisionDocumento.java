@@ -98,7 +98,9 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	@Column(name = "ADO_FECHA_CALIFICACION")
 	private Date fechaCalificacion;
 	
-	
+	@Column(name = "DATA_ID_DOCUMENTO")
+	private Long dataIdDocumento;
+		
 	
 	
 	@Version   
@@ -229,6 +231,14 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 
 	public void setFechaCalificacion(Date fechaCalificacion) {
 		this.fechaCalificacion = fechaCalificacion;
+	}
+
+	public Long getDataIdDocumento() {
+		return dataIdDocumento;
+	}
+
+	public void setDataIdDocumento(Long dataIdDocumento) {
+		this.dataIdDocumento = dataIdDocumento;
 	}
 
 	public Long getVersion() {

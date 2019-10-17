@@ -3624,4 +3624,28 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean existeTipoDoc(String codTipoDoc) {
+		if (Checks.esNulo(codTipoDoc)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
+				+" WHERE DD_TPD_CODIGO = '" + codTipoDoc +"'");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeEstadoDocumento(String codEstadoDoc) {
+		if (Checks.esNulo(codEstadoDoc)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_EDC_ESTADO_DOCUMENTO "
+				+" WHERE DD_EDC_CODIGO = '" + codEstadoDoc +"'");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeCalificacionEnergetica(String codCE) {
+		if (Checks.esNulo(codCE)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TCE_TIPO_CALIF_ENERGETICA "
+				+" WHERE DD_TCE_CODIGO = '" + codCE +"'");
+		return !"0".equals(resultado);
+	}
+	
 }

@@ -849,4 +849,22 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esActivoApple(String numActivo);
 
+	/***
+	 * @param codTipoDoc
+	 * @return true si existe el código del documento
+	 */
+	public Boolean existeTipoDoc(String codTipoDoc);
+
+	/***
+	 * @param codEstado
+	 * @return true si existe el código de estado
+	 */
+	public Boolean existeEstadoDocumento(String codEstadoDoc);
+
+	/***
+	 * @param codCalificacionEnergetica
+	 * @return true si existe el código de calificación energética
+	 */
+	public Boolean existeCalificacionEnergetica(String codCE);
+
 }

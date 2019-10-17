@@ -191,6 +191,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVActualizacionTomaPosesionExcelValidator tomaPosesion;
+	
+	@Autowired
+	private MSVActualizacionFasesPublicacionValidator FasesPublicacion;
 		
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -317,6 +320,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return informacionInscripcion;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TOMA_POSESION.equals(codTipoOperacion)) {
 			return tomaPosesion;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FASES_PUBLICACION.equals(codTipoOperacion)) {
+			return FasesPublicacion;
 		}
 		return null;
 	}

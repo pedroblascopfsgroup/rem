@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-
 public interface ParticularValidatorApi {
 
 	String getOneNumActivoAgrupacionRaw(String numAgrupacion);
@@ -1020,5 +1018,9 @@ public interface ParticularValidatorApi {
 	Boolean esExpedienteVenta(String numExpediente);
 
 	Boolean esExpedienteValido(String numExpediente);
+
+	Boolean existeFasePublicacion(String fasePublicacion);
+	
+	Boolean existeSubfasePublicacion(String subfasePublicacion);
 
 }

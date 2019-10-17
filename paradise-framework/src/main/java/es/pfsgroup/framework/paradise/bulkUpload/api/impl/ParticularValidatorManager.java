@@ -3950,4 +3950,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean existeFasePublicacion(String fasePublicacion) {
+		if(Checks.esNulo(fasePublicacion) || !StringUtils.isAlphanumeric(fasePublicacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_FSP_FASE_PUBLICACION WHERE"
+				+ "		 	DD_FSP_CODIGO ='"+fasePublicacion+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeSubfasePublicacion(String subfasePublicacion) {
+		if(Checks.esNulo(subfasePublicacion) || !StringUtils.isAlphanumeric(subfasePublicacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_SFP_SUBFASE_PUBLICACION WHERE"
+				+ "		 	DD_SFP_CODIGO ='"+subfasePublicacion+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
 }

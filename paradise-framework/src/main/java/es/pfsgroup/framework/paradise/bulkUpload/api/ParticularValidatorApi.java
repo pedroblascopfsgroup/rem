@@ -924,5 +924,9 @@ public interface ParticularValidatorApi {
 	Boolean existeGastoRefacturable(String numGasto);
 
 	Boolean esGastoDestinatarioPropietario(String numGasto);	
+	
+	Boolean existeFasePublicacion(String fasePublicacion);
+	
+	Boolean existeSubfasePublicacion(String subfasePublicacion);
 
 }

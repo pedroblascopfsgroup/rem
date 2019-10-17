@@ -122,7 +122,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													enableKeyEvents: true,
 											        listeners: {
 												        	specialKey: function(field, e) {
-												        		if (e.getKey() === e.ENTER) {
+												        		if (e.getKey() === e.ENTER && field.enableKeyEvents === true) {
 												        			field.lookupController().buscarProveedor(field);											        			
 												        		}
 												        	},
@@ -133,7 +133,7 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 												        	
 												        	},
 												        	blur: function(field, e) {											        		
-												        		if(!Ext.isEmpty(field.getValue())) {
+												        		if(!Ext.isEmpty(field.getValue()) && field.enableKeyEvents === true) {
 												        			field.lookupController().buscarProveedor(field);
 												        		}
 												        	}

@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Jose Antonio Gigante
---## FECHA_CREACION=20190729
+--## FECHA_CREACION=20191016
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.15.0
---## INCIDENCIA_LINK=HREOS-7241
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-7955
 --## PRODUCTO=SI
 --##
 --## FINALIDAD: [Explicación de la existencia de este script]

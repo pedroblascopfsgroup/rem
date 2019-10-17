@@ -127,7 +127,6 @@ public class UpdaterServiceSancionRatificacionComiteCES implements UpdaterServic
 						String doubleValue = valor.getValor();
 						doubleValue = doubleValue.replace(',', '.');
 						Double nuevoImporte = Double.valueOf(doubleValue);
-						ofertaAceptada.setImporteContraofertaCES(nuevoImporte);
 						
 						ofertaAceptada.setImporteContraOferta(nuevoImporte);
 	

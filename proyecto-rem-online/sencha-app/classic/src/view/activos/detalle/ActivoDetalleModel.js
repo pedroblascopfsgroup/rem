@@ -848,8 +848,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     	}
     	    
 	 }, 
-	 
-    stores: {
     		
     		comboProvincia: {
 				model: 'HreRem.model.ComboBase',

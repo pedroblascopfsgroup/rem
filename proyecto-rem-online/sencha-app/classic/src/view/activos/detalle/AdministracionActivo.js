@@ -471,10 +471,12 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 						        }
 					        ],
 					        renderer: function(value, metadata, record) {
-					        	
-					        	if(value != undefined){
+					        	if(value != undefined && value  != "No existe acceso al Gestor Documental"){
 					        		return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';
+					        	}else if(value  == "No existe acceso al Gestor Documental"){
+					        		return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em; color:red;">'+ value+'</div>';
 					        	}
+					        	
 					        	return null;
 					        },
 				            flex     : 1,            

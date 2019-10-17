@@ -140,6 +140,9 @@ Ext.define('HreRem.model.Activo', {
     			name:'paisCodigo'
     		},
     		{
+    			name:'direccionTerritorial'
+    		},
+    		{
     			name: 'idufir'
     		},
     		{

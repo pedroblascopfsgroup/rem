@@ -765,9 +765,17 @@ public class ActivoAdapter {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
 										activoCarga.getEstadoCarga().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-										activoCarga.getEstadoCarga().getCodigo());
+										activoCarga.getEstadoCarga().getCodigo());		
+								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
+									beanUtilNotNull.copyProperty(cargaDto, "subestadoCodigo", 
+										activoCarga.getSubestadoCarga().getCodigo());
+									beanUtilNotNull.copyProperty(cargaDto, "subestadoDescripcion",
+										activoCarga.getSubestadoCarga().getDescripcion());
+								}
 							}
 						}
+						
+						
 
 						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el
 						// estado Cancelado (independientemente del registrado
@@ -848,7 +856,13 @@ public class ActivoAdapter {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
 										activoCarga.getEstadoCarga().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-										activoCarga.getEstadoCarga().getCodigo());
+										activoCarga.getEstadoCarga().getCodigo());								
+								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
+									beanUtilNotNull.copyProperty(cargaDto, "subestadoCodigo", 
+											activoCarga.getSubestadoCarga().getCodigo());
+									beanUtilNotNull.copyProperty(cargaDto, "subestadoDescripcion",
+											activoCarga.getSubestadoCarga().getDescripcion());
+								}
 							}
 							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",

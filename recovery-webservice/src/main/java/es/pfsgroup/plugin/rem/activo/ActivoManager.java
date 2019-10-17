@@ -149,6 +149,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -4624,6 +4625,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				DDSubtipoCarga subtipoCarga = (DDSubtipoCarga) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSubtipoCarga.class, cargaDto.getSubtipoCargaCodigo());
 				cargaSeleccionada.setSubtipoCarga(subtipoCarga);
+			}
+			
+			if (!Checks.esNulo(cargaDto.getSubestadoCodigo())) {
+				DDSubestadoCarga subestadoCarga = (DDSubestadoCarga) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDSubestadoCarga.class, cargaDto.getSubestadoCodigo());
+				cargaSeleccionada.setSubestadoCarga(subestadoCarga);
 			}
 
 			// HREOS-2733

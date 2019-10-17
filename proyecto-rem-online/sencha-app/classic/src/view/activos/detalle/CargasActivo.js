@@ -101,6 +101,10 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
                     flex : 1,
                     dataIndex : 'estadoDescripcion'
                   }, {
+                      text : HreRem.i18n('header.subestado.carga'),
+                      flex : 1,
+                      dataIndex : 'subestadoDescripcion'
+                  }, {
                     text : 'Estado carga econ&oacute;mica',
                     flex : 1,
                     dataIndex : 'estadoEconomicaDescripcion'

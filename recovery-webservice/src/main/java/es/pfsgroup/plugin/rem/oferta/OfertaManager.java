@@ -2752,50 +2752,50 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		consultaComisionDto.setSubPortfolio(codSubportfolio);
 		consultaComisionDto.setClassType(classType);
 
-			// Los honorarios de colaboración serán asignados al FDV de la oferta si
-			// existe,
-			// sino al custodio de la oferta si existe,
-			// sino al mediador del activo.
-			if (accion.equals(DDAccionGastos.CODIGO_COLABORACION)) {
+		// Los honorarios de colaboración serán asignados al FDV de la oferta si
+		// existe,
+		// sino al custodio de la oferta si existe,
+		// sino al mediador del activo.
+		if (accion.equals(DDAccionGastos.CODIGO_COLABORACION)) {
 
-				if (!Checks.esNulo(oferta.getFdv())) {
-					proveedor = oferta.getFdv();
-				} else if (!Checks.esNulo(oferta.getCustodio())) {
-					proveedor = oferta.getCustodio();
-				} else if (!Checks.esNulo(activo.getInfoComercial())) {
-					proveedor = activo.getInfoComercial().getMediadorInforme();
-				}
-				// Los gastos de prescripcion serán asignados al al prescriptor de
-				// la oferta
-			} else if (accion.equals(DDAccionGastos.CODIGO_PRESCRIPCION)) {
-
-				if (!Checks.esNulo(oferta.getPrescriptor())) {
-					proveedor = oferta.getPrescriptor();
-				}
+			if (!Checks.esNulo(oferta.getFdv())) {
+				proveedor = oferta.getFdv();
+			} else if (!Checks.esNulo(oferta.getCustodio())) {
+				proveedor = oferta.getCustodio();
+			} else if (!Checks.esNulo(activo.getInfoComercial())) {
+				proveedor = activo.getInfoComercial().getMediadorInforme();
 			}
-			// TODO: Falta definir a quien asignar los honorarios para
-			// CODIGO_RESPONSABLE_CLIENTE (Doble
-			// prescripción)
+			// Los gastos de prescripcion serán asignados al al prescriptor de
+			// la oferta
+		} else if (accion.equals(DDAccionGastos.CODIGO_PRESCRIPCION)) {
 
-			// Información del receptor del honorario
-			if (!Checks.esNulo(proveedor)) {
-
-				if (!Checks.esNulo(proveedor.getTipoProveedor())) {
-					dto.setTipoProveedor(proveedor.getTipoProveedor().getDescripcion());
-				}
-				dto.setProveedor(proveedor.getNombre());
-				dto.setIdProveedor(proveedor.getCodigoProveedorRem());
+			if (!Checks.esNulo(oferta.getPrescriptor())) {
+				proveedor = oferta.getPrescriptor();
 			}
+		}
+		// TODO: Falta definir a quien asignar los honorarios para
+		// CODIGO_RESPONSABLE_CLIENTE (Doble
+		// prescripción)
 
-			// Información del tipo de honorario
-			DDAccionGastos accionGastoC = (DDAccionGastos) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDAccionGastos.class, accion);
-			if (!Checks.esNulo(accionGastoC)) {
-				dto.setCodigoTipoComision(accionGastoC.getCodigo());
-				dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
+		// Información del receptor del honorario
+		if (!Checks.esNulo(proveedor)) {
+
+			if (!Checks.esNulo(proveedor.getTipoProveedor())) {
+				dto.setTipoProveedor(proveedor.getTipoProveedor().getDescripcion());
 			}
+			dto.setProveedor(proveedor.getNombre());
+			dto.setIdProveedor(proveedor.getCodigoProveedorRem());
+		}
 
-			Long idProveedor = !Checks.esNulo(proveedor) ? proveedor.getId() : null;
+		// Información del tipo de honorario
+		DDAccionGastos accionGastoC = (DDAccionGastos) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDAccionGastos.class, accion);
+		if (!Checks.esNulo(accionGastoC)) {
+			dto.setCodigoTipoComision(accionGastoC.getCodigo());
+			dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
+		}
+
+		Long idProveedor = !Checks.esNulo(proveedor) ? proveedor.getId() : null;
 
 		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
 			// Información del tipo de cálculo. Por defecto siempre son porcentajes
@@ -2807,85 +2807,32 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
 			}
 
-			//HREOS-7251
-			if (DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
-				Double result = 0.0;
-				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-					if (!Checks.esNulo(oferta.getImporteOferta())) {
-						if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
-							if (!Checks.esNulo(proveedor)) {
-								if (DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(proveedor.getTipoProveedor().getCodigo()) && DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-									dto.setImporteCalculo(0.25);
-									result = (activoOferta.getImporteActivoOferta() * 0.0025);											
-								} else if (DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(proveedor.getTipoProveedor().getCodigo()) && DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-									dto.setImporteCalculo(1.15);
-									result = (activoOferta.getImporteActivoOferta() * 0.0115);											
-								} else if (DDTipoProveedor.COD_MEDIADOR.equals(proveedor.getTipoProveedor().getCodigo()) && DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-									dto.setImporteCalculo(1.75);
-									result = (activoOferta.getImporteActivoOferta() * 0.0175);
-								} else if (DDTipoProveedor.COD_MEDIADOR.equals(proveedor.getTipoProveedor().getCodigo()) && !DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-									dto.setImporteCalculo(0.0);
-									result = (activoOferta.getImporteActivoOferta() * 0);											
-								} else {
-									dto.setImporteCalculo(0.0);
-									result = (activoOferta.getImporteActivoOferta() * 0);
-								}
-								dto.setHonorarios(result);
-							} else {
-								dto.setImporteCalculo(0.00);
-								dto.setHonorarios(0.00);
-							}							
-						}						
-					}					
-				}				
+			// Información del cálculo de la comisión para venta
+			/*BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion),activo.getId(), idProveedor);*/
+			RespuestaComisionResultDto calculoComision = null;
+			try {
+				calculoComision = comisionamientoApi.createCommission(consultaComisionDto,accion);
+			} catch (Exception e) {
+				logger.error("Error en la llamada al comisionamiento: " + e);
+			}
+			
+			if (!Checks.esNulo(calculoComision) && !Checks.esNulo(calculoComision.getAmount()) && !Checks.esNulo(calculoComision.getRule().getCommissionPercentage())) {
+				dto.setImporteCalculo(Double.valueOf(calculoComision.getRule().getCommissionPercentage()));
+				dto.setHonorarios(Double.valueOf(calculoComision.getAmount()));
 			} else {
-				// Información del cálculo de la comisión para venta
-				BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion),
-						activo.getId(), idProveedor);
-				if (!Checks.esNulo(calculoComision)) {
-					Double calculoImporteC = calculoComision.doubleValue();
-					dto.setImporteCalculo(calculoImporteC);
-	
-					if (!Checks.esNulo(activo)) {
-						if (!Checks.esNulo(oferta.getImporteOferta())) {
-							for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-								if (activoOferta.getPrimaryKey().getActivo().getId().equals(activo.getId())) {
-									if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
-										Double result = (activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
-										dto.setHonorarios(result);
-									}
-								}
-							}
-						}
-					}
-				} else { // Si el importe calculo está vacío mostrar 0.00 y honorarios a 0.00
-					dto.setImporteCalculo(0.00);
-					dto.setHonorarios(0.00);
-				}
+				dto.setImporteCalculo(0.00);
+				dto.setHonorarios(0.00);
 			}
 			
 		} else if(DDTipoOferta.CODIGO_ALQUILER.equals(codigoOferta)) {
 			DDTipoCalculo tipoCalculoC = null;
-			
 			// Determinar tipo de calculo para alquiler
 			/*BigDecimal calculoComision = ofertaDao.getImporteCalculoAlquiler(oferta.getId(), TIPO_HONORARIOS.get(accion), idProveedor);*/
 			RespuestaComisionResultDto calculoComision = null;
 			try {
 				calculoComision = comisionamientoApi.createCommission(consultaComisionDto, accion);
-			} catch (JsonGenerationException e) {
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				e.printStackTrace();
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			} catch (RestConfigurationException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (HttpClientException e) {
-				e.printStackTrace();
-			} catch (HttpsClientException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				logger.error("Error en la llamada al comisionamiento: " + e);
 			}
 			
 			dto.setImporteCalculo(0.00);
@@ -3033,50 +2980,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 
 				}
-
-			}else { // Si el importe calculo está vacío mostrar 0.00 y honorarios a 0.00
-				dto.setImporteCalculo(0.00);
-				dto.setHonorarios(0.00);
-			}
-				
-			//HREOS-7251
-			if (DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
-				Double result = 0.0;
-				for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-					if (!Checks.esNulo(oferta.getImporteOferta())) {
-						if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
-							if (!Checks.esNulo(proveedor)) {
-								if (DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(proveedor.getTipoProveedor().getCodigo()) && DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-									dto.setImporteCalculo(0.25);
-									result = (activoOferta.getImporteActivoOferta() * 0.0025);											
-								} else if (DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(proveedor.getTipoProveedor().getCodigo()) && DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-									dto.setImporteCalculo(1.15);
-									result = (activoOferta.getImporteActivoOferta() * 0.0115);											
-								} else if (DDTipoProveedor.COD_MEDIADOR.equals(proveedor.getTipoProveedor().getCodigo()) && DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-									dto.setImporteCalculo(1.75);
-									result = (activoOferta.getImporteActivoOferta() * 0.0175);
-								} else if (DDTipoProveedor.COD_MEDIADOR.equals(proveedor.getTipoProveedor().getCodigo()) && !DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-									dto.setImporteCalculo(0.0);
-									result = (activoOferta.getImporteActivoOferta() * 0);											
-								} else {
-									dto.setImporteCalculo(0.0);
-									result = (activoOferta.getImporteActivoOferta() * 0);
-								}
-								dto.setHonorarios(result);
-							} else {
-								dto.setImporteCalculo(0.00);
-								dto.setHonorarios(0.00);
-							}							
-						}						
-					}					
-				}				
-			}
-			
-			//Si el honorario es menor de 100 € el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149 + HREOS-5244
-			if((dto.getHonorarios() != null && dto.getHonorarios() < 100.00) && !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo()))) {
-				dto.setHonorarios(100.00);
-			}else {
-				dto.setHonorarios(dto.getHonorarios());
 			}
 		}
 

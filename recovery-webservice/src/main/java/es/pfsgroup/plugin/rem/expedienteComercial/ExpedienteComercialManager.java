@@ -1813,14 +1813,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setIdEco(expediente.getId());
 		}
 		
-		Usuario gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-		if (!Checks.esNulo(gestorComercialPrescriptor)) {
-			if (!Checks.esNulo(oferta.getAgrupacion()) && DDTipoComercializar.CODIGO_SINGULAR.equals(oferta.getActivoPrincipal().getTipoComercializar().getCodigo()))
+		if (DDTipoComercializar.CODIGO_SINGULAR.equals(oferta.getActivoPrincipal().getTipoComercializar().getCodigo())) {
+			Usuario gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			if (!Checks.esNulo(gestorComercialPrescriptor)) {
+				if (!Checks.esNulo(oferta.getAgrupacion()))
+					dto.setIdGestorComercialPrescriptor(0l);
+				else
+					dto.setIdGestorComercialPrescriptor(gestorComercialPrescriptor.getId());
+			} else {
 				dto.setIdGestorComercialPrescriptor(0l);
-			else
-				dto.setIdGestorComercialPrescriptor(gestorComercialPrescriptor.getId());
+			}
 		} else {
-			dto.setIdGestorComercialPrescriptor(0l);
+			if (!Checks.esNulo(oferta.getGestorComercialPrescriptor()) && !Checks.esNulo(oferta.getGestorComercialPrescriptor().getId())) {
+				dto.setIdGestorComercialPrescriptor(oferta.getGestorComercialPrescriptor().getId());
+			}else {
+				dto.setIdGestorComercialPrescriptor(0l);
+			}
 		}
 
 		return dto;

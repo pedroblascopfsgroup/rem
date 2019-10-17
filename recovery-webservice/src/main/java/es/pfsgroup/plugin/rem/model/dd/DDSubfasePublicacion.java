@@ -51,6 +51,8 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 	public static final String CODIGO_PENDIENTE_CEE = "22";
 	public static final String CODIGO_PENDIENTE_CEDULA = "23";
 	public static final String CODIGO_PENDIENTE_REPARACIONES = "24";
+	public static final String CODIGO_DEVUELTO = "113";
+	public static final String CODIGO_CLASIFICADO = "114";
 
 
 	@Id

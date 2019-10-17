@@ -32,15 +32,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
  *
  */
 @Entity
-@Table(name = "ACT_HAG_HIST_ADECUA_GENCAT", schema = "${entity.schema}")
+@Table(name = "ACT_HFP_HIST_FASES_PUB", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class HistoricoFasePublicacionActivo implements Serializable, Auditable {
 
-	private static final long serialVersionUID = 5910940035703021446L;
-	
+	private static final long serialVersionUID = -2823931549724879229L;
+
 	@Id
     @Column(name = "HFP_ID")
+	@GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -51,10 +52,12 @@ public class HistoricoFasePublicacionActivo implements Serializable, Auditable {
 	@JoinColumn(name = "DD_FSP_ID")
 	private DDFasePublicacion fasePublicacion;
 	
-	@Column(name = "DD_SFP_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_SFP_ID")
 	private DDSubfasePublicacion subFasePublicacion;
 	
-	@Column(name = "UFP_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "USU_ID")
 	private Usuario usuario;
 	
 	@Column(name = "HFP_FECHA_INI")
@@ -64,7 +67,7 @@ public class HistoricoFasePublicacionActivo implements Serializable, Auditable {
 	private Date fechaFin;
 	
 	@Column(name = "HFP_COMENTARIO")
-	private Date comentario;
+	private String comentario;
 	
 	@Version   
 	private Long version;
@@ -120,11 +123,11 @@ public class HistoricoFasePublicacionActivo implements Serializable, Auditable {
 		this.fechaFin = fechaFin;
 	}
 
-	public Date getComentario() {
+	public String getComentario() {
 		return comentario;
 	}
 
-	public void setComentario(Date comentario) {
+	public void setComentario(String comentario) {
 		this.comentario = comentario;
 	}
 

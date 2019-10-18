@@ -34,6 +34,8 @@ public class DtoActivoCargas {
     private String ordenCarga;
     private String estadoCodigo;
     private String estadoDescripcion;
+    private String subestadoCodigo;
+    private String subestadoDescripcion;
     private String estadoEconomicaCodigo;
     private String estadoEconomicaDescripcion;
     private String observaciones;
@@ -180,6 +182,18 @@ public class DtoActivoCargas {
 	}
 	public void setEstadoDescripcion(String estadoDescripcion) {
 		this.estadoDescripcion = estadoDescripcion;
+	}	
+	public String getSubestadoCodigo() {
+		return subestadoCodigo;
+	}
+	public void setSubestadoCodigo(String subEstadoCodigo) {
+		this.subestadoCodigo = subEstadoCodigo;
+	}
+	public String getSubestadoDescripcion() {
+		return subestadoDescripcion;
+	}
+	public void setSubestadoDescripcion(String subEstadoDescripcion) {
+		this.subestadoDescripcion = subEstadoDescripcion;
 	}
 	public String getEstadoEconomicaCodigo() {
 		return estadoEconomicaCodigo;

@@ -127,8 +127,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											xtype: 'textfieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
 											reference: 'buscadorNifEmisorField',
-											readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
-											bind: '{gasto.buscadorNifEmisor}',
+											bind: {
+												value:'{gasto.buscadorNifEmisor}',
+												readOnly: '{emisorSoloLectura}'
+											},
 											triggers: {														
 													buscarEmisor: {
 											            cls: Ext.baseCSSPrefix + 'form-search-trigger',
@@ -165,7 +167,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											emptyText: HreRem.i18n('txt.seleccionar.emisor'),
 											valueField		: 'codigo',
 											bind: {
-												value: '{gasto.codigoProveedorRem}'
+												value: '{gasto.codigoProveedorRem}',
+												readOnly: '{gasto.tieneGastosRefacturables}'
 											},
 											tpl: Ext.create('Ext.XTemplate',
 							            		    '<tpl for=".">',

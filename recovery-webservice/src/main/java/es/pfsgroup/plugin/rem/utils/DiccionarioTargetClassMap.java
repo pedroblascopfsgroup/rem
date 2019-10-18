@@ -79,6 +79,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposHabitaculo", DDTipoHabitaculo.class);
 		mapa.put("situacionCarga", DDSituacionCarga.class);
 		mapa.put("estadosCarga", DDEstadoCarga.class);
+		mapa.put("subestadosCarga", DDSubestadoCarga.class);
 		mapa.put("estadosAdjudicacion", DDEstadoAdjudicacion.class);
 		mapa.put("tiposJuzgado", TipoJuzgado.class);
 		mapa.put("entidadesAdjudicacion", DDEntidadAdjudicataria.class);
@@ -190,6 +191,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivosDesbloqueo", DDMotivosDesbloqueo.class);
 		mapa.put("motivosAvisoGasto", DDMotivosAvisoGasto.class);
 		mapa.put("paises", DDPaises.class);
+		mapa.put("direccionTerritorial", DDDireccionTerritorial.class);
 		mapa.put("origenDato", DDOrigenDato.class);
 		mapa.put("tipoRechazoOferta", DDTipoRechazoOferta.class);
 		mapa.put("motivoRechazoOferta", DDMotivoRechazoOferta.class);
@@ -224,7 +226,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
 		mapa.put("EstadoPresentacion", DDEstadoPresentacion.class);
 		mapa.put("fasePublicacion", DDFasePublicacion.class);
-		mapa.put("direccionTerritorial", DDDireccionTerritorial.class);
 		mapa.put("claseOferta", DDClaseOferta.class);
 		mapa.put("servicerActivo", DDServicerActivo.class);
 		mapa.put("cesionSaneamiento", DDCesionSaneamiento.class);

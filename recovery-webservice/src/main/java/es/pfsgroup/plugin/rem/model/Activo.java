@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionApple;
+import es.pfsgroup.plugin.rem.model.dd.DDDireccionTerritorial;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
@@ -348,7 +349,10 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     private List<AdjuntosPromocion> adjuntosPromocion;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_DRT_ID")
+    private DDDireccionTerritorial direccionTerritorial; 
 
     // Indicadores de precios del activo y de activo publicable
     @Column(name = "ACT_FECHA_IND_PRECIAR")
@@ -478,7 +482,8 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
-
+    
+   
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -1014,6 +1019,7 @@ public class Activo implements Serializable, Auditable {
   			bien.getLocalizaciones().get(0).getProvincia().setCodigo(codProvincia);
   		}
   	}
+  	
 
 	public Long getVersion() {
 		return version;
@@ -1881,6 +1887,14 @@ public class Activo implements Serializable, Auditable {
 	public void setActivoAutorizacionTramitacionOfertas(
 			ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas) {
 		this.activoAutorizacionTramitacionOfertas = activoAutorizacionTramitacionOfertas;
+	}
+
+	public DDDireccionTerritorial getDireccionTerritorial() {
+		return direccionTerritorial;
+	}
+
+	public void setDireccionTerritorial(DDDireccionTerritorial direccionTerritorial) {
+		this.direccionTerritorial = direccionTerritorial;
 	}
 	
 }

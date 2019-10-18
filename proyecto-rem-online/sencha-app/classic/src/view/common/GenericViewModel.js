@@ -108,6 +108,15 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 				}
     		},
     		
+    		comboDireccionTerritorial: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'direccionTerritorial'}
+				}  			
+    		},    		
+    		
     		comboTipoCuota: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -305,6 +314,15 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 						type: 'uxproxy',
 						remoteUrl: 'generic/getDiccionario',
 						extraParams: {diccionario: 'estadosCarga'}
+					}
+    		},
+    		
+    		comboSubEstadoCarga: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'subestadosCarga'}
 					}
     		},
     		

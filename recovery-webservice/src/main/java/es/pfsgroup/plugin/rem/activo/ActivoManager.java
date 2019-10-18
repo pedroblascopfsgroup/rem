@@ -152,6 +152,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -3697,10 +3698,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						
 
 					}catch(GestorDocumentalException gex){
-						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-						if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
-							gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+						try {
+							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+							if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
+								gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							dtoTributo.setExisteDocumentoTributo("false");
+							dtoTributo.setDocumentoTributoNombre("No existe acceso al Gestor Documental");
+							
 						}
+						
 					}
 				}else {
 				
@@ -3714,7 +3723,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
 					dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
 					 
-				}else {
+				}else if(Checks.esNulo(dtoTributo.getExisteDocumentoTributo())){
 					dtoTributo.setExisteDocumentoTributo("false");
 					dtoTributo.setDocumentoTributoNombre(null);
 					dtoTributo.setDocumentoTributoId(null);
@@ -4642,6 +4651,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				DDSubtipoCarga subtipoCarga = (DDSubtipoCarga) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSubtipoCarga.class, cargaDto.getSubtipoCargaCodigo());
 				cargaSeleccionada.setSubtipoCarga(subtipoCarga);
+			}
+			
+			if (!Checks.esNulo(cargaDto.getSubestadoCodigo())) {
+				DDSubestadoCarga subestadoCarga = (DDSubestadoCarga) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDSubestadoCarga.class, cargaDto.getSubestadoCodigo());
+				cargaSeleccionada.setSubestadoCarga(subestadoCarga);
 			}
 
 			// HREOS-2733

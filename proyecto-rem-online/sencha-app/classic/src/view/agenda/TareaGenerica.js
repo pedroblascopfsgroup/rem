@@ -1128,12 +1128,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
 
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+        me.campoObligatorio(me.down('[name=comboTramitar]'));
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {
             if (combo.value == '01') {
                 me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
             } else {
                 me.habilitarCampo(me.down('[name=motivoDenegacion]'));
+                me.down('[name=motivoDenegacion]').noObligatorio=false;
             }
         })
     },

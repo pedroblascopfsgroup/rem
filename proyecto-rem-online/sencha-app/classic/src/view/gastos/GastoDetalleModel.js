@@ -305,6 +305,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 					return true;
 				}
 				return false;
+			},
+			
+			emisorSoloLectura: function(get){
+				return $AU.userIsRol(CONST.PERFILES['PROVEEDOR']) || get('gasto.tieneGastosRefacturables');
 			}
 			
 		

@@ -1572,6 +1572,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var gastos= field.getValue();
 		var nifPropietario = me.lookupReference("buscadorNifPropietarioField").getValue();
 		var destinatarioGastoCodigo = me.getView().down('[name=destinatarioGastoCodigo]');
+		var buscadorNifEmisorField = me.lookupReference("buscadorNifEmisorField");
+		var nifEmisor = me.lookupReference("comboProveedores");
 		
 		Ext.Ajax
 		.request({
@@ -1611,6 +1613,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				grid.setStore(myStore);
 				
 				destinatarioGastoCodigo.setReadOnly(arrayCodVal.length!=0);
+				buscadorNifEmisorField.setReadOnly(arrayCodVal.length!=0);
+				nifEmisor.setReadOnly(arrayCodVal.length!=0);
+				buscadorNifEmisorField.enableKeyEvents = (arrayCodVal.length==0);
 			},
 			failure : function(response) {
 				me.fireEvent("errorToast", HreRem

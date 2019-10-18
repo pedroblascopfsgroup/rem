@@ -2261,6 +2261,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.deshabilitarCampo(me.down('[name=motivo]'));
     	me.deshabilitarCampo(me.down('[name=importeContraoferta]'));
     	
+    	me.campoObligatorio(me.down('[name=resolucionExpediente]'));
     	me.down('[name=resolucionExpediente]').addListener('change', function(){
     		
     		var resolucionExpediente = me.down('[name=resolucionExpediente]');
@@ -2283,7 +2284,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     		}else{
     			
-    			me.down('[name=motivo]').noObligatorio=true;
+    			me.down('[name=motivo]').noObligatorio=false;
     			me.down('[name=importeContraoferta]').noObligatorio=true;
     			
     			me.habilitarCampo(me.down('[name=motivo]'));

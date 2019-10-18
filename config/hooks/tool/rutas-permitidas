@@ -1,4 +1,4 @@
-2.14.2-19101001-rem|version-R191003
+rem_mirror|version-R191003
 version-R190917|version-R191003
 version-R191003|func-rem-Divarian
 func-rem-Divarian|func-rem-Divarian-F2
@@ -10,3 +10,9 @@ version-R191003|rem_qa
 @|func-rem-maANof
 @|mejoras-rem-20190906
 func-rem-HREOS-7850|func-rem-Divarian
+rem_mirror|func-rem-Divarian
+rem_mirror|func-rem-mejoras-GD
+rem_mirror|func-rem-gencat_v2
+rem_mirror|func-rem-CLOA
+rem_mirror|func-rem-maANof
+rem_mirror|mejoras-rem-20190906

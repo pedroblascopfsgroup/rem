@@ -143,7 +143,6 @@ Ext.define('HreRem.model.GastoProveedor', {
    			name: 'idGastoAbonado',
    			critical: true
    		},
-   		
    		{
    			name: 'gastoSinActivos'
    		},
@@ -159,7 +158,10 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
    		{
    			name: 'devengoPosteriorTraspaso'
-   		}
+   		},
+   		{
+    		name: 'numeroPrimerGastoSerie'
+   	 	}
     		
     ],
     

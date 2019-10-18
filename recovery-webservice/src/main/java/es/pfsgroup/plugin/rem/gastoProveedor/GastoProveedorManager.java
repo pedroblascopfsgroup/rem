@@ -411,7 +411,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			if (!Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo())) {
 				dto.setCodigoImpuestoIndirecto(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo().getCodigo());
-			}
+			}			
+			
+			
+			if(!Checks.esNulo(gasto.getNumeroPrimerGastoSerie())) {
+				Filter filtroNumGs = genericDao.createFilter(FilterType.EQUALS, "id",gasto.getNumeroPrimerGastoSerie());
+				GastoProveedor gsPrim = genericDao.get(GastoProveedor.class, filtroNumGs);
+				dto.setNumeroPrimerGastoSerie(gsPrim.getNumGastoHaya());
+			}			
 
 		}
 

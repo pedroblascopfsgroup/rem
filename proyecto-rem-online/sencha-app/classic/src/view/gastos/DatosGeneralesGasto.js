@@ -301,7 +301,14 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												value: '{gasto.idGastoAbonado}'													
 											},
 											hidden: true
-										}											
+										},
+										{ 
+											xtype: 'textfieldbase',
+							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.primer.gasto.serie'),
+									      	bind: {
+								           		value: '{gasto.numeroPrimerGastoSerie}'
+								         	}
+									    }
 									]
 								}
 							]

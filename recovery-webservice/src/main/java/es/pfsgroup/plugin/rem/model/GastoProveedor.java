@@ -171,23 +171,15 @@ public class GastoProveedor implements Serializable, Auditable {
     @Column(name="GPV_GASTO_SIN_ACTIVOS")
     private Integer gastoSinActivos;
 
-//    @OneToMany(mappedBy="gastoProveedorAbonado", cascade = CascadeType.ALL)
-//    private Set<GastoProveedor> gastoProveedor = new HashSet<GastoProveedor>();
-    
-//    @OneToOne(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "NUM_GASTO_ABONADO")
-//    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-//    private GastoProveedor gastoProveedorAbonado;
-    
-
 	@Column(name="NUM_GASTO_DESTINATARIO")
 	private String numGastoDestinatario;
 	
 	@Column(name="GPV_EXISTE_DOCUMENTO")
 	private Integer existeDocumento;
 	
+	@Column(name="GPV_ID_PRIMER_GASTO_SERIE")
+	private Long numeroPrimerGastoSerie;	
 	
-    
 	@Version   
 	private Long version;
 
@@ -489,5 +481,15 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 		return subcartera;
 	
+	}
+
+	public Long getNumeroPrimerGastoSerie() {
+		return numeroPrimerGastoSerie;
+	}
+
+	public void setNumeroPrimerGastoSerie(Long numeroPrimerGastoSerie) {
+		this.numeroPrimerGastoSerie = numeroPrimerGastoSerie;
 	}	
+	
+	
 }

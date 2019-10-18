@@ -25,7 +25,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
     			html: HreRem.i18n('msg.oferta.activo.no.tramitable'),
     			style: 'color: red; font-weight: bold; font-size: small;',
     			readOnly: true,
-
+    			hidden: true,
     			reference: 'labelActivoNoTramitable',
     			bind : {
     				hidden: '{comercial.tramitable}'

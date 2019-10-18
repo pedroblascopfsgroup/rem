@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=ALVARO GARCIA
---## FECHA_CREACION=20191010
+--## AUTOR=Cristian Montoya
+--## FECHA_CREACION=20191018
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-7803
+--## INCIDENCIA_LINK=HREOS-8104
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--## 		0.2 Añadidos los cambios de nulos a fases y de fases a nulos.
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -27,7 +28,7 @@ DECLARE
     V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-7803';
+    V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-8104';
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_GTP_GES_TRANS_PERMITIDAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
 
@@ -84,6 +85,34 @@ DECLARE
 		, T_JBV('GEDI',		NULL,		'04',		'08',			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'04',		'09',			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'24',		'20',			0)	--Gestor de activo edificación
+		--HREOS-8104
+		, T_JBV('GEDI',		NULL,		'01',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'02',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'03',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'04',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'05',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'06',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'07',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'08',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'09',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'10',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'11',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'12',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'13',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'14',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'15',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'16',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'17',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'18',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'19',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'20',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'21',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'22',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'23',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'24',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'113',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'114',		NULL,			0)	--Gestor de activo edificación	
+		--FIN HREOS-8104		
 		, T_JBV('GACT',		NULL,		'01',		'12',			0)	--Gestor de mantenimiento
 		, T_JBV('GACT',		NULL,		'03',		'12',			0)	--Gestor de mantenimiento
 		, T_JBV('GACT',		NULL,		'04',		'12',			0)	--Gestor de mantenimiento
@@ -104,6 +133,34 @@ DECLARE
 		, T_JBV('GACT',		NULL,		'08',		'07',			0)	--Gestor de mantenimiento
 		, T_JBV('GACT',		NULL,		'08',		'09',			0)	--Gestor de mantenimiento
 		, T_JBV('GACT',		NULL,		'24',		'20',			0)	--Gestor de mantenimiento
+		--HREOS-8104
+		, T_JBV('GACT',		NULL,		'01',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'02',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'03',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'04',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'05',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'06',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'07',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'08',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'09',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'10',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'11',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'12',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'13',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'14',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'15',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'16',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'17',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'18',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'19',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'20',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'21',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'22',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'23',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'24',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'113',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'114',		NULL,			0)	--Gestor mantenimiento	
+		--FIN HREOS-8104		
 		, T_JBV('SUPACT',	NULL,		'01',		'12',			0)	--Supervisor de mantenimiento
 		, T_JBV('SUPACT',	NULL,		'03',		'12',			0)	--Supervisor de mantenimiento
 		, T_JBV('SUPACT',	NULL,		'04',		'12',			0)	--Supervisor de mantenimiento
@@ -123,7 +180,7 @@ DECLARE
 		, T_JBV('SUPACT',	NULL,		'07',		'09',			0)	--Supervisor de mantenimiento
 		, T_JBV('SUPACT',	NULL,		'08',		'07',			0)	--Supervisor de mantenimiento
 		, T_JBV('SUPACT',	NULL,		'08',		'09',			0)	--Supervisor de mantenimiento
-		, T_JBV('SUPACT',	NULL,		'24',		'20',			0)	--Supervisor de mantenimiento
+		, T_JBV('SUPACT',	NULL,		'24',		'20',			0)	--Supervisor de mantenimiento		
 		, T_JBV('GALQ',		NULL,		'01',		'12',			0)	--Gestor de alquiler
 		, T_JBV('GALQ',		NULL,		'03',		'12',			0)	--Gestor de alquiler
 		, T_JBV('GALQ',		NULL,		'04',		'12',			0)	--Gestor de alquiler
@@ -221,7 +278,23 @@ BEGIN
 	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_TFP_TRANSICIONES_FASESP WHERE TFP_ORIGEN = (SELECT DD_SFP_ID FROM DD_SFP_SUBFASE_PUBLICACION WHERE DD_SFP_CODIGO = '''||TRIM(V_TMP_JBV(3))||''') AND TFP_DESTINO= (SELECT DD_SFP_ID FROM DD_SFP_SUBFASE_PUBLICACION WHERE DD_SFP_CODIGO = '''||TRIM(V_TMP_JBV(4))||''')';
 	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 	IF V_COUNT = 0 THEN
-	 V_TFP_ID := NULL;
+	 IF TRIM(V_TMP_JBV(3)) IS NULL AND TRIM(V_TMP_JBV(4)) IS NOT NULL THEN
+	 	V_SQL := 'SELECT COUNT(1)  FROM '||V_ESQUEMA||'.ACT_TFP_TRANSICIONES_FASESP WHERE TFP_ORIGEN IS NULL AND TFP_DESTINO= (SELECT DD_SFP_ID FROM DD_SFP_SUBFASE_PUBLICACION WHERE DD_SFP_CODIGO = '''||TRIM(V_TMP_JBV(4))||''')';
+		EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+		IF V_COUNT = 1 THEN
+		 	V_SQL := 'SELECT TFP_ID  FROM '||V_ESQUEMA||'.ACT_TFP_TRANSICIONES_FASESP WHERE TFP_ORIGEN IS NULL AND TFP_DESTINO= (SELECT DD_SFP_ID FROM DD_SFP_SUBFASE_PUBLICACION WHERE DD_SFP_CODIGO = '''||TRIM(V_TMP_JBV(4))||''')';
+			EXECUTE IMMEDIATE V_SQL INTO V_TFP_ID;
+		END IF;
+	 ELSIF TRIM(V_TMP_JBV(4)) IS NULL AND TRIM(V_TMP_JBV(3)) IS NOT NULL THEN
+	 	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_TFP_TRANSICIONES_FASESP WHERE TFP_ORIGEN = (SELECT DD_SFP_ID FROM DD_SFP_SUBFASE_PUBLICACION WHERE DD_SFP_CODIGO = '''||TRIM(V_TMP_JBV(3))||''') AND TFP_DESTINO IS NULL';
+		EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+		IF V_COUNT = 1 THEN
+		 	V_SQL := 'SELECT TFP_ID  FROM '||V_ESQUEMA||'.ACT_TFP_TRANSICIONES_FASESP WHERE TFP_ORIGEN = (SELECT DD_SFP_ID FROM DD_SFP_SUBFASE_PUBLICACION WHERE DD_SFP_CODIGO = '''||TRIM(V_TMP_JBV(3))||''') AND TFP_DESTINO IS NULL';
+			EXECUTE IMMEDIATE V_SQL INTO V_TFP_ID;
+		END IF;
+	 ELSE	 	
+		V_TFP_ID := NULL;
+	 END IF;
 	ELSE	
 	V_SQL := 'SELECT TFP_ID  FROM '||V_ESQUEMA||'.ACT_TFP_TRANSICIONES_FASESP WHERE TFP_ORIGEN = (SELECT DD_SFP_ID FROM DD_SFP_SUBFASE_PUBLICACION WHERE DD_SFP_CODIGO = '''||TRIM(V_TMP_JBV(3))||''') AND TFP_DESTINO= (SELECT DD_SFP_ID FROM DD_SFP_SUBFASE_PUBLICACION WHERE DD_SFP_CODIGO = '''||TRIM(V_TMP_JBV(4))||''')';
 	EXECUTE IMMEDIATE V_SQL INTO V_TFP_ID;

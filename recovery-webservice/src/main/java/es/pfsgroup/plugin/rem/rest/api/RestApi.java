@@ -78,6 +78,7 @@ public interface RestApi {
 	public static final String REST_NO_PARAM = "MISSING_PARAMS";
 	public static final String REST_MSG_FORMAT_ERROR = "FORMAT_ERROR";
 	public static final String REST_FASE_SUBFASE_INVALIDAS = "FASE_O_SUBFASE_INVALIDAS";
+	public static final String REST_INF_COM_APROBADO = "YA_TIENE_INFORME_COMERCIAL_APROBADO";
 	/**
 	 * Valida la firma
 	 * 

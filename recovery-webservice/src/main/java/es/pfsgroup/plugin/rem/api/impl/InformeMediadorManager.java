@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.HistoricoFasePublicacionActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.InformeMediadorApi;
@@ -42,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
@@ -86,7 +88,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	private ActivoAdapter activoAdapterApi;
 	
 	@Autowired
-	private ActivoPublicacionDao activoPublicacionDao;
+	private HistoricoFasePublicacionActivoDao historicoFasePublicacionActivoDao;
 
 	public InformeMediadorManager() {
 		obligatorios = new HashMap<String, HashMap<String, Boolean>>();
@@ -1341,10 +1343,10 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				Long idProveedorParche = null;
 				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
 				ActivoInfoComercial informeEntity = null;
-				ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(activo.getId());
-				if (!Checks.esNulo(activoPublicacion) && DDFasePublicacion.CODIGO_FASE_III.equals(activoPublicacion.getFasePublicacion().getCodigo()) 
-						&& (DDSubfasePublicacion.CODIGO_PENDIENTE_DE_INFORMACION.equals(activoPublicacion.getSubfasePublicacion().getCodigo()) 
-								|| DDSubfasePublicacion.CODIGO_DEVUELTO.equals(activoPublicacion.getSubfasePublicacion().getCodigo()))) {
+				HistoricoFasePublicacionActivo histFasePublicacionActivo = historicoFasePublicacionActivoDao.getHistoricoFasesPublicacionActivoActualById(activo.getId());
+				if (!Checks.esNulo(histFasePublicacionActivo) && DDFasePublicacion.CODIGO_FASE_III.equals(histFasePublicacionActivo.getFasePublicacion().getCodigo()) 
+						&& (DDSubfasePublicacion.CODIGO_PENDIENTE_DE_INFORMACION.equals(histFasePublicacionActivo.getSubFasePublicacion().getCodigo()) 
+								|| DDSubfasePublicacion.CODIGO_DEVUELTO.equals(histFasePublicacionActivo.getSubFasePublicacion().getCodigo()))) {
 					if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
 						ArrayList<Serializable> entitys = new ArrayList<Serializable>();
 						if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
@@ -1536,6 +1538,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 									.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_RECHAZADA);
 						}
 						genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
+						
+						map.put("informeComercial", RestApi.REST_INF_COM_APROBADO);
 					}
 
 					// Actualizamos la situacion comercial del activo

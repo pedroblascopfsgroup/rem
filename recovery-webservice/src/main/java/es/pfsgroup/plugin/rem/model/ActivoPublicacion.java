@@ -125,14 +125,6 @@ public class ActivoPublicacion implements Serializable, Auditable {
 	@Column(name = "APU_FECHA_REVISION_PUB_ALQ")
 	private Date fechaRevisionPublicacionesAlquiler;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_FSP_ID")
-	private DDFasePublicacion fasePublicacion;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_SFP_ID")
-	private DDSubfasePublicacion subfasePublicacion;
-	
 	@Version
 	private Long version;
 
@@ -395,20 +387,5 @@ public class ActivoPublicacion implements Serializable, Auditable {
 		this.fechaRevisionPublicacionesAlquiler = fechaRevisionPublicacionesAlquiler;
 	}
 
-	public DDFasePublicacion getFasePublicacion() {
-		return fasePublicacion;
-	}
-
-	public void setFasePublicacion(DDFasePublicacion fasePublicacion) {
-		this.fasePublicacion = fasePublicacion;
-	}
-
-	public DDSubfasePublicacion getSubfasePublicacion() {
-		return subfasePublicacion;
-	}
-
-	public void setSubfasePublicacion(DDSubfasePublicacion subfasePublicacion) {
-		this.subfasePublicacion = subfasePublicacion;
-	}
 	
 }

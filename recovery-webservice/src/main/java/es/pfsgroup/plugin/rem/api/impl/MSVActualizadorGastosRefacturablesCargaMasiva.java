@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,8 +17,10 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 @Component
@@ -24,6 +28,9 @@ public class MSVActualizadorGastosRefacturablesCargaMasiva extends AbstractMSVAc
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
 	
 	private final String VALID_OPERATION = MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES;
 	
@@ -41,20 +48,9 @@ public class MSVActualizadorGastosRefacturablesCargaMasiva extends AbstractMSVAc
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
 		
-		Long numGastoProveedor = Long.valueOf(exc.dameCelda(fila, COL_GASTO_PADRE));
-		Long numGastoProveedorRefacturado =	Long.valueOf(exc.dameCelda(fila, COL_GASTO_HIJO));				
-		
-		Filter filtroGastoProveedor = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", numGastoProveedor);
-		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtroGastoProveedor);
-		
-		Filter filtroGastoProveedorRefacturado = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", numGastoProveedorRefacturado);
-		GastoProveedor gastoProveedorRefacturado = genericDao.get(GastoProveedor.class, filtroGastoProveedorRefacturado);		
-		
-		GastoRefacturable gasto = new GastoRefacturable();
-		gasto.setGastoProveedor(gastoProveedor.getId());
-		gasto.setGastoProveedorRefacturado(gastoProveedorRefacturado.getId());		
-		
-		genericDao.save(GastoRefacturable.class, gasto);		
+		List<String> gastosRefacturablesLista = new ArrayList<String>();
+		gastosRefacturablesLista.add(exc.dameCelda(fila, COL_GASTO_HIJO));
+		gastoProveedorApi.anyadirGastosRefacturadosAGastoExistente(exc.dameCelda(fila, COL_GASTO_PADRE), gastosRefacturablesLista);
 		
 		return new ResultadoProcesarFila();
 	}

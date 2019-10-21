@@ -141,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
@@ -160,6 +161,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -7595,5 +7597,43 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	public void deleteActOfr(Long idActivo, Long idOferta) {
 		activoDao.deleteActOfr(idActivo, idOferta);
+	}
+		
+	@Override
+	@Transactional(readOnly = false)
+	public void crearRegistroFaseHistorico(Activo activo) {			
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+		List <HistoricoFasePublicacionActivo> anteriorHistoricoFasePublicacionList = genericDao.getList(HistoricoFasePublicacionActivo.class, filtroActivo, filtroFechaFin);
+		//La lista debería devolver solo un valor, para que no salte una excepción se coge una lista y el valor 0
+		if (!Checks.estaVacio(anteriorHistoricoFasePublicacionList) && !Checks.esNulo(anteriorHistoricoFasePublicacionList.get(0))) {
+			HistoricoFasePublicacionActivo anteriorHistoricoFasePublicacion = anteriorHistoricoFasePublicacionList.get(0);
+			if(!Checks.esNulo(anteriorHistoricoFasePublicacion.getFasePublicacion()) && DDFasePublicacion.CODIGO_NO_APLICA.equals(anteriorHistoricoFasePublicacion.getFasePublicacion().getCodigo())) {
+				return;
+			}
+			anteriorHistoricoFasePublicacion.setFechaFin(new Date());
+			anteriorHistoricoFasePublicacion.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+			anteriorHistoricoFasePublicacion.getAuditoria().setFechaModificar(new Date());
+			genericDao.save(HistoricoFasePublicacionActivo.class, anteriorHistoricoFasePublicacion);
+		}			
+		
+		HistoricoFasePublicacionActivo nuevoHistoricoFasePublicacion = new HistoricoFasePublicacionActivo();
+		nuevoHistoricoFasePublicacion.setActivo(activo);
+		DDFasePublicacion nuevaFasePublicacion =  genericDao.get(DDFasePublicacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_NO_APLICA));
+		if (!Checks.esNulo(nuevaFasePublicacion)) {
+			nuevoHistoricoFasePublicacion.setFasePublicacion(nuevaFasePublicacion);				
+		}
+		
+		nuevoHistoricoFasePublicacion.setUsuario(usuarioApi.getUsuarioLogado());
+		nuevoHistoricoFasePublicacion.setFechaInicio(new Date());
+		
+		Auditoria auditoria = new Auditoria();
+		auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
+		auditoria.setFechaCrear(new Date());
+		
+		nuevoHistoricoFasePublicacion.setAuditoria(auditoria);
+		nuevoHistoricoFasePublicacion.setSubFasePublicacion(null);
+		
+		genericDao.save(HistoricoFasePublicacionActivo.class, nuevoHistoricoFasePublicacion);		
 	}
 }

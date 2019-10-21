@@ -1308,4 +1308,6 @@ public interface ActivoApi {
 	ActivoDto getDatosActivo(Long activoId);
 
 	Boolean getVisibilidadTabFasesPublicacion(Activo activo);
+	
+	public void crearRegistroFaseHistorico(Activo activo);
 }

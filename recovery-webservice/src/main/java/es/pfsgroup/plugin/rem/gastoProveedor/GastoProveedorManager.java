@@ -1093,15 +1093,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setNifTitularCuenta(detalleGasto.getNifTitularCuentaAbonar());
 			
 			/* Anyadimos el importe de los gastos refacturables asociados */
-			Double importeGastosRefacturables = 0.0;
+			/*Double importeGastosRefacturables = 0.0;
 			
 			for (GastoProveedor gastoRefactu : getGastosRefacturablesGasto(gasto.getId())) {
 				if(!Checks.esNulo(gastoRefactu.getGastoDetalleEconomico()) && !Checks.esNulo(gastoRefactu.getGastoDetalleEconomico().getImporteTotal())) {
 					importeGastosRefacturables += gastoRefactu.getGastoDetalleEconomico().getImporteTotal();
 				}
 			}
-			
-			dto.setImporteGastosRefacturables(importeGastosRefacturables);
+			*/
+			dto.setImporteGastosRefacturables(0.0);
 			
 			
 			if(Checks.esNulo(detalleGasto.getGastoRefacturable()) || (!Checks.esNulo(detalleGasto.getGastoRefacturable()) && detalleGasto.getGastoRefacturable())) { 

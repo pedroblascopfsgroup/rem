@@ -877,6 +877,31 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			
 			genericDao.save(ActivoAutorizacionTramitacionOfertas.class, autorizacion);
 			
+			for(ActivoAgrupacionActivo activoagrupacionactivo: activoAgrupacion.getActivos()) {
+				Activo activo = activoagrupacionactivo.getActivo();
+				Date facheInicioBloqueo = activoApi.getFechaInicioBloqueo(activo);
+				if(facheInicioBloqueo != null){
+					ActivoAutorizacionTramitacionOfertas activoAuto =  activo.getActivoAutorizacionTramitacionOfertas();
+					if(Checks.esNulo(activoAuto)) {
+						activoAuto = new ActivoAutorizacionTramitacionOfertas();
+						beanUtilNotNull.copyProperty(activoAuto, "activo", activo);
+					}
+					beanUtilNotNull.copyProperty(activoAuto, "observacionesAutoTram", dto.getObservacionesAutoTram());
+					beanUtilNotNull.copyProperty(activoAuto, "motivoAutorizacionTramitacion", motivoTramitacion);
+					activoAuto.setUsuario(usuario);
+					beanUtilNotNull.copyProperty(activoAuto, "fechIniBloq", activoApi.getFechaInicioBloqueo(activo));
+					beanUtilNotNull.copyProperty(activoAuto, "fechAutoTram", new Date());
+					
+					auditoriaActivoAuto = activoAuto.getAuditoria();
+					if (auditoriaActivoAuto != null) {
+						auditoriaActivoAuto.setFechaModificar(new Date());
+						auditoriaActivoAuto.setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+					}
+					
+					genericDao.save(ActivoAutorizacionTramitacionOfertas.class, activoAuto);
+				}
+			}
+			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoAgrupacionManager", e);
 			return false;

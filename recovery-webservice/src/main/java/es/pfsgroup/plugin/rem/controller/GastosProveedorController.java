@@ -214,10 +214,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", true );
 			
 		} catch (JsonViewerException ex) {
+			logger.error(ex.getMessage(),ex);
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);
 		}		
 		
@@ -1033,7 +1034,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("noRefacturable", gastosNoRefacturables);
 			model.put("success", true);			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);		
 		}
 
@@ -1065,7 +1066,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", dto);
 			model.put("success", true);			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);		
 		}
 
@@ -1096,11 +1097,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 			}		
 			model.put("success", true);			
 		} catch (JsonViewerException jve) {
-			logger.error(jve.getMessage());
+			logger.error(jve.getMessage(),jve);
 			model.put("error", jve.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("error", e.getMessage());
 			model.put("success", false);		
 		} 
@@ -1126,7 +1127,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("noTieneGastosRefacturados", noTieneGastosRefacturados);
 			model.put("success", true);			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);		
 		}
 

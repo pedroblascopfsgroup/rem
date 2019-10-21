@@ -1272,5 +1272,7 @@ public interface ExpedienteComercialApi {
 
 	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
 
+	boolean esOmegaConReserva(TareaExterna tareaExterna);
+
 }
 

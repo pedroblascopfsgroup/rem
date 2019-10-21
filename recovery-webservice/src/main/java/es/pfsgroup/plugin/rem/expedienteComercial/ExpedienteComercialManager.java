@@ -10065,6 +10065,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return esYubai;
 	}
+	
+	@Override
+	public boolean esOmegaConReserva(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esOmega = false;
+		if ( !Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) ) {
+			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
+			if ( !Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera())) {
+				esOmega = ( DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo()) 
+							&& DDSubcartera.CODIGO_OMEGA.equals(activo.getSubcartera().getCodigo()) );
+			}
+		}
+		return esOmega;
+	}
 
 	@Override
 	public List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta){

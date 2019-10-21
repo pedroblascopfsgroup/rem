@@ -633,6 +633,10 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkExpedienteFechaCheque(idTramite);
             }
+            def esOmega = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.esOmegaConReserva(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

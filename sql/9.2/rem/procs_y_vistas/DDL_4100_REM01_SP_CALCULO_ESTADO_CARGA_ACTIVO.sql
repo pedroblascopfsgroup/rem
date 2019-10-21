@@ -49,7 +49,8 @@ BEGIN
                             WHERE AUX_ACT.ACT_ID IN (
                             SELECT SQLI.ACT_ID
                             FROM '|| V_ESQUEMA ||'.ACT_CRG_CARGAS SQLI
-                            WHERE SQLI.BORRADO = 0 AND SQLI.DD_ECG_ID = (SELECT ECG.DD_ECG_ID FROM '|| V_ESQUEMA ||'.DD_ECG_ESTADO_CARGA ECG WHERE ECG.DD_ECG_CODIGO = ''01'') AND SQLI.DD_SCG_ID IS NOT NULL
+                            WHERE SQLI.BORRADO = 0 AND SQLI.DD_ECG_ID = (SELECT ECG.DD_ECG_ID FROM '|| V_ESQUEMA ||'.DD_ECG_ESTADO_CARGA ECG WHERE ECG.DD_ECG_CODIGO = ''01'') AND SQLI.CRG_IMPIDE_VENTA = 
+								(SELECT DD_SIN_ID FROM '|| V_ESQUEMA_MASTER ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO =  ''01'')
                             GROUP BY SQLI.ACT_ID)
                             AND AUX_ACT.BORRADO = 0'||V_ACT_ID||
                           ') AUX
@@ -75,12 +76,14 @@ BEGIN
                             WHERE AUX_ACT.ACT_ID IN (
                             SELECT SQLI.ACT_ID
                             FROM '|| V_ESQUEMA ||'.ACT_CRG_CARGAS SQLI
-                            WHERE SQLI.BORRADO = 0 AND SQLI.DD_ECG_ID = (SELECT ECG.DD_ECG_ID FROM '|| V_ESQUEMA ||'.DD_ECG_ESTADO_CARGA ECG WHERE ECG.DD_ECG_CODIGO = ''01'') AND SQLI.DD_SCG_ID IS NULL
+                            WHERE SQLI.BORRADO = 0 AND SQLI.DD_ECG_ID = (SELECT ECG.DD_ECG_ID FROM '|| V_ESQUEMA ||'.DD_ECG_ESTADO_CARGA ECG WHERE ECG.DD_ECG_CODIGO = ''01'') AND SQLI.CRG_IMPIDE_VENTA = 
+								(SELECT DD_SIN_ID FROM '|| V_ESQUEMA_MASTER ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO =  ''02'')
                             GROUP BY SQLI.ACT_ID)
                             AND AUX_ACT.ACT_ID NOT IN (
                             SELECT SQLI.ACT_ID
                             FROM '|| V_ESQUEMA ||'.ACT_CRG_CARGAS SQLI
-                            WHERE SQLI.BORRADO = 0 AND SQLI.DD_ECG_ID = (SELECT ECG.DD_ECG_ID FROM '|| V_ESQUEMA ||'.DD_ECG_ESTADO_CARGA ECG WHERE ECG.DD_ECG_CODIGO = ''01'') AND SQLI.DD_SCG_ID IS NOT NULL
+                            WHERE SQLI.BORRADO = 0 AND SQLI.DD_ECG_ID = (SELECT ECG.DD_ECG_ID FROM '|| V_ESQUEMA ||'.DD_ECG_ESTADO_CARGA ECG WHERE ECG.DD_ECG_CODIGO = ''01'') AND SQLI.CRG_IMPIDE_VENTA = 
+								(SELECT DD_SIN_ID FROM '|| V_ESQUEMA_MASTER ||'.DD_SIN_SINO WHERE DD_SIN_CODIGO =  ''01'')
                             GROUP BY SQLI.ACT_ID)
                             AND AUX_ACT.BORRADO = 0'||V_ACT_ID||
                           ') AUX
@@ -106,7 +109,7 @@ BEGIN
                             WHERE AUX_ACT.ACT_ID IN (
                             SELECT SQLI.ACT_ID
                             FROM '|| V_ESQUEMA ||'.ACT_CRG_CARGAS SQLI
-                            WHERE SQLI.BORRADO = 0 AND SQLI.DD_ECG_ID = (SELECT ECG.DD_ECG_ID FROM '|| V_ESQUEMA ||'.DD_ECG_ESTADO_CARGA ECG WHERE ECG.DD_ECG_CODIGO = ''02'')
+                            WHERE SQLI.BORRADO = 0 AND SQLI.DD_ECG_ID = (SELECT ECG.DD_ECG_ID FROM '|| V_ESQUEMA ||'.DD_ECG_ESTADO_CARGA ECG WHERE ECG.DD_ECG_CODIGO = ''02'') 
                             GROUP BY SQLI.ACT_ID)
                             AND AUX_ACT.ACT_ID NOT IN (
                             SELECT SQLI.ACT_ID

@@ -470,28 +470,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		},
 		ocultarBtnDevolverReserva: function(get){
 			var me = this;
-			var url =  $AC.getRemoteUrl('expedientecomercial/getIsExpedienteGencat');
-			if(get('expediente.tieneReserva') && get('expediente.codigoEstado') == '16'){
-				Ext.Ajax.request({
-				     url: url,
-				     method: 'POST',
-				     params: {idExpediente: get('expediente.id')},
-				     success: function(response, opts) {
-				    	data = Ext.decode(response.responseText);
-				    	if(!Ext.isEmpty(data) && data.success == 'true'){
-					    	if(data.data == "false"){
-					    		return true;
-					    	}else{
-					    		return false;
-					    	}
-				     	}else{
-				     		return false;
-				     	}
-				     },
-				     failure: function(){
-				    	 return false;
-				     }
-				});
+			if(get('expediente.tieneReserva') && get('expediente.codigoEstado') == '16' && CONST.CARTERA['BANKIA'] !=  get('expediente.entidadPropietariaCodigo') && get('expediente.noEsOfertaFinalGencat')){
+				return false;
 			}else{
 				return true;
 			}			

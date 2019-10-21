@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -263,4 +264,18 @@ public interface GenericApi {
 	public List<DDTipoTituloActivoTPA> getComboTipoTituloActivoTPA(Long idActivo);
 
 	public List<DDTipoDocumentoTributos> getDiccionarioTiposDocumentoTributo();
+
+	/**
+	 * Devuelve las subfases correspondientes de la fase seleccionada
+	 * @param codCartera
+	 * @return Devuelve las subfases correspondientes de la fase seleccionada
+	 */
+	List<DDSubfasePublicacion> getComboSubfase(Long idActivo);
+	
+	/**
+	 * Devuelve las subfases correspondientes de la fase seleccionada
+	 * @param codCartera
+	 * @return Devuelve las subfases correspondientes de la fase seleccionada
+	 */
+	List<DDSubfasePublicacion> getComboSubfaseFiltered(String codFase);
 }

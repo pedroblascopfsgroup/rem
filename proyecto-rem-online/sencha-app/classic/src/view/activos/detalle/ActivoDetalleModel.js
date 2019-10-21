@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
-    'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid'],
+    'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion'],
 
     data: {
     	activo: null,
@@ -2191,6 +2191,43 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {idActivo: '{activo.id}'}
 			},
 			autoLoad: true
+		},
+		
+		storeFasesDePublicacion: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'faseDePublicacion'}
+			},
+			autoLoad: true
+		},
+		
+		storeSubfasesDePublicacion: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboSubfase',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
+		storeSubfasesDePublicacionFiltered: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboSubfaseFiltered'
+			}
+		},
+		
+		storeHistoricoFesesDePublicacion:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoFasesDePublicacion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoFasesDePublicacionActivo',
+				extraParams: {id: '{activo.id}'}
+			}
 		}
 		
      }

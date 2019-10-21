@@ -393,6 +393,27 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
+		
+		/*
+		 * TAB_FASE_PUBLICACION
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_FASE_PUBLICACION, new DispachableMethod<DtoFasePublicacionActivo>() {
+			@Override
+			public Class<DtoFasePublicacionActivo> getArgumentType() {
+				return DtoFasePublicacionActivo.class;
+			}
+			
+			@Override
+			public void execute(Long id, DtoFasePublicacionActivo dto, HttpServletRequest request) {
+				if (dto != null) {
+					ModelAndView mm = this.controller.saveFasePublicacionActivo(dto, new ModelMap());
+					if ("false".equals(mm.getModel().get("success").toString())
+							&& !Checks.esNulo(mm.getModel().get("msgError"))) {
+							throw new JsonViewerException(mm.getModel().get("msgError").toString());
+					}
+				}
+			}
+		});
 	}
 
 	private ActivoController controller;

@@ -23,6 +23,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
@@ -635,6 +636,16 @@ public class GenericController extends ParadiseJsonController{
 		}
 	
 		restApi.sendResponse(response, model,request);
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubfase(Long idActivo) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubfase(idActivo)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubfaseFiltered(String codFase) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubfaseFiltered(codFase)));	
 	}
  }
 

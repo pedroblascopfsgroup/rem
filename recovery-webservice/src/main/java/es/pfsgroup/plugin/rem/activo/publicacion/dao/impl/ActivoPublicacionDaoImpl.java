@@ -7,6 +7,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
@@ -163,5 +164,13 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 				.add(Restrictions.in("codigo", new String[] {DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA, DDEstadoPublicacionVenta.CODIGO_OCULTO_VENTA}));
 
 		return HibernateUtils.castObject(Date.class, criteria.uniqueResult());
+	}
+	
+	@Override
+	public HistoricoFasePublicacionActivo getFasePublicacionVigentePorIdActivo(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(HistoricoFasePublicacionActivo.class);
+		criteria.add(Restrictions.eq("activo.id", idActivo));
+		criteria.add(Restrictions.isNull("fechaFin"));
+		return HibernateUtils.castObject(HistoricoFasePublicacionActivo.class, criteria.uniqueResult());
 	}
 }

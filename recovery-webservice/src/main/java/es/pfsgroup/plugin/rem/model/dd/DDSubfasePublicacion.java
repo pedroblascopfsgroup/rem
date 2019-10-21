@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -60,7 +62,11 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDSubfasePublicacionGenerator")
 	@SequenceGenerator(name = "DDSubfasePublicacionGenerator", sequenceName = "S_DD_SFP_SUBFASE_PUBLICACION")
 	private Long id;
-	    
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_FSP_ID")
+	private DDFasePublicacion fasePublicacion;
+	
 	@Column(name = "DD_SFP_CODIGO")   
 	private String codigo;
 	 
@@ -82,6 +88,14 @@ public class DDSubfasePublicacion implements Auditable, Dictionary {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public DDFasePublicacion getFasePublicacion() {
+		return fasePublicacion;
+	}
+
+	public void setFasePublicacion(DDFasePublicacion fasePublicacion) {
+		this.fasePublicacion = fasePublicacion;
 	}
 
 	public String getCodigo() {

@@ -5,9 +5,12 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -31,11 +34,13 @@ public class ActivoTransicionesFasesPublicacion implements Serializable, Auditab
 	@Id
     @Column(name = "TFP_ID")    
     private Long id;
-
-    @Column(name = "TFP_ORIGEN")
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TFP_ORIGEN")
 	private DDSubfasePublicacion origen; 
     
-    @Column(name = "TFP_DESTINO")
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TFP_DESTINO")
 	private DDSubfasePublicacion destino;
 
 	@Version   

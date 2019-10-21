@@ -268,6 +268,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 || tabData.models[0].name == "activotrabajo"
                 || tabData.models[0].name == "activotrabajosubida"
                 || tabData.models[0].name == "activotramite"
+                || tabData.models[0].name == "fasepublicacionactivo"
                 ){
                 idActivo = tabData.models[0].data.idActivo;
             } else {
@@ -493,7 +494,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onChangeChainedCombo: function(combo) {
-
     	var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);   
     	
@@ -501,6 +501,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
+    	
+    	if(combo.chainedStore == 'storeSubfasesDePublicacionFiltered'){
+    		var storeSubfaseFiltered = me.getViewModel().get("storeSubfasesDePublicacionFiltered");
+			chainedCombo.bindStore(storeSubfaseFiltered);
+			storeSubfaseFiltered.getProxy().setExtraParams({'codFase':combo.getValue()});	
+		}
+    	
 		chainedCombo.getStore().load({ 			
 			callback: function(records, operation, success) {
    				if(!Ext.isEmpty(records) && records.length > 0) {
@@ -5774,6 +5781,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else {
 			models = form.getModelsInstance();
 			me.cargarTabDataMultiple(form, 0, models, form.records);
+		}
+	},
+	
+	onChkbxSubfaseChange: function(chkbox, newValue, oldValue) {
+		var modelValue = chkbox.lookupController().getViewModel().data.fasepublicacionactivo.data.subfasePublicacionCodigo;
+		if (newValue != modelValue) {
+			var me = this;
+			var faseComentario = me.lookupReference('faseComentario');
+		    faseComentario.reset();
 		}
 	}
 });

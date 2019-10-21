@@ -5,45 +5,60 @@ Ext.define('HreRem.view.activos.detalle.HistoricoFasesDePublicacionGrid', {
 	editOnSelect:false,
 	disabledDeletedBtn:true,
 	
+	bind: {
+		store: '{storeHistoricoFesesDePublicacion}'
+	},
+	
 	initComponent: function () {
 		var me = this;
 		
 		me.columns = [
 			{
 				text:HreRem.i18n('fieldlabel.fases.de.publicacion.fase.de.publicacion'),
+				dataIndex: 'fasePublicacion',
 				flex:0.5
 			},
 			{
 				text:HreRem.i18n('fieldlabel.fases.de.publicacion.subfase.de.publicacion'),
+				dataIndex: 'subfasePublicacion',
 				flex:0.5
 			},
 			{
 				text:HreRem.i18n('title.fases.de.publicacion.usuario'),
+				dataIndex: 'usuario',
 				flex:0.5
 			},
 			{
 				text:HreRem.i18n('title.fases.de.publicacion.fecha.inicio'),
-				flex:0.5
+				dataIndex: 'fechaInicio',
+				flex:0.5,
+				formatter: 'date("d/m/Y")'
 			},
 			{
 				text:HreRem.i18n('title.fases.de.publicacion.fecha.fin'),
-				flex:0.5
+				dataIndex: 'fechaFin',
+				flex:0.5,
+				formatter: 'date("d/m/Y")'
 			},
 			{
 				text:HreRem.i18n('fieldlabel.fases.de.publicacion.comentario'),
+				dataIndex: 'comentario',
 				flex:0.5
 			}
 		];
 		
 		me.dockedItems = [
-			{
-				xtype: 'pagingtoolbar',
+	        {
+	            xtype: 'pagingtoolbar',
 	            dock: 'bottom',
 	            itemId: 'activosPaginationToolbar',
 	            inputItemWidth: 60,
-	            displayInfo: true
-			}
-		];
+	            displayInfo: true,
+	            bind: {
+	                store: '{storeHistoricoFesesDePublicacion}'
+	            }
+	        }
+	    ];
 		
 		me.callParent();
 	}

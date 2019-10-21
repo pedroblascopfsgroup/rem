@@ -238,6 +238,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoDocJunta", DDTipoDocJuntas.class);
 		mapa.put("tipoDocumentoPlusvalia", DDTipoDocPlusvalias.class);
 		mapa.put("estadoGestionPlusvalia", DDEstadoGestionPlusv.class);
+		mapa.put("faseDePublicacion", DDFasePublicacion.class);
+		mapa.put("subfaseDePublicacion", DDSubfasePublicacion.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

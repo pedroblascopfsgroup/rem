@@ -97,7 +97,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
 
 		HQLBuilder hb = new HQLBuilder(buildFrom(dto));
-		
+		 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
 		if (dto.getEntidadPropietariaCodigo() != null)
@@ -230,26 +230,27 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat",
 				dto.getEstadoComunicacionGencatCodigo());
 		
-		if (!Checks.esNulo(dto.getUsuarioGestoria())) {
-			String orGestorias = "";
+		if (dto.getUsuarioGestoria()) {
+			String orBuilder = "";
 			if (!Checks.esNulo(dto.getGestoriaAdmision())) {
-				orGestorias += " bag.gestoriaAdmision = '" + dto.getGestoriaAdmision() + "'";
+				orBuilder += " bag.gestoriaAdmision = '" + dto.getGestoriaAdmision() + "'";
 			}
-			
-			if (Checks.esNulo(dto.getGestoriaAdmision()) && !Checks.esNulo(dto.getGestoriaAdministracion())) {
-				orGestorias += " bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
-			} else if (!Checks.esNulo(dto.getGestoriaAdmision()) && !Checks.esNulo(dto.getGestoriaAdministracion())) {
-				orGestorias += "  OR bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
+
+			if (orBuilder.length() == 0 && dto.getGestoriaAdministracion() != null) {
+				orBuilder += " bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
+			} else if (orBuilder.length() != 0 && dto.getGestoriaAdministracion() != null) {
+				orBuilder += "  OR bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
 			}
-			
-			if (Checks.esNulo(dto.getGestoriaAdmision()) && Checks.esNulo(dto.getGestoriaAdministracion()) && !Checks.esNulo(dto.getGestoriaFormalizacion())) {
-				orGestorias += " bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
-			} else if (!Checks.esNulo(dto.getGestoriaAdmision()) || !Checks.esNulo(dto.getGestoriaAdministracion())) {
-				orGestorias += "  OR bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
+
+			if (orBuilder.length() == 0 && dto.getGestoriaFormalizacion() != null) {
+				orBuilder += " bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
+			} else if (orBuilder.length() != 0 || dto.getGestoriaAdministracion() != null) {
+				orBuilder += "  OR bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
 			}
-			
-			if (!"".equals(orGestorias)) {
-				hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where (" + orGestorias + ") AND bag.id = act.id)");
+
+			if (orBuilder.length() != 0) {
+				hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where (" + orBuilder
+						+ ") AND bag.id = act.id)");
 			}
 		}
 		

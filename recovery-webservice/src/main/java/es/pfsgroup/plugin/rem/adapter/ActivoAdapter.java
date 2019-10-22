@@ -19,9 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
@@ -126,9 +124,7 @@ import es.pfsgroup.plugin.rem.model.AdjuntoPlusvalias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
-import es.pfsgroup.plugin.rem.model.Comprador;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
+import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -155,7 +151,6 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoNumPlantas;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
@@ -1541,23 +1536,14 @@ public class ActivoAdapter {
 			}
 		}
 		
-		Usuario usuarioGestoria = gestorActivoApi.isGestoria(usuarioLogado);
+		ConfiguracionAccesoGestoria usuarioGestoria = gestorActivoApi.isGestoria(usuarioLogado);
 		if (!Checks.esNulo(usuarioGestoria)) {
 			dtoActivoFiltro.setUsuarioGestoria(true);
-			Usuario usernameAdmision = gestorActivoApi.usuarioGestoria(usuarioGestoria, GestorActivoApi.CODIGO_GESTORIA_ADMISION);
-			if (!Checks.esNulo(usernameAdmision)) {
-				dtoActivoFiltro.setGestoriaAdmision(usernameAdmision.getUsername());
-			}
-			
-			Usuario usernameAdministracion = gestorActivoApi.usuarioGestoria(usuarioGestoria, GestorActivoApi.CODIGO_GESTORIA_ADMINISTRACION);
-			if (!Checks.esNulo(usernameAdministracion)) {
-				dtoActivoFiltro.setGestoriaAdministracion(usernameAdministracion.getUsername());
-			}
-			
-			Usuario usernameFormalizacion = gestorActivoApi.usuarioGestoria(usuarioGestoria, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-			if (!Checks.esNulo(usernameFormalizacion)) {
-				dtoActivoFiltro.setGestoriaFormalizacion(usernameFormalizacion.getUsername());
-			}
+			dtoActivoFiltro.setGestoriaAdmision(usuarioGestoria.getUsernameGestoriaAdmision());
+			dtoActivoFiltro.setGestoriaAdministracion(usuarioGestoria.getUsernameGestoriaAdministracion());
+			dtoActivoFiltro.setGestoriaFormalizacion(usuarioGestoria.getUsernameGestoriaFormalizacion());
+		}else {
+			dtoActivoFiltro.setUsuarioGestoria(false);
 		}
 		
 		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);

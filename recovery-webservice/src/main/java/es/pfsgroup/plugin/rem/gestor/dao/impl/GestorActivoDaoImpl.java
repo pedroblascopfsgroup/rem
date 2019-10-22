@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.gestor.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -16,6 +17,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.gestorEntidad.dao.impl.GestorEntidadDaoImpl;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.Directorusuario;
 
 @Repository("GestorActivoDao")
@@ -26,6 +28,7 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -108,6 +111,26 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 			}
 		
 		return director;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConfiguracionAccesoGestoria> getConfiguracionGestorias(ArrayList<String> idGrupos) {
+		String[] idGruposValuesInArray = new String[idGrupos.size()];
+		for (int i = 0; i< idGrupos.size(); i++) {
+			idGruposValuesInArray[i] = idGrupos.get(i);
+		};
+		HQLBuilder hb = new HQLBuilder("select cag from ConfiguracionAccesoGestoria cag ");
+		hb.appendWhereIN("usuarioGrupoAdmision.id ", idGruposValuesInArray, true);
+		hb.appendWhereIN("usuarioGrupoAdministracion.id ", idGruposValuesInArray, true);
+		hb.appendWhereIN("usuarioGrupoFormalizacion.id ", idGruposValuesInArray, true);
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
+		//logger.error(hb.toString());
+		HQLBuilder.parametrizaQuery(query, hb);
+		List<ConfiguracionAccesoGestoria>  config = query.list();
+		
+		return config;
 	}
 
 }

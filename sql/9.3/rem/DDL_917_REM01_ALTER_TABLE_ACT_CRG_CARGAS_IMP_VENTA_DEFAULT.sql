@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lara Pablo Flores
---## FECHA_CREACION=20191029
+--## FECHA_CREACION=20191030
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=0
@@ -59,7 +59,7 @@ BEGIN
 				V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET '||V_TEXT_CAMPO||' = '|| V_SQL_VALOR ||' WHERE '||V_TEXT_CAMPO||' IS NULL';
 				EXECUTE IMMEDIATE V_MSQL;
 				
-				V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' MODIFY (CRG_IMPIDE_VENTA DEFAULT '|| V_SQL_VALOR ||')';
+				V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' MODIFY (CRG_IMPIDE_VENTA DEFAULT '|| V_SQL_VALOR ||' NOT NULL)';
 				EXECUTE IMMEDIATE V_MSQL;
 				
 				DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CRG_IMPIDE_VENTA tiene valor por defecto No del diccionario DD_SIN_SINO');

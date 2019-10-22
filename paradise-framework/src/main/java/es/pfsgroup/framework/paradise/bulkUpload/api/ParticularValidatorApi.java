@@ -18,7 +18,7 @@ public interface ParticularValidatorApi {
 
 	String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 
-	Boolean activoEnAgrupacionRestringida(Long idActivo);
+	Boolean activoEnAgrupacionRestringida(Long numActivo);
 
 	Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 
@@ -900,5 +900,17 @@ public interface ParticularValidatorApi {
 	Boolean existeGastoRefacturable(String numGasto);
 
 	Boolean esGastoDestinatarioPropietario(String numGasto);	
+
+	/**
+	 * @param numActivo
+	 * @return Devuelve el número de Agrupacion Restringida a la que pertenece el Activo 
+	 */
+	public Long obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo);
+
+	/**
+	 * @param numAgrupacion
+	 * @return true si la Agrupación de tipo alquiler tiene precio
+	 */
+	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
 
 }

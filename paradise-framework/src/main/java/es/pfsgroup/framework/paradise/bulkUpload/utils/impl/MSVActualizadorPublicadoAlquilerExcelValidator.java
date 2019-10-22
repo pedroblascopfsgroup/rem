@@ -26,9 +26,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelValidatorAbstract {
@@ -48,8 +50,16 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 	private static final String AGRUPACION_ACTIVO_NO_PUBLICABLE = "Existen activos no publicables en la agrupación";
 	private static final String AGRUPACION_DESTINO_COMERCIAL_NO_ALQUILER = "Existen activos que no incluyen destino comercial de alquiler en la agrupación";
 	private static final String AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO = "Existen activos que no tienen informe aprobado ni precio en la agrupación";
+	private static final String AGRUPACION_ACTIVO_SIN_PRECIO = "La agrupación no tiene precio";
 	private static final String CODIGO_TIPO_AGRUPACION_RESTRINGIDA = "02";
 	private static final Integer NUMERO_HOJA_DATOS = 0;
+	
+	private	static final int FILA_CABECERA = 0;
+	private	static final int DATOS_PRIMERA_FILA = 1;
+	
+	private	static final int COL_ACTIVO = 0;
+	private	static final int COL_OCULTAR_PRECIO = 1;
+	private	static final int COL_PUBLICAR_SIN_PRECIO = 2;
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -115,21 +125,15 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 			mapaErrores.put(AGRUPACION_ACTIVO_NO_COMERCIALIZABLE, activosAgrupacionNoComercializablesRows(exc));
 			mapaErrores.put(AGRUPACION_DESTINO_COMERCIAL_NO_ALQUILER, activosAgrupacionDestinoComercialNoAlquilerRows(exc));
 			mapaErrores.put(AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO, activosAgrupacionSinInformeAprobadoNiPrecioOSinPublicarSinPrecioRows(exc));
+			mapaErrores.put(AGRUPACION_ACTIVO_SIN_PRECIO, agrupacionSinPrecio(exc));
 
-			if (!mapaErrores.get(CAMPO_OCULTAR_PRECIO_FORMATO_NO_VALIDO).isEmpty() || !mapaErrores.get(CAMPO_PUBLICAR_SIN_PRECIO_FORMATO_NO_VALIDO).isEmpty()
-					|| !mapaErrores.get(ACTIVO_NOT_EXISTS).isEmpty() || !mapaErrores.get(ACTIVO_SIN_INFORME_NI_PRECIO).isEmpty()
-					|| !mapaErrores.get(ACTIVO_VENDIDO).isEmpty() || !mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty() || !mapaErrores.get(ACTIVO_PUBLICADO).isEmpty()
-					|| !mapaErrores.get(ACTIVO_NO_PUBLICABLE).isEmpty() || !mapaErrores.get(DESTINO_COMERCIAL_NO_ALQUILER).isEmpty()
-					|| !mapaErrores.get(AGRUPACION_ACTIVO_NO_AGRUPACION_RESTRINGIDA_PRINCIPAL).isEmpty() || !mapaErrores.get(AGRUPACION_ACTIVO_NO_PUBLICABLE).isEmpty()
-					|| !mapaErrores.get(AGRUPACION_ACTIVO_NO_COMERCIALIZABLE).isEmpty() || !mapaErrores.get(AGRUPACION_DESTINO_COMERCIAL_NO_ALQUILER).isEmpty()
-					|| !mapaErrores.get(AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO).isEmpty()
-					|| !mapaErrores.get(ACTIVO_OCULTO).isEmpty()){
-				dtoValidacionContenido.setFicheroTieneErrores(true);
-				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-			}
+			Set<String> keySet = mapaErrores.keySet();			
+			for (String key : keySet) {				
+				if(!Checks.estaVacio(mapaErrores.get(key))) {
+					dtoValidacionContenido.setFicheroTieneErrores(true);
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+				}
+			}	
 		}
 		exc.cerrar();
 
@@ -490,4 +494,32 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 		
 		return listaFilas;
 	}
+	
+	private List<Integer> agrupacionSinPrecio(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		String celdaActivo;
+		String publicarSinPrecio;
+
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				celdaActivo = exc.dameCelda(i, COL_ACTIVO);
+				publicarSinPrecio = exc.dameCelda(i, COL_PUBLICAR_SIN_PRECIO);				
+				String[] listaNo = { "NO", "N" };
+				
+				Long numAgrupacion = particularValidator.obtenerNumAgrupacionRestringidaPorNumActivo(celdaActivo);
+				if(Arrays.asList(listaNo).contains(publicarSinPrecio.toUpperCase()) &&!Checks.esNulo(numAgrupacion) && !particularValidator.esAgrupacionAlquilerConPrecio(String.valueOf(numAgrupacion))) {
+					listaFilas.add(i);
+				}
+				
+			} catch (ParseException e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			} catch (Exception e) {
+				listaFilas.add(0);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+	
 }

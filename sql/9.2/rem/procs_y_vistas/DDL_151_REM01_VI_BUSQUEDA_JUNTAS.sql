@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20190718
+--## FECHA_CREACION=20191014
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-6636
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-8018
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_JUNTAS.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial - Juan Beltrán - 20190718 - HREOS-6636
+--##        0.1 Versión inicial 		- Juan Beltrán - 20190718 - HREOS-6636
+--##        0.2 Modificar codProveedor 	- Juan Beltrán - 20191014 - HREOS-8018
 --##########################################
 --*/
 
@@ -51,7 +52,7 @@ BEGIN
 			JCM.JCM_ID,
 			JCM.ACT_ID,
 			ACT.ACT_NUM_ACTIVO,
-			PVE.PVE_COD_UVEM,
+			PVE.PVE_COD_REM,
 			PVE.PVE_NOMBRE,
 			JCM.JCM_FECHA_JUNTA,
 			JCM.JCM_COMUNIDAD,

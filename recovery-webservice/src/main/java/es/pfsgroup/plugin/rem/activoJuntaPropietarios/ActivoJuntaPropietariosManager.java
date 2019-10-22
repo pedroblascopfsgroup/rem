@@ -124,6 +124,7 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 			 
 			 if (!Checks.esNulo(junta.getComunidad())) {
 				 dto.setComunidad(junta.getComunidad().getId());
+				 dto.setCodProveedor(String.valueOf(junta.getComunidad().getCodigoProveedorRem()));
 			 }
 			 
 			 if (!Checks.esNulo(junta.getActivo())) {

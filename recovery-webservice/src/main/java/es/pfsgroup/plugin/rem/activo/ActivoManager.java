@@ -3655,27 +3655,38 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoAdjuntoTributo adjuntoTributo = null;
 				
 				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-					
+
 					try {
 						DtoAdjunto adjuntoTributoDto = gestorDocumentalAdapterApi.getAdjuntoTributo(tributo);
-						filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", tributo.getId());
+						filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id",
+								tributo.getId());
 						filtroRest = genericDao.createFilter(FilterType.NOTNULL, "idDocRestClient");
-						adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest, filtroAuditoria);
-						
-						
+						adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest,
+								filtroAuditoria);
 
-					}catch(GestorDocumentalException gex){
-						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-						if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
-							Thread hilo = new Thread(gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES));
-							hilo.run();
+					} catch (GestorDocumentalException gex) {
+						try {
+							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+							if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE
+									.equals(gex.getCodigoError())) {
+								Thread hilo = new Thread(
+										gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(),
+												GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES));
+								hilo.run();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							dtoTributo.setExisteDocumentoTributo("false");
+							dtoTributo.setDocumentoTributoNombre("No existe acceso al Gestor Documental");
 						}
+
 					}
-				}else {
-				
+				} else {
+
 					filtroRest = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
-					adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest, filtroAuditoria);
-				
+					adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest,
+							filtroAuditoria);
+
 				}
 				
 				if(!Checks.esNulo(adjuntoTributo)) {
@@ -3683,7 +3694,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
 					dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
 					 
-				}else {
+				}else if(Checks.esNulo(dtoTributo.getExisteDocumentoTributo())){
 					dtoTributo.setExisteDocumentoTributo("false");
 					dtoTributo.setDocumentoTributoNombre(null);
 					dtoTributo.setDocumentoTributoId(null);

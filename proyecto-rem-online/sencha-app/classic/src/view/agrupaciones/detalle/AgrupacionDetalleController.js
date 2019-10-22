@@ -1229,7 +1229,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 				HreRem.i18n("title.autorizar.tramitacion.ofertas"),
 				HreRem.i18n("msg.autorizar.tramitacion.activo.ofertas"),
 				function(boton){
-					
 					if (boton == "yes"){
 				    	var url =  $AC.getRemoteUrl('agrupacion/insertarActAutoTram');
 				    	var parametros = btn.up("comercialagrupacion").getBindRecord().getData();
@@ -1246,11 +1245,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 									me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
 									// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				    	         }else{
-				    	        	 btn.up("comercialagrupacion").funcionRecargar();
 				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botoneditar]").setVisible(false);
 				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botonguardar]").setVisible(false);
 				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botoncancelar]").setVisible(false);
 				    	        	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	        	 //se fuerza el valor a true dado que desde java llega bien pero en algunas pocas lecturas Sencha sigue mostrando false (HREOS-8034)
+				    	        	 btn.up('agrupacionesdetallemain').getViewModel().set("agrupacionficha.tramitable", true);
+				    	        	 btn.up("comercialagrupacion").funcionRecargar();
 				    	         }
 				    	     },
 				    	     failure: function (a, operation, context) {

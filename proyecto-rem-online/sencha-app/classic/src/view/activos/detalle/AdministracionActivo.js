@@ -342,7 +342,8 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            	return descripcion;
 				        	},
 			        		editor: {
-				        		xtype:'combobox',
+			        			xtype: 'comboboxfieldbase',
+								addUxReadOnlyEditFieldPlugin: false,
 				        		   labelWidth: '25%',
 						            width: '15%',
 				            		allowBlank: false,
@@ -364,7 +365,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					        }
 					   	},
 					   	{	  
-				            text: HreRem.i18n('fieldlabel.administracion.activo.fecha.recepcion.recurso.bankia'),		            
+				            text: HreRem.i18n('fieldlabel.administracion.activo.fecha.recepcion.recurso.propietario'),		            
 				            dataIndex: 'fechaRecRecursoPropietario',
 				            flex: 1,
 				            formatter: 'date("d/m/Y")',
@@ -406,7 +407,8 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            	return descripcion;
 				        	},
 				            editor: {
-				        		xtype:'combobox',
+				            	xtype: 'comboboxfieldbase',
+								addUxReadOnlyEditFieldPlugin: false,
 				        		   labelWidth: '25%',
 						            width: '15%',
 				            		allowBlank: false,
@@ -469,10 +471,12 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 						        }
 					        ],
 					        renderer: function(value, metadata, record) {
-					        	
-					        	if(value != undefined){
+					        	if(value != undefined && value  != "No existe acceso al Gestor Documental"){
 					        		return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>';
+					        	}else if(value  == "No existe acceso al Gestor Documental"){
+					        		return '<div style="float:right; margin-top:3px; font-size: 11px; line-height: 1em; color:red;">'+ value+'</div>';
 					        	}
+					        	
 					        	return null;
 					        },
 				            flex     : 1,            

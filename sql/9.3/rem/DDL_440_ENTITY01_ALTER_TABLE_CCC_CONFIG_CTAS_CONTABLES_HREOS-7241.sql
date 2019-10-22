@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=David Gonzalez
---## FECHA_CREACION=20190729
+--## AUTOR=Jose Antonio Gigante
+--## FECHA_CREACION=20191016
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.15.0
---## INCIDENCIA_LINK=HREOS-7241
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-7955
 --## PRODUCTO=SI
 --##
 --## FINALIDAD: [Explicación de la existencia de este script]
@@ -43,7 +43,7 @@ DECLARE
 
 	V_COLUMNS_MATRIX MATRIX_TABLE := MATRIX_TABLE(
 	--				    NOMBRE						TIPO COLUMNA		                COMENTARIO
-		ARRAY_TABLE('CCC_REFACTURABLE', 		'NUMBER(1) DEFAULT 0 NOT NULL',     'HREOS-7241')
+		ARRAY_TABLE('CCC_REFACTURABLE', 		'NUMBER(1) DEFAULT 0 NOT NULL',     'Indica si es un gasto refacturable')
 	);
 
 	V_FK_MATRIX MATRIX_TABLE := MATRIX_TABLE(

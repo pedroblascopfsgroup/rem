@@ -262,6 +262,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean checkPublicacionReadOnly;
 	private Boolean checkComercializarReadOnly;
 	private Boolean checkFormalizarReadOnly;
+	
+	// Es tramitable bankia
+	private Boolean tramitable;
 
 	private String nombreMediador; 
 
@@ -2017,5 +2020,12 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNombreMediador(String nombreMediador) {
 		this.nombreMediador = nombreMediador;
 	}
-	
+
+	public Boolean getTramitable() {
+		return tramitable;
+	}
+
+	public void setTramitable(Boolean tramitable) {
+		this.tramitable = tramitable;
+	}
 }

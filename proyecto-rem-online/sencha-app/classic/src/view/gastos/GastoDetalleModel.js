@@ -92,7 +92,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     importeRecargoVacio: function(get){
     	    var me= this;
-    	    if((get('detalleeconomico.importeRecargo')== 0 || get('detalleeconomico.importeRecargo')== null) && get('detalleeconomico.cartera') == CONST.CARTERA['BANKIA']){
+    	    if(get('detalleeconomico.importeRecargo')== 0 || get('detalleeconomico.importeRecargo')== null){
     	    	return false;
     	    }
     	    else{
@@ -295,8 +295,22 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 					return true;
 				}
 				return false;
-			}
+			},
 		
+			deshabilitarCheckGastoRefacturable: function(get){
+				var me = this;
+				var user = $AU.userIsRol("HAYASUPER") || $AU.userIsRol("HAYAADM") || $AU.userIsRol("HAYASADM");
+				var isGastoRefacturable = get('detalleeconomico.bloquearCheckRefacturado');
+				if(!user || isGastoRefacturable){
+					return true;
+				}
+				return false;
+			},
+			
+			emisorSoloLectura: function(get){
+				return $AU.userIsRol(CONST.PERFILES['PROVEEDOR']) || get('gasto.tieneGastosRefacturables');
+			}
+			
 		
 	 },
 	 

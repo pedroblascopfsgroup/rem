@@ -26,9 +26,24 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
     			style: 'color: red; font-weight: bold; font-size: small;',
     			readOnly: true,
     			hidden: true,
+    			reference: 'labelActivoNoTramitable',
     			bind : {
     				hidden: '{comercial.tramitable}'
-    			}
+    			},
+    			listeners:{
+    				
+    				afterrender: function(){
+    					var me = this;
+    					if(!me.hidden){
+    						me.lookupController().usuarioTieneFuncionPermitirTramitarOfertaC();
+    					};
+    					
+    				},
+    				hide: function(){
+    					var me = this;
+    					me.lookupController().usuarioTieneFuncionPermitirTramitarOfertaC();
+    				}
+				}
     		},
     		{
     			xtype:'fieldsettable',
@@ -141,10 +156,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				collapsible: true,
-				reference: 'atorizacionTramOfertas',
-				bind:{
-					hidden: '{usuarioTieneFuncionTramitarOferta}'
-				},
+				reference: 'autorizacionTramOfertas',
+				hidden: true,
 				title: HreRem.i18n('title.autorizacion.tramitacion.ofertas'),
 				items :
 					[{
@@ -186,12 +199,13 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
     	];
 
     	me.callParent();
+    	
     },
 
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
-		me.lookupController().cargarTabData(me);
+		me.lookupController().cargarTabDataComercial(me);
 		me.up('activosdetallemain').lookupReference('comercialactivotabpanelref').funcionRecargar();
 		me.evaluarEdicion();
     },

@@ -40,7 +40,7 @@ public class VActivoJuntaPropietarios implements Serializable {
 	@Column(name = "ACT_NUM_ACTIVO")
 	private Long numActivo;
 	
-	@Column(name = "PVE_COD_UVEM")
+	@Column(name = "PVE_COD_REM")
 	private String codProveedor;
 	
 	@Column(name = "PVE_NOMBRE")

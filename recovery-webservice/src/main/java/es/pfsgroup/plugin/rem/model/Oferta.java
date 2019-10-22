@@ -27,8 +27,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
-import com.bankia.arq.mad.catalogofmt.Campo;
-
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -264,7 +262,7 @@ public class Oferta implements Serializable, Auditable {
 
 	@Column(name="OFR_IMP_CONTRAOFERTA_CES")
 	private Double importeContraofertaCES;
-	
+
 	@Column(name="OFR_FECHA_RESOLUCION_CES")
 	private Date fechaResolucionCES;
 

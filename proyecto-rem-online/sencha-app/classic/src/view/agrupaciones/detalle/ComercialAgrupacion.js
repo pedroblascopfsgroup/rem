@@ -12,12 +12,14 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
 		boxready: function(){
 			var me = this;
 			me.lookupController().cargarTabData(me);
-			me.evaluarBotonesEdicion();
+			//me.evaluarBotonesEdicion();
 		}
 	},
-//	bind		: {
+//	bind: {
 //		ocultarBotonesEdicion: '{!usuarioTieneFuncionTramitarOferta}'
 //    },
+   
+    
     initComponent: function () {
     	
     	var me = this;
@@ -92,6 +94,8 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
     	me.callParent();
     	
     },
+
+    
     
     funcionRecargar: function() {
 		var me = this;
@@ -108,8 +112,9 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
 			esTramitable = detalleMain.getViewModel().get('agrupacionficha.tramitable');
 		}
 		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
-
-		if(!esTramitable && funcion){
+		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['AUTOTRAMOFR'])
+	    		
+		if(!esTramitable && funcion && usuariosValidos){
 			me.up('agrupacionesdetallemain').down("[itemId=botoneditar]").setVisible(true);
 		}else{
 			me.up('agrupacionesdetallemain').down("[itemId=botoneditar]").setVisible(false);

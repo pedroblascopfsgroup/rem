@@ -214,10 +214,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", true );
 			
 		} catch (JsonViewerException ex) {
+			logger.error(ex.getMessage(),ex);
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);
 		}		
 		
@@ -361,37 +362,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		try {
 			
-			List<VBusquedaGastoActivo> listaActivos = new ArrayList<VBusquedaGastoActivo>();
-			
-			DDCartera carteraPropietario = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDCartera.CODIGO_CARTERA_SAREB));
-			
-			if(carteraPropietario.getDescripcion().equalsIgnoreCase(gastoProveedorApi.findOne(idGasto).getPropietario().getNombre())) { /* Si el propietario del gasto es SAREB */
-				List<GastoProveedor> gastosRefacturables = gastoProveedorApi.getGastosRefacturablesGasto(idGasto);
-				
-				double importeTotal = 0.0;
-				if(!Checks.estaVacio(gastosRefacturables)) {
-					for (GastoProveedor gastosRefacturable : gastosRefacturables) {
-						listaActivos.addAll(gastoProveedorApi.getListActivosGastos(gastosRefacturable.getId()));
-						importeTotal += gastosRefacturable.getGastoDetalleEconomico().getImporteTotal(); /* Se suma el importe total del gasto */
-					}
-					
-					for (VBusquedaGastoActivo activo : listaActivos) {
-						for (GastoProveedor gastoProveedor : gastosRefacturables) {
-							if(gastoProveedor.getNumGastoHaya().equals(activo.getNumGasto())) {
-								activo.setParticipacion((gastoProveedor.getGastoDetalleEconomico().getImporteTotal() / importeTotal) * 100); /* Se calcula el porcentaje en base al importe individual */
-							}
-							
-						}
-					}
-					
-				}
-				
-			}
-			
-			if(Checks.estaVacio(listaActivos)) {
-				listaActivos = gastoProveedorApi.getListActivosGastos(idGasto);
-			}
-			
+			List<VBusquedaGastoActivo> listaActivos = gastoProveedorApi.getListActivosGastos(idGasto);
 			model.put("data", listaActivos);
 			model.put("success", true);
 			trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER);
@@ -1063,7 +1034,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("noRefacturable", gastosNoRefacturables);
 			model.put("success", true);			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);		
 		}
 
@@ -1095,7 +1066,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", dto);
 			model.put("success", true);			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);		
 		}
 
@@ -1114,7 +1085,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 				
 				//Esta línea de código sirve para validar los gastos a anyadir,
 				//en caso de no cumplir, lanza excepciones visuales para front.
-				gastoProveedorApi.validarGastosARefactorar(idGasto, gastosRefacturables);
+				gastoProveedorApi.validarGastosARefacturar(idGasto, gastosRefacturables);
 				
 				if(!Checks.esNulo(gastosRefacturables)) {
 					gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario);
@@ -1126,11 +1097,12 @@ public class GastosProveedorController extends ParadiseJsonController {
 			}		
 			model.put("success", true);			
 		} catch (JsonViewerException jve) {
-			logger.error(jve.getMessage());
+			logger.error(jve.getMessage(),jve);
 			model.put("error", jve.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
+			model.put("error", e.getMessage());
 			model.put("success", false);		
 		} 
 
@@ -1155,7 +1127,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("noTieneGastosRefacturados", noTieneGastosRefacturados);
 			model.put("success", true);			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);		
 		}
 

@@ -389,7 +389,7 @@ public interface GastoProveedorApi {
 		 */
 		public boolean isPosibleRefacturable(GastoProveedor gasto);
 
-		void validarGastosARefactorar(String idGasto, String listaGastos);
+		void validarGastosARefacturar(String idGasto, String listaGastos);
 
 }
 

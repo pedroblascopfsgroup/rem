@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=José Antonio Gigante
---## FECHA_CREACION=20190806
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20191017
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=func-rem-gestObjCajamar
 --## INCIDENCIA_LINK=HREOS-7298
@@ -15,7 +15,8 @@
 --##			secuencial, eliminar del fichero CSV aquellas columnas que sean innecesarias 
 --##			para la migración.
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - José Antonio Gigante
+--##        0.2 HREOS-8054 - Alejandro Valverde - Comprobación del JOIN de los campos PVE_COD_UVEM con ID_OFICINA y TRUNCATE table.
 --#########################################
 --*/
 
@@ -48,6 +49,11 @@ BEGIN
 				)';
 	EXECUTE IMMEDIATE V_SQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Eliminados '||SQL%ROWCOUNT||' registros de la tabla temporal '||V_TABLA_TMP);
+
+	V_SQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Eliminados '||SQL%ROWCOUNT||' registros de la tabla '||V_TABLA);
+
 	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' PGC 
 		(PGC.PGC_ID, 
 		PGC.USU_ID,
@@ -66,7 +72,8 @@ BEGIN
     	JOIN '||V_ESQUEMA_M||'.USU_USUARIOS U
     	ON U.USU_USERNAME = TMP.USUARIO_REM
     	JOIN ACT_PVE_PROVEEDOR P
-    	ON P.PVE_COD_UVEM = CONCAT(TMP.ID_ENTIDAD, TMP.ID_OFICINA)';
+    	ON SUBSTR(P.PVE_COD_UVEM,-4,4) = LPAD(TMP.ID_OFICINA,4,0)
+	WHERE P.DD_TPR_ID = (SELECT TPR.DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR TPR WHERE TPR.DD_TPR_CODIGO = ''29'')';
 				
 		EXECUTE IMMEDIATE V_SQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_TABLA);

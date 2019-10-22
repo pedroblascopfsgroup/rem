@@ -823,17 +823,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		}
     		}
     		return false;
-    	},
-    	usuarioTieneFuncionTramitarOferta: function(get){
-    		var esTramitable = get('comercial.tramitable');
-    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
-    			if(!esTramitable){
-    				return !funcion;
-    			}
-    		return true;
-    	}		
+    	}
+
+    
 	 },
-	
+		
     stores: {
     		
     		comboProvincia: {

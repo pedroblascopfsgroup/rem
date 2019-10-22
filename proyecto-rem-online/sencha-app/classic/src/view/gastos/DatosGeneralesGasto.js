@@ -121,8 +121,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											xtype: 'textfieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
 											reference: 'buscadorNifEmisorField',
-											readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
-											bind: '{gasto.buscadorNifEmisor}',
+											bind: {
+												value:'{gasto.buscadorNifEmisor}',
+												readOnly: '{emisorSoloLectura}'
+											},
 											triggers: {														
 													buscarEmisor: {
 											            cls: Ext.baseCSSPrefix + 'form-search-trigger',
@@ -159,7 +161,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											emptyText: HreRem.i18n('txt.seleccionar.emisor'),
 											valueField		: 'codigo',
 											bind: {
-												value: '{gasto.codigoProveedorRem}'
+												value: '{gasto.codigoProveedorRem}',
+												readOnly: '{gasto.tieneGastosRefacturables}'
 											},
 											tpl: Ext.create('Ext.XTemplate',
 							            		    '<tpl for=".">',
@@ -313,27 +316,37 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaRecPropiedad',
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recPropiedad')+' *',
-									       	bind: '{gasto.fechaRecPropiedad}',
+									       	bind: {
+									       		value: '{gasto.fechaRecPropiedad}',
+									       		allowBlank: '{!gasto.bloquearEdicionFechasRecepcion}'
+									       	},
 									       	maxValue: null,
-									       	allowBlank: false
+									       	readOnly: true
+									       	
 									    },
 									    {
 								        	xtype:'datefieldbase',
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaRecGestoria',
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recGestoria')+' *',
-									       	bind: '{gasto.fechaRecGestoria}',
+									       	bind: {
+									       		value: '{gasto.fechaRecGestoria}',
+									       		allowBlank: '{!gasto.bloquearEdicionFechasRecepcion}'
+									       	},
 									       	maxValue: null,
-									       	allowBlank: false
+									       	readOnly: true
 									    },
 									    {
 								        	xtype:'datefieldbase',
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaRecHaya',
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recHaya')+' *',
-									       	bind: '{gasto.fechaRecHaya}',
+									       	bind: {
+									       		value: '{gasto.fechaRecHaya}',
+									       		allowBlank: '{!gasto.bloquearEdicionFechasRecepcion}'
+									       	},
 									       	maxValue: null,
-									       	allowBlank: false
+									       	readOnly: true
 									    }										
 									]
 								}

@@ -44,5 +44,5 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 
 	List<GastoRefacturable> getGastosRefacturablesDelGasto(Long id);
 
-	Boolean updateGastosRefacturablesSiExiste(Long id, String usuario);
+	Boolean updateGastosRefacturablesSiExiste(Long id, Long idPadre, String usuario);
 }

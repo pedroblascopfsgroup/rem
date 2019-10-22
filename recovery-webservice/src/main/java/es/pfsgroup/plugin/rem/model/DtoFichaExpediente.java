@@ -59,6 +59,8 @@ public class DtoFichaExpediente extends WebDto {
 	private Date fechaFin;
 
 	private Date fechaAltaOferta;
+	
+	private Date fechaContabilizacionReserva;
 
 	private Date fechaPosicionamiento;
 	
@@ -281,6 +283,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaReserva(Date fechaReserva) {
 		this.fechaReserva = fechaReserva;
+	}
+	
+	public Date getFechaContabilizacionReserva() {
+		return fechaContabilizacionReserva;
+	}
+
+	public void setFechaContabilizacionReserva(Date fechaContabilizacionReserva) {
+		this.fechaContabilizacionReserva = fechaContabilizacionReserva;
 	}
 
 	public Date getFechaFin() {

@@ -349,6 +349,17 @@ white-space: normal !important;
 	background-size: 20px !important;
 }
 
+.ico-upload-documento {
+  background: url(images/cargar_archivo.svg) center center no-repeat;
+   background-size: 15px;
+}
+
+
+.ico-delete-documento {
+  background: url(images/borrar_archivo.svg) center center no-repeat;
+  background-size: 15px;
+}
+
 //------------------ PANEL BASE----------------------------
 
 .panel-base {  

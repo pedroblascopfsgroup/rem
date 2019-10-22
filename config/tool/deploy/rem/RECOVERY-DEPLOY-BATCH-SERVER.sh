@@ -22,6 +22,10 @@ if [[ "$1" == "val03" ]] ; then
 	BASE_DIR=/recovery/rem/batch-server-val03
 fi
 
+if [[ "$1" == "val04" ]] ; then
+    BASE_DIR=/recovery/map027/batch-server
+fi
+
 if [[ "$1" == "val05" ]] ; then
 	BASE_DIR=/recovery/map024/batch-server
 fi

@@ -50,6 +50,23 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     
     control: {
     	
+    	
+        'documentosjuntas gridBase': {
+        	abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
+            onClickRemove: 'borrarDocumentoAdjunto',
+            download: 'downloadDocumentoAdjunto',
+            afterupload: function(grid) {
+            	grid.getStore().load();
+            	grid.up('form').funcionRecargar();
+            	grid.fireEvent("refreshComponent", "documentosjuntas");
+            },
+            
+             afterdelete: function(grid) {
+            	grid.getStore().load();
+            }
+            
+        },
+    	
     	'gestiongastoslist' : {
     		
     		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
@@ -150,6 +167,89 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	}
 
     },
+    
+        refrescarJuntas: function(detalle, callbackFn) {
+    	
+    	var me = this,
+    	id = detalle.getViewModel().get("junta.id");
+    	
+    	HreRem.model.GastoProveedor.load(id, {
+    		scope: this,
+		    success: function(junta) {
+		    	
+		    	detalle.getViewModel().set("junta", junta);		    	
+		    	detalle.configCmp(junta);
+		    	callbackFn();
+		    	HreRem.model.GastoAviso.load(id, {
+		    		scope: this,
+				    success: function(avisos) {
+			    		detalle.getViewModel().set("avisos", avisos);				    	
+				    }
+				});
+		    }
+		});
+    	
+    },
+    
+    abrirFormularioAdjuntarDocumentos: function(grid) {
+		var me = this,
+		idJunta = me.getViewModel().get("junta.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoJuntas", {entidad: 'activojuntapropietarios', idEntidad: idJunta, parent: grid}).show();
+		
+	},
+    
+	cargarTabData: function (form) {
+		var me = this,
+		model = form.getModelInstance(),
+		id = me.getViewModel().get("junta.id");
+		
+		form.up("tabpanel").mask(HreRem.i18n('msg.mask.loading'));	
+		model.setId(id);
+		model.load({
+		    success: function(record) {
+		    	
+		    	form.setBindRecord(record);		    	
+		    	form.up("tabpanel").unmask();
+		    },
+		    failure: function(operation) {		    	
+		    	form.up("tabpanel").unmask();
+		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    }
+		});
+	},
+	
+    borrarDocumentoAdjunto: function(grid, record) {
+		var me = this;
+		idJunta = me.getViewModel().get("junta.id");
+		id = grid.getSelection()[0].data.id;
+		url = $AC.getRemoteUrl('activojuntapropietarios/deleteAdjunto');
+		Ext.Ajax.request({
+			url : url,
+			params: {idEntidad: idJunta, id: id},
+            success: function(record, operation) {
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 grid.fireEvent("afterdelete", grid);
+            },
+            failure: function(record, operation) {
+                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                  grid.fireEvent("afterdelete", grid);
+            }
+            
+        });	
+	},
+	
+	downloadDocumentoAdjunto: function(grid, record) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"activojuntapropietarios/bajarAdjuntoJunta."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idJunta=me.getViewModel().get("junta.id");
+		config.params.nombreDocumento=record.get("nombre")
+		
+		me.fireEvent("downloadFile", config);
+	},
 
     //Funcion que se ejecuta al hacer click en el botón buscar gastos
 	onClickGastosSearch: function(btn) {
@@ -157,10 +257,38 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var initialData = {};
 
 		var searchForm = btn.up('formBase');
-
+		
 		if (searchForm.isValid()) {
 			this.lookupReference('gestiongastoslistref').deselectAll();
 			this.lookupReference('gestiongastoslistref').getStore().loadPage(1);
+        }
+		
+		
+	},
+	
+	 //Funcion que se ejecuta al hacer click en el botón buscar plusvalia
+	onClickPlusvaliaSearch: function(btn) {
+		var me = this;
+		var initialData = {};
+
+		var searchForm = btn.up('formBase');
+		
+		if (searchForm.isValid()) {
+			this.lookupReference('gestionplusvalialistref').getStore().loadPage(1);
+        }
+		
+		
+	},
+	
+	 //Funcion que se ejecuta al hacer click en el boton buscar juntas
+	onClickJuntasSearch: function(btn) {
+		var me = this;
+		var initialData = {};
+
+		var searchForm = btn.up('formBase');
+		
+		if (searchForm.isValid()) {
+			this.lookupReference('gestionList').getStore().loadPage(1);
         }
 		
 		
@@ -249,7 +377,14 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	paramLoading: function(store, operation, opts) {
 		var initialData = {};
 		var me = this;
-		var searchForm = this.lookupReference('gestiongastossearchref');
+		var searchForm = null;
+		
+		if(this.lookupReference('gestiongastossearchref') == null){
+			searchForm = this.lookupReference('gestionplusvaliasearchref');
+		}else{
+			searchForm = this.lookupReference('gestiongastossearchref');
+		}
+
 		if (searchForm.isValid()) {
 			
 			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
@@ -259,9 +394,6 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 					delete criteria[key];
 				}
 			});	
-			if($AU.userIsRol(CONST.PERFILES['PROVEEDOR'])) {
-				criteria.nifProveedor = me.nifProveedorIdentificado;
-			}
 			store.getProxy().extraParams = criteria;
 			
 			return true;		
@@ -272,6 +404,12 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		var me = this;
 		
     	me.getView().fireEvent('abrirDetalleGasto', record);
+		
+	},
+	
+	onClickAbrirPlusvalia: function(grid, record){
+		var me = this;
+    	me.getView().fireEvent('abrirDetallePlusvalia', record);
 		
 	},
 
@@ -302,6 +440,19 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		
 		var me = this,		
 		searchForm = this.lookupReference('provisionesSearch');
+		
+		if (searchForm.isValid()) {				
+			store.getProxy().extraParams = me.getFormCriteria(searchForm);			
+			return true;		
+		}
+		
+	},
+	
+	paramLoadingJuntas: function(store, operation, opts) {
+		//var me = this;
+		
+		var me = this,		
+		searchForm = this.lookupReference('juntasSearch');
 		
 		if (searchForm.isValid()) {				
 			store.getProxy().extraParams = me.getFormCriteria(searchForm);			
@@ -1297,6 +1448,27 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		config.url= url;
 		
 		me.fireEvent("downloadFile", config);		
-	}
+	},	
 
+	 onChangeChainedCombo: function(combo) {
+    	
+    	var me = this, chainedCombo = me.lookupReference(combo.chainedReference);
+    	me.getViewModel().notify();
+		chainedCombo.clearValue("");
+		chainedCombo.getStore().load(); 	
+    	
+    },
+    
+    onRowClickJuntasList: function(gridView, record){
+    	var me = this;
+    	me.getView().fireEvent('abrirDetalleJunta', record);
+    },
+	
+    
+    onClickBotonCerrar: function(btn){
+		var me = this;
+		var window = btn.up("window");
+		window.hide();
+    }
+	
 });

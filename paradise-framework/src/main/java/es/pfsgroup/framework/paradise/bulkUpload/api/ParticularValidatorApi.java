@@ -866,5 +866,57 @@ public interface ParticularValidatorApi {
 	 * @return true si existe el código de calificación energética
 	 */
 	public Boolean existeCalificacionEnergetica(String codCE);
+	
+	Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia);
+
+	public Boolean esActivoUA(String numActivo);
+
+	public Boolean esAccionValido(String codAccion);
+
+	public Boolean esResultadoValido(String codResultado);
+
+	public Boolean esSolicitudValido(String codSolicitud);
+
+	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+
+	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+
+	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
+
+	String getActivoPlusvalia(String numActivo, String fechaPlusvalia);
+	
+	Boolean existeJunta(String numActivo,  String fechaJunta);
+	
+	public Boolean existeCodJGOJE(String codJunta);
+
+	String getActivoJunta(String numActivo, String fechaJunta);
+	
+	/**
+	 * @param numActivo
+	 * @return true si el activo es una unidad alquilable	 
+	 */
+	Boolean esUnidadAlquilable(String numActivo);
+	
+	/** 
+	 * @param numGasto
+	 * @return true si el gasto es refacturado
+	 */
+	Boolean esGastoRefacturado(String numGasto);
+
+	/** 
+	 * @param numGasto
+	 * @return true si el propietario del gasto es BANKIA o SAREB
+	 */
+	Boolean perteneceGastoBankiaSareb(String numGasto);
+
+	/** 
+	 * @param numGasto
+	 * @return true si el gasto es refacturable
+	 */
+	Boolean esGastoRefacturable(String numGasto);
+
+	Boolean existeGastoRefacturable(String numGasto);
+
+	Boolean esGastoDestinatarioPropietario(String numGasto);
 
 }

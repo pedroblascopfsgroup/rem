@@ -46,7 +46,9 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
     public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
     public static final String CODIGO_T017_ANALISIS_PM = "T017_AnalisisPM";
 	public static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
+	public static final String CODIGO_T017_RATIFIACION_COMITE_CES = "T017_RatificacionComiteCES";
 	private static final String COMBO_RESOLUCION = "comboResolucion";
+	private static final String COMBO_RATIFICACION = "comboRatificacion";
 
 	
 	@Resource
@@ -92,7 +94,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T013_RESOLUCION_COMITE, CODIGO_T017_ANALISIS_PM, CODIGO_T017_RESOLUCION_CES};
+		return new String[]{CODIGO_T013_RESOLUCION_COMITE, CODIGO_T017_ANALISIS_PM, CODIGO_T017_RESOLUCION_CES, CODIGO_T017_RATIFIACION_COMITE_CES};
 	}
 	
 	@Override
@@ -216,7 +218,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			String codTareaActual = null;
 			
 			for (TareaExternaValor valor : valores) {
-				if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if ((COMBO_RESOLUCION.equals(valor.getNombre()) || COMBO_RATIFICACION.equals(valor.getNombre()) )&& !Checks.esNulo(valor.getValor())) {
 					aprueba = DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor()) ? true : false;
 					break;
 				}

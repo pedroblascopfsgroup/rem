@@ -2,10 +2,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',
 
-    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
-            'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
-
-            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController','HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 'HreRem.view.activos.detalle.InformeComercialActivo'],
+    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 
+    		'HreRem.view.activos.detalle.CargaDetalle','HreRem.view.activos.detalle.OpcionesPropagacionCambios', 
+    		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
+    		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
+    		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias', 'HreRem.model.ComercialActivoModel'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -68,6 +70,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
           
           'informecomercialactivo historicomediadorgrid': {
            	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          },
+           
+           'adjuntosplusvalias gridBase': {
+               abrirFormulario: 'abrirFormularioAdjuntarDocumentosPlusvalia',
+               onClickRemove: 'borrarDocumentoAdjuntoPlusvalia', 
+               download: 'downloadDocumentoAdjuntoPlusvalia', 
+               afterupload: function(grid) {
+               	grid.getStore().load();
+               },
+               afterdelete: function(grid) {
+               	grid.getStore().load();
+               }
            }
     },
     
@@ -1091,6 +1105,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto", {entidad: 'promocion', idEntidad: idActivo, parent: grid}).show();
 
 	},
+	
+	abrirFormularioAdjuntarDocumentosPlusvalia: function(grid) {
+		
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+		if(me.getViewModel().get("plusvalia.idPlusvalia")!= undefined){
+	    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoPlusvalia", {
+	    		entidad: 'activo', 
+	    		idEntidad: idActivo,
+	    		parent: grid
+			}).show();
+		} else {
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activo.sin.plusvalia"));
+		}
+	},
 
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this,
@@ -1161,6 +1190,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			});
 		}
 	},
+	
+	borrarDocumentoAdjuntoPlusvalia: function(grid, record) {
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id"), 
+		id = grid.getSelection()[0].data.id,
+		url = $AC.getRemoteUrl('activo/deleteAdjuntoPlusvalia');
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		Ext.Ajax.request({
+			url : url,
+			params: {idEntidad: idActivo, id: id},
+			success: function(record, operation) {
+          		 grid.fireEvent("afterdelete", grid);
+          		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+          		 me.getView().unmask();
+           },
+           failure: function(record, operation) {
+                 grid.fireEvent("afterdelete", grid);
+                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                 me.getView().unmask();
+           }
+            
+        });	
+	},
 
 	downloadDocumentoAdjunto: function(grid, record) {
 		var me = this,
@@ -1184,6 +1236,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");
 		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
+		me.fireEvent("downloadFile", config);
+	},
+	
+	downloadDocumentoAdjuntoPlusvalia: function(grid, record) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"activo/bajarAdjuntoPlusvalia."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idActivo=me.getViewModel().get("activo.id");
+		config.params.nombreDocumento=record.get("nombre");
 		me.fireEvent("downloadFile", config);
 	},
 
@@ -5367,6 +5431,210 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		if(!Ext.isEmpty(usuarioGestor.getSelection()) && !unidadAlquilable)
 			agregarGestor.setDisabled(false);
+	},
+	
+
+	onInsertarAutorizacionTramOfertas: function(btn){
+		
+		var me = this;	
+		Ext.Msg.confirm(
+				HreRem.i18n("title.autorizar.tramitacion.ofertas"),
+				HreRem.i18n("msg.autorizar.tramitacion.activo.ofertas"),
+				function(boton){
+					
+					if (boton == "yes"){
+
+				    	var url =  $AC.getRemoteUrl('activo/insertarActAutoTram');
+				    	var parametros = btn.up("comercialactivo").getBindRecord().getData();
+				
+				    	Ext.Ajax.request({
+				    		
+				    	     url: url,
+				    	     params: parametros,
+				
+				    	     success: function(response, opts) {
+			    	         
+				    	         if(Ext.decode(response.responseText).success == "false") {
+									me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
+				    	         }else{
+				    	        	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	        	 me.getViewModel().set('comercial.tramitable', true);
+				    	        	 btn.up('activosdetallemain').lookupReference('comercialactivotabpanelref').funcionRecargar();
+				    	         }
+				    	         
+				    	         btn.up("comercialactivo").funcionRecargar();
+				    	     },
+				    	     failure: function (a, operation, context) {
+				           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				           }
+				    	 });
+					}
+				});
+    },
+	
+
+	descargarAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+		var me = this;
+		var grid = tableView.up('grid');
+		var existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+		
+		if(existeDocumentoTributo == "No"){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.no.existe.adjunto")); 
+		}else{
+			var nombreAdjuntoTributo = grid.store.getAt(indiceFila).get('documentoTributoNombre');	
+			if(nombreAdjuntoTributo != undefined){
+				var config = {};
+				
+				config.url=$AC.getWebPath()+"tributo/bajarAdjuntoActivoTributo."+$AC.getUrlPattern();
+				config.params = {};
+				config.params.idTributo=grid.store.getAt(indiceFila).get("idTributo");
+				config.params.idActivo=me.getView().getViewModel().getData().activo.id;
+				config.params.nombreDocumento=nombreAdjuntoTributo.replace(",","");
+				me.fireEvent("downloadFile", config);
+			}else{
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			}
+			
+		}
+	},
+	
+	eliminarAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+   		var me = this;
+		var grid = tableView.up('grid');
+		var existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+		
+		if(existeDocumentoTributo == "No"){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.no.existe.adjunto")); 
+		}else{
+			var idActivo = me.getViewModel().get("activo.id"),
+			idTributo = grid.store.getAt(indiceFila).get("idTributo");
+			
+			var url = $AC.getRemoteUrl('tributo/deleteAdjunto');
+			Ext.Ajax.request({
+	    		url: url,
+	    		params: { 
+	    			idActivo: idActivo,
+	    			idTributo: idTributo	
+	    		},
+	    		success: function(response, opts){
+	    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
+	    			grid.getStore().load()
+	    		},
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			    },
+			    callback: function(record, operation) {
+	    			me.getView().unmask();
+			    }
+	    	});
+			
+		}
+	},
+	 
+	anyadirAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+		var me = this,	
+		grid = tableView.up('grid'),
+		idActivo = me.getViewModel().get("activo.id"),
+		idTributo = grid.store.getAt(indiceFila).get("idTributo"),
+		existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+		
+		if(existeDocumentoTributo == "Si"){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ya.existe.adjunto")); 
+		}else{
+			Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoTributo", {entidad: 'tributo', idEntidad: idActivo, parent: grid, idTributo: idTributo}).show();
+		}
+	},
+	
+	usuarioTieneFuncionPermitirTramitarOfertaC: function(get){
+		var me = this;
+		var comercial =	me.getViewModel().get('activo.pertenceAgrupacionComercial');
+		var restringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
+
+		if (!comercial && !restringida && me.getViewModel().get('activo.isCarteraBankia')){
+			var tramitar = me.getView().lookupReference('labelActivoNoTramitable').hidden; 
+    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+    		if (!tramitar){
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(!funcion);
+    		}else{
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+    		}
+		}else{
+			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+		}
+	},
+	
+	usuarioTieneFuncionPermitirTramitarOferta: function(get){
+		var me = this;
+		var comercial =	me.getViewModel().get('activo.pertenceAgrupacionComercial');
+		var restringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
+		var tramitar = true;
+		
+		if (!comercial && !restringida && me.getViewModel().get('activo.isCarteraBankia')){
+			
+			var esTramitable = me.getViewModel().get('comercial');
+			if(esTramitable == null || esTramitable == undefined){
+				esTramitable = me.getViewModel().get('activo.tramitable');
+				if(esTramitable == "false"){
+					tramitar = false;
+				}
+			}else{
+				if(esTramitable.data.tramitable != undefined || esTramitable.data.tramitable != null ){
+					tramitar = esTramitable.data.tramitable;
+				}
+			}
+			
+    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+    		if (!tramitar){
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(!funcion);
+    		}else{
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+    		}
+		}else{
+			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+		}
+
+	},
+	
+	cargarTabDataComercial: function (form) {
+		var me = this,
+		model = null,
+		models = null,
+		nameModels = null,
+		id = me.getViewModel().get("activo.id");
+
+		form.mask(HreRem.i18n("msg.mask.loading"));
+		if(!form.saveMultiple) {	
+			model = form.getModelInstance(),
+			model.setId(id);
+			if(Ext.isDefined(model.getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				model.load({
+				    success: function(record,b,c,d) {
+				    	form.setBindRecord(record);			    	
+				    	
+				    	if(Ext.isFunction(form.afterLoad)) {
+				    		form.afterLoad();
+				    	}
+				    	me.usuarioTieneFuncionPermitirTramitarOferta();
+				    	form.unmask();
+				    },
+				    failure: function(operation) {		    	
+				    	form.up("tabpanel").unmask();
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+				    }
+				});
+			} else {
+				// Si la API no contiene metodo de lectura (read).
+				form.setBindRecord(model);			    	
+		    	form.unmask();
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
+			}
+		} else {
+			models = form.getModelsInstance();
+			me.cargarTabDataMultiple(form, 0, models, form.records);
+		}
 	}
 
 });

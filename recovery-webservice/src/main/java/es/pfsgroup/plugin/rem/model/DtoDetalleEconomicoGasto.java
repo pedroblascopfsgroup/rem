@@ -68,7 +68,13 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Double totalImportePromocion;
 	private Double importeTotalPrinex;
 	private Boolean prorrata;
-	
+	private Boolean gastoRefacturableB;
+	private Double importeGastosRefacturables;
+	private Long numeroGastoHaya;
+	private Boolean bloquearCheckRefacturado;
+	private Boolean bloquearGridRefacturados;
+	private Boolean bloquearDestinatarios;
+	private Boolean noAnyadirEliminarGastosRefacturados;
 
 	public Long getGastoProveedor() {
 		return gastoProveedor;
@@ -354,6 +360,49 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setImporteTotalPrinex(Double importeTotalPrinex) {
 		this.importeTotalPrinex = importeTotalPrinex;
 	}
+	public Boolean getGastoRefacturableB() {
+		return gastoRefacturableB;
+	}
+	public void setGastoRefacturableB(Boolean gastoRefacturableB) {
+		this.gastoRefacturableB = gastoRefacturableB;
+	}
+	public Long getNumeroGastoHaya() {
+		return numeroGastoHaya;
+	}
+	public void setNumeroGastoHaya(Long numeroGastoHaya) {
+		this.numeroGastoHaya = numeroGastoHaya;
+	}
+	public Boolean getBloquearCheckRefacturado() {
+		return bloquearCheckRefacturado;
+	}
+	public void setBloquearCheckRefacturado(Boolean bloquearCheckRefacturado) {
+		this.bloquearCheckRefacturado = bloquearCheckRefacturado;
+	}
+	public Boolean getBloquearGridRefacturados() {
+		return bloquearGridRefacturados;
+	}
+	public void setBloquearGridRefacturados(Boolean bloquearGridRefacturados) {
+		this.bloquearGridRefacturados = bloquearGridRefacturados;
+	}
+	public Double getImporteGastosRefacturables() {
+		return importeGastosRefacturables;
+	}
+	public void setImporteGastosRefacturables(Double importeGastosRefacturables) {
+		this.importeGastosRefacturables = importeGastosRefacturables;
+	}
+	public Boolean getBloquearDestinatarios() {
+		return bloquearDestinatarios;
+	}
+	public void setBloquearDestinatarios(Boolean bloquearDestinatarios) {
+		this.bloquearDestinatarios = bloquearDestinatarios;
+	}
+	public Boolean getNoAnyadirEliminarGastosRefacturados() {
+		return noAnyadirEliminarGastosRefacturados;
+	}
+	public void setNoAnyadirEliminarGastosRefacturados(Boolean noAnyadirEliminarGastosRefacturados) {
+		this.noAnyadirEliminarGastosRefacturados = noAnyadirEliminarGastosRefacturados;
+	}
 	
+		
    	
 }

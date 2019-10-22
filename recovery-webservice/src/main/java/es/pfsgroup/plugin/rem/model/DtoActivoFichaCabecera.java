@@ -262,6 +262,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean checkPublicacionReadOnly;
 	private Boolean checkComercializarReadOnly;
 	private Boolean checkFormalizarReadOnly;
+	
+	// Es tramitable bankia
+	private Boolean tramitable;
 
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2006,5 +2009,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCheckFormalizarReadOnly(Boolean checkFormalizarReadOnly) {
 		this.checkFormalizarReadOnly = checkFormalizarReadOnly;
+	}
+
+	public Boolean getTramitable() {
+		return tramitable;
+	}
+
+	public void setTramitable(Boolean tramitable) {
+		this.tramitable = tramitable;
 	}
 }

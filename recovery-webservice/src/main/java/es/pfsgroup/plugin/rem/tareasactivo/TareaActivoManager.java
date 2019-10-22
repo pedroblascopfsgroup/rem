@@ -517,7 +517,7 @@ public class TareaActivoManager implements TareaActivoApi {
 					&& (!Checks.esNulo(tareaActivo.getFechaVenc()) || !Checks.esNulo(tareaActivo.getFechaFin())))
 				tareaCompletada.add(tareaExterna.getTareaProcedimiento().getCodigo());
 		}
-		return tareaCompletada.size() > 1;
+		return !tareaCompletada.isEmpty();
 	}
 	
 	@Override

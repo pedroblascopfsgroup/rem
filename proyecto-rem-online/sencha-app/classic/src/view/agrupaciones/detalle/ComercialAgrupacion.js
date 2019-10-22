@@ -1,38 +1,90 @@
 Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
-    extend: 'Ext.tab.Panel',
-	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
-    xtype		: 'comercialagrupacion',
-    reference	: 'comercialagrupacionref',
-    layout		: 'fit',
-    requires: ['HreRem.view.agrupacion.detalle.VisitasComercialAgrupacion','HreRem.view.agrupacion.detalle.OfertasComercialAgrupacion'],    
-
-	listeners: {
-		boxready: function (tabPanel) {   		
-    		
-			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
-				var tab = tabPanel.items.items[0];
-				tabPanel.setActiveTab(tab);
-			}			
+	extend: 'HreRem.view.common.FormBase',
+    cls: 'panel-base shadow-panel',
+    xtype: 'comercialagrupacion',
+    mixins		: ['HreRem.ux.tab.TabBase'],
+    reference: 'comercialagrupacionref',
+    scrollable: 'y',
+    requires: ['HreRem.view.agrupacion.detalle.ComercialAgrupacionTabs', 'HreRem.ux.tab.TabBase','HreRem.model.AgrupacionFicha'], 
+	recordClass	: "HreRem.model.ComercialAgrupacion",
+	recordName : "comercialagrupacion",
+	listeners	: {
+		boxready: function(){
+			var me = this;
+			me.lookupController().cargarTabData(me);
+			//me.evaluarBotonesEdicion();
 		}
-    	
-        
-    },
-    
-	layout: 'fit',
+	},
+//	bind: {
+//		ocultarBotonesEdicion: '{!usuarioTieneFuncionTramitarOferta}'
+//    },
+   
     
     initComponent: function () {
     	
     	var me = this;
     	
     	var items = [
-			
-			{
-				xtype: 'ofertascomercialagrupacion'
+    		{
+    			xtype: 'label',
+    			cls:'x-form-item',
+    			html: HreRem.i18n('msg.oferta.agrupacion.no.tramitable'),
+    			style: 'color: red; font-weight: bold; font-size: small;',
+    			readOnly: true,
+    			hidden: true,
+    			bind : {
+    				hidden: '{comercialagrupacion.tramitable}'
+    			}
+    		},
+    		{
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				collapsible: true,
+				reference: 'autorizacionTramOfertasAgrupacion',
+				hidden: true,
+				bind:{
+					hidden: '{usuarioTieneFuncionTramitarOferta}'
+				},
+				title: HreRem.i18n('title.autorizacion.tramitacion.ofertas'),
+				items :
+					[{
+						xtype : 'comboboxfieldbase',
+			        	fieldLabel: HreRem.i18n('fieldlabel.motivo.autorizacion'),
+			        	reference: 'motivoAutorizacionTramitacionCodigoAgrupacion',
+			        	editable: true,
+			        	bind : {
+						      store : '{comboMotivoAutorizacionTramitacion}',
+						      value : '{comercialagrupacion.motivoAutorizacionTramitacionCodigo}'
+						      
+			        	},
+			        	displayField: 'descripcion',
+			        	valueField: 'codigo'
+					},
+					{
+						xtype: 'textareafieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),
+			        	reference: 'observacionesAutorizacionTramiteAgrupacion',
+						maxLength: 250,
+						bind:{
+							value: '{comercialagrupacion.observacionesAutoTram}',
+							disabled: '{!esOtrosotivoAutorizacionTramitacion}'
+						}
+
+					},
+					{
+						xtype: 'button',
+						text: HreRem.i18n('btn.autorizar.tramitacion.ofertas'),
+						reference: 'insertarAutoTramOferAgrupacion',
+						handler: 'onInsertarAutorizacionTramOfertasAgrupacion',
+						bind: {
+							disabled: '{!esSelecionadoAutorizacionTramitacion}'	
+						}
+					}
+				]
 			},
 			{
-				xtype: 'visitascomercialagrupacion'
+				xtype: 'comercialagrupaciontabs'
 			}
-			
     	];
     	
     	
@@ -42,11 +94,51 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
     	me.callParent();
     	
     },
+
+    
     
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
-		me.getActiveTab().funcionRecargar();
-    } 
+		me.lookupController().cargarTabData(me);
+		me.up('agrupacionesdetallemain').lookupReference('comercialagrupaciontabsref').funcionRecargar();
+    },
+    
+    evaluarBotonesEdicion: function(tab) {  
+		var me = this;
+		var detalleMain = me.up('agrupacionesdetallemain');
+		var esTramitable = detalleMain.getViewModel().get('comercialagrupacion.tramitable');
+		if(esTramitable == null){
+			esTramitable = detalleMain.getViewModel().get('agrupacionficha.tramitable');
+		}
+		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['AUTOTRAMOFR'])
+	    		
+		if(!esTramitable && funcion && usuariosValidos){
+			me.up('agrupacionesdetallemain').down("[itemId=botoneditar]").setVisible(true);
+		}else{
+			me.up('agrupacionesdetallemain').down("[itemId=botoneditar]").setVisible(false);
+			
+		}
+	}
+//    bloquearExpediente: function(tab) {    	
+//		var me = this;
+//		me.bloqueado = bloqueado;
+//		me.down("[itemId=botoneditar]").setVisible(false);
+//		var editionEnabled = function() {
+//			me.down("[itemId=botoneditar]").setVisible(true);
+//		}
+//		
+//		if(!bloqueado){
+//			// Si la pestaña recibida no tiene asignados roles de edicion
+//			if(Ext.isEmpty(tab.funPermEdition)) {
+//				editionEnabled();
+//			} else {
+//				$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+//			}
+//		}else{
+//			me.down("[itemId=botoneditar]").setVisible(false);
+//		}
+//	}
     
 });

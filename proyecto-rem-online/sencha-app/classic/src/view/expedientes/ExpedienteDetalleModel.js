@@ -90,6 +90,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	 return (CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera) || CONST.CARTERA['LIBERBANK'] == carteraCodigo;
 	     },
 	     
+	     fechaContabilizacionReservaReadOnly: function(get) {
+	    	 
+	    	 if($AU.userIsRol("HAYASUPER")){
+	    		 return false;
+	    	 }
+
+	    	 return true;
+	     },
+	     
 	     comiteSancionadorNoEditable: function(get) {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo;	
@@ -470,33 +479,38 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		},
 		ocultarBtnDevolverReserva: function(get){
 			var me = this;
-			var url =  $AC.getRemoteUrl('expedientecomercial/getIsExpedienteGencat');
-			if(get('expediente.tieneReserva') && get('expediente.codigoEstado') == '16'){
-				Ext.Ajax.request({
-				     url: url,
-				     method: 'POST',
-				     params: {idExpediente: get('expediente.id')},
-				     success: function(response, opts) {
-				    	data = Ext.decode(response.responseText);
-				    	if(!Ext.isEmpty(data) && data.success == 'true'){
-					    	if(data.data == "false"){
-					    		return true;
-					    	}else{
-					    		return false;
-					    	}
-				     	}else{
-				     		return false;
-				     	}
-				     },
-				     failure: function(){
-				    	 return false;
-				     }
-				});
+			if(get('expediente.tieneReserva') && get('expediente.codigoEstado') == '16' && CONST.CARTERA['BANKIA'] !=  get('expediente.entidadPropietariaCodigo') && get('expediente.noEsOfertaFinalGencat')){
+				return false;
 			}else{
 				return true;
 			}			
-		}
+		},
+		
+		esOfertaVentaEsCajamar: function(get){
+			var me= this;
+			var tipoOferta= get('expediente.tipoExpedienteDescripcion');
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+
+	     	if(tipoOferta=='Venta' && carteraCodigo==CONST.CARTERA['CAJAMAR']){
+	     		return true;
+	     	}
+	     	return false;
+	     },
+	     
+	 	
+	 	mostrarPrescriptorCajamar: function(get){
+	 		var me = this;
+	 		var esCajamar = me.getView().getViewModel().get('esCarteraCajamar');
+	 		var esTipoAlquiler = me.getView().getViewModel().get('esTipoAlquiler');
+	 		
+	 		if(esCajamar && !esTipoAlquiler){
+	 			return true;
+	 		}
+	 		
+	 		return false;
+	 	}
 	 },
+	 
 
 
     stores: {
@@ -1212,6 +1226,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'ofertas/getListActivosOfertasAgrupadas',
 				extraParams: {numOfertaPrincipal:'{datosbasicosoferta.numOferta}'}
 			}
+		},
+		storeComboGestorPrescriptor:{
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getGestorPrescriptor',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}	  
 		},
 		
 		comboClaseOferta: {

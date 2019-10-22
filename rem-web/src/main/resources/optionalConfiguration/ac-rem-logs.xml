@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean id="logAdvancedRemDefault" class="es.pfsgroup.plugin.log.advanced.api.LogAdvancedRemImpl" abstract="true">
+		<property name="registerBrowserLog">
+			<map>
+			<!-- ################################################################################### -->
+			<!-- ################################# ACTIVOS ######################################### -->
+			<!-- ################################################################################### -->
+				<entry key="/pfs/activo/getActivos.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>ACTIVO</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>ACCES</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Búsqueda de activos</value>
+						</entry>
+					</map>
+				</entry>
+				<entry key="/pfs/activo/getTabActivo.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>ACTIVO</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>ACCES</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Abrir tab del activo</value>
+						</entry>
+					</map>
+				</entry>
+				<entry key="/pfs/activo/saveActivo.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>ACTIVO</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>SAVE</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Editar ficha activo</value>
+						</entry>
+					</map>
+				</entry>
+				
+				<!-- ################################################################################### -->
+				<!-- ############################### AGRUPACIONES ###################################### -->
+				<!-- ################################################################################### -->
+				
+				<entry key="/pfs/agrupacion/getAgrupacionById.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>AGRUPACION</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>ACCESS</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Abrir tab de la agrupacion</value>
+						</entry>
+					</map>
+				</entry>
+				<entry key="/pfs/agrupacion/saveAgrupacion.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>AGRUPACION</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>SAVE</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Editar ficha agrupacion</value>
+						</entry>
+					</map>
+				</entry>
+				
+				<!-- ################################################################################### -->
+				<!-- ############################### EXPEDIENTES ####################################### -->
+				<!-- ################################################################################### -->
+				
+				<entry key="/pfs/expedientecomercial/getTabExpediente.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>EXPEDIENTE</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>VIEW</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Abrir tab del expediente</value>
+						</entry>
+					</map>
+				</entry>
+				<entry key="/pfs/expedientecomercial/saveFichaExpediente.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>EXPEDIENTE</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>SAVE</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Editar ficha agrupacion</value>
+						</entry>
+					</map>
+				</entry>
+				
+				<!-- ################################################################################### -->
+				<!-- ################################## GASTOS ######################################### -->
+				<!-- ################################################################################### -->
+				
+				<entry key="/pfs/gastosproveedor/getTabGasto.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>GASTO</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>VIEW</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Abrir el gasto</value>
+						</entry>
+					</map>
+				</entry>
+				<entry key="/pfs/gastosproveedor/createGastosProveedor.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>GASTO</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>CREATE</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Crea gasto</value>
+						</entry>
+					</map>
+				</entry>
+				<entry key="/pfs/gastosproveedor/saveGastosProveedor.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>GASTO</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>SAVE</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Edita gasto</value>
+						</entry>
+					</map>
+				</entry>
+				
+				<!-- ################################################################################### -->
+				<!-- ################################# TRABAJOS ######################################## -->
+				<!-- ################################################################################### -->
+				
+				<entry key="/pfs/trabajo/getAvisosTrabajoById.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>TRABAJO</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>ACCESS</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Abrir trabajo</value>
+						</entry>
+					</map>
+				</entry>
+				<entry key="/pfs/trabajo/saveFichaTrabajo.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>TRABAJO</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>SAVE</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Editar trabajo</value>
+						</entry>
+					</map>
+				</entry>
+				
+				<!-- ################################################################################### -->
+				<!-- ############################## PROVEEDORES ######################################## -->
+				<!-- ################################################################################### -->
+				
+				<entry key="/pfs/proveedores/getProveedorById.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>PROVEEDOR</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>ACCESS</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Abrir proveedor</value>
+						</entry>
+					</map>
+				</entry>
+				<entry key="/pfs/proveedores/saveProveedorById.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>PROVEEDOR</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>SAVE</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Editar proveedor</value>
+						</entry>
+					</map>
+				</entry>
+				<entry key="/pfs/proveedores/createProveedor.htm">	<!-- URL Que queremos registrar, Entidad Activo -->
+					<map>
+						<!-- Parámetros para construir el log -->
+						<entry key="PRIORITY">
+							<value>1</value>
+						</entry>
+						<entry key="ENTIDAD_CODE">	
+							<value>PROVEEDOR</value>
+						</entry>
+						<entry key="TYPE">	
+							<value>CREATE</value>
+						</entry>
+						<entry key="NAME_ID_PARAMETER">	
+							<value>id</value>
+						</entry>
+						<entry key="DESCRIPTION">	
+							<value>Crear proveedor</value>
+						</entry>
+					</map>
+				</entry>
+			</map>
+		</property>
+	</bean>  
+	
+		<!-- Implementaciones por defecto-->
+	<bean id="logAdvancedRem" parent="logAdvancedRemDefault"/>
+</beans>	

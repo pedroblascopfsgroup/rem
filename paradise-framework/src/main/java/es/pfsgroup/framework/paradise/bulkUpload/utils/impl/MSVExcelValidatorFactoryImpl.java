@@ -20,7 +20,7 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVAgrupacionLoteComercialExcelValidator agrupacionLoteComercialExcelValidator;
-	
+
 	@Autowired
 	private MSVAgrupacionLoteComercialAlquilerExcelValidator agrupacionLoteComercialAlquilerExcelValidator;
 
@@ -107,13 +107,13 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVExclusionDwh excluirDwh;
-	
+
 	@Autowired
 	private MSVCargaMasivaSancionExcelValidator cargaMasivaSancionValidator;
 
 	@Autowired
 	private MSVValidatorCargaMasivaReclamacion ValidatorNombreCargaMasiva;
-	
+
 	@Autowired
 	private MSVValidatorCargaMasivaComunicaciones validatorCargaMasivaComunicaciones;
 
@@ -134,7 +134,7 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVValidadorCargaMasivaAdecuacion adecuacion;
-	
+
 	@Autowired
 	private MSVValidatorAgrupacionPromocionAlquiler promocionAlquiler;
 
@@ -149,16 +149,16 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVOfertasGTAMExcelValidator ofertasGtam;
-	
+
 	@Autowired
 	private MSVActualizacionSuperficieExcelValidator actualizadorSuperficie;
 
 	@Autowired
 	private MSVActualizadorFechaIngresoChequeExcelValidator fechaIngresoCheque;
-	
+
 	@Autowired
 	private MSVActualizacionFormalizacionExcelValidator cargaMasivaFormalizacion ;
-	
+
 	@Autowired
 	private MSVActualizacionLPOExcelValidator cargaMasivaLPO;
 
@@ -170,6 +170,18 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired 
 	private MSVActualizacionDocAdministrativaExcelValidator docAdministrativa;
+		
+	@Autowired
+	private MSVControlTributosExcelValidator controlTributos;
+
+	@Autowired
+	private MSVReclamacionesPlusvaliasExcelValidator reclamacionesPlusvalia;
+
+	@Autowired
+	private MSVJuntasOrdinariaExtraExcelValidator juntasOrdinariasExtraordinarias;
+
+	@Autowired
+	private MSVGastosRefacturablesExcelValidator gastosRefacturables;
 		
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -282,6 +294,14 @@ public class MSVExcelValidatorFactoryImpl {
 			return cargaMasivaLPO;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_DOCUMENTACION_ADMINISTRATIVA.equals(codTipoOperacion)) {
 			return docAdministrativa;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CONTROL_TRIBUTOS.equals(codTipoOperacion)) {
+			return controlTributos;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES_PLUSVALIAS.equals(codTipoOperacion)) {
+			return reclamacionesPlusvalia;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_JUNTAS.equals(codTipoOperacion)) {
+			return juntasOrdinariasExtraordinarias;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES.equals(codTipoOperacion)) {
+			return gastosRefacturables;
 		}
 
 		return null;

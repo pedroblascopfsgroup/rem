@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
@@ -2179,7 +2180,20 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			logger.error("Error en expedienteComercialController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
+		return createModelAndViewJson(model);
+	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestorPrescriptor(Long idExpediente, ModelMap model) {
+		try {
+			List<DtoDiccionario> list = expedienteComercialApi.calcularGestorComercialPrescriptor(idExpediente);
+			model.put(RESPONSE_DATA_KEY, list);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
+		}
 		return createModelAndViewJson(model);
 	}
 }

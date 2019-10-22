@@ -440,7 +440,6 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 				if (celdaMal) {
 					listaFilas.add(i);
 				}
-
 			} catch (ParseException e) {
 				listaFilas.add(i);
 				logger.error(e.getMessage());

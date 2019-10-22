@@ -78,16 +78,14 @@ public class ConfigCuentaContable implements Serializable, Auditable {
 	@JoinColumn(name="EJE_ID")
 	private Ejercicio ejercicio;
     
+    @Column(name="CCC_REFACTURABLE")
+    private Integer cuentaRefacturable;
     
 	@Version   
 	private Long version;
 	
-	
 	@Embedded
 	private Auditoria auditoria;		
-	
-	
-	
 	
 	public Long getId() {
 		return id;
@@ -179,6 +177,14 @@ public class ConfigCuentaContable implements Serializable, Auditable {
 
 	public void setEjercicio(Ejercicio ejercicio) {
 		this.ejercicio = ejercicio;
+	}
+
+	public Integer getCuentaRefacturable() {
+		return cuentaRefacturable;
+	}
+
+	public void setCuentaRefacturable(Integer cuentaRefacturable) {
+		this.cuentaRefacturable = cuentaRefacturable;
 	}
 		
 }

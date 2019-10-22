@@ -14,7 +14,7 @@
 --##        0.1-Oscar Diestre-Versión inicial (20190412)
 --##        0.2-Oscar Diestre-Corrección error. No actualiza DD_EAP_ID y permitir nulos
 --##        0.3-Viorel Remus Ovidiu-REMVIP-5473-Corrección error, tamaño de linea en historico
---##        0.3-Oscar Diestre-REMVIP-5473-Corrección error
+--##        0.4-Oscar Diestre-REMVIP-5473-Corrección error
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE

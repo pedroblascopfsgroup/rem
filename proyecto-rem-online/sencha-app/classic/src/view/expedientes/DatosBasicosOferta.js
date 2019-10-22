@@ -1,6 +1,6 @@
 Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
     extend: 'HreRem.view.common.FormBase',
-    xtype: 'datosbasicosoferta',    
+    xtype: 'datosbasicosoferta',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
     disableValidation: true,
@@ -140,14 +140,25 @@ beforeedit: 'numVisitaIsEditable'
 							hidden : '{!esTipoAlquiler}'
 						}
 					}, {
-						xtype : 'datefieldbase',
-						formatter : 'date("d/m/Y")',
-						fieldLabel : HreRem.i18n('fieldlabel.respuesta.pm'),
-						bind : {
-							value : '{datosbasicosoferta.fechaRespuestaPM}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
+						xtype: 'comboboxfieldbase',
+						colspan: 3,
+						readOnly: !$AU.userIsRol("HAYASUPER"),
+						fieldLabel:  HreRem.i18n('fieldlabel.gestor.comercial.prescriptor'),
+						reference: 'comboGestorComercialPrescriptor',
+						bind:{
+							store:'{storeComboGestorPrescriptor}',
+							value:'{datosbasicosoferta.idGestorComercialPrescriptor}',
+							hidden: '{!mostrarPrescriptorCajamar}'
+						}
+					}, {
+						xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						fieldLabel:  HreRem.i18n('fieldlabel.respuesta.pm'),
+						bind: {
+							value: '{datosbasicosoferta.fechaRespuestaPM}',
+							hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
 						},
-						readOnly : true
+						readOnly: true
 					}, {
 						xtype : 'currencyfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.importe.pm'),
@@ -497,7 +508,7 @@ beforeedit: 'numVisitaIsEditable'
 
 		me.callParent(); 
     },
-    
+
     funcionRecargar: function() {
     var me = this;
 		me.recargar = false;

@@ -816,6 +816,13 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 							logger.error("error", e);
 						}
             		}
+					if(item.getNombre().equals("numImporteOferta"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if(!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(ofertaAceptada.getImporteContraOferta())){
+            				item.setValue(ofertaAceptada.getImporteContraOferta().toString());
+            			}
+            		}
             		
             	}
             }

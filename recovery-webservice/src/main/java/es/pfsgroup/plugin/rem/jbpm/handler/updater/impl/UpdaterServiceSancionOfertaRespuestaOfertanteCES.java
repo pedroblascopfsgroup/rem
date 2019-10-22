@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 
 @Component
 public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements UpdaterService {
@@ -46,6 +47,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
  	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
  	private static final String COMBO_RESPUESTA = "comboRespuesta";
  	private static final String FECHA_RESPUESTA = "fechaRespuesta";
+ 	private static final String IMPORTE_CONTRAOFERTA_OFERTANTE = "importeContraofertaOfertante";
  
  	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
  
@@ -60,11 +62,11 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 				ofertaAceptada.setFechaRespuestaCES(formatter.parse(valor.getValor()));
 	 				genericDao.save(Oferta.class, ofertaAceptada);
 	 			}else if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-	 				if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor())) {
+	 				if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo" , DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
 	 					DDEstadosExpedienteComercial aprobado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
 	 					expediente.setEstado(aprobado);
-	 				}else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())) {
+	 				}else if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 	 					ofertaApi.rechazarOferta(ofertaAceptada);
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);
 	 					DDEstadosExpedienteComercial denegado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
@@ -72,7 +74,24 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 	 					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 	 					genericDao.save(ActivoTramite.class, tramite);
+	 				}else if(DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) {
+	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION_CES);
+	 					DDEstadosExpedienteComercial contraoferta = genericDao.get(DDEstadosExpedienteComercial.class, f1);
+	 					expediente.setEstado(contraoferta);
 	 				}
+	 			}else if(IMPORTE_CONTRAOFERTA_OFERTANTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+	 				String doubleValue = valor.getValor();
+					doubleValue = doubleValue.replace(',', '.');
+					Double nuevoImporte = Double.valueOf(doubleValue);
+					
+					ofertaAceptada.setImporteContraOferta(nuevoImporte);
+
+					// Actualizar honorarios para el nuevo importe de contraoferta.
+					expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
+
+					// Actualizamos la participación de los activos en la oferta;
+					expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
+					expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 	 			}
 	 		}
 	 		genericDao.save(Oferta.class, ofertaAceptada);

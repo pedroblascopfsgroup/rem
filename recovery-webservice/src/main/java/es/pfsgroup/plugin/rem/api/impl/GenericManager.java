@@ -83,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
@@ -1179,5 +1180,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		
 		return combo;
+	}
+	
+	@Override
+	public List<DDTipoDocumentoTributos> getDiccionarioTiposDocumentoTributo() {
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<DDTipoDocumentoTributos> listaTipoAgrupaciones = genericDao.getList(DDTipoDocumentoTributos.class, filtroBorrado);
+		return listaTipoAgrupaciones;
 	}
 }

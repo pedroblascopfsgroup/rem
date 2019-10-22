@@ -621,9 +621,17 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esYubai(tareaExterna);
 			}
-			def isOfertaDependiente = {
+			def isOfertaDependiente = { 
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.isOfertaDependiente(tareaExterna);
+			}
+			def checkVieneDeRatificacionCES = {
+				def activoTramiteManager = ctx.getBean("activoTramiteManager");
+				return activoTramiteManager.checkVieneDeRatificacionCES(idTramite);
+			}
+			def checkInformeJuridicoYResolucionManzanaCompletadas = {
+				def activoTramiteManager = ctx.getBean("activoTramiteManager");
+				return activoTramiteManager.checkInformeJuridicoYResolucionManzanaCompletadas(idTramite);
 			}
 			def isValidateOfertasDependientes = {
 				def ofertaManager = ctx.getBean("ofertaManager");
@@ -640,6 +648,10 @@
 			def checkReservaInformada = {
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkReservaInformada(tareaExterna);
+			}
+			def checkContabilizacionReserva = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkContabilizacionReserva(tareaExterna);
 			}
   			 ]]></value>
   		</list>

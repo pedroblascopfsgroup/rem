@@ -21,7 +21,8 @@ import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import net.sf.json.JSONObject;
-
+import es.pfsgroup.plugin.log.advanced.api.LogAdvancedWebServiceApi;
+import es.pfsgroup.plugin.log.advanced.dto.LogDevoWebServiceDto;
 /**
  * Filtro para la gestión de las peticiones a la rest-api
  * 
@@ -35,6 +36,10 @@ public class RestSecurityFilter implements Filter {
 
 	@Autowired
 	private ServletContext servletContext;
+	
+	@Autowired
+	private LogAdvancedWebServiceApi logWebService;
+	
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -129,6 +134,7 @@ public class RestSecurityFilter implements Filter {
 			peticion.setErrorDesc(e.getMessage());
 			logger.error("ERROR WS: -> "+peticion.getData());
 			logger.error(e.getMessage(),e);
+			logWebService.registerLog(new LogDevoWebServiceDto(restApi.obtenerNombreServicio(request), false));
 			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
 
 		} catch (Throwable t) {
@@ -137,7 +143,9 @@ public class RestSecurityFilter implements Filter {
 			logger.error("ERROR WS: -> "+peticion.getData());
 			logger.error(t.getMessage(),t);
 			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
+			logWebService.registerLog(new LogDevoWebServiceDto(restApi.obtenerNombreServicio(request), false));
 		} finally {
+			logWebService.registerLog(new LogDevoWebServiceDto(restApi.obtenerNombreServicio(request), true));
 			SecurityContextHolder.clearContext();
 			if(restRequest.isTrace()){
 				restApi.guardarPeticionRest(peticion);

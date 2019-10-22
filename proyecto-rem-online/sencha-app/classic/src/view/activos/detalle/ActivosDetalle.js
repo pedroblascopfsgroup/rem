@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     			'HreRem.view.activos.detalle.FotosActivo','HreRem.view.activos.detalle.DocumentosActivo','HreRem.view.activos.detalle.GestionActivo',
     			'HreRem.view.activos.detalle.PreciosActivo','HreRem.view.activos.detalle.Publicacion','HreRem.view.activos.detalle.ComercialActivo',
     			'HreRem.view.activos.detalle.AdministracionActivo', 'HreRem.view.activos.detalle.DocumentosActivoPromocion','HreRem.view.activos.detalle.DocumentosActivoSimple',
-			'HreRem.view.activos.detalle.PatrimonioActivo'],
+			'HreRem.view.activos.detalle.PatrimonioActivo', 'HreRem.view.activos.detalle.PlusvaliaActivo'],
 
 	listeners: {
     	boxready: function (tabPanel) {
@@ -171,6 +171,9 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	}
     			
     	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
+
+    	me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')});
+    	
     },
    
     evaluarBotonesEdicion: function(tab) {

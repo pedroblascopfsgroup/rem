@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 public class ComercialUserAssigantionService implements UserAssigantionService  {
 
 	public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	public static final String CODIGO_T013_PBC_RESERVA = "T013_PBCReserva";
 	public static final String CODIGO_T013_FIRMA_PROPIETARIO = "T013_FirmaPropietario";
 	public static final String CODIGO_T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
 	public static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
@@ -679,6 +680,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		HashMap<String,String> mapa = new HashMap<String,String>();		
 		
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		mapa.put(ComercialUserAssigantionService.CODIGO_T013_PBC_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_FIRMA_PROPIETARIO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_OFERTANTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);	
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_COMITE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);

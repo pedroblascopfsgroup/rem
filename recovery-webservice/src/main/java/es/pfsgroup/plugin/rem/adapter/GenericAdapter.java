@@ -383,17 +383,24 @@ public class GenericAdapter {
 				dtoOfertaNueva.setNumDocumentoCliente(clienteOfertaOrigen.getDocumento());
 				dtoOfertaNueva.setRazonSocialCliente(clienteOfertaOrigen.getRazonSocial());
 				dtoOfertaNueva.setTipoPersona(clienteOfertaOrigen.getTipoPersona().getCodigo());
-				dtoOfertaNueva.setEstadoCivil(clienteOfertaOrigen.getEstadoCivil().getCodigo());
+				
+				if(!Checks.esNulo(clienteOfertaOrigen.getEstadoCivil())) {
+					dtoOfertaNueva.setEstadoCivil(clienteOfertaOrigen.getEstadoCivil().getCodigo());
+				}
+				
 				DDRegimenesMatrimoniales reg = clienteOfertaOrigen.getRegimenMatrimonial();
 				if(!Checks.esNulo(reg)) {
 					dtoOfertaNueva.setRegimenMatrimonial(reg.getCodigo());					
-				}				
+				}			
+				
 				dtoOfertaNueva.setCesionDatos(clienteOfertaOrigen.getCesionDatos());
 				dtoOfertaNueva.setTransferenciasInternacionales(clienteOfertaOrigen.getTransferenciasInternacionales());
 				dtoOfertaNueva.setComunicacionTerceros(clienteOfertaOrigen.getComunicacionTerceros());
 				dtoOfertaNueva.setImporteOferta("" + ofertaOrigen.getImporteOferta());
 				dtoOfertaNueva.setDerechoTanteo(ofertaOrigen.getDesdeTanteo());
-				dtoOfertaNueva.setCodigoPrescriptor("" + ofertaOrigen.getPrescriptor().getCodigoProveedorRem());
+				if(!Checks.esNulo(ofertaOrigen.getPrescriptor())) {
+					dtoOfertaNueva.setCodigoPrescriptor("" + ofertaOrigen.getPrescriptor().getCodigoProveedorRem());
+				}
 				Integer intencionFinanciar = ofertaOrigen.getIntencionFinanciar();
 				dtoOfertaNueva.setIntencionFinanciar((Checks.esNulo(intencionFinanciar)) ? null : intencionFinanciar == 1); // No entiendo por qué hay gente que usa los booleanos como Integers
 
@@ -408,12 +415,11 @@ public class GenericAdapter {
 						if (ofertaOrigen.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)
 							|| ofertaOrigen.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 							sucursal = oficinaSucursal.substring(4, oficinaSucursal.length());
+							dtoOfertaNueva.setCodigoSucursal(sucursal);
 						}					
 					}
 				}
-				else {
-					dtoOfertaNueva.setCodigoPrescriptor("" + ofertaOrigen.getPrescriptor().getCodigoProveedorRem());
-				}
+				
 				Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaOrigen.getId());
 				ExpedienteComercial expedienteOrigen = genericDao.get(ExpedienteComercial.class, filtroExpediente);	
 				
@@ -426,10 +432,10 @@ public class GenericAdapter {
 					compradorPrincipalOfertaOrigen = genericDao.get(Comprador.class, compradorDocumento);
 					idExpediente = expedienteOrigen.getId();
 					filtroIdExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", idExpediente);
-					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "comprador", compradorPrincipalOfertaOrigen.getId()); 
-					CompradorExpediente cex = genericDao.get(CompradorExpediente.class, filtroIdExpediente, filtroDocumento);
-					if(!Checks.esNulo(cex)) {
-						dtoOfertaNueva.setIdDocAdjunto(cex.getDocumentoAdjunto().getId());
+					if(!Checks.esNulo(compradorPrincipalOfertaOrigen)) {
+						if(!Checks.esNulo(compradorPrincipalOfertaOrigen.getAdjunto())) {
+							dtoOfertaNueva.setIdDocAdjunto(compradorPrincipalOfertaOrigen.getAdjunto().getId());
+						}
 					}
 					else {
 						logger.error("No se ha podido encontrar el comprador relacionado con la oferta que se está intentando clonar.");

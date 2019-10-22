@@ -7,6 +7,8 @@ import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
+import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 
 public interface GestorActivoApi extends GestorEntidadApi {
 
@@ -174,25 +176,19 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public Usuario supervisorTareaApple(String codigoTarea);
 
 	/**
-	 * Obtiene la lista de usuarios de gestorías
+	 * Obtiene la lista de configuracion de usuarios de gestorías
 	 * @param tipoGestor
 	 * @return
-	 */
-	public List<Usuario> getUsuariosGestorias();
+	 * 
+	 */	List<ConfiguracionAccesoGestoria> getUsuariosGestorias(List<GrupoUsuario> grupos);
 
 	/**
 	 * Mediante el usario logado obtenemos si el grupo de este es o no una gestoría
 	 * @param usuario
 	 * @return
 	 */
-	public Usuario isGestoria(Usuario usuario);
+	public ConfiguracionAccesoGestoria isGestoria(Usuario usuario);
 
-	/**
-	 * Devuelve el usuario de gestoria por el tipo de gestor
-	 * @param usuario
-	 * @return
-	 */
-	public Usuario usuarioGestoria(Usuario grupoUsuario, String tipoGestor);
 
 	public Usuario usuarioTareaDivarian(String codigoTarea);
 

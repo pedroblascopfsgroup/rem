@@ -84,7 +84,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 					doubleValue = doubleValue.replace(',', '.');
 					Double nuevoImporte = Double.valueOf(doubleValue);
 					
-					ofertaAceptada.setImporteContraofertaOfertanteCES(nuevoImporte);
 					ofertaAceptada.setImporteContraOferta(nuevoImporte);
 
 					// Actualizar honorarios para el nuevo importe de contraoferta.

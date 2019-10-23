@@ -116,8 +116,6 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Date fechaResolucionCES;
 
 	private Date fechaRespuesta;
-	
-	private Double importeContraofertaOfertanteCES;
 
 
 	public Long getIdOferta() {
@@ -503,13 +501,5 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setFechaRespuesta(Date fechaRespuesta) {
 		this.fechaRespuesta = fechaRespuesta;
-	}
-
-	public Double getImporteContraofertaOfertanteCES() {
-		return importeContraofertaOfertanteCES;
-	}
-
-	public void setImporteContraofertaOfertanteCES(Double importeContraofertaOfertanteCES) {
-		this.importeContraofertaOfertanteCES = importeContraofertaOfertanteCES;
 	}
 }

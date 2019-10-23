@@ -1777,10 +1777,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(oferta.getFechaRespuesta()) && isCarteraCerberusApple) {
 			dto.setFechaRespuesta(oferta.getFechaRespuesta());
 		}
-		
-		if(!Checks.esNulo(oferta.getImporteContraofertaOfertanteCES()) && isCarteraCerberusApple) {
-			dto.setImporteContraofertaOfertanteCES(oferta.getImporteContraofertaOfertanteCES());
-		}
 
 		if(oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			///Comprobamos si la tarea Elevar a Sanción está activa

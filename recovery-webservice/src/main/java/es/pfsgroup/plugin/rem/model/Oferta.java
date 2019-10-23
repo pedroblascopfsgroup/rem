@@ -283,9 +283,6 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "OFR_GES_COM_PRES")
 	private Usuario gestorComercialPrescriptor;
-	
-	@Column(name = "OFR_CONTRAOFERTA_OFERTANTE_CES")
-	private Double importeContraofertaOfertanteCES;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -847,13 +844,5 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setOrigenComprador(DDOrigenComprador origenComprador) {
 		this.origenComprador = origenComprador;
-	}
-
-	public Double getImporteContraofertaOfertanteCES() {
-		return importeContraofertaOfertanteCES;
-	}
-
-	public void setImporteContraofertaOfertanteCES(Double importeContraofertaOfertanteCES) {
-		this.importeContraofertaOfertanteCES = importeContraofertaOfertanteCES;
 	}
 }

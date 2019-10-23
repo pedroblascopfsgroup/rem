@@ -202,23 +202,7 @@ beforeedit: 'numVisitaIsEditable'
 							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
 						},
 						readOnly : true
-					}, 
-					{
-						
-					}, 
-					{
-						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.contraoferta.ofertante.ces'),
-						bind : {
-							value : '{datosbasicosoferta.importeContraofertaOfertanteCES}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly : true
-					},
-					{
-						
-					},
-					{
+					}, {
 						xtype : 'fieldsettable',
 						bind : { title : '{expediente.tituloCarteraLiberbankVenta}'},
 						colspan : 2,

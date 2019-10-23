@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.activo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -37,12 +39,14 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAutorizacionTramitacionOfertas;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
@@ -56,7 +60,10 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
+import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
+import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -104,6 +111,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private UsuarioManager usuarioApi;
 
 	// @Override
 	// public String managerName() {
@@ -812,5 +822,94 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		return numActivos;
 
+	}
+	
+	@Override
+	public boolean isTramitable(ActivoAgrupacion agrupacion) {
+		boolean tramitable = true;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", agrupacion.getId());
+		VTramitacionOfertaAgrupacion agrupacionNoTramitable = genericDao.get(VTramitacionOfertaAgrupacion.class, filtro);
+
+		if(!Checks.esNulo(agrupacionNoTramitable)) {
+			tramitable = false;
+		}
+
+		return tramitable;
+	}
+	
+	@Override
+	public Date getFechaInicioBloqueo(ActivoAgrupacion activoAgrupacion) {
+		Date fechaBloqueo = null;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", activoAgrupacion.getId());
+		VTramitacionOfertaAgrupacion agrupacionNoTramitable = genericDao.get(VTramitacionOfertaAgrupacion.class, filtro);
+		if(!Checks.esNulo(agrupacionNoTramitable)) {
+			fechaBloqueo = agrupacionNoTramitable.getFechaPublicacion();
+		}
+		return fechaBloqueo;
+	}
+
+	@Override
+	@Transactional
+	public boolean insertarActAutoTram(DtoAgrupaciones dto, Long id) {
+		Usuario usuario = usuarioApi.getUsuarioLogado();
+		if (Checks.esNulo(id)) {
+			return false;
+		}
+		ActivoAgrupacion activoAgrupacion = activoAgrupacionDao.get(id);
+		try {
+			DDMotivoAutorizacionTramitacion motivoTramitacion = genericDao.get(DDMotivoAutorizacionTramitacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getMotivoAutorizacionTramitacionCodigo()));
+			ActivoAutorizacionTramitacionOfertas autorizacion = activoAgrupacion.getActivoAutorizacionTramitacionOfertas();
+			if(Checks.esNulo(autorizacion)) {
+				autorizacion = new ActivoAutorizacionTramitacionOfertas();
+				beanUtilNotNull.copyProperty(autorizacion, "activoAgrupacion", activoAgrupacion);
+			}
+			beanUtilNotNull.copyProperty(autorizacion, "observacionesAutoTram", dto.getObservacionesAutoTram());
+			beanUtilNotNull.copyProperty(autorizacion,"motivoAutorizacionTramitacion", motivoTramitacion);
+			autorizacion.setUsuario(usuario);
+			beanUtilNotNull.copyProperty(autorizacion,"fechIniBloq", this.getFechaInicioBloqueo(activoAgrupacion));
+			beanUtilNotNull.copyProperty(autorizacion, "fechAutoTram", new Date());
+			
+			Auditoria auditoriaActivoAuto = autorizacion.getAuditoria();
+			if (auditoriaActivoAuto != null) {
+				auditoriaActivoAuto.setFechaModificar(new Date());
+				auditoriaActivoAuto.setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+			}
+			
+			genericDao.save(ActivoAutorizacionTramitacionOfertas.class, autorizacion);
+			
+			for(ActivoAgrupacionActivo activoagrupacionactivo: activoAgrupacion.getActivos()) {
+				Activo activo = activoagrupacionactivo.getActivo();
+				Date facheInicioBloqueo = activoApi.getFechaInicioBloqueo(activo);
+				if(facheInicioBloqueo != null){
+					ActivoAutorizacionTramitacionOfertas activoAuto =  activo.getActivoAutorizacionTramitacionOfertas();
+					if(Checks.esNulo(activoAuto)) {
+						activoAuto = new ActivoAutorizacionTramitacionOfertas();
+						beanUtilNotNull.copyProperty(activoAuto, "activo", activo);
+					}
+					beanUtilNotNull.copyProperty(activoAuto, "observacionesAutoTram", dto.getObservacionesAutoTram());
+					beanUtilNotNull.copyProperty(activoAuto, "motivoAutorizacionTramitacion", motivoTramitacion);
+					activoAuto.setUsuario(usuario);
+					beanUtilNotNull.copyProperty(activoAuto, "fechIniBloq", activoApi.getFechaInicioBloqueo(activo));
+					beanUtilNotNull.copyProperty(activoAuto, "fechAutoTram", new Date());
+					
+					auditoriaActivoAuto = activoAuto.getAuditoria();
+					if (auditoriaActivoAuto != null) {
+						auditoriaActivoAuto.setFechaModificar(new Date());
+						auditoriaActivoAuto.setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+					}
+					
+					genericDao.save(ActivoAutorizacionTramitacionOfertas.class, activoAuto);
+				}
+			}
+			
+		} catch (IllegalAccessException e) {
+			logger.error("Error en activoAgrupacionManager", e);
+			return false;
+
+		} catch (InvocationTargetException e) {
+			logger.error("Error en activoAgrupacionManager", e);
+			return false;
+		}
+		return true;
 	}
 }

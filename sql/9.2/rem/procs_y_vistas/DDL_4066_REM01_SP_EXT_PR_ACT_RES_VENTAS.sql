@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191007
+--## FECHA_CREACION=20191016
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=REMVIP-5373
@@ -23,6 +23,7 @@
 --##		1.04 (20190808) - Adrián Molina - Se añade al filtro de la cartera Liberbank, la cartera Cerberus
 --##		1.05 (20190827) - Viorel Remus Ovidiu - Se desactiva la actualizacion del estado del expediente a 'RESERVADO'
 --##		1.06 (20191007) - Viorel Remus Ovidiu - Se soluciona error de subcartera
+--##		1.07 (20191016) - Viorel Remus Ovidiu - Se añadie filtro de borrado en reservas
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -110,7 +111,8 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
                                                             WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138''))
-                                                            AND OFR.OFR_NUM_OFERTA = :1';
+                                                            AND OFR.OFR_NUM_OFERTA = :1 
+							    AND RES.BORRADO = 0';
                                                             
     V_FROM_RESERVA2                VARCHAR2(2000 CHAR) := 'FROM REM01.RES_RESERVAS RES
                                                             INNER JOIN REM01.ECO_EXPEDIENTE_COMERCIAL ECO
@@ -131,7 +133,8 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
                                                             WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138''))
                                                             AND OFR.OFR_NUM_OFERTA = :1
-                                                            AND ROWNUM = 1';                                                        
+                                                            AND ROWNUM = 1 
+							    AND RES.BORRADO = 0';                                                        
 
     V_OBTIENE_COBRO               VARCHAR2(1000 CHAR) := 'SELECT
                                                             CASE

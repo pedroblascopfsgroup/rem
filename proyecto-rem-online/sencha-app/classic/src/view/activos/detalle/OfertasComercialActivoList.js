@@ -428,6 +428,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				return false;
 			}
 		}
+		if(!me.up('comercialactivo').getBindRecord().data.tramitable && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.oferta.no.tramitable"));
+			return false
+		}
 		
 		return true;			
 	},

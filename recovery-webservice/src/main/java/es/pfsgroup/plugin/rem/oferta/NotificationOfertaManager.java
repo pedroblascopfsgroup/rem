@@ -87,6 +87,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario buzonOfertaApple = null;
 		Activo activo = oferta.getActivoPrincipal();
 		Usuario usuarioBackOffice = null;
+		List<String> mailsSustituto = null;
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) 
 		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
@@ -148,9 +149,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-					if(!Checks.esNulo(usuarioBackOffice)){
-						mailsSustituto.clear();
-						mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+					if(!Checks.esNulo(usuarioBackOffice)){						
+						if(Checks.estaVacio(mailsSustituto)){
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+						}else {
+							mailsSustituto.clear();
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);	
+						}						
 						if (!Checks.estaVacio(mailsSustituto)){
 							mailsPara.addAll(mailsSustituto);
 							mailsCC.add(usuarioBackOffice.getEmail());
@@ -159,6 +164,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						}
 					}	
 				}
+			}
+
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);	
+
 			}
 			
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
@@ -324,6 +336,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		ActivoProveedor prescriptor = null;
 		ActivoProveedor custodio = null;
 		Usuario usuarioBackOffice = null;
+		List<String> mailsSustituto = new ArrayList<String>();
 		
 		for (String codigoGestor: DESTINATARIOS_CORREO_APROBACION) {
 			usuarioRemApiImpl.rellenaListaCorreos(activo, codigoGestor, mailsPara, mailsCC, false);		

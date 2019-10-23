@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -17,12 +18,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -42,6 +47,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -52,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
@@ -59,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Controller
 public class GastosProveedorController extends ParadiseJsonController {
@@ -70,6 +78,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -203,10 +214,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", true );
 			
 		} catch (JsonViewerException ex) {
+			logger.error(ex.getMessage(),ex);
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put("success", false);
 		}		
 		
@@ -292,9 +304,14 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView searchPropietarioNif(@RequestParam String nifPropietario) {
 		ModelMap model = new ModelMap();
-		
+		ActivoPropietario propietario = (ActivoPropietario) gastoProveedorApi.searchPropietarioNif(nifPropietario);
+		Boolean carteraSareboBankia = false;
+		if(!Checks.esNulo(propietario)&& !Checks.esNulo(propietario.getCartera())) {
+			carteraSareboBankia = gastoProveedorApi.isCarteraPropietarioBankiaSareb(propietario);
+		}
 		try {
-			model.put("data", gastoProveedorApi.searchPropietarioNif(nifPropietario));
+			model.put("data", propietario);
+			model.put("carteraSareboBankia", carteraSareboBankia);
 			model.put("success", true);			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -343,19 +360,18 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosGastos(@RequestParam Long idGasto, ModelMap model, HttpServletRequest request) {
 		
-	try {
-		
-		List<VBusquedaGastoActivo> lista  =  gastoProveedorApi.getListActivosGastos(idGasto);
-		
-		model.put("data", lista);
-		model.put("success", true);
-		trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER);
-
-	} catch (Exception e) {
-		logger.error(e.getMessage());
-		model.put("success", false);
-		trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-	}
+		try {
+			
+			List<VBusquedaGastoActivo> listaActivos = gastoProveedorApi.getListActivosGastos(idGasto);
+			model.put("data", listaActivos);
+			model.put("success", true);
+			trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER);
+	
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
 
 		return createModelAndViewJson(model);
 		
@@ -1001,4 +1017,121 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getGastosRefacturados(@RequestParam String gastos, String nifPropietario) {
+		ModelMap model = new ModelMap();
+		
+		List<String> gastosRefacturables = new ArrayList<String>();
+		List<String> gastosNoRefacturables = new ArrayList<String>();
+		if(!Checks.esNulo(gastos)) {
+			gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos, nifPropietario);
+			gastosNoRefacturables = gastoProveedorApi.getGastosNoRefacturados(gastos, gastosRefacturables);
+		}
+		try {			
+			model.put("refacturable", gastosRefacturables);
+			model.put("noRefacturable", gastosNoRefacturables);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastosRefacturablesGastoCreado(String id) {
+		ModelMap model = new ModelMap();
+		
+		List<Long> gastosRefacturables;
+		int i;
+		Long idEnLong = Long.parseLong(id);
+	
+		gastosRefacturables = gastoProveedorApi.getGastosRefacturablesGastoCreado(idEnLong);
+
+		List<DtoDetalleEconomicoGasto> dto = new ArrayList<DtoDetalleEconomicoGasto>();
+	
+		for (i = 0; i < gastosRefacturables.size(); i++) {
+			DtoDetalleEconomicoGasto dtoAuxiliar = new DtoDetalleEconomicoGasto();
+			dtoAuxiliar.setNumeroGastoHaya(gastosRefacturables.get(i));
+			
+			dto.add(dtoAuxiliar);
+		}
+		
+		try {			
+			model.put("data", dto);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView anyadirGastoRefacturable(@RequestParam String idGasto, String gastosRefacturables, String nifPropietario) {
+		ModelMap model = new ModelMap();
+
+		try {
+			if(!Checks.esNulo(idGasto)) {
+				List<String> gastosRefacturablesLista = new ArrayList<String>();
+				
+				//Esta línea de código sirve para validar los gastos a anyadir,
+				//en caso de no cumplir, lanza excepciones visuales para front.
+				gastoProveedorApi.validarGastosARefacturar(idGasto, gastosRefacturables);
+				
+				if(!Checks.esNulo(gastosRefacturables)) {
+					gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario);
+				}
+				
+				if(!Checks.estaVacio(gastosRefacturablesLista)){
+					gastoProveedorApi.anyadirGastosRefacturadosAGastoExistente(idGasto, gastosRefacturablesLista);
+				}
+			}		
+			model.put("success", true);			
+		} catch (JsonViewerException jve) {
+			logger.error(jve.getMessage(),jve);
+			model.put("error", jve.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("error", e.getMessage());
+			model.put("success", false);		
+		} 
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView eliminarGastoRefacturado(@RequestParam Long idGasto, String numerosGasto) {
+		ModelMap model = new ModelMap();
+		List<String> gastosRefacturados = Arrays.asList(numerosGasto.split("/"));
+		Boolean noTieneGastosRefacturados = false;	
+		
+		if(!Checks.esNulo(idGasto) && !Checks.estaVacio(gastosRefacturados)) {
+			for (String numGastoRefacturado : gastosRefacturados) {
+				noTieneGastosRefacturados = gastoProveedorApi.eliminarGastoRefacturado(idGasto, Long.valueOf(numGastoRefacturado));
+			}
+			
+		}
+		
+		try {	
+			model.put("noTieneGastosRefacturados", noTieneGastosRefacturados);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
 }

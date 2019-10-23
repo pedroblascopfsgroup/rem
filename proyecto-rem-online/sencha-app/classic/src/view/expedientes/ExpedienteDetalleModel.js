@@ -479,7 +479,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		},
 		ocultarBtnDevolverReserva: function(get){
 			var me = this;
-			if(get('expediente.tieneReserva') && get('expediente.codigoEstado') == '16' && CONST.CARTERA['BANKIA'] != get('expediente.entidadPropietariaCodigo') && get('expediente.noEsOfertaFinalGencat')){
+			if(get('expediente.tieneReserva') && get('expediente.codigoEstado') == '16' && CONST.CARTERA['BANKIA'] != get('expediente.entidadPropietariaCodigo') &&
+					CONST.CARTERA['LIBERBANK'] != get('expediente.entidadPropietariaCodigo') && get('expediente.noEsOfertaFinalGencat')){
 				return false;
 			}else{
 				return true;

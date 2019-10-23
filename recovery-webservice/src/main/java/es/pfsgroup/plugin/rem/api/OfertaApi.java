@@ -713,7 +713,7 @@ public interface OfertaApi {
 	
 
 
-	public boolean faltanDatosCalculo(Oferta ofertaById);
+	public boolean faltanDatosCalculo(Long idOferta);
 
 	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
 

@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Cristian Montoya
---## FECHA_CREACION=20191018
+--## FECHA_CREACION=20191020
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8104
@@ -327,34 +327,46 @@ BEGIN
 	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE TFP_ID = '''||V_TFP_ID||''' AND DD_TGE_ID='''||V_DD_TGE_ID||'''';
 	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 	IF V_COUNT = 0 THEN						
-				V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-				  GTP_ID
-				, FECHACREAR
-				, USUARIOCREAR
-				, TFP_ID
-				, DD_TGE_ID
-				, DD_TPR_ID
-				,GTP_TOTAL
-				, VERSION
-				, BORRADO
-				) VALUES (
-				 '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
-				, SYSDATE
-				, '''||V_USUARIO||'''
-				, '''||V_TFP_ID||'''
-				, '''||V_DD_TGE_ID||'''
-				, '''||V_DD_TPR_ID||'''
-				,'''||TRIM(V_TMP_JBV(5))||'''
-				, 0
-				, 0
-				)';
-
-				EXECUTE IMMEDIATE V_SQL;
-		
-	DBMS_OUTPUT.PUT_LINE('Insertado el registro '''||TRIM(V_TMP_JBV(1))||''' con TFP_ID '''||TRIM(V_TFP_ID)||'''');			
+		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE TFP_ID IS NULL AND GTP_TOTAL = 1 AND DD_TGE_ID='''||V_DD_TGE_ID||'''';
+		EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+		IF V_COUNT = 0 THEN
+			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE TFP_ID = '''||V_TFP_ID||''' AND DD_TPR_ID = '''||V_DD_TPR_ID||''' AND DD_TGE_ID IS NULL';
+				EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+				IF V_COUNT = 0 THEN
+					V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
+					  GTP_ID
+					, FECHACREAR
+					, USUARIOCREAR
+					, TFP_ID
+					, DD_TGE_ID
+					, DD_TPR_ID
+					, GTP_TOTAL
+					, VERSION
+					, BORRADO
+					) VALUES (
+					 '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+					, SYSDATE
+					, '''||V_USUARIO||'''
+					, '''||V_TFP_ID||'''
+					, '''||V_DD_TGE_ID||'''
+					, '''||V_DD_TPR_ID||'''
+					, '''||TRIM(V_TMP_JBV(5))||'''
+					, 0
+					, 0
+					)';
+	
+					EXECUTE IMMEDIATE V_SQL;
+					DBMS_OUTPUT.PUT_LINE('Insertado el registro con TGE '''||TRIM(V_TMP_JBV(1))||''' con TFP_ID '''||TRIM(V_TFP_ID)||''' con TPR_ID '''||TRIM(V_DD_TPR_ID)||'''');	
+				ELSE
+					DBMS_OUTPUT.PUT_LINE('El registro con TPR '''||TRIM(V_TMP_JBV(2))||''' ya existe con TFP_ID '''||TRIM(V_TFP_ID)||'''');
+				END IF;
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('El registro con TGE '''||TRIM(V_TMP_JBV(1))||''' ya existe con GTP_TOTAL = 1');
+		END IF;
+				
 	ELSE
-	DBMS_OUTPUT.PUT_LINE('El registro '''||TRIM(V_TMP_JBV(1))||''' ya existe con TFP_ID '''||TRIM(V_TFP_ID)||'''');			
- END IF;		
+		DBMS_OUTPUT.PUT_LINE('El registro '''||TRIM(V_TMP_JBV(1))||''' ya existe con TFP_ID '''||TRIM(V_TFP_ID)||'''');			
+ 	END IF;		
  END LOOP;			    
     
 	COMMIT;

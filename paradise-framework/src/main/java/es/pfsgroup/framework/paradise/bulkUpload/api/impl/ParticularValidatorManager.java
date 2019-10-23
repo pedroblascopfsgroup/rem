@@ -3915,5 +3915,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+" WHERE DD_TCE_CODIGO = '" + codCE +"'");
 		return !"0".equals(resultado);
 	}
+
+	@Override
+	public Boolean esDocumentoCEE(String codDocumento) {
+		if (Checks.esNulo(codDocumento)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
+				+" WHERE DD_TPD_CODIGO =  '"+ codDocumento + "'"
+				+ "AND DD_TPD_CODIGO IN ('11','24','25','84','85','92')");
+		return !"0".equals(resultado);
+	}
 	
 }

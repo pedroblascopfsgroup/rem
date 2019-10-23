@@ -247,23 +247,7 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	public void setDataIdDocumento(Long dataIdDocumento) {
 		this.dataIdDocumento = dataIdDocumento;
 	}
-
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	public Auditoria getAuditoria() {
-		return auditoria;
-	}
-
-	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
-	}
-
+	
 	public String getLetraConsumo() {
 		return letraConsumo;
 	}
@@ -296,6 +280,21 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 		this.registro = registro;
 	}
 
-	
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+
 	
 }

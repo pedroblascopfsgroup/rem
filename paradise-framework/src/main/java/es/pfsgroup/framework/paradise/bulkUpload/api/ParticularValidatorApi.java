@@ -919,4 +919,10 @@ public interface ParticularValidatorApi {
 
 	Boolean esGastoDestinatarioPropietario(String numGasto);
 
+	/**
+	 * @param codDocumento
+	 * @return true si el código del documento es de tipo CEE
+	 */
+	public Boolean esDocumentoCEE(String codDocumento);
+
 }

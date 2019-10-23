@@ -48,6 +48,10 @@ public class MSVSDocAdministrativaProcesar extends AbstractMSVActualizador imple
 		static final int F_ETIQUETA = 8;
 		static final int CALIFICACION = 9;
 		static final int ID_DOC = 10;		
+		static final int LETRA_CONSUMO = 11;
+		static final int CONSUMO = 12;
+		static final int EMISION = 13;
+		static final int REGISTRO = 14;
 
 	}
 
@@ -67,8 +71,7 @@ public class MSVSDocAdministrativaProcesar extends AbstractMSVActualizador imple
 
 	@Override
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
-			throws IOException, ParseException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException {
 
 		final String celdaTipoDoc = exc.dameCelda(fila, COL_NUM.TIPO_DOC);
 		final String celdaActivo = exc.dameCelda(fila, COL_NUM.NUM_ACTIVO);
@@ -81,6 +84,10 @@ public class MSVSDocAdministrativaProcesar extends AbstractMSVActualizador imple
 		final String celdaFetiqueta = exc.dameCelda(fila, COL_NUM.F_ETIQUETA);
 		final String celdaCalificacion = exc.dameCelda(fila, COL_NUM.CALIFICACION);
 		final String celdaIdDoc = exc.dameCelda(fila, COL_NUM.ID_DOC);
+		final String celdaLetraConsumo = exc.dameCelda(fila, COL_NUM.LETRA_CONSUMO);
+		final String celdaConsumo = exc.dameCelda(fila, COL_NUM.CONSUMO);
+		final String celdaEmision = exc.dameCelda(fila, COL_NUM.EMISION);
+		final String celdaRegistro = exc.dameCelda(fila, COL_NUM.REGISTRO);
 		
 		final String FILTRO_CODIGO = "codigo";		
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
@@ -139,8 +146,20 @@ public class MSVSDocAdministrativaProcesar extends AbstractMSVActualizador imple
 		// DataId Documento		
 		ado.setDataIdDocumento(Checks.esNulo(celdaIdDoc) ? null : Long.parseLong(celdaIdDoc));
 		
+		// Letra Consumo
+		ado.setLetraConsumo(celdaLetraConsumo);
+		
+		// Consumo
+		ado.setConsumo(Checks.esNulo(celdaConsumo) ? null : Double.parseDouble(celdaConsumo));
+		
+		// Emision
+		ado.setEmision(Checks.esNulo(celdaEmision) ? null : Double.parseDouble(celdaEmision));
+		
+		// Registro
+		ado.setRegistro(Checks.esNulo(celdaRegistro) ? null : Long.parseLong(celdaRegistro));
+		
 		genericDao.save(ActivoAdmisionDocumento.class, ado);
-		return new ResultadoProcesarFila();
+		return new ResultadoProcesarFila();		
 	}
 
 }

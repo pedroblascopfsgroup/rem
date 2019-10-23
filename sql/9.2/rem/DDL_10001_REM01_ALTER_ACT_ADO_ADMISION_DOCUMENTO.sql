@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20191015
+--## FECHA_CREACION=20191022
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7997
@@ -10,6 +10,7 @@
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadir nuevos campos
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -28,8 +29,13 @@ DECLARE
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
-    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('DATA_ID_DOCUMENTO', 'NUMBER(16,0)', 'Identificador del Documento')
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(        
+        				-- Nombre Columna	-- Tipo						-- Comentario
+        T_TIPO_DATA('DATA_ID_DOCUMENTO',	'NUMBER(16,0)', 			'Identificador del Documento'),
+        T_TIPO_DATA('LETRA_CONSUMO', 		'VARCHAR2(20 CHAR)',	 	'Indica la Letra Consumo de calificación energética'),
+        T_TIPO_DATA('CONSUMO', 				'NUMBER(16,2)',			 	'Indica el valor de Consumo energético'),
+        T_TIPO_DATA('EMISION', 				'NUMBER(16,2)', 			'Indica el valor de Emisión energética'),
+        T_TIPO_DATA('REGISTRO',				'NUMBER(16,0)', 			'Indica el valor de Registro')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

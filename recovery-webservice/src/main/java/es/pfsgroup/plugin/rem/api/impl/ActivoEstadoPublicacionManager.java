@@ -1446,6 +1446,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						nuevaFasePublicacionActivo.setSubFasePublicacion(subfasePublicacionNueva);
 					}
 					
+					if (!Checks.esNulo(dto.getComentario())) {
+						nuevaFasePublicacionActivo.setComentario(dto.getComentario());
+					}
+					
 					genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivo);
 				} else {
 					throw new JsonViewerException("El usuario "+usuarioLogado.getUsername()+" no puede realizar el cambio");
@@ -1480,7 +1484,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 							}
 						}
 						
-						if (esGtpTotal) {
+						if (esGtpTotal || transicionPermitida) {
 							//La transicion que intenta hacer existe en la tabla de transiciones
 							fasePublicacionActivoVigente.setFechaFin(new Date());
 							genericDao.save(HistoricoFasePublicacionActivo.class, fasePublicacionActivoVigente);
@@ -1511,36 +1515,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 								nuevaFasePublicacionActivo.setSubFasePublicacion(subfasePublicacionNueva);
 							}
 							
-							genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivo);
-						} else if (transicionPermitida) {
-							//La transicion que intenta hacer existe en la tabla de transiciones
-							fasePublicacionActivoVigente.setFechaFin(new Date());
-							genericDao.save(HistoricoFasePublicacionActivo.class, fasePublicacionActivoVigente);
-							
-							//Si solo se cambia la subfase manteniendo la misma fase
-							Filter filtroFase = genericDao.createFilter(FilterType.EQUALS, "codigo", fasePublicacionActivoVigente.getFasePublicacion().getCodigo());
-							fasePublicacion = genericDao.get(DDFasePublicacion.class, filtroFase);
-							
-							//Si se cambia la fase
-							if (!Checks.esNulo(dto.getFasePublicacionCodigo())) {
-								Filter filtroFaseNueva = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getFasePublicacionCodigo());
-								fasePublicacion = genericDao.get(DDFasePublicacion.class, filtroFaseNueva);
-							}
-							
-							HistoricoFasePublicacionActivo nuevaFasePublicacionActivo = new HistoricoFasePublicacionActivo();
-							Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-							Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo());
-							Activo activo = genericDao.get(Activo.class, filtroActivo);
-							
-							nuevaFasePublicacionActivo.setActivo(activo);
-							nuevaFasePublicacionActivo.setFechaInicio(new Date());
-							nuevaFasePublicacionActivo.setUsuario(usu);
-							nuevaFasePublicacionActivo.setFasePublicacion(fasePublicacion);
-							
-							if (!Checks.esNulo(dto.getSubfasePublicacionCodigo())) {
-								Filter filtroSubfaseNueva = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSubfasePublicacionCodigo());
-								DDSubfasePublicacion subfasePublicacionNueva = genericDao.get(DDSubfasePublicacion.class, filtroSubfaseNueva);
-								nuevaFasePublicacionActivo.setSubFasePublicacion(subfasePublicacionNueva);
+							if (!Checks.esNulo(dto.getComentario())) {
+								nuevaFasePublicacionActivo.setComentario(dto.getComentario());
 							}
 							
 							genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivo);

@@ -93,6 +93,7 @@ Ext.define('HreRem.view.activos.detalle.FasePublicacionActivo', {
 		});
 		var comboFase = me.lookupController().getView().lookupReference('chkbxSubfase');
 		var storeFasesDePublicacion = me.lookupController().getViewModel().get("storeFasesDePublicacion");
+		comboFase.bindStore(storeFasesDePublicacion);
 		storeFasesDePublicacion.load();
 		var comboSubfase = me.lookupController().getView().lookupReference('chkbxSubfase');
 		comboSubfase.setDisabled(false);

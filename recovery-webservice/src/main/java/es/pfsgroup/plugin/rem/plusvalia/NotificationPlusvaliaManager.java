@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 
 
@@ -35,7 +36,7 @@ public class NotificationPlusvaliaManager extends AbstractNotificatorService {
 	 * 
 	 * @param activo
 	 */
-	public void sendNotificationPlusvaliaRechazado(Activo activo) {
+	public void sendNotificationPlusvaliaRechazado(Activo activo, ExpedienteComercial eco) {
 		
 		ActivoTramite tramite = new ActivoTramite();
 		tramite.setActivo(activo);
@@ -43,7 +44,7 @@ public class NotificationPlusvaliaManager extends AbstractNotificatorService {
 		ArrayList<String> mailsPara = new ArrayList<String>();
 		ArrayList<String> mailsCC = new ArrayList<String>();
 		
-		usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION, mailsPara, mailsCC, false);
+		usuarioRemApiImpl.rellenaListaCorreos(eco, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION, mailsPara, mailsCC, false);
 		
 			String asunto = "Solicitud de revisión del activo " + activo.getNumActivo();
 			String cuerpo = "<p>Buenos días,</p>";
@@ -73,7 +74,7 @@ public class NotificationPlusvaliaManager extends AbstractNotificatorService {
 	 * 
 	 * @param activo
 	 */
-	public void sendNotificationPlusvaliaLiquidacion(Activo activo) {
+	public void sendNotificationPlusvaliaLiquidacion(Activo activo, ExpedienteComercial expediente) {
 		
 		ActivoTramite tramite = new ActivoTramite();
 		tramite.setActivo(activo);
@@ -81,7 +82,7 @@ public class NotificationPlusvaliaManager extends AbstractNotificatorService {
 		ArrayList<String> mailsPara = new ArrayList<String>();
 		ArrayList<String> mailsCC = new ArrayList<String>();
 		
-		usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION, mailsPara, mailsCC, false);
+		usuarioRemApiImpl.rellenaListaCorreos(expediente, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION, mailsPara, mailsCC, false);
 		
 			String asunto = "Notificación de venta del activo " + activo.getNumActivo();
 			String cuerpo = "<p>Buenos días,</p>";

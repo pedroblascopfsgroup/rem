@@ -130,7 +130,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 								activoPlusvalia.setEstadoGestion(genericDao.get(DDEstadoGestionPlusv.class, filtroEstadoGestionPlusc));								
 								genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
 								
-								notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo);
+								notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
 								}
 								
 	
@@ -178,7 +178,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							activoPlusvalia.setEstadoGestion(genericDao.get(DDEstadoGestionPlusv.class, filtroEstadoGestionPlusc));								
 							genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
 							
-							notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo);
+							notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
 							}
 							
 							activo.setBloqueoPrecioFechaIni(new Date());

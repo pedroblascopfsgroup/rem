@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -18,10 +19,13 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 
@@ -182,7 +186,15 @@ public class TabActivoPlusvalia implements TabActivoService {
 			activoPlusvalia.setEstadoGestion(codEstadoGest);
 			
 			if(activoPlusvaliaDto.getEstadoGestion().equals(DDEstadoGestionPlusv.COD_RECHAZADO)) {
-				notificationPlusvaliaManager.sendNotificationPlusvaliaRechazado(activoPlusvalia.getActivo());
+				List<ActivoOferta> actOfrList = activoPlusvalia.getActivo().getOfertas();
+				for(ActivoOferta actOfr : actOfrList) {
+					if(actOfr.getPrimaryKey().getOferta().getEstadoOferta().equals(DDEstadoOferta.CODIGO_ACEPTADA)){
+						ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", actOfr.getPrimaryKey().getOferta().getId()));
+						notificationPlusvaliaManager.sendNotificationPlusvaliaRechazado(activoPlusvalia.getActivo(), eco);
+						break;
+					}
+				}
+				
 			}
  		}
 	

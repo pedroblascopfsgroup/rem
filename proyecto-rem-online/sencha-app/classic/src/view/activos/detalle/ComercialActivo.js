@@ -36,7 +36,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
     					var me = this;
     					me.lookupController().usuarioTieneFuncionPermitirTramitarOferta();
     					
-    				},
+    				}
 				}
     		},
     		{

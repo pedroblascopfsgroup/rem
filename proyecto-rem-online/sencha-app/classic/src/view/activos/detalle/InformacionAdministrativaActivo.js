@@ -526,15 +526,24 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        },
 			        {   text: 'Consumo', 
 			        	dataIndex: 'numConsumo',
-			        	width: '19%'
+			        	width: '19%',
+			        	renderer: function(value){
+		            		return (value > 0) ? value : '';
+		            	}
 			        },
 			        {   text: 'Emisión', 
 			        	dataIndex: 'numEmision',
-			        	width: '19%'
+			        	width: '19%',
+			        	renderer: function(value){
+		            		return (value > 0) ? value : '';
+		            	}
 			        },
 			        {   text: 'Registro', 
 			        	dataIndex: 'numRegistro',
-			        	width: '19%'
+			        	width: '19%',
+		            	renderer: function(value){
+		            		return (value > 0) ? value : '';
+		            	}
 			        }
 			        
 			       	        

@@ -1378,7 +1378,13 @@ public class ActivoAdapter {
 	
 					try {
 						BeanUtils.copyProperties(adoDto, activo.getAdmisionDocumento().get(i));
-						BeanUtils.copyProperty(adoDto, "tipoLetraConsumoDescripcion", activo.getAdmisionDocumento().get(i).getLetraConsumo());
+						
+						if(!Checks.esNulo(activo.getAdmisionDocumento().get(i).getLetraConsumo())) {
+							Filter filtroCodConsumo = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getAdmisionDocumento().get(i).getLetraConsumo());
+							DDTipoCalificacionEnergetica tipoCEE = genericDao.get(DDTipoCalificacionEnergetica.class, filtroCodConsumo);
+							adoDto.setTipoLetraConsumoCodigo(Checks.esNulo(tipoCEE) ? null : tipoCEE.getCodigo());
+							adoDto.setTipoLetraConsumoDescripcion(Checks.esNulo(tipoCEE) ? null : tipoCEE.getDescripcion());
+						}
 						BeanUtils.copyProperty(adoDto, "numConsumo", activo.getAdmisionDocumento().get(i).getConsumo());
 						BeanUtils.copyProperty(adoDto, "numEmision", activo.getAdmisionDocumento().get(i).getEmision());
 						BeanUtils.copyProperty(adoDto, "numRegistro", activo.getAdmisionDocumento().get(i).getRegistro());

@@ -31,6 +31,11 @@ public class DtoAdmisionDocumento extends WebDto {
 	private Date fechaVerificado;
 	private Integer aplica;
 	private String estadoDocumento;
+	private String tipoLetraConsumoCodigo;
+	private String tipoLetraConsumoDescripcion;	
+	private Double numConsumo;
+	private Double numEmision;
+	private Long numRegistro;
 	
 	//Mapeado a mano
 	private String descripcionTipoDocumentoActivo;
@@ -179,5 +184,45 @@ public class DtoAdmisionDocumento extends WebDto {
 
 	public void setCodigoTipoDocumentoActivo(String codigoTipoDocumentoActivo) {
 		this.codigoTipoDocumentoActivo = codigoTipoDocumentoActivo;
+	}
+
+	public String getTipoLetraConsumoCodigo() {
+		return tipoLetraConsumoCodigo;
+	}
+
+	public void setTipoLetraConsumoCodigo(String tipoLetraConsumoCodigo) {
+		this.tipoLetraConsumoCodigo = tipoLetraConsumoCodigo;
+	}
+
+	public String getTipoLetraConsumoDescripcion() {
+		return tipoLetraConsumoDescripcion;
+	}
+
+	public void setTipoLetraConsumoDescripcion(String tipoLetraConsumoDescripcion) {
+		this.tipoLetraConsumoDescripcion = tipoLetraConsumoDescripcion;
+	}
+
+	public Double getNumConsumo() {
+		return numConsumo;
+	}
+
+	public void setNumConsumo(Double numConsumo) {
+		this.numConsumo = numConsumo;
+	}
+
+	public Double getNumEmision() {
+		return numEmision;
+	}
+
+	public void setNumEmision(Double numEmision) {
+		this.numEmision = numEmision;
+	}
+
+	public Long getNumRegistro() {
+		return numRegistro;
+	}
+
+	public void setNumRegistro(Long numRegistro) {
+		this.numRegistro = numRegistro;
 	}
 }

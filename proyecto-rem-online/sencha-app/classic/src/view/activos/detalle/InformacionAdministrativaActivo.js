@@ -519,6 +519,22 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        {   text: 'Calificación', 
 			        	dataIndex: 'tipoCalificacionDescripcion',
 			        	width: '19%'
+			        },
+			        {   text: 'Letra consumo', 
+			        	dataIndex: 'tipoLetraConsumoDescripcion',
+			        	width: '10%'
+			        },
+			        {   text: 'Consumo', 
+			        	dataIndex: 'numConsumo',
+			        	width: '19%'
+			        },
+			        {   text: 'Emisión', 
+			        	dataIndex: 'numEmision',
+			        	width: '19%'
+			        },
+			        {   text: 'Registro', 
+			        	dataIndex: 'numRegistro',
+			        	width: '19%'
 			        }
 			        
 			       	        

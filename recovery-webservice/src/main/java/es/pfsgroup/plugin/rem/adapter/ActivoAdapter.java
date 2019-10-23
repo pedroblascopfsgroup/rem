@@ -1370,36 +1370,42 @@ public class ActivoAdapter {
 		Activo activo = activoApi.get(id);
 
 		List<DtoAdmisionDocumento> listaDtoAdmisionDocumento = new ArrayList<DtoAdmisionDocumento>();
-
-		if (!Checks.esNulo(activo.getAdmisionDocumento())) {
-
-			for (int i = 0; i < activo.getAdmisionDocumento().size(); i++) {
-				DtoAdmisionDocumento catastroDto = new DtoAdmisionDocumento();
-
-				try {
-					BeanUtils.copyProperties(catastroDto, activo.getAdmisionDocumento().get(i));
-
-					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento())) {
-						if(!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo())){
-						BeanUtils.copyProperty(catastroDto, "descripcionTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getDescripcion());
-						BeanUtils.copyProperty(catastroDto, "codigoTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getCodigo());
+		if(!Checks.esNulo(activo)) {		
+			if (!Checks.esNulo(activo.getAdmisionDocumento())) {
+	
+				for (int i = 0; i < activo.getAdmisionDocumento().size(); i++) {
+					DtoAdmisionDocumento adoDto = new DtoAdmisionDocumento();
+	
+					try {
+						BeanUtils.copyProperties(adoDto, activo.getAdmisionDocumento().get(i));
+						BeanUtils.copyProperty(adoDto, "tipoLetraConsumoDescripcion", activo.getAdmisionDocumento().get(i).getLetraConsumo());
+						BeanUtils.copyProperty(adoDto, "numConsumo", activo.getAdmisionDocumento().get(i).getConsumo());
+						BeanUtils.copyProperty(adoDto, "numEmision", activo.getAdmisionDocumento().get(i).getEmision());
+						BeanUtils.copyProperty(adoDto, "numRegistro", activo.getAdmisionDocumento().get(i).getRegistro());
+	
+						if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento())) {
+							if(!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo())){
+							BeanUtils.copyProperty(adoDto, "descripcionTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getDescripcion());
+							BeanUtils.copyProperty(adoDto, "codigoTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getCodigo());
+							}
 						}
+	
+						if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica())) {
+							BeanUtils.copyProperty(adoDto, "tipoCalificacionCodigo", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getCodigo());
+							BeanUtils.copyProperty(adoDto, "tipoCalificacionDescripcion", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getDescripcion());
+						}
+					} catch (IllegalAccessException e) {
+						logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
+					} catch (InvocationTargetException e) {
+						logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
 					}
-
-					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica())) {
-						BeanUtils.copyProperty(catastroDto, "tipoCalificacionCodigo", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getCodigo());
-						BeanUtils.copyProperty(catastroDto, "tipoCalificacionDescripcion", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getDescripcion());
-					}
-				} catch (IllegalAccessException e) {
-					logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
-				} catch (InvocationTargetException e) {
-					logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
+	
+					listaDtoAdmisionDocumento.add(adoDto);
 				}
-
-				listaDtoAdmisionDocumento.add(catastroDto);
 			}
+		} else {
+			throw new JsonViewerException("Error al buscar el activo");
 		}
-
 		return listaDtoAdmisionDocumento;
 	}
 

@@ -101,6 +101,17 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	@Column(name = "DATA_ID_DOCUMENTO")
 	private Long dataIdDocumento;
 		
+	@Column(name = "LETRA_CONSUMO")
+	private String letraConsumo;
+
+	@Column(name = "CONSUMO")
+	private Double consumo;
+
+	@Column(name = "EMISION")
+	private Double emision;
+
+	@Column(name = "REGISTRO")
+	private Long registro;
 	
 	
 	@Version   
@@ -255,6 +266,38 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getLetraConsumo() {
+		return letraConsumo;
+	}
+
+	public void setLetraConsumo(String letraConsumo) {
+		this.letraConsumo = letraConsumo;
+	}
+
+	public Double getConsumo() {
+		return consumo;
+	}
+
+	public void setConsumo(Double consumo) {
+		this.consumo = consumo;
+	}
+
+	public Double getEmision() {
+		return emision;
+	}
+
+	public void setEmision(Double emision) {
+		this.emision = emision;
+	}
+
+	public Long getRegistro() {
+		return registro;
+	}
+
+	public void setRegistro(Long registro) {
+		this.registro = registro;
 	}
 
 	

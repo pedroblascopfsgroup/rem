@@ -189,7 +189,6 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 */
 	public ConfiguracionAccesoGestoria isGestoria(Usuario usuario);
 
-
 	public Usuario usuarioTareaDivarian(String codigoTarea);
 
 	Usuario supervisorTareaDivarian(String codigoTarea);

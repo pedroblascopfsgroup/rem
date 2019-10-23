@@ -538,7 +538,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		return genericDao.get(Usuario.class, filtro);
 	}
-	
  	 	 	
  	@Override
 	public ConfiguracionAccesoGestoria isGestoria(Usuario usuario) {

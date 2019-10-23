@@ -100,7 +100,7 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	
 	@Column(name = "DATA_ID_DOCUMENTO")
 	private Long dataIdDocumento;
-		
+	
 	@Column(name = "LETRA_CONSUMO")
 	private String letraConsumo;
 
@@ -112,16 +112,12 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 
 	@Column(name = "REGISTRO")
 	private Long registro;
-	
-	
+		
 	@Version   
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
-	
-	
-	
 
 	public Long getId() {
 		return id;

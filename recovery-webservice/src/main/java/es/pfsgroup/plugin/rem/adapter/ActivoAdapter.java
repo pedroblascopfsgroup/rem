@@ -2485,6 +2485,11 @@ public class ActivoAdapter {
 				activoAdmisionDocumento.setFechaEtiqueta(null);
 				activoAdmisionDocumento.setFechaEmision(null);
 				activoAdmisionDocumento.setFechaCaducidad(null);
+				activoAdmisionDocumento.setDataIdDocumento(null);
+				activoAdmisionDocumento.setLetraConsumo(null);
+				activoAdmisionDocumento.setConsumo(null);
+				activoAdmisionDocumento.setEmision(null);
+				activoAdmisionDocumento.setRegistro(null);
 
 			} else {
 
@@ -2496,8 +2501,6 @@ public class ActivoAdapter {
 		} else {
 
 			activoAdmisionDocumento = new ActivoAdmisionDocumento();
-
-			//rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoAdmisionDocumento.getIdActivo());
 			Activo act = genericDao.get(Activo.class, filtro);
@@ -2513,13 +2516,9 @@ public class ActivoAdapter {
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 			
-			genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
-
-			
+			genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);	
 		}
-
 		return true;
-
 	}
 
 	private void rellenaCheckingDocumentoAdmision(ActivoAdmisionDocumento activoAdmisionDocumento,
@@ -2551,6 +2550,16 @@ public class ActivoAdapter {
 						.dameValorDiccionarioByCod(DDTipoCalificacionEnergetica.class, dtoAdmisionDocumento.getTipoCalificacionCodigo());
 				activoAdmisionDocumento.setTipoCalificacionEnergetica(calificacion);
 			}
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "dataIdDocumento",
+					dtoAdmisionDocumento.getDataIdDocumento());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "letraConsumo",
+					dtoAdmisionDocumento.getLetraConsumo());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "consumo",
+					dtoAdmisionDocumento.getConsumo());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "emision",
+					dtoAdmisionDocumento.getEmision());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "registro",
+					dtoAdmisionDocumento.getRegistro());
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ActivoAdapter", e);

@@ -122,7 +122,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
 		List<String> lista = recuperarFormato(dtoFile.getIdTipoOperacion());
-		MSVHojaExcel exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+		MSVHojaExcel exc = excelParser.getExcel(dtoFile.getRuta());
 		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(dtoFile.getIdTipoOperacion()));
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
@@ -130,7 +130,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
 		
 		//Validaciones especificas no contenidas en el fichero Excel de validacion
-		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+		exc = excelParser.getExcel(dtoFile.getRuta());
 		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
 		try {
 			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
@@ -157,7 +157,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE, getFormalizarActivoNoComercializable(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS), getComercializarConOfertasVivas(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO), getFormalizarConExpedienteVivo(exc));
-				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_FINANCIERO), isActivoFinanciero(exc));
+ 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_FINANCIERO), isActivoFinanciero(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_MATRIZ), isActivoMatriz(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_UA), isUA(exc));
 
@@ -185,7 +185,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					) {
 
 				dtoValidacionContenido.setFicheroTieneErrores(true);
-				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				exc = excelParser.getExcel(dtoFile.getRuta());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
 				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
 				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);

@@ -930,9 +930,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							reference:'historicotramitaciontitulo',
 							hidden: false, 
 							title: HreRem.i18n("title.historico.presentacion.registros"),
-							bind:{
-					 			hidden: '{!esSubcarteraDivarian}'
-							},
 							items :
 							[
 								{

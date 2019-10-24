@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.rem.oferta;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -18,8 +16,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -32,7 +28,6 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -164,9 +159,6 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
-import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
-import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -177,16 +169,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	private final Log logger = LogFactory.getLog(OfertaManager.class);
 	SimpleDateFormat groovyft = new SimpleDateFormat("yyyy-MM-dd");
-
-	private static final Map<String, String> TIPO_HONORARIOS = new HashMap<String, String>() {
-
-		private static final long serialVersionUID = -7097784886920388173L;
-
-		{
-			put(DDAccionGastos.CODIGO_COLABORACION, "C");
-			put(DDAccionGastos.CODIGO_PRESCRIPCION, "P");
-		}
-	};
 
 	private static final String T017 = "T017";
 
@@ -2803,8 +2785,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
 		}
 
-		Long idProveedor = !Checks.esNulo(proveedor) ? proveedor.getId() : null;
-
+		
 		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
 			// Información del tipo de cálculo. Por defecto siempre son porcentajes
 			DDTipoCalculo tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
@@ -3713,73 +3694,75 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 	@Override
-	public boolean faltanDatosCalculo (Oferta ofertaAceptada) {
+	public boolean faltanDatosCalculo (Long idOferta) {
 		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
-
-		if(!Checks.estaVacio(ofertaAceptada.getActivoPrincipal().getTasacion())) {
-			vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
-		}
-		pvb = ofertaAceptada.getImporteOferta();
-
-		
-		// Cuando son ofertas agrupadas, las recorro
-		if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) 
-				&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
-
-			Oferta principal = getOfertaPrincipalById(ofertaAceptada.getId());
-			List<OfertasAgrupadasLbk> ofertasAgrupadas = principal.getOfertasAgrupadas();
-
-			List<Oferta> listaOfertas = new ArrayList<Oferta>();
+		Oferta ofertaAceptada = this.getOfertaById(idOferta);
+		if(ofertaAceptada != null) {
+			if(!Checks.estaVacio(ofertaAceptada.getActivoPrincipal().getTasacion())) {
+				vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+			}
+			pvb = ofertaAceptada.getImporteOferta();
+	
 			
-			// Añado la oferta principal
-			listaOfertas.add(principal);
-
-			
-			// Añado las dependientes
-			for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
-				listaOfertas.add(lisOf.getOfertaDependiente());
-			}	
-			
-			// Recorro todas las ofertas que tiene la agrupada
-			for (Oferta oferta : listaOfertas) {
-
-				ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
-				if (expedienteComercial == null) continue;
-				if (!Checks.esNulo(expedienteComercial) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-					List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
-					
-					for (GastosExpediente gex : listaHonorarios) {
-						cco += gex.getImporteFinal() * gex.getImporteCalculo();
+			// Cuando son ofertas agrupadas, las recorro
+			if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) 
+					&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
+	
+				Oferta principal = getOfertaPrincipalById(ofertaAceptada.getId());
+				List<OfertasAgrupadasLbk> ofertasAgrupadas = principal.getOfertasAgrupadas();
+	
+				List<Oferta> listaOfertas = new ArrayList<Oferta>();
+				
+				// Añado la oferta principal
+				listaOfertas.add(principal);
+	
+				
+				// Añado las dependientes
+				for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
+					listaOfertas.add(lisOf.getOfertaDependiente());
+				}	
+				
+				// Recorro todas las ofertas que tiene la agrupada
+				for (Oferta oferta : listaOfertas) {
+	
+					ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
+					if (expedienteComercial == null) continue;
+					if (!Checks.esNulo(expedienteComercial) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+						List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
+						
+						for (GastosExpediente gex : listaHonorarios) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
+						
 					}
-					
 				}
-			}
-
-			List<ActivoValoraciones> valoraciones = ofertaAceptada.getActivoPrincipal().getValoracion();
-
-			for (ActivoValoraciones valoracion : valoraciones) {
-				String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-				if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-					vnc += valoracion.getImporte();
-				}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-					vr  += valoracion.getImporte();
+	
+				List<ActivoValoraciones> valoraciones = ofertaAceptada.getActivoPrincipal().getValoracion();
+	
+				for (ActivoValoraciones valoracion : valoraciones) {
+					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
+					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+						vnc += valoracion.getImporte();
+					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+						vr  += valoracion.getImporte();
+					}
 				}
+				
+				
+			// Si son ofertas individuales o principales se calculan ellas solas
+			} else {
+				vnc = 0.1;
+				vr = 0.1;
+				cco = 0.1;
 			}
 			
+			pvn = pvb - cco;
 			
-		// Si son ofertas individuales o principales se calculan ellas solas
-		} else {
-			vnc = 0.1;
-			vr = 0.1;
-			cco = 0.1;
-		}
-		
-		pvn = pvb - cco;
-		
-
-		
-		if (vta== 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
-			return true;
+	
+			
+			if (vta== 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
+				return true;
+			}
 		}
 		
 		return false;
@@ -4104,9 +4087,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote) {
 
 		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
-		Double importeUmbral = 500000.0;
-		Oferta principal = getOfertaPrincipalById(ofertaNueva.getId());
-		List<OfertasAgrupadasLbk> ofertasAgrupadas = principal.getOfertasAgrupadas();
 		List<Oferta> listaOfertas = new ArrayList<Oferta>();
 		DDComiteSancion comiteSancionador = null;
 
@@ -4726,7 +4706,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente)).getOferta();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean esTareaFinalizada(ActivoTramite tramite, String codigoTarea) {
 

@@ -95,7 +95,6 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.tramite.id", idTramite);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.tareaFinalizada", false);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.auditoria.borrado", false);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.tramite.trabajo.auditoria.borrado", false);
 		
 		listaTareas = HibernateQueryUtils.list(this, hb);
 		

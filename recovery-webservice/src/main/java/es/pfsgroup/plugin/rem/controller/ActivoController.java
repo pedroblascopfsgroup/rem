@@ -762,10 +762,9 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request) {
 		try {
-			if (!Checks.esNulo(ofertaApi.getOfertaById(ofertaActivoDto.getIdOferta()).getClaseOferta())
-					&& ofertaApi.faltanDatosCalculo(ofertaApi.getOfertaById(ofertaActivoDto.getIdOferta()))) {
-					model.put("advertencia", FALTAN_DATOS);
-				}
+			if (ofertaApi.faltanDatosCalculo(ofertaActivoDto.getIdOferta())) {
+				model.put("advertencia", FALTAN_DATOS);
+			}
 			boolean success = activoApi.saveOfertaActivo(ofertaActivoDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 			trustMe.registrarSuceso(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR);

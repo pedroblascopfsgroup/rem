@@ -55,7 +55,6 @@ import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 
 @Controller
 public class AgrupacionController extends ParadiseJsonController {
@@ -441,7 +440,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		try {
 			if (!Checks.esNulo(ofertaApi.getOfertaById(dtoOferta.getIdOferta()).getClaseOferta())
-				&& ofertaApi.faltanDatosCalculo(ofertaApi.getOfertaById(dtoOferta.getIdOferta()))) {
+				&& ofertaApi.faltanDatosCalculo(dtoOferta.getIdOferta())) {
 				model.put("advertencia", FALTAN_DATOS);
 			}
 			boolean success = adapter.saveOfertaAgrupacion(dtoOferta);

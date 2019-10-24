@@ -7110,8 +7110,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Activo activo = activoAdapter.getActivoById(condiciones.getIdActivo());
 		ExpedienteComercial expediente = this.findOne(condiciones.getEcoId());
 		CondicionesActivo condicionesActivo = genericDao.get(CondicionesActivo.class,
-				genericDao.createFilter(FilterType.EQUALS, "activo", activo),
-				genericDao.createFilter(FilterType.EQUALS, "expediente", expediente));
+				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()),
+				genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
 
 		if (condicionesActivo == null) {
 			condicionesActivo = new CondicionesActivo();

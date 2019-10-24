@@ -1156,6 +1156,11 @@ public class ActivoAdapter {
 			if(activoActual != null){
 				BeanUtils.copyProperty(dto, "idContrato", activoActual.getIdContrato());
 				BeanUtils.copyProperty(dto, "nombrePrinex", activoActual.getNombrePrinex());
+				BeanUtils.copyProperty(dto, "idContratoAntiguo", activoActual.getIdContratoAntiguo());
+				
+				Activo activoVista = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActivo()));
+				dto.setEsDivarian(Checks.esNulo(activoVista)? null: activoVista.getSubcartera().equals(DDSubcartera.CODIGO_DIVARIAN));
+				
 				page = actPatrimonioDao.getActivosRelacionados(dto);
 				lista = new ArrayList<DtoActivoVistaPatrimonioContrato>();
 				for (VActivoPatrimonioContrato activo: (List<VActivoPatrimonioContrato>) page.getResults()) {

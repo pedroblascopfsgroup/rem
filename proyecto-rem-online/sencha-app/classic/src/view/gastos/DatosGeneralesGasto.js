@@ -317,6 +317,13 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											},
 											hidden: true
 										},
+										{ 
+											xtype: 'textfieldbase',
+							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.primer.gasto.serie'),
+									      	bind: {
+								           		value: '{gasto.numeroPrimerGastoSerie}'
+								         	}
+									    },
 										{
 								        	xtype:'datefieldbase',
 								        	formatter: 'date("d/m/Y")',
@@ -353,7 +360,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									       	},
 									       	maxValue: null,
 									       	readOnly: true
-									    }										
+									    }
 									]
 								}
 							]

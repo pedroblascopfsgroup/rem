@@ -64,8 +64,6 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_YUBAI = "139";
 	public static final String CODIGO_DIVARIAN = "150";
 
-
-
 	@Id
 	@Column(name = "DD_SCR_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDSubcarteraGenerator")

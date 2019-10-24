@@ -16,9 +16,11 @@ public class DtoActivoVistaPatrimonioContrato extends DtoTabActivo {
 	private String descripcion;
 	private String localizacion;
 	private String idContrato;
+	private String idContratoAntiguo;
 	private String nombrePrinex;
 	private String numeroActivoHaya;
-	
+	private Boolean esDivarian;
+
 	public Long getActivo() {
 		return activo;
 	}
@@ -55,4 +57,17 @@ public class DtoActivoVistaPatrimonioContrato extends DtoTabActivo {
 	public void setNumeroActivoHaya(String numeroActivoHaya) {
 		this.numeroActivoHaya = numeroActivoHaya;
 	}
+	public String getIdContratoAntiguo() {
+		return idContratoAntiguo;
+	}
+	public void setIdContratoAntiguo(String idContratoAntiguo) {
+		this.idContratoAntiguo = idContratoAntiguo;
+	}
+	public Boolean getEsDivarian() {
+		return esDivarian;
+	}
+	public void setEsDivarian(Boolean esDivarian) {
+		this.esDivarian = esDivarian;
+	}
+	
 }

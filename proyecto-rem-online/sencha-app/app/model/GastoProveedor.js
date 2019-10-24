@@ -158,7 +158,6 @@ Ext.define('HreRem.model.GastoProveedor', {
    			name: 'idGastoAbonado',
    			critical: true
    		},
-   		
    		{
    			name: 'gastoSinActivos'
    		},
@@ -178,6 +177,9 @@ Ext.define('HreRem.model.GastoProveedor', {
 		{
 			name: 'identificadorUnico'
 		},
+   		{
+    		name: 'numeroPrimerGastoSerie'
+   	 	},
    		{
    			name: 'numeroDeGastoRefacturable'
    		},
@@ -214,7 +216,6 @@ Ext.define('HreRem.model.GastoProveedor', {
    			name: 'bloquearEdicionFechasRecepcion',
    			type: 'boolean'
    		}
-    		
     ],
     
 	proxy: {

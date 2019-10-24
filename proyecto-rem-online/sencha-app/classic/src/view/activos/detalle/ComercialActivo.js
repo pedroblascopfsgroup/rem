@@ -34,14 +34,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
     				
     				afterrender: function(){
     					var me = this;
-    					if(!me.hidden){
-    						me.lookupController().usuarioTieneFuncionPermitirTramitarOfertaC();
-    					};
+    					me.lookupController().usuarioTieneFuncionPermitirTramitarOferta();
     					
-    				},
-    				hide: function(){
-    					var me = this;
-    					me.lookupController().usuarioTieneFuncionPermitirTramitarOfertaC();
     				}
 				}
     		},

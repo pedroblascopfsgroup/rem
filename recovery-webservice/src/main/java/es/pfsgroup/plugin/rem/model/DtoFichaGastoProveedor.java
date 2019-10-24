@@ -66,6 +66,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String codigoImpuestoIndirecto;
    	private String cartera;
    	private String identificadorUnico;
+   	private Long numeroPrimerGastoSerie;
    	private Date fechaRecPropiedad;
 	private Date fechaRecGestoria;
 	private Date fechaRecHaya;
@@ -341,6 +342,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setIdentificadorUnico(String identificadorUnico) {
 		this.identificadorUnico = identificadorUnico;
+	}
+	public Long getNumeroPrimerGastoSerie() {
+		return numeroPrimerGastoSerie;
+	}
+	public void setNumeroPrimerGastoSerie(Long numeroPrimerGastoSerie) {
+		this.numeroPrimerGastoSerie = numeroPrimerGastoSerie;
 	}
 	public Date getFechaRecPropiedad() {
 		return fechaRecPropiedad;

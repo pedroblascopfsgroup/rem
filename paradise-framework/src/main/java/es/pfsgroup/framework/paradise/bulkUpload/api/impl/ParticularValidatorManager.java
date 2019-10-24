@@ -152,7 +152,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean activoEnAgrupacionRestringida(Long idActivo) {
+	public Boolean activoEnAgrupacionRestringida(Long numActivo) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(aga.AGR_ID) "
 				+ "			  FROM ACT_AGA_AGRUPACION_ACTIVO aga, "
 				+ "			    ACT_AGR_AGRUPACION agr, "
@@ -161,7 +161,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			  WHERE aga.AGR_ID = agr.AGR_ID "
 				+ "			    AND act.act_id   = aga.act_id "
 				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
-				+ "			    AND act.ACT_NUM_ACTIVO = "+idActivo+" "
+				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
 				+ "				AND agr.AGR_FECHA_BAJA is null"
 				+ "			    AND aga.BORRADO  = 0 "
@@ -1898,8 +1898,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		  FROM ACT_ACTIVO ACT"
 				+ "		  JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0"
 				+ "       JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID"
+				+"        LEFT JOIN DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID"	
 				+ " 	  WHERE ACT.ACT_NUM_ACTIVO =" + numActivo + " "
-				+ "       AND AGR.DD_TAG_ID = 2"
+				+ "       AND TAG.DD_TAG_CODIGO = '02'"
 				+ "       AND AGR_FECHA_BAJA IS NULL");
 	}
 
@@ -3949,5 +3950,57 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return Integer.valueOf(resultado) > 0;
 	};
+
+	@Override
+	public Long obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo){
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return null;
+		}
+		String sql = rawDao.getExecuteSQL("SELECT agr.AGR_NUM_AGRUP_REM "
+				+ "FROM ACT_AGA_AGRUPACION_ACTIVO aga, " 
+				+ "ACT_AGR_AGRUPACION agr, " 
+				+ "DD_TAG_TIPO_AGRUPACION tag, "
+				+ "ACT_ACTIVO act " 
+				+ "WHERE aga.AGR_ID = agr.AGR_ID " 
+				+ "AND agr.dd_tag_id = tag.dd_tag_id "
+				+ "AND act.act_id   = aga.act_id " 
+				+ "AND tag.dd_tag_codigo = '02' " 
+				+ "AND act.ACT_NUM_ACTIVO = " + numActivo +" " 
+				+ "AND aga.BORRADO  = 0 " 
+				+ "AND agr.BORRADO  = 0 " 
+				+ "AND act.BORRADO  = 0 ");
+		
+		return Checks.esNulo(sql)? null: Long.valueOf(sql);
+	}
+	
+	@Override
+	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion){
+		if (Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT NUM_ACT - NUM_VAL " 
+				   +"FROM ( "
+					    +"SELECT COUNT(DISTINCT AGA.ACT_ID) NUM_ACT "
+						+"FROM ACT_AGA_AGRUPACION_ACTIVO AGA "
+					 	+"JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID " 
+			            +"WHERE AGA.BORRADO = 0 "
+			            +"AND AGR.BORRADO = 0"  
+			            +"AND AGR.AGR_NUM_AGRUP_REM = " + numAgrupacion + " "
+			            +"),"
+			            +"("
+			            +"SELECT COUNT(DISTINCT AGA.ACT_ID) NUM_VAL "
+						+"FROM ACT_AGA_AGRUPACION_ACTIVO AGA "
+						+"JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0 "
+						+"JOIN ACT_VAL_VALORACIONES VAL ON VAL.ACT_ID = AGA.ACT_ID AND VAL.BORRADO = 0 " 
+						+"JOIN DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 " 			
+						+"WHERE AGA.BORRADO = 0 "			            
+			            +"AND TPC.DD_TPC_CODIGO = '03' "
+			            +"AND AGR.AGR_NUM_AGRUP_REM = " + numAgrupacion + " "
+			            +"AND (VAL.VAL_FECHA_FIN >= SYSDATE OR VAL.VAL_FECHA_FIN IS NULL) "
+			            +")"								
+				);
+		return "0".equals(resultado);
+	}
 	
 }

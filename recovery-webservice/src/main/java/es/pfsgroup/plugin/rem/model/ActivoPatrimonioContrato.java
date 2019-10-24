@@ -88,6 +88,8 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 	@Column(name = "DCA_F_ULTIMO_ADEUDADO")
 	private Date ultimoReciboAdeudado;
 	
+	@Column(name = "DCA_ID_CONTRATO_ANTIGUO")
+	private String idContratoAntiguo;
 	
 	
 	@Version
@@ -236,5 +238,12 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 		return serialVersionUID;
 	}
 	
+	public String getIdContratoAntiguo() {
+		return idContratoAntiguo;
+	}
+
+	public void setIdContratoAntiguo(String idContratoAntiguo) {
+		this.idContratoAntiguo = idContratoAntiguo;
+	}
 }
 	

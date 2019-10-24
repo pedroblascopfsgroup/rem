@@ -68,6 +68,16 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										readOnly : true
 										
 									},
+									{ //Número de contrato antiguo
+										xtype : 'displayfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.numero.contrato.alquiler.antiguo'),
+										bind: {
+												hidden : '{!contrato.esDivarian}',
+												value: '{contrato.idContratoAntiguo}'
+											},
+										readOnly : true
+										
+									},
 									{ 
 										//Inquilino
 										xtype : 'displayfieldbase',

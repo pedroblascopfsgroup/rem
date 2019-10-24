@@ -1276,7 +1276,13 @@ public interface ExpedienteComercialApi {
 
 	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
 
-	boolean esOmegaConReserva(TareaExterna tareaExterna);
+	/**
+	 * Metodo que comprueba si la entidad tiene subcartera Omega
+	 *
+	 * @param tareaExterna
+	 * @return boolean
+	 */
+	boolean esOmega(TareaExterna tareaExterna);
 
 }
 

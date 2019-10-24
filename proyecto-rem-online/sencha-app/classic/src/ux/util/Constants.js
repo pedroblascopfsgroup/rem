@@ -243,7 +243,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		LIBERBANK: '56',
 		MOSCATA: '57',
 		BEYOSPONGA: '59',
-		RETAMAR: '60'
+		RETAMAR: '60',
+		OMEGA: '65'
     },
 
     NOMBRE_SUBCARTERA: {

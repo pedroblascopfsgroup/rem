@@ -193,6 +193,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -2199,8 +2200,13 @@ public class ActivoAdapter {
 			try {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "id", tarea.getTareaPadre().getId());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "idTareaExterna", tarea.getId());
-				beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea",
-						tarea.getTareaProcedimiento().getDescripcion());
+				if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
+						DDSubcartera.CODIGO_OMEGA.equals(tramite.getActivo().getSubcartera().getCodigo()) && 
+						DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tarea.getTareaProcedimiento().getCodigo())) {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+				} else {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tarea.getTareaProcedimiento().getDescripcion());
+				}
 				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
 				// value);
 
@@ -2251,10 +2257,21 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "id", tareaActivo.getId());
 				if (!Checks.esNulo(tareaExterna)) {
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "idTareaExterna", tareaExterna.getId());
-					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea",
-							tareaExterna.getTareaProcedimiento().getDescripcion());
+					if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tareaActivo.getActivo().getCartera().getCodigo()) && 
+							DDSubcartera.CODIGO_OMEGA.equals(tareaActivo.getActivo().getSubcartera().getCodigo()) && 
+							DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaExterna.getTareaProcedimiento().getCodigo())) {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+					} else {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaExterna.getTareaProcedimiento().getDescripcion());
+					}
 				} else {
-					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaActivo.getDescripcionTarea());
+					if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tareaActivo.getActivo().getCartera().getCodigo()) && 
+							DDSubcartera.CODIGO_OMEGA.equals(tareaActivo.getActivo().getSubcartera().getCodigo()) && 
+							DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaActivo.getCodigoTarea())) {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+					} else {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaActivo.getDescripcionTarea());
+					}
 				}
 				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
 				// value);

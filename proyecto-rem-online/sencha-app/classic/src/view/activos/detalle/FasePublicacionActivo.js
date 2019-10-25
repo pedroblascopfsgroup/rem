@@ -95,7 +95,13 @@ Ext.define('HreRem.view.activos.detalle.FasePublicacionActivo', {
 		var comboFase = me.lookupController().getView().lookupReference('chkbxFase');
 		var storeFasesDePublicacion = me.lookupController().getViewModel().get("storeFasesDePublicacion");
 		comboFase.bindStore(storeFasesDePublicacion);
-		storeFasesDePublicacion.load();
+		storeFasesDePublicacion.load({
+			scope: this,
+			callback: function(records, operation, success) {
+				var codFase = me.lookupController().getViewModel().get('fasepublicacionactivo.fasePublicacionCodigo');
+				comboFase.setValue(codFase);
+			}
+		});
 		var comboSubfase = me.lookupController().getView().lookupReference('chkbxSubfase');
 		comboSubfase.setDisabled(false);
 		var storeSubfasesDePublicacion = me.lookupController().getViewModel().get("storeSubfasesDePublicacion");

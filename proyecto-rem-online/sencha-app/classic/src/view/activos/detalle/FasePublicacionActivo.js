@@ -37,7 +37,8 @@ Ext.define('HreRem.view.activos.detalle.FasePublicacionActivo', {
 						},
 						allowBlank: false,
 						listeners: {
-							select: 'onChangeChainedCombo'
+							select: 'onChangeChainedCombo',
+							change: 'onChkbxFaseChange'
 						},
 						chainedStore: 'storeSubfasesDePublicacionFiltered',
 						chainedReference: 'chkbxSubfase'
@@ -91,7 +92,7 @@ Ext.define('HreRem.view.activos.detalle.FasePublicacionActivo', {
 		Ext.Array.each(me.query('grid'), function(grid) {
 			grid.getStore().load();
 		});
-		var comboFase = me.lookupController().getView().lookupReference('chkbxSubfase');
+		var comboFase = me.lookupController().getView().lookupReference('chkbxFase');
 		var storeFasesDePublicacion = me.lookupController().getViewModel().get("storeFasesDePublicacion");
 		comboFase.bindStore(storeFasesDePublicacion);
 		storeFasesDePublicacion.load();

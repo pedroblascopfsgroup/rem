@@ -267,14 +267,14 @@ public interface GenericApi {
 
 	/**
 	 * Devuelve las subfases correspondientes de la fase seleccionada
-	 * @param codCartera
+	 * @param idActivo
 	 * @return Devuelve las subfases correspondientes de la fase seleccionada
 	 */
 	List<DDSubfasePublicacion> getComboSubfase(Long idActivo);
 	
 	/**
 	 * Devuelve las subfases correspondientes de la fase seleccionada
-	 * @param codCartera
+	 * @param codFase
 	 * @return Devuelve las subfases correspondientes de la fase seleccionada
 	 */
 	List<DDSubfasePublicacion> getComboSubfaseFiltered(String codFase);

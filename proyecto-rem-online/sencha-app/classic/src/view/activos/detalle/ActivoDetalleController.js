@@ -91,7 +91,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("activo.id");
-
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),
@@ -5790,6 +5789,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var me = this;
 			var faseComentario = me.lookupReference('faseComentario');
 		    faseComentario.reset();
+		}
+	},
+	
+	onChkbxFaseChange: function(chkbox, newValue, oldValue) {
+		var comboSubfase = chkbox.lookupController().getView().lookupReference('chkbxSubfase');
+		if (newValue != '01') {
+			comboSubfase.setAllowBlank(false);
+		} else {
+			comboSubfase.setAllowBlank(true);
 		}
 	}
 });

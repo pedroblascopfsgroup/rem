@@ -1381,7 +1381,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta;
 		String codigoEstado = "08";
-		String idAgrupacion = agrupacion.getId().toString();
+		String idAgrupacion = agrupacion.getNumAgrupRem().toString();
 		
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAgrupacion, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, codigoEstado);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
@@ -1400,7 +1400,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 	
 	@Override
-	public List<DtoAdjuntoAgrupacion> getAdjuntoAgrupacion(Long idAgrupacion) throws GestorDocumentalException {
+	public List<DtoAdjuntoAgrupacion> getAdjuntoAgrupacion(Long idAgrupacion) throws GestorDocumentalException { 
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		Usuario userLogin = genericAdapter.getUsuarioLogado();
 		String idAgrupacionString = String.valueOf(idAgrupacion);
@@ -1457,12 +1457,22 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			}
 			cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);		
 		}
-		
-		String estadoExpediente = "Alta";
+		 
+		String estadoExpediente = "Alta"; 
 		String codClase = GestorDocumentalConstants.CODIGO_CLASE_AGRUPACIONES;
 		String descripcionExpediente = "";
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
-		CrearExpedienteComercialDto crearExpedienteComercialDto = recoveryToGestorAssembler.getCrearExpedienteComercialDto(agrupacionId,descripcionExpediente, username, cliente, estadoExpediente, idSistemaOrigen,codClase, TIPO_AGRUPACION);
+		CrearExpedienteComercialDto crearExpedienteComercialDto = recoveryToGestorAssembler
+				.getCrearAgrupacionlDto(agrupacionId,descripcionExpediente, username, cliente, estadoExpediente, idSistemaOrigen,codClase, TIPO_AGRUPACION);
+		logger.error("Llamada al gestor documental : \n"
+				+ "\n [Id agrupacion] : " + agrupacionId
+				+ "\n [Descripcion expediente] : " + descripcionExpediente
+				+ "\n [Usuario] : " + username
+				+ "\n [Cliente] : " + cliente
+				+ "\n [Estado expediente] : " + estadoExpediente
+				+ "\n [Id sistema origen] : " + idSistemaOrigen
+				+ "\n [Clase] : " + codClase
+				+ "\n [Tipo codigo] : " + TIPO_AGRUPACION);
 		RespuestaCrearExpediente respuesta;
 		
 		try {

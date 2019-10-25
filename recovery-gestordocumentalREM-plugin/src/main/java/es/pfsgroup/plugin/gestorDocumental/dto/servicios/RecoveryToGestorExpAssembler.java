@@ -88,9 +88,34 @@ public class RecoveryToGestorExpAssembler {
 				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
 			sb.append("}");
 		sb.append("}");
+		System.out.println(sb.toString());
 		return sb.toString();
 	}
-	
+	public CrearExpedienteComercialDto getCrearAgrupacionlDto(String idExpedienteComercial, String descripcionExpediente, String username, String cliente, String estadoExpediente, String idSistemaOrigen, String codClase, String tipoExpediente) {
+		CrearExpedienteComercialDto doc = new CrearExpedienteComercialDto();
+		
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(codClase);
+		doc.setUsuarioOperacional(username);
+		doc.setDescripcionExpediente(descripcionExpediente);
+		doc.setOperacionMetadatos(rellenarAgrupacionMetadatos(idExpedienteComercial, idExpedienteComercial, idSistemaOrigen, estadoExpediente, cliente));
+		doc.setTipoClase(tipoExpediente);
+		return doc;
+	}
+	private static String rellenarAgrupacionMetadatos (String id, String idExterno, String idSistemaOrigen, String estadoExpediente, String cliente) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.AGRUPACION_REO).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
+		sb.append("}");
+		System.out.println(sb.toString());
+		return sb.toString();
+	}
 	public CrearEntidadCompradorDto getCrearActivoOferta(String idIntervinienteHaya, String username, String cliente, String idSistemaOrigen, String codClase, String descripcionEntidad, String tipoActivoOferta) {
 		CrearEntidadCompradorDto doc = new CrearEntidadCompradorDto();
 

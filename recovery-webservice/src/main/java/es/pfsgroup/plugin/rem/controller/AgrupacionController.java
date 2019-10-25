@@ -1073,12 +1073,12 @@ public class AgrupacionController extends ParadiseJsonController {
 		try {
 			model.put("data", agrupacionAdjuntos.getAdjuntosAgrupacion(idAgrupacion));
 		} catch (GestorDocumentalException e) {
-			logger.error("error en promocionController", e);
+			logger.error("error en agrupacioncontroller", e);
 			model.put("success", false);
 			model.put("errorMessage",
-					"Gestor documental: No existe la promoción o no tiene permisos para listar el contenedor");
+					"Gestor documental: No existe la agrupacion o no tiene permisos para listar el contenedor");
 		} catch (Exception e) {
-			logger.error("error en activoController", e);
+			logger.error("error en agrupacioncontroller", e);
 			model.put("success", false);
 			model.put("errorMessage", e.getMessage());
 		}

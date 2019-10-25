@@ -64,9 +64,6 @@ public class ActivoAdjuntoAgrupacionManager  implements ActivoAdjuntosAgrupacion
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipoDocumentoAgrupacion"));
 			tipoDocumento = genericDao.get(DDTipoDocumentoAgrupacion.class, filtro);
 		}
-		
-//TODO: Añadir la obtencion de la matricula;
-		
 		if (!Checks.esNulo(matricula)) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
 			tipoDocumento = (DDTipoDocumentoAgrupacion) genericDao.get(DDTipoDocumentoAgrupacion.class, filtro);
@@ -87,11 +84,9 @@ public class ActivoAdjuntoAgrupacionManager  implements ActivoAdjuntosAgrupacion
 				adjuntoActivoAgrupacion.setContentType(webFileItem.getFileItem().getContentType());
 				adjuntoActivoAgrupacion.setTamanyo(webFileItem.getFileItem().getLength());
 				adjuntoActivoAgrupacion.setNombre(webFileItem.getFileItem().getFileName());
-				adjuntoActivoAgrupacion.setDescripcion(webFileItem.getParameter("descripcionDocumentoAgrupacion"));
+				adjuntoActivoAgrupacion.setDescripcion(webFileItem.getParameter("descripcion"));
 				adjuntoActivoAgrupacion.setFechaDocumento(new Date());
 				adjuntoActivoAgrupacion.setAuditoria(Auditoria.getNewInstance());
-				
-
 				genericDao.save(ActivoAdjuntoAgrupacion.class, adjuntoActivoAgrupacion);
 				
 				return adjuntoActivoAgrupacion.getId().toString();

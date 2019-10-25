@@ -100,23 +100,24 @@ public class AgrupacionAdjuntosAdapter {
 	
 	public List<DtoAdjuntoAgrupacion> creaListaAdjuntosAgrupacion(Long idAgrupacion, List<DtoAdjuntoAgrupacion> listaAdjuntos) throws IllegalAccessException, InvocationTargetException {
 
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", idAgrupacion);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrupacion.numAgrupRem", idAgrupacion);
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			List<ActivoAdjuntoAgrupacion> adjuntosAgrupacion = genericDao.getList(ActivoAdjuntoAgrupacion.class, filtro,filtroBorrado);
 
 			for (ActivoAdjuntoAgrupacion adjuntoAgrupacion : adjuntosAgrupacion) {
-				DtoAdjuntoAgrupacion dto = new DtoAdjuntoAgrupacion(); 
-				//TODO: REVISAR PROPIEDADES
-				BeanUtils.copyProperties(dto, adjuntoAgrupacion);
-				if (!Checks.esNulo(adjuntoAgrupacion.getAgrupacion()))
-					BeanUtils.copyProperty(dto, "idAgrupacion", adjuntoAgrupacion.getAgrupacion().getId());
-				if (!Checks.esNulo(adjuntoAgrupacion.getAdjunto()))
-					BeanUtils.copyProperty(dto, "id", adjuntoAgrupacion.getAdjunto().getId());
-				if (!Checks.esNulo(adjuntoAgrupacion.getTipoDocumentoAgrupacion())) {
-					BeanUtils.copyProperty(dto, "codigoTipo", adjuntoAgrupacion.getTipoDocumentoAgrupacion().getCodigo());
-					BeanUtils.copyProperty(dto, "descripcionTipo", adjuntoAgrupacion.getTipoDocumentoAgrupacion().getDescripcionLarga());
+				if ( Checks.esNulo (adjuntoAgrupacion.getIdDocRestClient())) {
+					DtoAdjuntoAgrupacion dto = new DtoAdjuntoAgrupacion(); 
+					BeanUtils.copyProperties(dto, adjuntoAgrupacion);
+					if (!Checks.esNulo(adjuntoAgrupacion.getAgrupacion()))
+						BeanUtils.copyProperty(dto, "idAgrupacion", adjuntoAgrupacion.getAgrupacion().getId());
+					if (!Checks.esNulo(adjuntoAgrupacion.getAdjunto()))
+						BeanUtils.copyProperty(dto, "id", adjuntoAgrupacion.getAdjunto().getId());
+					if (!Checks.esNulo(adjuntoAgrupacion.getTipoDocumentoAgrupacion())) {
+						BeanUtils.copyProperty(dto, "codigoTipo", adjuntoAgrupacion.getTipoDocumentoAgrupacion().getCodigo());
+						BeanUtils.copyProperty(dto, "descripcionTipo", adjuntoAgrupacion.getTipoDocumentoAgrupacion().getDescripcionLarga());
+					}
+					listaAdjuntos.add(dto);
 				}
-				listaAdjuntos.add(dto);
 			}
 
 		return listaAdjuntos;
@@ -132,7 +133,6 @@ public class AgrupacionAdjuntosAdapter {
 			String idDocumento = null;
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			//return null;
-			
 			if (!Checks.esNulo(tipoDocumento)) {
 				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoAgrupacionAdjunto(agrupacion, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
 				idDocumento = activoAdjuntosAgrupacionApi.uploadDocumento(webFileItem, idDocRestClient,agrupacion,null,usuarioLogado);

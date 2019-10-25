@@ -1270,8 +1270,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	  onClickAnyadirNuevoDocumentoAgrupacion: function(btn){
 	  		var me = this;
 	    	var idAgrupacion = me.getView().idAgrupacion;
-	    	form = btn.up("anyadirNuevoDocumentoAgrupacion").down("form");
-	  
+	    	form = btn.up("anyadirNuevoDocumentoAgrupacion").down("form"); 
 	    	if(form.isValid()){
 	            form.submit({
 	                waitMsg: HreRem.i18n('msg.mask.loading'),

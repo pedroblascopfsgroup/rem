@@ -115,10 +115,12 @@ public class ActivoAdjuntoAgrupacion implements Serializable, Auditable {
    }	
 
 	public Adjunto getAdjunto() {
-       FileItem fileItem = adjunto.getFileItem();
-       fileItem.setContentType(contentType);
-       fileItem.setFileName(nombre);
-       fileItem.setLength(tamanyo);		
+		if (adjunto != null ) {
+	       FileItem fileItem = adjunto.getFileItem();
+	       fileItem.setContentType(contentType);
+	       fileItem.setFileName(nombre);
+	       fileItem.setLength(tamanyo);	
+		}
 		return adjunto;
 	}
 

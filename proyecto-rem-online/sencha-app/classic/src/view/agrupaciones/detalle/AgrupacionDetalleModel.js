@@ -1114,7 +1114,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
      	     proxy: {
      	        type: 'uxproxy',
      	        remoteUrl: 'agrupacion/getListAdjuntosAgrupacion',
-     	        extraParams: {idAgrupacion: '{agrupacionficha.id}'}
+     	        extraParams: {idAgrupacion: '{agrupacionficha.numAgrupRem}'}
          	 },
          	 groupField: 'descripcionTipo',
 		     remoteSort: true,

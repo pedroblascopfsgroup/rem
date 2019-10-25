@@ -34,17 +34,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevoDocumentoAgrupacion', {
 				cls	: 'panel-base shadow-panel',
 				url: $AC.getRemoteUrl(me.entidad + "/upload"),
 				reference: 'adjuntarDocumentoAgrupacion',
-//				layout: {
-//			        type: 'table',
-//			        columns: 1,
-//			        trAttrs: {height: '50px', width: '100%'},
-//			        tdAttrs: {width: '100%'},
-//			        tableAttrs: {
-//			            style: {
-//			                width: '100%'
-//						}
-//			        }
-//				},
 				defaultType: 'textfieldbase',
 				collapsed: false,
 				scrollable	: 'y',
@@ -111,8 +100,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevoDocumentoAgrupacion', {
 			        {
 	                	xtype: 'textarea',
 	                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
-	                	reference: 'descripcionDocumentoAgrupacion',
-            	    	name:'descripcionDocumentoAgrupacion',
+	                	reference: 'descripcion',
+            	    	name:'descripcion',
 	                	maxLength: 256,
 	                	msgTarget: 'side',
 	                	width: '100%'

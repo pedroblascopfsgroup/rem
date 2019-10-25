@@ -85,6 +85,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 		    ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
+		    Boolean correoEnviado = false;
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if(!Checks.esNulo(ofertaAceptada)) {
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -178,7 +179,9 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							activoPlusvalia.setEstadoGestion(genericDao.get(DDEstadoGestionPlusv.class, filtroEstadoGestionPlusc));								
 							genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
 							
-							notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
+							if(!COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+								notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
+							}		
 							}
 							
 							activo.setBloqueoPrecioFechaIni(new Date());

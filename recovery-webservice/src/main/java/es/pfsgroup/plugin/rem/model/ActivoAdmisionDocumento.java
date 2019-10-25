@@ -105,13 +105,13 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	private String letraConsumo;
 
 	@Column(name = "CONSUMO")
-	private Double consumo;
+	private String consumo;
 
 	@Column(name = "EMISION")
-	private Double emision;
+	private String emision;
 
 	@Column(name = "REGISTRO")
-	private Long registro;
+	private String registro;
 		
 	@Version   
 	private Long version;
@@ -256,27 +256,27 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 		this.letraConsumo = letraConsumo;
 	}
 
-	public Double getConsumo() {
+	public String getConsumo() {
 		return consumo;
 	}
 
-	public void setConsumo(Double consumo) {
+	public void setConsumo(String consumo) {
 		this.consumo = consumo;
 	}
 
-	public Double getEmision() {
+	public String getEmision() {
 		return emision;
 	}
 
-	public void setEmision(Double emision) {
+	public void setEmision(String emision) {
 		this.emision = emision;
 	}
 
-	public Long getRegistro() {
+	public String getRegistro() {
 		return registro;
 	}
 
-	public void setRegistro(Long registro) {
+	public void setRegistro(String registro) {
 		this.registro = registro;
 	}
 

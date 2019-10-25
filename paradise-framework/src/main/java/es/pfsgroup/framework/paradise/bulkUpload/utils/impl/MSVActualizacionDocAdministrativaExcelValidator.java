@@ -45,15 +45,16 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 	private final String CHECK_APLICA = "msg.error.masivo.doc.administrativa.validator.aplica";
 	private final String CHECK_ESTADO = "msg.error.masivo.doc.administrativa.validator.estado";
 	private final String CHECK_CALIFICACION = "msg.error.masivo.doc.administrativa.validator.calificacion";
-	private final String CHECK_EMISION="msg.error.masivo.doc.administrativa.validator.emision";
-	private final String CHECK_LETRA_CONSUMO = "msg.error.masivo.doc.administrativa.validator.letra.consumo";
+	private final String CHECK_EMISION = "msg.error.masivo.doc.administrativa.validator.emision";
+	private final String CHECK_LETRA_CONSUMO ="msg.error.masivo.doc.administrativa.validator.letra.consumo";
+	private final String CHECK_CONSUMO = "msg.error.masivo.doc.administrativa.validator.consumo";
 	private final String CHECK_ID_DOC = "msg.error.masivo.doc.administrativa.validator.dataid";
 	private final String CHECK_ES_DOC_CEE = "msg.error.masivo.doc.administrativa.validator.campos.cee";
-	private final String CHECK_FECHA_SOLICITUD ="msg.error.masivo.doc.administrativa.validator.fecha.solicitud";
-	private final String CHECK_FECHA_OBTENCION="msg.error.masivo.doc.administrativa.validator.fecha.obtencion";
-	private final String CHECK_FECHA_VALIDACION="msg.error.masivo.doc.administrativa.validator.fecha.validacion";
-	private final String CHECK_FECHA_CADUCIDAD="msg.error.masivo.doc.administrativa.validator.fecha.caducidad";
-	private final String CHECK_FECHA_ETIQUETA="msg.error.masivo.doc.administrativa.validator.fecha.etiqueta";
+	private final String CHECK_FECHA_SOLICITUD = "msg.error.masivo.doc.administrativa.validator.fecha.solicitud";
+	private final String CHECK_FECHA_OBTENCION = "msg.error.masivo.doc.administrativa.validator.fecha.obtencion";
+	private final String CHECK_FECHA_VALIDACION = "msg.error.masivo.doc.administrativa.validator.fecha.validacion";
+	private final String CHECK_FECHA_CADUCIDAD = "msg.error.masivo.doc.administrativa.validator.fecha.caducidad";
+	private final String CHECK_FECHA_ETIQUETA = "msg.error.masivo.doc.administrativa.validator.fecha.etiqueta";
 
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
@@ -161,11 +162,11 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 
 					switch (columna) {
 					case COL_TIPO_DOC:
-						valorOK = !Checks.esNulo(celda) || particularValidator.existeTipoDoc(celda);
+						valorOK = !Checks.esNulo(celda) && particularValidator.existeTipoDoc(celda);
 						break;
 
 					case COL_NUM_ACTIVO:
-						valorOK = !Checks.esNulo(celda) || particularValidator.existeActivo(celda);
+						valorOK = !Checks.esNulo(celda) && particularValidator.existeActivo(celda);
 						break;
 
 					case COL_APLICA:
@@ -181,6 +182,7 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 					case COL_F_OBTENCION:
 					case COL_F_VALIDACION:
 					case COL_F_CADUCIDAD:
+					case COL_F_ETIQUETA:						
 					case COL_CONSUMO:
 					case COL_EMISION:
 						valorOK = Checks.esNulo(celda) && !docTipoCEE || !Checks.esNulo(celda);
@@ -198,7 +200,7 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 						break;
 
 					case COL_REGISTRO:
-						valorOK = !Checks.esNulo(celda) && StringUtils.isNumeric(celda) || Checks.esNulo(celda);
+						valorOK = true;
 						break;
 					}
 
@@ -225,12 +227,14 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 			mapaErrores.put(messageServices.getMessage(CHECK_ESTADO), listasError.get(COL_ESTADO));
 			mapaErrores.put(messageServices.getMessage(CHECK_CALIFICACION), listasError.get(COL_CALIFICACION));
 			mapaErrores.put(messageServices.getMessage(CHECK_EMISION), listasError.get(COL_EMISION));
-			mapaErrores.put(messageServices.getMessage(CHECK_LETRA_CONSUMO), listasError.get(COL_CONSUMO));
+			mapaErrores.put(messageServices.getMessage(CHECK_LETRA_CONSUMO), listasError.get(COL_LETRA_CONSUMO));
+			mapaErrores.put(messageServices.getMessage(CHECK_CONSUMO), listasError.get(COL_CONSUMO));
 			mapaErrores.put(messageServices.getMessage(CHECK_ID_DOC), listasError.get(COL_ID_DOC));
 			mapaErrores.put(messageServices.getMessage(CHECK_FECHA_SOLICITUD), listasError.get(COL_F_SOLICITUD));
 			mapaErrores.put(messageServices.getMessage(CHECK_FECHA_CADUCIDAD), listasError.get(COL_F_CADUCIDAD));
 			mapaErrores.put(messageServices.getMessage(CHECK_FECHA_OBTENCION), listasError.get(COL_F_OBTENCION));
 			mapaErrores.put(messageServices.getMessage(CHECK_FECHA_VALIDACION), listasError.get(COL_F_VALIDACION));
+			mapaErrores.put(messageServices.getMessage(CHECK_FECHA_ETIQUETA), listasError.get(COL_F_ETIQUETA));
 		}
 		return esCorrecto;
 	}

@@ -3896,7 +3896,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean existeTipoDoc(String codTipoDoc) {
 		if (Checks.esNulo(codTipoDoc)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
-				+" WHERE DD_TPD_CODIGO = '" + codTipoDoc +"'");
+				+" WHERE DD_TPD_CODIGO = '" + codTipoDoc +"'"
+				+ " AND DD_TPD_CODIGO IN('02','04','05','06','07','08','09','10','11','12','13','14','15','16','17','19','24','25','26','27','52','71','72','104','106','119')");
 		return !"0".equals(resultado);
 	}
 	

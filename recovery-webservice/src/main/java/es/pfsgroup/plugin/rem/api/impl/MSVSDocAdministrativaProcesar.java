@@ -150,13 +150,13 @@ public class MSVSDocAdministrativaProcesar extends AbstractMSVActualizador imple
 		ado.setLetraConsumo(celdaLetraConsumo);
 		
 		// Consumo
-		ado.setConsumo(Checks.esNulo(celdaConsumo) ? null : Double.parseDouble(celdaConsumo));
+		ado.setConsumo(celdaConsumo);
 		
 		// Emision
-		ado.setEmision(Checks.esNulo(celdaEmision) ? null : Double.parseDouble(celdaEmision));
+		ado.setEmision(celdaEmision);
 		
 		// Registro
-		ado.setRegistro(Checks.esNulo(celdaRegistro) ? null : Long.parseLong(celdaRegistro));
+		ado.setRegistro(celdaRegistro);
 		
 		genericDao.save(ActivoAdmisionDocumento.class, ado);
 		return new ResultadoProcesarFila();		

@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -1229,6 +1230,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	 * @param informe
 	 * @throws Exception
 	 */
+	@Transactional(readOnly = false)
 	private Long parcheEspecificacionTablas(Object objeto, InformeMediadorDto informe) throws Exception {
 		Long idProveedor = null;
 		if (objeto instanceof ActivoLocalComercial || objeto instanceof ActivoPlazaAparcamiento
@@ -1328,12 +1330,19 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 				}
 			}
-
+			ActivoInfoComercial informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(
+					informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
+			if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL) && !DDTipoInfoComercial.COD_LOCAL_COMERCIAL.equals(informeEntity.getTipoInfoComercial().getCodigo())
+					|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS) && !DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO.equals(informeEntity.getTipoInfoComercial().getCodigo())
+					|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA) && !DDTipoInfoComercial.COD_VIVIENDA.equals(informeEntity.getTipoInfoComercial().getCodigo())) {
+				errorsList.put("codTipoActivo", "El tipo de Activo no concuerda con el tipo de Informe Comercial del Activo que es '" + informeEntity.getTipoInfoComercial().getDescripcion() + "'");
+			}
+			
 			if (errorsList.size() == 0) {
 				boolean tieneInformeComercialAceptado = false;
 				Long idProveedorParche = null;
 				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
-				ActivoInfoComercial informeEntity = null;
+				
 				if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
 					ArrayList<Serializable> entitys = new ArrayList<Serializable>();
 					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
@@ -1459,9 +1468,10 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					*	}
 					*}
 					*/
-					
-					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,
+					if(!Checks.estaVacio(entitys)) {
+						informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,
 							(JSONObject) jsonFields.getJSONArray("data").get(i));
+					}
 					// Si viene información de las plantas lo guardamos
 					List<PlantaDto> plantas = informe.getPlantas();
 					if (!Checks.esNulo(informe.getPlantas()) && !Checks.estaVacio(informe.getPlantas())) {

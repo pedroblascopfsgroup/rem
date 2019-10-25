@@ -204,7 +204,9 @@ beforeedit: 'numVisitaIsEditable'
 						readOnly : true
 					}, 
 					{
-						
+						bind : {
+							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
+						}
 					}, 
 					{
 						xtype : 'currencyfieldbase',
@@ -216,7 +218,9 @@ beforeedit: 'numVisitaIsEditable'
 						readOnly : true
 					},
 					{
-						
+						bind : {
+							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
+						}
 					},
 					{
 						xtype : 'fieldsettable',

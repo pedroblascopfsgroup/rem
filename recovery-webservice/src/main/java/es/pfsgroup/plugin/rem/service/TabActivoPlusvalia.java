@@ -188,7 +188,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 			if(activoPlusvaliaDto.getEstadoGestion().equals(DDEstadoGestionPlusv.COD_RECHAZADO)) {
 				List<ActivoOferta> actOfrList = activoPlusvalia.getActivo().getOfertas();
 				for(ActivoOferta actOfr : actOfrList) {
-					if(actOfr.getPrimaryKey().getOferta().getEstadoOferta().equals(DDEstadoOferta.CODIGO_ACEPTADA)){
+					if(actOfr.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)){
 						ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", actOfr.getPrimaryKey().getOferta().getId()));
 						notificationPlusvaliaManager.sendNotificationPlusvaliaRechazado(activoPlusvalia.getActivo(), eco);
 						break;

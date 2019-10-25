@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -46,9 +45,15 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 	private final String CHECK_APLICA = "msg.error.masivo.doc.administrativa.validator.aplica";
 	private final String CHECK_ESTADO = "msg.error.masivo.doc.administrativa.validator.estado";
 	private final String CHECK_CALIFICACION = "msg.error.masivo.doc.administrativa.validator.calificacion";
+	private final String CHECK_EMISION="msg.error.masivo.doc.administrativa.validator.emision";
 	private final String CHECK_LETRA_CONSUMO = "msg.error.masivo.doc.administrativa.validator.letra.consumo";
 	private final String CHECK_ID_DOC = "msg.error.masivo.doc.administrativa.validator.dataid";
 	private final String CHECK_ES_DOC_CEE = "msg.error.masivo.doc.administrativa.validator.campos.cee";
+	private final String CHECK_FECHA_SOLICITUD ="msg.error.masivo.doc.administrativa.validator.fecha.solicitud";
+	private final String CHECK_FECHA_OBTENCION="msg.error.masivo.doc.administrativa.validator.fecha.obtencion";
+	private final String CHECK_FECHA_VALIDACION="msg.error.masivo.doc.administrativa.validator.fecha.validacion";
+	private final String CHECK_FECHA_CADUCIDAD="msg.error.masivo.doc.administrativa.validator.fecha.caducidad";
+	private final String CHECK_FECHA_ETIQUETA="msg.error.masivo.doc.administrativa.validator.fecha.etiqueta";
 
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
@@ -96,6 +101,8 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	Map<String, List<Integer>> mapaErrores;
+
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		Long idTipoOperacion = dtoFile.getIdTipoOperacion();
@@ -122,31 +129,115 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 			logger.error(e.getMessage());
 		}
 
-		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
-			mapaErrores.put(messageServices.getMessage(CHECK_ACTIVO_EXISTE), comprobarActivo(exc));
-			mapaErrores.put(messageServices.getMessage(CHECK_DOC), comprobarDocumento(exc));
-			mapaErrores.put(messageServices.getMessage(CHECK_APLICA), comprobarAplica(exc));
-			mapaErrores.put(messageServices.getMessage(CHECK_ESTADO), comprobarEstado(exc));
-			mapaErrores.put(messageServices.getMessage(CHECK_CALIFICACION), comprobarCalificacion(exc, COL_CALIFICACION));
-			mapaErrores.put(messageServices.getMessage(CHECK_LETRA_CONSUMO), comprobarCalificacion(exc, COL_LETRA_CONSUMO));
-			mapaErrores.put(messageServices.getMessage(CHECK_ID_DOC), comprobarIdDoc(exc));
-			mapaErrores.put(messageServices.getMessage(CHECK_ES_DOC_CEE), comprobarEsDocCEE(exc));
-
-			for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
-				if (!registro.getValue().isEmpty()) {
-					dtoValidacionContenido.setFicheroTieneErrores(true);
-					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
-				}
-			}
+		if (!dtoValidacionContenido.getFicheroTieneErrores() && !validarFichero(exc)) {
+			dtoValidacionContenido.setFicheroTieneErrores(true);
+			dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
 		}
-
 		exc.cerrar();
 		return dtoValidacionContenido;
 	}
 
+	private boolean validarFichero(MSVHojaExcel exc) {
+		boolean esCorrecto = true;
+		mapaErrores = new HashMap<String, List<Integer>>();
+		ArrayList<ArrayList<Integer>> listasError = new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> errList = null;
+
+		String[] listaValidos = { "1", "0" };
+		String celda;
+
+		for (int columna = 0; columna < NUM_COLS; columna++) {
+			listasError.add(columna, new ArrayList<Integer>());
+		}
+
+		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
+			try {
+				boolean docTipoCEE = particularValidator.esDocumentoCEE(exc.dameCelda(fila, COL_TIPO_DOC));
+
+				for (int columna = 0; columna < NUM_COLS; columna++) {
+					errList = listasError.get(columna);
+					celda = exc.dameCelda(fila, columna);
+					boolean valorOK = true;
+
+					switch (columna) {
+					case COL_TIPO_DOC:
+						valorOK = !Checks.esNulo(celda) || particularValidator.existeTipoDoc(celda);
+						break;
+
+					case COL_NUM_ACTIVO:
+						valorOK = !Checks.esNulo(celda) || particularValidator.existeActivo(celda);
+						break;
+
+					case COL_APLICA:
+						valorOK = !Checks.esNulo(celda) && Arrays.asList(listaValidos).contains(celda);
+						break;
+
+					case COL_ESTADO:
+						valorOK = Checks.esNulo(celda) && !docTipoCEE
+								|| !Checks.esNulo(celda) && particularValidator.existeEstadoDocumento(celda);
+						break;
+
+					case COL_F_SOLICITUD:
+					case COL_F_OBTENCION:
+					case COL_F_VALIDACION:
+					case COL_F_CADUCIDAD:
+					case COL_CONSUMO:
+					case COL_EMISION:
+						valorOK = Checks.esNulo(celda) && !docTipoCEE || !Checks.esNulo(celda);
+						break;
+
+					case COL_ID_DOC:
+						valorOK = !Checks.esNulo(celda) && StringUtils.isNumeric(celda)
+								|| Checks.esNulo(celda) && !docTipoCEE;
+						break;
+
+					case COL_CALIFICACION:
+					case COL_LETRA_CONSUMO:
+						valorOK = !Checks.esNulo(celda) && particularValidator.existeCalificacionEnergetica(celda)
+								|| Checks.esNulo(celda) && !docTipoCEE;
+						break;
+
+					case COL_REGISTRO:
+						valorOK = !Checks.esNulo(celda) && StringUtils.isNumeric(celda) || Checks.esNulo(celda);
+						break;
+					}
+
+					if (!valorOK) {
+						errList.add(fila);
+						esCorrecto = false;
+					}
+
+				}
+
+			} catch (ParseException e) {
+				errList.add(fila);
+				logger.error(e.getMessage());
+			} catch (Exception e) {
+				errList.add(0);
+				logger.error(e.getMessage());
+			}
+		}
+		
+		if (!esCorrecto) {
+			mapaErrores.put(messageServices.getMessage(CHECK_ACTIVO_EXISTE), listasError.get(COL_NUM_ACTIVO));
+			mapaErrores.put(messageServices.getMessage(CHECK_DOC), listasError.get(COL_TIPO_DOC));
+			mapaErrores.put(messageServices.getMessage(CHECK_APLICA), listasError.get(COL_APLICA));
+			mapaErrores.put(messageServices.getMessage(CHECK_ESTADO), listasError.get(COL_ESTADO));
+			mapaErrores.put(messageServices.getMessage(CHECK_CALIFICACION), listasError.get(COL_CALIFICACION));
+			mapaErrores.put(messageServices.getMessage(CHECK_EMISION), listasError.get(COL_EMISION));
+			mapaErrores.put(messageServices.getMessage(CHECK_LETRA_CONSUMO), listasError.get(COL_CONSUMO));
+			mapaErrores.put(messageServices.getMessage(CHECK_ID_DOC), listasError.get(COL_ID_DOC));
+			mapaErrores.put(messageServices.getMessage(CHECK_FECHA_SOLICITUD), listasError.get(COL_F_SOLICITUD));
+			mapaErrores.put(messageServices.getMessage(CHECK_FECHA_CADUCIDAD), listasError.get(COL_F_CADUCIDAD));
+			mapaErrores.put(messageServices.getMessage(CHECK_FECHA_OBTENCION), listasError.get(COL_F_OBTENCION));
+			mapaErrores.put(messageServices.getMessage(CHECK_FECHA_VALIDACION), listasError.get(COL_F_VALIDACION));
+		}
+		return esCorrecto;
+	}
+
 	@Override
-	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda,	MSVBusinessValidators contentValidators) {
+	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda,
+			MSVBusinessValidators contentValidators) {
 		ResultadoValidacion resultado = new ResultadoValidacion();
 		resultado.setValido(true);
 
@@ -160,7 +251,8 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 	}
 
 	@Override
-	protected ResultadoValidacion validaContenidoFila(Map<String, String> mapaDatos, List<String> listaCabeceras, MSVBusinessCompositeValidators compositeValidators) {
+	protected ResultadoValidacion validaContenidoFila(Map<String, String> mapaDatos, List<String> listaCabeceras,
+			MSVBusinessCompositeValidators compositeValidators) {
 		ResultadoValidacion resultado = new ResultadoValidacion();
 		resultado.setValido(true);
 
@@ -183,166 +275,6 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 			logger.error(e.getMessage());
 		}
 		return null;
-	}
-
-	private List<Integer> comprobarActivo(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		String celdaNumActivo;
-		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
-			try {
-				celdaNumActivo = exc.dameCelda(i, COL_NUM_ACTIVO);
-				if (!particularValidator.existeActivo(celdaNumActivo)) {
-					listaFilas.add(i);
-				}
-			} catch (ParseException e) {
-				listaFilas.add(i);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
-	}
-
-	private List<Integer> comprobarDocumento(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		String celdaTipoDoc;
-
-		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
-			try {
-				celdaTipoDoc = exc.dameCelda(i, COL_TIPO_DOC);
-				if (Checks.esNulo(celdaTipoDoc) || !particularValidator.existeTipoDoc(celdaTipoDoc.toUpperCase())) {
-					listaFilas.add(i);
-				}
-			} catch (ParseException e) {
-				listaFilas.add(i);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
-	}
-
-	private List<Integer> comprobarEstado(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		String celdaEstadoDoc;
-		String celdaTipoDoc;	
-
-		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
-			try {
-				celdaEstadoDoc = exc.dameCelda(i, COL_ESTADO);
-				celdaTipoDoc = exc.dameCelda(i, COL_TIPO_DOC);
-				if (!Checks.esNulo(celdaEstadoDoc) && !particularValidator.existeEstadoDocumento(celdaEstadoDoc.toUpperCase())
-						|| Checks.esNulo(celdaEstadoDoc) && particularValidator.esDocumentoCEE(celdaTipoDoc.toUpperCase())) {
-					listaFilas.add(i);
-				}
-			} catch (ParseException e) {
-				listaFilas.add(i);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
-	}
-
-	private List<Integer> comprobarCalificacion(MSVHojaExcel exc, int columna) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		String codCE;
-		String celdaTipoDoc;	
-
-		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
-			try {
-				codCE = exc.dameCelda(i, columna);
-				celdaTipoDoc = exc.dameCelda(i, COL_TIPO_DOC);				
-				if (!Checks.esNulo(codCE) && !particularValidator.existeCalificacionEnergetica(codCE.toUpperCase())
-						|| Checks.esNulo(codCE) && particularValidator.esDocumentoCEE(celdaTipoDoc.toUpperCase())) {
-					listaFilas.add(i);
-				}
-			} catch (ParseException e) {
-				listaFilas.add(i);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
-	}
-
-	private List<Integer> comprobarAplica(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		String[] listaValidos = { "1", "0" };
-		String valorCelda;
-
-		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
-			try {
-				valorCelda = exc.dameCelda(i, COL_APLICA);
-				if (!Checks.esNulo(valorCelda) && !Arrays.asList(listaValidos).contains(valorCelda.toUpperCase())) {
-					listaFilas.add(i);
-				}
-			} catch (ParseException e) {
-				listaFilas.add(i);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
-	}
-
-	private List<Integer> comprobarIdDoc(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		String idDoc;
-
-		for (int i = FILA_DATOS; i < this.numFilasHoja; i++) {
-			try {
-				idDoc = exc.dameCelda(i, COL_ID_DOC);
-				if (!Checks.esNulo(idDoc) && !StringUtils.isNumeric(idDoc)) {
-					listaFilas.add(i);
-				}
-			} catch (ParseException e) {
-				listaFilas.add(i);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
-	}
-
-	private List<Integer> comprobarEsDocCEE(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		String celda;		
-
-		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
-			try {
-				celda = exc.dameCelda(fila, COL_TIPO_DOC);
-				if (!Checks.esNulo(celda) && particularValidator.esDocumentoCEE(celda)) {
-					for (int col = 0; col <= NUM_COLS; col++) {
-						if (col == COL_TIPO_DOC || col == COL_F_ETIQUETA || col == COL_REGISTRO) {
-							continue;
-						}
-						if (Checks.esNulo(exc.dameCelda(fila, col)) && !listaFilas.contains(fila)) {
-							listaFilas.add(fila);
-						}
-					}
-				}
-			} catch (ParseException e) {
-				listaFilas.add(fila);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
 	}
 
 }

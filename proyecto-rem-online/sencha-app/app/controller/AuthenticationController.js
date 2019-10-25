@@ -86,7 +86,7 @@ Ext.define('HreRem.controller.AuthenticationController', {
     	if(Ext.isEmpty(session.user)) {
     		me.warn("No se ha cargado el usuario.");
     	} else {
-    		me.log(session.user.get("data"));
+    		me.log(session.user.getData());
     	}
     	
     },
@@ -343,7 +343,7 @@ Ext.define('HreRem.controller.AuthenticationController', {
     	var me = this;
     	
     	if(!Ext.isEmpty(me.session) && !Ext.isEmpty(me.session.user)) {
-    		return me.session.user.get("data");
+    		return me.session.user.getData();
     	}
     	
     	return {};

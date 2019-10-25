@@ -1393,7 +1393,8 @@ public class ActivoAdapter {
 						BeanUtils.copyProperty(adoDto, "numConsumo", activo.getAdmisionDocumento().get(i).getConsumo());
 						BeanUtils.copyProperty(adoDto, "numEmision", activo.getAdmisionDocumento().get(i).getEmision());
 						BeanUtils.copyProperty(adoDto, "numRegistro", activo.getAdmisionDocumento().get(i).getRegistro());
-	
+						adoDto.setDataIdDocumento(Checks.esNulo(activo.getAdmisionDocumento().get(i).getDataIdDocumento()) ? null : activo.getAdmisionDocumento().get(i).getDataIdDocumento());
+						
 						if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento())) {
 							if(!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo())){
 							BeanUtils.copyProperty(adoDto, "descripcionTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getDescripcion());

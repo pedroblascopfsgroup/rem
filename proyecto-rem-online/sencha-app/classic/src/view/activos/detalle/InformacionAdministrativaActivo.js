@@ -520,6 +520,13 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        	dataIndex: 'tipoCalificacionDescripcion',
 			        	width: '19%'
 			        },
+			        {   text: 'Dataid_Documento', 
+			        	dataIndex: 'dataIdDocumento',
+			        	width: '19%',
+			        	renderer: function(value){
+		            		return (value > 0) ? value : '';
+		            	}
+			        },
 			        {   text: 'Letra consumo', 
 			        	dataIndex: 'tipoLetraConsumoDescripcion',
 			        	width: '10%'
@@ -541,7 +548,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        {   text: 'Registro', 
 			        	dataIndex: 'numRegistro',
 			        	width: '19%',
-		            	renderer: function(value){
+			        	renderer: function(value){
 		            		return (value > 0) ? value : '';
 		            	}
 			        }

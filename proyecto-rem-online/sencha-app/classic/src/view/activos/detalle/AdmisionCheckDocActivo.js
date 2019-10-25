@@ -294,8 +294,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        	cls: 'grid-no-seleccionable-col',
 								        	tdCls: 'grid-no-seleccionable-td',
 								        	editor: {
-								        		xtype: 'numberfield',
-								        		cls: 'grid-no-seleccionable-field-editor'
+								        		xtype: 'textfield'
 								        	}
 								        },
 								        {   
@@ -305,8 +304,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        	cls: 'grid-no-seleccionable-col',
 								        	tdCls: 'grid-no-seleccionable-td',
 								        	editor: {
-								        		xtype: 'numberfield',
-								        		cls: 'grid-no-seleccionable-field-editor'
+								        		xtype: 'textfield'
 								        	}
 								        },
 								        {   
@@ -316,8 +314,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        	cls: 'grid-no-seleccionable-col',
 								        	tdCls: 'grid-no-seleccionable-td',
 								        	editor: {
-								        		xtype: 'numberfield',
-								        		cls: 'grid-no-seleccionable-field-editor'
+								        		xtype: 'textfield'
 								        	}
 								        }
 			       	        

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20191022
+--## FECHA_CREACION=20191025
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7997
@@ -11,6 +11,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Añadir nuevos campos
+--##        0.3 Modificación nuevos campos
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -22,6 +23,7 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_TABLAS_AUX NUMBER(16); -- Vble. para validar la existencia de una tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USR VARCHAR2(30 CHAR) := 'HREOS-7997'; -- USUARIOCREAR/USUARIOMODIFICAR.
@@ -31,11 +33,11 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(        
         				-- Nombre Columna	-- Tipo						-- Comentario
-        T_TIPO_DATA('DATA_ID_DOCUMENTO',	'NUMBER(16,0)', 			'Identificador del Documento'),
-        T_TIPO_DATA('LETRA_CONSUMO', 		'VARCHAR2(20 CHAR)',	 	'Indica la Letra Consumo de calificación energética'),
-        T_TIPO_DATA('CONSUMO', 				'NUMBER(16,2)',			 	'Indica el valor de Consumo energético'),
-        T_TIPO_DATA('EMISION', 				'NUMBER(16,2)', 			'Indica el valor de Emisión energética'),
-        T_TIPO_DATA('REGISTRO',				'NUMBER(16,0)', 			'Indica el valor de Registro')
+        T_TIPO_DATA('DATA_ID_DOCUMENTO',	'NUMBER(16,0)', 			'Identificador del Documento', 							'NUMBER'),
+        T_TIPO_DATA('LETRA_CONSUMO', 		'VARCHAR2(20 CHAR)',	 	'Indica la Letra Consumo de calificación energética', 	'VARCHAR'),
+        T_TIPO_DATA('CONSUMO', 				'VARCHAR2(20 CHAR)',		'Indica el valor de Consumo energético', 				'VARCHAR'),
+        T_TIPO_DATA('EMISION', 				'VARCHAR2(20 CHAR)', 		'Indica el valor de Emisión energética', 				'VARCHAR'),
+        T_TIPO_DATA('REGISTRO',				'VARCHAR2(20 CHAR)', 		'Indica el valor de Registro', 							'VARCHAR')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -64,9 +66,27 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
 		
 		ELSE 
-		
-			DBMS_OUTPUT.PUT_LINE('[INFO] LA COLUMNA '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||' YA EXISTE');
-		
+			V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = '''||V_TMP_TIPO_DATA(1)||''' 
+														 and TABLE_NAME = '''||V_TEXT_TABLA||''' 
+														 and OWNER = '''||V_ESQUEMA||'''
+														 and DATA_TYPE <> '''||V_TMP_TIPO_DATA(4)||''' ';
+
+
+			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS_AUX;
+
+			IF V_NUM_TABLAS_AUX = 1 THEN
+				V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP COLUMN '||V_TMP_TIPO_DATA(1)||' ';
+				DBMS_OUTPUT.PUT_LINE(V_MSQL);
+				
+				EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('2');		
+				
+				V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('3');
+				DBMS_OUTPUT.PUT_LINE('[INFO] TABLA '''||V_TMP_TIPO_DATA(1)||''' ACTUALIZADA!');
+			END IF;
+			
 		END IF;
 		
 	END LOOP;

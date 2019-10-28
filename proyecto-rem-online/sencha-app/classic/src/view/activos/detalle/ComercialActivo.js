@@ -20,26 +20,6 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 
     	me.items = [
     		{
-    			xtype: 'label',
-    			cls:'x-form-item',
-    			html: HreRem.i18n('msg.oferta.activo.no.tramitable'),
-    			style: 'color: red; font-weight: bold; font-size: small;',
-    			readOnly: true,
-    			hidden: true,
-    			reference: 'labelActivoNoTramitable',
-    			bind : {
-    				hidden: '{comercial.tramitable}'
-    			},
-    			listeners:{
-    				
-    				afterrender: function(){
-    					var me = this;
-    					me.lookupController().usuarioTieneFuncionPermitirTramitarOferta();
-    					
-    				}
-				}
-    		},
-    		{
     			xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				collapsible: true,

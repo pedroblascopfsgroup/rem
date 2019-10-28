@@ -169,6 +169,9 @@ public class VGastosProveedor implements Serializable {
 	@Column(name="GGE_MOTIVO_RECHAZO_PROP")
 	private String motivoRechazoProp;
 	
+	@Column(name="TBJ_NUM_TRABAJO")
+	private Long numTrabajo;
+	
 	@Transient
 	private boolean esGastoAgrupado; 
 	
@@ -586,6 +589,14 @@ public class VGastosProveedor implements Serializable {
 
 	public void setMotivoRechazoProp(String motivoRechazoProp) {
 		this.motivoRechazoProp = motivoRechazoProp;
+	}
+
+	public Long getNumTrabajo() {
+		return numTrabajo;
+	}
+
+	public void setNumTrabajo(Long numTrabajo) {
+		this.numTrabajo = numTrabajo;
 	}
 	
 }

@@ -209,17 +209,21 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 				            	},
 				            	displayField: 'descripcion',
 								valueField: 'codigo'
-              },
-              {
-                xtype: 'comboboxfieldbase',
-                fieldLabel:  HreRem.i18n('fieldlabel.motivo.aviso.gasto'),
-                name: 'codigoMotivoAviso',
-                bind: {
-                  store: '{comboMotivosAviso}'
-                },
-                displayField: 'descripcion',
-                valueField: 'codigo'
-              }
+				             },
+				             {
+				                xtype: 'comboboxfieldbase',
+				                fieldLabel:  HreRem.i18n('fieldlabel.motivo.aviso.gasto'),
+				                name: 'codigoMotivoAviso',
+				                bind: {
+				                  store: '{comboMotivosAviso}'
+				                },
+				                displayField: 'descripcion',
+				                valueField: 'codigo'
+				             },
+				             {
+				    			fieldLabel: HreRem.i18n('fieldlabel.filtro.por.gasto'),
+								name: 'numTrabajo'
+				    		 }
 			    		]
 				    },
 				    {

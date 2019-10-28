@@ -1,17 +1,18 @@
 --/*
 --##########################################
---## AUTOR=Victor Olivares
---## FECHA_CREACION=20190304
+--## AUTOR=Alfonso Rodriguez
+--## FECHA_CREACION=20191028
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5384
+--## INCIDENCIA_LINK=HREOS-8159
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_GASTOS_PROVEEDOR.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial - Juanjo Arbona - 20180411 - REMVIP-471
---##        0.2 Añadido campo GGE.GGE_MOTIVO_RECHAZO_PROP para motivo de rechazo bankia
+--##        0.2 Añadido campo GGE.GGE_MOTIVO_RECHAZO_PROP para motivo de rechazo bankia - Victor Olivares - 20190304 - HREOS-5384
+--##        0.3 Añadido campo TBJ_GPV.TBJ_NUM_TRABAJO para filtrar busqueda por numTrabajo - HREOS-8159
 --##########################################
 --*/
 
@@ -98,7 +99,8 @@ BEGIN
 	        CRA.DD_CRA_CODIGO,
 	        CRA.DD_CRA_DESCRIPCION,
 			PVEG.PVE_ID AS PVE_ID_GESTORIA,  
-	        PVEG.PVE_NOMBRE AS PVE_NOMBRE_GESTORIA
+	        PVEG.PVE_NOMBRE AS PVE_NOMBRE_GESTORIA,
+	        TBJ_GPV.TBJ_NUM_TRABAJO AS TBJ_NUM_TRABAJO
             
 		FROM ' || V_ESQUEMA || '.GPV_GASTOS_PROVEEDOR GPV
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TGA_TIPOS_GASTO TGA ON GPV.DD_TGA_ID = TGA.DD_TGA_ID
@@ -116,7 +118,12 @@ BEGIN
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TEP_TIPO_ENTIDAD_PROVEEDOR TEP ON TPR.DD_TEP_ID = TEP.DD_TEP_ID
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
 	    LEFT JOIN ' || V_ESQUEMA || '.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
-		LEFT JOIN ' || V_ESQUEMA || '.DD_MRH_MOTIVOS_RECHAZO_HAYA MRH ON GGE.DD_MRH_ID = MRH.DD_MRH_ID 
+		LEFT JOIN ' || V_ESQUEMA || '.DD_MRH_MOTIVOS_RECHAZO_HAYA MRH ON GGE.DD_MRH_ID = MRH.DD_MRH_ID
+		LEFT JOIN (SELECT TBJ.TBJ_NUM_TRABAJO, GPV_TBJ.GPV_ID 
+					FROM ' || V_ESQUEMA || '.GPV_TBJ 
+                    JOIN ' || V_ESQUEMA || '.ACT_TBJ_TRABAJO TBJ ON GPV_TBJ.TBJ_ID = TBJ.TBJ_ID AND TBJ.BORRADO = 0
+                    WHERE TBJ.BORRADO = 0) TBJ_GPV ON TBJ_GPV.GPV_ID = GPV.GPV_ID
+
 		WHERE GPV.BORRADO = 0 ';
     
     --##########################################
@@ -173,9 +180,19 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR.SUJETO_IMPUESTO_INDIRECTO IS ''Indica si el gasto está sujeto a impuestos indirectos.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR.DD_EGA_CODIGO IS ''Código de estado del gasto.''';
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR.DD_EGA_DESCRIPCION IS ''Descripcion de estado del gasto.''';
+  EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVEEDOR.TBJ_NUM_TRABAJO IS ''Numero del trabajo relacionado con el gasto.''';
   
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_PROVEEDOR...Creada OK');
-  
+
+	EXCEPTION
+	WHEN OTHERS THEN 
+	DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+	DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+	DBMS_OUTPUT.put_line(SQLERRM);
+	DBMS_OUTPUT.put_line(V_MSQL);
+	ROLLBACK;
+	RAISE;   
+
 END;
 /
 

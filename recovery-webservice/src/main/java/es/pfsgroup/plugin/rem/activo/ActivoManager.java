@@ -55,7 +55,6 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -125,7 +124,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
@@ -210,7 +208,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String KEY_GDPR="gdpr.data.key";
 	private static final String URL_GDPR="gdpr.data.url";
 	private static final String AVISO_MENSAJE_MOTIVO_CALIFICACION = "activo.aviso.motivo.calificacion.duplicado";
-	private static final String AVISO_MENSAJE_ACTIVO_PRECIO_APROBADO_APPLE = "activo.aviso.precio.aprobado.apple";
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1122,8 +1119,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// El combo "Comité seleccionado" vendrá informado para cartera
 		// Liberbank
 		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-				&& Checks.esNulo(oferta.getAgrupacion())) {
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
 				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLiberbank(oferta));
 		}
@@ -6172,8 +6168,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 									for (DtoAdjunto adjunto : listAdjuntos) {
 
 										boolean esOcupacionDesocupacion = DDTipoDocumentoActivo.MATRICULA_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getMatricula());
-										Date adjuntoFecha = adjunto.getFechaDocumento();
-
 										if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion)) {
 											adjuntoAux = adjunto;
 										}

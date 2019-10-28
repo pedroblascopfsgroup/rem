@@ -644,6 +644,13 @@
             def esOmega = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.esOmega(tareaExterna);
+            def checkTipoImpuesto = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkTipoImpuesto(tareaExterna);
+			}
+			def checkReservaInformada = {
+				def ofertaManager = ctx.getBean("ofertaManager");
+				return ofertaManager.checkReservaInformada(tareaExterna);
 			}
 			def checkContabilizacionReserva = {
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");

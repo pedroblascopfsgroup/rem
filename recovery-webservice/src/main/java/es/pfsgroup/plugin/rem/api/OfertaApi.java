@@ -713,7 +713,7 @@ public interface OfertaApi {
 	
 
 
-	public boolean faltanDatosCalculo(Oferta ofertaById);
+	public boolean faltanDatosCalculo(Long idOferta);
 
 	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
 
@@ -796,5 +796,11 @@ public interface OfertaApi {
 	 */
 	public boolean agrupacionConActivoYaIncluidoEnOfertaAgrupadaLbk(Long idAgrupacion, Oferta ofertaPrincipal);
 
+
 	boolean checkEsOmega(TareaExterna tareaExterna);
+
+	boolean checkTipoImpuesto(TareaExterna tareaExterna);
+
+	boolean checkReservaInformada(TareaExterna tareaExterna);
+
 }

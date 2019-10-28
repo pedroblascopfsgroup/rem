@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20191025
+--## FECHA_CREACION=20191028
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7997
@@ -33,7 +33,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(        
         				-- Nombre Columna	-- Tipo						-- Comentario
-        T_TIPO_DATA('DATA_ID_DOCUMENTO',	'NUMBER(16,0)', 			'Identificador del Documento', 							'NUMBER'),
+        T_TIPO_DATA('DATA_ID_DOCUMENTO',	'VARCHAR2(20 CHAR)', 		'Identificador del Documento', 							'VARCHAR'),
         T_TIPO_DATA('LETRA_CONSUMO', 		'VARCHAR2(20 CHAR)',	 	'Indica la Letra Consumo de calificación energética', 	'VARCHAR'),
         T_TIPO_DATA('CONSUMO', 				'VARCHAR2(20 CHAR)',		'Indica el valor de Consumo energético', 				'VARCHAR'),
         T_TIPO_DATA('EMISION', 				'VARCHAR2(20 CHAR)', 		'Indica el valor de Emisión energética', 				'VARCHAR'),
@@ -55,9 +55,7 @@ BEGIN
 		
 		IF V_NUM_TABLAS = 0 THEN
 		
-			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-					   ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
-					   
+			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';					   
 			EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDA '||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2));
 
@@ -76,15 +74,16 @@ BEGIN
 
 			IF V_NUM_TABLAS_AUX = 1 THEN
 				V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP COLUMN '||V_TMP_TIPO_DATA(1)||' ';
-				DBMS_OUTPUT.PUT_LINE(V_MSQL);
-				
 				EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('2');		
+		
 				
 				V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
 				EXECUTE IMMEDIATE V_MSQL;
-				DBMS_OUTPUT.PUT_LINE('3');
 				DBMS_OUTPUT.PUT_LINE('[INFO] TABLA '''||V_TMP_TIPO_DATA(1)||''' ACTUALIZADA!');
+				
+				V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||' IS '''||V_TMP_TIPO_DATA(3)||'''';	
+            	EXECUTE IMMEDIATE V_MSQL;
+            	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
 			END IF;
 			
 		END IF;

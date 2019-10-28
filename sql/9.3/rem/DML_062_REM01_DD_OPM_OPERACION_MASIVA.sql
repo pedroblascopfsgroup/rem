@@ -1,15 +1,16 @@
 --/*
 --##########################################
---## AUTOR=JIN LI HU
---## FECHA_CREACION=20191018
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20191028
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.5
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-7997
 --## PRODUCTO=NO
 --##
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Modificar valores en el campo de validación 
 --##########################################
 --*/
 
@@ -35,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('MSDOCADM', 'Carga masiva documentación administrativa', 'Carga masiva documentación administrativa','MASIVO_DOCUMENTACION_ADMINISTRATIVA','s*, n*, n*, s, f, f, f, f, f, s, n, s, s, s, s')
+	  T_FUNCION('MSDOCADM', 'Carga masiva documentación administrativa', 'Carga masiva documentación administrativa','MASIVO_DOCUMENTACION_ADMINISTRATIVA','s*, n*, n*, s, f, f, f, f, f, s, s, s, s, s, s')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_MSQL_1 VARCHAR2(4000 CHAR);

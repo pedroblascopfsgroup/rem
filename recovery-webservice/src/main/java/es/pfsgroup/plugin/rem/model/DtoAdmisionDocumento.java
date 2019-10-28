@@ -36,7 +36,7 @@ public class DtoAdmisionDocumento extends WebDto {
 	private Double numConsumo;
 	private Double numEmision;
 	private Long numRegistro;
-	private Long dataIdDocumento;
+	private String dataIdDocumento;
 	private String letraConsumo;
 	private String consumo;
 	private String emision;
@@ -231,11 +231,11 @@ public class DtoAdmisionDocumento extends WebDto {
 		this.numRegistro = numRegistro;
 	}
 	
-	public Long getDataIdDocumento() {
+	public String getDataIdDocumento() {
 		return dataIdDocumento;
 	}
 
-	public void setDataIdDocumento(Long dataIdDocumento) {
+	public void setDataIdDocumento(String dataIdDocumento) {
 		this.dataIdDocumento = dataIdDocumento;
 	}
 

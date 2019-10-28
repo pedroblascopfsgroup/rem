@@ -182,17 +182,13 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 					case COL_F_OBTENCION:
 					case COL_F_VALIDACION:
 					case COL_F_CADUCIDAD:
-					case COL_F_ETIQUETA:						
+					case COL_F_ETIQUETA:		
+					case COL_ID_DOC:
 					case COL_CONSUMO:
 					case COL_EMISION:
 						valorOK = Checks.esNulo(celda) && !docTipoCEE || !Checks.esNulo(celda);
 						break;
-
-					case COL_ID_DOC:
-						valorOK = !Checks.esNulo(celda) && StringUtils.isNumeric(celda)
-								|| Checks.esNulo(celda) && !docTipoCEE;
-						break;
-
+					
 					case COL_CALIFICACION:
 					case COL_LETRA_CONSUMO:
 						valorOK = !Checks.esNulo(celda) && particularValidator.existeCalificacionEnergetica(celda)

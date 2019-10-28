@@ -144,7 +144,7 @@ public class MSVSDocAdministrativaProcesar extends AbstractMSVActualizador imple
 		ado.setFechaEtiqueta(Checks.esNulo(celdaFetiqueta) ? null : formato.parse(celdaFetiqueta));
 				
 		// DataId Documento		
-		ado.setDataIdDocumento(Checks.esNulo(celdaIdDoc) ? null : Long.parseLong(celdaIdDoc));
+		ado.setDataIdDocumento(celdaIdDoc);
 		
 		// Letra Consumo
 		ado.setLetraConsumo(celdaLetraConsumo);

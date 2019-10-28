@@ -99,7 +99,7 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 	private Date fechaCalificacion;
 	
 	@Column(name = "DATA_ID_DOCUMENTO")
-	private Long dataIdDocumento;
+	private String dataIdDocumento;
 	
 	@Column(name = "LETRA_CONSUMO")
 	private String letraConsumo;
@@ -240,11 +240,11 @@ public class ActivoAdmisionDocumento implements Serializable, Auditable {
 		this.fechaCalificacion = fechaCalificacion;
 	}
 
-	public Long getDataIdDocumento() {
+	public String getDataIdDocumento() {
 		return dataIdDocumento;
 	}
 
-	public void setDataIdDocumento(Long dataIdDocumento) {
+	public void setDataIdDocumento(String dataIdDocumento) {
 		this.dataIdDocumento = dataIdDocumento;
 	}
 	

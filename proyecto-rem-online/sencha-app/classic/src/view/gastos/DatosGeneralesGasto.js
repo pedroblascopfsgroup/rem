@@ -322,10 +322,9 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								        	xtype:'datefieldbase',
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaRecPropiedad',
-									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recPropiedad')+' *',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recPropiedad'),
 									       	bind: {
-									       		value: '{gasto.fechaRecPropiedad}',
-									       		allowBlank: '{!gasto.bloquearEdicionFechasRecepcion}'
+									       		value: '{gasto.fechaRecPropiedad}'
 									       	},
 									       	maxValue: null,
 									       	readOnly: true
@@ -335,10 +334,9 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								        	xtype:'datefieldbase',
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaRecGestoria',
-									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recGestoria')+' *',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recGestoria'),
 									       	bind: {
-									       		value: '{gasto.fechaRecGestoria}',
-									       		allowBlank: '{!gasto.bloquearEdicionFechasRecepcion}'
+									       		value: '{gasto.fechaRecGestoria}'
 									       	},
 									       	maxValue: null,
 									       	readOnly: true
@@ -347,10 +345,9 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								        	xtype:'datefieldbase',
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaRecHaya',
-									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recHaya')+' *',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recHaya'),
 									       	bind: {
-									       		value: '{gasto.fechaRecHaya}',
-									       		allowBlank: '{!gasto.bloquearEdicionFechasRecepcion}'
+									       		value: '{gasto.fechaRecHaya}'
 									       	},
 									       	maxValue: null,
 									       	readOnly: true

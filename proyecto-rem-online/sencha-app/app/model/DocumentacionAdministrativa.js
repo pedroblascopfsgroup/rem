@@ -43,19 +43,20 @@ Ext.define('HreRem.model.DocumentacionAdministrativa', {
     			dateFormat: 'c'    			
     		},
     		{
+	    		name:'dataIdDocumento'
+    		},
+    		{
     			name:'tipoLetraConsumoDescripcion'
     		},
     		{
-    			name:'numConsumo'
+    			name:'consumo'
     		},
     		{
-    			name:'numEmision'
+    			name:'emision'
     		},
     		{
-    			name:'numRegistro'
+    			name:'registro'
     		}
-    		
-    		
     		
     ]
 

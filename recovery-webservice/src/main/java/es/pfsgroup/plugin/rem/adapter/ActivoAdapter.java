@@ -1390,9 +1390,9 @@ public class ActivoAdapter {
 							adoDto.setTipoLetraConsumoCodigo(Checks.esNulo(tipoCEE) ? null : tipoCEE.getCodigo());
 							adoDto.setTipoLetraConsumoDescripcion(Checks.esNulo(tipoCEE) ? null : tipoCEE.getDescripcion());
 						}
-						BeanUtils.copyProperty(adoDto, "numConsumo", activo.getAdmisionDocumento().get(i).getConsumo());
-						BeanUtils.copyProperty(adoDto, "numEmision", activo.getAdmisionDocumento().get(i).getEmision());
-						BeanUtils.copyProperty(adoDto, "numRegistro", activo.getAdmisionDocumento().get(i).getRegistro());
+						BeanUtils.copyProperty(adoDto, "consumo", activo.getAdmisionDocumento().get(i).getConsumo());
+						BeanUtils.copyProperty(adoDto, "emision", activo.getAdmisionDocumento().get(i).getEmision());
+						BeanUtils.copyProperty(adoDto, "registro", activo.getAdmisionDocumento().get(i).getRegistro());
 						adoDto.setDataIdDocumento(activo.getAdmisionDocumento().get(i).getDataIdDocumento());
 						
 						if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento()) 

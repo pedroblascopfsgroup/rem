@@ -32,10 +32,7 @@ public class DtoAdmisionDocumento extends WebDto {
 	private Integer aplica;
 	private String estadoDocumento;
 	private String tipoLetraConsumoCodigo;
-	private String tipoLetraConsumoDescripcion;	
-	private Double numConsumo;
-	private Double numEmision;
-	private Long numRegistro;
+	private String tipoLetraConsumoDescripcion;
 	private String dataIdDocumento;
 	private String letraConsumo;
 	private String consumo;
@@ -205,31 +202,7 @@ public class DtoAdmisionDocumento extends WebDto {
 
 	public void setTipoLetraConsumoDescripcion(String tipoLetraConsumoDescripcion) {
 		this.tipoLetraConsumoDescripcion = tipoLetraConsumoDescripcion;
-	}
-
-	public Double getNumConsumo() {
-		return numConsumo;
-	}
-
-	public void setNumConsumo(Double numConsumo) {
-		this.numConsumo = numConsumo;
-	}
-
-	public Double getNumEmision() {
-		return numEmision;
-	}
-
-	public void setNumEmision(Double numEmision) {
-		this.numEmision = numEmision;
-	}
-
-	public Long getNumRegistro() {
-		return numRegistro;
-	}
-
-	public void setNumRegistro(Long numRegistro) {
-		this.numRegistro = numRegistro;
-	}
+	}	
 	
 	public String getDataIdDocumento() {
 		return dataIdDocumento;

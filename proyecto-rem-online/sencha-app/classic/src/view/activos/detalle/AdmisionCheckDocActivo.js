@@ -246,7 +246,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        	cls: 'grid-no-seleccionable-col',
 								        	tdCls: 'grid-no-seleccionable-td',
 								        	editor: {
-								        		xtype: 'numberfield',
+								        		xtype: 'textfield',
 								        		cls: 'grid-no-seleccionable-field-editor'
 								        	}
 								        },

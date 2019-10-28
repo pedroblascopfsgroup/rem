@@ -522,35 +522,24 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        },
 			        {   text: 'Dataid_Documento', 
 			        	dataIndex: 'dataIdDocumento',
-			        	width: '19%',
-			        	renderer: function(value){
-		            		return (value > 0) ? value : '';
-		            	}
+			        	width: '19%'
+			        	
 			        },
 			        {   text: 'Letra consumo', 
 			        	dataIndex: 'tipoLetraConsumoDescripcion',
 			        	width: '10%'
 			        },
 			        {   text: 'Consumo', 
-			        	dataIndex: 'numConsumo',
-			        	width: '19%',
-			        	renderer: function(value){
-		            		return (value > 0) ? value : '';
-		            	}
+			        	dataIndex: 'consumo',
+			        	width: '19%'
 			        },
 			        {   text: 'Emisión', 
-			        	dataIndex: 'numEmision',
-			        	width: '19%',
-			        	renderer: function(value){
-		            		return (value > 0) ? value : '';
-		            	}
+			        	dataIndex: 'emision',
+			        	width: '19%'
 			        },
 			        {   text: 'Registro', 
-			        	dataIndex: 'numRegistro',
-			        	width: '19%',
-			        	renderer: function(value){
-		            		return (value > 0) ? value : '';
-		            	}
+			        	dataIndex: 'registro',
+			        	width: '19%'
 			        }
 			        
 			       	        

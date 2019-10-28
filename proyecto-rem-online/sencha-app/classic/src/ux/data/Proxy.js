@@ -42,6 +42,15 @@
 			}
 		}
 
+		if (me.remApi) {
+		config.defaultActionMethods =  {
+                       create : 'PUT',
+                       read   : 'GET',
+                       update : 'PATCH',
+                       destroy: 'DELETE'
+                   };
+		}
+
 		Ext.apply(config,{
 				simpleSortMode: true,
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, 

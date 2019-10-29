@@ -59,7 +59,7 @@ public class MSVActualizacionDocAdministrativaExcelValidator extends MSVExcelVal
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
 
-	private final int NUM_COLS = 14;
+	private final int NUM_COLS = 15;
 
 	private final int COL_TIPO_DOC = 0;
 	private final int COL_NUM_ACTIVO = 1;

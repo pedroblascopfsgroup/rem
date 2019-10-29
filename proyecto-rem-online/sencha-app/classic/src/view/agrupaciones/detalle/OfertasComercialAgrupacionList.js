@@ -240,13 +240,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					}
 				}
 				if(agrupacion.get('cambioEstadoPublicacion')){
-					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
-						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
-					}else{
-						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.publicacion"));
-						me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
-						return false;
-					}
+					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 				}
 				
 			} 

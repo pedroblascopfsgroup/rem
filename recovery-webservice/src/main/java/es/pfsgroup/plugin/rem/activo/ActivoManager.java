@@ -7120,5 +7120,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return activoDto;
 	}
+	
+	@Override
+	public Long activoPerteneceDND(Activo activo) {
+		Long agruacionDND = null;
+		if(!Checks.esNulo(activo)) {
+			List<ActivoAgrupacionActivo> listaAgrupacionesActivo = activo.getAgrupaciones();
+			
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionesActivo) {
+				if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
+					&& DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					agruacionDND = activoAgrupacionActivo.getAgrupacion().getId();
+					break;
+				}
+			}
+		}
+		return agruacionDND;
+	}
 
 }

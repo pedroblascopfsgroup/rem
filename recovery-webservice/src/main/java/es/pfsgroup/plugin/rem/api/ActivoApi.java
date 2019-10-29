@@ -1269,4 +1269,6 @@ public interface ActivoApi {
 	
 	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente);
 
+	Long activoPerteneceDND(Activo activo);
+
 }

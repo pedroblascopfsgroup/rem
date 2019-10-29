@@ -143,7 +143,12 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 
 			MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(file.getProcesoMasivo().getId());
 			exc = excelParser.getExcel(archivo.getContenidoFichero().getFile());
-			String nomFicheroResultados = exc.crearExcelResultado(resultados, 0, this.getFilaInicial());
+			String nomFicheroResultados = null;
+			if(file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK)) {
+				nomFicheroResultados = exc.crearExcelResultado(resultados, 0, this.getFilaInicial(), true);
+			}else {
+				nomFicheroResultados = exc.crearExcelResultado(resultados, 0, this.getFilaInicial());
+			}
 			FileItem fileItemResultados = new FileItem(new File(nomFicheroResultados));
 
 			processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);

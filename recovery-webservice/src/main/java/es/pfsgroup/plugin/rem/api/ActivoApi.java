@@ -1266,4 +1266,6 @@ public interface ActivoApi {
 
 	ActivoDto getDatosActivo(Long activoId);
 
+	Long activoPerteneceDND(Activo activo);
+
 }

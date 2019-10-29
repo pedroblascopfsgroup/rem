@@ -222,14 +222,33 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				|| agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] || agrupacion.get('tipoAgrupacionCodigo')==CONST.TIPOS_AGRUPACION['RESTRINGIDA']))
 			{
 				if(agrupacion.get('cambioEstadoActivo')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
+					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
+						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.activo"));
+					}else{
+						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.activo"));
+						me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
+						return false;
+					}
 				}
 				if(agrupacion.get('cambioEstadoPrecio')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
+					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
+						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.valor.precio"));
+					}else{
+						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.valor.precio"));
+						me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
+						return false;
+					}
 				}
 				if(agrupacion.get('cambioEstadoPublicacion')){
-					me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
+						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+					}else{
+						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.publicacion"));
+						me.lookupController().lookupReference('activosagrupacion').lookupController().refrescarAgrupacion(true);
+						return false;
+					}
 				}
+				
 			} 
 		}
 		

@@ -26,6 +26,17 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
     	
     	var items = [
     		{
+    			xtype: 'label',
+    			cls:'x-form-item',
+    			html: HreRem.i18n('msg.oferta.agrupacion.no.tramitable'),
+    			style: 'color: red; font-weight: bold; font-size: small;',
+    			readOnly: true,
+    			hidden: true,
+    			bind : {
+    				hidden: '{comercialagrupacion.tramitable}'
+    			}
+    		},
+    		{
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				collapsible: true,

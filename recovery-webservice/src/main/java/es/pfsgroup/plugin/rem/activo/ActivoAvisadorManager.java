@@ -335,6 +335,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				}
 			}
 		}
+		
+		// Aviso 19: Activo perteneciente a agrupacion DND
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activoApi.activoPerteneceDND(activo))) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo incluido en un DND");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
 
 		return listaAvisos;
 	}

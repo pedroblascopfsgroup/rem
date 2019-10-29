@@ -14,10 +14,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
 
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 /**
  * Modelo que gestiona la informacion de los proveedores de los activos.
@@ -28,7 +27,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 @Entity
 @Table(name = "PCC_PROV_CARTERA_CONFIG", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoProveedorCartera implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -47,8 +45,15 @@ public class ActivoProveedorCartera implements Serializable {
 	@JoinColumn(name = "DD_CRA_ID")
 	private DDCartera cartera;
 	
-	@JoinColumn(name = "ID_HAYA")
+	@Column(name = "ID_HAYA")
 	private Long idPersonaHaya;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_SCR_ID")
+	private DDSubcartera subcartera;
+	
+	@Column(name = "CLIENTE_GD")
+    private String clienteGestorDocumental;
 
 	public Long getId() {
 		return id;
@@ -82,6 +87,20 @@ public class ActivoProveedorCartera implements Serializable {
 		this.idPersonaHaya = idPersonaHaya;
 	}
 	
+	public DDSubcartera getSubcartera() {
+		return subcartera;
+	}
+
+	public void setSubcartera(DDSubcartera subcartera) {
+		this.subcartera = subcartera;
+	}
 	
+	public String getClienteGestorDocumental() {
+		return clienteGestorDocumental;
+	}
+
+	public void setClienteGestorDocumental(String clienteGestorDocumental) {
+		this.clienteGestorDocumental = clienteGestorDocumental;
+	}
 
 }

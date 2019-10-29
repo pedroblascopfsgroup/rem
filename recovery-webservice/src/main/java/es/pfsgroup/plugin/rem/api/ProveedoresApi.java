@@ -6,6 +6,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
@@ -154,10 +155,13 @@ public interface ProveedoresApi {
 	/**
 	 * Este método obtiene una lista de documentos asociados al ID del proveedor.
 	 * 
-	 * @param id : ID del proveedor.
-	 * @return Devuelve una lista de docuemtnos con los resultados obtenidos.
+	 * @param id: ID del proveedor.
+	 * @param cartera: cartera seleccionada en el método upload (documento).
+	 * @param subcartera: subcartera seleccionada en el método upload (documento).
+	 * @return Devuelve una lista de documentos con los resultados obtenidos.
+	 * @throws GestorDocumentalException 
 	 */
-	public Object getAdjuntos(Long id);
+	public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException;
 
 	/**
 	 * Verificación de adjunto existente la lista de proveedores de 1 activo.
@@ -295,4 +299,5 @@ public interface ProveedoresApi {
 	List<DDCartera> getCarteraPorProveedor(Long idProveedor);
 
 	List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera);
+
 }

@@ -11,6 +11,9 @@ import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
@@ -21,6 +24,8 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 public interface GestorDocumentalAdapterApi {
 	
@@ -80,7 +85,6 @@ public interface GestorDocumentalAdapterApi {
 	
 	List<DtoAdjunto> getAdjuntosComunicacionGencat(ComunicacionGencat comunicacionGencat, HistoricoComunicacionGencat historicoComunicacion) throws GestorDocumentalException;
 
-
 	Integer crearContenedorComunicacionGencat(ComunicacionGencat comunicacionGencat, String username) throws GestorDocumentalException;
 
 	Long uploadDocumentoComunicacionGencat(ComunicacionGencat comunicacionGencat, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException;
@@ -118,4 +122,13 @@ public interface GestorDocumentalAdapterApi {
 	Integer crearContenedorAdjuntoAgrupacion(Long idAgrupacion, String username) throws GestorDocumentalException;
 
 	FileItem getFileItemAgrupacion(Long id, String nombreDocumento) throws Exception;
+
+	Integer crearProveedor(ActivoProveedorCartera actProvCar, String username) throws GestorDocumentalException;
+	
+	public String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro);
+
+	Long uploadDocumentoProveedor(ActivoProveedorCartera proveedorCartera, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException;
+
+	List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException;
+
 }

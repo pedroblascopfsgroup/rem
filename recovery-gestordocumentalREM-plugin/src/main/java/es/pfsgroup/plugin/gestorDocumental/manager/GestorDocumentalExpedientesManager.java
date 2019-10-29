@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearJuntaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPlusvaliaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearTributoDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProveedorDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
@@ -313,6 +314,49 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearActuacionTecnicaDto.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
 		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearActuacionTecnicaDto.getTipoClase());
 		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearActuacionTecnicaDto.getCodClase());
+		return sb.toString();
+	}
+	
+	@Override
+	public RespuestaCrearExpediente crearProveedor(CrearProveedorDto crearProveedorDto) throws GestorDocumentalException {
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setPath(getPathCrearProveedor(crearProveedorDto));
+		serverRequest.setMultipart(getMultipartCrearProveedor(crearProveedorDto));
+		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
+		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+
+		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+		}
+		if (Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
+		}
+
+		return respuesta;
+	}
+
+	@SuppressWarnings("resource")
+	private MultiPart getMultipartCrearProveedor(CrearProveedorDto crearProveedorDto) {
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearProveedorDto.getUsuario())
+				.field(PASSWORD,  crearProveedorDto.getPassword())
+				.field(DESCRIPCION_EXPEDIENTE, crearProveedorDto.getDescripcionProveedor())
+				.field(COD_CLASE, crearProveedorDto.getCodClase().toString())
+				.field(EXPEDIENTE_COMERCIAL_METADATOS, crearProveedorDto.getOperacionMetadatos());
+		return multipart;
+	}
+
+	private String getPathCrearProveedor(CrearProveedorDto crearProveedorDto) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/CrearContenedor");
+		sb.append("?").append(USUARIO_PATH).append(crearProveedorDto.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(crearProveedorDto.getPassword());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearProveedorDto.getUsuarioOperacional());
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearProveedorDto.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearProveedorDto.getTipoClase());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearProveedorDto.getCodClase());
 		return sb.toString();
 	}
 

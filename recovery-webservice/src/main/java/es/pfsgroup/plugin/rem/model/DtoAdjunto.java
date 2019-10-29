@@ -46,6 +46,10 @@ public class DtoAdjunto implements Serializable, Comparable<DtoAdjunto>{
 	private String tdn2_desc;
 	
 	private String tipoExpediente;	
+	
+	private String cartera;
+	
+	private String subcartera;
 
 	public Long getId() {
 		return id;
@@ -189,6 +193,22 @@ public class DtoAdjunto implements Serializable, Comparable<DtoAdjunto>{
 
 	public void setTipoExpediente(String tipoExpediente) {
 		this.tipoExpediente = tipoExpediente;
+	}
+	
+	public String getCartera() {
+		return cartera;
+	}
+
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
+	}
+
+	public String getSubcartera() {
+		return subcartera;
+	}
+
+	public void setSubcartera(String subcartera) {
+		this.subcartera = subcartera;
 	}
 
 	@Override

@@ -3,8 +3,6 @@ package es.pfsgroup.framework.paradise.fileUpload.adapter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -22,7 +20,6 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-
 
 @Service
 public class UploadAdapter {

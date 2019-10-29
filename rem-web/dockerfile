@@ -1,0 +1,4 @@
+FROM tomcat:7.0
+MAINTAINER pfs
+# COPY path-to-your-application-war path-to-webapps-in-docker-tomcat
+COPY target/pfs-9.1-SNAPSHOT.war /usr/local/tomcat/webapps/

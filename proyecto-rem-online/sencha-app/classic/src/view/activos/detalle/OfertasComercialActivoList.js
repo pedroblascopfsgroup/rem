@@ -287,6 +287,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var me= this;
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
+		var idActivo = me.lookupController().getViewModel().getData().activo.id;
+		
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
 			var activo = me.lookupController().getViewModel().get('activo');
@@ -322,22 +324,41 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			} 
 		}
 		
-		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
-			if (gencat == "true") {
-				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
-			}
-			Ext.Msg.show({
-			   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-			   msg: msg,
-			   buttons: Ext.MessageBox.YESNO,
-			   fn: function(buttonId) {
-			        if (buttonId == 'yes') {
-			        	me.saveFn(editor, me, context);
-					} else{
-			    		me.getStore().load(); 	
-			    	}
-				}
-			});
+		if(CONST.ESTADOS_OFERTA['ACEPTADA'] === estado){	
+			var url = $AC.getRemoteUrl('ofertas/isActivoEnDND');
+			
+			Ext.Ajax.request({
+	    		url: url,
+	    		params: {idActivo: idActivo},
+	    		
+	    		success: function(response, opts){
+	    			var data = Ext.decode(response.responseText);
+	    			if (gencat === "true") {
+	    				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
+	    			}else if(data.data != undefined || data.data != null){
+	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd") + " " + data.data + " " + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
+
+	    			}
+					Ext.Msg.show({
+					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+					   msg: msg,
+					   buttons: Ext.MessageBox.YESNO,
+					   fn: function(buttonId) {
+					        if (buttonId == 'yes') {
+					        	me.saveFn(editor, me, context);
+							} else{
+					    		me.getStore().load(); 	
+					    	}
+						}
+					});
+	    		},
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			    },
+			    callback: function(record, operation) {
+	    			me.getView().unmask();
+			    }
+	    	});				
 		} else {
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
 			if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){

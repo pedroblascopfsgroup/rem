@@ -3922,7 +3922,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if (Checks.esNulo(codDocumento)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
 				+" WHERE DD_TPD_CODIGO =  '"+ codDocumento + "'"
-				+ "AND DD_TPD_CODIGO IN ('11','24','25','84','85','92')");
+				+ "AND DD_TPD_CODIGO IN ('25')");
 		return !"0".equals(resultado);
 	}
 	

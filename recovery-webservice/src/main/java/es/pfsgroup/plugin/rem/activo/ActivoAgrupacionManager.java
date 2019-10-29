@@ -62,7 +62,6 @@ import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -729,28 +728,20 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 	@Override
 	public Usuario getGestorComercialAgrupacion(List<ActivosLoteOfertaDto> dtoActivos) {
-		
-		Activo activo = activoApi.getByNumActivo(dtoActivos.get(0).getIdActivoHaya());	
-		EXTDDTipoGestor tipoGestor = null;
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM"));
 		Usuario gestorComercial = null;
 		Usuario gestorAux = null;
-		
-		if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
-			tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "HAYAGBOINM"));
-		}else {
-			tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM"));
-		}
-		
-		gestorComercial = gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId());
 				
-		for (int i=1; i<dtoActivos.size(); i++) {
-			activo = activoApi.getByNumActivo(dtoActivos.get(i).getIdActivoHaya());
-			
-			gestorAux = gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId());
-			if (!gestorAux.equals(gestorComercial)) {
-				return null;
+		for (int i=0; i<dtoActivos.size(); i++) {
+			Activo activo = activoApi.getByNumActivo(dtoActivos.get(i).getIdActivoHaya());
+			if (i==0) {
+				gestorComercial = gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId());
+			} else {
+				gestorAux = gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId());
+				if (!gestorAux.equals(gestorComercial)) {
+					return null;
+				}
 			}
-			
 		}
 		return gestorComercial;
 	}
@@ -921,5 +912,4 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		return true;
 	}
-
 }

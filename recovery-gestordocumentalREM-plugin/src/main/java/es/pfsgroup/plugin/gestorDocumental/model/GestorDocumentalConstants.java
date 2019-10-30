@@ -41,6 +41,7 @@ public class GestorDocumentalConstants {
 	public static final String TIPO_CONSULTA_RELACION_GLOBAL = "Global";
 	public static final String OPERACION = "\"Operación\":";
 	public static final String AGRUPACION_REO = "\"Reo\":";
+	public static final String AGRUPACION_PROMOCION = "\"Promoción\":";
 	public static final String ENTIDAD = "\"Entidad\":";
 	public static final String GASTOS = "\"Gastos\":";
 	

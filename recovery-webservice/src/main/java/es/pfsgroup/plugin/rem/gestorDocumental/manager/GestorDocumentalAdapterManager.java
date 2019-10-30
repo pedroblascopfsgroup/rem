@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercia
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearJuntaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPlusvaliaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProyectoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearTributoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProveedorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
@@ -70,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
@@ -1645,4 +1647,34 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public FileItem getFileItemAgrupacion(Long id, String nombreDocumento) throws Exception {
 		return this.getFileItem(id, nombreDocumento);
 	}
+	
+	
+	@Override	
+	public Runnable crearProyecto(Activo activo, ActivoProyecto proyecto,  String usuarioLogado, String tipoExpediente) throws GestorDocumentalException {
+		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
+		
+		
+		
+		DDCartera cartera = proyecto.getCartera();
+		DDSubcartera subcartera = activo.getSubcartera();
+		ActivoPropietario actPro = activo.getPropietarioPrincipal();
+		
+		
+		String cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);
+		
+		CrearProyectoDto crearProyectoDto = recoveryToGestorAssembler.getCrearProyectoDto(proyecto.getNumAgrupRem().toString(), usuarioLogado, tipoExpediente, cliente);
+	
+
+		try {
+			RespuestaCrearExpediente respuesta = gestorDocumentalExpedientesApi.crearProyecto(crearProyectoDto);
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
+		
+		return null;
+
+	}
+	
+	
 }

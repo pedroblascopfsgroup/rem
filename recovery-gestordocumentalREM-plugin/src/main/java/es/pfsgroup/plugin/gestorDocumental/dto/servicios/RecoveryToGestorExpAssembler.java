@@ -116,6 +116,22 @@ public class RecoveryToGestorExpAssembler {
 		System.out.println(sb.toString());
 		return sb.toString();
 	}
+	
+	private static String rellenarAgrupacionProyectoSarebMetadatos (String id, String idExterno, String idSistemaOrigen, String estadoExpediente, String cliente) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.AGRUPACION_PROMOCION).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
+		sb.append("}");
+		System.out.println(sb.toString());
+		return sb.toString();
+	}
+	
+	
 	public CrearEntidadCompradorDto getCrearActivoOferta(String idIntervinienteHaya, String username, String cliente, String idSistemaOrigen, String codClase, String descripcionEntidad, String tipoActivoOferta) {
 		CrearEntidadCompradorDto doc = new CrearEntidadCompradorDto();
 
@@ -260,5 +276,21 @@ public class RecoveryToGestorExpAssembler {
 			sb.append("}");
 		sb.append("}");
 		return sb.toString();
+	}
+	
+	public CrearProyectoDto getCrearProyectoDto(String numeroAgrupacion,  String userLogin, String tipoExpediente, String cliente) {
+		CrearProyectoDto doc = new CrearProyectoDto();
+	
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(GestorDocumentalConstants.CODIGO_CLASE_PROYECTO);
+		doc.setCodTipo(GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO);
+		doc.setUsuarioOperacional(userLogin);
+		doc.setProyectoDescripcion(numeroAgrupacion);
+		doc.setProyectoMetadatos(rellenarAgrupacionProyectoSarebMetadatos(numeroAgrupacion, numeroAgrupacion, numeroAgrupacion, null, cliente));
+
+
+		
+		return doc;
 	}
 }

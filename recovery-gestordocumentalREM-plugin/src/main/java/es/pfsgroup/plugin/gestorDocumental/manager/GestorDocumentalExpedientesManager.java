@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercia
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearJuntaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPlusvaliaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProyectoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearTributoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProveedorDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
@@ -401,6 +402,28 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		
 		return respuesta;
 	}
+	
+	@Override
+	public RespuestaCrearExpediente crearProyecto(CrearProyectoDto crearProyecto) throws GestorDocumentalException {
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setPath(getPathCrearProyecto(crearProyecto));
+		serverRequest.setMultipart(getMultipartCrearProyecto(crearProyecto));
+
+		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
+		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+
+		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+		}
+		if (Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);			
+		}
+		
+		return respuesta;
+	}
+
 
 	
 	private String getPathCrearPlusvalia(CrearPlusvaliaDto crearPlusvaliaDto) {
@@ -453,5 +476,29 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 				.field(DESCRIPCION_EXPEDIENTE, crearTributo.getTributoDescripcion());
 		return multipart;
 	}
+	
+	private String getPathCrearProyecto(CrearProyectoDto proyectoDto) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/CrearContenedor");
+		sb.append("?").append(USUARIO_PATH).append(proyectoDto.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(proyectoDto.getPassword());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(proyectoDto.getCodClase());
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(proyectoDto.getCodTipo());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(proyectoDto.getUsuarioOperacional());
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(proyectoDto.getProyectoMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		
 
+
+		return sb.toString();
+	}
+
+	private MultiPart getMultipartCrearProyecto(CrearProyectoDto proyectoDto){
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, proyectoDto.getUsuario())
+				.field(PASSWORD,  proyectoDto.getPassword())
+				.field(COD_CLASE, proyectoDto.getCodClase().toString())
+				.field(EXPEDIENTE_COMERCIAL_METADATOS, proyectoDto.getProyectoMetadatos())
+				.field(DESCRIPCION_EXPEDIENTE, proyectoDto.getProyectoDescripcion());
+		return multipart;
+	}
 }

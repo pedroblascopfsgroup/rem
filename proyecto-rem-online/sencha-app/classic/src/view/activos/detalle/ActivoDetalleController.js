@@ -37,7 +37,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
              download: 'downloadDocumentoAdjuntoProyecto',
              afterupload: function(grid) {
              	grid.getStore().load();
-             }
+             },
+             afterdelete: function(grid) {
+              	grid.getStore().load();
+              }
          },
 
 		'documentosactivoofertacomercial textfieldbase' : {
@@ -1269,14 +1272,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	downloadDocumentoAdjuntoProyecto: function(grid, record) {
-
 		var me = this,
 		config = {};
 
 		config.url=$AC.getWebPath()+"proyecto/bajarAdjuntoActivoProyecto."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('id');
-		config.params.idActivo=record.get("idActivo");
+		config.params.idActivo=me.getViewModel().get("activo.id");
 		config.params.nombreDocumento=record.get("nombre");
 		me.fireEvent("downloadFile", config);
 	},

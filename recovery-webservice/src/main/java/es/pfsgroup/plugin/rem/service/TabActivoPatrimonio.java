@@ -223,6 +223,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 				DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getEstadoAlquiler()));
 
+				activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+				
 				if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(tipoEstadoAlquiler.getCodigo())){
 					if (!Checks.estaVacio(activo.getOfertas())) {
 						for (ActivoOferta activoOferta : activo.getOfertas()) {

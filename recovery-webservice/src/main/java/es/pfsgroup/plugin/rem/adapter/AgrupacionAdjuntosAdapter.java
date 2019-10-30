@@ -1,8 +1,5 @@
 package es.pfsgroup.plugin.rem.adapter;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +21,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoAdjuntosAgrupacionApi;
@@ -125,43 +121,17 @@ public class AgrupacionAdjuntosAdapter {
 	
 	
 	public String uploadDocumento(WebFileItem webFileItem) throws Exception {
-			Filter fAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", Long.parseLong(webFileItem.getParameter("idAgrupacion")));
-			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class,fAgrupacion); 
-			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipoDocumentoAgrupacion"));
-			DDTipoDocumentoAgrupacion tipoDocumento = genericDao.get(DDTipoDocumentoAgrupacion.class, filtro);
-			String idDocumento = null;
+		Filter fAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", Long.parseLong(webFileItem.getParameter("idAgrupacion")));
+		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class,fAgrupacion); 
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipoDocumentoAgrupacion"));
+		DDTipoDocumentoAgrupacion tipoDocumento = genericDao.get(DDTipoDocumentoAgrupacion.class, filtro);
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-			//return null;
 			if (!Checks.esNulo(tipoDocumento)) {
 				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoAgrupacionAdjunto(agrupacion, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
-				idDocumento = activoAdjuntosAgrupacionApi.uploadDocumento(webFileItem, idDocRestClient,agrupacion,null,usuarioLogado);
-		
-					CrearRelacionExpedienteDto crearRelacionExpedienteDto = new CrearRelacionExpedienteDto();
-					crearRelacionExpedienteDto.setTipoRelacion(RELACION_TIPO_DOCUMENTO_EXPEDIENTE);
-					String mat = tipoDocumento.getMatricula();
-					if(!Checks.esNulo(mat)){
-						String[] matSplit = mat.split("-");
-						crearRelacionExpedienteDto.setCodTipoDestino(matSplit[0]);
-						crearRelacionExpedienteDto.setCodClaseDestino(matSplit[1]);
-					}
-					
-					crearRelacionExpedienteDto.setOperacion(OPERACION_ALTA);
-
-					//Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el documento realmente, sólo insertando la fila.
-					File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
-					BufferedWriter out = new BufferedWriter(new FileWriter(file));
-				    out.write("pfs");
-				    out.close();					    
-				    FileItem fileItem = new FileItem();
-					fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
-					fileItem.setFile(file);
-					fileItem.setLength(file.length());			
-					webFileItem.setFileItem(fileItem);
 					activoAdjuntosAgrupacionApi.uploadDocumento(webFileItem, idDocRestClient,agrupacion,null,usuarioLogado);
-					file.delete();
 			}
-		} else {
+		}else {
 			activoAdjuntosAgrupacionApi.uploadDocumento(webFileItem, null,agrupacion,null,usuarioLogado);
 		}
 		

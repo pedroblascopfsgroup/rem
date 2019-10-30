@@ -5468,6 +5468,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	validarEdicionHistoricoTitulo: function(editor, grid, record) {
     	var me = this;
+    	var isBankia = me.getViewModel().get('activo.isCarteraBankia');
+    	if (isBankia) {
+    		return false;
+    	}
     	return grid.rowIdx == 0;
     },
     

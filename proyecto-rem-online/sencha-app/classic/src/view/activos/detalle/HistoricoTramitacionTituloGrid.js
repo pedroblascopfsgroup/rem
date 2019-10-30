@@ -272,6 +272,10 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
    isDeshabilitarAddButton: function(){
    	var me = this;
    	var tieneDatosStore = me.store.data.length > 0;
+   	var isBankia = me.lookupController().getViewModel().get('activo.isCarteraBankia'); 
+   	if (isBankia) {
+   		return true;
+   	}
    	if(tieneDatosStore){
 	    	var CalificacionNegativa = me.getUltimoRegistro().data.codigoEstadoPresentacion;
 	    	if(CalificacionNegativa == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
@@ -280,8 +284,11 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 	    		} else {
 	    			return false;
 	    		}
+	    	} else if (CalificacionNegativa == CONST.DD_ESP_ESTADO_PRESENTACION['PRESENTACION_EN_REGISTRO']) {
+	    		return false;
+	    	} else {
+	    		return true;
 	    	}
-	    	return true;
     }else{
     	return false;
     }
@@ -289,7 +296,9 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
    },
    
    isDeshabilitarRemoveButton:function(grid, records){
-	   if(records[0]){
+	   var me = this;
+	   var isBankia = me.lookupController().getViewModel().get('activo.isCarteraBankia');
+	   if(records[0] && !isBankia){
 		   return records[0].data.codigoEstadoPresentacion != "01";
 	   	}
 	   return true;

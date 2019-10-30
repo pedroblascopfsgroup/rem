@@ -2808,7 +2808,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    	me.getViewModel().set("detalleOfertaModel", record);
 		    	fieldset.unmask();
 		    }
-		});		
+		});			
 	},
 	
 	// Este mÃ©todo abre el activo o agrupaciÃ³n asociado a la oferta en el grid de ofertas del
@@ -5659,6 +5659,49 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
+	onSelectedRow: function(grid, record, index){
+		me = this;
+		if(!Ext.isEmpty(record)){
+			idOferta = record.data.idOferta;
+			if (idOferta && !Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
+				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'];
+	    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(hideButton); 
+			}	
+		}
+	},
+	
+	onDeselectedRow: function(grid, record, index){
+		me = this;
+		if(!Ext.isEmpty(record)){
+			idOferta = record.get("idOferta");
+		}
+		if (!Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
+    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(true); 
+		}	
+	},
+	
+	clonateOferta: function(numIdOferta, ofertasGrid)
+	{
+    	var url = $AC.getRemoteUrl('activo/clonateOferta');
+		Ext.Ajax.request({
+  		     url: url,
+  		     params: {idOferta : numIdOferta},
+  		
+  		     success: function(response, opts) {
+  		    	data = Ext.decode(response.responseText);
+  		    	var id= data.data;
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	 			ofertasGrid.unmask();
+    			me.onClickBotonRefrescar();
+	    	},
+ 		    failure: function (a, operation) {
+ 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+ 				ofertasGrid.unmask();
+    			me.onClickBotonRefrescar();
+ 		    }
+		});
+	},
+	
 	usuarioTieneFuncionPermitirTramitarOfertaC: function(get){
 		var me = this;
 		var comercial =	me.getViewModel().get('activo.pertenceAgrupacionComercial');
@@ -5750,6 +5793,4 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.cargarTabDataMultiple(form, 0, models, form.records);
 		}
 	}
-
 });
-

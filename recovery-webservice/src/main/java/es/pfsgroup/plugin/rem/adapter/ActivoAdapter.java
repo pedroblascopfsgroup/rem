@@ -18,6 +18,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
@@ -124,6 +125,7 @@ import es.pfsgroup.plugin.rem.model.AdjuntoPlusvalias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -349,6 +351,9 @@ public class ActivoAdapter {
 	@Autowired
 	private PresupuestoApi presupuestoManager;
 
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
@@ -1558,23 +1563,14 @@ public class ActivoAdapter {
 			}
 		}
 		
-		Usuario usuarioGestoria = gestorActivoApi.isGestoria(usuarioLogado);
+		ConfiguracionAccesoGestoria usuarioGestoria = gestorActivoApi.isGestoria(usuarioLogado);
 		if (!Checks.esNulo(usuarioGestoria)) {
 			dtoActivoFiltro.setUsuarioGestoria(true);
-			Usuario usernameAdmision = gestorActivoApi.usuarioGestoria(usuarioGestoria, GestorActivoApi.CODIGO_GESTORIA_ADMISION);
-			if (!Checks.esNulo(usernameAdmision)) {
-				dtoActivoFiltro.setGestoriaAdmision(usernameAdmision.getUsername());
-			}
-			
-			Usuario usernameAdministracion = gestorActivoApi.usuarioGestoria(usuarioGestoria, GestorActivoApi.CODIGO_GESTORIA_ADMINISTRACION);
-			if (!Checks.esNulo(usernameAdministracion)) {
-				dtoActivoFiltro.setGestoriaAdministracion(usernameAdministracion.getUsername());
-			}
-			
-			Usuario usernameFormalizacion = gestorActivoApi.usuarioGestoria(usuarioGestoria, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
-			if (!Checks.esNulo(usernameFormalizacion)) {
-				dtoActivoFiltro.setGestoriaFormalizacion(usernameFormalizacion.getUsername());
-			}
+			dtoActivoFiltro.setGestoriaAdmision(usuarioGestoria.getUsernameGestoriaAdmision());
+			dtoActivoFiltro.setGestoriaAdministracion(usuarioGestoria.getUsernameGestoriaAdministracion());
+			dtoActivoFiltro.setGestoriaFormalizacion(usuarioGestoria.getUsernameGestoriaFormalizacion());
+		}else {
+			dtoActivoFiltro.setUsuarioGestoria(false);
 		}
 		
 		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
@@ -3663,7 +3659,9 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createOfertaActivo(DtoOfertasFilter dto) throws Exception {
+	public Oferta createOfertaActivo(DtoOfertasFilter dto) throws Exception {
+		Oferta ofertaCreada = null;
+		
 		List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 
 		Activo activo = activoApi.get(dto.getIdActivo());
@@ -3852,8 +3850,7 @@ public class ActivoAdapter {
 			oferta.setOrigenComprador(origenComprador);
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
-			genericDao.save(Oferta.class, oferta);
-			
+			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
@@ -3943,10 +3940,10 @@ public class ActivoAdapter {
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
-			return false;
+			return ofertaCreada;
 		}
 
-		return true;
+		return ofertaCreada;
 	}
 
 	@Transactional(readOnly = false)
@@ -4701,4 +4698,8 @@ public class ActivoAdapter {
 		return listaCombo;
 	}
 
+	@Transactional(readOnly = false)
+	public Oferta clonateOfertaActivo(String idOferta) {
+		return genericAdapter.clonateOferta(idOferta, false);		
+	}
 }

@@ -98,7 +98,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
 
 		HQLBuilder hb = new HQLBuilder(buildFrom(dto));
-		
+		 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
 		if (dto.getEntidadPropietariaCodigo() != null)
@@ -231,26 +231,27 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat",
 				dto.getEstadoComunicacionGencatCodigo());
 		
-		if (!Checks.esNulo(dto.getUsuarioGestoria())) {
-			String orGestorias = "";
+		if (dto.getUsuarioGestoria()) {
+			String orBuilder = "";
 			if (!Checks.esNulo(dto.getGestoriaAdmision())) {
-				orGestorias += " bag.gestoriaAdmision = '" + dto.getGestoriaAdmision() + "'";
+				orBuilder += " bag.gestoriaAdmision = '" + dto.getGestoriaAdmision() + "'";
 			}
-			
-			if (Checks.esNulo(dto.getGestoriaAdmision()) && !Checks.esNulo(dto.getGestoriaAdministracion())) {
-				orGestorias += " bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
-			} else if (!Checks.esNulo(dto.getGestoriaAdmision()) && !Checks.esNulo(dto.getGestoriaAdministracion())) {
-				orGestorias += "  OR bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
+
+			if (orBuilder.length() == 0 && dto.getGestoriaAdministracion() != null) {
+				orBuilder += " bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
+			} else if (orBuilder.length() != 0 && dto.getGestoriaAdministracion() != null) {
+				orBuilder += "  OR bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
 			}
-			
-			if (Checks.esNulo(dto.getGestoriaAdmision()) && Checks.esNulo(dto.getGestoriaAdministracion()) && !Checks.esNulo(dto.getGestoriaFormalizacion())) {
-				orGestorias += " bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
-			} else if (!Checks.esNulo(dto.getGestoriaAdmision()) || !Checks.esNulo(dto.getGestoriaAdministracion())) {
-				orGestorias += "  OR bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
+
+			if (orBuilder.length() == 0 && dto.getGestoriaFormalizacion() != null) {
+				orBuilder += " bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
+			} else if (orBuilder.length() != 0 || dto.getGestoriaAdministracion() != null) {
+				orBuilder += "  OR bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
 			}
-			
-			if (!"".equals(orGestorias)) {
-				hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where (" + orGestorias + ") AND bag.id = act.id)");
+
+			if (orBuilder.length() != 0) {
+				hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where (" + orBuilder
+						+ ") AND bag.id = act.id)");
 			}
 		}
 		
@@ -1658,7 +1659,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ActivoProveedor> getComboApiPrimaria() {
+	public List<ActivoProveedor> getComboApiPrimario() {
 		HQLBuilder hb = new HQLBuilder(" from ActivoProveedor pve");
 		hb.appendWhere(" pve.tipoProveedor.codigo = '" + DDTipoProveedor.COD_MEDIADOR + "' and pve.auditoria.borrado = 0 and pve.nombre is not null and pve.fechaBaja is null ");
 		hb.orderBy("pve.nombre", "asc");
@@ -1723,6 +1724,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		List<VPlusvalia> plusvalias = (List<VPlusvalia>) pagePlusvalia.getResults();
 
 		return new DtoPage(plusvalias, pagePlusvalia.getTotalCount());
+	}
+
+	
+	@Override
+	public void deleteActOfr(Long idActivo, Long idOferta) {
+		StringBuilder sb = new StringBuilder("delete from ActivoOferta actofr where actofr.activo = " + idActivo + " and actofr.oferta = " + idOferta);
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 	}
 
 }

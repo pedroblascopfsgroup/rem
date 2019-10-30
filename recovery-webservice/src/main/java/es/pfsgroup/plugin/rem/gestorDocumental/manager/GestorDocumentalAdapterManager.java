@@ -1577,7 +1577,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	
 	@Override
 	public Integer crearContenedorAdjuntoAgrupacion(Long idAgrupacion, String username)  throws GestorDocumentalException {
-		Filter fAgrupacion = genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion);
+		Filter fAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", idAgrupacion);  
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, fAgrupacion);
 		String agrupacionId = agrupacion.getNumAgrupRem().toString();
 		String idSistemaOrigen = "";

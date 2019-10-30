@@ -1578,6 +1578,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setNombreProveedor(trabajo.getProveedorContacto().getProveedor().getNombreComercial());
 			dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
 		}
+		if(!Checks.esNulo(trabajo.getGastoTrabajo())) {
+			dtoTrabajo.setGastoProveedor(trabajo.getGastoTrabajo().getGastoProveedor().getNumGastoHaya());
+			dtoTrabajo.setEstadoGasto(trabajo.getGastoTrabajo().getGastoProveedor().getEstadoGasto().getCodigo());
+		}
 
 		if (trabajo.getTipoTrabajo() != null) {
 			dtoTrabajo.setTipoTrabajoDescripcion(trabajo.getTipoTrabajo().getDescripcion());

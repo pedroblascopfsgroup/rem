@@ -174,6 +174,12 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'terceroTel1'
     		},
     		{
+    			name: 'gastoProveedor'
+    		},
+    		{
+    			name: 'estadoGasto'
+    		},
+    		{
     			name: 'esSolicitudConjunta',
     			convert: function(value) {
     				if(Ext.isEmpty(value))return false;

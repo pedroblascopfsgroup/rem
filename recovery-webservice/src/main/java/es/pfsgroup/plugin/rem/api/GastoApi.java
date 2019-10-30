@@ -26,6 +26,6 @@ public interface GastoApi {
 	
 	public GastoProveedor getByNumGasto(Long numGastoHaya);
 	
-	
+	Long getGastoExists(Long numGasto);
 
 }

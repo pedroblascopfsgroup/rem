@@ -135,7 +135,8 @@ Ext.define('HreRem.controller.ActivosController', {
         	abrirDetalleTramite : 'abrirDetalleTramite',
         	abrirDetalleTramiteTarea : 'abrirDetalleTramiteTarea',
         	abrirDetalleTramiteHistoricoTarea : 'abrirDetalleTramiteHistoricoTarea',
-    		refrescarTrabajo: 'refrescarDetalleTrabajo'
+    		refrescarTrabajo: 'refrescarDetalleTrabajo',
+    		abrirDetalleGastoById: 'abrirDetalleGastoById'
     	},
     	
     	'tramitesdetalle' : {
@@ -1243,7 +1244,6 @@ Ext.define('HreRem.controller.ActivosController', {
     
     
     abrirDetalleJunta: function(record, refLinks) {
-    	console.log(record);
     	var me = this,
     	titulo = "Junta " + record.get("activo"),
     	id = record.get("id");

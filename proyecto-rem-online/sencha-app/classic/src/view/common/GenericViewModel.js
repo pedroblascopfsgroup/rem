@@ -491,7 +491,16 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     			remoteUrl: 'activo/getComboUsuarios',
     			extraParams: {idTipoGestor: '{tipoGestorSupervisor.selection.id}'}
     			}
-    		}
+    		},
+    		comboEstadoGasto: {
+		    	model: 'HreRem.model.ComboBase',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoGasto'}
+		    	},
+		    	autoLoad: true
+	    	}
 	    
     		
 			

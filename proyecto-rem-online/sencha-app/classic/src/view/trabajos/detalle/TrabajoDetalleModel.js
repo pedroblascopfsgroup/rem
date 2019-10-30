@@ -131,7 +131,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				 return true;
 			 else 
 				 return false;
-		}
+		},
+		
+		esVisibleGasto: function(get){
+	    		me = this;
+	    		
+	    		if(CONST.ESTADOS_GASTO["ANULADO"] == me.get('trabajo.estadoGasto')){
+	    		me.set('trabajo.gastoProveedor', null);
+	    			return true;
+	    		}else
+					return false;
+	    }
 		
     },
     

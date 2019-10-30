@@ -1437,14 +1437,14 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						// entitys.add(edificioEntity);
 
 					}
-//					ActivoEdificio edificioEntity = null;
-//					if(informeEntity.getId() != null ){
-//						edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
-//								informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
-//					}else{
-//						edificioEntity = new ActivoEdificio();
-//					}
-//					entitys.add(edificioEntity);
+					ActivoEdificio edificioEntity = null;
+					if(informeEntity.getId() != null ){
+						edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
+					}else{
+						edificioEntity = new ActivoEdificio();
+					}
+					entitys.add(edificioEntity);
 
 					if (informeEntity.getActivo() == null) {
 						informeEntity.setActivo(activo);

@@ -7,6 +7,6 @@ public  class EmptyParamDetector {
 	protected static final Log logger = LogFactory.getLog(EmptyParamDetector.class);
 	
 	public void isEmpty(int size, String busqueda, String usuario) {
-		logger.error("Atencion: Export de " + size + " " + busqueda + " registros por el usuario " + usuario);
+		logger.error("Atencion: Export de " + size + " registros de " + busqueda + " por el usuario " + usuario);
 	}
 }

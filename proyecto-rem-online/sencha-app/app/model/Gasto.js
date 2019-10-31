@@ -121,6 +121,9 @@ Ext.define('HreRem.model.Gasto', {
 		},
 		{
 			name: 'gastosRefacturadosGasto'
+		},
+		{
+			name: 'numTrabajo'
 		}
     ],
 

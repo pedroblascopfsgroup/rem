@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.model.DestinatariosRest;
 import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
@@ -87,6 +88,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	//Variables de buzones	
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_PFS = "buzonpfs";
+	private static final String BUZON_FDV = "buzonfdv";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	private static final String BUZON_FOR_APPLE = "buzonforapple";
 	private static final String BUZON_CES_APPLE = "buzoncesapple";
@@ -179,11 +181,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		Usuario buzonfdv = usuarioManager.getByUsername(BUZON_FDV);
 		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
 		Usuario buzonFormApple = usuarioManager.getByUsername(BUZON_FOR_APPLE);
 		Usuario usuarioBackOffice = null;
 		Usuario supervisorComercial = null;
-
+		ActivoProveedor proveedor = oferta.getPrescriptor();
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
 			Activo activo = oferta.getActivoPrincipal();
@@ -213,6 +216,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 				if (!Checks.esNulo(buzonPfs)) {
 					destinatarios.add(buzonPfs.getEmail());
+				}
+				if (!Checks.esNulo(buzonfdv) && DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(proveedor.getTipoProveedor().getCodigo())) {
+					destinatarios.add(buzonfdv.getEmail());
 				}
 				if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 					destinatarios.add(buzonOfertaApple.getEmail());

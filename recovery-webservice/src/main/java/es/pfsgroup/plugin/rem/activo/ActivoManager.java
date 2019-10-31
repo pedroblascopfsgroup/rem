@@ -3647,7 +3647,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(tributo.getGastoProveedor())){
 					dtoTributo.setNumGastoHaya(tributo.getGastoProveedor().getNumGastoHaya());
 				}
-				
+				/*
 				Filter filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", tributo.getId());
 				Filter filtroRest = null;
 				ActivoAdjuntoTributo adjuntoTributo = null;
@@ -3681,17 +3681,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					filtroRest = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
 					adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest, filtroAuditoria);
 				
-				}
+				}*/
 				
-				if(!Checks.esNulo(adjuntoTributo)) {
-					dtoTributo.setExisteDocumentoTributo("true");
-					dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
-					dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
-					 
-				}else if(Checks.esNulo(dtoTributo.getExisteDocumentoTributo())){
-					dtoTributo.setExisteDocumentoTributo("false");
-					dtoTributo.setDocumentoTributoNombre(null);
-					dtoTributo.setDocumentoTributoId(null);
+				if(!Checks.esNulo(tributo.getNumTributo())) {
+					dtoTributo.setNumTributo(tributo.getNumTributo());
 				}
 				
 				tributos.add(dtoTributo);
@@ -6907,7 +6900,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			tributo.getAuditoria().setBorrado(true);
 			genericDao.update(ActivoTributos.class, tributo);
 			
-			activoTributoApi.deleteAdjuntoDeTributo(tributo.getId());
+			activoTributoApi.deleteAdjuntosDeTributo(tributo.getId());
 			
 			return true;
 		}else {

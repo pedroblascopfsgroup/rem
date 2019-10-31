@@ -30,7 +30,8 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     	            collapsible: true,
 //    	            readOnly: true,
     	            bind:{
-    	            	disabled: '{!activo.isCarteraSareb}'
+    	            	disabled: '{!activo.isCarteraSareb}',
+    	            	hidden: '{!activo.isCarteraSareb}'
     	            },
     	 			colspan: 3
     	 		}/*,

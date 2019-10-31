@@ -9,7 +9,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel','HreRem.model.ListaActivoGrid','HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto',
-    'HreRem.model.ListaActivoGrid','HreRem.model.DocumentacionAdministrativa'],
+    'HreRem.model.DocumentacionAdministrativa'],
 
     data: {
     	activo: null,

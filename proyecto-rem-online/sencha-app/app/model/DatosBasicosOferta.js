@@ -215,6 +215,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'claseOfertaCodigo'	
+    		},
+    		{
+    			name:'importeContraofertaOfertanteCES'
     		}
     ],
 

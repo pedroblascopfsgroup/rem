@@ -259,7 +259,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		
 		return HibernateQueryUtils.page(this, hb, dto);
-
 	}
 
 	private String buildFrom(DtoActivoFilter dto) {

@@ -40,6 +40,8 @@ public class DtoActivoTributos implements Serializable{
 	private String documentoTributoNombre;
 	
 	private Long documentoTributoId;
+	
+	private Long numTributo;
 
 	public String getNumActivo() {
 		return numActivo;
@@ -159,6 +161,14 @@ public class DtoActivoTributos implements Serializable{
 
 	public void setDocumentoTributoId(Long documentoTributoId) {
 		this.documentoTributoId = documentoTributoId;
+	}
+
+	public Long getNumTributo() {
+		return numTributo;
+	}
+
+	public void setNumTributo(Long numTributo) {
+		this.numTributo = numTributo;
 	}
 
 	

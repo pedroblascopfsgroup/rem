@@ -442,7 +442,13 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        		readOnly: true
 			        		}
 					   	},
-					   	{
+					   	{	  
+					   		text: HreRem.i18n('fieldlabel.administracion.activo.numero.tributo'),
+				            flex: 0.5,
+				            dataIndex: 'numTributo',
+				            readOnly: true 
+					   	}
+					   	/*{
 				        	xtype: 'actioncolumn',
 				            dataIndex: 'documentoTributoNombre',
 				            reference: 'existeDocumentoTributoPorNombre',
@@ -483,7 +489,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				            align: 'left',
 				            hideable: false,
 				            sortable: true
-				       }
+				       }*/
 					   	],
 					   	dockedItems: [
 				        {

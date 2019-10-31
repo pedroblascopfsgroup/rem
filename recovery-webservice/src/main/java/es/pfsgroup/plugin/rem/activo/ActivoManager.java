@@ -3690,6 +3690,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dtoTributo.setDocumentoTributoId(null);
 				}
 				
+				if(!Checks.esNulo(tributo.getNumTributo())) {
+					dtoTributo.setNumTributo(tributo.getNumTributo());
+				}
+				
 				tributos.add(dtoTributo);
 			}
 		}

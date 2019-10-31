@@ -82,6 +82,9 @@ public class ActivoTributos implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor;
+	
+	@Column(name = "ACT_NUM_TRIBUTO")
+	private Long numTributo;
 
 	@Version   
 	private Long version;
@@ -200,6 +203,15 @@ public class ActivoTributos implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public Long getNumTributo() {
+		return numTributo;
+	}
+
+	public void setNumTributo(Long numTributo) {
+		this.numTributo = numTributo;
+	}
+	
 	
 
 }

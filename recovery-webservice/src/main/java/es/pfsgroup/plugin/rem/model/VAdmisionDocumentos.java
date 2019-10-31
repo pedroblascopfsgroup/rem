@@ -66,6 +66,21 @@ public class VAdmisionDocumentos implements Serializable {
 	
 	@Column(name="DD_TCE_CODIGO")
 	private String tipoCalificacionCodigo;
+	
+	@Column(name = "DATA_ID_DOCUMENTO")
+	private String dataIdDocumento;
+	
+	@Column(name = "LETRA_CONSUMO")
+	private String letraConsumo;
+
+	@Column(name = "CONSUMO")
+	private String consumo;
+
+	@Column(name = "EMISION")
+	private String emision;
+
+	@Column(name = "REGISTRO")
+	private String registro;
 
 	public String getId() {
 		return id;
@@ -194,5 +209,47 @@ public class VAdmisionDocumentos implements Serializable {
 	public void setTipoCalificacionCodigo(String tipoCalificacionCodigo) {
 		this.tipoCalificacionCodigo = tipoCalificacionCodigo;
 	}
+
+	public String getDataIdDocumento() {
+		return dataIdDocumento;
+	}
+
+	public void setDataIdDocumento(String dataIdDocumento) {
+		this.dataIdDocumento = dataIdDocumento;
+	}
+
+	public String getLetraConsumo() {
+		return letraConsumo;
+	}
+
+	public void setLetraConsumo(String letraConsumo) {
+		this.letraConsumo = letraConsumo;
+	}
+
+	public String getConsumo() {
+		return consumo;
+	}
+
+	public void setConsumo(String consumo) {
+		this.consumo = consumo;
+	}
+
+	public String getEmision() {
+		return emision;
+	}
+
+	public void setEmision(String emision) {
+		this.emision = emision;
+	}
+
+	public String getRegistro() {
+		return registro;
+	}
+
+	public void setRegistro(String registro) {
+		this.registro = registro;
+	}
+
+	
 	 
 }

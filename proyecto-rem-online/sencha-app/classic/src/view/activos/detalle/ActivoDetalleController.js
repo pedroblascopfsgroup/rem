@@ -5710,6 +5710,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	usuarioTieneFuncionPermitirTramitarOferta: function(get){
+		
 		var me = this;
 		var comercial =	me.getViewModel().get('activo.pertenceAgrupacionComercial');
 		var restringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');

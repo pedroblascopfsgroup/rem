@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,10 +30,12 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidators
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVValidationResult;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVColumnValidator;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnValidator;
+import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 
@@ -155,6 +158,9 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 	
+	@Autowired
+	private MSVFicheroDao ficheroDao;
+	
 	private Integer numFilasHoja;
 	
 	
@@ -177,6 +183,7 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 		
 		if(!dtoValidacionContenido.getFicheroTieneErrores()){
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
+			Map<String, List<Integer>> mapaCount = new HashMap<String, List<Integer>>();
 			if(this.numFilasHoja > COL_NUM.DATOS_PRIMERA_FILA){
 				mapaErrores.put(GASTO_NULL, esCampoNullByRows(exc, COL_NUM.GPV_NUM_GASTO_HAYA));
 				mapaErrores.put(GASTO_NOT_EXISTS, isGastoNotExistsByRows(exc));
@@ -194,7 +201,7 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 				mapaErrores.put(DIARIO1_VALORES_POSIBLES, validaDiario1(exc, COL_NUM.GPL_DIARIO1));
 				mapaErrores.put(DIARIO2_VALORES_POSIBLES, validaDiario2(exc, COL_NUM.GPL_DIARIO2));
 				mapaErrores.put(DIARIO1_VS_DIARIO2, validaDiario1Diario2(exc, COL_NUM.GPL_DIARIO1, COL_NUM.GPL_DIARIO2));
-				
+				mapaCount.put("fin", countNumGastos(exc, COL_NUM.GPV_NUM_GASTO_HAYA));
 				
 				if( !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty() || 
 					!mapaErrores.get(GASTO_NULL).isEmpty() ||
@@ -218,6 +225,13 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 						String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
 						FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
 						dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+				}else {
+					dtoValidacionContenido.setFicheroTieneErrores(false);
+					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+					String nomFichero = exc.crearExcelValidadoCount(mapaCount, 0, 0);
+					FileItem fileItem = new FileItem(new File(nomFichero));
+					MSVDocumentoMasivo archivo = ficheroDao.findByIdProceso(dtoFile.getProcessId());
+					archivo.setContenidoFichero(fileItem);
 				}
 			}else{
 				List<Integer> listaFilas = new ArrayList<Integer>();
@@ -526,5 +540,26 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 		}
 		
 		return listaFilas;
+	}
+	private List<Integer> countNumGastos(MSVHojaExcel exc, Integer colNumGasto){		
+		Map<String, Integer> mapaCount = new HashMap<String, Integer>();
+		for(int i = 1; i<this.numFilasHoja; i++){
+			try{
+				String valorNumGasto = exc.dameCelda(i, colNumGasto);
+				if(mapaCount.containsKey(valorNumGasto)) {
+					mapaCount.remove(valorNumGasto);
+				}
+				mapaCount.put(valorNumGasto, i);
+				
+				
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return new ArrayList<Integer>(mapaCount.values());
 	}
 }

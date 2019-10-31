@@ -170,6 +170,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired 
 	private MSVActualizacionPerimetroAppleExcelValidator valoresPerimetroApple;
+	
+	@Autowired 
+	private MSVActualizacionDocAdministrativaExcelValidator docAdministrativa;
 		
 	@Autowired
 	private MSVControlTributosExcelValidator controlTributos;
@@ -297,6 +300,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return valoresPerimetroApple;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_LPO.equals(codTipoOperacion)) {
 			return cargaMasivaLPO;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_DOCUMENTACION_ADMINISTRATIVA.equals(codTipoOperacion)) {
+			return docAdministrativa;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CONTROL_TRIBUTOS.equals(codTipoOperacion)) {
 			return controlTributos;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES_PLUSVALIAS.equals(codTipoOperacion)) {

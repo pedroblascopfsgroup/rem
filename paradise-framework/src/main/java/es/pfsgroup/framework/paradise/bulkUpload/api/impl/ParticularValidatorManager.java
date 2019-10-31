@@ -3963,6 +3963,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean existeTipoDoc(String codTipoDoc) {
+		if (Checks.esNulo(codTipoDoc)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
+				+" WHERE DD_TPD_CODIGO = '" + codTipoDoc +"'"
+				+ " AND DD_TPD_CODIGO IN('02','04','05','06','07','08','09','10','11','12','13','14','15','16','17','19','24','25','26','27','52','71','72','104','106','119')");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
 	public Boolean existeSubfasePublicacion(String subfasePublicacion) {
 		if(Checks.esNulo(subfasePublicacion) || !StringUtils.isAlphanumeric(subfasePublicacion))
 			return false;
@@ -3970,6 +3979,31 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 FROM DD_SFP_SUBFASE_PUBLICACION WHERE"
 				+ "		 	DD_SFP_CODIGO ='"+subfasePublicacion+"' "
 				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeEstadoDocumento(String codEstadoDoc) {
+		if (Checks.esNulo(codEstadoDoc)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_EDC_ESTADO_DOCUMENTO "
+				+" WHERE DD_EDC_CODIGO = '" + codEstadoDoc +"'");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeCalificacionEnergetica(String codCE) {
+		if (Checks.esNulo(codCE)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TCE_TIPO_CALIF_ENERGETICA "
+				+" WHERE DD_TCE_CODIGO = '" + codCE +"'");
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean esDocumentoCEE(String codDocumento) {
+		if (Checks.esNulo(codDocumento)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
+				+" WHERE DD_TPD_CODIGO =  '"+ codDocumento + "'"
+				+ "AND DD_TPD_CODIGO IN ('25')");
 		return !"0".equals(resultado);
 	}
 	

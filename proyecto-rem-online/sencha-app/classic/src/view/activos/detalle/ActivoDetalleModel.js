@@ -8,7 +8,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
-    'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion'],
+    'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
+    'HreRem.model.DocumentacionAdministrativa'],
 
     data: {
     	activo: null,
@@ -1178,13 +1179,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		},
     		
     		storeDocumentacionAdministrativa: {    			
-    		 model: 'HreRem.model.Catastro',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListDocumentacionAdministrativaById',
-		        extraParams: {id: '{activo.id}'}
-	    	 }
-    		},
+       		 model: 'HreRem.model.DocumentacionAdministrativa',
+   		     proxy: {
+   		        type: 'uxproxy',
+   		        remoteUrl: 'activo/getListDocumentacionAdministrativaById',
+   		        extraParams: {id: '{activo.id}'}
+   	    	 }
+       		},
 
     		storeGestoresActivos: {
     			pageSize: $AC.getDefaultPageSize(),

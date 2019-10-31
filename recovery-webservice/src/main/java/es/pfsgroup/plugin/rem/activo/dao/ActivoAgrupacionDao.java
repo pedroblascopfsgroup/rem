@@ -52,4 +52,5 @@ public interface ActivoAgrupacionDao extends AbstractDao<ActivoAgrupacion, Long>
 	
 	ActivoAgrupacion getAgrupacionById(Long id);
 
+
 }

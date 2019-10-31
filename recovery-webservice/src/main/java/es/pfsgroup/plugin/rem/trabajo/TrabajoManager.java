@@ -1752,6 +1752,27 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} else {
 			dtoTrabajo.setRequerimiento(false);
 		}
+		
+				
+		if(!Checks.esNulo(trabajo.getActivo())) {
+			
+			Long idAgrupacion = activoApi.activoPerteneceDND(trabajo.getActivo());
+			
+			if(!Checks.esNulo(idAgrupacion) &&  !Checks.esNulo(trabajo.getTipoTrabajo()) && DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())) {
+				dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
+				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(idAgrupacion);
+				if(!Checks.esNulo(agrupacion)) {
+					dtoTrabajo.setNumeroDND(agrupacion.getNumAgrupRem());
+					dtoTrabajo.setNombreDND(agrupacion.getNombre());
+					dtoTrabajo.setNumAgrupacion(agrupacion.getNumAgrupRem());
+					//dtoTrabajo.setCodigoPartida(agrupacion);
+				}else {
+					dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
+				}
+				
+			}
+			
+		}
 
 		return dtoTrabajo;
 	}

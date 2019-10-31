@@ -138,6 +138,31 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   		fieldLabel: HreRem.i18n('fieldlabel.mediador'),
 									                   		cls: 'cabecera-info-field',
 															bind:		'{trabajo.nombreMediador}'
+									                   	},
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.dnd'),
+									                   		cls: 'cabecera-info-field',
+															bind:{
+																value:'{trabajo.numeroDND}',
+																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+															}
+									                   	},
+														{ 
+															fieldLabel: HreRem.i18n('fieldlabel.nombre.dnd'),
+															cls: 'cabecera-info-field',
+															bind:{
+																value:'{trabajo.nombreDND}',
+																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+															}
+										                },
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.codigo.partida'),
+									                   		cls: 'cabecera-info-field',
+									                   		bind:{
+																value:'{trabajo.codigoPartida}',
+																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+															}
+															
 									                   	}
 											]
 										},

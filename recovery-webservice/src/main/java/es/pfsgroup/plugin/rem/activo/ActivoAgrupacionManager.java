@@ -920,7 +920,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		
 		for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionesActivo) {
 			if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
-				&& DDTipoAgrupacion.AGRUPACION_PROMOCION_DND.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+				&& DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 				perteneceDND = true;
 				break;
 			}

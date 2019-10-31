@@ -310,7 +310,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					}
 				}
 				if(activo.get('cambioEstadoPublicacion')){
-					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
+					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA']) || activo.get('estadoVentaCodigo') == '03'){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 					}else{
 						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.publicacion"));

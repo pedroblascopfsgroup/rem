@@ -5,7 +5,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     collapsed	: false,
     reference	: 'documentosactivoref',
     scrollable	: 'y',
-    requires	: ['HreRem.model.AdjuntoActivo','HreRem.model.AdjuntoActivoPromocion','HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','Ext.data.Store'],
+    requires	: ['HreRem.model.AdjuntoActivo','HreRem.model.AdjuntoActivoPromocion','HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','Ext.data.Store','HreRem.model.Activo'],
 
     initComponent: function () {
     	var me = this;
@@ -30,8 +30,8 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     	            collapsible: true,
 //    	            readOnly: true,
     	            bind:{
-    	            	disabled: '{!activo.isCarteraSareb}',
-    	            	hidden: '{!activo.isCarteraSareb}'
+    	            	disabled: '{!activo.esSarebProyecto}',
+    	            	hidden: '{!activo.esSarebProyecto}'
     	            },
     	 			colspan: 3
     	 		}/*,

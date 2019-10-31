@@ -126,6 +126,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean pertenceAgrupacionProyecto;
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
+	private Boolean esSarebProyecto;
 	
 	//Perimetro datos:
 	private Boolean incluidoEnPerimetro;
@@ -2046,4 +2047,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setTramitable(Boolean tramitable) {
 		this.tramitable = tramitable;
 	}
+
+	public Boolean getEsSarebProyecto() {
+		return esSarebProyecto;
+	}
+
+	public void setEsSarebProyecto(Boolean esSarebProyecto) {
+		this.esSarebProyecto = esSarebProyecto;
+	}
+	
 }

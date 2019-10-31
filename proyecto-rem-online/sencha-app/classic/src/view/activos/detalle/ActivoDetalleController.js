@@ -5798,4 +5798,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.cargarTabDataMultiple(form, 0, models, form.records);
 		}
 	}
+	
 });

@@ -12,7 +12,7 @@
 		localUrl : null,
 		remoteUrl : null,
 		writeAll : false,
-		remApi: false
+		remApi: true
 	},
 
 	requires : [ 

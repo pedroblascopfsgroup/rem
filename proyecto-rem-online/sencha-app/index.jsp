@@ -58,7 +58,7 @@
             java.lang.Long hoy = new java.util.Date().getTime();      
             %>
             $AC.setWebPath('<c:url value="/"/>');
-            $AC.setRemApiWebPath('localhost/');
+            $AC.setRemApiWebPath('http://localhost/');
             $AC.setCurrentDate(<c:out value="<%= hoy %>"/>);
             $AC.setVersion('${version}');
             $AC.setDebugMode(${jsDebug});

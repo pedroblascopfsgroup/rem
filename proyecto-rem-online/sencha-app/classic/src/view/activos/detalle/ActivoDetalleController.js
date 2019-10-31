@@ -5545,25 +5545,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	usuarioTieneFuncionPermitirTramitarOfertaC: function(get){
-		var me = this;
-		var comercial =	me.getViewModel().get('activo.pertenceAgrupacionComercial');
-		var restringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
-
-		if (!comercial && !restringida && me.getViewModel().get('activo.isCarteraBankia')){
-			var tramitar = me.getView().lookupReference('labelActivoNoTramitable').hidden; 
-    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
-    		if (!tramitar){
-    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(!funcion);
-    		}else{
-    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
-    		}
-		}else{
-			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
-		}
-	},
-	
 	usuarioTieneFuncionPermitirTramitarOferta: function(get){
+		
 		var me = this;
 		var comercial =	me.getViewModel().get('activo.pertenceAgrupacionComercial');
 		var restringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');

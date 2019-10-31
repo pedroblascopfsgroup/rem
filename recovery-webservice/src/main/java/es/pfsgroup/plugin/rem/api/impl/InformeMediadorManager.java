@@ -1438,7 +1438,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 					}
 					ActivoEdificio edificioEntity = null;
-					if(informeEntity.getId() != null){
+					if(informeEntity.getId() != null ){
 						edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
 					}else{

@@ -10106,7 +10106,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public boolean existeComprador(String numDoc) {
-		if (!Checks.esNulo(numDoc) && !Checks.esNulo(numDoc)) {
+		if (!Checks.esNulo(numDoc)) {
 			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "documento", numDoc);
 			Comprador comprador = genericDao.get(Comprador.class, filterComprador);
 			if (!Checks.esNulo(comprador)) {

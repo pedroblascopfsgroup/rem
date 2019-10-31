@@ -25,6 +25,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -67,6 +68,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaVivaRespuestaDto;
 import es.pfsgroup.plugin.rem.rest.dto.TareaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
+import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -118,6 +120,9 @@ public class OfertasController {
 	
 	@Autowired
 	private AgendaAdapter agendaAdapter;
+
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
 	private final static String CLIENTE_HAYA = "HAYA";
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
@@ -200,6 +205,10 @@ public class OfertasController {
 					}
 				}
 			}
+		}
+		
+		if (listaOfertas.size() > 5000) {
+			new EmptyParamDetector().isEmpty(listaOfertas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
 		}
 		
 		ExcelReport report = new OfertasExcelReport(listaOfertas, dtoCarteraCodigo, usuarioCartera, fechasReunionComite, sancionadores);

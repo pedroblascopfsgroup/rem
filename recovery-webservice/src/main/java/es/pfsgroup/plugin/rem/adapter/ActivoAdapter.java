@@ -193,6 +193,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -1375,36 +1376,48 @@ public class ActivoAdapter {
 		Activo activo = activoApi.get(id);
 
 		List<DtoAdmisionDocumento> listaDtoAdmisionDocumento = new ArrayList<DtoAdmisionDocumento>();
-
-		if (!Checks.esNulo(activo.getAdmisionDocumento())) {
-
-			for (int i = 0; i < activo.getAdmisionDocumento().size(); i++) {
-				DtoAdmisionDocumento catastroDto = new DtoAdmisionDocumento();
-
-				try {
-					BeanUtils.copyProperties(catastroDto, activo.getAdmisionDocumento().get(i));
-
-					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento())) {
-						if(!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo())){
-						BeanUtils.copyProperty(catastroDto, "descripcionTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getDescripcion());
-						BeanUtils.copyProperty(catastroDto, "codigoTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getCodigo());
+		if(!Checks.esNulo(activo)) {		
+			if (!Checks.esNulo(activo.getAdmisionDocumento())) {
+	
+				for (int i = 0; i < activo.getAdmisionDocumento().size(); i++) {
+					DtoAdmisionDocumento adoDto = new DtoAdmisionDocumento();
+	
+					try {
+						BeanUtils.copyProperties(adoDto, activo.getAdmisionDocumento().get(i));
+						
+						if(!Checks.esNulo(activo.getAdmisionDocumento().get(i).getLetraConsumo())) {
+							Filter filtroCodConsumo = genericDao.createFilter(FilterType.EQUALS, "codigo", activo.getAdmisionDocumento().get(i).getLetraConsumo());
+							DDTipoCalificacionEnergetica tipoCEE = genericDao.get(DDTipoCalificacionEnergetica.class, filtroCodConsumo);
+							adoDto.setTipoLetraConsumoCodigo(Checks.esNulo(tipoCEE) ? null : tipoCEE.getCodigo());
+							adoDto.setTipoLetraConsumoDescripcion(Checks.esNulo(tipoCEE) ? null : tipoCEE.getDescripcion());
 						}
+						BeanUtils.copyProperty(adoDto, "consumo", activo.getAdmisionDocumento().get(i).getConsumo());
+						BeanUtils.copyProperty(adoDto, "emision", activo.getAdmisionDocumento().get(i).getEmision());
+						BeanUtils.copyProperty(adoDto, "registro", activo.getAdmisionDocumento().get(i).getRegistro());
+						adoDto.setDataIdDocumento(activo.getAdmisionDocumento().get(i).getDataIdDocumento());
+						
+						if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento()) 
+								&& !Checks.esNulo(activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo())){
+								BeanUtils.copyProperty(adoDto, "descripcionTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getDescripcion());
+								BeanUtils.copyProperty(adoDto, "codigoTipoDocumentoActivo", activo.getAdmisionDocumento().get(i).getConfigDocumento().getTipoDocumentoActivo().getCodigo());
+							}						
+	
+						if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica())) {
+							BeanUtils.copyProperty(adoDto, "tipoCalificacionCodigo", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getCodigo());
+							BeanUtils.copyProperty(adoDto, "tipoCalificacionDescripcion", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getDescripcion());
+						}
+					} catch (IllegalAccessException e) {
+						logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
+					} catch (InvocationTargetException e) {
+						logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
 					}
-
-					if (!Checks.esNulo(activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica())) {
-						BeanUtils.copyProperty(catastroDto, "tipoCalificacionCodigo", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getCodigo());
-						BeanUtils.copyProperty(catastroDto, "tipoCalificacionDescripcion", activo.getAdmisionDocumento().get(i).getTipoCalificacionEnergetica().getDescripcion());
-					}
-				} catch (IllegalAccessException e) {
-					logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
-				} catch (InvocationTargetException e) {
-					logger.error("Error al obtener un listado de documentos administrativos del activo.", e);
+	
+					listaDtoAdmisionDocumento.add(adoDto);
 				}
-
-				listaDtoAdmisionDocumento.add(catastroDto);
 			}
+		} else {
+			throw new JsonViewerException("Error al buscar el activo");
 		}
-
 		return listaDtoAdmisionDocumento;
 	}
 
@@ -2204,8 +2217,13 @@ public class ActivoAdapter {
 			try {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "id", tarea.getTareaPadre().getId());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "idTareaExterna", tarea.getId());
-				beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea",
-						tarea.getTareaProcedimiento().getDescripcion());
+				if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
+						DDSubcartera.CODIGO_OMEGA.equals(tramite.getActivo().getSubcartera().getCodigo()) && 
+						DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tarea.getTareaProcedimiento().getCodigo())) {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+				} else {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tarea.getTareaProcedimiento().getDescripcion());
+				}
 				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
 				// value);
 
@@ -2256,10 +2274,21 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "id", tareaActivo.getId());
 				if (!Checks.esNulo(tareaExterna)) {
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "idTareaExterna", tareaExterna.getId());
-					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea",
-							tareaExterna.getTareaProcedimiento().getDescripcion());
+					if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tareaActivo.getActivo().getCartera().getCodigo()) && 
+							DDSubcartera.CODIGO_OMEGA.equals(tareaActivo.getActivo().getSubcartera().getCodigo()) && 
+							DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaExterna.getTareaProcedimiento().getCodigo())) {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+					} else {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaExterna.getTareaProcedimiento().getDescripcion());
+					}
 				} else {
-					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaActivo.getDescripcionTarea());
+					if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tareaActivo.getActivo().getCartera().getCodigo()) && 
+							DDSubcartera.CODIGO_OMEGA.equals(tareaActivo.getActivo().getSubcartera().getCodigo()) && 
+							DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaActivo.getCodigoTarea())) {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+					} else {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaActivo.getDescripcionTarea());
+					}
 				}
 				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
 				// value);
@@ -2484,6 +2513,11 @@ public class ActivoAdapter {
 				activoAdmisionDocumento.setFechaEtiqueta(null);
 				activoAdmisionDocumento.setFechaEmision(null);
 				activoAdmisionDocumento.setFechaCaducidad(null);
+				activoAdmisionDocumento.setDataIdDocumento(null);
+				activoAdmisionDocumento.setLetraConsumo(null);
+				activoAdmisionDocumento.setConsumo(null);
+				activoAdmisionDocumento.setEmision(null);
+				activoAdmisionDocumento.setRegistro(null);
 
 			} else {
 
@@ -2495,8 +2529,6 @@ public class ActivoAdapter {
 		} else {
 
 			activoAdmisionDocumento = new ActivoAdmisionDocumento();
-
-			//rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoAdmisionDocumento.getIdActivo());
 			Activo act = genericDao.get(Activo.class, filtro);
@@ -2512,13 +2544,9 @@ public class ActivoAdapter {
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 			
-			genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
-
-			
+			genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);	
 		}
-
 		return true;
-
 	}
 
 	private void rellenaCheckingDocumentoAdmision(ActivoAdmisionDocumento activoAdmisionDocumento,
@@ -2550,6 +2578,16 @@ public class ActivoAdapter {
 						.dameValorDiccionarioByCod(DDTipoCalificacionEnergetica.class, dtoAdmisionDocumento.getTipoCalificacionCodigo());
 				activoAdmisionDocumento.setTipoCalificacionEnergetica(calificacion);
 			}
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "dataIdDocumento",
+					dtoAdmisionDocumento.getDataIdDocumento());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "letraConsumo",
+					dtoAdmisionDocumento.getLetraConsumo());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "consumo",
+					dtoAdmisionDocumento.getConsumo());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "emision",
+					dtoAdmisionDocumento.getEmision());
+			beanUtilNotNull.copyProperty(activoAdmisionDocumento, "registro",
+					dtoAdmisionDocumento.getRegistro());
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ActivoAdapter", e);

@@ -3697,9 +3697,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean faltanDatosCalculo (Long idOferta) {
 		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
 		Oferta ofertaAceptada = this.getOfertaById(idOferta);
-		if(ofertaAceptada != null) {
-			if(!Checks.estaVacio(ofertaAceptada.getActivoPrincipal().getTasacion())) {
-				vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+		Activo activoPrincipal = ofertaAceptada.getActivoPrincipal();
+		
+		if(ofertaAceptada != null && !Checks.esNulo(activoPrincipal)) {
+			if(!Checks.estaVacio(activoPrincipal.getTasacion()) 
+					&& !Checks.esNulo(activoPrincipal.getTasacion().get(activoPrincipal.getTasacion().size()-1).getImporteTasacionFin())) {
+				vta += activoPrincipal.getTasacion().get(activoPrincipal.getTasacion().size()-1).getImporteTasacionFin();
 			}
 			pvb = ofertaAceptada.getImporteOferta();
 	
@@ -3737,7 +3740,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 	
-				List<ActivoValoraciones> valoraciones = ofertaAceptada.getActivoPrincipal().getValoracion();
+				List<ActivoValoraciones> valoraciones = activoPrincipal.getValoracion();
 	
 				for (ActivoValoraciones valoracion : valoraciones) {
 					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
@@ -4739,6 +4742,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(activo) && (!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera()))) {
 				return (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
 						&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkEsOmega(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			Activo activo = ofertaAceptada.getActivoPrincipal();
+			if (!Checks.esNulo(activo) && (!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera()))) {
+				return (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_OMEGA.equals(activo.getSubcartera().getCodigo()));
 			}
 		}
 		return false;

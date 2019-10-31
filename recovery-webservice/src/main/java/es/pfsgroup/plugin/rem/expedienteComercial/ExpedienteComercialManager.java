@@ -1777,6 +1777,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(oferta.getFechaRespuesta()) && isCarteraCerberusApple) {
 			dto.setFechaRespuesta(oferta.getFechaRespuesta());
 		}
+		
+		if(!Checks.esNulo(oferta.getImporteContraofertaOfertanteCES()) && isCarteraCerberusApple) {
+			dto.setImporteContraofertaOfertanteCES(oferta.getImporteContraofertaOfertanteCES());
+		}
 
 		if(oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			///Comprobamos si la tarea Elevar a Sanción está activa
@@ -10102,7 +10106,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public boolean existeComprador(String numDoc) {
-		if (!Checks.esNulo(numDoc) && !Checks.esNulo(numDoc)) {
+		if (!Checks.esNulo(numDoc)) {
 			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "documento", numDoc);
 			Comprador comprador = genericDao.get(Comprador.class, filterComprador);
 			if (!Checks.esNulo(comprador)) {
@@ -10261,6 +10265,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return esYubai;
+	}
+	
+	@Override
+	public boolean esOmega(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esOmega = false;
+		if ( !Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) ) {
+			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
+			if ( !Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera())) {
+				esOmega = ( DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo()) 
+							&& DDSubcartera.CODIGO_OMEGA.equals(activo.getSubcartera().getCodigo()) );
+			}
+		}
+		return esOmega;
 	}
 
 	@Override

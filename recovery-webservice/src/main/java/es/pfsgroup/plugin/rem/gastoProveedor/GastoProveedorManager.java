@@ -865,7 +865,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoTotal = Double.valueOf(result);
 					for (GastoPrinex gastoPrinex : listGastoPrinex) {
 						if(!Checks.esNulo(gastoPrinex.getIdActivo())) {
-							GastoProveedorActivo gastoProveedorActivos = new GastoProveedorActivo();
+							GastoProveedorActivo gastoProveedorActivos = null;
 							
 							Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id",idGasto);
 							Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "activo.id",gastoPrinex.getIdActivo());
@@ -889,6 +889,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							Double diarioTipo = gastoPrinex.getDiario1Tipo();
 							Double diarioCuota = gastoPrinex.getDiario1Cuota();
 							Double diario2Base = gastoPrinex.getDiario2Base();
+							detalleGasto = genericDao.get(GastoDetalleEconomico.class, filtro);
 							detalleGasto.setImpuestoIndirectoTipoImpositivo(diarioTipo);
 							detalleGasto.setImpuestoIndirectoCuota(diarioCuota);
 							detalleGasto.setIrpfTipoImpositivo(gastoPrinex.getPorcentajeIrpf());
@@ -909,7 +910,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}	
 					}
 				}
-				GastoProveedor gasto = new GastoProveedor();
+				GastoProveedor gasto = null;
 				gasto = gastoDao.getGastoById(idGasto);
 				if(!Checks.esNulo(gasto)) {
 					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();

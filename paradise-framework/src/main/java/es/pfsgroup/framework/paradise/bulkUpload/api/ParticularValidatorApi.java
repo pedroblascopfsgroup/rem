@@ -867,6 +867,24 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esActivoApple(String numActivo);
 
+	/***
+	 * @param codTipoDoc
+	 * @return true si existe el código del documento
+	 */
+	public Boolean existeTipoDoc(String codTipoDoc);
+
+	/***
+	 * @param codEstado
+	 * @return true si existe el código de estado
+	 */
+	public Boolean existeEstadoDocumento(String codEstadoDoc);
+
+	/***
+	 * @param codCalificacionEnergetica
+	 * @return true si existe el código de calificación energética
+	 */
+	public Boolean existeCalificacionEnergetica(String codCE);
+	
 	Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia);
 
 	public Boolean esActivoUA(String numActivo);
@@ -925,6 +943,12 @@ public interface ParticularValidatorApi {
 	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
 	 */
 	Boolean activoEnAgrupacionProyecto(String numActivo);
+
+	/**
+	 * @param codDocumento
+	 * @return true si el código del documento es de tipo CEE
+	 */
+	public Boolean esDocumentoCEE(String codDocumento);
 
 	/**
 	 * @param numActivo

@@ -28,6 +28,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -64,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 
 @Controller
 public class AgrupacionController extends ParadiseJsonController {
@@ -93,6 +95,9 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -743,6 +748,10 @@ public class AgrupacionController extends ParadiseJsonController {
 		@SuppressWarnings("unchecked")
 		List<VBusquedaAgrupaciones> listaAgrupaciones = (List<VBusquedaAgrupaciones>) adapter
 				.getListAgrupaciones(dtoAgrupacionFilter).getResults();
+		
+		if (listaAgrupaciones.size() > 5000) {
+			new EmptyParamDetector().isEmpty(listaAgrupaciones.size(), "agrupaciones",  usuarioManager.getUsuarioLogado().getUsername());
+		}
 
 		ExcelReport report = new AgrupacionExcelReport(listaAgrupaciones);
 

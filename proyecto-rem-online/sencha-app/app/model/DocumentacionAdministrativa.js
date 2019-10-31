@@ -41,6 +41,21 @@ Ext.define('HreRem.model.DocumentacionAdministrativa', {
     			name:'fechaEtiqueta',
     			type:'date',
     			dateFormat: 'c'    			
+    		},
+    		{
+	    		name:'dataIdDocumento'
+    		},
+    		{
+    			name:'tipoLetraConsumoDescripcion'
+    		},
+    		{
+    			name:'consumo'
+    		},
+    		{
+    			name:'emision'
+    		},
+    		{
+    			name:'registro'
     		}
     		
     ]

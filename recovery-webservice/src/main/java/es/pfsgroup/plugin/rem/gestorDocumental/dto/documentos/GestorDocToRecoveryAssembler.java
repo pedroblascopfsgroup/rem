@@ -91,28 +91,29 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setNombre(idnDoc.getNombreNodo());
 				dtoAdj.setCodigoTipo(idnDoc.getTdn1() + "-" + idnDoc.getTdn2());
 				dtoAdj.setDescripcionTipo("");
-				dtoAdj.setContentType(null);
+				dtoAdj.setContentType(idnDoc.getContentType());
+				dtoAdj.setTamanyo(idnDoc.getFileSizeInLongBytes());
 				dtoAdj.setGestor(null);
 				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
 				dtoAdj.setMatricula(idnDoc.getTipoExpediente() +"-"+idnDoc.getSerieDocumental()+"-"+idnDoc.getTdn1()+"-"+idnDoc.getTdn2());
-						        
+				       
 				Date fechaDocumento = null;
 				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
-					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
-				    }
+				fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
+				   }
 				dtoAdj.setFechaDocumento(fechaDocumento);
 				Date createDate = null;
 				if(!Checks.esNulo(idnDoc.getCreatedate())){
-					createDate = new Timestamp(stringToDate(idnDoc.getCreatedate()).getTime());
-				    }
+				createDate = new Timestamp(stringToDate(idnDoc.getCreatedate()).getTime());
+				   }
 				dtoAdj.setCreateDate(createDate);
 				dtoAdj.setFileSize(idnDoc.getFileSize());
 				dtoAdj.setId_activo(idnDoc.getId_activo());
 				dtoAdj.setRel(idnDoc.getRel());
 				dtoAdj.setTdn2_desc(idnDoc.getTdn2_desc());
 				dtoAdj.setTipoExpediente(idnDoc.getTipoExpediente());
-				
-				
+
+
 				list.add(dtoAdj);
 			}
 		}

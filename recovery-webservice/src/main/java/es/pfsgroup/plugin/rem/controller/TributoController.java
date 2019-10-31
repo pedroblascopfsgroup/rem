@@ -1,7 +1,10 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -32,8 +35,12 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.TributoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 
 
 @Controller
@@ -71,13 +78,8 @@ public class TributoController extends ParadiseJsonController {
 
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
-			if(activoTributoApi.comprobarSiExisteActivoTributo(webFileItem)) {
 				tributoAdapter.upload(webFileItem);
 				model.put("success", true);
-			}else {
-				model.put("success", false);
-				model.put("errorMessage", "Ya existe un documento para este tributo");
-			}
 		} catch (GestorDocumentalException e) {
 			logger.error("error en tributoController", e);
 			model.put("success", false);
@@ -98,57 +100,43 @@ public class TributoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoActivoTributo(HttpServletRequest request, HttpServletResponse response) {
 		ServletOutputStream salida = null;
-		Long idTributo = null;
-		Long id = null;
+		
 		try {
-			idTributo = Long.parseLong(request.getParameter("idTributo"));
-			Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", idTributo);
-			Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			Filter filtroRest = null;
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				filtroRest = genericDao.createFilter(FilterType.NOTNULL, "idDocRestClient");
-			}else {
-				filtroRest = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
+			Long id = Long.parseLong(request.getParameter("id"));
+			String nombreDocumento = request.getParameter("nombreDocumento");
+			salida = response.getOutputStream();
+			FileItem fileItem = tributoAdapter.download(id, nombreDocumento);
+			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+			response.setHeader("Cache-Control", "max-age=0");
+			response.setHeader("Expires", "0");
+			response.setHeader("Pragma", "public");
+			response.setDateHeader("Expires", 0); // prevents caching at the proxy
+			if(!Checks.esNulo(fileItem.getContentType())) {
+				response.setContentType(fileItem.getContentType());
 			}
 
-			
-			ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo,filtroRest, filtroAuditoria);
-			
-			if(!Checks.esNulo(activoAdjuntoTributo)) {
-				id = activoAdjuntoTributo.getIdDocRestClient();
-				
-				String nombreDocumento = request.getParameter("nombreDocumento");
-				salida = response.getOutputStream();
-				FileItem fileItem = tributoAdapter.download(id,nombreDocumento);
-				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
-				response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-				response.setHeader("Cache-Control", "max-age=0");
-				response.setHeader("Expires", "0");
-				response.setHeader("Pragma", "public");
-				response.setDateHeader("Expires", 0); // prevents caching at the
-														// proxy
-				if(!Checks.esNulo(fileItem.getContentType())) {
-					response.setContentType(fileItem.getContentType());
-				}
-				
-				// Write
-				FileUtils.copy(fileItem.getInputStream(), salida);
-			}
-		}catch(UserException ex) {
+			// Write
+			FileUtils.copy(fileItem.getInputStream(), salida);
+
+		} catch(UserException ex) {
 			try {
 				salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("error en activoController", e);
 			}
 	
-		} catch (Exception e) {
+		}
+		catch (SocketException e) {
+			logger.warn("error en activoController", e);
+		}catch (Exception e) {
 			logger.error("error en activoController", e);
 		}finally {
 			try {
 				salida.flush();			
 				salida.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("error en activoController", e);
 			}
 		}
 
@@ -157,10 +145,9 @@ public class TributoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView deleteAdjunto(Long idActivo,Long idTributo, ModelMap model) {
-	
+	public ModelAndView deleteAdjunto(DtoAdjuntoTributo dto, ModelMap model) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, activoTributoApi.deleteAdjuntoDeTributo(idTributo));
+			model.put(RESPONSE_SUCCESS_KEY, tributoAdapter.deleteAdjunto(dto));
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
@@ -168,6 +155,31 @@ public class TributoController extends ParadiseJsonController {
 			model.put("errorMessage", e.getMessage());
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDocumentosTributo(Long idTributo, ModelMap model, HttpServletRequest request) {
+		
+		List<DtoAdjuntoTributo> listaDocs = new ArrayList<DtoAdjuntoTributo>();
+		
+		try {
+			if(idTributo != null) {
+				listaDocs = tributoAdapter.getAdjuntos(idTributo);
+			}
+			model.put(RESPONSE_DATA_KEY, listaDocs);
+
+		} catch (GestorDocumentalException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
+			
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
+		}
+		
 		return createModelAndViewJson(model);
 	}
 

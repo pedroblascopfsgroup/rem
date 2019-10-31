@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.gestorDocumental.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
@@ -7,6 +8,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
@@ -98,12 +100,12 @@ public interface GestorDocumentalAdapterApi {
 	void crearRelacionPlusvalia(ActivoPlusvalia activoPlusvalia, Long idDocRestClient, String activo, String username,
 			CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
 
-	DtoAdjunto getAdjuntoTributo(ActivoTributos adjuntoTributo) throws GestorDocumentalException;
-
 	void crearTributo(ActivoTributos activoTributo, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
 
 	public void crearRelacionActivoTributo(ActivoTributos activoTributo, Long idDocRestClient, String activo, String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto)
 			throws GestorDocumentalException;
+
+	List<DtoAdjuntoTributo> getAdjuntosTributo(ActivoTributos tributo) throws GestorDocumentalException, IllegalAccessException, InvocationTargetException;
 
 
 }

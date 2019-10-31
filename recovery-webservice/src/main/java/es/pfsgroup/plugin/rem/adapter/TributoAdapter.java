@@ -3,11 +3,16 @@ package es.pfsgroup.plugin.rem.adapter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -20,16 +25,17 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 
 
@@ -61,6 +67,7 @@ public class TributoAdapter {
 	private DownloaderFactoryApi downloaderFactoryApi;
 	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
+	protected static final Log logger = LogFactory.getLog(ActivoAdapter.class);
 	
 
 	public String uploadDocumento(WebFileItem webFileItem, String matricula) throws Exception {
@@ -134,11 +141,55 @@ public class TributoAdapter {
 	public FileItem download(Long id,String nombreDocumento) throws UserException,Exception {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
-		FileItem result = dl.getFileItemTributo(id,nombreDocumento);
-		if(result == null){
-			throw new UserException("El fichero no existe");
+		return dl.getFileItem(id,nombreDocumento);
+	}
+
+	public List<DtoAdjuntoTributo> getAdjuntos(Long idTributo)
+			throws GestorDocumentalException, IllegalAccessException, InvocationTargetException{
+		List<DtoAdjuntoTributo> listaAdjuntos = new ArrayList<DtoAdjuntoTributo>();
+		
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			ActivoTributos tributo = activoTributoApi.getTributo(idTributo);
+			listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosTributo(tributo);
+		}else {
+			listaAdjuntos = getAdjuntosTributo(idTributo, listaAdjuntos);
 		}
-		return result;
+		
+		return listaAdjuntos;
+	}
+	
+	private List<DtoAdjuntoTributo> getAdjuntosTributo(Long idTributo, List<DtoAdjuntoTributo> listaAdjuntos)
+			throws IllegalAccessException, InvocationTargetException {
+		ActivoTributos tributo = activoTributoApi.getTributo(idTributo);
+		
+		for(ActivoAdjuntoTributo adjunto : tributo.getAdjuntos()) {
+			DtoAdjuntoTributo dto = new DtoAdjuntoTributo();
+
+			BeanUtils.copyProperties(dto, adjunto);
+			dto.setIdEntidad(tributo.getActivo().getId().toString());
+			dto.setIdTributo(idTributo);
+			dto.setDescripcionTipo(adjunto.getTipoDocumentoTributo().getDescripcion());
+			dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
+
+			listaAdjuntos.add(dto);
+		}
+		
+		return listaAdjuntos;
+	}
+
+	public Boolean deleteAdjunto(DtoAdjuntoTributo dto) {
+		Boolean borrado = false;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			try {
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dto.getId(), usuarioLogado.getUsername());
+			} catch (Exception e) {
+				logger.error("Error en ActivoAdapter", e);
+			}
+		} else {
+			borrado = activoTributoApi.deleteAdjuntoDeTributo(dto);
+		}
+		return borrado;
 	}
 
 }

@@ -1,13 +1,16 @@
 package es.pfsgroup.plugin.rem.gestorDocumental.manager;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +55,13 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -80,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -116,7 +122,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     
     @Autowired
     private ActivoAgrupacionApi activoAgrupacionApi;
-
 	
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -124,6 +129,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     @Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
 
+    @Autowired
+    private ActivoTributoApi activoTributoApi;
 
 	@Override
 	public String[] getKeys() {
@@ -1256,11 +1263,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 	
 	@Override
-	public DtoAdjunto getAdjuntoTributo(ActivoTributos adjuntoTributo) throws GestorDocumentalException {
+	public List<DtoAdjuntoTributo> getAdjuntosTributo(ActivoTributos tributo) throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		List<DtoAdjunto> list;
+		List<DtoAdjuntoTributo> listAdjunto = new ArrayList<DtoAdjuntoTributo>();
 
-		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(adjuntoTributo.getId().toString(),
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(tributo.getId().toString(),
 				GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, GestorDocumentalConstants.CODIGO_CLASE_TRIBUTOS);
 		Usuario userLogin = genericAdapter.getUsuarioLogado();
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
@@ -1268,19 +1276,28 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
 		if(!Checks.estaVacio(list)) {
-			DtoAdjunto adjuntoDeTributo = list.get(0);
-			
-			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjuntoDeTributo.getCodigoTipo());
-			if (tipoDoc == null) {
-				adjuntoDeTributo.setDescripcionTipo("");
-			} else {
-				adjuntoDeTributo.setDescripcionTipo(tipoDoc.getDescripcion());
+			for (DtoAdjunto adjunto : list) {
+				DtoAdjuntoTributo adjTributo = new DtoAdjuntoTributo();
+				DDTipoDocumentoTributos tipoDoc = (DDTipoDocumentoTributos) genericAdapter.dameValorDiccionarioByMatricula(DDTipoDocumentoTributos.class, adjunto.getMatricula());
+				
+				BeanUtils.copyProperties(adjTributo, adjunto);
+				
+				if (tipoDoc == null) {
+					adjTributo.setDescripcionTipo("");
+				} else {
+					adjTributo.setDescripcionTipo(tipoDoc.getDescripcion());
+				}
+				
+				ActivoAdjuntoTributo adj = activoTributoApi.getAdjuntoTributo(adjunto.getId());
+				
+				if(adj != null && adjTributo.getGestor() == null) {
+					adjTributo.setGestor(adj.getAuditoria().getUsuarioCrear());
+				}
+				
+				listAdjunto.add(adjTributo);
 			}
-			
-			
-			return adjuntoDeTributo;
 		}
-		return null;
+		return listAdjunto;
 	}
 	
 	@Override	

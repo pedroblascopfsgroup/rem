@@ -324,5 +324,17 @@ public class GenericAdapter {
 				|| usuario.getPerfiles().contains(FVDBACKVENTA) || usuario.getPerfiles().contains(HAYABACKOFFICE)
 				|| usuario.getPerfiles().contains(FVDNEGOCIO);		
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Object dameValorDiccionarioByMatricula(Class clase, String valor) {
+		if (Checks.esNulo(valor)) {
+			return null;
+		}
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "matricula", valor);
+		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Object obj = genericDao.get(clase, f1, f2);
+		//List lista = genericDao.getList(clazz, filtro);
+		return obj;
+	}
 
 }

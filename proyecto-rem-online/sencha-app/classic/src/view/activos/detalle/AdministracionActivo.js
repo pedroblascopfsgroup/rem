@@ -285,6 +285,9 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 						bind: {
 							store: '{storeActivoTributos}'
 						},
+						listeners:{
+							rowclick: 'onTributoClick'
+						},
 						features: [{
 		            		id: 'summary',
 		            		ftype: 'summary',
@@ -502,6 +505,10 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        }
 				   ]
 			
+				},
+				{
+					title: 'Documentos de tributos',
+					xtype:'documentostributosgrid'
 				}		
 				]
 		}

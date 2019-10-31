@@ -12,7 +12,6 @@
 		localUrl : null,
 		remoteUrl : null,
 		writeAll : false,
-		remApi: true
 	},
 
 	requires : [ 
@@ -24,25 +23,25 @@
         config = config || {};
 
         var root = Ext.isEmpty(config.rootProperty) ? 'data' : config.rootProperty;
-        var url = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : me.remApi ? $AC.getRemApiRemoteUrl(config.remoteUrl) : $AC.getRemoteUrl(config.remoteUrl);
+        var url = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : config.remApi ? $AC.getRemApiRemoteUrl(config.remoteUrl) : $AC.getRemoteUrl(config.remoteUrl);
         var writeAll = Ext.isEmpty(config.writeAll) ? me.writeAll : config.writeAll;
 
 		if (!Ext.isEmpty(config.api)) {
 			if(!Ext.isEmpty(config.api.read)){
-				config.api.read = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : me.remApi ? $AC.getRemApiRemoteUrl(config.api.read) : $AC.getRemoteUrl(config.api.read);
+				config.api.read = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : config.remApi ? $AC.getRemApiRemoteUrl(config.api.read) : $AC.getRemoteUrl(config.api.read);
 			}
 			if(!Ext.isEmpty(config.api.create)){
-				config.api.create = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : me.remApi ? $AC.getRemApiRemoteUrl(config.api.create) : $AC.getRemoteUrl(config.api.create);
+				config.api.create = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : config.remApi ? $AC.getRemApiRemoteUrl(config.api.create) : $AC.getRemoteUrl(config.api.create);
 			}
 			if(!Ext.isEmpty(config.api.update)){
-				config.api.update = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : me.remApi ? $AC.getRemApiRemoteUrl(config.api.update) : $AC.getRemoteUrl(config.api.update);
+				config.api.update = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : config.remApi ? $AC.getRemApiRemoteUrl(config.api.update) : $AC.getRemoteUrl(config.api.update);
 			}
 			if(!Ext.isEmpty(config.api.destroy)){
-				config.api.destroy = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : me.remApi ? $AC.getRemApiRemoteUrl(config.api.destroy) : $AC.getRemoteUrl(config.api.destroy);
+				config.api.destroy = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : config.remApi ? $AC.getRemApiRemoteUrl(config.api.destroy) : $AC.getRemoteUrl(config.api.destroy);
 			}
 		}
 
-		if (me.remApi) {
+		if (config.remApi) {
 		config.defaultActionMethods =  {
                        create : 'PUT',
                        read   : 'GET',
@@ -58,7 +57,7 @@
 			    reader: {
 			        rootProperty: root,
 			        type: 'json',
-			        totalProperty: 'totalCount'
+			        totalProperty: config.remApi ? 'totalElements':'totalCount'
 			    },
 			    writer: {
 			        rootProperty: root,

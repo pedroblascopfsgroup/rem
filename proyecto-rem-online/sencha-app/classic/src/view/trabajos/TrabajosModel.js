@@ -14,6 +14,7 @@ Ext.define('HreRem.view.trabajos.TrabajosModel', {
 		        localUrl: '/trabajos.json',
 		        remoteUrl: 'trabajo/do/busqueda',
 		        remApi: true,
+		        rootProperty : 'content',
 		        actionMethods: {read: 'GET'}
 	    	},	    		
 	    	remoteSort: true,

@@ -187,6 +187,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		Usuario usuarioBackOffice = null;
 		Usuario supervisorComercial = null;
 		ActivoProveedor proveedor = oferta.getPrescriptor();
+		String codProveedor = null;
+		
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
 			Activo activo = oferta.getActivoPrincipal();
@@ -217,7 +219,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				if (!Checks.esNulo(buzonPfs)) {
 					destinatarios.add(buzonPfs.getEmail());
 				}
-				if (!Checks.esNulo(buzonfdv) && DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(proveedor.getTipoProveedor().getCodigo())) {
+				
+				if(!Checks.esNulo(oferta.getPrescriptor())) {
+					proveedor = oferta.getPrescriptor();
+					if(!Checks.esNulo(proveedor.getTipoProveedor())) {
+						if(!Checks.esNulo(proveedor.getTipoProveedor().getCodigo())) {
+							codProveedor = proveedor.getTipoProveedor().getCodigo();
+						}
+					}
+				}
+				if (!Checks.esNulo(buzonfdv) && DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(codProveedor)) {
 					destinatarios.add(buzonfdv.getEmail());
 				}
 				if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {

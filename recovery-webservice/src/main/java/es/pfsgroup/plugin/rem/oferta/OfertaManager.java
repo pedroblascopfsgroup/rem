@@ -2682,7 +2682,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Double importe = null;
 		if (!Checks.esNulo(oferta)) {
-			importe = oferta.getImporteOferta();
+			if(!Checks.esNulo(oferta.getImporteContraOferta())) {
+				importe = oferta.getImporteContraOferta();
+			}else {
+				importe = oferta.getImporteOferta();
+			}
 			if (!Checks.esNulo(oferta.getTipoOferta())) {
 				codigoOferta = oferta.getTipoOferta().getCodigo();
 			}

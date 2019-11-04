@@ -94,9 +94,7 @@ public class DtoActivoFilter extends WebDto {
 	private String tipoTituloPosesorio;
 	private String estadoComunicacionGencatCodigo;
 	private Boolean usuarioGestoria;
-	private String gestoriaAdmision;
-	private String gestoriaAdministracion;
-	private String gestoriaFormalizacion;
+	private Long gestoria;
 	private String fasePublicacionCodigo;
 	private String fasePublicacionDescripcion;
 	private String gestorPublicacionUsername;
@@ -608,23 +606,11 @@ public class DtoActivoFilter extends WebDto {
 	public void setUsuarioGestoria(Boolean usuarioGestoria) {
 		this.usuarioGestoria = usuarioGestoria;
 	}
-	public String getGestoriaAdministracion() {
-		return gestoriaAdministracion;
+	public Long getGestoria() {
+		return gestoria;
 	}
-	public void setGestoriaAdministracion(String gestoriaAdministracion) {
-		this.gestoriaAdministracion = gestoriaAdministracion;
-	}
-	public String getGestoriaAdmision() {
-		return gestoriaAdmision;
-	}
-	public void setGestoriaAdmision(String gestoriaAdmision) {
-		this.gestoriaAdmision = gestoriaAdmision;
-	}
-	public String getGestoriaFormalizacion() {
-		return gestoriaFormalizacion;
-	}
-	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
-		this.gestoriaFormalizacion = gestoriaFormalizacion;
+	public void setGestoria(Long gestoria) {
+		this.gestoria = gestoria;
 	}
 	public String getFasePublicacionCodigo() {
 		return fasePublicacionCodigo;

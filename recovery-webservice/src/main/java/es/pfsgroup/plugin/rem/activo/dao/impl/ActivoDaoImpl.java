@@ -232,27 +232,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				dto.getEstadoComunicacionGencatCodigo());
 		
 		if (dto.getUsuarioGestoria()) {
-			String orBuilder = "";
-			if (!Checks.esNulo(dto.getGestoriaAdmision())) {
-				orBuilder += " bag.gestoriaAdmision = '" + dto.getGestoriaAdmision() + "'";
-			}
-
-			if (orBuilder.length() == 0 && dto.getGestoriaAdministracion() != null) {
-				orBuilder += " bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
-			} else if (orBuilder.length() != 0 && dto.getGestoriaAdministracion() != null) {
-				orBuilder += "  OR bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
-			}
-
-			if (orBuilder.length() == 0 && dto.getGestoriaFormalizacion() != null) {
-				orBuilder += " bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
-			} else if (orBuilder.length() != 0 || dto.getGestoriaAdministracion() != null) {
-				orBuilder += "  OR bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
-			}
-
-			if (orBuilder.length() != 0) {
-				hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where (" + orBuilder
-						+ ") AND bag.id = act.id)");
-			}
+			hb.appendWhere(" act.id = bag.id and bag.gestoria = " + dto.getGestoria());
 		}
 		
 		if(!Checks.esNulo(dto.getNumAgrupacion())) {
@@ -264,6 +244,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	private String buildFrom(DtoActivoFilter dto) {
 		StringBuilder sb = new StringBuilder("select act from VBusquedaActivos act "); 
+		
+		if (dto.getUsuarioGestoria()) {
+			sb.append(" ,VBusquedaActivosGestorias bag ");
+		}
 		
 		if (!Checks.esNulo(dto.getSubcarteraCodigo()) || !Checks.esNulo(dto.getSubcarteraCodigoAvanzado())) {
 			sb.append(" join act.subcartera scr ");

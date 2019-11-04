@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
+
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
@@ -9,6 +10,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 
 public interface GestorActivoApi extends GestorEntidadApi {
 
@@ -176,18 +178,11 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public Usuario supervisorTareaApple(String codigoTarea);
 
 	/**
-	 * Obtiene la lista de configuracion de usuarios de gestorías
-	 * @param tipoGestor
-	 * @return
-	 * 
-	 */	List<ConfiguracionAccesoGestoria> getUsuariosGestorias(List<GrupoUsuario> grupos);
-
-	/**
-	 * Mediante el usario logado obtenemos si el grupo de este es o no una gestoría
+	 * Mediante el usario logado obtenemos la gestoría a la que pertenece
 	 * @param usuario
 	 * @return
 	 */
-	public ConfiguracionAccesoGestoria isGestoria(Usuario usuario);
+	public DDIdentificacionGestoria isGestoria(Usuario usuario);
 
 
 }

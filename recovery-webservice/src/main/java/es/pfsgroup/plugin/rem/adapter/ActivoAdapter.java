@@ -194,6 +194,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1575,12 +1576,10 @@ public class ActivoAdapter {
 			}
 		}
 		
-		ConfiguracionAccesoGestoria usuarioGestoria = gestorActivoApi.isGestoria(usuarioLogado);
-		if (!Checks.esNulo(usuarioGestoria)) {
+		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
+		if (!Checks.esNulo(gestoria)) {
 			dtoActivoFiltro.setUsuarioGestoria(true);
-			dtoActivoFiltro.setGestoriaAdmision(usuarioGestoria.getUsernameGestoriaAdmision());
-			dtoActivoFiltro.setGestoriaAdministracion(usuarioGestoria.getUsernameGestoriaAdministracion());
-			dtoActivoFiltro.setGestoriaFormalizacion(usuarioGestoria.getUsernameGestoriaFormalizacion());
+			dtoActivoFiltro.setGestoria(gestoria.getId());
 		}else {
 			dtoActivoFiltro.setUsuarioGestoria(false);
 		}

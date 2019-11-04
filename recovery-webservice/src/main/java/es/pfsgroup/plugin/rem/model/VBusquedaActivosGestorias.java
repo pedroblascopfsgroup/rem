@@ -7,9 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Immutable;
+
 
 @Entity
 @Table(name = "V_BUSQUEDA_ACTIVOS_GESTORIAS", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Immutable
 public class VBusquedaActivosGestorias implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -18,15 +24,9 @@ public class VBusquedaActivosGestorias implements Serializable {
 	@Column(name = "ACT_ID")
 	private Long id;
 
-    @Column(name = "GESTORIA_ADMISION")
-    private String gestoriaAdmision;
+    @Column(name = "DD_IGE_ID")
+    private Long gestoria;
 
-    @Column(name = "GESTORIA_ADMINISTRACION")
-    private String gestoriaAdministracion;
-    
-    @Column(name = "GESTORIA_FORMALIZACION")
-    private String gestoriaFormalizacion;
-		
 	public Long getId() {
 		return id;
 	}
@@ -35,28 +35,13 @@ public class VBusquedaActivosGestorias implements Serializable {
 		this.id = id;
 	}
 
-	public String getGestoriaAdmision() {
-		return gestoriaAdmision;
+	public Long getGestoria() {
+		return gestoria;
 	}
 
-	public void setGestoriaAdmision(String gestoriaAdmision) {
-		this.gestoriaAdmision = gestoriaAdmision;
+	public void setGestoria(Long gestoria) {
+		this.gestoria = gestoria;
 	}
 
-	public String getGestoriaAdministracion() {
-		return gestoriaAdministracion;
-	}
-
-	public void setGestoriaAdministracion(String gestoriaAdministracion) {
-		this.gestoriaAdministracion = gestoriaAdministracion;
-	}
-
-	public String getGestoriaFormalizacion() {
-		return gestoriaFormalizacion;
-	}
-
-	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
-		this.gestoriaFormalizacion = gestoriaFormalizacion;
-	}
 
 }

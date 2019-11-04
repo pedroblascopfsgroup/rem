@@ -112,25 +112,5 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 		
 		return director;
 	}
-	
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ConfiguracionAccesoGestoria> getConfiguracionGestorias(ArrayList<String> idGrupos) {
-		String[] idGruposValuesInArray = new String[idGrupos.size()];
-		for (int i = 0; i< idGrupos.size(); i++) {
-			idGruposValuesInArray[i] = idGrupos.get(i);
-		};
-		HQLBuilder hb = new HQLBuilder("select cag from ConfiguracionAccesoGestoria cag ");
-		hb.appendWhereIN("usuarioGrupoAdmision.id ", idGruposValuesInArray, true);
-		hb.appendWhereIN("usuarioGrupoAdministracion.id ", idGruposValuesInArray, true);
-		hb.appendWhereIN("usuarioGrupoFormalizacion.id ", idGruposValuesInArray, true);
-		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
-		//logger.error(hb.toString());
-		HQLBuilder.parametrizaQuery(query, hb);
-		List<ConfiguracionAccesoGestoria>  config = query.list();
-		
-		return config;
-	}
 
 }

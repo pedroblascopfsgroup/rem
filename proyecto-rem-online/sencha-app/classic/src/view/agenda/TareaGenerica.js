@@ -843,9 +843,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 
-        me.borrarCampo(me.down('[name=fechaTope]'));
-        me.borrarCampo(me.down('[name=fechaConcreta]'));
-        me.borrarCampo(me.down('[name=horaConcreta]'));
         me.down('[name=fechaTope]').allowBlank = true;
         me.down('[name=fechaConcreta]').allowBlank = true;
         me.down('[name=horaConcreta]').allowBlank = true;

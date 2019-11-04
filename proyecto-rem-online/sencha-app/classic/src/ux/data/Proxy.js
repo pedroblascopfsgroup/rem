@@ -11,7 +11,7 @@
 	config : {
 		localUrl : null,
 		remoteUrl : null,
-		writeAll : false,
+		writeAll : false
 	},
 
 	requires : [ 

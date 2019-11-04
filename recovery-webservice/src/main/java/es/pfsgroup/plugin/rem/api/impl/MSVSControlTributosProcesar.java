@@ -61,6 +61,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		static final int COL_NUM_RESULTADO_SOLICITUD = 9;
 		static final int COL_NUM_HAYA_VINCULADO = 10;
 		static final int COL_NUM_ACCION = 11;
+		static final int COL_ID_TRIBUTO = 12;
 	}
 
 	@Override
@@ -99,6 +100,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		String celdaEmision = exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_EMISION);
 		String celdaSolicitud = exc.dameCelda(fila, COL_NUM.COL_NUM_TIPO_SOLICITUD);
 		String celdaGasto = exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO);
+		String celdaIdTributo = exc.dameCelda(fila, COL_NUM.COL_ID_TRIBUTO);
 		
 		if(accion.equals(DD_ACM_ADD)) {
 			
@@ -160,6 +162,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 			activoTributos.setFechaRecepcionRecursoGestoria(fechaRecepcionRecursoGestoria);
 			activoTributos.setFechaRespuestaRecurso(fechaRespuestaRecurso);
 			activoTributos.setFavorable(resultado);
+			activoTributos.setNumTributo(Checks.esNulo(celdaIdTributo) ? null : Long.parseLong(celdaIdTributo));
 						
 
 		} catch (Exception e) {

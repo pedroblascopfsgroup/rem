@@ -48,10 +48,14 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 
 	private static final String RESULTADO_NO_VALIDO = "msg.error.masivo.control.tributos.resultado.no.valido";
 	private static final String SOLICITUD_NO_VALIDO = "msg.error.masivo.control.tributos.tipo.solicitud.no.valido";
+	private static final String ID_TRIBUTO_NO_VALIDO = "msg.error.masivo.control.tributos.id.tributo.no.valido";
+	private static final String ID_TRIBUTO_VACIO = "msg.error.masivo.control.tributos.id.tributo.vacio";
 
 	private List<Integer> listaFilasAccionNoValido;
 	private List<Integer> listaFilasAccionActivoTributoExiste;
 	private List<Integer> listaFilasAccionActivoTributoNoExiste;
+	private List<Integer> listaFilasIdTributoErroneo;
+	private List<Integer> listaFilasSinIdTributo;
 
 	public static final class COL_NUM {
 		static final int FILA_CABECERA = 0;
@@ -69,6 +73,7 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 		static final int COL_NUM_RESULTADO_SOLICITUD = 9;
 		static final int COL_NUM_HAYA_VINCULADO = 10;
 		static final int COL_NUM_ACCION = 11;
+		static final int COL_ID_TRIBUTO = 12;
 	}
 
 	@Resource
@@ -131,6 +136,8 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 			mapaErrores.put(messageServices.getMessage(ACCION_NO_VALIDO), listaFilasAccionNoValido);
 			mapaErrores.put(messageServices.getMessage(REGISTRO_NO_EXISTE), listaFilasAccionActivoTributoNoExiste);
 			mapaErrores.put(messageServices.getMessage(REGISTRO_EXISTE), listaFilasAccionActivoTributoExiste);
+			mapaErrores.put(messageServices.getMessage(ID_TRIBUTO_NO_VALIDO), listaFilasIdTributoErroneo);
+			mapaErrores.put(messageServices.getMessage(ID_TRIBUTO_VACIO), listaFilasSinIdTributo);
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), existeActivo(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_ES_UA), esActivoUA(exc));
 			mapaErrores.put(messageServices.getMessage(NUM_HAYA_VINCULADO_NO_EXISTE), esNumHayaVinculado(exc));
@@ -200,6 +207,8 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 		listaFilasAccionNoValido = new ArrayList<Integer>();
 		listaFilasAccionActivoTributoExiste = new ArrayList<Integer>();
 		listaFilasAccionActivoTributoNoExiste = new ArrayList<Integer>();
+		listaFilasIdTributoErroneo = new ArrayList<Integer>();
+		listaFilasSinIdTributo = new ArrayList<Integer>();
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 
@@ -209,6 +218,7 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 				String valorCeldaActivo = exc.dameCelda(i, COL_NUM.COL_NUM_ACTIVO);
 				String valorCeldaFechaRecurso = exc.dameCelda(i, COL_NUM.COL_NUM_FECHA_EMISION);
 				String valorCeldaTipoSolicitud = exc.dameCelda(i, COL_NUM.COL_NUM_TIPO_SOLICITUD);
+				String valorCeldaIdTributo = exc.dameCelda(i, COL_NUM.COL_ID_TRIBUTO);
 
 				Boolean existeActivoTributo = particularValidator.existeActivoTributo(valorCeldaActivo,
 						valorCeldaFechaRecurso, valorCeldaTipoSolicitud);
@@ -219,10 +229,21 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 
 				if (valorCelda.equals(DD_ACM_ADD) && existeActivoTributo) {
 					listaFilasAccionActivoTributoExiste.add(i);
+					
+					if(!Checks.esNulo(valorCeldaIdTributo)) {
+						listaFilasIdTributoErroneo.add(i);
+					}
+				}
+				
+				if (valorCelda.equals(DD_ACM_ADD) && !existeActivoTributo && !Checks.esNulo(valorCeldaIdTributo)) {
+					listaFilasIdTributoErroneo.add(i);
 				}
 
 				if (!valorCelda.equals(DD_ACM_ADD) && !existeActivoTributo) {
 					listaFilasAccionActivoTributoNoExiste.add(i);
+					if(Checks.esNulo(valorCeldaIdTributo)) {
+						listaFilasSinIdTributo.add(i);
+					}
 				}
 
 			} catch (ParseException e) {

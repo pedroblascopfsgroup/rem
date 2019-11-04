@@ -94,7 +94,7 @@ public class ActivoTributos implements Serializable, Auditable {
     @JoinColumn(name = "ACT_TRI_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     private List<ActivoAdjuntoTributo> adjuntos;
-
+	
 	@Version   
 	private Long version;
 

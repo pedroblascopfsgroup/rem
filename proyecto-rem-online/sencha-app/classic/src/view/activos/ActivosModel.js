@@ -10,14 +10,15 @@ Ext.define('HreRem.view.activos.ActivosModel', {
     stores: {
     		
     		activos: {
-    				
     				pageSize: $AC.getDefaultPageSize(),
 			    	model: 'HreRem.model.BusquedaActivo',
 			    	proxy: {
 				        type: 'uxproxy',
 				        localUrl: '/activos.json',
-				        remoteUrl: 'activo/getActivos',
-					    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+				        remoteUrl: 'activo/do/busqueda',
+				        remApi: true,
+				        rootProperty : 'content',
+				        actionMethods: {read: 'GET'}
 			    	},
 			    	session: true,
 			    	remoteSort: true,

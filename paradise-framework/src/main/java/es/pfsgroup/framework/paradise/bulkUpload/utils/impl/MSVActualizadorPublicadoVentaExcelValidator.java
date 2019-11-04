@@ -396,12 +396,12 @@ public class MSVActualizadorPublicadoVentaExcelValidator extends MSVExcelValidat
 
 		try {
 			for(i = 1; i < this.numFilasHoja; i++) {
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
-					if(!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, 0)))){
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA) 
+					&&!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, 0)))){
 						listFilas.add(i);
 					}
 				}
-			}
+			
 		} catch (Exception e) {
 			throw new RuntimeException("No se ha podido comprobar si los activos están en otras agrupaciones restringidas", e);
 		}

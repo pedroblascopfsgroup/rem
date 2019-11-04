@@ -31,6 +31,13 @@ public class DtoAdmisionDocumento extends WebDto {
 	private Date fechaVerificado;
 	private Integer aplica;
 	private String estadoDocumento;
+	private String tipoLetraConsumoCodigo;
+	private String tipoLetraConsumoDescripcion;
+	private String dataIdDocumento;
+	private String letraConsumo;
+	private String consumo;
+	private String emision;
+	private String registro;
 	
 	//Mapeado a mano
 	private String descripcionTipoDocumentoActivo;
@@ -180,4 +187,62 @@ public class DtoAdmisionDocumento extends WebDto {
 	public void setCodigoTipoDocumentoActivo(String codigoTipoDocumentoActivo) {
 		this.codigoTipoDocumentoActivo = codigoTipoDocumentoActivo;
 	}
+
+	public String getTipoLetraConsumoCodigo() {
+		return tipoLetraConsumoCodigo;
+	}
+
+	public void setTipoLetraConsumoCodigo(String tipoLetraConsumoCodigo) {
+		this.tipoLetraConsumoCodigo = tipoLetraConsumoCodigo;
+	}
+
+	public String getTipoLetraConsumoDescripcion() {
+		return tipoLetraConsumoDescripcion;
+	}
+
+	public void setTipoLetraConsumoDescripcion(String tipoLetraConsumoDescripcion) {
+		this.tipoLetraConsumoDescripcion = tipoLetraConsumoDescripcion;
+	}	
+	
+	public String getDataIdDocumento() {
+		return dataIdDocumento;
+	}
+
+	public void setDataIdDocumento(String dataIdDocumento) {
+		this.dataIdDocumento = dataIdDocumento;
+	}
+
+	public String getLetraConsumo() {
+		return letraConsumo;
+	}
+
+	public void setLetraConsumo(String letraConsumo) {
+		this.letraConsumo = letraConsumo;
+	}
+
+	public String getConsumo() {
+		return consumo;
+	}
+
+	public void setConsumo(String consumo) {
+		this.consumo = consumo;
+	}
+
+	public String getEmision() {
+		return emision;
+	}
+
+	public void setEmision(String emision) {
+		this.emision = emision;
+	}
+
+	public String getRegistro() {
+		return registro;
+	}
+
+	public void setRegistro(String registro) {
+		this.registro = registro;
+	}
+
+	
 }

@@ -217,7 +217,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				dto.getEstadoComunicacionGencatCodigo());
 
 		return HibernateQueryUtils.page(this, hb, dto);
-
 	}
 
 	private String buildFrom(DtoActivoFilter dto) {

@@ -1,26 +1,5 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
-import es.capgemini.devon.files.FileItem;
-import es.capgemini.devon.message.MessageService;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
-import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.*;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVColumnValidator;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnValidator;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
-import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,6 +10,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationFactory;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidationRunner;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidators;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVValidationResult;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVColumnValidator;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnValidator;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
+import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
 public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelValidatorAbstract {
@@ -397,12 +403,12 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 
 		try {
 			for(i = 1; i < this.numFilasHoja; i++) {
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, 0)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
-					if(!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, 0)))){
+				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)
+					 && !particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_ACTIVO)))){
 						listFilas.add(i);
 					}
 				}
-			}
+			
 		} catch (Exception e) {
 			throw new RuntimeException("No se ha podido comprobar si los activos están en otras agrupaciones restringidas", e);
 		}

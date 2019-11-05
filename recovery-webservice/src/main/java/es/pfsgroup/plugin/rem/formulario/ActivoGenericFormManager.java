@@ -463,7 +463,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	
             	if(item.getType().equals(TIPO_CAMPO_FECHA))
             	{
-            		if(item.getNombre().equals("fechaFirma") && tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_ObtencionContratoReserva")){
+            		if(item.getNombre().equals("fechaFirma") && (tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_ObtencionContratoReserva") 
+            				|| tareaExterna.getTareaProcedimiento().getCodigo().equals("T017_ObtencionContratoReserva"))){
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());

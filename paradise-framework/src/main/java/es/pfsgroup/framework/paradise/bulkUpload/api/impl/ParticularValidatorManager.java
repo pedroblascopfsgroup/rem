@@ -4037,4 +4037,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo) {
+		if(Checks.esNulo(numExpediente))
+			return false;
+
+		String query = "SELECT COUNT(1) "
+				+ "	  	FROM REM01.ECO_EXPEDIENTE_COMERCIAL ECO "
+				+ " 	JOIN REM01.ACT_OFR AO ON AO.OFR_ID = ECO.OFR_ID "
+				+ "  	JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ "  	WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" "
+				+ "  	AND ACT.ACT_NUM_ACTIVO = "+ numActivo +" ";
+
+		String resultado = rawDao.getExecuteSQL(query);
+
+		return !"0".equals(resultado);
+	}
+	
 }

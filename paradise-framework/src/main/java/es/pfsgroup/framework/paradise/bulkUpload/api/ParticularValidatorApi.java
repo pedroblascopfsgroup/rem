@@ -962,4 +962,10 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
 
+	/**
+	 * @param numExpediente, numActivo
+	 * @return true si un activo esta relacionado con un expediente
+	 */
+	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo);
+
 }

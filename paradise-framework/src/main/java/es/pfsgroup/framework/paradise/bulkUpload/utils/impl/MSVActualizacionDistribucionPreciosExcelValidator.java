@@ -57,6 +57,7 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 	public static final String ACTIVO_NO_DISPONE_IMPORTE_ASOCIADO = "El activo no dispone de un importe asociado";
 	public static final String EXPEDIENTE_COMERCIAL_FALTAN_ACTIVOS = "Faltan activos en el expediente";
 	public static final String SUMA_ACTIVOS_DISTINTA_IMPORTE_TOTAL_OFERTA = "La suma de los importes de participación de los distintos activos no coincide con el importe total de la oferta";
+	public static final String ACTIVO_NO_PERTENECE_EXPEDIENTE_COMERCIAL = "El activo no pertenece al expediente comercial";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -113,9 +114,11 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 			mapaErrores.put(ACTIVO_NO_EXISTE, isActiveNotExistsRows(exc));
 			mapaErrores.put(ACTIVO_NO_DISPONE_IMPORTE_ASOCIADO, isActivoSinImporte(exc));
 			mapaErrores.put(SUMA_ACTIVOS_DISTINTA_IMPORTE_TOTAL_OFERTA, isTotalOfertaDistintoSumaActivos(exc));
+			mapaErrores.put(ACTIVO_NO_PERTENECE_EXPEDIENTE_COMERCIAL, activoConRelacionExpedienteComercial(exc));
 			mapaErrores.put(EXPEDIENTE_COMERCIAL_FALTAN_ACTIVOS, isAllActivosOferta(exc));
 			
 			if (!mapaErrores.get(EXPEDIENTE_COMERCIAL_NO_EXISTE).isEmpty() 
+					|| !mapaErrores.get(ACTIVO_NO_PERTENECE_EXPEDIENTE_COMERCIAL).isEmpty()
 					|| !mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(ACTIVO_NO_DISPONE_IMPORTE_ASOCIADO).isEmpty()
 					|| !mapaErrores.get(SUMA_ACTIVOS_DISTINTA_IMPORTE_TOTAL_OFERTA).isEmpty()
@@ -249,6 +252,32 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 			}
 		return listaFilas;
 	}
+	
+	private List<Integer> activoConRelacionExpedienteComercial(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO))
+							&&  !particularValidator.activoConRelacionExpedienteComercial(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE), exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO))
+					){
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
 	private List<Integer> isTotalOfertaDistintoSumaActivos(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		// Expedientes visitados
@@ -263,7 +292,7 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 				try {
 					numExpediente = exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE);
 					numActivo = exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO);
-					if (!Checks.esNulo(numExpediente) && !Checks.esNulo(numActivo)){
+					if (!Checks.esNulo(numExpediente) && !Checks.esNulo(numActivo) && particularValidator.activoConRelacionExpedienteComercial(numExpediente, numActivo)){
 						for(int j=1; j<this.numFilasHoja;j++) {
 							auxFilas[j] = false;
 							if (!Checks.esNulo(exc.dameCelda(j, COL_NUM.EXP_NUM_EXPEDIENTE))
@@ -283,6 +312,7 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 						&& particularValidator.existeActivo(numActivo) 
 						&& particularValidator.existeExpedienteComercial(numExpediente)
 						&& particularValidator.isTotalOfertaDistintoSumaActivos(sumaImportes, numExpediente)
+						&& particularValidator.activoConRelacionExpedienteComercial(numExpediente, numActivo)
 					){
 						for (int j=1; j<this.numFilasHoja;j++) {
 							if (auxFilas[j]) {

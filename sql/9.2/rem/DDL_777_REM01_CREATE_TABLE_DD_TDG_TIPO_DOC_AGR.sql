@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Serrano
---## FECHA_CREACION=20190708
+--## AUTOR=Alfonso Rodriguez
+--## FECHA_CREACION=20191104
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6956
+--## INCIDENCIA_LINK=HREOS-8258
 --## PRODUCTO=NO
 --##
 --## Finalidad: DDL Creación de la tabla DD_TDG_TIPO_DOC_AGR
@@ -62,7 +62,6 @@ BEGIN
 				  , FECHABORRAR TIMESTAMP(6)
 				  , BORRADO NUMBER(1,0) DEFAULT 0
 				  , DD_TDG_MATRICULA_GD VARCHAR2(20 CHAR)
-				  , DD_TDG_VISIBLE NUMBER(1,0)
 				  , CONSTRAINT PK_DD_TDG_ID PRIMARY KEY(DD_TDG_ID)
 			  )';
 		EXECUTE IMMEDIATE V_MSQL;
@@ -97,7 +96,6 @@ BEGIN
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_TDG_DESCRIPCION IS ''Descripción breve del tipo de documento de agrupación.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_TDG_DESCRIPCION_LARGA IS ''Descripción larga del tipo de documento de agrupación.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_TDG_MATRICULA_GD IS ''Matrícula del tipo de documento de agrupación.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_TDG_VISIBLE IS ''Visibilidad del tipo de documento de agrupación.''';
 	
 	-- Comentarios auditoría
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Versión del registro.''';

@@ -114,7 +114,12 @@ public class MSVHojaExcel {
 
 			Sheet hoja = libroExcel.getSheet(numHoja);
 			this.filasReales = 0;
-			this.filasReales = hoja.getColumn(this.posColumnaPrincipal).length;
+			try {
+				this.filasReales = hoja.getRows();
+			}catch(Exception e) {
+				this.filasReales = hoja.getColumn(this.posColumnaPrincipal).length;
+			}
+			
 		}
 
 		return this.filasReales;

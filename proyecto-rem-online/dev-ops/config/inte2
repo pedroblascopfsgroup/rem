@@ -1,0 +1,5 @@
+export DB_PRODUCTO=ibd04:1522/interem
+export DB_BI=***
+export BASE_DIR_APP=/recovery/app-server
+export BASE_DIR_BATCH=/recovery/batch-server
+export BASE_DIR_TRANSFERENCIA=/recovery/transferencia

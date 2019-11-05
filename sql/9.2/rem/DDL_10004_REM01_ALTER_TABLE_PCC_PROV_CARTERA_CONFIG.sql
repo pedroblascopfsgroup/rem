@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20190730
+--## FECHA_CREACION=20191105
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6959
@@ -10,7 +10,8 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial Alejandro Valverde HREOS-6959
+--##        0.2 Versión corregida
 --##########################################
 --*/
 
@@ -43,51 +44,57 @@ DECLARE
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la tabla
     IF V_NUM_TABLAS = 1 THEN
-    		V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_SCR||''' ';
-    		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    		--si no existe la columna la creamos
-    		IF V_NUM_TABLAS = 0 THEN
-	            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||' ADD '|| V_NOMBRE_COL_SCR||' '|| V_TIPO;
-	            EXECUTE IMMEDIATE V_MSQL;   
-	            DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_NOMBRE_TABLA||' columna '|| V_NOMBRE_COL_SCR||' añadida');
-                ELSE 
-                    DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' ||V_NOMBRE_COL_SCR || ' ya existe ');
-            END IF;	
+	V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = '''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_SCR||''' ';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	--si no existe la columna la creamos
+	IF V_NUM_TABLAS = 0 THEN
+            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||' ADD '|| V_NOMBRE_COL_SCR||' '|| V_TIPO;
+            EXECUTE IMMEDIATE V_MSQL;   
+            DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_NOMBRE_TABLA||' columna '|| V_NOMBRE_COL_SCR||' añadida');
+        ELSE 
+            DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' ||V_NOMBRE_COL_SCR || ' ya existe ');
+    	END IF;
+
+	--Restricciones     
+    
+	DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo las restricciones a las columnas añadidas ');
+	V_SQL := 'SELECT COUNT(CONSTRAINT_NAME) FROM USER_CONS_COLUMNS WHERE TABLE_NAME = '''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_SCR||''' ';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    	IF V_NUM_TABLAS = 0 THEN
+    
+		V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_NOMBRE_TABLA_REF||''' ';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+		IF V_NUM_TABLAS = 1 THEN
+		    V_SQL := 'ALTER TABLE '|| V_NOMBRE_TABLA||' ADD CONSTRAINT FK_PCC_'||V_NOMBRE_COL_SCR||' FOREIGN KEY ('||V_NOMBRE_COL_SCR||') REFERENCES '||V_NOMBRE_TABLA_REF||' ('||V_NOMBRE_COL_SCR||')';
+		EXECUTE IMMEDIATE V_SQL;
+
+		ELSE
+				DBMS_OUTPUT.PUT_LINE('[INFO] La tabla ' ||V_NOMBRE_TABLA_REF || ' no existe.');		
+		END IF;
+
+		--Cambio a Nullable en las columnas 
+
+		V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||' MODIFY '||V_NOMBRE_COL_CRA||' NULL';
+		EXECUTE IMMEDIATE V_SQL;
+		
+		V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||' MODIFY '||V_NOMBRE_COL_ID_HAYA||' NULL';
+		EXECUTE IMMEDIATE V_SQL;
+		
+	    ELSE 
+		DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' ||V_NOMBRE_COL_SCR || ' ya posee la restriccion pertinente');
+	    END IF;	
+	--Comentarios
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo los comentarios a las columnas añadidas ');
+
+	V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||'.'||V_NOMBRE_COL_SCR||' IS ''Código identificador único de la subcartera.'' ';    EXECUTE IMMEDIATE V_SQL;
+
+
     ELSE	
-		    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA ||'.'||V_NOMBRE_TABLA||'... La tabla NO existe.');
-    END IF;
-
-    --Restricciones     
-    
-        DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo las restricciones a las columnas añadidas ');
-    V_SQL := 'SELECT COUNT(CONSTRAINT_NAME) FROM USER_CONS_COLUMNS WHERE TABLE_NAME = '''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_SCR||''' ';
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    IF V_NUM_TABLAS = 0 THEN
-    
-        V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_NOMBRE_TABLA_REF||''' ';
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-        IF V_NUM_TABLAS = 1 THEN
-            V_SQL := 'ALTER TABLE '|| V_NOMBRE_TABLA||' ADD CONSTRAINT FK_PCC_'||V_NOMBRE_COL_SCR||' FOREIGN KEY ('||V_NOMBRE_COL_SCR||') REFERENCES '||V_NOMBRE_TABLA_REF||' ('||V_NOMBRE_COL_SCR||')';
-            EXECUTE IMMEDIATE V_SQL;
-        END IF;
-	
-    ELSE 
-        DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' ||V_NOMBRE_COL_SCR || ' ya posee la restriccion pertinente');
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA ||'.'||V_NOMBRE_TABLA||'... La tabla NO existe.');
     END IF;
     
-    --Comentarios
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo los comentarios a las columnas añadidas ');
-
-       V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||'.'||V_NOMBRE_COL_SCR||' IS ''Código identificador único de la subcartera.'' ';    EXECUTE IMMEDIATE V_SQL;
-
-    --Cambio a Nullable en las columnas 
-
-    V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||' MODIFY '||V_NOMBRE_COL_CRA||' NULL';
-	EXECUTE IMMEDIATE V_SQL;
-    V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||' MODIFY '||V_NOMBRE_COL_ID_HAYA||' NULL';
-	EXECUTE IMMEDIATE V_SQL;
-
+    
     COMMIT;
 
 EXCEPTION

@@ -36,6 +36,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 						 type: 'table',
 				         columns: 1
 				        },
+				        hidden: true,
 				bind: 
 					{
 			        	hidden: '{!infoAdministrativa.vpo}',
@@ -69,7 +70,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								[
 									{ 
 								 		xtype: 'comboboxfieldbase',
-								 		fieldLabel: HreRem.i18n('fieldlabel.regimen.proteccion'),	//Régimen protección 							 		
+								 		fieldLabel: HreRem.i18n('fieldlabel.regimen.proteccion'),	//Rï¿½gimen protecciï¿½n 							 		
 								 		bind: {
 			            						store: '{comboTipoVpo}',
 			            						value: '{infoAdministrativa.tipoVpoCodigo}'
@@ -85,12 +86,12 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 					                },
 					                { 
 					                	xtype: 'datefieldbase',
-					                	fieldLabel: HreRem.i18n('fieldlabel.fecha.calificacion'), // Fecha de calificación
+					                	fieldLabel: HreRem.i18n('fieldlabel.fecha.calificacion'), // Fecha de calificaciï¿½n
 					                	bind: '{infoAdministrativa.fechaCalificacion}'
 					                },
 					                { 
 					                	xtype: 'numberfieldbase',
-								 		fieldLabel: HreRem.i18n('fieldlabel.expediente.calificacion'), // Nº expediente calificación
+								 		fieldLabel: HreRem.i18n('fieldlabel.expediente.calificacion'), // Nï¿½ expediente calificaciï¿½n
 								 		bind: '{infoAdministrativa.numExpediente}'
 									},
 					                { 
@@ -113,7 +114,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								[								
 									 { 
 							        	xtype: 'comboboxfieldbase',							        	
-							        	fieldLabel:  HreRem.i18n('fieldlabel.precisa.comunicar.adquisicion'), // Precisa comunicar adquisición (NUEVO CAMPO)
+							        	fieldLabel:  HreRem.i18n('fieldlabel.precisa.comunicar.adquisicion'), // Precisa comunicar adquisiciï¿½n (NUEVO CAMPO)
 							        	bind: {
 			            						store: '{comboSiNoRem}',
 			            						value: '{infoAdministrativa.comunicarAdquisicion}'
@@ -121,7 +122,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 							        },							        
 							        { 
 							        	xtype: 'comboboxfieldbase',							        	
-							        	fieldLabel:  HreRem.i18n('fieldlabel.necesario.inscribir.registro.especial.vpo'),  // ¿Necesario inscribir en registro especial VPO? (NUEVO CAMPO)
+							        	fieldLabel:  HreRem.i18n('fieldlabel.necesario.inscribir.registro.especial.vpo'),  // ï¿½Necesario inscribir en registro especial VPO? (NUEVO CAMPO)
 							        	bind: {
 			            						store: '{comboSiNoRem}',
 			            						value: '{infoAdministrativa.necesarioInscribirVpo}'
@@ -171,7 +172,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											[
 												{ 
 											 		xtype: 'comboboxfieldbase',
-											 		fieldLabel: HreRem.i18n('fieldlabel.necesaria.autorizacion.venta'),		// Necesitaría autorización						 		
+											 		fieldLabel: HreRem.i18n('fieldlabel.necesaria.autorizacion.venta'),		// Necesitarï¿½a autorizaciï¿½n						 		
 											 		bind: {
 			            									store: '{comboSiNoRem}',
 			            									value: '{infoAdministrativa.obligatorioAutAdmVenta}'
@@ -179,12 +180,12 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 												},
 												{ 
 													xtype: 'currencyfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'), 			// Precio máximo de venta
+													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'), 			// Precio mï¿½ximo de venta
 					                				bind: '{infoAdministrativa.maxPrecioVenta}'
 								                },
 								                { 
 													xtype: 'comboboxfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.devolucion.ayudas'), 			// Devolución de ayudas
+													fieldLabel: HreRem.i18n('fieldlabel.devolucion.ayudas'), 			// Devoluciï¿½n de ayudas
 					                				bind: {
 															store: '{comboSiNoRem}',
 															value: '{infoAdministrativa.obligatorioSolDevAyuda}'
@@ -192,7 +193,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								                },
 								                { 
 								                	xtype: 'comboboxfieldbase',
-								                	fieldLabel: HreRem.i18n('fieldlabel.libertad.cesion'), // Libertad de cesión (NUEVO CAMPO)
+								                	fieldLabel: HreRem.i18n('fieldlabel.libertad.cesion'), // Libertad de cesiï¿½n (NUEVO CAMPO)
 								                	bind: {
 			            									store: '{comboSiNoRem}',
 			            									value: '{infoAdministrativa.libertadCesion}'
@@ -216,7 +217,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								                },
 								                { 
 								                	xtype: 'comboboxfieldbase',
-											 		fieldLabel: HreRem.i18n('fieldlabel.vender.persona.juridica'), // Permite vender a persona jurídica (NUEVO CAMPO)
+											 		fieldLabel: HreRem.i18n('fieldlabel.vender.persona.juridica'), // Permite vender a persona jurï¿½dica (NUEVO CAMPO)
 											 		bind: {
 			            									store: '{comboSiNoRem}',
 			            									value: '{infoAdministrativa.venderPersonaJuridica}'
@@ -237,7 +238,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											[								
 												 { 
 										        	xtype: 'comboboxfieldbase',							        	
-										        	fieldLabel:  HreRem.i18n('fieldlabel.minusvalia'),	// Minusvalía (NUEVO CAMPO)
+										        	fieldLabel:  HreRem.i18n('fieldlabel.minusvalia'),	// Minusvalï¿½a (NUEVO CAMPO)
 										        	bind: {
 			            									store: '{comboSiNoRem}',
 			            									value: '{infoAdministrativa.minusvalia}'
@@ -245,7 +246,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 										        },							        
 										        { 
 										        	xtype: 'comboboxfieldbase',							        	
-										        	fieldLabel:  HreRem.i18n('fieldlabel.inscripcion.registro.demandante.vpo'),				// Inscripción en registro demandante VPO (NUEVO CAMPO)
+										        	fieldLabel:  HreRem.i18n('fieldlabel.inscripcion.registro.demandante.vpo'),				// Inscripciï¿½n en registro demandante VPO (NUEVO CAMPO)
 										        	bind: {
 			            									store: '{comboSiNoRem}',
 			            									value: '{infoAdministrativa.inscripcionRegistroDemVpo}'
@@ -261,7 +262,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 												},							        
 										        { 
 										        	xtype: 'comboboxfieldbase',							        	
-										        	fieldLabel:  HreRem.i18n('fieldlabel.residencia.comunidad.autonoma'),				// Residencia en comunidad autónoma (NUEVO CAMPO)
+										        	fieldLabel:  HreRem.i18n('fieldlabel.residencia.comunidad.autonoma'),				// Residencia en comunidad autï¿½noma (NUEVO CAMPO)
 										        	bind: {
 			            									store: '{comboSiNoRem}',
 			            									value: '{infoAdministrativa.residenciaComAutonoma}'

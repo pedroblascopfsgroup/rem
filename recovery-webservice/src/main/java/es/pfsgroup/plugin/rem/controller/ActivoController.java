@@ -3127,7 +3127,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboApiPrimario(ModelMap model) {		
+	public ModelAndView getComboApiPrimario(ModelMap model) {			
 		try{
 			model.put(RESPONSE_DATA_KEY, activoApi.getComboApiPrimario());
 		} catch (Exception e) {

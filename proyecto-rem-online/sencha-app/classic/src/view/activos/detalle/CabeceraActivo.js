@@ -347,7 +347,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										}
 									},
 									{
-										fieldLabel: HreRem.i18n('fieldlabel.api.primaria'),
+										fieldLabel: HreRem.i18n('fieldlabel.api.primario'),
 										cls: 'cabecera-info-field',
 										bind: '{activo.nombreMediador}'
 									}

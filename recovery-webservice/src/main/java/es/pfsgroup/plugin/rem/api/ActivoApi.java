@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -1285,8 +1286,7 @@ public interface ActivoApi {
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
 
-
-	List<ActivoProveedor> getComboApiPrimario();
+	List<DtoProveedorMediador> getComboApiPrimario();
 
 	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
 	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
@@ -1297,5 +1297,5 @@ public interface ActivoApi {
 	FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto);
 
 	ActivoDto getDatosActivo(Long activoId);
-
+	
 }

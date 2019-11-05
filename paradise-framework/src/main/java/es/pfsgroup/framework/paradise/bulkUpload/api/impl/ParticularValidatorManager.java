@@ -3978,4 +3978,49 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean existeActivoNoBankia(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(*) FROM ACT_ACTIVO ACT "
+				+"JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID " 
+				+"WHERE ACT.ACT_NUM_ACTIVO = '"+ numActivo +"' " 
+				+"AND CRA.DD_CRA_CODIGO != '03' "
+				);
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeActivoTitulo(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(*) FROM ACT_TIT_TITULO TIT "
+				+"JOIN ACT_ACTIVO ACT ON TIT.ACT_ID = ACT.ACT_ID "
+				+"WHERE ACT.ACT_NUM_ACTIVO = '"+ numActivo +"' "
+				);
+
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeEstadoTitulo(String situacionTitulo) {
+		if(Checks.esNulo(situacionTitulo) || !StringUtils.isAlphanumeric(situacionTitulo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(*) FROM DD_ETI_ESTADO_TITULO " 
+				+ "WHERE DD_ETI_CODIGO = '"+ situacionTitulo +"' "
+				+ "AND DD_ETI_CODIGO IN (01, 02, 06)"
+		);
+
+		return !"0".equals(resultado);
+	}
+	
 }

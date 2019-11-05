@@ -936,5 +936,26 @@ public interface ParticularValidatorApi {
 	 * @return true si la Agrupación de tipo alquiler tiene precio
 	 */
 	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
+	
+	/**
+	 * 
+	 * @param numActivo
+	 * @return true si el activo indicado no es de la cartera bankia
+	 */
+	public Boolean existeActivoNoBankia(String numActivo);
+	
+	/**
+	 * 
+	 * @param numActivo
+	 * @return true si el activo tiene titulo
+	 */
+	public Boolean existeActivoTitulo(String numActivo);
+
+	/**
+	 * 
+	 * @param situacionTitulo
+	 * @return true si existe el estado del titulo
+	 */
+	public Boolean existeEstadoTitulo(String situacionTitulo);
 
 }

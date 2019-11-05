@@ -4129,15 +4129,16 @@ public class AgrupacionAdapter {
 					}
 				}
 			}
+			
+			if (canarias) {
+				if (!Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
+					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_CANARIAS);
+			} else {
+				if (Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
+					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_CANARIAS);
+			}
 		}
 
-		if (canarias) {
-			if (!Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
-				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_CANARIAS);
-		} else {
-			if (Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
-				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_CANARIAS);
-		}
 	}
 	
 	private void comprobarDistintoPropietario(ActivoAgrupacion agrupacion, Activo activo) {

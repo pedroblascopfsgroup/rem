@@ -866,7 +866,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 		bind: {
 					 			value: '{datosRegistrales.fechaPres1Registro}',
 					 			readOnly: '{datosRegistrales.unidadAlquilable}',
-					 			hidden: '{esSubcarteraDivarian}'
+					 			hidden: true
 					 		}
 						},
 						{
@@ -875,7 +875,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 		bind: {
 					 			value: '{datosRegistrales.fechaEnvioAuto}',
 					 			readOnly: '{datosRegistrales.unidadAlquilable}',
-					 			hidden: '{esSubcarteraDivarian}'
+					 			hidden: true
 					 		}
 						},
 						{
@@ -884,7 +884,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 		bind: {
 					 			value: '{datosRegistrales.fechaPres2Registro}',
 					 			readOnly: '{datosRegistrales.unidadAlquilable}',
-					 			hidden: '{esSubcarteraDivarian}'
+					 			hidden: true
 					 		}
 						},
 						{

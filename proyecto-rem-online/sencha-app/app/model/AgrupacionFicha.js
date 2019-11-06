@@ -297,6 +297,9 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 {
                 	name: 'tramitable',
                 	type: 'boolean'
+                },
+                {
+                	name: 'ventaSobrePlano'
                 }
     ],
     

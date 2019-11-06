@@ -143,6 +143,14 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 					     		value: '{comercial.puja}'
 						   },
 						   disabled: !isLogUsuGestComerSupComerSupAdmin
+						},
+						{ 
+				        	xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.venta.sobre.plano'),
+				        	bind: {
+			            		store: '{comboSiNoRem}',
+			            		value:'{comercial.ventaSobrePlano}'
+			            	}
 						}
 				]
 			}, 

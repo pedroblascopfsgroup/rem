@@ -288,7 +288,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
 		var idActivo = me.lookupController().getViewModel().getData().activo.id;
-		
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
 			var activo = me.lookupController().getViewModel().get('activo');
@@ -326,7 +325,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] === estado){	
 			var url = $AC.getRemoteUrl('ofertas/isActivoEnDND');
-			
 			Ext.Ajax.request({
 	    		url: url,
 	    		params: {idActivo: idActivo},
@@ -337,7 +335,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	    				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
 	    			}else if(data.data != undefined || data.data != null){
 	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd") + " " + data.data + " " + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
-
 	    			}
 					Ext.Msg.show({
 					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),

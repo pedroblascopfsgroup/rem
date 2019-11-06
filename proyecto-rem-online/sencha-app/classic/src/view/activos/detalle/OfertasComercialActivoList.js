@@ -334,7 +334,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	    			if (gencat === "true") {
 	    				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
 	    			}else if(data.data != undefined || data.data != null){
-	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd") + " " + data.data + " " + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
+	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd") + " "+  data.data + " " + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
 	    			}
 					Ext.Msg.show({
 					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
@@ -355,7 +355,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			    callback: function(record, operation) {
 	    			me.getView().unmask();
 			    }
-	    	});				
+	    	});
 		} else {
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
 			if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){

@@ -7121,6 +7121,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activoDto;
 	}
 	
+	//Para saber si pertenece a DND comprobar si devuelve un null. De esta forma se evita hacer otra función igual
+	//con otro bucle igual para devolver el número de agrupación dnd
 	@Override
 	public Long activoPerteneceDND(Activo activo) {
 		Long agruacionDND = null;
@@ -7129,7 +7131,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionesActivo) {
 				if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
-					&& DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					&& DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 					agruacionDND = activoAgrupacionActivo.getAgrupacion().getId();
 					break;
 				}

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import es.capgemini.devon.dto.WebDto;
+import java.util.Date;
 
 /**
  * Dto para el filtro de Activos
@@ -97,10 +98,22 @@ public class DtoActivoFilter extends WebDto {
 	private Long gestoria;
 	private String fasePublicacionCodigo;
 	private String fasePublicacionDescripcion;
+	private String gestoriaAdmision;
+	private String gestoriaAdministracion;
+	private String gestoriaFormalizacion;
 	private String gestorPublicacionUsername;
 	private Long numAgrupacion;
 	private String direccionTerritorialCodigo;
-	private Long apiPrimariaId;
+	private Long apiPrimarioId;
+	private String tipoAlquilerDescripcion;
+	private Date fechaPublicacionVenta;
+	private Date fechaPublicacionAlquiler;
+	/*tipoComercializacionCodigoAuxiliar la utiliza el listado de activos del filtro para saber si tiene
+	  que mostrar la fecha de publicacion venta o de alquiler en la columna Fecha de publicacion.
+	  No se puede utilizar el tipoComercializacionCodigo que hay definido más arriba porque es el que utiliza el filtro para buscar.*/
+	private String  tipoComercializacionCodigoAuxiliar;
+	private Long precioTasacionActivo;
+	private String estadoPublicacionActivoListadoCodigo;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -612,18 +625,6 @@ public class DtoActivoFilter extends WebDto {
 	public void setGestoria(Long gestoria) {
 		this.gestoria = gestoria;
 	}
-	public String getFasePublicacionCodigo() {
-		return fasePublicacionCodigo;
-	}
-	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
-		this.fasePublicacionCodigo = fasePublicacionCodigo;
-	}
-	public String getFasePublicacionDescripcion() {
-		return fasePublicacionDescripcion;
-	}
-	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
-		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
-	}
 	public String getGestorPublicacionUsername() {
 		return gestorPublicacionUsername;
 	}
@@ -642,10 +643,76 @@ public class DtoActivoFilter extends WebDto {
 	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
 		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
 	}
-	public Long getApiPrimariaId() {
-		return apiPrimariaId;
+	public Long getApiPrimarioId() {
+		return apiPrimarioId;
 	}
-	public void setApiPrimariaId(Long apiPrimariaId) {
-		this.apiPrimariaId = apiPrimariaId;
+	public void setApiPrimarioId(Long apiPrimarioId) {
+		this.apiPrimarioId = apiPrimarioId;
+	}
+	public String getTipoAlquilerDescripcion() {
+		return tipoAlquilerDescripcion;
+	}
+	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
+		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
+	}
+	public Date getFechaPublicacionVenta() {
+		return fechaPublicacionVenta;
+	}
+	public void setFechaPublicacionVenta(Date fechaPublicacionVenta) {
+		this.fechaPublicacionVenta = fechaPublicacionVenta;
+	}
+	public Date getFechaPublicacionAlquiler() {
+		return fechaPublicacionAlquiler;
+	}
+	public void setFechaPublicacionAlquiler(Date fechaPublicacionAlquiler) {
+		this.fechaPublicacionAlquiler = fechaPublicacionAlquiler;
+	}
+	public String getTipoComercializacionCodigoAuxiliar() {
+		return tipoComercializacionCodigoAuxiliar;
+	}
+	public void setTipoComercializacionCodigoAuxiliar(String tipoComercializacionCodigoAuxiliar) {
+		this.tipoComercializacionCodigoAuxiliar = tipoComercializacionCodigoAuxiliar;
+	}
+	public Long getPrecioTasacionActivo() {
+		return precioTasacionActivo;
+	}
+	public void setPrecioTasacionActivo(Long precioTasacionActivo) {
+		this.precioTasacionActivo = precioTasacionActivo;
+	}
+	public String getEstadoPublicacionActivoListadoCodigo() {
+		return estadoPublicacionActivoListadoCodigo;
+	}
+	public void setEstadoPublicacionActivoListadoCodigo(String estadoPublicacionActivoListadoCodigo) {
+		this.estadoPublicacionActivoListadoCodigo = estadoPublicacionActivoListadoCodigo;
+	}
+	public String getFasePublicacionCodigo() {
+		return fasePublicacionCodigo;
+	}
+	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
+		this.fasePublicacionCodigo = fasePublicacionCodigo;
+	}
+	public String getFasePublicacionDescripcion() {
+		return fasePublicacionDescripcion;
+	}
+	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
+		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
+	}
+	public String getGestoriaAdmision() {
+		return gestoriaAdmision;
+	}
+	public void setGestoriaAdmision(String gestoriaAdmision) {
+		this.gestoriaAdmision = gestoriaAdmision;
+	}
+	public String getGestoriaAdministracion() {
+		return gestoriaAdministracion;
+	}
+	public void setGestoriaAdministracion(String gestoriaAdministracion) {
+		this.gestoriaAdministracion = gestoriaAdministracion;
+	}
+	public String getGestoriaFormalizacion() {
+		return gestoriaFormalizacion;
+	}
+	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
+		this.gestoriaFormalizacion = gestoriaFormalizacion;
 	}
 }

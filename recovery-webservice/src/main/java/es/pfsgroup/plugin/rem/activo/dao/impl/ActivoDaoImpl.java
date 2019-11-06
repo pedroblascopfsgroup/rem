@@ -179,16 +179,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 					dto.getComboSelloCalidad().equals(Integer.valueOf(1)) ? true : false);
 		}
 		
-		if (dto.getFasePublicacionCodigo() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
-		}
-		
 		if (dto.getDireccionTerritorialCodigo() != null) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.direccionTerritorialCodigo", dto.getDireccionTerritorialCodigo());
 		}
 		
-		if (dto.getApiPrimariaId() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimariaId", dto.getApiPrimariaId());
+		if (dto.getApiPrimarioId() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimarioId", dto.getApiPrimarioId());
 		}
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());

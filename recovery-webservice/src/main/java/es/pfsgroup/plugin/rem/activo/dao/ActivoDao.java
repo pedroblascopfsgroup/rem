@@ -319,5 +319,5 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<ActivoProveedor> getComboApiPrimario();
 
 	void deleteActOfr(Long idActivo, Long idOferta);
-	
+
 }

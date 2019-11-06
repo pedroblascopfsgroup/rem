@@ -174,9 +174,6 @@ public interface ActivoApi {
 	@BusinessOperationDefinition("activoManager.savePrecioVigente")
 	boolean savePrecioVigente(DtoPrecioVigente precioVigenteDto);
 
-	@BusinessOperationDefinition("activoManager.saveOfertaActivo")
-	boolean saveOfertaActivo(DtoOfertaActivo precioVigenteDto) throws JsonViewerException, Exception;
-
 	/**
 	 * saveActivoValoracion: Para un activo dado, actualiza o crea una valoracion por tipo de precio. Este mismo proceso tambien se encarga de mantener el historico de valoraciones, si hay cambios en
 	 * las valoraciones. Devuelve TRUE si el proceso se ha realizado correctamente
@@ -871,14 +868,6 @@ public interface ActivoApi {
 	 */
 	Double getImporteValoracionActivoByCodigo(Activo activo, String codTipoPrecio);
 
-	/**
-	 * Devuelve el codigo del subtipo de trabajo segun el tipo de Oferta
-	 *
-	 * @param oferta
-	 * @return
-	 */
-	String getSubtipoTrabajoByOferta(Oferta oferta);
-
 	Boolean deleteCarga(DtoActivoCargas dto);
 
 	Boolean saveActivoCarga(DtoActivoCargas cargaDto);
@@ -1030,11 +1019,6 @@ public interface ActivoApi {
 	 * @param idAgrupacion
 	 */
 	void reactivarActivosPorAgrupacion(Long idAgrupacion);
-
-	/**
-	 * Crea un expediente comercial
-	 **/
-	ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce) throws Exception;
 
 	/**
 	 * Devuelve una lista de adecuaciones alquiler para el grid de adecuaciones en la pestaña patrimonio de un activo

@@ -286,7 +286,8 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 							store: '{storeActivoTributos}'
 						},
 						listeners:{
-							rowclick: 'onTributoClick'
+							rowclick: 'onTributoClick',
+							deselect: 'deselectTributo'
 						},
 						features: [{
 		            		id: 'summary',

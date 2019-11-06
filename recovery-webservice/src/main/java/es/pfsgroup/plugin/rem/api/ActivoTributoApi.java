@@ -67,5 +67,5 @@ public interface  ActivoTributoApi {
 
 	Boolean deleteAdjuntoDeTributo(DtoAdjuntoTributo dto);
 
-	Boolean deleteAdjuntosDeTributo(Long idTributo);
+	Runnable deleteAdjuntosDeTributo(Long idTributo);
 }

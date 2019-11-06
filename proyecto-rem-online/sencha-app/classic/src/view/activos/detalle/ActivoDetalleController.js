@@ -5622,13 +5622,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			listadoDocumentosTrabajo.getStore().getProxy().setExtraParams({'idTributo':record.data.idTributo});
 			listadoDocumentosTrabajo.getStore().load();
 		} else {
-			listadoDocumentosTrabajo.getStore().getProxy().setExtraParams({'idTributo':null});
-			gridDocs.idTributo = null;
-			listadoDocumentosTrabajo.getStore().load();
-			gridDocs.down('[xtype=toolbar]').items.items[0].setDisabled(true);
-			gridDocs.down('[xtype=toolbar]').items.items[1].setDisabled(true);
+			me.deselectTributo();
 		}
 		
+	},
+	
+	deselectTributo: function(){
+		var me = this;
+		var gridDocs = this.lookupReference('documentostributosgridref')
+		var listadoDocumentosTrabajo = gridDocs.down("[reference='listadoDocumentosTributo']");
+		gridDocs.idActivo = me.getViewModel().get("activo.id");
+		listadoDocumentosTrabajo.getStore().getProxy().setExtraParams({'idTributo':null});
+		gridDocs.idTributo = null;
+		listadoDocumentosTrabajo.getStore().load();
+		gridDocs.down('[xtype=toolbar]').items.items[0].setDisabled(true);
+		gridDocs.down('[xtype=toolbar]').items.items[1].setDisabled(true);
 	}
 
 });

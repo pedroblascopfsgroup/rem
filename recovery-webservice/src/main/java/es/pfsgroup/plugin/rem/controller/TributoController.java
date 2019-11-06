@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.exception.UserException;
@@ -25,21 +24,10 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.TributoAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
-import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
-import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
-import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
-import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 
 
@@ -49,26 +37,11 @@ public class TributoController extends ParadiseJsonController {
 	protected static final Log logger = LogFactory.getLog(TributoController.class);
 	private static final String RESPONSE_DATA_KEY = "data";
 	private static final String RESPONSE_SUCCESS_KEY = "success";
-	private static final String RESPONSE_ERROR_KEY = "error";
-	
-
-	@Autowired
-	private ActivoAdapter adapter;
-	
 	@Autowired
 	private UploadAdapter uploadAdapter;
 	
 	@Autowired
 	private TributoAdapter tributoAdapter;
-	
-	@Autowired
-	private ActivoTributoApi activoTributoApi;
-	
-	@Autowired
-	private GenericABMDao genericDao;
-	
-	@Autowired
-	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

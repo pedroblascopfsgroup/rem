@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,12 +23,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTributoDao;
+import es.pfsgroup.plugin.rem.adapter.TributoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 
@@ -51,6 +52,9 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 	
 	@Autowired
 	private ActivoTributoDao activoTributoDao;
+	
+	@Autowired
+	private TributoAdapter tributoAdapter;
 
 	@Override
 	@BusinessOperation(overrides = "activoTributoManager.get")
@@ -228,14 +232,25 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 	
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean deleteAdjuntosDeTributo(Long idTributo) {
+	public Runnable deleteAdjuntosDeTributo(Long idTributo) {
 		ActivoTributos tributo = getTributo(idTributo);
-
-		for(ActivoAdjuntoTributo adj: tributo.getAdjuntos()) {
-			tributo.getAdjuntos().remove(adj);
-			activoTributoDao.save(tributo);
+		DtoAdjuntoTributo dto = new DtoAdjuntoTributo();
+		dto.setIdEntidad(idTributo.toString());
+		List<ActivoAdjuntoTributo> adjuntos = tributo.getAdjuntos();
+		Integer numAdjuntos = adjuntos.size();
+		
+		for(int i = numAdjuntos-1; i >= 0; i--) {
+			ActivoAdjuntoTributo adj = adjuntos.get(i);
+			
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				dto.setId(adj.getIdDocRestClient());
+			}else {
+				dto.setId(adj.getId());
+			}
+			tributoAdapter.deleteAdjunto(dto);
 		}
-	
-		return true;
+		
+		
+		return null;
 	}
 }

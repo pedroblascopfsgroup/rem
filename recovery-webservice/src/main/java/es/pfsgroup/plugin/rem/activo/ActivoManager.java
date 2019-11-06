@@ -5724,7 +5724,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			tributo.getAuditoria().setBorrado(true);
 			genericDao.update(ActivoTributos.class, tributo);
 			
-			activoTributoApi.deleteAdjuntosDeTributo(tributo.getId());
+			Thread hilo = new Thread(activoTributoApi.deleteAdjuntosDeTributo(tributo.getId()));
+			hilo.start();
 			
 			return true;
 		}else {

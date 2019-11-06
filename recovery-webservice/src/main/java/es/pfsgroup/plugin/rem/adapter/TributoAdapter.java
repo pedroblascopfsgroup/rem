@@ -183,6 +183,11 @@ public class TributoAdapter {
 			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 			try {
 				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dto.getId(), usuarioLogado.getUsername());
+				ActivoAdjuntoTributo adjunto = activoTributoApi.getAdjuntoTributo(dto.getId());
+				if(borrado && adjunto != null) {
+					dto.setId(adjunto.getId());
+					activoTributoApi.deleteAdjuntoDeTributo(dto);
+				}
 			} catch (Exception e) {
 				logger.error("Error en ActivoAdapter", e);
 			}

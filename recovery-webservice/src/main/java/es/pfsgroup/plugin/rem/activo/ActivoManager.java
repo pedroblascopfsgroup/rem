@@ -7373,6 +7373,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 	}
 	
+
 	@Override
 	public List<DtoProveedorMediador> getComboApiPrimario() {
 		

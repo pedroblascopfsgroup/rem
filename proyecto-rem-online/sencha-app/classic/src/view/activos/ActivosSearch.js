@@ -559,16 +559,20 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		mode: 'local',
 							    		forceSelection	: false,
 							    		editable: true,
+							    		minChars: 3,
 							    		emptyText: 'Introduzca nombre mediador',
 										listeners: {
-											'change': function() {
-												this.getStore().clearFilter();
-											   	this.getStore().filter({
-												    property: 'nombre',
-												    value: this.getRawValue(),
-												    anyMatch: true,
-												    caseSensitive: false
-												})
+											'keyup': function() {
+												if(this.getRawValue().length >= 3)
+												{
+													this.getStore().clearFilter();
+												   	this.getStore().filter({
+													    property: 'nombre',
+													    value: this.getRawValue(),
+													    anyMatch: true,
+													    caseSensitive: false
+													})
+												}
 											},
 											'beforequery': function(queryEvent) {
 											 	queryEvent.combo.onLoad();

@@ -20,9 +20,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 
@@ -731,5 +729,13 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setEstadoPublicacionActivoListadoCodigo(String estadoPublicacionActivoListadoCodigo) {
 		this.estadoPublicacionActivoListadoCodigo = estadoPublicacionActivoListadoCodigo;
+	}
+
+	public Long getApiPrimarioId() {
+		return apiPrimarioId;
+	}
+
+	public void setApiPrimarioId(Long apiPrimarioId) {
+		this.apiPrimarioId = apiPrimarioId;
 	}
 }

@@ -255,8 +255,10 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
-					remoteUrl: 'activo/getComboApiPrimaria'
-				}
+					remoteUrl: 'activo/getComboApiPrimario'
+				},
+			    displayField: 'nombre',
+				valueField: 'id'				
 			},
 			
 			comboMotivoAutorizacionTramitacion: {

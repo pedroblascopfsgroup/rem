@@ -32,6 +32,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -44,6 +45,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
@@ -123,6 +125,9 @@ public class OfertasController {
 
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private ActivoAgrupacionDao activoAgrupacionDao;
 	
 	private final static String CLIENTE_HAYA = "HAYA";
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
@@ -847,6 +852,30 @@ public class OfertasController {
 			claseOferta = DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL;
 		}
 		model.put("claseOferta", claseOferta);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView isActivoEnDND(Long idActivo, ModelMap model) {
+		Activo activo = activoDao.getActivoById(idActivo);
+		Long numAgrupacion = null;
+		try {
+			Long idAgrupacion = activoApi.activoPerteneceDND(activo);
+			if(!Checks.esNulo(idAgrupacion)) {
+				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(idAgrupacion);
+				if(!Checks.esNulo(agrupacion)) {
+					numAgrupacion = agrupacion.getNumAgrupRem();
+					
+				}
+			}
+			model.put("data",numAgrupacion);
+			model.put("success", true);
+		}catch(Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+		
 		return createModelAndViewJson(model);
 	}
 }

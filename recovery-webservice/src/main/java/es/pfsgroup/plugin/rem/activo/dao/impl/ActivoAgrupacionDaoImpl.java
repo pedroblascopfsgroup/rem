@@ -540,6 +540,5 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 		return HibernateQueryUtils.uniqueResult(this, hb);
 	}
-
 }
 

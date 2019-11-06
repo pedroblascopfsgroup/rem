@@ -288,7 +288,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
 		var idActivo = me.lookupController().getViewModel().getData().activo.id;
-
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
 			var activo = me.lookupController().getViewModel().get('activo');
@@ -326,7 +325,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] === estado){	
 			var url = $AC.getRemoteUrl('ofertas/isActivoEnDND');
-
 			Ext.Ajax.request({
 	    		url: url,
 	    		params: {idActivo: idActivo},
@@ -358,7 +356,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	    			me.getView().unmask();
 			    }
 	    	});
-
 		} else {
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
 			if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){

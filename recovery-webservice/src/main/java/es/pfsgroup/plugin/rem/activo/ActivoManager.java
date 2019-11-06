@@ -168,6 +168,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -348,6 +349,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private ActivoTributoApi activoTributoApi;
 
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 
 	@Override
 	public String managerName() {
@@ -652,9 +655,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
 	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 		boolean resultado = true;
-		
+		boolean enviarCorreo = false;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
+		
 		
 
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
@@ -670,16 +674,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
 			comprobarTramitarOferta(oferta, dto);
 			resultado = doAceptaOferta(oferta);
+			enviarCorreo = true;
 		}
 
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
 		// enviamos un email/notificacion.
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 			resultado = doRechazaOferta(dto, oferta);
+			enviarCorreo = true;
 		}
 		
 		if(!resultado){
 			resultado = this.persistOferta(oferta);
+		}
+		
+		if (enviarCorreo) {
+			Activo activo = activoDao.getActivoById(dto.getIdActivo());
+			if (!Checks.esNulo(activo) && !Checks.esNulo(oferta)) {
+				notificationOfertaManager.sendNotificationDND(oferta, activo);
+			}
 		}
 		
 		if(!Checks.esNulo(dto.getIdActivo())) {
@@ -7186,7 +7199,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionesActivo) {
 				if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
-					&& DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					&& DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 					agruacionDND = activoAgrupacionActivo.getAgrupacion().getId();
 					break;
 				}

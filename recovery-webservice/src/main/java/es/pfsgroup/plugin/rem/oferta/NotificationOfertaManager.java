@@ -17,10 +17,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -28,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -72,6 +75,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	@Autowired
 	private UsuarioManager usuarioManager;
 
+	@Autowired
+	private ActivoApi activoApi;
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
 	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
@@ -288,6 +293,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		}
 	}
 	
+	
 	/**
 	 * Al proponer una oferta, 
 	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
@@ -501,5 +507,77 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		adjMail.setNombre(name);	
 		return adjMail;
 	}
-	
+	/**
+	 * Al proponer una oferta, 
+	 * se enviará una notificación (correo) al gestor comercial y supervisor correspondiente, 
+	 * indicando si se aprueba o se anula y solo en caso de venta.
+	 * El activo debe pertenecer a una agrupación.
+	 * @param oferta
+	 **/
+	public void sendNotificationDND(Oferta oferta, Activo activo) {
+		Usuario usuario = null;
+		Usuario supervisor= null;
+		List<String> mailsPara 		= new ArrayList<String>();
+		List<String> mailsCC 		= new ArrayList<String>();	
+		String titulo = null;
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+		
+		if (	!Checks.esNulo(activo) && !Checks.esNulo(activoApi.activoPerteneceDND(activo))
+				&& !Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta()) 
+				&& !Checks.esNulo(oferta.getEstadoOferta().getCodigo())
+		        && (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) 
+		        		|| DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())
+		        	)
+		) {
+				usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+				supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);		
+				
+				
+				if ( usuario != null || supervisor != null) {
+
+					dtoSendNotificator.setNumActivo(activo.getNumActivo());
+					dtoSendNotificator.setDireccion(generateDireccion(activo));
+					dtoSendNotificator.setTitulo(titulo);
+
+					if(!Checks.esNulo(oferta.getAgrupacion())) {
+						dtoSendNotificator.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());	
+					}
+
+					if(!Checks.esNulo(usuario)){		
+						usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES, mailsPara, mailsCC, false);
+					}
+					
+					if(!Checks.esNulo(supervisor)){
+						usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES, mailsPara, mailsCC, false);
+					}
+					
+
+					Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+					Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+
+					if (!Checks.esNulo(buzonRem)) {
+						mailsPara.add(buzonRem.getEmail());
+					}
+					if (!Checks.esNulo(buzonPfs)) {
+						mailsPara.add(buzonPfs.getEmail());
+					}
+					String contenido = null;
+					mailsCC.add(this.getCorreoFrom());
+					
+					if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+						titulo = String.format("Le notificamos que la oferta (%s) ha sido aceptada. ", oferta.getNumOferta().toString());
+						contenido = 
+								String.format("<p>La oferta n&acute;mero %s, ha sido aceptada </p>", 
+								oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()) );
+					} else if (DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())){
+						titulo = String.format("Le notificamos que la oferta (%s) ha sido rechazada ", oferta.getNumOferta().toString());
+						contenido = 
+								String.format("<p>La oferta n&uacute;mero %s ha sido rechazada.</p>", 
+								oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(), NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()) );
+					}
+			
+					genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+				}
+		} 
+	}
 }

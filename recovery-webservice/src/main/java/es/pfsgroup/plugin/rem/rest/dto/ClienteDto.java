@@ -41,10 +41,12 @@ public class ClienteDto implements Serializable{
 	@NotNull(groups = { Insert.class})
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String apellidos;
+	@NotNull(groups = { Insert.class})
 	@Size(max=20,groups = { Insert.class, Update.class })
 	@Diccionary(clase = DDTipoDocumento.class, message = "El codTipoDocumento no existe", groups = { Insert.class,
 			Update.class })
 	private String codTipoDocumento;
+	@NotNull(groups = { Insert.class})
 	@Size(max=14)
 	private String documento;
 	@Size(max=20,groups = { Insert.class, Update.class })

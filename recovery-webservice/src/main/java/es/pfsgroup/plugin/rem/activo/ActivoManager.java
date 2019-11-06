@@ -7191,6 +7191,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activoDto;
 	}
 	
+	//Para saber si pertenece a DND comprobar si devuelve un null. De esta forma se evita hacer otra función igual
+	//con otro bucle igual para devolver el número de agrupación dnd
 	@Override
 	public Long activoPerteneceDND(Activo activo) {
 		Long agruacionDND = null;

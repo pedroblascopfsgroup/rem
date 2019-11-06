@@ -960,9 +960,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						            colspan: 3,
 						            bind:{
 						            	value:'{datosRegistrales.puedeEditarCalificacionNegativa}',
-						            	readOnly:'{datosRegistrales.isCalificacionNegativaEnabled}'
+						            	readOnly:true
 						            },
-						            addUxReadOnlyEditFieldPlugin: true
+						            addUxReadOnlyEditFieldPlugin: true,
+						            hidden:true
 						            
 						            
 								},

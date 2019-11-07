@@ -1430,11 +1430,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			me.down('[name=observaciones]').setReadOnly(true);
     		}
     	}
+    	
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));
+                me.down('[name=numImporteContra]').allowBlank = false;
             } else {
                 me.deshabilitarCampo(me.down('[name=numImporteContra]'));
+                me.down('[name=numImporteContra]').reset();
+                me.down('[name=numImporteContra]').allowBlank = true;
             }
         })
     },

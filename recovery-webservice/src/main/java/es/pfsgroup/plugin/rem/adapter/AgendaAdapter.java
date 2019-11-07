@@ -199,11 +199,12 @@ public class AgendaAdapter {
 				TipoProcedimiento procedimiento = genericDao.get(TipoProcedimiento.class, filterDescripcion);
 				if(!Checks.esNulo(procedimiento)) {
 					dto.setDescripcionTarea(procedimiento.getDescripcion());
-			} else {
-				dto.setDescripcionTarea(null);
+				} else {
+					dto.setDescripcionTarea(null);
+				}
 			}
-		}
 
+		}
 		// Adaptamos las fechas por si introducimos sólo unas de las dos.
 		String fechaInicioDesde = (Checks.esNulo(dtoTareaFiltro.getFechaInicioDesde()) && !Checks.esNulo(dtoTareaFiltro.getFechaInicioHasta())) ? "01/01/2000" : dtoTareaFiltro.getFechaInicioDesde();
 		String fechaInicioHasta = (Checks.esNulo(dtoTareaFiltro.getFechaInicioHasta()) && !Checks.esNulo(dtoTareaFiltro.getFechaInicioDesde())) ? "31/12/2099" : dtoTareaFiltro.getFechaInicioHasta();

@@ -53,9 +53,6 @@ public class DDTipoDocumentoAgrupacion implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_TDG_MATRICULA_GD")   
 	private String matricula;
-	
-	@Column(name = "DD_TDG_VISIBLE")   
-	private Boolean visible;
 	    
 	@Version   
 	private Long version;
@@ -119,14 +116,6 @@ public class DDTipoDocumentoAgrupacion implements Auditable, Dictionary {
 	
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
-	}
-
-	public Boolean getVisible() {
-		return visible;
-	}
-
-	public void setVisible(Boolean visible) {
-		this.visible = visible;
 	}
 	
 }

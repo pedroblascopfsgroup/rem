@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20191022
+--## FECHA_CREACION=20191107
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7996
@@ -10,6 +10,7 @@
 --## Finalidad: 
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Se corrige para que omega se compruebe primero
 --##########################################
 --*/
 
@@ -31,7 +32,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-	SET TAP_SCRIPT_DECISION = ''checkFormalizacion() ? valores[''''T013_DefinicionOferta''''][''''comiteSuperior''''] != DDSiNo.SI ? checkAtribuciones() ? checkReserva() == false ? esYubai() ? ''''esYubai'''' : esOmega() ? ''''esOmegaSinReserva'''' : ''''ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo'''' : esYubai() ? ''''esYubai'''' : esOmega() ? ''''esOmegaConReserva'''' : ''''ConFormalizacionSinTanteoConAtribucionConReserva'''' : ''''ConFormalizacionSinTanteoSinAtribucion'''' : ''''ConFormalizacionSinTanteoSinAtribucion'''' : ''''SinFormalizacion'''''',
+	SET TAP_SCRIPT_DECISION = ''esOmega() ? checkReserva() ? ''''esOmegaConReserva'''' : ''''esOmegaSinReserva'''' : checkFormalizacion() ? valores[''''T013_DefinicionOferta''''][''''comiteSuperior''''] != DDSiNo.SI ? checkAtribuciones() ? checkReserva() == false ? esYubai() ? ''''esYubai''''  : ''''ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo'''' : esYubai() ? ''''esYubai'''' : ''''ConFormalizacionSinTanteoConAtribucionConReserva'''' : ''''ConFormalizacionSinTanteoSinAtribucion'''' : ''''ConFormalizacionSinTanteoSinAtribucion'''' : ''''SinFormalizacion'''''',
 	USUARIOMODIFICAR = ''HREOS-7996'', 
 	FECHAMODIFICAR = SYSDATE 
 	WHERE TAP_CODIGO = ''T013_DefinicionOferta''';

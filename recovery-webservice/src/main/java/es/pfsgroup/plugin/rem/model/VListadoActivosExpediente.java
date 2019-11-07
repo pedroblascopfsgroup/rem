@@ -73,6 +73,9 @@ public class VListadoActivosExpediente implements Serializable {
 	
 	@Column(name = "BIE_LOC_DIRECCION")
 	private String direccion;
+	
+	@Column(name = "OFR_ID")
+	private String idOferta;
 
 	public String getId() {
 		return id;
@@ -216,6 +219,14 @@ public class VListadoActivosExpediente implements Serializable {
 
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
+	}
+
+	public String getIdOferta() {
+		return idOferta;
+	}
+
+	public void setIdOferta(String idOferta) {
+		this.idOferta = idOferta;
 	}
 		
 }

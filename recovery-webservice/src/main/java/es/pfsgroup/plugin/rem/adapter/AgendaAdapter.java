@@ -199,7 +199,6 @@ public class AgendaAdapter {
 				TipoProcedimiento procedimiento = genericDao.get(TipoProcedimiento.class, filterDescripcion);
 				if(!Checks.esNulo(procedimiento)) {
 					dto.setDescripcionTarea(procedimiento.getDescripcion());
-Z
 			} else {
 				dto.setDescripcionTarea(null);
 			}

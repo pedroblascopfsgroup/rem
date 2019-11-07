@@ -183,7 +183,7 @@ public class AgendaAdapter {
 		dto.setBusqueda(true);
 
 		// Anotaciones buscan por el nombre de tarea, el resto buscan por la descripción
-		if("Notificación".equals(dtoTareaFiltro.getDescripcionTarea())){
+		if("NOTIFICACION".equals(dtoTareaFiltro.getDescripcionTarea())){
 			dto.setNombreTarea(dtoTareaFiltro.getDescripcionTarea());
 			dto.setDescripcionTarea(null);
 		}else{
@@ -197,7 +197,9 @@ public class AgendaAdapter {
 			if (!Checks.esNulo(dtoTareaFiltro.getDescripcionTarea())){
 				Filter filterDescripcion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTareaFiltro.getDescripcionTarea());
 				TipoProcedimiento procedimiento = genericDao.get(TipoProcedimiento.class, filterDescripcion);
-				dto.setDescripcionTarea(procedimiento.getDescripcion());
+				if(!Checks.esNulo(procedimiento)) {
+					dto.setDescripcionTarea(procedimiento.getDescripcion());
+Z
 			} else {
 				dto.setDescripcionTarea(null);
 			}

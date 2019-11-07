@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alfonso Rodriguez
---## FECHA_CREACION=20191104
+--## FECHA_CREACION=20191107
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-8258
@@ -45,13 +45,16 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la tabla no hacemos nada
     IF V_NUM_TABLAS = 1 THEN 
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Tabla YA EXISTE');    
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Tabla YA EXISTE');
+             V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' MODIFY DD_TDG_DESCRIPCION VARCHAR2(150 CHAR)';
+			EXECUTE IMMEDIATE V_MSQL; 
+
     ELSE  
     	 --Creamos la tabla
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
                (DD_TDG_ID NUMBER (16,0) 
 				  , DD_TDG_CODIGO VARCHAR2(20 CHAR) 
-				  , DD_TDG_DESCRIPCION VARCHAR2(100 CHAR) 
+				  , DD_TDG_DESCRIPCION VARCHAR2(150 CHAR) 
 				  , DD_TDG_DESCRIPCION_LARGA VARCHAR2(250 CHAR) 
 				  , VERSION NUMBER(1,0) DEFAULT 0
 				  , USUARIOCREAR VARCHAR2 (50 CHAR) 

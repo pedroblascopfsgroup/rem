@@ -41,13 +41,13 @@ Ext.define('HreRem.model.AdjuntoProveedor', {
     			name:'fechaDocumento',
     			type:'date',
     			dateFormat: 'c'
-    		},
+    		}/*,
     		{
     			name:'cartera'
     		},
     		{
     			name:'subcartera'
-    		}
+    		}*/
     ],
     
     proxy: {

@@ -381,14 +381,14 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     
     onChangeCheckboxTodasCarteras: function(chkBox, nValue) {
     	var comboCartera = chkBox.up().down('[name="cartera"]');
-    	var comboSubcartera = chkBox.up().down('[name="subcartera"]');
+    	//var comboSubcartera = chkBox.up().down('[name="subcartera"]');
     	var carteras = comboCartera.getStore().getTotalCount();
     	
     	if(nValue){
     		comboCartera.clearValue();
     		comboCartera.disable();
-    		comboSubcartera.clearValue();
-    		comboSubcartera.disable();
+    		/*comboSubcartera.clearValue();
+    		comboSubcartera.disable();*/
     	}else if(carteras != 0){
     		comboCartera.enable();
     	}

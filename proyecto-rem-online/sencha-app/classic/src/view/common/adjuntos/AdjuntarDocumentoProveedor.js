@@ -2,13 +2,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 	extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'adjuntardocumentoproveedorwindow',
     layout	: 'fit',
-    width: Ext.Element.getViewportWidth() / 2.5,
+    width: Ext.Element.getViewportWidth() / 3,
+    //width: Ext.Element.getViewportWidth() / 2.5,
    /* height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50 ,*/
-    requires: ['HreRem.view.common.adjuntos.AdjuntarDocumentoProveedorModel'],
+    //requires: ['HreRem.view.common.adjuntos.AdjuntarDocumentoProveedorModel'],
 	reference: 'adjuntarDocumentoProveedorWindowRef',
-	viewModel: {
+	/*viewModel: {
         type: 'adjuntardocumentoproveedor'
-    },
+    },*/
     /**
      * Parámetro para construir la url que sibirá el documento
      * @type 
@@ -26,7 +27,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
      */
     parent: null,
     
-    listeners: {
+    /*listeners: {
 		boxready: function (grid){
 			var combobox = grid.down('[name="cartera"]');
 			var check = grid.down('[name="checkboxTodasCarteras"]');
@@ -58,7 +59,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 			
 			
 		}
-    },
+    },*/
 	
     initComponent: function() {
     	
@@ -67,6 +68,15 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
     	me.setTitle(HreRem.i18n("title.adjuntar.documento"));
     	
     	me.buttonAlign = 'left';
+    	
+    	var comboTipoDocumento = new Ext.data.Store({
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoDocumentoProveedor'}
+			}
+    	});
     	
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 
@@ -78,7 +88,8 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 	    				collapsed: false,
 	   			 		scrollable	: 'y',
 	   			 		layout: {
-	   			 			type: 'table',
+	   			 			type: 'vbox'
+	   			 			/*type: 'table',
 	   			 			columns: 2,
 	   			 			trAttrs: {height: '30px', width: '100%'},
 					        tdAttrs: {width: '50%'},
@@ -86,17 +97,17 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 					            style: {
 					                width: '100%'
 									}
-					        }
+					        }*/
 	   			 		},
 	   			 		cls:'formbase_no_shadow',
-	   			 		defaults: {
+	   			 		/*defaults: {
 	   			 			columnWidth: '50%',
 	   			 			width: '100%',
 	   			 			labelWidth: 100,
 	   			 			msgTarget: 'side',
 	   			 			addUxReadOnlyEditFieldPlugin: false,
 	   			 			labelWidth: 100
-	   			 		},
+	   			 		},*/
 	    				items: [
 	    						{
 
@@ -125,7 +136,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 				                        }
 				                    }
 					    		},
-					    		{ 
+					    		/*{ 
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.entidad.propietaria'),
 						        	reference: 'cartera',
@@ -143,21 +154,22 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 									listeners: {
 										select: 'onChangeChainedCombo'
 									}
-						        },
+						        },*/
 					    		{ 
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
-						        	reference: 'tipo',
+						        	//reference: 'tipo',
 						        	name: 'tipo',
 						        	editable: true,
 						        	msgTarget: 'side',
-						        	publishes: 'value',
+						        	store: comboTipoDocumento,
+						        	/*publishes: 'value',
 						        	width: '100%',
 						        	bind: {
 						        		store: '{comboTipoDocumento}'
 						        	},
 					            	chainedStore: 'comboSubTipoDocumento',
-									chainedReference: 'subtipo',
+									chainedReference: 'subtipo',*/
 					            	displayField	: 'descripcion',
 								    							
 								    valueField		: 'codigo',
@@ -176,11 +188,11 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 								    	},
 								    	'beforequery': function(queryEvent) {
 								         	queryEvent.combo.onLoad();
-								    	},			
-										select: 'onChangeChainedCombo'
+								    	}/*,			
+										select: 'onChangeChainedCombo'*/
 								    }
 						        },
-						        {
+						        /*{
 						        	xtype: 'comboboxfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.proveedores.subcartera'),
 						        	reference: 'subcartera',
@@ -238,7 +250,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 								   	listeners: {
 								   		change: 'onChangeCheckboxTodasCarteras'	
 								   	}
-								},
+								},*/
 						        {
 				                	xtype: 'textarea',
 				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
@@ -247,14 +259,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 				                	msgTarget: 'side',
 				                	width: '100%'
 				                	
-			            		},{
+			            		}/*,{
 								   	xtype:'checkboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.sin.carteras'),
 									reference: 'checkboxHaya',
 									name: 'checkboxHaya',		
 									readOnly: true,
 									width: '100%'
-								}
+								}*/
     					]
     				}
     	];

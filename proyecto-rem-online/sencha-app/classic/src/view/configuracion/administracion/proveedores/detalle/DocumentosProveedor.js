@@ -96,7 +96,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 					        	dataIndex: 'gestor',
 					        	flex: 1					        	
 					        },
-					        {	
+					        /*{	
 					        	text: HreRem.i18n('header.cartera'),
 					        	dataIndex: 'cartera',
 					        	flex: 1					        	
@@ -105,7 +105,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 					        	text: HreRem.i18n('header.subcartera'),
 					        	dataIndex: 'subcartera',
 					        	flex: 1					        	
-					        },
+					        },*/
 					        {   text: HreRem.i18n('header.entidad.aplica'),
 					        	dataIndex: 'entidad',
 					        	flex: 1,

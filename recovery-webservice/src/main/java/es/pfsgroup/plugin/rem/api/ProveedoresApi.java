@@ -161,7 +161,8 @@ public interface ProveedoresApi {
 	 * @return Devuelve una lista de documentos con los resultados obtenidos.
 	 * @throws GestorDocumentalException 
 	 */
-	public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException;
+	public Object getAdjuntos(Long id);
+	//public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException;
 
 	/**
 	 * Verificación de adjunto existente la lista de proveedores de 1 activo.

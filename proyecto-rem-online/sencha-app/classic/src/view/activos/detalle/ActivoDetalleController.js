@@ -2053,10 +2053,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);
 	    grid.setSelection(record);
+	    var idFalsoProv = record.get('idFalso').id;
 	    
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
 	    	record.data.id= idProveedor;
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }else if(!Ext.isEmpty(idFalsoProv)){
+	    	record.data.id= idFalsoProv;
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);
 	    }
 	    else if(!Ext.isEmpty(record.get('id'))){

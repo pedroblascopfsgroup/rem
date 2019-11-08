@@ -211,21 +211,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	@Override
 	public List<DtoAdjunto> getAdjuntosPlusvalia(ActivoPlusvalia activoPlusvalia) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
-//		String codigoEstado = Checks.esNulo(activo.getEstadoActivo()) ? null : activo.getEstadoActivo().getCodigo();
+		
 		Usuario userLogin = genericAdapter.getUsuarioLogado();
-
-//		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
-//			codigoEstado = CODIGO_ESTADO_UA;
-//		}else if (!Checks.esNulo(codigoEstado)) {
-//			if (!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_SUELO) && !codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO) &&
-//					!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO)) {
-//				codigoEstado = DDEstadoActivo.ESTADO_ACTIVO_TERMINADO;
-//			}
-//
-//		} else {
-//			codigoEstado = DDEstadoActivo.ESTADO_ACTIVO_TERMINADO;
-//		}
-
+		
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
 				activoPlusvalia.getId().toString(), GestorDocumentalConstants.CODIGO_TIPO_PLUSVALIAS, GestorDocumentalConstants.CODIGO_CLASE_PLUSVALIAS);
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());

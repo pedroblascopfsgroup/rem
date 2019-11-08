@@ -3136,6 +3136,8 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntosPlusvalia(Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			model.put(RESPONSE_DATA_KEY, adapter.getAdjuntosActivoPlusvalia(id));

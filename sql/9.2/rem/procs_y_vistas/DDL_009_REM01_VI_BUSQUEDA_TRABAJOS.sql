@@ -68,7 +68,7 @@ BEGIN
 			tbj.tbj_importe_total, 
 			tbj.tbj_fecha_ejecutado,
           	NVL2 (agr.agr_num_agrup_rem, agr.agr_num_agrup_rem, act.act_num_activo) AS num_activo_agrupacion,
-          	'''' AS tipo_entidad, 
+          	NVL2 (agr.agr_num_agrup_rem, ''agrupaciones'', NVL2 (tbj.act_id, ''activo'', ''listado'')) AS tipo_entidad,
 			ttr.dd_ttr_codigo, 
 			ttr.dd_ttr_descripcion, 
 			str.dd_str_codigo, 

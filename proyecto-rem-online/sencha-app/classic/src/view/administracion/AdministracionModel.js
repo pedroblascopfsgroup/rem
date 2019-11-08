@@ -2,7 +2,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.administracion',
     requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision', 'HreRem.model.ActivoJuntaPropietarios', 'HreRem.model.ComboBase', 'HreRem.model.JuntasPropietarios', 
-    	'HreRem.model.TipoDocumentoExpediente', 'HreRem.model.AdjuntoJuntas', 'HreRem.model.Activo'],
+    	'HreRem.model.TipoDocumentoExpediente', 'HreRem.model.AdjuntoJuntas', 'HreRem.model.Activo', 'HreRem.model.Plusvalia'],
 
     data: {
     	junta: null
@@ -229,7 +229,7 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	    ]
 	},
 	
-	// STORE PESTAÑA DOCUMENTOS TIPO DE JUNTA
+	// STORE PESTAï¿½A DOCUMENTOS TIPO DE JUNTA
     	comboTipoDocumento: {
 			model: 'HreRem.model.ComboBase',
 	    	proxy: {

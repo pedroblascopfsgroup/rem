@@ -843,9 +843,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 
-        me.borrarCampo(me.down('[name=fechaTope]'));
-        me.borrarCampo(me.down('[name=fechaConcreta]'));
-        me.borrarCampo(me.down('[name=horaConcreta]'));
         me.down('[name=fechaTope]').allowBlank = true;
         me.down('[name=fechaConcreta]').allowBlank = true;
         me.down('[name=horaConcreta]').allowBlank = true;
@@ -1498,6 +1495,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));
+                me.down('[name=numImporteContra]').allowBlank = false;
             } else {
                 me.deshabilitarCampo(me.down('[name=numImporteContra]'));
             }

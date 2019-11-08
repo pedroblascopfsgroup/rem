@@ -3855,10 +3855,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
+            combobox.setAllowBlank(false);
             fechaVenta.setDisabled(false);
             fechaAlquiler.setDisabled(false);
         } else {
             combobox.setDisabled(true);
+            combobox.setAllowBlank(true);
             fechaVenta.setDisabled(true);
             fechaAlquiler.setDisabled(true);
             combobox.clearValue();

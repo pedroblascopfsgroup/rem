@@ -24,6 +24,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTributoDaoImpl;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
@@ -42,6 +43,9 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		
 	@Autowired
 	private ParticularValidatorApi particularValidator;
+	
+	@Autowired
+	private ActivoTributoDaoImpl tributoDaoImpl;
 
 	protected static final Log logger = LogFactory.getLog(MSVSControlTributosProcesar.class);
 
@@ -162,7 +166,13 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 			activoTributos.setFechaRecepcionRecursoGestoria(fechaRecepcionRecursoGestoria);
 			activoTributos.setFechaRespuestaRecurso(fechaRespuestaRecurso);
 			activoTributos.setFavorable(resultado);
-			activoTributos.setNumTributo(Checks.esNulo(celdaIdTributo) ? null : Long.parseLong(celdaIdTributo));
+						
+			if(Checks.esNulo(celdaIdTributo)) {
+				Long numMaxTributo = tributoDaoImpl.getNumMaxTributo();
+				activoTributos.setNumTributo(numMaxTributo + 1);
+				//activoTributos.setNumTributo(Checks.esNulo(celdaIdTributo) ? null : Long.parseLong(celdaIdTributo));
+			}
+				
 						
 
 		} catch (Exception e) {

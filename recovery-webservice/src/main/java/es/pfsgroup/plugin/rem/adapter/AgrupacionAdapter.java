@@ -4119,25 +4119,24 @@ public class AgrupacionAdapter {
 				for (int i = 0; i < lista.size(); i++) {
 					ActivoAgrupacionActivo aga = lista.get(i);
 
-					for (int j = 0; j < lista.size(); j++) {
-						Activo act = aga.getActivo();
-						String codProvincia = act.getProvincia();
+					Activo act = aga.getActivo();
+					String codProvincia = act.getProvincia();
 
-						if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
-							canarias = true;
-						}
+					if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
+						canarias = true;
 					}
 				}
 			}
+			
+			if (canarias) {
+				if (!Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
+					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_CANARIAS);
+			} else {
+				if (Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
+					throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_CANARIAS);
+			}
 		}
 
-		if (canarias) {
-			if (!Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
-				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_NO_CANARIAS);
-		} else {
-			if (Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia()))
-				throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_CANARIAS);
-		}
 	}
 	
 	private void comprobarDistintoPropietario(ActivoAgrupacion agrupacion, Activo activo) {

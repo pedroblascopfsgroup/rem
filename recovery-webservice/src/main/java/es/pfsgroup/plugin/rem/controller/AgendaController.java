@@ -321,9 +321,7 @@ public class AgendaController extends TareaController {
 		List<DtoResultadoBusquedaTareasBuzones> listaTareas = (List<DtoResultadoBusquedaTareasBuzones>) adapter
 				.getListTareas(dtoTareaFilter).getResults();
 		
-		if (listaTareas.size() > 5000) {
-			new EmptyParamDetector().isEmpty(listaTareas.size(), "tareas",  usuarioManager.getUsuarioLogado().getUsername());
-		}
+		new EmptyParamDetector().isEmpty(listaTareas.size(), "tareas",  usuarioManager.getUsuarioLogado().getUsername());
 
 		ExcelReport report = new TareaExcelReport(listaTareas);
 

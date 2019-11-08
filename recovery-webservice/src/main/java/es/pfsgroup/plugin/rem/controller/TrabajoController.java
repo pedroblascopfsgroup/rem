@@ -1139,9 +1139,7 @@ public class TrabajoController extends ParadiseJsonController {
 		@SuppressWarnings("unchecked")
 		List<VBusquedaTrabajos> listaTrabajos = (List<VBusquedaTrabajos>) trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado()).getResults();
 		
-		if (listaTrabajos.size() > 5000) {
-			new EmptyParamDetector().isEmpty(listaTrabajos.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
-		}
+		new EmptyParamDetector().isEmpty(listaTrabajos.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
 		
 		ExcelReport report = new TrabajoExcelReport(listaTrabajos);
 

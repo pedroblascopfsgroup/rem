@@ -58,14 +58,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	},
 							allowBlank	:	false
 		                },
-		                { 
-		                	xtype		: 'displayfieldbase',
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
-		                	bind		: {
-			            		value: '{agrupacionficha.numAgrupUvem}',
-			            		hidden: '{esAgrupacionPromocionAlquiler}'
-			            	}		
-		                },
 		                {
 		                	fieldLabel: HreRem.i18n('header.numero.agrupacion.prinex'),
 		                	bind: {

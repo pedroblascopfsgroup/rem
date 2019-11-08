@@ -198,6 +198,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -773,10 +774,14 @@ public class ActivoAdapter {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
 										activoCarga.getEstadoCarga().getCodigo());		
 								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
-									beanUtilNotNull.copyProperty(cargaDto, "subestadoCodigo", 
-										activoCarga.getSubestadoCarga().getCodigo());
-									beanUtilNotNull.copyProperty(cargaDto, "subestadoDescripcion",
-										activoCarga.getSubestadoCarga().getDescripcion());
+								    cargaDto.setSubestadoCodigo(activoCarga.getSubestadoCarga().getCodigo());
+								    cargaDto.setSubestadoDescripcion(activoCarga.getSubestadoCarga().getDescripcion());
+								}else {
+								    DDSubestadoCarga subEstadoSinIndicar = genericDao.get(DDSubestadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoCarga.COD_SCG_SIN_INICIAR));
+								    if(!Checks.esNulo(subEstadoSinIndicar)) {
+								        cargaDto.setSubestadoCodigo(subEstadoSinIndicar.getCodigo());
+								        cargaDto.setSubestadoDescripcion(subEstadoSinIndicar.getDescripcion());
+								    }
 								}
 							}
 						}
@@ -864,11 +869,15 @@ public class ActivoAdapter {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
 										activoCarga.getEstadoCarga().getCodigo());								
 								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
-									beanUtilNotNull.copyProperty(cargaDto, "subestadoCodigo", 
-											activoCarga.getSubestadoCarga().getCodigo());
-									beanUtilNotNull.copyProperty(cargaDto, "subestadoDescripcion",
-											activoCarga.getSubestadoCarga().getDescripcion());
-								}
+								    cargaDto.setSubestadoCodigo(activoCarga.getSubestadoCarga().getCodigo());
+								    cargaDto.setSubestadoDescripcion(activoCarga.getSubestadoCarga().getDescripcion());
+								}else {
+								    DDSubestadoCarga subEstadoSinIndicar = genericDao.get(DDSubestadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoCarga.COD_SCG_SIN_INICIAR));
+								    if(!Checks.esNulo(subEstadoSinIndicar)) {
+								        cargaDto.setSubestadoCodigo(subEstadoSinIndicar.getCodigo());
+								        cargaDto.setSubestadoDescripcion(subEstadoSinIndicar.getDescripcion());
+								    }
+								}	
 							}
 							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",

@@ -1026,8 +1026,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
+            combobox.setAllowblank(false);
         } else {
             combobox.setDisabled(true);
+            combobox.setAllowblank(true);
             combobox.clearValue();
         }
 

@@ -1760,10 +1760,8 @@ public class ActivoController extends ParadiseJsonController {
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
 
 		List<VBusquedaActivos> listaActivos = (List<VBusquedaActivos>) adapter.getActivos(dtoActivoFilter).getResults();
-		
-		if (listaActivos.size() > 5000) {
-			new EmptyParamDetector().isEmpty(listaActivos.size(), "activos", usuarioManager.getUsuarioLogado().getUsername());
-		}
+
+		new EmptyParamDetector().isEmpty(listaActivos.size(), "activos", usuarioManager.getUsuarioLogado().getUsername());
 
 		List<DDRatingActivo> listaRating = utilDiccionarioApi.dameValoresDiccionarioSinBorrado(DDRatingActivo.class);
 		Map<String, String> mapRating = new HashMap<String, String>();

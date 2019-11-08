@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 	extend		: 'HreRem.view.common.FormBase',
     xtype		: 'activospublicacionsearch',
-    isSearchForm: true,
+    isSearchFormPublicacion: true,
     cls			: 'panel-base shadow-panel',
 	recordName	: "publicacionesSearch",
 

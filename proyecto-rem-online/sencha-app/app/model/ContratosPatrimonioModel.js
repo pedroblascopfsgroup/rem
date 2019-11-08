@@ -76,7 +76,12 @@ Ext.define('HreRem.model.ContratosPatrimonioModel', {
     		},
     		{
     			name: 'idContratoAntiguo'
-    		}
+    		},
+    		{
+				name:'fechaCreacion',
+    			type:'date',
+    			dateFormat: 'c'
+			}
     		
     ],
     

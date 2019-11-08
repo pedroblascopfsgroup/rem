@@ -167,9 +167,7 @@ public class VisitasController {
 		List<DtoVisitasFilter> listaVisitas = (List<DtoVisitasFilter>) visitaApi.getListVisitas(dtoVisitasFilter)
 				.getResults();
 		
-		if (listaVisitas.size() > 5000) {
-			new EmptyParamDetector().isEmpty(listaVisitas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
-		}
+		new EmptyParamDetector().isEmpty(listaVisitas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
 
 		ExcelReport report = new VisitasExcelReport(listaVisitas);
 

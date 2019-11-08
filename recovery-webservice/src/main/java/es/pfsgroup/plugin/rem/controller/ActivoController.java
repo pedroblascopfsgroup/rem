@@ -3270,4 +3270,19 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioFasePublicacion(ModelMap model) {
+
+		try {
+			model.put("data", activoApi.getDiccionarioFasePublicacion());
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en activoController", e);
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

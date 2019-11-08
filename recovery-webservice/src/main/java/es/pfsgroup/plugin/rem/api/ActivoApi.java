@@ -14,6 +14,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -1297,5 +1298,12 @@ public interface ActivoApi {
 	FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto);
 
 	ActivoDto getDatosActivo(Long activoId);
+
+	/**
+	 * Devuelve la lista ordenada de valores del diccionario Fase de Publicacion.
+	 * @return List
+	 * @throws Exception
+	 */
+	public List<Dictionary> getDiccionarioFasePublicacion() throws Exception;
 	
 }

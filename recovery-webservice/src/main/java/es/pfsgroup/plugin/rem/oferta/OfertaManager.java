@@ -693,14 +693,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				for (int i=0; i<ofertaDto.getActivosLote().size(); i++) {
 					try {
 						Activo activo = activoApi.getByNumActivo(ofertaDto.getActivosLote().get(i).getIdActivoHaya());
-						if(!Checks.estaVacio(agrup.getActivos())){
-							agrup.setTipoAlquiler(activo.getTipoAlquiler());
-							agrupacionAdapter.createActivoAgrupacion(ofertaDto.getActivosLote().get(i).getIdActivoHaya(), agrup.getId(), i+1, false);
-						}else {
-							agrupacionAdapter.activoAgrupacionValidate(activo, agrup);
-							agrup = agrupacionAdapter.updateAgrupacionPrimerActivo(activo, agrup);
-							activoAgrupacionApi.saveOrUpdate(agrup);
-						}
+						agrup.setTipoAlquiler(activo.getTipoAlquiler());
+						agrupacionAdapter.createActivoAgrupacion(ofertaDto.getActivosLote().get(i).getIdActivoHaya(), agrup.getId(), i+1, false);
 					} catch (Exception e) {
 						logger.error("Error en ofertaManager", e);
 						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
@@ -2686,7 +2680,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Double importe = null;
 		if (!Checks.esNulo(oferta)) {
-			importe = oferta.getImporteOferta();
+			if(!Checks.esNulo(oferta.getImporteContraOferta())) {
+				importe = oferta.getImporteContraOferta();
+			}else {
+				importe = oferta.getImporteOferta();
+			}
 			if (!Checks.esNulo(oferta.getTipoOferta())) {
 				codigoOferta = oferta.getTipoOferta().getCodigo();
 			}

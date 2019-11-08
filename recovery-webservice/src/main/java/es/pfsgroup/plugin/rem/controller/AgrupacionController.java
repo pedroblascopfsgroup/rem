@@ -706,9 +706,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		List<VBusquedaAgrupaciones> listaAgrupaciones = (List<VBusquedaAgrupaciones>) adapter
 				.getListAgrupaciones(dtoAgrupacionFilter).getResults();
 		
-		if (listaAgrupaciones.size() > 5000) {
-			new EmptyParamDetector().isEmpty(listaAgrupaciones.size(), "agrupaciones",  usuarioManager.getUsuarioLogado().getUsername());
-		}
+		new EmptyParamDetector().isEmpty(listaAgrupaciones.size(), "agrupaciones",  usuarioManager.getUsuarioLogado().getUsername());
 
 		ExcelReport report = new AgrupacionExcelReport(listaAgrupaciones);
 

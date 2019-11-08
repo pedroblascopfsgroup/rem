@@ -55,10 +55,11 @@
             --%>
              <%
             java.util.Date currentDate = new java.util.Date();
-            java.lang.Long hoy = new java.util.Date().getTime();      
+            java.lang.Long hoy = new java.util.Date().getTime();
+            java.lang.String remApiHome = new java.util.Properties().getProperty("rem-api.home", "http://localhost/");
             %>
             $AC.setWebPath('<c:url value="/"/>');
-            $AC.setRemApiWebPath('http://localhost/');
+            $AC.setRemApiWebPath('<c:out value="<%= remApiHome %>"/>');
             $AC.setCurrentDate(<c:out value="<%= hoy %>"/>);
             $AC.setVersion('${version}');
             $AC.setDebugMode(${jsDebug});

@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTributoDaoImpl;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -399,6 +400,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private ActivoTributoApi activoTributoApi;
+	
+	@Autowired
+	private ActivoTributoDaoImpl tributoDaoImpl;
 
 
 	@Override
@@ -5699,6 +5703,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if(!Checks.esNulo(gasto)){
 						tributo.setGastoProveedor(gasto);
 					}
+				}
+				
+				if(Checks.esNulo(dto.getNumTributo())) {
+					Long numMaxTributo = tributoDaoImpl.getNumMaxTributo();
+					tributo.setNumTributo(numMaxTributo + 1);
+				} else {
+					tributo.setNumTributo(dto.getNumTributo());
 				}
 								
 				if(!Checks.esNulo(tributo.getId())){

@@ -87,6 +87,7 @@ public class ActivoTributos implements Serializable, Auditable {
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor;
 	
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ACT_NUM_TRIBUTO")
 	private Long numTributo;
 

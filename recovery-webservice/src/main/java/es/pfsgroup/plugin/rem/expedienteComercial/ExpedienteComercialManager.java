@@ -6419,10 +6419,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			for (ActivoOferta activoOferta : listaOfertas) {
 				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
 
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+				if (oferta != null && oferta.getEstadoOferta() != null &&
+						DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialPorOferta(oferta.getId());
 
-					if (!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())
+					if (expediente != null && expediente.getEstado() != null 
+							&& !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.PTE_SANCION.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())

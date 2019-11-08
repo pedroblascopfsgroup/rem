@@ -4054,4 +4054,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean esExpedienteVenta(String numExpediente) {
+		if(Checks.esNulo(numExpediente))
+			return false;
+
+		String query = "SELECT DD_TOF_CODIGO "
+				+ "	  	FROM REM01.ECO_EXPEDIENTE_COMERCIAL ECO "
+				+ " 	JOIN REM01.OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID "
+				+ "  	JOIN REM01.DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID = TOF.DD_TOF_ID "
+				+ "  	WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" ";
+
+		String resultado = rawDao.getExecuteSQL(query);
+
+		return "01".equals(resultado);
+	}
+	
 }

@@ -968,4 +968,6 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo);
 
+	Boolean esExpedienteVenta(String numExpediente);
+
 }

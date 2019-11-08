@@ -258,7 +258,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			activo = oferta.getActivoPrincipal();
 		}
 		
-		if(faltanDatosCalculo(oferta, activo)) {
+		if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) && faltanDatosCalculo(oferta, activo)) {
 			throw new JsonViewerException(FALTAN_DATOS);
 		}
 		// Si el activo pertenece a un lote comercial, no se pueden aceptar

@@ -139,11 +139,8 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 		// Tipo Adjudicacion
 		Filter filtroTipoAdjudicacion = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 
-		if (ES_BORRAR.equalsIgnoreCase(celdaTipoAdjudicacion)) {
-			activo.setAdjJudicial(null);
-			activo.setAdjNoJudicial(null);
-			// 01-JUDICIAL
-		} else if ("01".equals(celdaTipoAdjudicacion)) {
+		// 01-JUDICIAL
+		if ("01".equals(celdaTipoAdjudicacion)) {
 			ActivoAdjudicacionJudicial taJudicial = genericDao.get(ActivoAdjudicacionJudicial.class,
 					filtroTipoAdjudicacion);
 
@@ -153,14 +150,15 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 				taJudicial.setAuditoria(Auditoria.getNewInstance());
 			}
 
-			Filter filtroEntEjec = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO,
-					celdaEntidadEjecHipotecaria);
+			Filter filtroEntEjec = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaEntidadEjecHipotecaria);
 			DDEntidadEjecutante entEjec = genericDao.get(DDEntidadEjecutante.class, filtroEntEjec);
-			taJudicial.setEntidadEjecutante(entEjec);
+			if (!Checks.esNulo(celdaEntidadEjecHipotecaria))
+				taJudicial.setEntidadEjecutante(ES_BORRAR.equalsIgnoreCase(celdaImporteAdj) ? null : entEjec);
 
 			Filter filtroEstAdj = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaEstadoAdj);
 			DDEstadoAdjudicacion estAdj = genericDao.get(DDEstadoAdjudicacion.class, filtroEstAdj);
-			taJudicial.setEstadoAdjudicacion(estAdj);
+			if (!Checks.esNulo(celdaEstadoAdj))
+				taJudicial.setEstadoAdjudicacion(ES_BORRAR.equalsIgnoreCase(celdaEstadoAdj) ? null : estAdj);
 
 			if (Checks.esNulo(bien)) {
 				bien = new NMBBien();
@@ -185,67 +183,68 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 				adjudicacionBien = bien.getAdjudicacion();
 			}
 
-			adjudicacionBien.setImporteAdjudicacion(Checks.esNulo(celdaImporteAdj) ? BigDecimal.ZERO
-					: ES_BORRAR.equalsIgnoreCase(celdaImporteAdj) ? BigDecimal.ZERO : new BigDecimal(celdaImporteAdj));
-
-			adjudicacionBien.setLanzamientoNecesario(Checks.esNulo(celdaImporteAdj) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaImporteAdj) ? null : "SI".equalsIgnoreCase(celdaLanzNecesario));
+		if	(!Checks.esNulo(celdaImporteAdj))
+				adjudicacionBien.setImporteAdjudicacion(ES_BORRAR.equalsIgnoreCase(celdaImporteAdj) ? BigDecimal.ZERO : new BigDecimal(celdaImporteAdj));
+			
+		if	(!Checks.esNulo(celdaImporteAdj))
+			adjudicacionBien.setLanzamientoNecesario(ES_BORRAR.equalsIgnoreCase(celdaLanzNecesario) ? null : "SI".equalsIgnoreCase(celdaLanzNecesario));
 
 			// FECHAS
-			adjudicacionBien.setFechaSolicitudMoratoria(Checks.esNulo(celdaFsolMoratoria) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaFsolMoratoria) ? null : formato.parse(celdaFsolMoratoria));
+		if	(!Checks.esNulo(celdaFsolMoratoria))
+			adjudicacionBien.setFechaSolicitudMoratoria(ES_BORRAR.equalsIgnoreCase(celdaFsolMoratoria) ? null : formato.parse(celdaFsolMoratoria));
 			
-			adjudicacionBien.setFechaResolucionMoratoria(Checks.esNulo(celdaFresMoratoria) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaFresMoratoria) ? null : formato.parse(celdaFresMoratoria));
+		if	(!Checks.esNulo(celdaFresMoratoria))
+			adjudicacionBien.setFechaResolucionMoratoria(ES_BORRAR.equalsIgnoreCase(celdaFresMoratoria) ? null : formato.parse(celdaFresMoratoria));
 			
-			adjudicacionBien.setFechaSenalamientoLanzamiento(Checks.esNulo(celdafSenyalLanz) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdafSenyalLanz) ? null : formato.parse(celdafSenyalLanz));
+		if	(!Checks.esNulo(celdafSenyalLanz))
+			adjudicacionBien.setFechaSenalamientoLanzamiento(ES_BORRAR.equalsIgnoreCase(celdafSenyalLanz) ? null : formato.parse(celdafSenyalLanz));
 			
-			adjudicacionBien.setFechaSenalamientoPosesion(Checks.esNulo(celdaFsenyalAdj) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaFsenyalAdj) ? null : formato.parse(celdaFsenyalAdj));
+		if	(!Checks.esNulo(celdaFsenyalAdj))
+			adjudicacionBien.setFechaSenalamientoPosesion(ES_BORRAR.equalsIgnoreCase(celdaFsenyalAdj) ? null : formato.parse(celdaFsenyalAdj));
 			
-			adjudicacionBien.setFechaDecretoFirme(Checks.esNulo(celdaFfirmezaAutoadj) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaFfirmezaAutoadj) ? null : formato.parse(celdaFfirmezaAutoadj));
+		if	(!Checks.esNulo(celdaFfirmezaAutoadj))
+			adjudicacionBien.setFechaDecretoFirme(ES_BORRAR.equalsIgnoreCase(celdaFfirmezaAutoadj) ? null : formato.parse(celdaFfirmezaAutoadj));
 			
-			adjudicacionBien.setFechaDecretoNoFirme(Checks.esNulo(celdaFautoadj) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaFautoadj) ? null : formato.parse(celdaFautoadj));
+		if	(!Checks.esNulo(celdaFautoadj))
+			adjudicacionBien.setFechaDecretoNoFirme(ES_BORRAR.equalsIgnoreCase(celdaFautoadj) ? null : formato.parse(celdaFautoadj));
 			
-			adjudicacionBien.setFechaRealizacionPosesion(Checks.esNulo(celdaFRealizacionPosesion) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaFRealizacionPosesion) ? null : formato.parse(celdaFRealizacionPosesion));
+		if	(!Checks.esNulo(celdaFRealizacionPosesion))
+			adjudicacionBien.setFechaRealizacionPosesion(ES_BORRAR.equalsIgnoreCase(celdaFRealizacionPosesion) ? null : formato.parse(celdaFRealizacionPosesion));
 			
-			adjudicacionBien.setFechaRealizacionLanzamiento(Checks.esNulo(celdaFlanzEfectuado) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaFlanzEfectuado) ? null : formato.parse(celdaFlanzEfectuado));
+		if	(!Checks.esNulo(celdaFlanzEfectuado))
+			adjudicacionBien.setFechaRealizacionLanzamiento(ES_BORRAR.equalsIgnoreCase(celdaFlanzEfectuado) ? null : formato.parse(celdaFlanzEfectuado));
 			
 
 			Filter filtroResMor = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaResolucionMoratoria);
 			DDFavorable resMor = genericDao.get(DDFavorable.class, filtroResMor);
-			adjudicacionBien
-					.setResolucionMoratoria(ES_BORRAR.equalsIgnoreCase(celdaResolucionMoratoria) ? null : resMor);
+			adjudicacionBien.setResolucionMoratoria(ES_BORRAR.equalsIgnoreCase(celdaResolucionMoratoria) ? null : resMor);
 
 			taJudicial.setAdjudicacionBien(adjudicacionBien);
 
+			
 			Filter filtroTipoJuz = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaTipoJuzgado);
 			TipoJuzgado tipoJuzgado = genericDao.get(TipoJuzgado.class, filtroTipoJuz);
 			taJudicial.setJuzgado(ES_BORRAR.equalsIgnoreCase(celdaTipoJuzgado) ? null : tipoJuzgado);
 
 			Filter filtroPob = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaPoblacionJuzgado);
 			TipoPlaza poblacion = genericDao.get(TipoPlaza.class, filtroPob);
+			if	(!Checks.esNulo(celdaPoblacionJuzgado))
 			taJudicial.setPlazaJuzgado(ES_BORRAR.equalsIgnoreCase(celdaPoblacionJuzgado) ? null : poblacion);
-
-			taJudicial.setNumAuto(Checks.esNulo(celdaNumAutos) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaNumAutos) ? null : celdaNumAutos);
 			
-			taJudicial.setProcurador(Checks.esNulo(celdaProcurador) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaProcurador) ? null : celdaProcurador);
+			if	(!Checks.esNulo(celdaNumAutos))
+			taJudicial.setNumAuto(ES_BORRAR.equalsIgnoreCase(celdaNumAutos) ? null : celdaNumAutos);
 			
-			taJudicial.setLetrado(Checks.esNulo(celdaLetrado) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaLetrado) ? null : celdaLetrado);
+			if	(!Checks.esNulo(celdaProcurador))
+			taJudicial.setProcurador(ES_BORRAR.equalsIgnoreCase(celdaProcurador) ? null : celdaProcurador);
 			
-			taJudicial.setIdAsunto(Checks.esNulo(celdaIdAsuntos) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaIdAsuntos) ? null : Long.parseLong(celdaIdAsuntos));
+			if	(!Checks.esNulo(celdaLetrado))
+			taJudicial.setLetrado(ES_BORRAR.equalsIgnoreCase(celdaLetrado) ? null : celdaLetrado);
 			
-			taJudicial.setDefectosTestimonio(Checks.esNulo(celdaExpedienteJudicialDefectos) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaExpedienteJudicialDefectos) ? null : "SI".equalsIgnoreCase(celdaExpedienteJudicialDefectos) ? 1L : 0);
+			if	(!Checks.esNulo(celdaIdAsuntos))
+			taJudicial.setIdAsunto(ES_BORRAR.equalsIgnoreCase(celdaIdAsuntos) ? null : Long.parseLong(celdaIdAsuntos));
+			
+			if	(!Checks.esNulo(celdaExpedienteJudicialDefectos))
+			taJudicial.setDefectosTestimonio(ES_BORRAR.equalsIgnoreCase(celdaExpedienteJudicialDefectos) ? null : "SI".equalsIgnoreCase(celdaExpedienteJudicialDefectos) ? 1L : 0);
 
 			genericDao.save(ActivoAdjudicacionJudicial.class, taJudicial);
 
@@ -259,23 +258,23 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 				taNotarial.setAuditoria(Auditoria.getNewInstance());
 			}
 
-			taNotarial.setFechaTitulo(Checks.esNulo(celdaFtitulo) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaFtitulo) ? null : formato.parse(celdaFtitulo));
+			if	(!Checks.esNulo(celdaFtitulo))
+			taNotarial.setFechaTitulo(ES_BORRAR.equalsIgnoreCase(celdaFtitulo) ? null : formato.parse(celdaFtitulo));
 			
-			taNotarial.setFechaFirmaTitulo(Checks.esNulo(celdaFirmezaTitulo) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaFirmezaTitulo) ? null : formato.parse(celdaFirmezaTitulo));
+			if	(!Checks.esNulo(celdaFirmezaTitulo))
+			taNotarial.setFechaFirmaTitulo(ES_BORRAR.equalsIgnoreCase(celdaFirmezaTitulo) ? null : formato.parse(celdaFirmezaTitulo));
 			
-			taNotarial.setValorAdquisicion(Checks.esNulo(celdaValorAdquisicion) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaValorAdquisicion) ? null
-							: Double.valueOf(celdaValorAdquisicion.replace(",", ".")));
+			if	(!Checks.esNulo(celdaValorAdquisicion))
+			taNotarial.setValorAdquisicion(ES_BORRAR.equalsIgnoreCase(celdaValorAdquisicion) ? null : Double.valueOf(celdaValorAdquisicion.replace(",", ".")));
 			
-			taNotarial.setTramitadorTitulo(Checks.esNulo(celdaNombre) ? null : ES_BORRAR.equalsIgnoreCase(celdaNombre) ? null : celdaNombre);
+			if	(!Checks.esNulo(celdaNombre))
+			taNotarial.setTramitadorTitulo(ES_BORRAR.equalsIgnoreCase(celdaNombre) ? null : celdaNombre);
 			
-			taNotarial.setNumReferencia(Checks.esNulo(celdaNumExpediente) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaNumExpediente) ? null : celdaNumExpediente);
+			if	(!Checks.esNulo(celdaNumExpediente))
+			taNotarial.setNumReferencia(ES_BORRAR.equalsIgnoreCase(celdaNumExpediente) ? null : celdaNumExpediente);
 			
-			taNotarial.setDefectosTestimonio(Checks.esNulo(celdaExpedienteDefectos) ? null
-					: ES_BORRAR.equalsIgnoreCase(celdaExpedienteDefectos) ? null : "SI".equalsIgnoreCase(celdaExpedienteDefectos) ? 1L : 0);
+			if	(!Checks.esNulo(celdaExpedienteDefectos))
+			taNotarial.setDefectosTestimonio(ES_BORRAR.equalsIgnoreCase(celdaExpedienteDefectos) ? null : "SI".equalsIgnoreCase(celdaExpedienteDefectos) ? 1L : 0);
 
 			genericDao.save(ActivoAdjudicacionNoJudicial.class, taNotarial);
 		}

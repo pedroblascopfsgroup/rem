@@ -958,4 +958,18 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean existeEstadoTitulo(String situacionTitulo);
 
+	/**
+	 * 
+	 * @param numActivo
+	 * @return true si el activo pertenece a la cartera Bankia
+	 */
+	public Boolean esActivoBankia(String numActivo);
+
+	/**
+	 * 
+	 * @param codigo
+	 * @return true si el codigo pertenece a una entidad hipotecaria
+	 */
+	public Boolean existeEntidadHipotecaria(String codigo);
+
 }

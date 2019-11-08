@@ -4005,6 +4005,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"JOIN ACT_ACTIVO ACT ON TIT.ACT_ID = ACT.ACT_ID "
 				+"WHERE ACT.ACT_NUM_ACTIVO = '"+ numActivo +"' "
 				);
+	
+		return !"0".equals(resultado);
+	}
+		
+	public Boolean esActivoBankia(String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO = '03' "
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
 
 		return !"0".equals(resultado);
 	}
@@ -4017,8 +4031,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(*) FROM DD_ETI_ESTADO_TITULO " 
 				+ "WHERE DD_ETI_CODIGO = '"+ situacionTitulo +"' "
-				+ "AND DD_ETI_CODIGO IN (01, 02, 06)"
+				+ "AND DD_ETI_CODIGO IN ('01', '02', '06')"
 		);
+		
+		return !"0".equals(resultado);
+	}
+
+	public Boolean existeEntidadHipotecaria(String codigo) {
+		if (Checks.esNulo(codigo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM DD_EEJ_ENTIDAD_EJECUTANTE "
+					+"		WHERE DD_EEJ_CODIGO = "+ codigo +"");
 
 		return !"0".equals(resultado);
 	}

@@ -101,6 +101,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	public static final String USUARIO_NOT_EXISTS_EXCEPTION_MESSAGE = "No se ha encontrado el usuario especificado";
 	public static final String ERROR_EVALUAR_MEDIADORES_MESSAGE = "Error al evaluar mediadores con calificaciones propuestas";
 	public static final String BAJA_PROVEEDOR_ACTIVOS_ASIGNADOS = "proveedor.baja.proveedor.con.activos";
+	public static final String ERROR_TIPO_DOCUMENTO_PROVEEDOR = "No existe el tipo de documento indicado";
 
 	public static final Integer comboOK = 1;
 	public static final Integer comboKO = 0;
@@ -972,6 +973,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
+		
 		/*boolean borrado = true;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
@@ -1009,6 +1012,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 	@Override
 	public List<DtoAdjunto> getAdjuntos(Long id) /*throws GestorDocumentalException*/ {
+		
+		//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
 		
 		/*List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		ActivoProveedor proveedor = proveedoresDao.getProveedorById(id);
@@ -1092,6 +1097,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Transactional(readOnly = false)
 	public String upload(WebFileItem fileItem) throws Exception {
 				
+		//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
+		
 		/*DDCartera cartera = null;
 		DDSubcartera subcartera = null;
 		List<MapeoGestorDocumental> listaMapeoGD = new ArrayList<MapeoGestorDocumental>();
@@ -1268,20 +1275,24 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		if(!Checks.esNulo(tipoDocumento)) {
 			adjuntoProveedor.setTipoDocumentoProveedor(tipoDocumento);
+			adjuntoProveedor.setContentType(fileItem.getFileItem().getContentType());
+			adjuntoProveedor.setTamanyo(fileItem.getFileItem().getLength());
+			adjuntoProveedor.setNombre(fileItem.getFileItem().getFileName());
+			adjuntoProveedor.setDescripcion(fileItem.getParameter("descripcion"));			
+			adjuntoProveedor.setFechaDocumento(new Date());
+			Auditoria.save(adjuntoProveedor);
+			genericDao.save(ActivoAdjuntoProveedor.class, adjuntoProveedor);
+		} else {
+			throw new Exception(ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
 		}
-		adjuntoProveedor.setContentType(fileItem.getFileItem().getContentType());
-		adjuntoProveedor.setTamanyo(fileItem.getFileItem().getLength());
-		adjuntoProveedor.setNombre(fileItem.getFileItem().getFileName());
-		adjuntoProveedor.setDescripcion(fileItem.getParameter("descripcion"));			
-		adjuntoProveedor.setFechaDocumento(new Date());
-		Auditoria.save(adjuntoProveedor);
-		genericDao.save(ActivoAdjuntoProveedor.class, adjuntoProveedor);
 		
 		return null;
 	}
 
 	@Override
 	public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto) {
+		
+		//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
 		
 		/*FileItem fileItem = null;
 		

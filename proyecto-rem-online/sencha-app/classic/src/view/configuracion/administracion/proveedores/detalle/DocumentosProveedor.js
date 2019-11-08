@@ -96,6 +96,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 					        	dataIndex: 'gestor',
 					        	flex: 1					        	
 					        },
+					        //ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
 					        /*{	
 					        	text: HreRem.i18n('header.cartera'),
 					        	dataIndex: 'cartera',

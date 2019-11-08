@@ -162,6 +162,7 @@ public interface ProveedoresApi {
 	 * @throws GestorDocumentalException 
 	 */
 	public Object getAdjuntos(Long id);
+	//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
 	//public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException;
 
 	/**

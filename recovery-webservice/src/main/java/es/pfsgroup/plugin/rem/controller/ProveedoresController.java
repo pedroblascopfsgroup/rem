@@ -333,6 +333,8 @@ public class ProveedoresController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntos(Long id, ModelMap model, HttpServletRequest request){
+		//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
+		
 		/*try {
 			model.put("data", proveedoresApi.getAdjuntos(id));
 		} catch (GestorDocumentalException gex) {
@@ -383,14 +385,22 @@ public class ProveedoresController extends ParadiseJsonController {
 			model.put("errores", errores);
 			model.put("success", errores == null);
 
+			//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
+			
 		/*} catch (GestorDocumentalException ex) {
 			logger.error("Error en ProveedoresController sobre el Gestor Documental", ex);
 			model.put("success", false);
 			model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");*/
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
-			model.put("success", false);
-			model.put("errores", e.getCause());
+			if (e.getMessage().equals(ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR)) {
+				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
+				model.put("errores", e.getCause());
+				model.put("success", false);
+			} else {
+				model.put("success", false);
+				model.put("errores", e.getCause());
+			}
 		}
 
 		return createModelAndViewJson(model);

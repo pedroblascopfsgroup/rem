@@ -307,9 +307,11 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 				}
 
 			} catch (ParseException e) {
+				esCorrecto = false;
 				errList.add(fila);
 				logger.error(e.getMessage());
 			} catch (Exception e) {
+				esCorrecto = false;
 				errList.add(0);
 				logger.error(e.getMessage());
 			}

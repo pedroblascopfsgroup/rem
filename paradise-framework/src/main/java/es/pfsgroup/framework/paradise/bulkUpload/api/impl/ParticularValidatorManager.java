@@ -4043,7 +4043,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+"		FROM DD_EEJ_ENTIDAD_EJECUTANTE "
-					+"		WHERE DD_EEJ_CODIGO = "+ codigo +"");
+					+"		WHERE DD_EEJ_CODIGO = '"+ codigo +"'");
 
 		return !"0".equals(resultado);
 	}

@@ -217,6 +217,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_MOTIVO_CALIFICACION = "activo.aviso.motivo.calificacion.duplicado";
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";
+	public static final String ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO = "Ya existe un registro 'Presentación en registro', y está activo";
+	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -7215,7 +7217,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,Long idActivo) {
+	public boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,Long idActivo) throws Exception {
 		
 		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
 		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
@@ -7231,6 +7233,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
 					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
 					if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
+						List<DtoHistoricoTramitacionTitulo> listaTramitacionTitulo = getHistoricoTramitacionTitulo(idActivo);
+						
+						for(DtoHistoricoTramitacionTitulo dtoHistoricoTramTitulo : listaTramitacionTitulo) {
+							if(DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(dtoHistoricoTramTitulo.getCodigoEstadoPresentacion()) &&
+									DDEstadoTitulo.ESTADO_EN_TRAMITACION.equals(titulo.getEstado().getCodigo()))
+								throw new Exception(ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO);
+						}
+						
 						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
 					}
 					

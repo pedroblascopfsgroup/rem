@@ -1234,8 +1234,9 @@ public interface ActivoApi {
 	 * Guarda el historico de tramitacion de titulo de un activo
 	 * @param tramitacionDto
 	 * @return boolean
+	 * @throws Exception 
 	 */
-	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo);
+	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo) throws Exception;
 	
 	/**
 	 * actualiza el historico de tramitacion de titulo de un activo

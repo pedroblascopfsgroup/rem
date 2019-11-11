@@ -107,6 +107,7 @@ import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -114,6 +115,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
+import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
@@ -140,6 +142,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
@@ -362,6 +365,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	private GestorActivoManager gestorActivoManager;
 
 	@Override
 	public String managerName() {
@@ -6140,22 +6146,51 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		String idActivo = null;
 		String idCartera = null;
-
+		Boolean esGestoria = false;
+		Boolean esGestoriaDelActivo = false;
+		
 		try {
-
-			idCartera = rawDao.getExecuteSQL(
-					"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			DDIdentificacionGestoria ige = gestorActivoManager.isGestoria(usuarioLogado);
+			esGestoria = !Checks.esNulo(ige);
+			Filter numActivoFilter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+			Activo activo = genericDao.get(Activo.class, numActivoFilter);
 			
-			if(!Checks.esNulo(idCartera)) {
-				idActivo = rawDao.getExecuteSQL(
-						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+			if (esGestoria) {
+				esGestoriaDelActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT COUNT(*) "
+						 + "FROM V_BUSQUEDA_ACTIVOS_GESTORIAS "
+						 + "WHERE DD_IGE_ID = "+ige.getId()+ " AND ACT_ID = "+activo.getId())) >= 1;
+						 
+				if (esGestoriaDelActivo) {
+					idCartera = rawDao.getExecuteSQL(
+							"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+					
+					if(!Checks.esNulo(idCartera)) {
+						idActivo = rawDao.getExecuteSQL(
+								"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+					} else {
+						idActivo = rawDao.getExecuteSQL(
+								"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+					}
+					
+					return Long.parseLong(idActivo);
+				} else {
+					return null;
+				}
 			} else {
-				idActivo = rawDao.getExecuteSQL(
-						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+				idCartera = rawDao.getExecuteSQL(
+						"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+				
+				if(!Checks.esNulo(idCartera)) {
+					idActivo = rawDao.getExecuteSQL(
+							"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+				} else {
+					idActivo = rawDao.getExecuteSQL(
+							"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+				}
+				
+				return Long.parseLong(idActivo);
 			}
-			
-			return Long.parseLong(idActivo);
-
 		} catch (Exception e) {
 			return null;
 		}

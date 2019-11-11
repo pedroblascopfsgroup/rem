@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191028
+--## FECHA_CREACION=20191111
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-8087
@@ -1766,6 +1766,10 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
                     , FECHACREAR
                     , BORRADO
                     )
+                    WITH DISTINTOS AS (
+                      SELECT AHT.AHT_ID, AHT.TIT_ID, AHT.AHT_FECHA_PRES_REGISTRO, AHT.AHT_FECHA_CALIFICACION, AHT.DD_ESP_ID, row_number() over (partition by  AHT.TIT_ID order by AHT.AHT_ID desc) as rn 
+                      FROM '||V_ESQUEMA||'.ACT_AHT_HIST_TRAM_TITULO AHT WHERE AHT.BORRADO = 0
+                    )
                     SELECT 
                     '||V_ESQUEMA||'.S_ACT_AHT_HIST_TRAM_TITULO.NEXTVAL
                     , TIT.TIT_ID TIT_ID
@@ -1817,43 +1821,44 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
                     JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = TIT.ACT_ID AND ACT.BORRADO = 0
                     LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
                     LEFT JOIN '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI ON TIT.DD_ETI_ID = ETI.DD_ETI_ID AND ETI.BORRADO = 0
-                    LEFT JOIN '||V_ESQUEMA||'.ACT_AHT_HIST_TRAM_TITULO AHT ON TIT.TIT_ID = AHT.TIT_ID AND AHT.BORRADO = 0
+                    LEFT JOIN DISTINTOS AHT ON TIT.TIT_ID = AHT.TIT_ID AND AHT.RN = 1
                     WHERE CRA.DD_CRA_CODIGO = ''03'' AND
                     (
-                    NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.ACT_AHT_HIST_TRAM_TITULO AHT WHERE AHT.TIT_ID = TIT.TIT_ID)
+                    AHT.AHT_ID IS NULL
                     OR COALESCE(TIT.TIT_FECHA_PRESENT2_REG,TIT.TIT_FECHA_PRESENT1_REG, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) <> AHT.AHT_FECHA_PRES_REGISTRO
-                    OR TIT.TIT_FECHA_INSC_REG <> AHT.AHT_FECHA_INSCRIPCION
+                    OR (ETI.DD_ETI_CODIGO IN (''06'') AND AHT.AHT_FECHA_CALIFICACION IS NULL)
                     OR CASE
-                      WHEN ETI.DD_ETI_CODIGO NOT IN (''02'',''06'')
-                          THEN (
-                              SELECT DD_ESP_ID
-                              FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
-                              WHERE  DD_ESP_CODIGO = ''01''
-                          )
-                      WHEN ETI.DD_ETI_CODIGO IN (''02'')
-                          THEN (
-                              SELECT DD_ESP_ID
-                              FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
-                              WHERE  DD_ESP_CODIGO = ''03''
-                          )
-                      WHEN ETI.DD_ETI_CODIGO IN (''06'')
-                          THEN (
-                              SELECT DD_ESP_ID
-                              FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
-                              WHERE  DD_ESP_CODIGO = ''02''
-                          )
-                      WHEN ETI.DD_ETI_CODIGO IS NULL AND TIT.TIT_FECHA_INSC_REG IS NOT NULL
-                          THEN (
-                              SELECT DD_ESP_ID
-                              FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
-                              WHERE  DD_ESP_CODIGO = ''03''
-                          )
-                      WHEN ETI.DD_ETI_CODIGO IS NULL AND COALESCE(TIT.TIT_FECHA_PRESENT2_REG,TIT.TIT_FECHA_PRESENT1_REG, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) IS NOT NULL
-                          THEN (
-                              SELECT DD_ESP_ID
-                              FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
-                              WHERE  DD_ESP_CODIGO = ''01''
-                          ) END <> AHT.DD_ESP_ID
+                        WHEN ETI.DD_ETI_CODIGO NOT IN (''02'',''06'')
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''01''
+                        )
+                        WHEN ETI.DD_ETI_CODIGO IN (''02'')
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''03''
+                        )
+                        WHEN ETI.DD_ETI_CODIGO IN (''06'')
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''02''
+                        )
+                        WHEN ETI.DD_ETI_CODIGO IS NULL AND TIT.TIT_FECHA_INSC_REG IS NOT NULL
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''03''
+                        )
+                        WHEN ETI.DD_ETI_CODIGO IS NULL AND COALESCE(TIT.TIT_FECHA_PRESENT2_REG,TIT.TIT_FECHA_PRESENT1_REG, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) IS NOT NULL
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''01''
+                        )
+                        END <> AHT.DD_ESP_ID
                     )
           '
           ;

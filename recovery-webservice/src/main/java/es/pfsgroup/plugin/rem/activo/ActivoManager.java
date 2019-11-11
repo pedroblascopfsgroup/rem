@@ -7366,12 +7366,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				logger.error("Error en activoManager", e);
 				return false;
 			}
-		
-		DDEstadoTitulo ddEstadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoTitulo));
-		if (!Checks.esNulo(ddEstadoTitulo)) {
-			htt.getTitulo().setEstado(ddEstadoTitulo);
+		if (!Checks.esNulo(estadoTitulo)) {
+			DDEstadoTitulo ddEstadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoTitulo));
+			if (!Checks.esNulo(ddEstadoTitulo)) {
+				htt.getTitulo().setEstado(ddEstadoTitulo);
+			}
 		}
-			
+		
 		genericDao.save(HistoricoTramitacionTitulo.class, htt);
 		return true;
 	}

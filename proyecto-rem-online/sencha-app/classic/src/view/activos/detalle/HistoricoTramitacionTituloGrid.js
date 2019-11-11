@@ -62,7 +62,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 		        		onTriggerClick: function (){
 		        			var me = this;
 		        			me.lookupController().checkDateInterval(me);
-		        		} 
+		        		},
+		        		maxValue: new Date() 
 		        		
 		        	},
 		            flex: 1,

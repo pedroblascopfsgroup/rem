@@ -82,6 +82,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	public static final String TIPO_CAMPO_TEXTFIELD = "textfield";
 	public static final String TIPO_CAMPO_COMBO_READONLY = "comboboxreadonly";
 	public static final String TIPO_CAMPO_COMBO = "combobox";
+	public static final String TIPO_CAMPO_FECHA_MIN_TO_DAY = "datemintoday";
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
@@ -462,7 +463,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	
             	if(item.getType().equals(TIPO_CAMPO_FECHA))
             	{
-            		if(item.getNombre().equals("fechaFirma") && tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_ObtencionContratoReserva")){
+            		if(item.getNombre().equals("fechaFirma") && (tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_ObtencionContratoReserva") 
+            				|| tareaExterna.getTareaProcedimiento().getCodigo().equals("T017_ObtencionContratoReserva"))){
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -548,6 +550,26 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			}
             		}
             		
+            	}
+            	if(item.getType().equals(TIPO_CAMPO_FECHA_MIN_TO_DAY)){
+            		if(item.getNombre().equals("fechaTope"))
+            		{
+            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+            			Trabajo trabajo = tramite.getTrabajo();
+            			Date fecha = trabajo.getFechaTope();
+            			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+            			if(!Checks.esNulo(fecha))
+            				item.setValue(formatoFecha.format(fecha));
+            		}
+            		if(item.getNombre().equals("fechaConcreta"))
+            		{
+            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+            			Trabajo trabajo = tramite.getTrabajo();
+            			Date fecha = trabajo.getFechaHoraConcreta();
+            		    SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+            		    if(!Checks.esNulo(fecha))
+            		    	item.setValue(formatoFecha.format(fecha));
+            		}
             	}
             	if(item.getType().equals(TIPO_CAMPO_FECHA_MAX_TO_DAY))
             	{

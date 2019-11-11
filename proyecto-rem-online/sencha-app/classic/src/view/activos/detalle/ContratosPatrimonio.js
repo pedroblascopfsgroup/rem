@@ -52,7 +52,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										xtype:'datefieldbase',
 										formatter: 'date("d/m/Y")',
 										fieldLabel : HreRem.i18n('fieldlabel.fecha.ultima.actualizacion'),
-										bind : '{contrato.ultimoReciboPagado}',
+										bind : '{contrato.fechaCreacion}',
 										readOnly : true
 									},
 									{

@@ -340,7 +340,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					posicionIDmasAlta = i;
 				}					
 			}
-			//tramitacionTitulo.get(2).getEstadoPresentacion().getCodigo();
+			
 			if(!Checks.estaVacio(tramitacionTitulo) && !Checks.esNulo(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion())
 				&& DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion().getCodigo())
 				&& !Checks.esNulo(activo.getTitulo().getEstado()) && DDEstadoTitulo.ESTADO_SUBSANAR.equals(activo.getTitulo().getEstado().getCodigo())

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20191112
+--## FECHA_CREACION=20191113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-5617
@@ -26,7 +26,7 @@ DECLARE
     V_ESQUEMA VARCHAR2(50 CHAR) := '#ESQUEMA#';
     V_ESQUEMA_M VARCHAR2(50 CHAR) := '#ESQUEMA_MASTER#';
     V_EXISTS NUMBER(1);
-    V_USR VARCHAR2(30 CHAR) := 'REMVIP-5721'; -- USUARIOCREAR/USUARIOMODIFICAR
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-5721_V1'; -- USUARIOCREAR/USUARIOMODIFICAR
     V_ACTIVO NUMBER(16) := 5963037; 
 
 BEGIN
@@ -453,7 +453,9 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('Finalizados '||SQL%ROWCOUNT||' registros de tipo de trámite comercial de venta para la tarea de resolución de tanteo para los activos a los que se les ha creado comunicación GENCAT.');
 
-    ALTA_BPM_INSTANCES('SP_BPM',PL_OUTPUT);
+    REM01.ALTA_BPM_INSTANCES('SP_BPM',PL_OUTPUT);
+
+    COMMIT;
 
 EXCEPTION
     WHEN OTHERS THEN

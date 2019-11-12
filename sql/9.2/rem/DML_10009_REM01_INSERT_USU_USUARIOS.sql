@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Juan Torrella
---## FECHA_CREACION=201910311
+--## FECHA_CREACION=20191112
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5152
@@ -38,7 +38,7 @@ V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'USU_USUARIOS'; -- Vble. auxiliar para almac
 BEGIN
 
         --Comprobacion de la tabla
-        V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = ''USU_USUARIOS'''; 
+        V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA_M||''' AND TABLE_NAME = ''USU_USUARIOS'''; 
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         IF V_NUM_TABLAS > 0 THEN              

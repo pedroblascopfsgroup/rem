@@ -16,7 +16,7 @@ public class PlantaDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@NotNull(groups = Insert.class)
+	@NotNull(groups = {Insert.class, Update.class})
 	private Integer numero;
 
 	@NotNull(groups = Insert.class)

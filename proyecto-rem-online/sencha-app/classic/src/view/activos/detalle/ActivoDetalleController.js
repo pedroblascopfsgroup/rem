@@ -5556,7 +5556,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	usuarioLogadoPuedeEditar: function(){
 		var me = this;
 		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']) 
-			|| $AU.userIsRol(CONST.PERFILES['GESTORIA_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTORIA_ADMISION']);
+			|| $AU.userIsRol(CONST.PERFILES['GESTORIA_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']); 
 		if(!usuariosValidos){
 			me.lookupReference("fechaInscripcion").setDisabled(true);
 		}

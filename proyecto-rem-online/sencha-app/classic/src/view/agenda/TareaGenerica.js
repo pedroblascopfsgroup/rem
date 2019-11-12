@@ -1296,6 +1296,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			}			
 		}
 	},
+	
+	T013_PBCReservaValidacion: function() {
+        var me = this;
+        me.campoObligatorio(me.down('[name=comboRespuesta]'));
+    }, 
+	
 	T013_DocumentosPostVentaValidacion: function() {
 		var me = this;
 		var fechaIngreso = me.down('[name=fechaIngreso]');

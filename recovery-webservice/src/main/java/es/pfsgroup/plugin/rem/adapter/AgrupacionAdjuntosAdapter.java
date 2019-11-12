@@ -110,7 +110,13 @@ public class AgrupacionAdjuntosAdapter {
 						BeanUtils.copyProperty(dto, "id", adjuntoAgrupacion.getAdjunto().getId());
 					if (!Checks.esNulo(adjuntoAgrupacion.getTipoDocumentoAgrupacion())) {
 						BeanUtils.copyProperty(dto, "codigoTipo", adjuntoAgrupacion.getTipoDocumentoAgrupacion().getCodigo());
-						BeanUtils.copyProperty(dto, "descripcionTipo", adjuntoAgrupacion.getTipoDocumentoAgrupacion().getDescripcionLarga());
+						BeanUtils.copyProperty(dto, "descripcionTipo", adjuntoAgrupacion.getTipoDocumentoAgrupacion().getDescripcion());
+					}
+					if(!Checks.esNulo(adjuntoAgrupacion.getTamanyo())) {
+						BeanUtils.copyProperty(dto, "tamanyo", adjuntoAgrupacion.getTamanyo());
+					}
+					if(!Checks.esNulo(adjuntoAgrupacion.getFechaDocumento())) {
+						BeanUtils.copyProperty(dto, "fechaDocumento", adjuntoAgrupacion.getFechaDocumento());
 					}
 					listaAdjuntos.add(dto);
 				}

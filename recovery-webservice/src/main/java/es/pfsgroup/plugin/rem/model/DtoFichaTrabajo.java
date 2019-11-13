@@ -167,6 +167,8 @@ public class DtoFichaTrabajo {
     
     private String codigoPartida;
     
+    private String codigoSubpartida;
+    
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -804,6 +806,14 @@ public class DtoFichaTrabajo {
 
 	public void setCodigoPartida(String codigoPartida) {
 		this.codigoPartida = codigoPartida;
+	}
+
+	public String getCodigoSubpartida() {
+		return codigoSubpartida;
+	}
+
+	public void setCodigoSubpartida(String codigoSubpartida) {
+		this.codigoSubpartida = codigoSubpartida;
 	}
 	
 	

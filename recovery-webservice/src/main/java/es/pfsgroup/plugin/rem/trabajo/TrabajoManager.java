@@ -1734,7 +1734,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					dtoTrabajo.setNumeroDND(agrupacion.getNumAgrupRem());
 					dtoTrabajo.setNombreDND(agrupacion.getNombre());
 					dtoTrabajo.setNumAgrupacion(agrupacion.getNumAgrupRem());
-					//dtoTrabajo.setCodigoPartida(agrupacion);
+					dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
+					dtoTrabajo.setCodigoSubpartida(trabajo.getCodigoSubpartida());
 				}else {
 					dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
 				}

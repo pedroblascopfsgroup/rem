@@ -912,20 +912,4 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		return true;
 	}
-	
-	public Boolean activoPerteneceDND(Activo activo) {
-		Boolean perteneceDND = false;
-		
-		List<ActivoAgrupacionActivo> listaAgrupacionesActivo = activo.getAgrupaciones();
-		
-		for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionesActivo) {
-			if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
-				&& DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-				perteneceDND = true;
-				break;
-			}
-		}
-		
-		return perteneceDND;
-	}
 }

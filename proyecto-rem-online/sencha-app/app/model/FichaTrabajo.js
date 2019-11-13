@@ -258,6 +258,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'codigoPartida'
+    		},
+    		{
+    			name: 'codigoSubpartida' 
     		}
     		
     ],

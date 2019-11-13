@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -38,7 +39,7 @@ public class GdprManager implements GdprApi {
 	private ClienteComercialDao clienteComercialDao;
 	
 	@Override
-	public String obtenerIdPersonaHaya(String docCliente) throws Exception {
+	public String obtenerIdPersonaHaya(String docCliente) throws UserException {
 
 		String idPersonaHaya = null;
 		TmpClienteGDPR tmpClienteGDPR = null;
@@ -49,7 +50,7 @@ public class GdprManager implements GdprApi {
 		} else {
 			List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "documento", docCliente));
-			if (clientes != null && clientes.size() > 0) {
+			if (clientes != null && clientes.isEmpty()) {
 				for (ClienteComercial clc : clientes) {
 					if (clc.getIdPersonaHaya() != null) {
 						idPersonaHaya = clc.getIdPersonaHaya();
@@ -66,7 +67,7 @@ public class GdprManager implements GdprApi {
 			}
 		}
 		if (Checks.esNulo(idPersonaHaya)) {
-			throw new Exception("El comprador no está dado de alta en el maestro de personas");
+			throw new UserException("El comprador no está dado de alta en el maestro de personas");
 		}
 		return idPersonaHaya;
 
@@ -111,8 +112,7 @@ public class GdprManager implements GdprApi {
 	@Override
 	public List<ClienteGDPR> obtnenerClientesGdprNyNumDoc(String docCliente) throws Exception {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
-		List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class, filtro);
-		return clienteGDPR;
+		return genericDao.getList(ClienteGDPR.class, filtro);
 	}
 
 	@Override
@@ -131,7 +131,6 @@ public class GdprManager implements GdprApi {
 		}
 
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);
-		return adjComprador;
+		return genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);		
 	}
 }

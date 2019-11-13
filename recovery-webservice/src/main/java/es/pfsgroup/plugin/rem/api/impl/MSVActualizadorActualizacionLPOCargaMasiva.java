@@ -64,9 +64,9 @@ public class MSVActualizadorActualizacionLPOCargaMasiva extends AbstractMSVActua
 			ActivoConfigDocumento activoConfigDocumento = genericDao.get(ActivoConfigDocumento.class, filterTipoActivo, filterLPOCFD);
 			activoAdmisionDocumento.setConfigDocumento(activoConfigDocumento);
 			String lpo = exc.dameCelda(fila, ACT_ES_LPO).toUpperCase().toString();
-			if (lpo.equals(SI) || lpo.equals('S')){
+			if (lpo.equals(SI) || lpo.equals("S")){
 				activoAdmisionDocumento.setAplica(true);
-			}else if (lpo.equals(NO) || lpo.equals('N')){
+			}else if (lpo.equals(NO) || lpo.equals("N")){
 				activoAdmisionDocumento.setAplica(false);
 			}
 			

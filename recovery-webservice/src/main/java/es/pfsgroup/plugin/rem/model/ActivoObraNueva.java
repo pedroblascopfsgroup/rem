@@ -67,6 +67,11 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
     @JoinColumn(name = "AGR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoSubdivision> subdivision;
+	
+	@Column(name = "ACT_ONV_DND")
+	private Boolean isDND;
+	
+	
 
 	public DDProvincia getProvincia() {
 		return provincia;
@@ -127,5 +132,14 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	public Integer getIncluidos() {
 		return Checks.estaVacio(this.getActivos()) ? 0 : this.getActivos().size();
 	}
+
+	public Boolean getIsDND() {
+		return isDND;
+	}
+
+	public void setIsDND(Boolean isDND) {
+		this.isDND = isDND;
+	}
+	
 
 }

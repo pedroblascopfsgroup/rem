@@ -7199,12 +7199,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if(!Checks.esNulo(activo)) {
 			List<ActivoAgrupacionActivo> listaAgrupacionesActivo = activo.getAgrupaciones();
 			
-			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionesActivo) {
-				if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
-					&& DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-					agruacionDND = activoAgrupacionActivo.getAgrupacion().getId();
-					break;
-				}
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionesActivo) {	
+				if(!Checks.esNulo( activoAgrupacionActivo.getAgrupacion())) {
+					ActivoObraNueva activoObraNueva =  genericDao.get(ActivoObraNueva.class, genericDao.createFilter(FilterType.EQUALS, "id", activoAgrupacionActivo.getAgrupacion().getId()));
+					if(!Checks.esNulo(activoObraNueva) && !Checks.esNulo(activoObraNueva.getIsDND()) && activoObraNueva.getIsDND()) {
+						agruacionDND = activoAgrupacionActivo.getAgrupacion().getId();
+						break;
+					}
+				}	
 			}
 		}
 		return agruacionDND;

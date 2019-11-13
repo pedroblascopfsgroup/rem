@@ -74,11 +74,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 						    				xtype:'container',
 					                   		flex: 4,
 					                   		maxWidth: 900,
-											height: 150,
-					                   		margin: '5 10 10 30 ',
+											height: 120,
+					                   		margin: '5 20 10 30 ',
 											defaultType: 'displayfield',
 											defaults: {
-												labelWidth: 80},
+												labelWidth: 90},
 											autoScroll: true,
 											layout: {
 											    type: 'table',
@@ -160,6 +160,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   		cls: 'cabecera-info-field',
 									                   		bind:{
 																value:'{trabajo.codigoPartida}',
+																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+															}
+															
+									                   	},
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.codigo.subpartida'),
+									                   		cls: 'cabecera-info-field',
+									                   		bind:{
+																value:'{trabajo.codigoSubpartida}',
 																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 															

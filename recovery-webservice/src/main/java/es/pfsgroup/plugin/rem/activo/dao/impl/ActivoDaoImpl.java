@@ -1321,6 +1321,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ActivoAgrupacion getAgrupacionPAByIdActivo(Long idActivo) {
 
@@ -1335,6 +1336,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override 
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo) {
 
@@ -1349,6 +1351,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override 
 	public ActivoAgrupacion getAgrupacionPAByIdActivoConFechaBaja(Long idActivo) {
 
@@ -1668,15 +1671,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		String select = "select vplusvalia ";
 		String from = "from VPlusvalia vplusvalia";
 
-		String where = "";
-		boolean hasWhere = false;
 		HQLBuilder hb = null;
 
-		hb = new HQLBuilder(select + from + where);
-		if (hasWhere) {
-			hb.setHasWhere(true);
-		}
-
+		hb = new HQLBuilder(select + from);
+		
 		if (!Checks.esNulo(dtoPlusvaliaFilter.getNumActivo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vplusvalia.activo", dtoPlusvaliaFilter.getNumActivo());
 		}

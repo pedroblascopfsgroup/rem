@@ -1278,5 +1278,13 @@ public interface ExpedienteComercialApi {
 
 	boolean esDivarian(TareaExterna tareaExterna);
 
+	/**
+	 * Metodo que comprueba si la entidad tiene subcartera Omega
+	 *
+	 * @param tareaExterna
+	 * @return boolean
+	 */
+	boolean esOmega(TareaExterna tareaExterna);
+
 }
 

@@ -1363,6 +1363,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			}			
 		}
 	},
+	
+	T013_PBCReservaValidacion: function() {
+        var me = this;
+        me.campoObligatorio(me.down('[name=comboRespuesta]'));
+    }, 
+	
 	T013_DocumentosPostVentaValidacion: function() {
 		var me = this;
 		var fechaIngreso = me.down('[name=fechaIngreso]');
@@ -1556,6 +1562,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			});
 		}
     	
+    },
+    
+    T013_ResultadoPBCValidacion: function() {
+        var me = this;
+        
+        var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
+        if (CONST.SUBCARTERA['OMEGA'] == codigoSubcartera) {
+        	me.title = HreRem.i18n('fieldset.salto.tarea.pbc.venta');
+        } else {
+        	me.title = HreRem.i18n('fieldset.salto.tarea.resultado.pbc');
+        }
     },
 
     T013_ResolucionTanteoValidacion: function() {

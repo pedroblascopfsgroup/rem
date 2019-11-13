@@ -4746,6 +4746,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
+	public boolean checkEsOmega(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			Activo activo = ofertaAceptada.getActivoPrincipal();
+			if (!Checks.esNulo(activo) && (!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera()))) {
+				return (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_OMEGA.equals(activo.getSubcartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public DtoPage getListOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dto) {
 		
 		DtoPage ofertasAgrupadasPage;

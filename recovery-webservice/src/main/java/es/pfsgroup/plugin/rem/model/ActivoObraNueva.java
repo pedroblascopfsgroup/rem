@@ -140,8 +140,7 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	public DDSinSiNo getVentaPlano() {
 		return ventaPlano;
 	}
-
-
+	
 	public void setVentaPlano(DDSinSiNo ventaPlano) {
 		this.ventaPlano = ventaPlano;
 	}
@@ -153,4 +152,5 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	public void setIsDND(Boolean isDND) {
 		this.isDND = isDND;
 	}
+	
 }

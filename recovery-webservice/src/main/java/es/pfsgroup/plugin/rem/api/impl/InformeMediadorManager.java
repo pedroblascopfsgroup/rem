@@ -1233,25 +1233,21 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	@Transactional(readOnly = false)
 	private Long parcheEspecificacionTablas(Object objeto, InformeMediadorDto informe) throws Exception {
 		Long idProveedor = null;
-		if (objeto instanceof ActivoLocalComercial || objeto instanceof ActivoPlazaAparcamiento
-				|| objeto instanceof ActivoVivienda) {
+		ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity
+				.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
 
-			ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity
-					.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
-
-			if (infoAux != null && infoAux.getId() != null) {
-				if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
-						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null
-								&& !infoAux.getActivo().getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-						|| ((ActivoInfoComercial) objeto).getId() == null) {
-					if (infoAux.getMediadorInforme() != null) {
-						idProveedor = infoAux.getMediadorInforme().getId();
-					}
-
-					genericaRestDaoImp.deleteInformeMediador(infoAux);
+		if (infoAux != null && infoAux.getId() != null) {
+//			if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
+//					&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
+//					|| (infoAux.getId() != null && infoAux.getTipoActivo() == null
+//							&& !infoAux.getActivo().getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
+//					|| ((ActivoInfoComercial) objeto).getId() == null) {
+				if (infoAux.getMediadorInforme() != null) {
+					idProveedor = infoAux.getMediadorInforme().getId();
 				}
-			}
+
+				genericaRestDaoImp.deleteInformeMediador(infoAux);
+//			}
 		}
 
 		return idProveedor;
@@ -1336,12 +1332,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				}
 			}
 			
-			if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL) && !DDTipoInfoComercial.COD_LOCAL_COMERCIAL.equals(informeEntity.getTipoInfoComercial().getCodigo())
-					|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS) && !DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO.equals(informeEntity.getTipoInfoComercial().getCodigo())
-					|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA) && !DDTipoInfoComercial.COD_VIVIENDA.equals(informeEntity.getTipoInfoComercial().getCodigo())) {
-				errorsList.put("codTipoActivo", "El tipo de Activo no concuerda con el tipo de Informe Comercial del Activo que es '" + informeEntity.getTipoInfoComercial().getDescripcion() + "'");
-			}
-			
 			if (errorsList.size() == 0) {
 				boolean tieneInformeComercialAceptado = false;
 				
@@ -1353,6 +1343,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");						
 						((ActivoLocalComercial)informeEntity).setMtsAlturaLibre(informe.getAltura());
+						informeEntity.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, 
+								genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoInfoComercial.COD_LOCAL_COMERCIAL)));
 						entitys.add(informeEntity);
 
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)) {
@@ -1366,6 +1358,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
 						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
+						informeEntity.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, 
+								genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO)));
 						((ActivoPlazaAparcamiento)informeEntity).setAparcamientoAltura(informe.getAltura());
 						entitys.add(informeEntity);
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)) {
@@ -1378,7 +1372,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						if (informe.getDistribucionInterior() != null) {
 							((ActivoVivienda)informeEntity).setDistribucionTxt(informe.getDistribucionInterior());	
 						}			
-
+						informeEntity.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, 
+								genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoInfoComercial.COD_VIVIENDA)));
 						ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
 										"infoComercial.activo.numActivo");

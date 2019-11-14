@@ -18,6 +18,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
@@ -33,6 +34,7 @@ import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -184,15 +186,19 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -347,6 +353,9 @@ public class ActivoAdapter {
 	@Autowired
 	private PresupuestoApi presupuestoManager;
 
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
@@ -726,6 +735,10 @@ public class ActivoAdapter {
 						beanUtilNotNull.copyProperty(cargaDto, "origenDatoDescripcion", activoCarga.getOrigenDato().getDescripcion());
 					}
 					
+					if(!Checks.esNulo(activoCarga.getImpideVenta())) {
+						beanUtilNotNull.copyProperty(cargaDto, "codigoImpideVenta", activoCarga.getImpideVenta().getCodigo());
+					}
+					
 					if (activoCarga.getCargaBien() != null) {
 						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el
 						// estado Cancelado (independientemente del registrado
@@ -735,11 +748,11 @@ public class ActivoAdapter {
 										.equals(activoCarga.getTipoCargaActivo().getCodigo())
 								&& (!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion())
 										|| !Checks.esNulo(activoCarga.getFechaCancelacionRegistral()))) {
-							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi
-									.dameValorDiccionarioByCod(DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+							DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
+									.dameValorDiccionarioByCod(DDEstadoCarga.class, DDEstadoCarga.CODIGO_CANCELADA);
 							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-									situacionCancelada.getDescripcion());
-							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", situacionCancelada.getCodigo());
+									estadoCarga.getDescripcion());
+							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", estadoCarga.getCodigo());
 
 							// Fecha de cancelacion de una carga registral
 							if (Checks.esNulo(activoCarga.getFechaCancelacionRegistral())) {
@@ -755,13 +768,25 @@ public class ActivoAdapter {
 							}
 							cargaDto.setFechaCancelacionEconomica(null);
 						} else {
-							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
+							if (activoCarga.getEstadoCarga() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-										activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
+										activoCarga.getEstadoCarga().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-										activoCarga.getCargaBien().getSituacionCarga().getCodigo());
+										activoCarga.getEstadoCarga().getCodigo());		
+								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
+								    cargaDto.setSubestadoCodigo(activoCarga.getSubestadoCarga().getCodigo());
+								    cargaDto.setSubestadoDescripcion(activoCarga.getSubestadoCarga().getDescripcion());
+								}else {
+								    DDSubestadoCarga subEstadoSinIndicar = genericDao.get(DDSubestadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoCarga.COD_SCG_SIN_INICIAR));
+								    if(!Checks.esNulo(subEstadoSinIndicar)) {
+								        cargaDto.setSubestadoCodigo(subEstadoSinIndicar.getCodigo());
+								        cargaDto.setSubestadoDescripcion(subEstadoSinIndicar.getDescripcion());
+								    }
+								}
 							}
 						}
+						
+						
 
 						// HREOS-1666 - Si tiene F. Cancelacion debe mostrar el
 						// estado Cancelado (independientemente del registrado
@@ -810,9 +835,11 @@ public class ActivoAdapter {
 										|| !Checks.esNulo(activoCarga.getFechaCancelacionRegistral()))) {
 							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
+							DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
+									.dameValorDiccionarioByCod(DDEstadoCarga.class, DDEstadoCarga.CODIGO_CANCELADA);
 							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-									situacionCancelada.getDescripcion());
-							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", situacionCancelada.getCodigo());
+									estadoCarga.getDescripcion());
+							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", estadoCarga.getCodigo());
 							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
 									situacionCancelada.getDescripcion());
 							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",
@@ -836,11 +863,22 @@ public class ActivoAdapter {
 							}
 
 						} else {
-							if (activoCarga.getCargaBien().getSituacionCarga() != null) {
+							if (activoCarga.getEstadoCarga() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-										activoCarga.getCargaBien().getSituacionCarga().getDescripcion());
+										activoCarga.getEstadoCarga().getDescripcion());
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
-										activoCarga.getCargaBien().getSituacionCarga().getCodigo());
+										activoCarga.getEstadoCarga().getCodigo());								
+								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
+
+								    cargaDto.setSubestadoCodigo(activoCarga.getSubestadoCarga().getCodigo());
+								    cargaDto.setSubestadoDescripcion(activoCarga.getSubestadoCarga().getDescripcion());
+								}else {
+								    DDSubestadoCarga subEstadoSinIndicar = genericDao.get(DDSubestadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoCarga.COD_SCG_SIN_INICIAR));
+								    if(!Checks.esNulo(subEstadoSinIndicar)) {
+								        cargaDto.setSubestadoCodigo(subEstadoSinIndicar.getCodigo());
+								        cargaDto.setSubestadoDescripcion(subEstadoSinIndicar.getDescripcion());
+								    }
+								}	
 							}
 							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
@@ -1154,7 +1192,7 @@ public class ActivoAdapter {
 				BeanUtils.copyProperty(dto, "idContratoAntiguo", activoActual.getIdContratoAntiguo());
 				
 				Activo activoVista = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActivo()));
-				dto.setEsDivarian(Checks.esNulo(activoVista)? null: activoVista.getSubcartera().equals(DDSubcartera.CODIGO_DIVARIAN));
+				dto.setEsDivarian(Checks.esNulo(activoVista)? null: Checks.esNulo(activoVista.getSubcartera()) ? null : activoVista.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN));
 				
 				page = actPatrimonioDao.getActivosRelacionados(dto);
 				lista = new ArrayList<DtoActivoVistaPatrimonioContrato>();
@@ -1546,6 +1584,14 @@ public class ActivoAdapter {
 			}else{
 				dtoActivoFiltro.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
 			}
+		}
+		
+		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
+		if (!Checks.esNulo(gestoria)) {
+			dtoActivoFiltro.setUsuarioGestoria(true);
+			dtoActivoFiltro.setGestoria(gestoria.getId());
+		}else {
+			dtoActivoFiltro.setUsuarioGestoria(false);
 		}
 		
 		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
@@ -2216,8 +2262,13 @@ public class ActivoAdapter {
 			try {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "id", tarea.getTareaPadre().getId());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "idTareaExterna", tarea.getId());
-				beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea",
-						tarea.getTareaProcedimiento().getDescripcion());
+				if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
+						DDSubcartera.CODIGO_OMEGA.equals(tramite.getActivo().getSubcartera().getCodigo()) && 
+						DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tarea.getTareaProcedimiento().getCodigo())) {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+				} else {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tarea.getTareaProcedimiento().getDescripcion());
+				}
 				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
 				// value);
 
@@ -2268,10 +2319,21 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "id", tareaActivo.getId());
 				if (!Checks.esNulo(tareaExterna)) {
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "idTareaExterna", tareaExterna.getId());
-					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea",
-							tareaExterna.getTareaProcedimiento().getDescripcion());
+					if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tareaActivo.getActivo().getCartera().getCodigo()) && 
+							DDSubcartera.CODIGO_OMEGA.equals(tareaActivo.getActivo().getSubcartera().getCodigo()) && 
+							DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaExterna.getTareaProcedimiento().getCodigo())) {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+					} else {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaExterna.getTareaProcedimiento().getDescripcion());
+					}
 				} else {
-					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaActivo.getDescripcionTarea());
+					if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tareaActivo.getActivo().getCartera().getCodigo()) && 
+							DDSubcartera.CODIGO_OMEGA.equals(tareaActivo.getActivo().getSubcartera().getCodigo()) && 
+							DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaActivo.getCodigoTarea())) {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+					} else {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaActivo.getDescripcionTarea());
+					}
 				}
 				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
 				// value);
@@ -3643,7 +3705,9 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createOfertaActivo(DtoOfertasFilter dto) throws Exception {
+	public Oferta createOfertaActivo(DtoOfertasFilter dto) throws Exception {
+		Oferta ofertaCreada = null;
+		
 		List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 
 		Activo activo = activoApi.get(dto.getIdActivo());
@@ -3832,8 +3896,7 @@ public class ActivoAdapter {
 			oferta.setOrigenComprador(origenComprador);
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
-			genericDao.save(Oferta.class, oferta);
-			
+			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
@@ -3923,10 +3986,10 @@ public class ActivoAdapter {
 
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
-			return false;
+			return ofertaCreada;
 		}
 
-		return true;
+		return ofertaCreada;
 	}
 
 	@Transactional(readOnly = false)
@@ -4554,6 +4617,18 @@ public class ActivoAdapter {
 		return activoDao.isUnidadAlquilable(idActivo);
 	}
 	
+	public List<DDSiNo> getComboImpideVenta(String codEstadoCarga) {
+		List<DDSiNo> listaCombo = new ArrayList<DDSiNo>();
+		
+		if(Checks.esNulo(codEstadoCarga) || DDEstadoCarga.CODIGO_VIGENTE.equals(codEstadoCarga)) {
+			listaCombo = genericDao.getList(DDSiNo.class);
+		} else {
+			listaCombo = genericDao.getList(DDSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO));
+		}
+		
+		return listaCombo;
+	}	
+	
 	public Boolean deleteAdjuntoTributo(Long idRestTributo) {
 		boolean borrado = false;
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
@@ -4584,29 +4659,32 @@ public class ActivoAdapter {
 				try {
 					listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosPlusvalia(activoPlusvalia);
 		
-					for (DtoAdjunto adj : listaAdjuntos) {
-						AdjuntoPlusvalias adjunto = activoPlusvalia.getAdjunto(adj.getId());
-						if (!Checks.esNulo(adjunto)) {
-							if(!Checks.esNulo(activo.getId())) {
-								adj.setIdEntidad(activo.getId());
-							}
-							if(!Checks.esNulo(adjunto.getNombre())) {
-								adj.setNombre(adjunto.getNombre());
-							}
-							if(!Checks.esNulo(adjunto.getTipoDocPlusvalias())) {
-								adj.setDescripcionTipo(adjunto.getTipoDocPlusvalias().getDescripcion());
-							}
-							if(!Checks.esNulo(adjunto.getFechaDocumento())) {
-								adj.setFechaDocumento(adjunto.getFechaDocumento());
-							}
-							if(!Checks.esNulo(adjunto.getTamanyo())) {
-								adj.setTamanyo(adjunto.getTamanyo());
-							}
-							if(!Checks.esNulo(activo.getAuditoria().getUsuarioCrear())) {
-								adj.setGestor(activo.getAuditoria().getUsuarioCrear());
+					if(!Checks.estaVacio(listaAdjuntos)) {
+						for (DtoAdjunto adj : listaAdjuntos) {
+							AdjuntoPlusvalias adjunto = activoPlusvalia.getAdjunto(adj.getId());
+							if (!Checks.esNulo(adjunto)) {
+								if(!Checks.esNulo(activo.getId())) {
+									adj.setIdEntidad(activo.getId());
+								}
+								if(!Checks.esNulo(adjunto.getNombre())) {
+									adj.setNombre(adjunto.getNombre());
+								}
+								if(!Checks.esNulo(adjunto.getTipoDocPlusvalias())) {
+									adj.setDescripcionTipo(adjunto.getTipoDocPlusvalias().getDescripcion());
+								}
+								if(!Checks.esNulo(adjunto.getFechaDocumento())) {
+									adj.setFechaDocumento(adjunto.getFechaDocumento());
+								}
+								if(!Checks.esNulo(adjunto.getTamanyo())) {
+									adj.setTamanyo(adjunto.getTamanyo());
+								}
+								if(!Checks.esNulo(activo.getAuditoria().getUsuarioCrear())) {
+									adj.setGestor(activo.getAuditoria().getUsuarioCrear());
+								}
 							}
 						}
 					}
+					
 				} catch (GestorDocumentalException gex) {
 					if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 		
@@ -4669,4 +4747,8 @@ public class ActivoAdapter {
 		return listaAdjuntos;
 	}
 
+	@Transactional(readOnly = false)
+	public Oferta clonateOfertaActivo(String idOferta) {
+		return genericAdapter.clonateOferta(idOferta, false);		
+	}
 }

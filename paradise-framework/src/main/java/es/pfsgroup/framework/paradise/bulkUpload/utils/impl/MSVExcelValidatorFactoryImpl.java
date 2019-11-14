@@ -165,6 +165,9 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired 
 	private MSVSuperDiscPublicacionesExcelValidator disclamerPublicaciones;
 	
+	@Autowired
+	private MSVActualizacionDistribucionPreciosExcelValidator cargaDistribucionPrecios;
+
 	@Autowired 
 	private MSVActualizacionPerimetroAppleExcelValidator valoresPerimetroApple;
 	
@@ -182,6 +185,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVGastosRefacturablesExcelValidator gastosRefacturables;
+	
+	@Autowired
+	private MSVActualizacionFasesPublicacionValidator FasesPublicacion;
 		
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -288,6 +294,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return cargaMasivaFormalizacion;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION.equals(codTipoOperacion)) {
 			return disclamerPublicaciones;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_DISTRIBUCION_PRECIOS.equals(codTipoOperacion)) {
+			return cargaDistribucionPrecios;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALORES_PERIMETRO_APPLE.equals(codTipoOperacion)) {
 			return valoresPerimetroApple;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_LPO.equals(codTipoOperacion)) {
@@ -302,8 +310,9 @@ public class MSVExcelValidatorFactoryImpl {
 			return juntasOrdinariasExtraordinarias;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES.equals(codTipoOperacion)) {
 			return gastosRefacturables;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FASES_PUBLICACION.equals(codTipoOperacion)) {
+			return FasesPublicacion;
 		}
-
 		return null;
 	}
 }

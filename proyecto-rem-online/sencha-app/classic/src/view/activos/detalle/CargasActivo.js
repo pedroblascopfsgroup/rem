@@ -51,7 +51,16 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
                       readOnly: true
                     },
                     readOnly : true
-                  }, {
+                  },
+                  {
+                      xtype : 'textfieldbase',
+                      fieldLabel : HreRem.i18n('fieldlabel.cargas.estado.cargas'),
+                      name : 'estadoCargas',
+                      bind : { 
+                        value : '{cargaTab.estadoCargas}'
+                      },
+                      readOnly : true
+                    },{
                     xtype : 'datefieldbase',
                     fieldLabel : HreRem.i18n('fieldlabel.fecha.revision.cargas'),
                     bind : {
@@ -88,13 +97,19 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
                     flex : 1,
                     dataIndex : 'subtipoCargaDescripcion'
                   }, {
-                    text : 'Estado carga registral',
+                    text : HreRem.i18n('header.estado.carga'),
                     flex : 1,
                     dataIndex : 'estadoDescripcion'
                   }, {
+                      text : HreRem.i18n('header.subestado.carga'),
+                      flex : 1,
+                      dataIndex : 'subestadoDescripcion'
+                  }, {
                     text : 'Estado carga econ&oacute;mica',
                     flex : 1,
-                    dataIndex : 'estadoEconomicaDescripcion'
+                    dataIndex : 'estadoEconomicaDescripcion',
+                    hidden:true,
+                    disabled:true
                   }, {
                     text : HreRem.i18n('header.titular'),
                     flex : 1,

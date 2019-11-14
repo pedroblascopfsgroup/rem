@@ -188,4 +188,26 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return Devuelve True si la operación se ha llevado a cabo.
 	 */
 	Boolean actualizarPublicacionActivoCambioTipoComercializacion(Activo activo, String tipoComercializacionCodigo);
+	
+	/**
+	 * Este método guarda los cambios realizados de la subpestaña Fases de publicación
+	 * @param dto
+	 * @return true si los cambios se han guardado correctamente, de lo contrario false
+	 * @throws JsonViewerException
+	 */
+	Boolean saveFasePublicacionActivo(DtoFasePublicacionActivo dto);
+	
+	/**
+	 * Este método obtiene la ultima fase vigente de publicacion del activo
+	 * @param idActivo
+	 * @return DtoFasePublicacionActivo
+	 */
+	DtoFasePublicacionActivo getFasePublicacionActivo(Long idActivo);
+	
+	/**
+	 * Este método obtiene el historico de las fases de publicacion del activo
+	 * @param idActivo
+	 * @return List<DtoHistoricoFasesDePublicacion>
+	 */
+	List<DtoHistoricoFasesDePublicacion> getHistoricoFasesDePublicacionActivo(Long idActivo);
 }

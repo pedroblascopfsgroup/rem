@@ -14,6 +14,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -50,8 +51,10 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoDiarioGestion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
@@ -61,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -1219,6 +1223,35 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
+	
+	/**
+	 * Devuelve una lista del Historico de tramitacion de titulo
+	 * @param id 
+	 * @return List<DtoHistoricoTramitacionTitulo>
+	 */
+	List<DtoHistoricoTramitacionTitulo> getHistoricoTramitacionTitulo(Long id);
+
+	/**
+	 * Guarda el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 * @throws Exception 
+	 */
+	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo) throws Exception;
+	
+	/**
+	 * actualiza el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 */
+	boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto);
+	
+	/**
+	 * borra el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 */
+	Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto);
 
 	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
 	
@@ -1252,9 +1285,19 @@ public interface ActivoApi {
 	 */
 	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
 
+	boolean esPopietarioRemaining(TareaExterna tareaExterna);
+
+	boolean esPopietarioArrow(TareaExterna tareaExterna);
+
+	List<DtoProveedorMediador> getComboApiPrimario();
+
 	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
+
+	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo);
+
+	Boolean crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
 
 	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
 	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
@@ -1266,4 +1309,14 @@ public interface ActivoApi {
 
 	ActivoDto getDatosActivo(Long activoId);
 
+	Boolean getVisibilidadTabFasesPublicacion(Activo activo);
+
+	/**
+	 * Devuelve la lista ordenada de valores del diccionario Fase de Publicacion.
+	 * @return List
+	 * @throws Exception
+	 */
+	public List<Dictionary> getDiccionarioFasePublicacion() throws Exception;
+	
+	public void crearRegistroFaseHistorico(Activo activo);
 }

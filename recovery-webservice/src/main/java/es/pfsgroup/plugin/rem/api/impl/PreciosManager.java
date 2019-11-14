@@ -147,7 +147,6 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	@Transactional(readOnly = false)
 	public PropuestaPrecio createPropuestaPreciosAutom(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo){
 	
-		//TODO: CrearFuncionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Automatica"
 		// Consejo: seguir los mismos pasos de la propuesta manual
 		// No se utiliza, he reaprovechando el Manual, que hace lo mismo
 		return new PropuestaPrecio();
@@ -177,7 +176,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		for(VBusquedaActivosPrecios activoPrecio : activosPrecios){
 			if(!activoPrecio.getActivoEnPropuestaEnTramitacion()) {
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(activoPrecio.getId()));
-				Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
+				Activo activo = genericDao.get(Activo.class, filtroActivo);
 				activos.add(activo);
 			}
 		}
@@ -221,7 +220,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 			for(BigDecimal idActivo : listIdActivos) {
 				
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id",idActivo.longValue());
-				Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
+				Activo activo = genericDao.get(Activo.class, filtroActivo);
 				activos.add(activo);
 			}
 			
@@ -243,7 +242,6 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	 * @param esPropManual Indicador del origen de la propuesta: Peticion o Manual
 	 * @return PropuestaPrecio
 	 */
-	@Transactional(readOnly = false)
 	private PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo, Trabajo trabajo){
 		
 		PropuestaPrecio propuestaPrecio = new PropuestaPrecio();
@@ -357,6 +355,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 				case 3:
 					activo.setFechaDescuento(null);
 					break;
+				default:					
 			}
 			
 			activoDao.update(activo);
@@ -398,23 +397,26 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		Double resultado = null;
 
 		
-		switch(cartera) {
-		
-			case 1: // Cajamar
-				resultado = precioPropuestoCajamar(dto.getValorFsv(),dto.getValorTasacion(),dto.getValorVnc(),valorAdquisitivo);
-				break;
-			case 2: // Sareb
-				resultado = precioPropuestoSareb(dto.getValorFsv());
-				break;
-			case 3: // Bankia
-				if(dto.getCodCartera()=="03" && !Checks.esNulo(dto.getCodSubCartera())) 
-					resultado = precioPropuestoBankiaTerceros(dto.getValorTasacion());
-				else
-					resultado = precioPropuestoBankia(dto.getTipoActivoCodigo()!="02",dto.getValorTasacion(),dto.getValorVnc(),dto.getValorLiquidativo(),dto.getValorFsv());
-				break;
-			default:
-				break;
-				
+		switch (cartera) {
+
+		case 1: // Cajamar
+			resultado = precioPropuestoCajamar(dto.getValorFsv(), dto.getValorTasacion(), dto.getValorVnc(),
+					valorAdquisitivo);
+			break;
+		case 2: // Sareb
+			resultado = precioPropuestoSareb(dto.getValorFsv());
+			break;
+		case 3: // Bankia
+			if (dto.getCodSubCartera() != null && dto.getCodCartera() != null && dto.getCodCartera().equals("03"))
+				resultado = precioPropuestoBankiaTerceros(dto.getValorTasacion());
+			else
+				resultado = precioPropuestoBankia(
+						dto.getTipoActivoCodigo() != null && dto.getTipoActivoCodigo().equals("02"),
+						dto.getValorTasacion(), dto.getValorVnc(), dto.getValorLiquidativo(), dto.getValorFsv());
+			break;
+		default:
+			break;
+
 		}
 
 		return resultado;
@@ -507,8 +509,6 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 		if(codSubtipo.equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS))
 			return DDTipoPropuestaPrecio.TIPO_PRECIAR;
-		//else if(codSubtipo.equals(DDSubtipoTrabajo))
-		//	return DDTipoPropuestaPrecio.TIPO_REPRECIAR;	
 		else if(codSubtipo.equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_DESCUENTO))
 			return DDTipoPropuestaPrecio.TIPO_DESCUENTO;
 		else
@@ -543,7 +543,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
 		Order orden = new Order(OrderType.DESC,"auditoria.fechaCrear");
 		
-		List<PropuestaPrecio>  listaPropuestas = (List<PropuestaPrecio>) genericDao.getListOrdered(PropuestaPrecio.class, orden, filtro);
+		List<PropuestaPrecio>  listaPropuestas = genericDao.getListOrdered(PropuestaPrecio.class, orden, filtro);
 		PropuestaPrecio propuesta = null;
 		
 		if(!Checks.estaVacio(listaPropuestas))
@@ -568,7 +568,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 			adjuntoTrabajo.setTrabajo(trabajo);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_LISTADO_PROPUESTA_PRECIOS);
-			DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+			DDTipoDocumentoActivo tipoDocumento =  genericDao.get(DDTipoDocumentoActivo.class, filtro);
 			
 			adjuntoTrabajo.setTipoDocumentoActivo(tipoDocumento);
 			adjuntoTrabajo.setContentType(fileItem.getContentType());
@@ -617,8 +617,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 			}
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 		}
 	}
 	

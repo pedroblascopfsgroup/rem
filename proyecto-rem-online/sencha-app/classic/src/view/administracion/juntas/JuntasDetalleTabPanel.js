@@ -87,7 +87,7 @@ Ext.define('HreRem.view.administracion.juntas.JuntasDetalleTabPanel', {
         var me = this;
 
         var items = [];
-        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichajuntas', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichajuntas', ocultarBotonesEdicion: true, funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosjuntas', ocultarBotonesEdicion: true, bind:{disabled: '{proveedor.isAdministracion}'}})}, ['TAB_DOCUMENTOS_PROVEEDORES']);
 
         me.addPlugin({ptype: 'lazyitems', items: items});

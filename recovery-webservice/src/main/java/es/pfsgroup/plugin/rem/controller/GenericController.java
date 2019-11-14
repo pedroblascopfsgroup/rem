@@ -23,6 +23,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
@@ -39,6 +40,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -51,6 +53,9 @@ import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -92,6 +97,9 @@ public class GenericController extends ParadiseJsonController{
 
 	@Autowired
 	private ExpedienteComercialAdapter expedienteComercialAdapter;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
 	private GastoProveedorApi gastoProveedorApi;
@@ -336,6 +344,7 @@ public class GenericController extends ParadiseJsonController{
 		tipoGestorCodigos.add("GACT"); // Gestor de activos
 		tipoGestorCodigos.add("GCOM"); // Gestor comercial
 		tipoGestorCodigos.add("GGADM"); // Gestoría de Admisión
+		tipoGestorCodigos.add("GPUBL"); // Gestor de publicaciones
 
 		model.put("data", genericApi.getComboTipoGestorFiltrado(tipoGestorCodigos));
 
@@ -466,6 +475,30 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioTiposDocumentoTributo()));
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioLanzarTareaAdministrativa(String diccionario, Long idExpediente) {
+		ExpedienteComercial expediente = null;
+		List<Dictionary> lista = adapter.getDiccionario(diccionario);
+		
+		if(!Checks.esNulo(idExpediente)) {
+			expediente = expedienteComercialApi.findOne(idExpediente);
+		
+			if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta()) && 
+					DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo()) && 
+					DDSubcartera.CODIGO_OMEGA.equalsIgnoreCase(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) && 
+					"tareaDestinoSalto".equals(diccionario)) {
+				for(int i=0; i<lista.size(); i++) {
+					DDTareaDestinoSalto tareaSalto = (DDTareaDestinoSalto) lista.get(i);
+					if(DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaSalto.getCodigo())) {
+						tareaSalto.setDescripcion("PBC Venta");
+						tareaSalto.setDescripcionLarga("PBC Venta");
+					}
+				}
+			}
+		}
+		
+		return createModelAndViewJson(new ModelMap("data", lista));
+	}
 
 		/**
 	 * Inserta un documento a la entidad correspondiente  Ejem: IP:8080/pfs/rest/generic/altaDocumento
@@ -634,6 +667,16 @@ public class GenericController extends ParadiseJsonController{
 		}
 	
 		restApi.sendResponse(response, model,request);
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubfase(Long idActivo) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubfase(idActivo)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubfaseFiltered(String codFase) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubfaseFiltered(codFase)));	
 	}
  }
 

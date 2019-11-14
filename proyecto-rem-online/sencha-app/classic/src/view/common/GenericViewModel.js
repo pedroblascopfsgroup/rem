@@ -108,6 +108,15 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 				}
     		},
     		
+    		comboDireccionTerritorial: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'direccionTerritorial'}
+				}  			
+    		},    		
+    		
     		comboTipoCuota: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -307,6 +316,24 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 						extraParams: {diccionario: 'estadosCarga'}
 					}
     		},
+    		
+    		comboSubEstadoCarga: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'subestadosCarga'}
+					}
+    		},
+    		
+    		comboSituacionCarga: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'situacionCarga'}
+					}
+    		},
 
     		comboEstadoAdjudicacion: {
 				model: 'HreRem.model.ComboBase',
@@ -491,9 +518,16 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     			remoteUrl: 'activo/getComboUsuarios',
     			extraParams: {idTipoGestor: '{tipoGestorSupervisor.selection.id}'}
     			}
-    		}
-	    
+    		},
     		
+    		storeComboImpideVenta: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+	    			type: 'uxproxy',
+	    			remoteUrl: 'activo/getComboImpideVenta',
+	    			extraParams: {codEstadoCarga: '{comboestadocargaref.value}'}
+    			}
+    		}
 			
      }    
 });

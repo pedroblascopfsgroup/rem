@@ -107,7 +107,10 @@ Ext.define('HreRem.view.common.GridBase', {
 		
 		me.disableAddButton($AU.userIsRol('HAYACONSU'));
 		me.disablePropagationButton($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
-				
+
+		if (!Ext.isEmpty(me.down('[itemId=removeButton]'))) {
+			me.down('[itemId=removeButton]').setHidden($AU.userIsRol(CONST.PERFILES['PROVEEDOR']));
+    	}
 	},
 	
 	disableAddButton: function(disabled) {

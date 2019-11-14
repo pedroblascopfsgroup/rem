@@ -24,6 +24,8 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	private String situacionDescripcion;
 	private String situacionCodigo;
 	private Boolean unidadAlquilable;
+	private String estadoLocalizacion;
+	private String subestadoGestion;
 	
 
 	public Date getFechaComunicacionComunidad() {
@@ -97,6 +99,18 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	}
 	public void setUnidadAlquilable(Boolean unidadAlquilable) {
 		this.unidadAlquilable = unidadAlquilable;
+	}
+	public String getEstadoLocalizacion() {
+		return estadoLocalizacion;
+	}
+	public void setEstadoLocalizacion(String estadoLocalizacion) {
+		this.estadoLocalizacion = estadoLocalizacion;
+	}
+	public String getSubestadoGestion() {
+		return subestadoGestion;
+	}
+	public void setSubestadoGestion(String subestadoGestion) {
+		this.subestadoGestion = subestadoGestion;
 	}
 	
 	

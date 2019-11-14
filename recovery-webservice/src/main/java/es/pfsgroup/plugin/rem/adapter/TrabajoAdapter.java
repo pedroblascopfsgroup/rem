@@ -41,7 +41,10 @@ import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 
 
@@ -133,7 +136,13 @@ public class TrabajoAdapter {
 	
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "id", tarea.getTareaPadre().getId());
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "idTareaExterna", tarea.getId());
-						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tarea.getTareaProcedimiento().getDescripcion());
+						if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
+								DDSubcartera.CODIGO_OMEGA.equals(tramite.getActivo().getSubcartera().getCodigo()) && 
+								DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tarea.getTareaProcedimiento().getCodigo())) {
+							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+						} else {
+							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tarea.getTareaProcedimiento().getDescripcion());
+						}
 						//idTramite necesario para poder abrir desde listado de tareas del trabajo
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite", tramite.getId());
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", tramite.getTipoTramite().getDescripcion());

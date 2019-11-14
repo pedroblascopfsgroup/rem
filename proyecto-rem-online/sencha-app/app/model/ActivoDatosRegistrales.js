@@ -457,6 +457,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			type: 'boolean'
     		},
     		{
+    			name: 'sociedadPagoAnterior'
+    		},
+    		{
     			name: 'fechaSubsanacion',
     			type:'date',
     			dateWriteFormat: 'Y-m.d',

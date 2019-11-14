@@ -49,6 +49,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Long acreedorNumExp;
 	private String numReferencia;
 	private Integer vpo;
+	private String sociedadPagoAnterior;
 	
 	private Date fechaEntregaGestoria;
 	private Date fechaPresHacienda;
@@ -115,6 +116,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Boolean puedeEditarCalificacionNegativa;
 	private Boolean isCalificacionNegativaEnabled;
 	private Boolean noEstaInscrito;
+	private Date fechaCalificacionNegativa;
+	private Date fechaPresentacionRegistroCN;
 	
 	//Motivo Estado Calificación negativa
 	private String estadoMotivoCalificacionNegativa;
@@ -306,6 +309,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setSuperficieUtil(String superficieUtil) {
 		this.superficieUtil = superficieUtil;
+	}
+	public String getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
 	}
 	public String getSuperficieElementosComunes() {
 		return superficieElementosComunes;
@@ -737,6 +746,18 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setTipoTituloActivoMatriz(String tipoTituloActivoMatriz) {
 		this.tipoTituloActivoMatriz = tipoTituloActivoMatriz;
+	}
+	public Date getFechaCalificacionNegativa() {
+		return fechaCalificacionNegativa;
+	}
+	public void setFechaCalificacionNegativa(Date fechaCalificacionNegativa) {
+		this.fechaCalificacionNegativa = fechaCalificacionNegativa;
+	}
+	public Date getFechaPresentacionRegistroCN() {
+		return fechaPresentacionRegistroCN;
+	}
+	public void setFechaPresentacionRegistroCN(Date fechaPresentacionRegistroCN) {
+		this.fechaPresentacionRegistroCN = fechaPresentacionRegistroCN;
 	}
 
 }

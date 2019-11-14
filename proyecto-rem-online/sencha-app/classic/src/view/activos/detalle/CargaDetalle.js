@@ -168,31 +168,50 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 													},
 													{ 
 											        	xtype: 'comboboxfieldbase',
+											        	reference: 'comboestadocargaref',
+											        	name: 'comboestadocargaref',
 											        	editable: false,
-														fieldLabel: HreRem.i18n('fieldlabel.estado.registral'),
+														fieldLabel: HreRem.i18n('header.estado.carga'),
 											        	bind: {
 										            		store: '{comboEstadoCarga}',
 										            		value: '{carga.estadoCodigo}'
 										            	},
 										            	listeners: {
 										            		select: 'onChangeEstadoCargaCombo'
-										            	}
-											        },													
+										            	},
+					    								publishes: 'value',
+					    								chainedStore: 'storeComboImpideVenta',
+														chainedReference: 'comboImpideVenta'
+											        },	
+											        									            											
 													{ 
 														xtype:'currencyfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.importe.registral'),
 									                	bind:		'{carga.importeRegistral}'
 									                },
-									                { 
+													{ 
 											        	xtype: 'comboboxfieldbase',
+											        	reference: 'combosubestadocargaref',
+											        	name: 'combosubestadocargaref',
 											        	editable: false,
-												 		fieldLabel: HreRem.i18n('fieldlabel.estado.economico'),
+														fieldLabel: HreRem.i18n('header.subestado.carga'),
 											        	bind: {
-										            		store: '{comboEstadoCarga}',
-										            		value: '{carga.estadoEconomicaCodigo}'
-										            	},
-										            	listeners: {
-										            		select: 'onChangeEstadoEconomicoCombo'
+										            		store: '{comboSubEstadoCarga}',
+										            		value: '{carga.subestadoCodigo}'
+										            	}
+										            },
+													{
+										            	readOnly: true
+													},												
+									                {
+											        	xtype: 'comboboxfieldbase',
+											        	reference: 'comboImpideVenta',
+											        	name: 'comboImpideVenta',
+											        	editable: false,
+														fieldLabel: HreRem.i18n('header.impide.venta'),
+											        	bind: {
+															store: '{storeComboImpideVenta}',
+										            		value: '{carga.codigoImpideVenta}'
 										            	}
 											        }
 										]

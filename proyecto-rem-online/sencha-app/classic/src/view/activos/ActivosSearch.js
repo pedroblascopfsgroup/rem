@@ -143,7 +143,12 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.referencia.catastral'),
 				        	name: 'refCatastral'
-				        }
+				        },
+				    	{ 
+				    		xtype: 'currencyfieldbase',
+				    		fieldLabel: HreRem.i18n('fieldlabel.numero.de.agrupacion'),
+				    		name: 'numAgrupacion'
+				    	}
 				    ]}
 			    ]
     		},
@@ -543,7 +548,40 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 												queryEvent.combo.onLoad();
 											}
 		    						    }
-								    }
+								    },
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.api.primario'),
+							    		name: 'apiPrimarioId',
+							    		valueField : 'id',
+										displayField : 'nombre',
+							    		enableKeyEvents:true,
+							    		mode: 'local',
+							    		forceSelection	: false,
+							    		editable: true,
+							    		minChars: 3,
+							    		emptyText: 'Introduzca nombre mediador',
+										listeners: {
+											'keyup': function() {
+												if(this.getRawValue().length >= 3)
+												{
+													this.getStore().clearFilter();
+												   	this.getStore().filter({
+													    property: 'nombre',
+													    value: this.getRawValue(),
+													    anyMatch: true,
+													    caseSensitive: false
+													})
+												}
+											},
+											'beforequery': function(queryEvent) {
+											 	queryEvent.combo.onLoad();
+											}
+										},
+							    		bind: {
+							    			store: '{comboApiPrimario}'
+							    		}
+							    	}
 								]
 			            }
 		            ]},
@@ -609,6 +647,22 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		name: 'estadoComunicacionGencatCodigo',
 							    		bind: {
 							    			store: '{comboEstadoComunicacionGencat}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.direccion.territorial'),
+							    		name: 'direccionTerritorialCodigo',
+							    		bind: {
+							    			store: '{comboDireccionTerritorial}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.fase.de.publicacion'),
+							    		name: 'fasePublicacionCodigo',
+							    		bind: {
+							    			store: '{comboFasePublicacion}'
 							    		}
 							    	}
 								]

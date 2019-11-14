@@ -223,9 +223,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 				DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getEstadoAlquiler()));
 
-				if (!Checks.esNulo(tipoEstadoAlquiler)) {
-					activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-				}
+				activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+				
 				if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(tipoEstadoAlquiler.getCodigo())){
 					if (!Checks.estaVacio(activo.getOfertas())) {
 						for (ActivoOferta activoOferta : activo.getOfertas()) {
@@ -257,11 +256,12 @@ public class TabActivoPatrimonio implements TabActivoService {
 		if(!Checks.esNulo(activoPatrimonioDto.getTipoAlquilerCodigo())){
 
 			DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getTipoAlquilerCodigo()));
-
+			if(DDTipoAlquiler.CODIGO_PAZ_SOCIAL.equals(tipoAlquiler.getCodigo())) {
+				activoApi.crearRegistroFaseHistorico(activo);
+			}
 			activo.setTipoAlquiler(tipoAlquiler);
-
 			activoDao.save(activo);
-		}
+		}		
 		
 		//comprobamos si hay que modificar el tipo de comercializacion del activo
 		if(!Checks.esNulo(activoPatrimonioDto) 

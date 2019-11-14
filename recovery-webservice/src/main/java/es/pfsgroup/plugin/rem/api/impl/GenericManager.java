@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
@@ -73,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -1187,5 +1189,34 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		List<DDTipoDocumentoTributos> listaTipoAgrupaciones = genericDao.getList(DDTipoDocumentoTributos.class, filtroBorrado);
 		return listaTipoAgrupaciones;
+	}
+	
+	@Override
+	public List<DDSubfasePublicacion> getComboSubfase(Long idActivo) {
+
+		List<DDSubfasePublicacion> listaSubfase = new ArrayList<DDSubfasePublicacion>();
+		if (!Checks.esNulo(idActivo)){
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+			HistoricoFasePublicacionActivo fasePublicacion = genericDao.get(HistoricoFasePublicacionActivo.class, filtroActivo, filtroFechaFin);
+			if (!Checks.esNulo(fasePublicacion.getFasePublicacion())) {
+				Filter filtroFase = genericDao.createFilter(FilterType.EQUALS, "fasePublicacion.codigo", fasePublicacion.getFasePublicacion().getCodigo());
+				listaSubfase = genericDao.getList(DDSubfasePublicacion.class, filtroFase);
+			}
+		} 
+
+		return listaSubfase;
+	}
+	
+	@Override
+	public List<DDSubfasePublicacion> getComboSubfaseFiltered(String codFase) {
+
+		List<DDSubfasePublicacion> listaSubfase = new ArrayList<DDSubfasePublicacion>();
+		if (!Checks.esNulo(codFase)) {
+			Filter filtroFase = genericDao.createFilter(FilterType.EQUALS, "fasePublicacion.codigo", codFase);
+			listaSubfase = genericDao.getList(DDSubfasePublicacion.class, filtroFase);
+		}
+
+		return listaSubfase;
 	}
 }

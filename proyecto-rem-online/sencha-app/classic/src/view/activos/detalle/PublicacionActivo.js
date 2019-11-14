@@ -4,7 +4,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
     xtype		: 'publicacionactivo',
     reference	: 'publicacionactivoref',
     layout		: 'fit',
-    requires	: ['HreRem.view.activos.detalle.InformeComercialActivo', 'HreRem.view.activos.detalle.DatosPublicacionActivo'],
+    requires	: ['HreRem.view.activos.detalle.InformeComercialActivo', 'HreRem.view.activos.detalle.DatosPublicacionActivo', 'HreRem.view.activos.detalle.FasePublicacionActivo'],
 
 	listeners: {
     	boxready: function (tabPanel) {
@@ -126,6 +126,8 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 				if(me.lookupController().getViewModel().get('activo').get('perteneceAgrupacionRestringidaVigente')){
 					visible = false;
 				}
+			}else if(tab.xtype=='fasepublicacionactivo') {
+				visible = true;
 			}
 			me.down("[itemId=botoneditar]").setVisible(visible);
 		}
@@ -165,7 +167,10 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
     	var items = [];
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informecomercialactivo', ocultarBotonesEdicion: ocultarInformecomercialactivo})}, ['TAB_INFO_COMERCIAL_PUBLICACION']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionactivo', ocultarBotonesEdicion: ocultarDatospublicacionactivo})}, ['TAB_DATOS_PUBLICACION']);
-
+		if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || me.lookupController().getViewModel().get('activo').get('visualizarTabFasesPublicacion')) {
+			items.push({xtype: 'fasepublicacionactivo', ocultarBotonesEdicion: false});
+		}
+		
 		me.addPlugin({ptype: 'lazyitems', items: items});
 		me.callParent();
     },

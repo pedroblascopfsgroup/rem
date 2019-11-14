@@ -55,7 +55,8 @@ Ext.define('HreRem.model.AdjuntoActivoPromocion', {
 		api: {
             read: 'promocion/getAdjunto',
             create: 'promocion/saveAdjunto',
-            update: 'promocion/updateAdjunto'
+            update: 'promocion/updateAdjunto',
+            destroy: 'promocion/deleteAdjunto'
         }
     }   
 

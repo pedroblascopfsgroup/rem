@@ -174,6 +174,9 @@ Ext.define('HreRem.model.GastoProveedor', {
    		{
    			name: 'devengoPosteriorTraspaso'
    		},
+		{
+			name: 'identificadorUnico'
+		},
    		{
     		name: 'numeroPrimerGastoSerie'
    	 	},

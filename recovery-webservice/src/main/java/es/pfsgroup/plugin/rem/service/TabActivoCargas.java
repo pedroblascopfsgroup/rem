@@ -8,15 +8,11 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.DtoActivo;
-import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 
 @Component
@@ -30,12 +26,6 @@ public class TabActivoCargas implements TabActivoService {
 	
 	@Autowired
 	private ActivoDao activoDao;
-	
-	@Autowired
-	private GenericABMDao genericDao;
-	
-	@Autowired
-	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Override
 	public String[] getKeys() {
@@ -80,6 +70,9 @@ public class TabActivoCargas implements TabActivoService {
 				// Buscamos los campos que pueden ser propagados para esta pestaña
 				activoDto.setCamposPropagables(TabActivoService.TAB_CARGAS_ACTIVO);
 			}
+		if(!Checks.esNulo(activo.getEstadoCargaActivo())) {
+			activoDto.setEstadoCargas(activo.getEstadoCargaActivo().getDescripcion());
+		}
 	
 		return activoDto;
 	}

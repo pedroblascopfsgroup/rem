@@ -345,6 +345,11 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 											value: '{activo.claseActivoDescripcion}',
 											disabled: '{!activo.claseActivoDescripcion}'
 										}
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.api.primario'),
+										cls: 'cabecera-info-field',
+										bind: '{activo.nombreMediador}'
 									}
 								]
 							},

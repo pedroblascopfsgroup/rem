@@ -39,13 +39,16 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClasificacionApple;
+import es.pfsgroup.plugin.rem.model.dd.DDDireccionTerritorial;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
@@ -157,7 +160,11 @@ public class Activo implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SCM_ID")
-    private DDSituacionComercial situacionComercial;       
+    private DDSituacionComercial situacionComercial;     
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SPG_ID")
+    private DDSociedadPagoAnterior sociedadPagoAnterior;
     
     @Column(name = "ACT_VPO")
     private Integer vpo;
@@ -342,7 +349,15 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     private List<AdjuntosPromocion> adjuntosPromocion;
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<AdjuntosProyecto> adjuntosProyecto;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_DRT_ID")
+    private DDDireccionTerritorial direccionTerritorial; 
 
     // Indicadores de precios del activo y de activo publicable
     @Column(name = "ACT_FECHA_IND_PRECIAR")
@@ -463,12 +478,16 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EQG_ID")
     private DDEquipoGestion equipoGestion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ECA_ID")
+    private DDEstadoCargaActivo estadoCargaActivo;  
     
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
-
+	
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -759,6 +778,14 @@ public class Activo implements Serializable, Auditable {
 		this.bien.setSarebId(sarebId);
 	}
     
+	public DDSociedadPagoAnterior getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+
+	public void setSociedadPagoAnterior(DDSociedadPagoAnterior sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
+
 	public String getPoblacion() {
 		if (bien.getLocalizaciones() != null) {
 			return bien.getLocalizaciones().get(0).getPoblacion();
@@ -996,6 +1023,7 @@ public class Activo implements Serializable, Auditable {
   			bien.getLocalizaciones().get(0).getProvincia().setCodigo(codProvincia);
   		}
   	}
+  	
 
 	public Long getVersion() {
 		return version;
@@ -1847,6 +1875,37 @@ public class Activo implements Serializable, Auditable {
 	public void setEquipoGestion(DDEquipoGestion equipoGestion) {
 		this.equipoGestion = equipoGestion;
 	}
+
+	public List<AdjuntosProyecto> getAdjuntosProyecto() {
+		return this.adjuntosProyecto;
+	}
+	
+	public void setAdjuntosProyecto(List<AdjuntosProyecto> adjuntosProyecto) {
+		this.adjuntosProyecto = adjuntosProyecto;
+	}
+	
+  public AdjuntosProyecto getAdjuntoProyecto(Long id) {
+       for (AdjuntosProyecto adj : getAdjuntosProyecto()) {
+           if (adj.getId().equals(id)) { return adj; }
+       }
+       return null;
+  }
+   
+  public void addAdjuntoProyecto(FileItem fileItem) {
+	   AdjuntosProyecto adjuntosProyecto = new AdjuntosProyecto(fileItem);
+	   adjuntosProyecto.setActivo(this);
+       Auditoria.save(adjuntosProyecto);
+       getAdjuntosProyecto().add(adjuntosProyecto);
+
+  }
+
+	public DDEstadoCargaActivo getEstadoCargaActivo() {
+		return estadoCargaActivo;
+	}
+
+	public void setEstadoCargaActivo(DDEstadoCargaActivo estadoCargaActivo) {
+		this.estadoCargaActivo = estadoCargaActivo;
+	}
 	
 	public ActivoAutorizacionTramitacionOfertas getActivoAutorizacionTramitacionOfertas() {
 		return activoAutorizacionTramitacionOfertas;
@@ -1855,6 +1914,14 @@ public class Activo implements Serializable, Auditable {
 	public void setActivoAutorizacionTramitacionOfertas(
 			ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas) {
 		this.activoAutorizacionTramitacionOfertas = activoAutorizacionTramitacionOfertas;
+	}
+
+	public DDDireccionTerritorial getDireccionTerritorial() {
+		return direccionTerritorial;
+	}
+
+	public void setDireccionTerritorial(DDDireccionTerritorial direccionTerritorial) {
+		this.direccionTerritorial = direccionTerritorial;
 	}
 	
 }

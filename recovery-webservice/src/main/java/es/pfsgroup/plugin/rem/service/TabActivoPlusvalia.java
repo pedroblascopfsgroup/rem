@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -18,10 +19,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 
 
 @Component
@@ -38,6 +44,9 @@ public class TabActivoPlusvalia implements TabActivoService {
 	@Autowired
 	private GastoDao gastoDao; 
 	
+	@Autowired
+	private NotificationPlusvaliaManager notificationPlusvaliaManager;
+
 	@Override
 	public String[] getKeys() {
 		return this.getCodigoTab();
@@ -87,6 +96,10 @@ public class TabActivoPlusvalia implements TabActivoService {
 			if(!Checks.esNulo(activoPlusvalia.getAutoliquidacion())) {
 				activoPlusvaliaDto.setAutoliquidacion(activoPlusvalia.getAutoliquidacion().getCodigo());
 			}
+			
+			if(!Checks.esNulo(activoPlusvalia.getEstadoGestion())) {
+				activoPlusvaliaDto.setEstadoGestion(activoPlusvalia.getEstadoGestion().getCodigo());
+			}
 		}
 		
 		return activoPlusvaliaDto;
@@ -98,7 +111,7 @@ public class TabActivoPlusvalia implements TabActivoService {
 		
 		DtoActivoPlusvalia activoPlusvaliaDto = (DtoActivoPlusvalia) dto;
 		DDSinSiNo codSiNo = new DDSinSiNo();
-		ActivoPlusvalia activoPlusvalia = genericDao.get(ActivoPlusvalia.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(activo.getId());
 		
 		if(Checks.esNulo(activoPlusvalia)) {
 			activoPlusvalia = new ActivoPlusvalia();			
@@ -166,6 +179,24 @@ public class TabActivoPlusvalia implements TabActivoService {
 			activoPlusvalia.setObservaciones(activoPlusvaliaDto.getObservaciones());
 
 		}
+		
+ 		if(!Checks.esNulo(activoPlusvaliaDto.getEstadoGestion())) {			
+ 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getEstadoGestion());
+			DDEstadoGestionPlusv codEstadoGest = (DDEstadoGestionPlusv) genericDao.get(DDEstadoGestionPlusv.class, filtro);
+			activoPlusvalia.setEstadoGestion(codEstadoGest);
+			
+			if(activoPlusvaliaDto.getEstadoGestion().equals(DDEstadoGestionPlusv.COD_RECHAZADO)) {
+				List<ActivoOferta> actOfrList = activoPlusvalia.getActivo().getOfertas();
+				for(ActivoOferta actOfr : actOfrList) {
+					if(actOfr.getPrimaryKey().getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_ACEPTADA)){
+						ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", actOfr.getPrimaryKey().getOferta().getId()));
+						notificationPlusvaliaManager.sendNotificationPlusvaliaRechazado(activoPlusvalia.getActivo(), eco);
+						break;
+					}
+				}
+				
+			}
+ 		}
 	
 		
 		genericDao.save(ActivoPlusvalia.class, activoPlusvalia);

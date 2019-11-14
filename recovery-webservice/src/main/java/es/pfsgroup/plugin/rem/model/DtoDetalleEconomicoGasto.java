@@ -68,6 +68,8 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Double totalImportePromocion;
 	private Double importeTotalPrinex;
 	private Boolean prorrata;
+	private String existeRecargo;
+	private String tipoRecargo;
 	private Boolean gastoRefacturableB;
 	private Double importeGastosRefacturables;
 	private Long numeroGastoHaya;
@@ -360,6 +362,18 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setImporteTotalPrinex(Double importeTotalPrinex) {
 		this.importeTotalPrinex = importeTotalPrinex;
 	}
+	public String getExisteRecargo() {
+		return existeRecargo;
+	}
+	public void setExisteRecargo(String existeRecargo) {
+		this.existeRecargo = existeRecargo;
+	}
+	public String getTipoRecargo() {
+		return tipoRecargo;
+	}
+	public void setTipoRecargo(String tipoRecargo) {
+		this.tipoRecargo = tipoRecargo;
+	}
 	public Boolean getGastoRefacturableB() {
 		return gastoRefacturableB;
 	}
@@ -403,6 +417,4 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 		this.noAnyadirEliminarGastosRefacturados = noAnyadirEliminarGastosRefacturados;
 	}
 	
-		
-   	
 }

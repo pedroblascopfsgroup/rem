@@ -105,8 +105,8 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 						dtoOfertasFilter.setIdActivo(activo.getId());
 						dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
 						dtoOfertasFilter.setExcluirGencat(true);
-						List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
-						if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
+						List<VOfertasActivosAgrupacion> listaOfer = ofertaApi.getListOfertasFromView(dtoOfertasFilter);
+						if(!Checks.esNulo(listaOfer) && listaOfer.isEmpty()){
 							Long idOferta = listaOfer.get(0).getIdOferta();
 							if(!Checks.esNulo(idOferta)){
 								oferta = ofertaApi.getOfertaById(idOferta);
@@ -162,17 +162,6 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 								hashErrores.put("activo", "Ya se ha relizado el cobro de la reserva.");
 	
 							} 
-							
-							//HREOS-1888 - Se quitan validaciones para puesta en marcha por orden de Hector
-							/*else if (!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_FIRMA)) {
-								hashErrores.put("activo", "La reserva debe estar en el estado Pendiente de firma.");
-	
-							} else if (!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.APROBADO)) {
-								hashErrores.put("activo", "El expediente comercial debe estar Aprobado.");
-							}*/
-							
-							
-
 						} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.DEVOLUCION_RESERVA)){
 							
 							if(expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_RESUELTA) ||
@@ -180,25 +169,8 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 								   hashErrores.put("activo", "Ya se ha realizado la devolución de la reserva.");
 
 							} 
-							//HREOS-1888 - Se quitan validaciones para puesta en marcha por orden de Hector
-							/*else if (!expedienteComercial.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION)) {
-								hashErrores.put("activo","La reserva debe estar en el estado Pendiente de devolucion.");
-								
-							} else if (!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.EN_DEVOLUCION)) {
-								hashErrores.put("activo","El expediente comercial debe estar en el estado En devolución.");	
-							}*/
-
-							
-
 						} else if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.COBRO_VENTA)){
-							
-							  /*if(!expedienteComercial.getEstado().getCodigo().equals(DDEstadosExpedienteComercial.VENDIDO)) {
-								  hashErrores.put("activo", "El expediente comercial debe estar en el estado vendido.");
-
-							  } else if (expedienteComercial.getFechaContabilizacionPropietario()!=null) {
-								  hashErrores.put("activo", "El cobro ya se ha realizado");
-							  }*/
-
+						
 							  if (expedienteComercial.getFechaContabilizacionPropietario()!=null) {
 								  hashErrores.put("activo", "El cobro ya se ha realizado");
 							  }
@@ -292,8 +264,6 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 	}
 	
 	public Date getFechaFirmaByIdExpediente(String idExpediente) {
-		Date fechaFirma = reservaDao.getFechaFirmaReservaByIdExpediente(Long.parseLong(idExpediente));
-
-		return fechaFirma;
+		return reservaDao.getFechaFirmaReservaByIdExpediente(Long.parseLong(idExpediente));
 	}
 }

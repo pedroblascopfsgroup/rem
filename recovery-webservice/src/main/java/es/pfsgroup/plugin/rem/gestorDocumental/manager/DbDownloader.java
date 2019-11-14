@@ -9,6 +9,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.AdjuntosPromocion;
 
@@ -57,6 +58,14 @@ public class DbDownloader implements Downloader {
 
 		return adjuntoActivo.getAdjunto().getFileItem();
 	}
+	@Override
+	public FileItem getFileItemAgrupacion(Long id, String nombreDocumento) throws Exception {
+		ActivoAdjuntoAgrupacion adjAgrupacion = genericDao.get(ActivoAdjuntoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "adjunto.id", id));
+		FileItem fileItem = adjAgrupacion.getAdjunto().getFileItem();
+		fileItem.setContentType(adjAgrupacion.getContentType());
+		fileItem.setFileName(adjAgrupacion.getNombre());
+		return adjAgrupacion.getAdjunto().getFileItem();
+	}
 
 	@Override
 	public FileItem getFileItemTributo(Long id, String nombreDocumento) throws Exception {
@@ -67,5 +76,4 @@ public class DbDownloader implements Downloader {
 
 		return adjunto.getAdjunto().getFileItem();
 	}
-
 }

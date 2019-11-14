@@ -52,6 +52,7 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 	public static final String ACTIVO_AGRUPACION_CRA = "msg.error.masivo.agrupar.activos.proyecto.activos.agrupacion.diferentes.carteras";
 	public static final String ACTIVO_AGRUPACION_LOC = "msg.error.masivo.agrupar.activos.proyecto.activos.agrupacion.diferentes.municipios";
 	public static final String ACTIVO_AGRUPACION_PRV = "msg.error.masivo.agrupar.activos.proyecto.activos.agrupacion.diferentes.provincias";
+	public static final String ACTIVO_TIENE_AGRUPACION = "msg.error.masivo.agrupar.activos.proyecto.activo.tiene.agrupacion.proyecto";
 	public static final class ACTIVOS_NO_MISMA_CARTERA { static int codigoError = 2; static String mensajeError = "msg.error.masivo.agrupar.activos.asistida.activos.agrupacion.diferente.cartera";};
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -119,6 +120,7 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 		//	mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_MUNICIPIO), activeSinMunicipio(exc)); //Quitamos a petición de REMVIP-2168
 			mapaErrores.put(messageServices.getMessage(ACTIVO_AGRUPACION_PRV), activoAgrupacionPRV(exc));
 		//	mapaErrores.put(messageServices.getMessage(ACTIVO_AGRUPACION_LOC), activoAgrupacionLOC(exc)); //Quitamos a petición de REMVIP-2168
+			mapaErrores.put(messageServices.getMessage(ACTIVO_TIENE_AGRUPACION), activoEnAgrupacionProyecto(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_CARTERA.codigoError));
 
 			if    (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
@@ -128,6 +130,7 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 		//	    || !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_MUNICIPIO)).isEmpty() //Quitamos a petición de REMVIP-2168
 			    || !mapaErrores.get(messageServices.getMessage(ACTIVO_AGRUPACION_PRV)).isEmpty()
 		//	    || !mapaErrores.get(messageServices.getMessage(ACTIVO_AGRUPACION_LOC)).isEmpty()//Quitamos a petición de REMVIP-2168
+			    || !mapaErrores.get(messageServices.getMessage(ACTIVO_TIENE_AGRUPACION)).isEmpty()
 			    || !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError)).isEmpty() 
 			) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -378,6 +381,26 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 				numAgrupacion = Long.parseLong(exc.dameCelda(i, 0));
 				numActivo = Long.parseLong(exc.dameCelda(i, 1));
 				if(!particularValidator.esMismaLocalidad(numActivo, numAgrupacion))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> activoEnAgrupacionProyecto(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		Long numActivo;
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				numActivo = Long.parseLong(exc.dameCelda(i, 1));
+				if(particularValidator.activoEnAgrupacionProyecto(Long.toString(numActivo)))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {

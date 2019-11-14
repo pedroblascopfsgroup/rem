@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.gestor.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -16,6 +17,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.gestorEntidad.dao.impl.GestorEntidadDaoImpl;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.Directorusuario;
 
 @Repository("GestorActivoDao")
@@ -26,6 +28,7 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -151,7 +151,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		        	
 		            dataIndex: 'numActivo',
 		            text: HreRem.i18n('header.numero.activo.haya'),
-		            flex: 0.5
+		            flex: 1
 		        },
 		        {
 		            dataIndex: 'tipoActivoDescripcion',
@@ -223,7 +223,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		        },
 		        {
 					dataIndex: 'selloCalidad',
-		            text     : HreRem.i18n('header.dpto.calidad'),
+		            text     : HreRem.i18n('header.sello.calidad'),
 		            flex     : 0.5,            
 		            align: 'center',
 		            renderer: function(value) {
@@ -239,6 +239,80 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            renderer: function(value) {
 		            	if(!Ext.isEmpty(value) && value != 0) 
 		            	return '<div> <img src="resources/images/rating_'+value+'_listado.svg" alt="Rating" width="20px"></div>';	
+		            }
+		        },
+		        {
+		            dataIndex: 'gestorPublicacionUsername',
+		            text: HreRem.i18n('header.gestor.publicacion'),
+		            flex: 1           
+		        },
+		        {
+		            dataIndex: 'fasePublicacionDescripcion',
+		            text: HreRem.i18n('header.fase.publicacion'),
+		            flex: 1           
+		        },
+		        {
+		            dataIndex: 'fasePublicacionDescripcion',
+		            text: HreRem.i18n('header.subfase.publicacion'),
+		            flex: 1          
+		        },
+		        {
+		            dataIndex: 'precioTasacionActivo',
+		            text: HreRem.i18n('header.precio'),
+		            flex: 1,
+		            renderer: function(value) {
+		        		return (value > 0) ? Ext.util.Format.currency(value) : null;
+		        	}
+		        },
+		        {
+		            dataIndex: 'tipoAlquilerDescripcion',
+		            text: HreRem.i18n('header.tipo.alquiler'),
+		            flex: 1          
+		        },
+		        {
+		            dataIndex: 'tipoComercializacionCodigo',
+		            text: HreRem.i18n('header.fecha.publicacion'),
+		            flex: 1,
+		            renderer: function(value, cell, record) {
+		            	var estadoPublicacion = record.get("estadoPublicacionActivoListadoCodigo");
+		            	
+		            	var estadosPublicados = [CONST.ESTADOS_PUBLICACION['PUBLICADO'],
+	            						 		 CONST.ESTADOS_PUBLICACION['PUBLICADO_FORZADO'],
+	            						 		 CONST.ESTADOS_PUBLICACION['PUBLICADO_PRECIO_OCULTO'],
+	            						 		 CONST.ESTADOS_PUBLICACION['PUBLICADO_FORZADO_PRECIO_OCULTO']];	
+	            						 		 
+		            	if(estadosPublicados.includes(estadoPublicacion))
+            			{		            		
+			            	var myDate = (value == CONST.TIPOS_COMERCIALIZACION['VENTA']
+			            			|| value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
+			            			? record.get("fechaPublicacionVenta") : record.get("fechaPublicacionAlquiler");
+			            	myDate = Ext.Date.format(myDate, "d/m/Y");
+			            	return myDate;
+		            	}
+						
+		            	return null;
+		            }
+		        },
+		        {
+		            dataIndex: 'tipoComercializacionCodigo',
+		            text: HreRem.i18n('header.fecha.despublicacion'),
+		            flex: 1,
+		            renderer: function(value, cell, record) {
+		            	var estadoPublicacion = record.get("estadoPublicacionActivoListadoCodigo");
+		            	
+		            	var estadosPublicados = [CONST.ESTADOS_PUBLICACION['PUBLICADO_OCULTO'],
+	            						 		 CONST.ESTADOS_PUBLICACION['DESPUBLICADO']];	
+	            						 		 
+		            	if(estadosPublicados.includes(estadoPublicacion))
+            			{		            		
+			            	var myDate = (value == CONST.TIPOS_COMERCIALIZACION['VENTA']
+			            			|| value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
+			            			? record.get("fechaPublicacionVenta") : record.get("fechaPublicacionAlquiler");
+			            	myDate = Ext.Date.format(myDate, "d/m/Y");
+			            	return myDate;
+		            	}
+						
+		            	return null;
 		            }
 		        }
 		

@@ -17,7 +17,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 	  recordName: "datosComunidad",
       recordClass: "HreRem.model.ActivoComunidadPropietarios",
       
-      requires : ['HreRem.model.ActivoComunidadPropietarios'],
+      requires : ['HreRem.model.ActivoComunidadPropietarios', 'HreRem.model.HistoricoGestionGrid'],
 
       initComponent : function() {
 
@@ -195,15 +195,31 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									      value : '{datosComunidad.burofax}',
 									      readOnly: '{datosComunidad.unidadAlquilable}'
 									    }
-									}, {xtype : 'comboboxfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.situacion'),
+									}, 
+									{	xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.estado.localizacion'),
+										reference: 'estadoLocalizacion',
+		        						listeners:{
+		        								afterrender: 'usuarioLogadoEditar'
+		        						},
 									    bind : {
-										      store : '{comboSituacionActivo}',
-										      value : '{datosComunidad.situacionCodigo}',
-										      readOnly: '{datosComunidad.unidadAlquilable}'
+										      store : '{comboEstadoLocalizacion}',
+										      value : '{datosComunidad.estadoLocalizacion}'
+										    }
+										   
+									},
+									{	xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.subestado.gestion'),
+										reference: 'subestadoGestion',
+										listeners:{
+		        								afterrender: 'usuarioLogadoEditar'
+		        						},
+									    bind : {
+										      store : '{comboSubestadoGestion}',
+										      value : '{datosComunidad.subestadoGestion}'
 										    }	
-									},							
-										{
+									},
+									{
 										xtype : 'datefieldbase',
 									    fieldLabel : HreRem.i18n('fieldlabel.fechaEnvioCarta'),
 										bind : {
@@ -212,7 +228,18 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 										}
 									  }
 						]
-				}
+				},
+				{
+					xtype:'fieldsettable',
+							title: HreRem.i18n('title.diario.de.gestion'),
+							collapsible: false,
+							items :	[
+								{
+									xtype: 'historicoDiarioGestionGrid'
+									
+								}
+							]
+					}
 			]
 			
 			me.addPlugin({ptype: 'lazyitems', items: items });

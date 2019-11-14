@@ -56,8 +56,8 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativaModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tareaDestinoSalto'}
+				remoteUrl: 'generic/getDiccionarioLanzarTareaAdministrativa',
+				extraParams: {diccionario: 'tareaDestinoSalto', idExpediente: '{idExpediente}'}
 			}
 		},
 		

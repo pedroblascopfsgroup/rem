@@ -2688,41 +2688,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(tributo.getGastoProveedor())){
 					dtoTributo.setNumGastoHaya(tributo.getGastoProveedor().getNumGastoHaya());
 				}
-				/*
-				Filter filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", tributo.getId());
-				Filter filtroRest = null;
-				ActivoAdjuntoTributo adjuntoTributo = null;
-				
-				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-					
-					try {
-						DtoAdjunto adjuntoTributoDto = gestorDocumentalAdapterApi.getAdjuntoTributo(tributo);
-						filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", tributo.getId());
-						filtroRest = genericDao.createFilter(FilterType.NOTNULL, "idDocRestClient");
-						adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest, filtroAuditoria);
-						
-						
-
-					}catch(GestorDocumentalException gex){
-						try {
-							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-							if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
-								gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-							dtoTributo.setExisteDocumentoTributo("false");
-							dtoTributo.setDocumentoTributoNombre("No existe acceso al Gestor Documental");
-							
-						}
-						
-					}
-				}else {
-				
-					filtroRest = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
-					adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest, filtroAuditoria);
-				
-				}*/
 				
 				if(!Checks.esNulo(tributo.getNumTributo())) {
 					dtoTributo.setNumTributo(tributo.getNumTributo());

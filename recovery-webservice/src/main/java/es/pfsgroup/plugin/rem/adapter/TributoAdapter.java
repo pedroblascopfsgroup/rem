@@ -147,10 +147,18 @@ public class TributoAdapter {
 	public List<DtoAdjuntoTributo> getAdjuntos(Long idTributo)
 			throws GestorDocumentalException, IllegalAccessException, InvocationTargetException{
 		List<DtoAdjuntoTributo> listaAdjuntos = new ArrayList<DtoAdjuntoTributo>();
+		ActivoTributos tributo = null;
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-			ActivoTributos tributo = activoTributoApi.getTributo(idTributo);
-			listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosTributo(tributo);
+			try {
+				tributo = activoTributoApi.getTributo(idTributo);
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosTributo(tributo);
+			}catch(GestorDocumentalException gex){
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
+					gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+				}
+			}
 		}else {
 			listaAdjuntos = getAdjuntosTributo(idTributo, listaAdjuntos);
 		}

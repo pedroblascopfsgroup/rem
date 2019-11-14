@@ -179,7 +179,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									bind:{
 										value:'{trabajo.numeroDND}',
 										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
-										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+										readOnly: true
 									}
 			                   	},
 								{ 
@@ -188,7 +188,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									bind:{
 										value:'{trabajo.nombreDND}',
 										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
-										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+										readOnly: true
 									}
 				                },
 			                   	{

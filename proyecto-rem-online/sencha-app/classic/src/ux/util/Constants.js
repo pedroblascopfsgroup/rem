@@ -693,5 +693,9 @@ Ext.define('HreRem.ux.util.Constants', {
 		 EN_CURSO:'EN_CURSO',
 		 FINALIZADO:'FINALIZADO',
 		 RECHAZADO:'RECHAZADO'
+	 },
+	 
+	 CIF_PROPIETARIO: {
+		 OMEGA: 'B88203708'
 	 }
 });

@@ -222,8 +222,9 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 		
 		String celda;
 		
-	
-		
+		errAdj.clear();
+		errJudicial.clear();
+		errNotarial.clear();		
 
 		for (int columna = 0; columna < NUM_COLS; columna++) {
 			listasError.add(columna, new ArrayList<Integer>());
@@ -299,7 +300,7 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 
 					}
 
-					if (!valorOK) {
+					if (!valorOK && COL_TIPO_ADJ != columna) {
 						errList.add(fila);
 						esCorrecto = false;
 					}

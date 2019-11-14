@@ -41,6 +41,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -140,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -206,6 +208,9 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@Autowired
 	private ConfigManager configManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
 
 	public ActivoApi getActivoApi() {
@@ -1754,6 +1759,8 @@ public class ActivoController extends ParadiseJsonController {
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
 
 		List<VBusquedaActivos> listaActivos = (List<VBusquedaActivos>) adapter.getActivos(dtoActivoFilter).getResults();
+
+		new EmptyParamDetector().isEmpty(listaActivos.size(), "activos", usuarioManager.getUsuarioLogado().getUsername());
 
 		List<DDRatingActivo> listaRating = utilDiccionarioApi.dameValoresDiccionarioSinBorrado(DDRatingActivo.class);
 		Map<String, String> mapRating = new HashMap<String, String>();

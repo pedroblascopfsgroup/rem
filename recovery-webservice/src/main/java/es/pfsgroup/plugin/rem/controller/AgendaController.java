@@ -28,6 +28,7 @@ import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.recibo.model.DDMotivoRechazo;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -65,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
+import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
 @Controller
@@ -105,7 +107,10 @@ public class AgendaController extends TareaController {
 	private NotificatorServiceSancionOfertaSoloRechazo notificatorSoloRechazo;
 
     @Autowired
-    private ActivoAdapter activoAdapter;	
+    private ActivoAdapter activoAdapter;
+
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
@@ -315,6 +320,8 @@ public class AgendaController extends TareaController {
 		@SuppressWarnings("unchecked")
 		List<DtoResultadoBusquedaTareasBuzones> listaTareas = (List<DtoResultadoBusquedaTareasBuzones>) adapter
 				.getListTareas(dtoTareaFilter).getResults();
+		
+		new EmptyParamDetector().isEmpty(listaTareas.size(), "tareas",  usuarioManager.getUsuarioLogado().getUsername());
 
 		ExcelReport report = new TareaExcelReport(listaTareas);
 

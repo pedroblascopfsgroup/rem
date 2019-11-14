@@ -47,8 +47,6 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 
 	private final Log logger = LogFactory.getLog(getClass());
 	
-	private List<Long> gastos = new ArrayList<Long>();
-	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK;
@@ -111,14 +109,9 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		} else {
 			genericDao.update(GastoPrinex.class, gasto);
 		}
-		
-		if(!gastos.contains(gastoProveedor.getId())) {
-			gastos.add(gastoProveedor.getId());
-		}
-		if(exc.getNumeroFilas()-1 == fila) {
-			for(Long id : gastos) {
-				gastoProveedorApi.updateGastoByPrinexLBK(id);
-			}
+		if("fin".equals(exc.dameCelda(fila, 63))) {
+			gastoProveedorApi.updateGastoByPrinexLBK(gasto.getId());
+			
 		}
 		return resultado;
 	}

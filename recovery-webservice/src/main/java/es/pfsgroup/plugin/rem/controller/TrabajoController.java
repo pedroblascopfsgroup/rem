@@ -31,6 +31,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -91,6 +92,7 @@ import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
 
 
@@ -149,6 +151,9 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@Autowired
 	private ProveedoresDao proveedoresDao;
+
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1133,6 +1138,8 @@ public class TrabajoController extends ParadiseJsonController {
 		
 		@SuppressWarnings("unchecked")
 		List<VBusquedaTrabajos> listaTrabajos = (List<VBusquedaTrabajos>) trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado()).getResults();
+		
+		new EmptyParamDetector().isEmpty(listaTrabajos.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
 		
 		ExcelReport report = new TrabajoExcelReport(listaTrabajos);
 

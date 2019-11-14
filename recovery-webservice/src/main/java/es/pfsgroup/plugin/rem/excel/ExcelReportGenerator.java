@@ -50,6 +50,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 
 
 @Component
@@ -57,7 +58,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	
 	protected static final Log logger = LogFactory.getLog(ExcelReportGenerator.class);
 	
-	private static final int MAX_ROW_LIMIT = 50000;
+	private static final int MAX_ROW_LIMIT = 5000;
 
 	private static final String EXPORTAR_EXCEL_LIMITE_ACTIVOS = "exportar.excel.limite.activos";
 
@@ -124,6 +125,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		String rutaFichero = appProperties.getProperty("files.temporaryPath","/tmp")+"/";
 				
 		HojaExcel hojaExcel = new HojaExcel();
+		
 		hojaExcel.crearNuevoExcel(rutaFichero+report.getReportName(), report.getCabeceras(), report.getData());
 		File file = hojaExcel.getFile();
 		

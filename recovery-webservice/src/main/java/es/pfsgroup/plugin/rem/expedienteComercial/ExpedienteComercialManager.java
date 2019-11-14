@@ -1238,6 +1238,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (!Checks.esNulo(oferta)) {
 				activo = oferta.getActivoPrincipal();
+				dto.setIdOferta(oferta.getId());
 			}
 
 			dto.setId(expediente.getId());
@@ -1776,6 +1777,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if(!Checks.esNulo(oferta.getFechaRespuesta()) && isCarteraCerberusApple) {
 			dto.setFechaRespuesta(oferta.getFechaRespuesta());
+		}
+		
+		if(!Checks.esNulo(oferta.getImporteContraofertaOfertanteCES()) && isCarteraCerberusApple) {
+			dto.setImporteContraofertaOfertanteCES(oferta.getImporteContraofertaOfertanteCES());
 		}
 
 		if(oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
@@ -10102,7 +10107,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public boolean existeComprador(String numDoc) {
-		if (!Checks.esNulo(numDoc) && !Checks.esNulo(numDoc)) {
+		if (!Checks.esNulo(numDoc)) {
 			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "documento", numDoc);
 			Comprador comprador = genericDao.get(Comprador.class, filterComprador);
 			if (!Checks.esNulo(comprador)) {

@@ -50,7 +50,6 @@ public interface ActivoAgrupacionDao extends AbstractDao<ActivoAgrupacion, Long>
 	
 	Double getPorcentajeParticipacionUATotalDeUnAMById(Long id);
 	
-	ActivoAgrupacion getAgrupacionById(Long id);
-
+	ActivoAgrupacion getAgrupacionById(Long idAgrupacion);
 
 }

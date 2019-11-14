@@ -168,6 +168,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -348,6 +349,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private ActivoTributoApi activoTributoApi;
 
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 
 	@Override
 	public String managerName() {
@@ -652,9 +655,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
 	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 		boolean resultado = true;
-		
+		boolean enviarCorreo = false;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
+		
 		
 
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
@@ -670,16 +674,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
 			comprobarTramitarOferta(oferta, dto);
 			resultado = doAceptaOferta(oferta);
+			enviarCorreo = true;
 		}
 
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
 		// enviamos un email/notificacion.
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 			resultado = doRechazaOferta(dto, oferta);
+			enviarCorreo = true;
 		}
 		
 		if(!resultado){
 			resultado = this.persistOferta(oferta);
+		}
+		
+		if (enviarCorreo) {
+			Activo activo = activoDao.getActivoById(dto.getIdActivo());
+			if (!Checks.esNulo(activo) && !Checks.esNulo(oferta)) {
+				notificationOfertaManager.sendNotificationDND(oferta, activo);
+			}
 		}
 		
 		if(!Checks.esNulo(dto.getIdActivo())) {
@@ -942,12 +955,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
 				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
-				if(oferta.getImporteOferta() > 6000) {
+				if(oferta.getImporteOferta() >= 6000) {
 					nuevoCondicionante.setSolicitaReserva(1);
 					DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
 					nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
-					nuevoCondicionante.setImporteReserva(new Double(1000));
+					if (oferta.getImporteOferta() <= 50000) {
+						nuevoCondicionante.setImporteReserva((new Double(1000)));
+					} else {
+						nuevoCondicionante.setImporteReserva((new Double(3000)));
+					}
 				} else {
 					nuevoCondicionante.setSolicitaReserva(0);
 				}
@@ -7174,20 +7191,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activoDto;
 	}
 	
-	//Comprobar si devuelve null o no para saber si pertenece a agrupación DND.	
+
+	//Para saber si pertenece a DND comprobar si devuelve un null. De esta forma se evita hacer otra función igual
+	//con otro bucle igual para devolver el número de agrupación dnd
+
 	@Override
 	public Long activoPerteneceDND(Activo activo) {
 		Long agruacionDND = null;
 		if(!Checks.esNulo(activo)) {
 			List<ActivoAgrupacionActivo> listaAgrupacionesActivo = activo.getAgrupaciones();
 			
-			for (int i = 0; i < listaAgrupacionesActivo.size(); i++) {
-				ActivoAgrupacionActivo activoAgrupacionActivo = listaAgrupacionesActivo.get(i);
-				if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
-					&& DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-					agruacionDND = activoAgrupacionActivo.getAgrupacion().getId();
-					break;
-				}
+
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionesActivo) {	
+				if(!Checks.esNulo( activoAgrupacionActivo.getAgrupacion())) {
+					ActivoObraNueva activoObraNueva =  genericDao.get(ActivoObraNueva.class, genericDao.createFilter(FilterType.EQUALS, "id", activoAgrupacionActivo.getAgrupacion().getId()));
+					if(!Checks.esNulo(activoObraNueva) && !Checks.esNulo(activoObraNueva.getIsDND()) && activoObraNueva.getIsDND()) {
+						agruacionDND = activoAgrupacionActivo.getAgrupacion().getId();
+						break;
+					}
+				}	
 			}
 		}
 		return agruacionDND;

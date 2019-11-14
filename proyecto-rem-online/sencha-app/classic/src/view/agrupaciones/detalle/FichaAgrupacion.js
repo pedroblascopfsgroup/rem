@@ -58,14 +58,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	},
 							allowBlank	:	false
 		                },
-		                { 
-		                	xtype		: 'displayfieldbase',
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
-		                	bind		: {
-			            		value: '{agrupacionficha.numAgrupUvem}',
-			            		hidden: '{esAgrupacionPromocionAlquiler}'
-			            	}		
-		                },
 		                {
 		                	fieldLabel: HreRem.i18n('header.numero.agrupacion.prinex'),
 		                	bind: {
@@ -387,6 +379,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								readOnly: false,
 								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
 							}
+						},
+						{
+							xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.venta.sobre.plano'),
+				        	bind: {
+			            		store: '{comboSiNoRem}',
+			            		value: '{agrupacionficha.ventaSobrePlano}',
+			            		hidden: '{!esAgrupacionObraNueva}'
+			            	}
 						}
 				]
           },

@@ -27,6 +27,8 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoPromocionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntosPromocion;
+import es.pfsgroup.plugin.rem.model.AdjuntosProyecto;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoPromocion;
 
@@ -199,6 +201,22 @@ public class ActivoPromocionManager extends BusinessOperationOverrider<ActivoPro
 		}
 
 		return listaAdjuntosPromocion;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = "activoPromocionManager.deleteAdjunto")
+	@Transactional(readOnly = false)
+	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		Activo activo = get(dtoAdjunto.getIdEntidad());
+		AdjuntosPromocion adjunto = activo.getAdjuntoPromocion(dtoAdjunto.getId());
+
+		if (adjunto == null) {
+			return false;
+		}
+		activo.getAdjuntosPromocion().remove(adjunto);
+		activoDao.save(activo);
+
+		return true;
 	}
 
 }

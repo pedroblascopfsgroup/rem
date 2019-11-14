@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  
  @Component
@@ -540,24 +541,19 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	}
  	 	 	
  	@Override
-	public ConfiguracionAccesoGestoria isGestoria(Usuario usuario) {
+	public DDIdentificacionGestoria isGestoria(Usuario usuario) {
 		List<GrupoUsuario> grupos = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
 		if (!Checks.estaVacio(grupos)) {
-			List<ConfiguracionAccesoGestoria> listaGruposGestorias = getUsuariosGestorias(grupos);
-			if ( !Checks.estaVacio (listaGruposGestorias)) {
-				for (GrupoUsuario grupo : grupos) {
-					for (ConfiguracionAccesoGestoria usuarioGestoria : listaGruposGestorias) {
-						String usuariosGestorias =  usuarioGestoria.getUsernameGestoriaAdmision() + usuarioGestoria.getUsernameGestoriaAdministracion() +  usuarioGestoria.getUsernameGestoriaFormalizacion(); 
-						if (usuariosGestorias != null && usuariosGestorias.contains(grupo.getGrupo().getUsername())) {
-							return usuarioGestoria;
-						}
-					}
+			for (GrupoUsuario grupo : grupos) {
+				ConfiguracionAccesoGestoria cag = genericDao.get(ConfiguracionAccesoGestoria.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGrupo.id", grupo.getGrupo().getId()));
+				if (!Checks.esNulo(cag)) {
+					return cag.getGestoria();
 				}
 			}
 		}
 		return null;
 	}  
- 	
+ 	/* Se comenta por que no lo llama nadie ni llama a nada, pero se anyadio recientemente, por si hay necesidad de recuperarlo pronto
  	@Override
  	public List<ConfiguracionAccesoGestoria> getUsuariosGestorias(List<GrupoUsuario> grupos){
 		ArrayList<String> idGrupos = new ArrayList<String>();
@@ -568,7 +564,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		if ( !idGrupos.isEmpty() )
 			config = gestorActivoDao.getConfiguracionGestorias(idGrupos);
 		return config;
- 	}
+ 	}*/
 
  	@Override
  	@Transactional(readOnly = false)

@@ -1192,12 +1192,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
 
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+        me.campoObligatorio(me.down('[name=comboTramitar]'));
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {
             if (combo.value == '01') {
                 me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
             } else {
                 me.habilitarCampo(me.down('[name=motivoDenegacion]'));
+                me.down('[name=motivoDenegacion]').noObligatorio=false;
             }
         })
     },
@@ -1498,12 +1500,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			me.down('[name=observaciones]').setReadOnly(true);
     		}
     	}
+    	
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));
                 me.down('[name=numImporteContra]').allowBlank = false;
             } else {
                 me.deshabilitarCampo(me.down('[name=numImporteContra]'));
+                me.down('[name=numImporteContra]').reset();
+                me.down('[name=numImporteContra]').allowBlank = true;
             }
         })
     },
@@ -2314,6 +2319,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.down('[name=comiteInternoSancionador]').hide();
 		}
     	
+    },
+    
+    T015_AceptacionClienteValidacion: function(){
+    	var me = this; 
+    	me.down('[name=aceptacionContraoferta]').noObligatorio=false;
+    	me.campoObligatorio(me.down('[name=aceptacionContraoferta]'));
     },
     
     T015_ResolucionPBCValidacion: function(){

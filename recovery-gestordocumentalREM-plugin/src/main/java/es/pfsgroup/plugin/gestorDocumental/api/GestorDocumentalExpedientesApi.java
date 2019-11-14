@@ -6,7 +6,9 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercia
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearJuntaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPlusvaliaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProyectoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearTributoDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProveedorDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
 
@@ -31,7 +33,10 @@ public interface GestorDocumentalExpedientesApi {
 
 	RespuestaCrearExpediente crearPlusvalia(CrearPlusvaliaDto crearPlusvaliaDto) throws GestorDocumentalException;
 
-	RespuestaCrearExpediente crearTributo(CrearTributoDto crearGasto) throws GestorDocumentalException;	
+	RespuestaCrearExpediente crearTributo(CrearTributoDto crearGasto) throws GestorDocumentalException;
 
+	RespuestaCrearExpediente crearProyecto(CrearProyectoDto crearProyecto) throws GestorDocumentalException;	
+
+	RespuestaCrearExpediente crearProveedor(CrearProveedorDto crearProveedorDto) throws GestorDocumentalException;	
 
 }

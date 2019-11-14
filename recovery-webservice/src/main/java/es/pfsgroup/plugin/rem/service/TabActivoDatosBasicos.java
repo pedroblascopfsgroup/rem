@@ -422,6 +422,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionAsistida", pertenceAgrupacionAsistida);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionObraNueva", pertenceAgrupacionObraNueva);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionProyecto", pertenceAgrupacionProyecto);
+			
+			if(pertenceAgrupacionProyecto && !Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+				activoDto.setEsSarebProyecto(true);
+			}else {
+				activoDto.setEsSarebProyecto(false);
+			}
 		}
 
 		for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){

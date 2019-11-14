@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -227,27 +228,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				dto.getEstadoComunicacionGencatCodigo());
 		
 		if (dto.getUsuarioGestoria()) {
-			String orBuilder = "";
-			if (!Checks.esNulo(dto.getGestoriaAdmision())) {
-				orBuilder += " bag.gestoriaAdmision = '" + dto.getGestoriaAdmision() + "'";
-			}
-
-			if (orBuilder.length() == 0 && dto.getGestoriaAdministracion() != null) {
-				orBuilder += " bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
-			} else if (orBuilder.length() != 0 && dto.getGestoriaAdministracion() != null) {
-				orBuilder += "  OR bag.gestoriaAdministracion = '" + dto.getGestoriaAdministracion() + "'";
-			}
-
-			if (orBuilder.length() == 0 && dto.getGestoriaFormalizacion() != null) {
-				orBuilder += " bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
-			} else if (orBuilder.length() != 0 || dto.getGestoriaAdministracion() != null) {
-				orBuilder += "  OR bag.gestoriaFormalizacion = '" + dto.getGestoriaFormalizacion() + "'";
-			}
-
-			if (orBuilder.length() != 0) {
-				hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where (" + orBuilder
-						+ ") AND bag.id = act.id)");
-			}
+			hb.appendWhere(" act.id = bag.id and bag.gestoria = " + dto.getGestoria());
 		}
 		
 		if(!Checks.esNulo(dto.getNumAgrupacion())) {
@@ -259,6 +240,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	private String buildFrom(DtoActivoFilter dto) {
 		StringBuilder sb = new StringBuilder("select act from VBusquedaActivos act "); 
+		
+		if (dto.getUsuarioGestoria()) {
+			sb.append(" ,VBusquedaActivosGestorias bag ");
+		}
 		
 		if (!Checks.esNulo(dto.getSubcarteraCodigo()) || !Checks.esNulo(dto.getSubcarteraCodigoAvanzado())) {
 			sb.append(" join act.subcartera scr ");
@@ -1336,6 +1321,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ActivoAgrupacion getAgrupacionPAByIdActivo(Long idActivo) {
 
@@ -1350,6 +1336,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override 
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo) {
 
@@ -1364,6 +1351,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override 
 	public ActivoAgrupacion getAgrupacionPAByIdActivoConFechaBaja(Long idActivo) {
 
@@ -1631,7 +1619,25 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				.createQuery(hb.toString()).list();
 		return trabajoList;
 		
-	}	
+	}
+
+	@Override
+	public Long getAgrupacionYubaiByIdActivo(Long id) {
+		String sql = "SELECT agrupacion.AGR_ID "  
+				+" FROM ACT_AGA_AGRUPACION_ACTIVO activoAgrupacion "
+				+" INNER JOIN ACT_ACTIVO  activo ON activoAgrupacion.ACT_ID = activo.ACT_ID AND activo.ACT_ID = " +id
+				+" INNER JOIN ACT_AGR_AGRUPACION agrupacion ON activoAgrupacion.AGR_ID = agrupacion.AGR_ID "
+				+" INNER JOIN DD_TAG_TIPO_AGRUPACION tipoAgrupacion ON  agrupacion.DD_TAG_ID = tipoAgrupacion.DD_TAG_ID AND DD_TAG_CODIGO = "+DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA
+				+" INNER JOIN DD_CRA_CARTERA cartera ON activo.DD_CRA_ID = cartera.DD_CRA_ID AND cartera.DD_CRA_CODIGO = "+DDCartera.CODIGO_CARTERA_THIRD_PARTY  
+				+" INNER JOIN DD_SCR_SUBCARTERA subCartera ON activo.DD_SCR_ID = subCartera.DD_SCR_ID AND subCartera.DD_SCR_CODIGO = " +DDSubcartera.CODIGO_YUBAI;
+				
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
+		}
+		return null;
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -1665,15 +1671,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		String select = "select vplusvalia ";
 		String from = "from VPlusvalia vplusvalia";
 
-		String where = "";
-		boolean hasWhere = false;
 		HQLBuilder hb = null;
 
-		hb = new HQLBuilder(select + from + where);
-		if (hasWhere) {
-			hb.setHasWhere(true);
-		}
-
+		hb = new HQLBuilder(select + from);
+		
 		if (!Checks.esNulo(dtoPlusvaliaFilter.getNumActivo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vplusvalia.activo", dtoPlusvaliaFilter.getNumActivo());
 		}

@@ -14,6 +14,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -1234,8 +1235,9 @@ public interface ActivoApi {
 	 * Guarda el historico de tramitacion de titulo de un activo
 	 * @param tramitacionDto
 	 * @return boolean
+	 * @throws Exception 
 	 */
-	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo);
+	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo) throws Exception;
 	
 	/**
 	 * actualiza el historico de tramitacion de titulo de un activo
@@ -1308,6 +1310,13 @@ public interface ActivoApi {
 	ActivoDto getDatosActivo(Long activoId);
 
 	Boolean getVisibilidadTabFasesPublicacion(Activo activo);
+
+	/**
+	 * Devuelve la lista ordenada de valores del diccionario Fase de Publicacion.
+	 * @return List
+	 * @throws Exception
+	 */
+	public List<Dictionary> getDiccionarioFasePublicacion() throws Exception;
 	
 	public void crearRegistroFaseHistorico(Activo activo);
 }

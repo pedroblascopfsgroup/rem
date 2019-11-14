@@ -3731,21 +3731,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean activoEnAgrupacionProyecto(String numActivo) {
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) FROM ACT_AGR_AGRUPACION AGR " +
-				" INNER JOIN DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = '04' " +
-				" INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " +
-				" INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID AND ACT.ACT_NUM_ACTIVO = " + numActivo +
-				" WHERE AGR.AGR_FECHA_BAJA IS NULL" +
-				" AND ACT.BORRADO = 0" +
-				" AND AGR.BORRADO = 0" +
-				" AND TAG.BORRADO = 0" +
-				" AND AGA.BORRADO = 0");
-
-		return Integer.valueOf(resultado) > 0;
-	};
-	
-	@Override
 	public Boolean perteneceDDServicerActivo(String codigoServicer) {
 		if(Checks.esNulo(codigoServicer)) {
 			return false;
@@ -3963,6 +3948,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean activoEnAgrupacionProyecto(String numActivo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) FROM ACT_AGR_AGRUPACION AGR " +
+				" INNER JOIN DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = '04' " +
+				" INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " +
+				" INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID AND ACT.ACT_NUM_ACTIVO = " + numActivo +
+				" WHERE AGR.AGR_FECHA_BAJA IS NULL" +
+				" AND ACT.BORRADO = 0" +
+				" AND AGR.BORRADO = 0" +
+				" AND TAG.BORRADO = 0" +
+				" AND AGA.BORRADO = 0");
+
+		return Integer.valueOf(resultado) > 0;
+	}
+
+	@Override
 	public Boolean existeTipoDoc(String codTipoDoc) {
 		if (Checks.esNulo(codTipoDoc)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
@@ -4057,6 +4057,39 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			            +")"								
 				);
 		return "0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo) {
+		if(Checks.esNulo(numExpediente))
+			return false;
+
+		String query = "SELECT COUNT(1) "
+				+ "	  	FROM REM01.ECO_EXPEDIENTE_COMERCIAL ECO "
+				+ " 	JOIN REM01.ACT_OFR AO ON AO.OFR_ID = ECO.OFR_ID "
+				+ "  	JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ "  	WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" "
+				+ "  	AND ACT.ACT_NUM_ACTIVO = "+ numActivo +" ";
+
+		String resultado = rawDao.getExecuteSQL(query);
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esExpedienteVenta(String numExpediente) {
+		if(Checks.esNulo(numExpediente))
+			return false;
+
+		String query = "SELECT DD_TOF_CODIGO "
+				+ "	  	FROM REM01.ECO_EXPEDIENTE_COMERCIAL ECO "
+				+ " 	JOIN REM01.OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID "
+				+ "  	JOIN REM01.DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID = TOF.DD_TOF_ID "
+				+ "  	WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" ";
+
+		String resultado = rawDao.getExecuteSQL(query);
+
+		return "01".equals(resultado);
 	}
 	
 }

@@ -10,6 +10,7 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 
@@ -30,7 +31,11 @@ public class OfertasAgrupadasLbkDaoImpl extends AbstractEntityDao<OfertasAgrupad
 		} catch (Exception e) {
 			logger.error("error obtienendo oferta principal",e);
 		} 
-
+		
+		if(resultado == null) {
+			throw new JsonViewerException("No se ha encontrado la oferta principal");
+		}
+		
 		return resultado.getId();
 	}
 

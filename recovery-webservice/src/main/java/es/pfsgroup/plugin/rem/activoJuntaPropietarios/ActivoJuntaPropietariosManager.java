@@ -14,16 +14,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
-import es.capgemini.devon.pagination.DtoPagination;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -39,26 +34,17 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activoJuntaPropietarios.dao.ActivoJuntaPropietariosDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoJuntaPropietariosApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoJuntas;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
-import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VListadoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocJuntas;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 
 
@@ -77,8 +63,6 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
-	@Autowired
-	private ExpedienteComercialApi expedienteComercialApi;
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -86,8 +70,6 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 	@Autowired
 	private UploadAdapter uploadAdapter;
 	
-	@Autowired
-	private ActivoManager activoManager;
 	
 	@Autowired
 	private GenericABMDao genericDao;

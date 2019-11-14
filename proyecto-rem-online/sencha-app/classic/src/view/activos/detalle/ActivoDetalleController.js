@@ -24,11 +24,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
          'documentosactivopromocion gridBase': {
              abrirFormulario: 'abrirFormularioAdjuntarDocPromo',
-             // onClickRemove: 'borrarDocumentoAdjunto',
+             onClickRemove: 'borrarDocumentoAdjunto',
              download: 'downloadDocumentoAdjuntoPromocion',
              afterupload: function(grid) {
              	grid.getStore().load();
              }
+         },
+
+         'documentosactivoproyecto gridBase': {
+             abrirFormulario: 'abrirFormularioAdjuntarDocProyecto',
+             onClickRemove: 'borrarDocumentoAdjunto',
+             download: 'downloadDocumentoAdjuntoProyecto',
+             afterupload: function(grid) {
+             	grid.getStore().load();
+             },
+             afterdelete: function(grid) {
+              	grid.getStore().load();
+              }
          },
 
 		'documentosactivoofertacomercial textfieldbase' : {
@@ -1127,6 +1139,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
+	abrirFormularioAdjuntarDocProyecto: function(grid) {
+
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto", {entidad: 'proyecto', idEntidad: idActivo, parent: grid, title: HreRem.i18n("title.adjuntar.documento.proyecto"), diccionario: "tiposDocumentoProyecto"}).show();
+
+	},
+
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
@@ -1257,6 +1277,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.fireEvent("downloadFile", config);
 	},
 
+	downloadDocumentoAdjuntoProyecto: function(grid, record) {
+		var me = this,
+		config = {};
+
+		config.url=$AC.getWebPath()+"proyecto/bajarAdjuntoActivoProyecto."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idActivo=me.getViewModel().get("activo.id");
+		config.params.nombreDocumento=record.get("nombre");
+		me.fireEvent("downloadFile", config);
+	},
 	updateOrdenFotosInterno: function(data, record, store) {
 
 		var me = this;
@@ -2028,10 +2059,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);
 	    grid.setSelection(record);
+	    var idFalsoProv = record.get('idFalso').id;
 	    
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
 	    	record.data.id= idProveedor;
+	    	me.getView().fireEvent('abrirDetalleProveedor', record);
+	    }else if(!Ext.isEmpty(idFalsoProv)){
+	    	record.data.id= idFalsoProv;
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);
 	    }
 	    else if(!Ext.isEmpty(record.get('id'))){
@@ -5445,6 +5482,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	validarEdicionHistoricoTitulo: function(editor, grid, record) {
     	var me = this;
+    	var isBankia = me.getViewModel().get('activo.isCarteraBankia');
+    	if (isBankia) {
+    		return false;
+    	}
     	return grid.rowIdx == 0;
     },
     
@@ -5502,6 +5543,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			fechas['fechaInscripcion'].allowBlank = false;
 			break;
 		}
+		
 		me.usuarioLogadoPuedeEditar();
 	},
 	checkDateInterval: function (obj) {
@@ -5519,7 +5561,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	usuarioLogadoPuedeEditar: function(){
 		var me = this;
-		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
+		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']) 
+			|| $AU.userIsRol(CONST.PERFILES['GESTORIA_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']); 
 		if(!usuariosValidos){
 			me.lookupReference("fechaInscripcion").setDisabled(true);
 		}
@@ -5803,4 +5846,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			comboSubfase.setAllowBlank(true);
 		}
 	}
+	
 });

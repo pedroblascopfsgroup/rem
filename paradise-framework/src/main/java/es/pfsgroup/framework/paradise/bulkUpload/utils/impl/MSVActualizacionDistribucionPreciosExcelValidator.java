@@ -3,19 +3,16 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +54,8 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 	public static final String ACTIVO_NO_DISPONE_IMPORTE_ASOCIADO = "El activo no dispone de un importe asociado";
 	public static final String EXPEDIENTE_COMERCIAL_FALTAN_ACTIVOS = "Faltan activos en el expediente";
 	public static final String SUMA_ACTIVOS_DISTINTA_IMPORTE_TOTAL_OFERTA = "La suma de los importes de participación de los distintos activos no coincide con el importe total de la oferta";
+	public static final String ACTIVO_NO_PERTENECE_EXPEDIENTE_COMERCIAL = "El activo no pertenece al expediente comercial";
+	public static final String EXPEDIENTE_NO_VENTA = "El expediente que se está actualizando no es de tipo venta";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -113,14 +112,17 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 			mapaErrores.put(ACTIVO_NO_EXISTE, isActiveNotExistsRows(exc));
 			mapaErrores.put(ACTIVO_NO_DISPONE_IMPORTE_ASOCIADO, isActivoSinImporte(exc));
 			mapaErrores.put(SUMA_ACTIVOS_DISTINTA_IMPORTE_TOTAL_OFERTA, isTotalOfertaDistintoSumaActivos(exc));
+			mapaErrores.put(ACTIVO_NO_PERTENECE_EXPEDIENTE_COMERCIAL, activoConRelacionExpedienteComercial(exc));
 			mapaErrores.put(EXPEDIENTE_COMERCIAL_FALTAN_ACTIVOS, isAllActivosOferta(exc));
+			mapaErrores.put(EXPEDIENTE_NO_VENTA, isExpedienteVenta(exc));
 			
 			if (!mapaErrores.get(EXPEDIENTE_COMERCIAL_NO_EXISTE).isEmpty() 
+					|| !mapaErrores.get(ACTIVO_NO_PERTENECE_EXPEDIENTE_COMERCIAL).isEmpty()
 					|| !mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(ACTIVO_NO_DISPONE_IMPORTE_ASOCIADO).isEmpty()
 					|| !mapaErrores.get(SUMA_ACTIVOS_DISTINTA_IMPORTE_TOTAL_OFERTA).isEmpty()
 					|| !mapaErrores.get(EXPEDIENTE_COMERCIAL_FALTAN_ACTIVOS).isEmpty()
-					
+					|| !mapaErrores.get(EXPEDIENTE_NO_VENTA).isEmpty()
 				)
 			{
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -249,6 +251,32 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 			}
 		return listaFilas;
 	}
+	
+	private List<Integer> activoConRelacionExpedienteComercial(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO))
+							&&  !particularValidator.activoConRelacionExpedienteComercial(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE), exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO))
+					){
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
 	private List<Integer> isTotalOfertaDistintoSumaActivos(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		// Expedientes visitados
@@ -263,7 +291,7 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 				try {
 					numExpediente = exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE);
 					numActivo = exc.dameCelda(i, COL_NUM.ACT_NUM_ACTIVO);
-					if (!Checks.esNulo(numExpediente) && !Checks.esNulo(numActivo)){
+					if (!Checks.esNulo(numExpediente) && !Checks.esNulo(numActivo) && particularValidator.activoConRelacionExpedienteComercial(numExpediente, numActivo)){
 						for(int j=1; j<this.numFilasHoja;j++) {
 							auxFilas[j] = false;
 							if (!Checks.esNulo(exc.dameCelda(j, COL_NUM.EXP_NUM_EXPEDIENTE))
@@ -283,6 +311,7 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 						&& particularValidator.existeActivo(numActivo) 
 						&& particularValidator.existeExpedienteComercial(numExpediente)
 						&& particularValidator.isTotalOfertaDistintoSumaActivos(sumaImportes, numExpediente)
+						&& particularValidator.activoConRelacionExpedienteComercial(numExpediente, numActivo)
 					){
 						for (int j=1; j<this.numFilasHoja;j++) {
 							if (auxFilas[j]) {
@@ -377,6 +406,31 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 			listaFilas.add(0);
 			e.printStackTrace();
 		}
+		return listaFilas;
+	}
+	
+	private List<Integer> isExpedienteVenta(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))
+							&&  !particularValidator.esExpedienteVenta(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))
+					){
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
 		return listaFilas;
 	}
 	

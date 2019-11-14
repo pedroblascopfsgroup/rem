@@ -49,6 +49,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -114,6 +115,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
+import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
@@ -141,6 +143,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
@@ -219,6 +222,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_MOTIVO_CALIFICACION = "activo.aviso.motivo.calificacion.duplicado";
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";
+	public static final String ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO = "Ya existe un registro 'Presentación en registro', y está activo";
+	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -362,6 +367,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+
+	@Autowired
+	private GestorActivoManager gestorActivoManager;
 
 	@Override
 	public String managerName() {
@@ -1192,28 +1200,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
-		//if (!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-			crearGastosExpediente(oferta, nuevoExpediente);
-		//}
-
-//		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-//				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-//				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente), null);
-//				nuevoExpediente.setComiteSancion(comiteLbk);
-//				nuevoExpediente.setComitePropuesto(comiteLbk);
-//				
-//				if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
-//					Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
-//					Filter deletedFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
-//					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
-//					Oferta nuevaOfertaPrincipal = oALbk.getOfertaPrincipal();
-//					ExpedienteComercial nuevoEcoPrincipal = expedienteComercialApi.findOneByOferta(nuevaOfertaPrincipal);
-//					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
-//					nuevoEcoPrincipal.setComitePropuesto(comiteLbkPrincipal);
-//					genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
-//				}
-//		}
-		
+		crearGastosExpediente(oferta, nuevoExpediente);
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
 
@@ -3271,14 +3258,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					tieneAdjunto = true;
 				}
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			} catch (GestorDocumentalException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 
 
@@ -3690,34 +3674,38 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoAdjuntoTributo adjuntoTributo = null;
 				
 				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-					
+
 					try {
 						DtoAdjunto adjuntoTributoDto = gestorDocumentalAdapterApi.getAdjuntoTributo(tributo);
-						filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", tributo.getId());
+						filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id",
+								tributo.getId());
 						filtroRest = genericDao.createFilter(FilterType.NOTNULL, "idDocRestClient");
-						adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest, filtroAuditoria);
-						
-						
+						adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest,
+								filtroAuditoria);
 
-					}catch(GestorDocumentalException gex){
+					} catch (GestorDocumentalException gex) {
 						try {
 							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-							if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
-								gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES);
+							if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE
+									.equals(gex.getCodigoError())) {
+								Thread hilo = new Thread(
+										gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(),
+												GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES));
+								hilo.start();
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
 							dtoTributo.setExisteDocumentoTributo("false");
 							dtoTributo.setDocumentoTributoNombre("No existe acceso al Gestor Documental");
-							
 						}
-						
+
 					}
-				}else {
-				
+				} else {
+
 					filtroRest = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
-					adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest, filtroAuditoria);
-				
+					adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest,
+							filtroAuditoria);
+
 				}
 				
 				if(!Checks.esNulo(adjuntoTributo)) {
@@ -6158,22 +6146,51 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		String idActivo = null;
 		String idCartera = null;
-
+		Boolean esGestoria = false;
+		Boolean esGestoriaDelActivo = false;
+		
 		try {
-
-			idCartera = rawDao.getExecuteSQL(
-					"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			DDIdentificacionGestoria ige = gestorActivoManager.isGestoria(usuarioLogado);
+			esGestoria = !Checks.esNulo(ige);
+			Filter numActivoFilter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+			Activo activo = genericDao.get(Activo.class, numActivoFilter);
 			
-			if(!Checks.esNulo(idCartera)) {
-				idActivo = rawDao.getExecuteSQL(
-						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+			if (esGestoria) {
+				esGestoriaDelActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT COUNT(*) "
+						 + "FROM V_BUSQUEDA_ACTIVOS_GESTORIAS "
+						 + "WHERE DD_IGE_ID = "+ige.getId()+ " AND ACT_ID = "+activo.getId())) >= 1;
+						 
+				if (esGestoriaDelActivo) {
+					idCartera = rawDao.getExecuteSQL(
+							"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+					
+					if(!Checks.esNulo(idCartera)) {
+						idActivo = rawDao.getExecuteSQL(
+								"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+					} else {
+						idActivo = rawDao.getExecuteSQL(
+								"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+					}
+					
+					return Long.parseLong(idActivo);
+				} else {
+					return null;
+				}
 			} else {
-				idActivo = rawDao.getExecuteSQL(
-						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+				idCartera = rawDao.getExecuteSQL(
+						"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+				
+				if(!Checks.esNulo(idCartera)) {
+					idActivo = rawDao.getExecuteSQL(
+							"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+				} else {
+					idActivo = rawDao.getExecuteSQL(
+							"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+				}
+				
+				return Long.parseLong(idActivo);
 			}
-			
-			return Long.parseLong(idActivo);
-
 		} catch (Exception e) {
 			return null;
 		}
@@ -7228,7 +7245,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,Long idActivo) {
+	public boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,Long idActivo) throws Exception {
 		
 		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
 		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
@@ -7244,6 +7261,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
 					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
 					if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
+						List<DtoHistoricoTramitacionTitulo> listaTramitacionTitulo = getHistoricoTramitacionTitulo(idActivo);
+						
+						for(DtoHistoricoTramitacionTitulo dtoHistoricoTramTitulo : listaTramitacionTitulo) {
+							if(DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(dtoHistoricoTramTitulo.getCodigoEstadoPresentacion()) &&
+									DDEstadoTitulo.ESTADO_EN_TRAMITACION.equals(titulo.getEstado().getCodigo()))
+								throw new Exception(ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO);
+						}
+						
 						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
 					}
 					
@@ -7334,12 +7359,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				logger.error("Error en activoManager", e);
 				return false;
 			}
-		
-		DDEstadoTitulo ddEstadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoTitulo));
-		if (!Checks.esNulo(ddEstadoTitulo)) {
-			htt.getTitulo().setEstado(ddEstadoTitulo);
+		if (!Checks.esNulo(estadoTitulo)) {
+			DDEstadoTitulo ddEstadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoTitulo));
+			if (!Checks.esNulo(ddEstadoTitulo)) {
+				htt.getTitulo().setEstado(ddEstadoTitulo);
+			}
 		}
-			
+		
 		genericDao.save(HistoricoTramitacionTitulo.class, htt);
 		return true;
 	}
@@ -7634,5 +7660,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		nuevoHistoricoFasePublicacion.setSubFasePublicacion(null);
 		
 		genericDao.save(HistoricoFasePublicacionActivo.class, nuevoHistoricoFasePublicacion);		
+	}
+	
+	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<Dictionary> getDiccionarioFasePublicacion() throws Exception {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order order = new Order(OrderType.ASC, "codigo");
+		List lista = genericDao.getListOrdered(DDFasePublicacion.class, order, filtro);
+		
+		return lista;
 	}
 }

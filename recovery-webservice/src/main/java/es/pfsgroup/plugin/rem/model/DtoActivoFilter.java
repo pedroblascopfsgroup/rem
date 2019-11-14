@@ -95,6 +95,9 @@ public class DtoActivoFilter extends WebDto {
 	private String tipoTituloPosesorio;
 	private String estadoComunicacionGencatCodigo;
 	private Boolean usuarioGestoria;
+	private Long gestoria;
+	private String fasePublicacionCodigo;
+	private String fasePublicacionDescripcion;
 	private String gestoriaAdmision;
 	private String gestoriaAdministracion;
 	private String gestoriaFormalizacion;
@@ -616,23 +619,11 @@ public class DtoActivoFilter extends WebDto {
 	public void setUsuarioGestoria(Boolean usuarioGestoria) {
 		this.usuarioGestoria = usuarioGestoria;
 	}
-	public String getGestoriaAdministracion() {
-		return gestoriaAdministracion;
+	public Long getGestoria() {
+		return gestoria;
 	}
-	public void setGestoriaAdministracion(String gestoriaAdministracion) {
-		this.gestoriaAdministracion = gestoriaAdministracion;
-	}
-	public String getGestoriaAdmision() {
-		return gestoriaAdmision;
-	}
-	public void setGestoriaAdmision(String gestoriaAdmision) {
-		this.gestoriaAdmision = gestoriaAdmision;
-	}
-	public String getGestoriaFormalizacion() {
-		return gestoriaFormalizacion;
-	}
-	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
-		this.gestoriaFormalizacion = gestoriaFormalizacion;
+	public void setGestoria(Long gestoria) {
+		this.gestoria = gestoria;
 	}
 	public String getGestorPublicacionUsername() {
 		return gestorPublicacionUsername;
@@ -693,5 +684,35 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setEstadoPublicacionActivoListadoCodigo(String estadoPublicacionActivoListadoCodigo) {
 		this.estadoPublicacionActivoListadoCodigo = estadoPublicacionActivoListadoCodigo;
+	}
+	public String getFasePublicacionCodigo() {
+		return fasePublicacionCodigo;
+	}
+	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
+		this.fasePublicacionCodigo = fasePublicacionCodigo;
+	}
+	public String getFasePublicacionDescripcion() {
+		return fasePublicacionDescripcion;
+	}
+	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
+		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
+	}
+	public String getGestoriaAdmision() {
+		return gestoriaAdmision;
+	}
+	public void setGestoriaAdmision(String gestoriaAdmision) {
+		this.gestoriaAdmision = gestoriaAdmision;
+	}
+	public String getGestoriaAdministracion() {
+		return gestoriaAdministracion;
+	}
+	public void setGestoriaAdministracion(String gestoriaAdministracion) {
+		this.gestoriaAdministracion = gestoriaAdministracion;
+	}
+	public String getGestoriaFormalizacion() {
+		return gestoriaFormalizacion;
+	}
+	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
+		this.gestoriaFormalizacion = gestoriaFormalizacion;
 	}
 }

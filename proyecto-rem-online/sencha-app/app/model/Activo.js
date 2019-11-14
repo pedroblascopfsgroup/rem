@@ -871,6 +871,10 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'visualizarTabFasesPublicacion',
     			type: 'boolean'
+			},
+			{
+    			name:'esSarebProyecto',
+    			type:'boolean'
     		}
     ],
     

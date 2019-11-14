@@ -1,4 +1,4 @@
-Ext.define('HreRem.view.activos.detalle.DocumentosActivoPromocion', {
+Ext.define('HreRem.view.activos.detalle.DocumentosActivoPromocion', { 
     extend		: 'Ext.panel.Panel',
     xtype		: 'documentosactivopromocion', 
     reference	: 'documentosactivopromocionref',
@@ -14,7 +14,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoPromocion', {
     	         {
 				    xtype		: 'gridBase',
 				    topBar		:  true,
-				    removeButton: false,
+				    removeButton : true,
 				    features: [{ftype:'grouping'}],
 				    reference: 'listadoDocumentosPromocion',
 					cls	: 'panel-base shadow-panel',

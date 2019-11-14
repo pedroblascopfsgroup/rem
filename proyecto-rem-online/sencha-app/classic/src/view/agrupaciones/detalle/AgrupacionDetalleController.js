@@ -6,6 +6,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
       'fotossubdivision': {
          	updateOrdenFotos: 'updateOrdenFotosInterno',
          	cargarFotosSubdivision: 'cargarFotosSubdivision'
+      },
+      'documentosagrupacion': {
+    	  download: 'downloadDocumentosAgrupacion'
       }
     },
 
@@ -1191,7 +1194,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		     }
     		 });    
 		}
-    },
+  },
 
     onChangeComboComercializableConsPlano: function(combo){
 		var me = this;
@@ -1258,6 +1261,56 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 				    	 });
 					}
 				});
+    },
+	
+		onClickCerrarPestanyaAnyadirNuevoDocumentoAgrupacion: function(btn){
+			var me = this,
+			window = btn.up('window');
+				window.close();
+		},
+	
+	  onClickAnyadirNuevoDocumentoAgrupacion: function(btn){
+	  		var me = this;
+	    	var idAgrupacion = me.getView().idAgrupacion;
+	    	form = btn.up("anyadirNuevoDocumentoAgrupacion").down("form"); 
+	    	if(form.isValid()){
+	            form.submit({
+	                waitMsg: HreRem.i18n('msg.mask.loading'),
+	                params: {
+	                	idAgrupacion: idAgrupacion
+	                },
+	                success: function(fp, o) {
+	                	if(o.result.success == "false") {
+	                		me.fireEvent("errorToast", o.result.errorMessage);
+	                	}
+	                	else {
+	                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	                	}
+	                	
+	                	if(!Ext.isEmpty(me.parent)) {
+	                		me.parent.fireEvent("afterupload", me.parent);
+	                	}
+	                	me.getView().grid.getStore().load();
+	                    btn.up("window").close();
+	                },
+	                failure: function(fp, o) {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+	            });
+	        }
+	    },
+	
+		downloadDocumentosAgrupacion: function(grid, record) {
+			
+			var me = this,
+			config = {};
+			
+			config.url= $AC.getWebPath() + "agrupacion/bajarAdjuntoAgrupacion." + $AC.getUrlPattern();
+			config.params = {};
+			config.params.id=record.get('id');
+			config.params.nombreDocumento=record.get("nombre");
+			me.fireEvent("downloadFile", config);
+			
 	},
 	
 	onSelectedRow: function(grid, record, index){

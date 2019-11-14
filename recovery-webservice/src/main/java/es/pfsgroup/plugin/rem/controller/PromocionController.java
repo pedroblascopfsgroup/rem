@@ -25,6 +25,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.PromocionAdapter;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 
 
 @Controller
@@ -127,6 +128,21 @@ public class PromocionController extends ParadiseJsonController {
 			}
 		}
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteAdjunto(DtoAdjunto dtoAdjunto, ModelMap model) {
+		try {
+			model.put("success", promocionAdapter.deleteAdjunto(dtoAdjunto));
+
+		} catch (Exception e) {
+			logger.error("error en promocionController", e);
+			model.put("success", false);
+			model.put("errorMessage", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
 	}
 
 }

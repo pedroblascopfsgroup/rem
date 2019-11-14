@@ -125,7 +125,6 @@ import es.pfsgroup.plugin.rem.model.AdjuntoPlusvalias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
-import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -194,9 +193,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -773,10 +774,14 @@ public class ActivoAdapter {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
 										activoCarga.getEstadoCarga().getCodigo());		
 								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
-									beanUtilNotNull.copyProperty(cargaDto, "subestadoCodigo", 
-										activoCarga.getSubestadoCarga().getCodigo());
-									beanUtilNotNull.copyProperty(cargaDto, "subestadoDescripcion",
-										activoCarga.getSubestadoCarga().getDescripcion());
+								    cargaDto.setSubestadoCodigo(activoCarga.getSubestadoCarga().getCodigo());
+								    cargaDto.setSubestadoDescripcion(activoCarga.getSubestadoCarga().getDescripcion());
+								}else {
+								    DDSubestadoCarga subEstadoSinIndicar = genericDao.get(DDSubestadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoCarga.COD_SCG_SIN_INICIAR));
+								    if(!Checks.esNulo(subEstadoSinIndicar)) {
+								        cargaDto.setSubestadoCodigo(subEstadoSinIndicar.getCodigo());
+								        cargaDto.setSubestadoDescripcion(subEstadoSinIndicar.getDescripcion());
+								    }
 								}
 							}
 						}
@@ -864,11 +869,16 @@ public class ActivoAdapter {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
 										activoCarga.getEstadoCarga().getCodigo());								
 								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
-									beanUtilNotNull.copyProperty(cargaDto, "subestadoCodigo", 
-											activoCarga.getSubestadoCarga().getCodigo());
-									beanUtilNotNull.copyProperty(cargaDto, "subestadoDescripcion",
-											activoCarga.getSubestadoCarga().getDescripcion());
-								}
+
+								    cargaDto.setSubestadoCodigo(activoCarga.getSubestadoCarga().getCodigo());
+								    cargaDto.setSubestadoDescripcion(activoCarga.getSubestadoCarga().getDescripcion());
+								}else {
+								    DDSubestadoCarga subEstadoSinIndicar = genericDao.get(DDSubestadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubestadoCarga.COD_SCG_SIN_INICIAR));
+								    if(!Checks.esNulo(subEstadoSinIndicar)) {
+								        cargaDto.setSubestadoCodigo(subEstadoSinIndicar.getCodigo());
+								        cargaDto.setSubestadoDescripcion(subEstadoSinIndicar.getDescripcion());
+								    }
+								}	
 							}
 							if (activoCarga.getCargaBien().getSituacionCargaEconomica() != null) {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
@@ -1182,7 +1192,7 @@ public class ActivoAdapter {
 				BeanUtils.copyProperty(dto, "idContratoAntiguo", activoActual.getIdContratoAntiguo());
 				
 				Activo activoVista = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActivo()));
-				dto.setEsDivarian(Checks.esNulo(activoVista)? null: activoVista.getSubcartera().equals(DDSubcartera.CODIGO_DIVARIAN));
+				dto.setEsDivarian(Checks.esNulo(activoVista)? null: Checks.esNulo(activoVista.getSubcartera()) ? null : activoVista.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN));
 				
 				page = actPatrimonioDao.getActivosRelacionados(dto);
 				lista = new ArrayList<DtoActivoVistaPatrimonioContrato>();
@@ -1576,12 +1586,10 @@ public class ActivoAdapter {
 			}
 		}
 		
-		ConfiguracionAccesoGestoria usuarioGestoria = gestorActivoApi.isGestoria(usuarioLogado);
-		if (!Checks.esNulo(usuarioGestoria)) {
+		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
+		if (!Checks.esNulo(gestoria)) {
 			dtoActivoFiltro.setUsuarioGestoria(true);
-			dtoActivoFiltro.setGestoriaAdmision(usuarioGestoria.getUsernameGestoriaAdmision());
-			dtoActivoFiltro.setGestoriaAdministracion(usuarioGestoria.getUsernameGestoriaAdministracion());
-			dtoActivoFiltro.setGestoriaFormalizacion(usuarioGestoria.getUsernameGestoriaFormalizacion());
+			dtoActivoFiltro.setGestoria(gestoria.getId());
 		}else {
 			dtoActivoFiltro.setUsuarioGestoria(false);
 		}
@@ -4651,29 +4659,32 @@ public class ActivoAdapter {
 				try {
 					listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosPlusvalia(activoPlusvalia);
 		
-					for (DtoAdjunto adj : listaAdjuntos) {
-						AdjuntoPlusvalias adjunto = activoPlusvalia.getAdjunto(adj.getId());
-						if (!Checks.esNulo(adjunto)) {
-							if(!Checks.esNulo(activo.getId())) {
-								adj.setIdEntidad(activo.getId());
-							}
-							if(!Checks.esNulo(adjunto.getNombre())) {
-								adj.setNombre(adjunto.getNombre());
-							}
-							if(!Checks.esNulo(adjunto.getTipoDocPlusvalias())) {
-								adj.setDescripcionTipo(adjunto.getTipoDocPlusvalias().getDescripcion());
-							}
-							if(!Checks.esNulo(adjunto.getFechaDocumento())) {
-								adj.setFechaDocumento(adjunto.getFechaDocumento());
-							}
-							if(!Checks.esNulo(adjunto.getTamanyo())) {
-								adj.setTamanyo(adjunto.getTamanyo());
-							}
-							if(!Checks.esNulo(activo.getAuditoria().getUsuarioCrear())) {
-								adj.setGestor(activo.getAuditoria().getUsuarioCrear());
+					if(!Checks.estaVacio(listaAdjuntos)) {
+						for (DtoAdjunto adj : listaAdjuntos) {
+							AdjuntoPlusvalias adjunto = activoPlusvalia.getAdjunto(adj.getId());
+							if (!Checks.esNulo(adjunto)) {
+								if(!Checks.esNulo(activo.getId())) {
+									adj.setIdEntidad(activo.getId());
+								}
+								if(!Checks.esNulo(adjunto.getNombre())) {
+									adj.setNombre(adjunto.getNombre());
+								}
+								if(!Checks.esNulo(adjunto.getTipoDocPlusvalias())) {
+									adj.setDescripcionTipo(adjunto.getTipoDocPlusvalias().getDescripcion());
+								}
+								if(!Checks.esNulo(adjunto.getFechaDocumento())) {
+									adj.setFechaDocumento(adjunto.getFechaDocumento());
+								}
+								if(!Checks.esNulo(adjunto.getTamanyo())) {
+									adj.setTamanyo(adjunto.getTamanyo());
+								}
+								if(!Checks.esNulo(activo.getAuditoria().getUsuarioCrear())) {
+									adj.setGestor(activo.getAuditoria().getUsuarioCrear());
+								}
 							}
 						}
 					}
+					
 				} catch (GestorDocumentalException gex) {
 					if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 		

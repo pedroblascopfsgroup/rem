@@ -1385,8 +1385,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	public void borradoOfertaAgrupadaDependiente(Oferta oferta) {
-		Long idOfertaLBK = ofertasAgrupadasLbkDao.getIdOfertaAgrupadaLBK(oferta.getId());
-		genericDao.deleteById(OfertasAgrupadasLbk.class, idOfertaLBK);
+		try {
+			Long idOfertaLBK = ofertasAgrupadasLbkDao.getIdOfertaAgrupadaLBK(oferta.getId());
+			genericDao.deleteById(OfertasAgrupadasLbk.class, idOfertaLBK);
+		}catch(Exception e) {
+			logger.error(e.getMessage());
+		}
 	}
 	
 	@Override

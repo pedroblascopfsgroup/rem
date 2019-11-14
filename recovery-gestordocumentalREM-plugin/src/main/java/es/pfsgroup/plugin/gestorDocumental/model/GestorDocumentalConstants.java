@@ -14,6 +14,7 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_TIPO_EXPEDIENTE_REO = "AI";
 	public static final String CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS = "AF";
 	public static final String CODIGO_TIPO_EXPEDIENTE_ENTIDADES = "EN";
+	public static final String CODIGO_TIPO_PROVEEDORES = "EN";
 	public static final String CODIGO_TIPO_EXPEDIENTE_GARANTIAS = "GA";
 	public static final String CODIGO_TIPO_EXPEDIENTE_HAYA_CORPORATIVO = "HA";
 	public static final String CODIGO_TIPO_EXPEDIENTE_OPERACIONES = "OP";
@@ -23,9 +24,12 @@ public class GestorDocumentalConstants {
 	
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROYECTO = "01";
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROMOCION = "02";
+	public static final String CODIGO_CLASE_PROVEEDORES = "02";
 	public static final String CODIGO_CLASE_EXPEDIENTE_ACTIVO = "03";
 	public static final String CODIGO_CLASE_GASTO = "07";
 	public static final String CODIGO_CLASE_PROMOCIONES = "09";
+	public static final String CODIGO_CLASE_PROYECTO = "09";
+	public static final String CODIGO_CLASE_AGRUPACIONES = "08";
 	public static final String CODIGO_CLASE_ACTUACION_TECNICA = "13";
 	public static final String CODIGO_CLASE_TRABAJO = "13";
 
@@ -36,6 +40,8 @@ public class GestorDocumentalConstants {
 	public static final String TIPO_CONSULTA_RELACION_EXPEDIENTE = "Tipo Expediente";
 	public static final String TIPO_CONSULTA_RELACION_GLOBAL = "Global";
 	public static final String OPERACION = "\"Operación\":";
+	public static final String AGRUPACION_REO = "\"Reo\":";
+	public static final String AGRUPACION_PROMOCION = "\"Promoción\":";
 	public static final String ENTIDAD = "\"Entidad\":";
 	public static final String GASTOS = "\"Gastos\":";
 	

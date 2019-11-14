@@ -32,11 +32,5 @@ public interface GestorActivoDao extends GestorEntidadDao{
 	 * @return
 	 */
 	public Boolean isUsuarioGestorExternoProveedor(Long idUsuario);
-	
-    /*
-     * Recupera una lista con la configuracion de gestorias dado un id de usuario
-     * @param usuario
-     * @return lista usuarios
-     */
-	List<ConfiguracionAccesoGestoria> getConfiguracionGestorias(ArrayList<String> idGrupos);
+
 }

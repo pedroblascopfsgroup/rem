@@ -314,6 +314,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo);
 	
+	Long getAgrupacionYubaiByIdActivo(Long id);
+	
 	List<ActivoProveedor> getComboApiPrimario();
 
 	void deleteActOfr(Long idActivo, Long idOferta);

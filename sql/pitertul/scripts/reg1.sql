@@ -88,6 +88,7 @@ IS
 v_count number(3);
 v_schema varchar2(30) := '#ESQUEMA#';
 v_sql varchar2(4000);
+v_hace_horas number(9);
 
 v_RESULTADO VARCHAR2(20) := 'OK';
 
@@ -102,9 +103,26 @@ BEGIN
       || ''' AND RSR_FECHACREACION = ''' || v_RSR_FECHACREACION || ''' AND RSR_ESQUEMA = ''' || v_RSR_ESQUEMA || ''' AND RSR_RESULTADO=''OK''' into v_count;
     
     if v_count > 0 then
-      DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' || v_RSR_FECHACREACION || ' y esquema ' || v_RSR_ESQUEMA ||
-     ' YA EJECUTADO');
-      v_RESULTADO := 'YA_EXISTE';
+    	if instr(v_RSR_NOMBRE_SCRIPT, '_SP_')>0 or instr(v_RSR_NOMBRE_SCRIPT, '_VI_')>0 or instr(v_RSR_NOMBRE_SCRIPT, '_MV_')>0  then
+	    	v_sql := 'select extract(hour from (systimestamp - rsr_inicio)) from (select * from ' || v_schema || 
+	    		'.RSR_REGISTRO_SQLS WHERE RSR_NOMBRE_SCRIPT=''' || v_RSR_NOMBRE_SCRIPT || ''' AND RSR_FECHACREACION = ''' || v_RSR_FECHACREACION || 
+	    		''' AND RSR_ESQUEMA = ''' || v_RSR_ESQUEMA || ''' AND RSR_RESULTADO=''OK'' order by rsr_inicio desc) where rownum = 1';
+	    	DBMS_OUTPUT.put_line(v_sql);
+	    	EXECUTE IMMEDIATE v_sql into v_hace_horas;
+		    if v_hace_horas < 2 then
+				DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' || v_RSR_FECHACREACION || ' y esquema ' || v_RSR_ESQUEMA ||
+				' EJECUTADO HACE MENOS DE DOS HORAS');
+				v_RESULTADO := 'EJECUCION_RECIENTE';
+		    else
+				DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' || v_RSR_FECHACREACION || ' y esquema ' || v_RSR_ESQUEMA ||
+				' YA EJECUTADO');
+				v_RESULTADO := 'YA_EXISTE';
+	     	end if;
+	     else
+			DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' || v_RSR_FECHACREACION || ' y esquema ' || v_RSR_ESQUEMA ||
+			' YA EJECUTADO');
+			v_RESULTADO := 'YA_EXISTE';	     	
+	     end if;
     else 
       DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || 
         ' con fecha de creación ' || v_RSR_FECHACREACION || 

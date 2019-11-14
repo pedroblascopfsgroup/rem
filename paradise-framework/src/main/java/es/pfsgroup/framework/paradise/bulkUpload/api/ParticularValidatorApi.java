@@ -843,12 +843,6 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto);
 
-	/**
-	 * @param numActivo
-	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
-	 */
-	Boolean activoEnAgrupacionProyecto(String numActivo);
-
 	/** 
 	 * @param codigoServicer
 	 * @return true si existe el código de Servicer Activo 
@@ -937,6 +931,7 @@ public interface ParticularValidatorApi {
 	 * @param numGasto
 	 * @return true si el gasto es refacturable
 	 */
+
 	Boolean esGastoRefacturable(String numGasto);
 
 	Boolean existeGastoRefacturable(String numGasto);
@@ -946,6 +941,12 @@ public interface ParticularValidatorApi {
 	Boolean existeFasePublicacion(String fasePublicacion);
 	
 	Boolean existeSubfasePublicacion(String subfasePublicacion);
+
+	/**
+	 * @param numActivo
+	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
+	 */
+	Boolean activoEnAgrupacionProyecto(String numActivo);
 
 	/**
 	 * @param codDocumento
@@ -964,5 +965,13 @@ public interface ParticularValidatorApi {
 	 * @return true si la Agrupación de tipo alquiler tiene precio
 	 */
 	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
+
+	/**
+	 * @param numExpediente, numActivo
+	 * @return true si un activo esta relacionado con un expediente
+	 */
+	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo);
+
+	Boolean esExpedienteVenta(String numExpediente);
 
 }

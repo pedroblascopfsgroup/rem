@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionUAsFieldTabMap;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -3025,6 +3026,9 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
+			if(ActivoManager.ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO.equalsIgnoreCase(e.getMessage())) {
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, ActivoManager.ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO);
+			}
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
@@ -3142,6 +3146,8 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntosPlusvalia(Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			model.put(RESPONSE_DATA_KEY, adapter.getAdjuntosActivoPlusvalia(id));
@@ -3267,6 +3273,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView clonateOferta(String idOferta, ModelMap model) {
 		try {
@@ -3318,6 +3325,21 @@ public class ActivoController extends ParadiseJsonController {
 		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getHistoricoFasesDePublicacionActivo(id));
 		model.put(RESPONSE_SUCCESS_KEY, true);
 
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioFasePublicacion(ModelMap model) {
+
+		try {
+			model.put("data", activoApi.getDiccionarioFasePublicacion());
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en activoController", e);
+			model.put("success", false);
+		}
+		
 		return createModelAndViewJson(model);
 	}
 }

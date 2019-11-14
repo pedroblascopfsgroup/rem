@@ -12,20 +12,24 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 
 @Entity
 @Table(name = "CAG_CONFIG_ACCESO_GESTORIAS", schema = "${entity.schema}")
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Inheritance(strategy=InheritanceType.JOINED)
 public class ConfiguracionAccesoGestoria implements Serializable, Auditable {
 
@@ -37,31 +41,17 @@ public class ConfiguracionAccesoGestoria implements Serializable, Auditable {
     @SequenceGenerator(name = "ConfAccesoGestoriaGenerator", sequenceName = "S_CAG_CONFIG_ACCESO_GESTORIAS")
     private Long id;
 	
-    @Column(name = "CAG_NOMBRE_GESTORIA")
-    private String nombreGestoria;
-    
-
     @OneToOne
-    @JoinColumn(name="CAG_USU_GRUPO_ADMISION", referencedColumnName="USU_ID")
-    private Usuario usuarioGrupoAdmision;
+    @JoinColumn(name="DD_IGE_ID", referencedColumnName="DD_IGE_ID")
+    private DDIdentificacionGestoria gestoria;
     
-	@Column(name = "CAG_USU_USERNAME_ADMISION")
-	private String usernameGestoriaAdmision;
-
     @OneToOne
-    @JoinColumn(name="CAG_USU_GRUPO_ADMINISTRACION", referencedColumnName="USU_ID")
-    private Usuario usuarioGrupoAdministracion;
+    @JoinColumn(name="CAG_USU_GRUPO", referencedColumnName="USU_ID")
+    private Usuario usuarioGrupo;
     
-	@Column(name = "CAG_USU_USERNAME_ADMINISTRACION")
-	private String usernameGestoriaAdministracion;
-
-
     @OneToOne
-    @JoinColumn(name="CAG_USU_GRUPO_FORMALIZACION", referencedColumnName="USU_ID")
-    private Usuario usuarioGrupoFormalizacion;
-    
-	@Column(name = "CAG_USU_USERNAME_FORMALIZACION")
-	private String usernameGestoriaFormalizacion;
+    @JoinColumn(name="DD_TGE_ID", referencedColumnName="DD_TGE_ID")
+    private EXTDDTipoGestor tipoGestor;
 
 	@Version   
 	private Long version;
@@ -77,60 +67,28 @@ public class ConfiguracionAccesoGestoria implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public String getNombreGestoria() {
-		return nombreGestoria;
+	public DDIdentificacionGestoria getGestoria() {
+		return gestoria;
 	}
 
-	public void setNombreGestoria(String nombreGestoria) {
-		this.nombreGestoria = nombreGestoria;
+	public void setGestoria(DDIdentificacionGestoria gestoria) {
+		this.gestoria = gestoria;
 	}
 
-	public Usuario getUsuarioGrupoAdmision() {
-		return usuarioGrupoAdmision;
+	public Usuario getUsuarioGrupo() {
+		return usuarioGrupo;
 	}
 
-	public void setUsuarioGrupoAdmision(Usuario usuarioGrupoAdmision) {
-		this.usuarioGrupoAdmision = usuarioGrupoAdmision;
+	public void setUsuarioGrupo(Usuario usuarioGrupo) {
+		this.usuarioGrupo = usuarioGrupo;
 	}
 
-	public String getUsernameGestoriaAdmision() {
-		return usernameGestoriaAdmision;
+	public EXTDDTipoGestor getTipoGestor() {
+		return tipoGestor;
 	}
 
-	public void setUsernameGestoriaAdmision(String usernameGestoriaAdmision) {
-		this.usernameGestoriaAdmision = usernameGestoriaAdmision;
-	}
-
-	public Usuario getUsuarioGrupoAdministracion() {
-		return usuarioGrupoAdministracion;
-	}
-
-	public void setUsuarioGrupoAdministracion(Usuario usuarioGrupoAdministracion) {
-		this.usuarioGrupoAdministracion = usuarioGrupoAdministracion;
-	}
-
-	public String getUsernameGestoriaAdministracion() {
-		return usernameGestoriaAdministracion;
-	}
-
-	public void setUsernameGestoriaAdministracion(String usernameGestoriaAdministracion) {
-		this.usernameGestoriaAdministracion = usernameGestoriaAdministracion;
-	}
-
-	public Usuario getUsuarioGrupoFormalizacion() {
-		return usuarioGrupoFormalizacion;
-	}
-
-	public void setUsuarioGrupoFormalizacion(Usuario usuarioGrupoFormalizacion) {
-		this.usuarioGrupoFormalizacion = usuarioGrupoFormalizacion;
-	}
-
-	public String getUsernameGestoriaFormalizacion() {
-		return usernameGestoriaFormalizacion;
-	}
-
-	public void setUsernameGestoriaFormalizacion(String usernameGestoriaFormalizacion) {
-		this.usernameGestoriaFormalizacion = usernameGestoriaFormalizacion;
+	public void setTipoGestor(EXTDDTipoGestor tipoGestor) {
+		this.tipoGestor = tipoGestor;
 	}
 
 	public Auditoria getAuditoria() {

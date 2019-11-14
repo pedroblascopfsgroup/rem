@@ -303,6 +303,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 										comunicacionGencat.setFechaAnulacion(new Date());
 										if(!Checks.esNulo(estado) && (DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo()) || DDEstadoComunicacionGencat.COD_ANULADO.equals(estado.getCodigo()))) {
 											comunicacionGencat.setComunicadoAnulacionAGencat(true);
+											mandaCorreo=true;
 										}
 										mandaCorreo=true;
 										genericDao.save(ComunicacionGencat.class, comunicacionGencat);

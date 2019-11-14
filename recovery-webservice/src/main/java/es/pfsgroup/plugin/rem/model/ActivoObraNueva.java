@@ -10,7 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -72,6 +71,11 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
     @JoinColumn(name = "AGR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoSubdivision> subdivision;
+	
+	@Column(name = "ACT_ONV_DND")
+	private Boolean isDND;
+	
+	
 
 	public DDProvincia getProvincia() {
 		return provincia;
@@ -137,7 +141,16 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 		return ventaPlano;
 	}
 
+
 	public void setVentaPlano(DDSinSiNo ventaPlano) {
 		this.ventaPlano = ventaPlano;
+	}
+
+	public Boolean getIsDND() {
+		return isDND;
+	}
+
+	public void setIsDND(Boolean isDND) {
+		this.isDND = isDND;
 	}
 }

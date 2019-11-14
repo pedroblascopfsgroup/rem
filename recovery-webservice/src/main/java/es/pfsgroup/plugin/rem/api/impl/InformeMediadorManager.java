@@ -1332,6 +1332,12 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				}
 			}
 			
+			if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL) && !DDTipoInfoComercial.COD_LOCAL_COMERCIAL.equals(informeEntity.getTipoInfoComercial().getCodigo())
+					|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS) && !DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO.equals(informeEntity.getTipoInfoComercial().getCodigo())
+					|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA) && !DDTipoInfoComercial.COD_VIVIENDA.equals(informeEntity.getTipoInfoComercial().getCodigo())) {
+				errorsList.put("codTipoActivo", "El tipo de Activo no concuerda con el tipo de Informe Comercial del Activo que es '" + informeEntity.getTipoInfoComercial().getDescripcion() + "'");
+			}
+			
 			if (errorsList.size() == 0) {
 				boolean tieneInformeComercialAceptado = false;
 				

@@ -69,7 +69,11 @@ var AppConfig  = $AC = (function () {
 		getRemoteUrl: function(url) {
 			return [webPath,url,'.',urlPattern].join('');
 		},
-				
+
+		getRemApiRemoteUrl: function(url) {
+			return [remApiWebPath,url].join('');
+		},
+		
 		getLocalUrl: function(url) {
 			
 			return [localDataPath,'/',url].join('');

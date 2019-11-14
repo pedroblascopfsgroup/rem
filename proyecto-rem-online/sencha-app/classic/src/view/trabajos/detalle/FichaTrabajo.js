@@ -172,7 +172,45 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            		store: '{comboSiNoRem}',
 										value: '{trabajo.esTarifaPlana}'	            		
 					            	}
-			        			}
+			        			},
+			        			{
+			                   		fieldLabel: HreRem.i18n('fieldlabel.numero.dnd'),
+			                   		cls: 'cabecera-info-field',
+									bind:{
+										value:'{trabajo.numeroDND}',
+										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
+										readOnly: true
+									}
+			                   	},
+								{ 
+									fieldLabel: HreRem.i18n('fieldlabel.nombre.dnd'),
+									cls: 'cabecera-info-field',
+									bind:{
+										value:'{trabajo.nombreDND}',
+										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
+										readOnly: true
+									}
+				                },
+			                   	{
+			                   		fieldLabel: HreRem.i18n('fieldlabel.codigo.partida'),
+			                   		cls: 'cabecera-info-field',
+			                   		bind:{
+										value:'{trabajo.codigoPartida}',
+										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
+										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+									}
+									
+			                   	},
+			                   	{
+			                   		fieldLabel: HreRem.i18n('fieldlabel.codigo.subpartida'),
+			                   		cls: 'cabecera-info-field',
+			                   		bind:{
+										value:'{trabajo.codigoSubpartida}',
+										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
+										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+									}
+									
+			                   	}
 							]
 		           },
 		           {

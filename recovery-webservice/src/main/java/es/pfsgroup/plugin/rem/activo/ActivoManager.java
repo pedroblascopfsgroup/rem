@@ -7191,14 +7191,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activoDto;
 	}
 	
+
 	//Para saber si pertenece a DND comprobar si devuelve un null. De esta forma se evita hacer otra función igual
 	//con otro bucle igual para devolver el número de agrupación dnd
+
 	@Override
 	public Long activoPerteneceDND(Activo activo) {
 		Long agruacionDND = null;
 		if(!Checks.esNulo(activo)) {
 			List<ActivoAgrupacionActivo> listaAgrupacionesActivo = activo.getAgrupaciones();
 			
+
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionesActivo) {	
 				if(!Checks.esNulo( activoAgrupacionActivo.getAgrupacion())) {
 					ActivoObraNueva activoObraNueva =  genericDao.get(ActivoObraNueva.class, genericDao.createFilter(FilterType.EQUALS, "id", activoAgrupacionActivo.getAgrupacion().getId()));

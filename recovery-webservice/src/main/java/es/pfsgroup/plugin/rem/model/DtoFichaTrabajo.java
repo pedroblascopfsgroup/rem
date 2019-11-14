@@ -158,6 +158,17 @@ public class DtoFichaTrabajo {
     private Boolean logadoGestorMantenimiento;
     
     private String codSubcartera;
+    
+    private Boolean perteneceDNDtipoEdificacion;
+    
+    private Long numeroDND;
+    
+    private String nombreDND;
+    
+    private String codigoPartida;
+    
+    private String codigoSubpartida;
+    
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -764,4 +775,46 @@ public class DtoFichaTrabajo {
 	public void setCodSubcartera(String codSubcartera) {
 		this.codSubcartera = codSubcartera;
 	}
+
+	public Boolean getPerteneceDNDtipoEdificacion() {
+		return perteneceDNDtipoEdificacion;
+	}
+
+	public void setPerteneceDNDtipoEdificacion(Boolean perteneceDNDtipoEdificacion) {
+		this.perteneceDNDtipoEdificacion = perteneceDNDtipoEdificacion;
+	}
+
+	public Long getNumeroDND() {
+		return numeroDND;
+	}
+
+	public void setNumeroDND(Long numeroDND) {
+		this.numeroDND = numeroDND;
+	}
+
+	public String getNombreDND() {
+		return nombreDND;
+	}
+
+	public void setNombreDND(String nombreDND) {
+		this.nombreDND = nombreDND;
+	}
+
+	public String getCodigoPartida() {
+		return codigoPartida;
+	}
+
+	public void setCodigoPartida(String codigoPartida) {
+		this.codigoPartida = codigoPartida;
+	}
+
+	public String getCodigoSubpartida() {
+		return codigoSubpartida;
+	}
+
+	public void setCodigoSubpartida(String codigoSubpartida) {
+		this.codigoSubpartida = codigoSubpartida;
+	}
+	
+	
 }

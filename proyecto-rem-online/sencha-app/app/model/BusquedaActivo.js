@@ -107,6 +107,9 @@ Ext.define('HreRem.model.BusquedaActivo', {
     		},
     		{
     			name: 'estadoPublicacionActivoListadoCodigo'
+    		},
+    		{
+    			name: 'tipoGestorCodigo'
     		}
     ] 
     

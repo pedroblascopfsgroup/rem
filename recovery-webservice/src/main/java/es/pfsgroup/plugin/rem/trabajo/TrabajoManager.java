@@ -1542,6 +1542,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUALIZA_ESTADOS);
 		}
 
+		
+		//TODO DE MOMENTO EL TIPO DE TRABAJO DE EDIFICACIÓN VA LIGADO CON EL TRAMITE DE ACTUACIÓN TÉCNICA  HREOS-8327
+		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_EDIFICACION)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
+		}
 		// Módulo de Expediente comercial ----------
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);

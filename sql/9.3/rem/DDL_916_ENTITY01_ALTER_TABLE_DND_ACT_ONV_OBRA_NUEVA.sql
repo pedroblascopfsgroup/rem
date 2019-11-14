@@ -30,7 +30,7 @@ DECLARE
 	V_TABLA VARCHAR2(50 CHAR):= 'ACT_ONV_OBRA_NUEVA'; -- Nombre de la tabla a crear
 	V_COL VARCHAR2(50 CHAR):= 'ACT_ONV_DND'; --Nombre de la columna
 	
-
+	
 	V_TIPO VARCHAR2(250 CHAR):= 'NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE';--Tipo nuevo campo
 
  	V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.

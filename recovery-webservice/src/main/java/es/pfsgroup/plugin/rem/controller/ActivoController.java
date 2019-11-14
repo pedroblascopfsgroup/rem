@@ -1777,6 +1777,8 @@ public class ActivoController extends ParadiseJsonController {
 
 		new EmptyParamDetector().isEmpty(listaActivos.size(), "activos", usuarioManager.getUsuarioLogado().getUsername());
 
+		new EmptyParamDetector().isEmpty(listaActivos.size(), "activos", usuarioManager.getUsuarioLogado().getUsername());
+
 		List<DDRatingActivo> listaRating = utilDiccionarioApi.dameValoresDiccionarioSinBorrado(DDRatingActivo.class);
 		Map<String, String> mapRating = new HashMap<String, String>();
 		for (DDRatingActivo rating : listaRating)

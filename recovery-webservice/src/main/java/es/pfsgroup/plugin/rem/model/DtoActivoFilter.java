@@ -114,6 +114,7 @@ public class DtoActivoFilter extends WebDto {
 	private String  tipoComercializacionCodigoAuxiliar;
 	private Long precioTasacionActivo;
 	private String estadoPublicacionActivoListadoCodigo;
+	private String tipoGestorCodigo;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -714,5 +715,11 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
 		this.gestoriaFormalizacion = gestoriaFormalizacion;
+	}
+	public String getTipoGestorCodigo() {
+		return tipoGestorCodigo;
+	}
+	public void setTipoGestorCodigo(String tipoGestorCodigo) {
+		this.tipoGestorCodigo = tipoGestorCodigo;
 	}
 }

@@ -1,14 +1,14 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
-
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -21,13 +21,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
 	
 	@Autowired
-	private GenericABMDao genericDao;	
+	private GenericABMDao genericDao;
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 	
 //	@Autowired
 //	private GenericAdapter genericAdapter;
@@ -62,7 +65,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
 	private static final String VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
 	
+	private DDEstadoProvisionGastos estadoProvision = null;
 	
+	private String codEstadoProvision = null;
 	
 	@Override
 	public boolean updaterStates(GastoProveedor gasto, String codigo) {
@@ -71,6 +76,16 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	
 	@Override
 	public String validarCamposMinimos(GastoProveedor gasto) {
+		
+		if(gasto.getProvision() != null) {
+			logger.error("HAY PROVISION!");
+			if(!Checks.esNulo(gasto.getProvision().getEstadoProvision())) {
+				estadoProvision = gasto.getProvision().getEstadoProvision();
+				if(!Checks.esNulo(estadoProvision.getCodigo())) {
+					codEstadoProvision = estadoProvision.getCodigo();
+				}
+			}
+		}
 		
 		String error = null;
 		
@@ -169,9 +184,11 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 			
-			if(Checks.esNulo(gasto.getExisteDocumento()) || !BooleanUtils.toBoolean(gasto.getExisteDocumento())) {
-				error = messageServices.getMessage(VALIDACION_DOCUMENTO_ADJUNTO_GASTO);
-				return error;
+			if(!DDEstadoProvisionGastos.CODIGO_RECHAZADO_SUBSANABLE.equals(codEstadoProvision)) {
+				if(Checks.esNulo(gasto.getExisteDocumento()) || !BooleanUtils.toBoolean(gasto.getExisteDocumento())) {
+					error = messageServices.getMessage(VALIDACION_DOCUMENTO_ADJUNTO_GASTO);
+					return error;
+				}
 			}
 		}
 		return error;

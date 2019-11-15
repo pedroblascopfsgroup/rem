@@ -3625,7 +3625,7 @@ public class ActivoAdapter {
 					for (ActivoTrabajo activoTrabajo : listaTrabajos) {
 						//System.out.println(activoTrabajo.getTrabajo().getNumTrabajo());
 						Usuario usuResponsable = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
-						String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
+						String estadoTrabajo = Checks.esNulo(activoTrabajo.getTrabajo().getEstado()) ? null : activoTrabajo.getTrabajo().getEstado().getCodigo();
 						Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo,
 								GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 						if (DDEstadoTrabajo.ESTADO_SOLICITADO.equals(estadoTrabajo)

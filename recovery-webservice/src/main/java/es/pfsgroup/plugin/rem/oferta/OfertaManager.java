@@ -516,6 +516,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()));
 			if (Checks.esNulo(cliente)) {
 				errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
+			}else {
+				if (Checks.esNulo(cliente.getDocumento()) || Checks.esNulo(cliente.getTipoDocumento())) {
+					errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {

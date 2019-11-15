@@ -7295,6 +7295,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
 		String estadoTitulo = null;
+		ActivoTitulo activoTitulo = null;
 		
 		try {
 				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
@@ -7326,6 +7327,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
 					beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
+					Long idTitulo = htt.getTitulo().getId();
+					Filter idTituloFiltro = genericDao.createFilter(FilterType.EQUALS, "id", idTitulo);
+					activoTitulo = genericDao.get(ActivoTitulo.class, idTituloFiltro);
+					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
 				if(!Checks.esNulo(tramitacionDto.getObservaciones())) {
 					beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());
@@ -7346,6 +7351,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		
+		if (!Checks.esNulo(activoTitulo)) {
+			genericDao.save(ActivoTitulo.class, activoTitulo);
+		}
 		genericDao.save(HistoricoTramitacionTitulo.class, htt);
 		return true;
 	}

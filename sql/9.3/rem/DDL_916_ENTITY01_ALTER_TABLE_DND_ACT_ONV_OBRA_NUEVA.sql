@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Lara Pablo
---## FECHA_CREACION=20191113
+--## FECHA_CREACION=20191115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=v2.2.0
 --## INCIDENCIA_LINK=HREOS-8330
@@ -31,7 +31,7 @@ DECLARE
 	V_COL VARCHAR2(50 CHAR):= 'ACT_ONV_DND'; --Nombre de la columna
 	
 
-	V_TIPO VARCHAR2(250 CHAR):= 'NUMBER(16,0) DEFAULT 0 NOT NULL ENABLE';--Tipo nuevo campo
+	V_TIPO VARCHAR2(250 CHAR):= 'NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE';--Tipo nuevo campo
 
  	V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     

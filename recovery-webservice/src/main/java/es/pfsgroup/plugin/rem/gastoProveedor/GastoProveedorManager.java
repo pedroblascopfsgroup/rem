@@ -339,6 +339,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setCodigoEmisor(gasto.getProveedor().getCodProveedorUvem());
 				dto.setBuscadorCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
 				dto.setCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
+				dto.setEstadoEmisor(Checks.esNulo(gasto.getProveedor().getEstadoProveedor()) ? null : gasto.getProveedor().getEstadoProveedor().getDescripcion());
 			}
 
 			if (!Checks.esNulo(gasto.getPropietario())) {

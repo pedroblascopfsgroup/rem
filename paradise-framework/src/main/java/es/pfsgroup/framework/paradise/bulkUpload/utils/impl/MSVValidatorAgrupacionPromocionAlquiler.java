@@ -22,6 +22,8 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
@@ -78,6 +80,9 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 	private ApiProxyFactory proxyFactory;
 	
 	private Integer numFilasHoja;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
@@ -242,10 +247,11 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 					&& particularValidator.esAgrupacionVigente(exc.dameCelda(1, 0))
 					&& particularValidator.tieneActivoMatriz(exc.dameCelda(1, 0))){
 
-				List <Perfil> perfiles = usu.getPerfiles();
+				List<Perfil> perfiles = usu.getPerfiles();
 				if(!Checks.estaVacio(perfiles)) {
-					for (Perfil perfil : perfiles) {
-						if(!USUARIOSUPER.equals(perfil.getCodigo())) {
+					Perfil perfilSuper = genericDao.get(Perfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", USUARIOSUPER));
+					if(!perfiles.contains(perfilSuper)) {
+						for (Perfil perfil : perfiles) {
 							String gestor = particularValidator.getGestorComercialAlquilerByAgrupacion(numAgrupacion);
 							String supervisor = particularValidator.getSupervisorComercialAlquilerByAgrupacion(numAgrupacion);
 							if((!usernameLogado.equals(gestor) && !usernameLogado.equals(supervisor))){

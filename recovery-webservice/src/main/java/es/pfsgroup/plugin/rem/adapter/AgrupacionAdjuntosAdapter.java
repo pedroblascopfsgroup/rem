@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -63,7 +64,7 @@ public class AgrupacionAdjuntosAdapter {
 	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	//TODO: Revisar que se está copiando bien
-	public List<DtoAdjuntoAgrupacion> getAdjuntosAgrupacion(Long idAgrupacion)throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
+	public List<DtoAdjuntoAgrupacion> getAdjuntosAgrupacion(Long idAgrupacion)throws GestorDocumentalException, IllegalAccessException, InvocationTargetException, ParseException {
 		List<DtoAdjuntoAgrupacion> listaAdjuntos = new ArrayList<DtoAdjuntoAgrupacion>();
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			 try {

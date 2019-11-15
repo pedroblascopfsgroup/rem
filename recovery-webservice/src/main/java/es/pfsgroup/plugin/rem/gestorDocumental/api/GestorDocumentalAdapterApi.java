@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.gestorDocumental.api;
 
+import java.text.ParseException;
 import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
@@ -118,7 +119,7 @@ public interface GestorDocumentalAdapterApi {
 
 	Long uploadDocumentoAgrupacionAdjunto(ActivoAgrupacion agrupacion, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException;
 
-	List<DtoAdjuntoAgrupacion> getAdjuntoAgrupacion(Long idAgrupacion) throws GestorDocumentalException;
+	List<DtoAdjuntoAgrupacion> getAdjuntoAgrupacion(Long idAgrupacion) throws GestorDocumentalException, ParseException;
 
 	Integer crearContenedorAdjuntoAgrupacion(Long idAgrupacion, String username) throws GestorDocumentalException;
 

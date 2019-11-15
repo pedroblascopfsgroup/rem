@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.gestorDocumental.manager;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1542,7 +1543,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 	
 	@Override
-	public List<DtoAdjuntoAgrupacion> getAdjuntoAgrupacion(Long idAgrupacion) throws GestorDocumentalException { 
+	public List<DtoAdjuntoAgrupacion> getAdjuntoAgrupacion(Long idAgrupacion) throws GestorDocumentalException, ParseException { 
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		Usuario userLogin = genericAdapter.getUsuarioLogado();
 		String idAgrupacionString = String.valueOf(idAgrupacion);
@@ -1552,7 +1553,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		List<DtoAdjuntoAgrupacion> list = GestorDocToRecoveryAssembler.getListDtoAdjuntoAgrupacion(respuesta, idAgrupacion);
 
 		for (DtoAdjuntoAgrupacion adjunto : list) {
-			DDTipoDocumentoAgrupacion tipoDoc = (DDTipoDocumentoAgrupacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoDocumentoAgrupacion.class, adjunto.getCodigoTipo());
+			DDTipoDocumentoAgrupacion tipoDoc = genericAdapter.dameValorDiccionarioByMatricula(DDTipoDocumentoAgrupacion.class, adjunto.getMatricula());
 			if (tipoDoc == null) {
 				adjunto.setDescripcionTipo("");
 			} else {

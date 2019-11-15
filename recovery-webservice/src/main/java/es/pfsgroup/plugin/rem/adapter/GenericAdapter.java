@@ -539,5 +539,14 @@ public class GenericAdapter {
 		
 		return ofertaCreada;		
 	}
+	
+	 public <T extends Dictionary> T dameValorDiccionarioByMatricula(Class<T> clase, String valor) {
+	  if (Checks.esNulo(valor)) {
+	   return null;
+	  }
+	  Filter f1 = genericDao.createFilter(FilterType.EQUALS, "matricula", valor);
+	  Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+	  return genericDao.get(clase, f1, f2);
+	 }
 
 }

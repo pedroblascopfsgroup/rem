@@ -131,8 +131,9 @@ BEGIN
 						DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA_GDE||'.'||V_COL_DD_TRG||'... YA existe.');
 					END IF;  
 		
-		ELSE
-		DBMS_OUTPUT.PUT_LINE(' [INFO] '''||V_TABLA_REF_TRG||'''... No existe.');
+	ELSE
+	DBMS_OUTPUT.PUT_LINE(' [INFO] '''||V_TABLA_REF_TRG||'''... No existe.');
+	END IF;
 		
   ELSE
       DBMS_OUTPUT.PUT_LINE(' [INFO] '''||V_TABLA_GDE||'''... No existe.');  

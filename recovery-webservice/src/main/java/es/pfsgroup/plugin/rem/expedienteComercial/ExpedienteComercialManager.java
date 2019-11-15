@@ -5897,12 +5897,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		if (!Checks.esNulo(dto.getCodigoProveedorRem())) {
+			Date fechaHoy = new Date();
 			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
 					dto.getCodigoProveedorRem());
 			ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroProveedor);
 
 			if (Checks.esNulo(proveedor) || Checks.esNulo(proveedor.getTipoProveedor())
-					|| !proveedor.getTipoProveedor().getCodigo().equals(dto.getCodigoTipoProveedor())) {
+					|| !proveedor.getTipoProveedor().getCodigo().equals(dto.getCodigoTipoProveedor())
+					|| proveedor.getFechaBaja().before(fechaHoy)) {
 				throw new JsonViewerException(ExpedienteComercialManager.PROVEDOR_NO_EXISTE_O_DISTINTO_TIPO);
 			}
 

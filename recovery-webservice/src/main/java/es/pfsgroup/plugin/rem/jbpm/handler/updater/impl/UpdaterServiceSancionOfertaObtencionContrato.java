@@ -104,7 +104,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 			for (ActivoOferta activoOferta : listActivosOferta) {
 				ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-				if (!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+				if ((!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()))
+						|| (Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()))
 						&& activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())) {
 					Oferta oferta = expediente.getOferta();
 					OfertaGencat ofertaGencat = null;

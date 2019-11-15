@@ -95,7 +95,7 @@ public class InformeMediadorDto implements Serializable {
 	private Date fechaUltimaVisita;
 
 	@NotNull(groups = Insert.class)
-	@Diccionary(clase = DDTipoVia.class, message = "El codTpoVivienda de activo no existe", groups = { Insert.class,
+	@Diccionary(clase = DDTipoVia.class, message = "El codTpoVia de activo no existe", groups = { Insert.class,
 			Update.class })
 	@EntityDefinition(propertyName = "tipoVia", classObj = DDTipoVia.class)
 	private String codTipoVia;

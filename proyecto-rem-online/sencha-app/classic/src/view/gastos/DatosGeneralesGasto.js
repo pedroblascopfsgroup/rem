@@ -174,7 +174,18 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							            		        '{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion}',
 							            		    '</tpl>'
 							            	)
+					            	    },					            	    
+					            	    {
+											xtype: 'textfieldbase',
+											fieldLabel: HreRem.i18n('fieldlabel.estado.emisor'),											
+											name: 'estadoEmisor',
+											bind:{
+												value: '{gasto.estadoEmisor}'													
+											},
+											readOnly: true
+											
 					            	    },
+					            	    
 									 { 
 										xtype: 'comboboxfieldbase',
 						               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.destinatario'),

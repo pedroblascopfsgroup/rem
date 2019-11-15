@@ -74,6 +74,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private Boolean bloquearDestinatario;
    	private Boolean tieneGastosRefacturables;
    	private Boolean bloquearEdicionFechasRecepcion;
+   	private String estadoEmisor;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -389,5 +390,11 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setBloquearEdicionFechasRecepcion(Boolean bloquearEdicionFechasRecepcion) {
 		this.bloquearEdicionFechasRecepcion = bloquearEdicionFechasRecepcion;
+	}
+	public String getEstadoEmisor() {
+		return estadoEmisor;
+	}
+	public void setEstadoEmisor(String estadoEmisor) {
+		this.estadoEmisor = estadoEmisor;
 	}
 }

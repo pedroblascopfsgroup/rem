@@ -3190,15 +3190,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					long diffInMillies = 0;
 					int diff = 0;
 
-					if (!Checks.esNulo(adjuntoAux)) {
+					// Si no existe ningun adjunto de tipo ocupacionDesocupacion o si lo hay y tiene una fecha superior a los 30 dias se ha de mostrar el disclaimer
+					if (Checks.esNulo(adjuntoAux) || adjuntoAux.getFechaDocumento()==null) {
+						tieneAdjunto = true;
+					} else {
 						diffInMillies = Math.abs(System.currentTimeMillis() - adjuntoAux.getFechaDocumento().getTime());
 					    diff = (int)TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+						tieneAdjunto = diff >= 30;
 					}
-
-					// Si no existe ningun adjunto de tipo ocupacionDesocupacion o si lo hay y tiene una fecha superior a los 30 dias se ha de mostrar el disclaimer
-					if (Checks.esNulo(adjuntoAux)) {
-						tieneAdjunto = true;
-					} else tieneAdjunto = diff >= 30;
 
 				}
 				else

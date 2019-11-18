@@ -2829,8 +2829,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(dto, "codigoResponsableSubsanar", activo.getResponsableSubsanar().getCodigo());
 				}
 				beanUtilNotNull.copyProperty(dto, "fechaSubsanacion", activo.getFechaSubsanacion());
-				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());				
-				existeCalificacionNegativa(getHistoricoTramitacionTitulo(idActivo), dto);
+				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());	
+				
+				
+				HistoricoTramitacionCalificacionNegativa histCalNeg = genericDao.get(HistoricoTramitacionCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "activoCalificacionNegativa.id",  activo.getId()));
+
+				if(!Checks.esNulo(histCalNeg) && !Checks.esNulo(histCalNeg.getHistoricoTramitacionTitulo())) {
+					dto.setFechaCalificacionNegativa(histCalNeg.getHistoricoTramitacionTitulo().getFechaCalificacion());
+					dto.setFechaPresentacionRegistroCN(histCalNeg.getHistoricoTramitacionTitulo().getFechaPresentacionRegistro());
+				}
+				//existeCalificacionNegativa(getHistoricoTramitacionTitulo(idActivo), dto);
 				
 				activoCNListDto.add(dto);
 			}
@@ -5805,6 +5813,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				genericDao.save(ActivoCalificacionNegativa.class, activoCalificacionNegativa);
 				
+				if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTitulo())){
+					HistoricoTramitacionCalificacionNegativa historicoTramitacionCalificacionNegativa = new HistoricoTramitacionCalificacionNegativa();
+					historicoTramitacionCalificacionNegativa.setActivoCalificacionNegativa(activoCalificacionNegativa);
+				
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "titulo.id", activo.getTitulo().getId());
+					List<HistoricoTramitacionTitulo> historicoTramitacionTituloList = genericDao.getList(HistoricoTramitacionTitulo.class, filter);
+					Long idMasAlta = 0L;
+					int posicionIDmasAlta = 0;
+					
+					for (int i = 0; i < historicoTramitacionTituloList.size(); i++) {
+						
+						if(idMasAlta < historicoTramitacionTituloList.get(i).getId()) {
+							idMasAlta = historicoTramitacionTituloList.get(i).getId();
+							posicionIDmasAlta = i;
+						}					
+					}
+					HistoricoTramitacionTitulo historicoTramitacionTitulo = historicoTramitacionTituloList.get(posicionIDmasAlta);
+					historicoTramitacionCalificacionNegativa.setHistoricoTramitacionTitulo(historicoTramitacionTitulo);
+					
+					genericDao.save(HistoricoTramitacionCalificacionNegativa.class, historicoTramitacionCalificacionNegativa);
+				}
 				
 				return true;
 			}
@@ -6553,6 +6582,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			dto.setCodigoResponsableSubsanar(actCalNeg.getResponsableSubsanar().getCodigo());
 			dto.setResponsableSubsanar(actCalNeg.getResponsableSubsanar().getDescripcion());
 			dto.setCodigoMotivoCalificacionNegativa(actCalNeg.getMotivoCalificacionNegativa().getCodigo());
+			
 		}
 		return dto;
 	}

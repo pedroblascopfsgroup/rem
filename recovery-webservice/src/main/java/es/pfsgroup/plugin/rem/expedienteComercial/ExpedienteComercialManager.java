@@ -10085,27 +10085,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial){
-		TareaNotificacion tarNot = new TareaNotificacion();
-		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajo(expedienteComercial.getTrabajo().getId());
-		if (!Checks.esNulo(tramite)){
+	public void finalizarTareaValidacionClientes(ExpedienteComercial expedienteComercial) {
+		TareaNotificacion tarNot = null;
+		ActivoTramite tramite = tramiteDao
+				.getTramiteComercialVigenteByTrabajo(expedienteComercial.getTrabajo().getId());
+		if (!Checks.esNulo(tramite)) {
 			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
-			for (TareaExterna tarea : tareasActivas){
-				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
-					tarNot = tarea.getTareaPadre();
-					if (!Checks.esNulo(tarNot)){
-						tarNot.setFechaFin(new Date());
+			if (tareasActivas != null && !tareasActivas.isEmpty()) {
+				for (TareaExterna tarea : tareasActivas) {
+					if (tarea.getTareaProcedimiento().getCodigo()
+							.equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)) {
+						tarNot = tarea.getTareaPadre();
+						if (!Checks.esNulo(tarNot)) {
+							tarNot.setFechaFin(new Date());
 
-						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-						if (!Checks.esNulo(usuarioLogado)){
-							tarNot.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
-							tarNot.getAuditoria().setFechaBorrar(new Date());
-							tarNot.getAuditoria().setBorrado(true);
+							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+							if (!Checks.esNulo(usuarioLogado)) {
+								tarNot.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+								tarNot.getAuditoria().setFechaBorrar(new Date());
+								tarNot.getAuditoria().setBorrado(true);
 
-							genericDao.update(TareaNotificacion.class, tarNot);
+								genericDao.update(TareaNotificacion.class, tarNot);
+							}
 						}
-					}
 
+					}
 				}
 			}
 			genericaRestDaoImp.doFlush();

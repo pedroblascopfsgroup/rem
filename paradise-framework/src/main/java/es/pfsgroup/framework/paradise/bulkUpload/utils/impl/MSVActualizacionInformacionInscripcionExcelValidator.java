@@ -303,6 +303,8 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 					if (!valorOK && COL_TIPO_ADJ != columna) {
 						errList.add(fila);
 						esCorrecto = false;
+					} else if (!valorOK && COL_TIPO_ADJ == columna) {
+						esCorrecto = false;
 					}
 
 				}

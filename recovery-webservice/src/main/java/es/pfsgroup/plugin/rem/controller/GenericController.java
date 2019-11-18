@@ -33,26 +33,15 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
@@ -75,26 +64,11 @@ public class GenericController extends ParadiseJsonController{
 	private LogTrustAcceso trustMe;
 	
 	@Autowired
-	private GenericABMDao genericDao;
-	
-	@Autowired
 	private RestApi restApi;
 	
 	
 	@Resource
 	Properties appProperties;
-	
-	@Autowired
-	private ActivoAdapter adapterActivo;
-
-	@Autowired
-	private TrabajoApi trabajoApi;
-
-	@Autowired
-	private ExpedienteComercialAdapter expedienteComercialAdapter;
-	
-	@Autowired
-	private GastoProveedorApi gastoProveedorApi;
 	
 	@Autowired
 	private UploadApi uploadApi;
@@ -105,8 +79,6 @@ public class GenericController extends ParadiseJsonController{
 	
 	private static final String DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO = "activo";
 	private final Log logger = LogFactory.getLog(getClass());
-
-	private static final String DICCIONARIO_TIPO_DOCUMENTO_TRIBUTO = "tiposDocumentoTributo";
 
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -259,7 +231,7 @@ public class GenericController extends ParadiseJsonController{
 		
 		List<DtoMenuItem> menuItemsPerm = genericApi.getMenuItems(tipo);			
 		
-		if (menuItemsPerm != null && menuItemsPerm.size()>0) {
+		if (menuItemsPerm != null && !menuItemsPerm.isEmpty()) {
 			//Devolvemos las opciones de menu permitidas.
 			map.put("data",menuItemsPerm);
 			map.put("success", true);
@@ -585,9 +557,14 @@ public class GenericController extends ParadiseJsonController{
 					file = new java.io.File(rutaFichero+documentoDto.getNombreDocumento()); 
 					file.createNewFile(); 
 					FileOutputStream fop = new FileOutputStream(file); 
-					fop.write(fichero); 
-					fop.flush(); 
-					fop.close(); 
+					try {
+						fop.write(fichero); 
+						fop.flush(); 
+					}finally {
+						fop.close(); 
+					}
+					
+					
 					fileItem = new FileItem(file);
 					fileItem.setFileName(documentoDto.getNombreDocumento());
 					fileItem.setLength(fichero.length);

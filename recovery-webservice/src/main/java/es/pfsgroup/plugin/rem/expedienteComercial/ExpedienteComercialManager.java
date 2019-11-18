@@ -1834,6 +1834,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setIdGestorComercialPrescriptor(0l);
 			}
 		}
+		
+		if(!Checks.esNulo(oferta.getOfertaSingular())) {
+			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
+		}
 
 		return dto;
 	}

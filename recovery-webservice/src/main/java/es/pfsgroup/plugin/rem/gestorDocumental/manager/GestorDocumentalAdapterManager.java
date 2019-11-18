@@ -970,7 +970,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
 	public String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
 		if(Checks.esNulo(subcartera)) {
 			return "";

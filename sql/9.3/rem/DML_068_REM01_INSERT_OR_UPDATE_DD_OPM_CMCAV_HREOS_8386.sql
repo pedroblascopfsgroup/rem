@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	     T_FUNCION('CMCAV', 'Carga Masiva Cambio API', 'Carga Masiva Fases de Publicación','CARGA_CAMBIO_API','*n,*n')
+	     T_FUNCION('CMCAV', 'Carga Masiva Cambio API', 'Carga Masiva Fases de Publicación','CARGA_CAMBIO_API','n*,n*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     

@@ -2,7 +2,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevoDocumentoAgrupacion', {
     extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'anyadirNuevoDocumentoAgrupacion',
     layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() / 4.5,    
+    width	: Ext.Element.getViewportWidth() / 3,    
     controller: 'agrupaciondetalle',
     viewModel: {
         type: 'agrupaciondetalle'
@@ -34,10 +34,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevoDocumentoAgrupacion', {
 				cls	: 'panel-base shadow-panel',
 				url: $AC.getRemoteUrl(me.entidad + "/upload"),
 				reference: 'adjuntarDocumentoAgrupacion',
-				defaultType: 'textfieldbase',
 				collapsed: false,
 				scrollable	: 'y',
-				cls:'',	    				
+				layout: {
+	   			 			type: 'vbox'
+	   			 		},
+				cls:'formbase_no_shadow',	    				
             	items: [
             		{
 
@@ -47,6 +49,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevoDocumentoAgrupacion', {
 				        name: 'fileUpload',
 				        allowBlank: false,
 				        msgTarget: 'side',
+				        anchor: '100%',
 				        width: 		'100%',
 				        buttonConfig: {
 				        	iconCls: 'ico-search-white',

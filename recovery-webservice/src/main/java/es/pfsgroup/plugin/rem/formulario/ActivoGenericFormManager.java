@@ -761,7 +761,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					Filter filtroComiteSancionadorBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
             					DDComiteSancion comiteSancionador= genericDao.get(DDComiteSancion.class, filtroComiteSancionador, filtroComiteSancionadorBorrado);
             					if(!Checks.esNulo(comiteSancionador)) {
-            						item.setValue(comiteSancionador.getDescripcion());
+            						if(item.getNombre().equals("comiteSancionador")) {
+            							item.setValue(comiteSancionador.getCodigo());
+            						}else {
+            							item.setValue(comiteSancionador.getDescripcion());
+            						}
             					}
             				}
             			}

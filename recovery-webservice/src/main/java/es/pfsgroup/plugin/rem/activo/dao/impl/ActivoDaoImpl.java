@@ -223,7 +223,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "perac.aplicaGestion", dto.getPerimetroGestion());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.flagRating", dto.getRatingCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conCargas", dto.getConCargas());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
+		if(!Checks.esNulo(dto.getUsuarioGestor())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ga.tipoGestor.codigo", dto.getTipoGestorCodigo());	
+		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat",
 				dto.getEstadoComunicacionGencatCodigo());
 		
@@ -1321,6 +1324,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ActivoAgrupacion getAgrupacionPAByIdActivo(Long idActivo) {
 
@@ -1335,6 +1339,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override 
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo) {
 
@@ -1349,6 +1354,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override 
 	public ActivoAgrupacion getAgrupacionPAByIdActivoConFechaBaja(Long idActivo) {
 
@@ -1668,15 +1674,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		String select = "select vplusvalia ";
 		String from = "from VPlusvalia vplusvalia";
 
-		String where = "";
-		boolean hasWhere = false;
 		HQLBuilder hb = null;
 
-		hb = new HQLBuilder(select + from + where);
-		if (hasWhere) {
-			hb.setHasWhere(true);
-		}
-
+		hb = new HQLBuilder(select + from);
+		
 		if (!Checks.esNulo(dtoPlusvaliaFilter.getNumActivo())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vplusvalia.activo", dtoPlusvaliaFilter.getNumActivo());
 		}

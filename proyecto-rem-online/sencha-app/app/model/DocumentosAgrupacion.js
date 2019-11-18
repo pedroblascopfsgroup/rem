@@ -17,16 +17,16 @@ Ext.define('HreRem.model.DocumentosAgrupacion', {
     			name:'nombreDocumento'
     		},
     		{
-    			name:'tipoDocumento'
+    			name:'descripcionTipo'
     		},
     		{
     			name:'descripcion'
     		},
     		{
-    			name:'tamanoDocumento'
+    			name:'tamanyo'
     		},
     		{
-    			name:'fechaSubida',
+    			name:'fechaDocumento',
     			type:'date',
     			dateFormat: 'c'
     		},

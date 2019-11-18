@@ -507,7 +507,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	    //readOnly: $AU.userTipoGestor()=="GIAFORM"
 						            	},
 										reference: 'tipoGestor',
-										name: 'tipoGestor',
+										name: 'tipoGestorCodigo',
 			        					chainedStore: 'comboUsuarios',
 										chainedReference: 'usuarioGestor',
 						            	displayField: 'descripcion',

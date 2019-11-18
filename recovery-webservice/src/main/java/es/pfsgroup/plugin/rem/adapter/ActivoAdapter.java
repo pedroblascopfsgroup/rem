@@ -1191,7 +1191,7 @@ public class ActivoAdapter {
 				BeanUtils.copyProperty(dto, "idContratoAntiguo", activoActual.getIdContratoAntiguo());
 				
 				Activo activoVista = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActivo()));
-				dto.setEsDivarian(Checks.esNulo(activoVista)? null: activoVista.getSubcartera().equals(DDSubcartera.CODIGO_DIVARIAN));
+				dto.setEsDivarian(Checks.esNulo(activoVista)? null: Checks.esNulo(activoVista.getSubcartera()) ? null : activoVista.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN));
 				
 				page = actPatrimonioDao.getActivosRelacionados(dto);
 				lista = new ArrayList<DtoActivoVistaPatrimonioContrato>();
@@ -3608,7 +3608,7 @@ public class ActivoAdapter {
 					for (ActivoTrabajo activoTrabajo : listaTrabajos) {
 						//System.out.println(activoTrabajo.getTrabajo().getNumTrabajo());
 						Usuario usuResponsable = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
-						String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
+						String estadoTrabajo = Checks.esNulo(activoTrabajo.getTrabajo().getEstado()) ? null : activoTrabajo.getTrabajo().getEstado().getCodigo();
 						Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo,
 								GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 						if (DDEstadoTrabajo.ESTADO_SOLICITADO.equals(estadoTrabajo)

@@ -41,9 +41,9 @@ Ext.define('HreRem.model.AdjuntoActivoAgrupacion', {
     			name:'tamanyo'
     		},
     		{
-    			name:'fechaDocumento',
-    			type:'date',
-    			dateFormat: 'c'
+    			name:'fechaDocumento'
+    			//type:'date',
+    			//dateFormat: 'c'
     		}     
     ],
     

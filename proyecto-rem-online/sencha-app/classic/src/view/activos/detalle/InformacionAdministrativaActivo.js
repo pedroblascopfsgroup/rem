@@ -97,7 +97,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 					                { 
 					                	xtype: 'datefieldbase',     
 								 		fieldLabel: HreRem.i18n('fieldlabel.vigencia'), // Vigencia (NUEVO CAMPO)
-								 		bind: '{infoAdministrativa.vigencia}'
+								 		bind: '{infoAdministrativa.vigencia}',
+								 		maxValue : null
 									}
 		
 								]

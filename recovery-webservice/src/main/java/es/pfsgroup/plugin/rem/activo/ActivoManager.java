@@ -107,7 +107,6 @@ import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -363,9 +362,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private ActivoCargasDao activoCargasDao;
 
-	@Autowired
-	private UtilDiccionarioApi diccionarioApi;
-	
+		
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
 
@@ -1176,28 +1173,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
-		//if (!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-			crearGastosExpediente(oferta, nuevoExpediente);
-		//}
-
-//		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-//				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-//				DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(oferta, crearGastosExpediente(oferta, nuevoExpediente), null);
-//				nuevoExpediente.setComiteSancion(comiteLbk);
-//				nuevoExpediente.setComitePropuesto(comiteLbk);
-//				
-//				if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
-//					Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
-//					Filter deletedFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
-//					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
-//					Oferta nuevaOfertaPrincipal = oALbk.getOfertaPrincipal();
-//					ExpedienteComercial nuevoEcoPrincipal = expedienteComercialApi.findOneByOferta(nuevaOfertaPrincipal);
-//					DDComiteSancion comiteLbkPrincipal = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, expedienteComercialApi.getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
-//					nuevoEcoPrincipal.setComitePropuesto(comiteLbkPrincipal);
-//					genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
-//				}
-//		}
-		
+		crearGastosExpediente(oferta, nuevoExpediente);
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
 
@@ -3263,14 +3239,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					tieneAdjunto = true;
 				}
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			} catch (GestorDocumentalException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 
 
@@ -3699,7 +3672,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								Thread hilo = new Thread(
 										gestorDocumentalAdapterApi.crearTributo(tributo, usuarioLogado.getUsername(),
 												GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES));
-								hilo.run();
+								hilo.start();
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -7352,6 +7325,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
 		String estadoTitulo = null;
+		ActivoTitulo activoTitulo = null;
 		
 		try {
 				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
@@ -7383,6 +7357,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
 					beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
+					Long idTitulo = htt.getTitulo().getId();
+					Filter idTituloFiltro = genericDao.createFilter(FilterType.EQUALS, "id", idTitulo);
+					activoTitulo = genericDao.get(ActivoTitulo.class, idTituloFiltro);
+					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
 				if(!Checks.esNulo(tramitacionDto.getObservaciones())) {
 					beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());
@@ -7403,6 +7381,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		
+		if (!Checks.esNulo(activoTitulo)) {
+			genericDao.save(ActivoTitulo.class, activoTitulo);
+		}
 		genericDao.save(HistoricoTramitacionTitulo.class, htt);
 		return true;
 	}

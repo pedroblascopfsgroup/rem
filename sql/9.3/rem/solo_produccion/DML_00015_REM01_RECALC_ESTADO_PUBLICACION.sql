@@ -1,0 +1,167 @@
+--/*
+--#########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20191111
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-5719
+--## PRODUCTO=NO
+--## 
+--## Finalidad: RECALCULAR ESTADO PUBLICACION ACTIVOS
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+   V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-5719';
+   V_COUNT NUMBER(16):= 0;
+   HORA_INI TIMESTAMP;
+   HORA_FIN TIMESTAMP;
+   v_n INTERVAL DAY TO SECOND ;
+    
+   
+   CURSOR ESTADO_PUBLI_RECALCULAR IS 
+       SELECT ACT_ID 
+       FROM REM01.ACT_ACTIVO
+       WHERE ACT_NUM_ACTIVO IN (
+        6854209,
+	7100631,
+	7100633,
+	7101849,
+	7101880,
+	7224250,
+	7074816,
+	7074837,
+	156075,
+	145431,
+	66346,
+	194295,
+	166909,
+	142703,
+	164761,
+	154686,
+	7016504,
+	6973211,
+	6971349,
+	6886231,
+	180323,
+	129630,
+	6837034,
+	6083257,
+	6040779,
+	6033843,
+	6039131,
+	6030523,
+	6031373,
+	6040769,
+	6039085,
+	6035090,
+	108901,
+	6040387,
+	6043227,
+	6829889,
+	89881,
+	91374,
+	99843,
+	91178,
+	90196,
+	91369,
+	91063,
+	175122,
+	168714,
+	89919,
+	87341,
+	6345727,
+	158901,
+	6850637,
+	7072595,
+	7072589,
+	7071761,
+	6869392,
+	6885481,
+	6885493,
+	6874412,
+	6867341,
+	7008743,
+	6876458,
+	6877166,
+	6854784,
+	6873509,
+	6868786,
+	6875510,
+	6876410,
+	6850266,
+	6850887,
+	6882521,
+	6837565,
+	6871206,
+	6973702,
+	6883200,
+	6883565,
+	6883564,
+	6884523,
+	6884326,
+	6883199,
+	6883087,
+	6883874,
+	6884522,
+	6884806,
+	132877,
+	6857934,
+	6879527
+       );
+
+   FILA ESTADO_PUBLI_RECALCULAR%ROWTYPE;
+  
+BEGIN
+   HORA_INI := SYSTIMESTAMP;
+   DBMS_OUTPUT.put_line('[INICIO] Ejecutando actualizacion estados publicacion ...........'||HORA_INI||' ');
+
+     
+   OPEN ESTADO_PUBLI_RECALCULAR;
+   
+   V_COUNT := 0;
+   
+   LOOP
+       FETCH ESTADO_PUBLI_RECALCULAR INTO FILA;
+       EXIT WHEN ESTADO_PUBLI_RECALCULAR%NOTFOUND;
+       
+       REM01.SP_CAMBIO_ESTADO_PUBLICACION (FILA.ACT_ID, 1, ''||V_USUARIOMODIFICAR||'');
+           
+       V_COUNT := V_COUNT + 1;
+   END LOOP;
+    
+   DBMS_OUTPUT.PUT_LINE(' [INFO] Se han RECALCULADO '||V_COUNT||' ESTADOS DE PUBLICACION ');
+   CLOSE ESTADO_PUBLI_RECALCULAR;
+
+   HORA_FIN := SYSTIMESTAMP;
+   v_n := HORA_FIN - HORA_INI;
+   DBMS_OUTPUT.PUT_LINE('[FIN] Duración la ejecución................'||EXTRACT( SECOND FROM v_n)||' segundos ');
+    
+   COMMIT;
+
+EXCEPTION
+   WHEN OTHERS THEN
+        ERR_NUM := SQLCODE;
+        ERR_MSG := SQLERRM;
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+        DBMS_OUTPUT.put_line(ERR_MSG);
+        ROLLBACK;
+        RAISE;   
+END;
+/
+EXIT;

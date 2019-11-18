@@ -113,7 +113,9 @@ public class DtoActivoFilter extends WebDto {
 	  No se puede utilizar el tipoComercializacionCodigo que hay definido más arriba porque es el que utiliza el filtro para buscar.*/
 	private String  tipoComercializacionCodigoAuxiliar;
 	private Long precioTasacionActivo;
-	private String estadoPublicacionActivoListadoCodigo;
+	private String estadoPublicacionVenta;
+	private String estadoPublicacionAlquiler;
+	private String tipoGestorCodigo;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -679,11 +681,17 @@ public class DtoActivoFilter extends WebDto {
 	public void setPrecioTasacionActivo(Long precioTasacionActivo) {
 		this.precioTasacionActivo = precioTasacionActivo;
 	}
-	public String getEstadoPublicacionActivoListadoCodigo() {
-		return estadoPublicacionActivoListadoCodigo;
+	public String getEstadoPublicacionVenta() {
+		return estadoPublicacionVenta;
 	}
-	public void setEstadoPublicacionActivoListadoCodigo(String estadoPublicacionActivoListadoCodigo) {
-		this.estadoPublicacionActivoListadoCodigo = estadoPublicacionActivoListadoCodigo;
+	public void setEstadoPublicacionVenta(String estadoPublicacionVenta) {
+		this.estadoPublicacionVenta = estadoPublicacionVenta;
+	}
+	public String getEstadoPublicacionAlquiler() {
+		return estadoPublicacionAlquiler;
+	}
+	public void setEstadoPublicacionAlquiler(String estadoPublicacionAlquiler) {
+		this.estadoPublicacionAlquiler = estadoPublicacionAlquiler;
 	}
 	public String getFasePublicacionCodigo() {
 		return fasePublicacionCodigo;
@@ -714,5 +722,11 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
 		this.gestoriaFormalizacion = gestoriaFormalizacion;
+	}
+	public String getTipoGestorCodigo() {
+		return tipoGestorCodigo;
+	}
+	public void setTipoGestorCodigo(String tipoGestorCodigo) {
+		this.tipoGestorCodigo = tipoGestorCodigo;
 	}
 }

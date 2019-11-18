@@ -23,11 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -36,6 +31,9 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -50,7 +48,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
-import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 
 
 @Component
@@ -166,9 +163,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				fileOutStream.close();
 				
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 
@@ -190,8 +187,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis);
 			
 			boolean primero = true; 
-			int currentIndex = 2;
-			////// 𝕺𝕶
 			
 			XSSFSheet mySheet;
 			CellReference cellReference;
@@ -212,7 +207,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					mySheet = myWorkBook.cloneSheet(1);
 					myWorkBook.setSheetName(myWorkBook.getSheetIndex(mySheet), dtoPAB.getNumActivoUvem().toString());
-					++currentIndex;
 				}
 				
 				cellReference = new CellReference("B4");
@@ -870,7 +864,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesSoloAbajo.setWrapText(true);
 			
 			//BORDES ABAJO DERECHA
-			XSSFCellStyle styleBordesAbajoDerecha= myWorkBook.createCellStyle();	
 			styleBordesArribaAbajoIzquierda.setBorderBottom(XSSFCellStyle.BORDER_THIN);
 			styleBordesSoloDerecha.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			styleBordesSoloDerecha.setWrapText(true);
@@ -905,7 +898,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			c = r.getCell(cellReference.getCol());
 			c.setCellValue(format.format(new Date()));
 			
-			Boolean promotoriaManzanaEsPrimera = true;
 			int currentRow = 6;
 			int iniciobucle = currentRow;
 			for (int i = 0; i < listaAN.size(); i++) {
@@ -920,7 +912,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						r.createCell(j);
 						c = r.getCell(j);
 						if(j==1) {
-							promotoriaManzanaEsPrimera = false;
 							c.setCellValue("PROMONTORIA \n MANZANA");
 							c.setCellStyle(styleBordesCompletos);
 						}else
@@ -1102,7 +1093,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 
 			Long aumulacionSuperficie = 0L;
 			Double acumulacionAskingPrice = (double) 0;
-			Long acumulacionRentaMensual = 0L;
 			Boolean total = false;
 			for (int i = 0; i <= listaAN.size(); i++) {
 				mySheet.createRow(currentRow);

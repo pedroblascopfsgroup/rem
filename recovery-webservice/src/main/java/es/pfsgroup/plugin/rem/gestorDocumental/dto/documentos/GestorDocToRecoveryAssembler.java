@@ -268,7 +268,7 @@ public class GestorDocToRecoveryAssembler {
 		throw new IllegalArgumentException("Invalid input for date. Given '"+strDate+"', expecting format yyyy-MM-dd'T'HH:mm:ss or dd/MM/yyyy.");
 	}
 
-	public static List<DtoAdjuntoAgrupacion> getListDtoAdjuntoAgrupacion(RespuestaDocumentosExpedientes documentosExp, Long idAgrupacion) {
+	public static List<DtoAdjuntoAgrupacion> getListDtoAdjuntoAgrupacion(RespuestaDocumentosExpedientes documentosExp, Long idAgrupacion) throws ParseException {
 
 		List<DtoAdjuntoAgrupacion> list = new ArrayList<DtoAdjuntoAgrupacion>();
 		
@@ -280,17 +280,13 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setIdAgrupacion(idAgrupacion);
 				dtoAdj.setnombre(idnDoc.getNombreNodo());
 				dtoAdj.setCodigoTipo(idnDoc.getTdn1() + "-" + idnDoc.getTdn2());
-				dtoAdj.setDescripcionTipo("");
-				dtoAdj.setContentType(null);
-				dtoAdj.setTamanyo(null);
+				dtoAdj.setFechaDocumento((idnDoc.getCreatedate()).substring(0,10));
+				dtoAdj.setDescripcionTipo(idnDoc.getDescripcionDocumento());
+				dtoAdj.setContentType(idnDoc.getContentType());
+				dtoAdj.setTamanyo(idnDoc.getFileSize());
 				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
 				dtoAdj.setMatricula(idnDoc.getTipoExpediente() +"-"+idnDoc.getSerieDocumental()+"-"+idnDoc.getTdn1()+"-"+idnDoc.getTdn2());
-						        
-				Date fechaDocumento = null;
-				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
-					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
-				    }
-				dtoAdj.setFechaDocumento(fechaDocumento);
+						       
 				dtoAdj.setFileSize(idnDoc.getFileSize());
 
 				

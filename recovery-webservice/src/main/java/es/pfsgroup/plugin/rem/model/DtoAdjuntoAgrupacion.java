@@ -19,9 +19,9 @@ public class DtoAdjuntoAgrupacion implements Serializable {
 
 	private String descripcion;
 	
-	private Long tamanyo;
+	private String tamanyo;
 	
-	private Date fechaDocumento;
+	private String fechaDocumento;
 	
 	private String contentType;
 
@@ -69,19 +69,19 @@ public class DtoAdjuntoAgrupacion implements Serializable {
 		this.descripcion = descripcion;
 	}
 
-	public Long getTamanyo() {
+	public String getTamanyo() {
 		return tamanyo;
 	}
 
-	public void setTamanyo(Long tamanyo) {
+	public void setTamanyo(String tamanyo) {
 		this.tamanyo = tamanyo;
 	}
 
-	public Date getFechaDocumento() {
+	public String getFechaDocumento() {
 		return fechaDocumento;
 	}
 
-	public void setFechaDocumento(Date fechaDocumento) {
+	public void setFechaDocumento(String fechaDocumento) {
 		this.fechaDocumento = fechaDocumento;
 	}
 

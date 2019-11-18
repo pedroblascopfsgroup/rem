@@ -124,7 +124,7 @@ public class ActivoAdjuntoAgrupacionManager  implements ActivoAdjuntosAgrupacion
 				BeanUtils.copyProperty(dto, "idDoc", adjunto.getAdjunto().getId());
 				BeanUtils.copyProperty(dto, "codTipoDocumento", adjunto.getTipoDocumentoAgrupacion().getCodigo());
 				BeanUtils.copyProperty(dto, "descripcionTipo", adjunto.getTipoDocumentoAgrupacion().getDescripcionLarga());
-				BeanUtils.copyProperty(dto, "fechaSubida", adjunto.getAuditoria().getFechaCrear());
+				BeanUtils.copyProperty(dto, "fechaDocumento", adjunto.getAuditoria().getFechaCrear());
 				listaAdjuntosPromocion.add(dto);
 			}
 

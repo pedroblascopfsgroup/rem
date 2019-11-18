@@ -141,8 +141,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			pageSize: $AC.getDefaultPageSize(),
 				 model: 'HreRem.model.ActivoTrabajo',
 				 proxy: {
-				    type: 'uxproxy',
-					remoteUrl: 'trabajo/getListActivos',
+				    type: 'uxproxy', 
+				    remApi: true,
+					remoteUrl: 'trabajo/list/activos',
+					rootProperty: 'content',
 					extraParams: {idTrabajo: '{trabajo.id}'},
 					timeout: 120000
 				 }

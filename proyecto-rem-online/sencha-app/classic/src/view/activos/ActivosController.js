@@ -92,6 +92,8 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		var me = this;
 		var comboApiPrimario = btn.up('form').getForm().findField("apiPrimarioId");
 		comboApiPrimario.getStore().removeAll();
+		comboApiPrimario.getStore().clearFilter();
+		comboApiPrimario.getStore().load();
 		btn.up('form').getForm().reset();				
 	},
 	

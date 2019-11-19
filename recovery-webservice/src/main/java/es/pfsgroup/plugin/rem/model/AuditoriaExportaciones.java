@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import org.hibernate.annotations.Where;
@@ -24,7 +25,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 public class AuditoriaExportaciones implements Serializable, Auditable {
 
 	/**
-	 * Modelo que gestiona las exportaciones de auditoria
+	 * Modelo que audita las exportaciones
 	 * 
 	 * @author juan.torrella@pfsgroup.es
 	 * 
@@ -33,7 +34,8 @@ public class AuditoriaExportaciones implements Serializable, Auditable {
 
 	@Id
     @Column(name = "AEX_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "AuditoriaExportacionesGenerator")
+	@SequenceGenerator(name = "AuditoriaExportacionesGenerator", sequenceName = "S_AEX_AUDITORIA_EXPORTACIONES")
     private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

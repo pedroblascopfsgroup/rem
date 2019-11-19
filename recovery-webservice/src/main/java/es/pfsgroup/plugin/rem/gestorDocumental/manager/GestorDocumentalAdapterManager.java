@@ -67,7 +67,6 @@ import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
@@ -758,13 +757,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 //------------------------------------------------------------ FIN JUNTA ----------------------------------------------------------------
 	
 
-	public Integer crearExpedienteComercialTransactional(Long idEco, String username) throws GestorDocumentalException {
+	public Integer crearExpedienteComercialTransactional(ExpedienteComercial eco, String username) throws GestorDocumentalException {
 		Integer resultado = null;
 		TransactionStatus transaction = null;
 
 		try{
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			ExpedienteComercial eco = expedienteComercialApi.findOne(idEco);
 			resultado = this.crearExpedienteComercial(eco, username);
 			transactionManager.commit(transaction);
 

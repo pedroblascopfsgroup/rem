@@ -8,13 +8,11 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedient
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
-import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
@@ -60,7 +58,7 @@ public interface GestorDocumentalAdapterApi {
 	
 	Integer crearJunta(ActivoJuntaPropietarios activoJunta, String username) throws GestorDocumentalException;
 	
-	Integer crearExpedienteComercialTransactional(Long idEco, String username) throws GestorDocumentalException;
+	Integer crearExpedienteComercialTransactional(ExpedienteComercial idEco, String username) throws GestorDocumentalException;
 	
 	void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException ;
 	

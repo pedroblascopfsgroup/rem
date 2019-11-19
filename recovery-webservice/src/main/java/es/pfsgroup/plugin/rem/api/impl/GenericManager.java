@@ -243,16 +243,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		try {
 			scan = new Scanner(menuItemsJsonFile);
 			scan.useDelimiter("#");
+			
+			// Lo convertimos en un object y posteriormente en un jsonobject para
+			// iterar sobre los elementos de menu y comprobar
+			// si el usuario tiene permisos para esa opción.
+			obj = jsonParser.parse(scan.next());
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage(),e);
 		}finally {
 			scan.close();
 		}
-
-		// Lo convertimos en un object y posteriormente en un jsonobject para
-		// iterar sobre los elementos de menu y comprobar
-		// si el usuario tiene permisos para esa opción.
-		obj = jsonParser.parse(scan.next());
 
 		JSONObject jsonObject = JSONObject.fromObject(obj);
 		JSONArray menuItems = (JSONArray) jsonObject.get("data");

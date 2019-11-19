@@ -88,7 +88,10 @@ Ext.define('HreRem.view.activos.ActivosController', {
 	},	
 	
 	// Funcion que se ejecuta al hacer click en el botón limpiar
-	onCleanFiltersClick: function(btn) {			
+	onCleanFiltersClick: function(btn) {
+		var me = this;
+		var comboApiPrimario = btn.up('form').getForm().findField("apiPrimarioId");
+		comboApiPrimario.getStore().removeAll();
 		btn.up('form').getForm().reset();				
 	},
 	

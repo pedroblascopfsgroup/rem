@@ -66,7 +66,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
-@Component
+@Component @Transactional(readOnly = false)
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
 	
 	private static final String ERROR_ACTIVO_NO_PROC_CORREC = "Activo no procesado correctamente, intentelo de nuevo más tarde";

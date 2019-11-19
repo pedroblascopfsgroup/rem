@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20191118
+--## FECHA_CREACION=20191119
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8386
@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	     T_FUNCION('CMCAV', 'Carga Masiva Cambio API', 'Carga Masiva Fases de Publicación','CARGA_CAMBIO_API','*n,*n')
+	     T_FUNCION('CMCAV', 'Carga Masiva Cambio API', 'Carga Masiva Cambio API','CARGA_CAMBIO_API','n*,n*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     

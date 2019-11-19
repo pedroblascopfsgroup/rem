@@ -106,7 +106,10 @@ Ext.define('HreRem.model.BusquedaActivo', {
     			name: 'precioTasacionActivo'
     		},
     		{
-    			name: 'estadoPublicacionActivoListadoCodigo'
+    			name: 'estadoPublicacionVenta'
+    		},
+    		{
+    			name: 'estadoPublicacionAlquiler'
     		},
     		{
     			name: 'tipoGestorCodigo'

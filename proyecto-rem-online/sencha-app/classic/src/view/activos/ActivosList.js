@@ -274,14 +274,19 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            text: HreRem.i18n('header.fecha.publicacion'),
 		            flex: 1,
 		            renderer: function(value, cell, record) {
-		            	var estadoPublicacion = record.get("estadoPublicacionActivoListadoCodigo");
-		            	
-		            	var estadosPublicados = [CONST.ESTADOS_PUBLICACION['PUBLICADO'],
-	            						 		 CONST.ESTADOS_PUBLICACION['PUBLICADO_FORZADO'],
-	            						 		 CONST.ESTADOS_PUBLICACION['PUBLICADO_PRECIO_OCULTO'],
-	            						 		 CONST.ESTADOS_PUBLICACION['PUBLICADO_FORZADO_PRECIO_OCULTO']];	
+		            	var estadoPublicacionVenta = record.get("estadoPublicacionVenta");
+		            	var estadoPublicacionAlquiler = record.get("estadoPublicacionAlquiler");
+		            	var estadosPublicados;
+		            	if (value == CONST.TIPOS_COMERCIALIZACION['VENTA'] || value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA']) {
+		            		estadosPublicados = [CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'],
+						 		 CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO']];
+		            	} else {
+		            		estadosPublicados = [CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'],
+						 		 CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO']];
+		            	}		
 	            						 		 
-		            	if(estadosPublicados.includes(estadoPublicacion))
+		            	if(((value == CONST.TIPOS_COMERCIALIZACION['VENTA'] || value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA']) && estadosPublicados.includes(estadoPublicacionVenta)) 
+		            			|| (value == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && estadosPublicados.includes(estadoPublicacionAlquiler)))
             			{		            		
 			            	var myDate = (value == CONST.TIPOS_COMERCIALIZACION['VENTA']
 			            			|| value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
@@ -298,12 +303,16 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            text: HreRem.i18n('header.fecha.despublicacion'),
 		            flex: 1,
 		            renderer: function(value, cell, record) {
-		            	var estadoPublicacion = record.get("estadoPublicacionActivoListadoCodigo");
-		            	
-		            	var estadosPublicados = [CONST.ESTADOS_PUBLICACION['PUBLICADO_OCULTO'],
-	            						 		 CONST.ESTADOS_PUBLICACION['DESPUBLICADO']];	
-	            						 		 
-		            	if(estadosPublicados.includes(estadoPublicacion))
+		            	var estadoPublicacionVenta = record.get("estadoPublicacionVenta");
+		            	var estadoPublicacionAlquiler = record.get("estadoPublicacionAlquiler");
+		            	var estadosPublicados;
+		            	if (value == CONST.TIPOS_COMERCIALIZACION['VENTA'] || value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA']) {
+		            		estadosPublicados = [CONST.ESTADO_PUBLICACION_VENTA['OCULTO']];
+		            	} else {
+		            		estadosPublicados = [CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO']];
+		            	}
+		            	if(((value == CONST.TIPOS_COMERCIALIZACION['VENTA'] || value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA']) && estadosPublicados.includes(estadoPublicacionVenta)) 
+		            			|| (value == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && estadosPublicados.includes(estadoPublicacionAlquiler)))
             			{		            		
 			            	var myDate = (value == CONST.TIPOS_COMERCIALIZACION['VENTA']
 			            			|| value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])

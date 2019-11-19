@@ -12,6 +12,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -331,12 +332,20 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		
 		
 		Boolean puedeEditar = false;
+		Long idMasAlta = 0L;
+		int posicionIDmasAlta = 0;
 		
 		if(!Checks.esNulo(activo.getTitulo())) {
 			List <HistoricoTramitacionTitulo> tramitacionTitulo = genericDao.getList(HistoricoTramitacionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "titulo.id", activo.getTitulo().getId()));
+			for (int i = 0; i < tramitacionTitulo.size(); i++) {
+				if(idMasAlta < tramitacionTitulo.get(i).getId()) {
+					idMasAlta = tramitacionTitulo.get(i).getId();
+					posicionIDmasAlta = i;
+				}					
+			}
 			
-			if(!Checks.estaVacio(tramitacionTitulo) && !Checks.esNulo(tramitacionTitulo.get(0).getEstadoPresentacion())
-				&& DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(tramitacionTitulo.get(0).getEstadoPresentacion().getCodigo())
+			if(!Checks.estaVacio(tramitacionTitulo) && !Checks.esNulo(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion())
+				&& DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion().getCodigo())
 				&& !Checks.esNulo(activo.getTitulo().getEstado()) && DDEstadoTitulo.ESTADO_SUBSANAR.equals(activo.getTitulo().getEstado().getCodigo())
 			) {
 				puedeEditar = true;

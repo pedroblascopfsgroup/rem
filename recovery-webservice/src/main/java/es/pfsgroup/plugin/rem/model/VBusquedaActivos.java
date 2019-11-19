@@ -301,8 +301,11 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "TAS_IMPORTE_TAS_FIN")
 	private Long precioTasacionActivo; 
 		
-	@Column(name = "DD_EPU_CODIGO")
-	private String estadoPublicacionActivoListadoCodigo; 
+	@Column(name = "ESTADO_PUBLICACION_VENTA")
+	private String estadoPublicacionVenta;
+	
+	@Column(name = "ESTADO_PUBLICACION_ALQUILER")
+	private String estadoPublicacionAlquiler;
 	
 	
 	public Long getId() {
@@ -723,12 +726,20 @@ public class VBusquedaActivos implements Serializable {
 		this.precioTasacionActivo = precioTasacionActivo;
 	}
 
-	public String getEstadoPublicacionActivoListadoCodigo() {
-		return estadoPublicacionActivoListadoCodigo;
+	public String getEstadoPublicacionVenta() {
+		return estadoPublicacionVenta;
 	}
 
-	public void setEstadoPublicacionActivoListadoCodigo(String estadoPublicacionActivoListadoCodigo) {
-		this.estadoPublicacionActivoListadoCodigo = estadoPublicacionActivoListadoCodigo;
+	public void setEstadoPublicacionVenta(String estadoPublicacionVenta) {
+		this.estadoPublicacionVenta = estadoPublicacionVenta;
+	}
+
+	public String getEstadoPublicacionAlquiler() {
+		return estadoPublicacionAlquiler;
+	}
+
+	public void setEstadoPublicacionAlquiler(String estadoPublicacionAlquiler) {
+		this.estadoPublicacionAlquiler = estadoPublicacionAlquiler;
 	}
 
 	public Long getApiPrimarioId() {

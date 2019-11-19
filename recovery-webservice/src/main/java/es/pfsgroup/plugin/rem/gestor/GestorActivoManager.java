@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  
  @Component
@@ -580,4 +581,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		
 		return userTarea;
 	}
+ 	
+ 	@Override
+ 	@Transactional(readOnly = false)
+ 	public Boolean isGestorMantenimiento(Activo activo, Usuario usuario){
+ 		 
+ 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_ACTIVO);
+ 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+ 		
+ 		List<Usuario> usuariosAdmision = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+ 		return usuariosAdmision.contains(usuario);
+ 	}
+ 	
  }

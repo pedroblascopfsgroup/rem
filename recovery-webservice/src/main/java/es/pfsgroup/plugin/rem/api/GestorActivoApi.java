@@ -174,6 +174,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 * @return
 	 */
 	public Usuario usuarioTareaApple(String codigoTarea);
+
 	
 	public Usuario supervisorTareaApple(String codigoTarea);
 
@@ -187,5 +188,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public Usuario usuarioTareaDivarian(String codigoTarea);
 
 	Usuario supervisorTareaDivarian(String codigoTarea);
+
+	Boolean isGestorMantenimiento(Activo activo, Usuario usuario);
 
 }

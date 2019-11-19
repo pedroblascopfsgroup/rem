@@ -660,7 +660,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
 	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws Exception {
 		boolean resultado = true;
-		boolean enviarCorreo = false;
+		boolean mandaCorreo = false;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 		
@@ -679,21 +679,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
 			comprobarTramitarOferta(oferta, dto);
 			resultado = doAceptaOferta(oferta);
-			enviarCorreo = true;
+			mandaCorreo = true;
 		}
 
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
 		// enviamos un email/notificacion.
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 			resultado = doRechazaOferta(dto, oferta);
-			enviarCorreo = true;
+			mandaCorreo = true;
 		}
 		
 		if(!resultado){
 			resultado = this.persistOferta(oferta);
 		}
 		
-		if (enviarCorreo) {
+		if (mandaCorreo) {
 			Activo activo = activoDao.getActivoById(dto.getIdActivo());
 			if (!Checks.esNulo(activo) && !Checks.esNulo(oferta)) {
 				notificationOfertaManager.sendNotificationDND(oferta, activo);

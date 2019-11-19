@@ -10093,8 +10093,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 			if (tareasActivas != null && !tareasActivas.isEmpty()) {
 				for (TareaExterna tarea : tareasActivas) {
-					if (tarea.getTareaProcedimiento().getCodigo()
-							.equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)) {
+					if (ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES
+							.equals(tarea.getTareaProcedimiento().getCodigo())) {
 						tarNot = tarea.getTareaPadre();
 						if (!Checks.esNulo(tarNot)) {
 							tarNot.setFechaFin(new Date());

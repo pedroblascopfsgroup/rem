@@ -69,7 +69,7 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
     private List<ActivoSubdivision> subdivision;
 	
 	@Column(name = "ACT_ONV_DND")
-	private Boolean isDND;
+	private Boolean isDND =false;
 	
 	
 

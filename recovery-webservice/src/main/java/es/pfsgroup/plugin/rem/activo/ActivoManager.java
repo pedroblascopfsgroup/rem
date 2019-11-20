@@ -142,6 +142,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -4429,6 +4430,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activo.getEstaEnPuja())) {
 				beanUtilNotNull.copyProperty(dto, "puja", activo.getEstaEnPuja());
 			}
+			
+			if (!Checks.esNulo(activo.getVentaSobrePlano())){
+				if(DDSinSiNo.CODIGO_SI.equals(activo.getVentaSobrePlano().getCodigo())) {
+					beanUtilNotNull.copyProperty(dto, "ventaSobrePlano", true);
+				}else {
+					beanUtilNotNull.copyProperty(dto, "ventaSobrePlano", false);
+				}		
+				
+			}
+			
 			if (!Checks.esNulo(activo.getActivoAutorizacionTramitacionOfertas())) {
 				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
 				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
@@ -4502,6 +4513,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 			
+//			if (!Checks.esNulo(dto.getVentaSobrePlano())){
+//				
+//				if(dto.getVentaSobrePlano()) {
+//					activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI)));
+//				}else {
+//					activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO)));
+//				}
+//	
+//				
+//			}
 //			if(!Checks.esNulo(dto.getMotivoAutorizacionTramitacionCodigo())) {
 //				if(DDMotivoAutorizacionTramitacion.COD_OTROS.equals(activo.getOfertas().get(0))) {
 //					

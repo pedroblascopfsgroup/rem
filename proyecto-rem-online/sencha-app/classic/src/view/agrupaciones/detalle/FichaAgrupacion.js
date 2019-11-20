@@ -383,8 +383,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						{
 							xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.venta.sobre.plano'),
-				        	bind: {
-			            		store: '{comboSiNoRem}',
+				        	reference: 'ventaPlano',
+						
+				        	bind: {	
+				        		readOnly: '{usuarioEditarVentaPlano}',
+			            		store: '{comboSiNoBoolean}',
 			            		value: '{agrupacionficha.ventaSobrePlano}',
 			            		hidden: '{!esAgrupacionObraNueva}'
 			            	}

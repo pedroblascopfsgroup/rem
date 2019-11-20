@@ -41,7 +41,8 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'observacionesAutoTram'
 		},
 		{
-			name: 'ventaSobrePlano'
+			name: 'ventaSobrePlano',
+			type: 'boolean'
 		}
     ],
     

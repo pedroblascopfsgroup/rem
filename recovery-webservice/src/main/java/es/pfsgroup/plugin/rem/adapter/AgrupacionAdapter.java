@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
@@ -130,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -477,6 +479,16 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "estadoObraNuevaCodigo",
 								agrupacionTemp.getEstadoObraNueva().getCodigo());
 					}
+					
+					if (!Checks.esNulo(agrupacionTemp.getVentaPlano())){
+						if(DDSinSiNo.CODIGO_SI.equals(agrupacionTemp.getVentaPlano().getCodigo())) {
+							beanUtilNotNull.copyProperty(dtoAgrupacion, "ventaSobrePlano", true);
+						}else {
+							beanUtilNotNull.copyProperty(dtoAgrupacion, "ventaSobrePlano", false);
+						}		
+						
+					}
+					
 					Boolean esYubai = false;
 					if ( ((agrupacion.getActivoPrincipal() != null)  
 						&& DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(agrupacion.getActivoPrincipal().getCartera().getCodigo())
@@ -3241,6 +3253,33 @@ public class AgrupacionAdapter {
 					
 					if(!Checks.esNulo(dto.getEmpresaComercializadora())) {
 						agrupacion.setEmpresaComercializadora(dto.getEmpresaComercializadora());
+					}
+					
+					if (!Checks.esNulo(dto.getVentaSobrePlano())){
+						
+						Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+						Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+						
+						if(dto.getVentaSobrePlano()) {
+							obraNueva.setVentaPlano(genericDao.get(DDSinSiNo.class, filtroSi));
+							
+						}else {
+							obraNueva.setVentaPlano(genericDao.get(DDSinSiNo.class, filtroNo));
+						}
+						
+
+						List<ActivoAgrupacionActivo> listaActivos = obraNueva.getActivos();
+						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+							Activo activo=activoAgrupacionActivo.getActivo();
+							if(dto.getVentaSobrePlano()) {
+								activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, filtroSi));
+							}else {
+								activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, filtroNo));
+							}
+							
+							activoDao.save(activo);
+						}
+						
 					}
 					
 					activoAgrupacionApi.saveOrUpdate(obraNueva);

@@ -970,4 +970,6 @@ public interface ParticularValidatorApi {
 
 	Boolean esExpedienteVenta(String numExpediente);
 
+	Boolean esExpedienteValido(String numExpediente);
+
 }

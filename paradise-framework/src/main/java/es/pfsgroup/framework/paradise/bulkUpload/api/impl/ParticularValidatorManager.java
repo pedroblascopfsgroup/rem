@@ -4070,4 +4070,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "01".equals(resultado);
 	}
 	
+	@Override
+	public Boolean esExpedienteValido(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID NOT IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('03','06','08','11'))");
+
+		return "1".equals(resultado);
+	}
 }

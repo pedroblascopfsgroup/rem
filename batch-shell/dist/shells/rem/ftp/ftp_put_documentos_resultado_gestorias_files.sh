@@ -1,0 +1,162 @@
+echo "Inicio del proceso de volcado de los ficheros de documentos de resultado a las gestorias"
+
+cd $INSTALL_DIR/control/etl/ogf/output
+echo "Gestoria OGF - OGF_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_ogf,VCMRwacF sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/ogf/output/OGF_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/tecnotramit/output
+
+echo "Gestoria TECNOTRAMIT - TECNOTRAMIT_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_tecnotramit,XuPOjpUT sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/tecnotramit/output/TECNOTRAMIT_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/tinsa_certify/output
+
+echo "Gestoria TINSACERTIFY - TINSACERTIFY_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_tinsa,SaQbBvMf sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/tinsa_certify/output/TINSACERTIFY_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/garsa/output
+
+echo "Gestoria GARSA - GARSA_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_garsa,bMqBKpiL sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/garsa/output/GARSA_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/gutierrez_labrador/output
+
+echo "Gestoria GUTIERREZ_LABRADOR - GUTIERREZL_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_gutierrez,xWySWrwQ sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/gutierrez_labrador/output/GUTIERREZL_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/montalvo/output
+
+echo "Gestoria MONTALVO - MONTALVO_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_montalvo,ghBTFtDz sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/montalvo/output/MONTALVO_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/pinos/output
+
+echo "Gestoria PINOS - PINOS_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_pinos,leChDHxh sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/pinos/output/PINOS_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/uniges/output
+
+echo "Gestoria UNIGES - UNIGES_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_uniges,IOViuMTI sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/uniges/output/UNIGES_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/emais/output
+
+echo "Gestoria EMAIS - EMAIS_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_emais,"UZ-q4}{k" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/emais/output/EMAIS_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/f\&g/output
+
+echo "Gestoria F&G - F&G_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_fyg,"D]it&2/J" sftp://192.168.49.14 <<EOF
+cd /output/
+mput F\&G_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/gestinova/output
+
+echo "Gestoria GESTINOVA - GESTINOVA_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_gestinova,"JD3Rir('" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/gestinova/output/GESTINOVA_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/maretra/output
+
+echo "Gestoria MARETRA - MARETRA_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_maretra,"4Dmx<HEb" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/maretra/output/MARETRA_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/qipert/output
+
+echo "Gestoria QIPERT - QIPERT_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_qipert,"E4GL7~|K" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/qipert/output/QIPERT_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/mediterraneo/output
+
+echo "Gestoria MEDITERRANEO - MEDITERRANEO_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_mediterraneo,"3qP*X8iG" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/mediterraneo/output/MEDITERRANEO_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/grupoBC/output
+
+echo "Gestoria GRUPOBC - GRUPOBC_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_grupobc,"eDRvpuxN" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/grupoBC/output/GRUPOBC_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/gestinova99/output
+
+echo "Gestoria GESTINOVA99 - GESTINOVA99_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_gestinova99,"u2K#Plqv" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/gestinova99/output/GESTINOVA99_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+echo "Fin del proceso de volcado de los ficheros de documentos de resultado a las gestorias"

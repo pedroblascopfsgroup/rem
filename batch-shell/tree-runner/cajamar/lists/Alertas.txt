@@ -1,0 +1,5 @@
+apr_wait_alert.sh
+apr_load_alerts.sh
+apr_validacion_pcr.sh ALERTAS
+apr_main_alerts.sh
+apr_gen_alert_ptro.sh

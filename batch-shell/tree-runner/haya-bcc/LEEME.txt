@@ -1,0 +1,57 @@
+.....................................................................................
+         _..._                  .---.                                            
+      .-'_..._''.               |   |                                            
+    .' .'      '.\              '---'          __  __   ___                      
+   / .'                         .---.         |  |/  `.'   `.                    
+  . '                           |   |         |   .-.  .-.   '          .-,.--.  
+  | |                 __        |   |    __   |  |  |  |  |  |    __    |  .-. | 
+  | |              .:--.'.      |   | .:--.'. |  |  |  |  |  | .:--.'.  | |  | | 
+  . '             / |   \ |     |   |/ |   \ ||  |  |  |  |  |/ |   \ | | |  | | 
+   \ '.          .`" __ | |     |   |`" __ | ||  |  |  |  |  |`" __ | | | |  '-  
+    '. `._____.-'/ .'.''| |     |   | .'.''| ||__|  |__|  |__| .'.''| | | |      
+      `-.______ / / /   | |_ __.'   '/ /   | |_               / /   | |_| |      
+               `  \ \._,\ '/|      ' \ \._,\ '/               \ \._,\ '/|_|      
+                   `--'  `" |____.'   `--'  `"                 `--'  `"          
+  
+   ______  ____     ___    ___      ____  __ __  ____   ____     ___  ____  
+  |      ||    \   /  _]  /  _]    |    \|  |  ||    \ |    \   /  _]|    \ 
+  |      ||  D  ) /  [_  /  [_     |  D  )  |  ||  _  ||  _  | /  [_ |  D  )
+  |_|  |_||    / |    _]|    _]    |    /|  |  ||  |  ||  |  ||    _]|    / 
+    |  |  |    \ |   [_ |   [_     |    \|  :  ||  |  ||  |  ||   [_ |    \ 
+    |  |  |  .  \|     ||     |    |  .  \     ||  |  ||  |  ||     ||  .  \
+    |__|  |__|\_||_____||_____|    |__|\_|\__,_||__|__||__|__||_____||__|\_|
+                                                                            
+  
+.....................................................................................
+
+ El fichero principal donde se indican shells en ejecución lineal es:
+ 
+     lists/processes-list.txt
+ 
+ Y para cada rama que se ejecuta en paralelo, hay un fichero:
+ 
+     lists/Alertas.txt
+     lists/Atipicos.txt
+     lists/Bienes.txt
+     lists/Cirbe.txt
+     lists/Cobros.txt
+     lists/Direcciones.txt
+     lists/Disposiciones.txt
+     lists/Efectos.txt
+     lists/GCL.txt
+     lists/Ingresos.txt
+     lists/Recibos.txt
+     lists/Telefonos.txt
+     lists/Vencidos.txt
+ 
+ Todos los logs de salida se ubican en el directorio log.
+
+ Para ejecutar el árbol completo: 
+ 
+     nohup ./run-tree.sh > log/run-tree.log 2> log/run-tree.error &
+
+ Para ejecutar una rama en concreto: 
+ 
+     nohup ./scripts/run-parallel.sh <nombre-rama>.txt > log/rama.log 2> log/rama.error &
+
+.....................................................................................

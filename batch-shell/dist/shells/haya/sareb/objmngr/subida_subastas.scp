@@ -1,0 +1,3 @@
+﻿CONNECT SOURCE "Recovery_BI" USER "administrator" PASSWORD "";
+IMPORT PACKAGE "/mnt/fs_servicios/ops-haya/aplicaciones/ops-haya/shells/objmngr/subida_subastas.mmp" FOR PROJECT "Recovery BI (Bankia)"; 
+DISCONNECT SERVER;

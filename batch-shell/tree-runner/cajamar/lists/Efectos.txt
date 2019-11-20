@@ -1,0 +1,5 @@
+apr_wait_efectos.sh
+apr_main_efectos.sh
+apr_validacion_pcr.sh EFECTOS
+apr_main_efectos_prod.sh
+apr_gen_efect_ptro.sh

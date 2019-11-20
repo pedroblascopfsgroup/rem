@@ -1,0 +1,15 @@
+apr_pcr_precal_per
+apr_ana_man
+ExtrasContratos
+ExtrasPersonas
+Direcciones
+Ingresos
+Recibos
+Disposiciones
+Cirbe
+Telefonos
+Cobros
+Efectos_persona
+Bienes
+Efectos_contratos
+Adecuaciones

@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -19,40 +21,40 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de tipos de documentos de proveedor.
+ * Modelo que gestiona el diccionario de contenedores en el que se almacenan los documentos para el Proveedor
  * 
- * @author Daniel Gutiérrez
+ * @author Alejandro Valverde Herrera
  *
  */
 @Entity
-@Table(name = "DD_TDP_TIPO_DOC_PROVEEDOR", schema = "${entity.schema}")
+@Table(name = "DD_TCP_TIPO_CONTENEDOR_PROV", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
+public class DDTipoContenedorProveedor implements Auditable, Dictionary {
 
-	private static final long serialVersionUID = 1L;
+	public static final String CODIGO_COMUNIDADES_VECINOS = "01";
+	public static final String CODIGO_JUNTAS_COMPENSACION = "02";
 	
-	public static final String CODIGO_JUNTAS_COMPENSACION = "01";
-	public static final String CODIGO_COMUNIDADES_VECINOS = "02";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TDP_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoDocumentoProveedorGenerator")
-	@SequenceGenerator(name = "DDTipoDocumentoProveedorGenerator", sequenceName = "S_DD_TDP_TIPO_DOC_PROVEEDOR")
+	@Column(name = "DD_TCP_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoContenedorProveedorGenerator")
+	@SequenceGenerator(name = "DDTipoContenedorProveedorGenerator", sequenceName = "S_DD_TCP_TIPO_CONTENEDOR_PROV")
 	private Long id;
-	    
-	@Column(name = "DD_TDP_CODIGO")   
+	 
+	@Column(name = "DD_TCP_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TDP_DESCRIPCION")   
+	@Column(name = "DD_TCP_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TDP_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TCP_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	
-	@Column(name = "DD_TDP_MATRICULA_GD")   
-	private String matricula;	
-
+	    
 	@Version   
 	private Long version;
 
@@ -89,14 +91,6 @@ public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
-	}
-	
-	public String getMatricula() {
-		return matricula;
-	}
-
-	public void setMatricula(String matricula) {
-		this.matricula = matricula;
 	}
 
 	public Long getVersion() {

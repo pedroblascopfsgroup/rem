@@ -11,20 +11,22 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedorModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tipoDocumentoProveedor'}
+				extraParams: {diccionario: 'tipoContenedorProveedor'}
 			},
 			autoLoad: true,
     		sorters: 'descripcion'
     	},
     	
+    	//El tipo y subtipo se corresponden con contenedor y tipo ya que se cambió la forma de organizarlo internamente,
+    	// pero visualmente quiere que se siga manteniendo como tipo y subtipo. (HREOS-8415).
     	comboSubTipoDocumento: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'proveedores/getSubtipoDocProveedor',
-				extraParams: {codigoTipoDoc: '{tipo.value}'}
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoDocumentoProveedor'}
 			},
-	    	autoLoad: false,
+	    	autoLoad: true,
 	    	sorters: 'descripcion'
     	},
     	

@@ -7,6 +7,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
@@ -21,7 +22,6 @@ import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoProveedor;
 
 public interface ProveedoresApi {
 	
@@ -161,9 +161,7 @@ public interface ProveedoresApi {
 	 * @return Devuelve una lista de documentos con los resultados obtenidos.
 	 * @throws GestorDocumentalException 
 	 */
-	public Object getAdjuntos(Long id);
-	//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
-	//public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException;
+	public List<DtoAdjunto> getAdjuntos(Long id, ActivoProveedorCartera actProvCar, String username) throws GestorDocumentalException;
 
 	/**
 	 * Verificación de adjunto existente la lista de proveedores de 1 activo.
@@ -295,8 +293,6 @@ public interface ProveedoresApi {
 	 * @return Devuelve True si el usuario tiene el perfil de proveedor, False si no lo tiene.
 	 */
 	public Boolean esUsuarioConPerfilProveedor(Usuario usuario);
-
-	public List<DDSubtipoDocumentoProveedor> getSubtipoDocProveedor(String codigoTipoDoc);
 
 	List<DDCartera> getCarteraPorProveedor(Long idProveedor);
 

@@ -93,8 +93,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoContenedorProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
@@ -237,6 +239,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		List<DtoAdjunto> list = new ArrayList<DtoAdjunto>();
+		List<DtoAdjunto> listAdjuntoProveedor = new ArrayList<DtoAdjunto>();
 
 		List<ActivoProveedorCartera> listaActivoProveedoresCartera = new ArrayList<ActivoProveedorCartera>();
 		
@@ -248,15 +251,19 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		for (ActivoProveedorCartera activoProveedorCartera: listaActivoProveedoresCartera) {
 			if(!Checks.esNulo(activoProveedorCartera) && !Checks.esNulo(activoProveedorCartera.getClienteGestorDocumental())) {
-				CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-						activoProveedorCartera.getIdPersonaHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES);
+				CabeceraPeticionRestClientDto cabeceraComunidades = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+						activoProveedorCartera.getIdPersonaHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_COMUNIDAD);
+				CabeceraPeticionRestClientDto cabeceraJuntas = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+						activoProveedorCartera.getIdPersonaHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_JUNTAS);
 				
 				Usuario userLogin = genericAdapter.getUsuarioLogado();
 				DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
-				RespuestaDocumentosExpedientes respuesta = new RespuestaDocumentosExpedientes();
+				RespuestaDocumentosExpedientes respuestaComunidades = new RespuestaDocumentosExpedientes();
+				RespuestaDocumentosExpedientes respuestaJuntas = new RespuestaDocumentosExpedientes();
 				
 				try {
-					respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+					respuestaComunidades = gestorDocumentalApi.documentosExpediente(cabeceraComunidades, docExpDto);
+					respuestaJuntas = gestorDocumentalApi.documentosExpediente(cabeceraJuntas, docExpDto);
 				} catch (GestorDocumentalException gex) {
 					if (gestorDocumentalManager.ERROR_SERVER_NOT_RESPONDING.contains(gex.getMessage())) {
 						logger.error(gestorDocumentalManager.ERROR_SERVER_NOT_RESPONDING);
@@ -266,8 +273,23 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 					throw gex;
 				}
 	
-				if(!Checks.esNulo(respuesta) && !(Checks.esNulo(respuesta.getCodigoError()) && Checks.esNulo(respuesta.getDocumentos()) && Checks.esNulo(respuesta.getMensajeError()))) {
-					List<DtoAdjunto> listAdjuntoProveedor = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
+				if(!Checks.esNulo(respuestaComunidades) && !(Checks.esNulo(respuestaComunidades.getCodigoError()) && Checks.esNulo(respuestaComunidades.getDocumentos()) && Checks.esNulo(respuestaComunidades.getMensajeError()))) {
+					listAdjuntoProveedor = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuestaComunidades);
+					for(DtoAdjunto adjProveedor : listAdjuntoProveedor) {
+						if(!Checks.esNulo(activoProveedorCartera)) {
+							if(!Checks.esNulo(activoProveedorCartera.getCartera()) && !Checks.esNulo(activoProveedorCartera.getCartera().getDescripcion())) {
+								adjProveedor.setCartera(activoProveedorCartera.getCartera().getDescripcion());
+							}
+							if(!Checks.esNulo(activoProveedorCartera.getSubcartera()) && !Checks.esNulo(activoProveedorCartera.getSubcartera().getDescripcion())) {
+								adjProveedor.setSubcartera(activoProveedorCartera.getSubcartera().getDescripcion());
+							}
+						}
+					}
+					list.addAll(listAdjuntoProveedor);
+				}
+				
+				if(!Checks.esNulo(respuestaJuntas) && !(Checks.esNulo(respuestaJuntas.getCodigoError()) && Checks.esNulo(respuestaJuntas.getDocumentos()) && Checks.esNulo(respuestaJuntas.getMensajeError()))) {
+					listAdjuntoProveedor = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuestaJuntas);
 					for(DtoAdjunto adjProveedor : listAdjuntoProveedor) {
 						if(!Checks.esNulo(activoProveedorCartera)) {
 							if(!Checks.esNulo(activoProveedorCartera.getCartera()) && !Checks.esNulo(activoProveedorCartera.getCartera().getDescripcion())) {
@@ -286,15 +308,15 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		if (!Checks.esNulo(list) || !Checks.estaVacio(list)) {
 			for (DtoAdjunto adjunto : list) {
-				List<ActivoAdjuntoProveedor> listAdjuntoProveedor = genericDao.getList(ActivoAdjuntoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor), 
+				List<ActivoAdjuntoProveedor> listActivoAdjuntoProveedor = genericDao.getList(ActivoAdjuntoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor), 
 						genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", adjunto.getId()));
-				if (!Checks.estaVacio(listAdjuntoProveedor)) {
-					adjunto.setDescripcionTipo(listAdjuntoProveedor.get(0).getTipoDocumentoProveedor().getDescripcion());
-					if(!Checks.esNulo(listAdjuntoProveedor.get(0).getSubtipoDocumentoProveedor())) {
-						adjunto.setDescripcionSubtipo(listAdjuntoProveedor.get(0).getSubtipoDocumentoProveedor().getDescripcion());
+				if (!Checks.estaVacio(listActivoAdjuntoProveedor)) {
+					adjunto.setDescripcionTipo(listActivoAdjuntoProveedor.get(0).getTipoContenedorProveedor().getDescripcion());
+					if(!Checks.esNulo(listActivoAdjuntoProveedor.get(0).getTipoDocumentoProveedor())) {
+						adjunto.setDescripcionSubtipo(listActivoAdjuntoProveedor.get(0).getTipoDocumentoProveedor().getDescripcion());
 					}
-					adjunto.setGestor(listAdjuntoProveedor.get(0).getAuditoria().getUsuarioCrear());
-					adjunto.setFechaDocumento(listAdjuntoProveedor.get(0).getAuditoria().getFechaCrear());
+					adjunto.setGestor(listActivoAdjuntoProveedor.get(0).getAuditoria().getUsuarioCrear());
+					adjunto.setFechaDocumento(listActivoAdjuntoProveedor.get(0).getAuditoria().getFechaCrear());
 				}
 			}
 		}
@@ -537,29 +559,33 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		String idSistemaOrigen = "";		
 		String cliente = "";
-		RespuestaCrearExpediente respuesta = null;
-		CrearProveedorDto crearProveedorDto = null;
+		RespuestaCrearExpediente respuestaComunidad = null;
+		RespuestaCrearExpediente respuestaJuntas = null;
+		CrearProveedorDto crearProveedorDtoComunidad = null;
+		CrearProveedorDto crearProveedorDtoJuntas = null;
 		
 		if (!Checks.esNulo(activoProveedorCartera) && !Checks.esNulo(activoProveedorCartera.getProveedor()) 
 				&& !Checks.esNulo(activoProveedorCartera.getProveedor().getCodigoProveedorRem())) {	
-			idSistemaOrigen = activoProveedorCartera.getProveedor().getCodigoProveedorRem().toString();		
+			idSistemaOrigen = activoProveedorCartera.getProveedor().getCodigoProveedorRem().toString();	
+			cliente = activoProveedorCartera.getClienteGestorDocumental();
 		}
-		
-		cliente = activoProveedorCartera.getClienteGestorDocumental();
-				
+						
 		String descripcionProveedor = "";
 		
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
 		
 		if(!Checks.esNulo(activoProveedorCartera) && !Checks.esNulo(activoProveedorCartera.getIdPersonaHaya())) {
 			String idPersonaHaya = activoProveedorCartera.getIdPersonaHaya().toString();
-			crearProveedorDto = recoveryToGestorAssembler.getCrearProveedorDto(idPersonaHaya, username, cliente, idSistemaOrigen, 
-					GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES, descripcionProveedor, GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES);
+			crearProveedorDtoComunidad = recoveryToGestorAssembler.getCrearProveedorDto(idPersonaHaya, username, cliente, idSistemaOrigen, 
+					GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_COMUNIDAD, descripcionProveedor, GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES);
+			crearProveedorDtoJuntas = recoveryToGestorAssembler.getCrearProveedorDto(idPersonaHaya, username, cliente, idSistemaOrigen, 
+					GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_JUNTAS, descripcionProveedor, GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES);
 		}
 		
 		try {
 			if(!Checks.esNulo(cliente)) {
-				if(!Checks.esNulo(crearProveedorDto)) respuesta = gestorDocumentalExpedientesApi.crearProveedor(crearProveedorDto);
+				if(!Checks.esNulo(crearProveedorDtoComunidad)) respuestaComunidad = gestorDocumentalExpedientesApi.crearProveedor(crearProveedorDtoComunidad);
+				if(!Checks.esNulo(crearProveedorDtoJuntas)) respuestaJuntas = gestorDocumentalExpedientesApi.crearProveedor(crearProveedorDtoJuntas);
 			} else {
 				//Si el cliente es nulo no se creara el contenedor.
 				logger.error("GestorDocumentalAdapterManager > EL PARAMETRO CLIENTE PARA CREAR EL CONTENEDOR ES NULO");
@@ -570,8 +596,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			
 		}
 		
-		if(!Checks.esNulo(respuesta)) {
-			return respuesta.getIdExpediente();
+		if(!Checks.esNulo(respuestaComunidad) && !Checks.esNulo(respuestaJuntas)) {
+			return respuestaComunidad.getIdExpediente()+respuestaJuntas.getIdExpediente();
 		}
 		
 		return null;
@@ -721,12 +747,19 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	
 	@Override
 	public Long uploadDocumentoProveedor(ActivoProveedorCartera proveedorCartera,
-			WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
+			WebFileItem webFileItem, String userLogin, DDTipoContenedorProveedor tipoContenedor, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta;
+		String codigoClaseProveedores = "";
+		
+		if(!Checks.esNulo(tipoContenedor) && DDTipoContenedorProveedor.CODIGO_COMUNIDADES_VECINOS.equalsIgnoreCase(tipoContenedor.getCodigo())) {
+			codigoClaseProveedores = GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_COMUNIDAD;
+		} else if (!Checks.esNulo(tipoContenedor) && DDTipoContenedorProveedor.CODIGO_JUNTAS_COMPENSACION.equalsIgnoreCase(tipoContenedor.getCodigo())) {
+			codigoClaseProveedores = GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_JUNTAS;
+		}
 
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-				proveedorCartera.getIdPersonaHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES);
+				proveedorCartera.getIdPersonaHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, codigoClaseProveedores);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
 		
 		RespuestaCrearDocumento respuestaCrearDocumento;

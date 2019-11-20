@@ -394,7 +394,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		hb.appendWhere("scr.id = vis.idSubcartera");
 		hb.appendWhere("vis.idProveedor = " + idProveedor);
 		if(!Checks.esNulo(codigoCartera)) {
-			hb.appendWhere("cra.codigo = " + codigoCartera);
+			hb.appendWhere("cra.codigo = '" + codigoCartera +"'");
 		}
 		
 		carterasProveedor = (List<DDSubcartera>) this.getSessionFactory().getCurrentSession()

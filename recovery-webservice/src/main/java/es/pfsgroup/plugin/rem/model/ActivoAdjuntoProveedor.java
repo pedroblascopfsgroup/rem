@@ -26,7 +26,7 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumentoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoContenedorProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 
 
@@ -88,9 +88,9 @@ public class ActivoAdjuntoProveedor implements Serializable, Auditable {
 	private DDEstadoDocumentoProveedor estadoDocumentoProveedor;
 	
 	@ManyToOne
-    @JoinColumn(name = "DD_SDP_ID")
-    private DDSubtipoDocumentoProveedor subtipoDocumentoProveedor; 
-	
+    @JoinColumn(name = "DD_TCP_ID")
+    private DDTipoContenedorProveedor tipoContenedorProveedor; 
+
 	@Version   
 	private Long version;
 
@@ -200,12 +200,12 @@ public class ActivoAdjuntoProveedor implements Serializable, Auditable {
 		this.idDocRestClient = idDocRestClient;
 	}
 	
-	public DDSubtipoDocumentoProveedor getSubtipoDocumentoProveedor() {
-		return subtipoDocumentoProveedor;
+	public DDTipoContenedorProveedor getTipoContenedorProveedor() {
+		return tipoContenedorProveedor;
 	}
 
-	public void setSubtipoDocumentoProveedor(DDSubtipoDocumentoProveedor subtipoDocumentoProveedor) {
-		this.subtipoDocumentoProveedor = subtipoDocumentoProveedor;
+	public void setTipoContenedorProveedor(DDTipoContenedorProveedor tipoContenedorProveedor) {
+		this.tipoContenedorProveedor = tipoContenedorProveedor;
 	}
 
 	public Long getVersion() {

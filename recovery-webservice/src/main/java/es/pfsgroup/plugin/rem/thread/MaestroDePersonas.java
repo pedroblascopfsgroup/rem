@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.thread;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,12 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
@@ -410,8 +413,22 @@ public class MaestroDePersonas implements Runnable {
 					if (Checks.esNulo(activoProveedorCartera) || Checks.esNulo(idPersonaHaya) || idPersonaHayaNoExiste.equals(idPersonaHaya)) {
 						
 						if(!Checks.esNulo(proveedor) && !Checks.esNulo(ddCartera) && !Checks.esNulo(subcartera)) {
-							MapeoGestorDocumental mgd = llamadaMapeoGestorDocumental(sessionObj, ddCartera, subcartera);
-							cliente = mgd.getClienteGestorDocumental();
+							MapeoGestorDocumental mgd = null;
+							/*
+							 * Parte comentada debido a una recuperacion del cliente de la MGD que no se ha tenido en cuenta.
+							 * A la espera de solución.
+							 * 
+							 * if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ddCartera.getCodigo()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo())) {
+								List<ActivoPropietario> listActPro = getActivoPropietarioProveedor(sessionObj, proveedor, ddCartera, subcartera);
+								for(ActivoPropietario actPro : listActPro) {
+									mgd = llamadaMapeoGestorDocumental(sessionObj, ddCartera, subcartera, actPro);
+								}
+								
+							} else {*/
+								mgd = llamadaMapeoGestorDocumental(sessionObj, ddCartera, subcartera, null);
+							//}
+							
+							if(!Checks.esNulo(mgd)) cliente = mgd.getClienteGestorDocumental();
 						} else if (!Checks.esNulo(proveedor) && Checks.esNulo(ddCartera) && Checks.esNulo(subcartera)){
 							cliente = ID_HAYA;
 						}
@@ -540,7 +557,7 @@ public class MaestroDePersonas implements Runnable {
 		return  HibernateUtils.castObject(ActivoProveedorCartera.class, criteria.uniqueResult());
 	}
 	
-	private MapeoGestorDocumental llamadaMapeoGestorDocumental(Session sessionObj, DDCartera cartera, DDSubcartera subcartera) {
+	private MapeoGestorDocumental llamadaMapeoGestorDocumental(Session sessionObj, DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
 		Criteria criteria = sessionObj.createCriteria(MapeoGestorDocumental.class);
 		if(Checks.esNulo(subcartera)) {
 			criteria.add(Restrictions.isNull("subcartera"));
@@ -552,6 +569,11 @@ public class MaestroDePersonas implements Runnable {
 		} else {
 			criteria.add(Restrictions.eq("cartera", cartera));
 		}
+		if(Checks.esNulo(actPro)) {
+			criteria.add(Restrictions.isNull("activoPropietario"));
+		} else {
+			criteria.add(Restrictions.eq("activoPropietario", actPro));
+		}
 		return  HibernateUtils.castObject(MapeoGestorDocumental.class, criteria.uniqueResult());
 	}
 	
@@ -561,4 +583,26 @@ public class MaestroDePersonas implements Runnable {
 		criteria.add(Restrictions.eq("documento", numCliente));
 		return criteria.list();
 	}
+	
+	/*public List<ActivoPropietario> getActivoPropietarioProveedor(Session sessionObj, ActivoProveedor proveedor, DDCartera cartera, DDSubcartera subcartera){
+		List<ActivoPropietario> listActivoPropietario = new ArrayList<ActivoPropietario>();
+		
+		HQLBuilder hb = new HQLBuilder("select actpro from ActivoProveedor pve, ActivoProveedorContacto apc, Trabajo tbj, ActivoTrabajo actj, DDCartera cra, DDSubcartera scr, Activo act, ActivoPropietario actpro, ActivoPropietarioActivo apa ");
+
+		hb.appendWhere("pve.id = apc.proveedor.id");
+		hb.appendWhere("apc.id = tbj.proveedorContacto.id");
+		hb.appendWhere("tbj.id = actj.trabajo.id");
+		hb.appendWhere("actj.activo.id = act.id");
+		hb.appendWhere("act.cartera.id = cra.id");
+		hb.appendWhere("cra.id = " + cartera.getId());
+		hb.appendWhere("act.subcartera.id = scr.id");
+		hb.appendWhere("scr.id = " + subcartera.getId());
+		hb.appendWhere("act.id = apa.activo.id");
+		hb.appendWhere("apa.propietario.id = actpro.id");
+		hb.appendWhere("pve.id = " + proveedor.getId());
+		
+		listActivoPropietario = (List<ActivoPropietario>) sessionObj.createQuery(hb.toString()).list();
+		
+		return listActivoPropietario;
+	}*/
 }

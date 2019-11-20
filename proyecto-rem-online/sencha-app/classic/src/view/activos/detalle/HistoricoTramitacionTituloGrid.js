@@ -82,7 +82,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 		        		},
 		        		listeners:{
 		        			afterrender: 'usuarioLogadoPuedeEditar'
-		        		}
+		        		},
+		        		maxValue: new Date()
 		        	},
 		            flex: 1,
 		            formatter: 'date("d/m/Y")'

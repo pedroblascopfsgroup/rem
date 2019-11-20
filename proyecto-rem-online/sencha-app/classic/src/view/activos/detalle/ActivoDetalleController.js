@@ -2,10 +2,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',
 
-    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
-            'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
-
-            'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController','HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 'HreRem.view.activos.detalle.InformeComercialActivo'],
+    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 
+    		'HreRem.view.activos.detalle.CargaDetalle','HreRem.view.activos.detalle.OpcionesPropagacionCambios', 
+    		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
+    		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
+    		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias', 'HreRem.model.ComercialActivoModel'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -68,6 +70,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
           
           'informecomercialactivo historicomediadorgrid': {
            	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          },
+           
+           'adjuntosplusvalias gridBase': {
+               abrirFormulario: 'abrirFormularioAdjuntarDocumentosPlusvalia',
+               onClickRemove: 'borrarDocumentoAdjuntoPlusvalia', 
+               download: 'downloadDocumentoAdjuntoPlusvalia', 
+               afterupload: function(grid) {
+               	grid.getStore().load();
+               },
+               afterdelete: function(grid) {
+               	grid.getStore().load();
+               }
            }
     },
     
@@ -1091,6 +1105,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto", {entidad: 'promocion', idEntidad: idActivo, parent: grid}).show();
 
 	},
+	
+	abrirFormularioAdjuntarDocumentosPlusvalia: function(grid) {
+		
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+		if(me.getViewModel().get("plusvalia.idPlusvalia")!= undefined){
+	    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoPlusvalia", {
+	    		entidad: 'activo', 
+	    		idEntidad: idActivo,
+	    		parent: grid
+			}).show();
+		} else {
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activo.sin.plusvalia"));
+		}
+	},
 
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this,
@@ -1161,6 +1190,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			});
 		}
 	},
+	
+	borrarDocumentoAdjuntoPlusvalia: function(grid, record) {
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id"), 
+		id = grid.getSelection()[0].data.id,
+		url = $AC.getRemoteUrl('activo/deleteAdjuntoPlusvalia');
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		Ext.Ajax.request({
+			url : url,
+			params: {idEntidad: idActivo, id: id},
+			success: function(record, operation) {
+          		 grid.fireEvent("afterdelete", grid);
+          		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+          		 me.getView().unmask();
+           },
+           failure: function(record, operation) {
+                 grid.fireEvent("afterdelete", grid);
+                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                 me.getView().unmask();
+           }
+            
+        });	
+	},
 
 	downloadDocumentoAdjunto: function(grid, record) {
 		var me = this,
@@ -1170,7 +1222,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");
-		config.params.nombreDocumento=record.get("nombre").replace(",","");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
 	},
 
@@ -1183,7 +1235,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");
-		config.params.nombreDocumento=record.get("nombre").replace(",","");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
+		me.fireEvent("downloadFile", config);
+	},
+	
+	downloadDocumentoAdjuntoPlusvalia: function(grid, record) {
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"activo/bajarAdjuntoPlusvalia."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idActivo=me.getViewModel().get("activo.id");
+		config.params.nombreDocumento=record.get("nombre");
 		me.fireEvent("downloadFile", config);
 	},
 
@@ -1196,54 +1260,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var orden = 1;
 		var modificados = new Array();
 		var contadorModificados = 0;
-		for (i=0; i<record.store.getData().items.length;i++) {
-			
-			if (store.getData().items[i].data.orden != orden) {
-				store.getAt(i).data.orden = orden;
-				
-				// FIXME: Â¿Poner mÃ¡scara?
-				// me.getView().mask(HreRem.i18n("msg.mask.loading"));
-				var url =  $AC.getRemoteUrl('activo/updateFotosById');
-    			Ext.Ajax.request({
-    			
-	    		     url: url,
-	    		     params: {
-	    		     			id: store.getAt(i).data.id,
-	    		     			orden: store.getAt(i).data.orden 	
-	    		     		}
-	    			
-	    		    ,success: function (a, operation, context) {
-
-	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
-	                    	me.storeGuardado.load();
-	                    	me.refrescarGuardado = false;
-	                    	/*
-							 * //FIXME: Â¿Poner mÃ¡scara? Ext.toast({ html: 'LA OPERACIÃN SE HA
-							 * REALIZADO CORRECTAMENTE', width: 360, height: 100, align: 't' });
-							 */
-							// me.getView().unmask();
-	                    }
-
-	                },
-	                
-	                failure: function (a, operation, context) {
-	                	  Ext.toast({
-						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
-						     width: 360,
-						     height: 100,
-						     align: 't'									     
-						 });
-						 me.unmask();
-	                }
-    		     
-				});
-				
-				
-			}
-			orden++;
-			me.ordenGuardado++;
-		}
+		// FIXME: Â¿Poner mÃ¡scara?
+		// me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		var url =  $AC.getRemoteUrl('activo/updateFotosById');
+		Ext.Ajax.request({
 		
+		     url: url,
+		     params: {
+		     			data: Ext.encode(store.getData().getIndices())	
+		     		}
+			
+		    ,success: function (a, operation, context) {
+                	me.storeGuardado.load();
+                	/*
+					 * //FIXME: Â¿Poner mÃ¡scara? Ext.toast({ html: 'LA OPERACIÃN SE HA
+					 * REALIZADO CORRECTAMENTE', width: 360, height: 100, align: 't' });
+					 */
+					// me.getView().unmask();
+
+            },
+            
+            failure: function (a, operation, context) {
+            	  Ext.toast({
+				     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
+				     width: 360,
+				     height: 100,
+				     align: 't'									     
+				 });
+				 me.unmask();
+            }
+	     
+		});		
 	},
 	
 	onAddFotoClick: function(grid) {
@@ -1719,7 +1766,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				intencionFinanciar: bindRecord.intencionFinanciar,
 				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
-				deDerechoTanteo: bindRecord.deDerechoTanteo
+				deDerechoTanteo: bindRecord.deDerechoTanteo,
+				claseOferta: bindRecord.claseOferta,
+				numOferPrincipal: bindRecord.numOferPrincipal
 			});
 		}else{
 			model = Ext.create('HreRem.model.OfertaComercial', {
@@ -1740,7 +1789,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				intencionFinanciar: bindRecord.intencionFinanciar,
 				tipoPersona: bindRecord.tipoPersona,
 				razonSocialCliente: bindRecord.razonSocialCliente,
-				deDerechoTanteo: bindRecord.deDerechoTanteo
+				deDerechoTanteo: bindRecord.deDerechoTanteo,
+				claseOferta: bindRecord.claseOferta,
+				numOferPrincipal: bindRecord.numOferPrincipal
 			});
 		}
 
@@ -2276,11 +2327,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				break;
 				
 			case 'chkbxPerimetroFormalizar':
-				if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()) {
-					chkbxFormalizar.setValue(false);
+				if(!chkbxFormalizar.getValue() && chkbxPerimetroComercializar.getValue()) {
+					chkbxFormalizar.setValue(true);
 					me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
-				}
-				else {
+				}else if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()){
+					chkbxFormalizar.setValue(false);
+					me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.marcar.formalizar.con.comercializar.desactivado"));
+				}else {
 					textFieldFormalizar.reset();
 				}
 				break;
@@ -2291,11 +2344,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		else{
 			switch(ref){
 				case 'chkbxPerimetroFormalizar':
-					if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()) {
-						chkbxFormalizar.setValue(false);
+					if(!chkbxFormalizar.getValue() && chkbxPerimetroComercializar.getValue()) {
+						chkbxFormalizar.setValue(true);
 						me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.desmarcar.formalizar.con.comercializar.activado"));
-					}
-					else {
+					}else if(chkbxFormalizar.getValue() && !chkbxPerimetroComercializar.getValue()){
+						chkbxFormalizar.setValue(false);
+						me.fireEvent("errorToast", HreRem.i18n("msg.error.perimetro.marcar.formalizar.con.comercializar.desactivado"));
+					}else {
 						textFieldFormalizar.reset();
 					}
 					break;
@@ -3793,10 +3848,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
+            combobox.setAllowBlank(false);
             fechaVenta.setDisabled(false);
             fechaAlquiler.setDisabled(false);
         } else {
             combobox.setDisabled(true);
+            combobox.setAllowBlank(true);
             fechaVenta.setDisabled(true);
             fechaAlquiler.setDisabled(true);
             combobox.clearValue();
@@ -4232,7 +4289,36 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                     me.onClickBotonCancelarComercial(btn);
                 }
             });
-        }
+        }else{
+        	var fechaHoy = new Date();
+        	
+        	var mes = fechaHoy.getMonth() + 1;
+        	
+        	var dia = fechaHoy.getDate();
+        	
+        	if(mes < 10){
+        		mes = "0" + mes;
+        	}
+        	
+        	if(dia < 10){
+        		dia = "0" + dia;
+        	}
+        	
+        	//Transformamos la fecha a string para compararla
+        	var fechaString = fechaHoy.getFullYear() + "-" + mes + "-" + dia;
+        	
+        	var fechaCom = form.getValues().fechaComunicacion;
+        	
+        	if(new Date(fechaCom) > new Date(fechaString)){
+        		me.fireEvent("errorToast", HreRem.i18n("msg.fecha.com.mayor"));
+                me.onClickBotonCancelarComercial(btn);
+        	}else if(form.isValid()){
+        		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+        		me.onClickBotonCancelarComercial(btn);
+        	}
+        		
+        	
+       }
 	},
 
 	existeCliente: function(btn){
@@ -4258,6 +4344,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var datosForm = form.getValues();
 			var codtipoDoc= datosForm.comboTipoDocumento;
 			var dniComprador= datosForm.numDocumentoCliente;
+			
 			Ext.Ajax.request({
 	    		url: url,
 				method : 'POST',
@@ -4270,8 +4357,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    			var ventanaWizard = null;
 	    			var carteraInternacional = datos.carteraInternacional;
 	    			var ventanaAnyadirOferta;
+    				
 
 	    			if(!Ext.isEmpty(btn.up('wizardaltaoferta'))){
+	    				
 	    				ventanaWizard = btn.up('wizardaltaoferta');
 	    				ventanaAnyadirOferta = ventanaWizard.down('anyadirnuevaofertadetalle');
 	    				ventanaWizard.getViewModel().data.destinoComercial=destinoComercial;
@@ -5251,42 +5340,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			finalVal = false;
 		}
 		switch(ref){
-			case 'chkbxPerimetroGestion': action = 1; break;
-			case 'chkbxPerimetroPublicar': action = 2; break;
-			case 'chkbxPerimetroComercializar': action = 3; break;
-			case 'chkbxPerimetroFormalizar': action = 4; break;
+			case 'chkbxPerimetroGestion': if(me.getViewModel().get('activo.checkGestionarReadOnly') === 'false'){checkBox.setRawValue(finalVal)}else{isOk = true;}; break;
+			case 'chkbxPerimetroPublicar': if(me.getViewModel().get('activo.checkPublicacionReadOnly') === 'false'){checkBox.setRawValue(finalVal)}else{isOk = true;}; break;
+			case 'chkbxPerimetroComercializar': if(me.getViewModel().get('activo.checkComercializarReadOnly') === 'false'){checkBox.setRawValue(finalVal)}else{isOk = true;}; break;
+			case 'chkbxPerimetroFormalizar': if(me.getViewModel().get('activo.checkFormalizarReadOnly') === 'false'){checkBox.setRawValue(finalVal)}else{isOk = true;}; break;
 			
 		}
 		
 		if ((me.getViewModel().get('activo.activoMatriz')  || me.getViewModel().get('activo.unidadAlquilable'))){
-			
-			Ext.Ajax.request({
-				async: false,
-	    		url: url,
-	    		 method : 'GET',
-	    		params: {
-	    			idActivo: idActivo, 
-	    			action:action
-	    		}, 
-	    		success: function(response, opts){
-	    			var result = Ext.decode(response.responseText);
-	    				if (result.data === 'false'){ 
-	    					checkBox.setRawValue(finalVal);
-	    					me.fireEvent("errorToast", HreRem.i18n("msg.no.modificar.los.checks"));
-	    					isOk = false;
-	    				}else{
-	    					isOk = true;
-	    				}
-	    		},
-			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-			    }
-	    	});
-			
-
 			return isOk;
 		}
-
 	},
 	
 	validateDocOfertante: function(value){
@@ -5370,6 +5433,193 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		if(!Ext.isEmpty(usuarioGestor.getSelection()) && !unidadAlquilable)
 			agregarGestor.setDisabled(false);
+	},
+	
+
+	onInsertarAutorizacionTramOfertas: function(btn){
+		
+		var me = this;	
+		Ext.Msg.confirm(
+				HreRem.i18n("title.autorizar.tramitacion.ofertas"),
+				HreRem.i18n("msg.autorizar.tramitacion.activo.ofertas"),
+				function(boton){
+					
+					if (boton == "yes"){
+
+				    	var url =  $AC.getRemoteUrl('activo/insertarActAutoTram');
+				    	var parametros = btn.up("comercialactivo").getBindRecord().getData();
+				
+				    	Ext.Ajax.request({
+				    		
+				    	     url: url,
+				    	     params: parametros,
+				
+				    	     success: function(response, opts) {
+			    	         
+				    	         if(Ext.decode(response.responseText).success == "false") {
+									me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
+				    	         }else{
+				    	        	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	        	 me.getViewModel().set('comercial.tramitable', true);
+				    	        	 btn.up('activosdetallemain').lookupReference('comercialactivotabpanelref').funcionRecargar();
+				    	         }
+				    	         
+				    	         btn.up("comercialactivo").funcionRecargar();
+				    	     },
+				    	     failure: function (a, operation, context) {
+				           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				           }
+				    	 });
+					}
+				});
+    },
+	
+
+	descargarAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+		var me = this;
+		var grid = tableView.up('grid');
+		var existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+		
+		if(existeDocumentoTributo == "No"){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.no.existe.adjunto")); 
+		}else{
+			var nombreAdjuntoTributo = grid.store.getAt(indiceFila).get('documentoTributoNombre');	
+			if(nombreAdjuntoTributo != undefined){
+				var config = {};
+				
+				config.url=$AC.getWebPath()+"tributo/bajarAdjuntoActivoTributo."+$AC.getUrlPattern();
+				config.params = {};
+				config.params.idTributo=grid.store.getAt(indiceFila).get("idTributo");
+				config.params.idActivo=me.getView().getViewModel().getData().activo.id;
+				config.params.nombreDocumento=nombreAdjuntoTributo.replace(",","");
+				me.fireEvent("downloadFile", config);
+			}else{
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			}
+			
+		}
+	},
+	
+	eliminarAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+   		var me = this;
+		var grid = tableView.up('grid');
+		var existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+		
+		if(existeDocumentoTributo == "No"){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.no.existe.adjunto")); 
+		}else{
+			var idActivo = me.getViewModel().get("activo.id"),
+			idTributo = grid.store.getAt(indiceFila).get("idTributo");
+			
+			var url = $AC.getRemoteUrl('tributo/deleteAdjunto');
+			Ext.Ajax.request({
+	    		url: url,
+	    		params: { 
+	    			idActivo: idActivo,
+	    			idTributo: idTributo	
+	    		},
+	    		success: function(response, opts){
+	    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
+	    			grid.getStore().load()
+	    		},
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			    },
+			    callback: function(record, operation) {
+	    			me.getView().unmask();
+			    }
+	    	});
+			
+		}
+	},
+	 
+	anyadirAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+		var me = this,	
+		grid = tableView.up('grid'),
+		idActivo = me.getViewModel().get("activo.id"),
+		idTributo = grid.store.getAt(indiceFila).get("idTributo"),
+		existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+		
+		if(existeDocumentoTributo == "Si"){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ya.existe.adjunto")); 
+		}else{
+			Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoTributo", {entidad: 'tributo', idEntidad: idActivo, parent: grid, idTributo: idTributo}).show();
+		}
+	},
+	
+	usuarioTieneFuncionPermitirTramitarOferta: function(get){
+		
+		var me = this;
+		var comercial =	me.getViewModel().get('activo.pertenceAgrupacionComercial');
+		var restringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
+		var tramitar = true;
+		
+		if (!comercial && !restringida && me.getViewModel().get('activo.isCarteraBankia')){
+			
+			var esTramitable = me.getViewModel().get('comercial');
+			if(esTramitable == null || esTramitable == undefined){
+				esTramitable = me.getViewModel().get('activo.tramitable');
+				if(esTramitable == "false"){
+					tramitar = false;
+				}
+			}else{
+				if(esTramitable.data.tramitable != undefined || esTramitable.data.tramitable != null ){
+					tramitar = esTramitable.data.tramitable;
+				}
+			}
+			
+    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+    		if (!tramitar){
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(!funcion);
+    		}else{
+    			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+    		}
+		}else{
+			me.getView().lookupReference('autorizacionTramOfertas').setHidden(true);
+		}
+
+	},
+	
+	cargarTabDataComercial: function (form) {
+		var me = this,
+		model = null,
+		models = null,
+		nameModels = null,
+		id = me.getViewModel().get("activo.id");
+
+		form.mask(HreRem.i18n("msg.mask.loading"));
+		if(!form.saveMultiple) {	
+			model = form.getModelInstance(),
+			model.setId(id);
+			if(Ext.isDefined(model.getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				model.load({
+				    success: function(record,b,c,d) {
+				    	form.setBindRecord(record);			    	
+				    	
+				    	if(Ext.isFunction(form.afterLoad)) {
+				    		form.afterLoad();
+				    	}
+				    	me.usuarioTieneFuncionPermitirTramitarOferta();
+				    	form.unmask();
+				    },
+				    failure: function(operation) {		    	
+				    	form.up("tabpanel").unmask();
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+				    }
+				});
+			} else {
+				// Si la API no contiene metodo de lectura (read).
+				form.setBindRecord(model);			    	
+		    	form.unmask();
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
+			}
+		} else {
+			models = form.getModelsInstance();
+			me.cargarTabDataMultiple(form, 0, models, form.records);
+		}
 	}
 
 });

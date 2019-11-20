@@ -18,6 +18,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -31,9 +32,11 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
@@ -42,7 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 /**
  * Modelo que gestiona la informacion de una oferta
- *  
+ *
  * @author Jose Villel
  *
  */
@@ -52,37 +55,37 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
 public class Oferta implements Serializable, Auditable {
-	
+
     /**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-		
+
 	@Id
     @Column(name = "OFR_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "OfertaGenerator")
     @SequenceGenerator(name = "OfertaGenerator", sequenceName = "S_OFR_OFERTAS")
     private Long id;
-	
+
     @Column(name = "OFR_WEBCOM_ID")
     private Long idWebCom;
-	
+
     @Column(name = "OFR_NUM_OFERTA")
     private Long numOferta;
-    
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_ID")
     private ActivoAgrupacion agrupacion;
-	
+
 	@Column(name="OFR_IMPORTE")
 	private Double importeOferta;
-	
+
 	@Column(name="OFR_IMPORTE_CONTRAOFERTA")
 	private Double importeContraOferta;
-	
+
 	@Column(name="OFR_FECHA_CONTRAOFERTA")
 	private Date fechaContraoferta;
-	
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EOF_ID")
 	private DDEstadoOferta estadoOferta;
@@ -90,33 +93,33 @@ public class Oferta implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_MRO_ID")
 	private DDMotivoRechazoOferta motivoRechazo;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EVO_ID")
-	private DDEstadosVisitaOferta estadoVisitaOferta;    
-    
+	private DDEstadosVisitaOferta estadoVisitaOferta;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TOF_ID")
-	private DDTipoOferta tipoOferta;      
-    
+	private DDTipoOferta tipoOferta;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CLC_ID")
     private ClienteComercial cliente;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "VIS_ID")
     private Visita visita;
-    
+
     @Column(name = "OFR_FECHA_ACCION")
     private Date fechaAccion;
-    
+
     @Column(name = "OFR_USUARIO_BAJA")
     private String usuarioBaja;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USU_ID")
     private Usuario usuarioAccion;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_PRESCRIPTOR")
 	private ActivoProveedor prescriptor;
@@ -124,118 +127,169 @@ public class Oferta implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_API_RESPONSABLE")
 	private ActivoProveedor apiResponsable;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_CUSTODIO")
-	private ActivoProveedor custodio;   
-    
+	private ActivoProveedor custodio;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_FDV")
 	private ActivoProveedor fdv;
-    
+
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<TitularesAdicionalesOferta> titularesAdicionales;
-    
+
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<TextosOferta> textos;
-    
+
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
     private List<ActivoOferta> activosOferta;
+
+    @OneToMany(mappedBy = "ofertaPrincipal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JoinColumn(name = "OFR_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<OfertasAgrupadasLbk> ofertasAgrupadas;
+
+    @OneToOne(mappedBy = "ofertaDependiente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private OfertasAgrupadasLbk ofertaDependiente;
     
+   	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_CES")
+   	private Date fechaRespuestaCES;
+
     @Column(name = "OFR_ORIGEN")
     private String origen;
-   
-    
+
+
     @Column(name = "OFR_FECHA_ALTA")
     private Date fechaAlta;
-    
+
     @Column(name = "OFR_FECHA_NOTIFICACION")
     private Date fechaNotificacion;
-    
+
 	@Column(name="OFR_IMPORTE_APROBADO")
-	private Double importeOfertaAprobado; 
-	
+	private Double importeOfertaAprobado;
+
 	@Column(name="OFR_IND_LOTE_RESTRINGIDO")
 	private Integer indicadorLoteRestringido;
-	
+
 	@Column(name="OFR_FECHA_RECHAZO")
 	private Date fechaRechazoOferta;
-	
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CAP_ID")
 	private DDCanalPrescripcion canalPrescripcion;
-    
-    // Datos de Tanteo y Retracto +-+-+-+-+-+ TR
+
+    // Datos de Tanteo y Retracto ----- TR
 	@Column(name="OFR_DESDE_TANTEO")
 	private Boolean desdeTanteo;
 
 	@Column(name="OFR_CONDICIONES_TX")
 	private String condicionesTransmision;
-	
+
 	@Column(name="OFR_FECHA_COMUNIC_REG")
 	private Date fechaComunicacionReg;
-	
+
 	@Column(name="OFR_FECHA_CONTESTACION")
 	private Date fechaContestacion;
-	
+
 	@Column(name="OFR_FECHA_SOLICITUD_VISITA")
 	private Date fechaSolicitudVisita;
-	
+
 	@Column(name="OFR_FECHA_REALIZACION_VISITA")
 	private Date fechaRealizacionVisita;
-	
+
 	@Column(name="OFR_FECHA_HASTA_TANTEO")
 	private Date fechaFinTanteo;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_DRT_ID")
 	private DDResultadoTanteo resultadoTanteo;
-	
+
 	@Column(name="OFR_INTENCION_FINANCIAR")
 	private Integer intencionFinanciar;
-	
+
 	@Column(name="OFR_FECHA_MAX_FORMALIZACION")
-	private Date plazoMaxFormalizacion;	
-	//+-+-+-+-+-+ TR
-	
+	private Date plazoMaxFormalizacion;
+	//----- TR
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_SUCURSAL")
 	private ActivoProveedor sucursal;
-    
+
     @Column(name="OFR_OFERTA_EXPRESS")
-	private Boolean ofertaExpress;	
-    
+	private Boolean ofertaExpress;
+
     @Column(name="OFR_NECESITA_FINANCIACION")
-	private Boolean necesitaFinanciacion;	
-    
+	private Boolean necesitaFinanciacion;
+
     @Column(name="OFR_OBSERVACIONES")
-	private String observaciones;	
-    
+	private String observaciones;
+
     @Column(name = "OFR_UVEM_ID")
     private Long idUvem;
-    
+
     @Column(name = "OFR_VENTA_DIRECTA")
     private Boolean ventaDirecta = false;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TAL_ID")
 	private DDTipoAlquiler tipoAlquiler;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPI_ID")
 	private DDTipoInquilino tipoInquilino;
-	
+
 	@Column(name="OFR_CONTRATO_PRINEX")
 	private String numContratoPrinex;
-	
+
 	@Column(name="OFR_REF_CIRCUITO_CLIENTE")
 	private String refCircuitoCliente;
-    
+
+	@Column(name="OFR_IMP_CONTRAOFERTA_PM")
+	private Double importeContraofertaPM;
+
+	@Column(name="OFR_FECHA_RESPUESTA_PM")
+	private Date fechaRespuestaPM;
+
+	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_PM")
+	private Date fechaRespuestaOfertantePM;
+
+	@Column(name="OFR_IMP_CONTRAOFERTA_CES")
+	private Double importeContraofertaCES;
+
+	@Column(name="OFR_FECHA_RESOLUCION_CES")
+	private Date fechaResolucionCES;
+
+   	@Column(name="OFR_FECHA_RESPUESTA")
+   	private Date fechaRespuesta;
+
+   	@Column(name="OFR_FECHA_APROBACION_PRO_MANZANA")
+   	private Date fechaAprobacionProManzana;	
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CLO_ID")
+	private DDClaseOferta claseOferta;  
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ORC_ID")
+	private DDOrigenComprador origenComprador;
+
+	@ManyToOne
+	@JoinColumn(name = "OFR_GES_COM_PRES")
+	private Usuario gestorComercialPrescriptor;
+	
+	@Column(name = "OFR_CONTRAOFERTA_OFERTANTE_CES")
+	private Double importeContraofertaOfertanteCES;
+	
+	@Column(name="OFR_OFERTA_SINGULAR")
+	private Boolean ofertaSingular;
+
 	public Date getFechaAlta() {
 		return fechaAlta;
 	}
@@ -244,12 +298,12 @@ public class Oferta implements Serializable, Auditable {
 		this.fechaAlta = fechaAlta;
 	}
 
-	@Version   
+	@Version
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-    
+
 
 	public Long getId() {
 		return id;
@@ -258,7 +312,7 @@ public class Oferta implements Serializable, Auditable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public Long getIdWebCom() {
 		return idWebCom;
 	}
@@ -306,7 +360,7 @@ public class Oferta implements Serializable, Auditable {
 	public void setMotivoRechazo(DDMotivoRechazoOferta motivoRechazo) {
 		this.motivoRechazo = motivoRechazo;
 	}
-	
+
 	public DDEstadosVisitaOferta getEstadoVisitaOferta() {
 		return estadoVisitaOferta;
 	}
@@ -381,9 +435,9 @@ public class Oferta implements Serializable, Auditable {
 	}
 
 	public List<ActivoOferta> getActivosOferta() {
-		
-		if(activosOferta == null) activosOferta = new ArrayList<ActivoOferta>(); 
-		
+
+		if(activosOferta == null) activosOferta = new ArrayList<ActivoOferta>();
+
 		return activosOferta;
 	}
 
@@ -408,14 +462,14 @@ public class Oferta implements Serializable, Auditable {
 	}
 
 	/**
-	 * Devuelve un activo. El activo principal si es una agrupación, 
+	 * Devuelve un activo. El activo principal si es una agrupación,
 	 * el primer y único activo relacionado con la oferta si no es agrupación.
 	 * @return Activo activo
 	 */
 	public Activo getActivoPrincipal() {
-		
+
 		Activo activo = null;
-		
+
 		if(!Checks.esNulo(this.getAgrupacion())) {
 			activo = this.getAgrupacion().getActivoPrincipal();
 			if(Checks.esNulo(activo)) {
@@ -428,9 +482,9 @@ public class Oferta implements Serializable, Auditable {
 			}
 		}else if(!Checks.esNulo(this.getActivosOferta()) && !this.getActivosOferta().isEmpty()) {
 			activo = this.getActivosOferta().get(0).getPrimaryKey().getActivo();
-		}	
+		}
 		return activo;
-		
+
 	}
 
 	public Double getImporteContraOferta() {
@@ -512,7 +566,7 @@ public class Oferta implements Serializable, Auditable {
 	public void setCanalPrescripcion(DDCanalPrescripcion canalPrescripcion) {
 		this.canalPrescripcion = canalPrescripcion;
 	}
-	
+
 	public String getCondicionesTransmision() {
 		return condicionesTransmision;
 	}
@@ -544,7 +598,7 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaSolicitudVisita(Date fechaSolicitudVisita) {
 		this.fechaSolicitudVisita = fechaSolicitudVisita;
 	}
-	
+
 	public Date getFechaRealizacionVisita() {
 		return fechaRealizacionVisita;
 	}
@@ -552,7 +606,7 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaRealizacionVisita(Date fechaRealizacionVisita) {
 		this.fechaRealizacionVisita = fechaRealizacionVisita;
 	}
-	
+
 	public Date getFechaFinTanteo() {
 		return fechaFinTanteo;
 	}
@@ -648,14 +702,14 @@ public class Oferta implements Serializable, Auditable {
 	public void setIdUvem(Long idUvem) {
 		this.idUvem = idUvem;
 	}
-	
+
 	public Boolean getVentaDirecta() {
 		if(ventaDirecta == null){
 			return false;
 		}else{
 			return ventaDirecta;
 		}
-		
+
 	}
 
 	public void setVentaDirecta(Boolean ventaDirecta) {
@@ -694,4 +748,123 @@ public class Oferta implements Serializable, Auditable {
 		this.refCircuitoCliente = refCircuitoCliente;
 	}
 
+
+	public Usuario getGestorComercialPrescriptor() {
+		return gestorComercialPrescriptor;
+	}
+
+	public void setGestorComercialPrescriptor(Usuario gestorComercialPrescriptor) {
+		this.gestorComercialPrescriptor = gestorComercialPrescriptor;
+	}
+
+	public Double getImporteContraofertaPM() {
+		return importeContraofertaPM;
+	}
+
+	public void setImporteContraofertaPM(Double importeContraofertaPM) {
+		this.importeContraofertaPM = importeContraofertaPM;
+	}
+
+	public Date getFechaRespuestaPM() {
+		return fechaRespuestaPM;
+	}
+
+	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
+		this.fechaRespuestaPM = fechaRespuestaPM;
+	}
+
+	public Date getFechaRespuestaOfertantePM() {
+		return fechaRespuestaOfertantePM;
+	}
+
+	public void setFechaRespuestaOfertantePM(Date fechaRespuestaOfertantePM) {
+		this.fechaRespuestaOfertantePM = fechaRespuestaOfertantePM;
+	}
+
+	public Double getImporteContraofertaCES() {
+		return importeContraofertaCES;
+	}
+
+	public void setImporteContraofertaCES(Double importeContraofertaCES) {
+		this.importeContraofertaCES = importeContraofertaCES;
+	}
+
+	public Date getFechaResolucionCES() {
+		return fechaResolucionCES;
+	}
+
+	public void setFechaResolucionCES(Date fechaResolucionCES) {
+		this.fechaResolucionCES = fechaResolucionCES;
+	}
+
+	public Date getFechaRespuestaCES() {
+			return fechaRespuestaCES;
+	}
+	public void setFechaRespuestaCES(Date fechaRespuestaCES) {
+		this.fechaRespuestaCES = fechaRespuestaCES;
+	}
+
+	public Date getFechaRespuesta() {
+		return fechaRespuesta;
+	}
+
+	public void setFechaRespuesta(Date fechaRespuesta) {
+		this.fechaRespuesta = fechaRespuesta;
+	}
+
+	public Date getFechaAprobacionProManzana() {
+		return fechaAprobacionProManzana;
+	}
+
+	public void setFechaAprobacionProManzana(Date fechaAprobacionProManzana) {
+		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
+	}
+	public DDClaseOferta getClaseOferta() {
+		return claseOferta;
+	}
+
+	public void setClaseOferta(DDClaseOferta claseOferta) {
+		this.claseOferta = claseOferta;
+	}
+
+	public List<OfertasAgrupadasLbk> getOfertasAgrupadas() {
+		if(ofertasAgrupadas == null) ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>(); 
+		return ofertasAgrupadas;
+	}
+
+	public void setOfertasAgrupadas(List<OfertasAgrupadasLbk> ofertasAgrupadas) {
+		this.ofertasAgrupadas = ofertasAgrupadas;
+	}
+
+	public OfertasAgrupadasLbk getOfertaDependiente() {
+		return ofertaDependiente;
+	}
+
+	public void setOfertaDependiente(OfertasAgrupadasLbk ofertaDependiente) {
+		this.ofertaDependiente = ofertaDependiente;
+	}	
+
+	public DDOrigenComprador getOrigenComprador() {
+		return origenComprador;
+	}
+
+	public void setOrigenComprador(DDOrigenComprador origenComprador) {
+		this.origenComprador = origenComprador;
+	}
+
+	public Double getImporteContraofertaOfertanteCES() {
+		return importeContraofertaOfertanteCES;
+	}
+
+	public void setImporteContraofertaOfertanteCES(Double importeContraofertaOfertanteCES) {
+		this.importeContraofertaOfertanteCES = importeContraofertaOfertanteCES;
+	}
+	
+	public Boolean getOfertaSingular() {
+		return ofertaSingular;
+	}
+
+	public void setOfertaSingular(Boolean ofertaSingular) {
+		this.ofertaSingular = ofertaSingular;
+	}
 }

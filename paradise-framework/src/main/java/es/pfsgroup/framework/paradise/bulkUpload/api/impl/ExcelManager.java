@@ -292,6 +292,9 @@ public class ExcelManager implements ExcelManagerApi {
 			resultadoValidacion = !dtoResultado.getFicheroTieneErrores();
 			if (dtoResultado.getFicheroTieneErrores()) {
 				archivo.setErroresFichero(dtoResultado.getExcelErroresFormato());
+				archivo.setContenidoFichero(dtoResultado.getExcelErroresFormato());
+				archivo.setErroresFicheroProcesar(dtoResultado.getExcelErroresFormato());
+				archivo.setResultadoFich(dtoResultado.getExcelErroresFormato());
 			}
 		} else {
 			resultadoValidacion = false;
@@ -316,7 +319,7 @@ public class ExcelManager implements ExcelManagerApi {
 
 		document.setProcesoMasivo(proceso);
 		
-		document.setDirectorio("./");
+		document.setDirectorio(uploadForm.getExcelFile().getFileItem().getFile().getParent());
 		document.setNombre(uploadForm.getExcelFile().getFileItem().getFileName());
 		document.setContenidoFichero(uploadForm.getExcelFile().getFileItem());
 		//ErroresFichero inicialmente igual que el fichero base
@@ -358,7 +361,7 @@ public class ExcelManager implements ExcelManagerApi {
 		if (fichero.getContenidoFichero().getFile() != null) {
 			exc = excelParser.getExcel(fichero.getContenidoFichero().getFile() );
 		} else {
-			exc = excelParser.getExcel(fichero.getDirectorio());
+			exc = excelParser.getExcel(fichero.getDirectorio() + "/" + fichero.getNombre());
 		}
 		return exc;
 	}

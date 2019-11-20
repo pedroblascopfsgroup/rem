@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.PathParam;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,12 +25,15 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -41,24 +45,30 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaVivaRespuestaDto;
+import es.pfsgroup.plugin.rem.rest.dto.TareaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
+import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -68,6 +78,9 @@ public class OfertasController {
 	private OfertaApi ofertaApi;
 	
 	@Autowired
+	private OfertaDao ofertaDao;
+	
+	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
@@ -75,8 +88,7 @@ public class OfertasController {
 
 	@Autowired
 	private RestApi restApi;
-	
-	
+		
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
@@ -100,7 +112,21 @@ public class OfertasController {
 	@Autowired
 	private ActivoApi activoApi;
 	
+	@Autowired
+	private ActivoDao activoDao;
 	
+	@Autowired
+	private ProveedoresDao proveedoresDao;
+	
+	@Autowired
+	private AgendaAdapter agendaAdapter;
+
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	private final static String CLIENTE_HAYA = "HAYA";
+	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
+
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -180,6 +206,8 @@ public class OfertasController {
 				}
 			}
 		}
+		
+		new EmptyParamDetector().isEmpty(listaOfertas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
 		
 		ExcelReport report = new OfertasExcelReport(listaOfertas, dtoCarteraCodigo, usuarioCartera, fechasReunionComite, sancionadores);
 
@@ -425,78 +453,398 @@ public class OfertasController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET, value="ofertas/getOfertasVivasActGestoria")
-	public void getOfertasVivasActGestoria(Long numActivo, Long codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+	public void getOfertasVivasActGestoria(@PathParam("id") String id, @PathParam("numActivo") String numActivo, @PathParam("codGestoria") String codGestoria, ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+	  try {
+		Usuario usuarioGestoria = null; 
 		DtoOfertasFilter filtro = new DtoOfertasFilter();
-		filtro.setGestoria(codGestoria);
-		filtro.setNumActivo(numActivo);
-		filtro.setLimit(100);
-		
-		DtoPage page = ofertaApi.getListOfertasGestoria(filtro);
-		
-		VOfertasActivosAgrupacion voaa;
-		
+		Boolean flagParametrosANulo = false;
+		Boolean flagnumActivoNoExiste = false;
+		Boolean flagcodGestoriaNoExiste = false;
+		Boolean flagRelacionNumActivoCodGestoriaNoExiste = false;
+		String error = null;
+		String errorDesc = null;
 		List<OfertaVivaRespuestaDto> ofertasList = new ArrayList<OfertaVivaRespuestaDto>();
-		
-		Oferta oferta;
-		OfertaVivaRespuestaDto ofr;
-		if(!Checks.esNulo(page) && !Checks.esNulo(page.getResults())) {
-			for (Object obj : page.getResults()) {
-				try {
-					voaa = (VOfertasActivosAgrupacion) obj;
-					oferta = ofertaApi.getOfertaById(voaa.getId());
-					ExpedienteComercial eco = expedienteComercialApi.findOneByOferta(oferta);
-					if(ofertaApi.estaViva(oferta)) {			
+		Long numActivoL = null;
+		Long idL = null;
+		try {
+			idL = Long.valueOf(id);
+		}catch(Exception e){
+			logger.error("Error trabajo", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", id);
+			model.put("error", RestApi.REST_MSG_FORMAT_ERROR );
+			model.put("errorDesc", "La id no tiene el formato adecuado" );
+			model.put("success", false);
+		}
+		if(!Checks.esNulo(idL)) {
+			try {
+				numActivoL = Long.valueOf(numActivo);
+			}catch(Exception e){
+				logger.error("Error trabajo", e);
+				request.getPeticionRest().setErrorDesc(e.getMessage());
+				model.put("id", id);
+				model.put("error", RestApi.REST_MSG_FORMAT_ERROR );
+				model.put("errorDesc", "El numero de activo no tiene el formato adecuado" );
+				model.put("success", false);
+			}
+			if(!Checks.esNulo(numActivoL)) { 	
+			
+			
+				if(Checks.esNulo(idL) || Checks.esNulo(numActivo) || Checks.esNulo(codGestoria)) {
+					flagParametrosANulo = true;
+				}else if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivoL))){
+					flagnumActivoNoExiste = true;
+				}else if(Checks.esNulo(genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", codGestoria)))){
+					flagcodGestoriaNoExiste = true;
+				}else{
+				
+					usuarioGestoria  = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", codGestoria));
+					filtro.setGestoria(usuarioGestoria.getId());
+			
 					
-						ofr = new OfertaVivaRespuestaDto();
-						ofr.setNumOferta(oferta.getNumOferta()); //Número oferta
-						// Id tarea [ini]
-						Trabajo trabajo = eco.getTrabajo();
-						if(!Checks.esNulo(trabajo)) {
-							List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-							if(!Checks.estaVacio(tramites)) {
-								ActivoTramite activoTramite = tramites.get(0);
-								List<TareaExterna> tareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(activoTramite.getId());
-								if(!Checks.estaVacio(tareas)) {
-									ofr.setIdTarea(tareas.get(0).getTareaPadre().getId());// Id tarea [fin]
+			
+					filtro.setNumActivo(numActivoL);
+					filtro.setLimit(100);
+					
+					
+					//Gestoria, comprobar que exista en la BD
+					//Oferta relacionada que devuelva algo ofertasVivasActGestoria
+					
+					
+					DtoPage page = ofertaApi.getListOfertasGestoria(filtro);
+					
+					VOfertasActivosAgrupacion voaa;
+					
+					
+					
+					Oferta oferta;
+					OfertaVivaRespuestaDto ofr;
+					if(!Checks.esNulo(page) && !Checks.esNulo(page.getResults())) {
+						for (Object obj : page.getResults()) {
+							
+								voaa = (VOfertasActivosAgrupacion) obj;
+								oferta = ofertaApi.getOfertaById(voaa.getId());
+								if(ofertaApi.estaViva(oferta)) {			
+									ofr = new OfertaVivaRespuestaDto();
+									ofr.setNumOferta(oferta.getNumOferta()); //Número oferta
+									ofr.setCodEstadoEco(voaa.getCodigoEstadoExpediente()); //Estado expediente
+									// Activos [ini]
+									List<Long> listaIds = new ArrayList<Long>();
+									for (ActivoOferta activoOfr : oferta.getActivosOferta()) {
+										Long activoId = activoOfr.getActivoId();
+										listaIds.add(activoId);
+									}
+									List<Activo> activosLista = activoApi.getListActivosPorID(listaIds);
+									List<Long> activoNumLista = new ArrayList<Long>();
+									for (Activo activo : activosLista) {
+										activoNumLista.add(activo.getNumActivo());
+									}
+									ofr.setResultado(activoNumLista); //Activos [fin]
+									ofertasList.add(ofr);
+									
 								}
-							}	
+							}
 						}
-						
-						ofr.setCodEstadoEco(voaa.getCodigoEstadoExpediente()); //Estado expediente
-						// Activos [ini]
-						List<Long> listaIds = new ArrayList<Long>();
-						for (ActivoOferta activoOfr : oferta.getActivosOferta()) {
-							Long activoId = activoOfr.getActivoId();
-							listaIds.add(activoId);
-						}
-						List<Activo> activosLista = activoApi.getListActivosPorID(listaIds);
-						List<Long> activoNumLista = new ArrayList<Long>();
-						for (Activo activo : activosLista) {
-							activoNumLista.add(activo.getNumActivo());
-						}
-						ofr.setResultado(activoNumLista); //Activos [fin]
-						ofertasList.add(ofr);
-						
-					}
-				}catch (NullPointerException e) {
-					logger.error("Error ofertas NULLPOINTER", e);
+				}
+				
+				if(Checks.estaVacio(ofertasList)) {
+					flagRelacionNumActivoCodGestoriaNoExiste = true;
 				}
 			}
 		}
+		//El id, tanto en el try como en el catch, lo debe devolver siempre
+
+		try {
+			if(flagParametrosANulo) {
+				error = RestApi.REST_NO_PARAM;
+				if(Checks.esNulo(idL)) {
+					error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+					errorDesc = "Falta el campo id";
+					throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+				}else if( Checks.esNulo(numActivo)) {
+					errorDesc = "Falta el campo numActivo";
+				}else {
+					errorDesc = "Falta el campo codGestoria";
+				}
+				throw new Exception(RestApi.REST_NO_PARAM);
+			}
+			if(flagnumActivoNoExiste || flagcodGestoriaNoExiste) {
+				error = RestApi.REST_MSG_UNKNOW_KEY;
+				if(flagnumActivoNoExiste) {
+					errorDesc = "El activo " + numActivo + " no existe.";
+				}else {
+					errorDesc = "La gestoria " + codGestoria + " no existe.";
+				}
+				throw new Exception(RestApi.REST_MSG_UNKNOW_KEY);
+			}
+			if(flagRelacionNumActivoCodGestoriaNoExiste){
+				error = RestApi.REST_MSG_NO_RELATED_OFFER;
+				errorDesc = "No existe oferta relacionada con el activo "+ numActivo +" y la gestoria " + codGestoria;
+				throw new Exception(RestApi.REST_MSG_NO_RELATED_OFFER);
+			}
+
+			if(!Checks.esNulo(idL) && !Checks.esNulo(numActivoL)) {
+				model.put("id", 0);
+				model.put("id", id);
+				model.put("data", ofertasList);
+				model.put("error", "null");
+				model.put("success", true);
+			}
+			
+		}catch(Exception e) {
+			logger.error("Error en OfertasController, metodo getOfertasVivasActGestoria", e);
+			request.getPeticionRest().setErrorDesc(e.getMessage());
+			model.put("id", id);
+			model.put("error", error);
+			model.put("errorDesc", errorDesc );
+			model.put("success", false);
+		}
 		
+		restApi.sendResponse(response, model, request);
+	  }	
+	  catch(Exception e) {
+		  logger.error("Error en OfertasController, metodo getOfertasVivasActGestoria", e);
+		  request.getPeticionRest().setErrorDesc(e.getMessage());
+		  model.put("id", id);
+		  model.put("data", null);
+		  model.put("error", RestApi.CODE_ERROR);
+		  model.put("errorDesc", RestApi.CODE_ERROR );
+		  model.put("success", false);
+	  }
+	}
+	
+	/**
+	 * Avanza Ofertas Ejem: http://172.17.0.2:8080/pfs/rest/ofertas/avanzaOferta
+	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
+	 * 
+	 * BODY: {
+	 * 			"id":"1234",
+	 *			"ofrNumOferta" :"90185574",
+	 *			"codTarea"	: "T013_DefinicionOferta",
+	 *			"data": {"observaciones":["asdasdasd"],
+	 *			"comboConflicto":["02"],
+	 *			"comboRiesgo":["02"],
+	 *			"comite":["29"],
+	 *			"fechaEnvio":["05/06/2019"],
+	 *			"numExpediente":["164698"],
+	 *			"comiteSuperior":["02"]
+	 *			}
+	 *	}
+	 * 
+	 * @param model
+	 * @param request
+	 * @return model
+	 */
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/ofertas/avanzaOferta")
+	public void avanzaOferta( ModelMap model, RestRequestWrapper request, HttpServletResponse response){
+		TareaRequestDto jsonData = null;
+		Map<String, String[]> datosTarea = new HashMap<String, String[]>();
+		JSONObject jsonFields = null;
+		Long tareaId = null;
+		String[] idTarea = new String[1];
+		boolean resultado = false;
+		String ofrNumOferta = "";
+		String codTarea = "";
+		String id = null;
+		String error = null;
+		String errorDesc = null;
 		
 		try {
-			model.put("id", 0);
-			model.put("data", ofertasList);
-			model.put("error", "null");
-		}catch(Exception e) {
-			logger.error("Error ofertas", e);
+
+			jsonFields = request.getJsonObject();
+			jsonData = (TareaRequestDto) request.getRequestData(TareaRequestDto.class);
+			
+			if(Checks.esNulo(jsonFields)) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			}else if (jsonFields.isNullObject()) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+
+			} else if(jsonFields.isEmpty()) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			}else if(Checks.esNulo(jsonData)) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			} else if(Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())){
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			}else if (jsonFields.isNullObject()) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+
+			} else if(jsonFields.isEmpty()) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			}else if(Checks.esNulo(jsonData)) {
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+			} else if(Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())){
+				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
+				errorDesc = "Faltan campos";
+			}else {
+				
+				
+				id = jsonData.getId();
+				datosTarea = jsonData.getData();
+				
+				
+				if(Checks.esNulo(jsonFields.get("id"))){
+					error = RestApi.REST_NO_PARAM;
+					errorDesc = "Falta el id de llamada.";
+					throw new Exception(RestApi.REST_NO_PARAM);					
+				}
+				try {
+					Long.valueOf(id);
+				}catch(Exception e){
+					error = RestApi.REST_MSG_FORMAT_ERROR;
+					errorDesc = "El formato el id no es el correcto.";
+					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+				}
+				if(Checks.esNulo(jsonFields.get("codTarea"))){
+					error = RestApi.REST_NO_PARAM;
+					errorDesc = "Falta el codigo de la tarea.";
+					throw new Exception(RestApi.REST_NO_PARAM);					
+				}
+				ofrNumOferta = jsonFields.get("ofrNumOferta").toString();
+				try {
+					Long.valueOf(ofrNumOferta);
+				}catch(Exception e){
+					error = RestApi.REST_MSG_FORMAT_ERROR;
+					errorDesc = "El formato el número de oferta no es el correcto.";
+					throw new Exception(RestApi.REST_MSG_FORMAT_ERROR);
+				}
+				if(Checks.esNulo(ofertaApi.getOfertaByNumOfertaRem(Long.valueOf(ofrNumOferta)))){
+					
+					error = RestApi.REST_MSG_UNKNOW_OFFER;
+					errorDesc = "La oferta " + ofrNumOferta + " no existe";
+					throw new Exception(RestApi.REST_MSG_UNKNOW_OFFER);
+					
+				}else {
+					codTarea = jsonFields.get("codTarea").toString();
+					
+					if(!ofertaDao.tieneTareaActiva(codTarea, ofrNumOferta)) 
+					{
+						error = RestApi.REST_MSG_VALIDACION_TAREA;
+						errorDesc = "La tarea " + codTarea + " no está activa en esta oferta.";
+						throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+					}
+					
+					tareaId = ofertaApi.getIdTareaByNumOfertaAndCodTarea(Long.parseLong(ofrNumOferta.toString()), codTarea);
+					
+					if(Checks.esNulo(tareaId)) {
+						error = RestApi.REST_MSG_VALIDACION_TAREA;
+						errorDesc = "La tarea " + codTarea + " no existe.";
+						throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
+					}
+					else {
+						idTarea[0] = tareaId.toString();
+						datosTarea.put("idTarea",idTarea);
+						
+						resultado = agendaAdapter.validationAndSave(datosTarea);
+						
+						if (resultado) {
+							error = null;
+							errorDesc = null;
+						}						
+						model.put("id", id);
+						model.put("ofrNumOferta", ofrNumOferta);
+						model.put("codTarea", codTarea);
+						model.put("data", resultado);
+						model.put("success", resultado);
+						
+					}
+				}
+			}
+
+			//El id, tanto en el try como en el catch, lo debe devolver siempre
+		} catch (Exception e) {
+			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("id", 0);
-			model.put("data", null);
-			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
+			model.put("id", id);
+			model.put("error",error);
+			model.put("descError", errorDesc);
+			model.put("success", false);
 		}
+
 		restApi.sendResponse(response, model, request);
 	}
 
+
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
+		{
+			try {
+
+				DtoPage page = ofertaApi.getListOfertasAgrupadasLiberbank(dtoOfertasAgrupadas);
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+
+			} catch (Exception e) {
+				logger.error("Error en ofertasController", e);
+				model.put("success", false);
+			}
+			
+			
+			return createModelAndViewJson(model);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListActivosOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
+		{
+			try {
+				DtoPage page = ofertaApi.getListActivosOfertasAgrupadasLiberbank(dtoOfertasAgrupadas);
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
+	
+
+			} catch (Exception e) {
+				logger.error("Error en ofertasController", e);
+				model.put("success", false);
+			}
+			
+			
+			return createModelAndViewJson(model);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelOfertaCES(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		ExcelReport report = ofertaApi.generarExcelOfertasCES(dtoOfertasFilter);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getClaseOferta(Long idExpediente, ModelMap model) {
+		ExpedienteComercial eco = expedienteComercialApi.findOne(idExpediente);
+		Filter filtroOfertaOfertaDependiente = genericDao.createFilter(FilterType.EQUALS ,"ofertaDependiente.id", eco.getOferta().getId());
+		OfertasAgrupadasLbk ofertaDependiente = genericDao.get(OfertasAgrupadasLbk.class, filtroOfertaOfertaDependiente);
+		
+		String claseOferta = "";
+		if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(eco.getOferta().getClaseOferta().getCodigo())) {
+			claseOferta = DDClaseOferta.CODIGO_OFERTA_PRINCIPAL;
+		}else if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(eco.getOferta().getClaseOferta().getCodigo()) && !Checks.esNulo(ofertaDependiente)  ) {
+			claseOferta = DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE;
+		}else if(!Checks.esNulo(eco) && DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(eco.getOferta().getClaseOferta().getCodigo())) {
+			claseOferta = DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL;
+		}
+		model.put("claseOferta", claseOferta);
+		return createModelAndViewJson(model);
+	}
 }

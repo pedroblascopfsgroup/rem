@@ -131,7 +131,7 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 		me.recargar = false;
 		me.getActiveTab().funcionRecargar();
     }
-
+	
     /*evaluarBotonesEdicion: function(tab) {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);

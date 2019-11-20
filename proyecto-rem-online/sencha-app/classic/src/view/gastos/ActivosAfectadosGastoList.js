@@ -1,3 +1,14 @@
+var rowCounter = 0;
+var sumaValores = function(record, field) {
+    var total = 0;
+    var j = 0,
+    lenn = record.length;
+    for (; j < lenn; ++j) {
+       total = total + parseFloat(record[j].get(field));
+    }
+    return total.toFixed(2);
+};
+
 Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 	extend : 'HreRem.view.common.GridBaseEditableRow',
 	xtype : 'activosafectadosgastolist',
@@ -129,6 +140,11 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					text : HreRem.i18n('header.activos.afectados.porcentaje.participacion.gasto'),
 					dataIndex : 'participacion',
 					renderer: function(value) {
+//						var dataStore = me.getStore().getData().items;
+//						console.log(dataStore[rowCounter]);
+//						value = dataStore[rowCounter].data.importeTotalGasto / sumaValores(dataStore, ['importeTotalGasto']) * 100;/*Calculamos el porcentaje individual*/
+//						rowCounter++;
+						
 			          return Ext.util.Format.number(value, '0.00%');
 			        },
 					flex : 1,
@@ -137,30 +153,22 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 						var store = this;
 	                    var records = store.getData().items;
 	                    var field = ['participacion'];
-	                    function Suma(record, field) {
-	                        var total = 0;
-	                        var j = 0,
-	                        lenn = record.length;
-	                        for (; j < lenn; ++j) {
-	                           total = total + parseFloat(record[j].get(field));
-	                        }
-	                        return total.toFixed(2);
-	                    };
+	                    
 	                    if (this.isGrouped()) {
 	                        var groups = this.getGroups();
 	                        var i = 0;
 	                        var len = groups.length;
-	                        var out = {},
-	                        group;
+	                        var out = {};
+	                        var group;
 	                        for (; i < len; i++) {
 	                            group = groups[i];
-	                            out[group.name] = Suma.apply(store, [group.children].concat(field));
+	                            out[group.name] = sumaValores.apply(store, [group.children].concat(field));
 	                        }
 	                        var groupSum = out[groups[w].name];
 	                        w++;
 	                        return groupSum;
 	                    } else {
-	                        return Suma.apply(store, [records].concat(field));
+	                        return sumaValores.apply(store, [records].concat(field));
 	                    }
 					},
 		            summaryRenderer: function(value, summaryData, dataIndex) {
@@ -184,7 +192,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            	var value2=Ext.util.Format.number(value, '0.00');
 		            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
 		            	var style = "style= 'color: black'";
-		            	var importeTotal = Ext.util.Format.number(me.up('gastodetallemain').getViewModel().get('gasto.importeTotal'), '0.00');
+		            	var importeTotal = Ext.util.Format.number(me.store.getData().items[0].get('importeTotalGasto'), '0.00');
 		            	if(importeTotal==""){
 		            		importeTotal = Ext.util.Format.number(0, '0.00');
 		            	}
@@ -212,14 +220,14 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
     
     deleteSuccessFn: function() {
     	var me = this; 
-    	me.lookupController().updateGastoByPrinexLBK();	
+    	//me.lookupController().updateGastoByPrinexLBK();	
     	me.up('form').funcionRecargar();
     	
     },
 					    
    	saveSuccessFn: function () {
 		var me = this;
-		me.lookupController().updateGastoByPrinexLBK();	
+		//me.lookupController().updateGastoByPrinexLBK();	
 		me.up('form').funcionRecargar();
 		return true;
 	},

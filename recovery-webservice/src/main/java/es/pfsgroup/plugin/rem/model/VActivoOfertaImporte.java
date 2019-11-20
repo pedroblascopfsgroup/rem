@@ -24,7 +24,7 @@ public class VActivoOfertaImporte implements Serializable{
 	
 	 @Id
 	 @Column(name = "ID_VISTA")
-	 private Long id_vista;
+	 private String id_vista;
 
 	@Column(name = "ACT_ID")
 	 private Long activo;
@@ -70,11 +70,11 @@ public class VActivoOfertaImporte implements Serializable{
 		this.porcentajeParticipacion = porcentajeParticipacion;
 	}
 	
-	 public Long getId_vista() {
+	 public String getId_vista() {
 			return id_vista;
 	}
 
-	public void setId_vista(Long id_vista) {
+	public void setId_vista(String id_vista) {
 		this.id_vista = id_vista;
 	}
 

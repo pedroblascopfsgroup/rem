@@ -39,6 +39,30 @@
 			<param name="AcceptOnMatch" value="false" />
 		</filter>
 	</appender>
+	
+	<appender name="excelExport"
+		class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/rem_excel_export.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%c] - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="JBPM_" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+	</appender>
+	
+	<appender name="fileAdvancedLog"
+		class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/rem_advanced.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%c] - %m%n" />
+		</layout>
+	</appender>
 
 	<appender name="logTrustEvento" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
 		<param name="file" value="{DEVON_HOME}/log/logtrust/logTrust_evento.log" />
@@ -336,7 +360,13 @@
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
-
+	
+	<logger name="es.pfsgroup.plugin.log.advanced.manager.LogAdvancedManager" 
+		additivity="false">
+		<level value="info" />
+		<appender-ref ref="fileAdvancedLog" />
+	</logger>
+	
 	<logger name="es.pfsgroup.plugin.rem.api.impl.MSVActualizadorVentaCartera"
 		additivity="false">
 		<level value="error" />
@@ -357,6 +387,11 @@
 		<appender-ref ref="file" />
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
+	</logger>
+	<logger name="es.pfsgroup.plugin.rem.utils.EmptyParamDetector" additivity="false">
+		<level value="error" />
+		<appender-ref ref="console" />
+		<appender-ref ref="excelExport" />
 	</logger>
 
 	<logger name="es.pfsgroup.plugin.rem.logTrust.LogTrustEvento" additivity="false">

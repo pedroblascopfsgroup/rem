@@ -12,4 +12,6 @@ public interface Downloader {
 
 	FileItem getFileItemComunicacionGencat(Long id, String nombreDocumento);
 
+	FileItem getFileItemTributo(Long id, String nombreDocumento)  throws Exception;
+
 }

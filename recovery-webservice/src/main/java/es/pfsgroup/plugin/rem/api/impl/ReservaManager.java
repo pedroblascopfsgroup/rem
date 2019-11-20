@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ReservaDto;
@@ -51,6 +52,9 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ReservaDao reservaDao;
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -114,7 +118,7 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 					}			
 				}else{
 					//Para el resto de acciones hay que buscar la última oferta aceptada.
-					oferta = activoApi.tieneOfertaAceptada(activo);
+					oferta = activoApi.tieneOfertaTramitadaOCongeladaConReserva(activo);
 					if(Checks.esNulo(oferta)){
 						hashErrores.put("activo", "No se ha podido obtener la oferta. El activo no tiene ofertas aceptadas.");
 					}	
@@ -286,5 +290,10 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 		}
 		return estado;
 	}
+	
+	public Date getFechaFirmaByIdExpediente(String idExpediente) {
+		Date fechaFirma = reservaDao.getFechaFirmaReservaByIdExpediente(Long.parseLong(idExpediente));
 
+		return fechaFirma;
+	}
 }

@@ -203,15 +203,16 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 								        		cls: 'grid-no-seleccionable-field-editor'
 								        	}
 								        },
-								        										{
+								        {
 								            text: HreRem.i18n('header.calificacion'),
 								            dataIndex: 'tipoCalificacionCodigo',
-								            flex: 1,
+								            flex: 1.2,
 								            align: 'center',
 								            cls: 'grid-no-seleccionable-col',
 								            tdCls: 'grid-no-seleccionable-td',
 								            editor: {
 								        		xtype: 'combobox',
+								        		editable: false,
 								        		cls: 'grid-no-seleccionable-field-editor',
 								        		store: Ext.create('Ext.data.Store',{								        		
 								        			model: 'HreRem.model.ComboBase',
@@ -237,6 +238,83 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckDocActivo', {
 									        			comboEditor.setValue(value);								        			
 									        		}
 								        		}
+								        	}
+								        },{   
+								        	text: HreRem.i18n('admision.grid.header.dataIdDocumento'),
+								        	dataIndex: 'dataIdDocumento',
+								        	flex: 2,
+								        	cls: 'grid-no-seleccionable-col',
+								        	tdCls: 'grid-no-seleccionable-td',
+								        	editor: {
+								        		xtype: 'textfield',
+								        		cls: 'grid-no-seleccionable-field-editor'
+								        	}
+								        },
+								        {   
+								        	text: HreRem.i18n('admision.grid.header.letraConsumo'),
+								        	dataIndex: 'letraConsumo',
+								        	flex: 1.2,
+								            align: 'center',
+								            cls: 'grid-no-seleccionable-col',
+								            tdCls: 'grid-no-seleccionable-td',
+								            editor: {
+								        		xtype: 'combobox',
+								        		editable: false,
+								        		cls: 'grid-no-seleccionable-field-editor',
+								        		store: Ext.create('Ext.data.Store',{								        		
+								        			model: 'HreRem.model.ComboBase',
+													proxy: {
+														type: 'uxproxy',
+														remoteUrl: 'generic/getDiccionario',
+														extraParams: {diccionario: 'calificacionEnergetica'}
+													},
+													autoLoad: true
+												}),								            	
+								            	displayField: 'descripcion',
+    											valueField: 'codigo'    											
+								        	},
+								        	renderer: function(value) {								        		
+								        		var me = this,
+								        		comboEditor = me.columns && me.columns[8].getEditor ? me.columns[8].getEditor() : me.getEditor ? me.getEditor():null;
+								        		if(!Ext.isEmpty(comboEditor)) {
+									        		store = comboEditor.getStore(),							        		
+									        		record = store.findRecord("codigo", value);
+									        		if(!Ext.isEmpty(record)) {								        			
+									        			return record.get("descripcion");								        		
+									        		} else {
+									        			comboEditor.setValue(value);								        			
+									        		}
+								        		}
+								        	}
+								        },
+								        {   
+								        	text: HreRem.i18n('admision.grid.header.consumo'),
+								        	dataIndex: 'consumo',
+								        	flex: 1.5,
+								        	cls: 'grid-no-seleccionable-col',
+								        	tdCls: 'grid-no-seleccionable-td',
+								        	editor: {
+								        		xtype: 'textfield'
+								        	}
+								        },
+								        {   
+								        	text: HreRem.i18n('admision.grid.header.emision'),
+								        	dataIndex: 'emision',
+								        	flex: 1.5,
+								        	cls: 'grid-no-seleccionable-col',
+								        	tdCls: 'grid-no-seleccionable-td',
+								        	editor: {
+								        		xtype: 'textfield'
+								        	}
+								        },
+								        {   
+								        	text: HreRem.i18n('admision.grid.header.registro'),
+								        	dataIndex: 'registro',
+								        	flex: 1.5,
+								        	cls: 'grid-no-seleccionable-col',
+								        	tdCls: 'grid-no-seleccionable-td',
+								        	editor: {
+								        		xtype: 'textfield'
 								        	}
 								        }
 			       	        

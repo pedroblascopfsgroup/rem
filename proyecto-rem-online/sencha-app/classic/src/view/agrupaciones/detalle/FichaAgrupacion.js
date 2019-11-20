@@ -21,7 +21,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     initComponent: function () {
 
         var me = this;
-
         me.setTitle(HreRem.i18n('title.ficha'));
 
         var items= [
@@ -58,14 +57,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		readOnly: '{agrupacionficha.existeFechaBaja}'
 			            	},
 							allowBlank	:	false
-		                },
-		                { 
-		                	xtype		: 'displayfieldbase',
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
-		                	bind		: {
-			            		value: '{agrupacionficha.numAgrupUvem}',
-			            		hidden: '{esAgrupacionPromocionAlquiler}'
-			            	}		
 		                },
 		                {
 		                	fieldLabel: HreRem.i18n('header.numero.agrupacion.prinex'),
@@ -303,8 +294,92 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
                                 value: '{agrupacionficha.tipoComercializacionCodigo}',
                                 readOnly: '{!esAgrupacionRestringida}'
                             }	
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.agrupacion.comercializable.construccion.plano'),
+							name: 'comercializableConsPlano',
+							allowBlank:	false,
+							bind: {
+								value: '{agrupacionficha.comercializableConsPlano}',
+								store: '{comboTrueFalse}',
+								readOnly: false,
+								disabled: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								listeners: {
+									change: 'onChangeComboComercializableConsPlano'
+								}
+							}
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.existe.piso.piloto'),
+							name: 'existePiloto',
+							reference: 'existePiloto',
+							allowBlank:	false,
+							bind: {
+								value: '{agrupacionficha.existePiloto}',
+								store: '{comboTrueFalse}',
+								readOnly: false,
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								disabled: '{!comercializableConstruccionPlano}',
+								listeners: {
+									change: 'onChangeComboExistePisoPiloto'
+								}
+							}
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.visitable'),
+							name: 'esVisitable',
+							reference: 'esVisitable',
+							allowBlank:	false,
+							bind: {
+								value: '{agrupacionficha.esVisitable}',
+								store: '{comboTrueFalse}',
+								readOnly: false,
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}',
+								disabled: '{!comprobarExistePiloto}',
+								listeners: {
+									change: 'onChangeComboEsVisitable'
+								}
+							}
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.piso.piloto'),
+							name: 'pisoPiloto',
+							reference: 'pisoPiloto',
+							bind: {
+								value: '{agrupacionficha.pisoPiloto}',
+								readOnly: false,
+								disabled: '{!comprobarEsVisitable}',
+								allowBlank: '{!comprobarEsVisitable}',
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
+							}
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.empresa.promotora'),
+							name: 'empresapromotora',
+							reference: 'empresapromotora',
+							bind: {
+								value: '{agrupacionficha.empresaPromotora}',
+								readOnly: false,
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
+							}
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.empresa.comercializadora'),
+							name: 'empresacomercializadora',
+							reference: 'empresacomercializadora',
+							bind: {
+								value: '{agrupacionficha.empresaComercializadora}',
+								readOnly: false,
+								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
+							}
 						}
-
 				]
           },
           {

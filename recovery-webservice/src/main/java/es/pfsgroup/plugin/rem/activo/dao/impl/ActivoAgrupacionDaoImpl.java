@@ -533,3 +533,4 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		}
 	}
 }
+

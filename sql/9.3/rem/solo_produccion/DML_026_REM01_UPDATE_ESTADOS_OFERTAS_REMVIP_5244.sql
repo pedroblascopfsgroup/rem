@@ -1,0 +1,288 @@
+--/*
+--##########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20190917
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-5263
+--## PRODUCTO=NO
+--##
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+
+    PL_OUTPUT VARCHAR2(32000 CHAR);
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FILAS_1 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_FILAS_2 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_FILAS_3 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_FILAS_4 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_FILAS_5 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-5263'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_ECO_ID NUMBER(16); 
+    
+    TRA_ID NUMBER(16);
+    TAR_ID NUMBER(16);
+    TEX_ID NUMBER(16);
+    OFR_ID NUMBER(16);
+    ECO_ID NUMBER(16);
+    EEC_ID VARCHAR2(30 CHAR);
+    V_COUNT_UPDATE_1 NUMBER(16):= 0; -- Vble. para contar updates
+    V_COUNT_UPDATE_2 NUMBER(16):= 0; -- Vble. para contar updates
+    V_COUNT_UPDATE_3 NUMBER(16):= 0; -- Vble. para contar updates
+    V_COUNT_UPDATE_4 NUMBER(16):= 0; -- Vble. para contar updates
+    V_COUNT_UPDATE_5 NUMBER(16):= 0; -- Vble. para contar updates
+    
+    TYPE T_JBV IS TABLE OF VARCHAR2(32000);
+    TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
+	
+	--TRA_ID , TAR_ID, TEX_ID 
+
+	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
+		T_JBV(90207131),
+		T_JBV(90195713),
+		T_JBV(90205730),
+		T_JBV(90192839),
+		T_JBV(90202712),
+		T_JBV(90177945),
+		T_JBV(90082510),
+		T_JBV(90190056),
+		T_JBV(90209471),
+		T_JBV(90210209),
+		T_JBV(90207958),
+		T_JBV(90207875),
+		T_JBV(90207752),
+		T_JBV(90194602),
+		T_JBV(90207179),
+		T_JBV(90194130),
+		T_JBV(90201104),
+		T_JBV(90208397),
+		T_JBV(90204190),
+		T_JBV(90207622),
+		T_JBV(90180881),
+		T_JBV(90212668),
+		T_JBV(90200173),
+		T_JBV(90166912),
+		T_JBV(90204342),
+		T_JBV(90193663),
+		T_JBV(90205668),
+		T_JBV(90192310),
+		T_JBV(90206582),
+		T_JBV(90205768),
+		T_JBV(90205461),
+		T_JBV(90200037),
+		T_JBV(90209812),
+		T_JBV(90204555),
+		T_JBV(90205639),
+		T_JBV(90182591),
+		T_JBV(90201970),
+		T_JBV(90210637),
+		T_JBV(90206190),
+		T_JBV(90210851),
+		T_JBV(90104733),
+		T_JBV(90046227),
+		T_JBV(90184735),
+		T_JBV(90195128),
+		T_JBV(90210225),
+		T_JBV(90200490),
+		T_JBV(90197463),
+		T_JBV(90197459),
+		T_JBV(90201331),
+		T_JBV(90189206),
+		T_JBV(90197395),
+		T_JBV(90182252),
+		T_JBV(90196418),
+		T_JBV(90198016),
+		T_JBV(90196564),
+		T_JBV(90201979),
+		T_JBV(13052),
+		T_JBV(90213660),
+		T_JBV(90203929),
+		T_JBV(90206549),
+		T_JBV(90206645),
+		T_JBV(90208049),
+		T_JBV(90195944),
+		T_JBV(90210866),
+		T_JBV(90210629),
+		T_JBV(90202325),
+		T_JBV(90205150),
+		T_JBV(90204527),
+		T_JBV(90192613),
+		T_JBV(90190367),
+		T_JBV(90190369),
+		T_JBV(90204128),
+		T_JBV(90210658),
+		T_JBV(90210633),
+		T_JBV(90193764),
+		T_JBV(90210867),
+		T_JBV(90210717),
+		T_JBV(90210661),
+		T_JBV(90210636),
+		T_JBV(90207597),
+		T_JBV(90208135),
+		T_JBV(90207673),
+		T_JBV(90192274),
+		T_JBV(90193579),
+		T_JBV(90203921),
+		T_JBV(90187043),
+		T_JBV(90200784),
+		T_JBV(90207026),
+		T_JBV(90206187),
+		T_JBV(90207385),
+		T_JBV(90205441),
+		T_JBV(90196988),
+		T_JBV(90206024),
+		T_JBV(90206923),
+		T_JBV(90200017),
+		T_JBV(90200873),
+		T_JBV(90207137),
+		T_JBV(90202410),
+		T_JBV(90193968),
+		T_JBV(90208568),
+		T_JBV(90206516),
+		T_JBV(90038790),
+		T_JBV(90097422),
+		T_JBV(90198548),
+		T_JBV(90202260),
+		T_JBV(90166657),
+		T_JBV(90175552),
+		T_JBV(90201289),
+		T_JBV(90199006),
+		T_JBV(90175549),
+		T_JBV(90173461),
+		T_JBV(90203630),
+		T_JBV(90212667),
+		T_JBV(90205954),
+		T_JBV(90204569),
+		T_JBV(90175589),
+		T_JBV(90156494),
+		T_JBV(90082610),
+		T_JBV(90209125),
+		T_JBV(90197627),
+		T_JBV(90195715),
+		T_JBV(90201534),
+		T_JBV(90206570),
+		T_JBV(90199989),
+		T_JBV(90208745),
+		T_JBV(90201765),
+		T_JBV(90212905),
+		T_JBV(90201646),
+		T_JBV(90205113),
+		T_JBV(90195966)
+				); 
+	V_TMP_JBV T_JBV;
+    
+BEGIN	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZACION OFERTAS');
+
+	--DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZACION OFERTAS, EXPEDIENTES TRAMITES Y TAREAS');
+	
+	FOR I IN V_JBV.FIRST .. V_JBV.LAST
+	
+	LOOP
+ 
+	V_TMP_JBV := V_JBV(I);
+
+	OFR_ID := TRIM(V_TMP_JBV(1));
+/*
+	ECO_ID := TRIM(V_TMP_JBV(2));
+
+        EEC_ID := TRIM(V_TMP_JBV(3));
+*/
+
+	--UPDATE OFR_OFERTAS
+	
+	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE OFR_NUM_OFERTA = '||OFR_ID;
+	
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS_4;
+	
+	IF V_NUM_FILAS_4 = 1 THEN
+	
+		V_MSQL := 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS SET 
+					  DD_EOF_ID = (SELECT EOF.DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF WHERE EOF.DD_EOF_CODIGO = ''01'')
+					  , USUARIOMODIFICAR = '''||V_USR||''' 
+					  , FECHAMODIFICAR = SYSDATE 
+					WHERE OFR_NUM_OFERTA = '||OFR_ID||' AND DD_EOF_ID = 2'; 
+	
+
+		EXECUTE IMMEDIATE V_MSQL;
+    
+		DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO CON OFR_NUM_OFERTA: '||OFR_ID||' ACTUALIZADO');
+		
+		V_COUNT_UPDATE_4 := V_COUNT_UPDATE_4 + 1;
+		
+	ELSE
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO NO EXISTE');
+		
+	END IF;
+/*
+	--UPDATE ECO_EXPEDIENTE_COMERCIAL
+	
+	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_NUM_EXPEDIENTE = '||ECO_ID;
+	
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS_5;
+	
+	IF V_NUM_FILAS_5 = 1 THEN
+	
+		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL SET 
+						  DD_EEC_ID = (SELECT EEC.DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL EEC WHERE EEC.DD_EEC_CODIGO = '''||EEC_ID||''') 
+						  , ECO_FECHA_ANULACION = NULL 
+						  , USUARIOMODIFICAR = '''||V_USR||''' 
+						  , FECHAMODIFICAR = SYSDATE 
+						WHERE ECO_NUM_EXPEDIENTE = '||ECO_ID; 
+	
+
+		EXECUTE IMMEDIATE V_MSQL;
+    
+		DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO CON ECO_NUM_EXPEDIENTE: '||ECO_ID||' ACTUALIZADO');
+		
+		V_COUNT_UPDATE_5 := V_COUNT_UPDATE_5 + 1;
+		
+	ELSE
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO NO EXISTE');
+		
+	END IF;
+*/
+	END LOOP;
+
+
+	DBMS_OUTPUT.PUT_LINE('********************************************************************');
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE_4||' registros EN OFR_OFERTAS');
+
+	DBMS_OUTPUT.PUT_LINE('********************************************************************');
+/*
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE_5||' registros EN ECO_EXPEDIENTE_COMERCIAL');
+
+	DBMS_OUTPUT.PUT_LINE('********************************************************************');
+*/
+	DBMS_OUTPUT.PUT_LINE('[FIN] ');
+	
+	COMMIT;
+	
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

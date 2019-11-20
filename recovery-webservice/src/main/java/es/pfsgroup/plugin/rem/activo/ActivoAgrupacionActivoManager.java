@@ -194,5 +194,10 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion) {
 		return activoAgrupacionActivoDao.getActivoAgrupacionActivoPrincipalByIdAgrupacion(idAgrupacion);
 	}
+	
+	@Override
+	public Activo getPisoPilotoByIdAgrupacion(long idAgrupacion) {
+		return activoAgrupacionActivoDao.getPisoPilotoByIdAgrupacion(idAgrupacion);
+	}
 
 }

@@ -44,7 +44,7 @@ Ext.define('HreRem.view.gastos.DocumentosGasto', {
 						        		    	 if(data.sucess == "true"){
 						        		    		 var grid = me.down('gridBase');
 						        		    		 var limite = data.limite;
-						        		    		 var record = grid.getStore().getAt(rowIndex);
+						        		    		 var record = grid.getView().lastFocused.record;
 						        		    		 
 						        		    		 if(!Ext.isDefined(record.get('tamanyo')) || record.get('tamanyo') == null || limite == 0 || record.get('tamanyo')/1024/1024 <= limite){
 						        		    			 grid.fireEvent("download", grid, record);

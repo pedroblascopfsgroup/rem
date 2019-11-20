@@ -33,6 +33,9 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	private String numeroActivoHaya;
 	private Long ofertaREM;
 	private Long idExpediente;
+	private String idContratoAntiguo;
+	private Boolean esDivarian;
+
 	
 	
 	public Long getIdActivo() {
@@ -148,5 +151,18 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	}
 	public void setTieneRegistro(Boolean tieneRegistro) {
 		this.tieneRegistro = tieneRegistro;
-	}	
+	}
+	public String getIdContratoAntiguo() {
+		return idContratoAntiguo;
+	}
+	public void setIdContratoAntiguo(String idContratoAntiguo) {
+		this.idContratoAntiguo = idContratoAntiguo;
+	}
+	public Boolean getEsDivarian() {
+		return esDivarian;
+	}
+	public void setEsDivarian(Boolean esDivarian) {
+		this.esDivarian = esDivarian;
+	}
+	
 }

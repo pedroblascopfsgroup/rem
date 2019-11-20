@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +46,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	private GastoProveedorApi gastoProveedorApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
-
+	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK;
@@ -53,7 +55,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
-
+		
 		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		Long gpvNumGasto = Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPV_NUM_GASTO_HAYA));
 		Long numActivo = null;
@@ -107,7 +109,10 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		} else {
 			genericDao.update(GastoPrinex.class, gasto);
 		}
-		gastoProveedorApi.updateGastoByPrinexLBK(gastoProveedor.getId());
+		if("fin".equals(exc.dameCelda(fila, 63))) {
+			gastoProveedorApi.updateGastoByPrinexLBK(gasto.getId());
+			
+		}
 		return resultado;
 	}
 	
@@ -337,7 +342,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	private Double dameNumero(MSVHojaExcel exc, int fila, Integer columna)
 			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 		Double resultado = null;
-		if(exc.dameCelda(fila, columna) != null && !exc.dameCelda(fila, columna).isEmpty())
+		if(exc.dameCelda(fila, columna) != null && exc.dameCelda(fila, columna).trim().length() != 0)
 			resultado = Double.valueOf(exc.dameCelda(fila, columna));
 		return resultado;
 	}
@@ -345,7 +350,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	private Long dameLong(MSVHojaExcel exc, int fila, Integer columna)
 			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 		Long resultado = null;
-		if(exc.dameCelda(fila, columna) != null && !exc.dameCelda(fila, columna).isEmpty())
+		if(exc.dameCelda(fila, columna) != null && exc.dameCelda(fila, columna).trim().length() != 0)
 			resultado = Long.valueOf(exc.dameCelda(fila, columna));
 		return resultado;
 	}

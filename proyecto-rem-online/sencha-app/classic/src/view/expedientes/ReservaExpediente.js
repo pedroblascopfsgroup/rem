@@ -4,12 +4,10 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
     disableValidation: true,
     reference: 'reservaExpediente',
     scrollable	: 'y',
-
-	recordName: "reserva",
-	
-	recordClass: "HreRem.model.Reserva",
-    
-    requires: ['HreRem.model.Reserva'],
+    saveMultiple: true,
+	records: ['expediente','reserva'],	
+	recordsClass: ['HreRem.model.ExpedienteComercial','HreRem.model.Reserva'],    
+    requires: ['HreRem.model.ExpedienteComercial','HreRem.model.Reserva'],
     
     listeners: {
 			boxready:'cargarTabData'
@@ -55,15 +53,36 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.reserva'),
 		                	bind:		'{reserva.estadoReservaDescripcion}'
 		                },*/
-		                {
-		                	xtype: 'comboboxfieldbase',
-		                	bind: {
-								store: '{comboEstadoReserva}',
-								value: '{reserva.estadoReservaCodigo}'
+		                
+						{
+							xtype: 'container',
+							layout: {
+								type: 'table',
+								columns: 2
 							},
-							readOnly: !$AU.userIsRol("HAYASUPER"),
-		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.reserva')
-		                },
+							padding: '5px',
+							items: [
+					                {
+					                	xtype: 'comboboxfieldbase',
+					                	bind: {
+											store: '{comboEstadoReserva}',
+											value: '{reserva.estadoReservaCodigo}'
+										},
+										readOnly: !$AU.userIsRol("HAYASUPER"),
+					                	fieldLabel:  HreRem.i18n('fieldlabel.estado.reserva')
+					                },
+					                {
+					                	
+										xtype: 'button',
+										handler: 'onClickBtnDevolverReserva',
+										bind: {
+											hidden: '{ocultarBtnDevolverReserva}'
+										},
+										reference: 'btnDevolverReserva',
+										text: 'Devolver Reserva'
+										
+					                }]
+						},
 		                {
 		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.firma'),

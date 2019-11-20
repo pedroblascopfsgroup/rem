@@ -191,9 +191,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								layout: {
 								        type: 'table',
 								        // The total column count must be specified here
-								        columns: 2,
+								        columns: 1,
 								        trAttrs: {height: '30px', width: '100%'},
-								        tdAttrs: {width: '50%'},
+								        tdAttrs: {width: '100%'},
 								        tableAttrs: {
 								            style: {
 								                width: '100%'
@@ -215,9 +215,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							        	bind: {
 						            		store: '{comboEstadoActivo}',
 						            		value: '{activo.estadoActivoCodigo}'
-						            	},
-						            	labelWidth: 130,
-						            	width: 300
+							        	}
 							        },
 					                {
 					                	xtype: 'textfieldbase',
@@ -228,9 +226,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					                		value: '{activo.diasCambioEstadoActivo}',
 					                		hidden: '{!activo.isCarteraBankia}',
 					                		readOnly: true
-					                	},
-						            	labelWidth: 90,
-						            	width: 60
+					                	}
 					                }
 								]
 							}
@@ -709,6 +705,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											disabled: '{!activo.isDestinoComercialAlquiler}',
 											value: '{activo.tipoAlquilerCodigo}'
 										}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.perimetro.equipo.gestion'),
+										bind: {
+											readOnly: '{!esSuperUsuario}',
+											store: '{comboEquipoGestion}',
+											value: '{activo.tipoEquipoGestionCodigo}'
+										}
 									}
 									]
 							},
@@ -847,7 +852,78 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							}
 						]
 						
-					} //Fin activo bancario
+					}, //Fin activo bancario
+					
+		            {//Per�metro apple    
+		                
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.perimetro.apple'),
+						bind:{hidden: '{!activo.isSubcarteraApple}'},						
+						border: true,
+						colapsible: false,
+						colspan: 3,
+						items :
+							[
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.servicer'),	
+								reference: 'comboPerimetroAppleServicer',
+								chainedStore: 'comboCesionSaneamiento',
+								chainedReference: 'comboPerimetroAppleCesion',					        	
+								bind: {
+									readOnly : !$AU.userIsRol("HAYASUPER"),
+									store: '{comboServicerActivo}',
+									value: '{activo.servicerActivoCodigo}'
+								},
+								publishes: 'value',									
+		    					listeners: {
+									select: 'onChangeChainedCombo'
+		    					}
+	    													
+							},
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.cesion'),
+								reference: 'comboPerimetroAppleCesion',
+								bind:{
+									readOnly : !$AU.userIsRol("HAYASUPER"),
+									store: '{comboCesionSaneamiento}',									
+									value: '{activo.cesionSaneamientoCodigo}' 
+								}
+							},
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.macc.perimetro'),
+								reference: 'comboPerimetroAppleMACC',
+								bind:{
+									readOnly : !$AU.userIsRol("HAYASUPER"),
+									store: '{comboSiNoDatosPerimetroApple}',
+									value: '{activo.perimetroMacc}'	
+								}
+                            },
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.cartera.perimetro'),
+								reference: 'comboPerimetroAppleCartera',
+								bind:{
+									readOnly : !$AU.userIsRol("HAYASUPER"),
+									store: '{comboSiNoDatosPerimetroApple}',
+									value: '{activo.perimetroCartera}'	
+								}
+							},
+							{
+								xtype: 'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.cartera.nombre'),
+								reference: 'comboPerimetroAppleCarteraNombre',
+								bind: {
+									readOnly : !$AU.userIsRol("HAYASUPER"),									
+									value: '{activo.nombreCarteraPerimetro}'
+								}
+							}
+						]
+						
+					} //Fin per�metro apple
 				]
 			}, //Fin perimetros
 			{	// Histórico Destino Comercial ---------------------------------------------------------

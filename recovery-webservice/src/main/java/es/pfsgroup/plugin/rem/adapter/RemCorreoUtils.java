@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.adapter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -71,16 +72,18 @@ public class RemCorreoUtils {
 
 		CorreoSaliente traza = obtenerTrazaCorreoSaliente(emailFrom, mailsPara, direccionesMailCc, asuntoMail,
 				cuerpoEmail, list);
+		ArrayList<String> mailsParaSinNull = new ArrayList<String>(); 
 
 		try {
 
 			emailFrom = emailFrom(emailFrom);
-			for (int i = 0; i < mailsPara.size(); i++) {
-				if (Checks.esNulo(mailsPara.get(i)) || "null".equals(mailsPara.get(i).toLowerCase())) {
-					mailsPara.remove(i);
+			for (String para : mailsPara) {
+				if (para != null && para.length() > 0) {
+					mailsParaSinNull.add(para);
 				}
 			}
-			if (mailsPara == null || mailsPara.isEmpty()) {
+			
+			if (mailsParaSinNull == null || mailsParaSinNull.isEmpty()) {
 				throw new Exception("La lista de destinatorios no puede ser null");
 			}
 
@@ -94,7 +97,7 @@ public class RemCorreoUtils {
 
 			MimeMessage message = new MimeMessage(session);
 
-			prepararDestinatarios(message, mailsPara, direccionesMailCc);
+			prepararDestinatarios(message, mailsParaSinNull, direccionesMailCc);
 
 			message.setSubject(asuntoMail);
 

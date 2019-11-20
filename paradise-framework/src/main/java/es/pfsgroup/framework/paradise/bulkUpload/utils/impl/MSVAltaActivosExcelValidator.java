@@ -1,10 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,7 +22,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -36,7 +33,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnV
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
-import es.pfsgroup.framework.paradise.bulkUpload.model.ExcelFileBean;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import jxl.write.WriteException;
@@ -319,6 +315,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(CARTERA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty()
+					|| !mapaErrores.get(SUBCARTERA_CARTERA_INCORRECTA).isEmpty()
 					|| !mapaErrores.get(TIPO_TITULO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(TIPO_TITULO_CARTERA_INCORRECTA).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_TITULO_INCORRECTO).isEmpty()
@@ -463,8 +460,9 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				if (Checks.esNulo(exc.dameCelda(i, columnNumber)))
+				if (Checks.esNulo(exc.dameCelda(i, columnNumber))) {
 					listaFilas.add(i);
+				}
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage(),e);
 				e.printStackTrace();
@@ -931,7 +929,9 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 		
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				if(!particularValidator.subcarteraPerteneceCartera(exc.dameCelda(i, columnNumber), exc.dameCelda(i, columnNumber-1))){
+				String subcartera = exc.dameCelda(i, columnNumber);
+
+				if(!Checks.esNulo(subcartera) && !particularValidator.subcarteraPerteneceCartera(subcartera, exc.dameCelda(i, columnNumber-1))) {
 					listaFilas.add(i);
 				}
 			} catch (IllegalArgumentException e) {

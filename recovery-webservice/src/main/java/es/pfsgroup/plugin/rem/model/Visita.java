@@ -26,6 +26,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
 
 
@@ -119,6 +120,10 @@ public class Visita implements Serializable, Auditable {
     
     @Column(name="VIS_TELF_CONTACTO_VIS")
     private String telefonoContactoVisitas; 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ORC_ID")
+	private DDOrigenComprador origenComprador;
     
     
 /*    @Column(name="VIS_VISITA_PRESCRIPTOR")
@@ -337,6 +342,14 @@ public class Visita implements Serializable, Auditable {
 
 	public void setTelefonoContactoVisitas(String telefonoContactoVisitas) {
 		this.telefonoContactoVisitas = telefonoContactoVisitas;
+	}
+
+	public DDOrigenComprador getOrigenComprador() {
+		return origenComprador;
+	}
+
+	public void setOrigenComprador(DDOrigenComprador origenComprador) {
+		this.origenComprador = origenComprador;
 	}
     
     

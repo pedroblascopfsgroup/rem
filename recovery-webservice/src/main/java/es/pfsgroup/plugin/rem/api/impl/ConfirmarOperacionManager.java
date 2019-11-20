@@ -289,9 +289,10 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		if (Checks.esNulo(activo)) {
 			throw new Exception("No existe el activo");
 		}
-		Oferta oferta = activoApi.tieneOfertaAceptada(activo);
+		
+		Oferta oferta = activoApi.tieneOfertaTramitadaOCongeladaConReserva(activo);	
 		if (Checks.esNulo(oferta)) {
-			throw new Exception("El activo no tiene ofertas aceptadas.");
+			throw new Exception("El activo no tiene ofertas aceptadas o congeladas con reserva firmada.");
 		}
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 		if (Checks.esNulo(expedienteComercial)) {

@@ -272,6 +272,24 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 						if(!Ext.isEmpty(campoApellidos)){
 							campoApellidos.setDisabled(false);
 						}
+						if(!Ext.isEmpty(campoEstadoCivil)){
+							campoEstadoCivil.allowBlank = false;
+						}						
+						if(!Ext.isEmpty(campoNombreRazonSocialRte)){
+							campoNombreRazonSocialRte.allowBlank = true;
+						}						
+						if(!Ext.isEmpty(campoApellidosRte)){
+							campoApellidosRte.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoTipoRte)){
+							campoTipoRte.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoNumRte)){
+							campoNumRte.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoPaisRte)){
+							campoPaisRte.allowBlank = true;
+						}
 											
 					} else {
 						//  Si el tipo de persona es 'Jurídica'

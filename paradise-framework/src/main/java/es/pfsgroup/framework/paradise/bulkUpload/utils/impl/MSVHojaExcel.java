@@ -269,6 +269,41 @@ public class MSVHojaExcel {
 
 		return nombreFicheroErrores;
 	}
+	
+	public String crearExcelValidadoCount(Map<String, List<Integer>> mapaFin, int numHoja,
+			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+		if (!isOpen) {
+			abrir();
+		}
+
+		String nombreFicheroErrores = getNombreFicheroErrores();
+
+		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroErrores), libroExcel);
+		try {
+
+			WritableSheet hoja = copy.getSheet(numHoja);
+			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, numFilaCabeceras);
+
+			Iterator<String> it = mapaFin.keySet().iterator();
+			int columna = numColumnas;
+			while (it.hasNext()) {
+				String fin = (String) it.next();
+				addTexto(hoja, columna, 0, "FIN");
+				for (int i = 0; i < mapaFin.get(fin).size(); i++) {
+					addTexto(hoja, columna, mapaFin.get(fin).get(i), fin);
+				}
+				if (!mapaFin.get(fin).isEmpty()) {
+					// columna++;
+				}
+			}
+			copy.write();
+		} finally {
+			copy.close();
+		}
+		
+
+		return nombreFicheroErrores;
+	}
 	public String crearExcelErroresMejoradoByHojaAndFilaCabeceraConValores(Map<String, List<Integer>> mapaErrores, Map<String, List<String>> mapaValres, int numHoja,
 			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
 		if (!isOpen) {
@@ -355,11 +390,17 @@ public class MSVHojaExcel {
 			int numFilaCabeceras)
 			throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
 
-		return this.crearExcelProcesadoByHojaAndFilaCabecera(resultados, numHoja, numFilaCabeceras);
+		return this.crearExcelProcesadoByHojaAndFilaCabecera(resultados, numHoja, numFilaCabeceras, false);
+	}
+	public String crearExcelResultado(ArrayList<ResultadoProcesarFila> resultados,int numHoja,
+			int numFilaCabeceras, boolean prinex)
+			throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+
+		return this.crearExcelProcesadoByHojaAndFilaCabecera(resultados, numHoja, numFilaCabeceras, prinex);
 	}
 
 	public String crearExcelProcesadoByHojaAndFilaCabecera(ArrayList<ResultadoProcesarFila> resultados, int numHoja,
-			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+			int numFilaCabeceras, boolean prinex) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
 		if (!isOpen) {
 			abrir();
 		}
@@ -372,6 +413,8 @@ public class MSVHojaExcel {
 			WritableSheet hoja = copy.getSheet(numHoja);
 			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, 0);
 			int columna = numColumnas;
+			if(prinex)
+				columna--;
 			addTexto(hoja, columna, numFilaCabeceras-1, "RESULTADO");
 			addTexto(hoja, columna+1, numFilaCabeceras-1, "DESC. ERROR");
 			if (resultados != null && resultados.size() > 0 && resultados.get(0).gethMap() != null

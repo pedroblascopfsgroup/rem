@@ -41,6 +41,7 @@ public class DtoAgrupacionFilter extends WebDto {
 	private String condPublVenta;
 	private String condPublAlquiler;
 	private Long activo_gencat;
+	private Boolean esPisoPiloto;
 
 
 	public String getNombre() {
@@ -282,4 +283,11 @@ public class DtoAgrupacionFilter extends WebDto {
 		this.activo_gencat = activo_gencat;
 	}
 
+	public Boolean getEsPisoPiloto() {
+		return esPisoPiloto;
+	}
+
+	public void setEsPisoPiloto(Boolean esPisoPiloto) {
+		this.esPisoPiloto = esPisoPiloto;
+	}
 }

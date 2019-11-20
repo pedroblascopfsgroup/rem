@@ -61,6 +61,8 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
     public static final String CODIGO_CONSENTIMIENTO_PROTECCION_DATOS = "83";
     public static final String CODIGO_CEE_ETIQUETA_ACTIVO = "84";
     public static final String CODIGO_CEE_ETIQUETA_TRABAJO = "25";
+    public static final String CODIGO_LPO_GESTOR = "12";
+    public static final String MATRICULA_INFORME_OCUPACION_DESOCUPACION = "AI-02-ESIN-97";
    
 	/**
 	 * 
@@ -130,7 +132,6 @@ public class DDTipoDocumentoActivo implements Auditable, Dictionary {
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
 	}
-
 
 	public Long getVersion() {
 		return version;

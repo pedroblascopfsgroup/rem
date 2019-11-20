@@ -50,6 +50,8 @@ BEGIN
 			EXECUTE IMMEDIATE V_SQL;
 
 
+
+
 	COMMIT;
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] Modificado propietario');	    

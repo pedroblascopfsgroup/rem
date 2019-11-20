@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
@@ -64,6 +65,16 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String nombreGestoria;
    	private String codigoImpuestoIndirecto;
    	private String cartera;
+   	private Long numeroPrimerGastoSerie;
+   	private Date fechaRecPropiedad;
+	private Date fechaRecGestoria;
+	private Date fechaRecHaya;
+   	private Boolean gastoRefacturable;
+   	private List<String> gastoRefacturadoGrid;
+   	private Boolean bloquearDestinatario;
+   	private Boolean tieneGastosRefacturables;
+   	private Boolean bloquearEdicionFechasRecepcion;
+   	private String estadoEmisor;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -326,5 +337,64 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
 	}
-	
+	public Long getNumeroPrimerGastoSerie() {
+		return numeroPrimerGastoSerie;
+	}
+	public void setNumeroPrimerGastoSerie(Long numeroPrimerGastoSerie) {
+		this.numeroPrimerGastoSerie = numeroPrimerGastoSerie;
+	}
+	public Date getFechaRecPropiedad() {
+		return fechaRecPropiedad;
+	}
+	public void setFechaRecPropiedad(Date fechaRecPropiedad) {
+		this.fechaRecPropiedad = fechaRecPropiedad;
+	}
+	public Date getFechaRecGestoria() {
+		return fechaRecGestoria;
+	}
+	public void setFechaRecGestoria(Date fechaRecGestoria) {
+		this.fechaRecGestoria = fechaRecGestoria;
+	}
+	public Date getFechaRecHaya() {
+		return fechaRecHaya;
+	}
+	public void setFechaRecHaya(Date fechaRecHaya) {
+		this.fechaRecHaya = fechaRecHaya;
+	}
+	public List<String> getGastoRefacturadoGrid() {
+		return gastoRefacturadoGrid;
+	}
+	public void setGastoRefacturadoGrid(List<String> gastoRefacturadoGrid) {
+		this.gastoRefacturadoGrid = gastoRefacturadoGrid;
+	}
+	public Boolean getGastoRefacturable() {
+		return gastoRefacturable;
+	}
+	public void setGastoRefacturable(Boolean gastoRefacturable) {
+		this.gastoRefacturable = gastoRefacturable;
+	}
+	public Boolean getBloquearDestinatario() {
+		return bloquearDestinatario;
+	}
+	public void setBloquearDestinatario(Boolean bloquearDestinatario) {
+		this.bloquearDestinatario = bloquearDestinatario;
+	}
+	public Boolean getTieneGastosRefacturables() {
+		return tieneGastosRefacturables;
+	}
+	public void setTieneGastosRefacturables(Boolean tieneGastosRefacturables) {
+		this.tieneGastosRefacturables = tieneGastosRefacturables;
+	}
+	public Boolean getBloquearEdicionFechasRecepcion() {
+		return bloquearEdicionFechasRecepcion;
+	}
+	public void setBloquearEdicionFechasRecepcion(Boolean bloquearEdicionFechasRecepcion) {
+		this.bloquearEdicionFechasRecepcion = bloquearEdicionFechasRecepcion;
+	}
+	public String getEstadoEmisor() {
+		return estadoEmisor;
+	}
+	public void setEstadoEmisor(String estadoEmisor) {
+		this.estadoEmisor = estadoEmisor;
+	}
 }

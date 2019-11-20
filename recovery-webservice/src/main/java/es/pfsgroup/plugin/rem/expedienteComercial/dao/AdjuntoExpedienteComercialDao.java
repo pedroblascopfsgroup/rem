@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.expedienteComercial.dao;
 
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 
 public interface AdjuntoExpedienteComercialDao extends AbstractDao<AdjuntoExpedienteComercial, Long> {
 
@@ -15,4 +16,13 @@ public interface AdjuntoExpedienteComercialDao extends AbstractDao<AdjuntoExpedi
      * @return Devuelve True si el documento con las caracteristicas especificadas está asociado al expediente comercial, False si no lo está.
      */
     Boolean existeAdjuntoPorNombreYTipoDocumentoYNumExpedienteComercial(String nombreAdjunto, String matriculaDocumento, Long numExpedienteComercial);
+    
+    /**
+     * Este método recoge un dtoAdjunto que tenga como id el campo idDocRestClient (ADE_ID_DOCUMENTO_REST de la tabla ADE_ADJUNTO_EXPEDIENTE
+     * del Documento y devuelve un dtoAdjunto con el id (ADE_ID de la tabla ADE_ADJUNTO_EXPEDIENTE). 
+     * 
+     * @param dtoAdjunto
+     * @return dtoAdjunto
+     */
+	DtoAdjunto getAdjuntoByIdDocRest(DtoAdjunto dtoAdjunto);
 }

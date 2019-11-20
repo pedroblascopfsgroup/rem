@@ -2,7 +2,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
     extend: 'HreRem.view.common.FormBase',
     xtype: 'configuracionproveedoresfiltros',
     reference: 'configuracionProveedoresFiltros',
-    isSearchForm: true,
+    isSearchProveedoresForm: true,
     cls	: 'panel-base shadow-panel',
     collapsible: true,
     collapsed: false,    

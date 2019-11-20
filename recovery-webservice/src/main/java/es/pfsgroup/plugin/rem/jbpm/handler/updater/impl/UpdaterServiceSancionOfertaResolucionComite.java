@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -29,6 +30,8 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -69,6 +72,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	private static final String IMPORTE_CONTRAOFERTA = "numImporteContra";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
+	private static final String COMITE_SANCIONADOR = "comiteSancionador";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -89,6 +93,15 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						}
 	
 					}
+					
+					if (COMITE_SANCIONADOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) 
+							&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+							&& !Checks.esNulo(valor.getValor())) {
+
+							expediente.setComiteSancion(expedienteComercialApi.comiteSancionadorByCodigo(valor.getValor()));
+						
+					}
+					
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
@@ -140,6 +153,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 								// Rechaza la oferta y descongela el resto
 								ofertaApi.rechazarOferta(ofertaAceptada);
+								ofertaApi.finalizarOferta(ofertaAceptada);
 								
 								// Tipo rechazo y motivo rechazo ofertas cajamar
 								DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi
@@ -175,12 +189,12 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						ofertaAceptada.setImporteContraOferta(Double.valueOf(doubleValue));
 						genericDao.save(Oferta.class, ofertaAceptada);
 	
-						// Actualizar honorarios para el nuevo importe de contraoferta.
-						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
-	
 						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
+						
+						// Actualizar honorarios para el nuevo importe de contraoferta.
+						expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());
 						
 					}
 				}

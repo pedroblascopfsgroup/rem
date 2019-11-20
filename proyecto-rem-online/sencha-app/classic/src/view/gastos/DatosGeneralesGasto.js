@@ -17,19 +17,21 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 	    	var rechazado = me.lookupController().getViewModel().get('gasto').get('rechazado');
 	    	var agrupado = me.lookupController().getViewModel().get('gasto').get('esGastoAgrupado');
 	    	var gestoria = me.lookupController().getViewModel().get('gasto').get('nombreGestoria')!=null;
+	    	var cartera = me.lookupController().getViewModel().get('gasto').get('cartera');
 			if(this.lookupController().botonesEdicionGasto(estadoGasto,autorizado,rechazado,agrupado,gestoria,this)){
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').show();
 			}
 			else{
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').hide();
 			}
+			
 		}
 	},
 
     initComponent: function () {
 
         var me = this;
-
+        
         var storeEmisoresGasto = new Ext.data.Store({  
     		model: 'HreRem.model.Proveedor',
 			proxy: {
@@ -48,7 +50,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							{
 								xtype: 'fieldset',
 								title: HreRem.i18n('title.identificacion'),
-								height: 275,
+								height: 375,
 								margin: '0 10 10 0',
 								collapsible: false,
 								layout: 'vbox',
@@ -111,7 +113,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								xtype: 'fieldset',
 								title: HreRem.i18n('title.sujetos'),
 								layout: 'vbox',
-								height: 275,
+								height: 375,
 								margin: '0 10 10 0',
 								collapsible: false,
 								items: [
@@ -119,8 +121,10 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											xtype: 'textfieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
 											reference: 'buscadorNifEmisorField',
-											readOnly: $AU.userIsRol(CONST.PERFILES['PROVEEDOR']),
-											bind: '{gasto.buscadorNifEmisor}',
+											bind: {
+												value:'{gasto.buscadorNifEmisor}',
+												readOnly: '{emisorSoloLectura}'
+											},
 											triggers: {														
 													buscarEmisor: {
 											            cls: Ext.baseCSSPrefix + 'form-search-trigger',
@@ -157,7 +161,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											emptyText: HreRem.i18n('txt.seleccionar.emisor'),
 											valueField		: 'codigo',
 											bind: {
-												value: '{gasto.codigoProveedorRem}'
+												value: '{gasto.codigoProveedorRem}',
+												readOnly: '{gasto.tieneGastosRefacturables}'
 											},
 											tpl: Ext.create('Ext.XTemplate',
 							            		    '<tpl for=".">',
@@ -169,15 +174,29 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							            		        '{codigo} - {nombreProveedor} - {subtipoProveedorDescripcion}',
 							            		    '</tpl>'
 							            	)
+					            	    },					            	    
+					            	    {
+											xtype: 'textfieldbase',
+											fieldLabel: HreRem.i18n('fieldlabel.estado.emisor'),											
+											name: 'estadoEmisor',
+											bind:{
+												value: '{gasto.estadoEmisor}'													
+											},
+											readOnly: true
+											
 					            	    },
+					            	    
 									 { 
 										xtype: 'comboboxfieldbase',
 						               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.destinatario'),
 						               	name: 'destinatarioField',
+						               	reference: 'destGasto',
 								      	bind: {
 							           		store: '{comboDestinatarios}',
-							           		value: '{gasto.destinatario}'
+							           		value: '{gasto.destinatario}',
+							           		readOnly: '{gasto.bloquearDestinatario}'
 							         	},
+							         	
 							         	allowBlank: false
 							    	},								    
 									{
@@ -185,7 +204,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.nif.propietario'),
 										name: 'buscadorNifPropietarioField',
 										bind: {
-											value: '{gasto.buscadorNifPropietario}'
+											value: '{gasto.buscadorNifPropietario}',
+											readOnly: '{gasto.tieneGastosRefacturables}'
 										},
 										allowBlank: false,
 										triggers: {
@@ -223,7 +243,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							{
 								xtype: 'fieldset',
 								layout: 'vbox',
-								height: 275,
+								height: 375,
 								margin: '0 5 10 0',
 								title: HreRem.i18n('title.datos'),
 								collapsible: false,
@@ -301,7 +321,48 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 												value: '{gasto.idGastoAbonado}'													
 											},
 											hidden: true
-										}											
+										},
+										{ 
+											xtype: 'textfieldbase',
+							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.primer.gasto.serie'),
+									      	bind: {
+								           		value: '{gasto.numeroPrimerGastoSerie}'
+								         	}
+									    },
+										{
+								        	xtype:'datefieldbase',
+								        	formatter: 'date("d/m/Y")',
+											reference: 'fechaRecPropiedad',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recPropiedad'),
+									       	bind: {
+									       		value: '{gasto.fechaRecPropiedad}'
+									       	},
+									       	maxValue: null,
+									       	readOnly: true
+									       	
+									    },
+									    {
+								        	xtype:'datefieldbase',
+								        	formatter: 'date("d/m/Y")',
+											reference: 'fechaRecGestoria',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recGestoria'),
+									       	bind: {
+									       		value: '{gasto.fechaRecGestoria}'
+									       	},
+									       	maxValue: null,
+									       	readOnly: true
+									    },
+									    {
+								        	xtype:'datefieldbase',
+								        	formatter: 'date("d/m/Y")',
+											reference: 'fechaRecHaya',
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.recHaya'),
+									       	bind: {
+									       		value: '{gasto.fechaRecHaya}'
+									       	},
+									       	maxValue: null,
+									       	readOnly: true
+									    }
 									]
 								}
 							]

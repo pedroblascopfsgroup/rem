@@ -5,13 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
@@ -20,8 +23,11 @@ import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -31,23 +37,24 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import net.sf.json.JSONObject;
 
 public interface OfertaApi {
-	
+
 	public static String ORIGEN_REM ="REM";
 	public static String ORIGEN_WEBCOM ="WCOM";
 	public final static String CLIENTE_HAYA = "HAYA";
 
 	/**
 	 * Devuelve una Oferta por id.
-	 * 
+	 *
 	 * @param id
 	 *            de la Oferta a consultar
 	 * @return Oferta
 	 */
 	public Oferta getOfertaById(Long id);
 
+	public Oferta getOfertaPrincipalById(Long id);
 	/**
 	 * Devuelve una Oferta por idOfertaWebcom.
-	 * 
+	 *
 	 * @param idOfertaWebcom
 	 *            a consultar
 	 * @return Oferta
@@ -56,7 +63,7 @@ public interface OfertaApi {
 
 	/**
 	 * Devuelve una Oferta por numOfertaRem
-	 * 
+	 *
 	 * @param numOfertaRem
 	 *            a consultar
 	 * @return Oferta
@@ -65,7 +72,7 @@ public interface OfertaApi {
 
 	/**
 	 * Devuelve una Oferta por idOfertaWebcom y numOfertaRem.
-	 * 
+	 *
 	 * @param idOfertaWebcom
 	 *            a consultar
 	 * @param numOfertaRem
@@ -76,23 +83,23 @@ public interface OfertaApi {
 
 	/**
 	 * Devuelve un Page de Ofertas aplicando el filtro que recibe.
-	 * 
+	 *
 	 * @param dtoOfertasFilter
 	 *            con los parametros de filtro
 	 * @return Page<Oferta>
 	 */
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
-	
+
 	/**
-	 * Devuelve un Page de Ofertas aplicando el filtro que recibe teniendo en cuenta si se filtra por usuario gestor o gestoria determinado, o ambos, 
+	 * Devuelve un Page de Ofertas aplicando el filtro que recibe teniendo en cuenta si se filtra por usuario gestor o gestoria determinado, o ambos,
 	 * o en caso de no recibirlo, teniendo en cuenta el usuario logado.
 	 * @param dtoOfertasFilter
 	 * @return
 	 */
 	public DtoPage getListOfertasUsuario(DtoOfertasFilter dtoOfertasFilter);
-	
+
 	/**
-	 * Devuelve un Page de Ofertas aplicando el filtro que recibe teniendo en cuenta si se filtra por gestoria.
+	 * Devuelve un Page de Ofertas filtrando por usuario gestoria y número de activo.
 	 * @param dtoOfertasFilter
 	 * @return
 	 */
@@ -101,16 +108,16 @@ public interface OfertaApi {
 
 	/**
 	 * Devuelve una lista de Ofertas aplicando el filtro que recibe.
-	 * 
+	 *
 	 * @param dtoOfertasFilter con los parametros de filtro
 	 * @return List<Oferta>
 	 */
 	public List<VOfertasActivosAgrupacion> getListOfertasFromView(DtoOfertasFilter dtoOfertasFilter);
 
-	
+
 	/**
 	 * Devuelve una lista de Ofertas aplicando el filtro que recibe.
-	 * 
+	 *
 	 * @param ofertaDto
 	 *            con los parametros de filtro
 	 * @return List<Oferta>
@@ -120,7 +127,7 @@ public interface OfertaApi {
 	/**
 	 * Devuelve una lista de errores encontrados en los parámetros de entrada de
 	 * las peticiones POST.
-	 * 
+	 *
 	 * @param OfertaDto
 	 *            con los parametros de entrada
 	 * @param jsonFields
@@ -136,7 +143,7 @@ public interface OfertaApi {
 
 	/**
 	 * Crea una nueva Oferta a partir de la información pasada por parámetro.
-	 * 
+	 *
 	 * @param ofertaDto
 	 *            con la información de la Oferta a dar de alta
 	 * @return List<String> con la lista de errores detectados
@@ -145,7 +152,7 @@ public interface OfertaApi {
 
 	/**
 	 * Actualiza una Oferta a partir de la información pasada por parámetro.
-	 * 
+	 *
 	 * @param ofertaDto
 	 *            con la información de la Oferta a actualizar
 	 * @param jsonFields
@@ -156,10 +163,10 @@ public interface OfertaApi {
 	 */
 	public HashMap<String,String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
 			throws Exception;
-	
+
 	/**
 	 * Actualiza una lista de ofertas a partir de la información pasada por parámetro.
-	 * 
+	 *
 	 * @param listaOfertaDto
 	 * @param jsonFields
 	 * @param listaRespuesta
@@ -170,16 +177,16 @@ public interface OfertaApi {
 
 	/**
 	 * Actualizar el estado de disponibilidad comercial en los activos
-	 * 
+	 *
 	 * @param oferta
 	 */
 	public void updateStateDispComercialActivosByOferta(Oferta oferta);
-	
-	
+
+
 	/**
 	 * Método que obtiene uno de los estados posibles de la oferta relacionado
 	 * con una determinado código
-	 * 
+	 *
 	 * @param codigo
 	 * @return
 	 */
@@ -191,59 +198,59 @@ public interface OfertaApi {
 	 * @return Boolean true si ha podido rechazar la oferta false en caso contrario
 	 */
 	public Boolean rechazarOferta(Oferta oferta);
-	
+
 	/**
 	 * Método que congela una oferta y oculta las tareas pendientes
 	 * @param oferta
 	 * @return Boolean true si ha podido congelar la oferta false en caso contrario
 	 */
 	public Boolean congelarOferta(Oferta oferta);
-	
-	
+
+
 	/**
-	 * Congela las ofertas Pendientes asociadas a 
+	 * Congela las ofertas Pendientes asociadas a
 	 * un activo cuyo expediente comercial se ha aprobado.
 	 * @param oferta
 	 * @return Boolean true si ha podido congelar la oferta false en caso contrario
 	 */
 	public void congelarOfertasPendientes(ExpedienteComercial expediente) throws Exception;
 
-	
+
 	/**
-	 * Descongela las ofertas suceptibles de descongelar asociadas a 
+	 * Descongela las ofertas suceptibles de descongelar asociadas a
 	 * un activo cuyo expediente comercial se ha anulado/denegado.
 	 * @param expediente: expediente cuyo activo tiene ofertas a descongelar.
 	 */
 	public void descongelarOfertas(ExpedienteComercial expediente) throws Exception;
 
-	
+
 	/**
 	 * Método que saca la oferta a partir de una tarea externa
-	 * 
+	 *
 	 * @param tareaExterna
 	 * @return Oferta
 	 */
 	public Oferta tareaExternaToOferta(TareaExterna tareaExterna);
 
-	
+
 	/**
 	 * Método que saca la oferta aceptada a partir de un trabajo
 	 * @param trabajo
 	 * @return
 	 */
 	public Oferta trabajoToOferta(Trabajo trabajo);
-	
-	
+
+
 	/**
 	 * Método que saca las ofertas de un activo a partir de su trabajo
 	 * @param trabajo
 	 * @return
 	 */
 	public List<Oferta> trabajoToOfertas(Trabajo trabajo);
-	
+
 	/**
 	 * Método que obtiene la oferta aceptada de un activo en caso de haberla.
-	 * 
+	 *
 	 * @param activo
 	 * @return Oferta
 	 */
@@ -257,38 +264,38 @@ public interface OfertaApi {
 
 	/**
 	 * Método que comprueba si un activo tiene reserva.
-	 * 
+	 *
 	 * @param tareaExterna
 	 * @return true si tiene reserva, false si no la tiene.
 	 */
 	public boolean checkReserva(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Es express??
-	 * 
+	 *
 	 * @param tareaExterna
 	 * @return
 	 */
 	public boolean checkEsExpress(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método que comprueba si un activo tiene reserva.
-	 * 
+	 *
 	 * @param tareaExterna
 	 * @return true si tiene reserva, false si no la tiene.
 	 */
 	public boolean checkReserva(Oferta oferta);
-	
+
 	/**
 	 * Método que comprueba si el activo tiene derecho de tanteo por la Generalitat
 	 * @param trabajo
 	 * @return true si tiene derecho de tanteo, false si no lo tiene
 	 */
 	public boolean checkDerechoTanteo(Trabajo trabajo);
-	
+
 	/**
 	 * Método que comprueba si el activo tiene derecho de tanteo por la Generalitat
-	 * 
+	 *
 	 * @param tareaExterna
 	 * @return true si tiene derecho de tanteo, false si lo tiene
 	 */
@@ -297,48 +304,48 @@ public interface OfertaApi {
 	/**
 	 * Método que comprueba si la oferta viene de una oferta de tanteo de la
 	 * Generalitat
-	 * 
+	 *
 	 * @param tareaExterna
 	 * @return true si viene, false si es nueva
 	 */
 	public boolean checkDeDerechoTanteo(TareaExterna tareaExterna);
 
-	
+
 	/**
 	 * Método que comprueba que la oferta no tenga riesgo reputacional
 	 * @param tareaExterna
 	 * @return si no tiene riesgo devuelve true, si tiene false
 	 */
 	public boolean checkRiesgoReputacional(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método que comprueba si la oferta tiene importe
 	 * @param tareaExterna
 	 * @return si tiene importe devuelve true, en caso contrario devuelve false
 	 */
 	public boolean checkImporte(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método que comprueba si la oferta tiene compradores
 	 * @param tareaExterna
 	 * @return si tiene compradores devuelve true, en caso contrario devuelve false
 	 */
 	public boolean checkCompradores(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método que comprueba que la oferta no tenga conflicto de intereses
 	 * @param tareaExterna
 	 * @return si tiene conflicto de intereses devuelve true, en caso contrario devuelve false
 	 */
-	public boolean checkConflictoIntereses(TareaExterna tareaExterna);	
-	
+	public boolean checkConflictoIntereses(TareaExterna tareaExterna);
+
 	/**
 	 * Metodo que comprueba si la oferta tiene relleno el comite sancionador
 	 * @param tareaExterna
 	 * @return
 	 */
 	public boolean checkComiteSancionador(TareaExterna tareaExterna);
-	
+
 
 	/**
 	 * Metodo que comprueba si la oferta tiene el comite sancionador alquiler HAYA
@@ -350,7 +357,7 @@ public interface OfertaApi {
 	/**
 	 * Método que comprueba si el activo tiene atribuciones para sancionar el
 	 * expediente
-	 * 
+	 *
 	 * @param tareaExterna
 	 * @return true si tiene atribuciones, false si no las tiene
 	 */
@@ -359,20 +366,11 @@ public interface OfertaApi {
 	/**
 	 * Método que comprueba si el activo tiene atribuciones para sancionar el
 	 * expediente
-	 * 
+	 *
 	 * @param trabajo
 	 * @return true si tiene atribuciones, false si no las tiene
 	 */
 	public boolean checkAtribuciones(Trabajo trabajo);
-	
-	/**
-	 * Método que comprueba si el activo tiene atribuciones para sancionar el
-	 * expediente 
-	 *
-	 * @param oferta
-	 * @return
-	 */
-	public boolean checkAtribuciones(Oferta oferta);
 
 	/**
 	 * Método que da de alta el comité externo en Bankia
@@ -380,14 +378,14 @@ public interface OfertaApi {
 	 * @return
 	 */
 	public boolean altaComite(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método que comprueba si existe conflicto de intereses y/o riesgo computacional
 	 * @param tareaExterna
 	 * @return true si el valor es NO en ambos combos, false en caso de que no estén rellenos o alguno tenga SI.
 	 */
 	public boolean checkPoliticaCorporativa(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método que comprueba si el expediente tiene algún posicionamiento creado
 	 * @param tareaExterna
@@ -398,7 +396,7 @@ public interface OfertaApi {
 	/**
 	 * Este método obtiene los detalles de una oferta por ID de oferta requeridos
 	 * en la pestaña ofertas de un activo.
-	 * 
+	 *
 	 * @param id identificador de la oferta a consultar.
 	 * @return Devuelve un objeto detalle oferta.
 	 */
@@ -407,7 +405,7 @@ public interface OfertaApi {
 	/**
 	 * Este método obtiene una lista de ofertantes para el ID de oferta dado, esto incluye
 	 * el ofertante principal y los titulares adicionales.
-	 * 
+	 *
 	 * @param idOferta id de la oferta a filtrar.
 	 * @return Devuelve una lista de DtoOfertantesOferta por cada ofertante encontrado.
 	 */
@@ -421,7 +419,7 @@ public interface OfertaApi {
 	 * @return Devuelve una lista de DtoGastoExpediente.
 	 */
 	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta);
-	
+
 	/**
 	 * Este método obtiene una lista de honorarios para el ID de oferta dado.
 	 *
@@ -429,7 +427,7 @@ public interface OfertaApi {
 	 * @return Devuelve una lista de DtoHonorariosOferta por cada honorario encontrado.
 	 */
 	public List<DtoHonorariosOferta> getHonorariosByOfertaId(DtoHonorariosOferta dtoHonorariosOferta);
-	
+
 
 	/**
 	 * Método que comprueba si se ejerce el tanteo
@@ -437,9 +435,9 @@ public interface OfertaApi {
 	 * @return
 	 */
 	public boolean checkEjerce(TareaExterna tareaExterna);
-	
-	
-	
+
+
+
 	/**
 	 * Devuelve una lista de todas las ofertas pertenecientes a todos los titulares de una oferta
 	 *
@@ -454,7 +452,7 @@ public interface OfertaApi {
 	 * @return
 	 */
 	boolean ratificacionComite(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método para comprobar que el ACTIVO tenga una oferta ACEPTADA con un expediente comercial con algunos
 	 * de los estados finalizados del expediente
@@ -462,7 +460,7 @@ public interface OfertaApi {
 	 * @return
 	 */
 	public Boolean isActivoConOfertaYExpedienteBlocked(Activo activo);
-	
+
 	/**
 	 * Método para comprobar que la AGRUPACION tenga una oferta ACEPTADA con un expediente comercial con algunos
 	 * de los estados finalizados del expediente
@@ -470,7 +468,7 @@ public interface OfertaApi {
 	 * @return
 	 */
 	public Boolean isAgrupacionConOfertaYExpedienteBlocked(ActivoAgrupacion agrupacion);
-	
+
 	/**
 	 * Comprueba que la oferta y su expediente comercial esten aprobados
 	 * @param of
@@ -480,31 +478,32 @@ public interface OfertaApi {
 
 	/**
 	 * Este método resetea el PBC.
-	 * 
+	 *
 	 * @param expediente : entidad expediente.
 	 * @param fullReset, Booleano para indicar si reseteamos solo el estado o también la responsabilidad corporativa.
 	 * @return Devuelve True si la operación ha sido satisfactoria, False si ha habido un error.
 	 */
 	public boolean resetPBC(ExpedienteComercial expediente, Boolean fullReset);
-	
+
 	/**
 	 * Este método comprueba si hay impuestos.
 	 * @param tareaExterna
 	 * @return
 	 */
 	public boolean checkImpuestos(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Este método construye una lista de ActivoOferta para la creación de ofertas.
 	 * @param activo a incluir en la oferta
 	 * @param agrupacion a incluir en la oferta
 	 * @param oferta con la información de la oferta
-	 * @return List<ActivoOferta> 
+	 * @return List<ActivoOferta>
 	 */
 	public List<ActivoOferta> buildListaActivoOferta(Activo activo, ActivoAgrupacion agrupacion, Oferta oferta) throws Exception;
+	
 
 	/**
-	 * 
+	 *
 	 * @param oferta
 	 * @param accion
 	 * @param activo
@@ -526,16 +525,16 @@ public interface OfertaApi {
 	 * @return String Error o null
 	 */
 	String altaComiteProcess(TareaExterna tareaExterna, String codigo);
-	
+
 	public boolean updateOfertantesByOfertaId(DtoOfertantesOferta dtoOfertantesOferta);
-	
+
 	/**
 	 * Obtiene el listado de subtipos  de proveedor que pueden ser un canal de prescripción
 	 * @return
 	 */
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedorCanal();
 
-	
+
 	/**
 	 * Este método comprueba que todos los tanteos de los activos del expedientes tienen una resolucion renuncia
 	 * @param tareaExterna
@@ -556,7 +555,7 @@ public interface OfertaApi {
 	 * @return Usuario
 	 */
 	Usuario getUsuarioPreescriptor(Oferta oferta);
-	
+
 	/**
 	 * Devuelve el ActivoProveedor asociado al preescritor de la oferta. En caso de no existir devuelve null.
 	 * @param oferta
@@ -565,7 +564,7 @@ public interface OfertaApi {
 	public ActivoProveedor getPreescriptor(Oferta oferta);
 
 	public void desocultarActivoOferta(Oferta oferta) throws Exception;
-	
+
 	/**
 	 * Método que comprueba para Bankia (excepto subcartera BH) si el estado de la reserva es firmada.
 	 * @param tareaExterna
@@ -579,7 +578,11 @@ public interface OfertaApi {
 
 	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 
+//	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+	
 	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
+	
+	DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
 
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
@@ -591,7 +594,7 @@ public interface OfertaApi {
 	boolean estaViva(Oferta oferta);
 
 	public List<Oferta> getListaOfertasByActivo(Activo activo);
-	
+
 	public DtoOferta getOfertaOrigenByIdExpediente(Long numExpediente);
 
 	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId);
@@ -606,17 +609,17 @@ public interface OfertaApi {
 	DtoClienteComercial getClienteComercialByTipoDoc(String dniComprador, String codtipoDoc);
 
 	DtoClienteComercial getClienteGDPRByTipoDoc(String dniComprador, String codtipoDoc);
-	
+
 	public void llamadaMaestroPersonas(Long idExpediente, String cartera);
 
 	public void llamadaMaestroPersonas(String numDocCliente, String cartera);
-	
+
 	/**
 	 * Devuelve el destino comercial segun el id del activo.
 	 * @return String destino comercial del activo.
 	 */
 	public String getDestinoComercialActivo(Long idActivo, Long idAgrupacion, Long idExpediente);
-	
+
 	/**
 	 * Devuelve un booleano indicando si existe el cliente GDPR o el comprador.
 	 * @param idActivo
@@ -627,21 +630,173 @@ public interface OfertaApi {
 	 * @return boolean si existe el cliente o el comprador.
 	 */
 	public boolean existeClienteOComprador(Long idActivo, Long idAgrupacion, Long idExpediente, String docCliente, String codtipoDoc);
-	
+
 	/**
 	 * Es cartera internacional?
-	 * 
+	 *
 	 * @param idActivo
 	 * @param idAgrupacion
 	 * @param idExpediente
 	 * @return
 	 */
 	public boolean esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente);
-	
+
+	/**
+	 * @param ofrNumOferta
+	 * @param codTarea
+	 * @return devuelve el id de la tarea activa.
+	 */
+	public Long getIdTareaByNumOfertaAndCodTarea(Long ofrNumOferta, String codTarea);
+
 	/**
 	 * Anula la oferta si viene de un lote crm
 	 * @param oferta
 	 */
 	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta);
-}
+	
+	/**
+	 * Genera la excel de Ofertas CES
+	 * @param dtoOfertasFilter
+	 * @return ExcelReport
+	 */
+	ExcelReport generarExcelOfertasCES(DtoOfertasFilter dtoOfertasFilter);
 
+	/**
+	 * Devuelve el Gestor Entidad Comercial de la Oferta
+	 * @param oferta
+	 */
+	GestorEntidad getGestorEntidad(Oferta oferta);
+
+	/**
+	 * Calcula el gestor comercial prescriptor de la oferta
+	 * @param oferta
+	 * @return Usuario GestorComercial / null
+	 */
+	public Usuario calcularGestorComercialPrescriptorOferta(Oferta oferta);
+
+
+	/**
+	 * Metodo que busca si la tarea pasada del tramite dado esta finalizada
+	 * @param tramite - TramiteActivo
+	 * @param codigoTarea - Codigo de la tabla TareaProcedimiento
+	 * @return devuelve true si esta finalizada
+	 */
+	public Boolean esTareaFinalizada(ActivoTramite tramite, String codigoTarea);
+
+	Boolean finalizarOferta(Oferta oferta);
+
+	Oferta getOfertaByIdExpediente(Long idExpediente);
+
+	boolean checkEsYubai(TareaExterna tareaExterna);
+	/**
+	 * Este método construye una lista de OfertasAgrupadasLbk para la creación de ofertas.
+	 * @param idOfertaPrincipal a incluir en la oferta
+	 * @param oferta con la información de la oferta
+	 * @return List<OfertasAgrupadasLbk> 
+	 */
+	public List<OfertasAgrupadasLbk> buildListaOfertasAgrupadasLbk(Oferta principal, Oferta dependiente, String claseOferta) throws Exception;
+
+
+	/**
+	 * Obtener la lista de ofertas agrupadas para Liberbank 
+	 * @param dtoVListadoOfertasAgrupadasLbk <DtoVListadoOfertasAgrupadasLbk>
+	 * @return <DtoPage> Página de valores de ofertas agrupadas Liberbank
+	 */
+	DtoPage getListOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
+	
+	/**
+	 * Obtener la lista de activos de las ofertas agrupadas para Liberbank 
+	 * @param dtoVListadoOfertasAgrupadasLbk <DtoVListadoOfertasAgrupadasLbk>
+	 * @return <DtoPage> Página de valores de ofertas agrupadas Liberbank
+	 */
+	DtoPage getListActivosOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
+	
+
+
+	public boolean faltanDatosCalculo(Long idOferta);
+
+	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
+
+	DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+
+	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+
+	/**
+	 * Método que comprueba si la oferta es una oferta principal
+	 * @param oferta oferta actual
+	 * @return boolean
+	 */
+	public boolean isOfertaPrincipal(Oferta oferta);
+	
+	/**
+	 * Método que comprueba si la oferta es una oferta principal
+	 * @param oferta oferta actual
+	 * @return boolean
+	 */
+	public boolean isOfertaDependiente(Oferta oferta);
+	
+	/**
+	 * Método para obtener todas las ofertas dependientes de una principal.
+	 * @param oferta oferta actual
+	 * @return lista de ofertas dependientes
+	 */
+	public List<Oferta> ofertasAgrupadasDependientes(Oferta oferta);
+
+	/**
+	 * Este método obtiene la oferta mediante el id de la tarea por la que entra (creado para obtener la oferta y comprobar si es o no principal).
+	 *
+	 * @param idTarea
+	 * @return Oferta
+	 */
+	public Oferta tareaOferta(Long idTarea);
+
+	void actualizaPrincipalId(OfertasAgrupadasLbk ofertaLbk, Oferta nuevaOfertaPrincipal);
+
+	void borradoOfertaAgrupadaDependiente(Oferta oferta);
+
+	public void actualizaListadoPrincipales(Oferta nuevaPrincipal, List<OfertasAgrupadasLbk> ofertasAgrupadas);
+
+	public void actualizaClaseOferta(Oferta principal, String codigoOfertaPrincipal);
+	
+	/**
+	 * Este método comprueba si en la agrupación de la ofertaPrincipal ya está incluido algun activo de la nueva ofertaDependiente
+	 *
+	 * @param ofertaDependiente
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public boolean ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(Oferta ofertaDependiente, Oferta ofertaPrincipal);
+	
+	/**
+	 * Este método comprueba si en la oferta agrupada de la ofertaPrincipal ya está incluido un activo en concreto. Se usa para hacer las comprobaciones de ofertas nuevas sobre activos (cuando se están creando y aun no existen).
+	 *
+	 * @param idActivo
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public boolean activoYaIncluidoEnOfertaAgrupadaLbk(Long idActivo, Oferta ofertaPrincipal);
+
+	boolean checkAtribuciones(Oferta oferta);
+
+	/**
+	 * Este método comprueba si alguna oferta dependiente no pasa alguna validación de la tareas
+	 *
+	 * @param idActivo
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public String isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String, String>> valores);
+	
+	/*
+	 * Este método comprueba si en la oferta agrupada de la ofertaPrincipal ya está incluido alguno de los activos que contiene la agrupación sobre la que se está intentando crear una oferta. Se usa para hacer las comprobaciones de ofertas nuevas sobre agrupaciones (cuando se están creando y aun no existen).
+	 *
+	 * @param idAgrupacion
+	 * @param ofertaPrincipal
+	 * @return boolean
+	 */
+	public boolean agrupacionConActivoYaIncluidoEnOfertaAgrupadaLbk(Long idAgrupacion, Oferta ofertaPrincipal);
+
+	boolean checkTipoImpuesto(TareaExterna tareaExterna);
+
+	boolean checkReservaInformada(TareaExterna tareaExterna);
+}

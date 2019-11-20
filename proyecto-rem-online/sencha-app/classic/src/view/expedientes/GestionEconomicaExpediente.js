@@ -302,6 +302,18 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            	xtype:'textarea',
 					            	reference: 'observaciones'
 					            }
+						   },
+						   {
+						   		text: HreRem.i18n('header.origen.comprador'),
+					            dataIndex: 'origenComprador',
+					            reference: 'origenCompradorVistaRef',
+					            flex: 1,
+					            editor: {
+									xtype: 'textfield',
+    								editable: false,
+    								readOnly: true,
+    								reference: 'origenCompradorRef'
+								}
 						   }
 					    ]/*,
 					    dockedItems : [

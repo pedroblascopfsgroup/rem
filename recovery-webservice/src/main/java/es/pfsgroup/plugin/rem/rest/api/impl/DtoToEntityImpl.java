@@ -82,6 +82,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Transactional(readOnly = false)
 	public Serializable obtenerObjetoEntity(Long idValue, Class entity, String fieldActivo)
 			throws Exception {
 		Serializable objetoEntity = null;

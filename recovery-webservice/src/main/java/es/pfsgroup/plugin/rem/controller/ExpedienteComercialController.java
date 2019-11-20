@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
@@ -27,6 +29,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -45,8 +48,10 @@ import es.pfsgroup.plugin.rem.api.GdprApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
+import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.OfertaAgrupadaListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
@@ -54,10 +59,13 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -80,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoSlideDatosCompradores;
@@ -88,15 +97,19 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
-
 
 
 @Controller
 public class ExpedienteComercialController extends ParadiseJsonController {
 
-	protected static final Log logger = LogFactory.getLog(ActivoController.class);
+	protected static final Log logger = LogFactory.getLog(ExpedienteComercialController.class);
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 
 	//private static final String CONSTANTE_CARTERA_HAYA = "Haya";
@@ -159,6 +172,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -252,6 +266,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveDatosBasicosOferta(dto, id));
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "datosBasicosOferta", ACCION_CODIGO.CODIGO_MODIFICAR);
+
+		} catch (Error err) {
+			model.put(RESPONSE_MESSAGE_KEY, err.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", err);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "datosBasicosOferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 
 		} catch (JsonViewerException e) {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
@@ -467,7 +487,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		String nombreDocumento = request.getParameter("nombreDocumento");
 		ServletOutputStream salida = null;
 		try {
-			nombreDocumento = URLDecoder.decode(nombreDocumento,"UTF-8");
+
 			FileItem fileItem = dl.getFileItem(id, nombreDocumento);
 			salida = response.getOutputStream();
 			if(fileItem != null){	
@@ -505,32 +525,31 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoExpedienteGDPR(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 
-		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
-		Downloader dl = downloaderFactoryApi.getDownloader(key);
-		String nombreDocumento = request.getParameter("nombreAdjunto");
-		Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
-
-		try {
-			FileItem fileItem = dl.getFileItem(idDocRestClient, nombreDocumento);
-			ServletOutputStream salida = response.getOutputStream();
-
-			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
-			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-			response.setHeader("Cache-Control", "max-age=0");
-			response.setHeader("Expires", "0");
-			response.setHeader("Pragma", "public");
-			response.setDateHeader("Expires", 0); // prevents caching at the
-													// proxy
-			response.setContentType(fileItem.getContentType());
-
-			// Write
-			FileUtils.copy(fileItem.getInputStream(), salida);
-			salida.flush();
-
-		} catch (Exception e) {
-			logger.error("Error en ExpedienteComercialController", e);
-		}
-	}
+				String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+				Downloader dl = downloaderFactoryApi.getDownloader(key);
+				String nombreDocumento = request.getParameter("nombreAdjunto");
+				Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
+				
+       	try {
+	       		FileItem fileItem = dl.getFileItem( idDocRestClient , nombreDocumento);
+           		ServletOutputStream salida = response.getOutputStream(); 
+           			
+           		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+           		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+           		response.setHeader("Cache-Control", "max-age=0");
+           		response.setHeader("Expires", "0");
+           		response.setHeader("Pragma", "public");
+           		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+           		response.setContentType(fileItem.getContentType());
+           		
+           		// Write
+           		FileUtils.copy(fileItem.getInputStream(), salida);
+           		salida.flush();
+        
+    		}catch(Exception e) {
+    			logger.error("Error en ExpedienteComercialController", e);
+		    }	
+       	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -1737,6 +1756,25 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void getAdvisoryNoteExpediente(HttpServletRequest request, HttpServletResponse response, Long idExpediente) throws Exception {
+		try {
+			Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+			
+			List<VReportAdvisoryNotes> listaAN = expedienteComercialApi.getAdvisoryNotesByOferta(oferta);
+			
+			if(!Checks.estaVacio(listaAN)) {
+				File file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request);
+				excelReportGeneratorApi.sendReport(file, response);
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} 
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -2074,6 +2112,88 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put("error", e.getMessage());
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void exportarListadoActivosOfertaPrincipal(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpediente);
+		Long idOferta = expedienteComercial.getOferta().getId();
+
+		if(!Checks.esNulo(idOferta)) {
+			List<VListadoOfertasAgrupadasLbk> listaActivosPorAgrupacion = expedienteComercialAdapter.getListActivosAgrupacionById(idOferta);
+	
+			if(!Checks.estaVacio(listaActivosPorAgrupacion)) {
+				ExcelReport report = new OfertaAgrupadaListadoActivosExcelReport(listaActivosPorAgrupacion);
+		
+				excelReportGeneratorApi.generateAndSend(report, response);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView esOfertaDependiente(Long numOferta, ModelMap model) { 
+		try {
+			Oferta oferta = null;
+			if (!Checks.esNulo(numOferta)) {
+				oferta = ofertaApi.getOfertaById(numOferta);
+				if (Checks.esNulo(oferta)) {
+					oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
+				}
+			}
+			
+			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getId())) {
+				model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.esOfertaDependiente(oferta.getId()));
+				model.put(RESPONSE_ERROR_KEY, false);
+			} else {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_KEY, true);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("error", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchOfertaCodigo(@RequestParam String numOferta, @RequestParam String id, @RequestParam String esAgrupacion) {
+		ModelMap model = new ModelMap();
+
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.searchOfertaCodigo(numOferta, id, esAgrupacion));
+
+		} catch(JsonViewerException jve) {
+			logger.error("Error en expedienteComercialController", jve);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jve.getMessage());
+		} catch (Exception e) {
+			logger.error("Error en expedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestorPrescriptor(Long idExpediente, ModelMap model) {
+		try {
+			List<DtoDiccionario> list = expedienteComercialApi.calcularGestorComercialPrescriptor(idExpediente);
+			model.put(RESPONSE_DATA_KEY, list);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
+		}
 		return createModelAndViewJson(model);
 	}
 }

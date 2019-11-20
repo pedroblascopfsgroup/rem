@@ -59,6 +59,8 @@ public class DtoFichaExpediente extends WebDto {
 	private Date fechaFin;
 
 	private Date fechaAltaOferta;
+	
+	private Date fechaContabilizacionReserva;
 
 	private Date fechaPosicionamiento;
 	
@@ -111,6 +113,7 @@ public class DtoFichaExpediente extends WebDto {
 	private Integer conflictoIntereses;
 	private Integer riesgoReputacional;
 	private Integer estadoPbc;
+	private Integer estadoPbcR;
 	private Date fechaVenta;
 	
 
@@ -139,6 +142,12 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean problemasUrsus;
 	private Long idOfertaAnterior;
 	private Boolean noEsOfertaFinalGencat;
+	
+	private Date fechaEnvioAdvisoryNote;
+	
+	private Date fechaRecomendacionCes;
+	
+	private Date fechaAprobacionProManzana;
 
 	public Long getId() {
 		return id;
@@ -274,6 +283,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaReserva(Date fechaReserva) {
 		this.fechaReserva = fechaReserva;
+	}
+	
+	public Date getFechaContabilizacionReserva() {
+		return fechaContabilizacionReserva;
+	}
+
+	public void setFechaContabilizacionReserva(Date fechaContabilizacionReserva) {
+		this.fechaContabilizacionReserva = fechaContabilizacionReserva;
 	}
 
 	public Date getFechaFin() {
@@ -500,6 +517,13 @@ public class DtoFichaExpediente extends WebDto {
 	public void setEstadoPbc(Integer estadoPbc) {
 		this.estadoPbc = estadoPbc;
 	}
+	public Integer getEstadoPbcR() {
+		return estadoPbcR;
+	}
+
+	public void setEstadoPbcR(Integer estadoPbcR) {
+		this.estadoPbcR = estadoPbcR;
+	}
 
 	public Integer getAlquilerOpcionCompra() {
 		return alquilerOpcionCompra;
@@ -709,5 +733,30 @@ public class DtoFichaExpediente extends WebDto {
 	public void setNoEsOfertaFinalGencat(Boolean noEsOfertaFinalGencat) {
 		this.noEsOfertaFinalGencat = noEsOfertaFinalGencat;
 	}
+
+	public Date getFechaEnvioAdvisoryNote() {
+		return fechaEnvioAdvisoryNote;
+	}
+
+	public void setFechaEnvioAdvisoryNote(Date fechaEnvioAdvisoryNote) {
+		this.fechaEnvioAdvisoryNote = fechaEnvioAdvisoryNote;
+	}
+
+	public Date getFechaRecomendacionCes() {
+		return fechaRecomendacionCes;
+	}
+
+	public void setFechaRecomendacionCes(Date fechaRecomendacionCes) {
+		this.fechaRecomendacionCes = fechaRecomendacionCes;
+	}
+
+	public Date getFechaAprobacionProManzana() {
+		return fechaAprobacionProManzana;
+	}
+
+	public void setFechaAprobacionProManzana(Date fechaAprobacionProManzana) {
+		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
+	}
+	
 	
 }

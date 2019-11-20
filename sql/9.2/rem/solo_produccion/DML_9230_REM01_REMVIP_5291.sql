@@ -1,0 +1,75 @@
+--/*
+--#########################################
+--## AUTOR=Oscar Diestre Pérez
+--## FECHA_CREACION=20190926
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-5291
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Carga masiva de aprobación del informe comercial
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-5291'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    
+BEGIN		
+        ---------------------------------------------------------------------------------
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZANDO TAR_TAREAS_NOTIFICACIONES ');	
+	
+
+	V_MSQL := ' MERGE INTO '|| V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES TAR
+		    USING( 
+
+				SELECT TAR.TAR_ID
+				FROM '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR,
+				'||V_ESQUEMA||'.ETN_EXTAREAS_NOTIFICACIONES ETN
+				WHERE ETN.TAR_ID = TAR.TAR_ID
+				AND DD_STA_ID = ( SELECT DD_STA_ID  FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''700'' )
+				AND ETN.TAR_ID_DEST = 30147
+				AND TAR_FECHA_FIN IS NULL
+
+			) AUX
+		    ON ( AUX.TAR_ID = TAR.TAR_ID )
+		    WHEN MATCHED THEN UPDATE SET
+		    TAR_FECHA_FIN = SYSDATE,
+		    TAR_TAREA_FINALIZADA = 1,
+		    FECHAMODIFICAR = SYSDATE,
+		    USUARIOMODIFICAR = ''' || V_USR || '''' ;	
+	
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se actualizan '||SQL%ROWCOUNT||' registros de TAR_TAREAS_NOTIFICACIONES'); 	
+
+	COMMIT;
+	
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

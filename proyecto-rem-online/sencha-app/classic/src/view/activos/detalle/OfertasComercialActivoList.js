@@ -310,7 +310,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					}
 				}
 				if(activo.get('cambioEstadoPublicacion')){
-					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
+					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA']) || activo.get('estadoVentaCodigo') == '03'){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 					}else{
 						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.publicacion"));
@@ -356,8 +356,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
                 params: {
                     idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
                 },
-                success: function (a, operation, c) {																	
-					me.saveSuccessFn();
+                success: function (a, operation, c) {
+					me.saveSuccessFn(operation);
 				},
                 
 				failure: function (a, operation) {
@@ -398,7 +398,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				var codigoEstadoExpediente=  me.getStore().getData().items[i].data.codigoEstadoExpediente;
 				var expedienteBlocked = CONST.ESTADOS_EXPEDIENTE['APROBADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['RESERVADO'] == codigoEstadoExpediente 
 					|| CONST.ESTADOS_EXPEDIENTE['EN_DEVOLUCION'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['VENDIDO'] == codigoEstadoExpediente 
-					|| CONST.ESTADOS_EXPEDIENTE['FIRMADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['BLOQUEO_ADM'] == codigoEstadoExpediente;
+					|| CONST.ESTADOS_EXPEDIENTE['FIRMADO'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['BLOQUEO_ADM'] == codigoEstadoExpediente
+					|| CONST.ESTADOS_EXPEDIENTE['RES_PTE_MAN'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['AP_PTE_MAN'] == codigoEstadoExpediente
+					|| CONST.ESTADOS_EXPEDIENTE['AP_CES_PTE_MAN'] == codigoEstadoExpediente || CONST.ESTADOS_EXPEDIENTE['CONT_CES'] == codigoEstadoExpediente;
 				hayOfertaAceptada = CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoOferta && expedienteBlocked;
 			}
 		}
@@ -426,13 +428,28 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				return false;
 			}
 		}
+		if(!me.up('comercialactivo').getBindRecord().data.tramitable && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.oferta.no.tramitable"));
+			return false
+		}
 		
 		return true;			
 	},
-    saveSuccessFn: function () {
+    saveSuccessFn: function (operation) {
    		var me = this;
         me.unmask();	
-        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+
+        try {
+    		var response = Ext.JSON.decode(operation.getResponse().responseText)
+    		
+    	}catch(err) {}
+    	
+        if(!Ext.isEmpty(response) && !Ext.isEmpty(response.advertencia)) {
+    		me.fireEvent("warnToast", response.advertencia);
+    	}else{
+    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    	}
+        
         me.up('activosdetalle').lookupController().refrescarActivo(true);
 		return true;
 	},
@@ -469,7 +486,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var activo = me.lookupController().getViewModel().get('activo');
 
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
-			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')  || activo.get('isActivoEnTramite') || activo.get('situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['ALQUILADO_PARCIALMENTE']) {
+			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')  || activo.get('isActivoEnTramite') 
+			|| (activo.get('situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['ALQUILADO_PARCIALMENTE'] && activo.get('tipoComercializacionCodigo') !=  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

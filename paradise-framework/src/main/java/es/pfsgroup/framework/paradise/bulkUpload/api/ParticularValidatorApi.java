@@ -18,7 +18,7 @@ public interface ParticularValidatorApi {
 
 	String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 
-	Boolean activoEnAgrupacionRestringida(Long idActivo);
+	Boolean activoEnAgrupacionRestringida(Long numActivo);
 
 	Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 
@@ -735,6 +735,16 @@ public interface ParticularValidatorApi {
 
 	Boolean isActivoOfGiants(String numActivo);
 	
+	Boolean perteneceDDEstadoActivo(String codigoEstadoActivo);
+
+	Boolean perteneceDDTipoTituloTPA(String codigoTituloTPA);
+
+	Boolean conTituloOcupadoSi(String codigoTituloTPA);	
+	
+	Boolean conPosesion(String numActivo);
+	
+	Boolean perteneceDDEstadoDivHorizontal(String codigoEstadoDivHorizontal);
+
 	/**
 	 * @param numActivo
 	 * @return true si el activo es un activo Matriz de una PA
@@ -772,10 +782,159 @@ public interface ParticularValidatorApi {
 	 * @return true si el activo pertenece a un activo de venta.
 	 */
 	
-	public Boolean activosVendidos(String numExpedienteComercial);
+	public Boolean activosVendidos(String numExpedienteComercial);	
 
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 	Boolean existeActivoAsociado(String numActivo);
+	
+	/**
+	 * Devuelve el codigo del destino comercial de un activo
+	 * 
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean esActivoProductoTerminado(String numActivo);
+
+	public Boolean noExisteEstado(String numActivo);
+	
+
+	/** 
+	 * @param numGasto
+	 * @return true si el emisor del gasto es HAYA
+	 */
+	public Boolean esGastoEmisorHaya(String numGasto);
+	
+	/** 
+	 * @param numGasto
+	 * @return true si el destinatario del gasto es HAYA
+	 */
+	public Boolean esGastoDestinatarioHaya(String numGasto);
+	
+	/** 
+	 * Comprueba si dos gastos son de la misma cartera
+	 * @param numGasto
+	 * @param numOtroGasto
+	 * @return true si ambos gastos son de la misma cartera
+	 */
+	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto);
+
+	/**
+	 * @param numActivo
+	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
+	 */
+	Boolean activoEnAgrupacionProyecto(String numActivo);
+
+	/** 
+	 * @param codigoServicer
+	 * @return true si existe el código de Servicer Activo 
+	 */
+	public Boolean perteneceDDServicerActivo(String codigoServicer);
+
+	/** 
+	 * @param codigoCesion
+	 * @return true si existe el código de Cesión Comercial/Saneamiento
+	 */
+	public Boolean perteneceDDCesionComercial(String codigoCesion);
+
+	/** 
+	 * @param codigoValorOrdinario
+	 * @return true si existe el código de Clasificación Apple
+	 */
+	public Boolean perteneceDDClasificacionApple(String codigoValorOrdinario);
+
+	/** 
+	 * @param numActivo
+	 * @return true si el Activo pertenece a la subcartera Apple
+	 */
+	public Boolean esActivoApple(String numActivo);
+
+	/***
+	 * @param codTipoDoc
+	 * @return true si existe el código del documento
+	 */
+	public Boolean existeTipoDoc(String codTipoDoc);
+
+	/***
+	 * @param codEstado
+	 * @return true si existe el código de estado
+	 */
+	public Boolean existeEstadoDocumento(String codEstadoDoc);
+
+	/***
+	 * @param codCalificacionEnergetica
+	 * @return true si existe el código de calificación energética
+	 */
+	public Boolean existeCalificacionEnergetica(String codCE);
+	
+	Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia);
+
+	public Boolean esActivoUA(String numActivo);
+
+	public Boolean esAccionValido(String codAccion);
+
+	public Boolean esResultadoValido(String codResultado);
+
+	public Boolean esSolicitudValido(String codSolicitud);
+
+	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+
+	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+
+	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
+
+	String getActivoPlusvalia(String numActivo, String fechaPlusvalia);
+	
+	Boolean existeJunta(String numActivo,  String fechaJunta);
+	
+	public Boolean existeCodJGOJE(String codJunta);
+
+	String getActivoJunta(String numActivo, String fechaJunta);
+	
+	/**
+	 * @param numActivo
+	 * @return true si el activo es una unidad alquilable	 
+	 */
+	Boolean esUnidadAlquilable(String numActivo);
+	
+	/** 
+	 * @param numGasto
+	 * @return true si el gasto es refacturado
+	 */
+	Boolean esGastoRefacturado(String numGasto);
+
+	/** 
+	 * @param numGasto
+	 * @return true si el propietario del gasto es BANKIA o SAREB
+	 */
+	Boolean perteneceGastoBankiaSareb(String numGasto);
+
+	/** 
+	 * @param numGasto
+	 * @return true si el gasto es refacturable
+	 */
+	Boolean esGastoRefacturable(String numGasto);
+
+	Boolean existeGastoRefacturable(String numGasto);
+
+	Boolean esGastoDestinatarioPropietario(String numGasto);
+
+	/**
+	 * @param codDocumento
+	 * @return true si el código del documento es de tipo CEE
+	 */
+	public Boolean esDocumentoCEE(String codDocumento);
+
+	/**
+	 * @param numActivo
+	 * @return Devuelve el número de Agrupacion Restringida a la que pertenece el Activo 
+	 */
+	public Long obtenerNumAgrupacionRestringidaPorNumActivo(String numActivo);
+
+	/**
+	 * @param numAgrupacion
+	 * @return true si la Agrupación de tipo alquiler tiene precio
+	 */
+	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
 
 }

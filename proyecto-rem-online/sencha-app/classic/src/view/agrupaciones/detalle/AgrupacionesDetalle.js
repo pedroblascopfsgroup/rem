@@ -25,7 +25,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		},
 
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {
-        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
+        	tabPanel.down("[itemId=botoneditar]").setVisible(false);
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null)
         	{
@@ -103,7 +103,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'seguimientoagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionProyecto}'}})}, ['TAB_SEGUIMIENTO_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
 		items.push({xtype: 'datospublicacionagrupacion', ocultarBotonesEdicion: false, bind: {disabled:'{!esAgrupacionRestringida}'}});
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{habilitarComercial}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_COMERCIAL_AGRUPACION'])
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', bind: {disabled:'{habilitarComercial}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_COMERCIAL_AGRUPACION'])
 
         me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent(); 

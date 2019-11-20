@@ -261,6 +261,23 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActivoProveedorContacto getActivoProveedorContactoPorUsernameUsuario(String username) {
+
+		HQLBuilder hb = new HQLBuilder("from ActivoProveedorContacto pvc");
+		hb.appendWhere("pvc.usuario.username = '" + username +"'");
+		hb.appendWhere("pvc.fechaBaja IS NULL");
+		hb.appendWhere("pvc.auditoria.borrado = 0");
+		
+		List<ActivoProveedorContacto> listaProveedoresContacto = (List<ActivoProveedorContacto>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		
+		if(!listaProveedoresContacto.isEmpty()){
+			return listaProveedoresContacto.get(0);
+		}
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -341,7 +358,6 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 				.createQuery(hb.toString()).list();
 		return listaProveedores;
 	}
-	
 	
 	
 	

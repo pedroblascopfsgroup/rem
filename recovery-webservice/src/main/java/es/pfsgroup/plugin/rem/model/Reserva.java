@@ -105,6 +105,9 @@ public class Reserva implements Serializable, Auditable {
     @Column(name="RES_IMPORTE_DEVUELTO")
     private Double importeDevuelto;
     
+    @Column(name="RES_FECHA_CONTABILIZACION")
+    private Date fechaContabilizacionReserva; 
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EDE_ID")
 	private DDEstadoDevolucion estadoDevolucion;
@@ -272,6 +275,14 @@ public class Reserva implements Serializable, Auditable {
 
 	public void setDevolucionReserva(DDDevolucionReserva devolucionReserva) {
 		this.devolucionReserva = devolucionReserva;
+	}
+
+	public Date getFechaContabilizacionReserva() {
+		return fechaContabilizacionReserva;
+	}
+
+	public void setFechaContabilizacionReserva(Date fechaContabilizacionReserva) {
+		this.fechaContabilizacionReserva = fechaContabilizacionReserva;
 	} 
    
 }

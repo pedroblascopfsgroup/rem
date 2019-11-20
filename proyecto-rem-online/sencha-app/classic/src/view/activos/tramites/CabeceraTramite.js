@@ -117,9 +117,8 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 																width: 70,
 																bind: {
 																	hidden:'{!isEmptySrcCartera}',
-																	value: '{activo.entidadPropietariaDescripcion}'
+																	value: '{tramite.cartera}'
 																}
-										
 															},
 											                { 
 																fieldLabel: HreRem.i18n('fieldlabel.estado'),

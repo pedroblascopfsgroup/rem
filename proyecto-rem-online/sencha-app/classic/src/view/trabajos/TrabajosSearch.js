@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.trabajos.TrabajosSearch', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'trabajossearch',
-    isSearchForm: true,
+    isSearchFormTrabajos: true,
     cls	: 'panel-base shadow-panel',
     collapsible: true,
     collapsed: false,    

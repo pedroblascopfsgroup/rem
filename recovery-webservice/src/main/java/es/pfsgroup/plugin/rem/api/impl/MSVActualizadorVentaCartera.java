@@ -866,7 +866,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	 * @throws JsonViewerException
 	 * @throws Exception
 	 */
-	private void crearTramiteOferta(Long idAgrupacion) throws JsonViewerException, Exception {
+	private void crearTramiteOferta(Long idAgrupacion) throws JsonViewerException, Exception, Error {
 		TransactionStatus transaction = null;
 		logger.debug("OFERTA_CARTERA: Creamos el tramite y el expediente");
 		try {
@@ -879,6 +879,8 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 
 			agrupacionAdapter.saveOfertaAgrupacion(dtoOferta);
 			transactionManager.commit(transaction);
+		} catch (Error err) {
+			throw err;
 		} catch (Exception e) {
 			transactionManager.rollback(transaction);
 			throw e;

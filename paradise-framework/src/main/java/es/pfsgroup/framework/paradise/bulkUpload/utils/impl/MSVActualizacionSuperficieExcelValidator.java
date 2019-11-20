@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -46,6 +47,7 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 	private static final String ERR_SUPERFICIE_UTIL = "msg.error.masivo.superficies.err.superficie.util";
 	private static final String ERR_REPERCUSION_EECC = "msg.error.masivo.superficies.err.repercusion.eecc";
 	private static final String ERR_PARCELA = "msg.error.masivo.superficies.err.parcela";	
+	private static final String ACTIVO_UA = "activo.aviso.unidad.alquilable";
 	
 	private	static final int FILA_CABECERA = 0;
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -112,27 +114,21 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), isActiveNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CARTERA_ERR), isActivoNotBankiaLiberbank(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_UA), esUnidadAlquilable(exc));
 			mapaErrores.put(messageServices.getMessage(ERR_SUPERFICIE_CONSTRUIDA), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM_SUP_CONSTRUIDA));
 			mapaErrores.put(messageServices.getMessage(ERR_SUPERFICIE_UTIL), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM_SUP_UTIL));
 			mapaErrores.put(messageServices.getMessage(ERR_REPERCUSION_EECC), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM_REPERCUSION_EECC));
 			mapaErrores.put(messageServices.getMessage(ERR_PARCELA), isColumnNANSuperficieIncorrectoByRows(exc, COL_NUM_REPERCUSION_EECC));
-			
-			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CARTERA_ERR)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ERR_SUPERFICIE_CONSTRUIDA)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ERR_SUPERFICIE_UTIL)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ERR_REPERCUSION_EECC)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ERR_PARCELA)).isEmpty())
-			{
+						
+			for (Entry<String, List<Integer>> registros : mapaErrores.entrySet()) {
+				if(!registros.getValue().isEmpty()) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
-					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());	
-					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+				}
 			}
 		}
-		exc.cerrar();
 		
+		exc.cerrar();
 		
 		return dtoValidacionContenido;
 	}
@@ -213,6 +209,28 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 			} catch (Exception e) {
 				listaFilas.add(0);
 				e.printStackTrace();
+			}
+		}
+		return listaFilas;
+	}
+	
+	/**
+	 * Comprueba si el Activo pertenece a una Unidad Alquilable
+	 * @param exc
+	 * @return listado filas erroneas
+	 */
+	private List<Integer> esUnidadAlquilable(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				if (particularValidator.esUnidadAlquilable(exc.dameCelda(i, COL_NUM_ID_ACTIVO_HAYA)))
+					listaFilas.add(i);
+			} catch (ParseException e) {
+				listaFilas.add(i);
+			} catch (Exception e) {
+				listaFilas.add(0);
+				logger.error(e);				
 			}
 		}
 		return listaFilas;

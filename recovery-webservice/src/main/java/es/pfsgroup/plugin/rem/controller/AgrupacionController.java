@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -29,6 +30,8 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -52,10 +55,14 @@ import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 
 @Controller
 public class AgrupacionController extends ParadiseJsonController {
 
+	private static final String FALTAN_DATOS = "Faltan datos para proponer";
+	
+	
 	@Autowired
 	private AgrupacionAdapter adapter;
 
@@ -71,6 +78,11 @@ public class AgrupacionController extends ParadiseJsonController {
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -429,6 +441,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView saveOfertaAgrupacion(DtoOfertaActivo dtoOferta, ModelMap model) {
 
 		try {
+			if (!Checks.esNulo(ofertaApi.getOfertaById(dtoOferta.getIdOferta()).getClaseOferta())
+				&& ofertaApi.faltanDatosCalculo(dtoOferta.getIdOferta())) {
+				model.put("advertencia", FALTAN_DATOS);
+			}
 			boolean success = adapter.saveOfertaAgrupacion(dtoOferta);
 			model.put("success", success);
 		}catch (JsonViewerException jvex) {
@@ -717,6 +733,8 @@ public class AgrupacionController extends ParadiseJsonController {
 		@SuppressWarnings("unchecked")
 		List<VBusquedaAgrupaciones> listaAgrupaciones = (List<VBusquedaAgrupaciones>) adapter
 				.getListAgrupaciones(dtoAgrupacionFilter).getResults();
+		
+		new EmptyParamDetector().isEmpty(listaAgrupaciones.size(), "agrupaciones",  usuarioManager.getUsuarioLogado().getUsername());
 
 		ExcelReport report = new AgrupacionExcelReport(listaAgrupaciones);
 
@@ -747,7 +765,11 @@ public class AgrupacionController extends ParadiseJsonController {
 			ModelMap model) {
 
 		try {
-			model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor));
+			if (GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(codigoGestor)) {
+				model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor, agrId));
+			} else {
+				model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor));
+			}
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error(e);
@@ -1001,6 +1023,41 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("error",e.getMessage());
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView insertarActAutoTram(DtoAgrupaciones dto, Long id, ModelMap model, HttpServletRequest request) {
+		try {
+			model.put("success", activoAgrupacionApi.insertarActAutoTram(dto, id));
+
+		} catch (Exception e) {
+			logger.error("error en agrupacionController", e);
+			model.put("success", false);
+			model.put("errorCode", "msg.operacion.ko");
+		}
+
+		return new ModelAndView("jsonView", model);
+	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComercialAgrupacionById(Long id, int pestana, ModelMap model, HttpServletRequest request) {
+
+		model.put("data", adapter.getComercialAgrupacionById(id));
+		//trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "ficha", ACCION_CODIGO.CODIGO_VER);
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveComercialAgrupacion(DtoAgrupaciones dtoAgrupacion, @RequestParam Long id, ModelMap model, HttpServletRequest request)
+	{
+		//generamos el metodo para que no de error desde la clase donde se le llama, pero de momento no debe guardar nada con este metodo
+		//puesto que por ahora todo lo que tiene que hacer la pestaña, lo guarda insertarActAutoTram
+		boolean success = true;
+		model.put("success", success);
 		return createModelAndViewJson(model);
 	}
 }

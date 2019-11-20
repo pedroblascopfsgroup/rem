@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Miguel Ángel Ávila Sánchez
---## FECHA_CREACION=20190723
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=20190814
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6791

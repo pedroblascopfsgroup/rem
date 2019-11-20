@@ -4,12 +4,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
     'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial',
-    'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion'],
+    'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion', 'HreRem.model.ComercialAgrupacion'],
     
     data: {
     	agrupacionficha: null,
-    	ofertaRecord: null
-    	
+    	ofertaRecord: null,
+    	editing: null
     },
     
     formulas: {
@@ -306,7 +306,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     esAgrupacionLiberbank: function(get) {
 			var codigoCartera=get('agrupacionficha.codigoCartera');
 	         var tipoAgrup= get('agrupacionficha.tipoAgrupacionCodigo');
-	         if(codigoCartera == CONST.CARTERA['LIBERBANK'] && tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
+	         if(codigoCartera == CONST.CARTERA['LIBERBANK'] && (tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'] || tipoAgrup == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])){
 	             return true;
 	         }else{
 	             return false;
@@ -314,12 +314,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 	     
 	     mostrarComboBO: function(get) {
-			var codigoCartera=get('agrupacionficha.codigoCartera');
-			var codigoSubCartera=get('agrupacionficha.codSubcartera');
+	    	 var codigoCartera=get('agrupacionficha.codigoCartera');
+	    	 var codigoSubCartera=get('agrupacionficha.codSubcartera');
 	         var tipoAgrup= get('agrupacionficha.tipoAgrupacionCodigo');
-	         if((codigoCartera == CONST.CARTERA['LIBERBANK'] || codigoCartera == CONST.CARTERA['BANKIA'] || codigoCartera == CONST.CARTERA['SAREB'] 
-	         	|| (codigoCartera == CONST.CARTERA['CERBERUS']) && codigoSubCartera == CONST.SUBCARTERA['APPLEINMOBILIARIO']) 
-	         		&& tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
+	         if((codigoCartera == CONST.CARTERA['LIBERBANK'] || 
+	        	codigoCartera == CONST.CARTERA['BANKIA'] ||
+	        	(codigoCartera == CONST.CARTERA['CERBERUS'] && 
+	        		(codigoSubCartera == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || 
+	        		codigoSubCartera == CONST.SUBCARTERA['JAIPURFINANCIERO'])
+	         	) ||
+	        	(codigoCartera == CONST.CARTERA['EGEO'] 
+	        		 && codigoSubCartera == CONST.SUBCARTERA['ZEUS']) ||
+	        	codigoCartera == CONST.CARTERA['GALEON'] || 
+	        	codigoCartera == CONST.CARTERA['GIANTS'] ||
+		        codigoCartera == CONST.CARTERA['HYT'] || 
+	        	codigoCartera == CONST.CARTERA['SAREB'] || 
+	        	codigoCartera == CONST.CARTERA['TANGO'] ||
+	        	(codigoCartera == CONST.CARTERA['THIRD'] && 
+	        		(codigoSubCartera == CONST.SUBCARTERA['QUITASBANKIA'] ||
+	        		codigoSubCartera == CONST.SUBCARTERA['COMERCIALING']) 
+	        	)
+	         ) 
+	         && tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
 	             return true;
 	         }else{
 	             return false;
@@ -630,9 +646,74 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 		
 		 		return '<a href="' + HreRem.i18n('fieldlabel.link.web.haya').replace("vivienda",tipoActivo) + get('agrupacionficha.idNumActivoPrincipal')+'?utm_source=rem&utm_medium=aplicacion&utm_campaign=activo " target="_blank">' + get('agrupacionficha.estadoAlquilerDescripcion') + '</a>'
 		 	}else {
-		 		return get('agrupacionficha.estadoAlquilerDescripcion')
+		 		return get('agrupacionficha.estadoAlquilerDescripcion');
 		 	}
-		 }
+		 },
+		 comercializableConstruccionPlano: function(get){
+			 return "true"===get('agrupacionficha.comercializableConsPlano');
+		 },
+		 
+		 comprobarExistePiloto: function(get){
+			 return "true"===get('agrupacionficha.existePiloto');
+		 },
+		 
+		 comprobarEsVisitable: function(get){
+			 return "true"===get('agrupacionficha.esVisitable');
+		 },
+		 
+		 existePisoPilotoAndcomercializableConstruccionPlano: function(get){
+			 return "true"===get('agrupacionficha.comercializableConsPlano') && "true"===get('agrupacionficha.existePiloto');
+		 },
+		 
+		 esAgrupacionThirdpartiesYubaiObraNueva: function(get) {
+			 	if(get('agrupacionficha.codigoCartera') == CONST.CARTERA['THIRDPARTIES']
+			     		&& get('agrupacionficha.codSubcartera') == CONST.SUBCARTERA['YUBAI']
+			     		&& get('agrupacionficha.tipoAgrupacionCodigo') == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		},
+		    
+	    	esOtrosotivoAutorizacionTramitacion: function(get){
+	    		var me = this;
+	    		
+	    		var comboOtros = get('comercialagrupacion.motivoAutorizacionTramitacionCodigo');
+	    		
+	    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == comboOtros){
+	    			return true;
+	    		}
+	    		me.set('comercialagrupacion.observacionesAutoTram', null);
+				return false;
+	    	},
+	    	
+	    	esSelecionadoAutorizacionTramitacion: function(get){
+	    		var me = this;
+	    		var editing = get('editing');
+	    		var todoSelec = get('comercialagrupacion.motivoAutorizacionTramitacionCodigo');
+	    		var obsv = get('comercialagrupacion.observacionesAutoTram');
+	    		if(editing){
+	    			if(todoSelec != undefined && todoSelec != null){
+			    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == todoSelec){
+			    			if(obsv){
+			    				return true;
+			    			}
+			    			return false;
+			    		} else {
+			    			return true;
+			    		}
+		    		}
+	    		}
+	    		return false;
+	    	},
+	    	usuarioTieneFuncionTramitarOferta: function(get){
+	    		var esTramitable = get('comercialagrupacion.tramitable');
+	    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+	    			if(!esTramitable){
+	    				return !funcion;
+	    			}
+	    		return true;
+	    	}
     },
     stores: {
     	comboCartera: {
@@ -929,6 +1010,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		        {"codigo":"0", "descripcion":"No"}
 		    ]
 		},
+		
+		comboTrueFalse: {
+			data : [
+		        {"codigo":"true", "descripcion":eval(String.fromCharCode(34,83,237,34))},
+		        {"codigo":"false", "descripcion":"No"}
+		    ]
+		},
 
 		storeEstadoDisponibilidadComercial: {
 			model: 'HreRem.model.DDBase',
@@ -984,6 +1072,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
                 remoteUrl: 'generic/getDiccionario',
                 extraParams: {diccionario: 'tiposAlquilerActivo'}
             }
-        }
+        }, 
+		
+		comboMotivoAutorizacionTramitacion: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'motivoAutorizacionTramitacion'}
+				}
+		}
      }
 });

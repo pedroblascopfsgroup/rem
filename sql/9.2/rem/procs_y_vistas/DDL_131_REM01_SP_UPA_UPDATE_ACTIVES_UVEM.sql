@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190516
+--## FECHA_CREACION=20190924
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=bau_jaus
---## INCIDENCIA_LINK=REMVIP-4223
+--## INCIDENCIA_LINK=REMVIP-5001
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -17,6 +17,7 @@
 --##		0.5 Pablo Meseguer - actualizamos el tipo de activo junto con el subtipo a traves del COTSIN
 --##		0.6 Actualizar DD_SCR_ID en caso que sea COD_ENTRADA_ACTIVO = '02'
 --##		0.7 Viorel Remus Ovidiu - actualizamos siempre el PAC_PORC_PROPIEDAD en REM con lo que hay en la APR_AUX_STOCK_UVEM_TO_REM
+--##		0.7 Oscar Diestre - Crea registro en ACT_VIV_VIVIENDA aunque no vengan datos asociados
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -2129,11 +2130,13 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
     WHERE DIS.ICO_ID IS NULL
     and act.borrado = 0
     AND CRA.DD_CRA_CODIGO = ''03''
+    /*
     AND (APR.DORMITORIOS_ACTIVO IS NOT NULL
     OR APR.BANIOS_ACTIVO IS NOT NULL
     OR APR.GARAJE IS NOT NULL
     OR APR.TRASTERO_ACTIVO IS NOT NULL
-    OR APR.NUM_TERRAZAS_DESCUBIERTAS IS NOT NULL)
+    OR APR.NUM_TERRAZAS_DESCUBIERTAS IS NOT NULL
+   )*/
   ) TMP
   ON (TMP.ICO_ID = VIV.ICO_ID)
   WHEN NOT MATCHED THEN INSERT

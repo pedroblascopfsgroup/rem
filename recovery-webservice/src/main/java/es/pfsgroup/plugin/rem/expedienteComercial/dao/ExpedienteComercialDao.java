@@ -7,6 +7,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 
 public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial, Long> {
 
@@ -94,5 +95,7 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @return Devuelve un objeto ExpedienteComercial si coincide con el número de expediente pasado por parámetro.
 	 */
 	ExpedienteComercial getExpedienteComercialByNumExpediente(Long numeroExpediente);
+	
+	List<VListadoOfertasAgrupadasLbk> getListActivosOfertaPrincipal(Long numOferta);
 	
 }

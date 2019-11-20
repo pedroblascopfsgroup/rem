@@ -1,26 +1,28 @@
 .#{$prefix}grid-drop-indicator {
     position: absolute;
-    height: 1px;
+    width: 1px;
     line-height: 0px;
     background-color: #77BC71;
     overflow: visible;
     pointer-events: none;
 
     .#{$prefix}grid-drop-indicator-left {
-        position: absolute;
-        top: -8px;
-        left: -12px;
+        position: absolute;        
         background-image: theme-background-image('grid/dd-insert-arrow-right', 'png');
         height: 16px;
         width: 16px;
+        transform: rotate(90deg);
+        top: -13px;
+        left: -7px;
     }
 
     .#{$prefix}grid-drop-indicator-right {
-        position: absolute;
-        top: -8px;
-        right: -11px;
+        position: absolute;        
         background-image: theme-background-image('grid/dd-insert-arrow-left', 'png');
         height: 16px;
         width: 16px;
+        transform: rotate(90deg);
+        top: 216px;
+        right: -7px;
     }
 }

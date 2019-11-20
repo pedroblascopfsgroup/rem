@@ -25,6 +25,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadHistoricoDa
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.manager.GestorEntidadManager;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -33,6 +34,7 @@ import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoHistoricoDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -46,6 +48,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  @Component
  @Service("gestorActivoManager")
  public class GestorActivoManager extends GestorEntidadManager implements GestorActivoApi  {
+	//En el caso de Apple existen varias tareas en que no se asignan a gestores si no a usuario de grupo
+	public static final String USERNAME_GRUPO_CES ="grucoces";
+	public static final String USERNAME_PROMONTORIA_MANZANA ="gruproman";
  	
  	@Autowired
  	private GenericABMDao genericDao;
@@ -75,9 +80,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	private GestorActivoDao gestorActivoDao;
  	
  	@Autowired
+ 	private ActivoAdapter activoAdapter;
+ 	
+ 	@Autowired
  	private GestorActivoHistoricoDao gestorActivoHistoricoDao;
  	
  	public static final String CODIGO_TGE_PROVEEDOR_TECNICO = "PTEC";
+ 	public static final String USERNAME = "username";
  
  	@Transactional(readOnly = false)
  	public Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto) {
@@ -131,6 +140,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  						
  						//Actualizamos usuarios de las tareas
  						actualizarTareas(dto.getIdEntidad());
+ 						
+ 						//Actualizar Responsable Trabajo de los trabajos
+ 						activoAdapter.cambiarResponsableTrabajosActivos(act);
  					}
  				}
  			}
@@ -218,6 +230,19 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtro);
  		if(tipoGestor != null){
  			gestor = this.getGestorByActivoYTipo(activo, tipoGestor.getId());
+ 		}
+ 		return gestor;		
+ 	}
+
+ 	@Override
+ 	public GestorEntidad getGestorEntidadByActivoYTipo(Activo activo, String codigoTipo){
+ 		GestorActivo gestor = null;
+ 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipo);
+ 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtro);
+ 		if(tipoGestor != null){
+ 			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
+ 			Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "activo.id",activo.getId());
+ 			gestor = genericDao.get(GestorActivo.class, filtro2,filtro3);
  		}
  		return gestor;		
  	}
@@ -475,5 +500,24 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 			return null;
 		}
 	}
- 
+ 	
+ 	@Override
+ 	@Transactional(readOnly = false)
+	public Usuario usuarioTareaApple(String codigoTarea) {
+		Usuario userTarea = null;
+		Filter filtro = null;
+
+		if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)  
+			|| ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)
+			|| ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea)) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);
+		} else if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_PROMONTORIA_MANZANA);
+		}
+		if(!Checks.esNulo(filtro)) {
+			userTarea = genericDao.get(Usuario.class, filtro);
+		}
+		
+		return userTarea;
+	}
  }

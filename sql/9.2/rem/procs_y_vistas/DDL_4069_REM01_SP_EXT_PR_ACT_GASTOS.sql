@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20180904
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20191030
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4197
+--## VERSION_ARTEFACTO=2.15.3-rem
+--## INCIDENCIA_LINK=HREOS-5417
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -17,6 +17,7 @@
 --##        1.01 Se elimina la restricción para los gastos con iva. Ahora pueden actualizar la fecha de contabilización.
 --##	    1.02 Se añaden modificaciones segun el item REMVIP-1698.
 --##	    1.03 Se añaden modificaciones según el ítem REMVIP-2891.
+--##	    1.04 Se añaden modificaciones según el ítem REMVIP-5417.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -417,14 +418,27 @@ BEGIN
             ------------------------------------------------------------       
             EXECUTE IMMEDIATE 'SELECT DD_DEG_ID_CONTABILIZA FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD WHERE GIC_ID = '||V_GIC_ID INTO DD_DEG_ID_CONTABILIZA;
             EXECUTE IMMEDIATE 'SELECT DD_DEG_ID FROM '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO WHERE DD_DEG_CODIGO = ''03'' ' INTO DD_DEG_ID;
-            V_MSQL := '
-            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
-            SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
-            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-            FECHAMODIFICAR = SYSDATE
-            WHERE GIC_ID = '||V_GIC_ID||'
-            ';
-            EXECUTE IMMEDIATE V_MSQL; 
+            
+            --Comprobamos si el gasto pertenece a la cartera Liberbank. REMVIP-5417
+            EXECUTE IMMEDIATE 'SELECT COUNT(*)
+				FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC
+				JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIC.GPV_ID
+				JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
+				JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
+				WHERE GIC.GIC_ID = '||V_GIC_ID||'
+				AND CRA.DD_CRA_CODIGO = ''08''' INTO V_NUM;
+            
+			IF V_NUM = 1 THEN
+				V_MSQL := '
+	            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
+	            SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
+	            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+	            FECHAMODIFICAR = SYSDATE
+	            WHERE GIC_ID = '||V_GIC_ID||'
+	            ';
+	            EXECUTE IMMEDIATE V_MSQL; 			
+			END IF;			
+           
             --Comprobamos si se ha actualizado o no
             IF SQL%ROWCOUNT > 0 THEN
                 DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
@@ -777,14 +791,27 @@ BEGIN
             ------------------------------------------------------------       
             EXECUTE IMMEDIATE 'SELECT DD_DEG_ID_CONTABILIZA FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD WHERE GIC_ID = '||V_GIC_ID INTO DD_DEG_ID_CONTABILIZA;
             EXECUTE IMMEDIATE 'SELECT DD_DEG_ID FROM '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO WHERE DD_DEG_CODIGO = ''03'' ' INTO DD_DEG_ID;
-            V_MSQL := '
-            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
-            SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
-            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-            FECHAMODIFICAR = SYSDATE
-            WHERE GIC_ID = '||V_GIC_ID||'
-            ';
-            EXECUTE IMMEDIATE V_MSQL; 
+            
+            --Comprobamos si el gasto pertenece a la cartera Liberbank. REMVIP-5417
+            EXECUTE IMMEDIATE 'SELECT COUNT(*)
+				FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC
+				JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIC.GPV_ID
+				JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
+				JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
+				WHERE GIC.GIC_ID = '||V_GIC_ID||'
+				AND CRA.DD_CRA_CODIGO = ''08''' INTO V_NUM;
+            
+			IF V_NUM = 1 THEN
+				V_MSQL := '
+	            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
+	            SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
+	            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+	            FECHAMODIFICAR = SYSDATE
+	            WHERE GIC_ID = '||V_GIC_ID||'
+	            ';
+	            EXECUTE IMMEDIATE V_MSQL; 
+			END IF;           
+            
             --Comprobamos si se ha actualizado o no
             IF SQL%ROWCOUNT > 0 THEN
                 DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
@@ -1093,6 +1120,7 @@ EXCEPTION
           COD_RETORNO := 1;          
           HLP_HISTORICO_LANZA_PERIODICO (TO_CHAR(V_GPV_NUM_GASTO_HAYA), 1, SQLERRM);
           COMMIT;
+          RAISE;
 END SP_EXT_PR_ACT_GASTOS;
 /
 EXIT;

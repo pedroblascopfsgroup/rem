@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 @Component
@@ -67,7 +68,12 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 		
 		if(!Checks.estaVacio(listadoOfertas)) {
 			String idContrato = activoPatrimonioContratoDto.getIdContrato(); 
+			
 			if(!Checks.esNulo(idContrato)) {
+				activoPatrimonioContratoDto.setEsDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN));
+				activoPatrimonioContratoDto.setIdContratoAntiguo(activoPatrimonioContratoDto.getIdContratoAntiguo()); 
+				
+				
 				ExpedienteComercial aux = null;
 				for (Oferta oferta : listadoOfertas) {	//Lista de ofertas del activo con un expediente relacionado
 					ExpedienteComercial expComercial = expedienteComercialApi.findOneByOferta(oferta);

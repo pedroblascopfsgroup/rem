@@ -57,6 +57,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	@Autowired
 	private ActivoDao activoDao;
 
+
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
 		return getListOfertas(dtoOfertasFilter, null, null);
 	}
@@ -306,11 +307,11 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	//HREOS-6229
 	@SuppressWarnings("unchecked")
 	@Override
-	public DtoPage getListOfertasGestoria(DtoOfertasFilter dtoOfertasFilter, Usuario usuarioGestoria) {
+	public DtoPage getListOfertasGestoria(DtoOfertasFilter dtoOfertasFilter) {
 		HQLBuilder hb = null;
 		
 		String from = "SELECT voferta FROM VOfertasActivosAgrupacion voferta, GestorActivo ga INNER JOIN ga.activo INNER JOIN ga.tipoGestor";
-		String where ="voferta.idActivo = ga.activo.id AND ga.usuario.username = '" + usuarioGestoria.getUsername() + "' AND voferta.numActivoAgrupacion = "
+		String where ="voferta.idActivo = ga.activo.id AND ga.usuario.id = '" + dtoOfertasFilter.getGestoria() + "' AND voferta.numActivoAgrupacion = "
 				+ dtoOfertasFilter.getNumActivo();
 					
 		hb = new HQLBuilder(from);
@@ -371,6 +372,25 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		callFunctionSql.setParameter("TIPO_COMISION", tipoComision);
 
 		return (BigDecimal) callFunctionSql.uniqueResult();
+	}
+	
+	@Override
+	public Boolean tieneTareaActiva(String tarea, String numOferta) {
+		String sql = "SELECT COUNT(*)" + 
+				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
+				"		INNER JOIN ACT_OFR ACTOFR ON ACTOFR.OFR_ID = ECO.OFR_ID" + 
+				"		INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTOFR.ACT_ID" + 
+				"		INNER JOIN ACT_TRA_TRAMITE ATR ON ECO.TBJ_ID = ATR.TBJ_ID" + 
+				"		INNER JOIN TAC_TAREAS_ACTIVOS TAC ON ATR.TRA_ID = TAC.TRA_ID" + 
+				"		INNER JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID" + 
+				"		INNER JOIN TEX_TAREA_EXTERNA TXT ON TXT.TAR_ID = TAR.TAR_ID" + 
+				"		INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TXT.TAP_ID = TAP.TAP_ID" + 
+				"		INNER JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID" + 
+				"		WHERE TAR.TAR_TAREA_FINALIZADA = 0" + 
+				"		AND TAP.TAP_CODIGO = '" + tarea + "'" + 
+				"		AND OFR.OFR_NUM_OFERTA = " + numOferta;
+		
+		return "1".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
 	}
 	
 	@Override
@@ -453,7 +473,31 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		}
 		return resultado;
 	}
-	
+
+	@Override
+	public Oferta getOfertaPrincipal(Long idferta) {
+
+//		StringBuilder hql = new StringBuilder(
+//				"SELECT ID_OFERTA_PRINCIPAL FROM OGR_OFERTAS_AGRUPADAS_LBK WHERE ID_OFERTA_DEPENDIENTE = :ID_OFERTA_DEPENDIENTE");
+//		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(hql.toString());
+//		
+//		callFunctionSql.setParameter("ID_OFERTA_DEPENDIENTE", numOferta);
+//
+//		return ((BigDecimal)callFunctionSql.uniqueResult()).longValue();
+		
+
+
+		Oferta resultado = null;
+		HQLBuilder hql = new HQLBuilder("select oferAgruLbk.ofertaPrincipal from OfertasAgrupadasLbk oferAgruLbk join oferAgruLbk.ofertaDependiente depen where depen.id ="+idferta);
+		try {
+			resultado = HibernateQueryUtils.uniqueResult(this, hql);
+		} catch (Exception e) {
+			logger.error("error obtienendo oferta principal",e);
+		}
+
+		return resultado;
+	}
+
 	@Override
 	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr) {
 		List<Oferta> ofertasVivas = new ArrayList<Oferta>();
@@ -472,6 +516,18 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			}
 		}
 		return ofertasVivas;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public DtoPage getListOfertasCES(DtoOfertasFilter dtoOfertasFilter) {
+		String from = "select vofertasces from VListOfertasCES vofertasces";
+		HQLBuilder hb = new HQLBuilder(from);
+
+		Page pageVisitas = HibernateQueryUtils.page(this, hb,dtoOfertasFilter);
+		List<VOfertasActivosAgrupacion> ofertas = (List<VOfertasActivosAgrupacion>) pageVisitas.getResults();
+
+		return new DtoPage(ofertas, pageVisitas.getTotalCount());
 	}
 	
 	public void flush() {

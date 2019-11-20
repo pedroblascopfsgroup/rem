@@ -30,7 +30,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoInfoComercial implements Auditable, Dictionary {
 
-
+	public static final String COD_VIVIENDA = "01";
+	public static final String COD_LOCAL_COMERCIAL = "02";
+	public static final String COD_PLAZA_APARCAMIENTO = "03";
 	/**
 	 * 
 	 */

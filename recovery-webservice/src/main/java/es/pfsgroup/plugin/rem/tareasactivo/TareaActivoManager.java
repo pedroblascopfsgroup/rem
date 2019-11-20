@@ -1,10 +1,12 @@
 package es.pfsgroup.plugin.rem.tareasactivo;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,21 +36,33 @@ import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.jbpm.ValidateJbpmApi;
+import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
@@ -66,6 +80,10 @@ public class TareaActivoManager implements TareaActivoApi {
 	
 	private static final String NOMBRE_CAMPO_FECHA = "fecha";
 	private static final String NOMBRE_CAMPO_RESPUESTA = "comboRespuesta";
+	private static final String T013_DEFINICIONOFERTA = "T013_DefinicionOferta";
+	private static final String T013_RESOLUCIONCOMITE = "T013_ResolucionComite";
+	private static final String MENSAJE_OFERTAS_DEPENDIENTES = "Para sancionar esta oferta, hay que acceder a su Oferta Agrupada (Principal), cuyo enlace se muestra m&aacute;s abajo";
+	private static final String COMITE_SUPERIOR = "comiteSuperior";
 	
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;	
@@ -94,6 +112,21 @@ public class TareaActivoManager implements TareaActivoApi {
 	
 	@Autowired
     private TareaExternaValorDao tareaExternaValorDao;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private AgendaAdapter agendaAdapter;
+	
+	@Autowired
+	private JBPMActivoScriptExecutorApi jbpmMActivoScriptExecutorApi;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ValidateJbpmApi validateJbpmApi;
 	
 	@Override
 	public TareaActivo get(Long id) {
@@ -463,20 +496,132 @@ public class TareaActivoManager implements TareaActivoApi {
 	public List<TareaActivo> getTareasActivo(Long idActivo, String codigoTipoTramite) {
 		return tareaActivoDao.getTareasActivoPorIdActivoAndTramite(idActivo, codigoTipoTramite);
 	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoResolucionExpedienteApple(Long idTareaExterna){
+		saltoDesdeTareaExterna(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_RESOLUCION_APPLE);
+	}
+	
+	
+	@Override
+	public boolean getSiTareaHaSidoCompletada(Long idTramite, String nombreTarea) {
+		List<TareaActivo> tareasTramite = getTareasActivoByIdTramite(idTramite);
+		List <String>  tareaCompletada = new ArrayList<String>() ;
+		for (TareaActivo tareaActivo : tareasTramite) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaActivo.getId());
+			TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtro);
+			if (!Checks.esNulo(tareaExterna) 
+					&& !Checks.esNulo(tareaExterna.getTareaProcedimiento())
+					&& nombreTarea.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					&& (!Checks.esNulo(tareaActivo.getFechaVenc()) || !Checks.esNulo(tareaActivo.getFechaFin())))
+				tareaCompletada.add(tareaExterna.getTareaProcedimiento().getCodigo());
+		}
+		return !tareaCompletada.isEmpty();
+	}
+	
+	@Override
+	public TareaActivo tareaOfertaDependiente(Oferta oferta) {
+		TareaActivo tarea = null;
+		ExpedienteComercial expediente = expedienteComercialApi
+				.expedienteComercialPorOferta(oferta.getId());
+		if (!Checks.esNulo(expediente)) {
+			Trabajo trabajoAsociadoExpediente = expediente.getTrabajo();
+			if (!Checks.esNulo(trabajoAsociadoExpediente)) {
+				Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajoAsociadoExpediente.getId());
+				ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTrabajo);
+				if (!Checks.esNulo(tramite)) {
+					Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "tramite.id", tramite.getId());
+					Order order = new Order(OrderType.DESC, "id");
+					tarea = genericDao.getListOrdered(TareaActivo.class, order, filtroTramite).get(0);
+				}
+			}
+		}
+		return tarea;
+	}
+	
+	@Override
+	public Map<String,String[]> valoresTareaDependiente(Map<String, String[]> valores, TareaActivo tarea, Oferta oferta) {
+		Map<String, String[]> camposFormulario = new HashMap<String,String[]>();
+		String[] idTareaToChange = new String[]{tarea.getId().toString()};
+		camposFormulario.put("idTarea", idTareaToChange);
+		String[] numOfertaPrincipal = new String[]{oferta.getNumOferta().toString()};
+		camposFormulario.put("numOfertaPrincipal", numOfertaPrincipal);
+		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+			String key = entry.getKey();
+			if (!"idTarea".equals(key) && !"numOfertaPrincipal".equals(key)){
+				camposFormulario.put(key, entry.getValue());
+			}
+		}
+		return camposFormulario;
+	}
+	
+	@Override
+	public String validarTareaDependientes(TareaExterna tareaExterna, Oferta oferta, Map<String, Map<String,String>> valoresTareas) throws Exception {
+		List<Oferta> ofertasDependientes = null;
+		DtoGenericForm dto;
+		String validacionPrevia;
+		Map<String,String[]> valores = new HashMap<String,String[]>();
+		String comiteSuperior = "";
+		
+		TareaActivo tareaActivoPrincipal = getByIdTareaExterna(tareaExterna.getId());
+		
+		if (!Checks.esNulo(tareaActivoPrincipal)) {
+			ofertasDependientes = ofertaApi.ofertasAgrupadasDependientes(oferta); 
+			for (Entry<String, Map<String, String>> entry : valoresTareas.entrySet()) {
+				String key = entry.getKey();
+				if (T013_DEFINICIONOFERTA.equals(key) || T013_RESOLUCIONCOMITE.equals(key)){
+					for (Entry<String, String> valor : entry.getValue().entrySet()) {
+						valores.put(valor.getKey(), new String[]{valor.getValue()});
+					}
+				}
+			}
+			
+			for (Oferta comprobarOferta : ofertasDependientes) {
+				TareaActivo tareaDependiente = tareaOfertaDependiente(comprobarOferta);
+				if (!Checks.esNulo(tareaDependiente) && !Checks.estaVacio(valores)) {
+					Map<String,String[]> valoresDependientes = valoresTareaDependiente(valores, tareaDependiente, oferta);
+					dto = agendaAdapter.convetirValoresToDto(valoresDependientes);
+					String errorSalida = "La oferta " + comprobarOferta.getNumOferta() + " tiene el siguiente error: ";
+					String errorValidacionTarea;
+					for (Map.Entry<String, String[]> entry : valoresDependientes.entrySet()) {
+						String key = entry.getKey();
+						if (COMITE_SUPERIOR.equals(key)){
+							comiteSuperior = entry.getValue()[0];
+						}
+					}
+					
+					validacionPrevia = agendaAdapter.getValidacionPrevia(dto.getForm().getTareaExterna().getTareaPadre().getId());
+					if (!Checks.esNulo(validacionPrevia) && !MENSAJE_OFERTAS_DEPENDIENTES.equals(validacionPrevia)) {
+						return errorSalida += validacionPrevia;
+					}
+					
+					TareaActivo tareaActivo = getByIdTareaExterna(dto.getForm().getTareaExterna().getId());
+					
+					if (T013_DEFINICIONOFERTA.equals(dto.getForm().getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						errorValidacionTarea = validateJbpmApi.definicionOfertaT013(dto.getForm().getTareaExterna(), comiteSuperior, valoresTareas);
+						if (!Checks.esNulo(errorValidacionTarea)) {
+							return errorSalida += errorValidacionTarea;
+						}
+					} else if (T013_RESOLUCIONCOMITE.equals(dto.getForm().getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						errorValidacionTarea = validateJbpmApi.resolucionComiteT013(dto.getForm().getTareaExterna(), valoresTareas);
+						if (!Checks.esNulo(errorValidacionTarea)) {
+							return errorSalida += errorValidacionTarea;
+						}
+					}
+					
+					String scriptValidacion = dto.getForm().getTareaExterna().getTareaProcedimiento().getScriptValidacionJBPM();
+					Object result = jbpmMActivoScriptExecutorApi.evaluaScript(tareaActivo.getTramite().getId(), dto.getForm().getTareaExterna().getId(), dto.getForm().getTareaExterna().getTareaProcedimiento().getId(),
+							null, scriptValidacion);
+					
+					if (!Checks.esNulo(result)) {
+						return errorSalida += result.toString();
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

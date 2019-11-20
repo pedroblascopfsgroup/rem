@@ -185,6 +185,26 @@ public abstract class AbstractNotificatorService {
 					+ dtoSendNotificator.getFechaFinalizacion() + "</strong>" + "							</div>"
 					+ "						</div>";
 		}
+		if (dtoSendNotificator.getProvincia() != null) {
+			cuerpo = cuerpo + "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='" + this.getUrlImagenes() + "ico_direccion.png' />"
+					+ "							</div>"
+					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Provincia: <strong>"
+					+ dtoSendNotificator.getProvincia() + "</strong>" + "							</div>"
+					+ "						</div>";
+		}
+		if (dtoSendNotificator.getMunicipio() != null) {
+			cuerpo = cuerpo + "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='" + this.getUrlImagenes() + "ico_direccion.png' />"
+					+ "							</div>"
+					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Localidad: <strong>"
+					+ dtoSendNotificator.getMunicipio() + "</strong>" + "							</div>"
+					+ "						</div>";
+		}
 		cuerpo = cuerpo + "						<div style='display: table-row;'>"
 				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
 				+ "								<img src='" + this.getUrlImagenes() + "ico_activos.png' />"
@@ -333,10 +353,17 @@ public abstract class AbstractNotificatorService {
 			dtoSendNotificator.setTipoContrato(tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
 			dtoSendNotificator.setNumTrabajo(tramite.getTrabajo().getNumTrabajo());
 			dtoSendNotificator.setFechaFinalizacion(this.generateFechaTrabajo(tramite.getTrabajo()));
+			dtoSendNotificator.setNumActivo(tramite.getActivo().getNumActivo());
+			if(!Checks.esNulo(tramite.getActivo().getDireccionCompleta())) {
+				dtoSendNotificator.setDireccion(tramite.getActivo().getDireccionCompleta());
+			}
+			if(!Checks.esNulo(tramite.getActivo().getLocalidad())) {
+				dtoSendNotificator.setMunicipio(tramite.getActivo().getLocalidad().getDescripcion());
+			}
+			if(!Checks.esNulo(tramite.getActivo().getLocalizacionActual().getProvincia())) {
+				dtoSendNotificator.setProvincia(tramite.getActivo().getLocalizacionActual().getProvincia().getDescripcion());
+			}
 		}
-
-		
-
 		return dtoSendNotificator;
 	}
 

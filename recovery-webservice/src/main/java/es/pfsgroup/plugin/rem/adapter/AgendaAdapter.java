@@ -26,6 +26,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -60,6 +61,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.avanza.tareas.generic.dao.AvanzaTareasGenericDao;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -80,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.TareaConfigPeticion;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
@@ -98,8 +101,13 @@ public class AgendaAdapter {
 
 	private static final String CODIGO_DEFINICION_OFERTA = "T013_DefinicionOferta";
 	private static final String TEXTO_ADVERTENCIA_T013_DO = "ATENCIÓN: Va a aprobar un expediente con importe inferior al precio mínimo. Confirme que tiene la autorización de su supervisor.";
+	private static final String ERROR_CAMPOS_VALIDACION ="Los campos requeridos y no requeridos no son correctos, revise las instrucciones de la tarea: ";
+	private static final String ERROR_CAMPOS_VALIDACION_FORMATO ="Los formatos de los siguientes campos requeridos y no requeridos no son correctos: ";
+	private static final String ERROR_TAREA_NO_PERMITIDA = "El tipo de tarea no esta permitida para avanzar";
+	public static final String ERROR_TAREA_DEPENDIENTE = "No se ha podido avanzar alguna oferta dependiente de la principal";
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	private SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat ft2 = new SimpleDateFormat("yyyy-MM-dd");
 	protected static final Log logger = LogFactory.getLog(AgendaAdapter.class);
 
 	@Resource
@@ -152,6 +160,9 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private AvanzaTareasGenericDao avanzaTareasGenericDao;
 	
 	@Autowired
 	private ActivoPatrimonioDao patrimonioDao;
@@ -355,26 +366,120 @@ public class AgendaAdapter {
 				idTarea = Long.parseLong((String)entry.getValue()[0]);
 			}
 		}
-
+		
 		dto = this.rellenaDTO(idTarea,camposFormulario);
+
+		Filter tareaId = genericDao.createFilter(FilterType.EQUALS, "tarea.id", dto.getForm().getTareaExterna().getTareaProcedimiento().getId());
+		TareaConfigPeticion tareaConfig = genericDao.get(TareaConfigPeticion.class, tareaId);
+		
+		if(Checks.esNulo(tareaConfig) || Checks.esNulo(tareaConfig.getPermitida()) || !tareaConfig.getPermitida()){
+			throw new UserException(ERROR_TAREA_NO_PERMITIDA);
+		}
+		
+		String codigoTarea = dto.getForm().getTareaExterna().getTareaProcedimiento().getCodigo();
 		
 		if(!Checks.esNulo(dto.getForm().getErrorValidacion())){
 			throw new UserException(dto.getForm().getErrorValidacion());
 		}
 		
-		//validaciones campos requeridos
+		//Rellenamos los valores que no nos pasan como vacios
 		List<GenericFormItem> campos = dto.getForm().getItems();
+		String instrucciones = "";
 		for(GenericFormItem campo : campos){
-			if(!Checks.esNulo(campo.getValidation()) && Checks.esNulo(valores.get(campo.getNombre()))){
-				  throw new UserException(campo.getValidationError());
+			if(campo.getNombre().equals("titulo")){
+				instrucciones = campo.getLabel();
+			}
+			if(Checks.esNulo(valores.get(campo.getNombre()))){
+				String[] valorvacio = new String[]{""};
+				valores.put(campo.getNombre(), valorvacio);
 			}
 		}
-
+		
+		//validaciones campos requeridos
+		boolean camposValidos = avanzaTareasGenericDao.validaCamposTarea(codigoTarea, valores);
+		String errores = null;
+		if(!camposValidos){
+			throw new UserException(ERROR_CAMPOS_VALIDACION+instrucciones.replaceAll("\\<.*?>","") );
+		}else {
+			//si los campos coinciden con la instancia, validamos sus formatos
+			errores = validaFormatosTFI(campos,valores);
+		}
+		if(!Checks.esNulo(errores)) {
+			throw new UserException(ERROR_CAMPOS_VALIDACION_FORMATO+errores);
+		}
 		actGenericFormManager.validateAndSaveValues(dto);
 
 		return true;
 	}
 	
+	private String validaFormatosTFI(List<GenericFormItem> campos, Map<String, String[]> valores) {
+		String errores = "";
+		for (GenericFormItem tfi : campos) {
+			if(!Checks.esNulo(valores.get(tfi.getNombre()))) {
+				String[] valor = valores.get(tfi.getNombre());
+				if(!Checks.esNulo(valor[0])){
+					if("combobox".equals(tfi.getType())) {
+						if("DDSiNo".equals(tfi.getValuesBusinessOperation())) {
+							if(DDSiNo.SI.equals(valor[0]) || DDSiNo.NO.equals(valor[0])) {
+							}else {
+								errores= errores + "El valor del diccionario "+tfi.getNombre()+" debe ser un 01 o 02. ";
+							}
+						}else if("DDMotivoAnulacionExpediente".equals(tfi.getValuesBusinessOperation())) {
+							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", tfi.getValue());
+							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+							DDMotivoAnulacionExpediente diccionario = genericDao.get(DDMotivoAnulacionExpediente.class, filtroCodigo, filtroBorrado);
+							if(Checks.esNulo(diccionario)) {
+								errores= errores + "El valor "+tfi.getLabel()+" no es correcto. ";
+							}
+						}
+					}else if("datemaxtoday".equals(tfi.getType())){
+						Date hoy = new Date();
+						String hoyString = ft.format(hoy);
+						String dateValor = "";
+						try {
+							Date fecha = ft.parse(valor[0]);
+						} catch (ParseException e) {
+							errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. ";
+						}
+						dateValor = valor[0];
+						if(hoyString.compareTo(dateValor) <= 0) {
+							errores= errores + "La fecha "+tfi.getLabel()+" es mayor que hoy. ";
+						}
+					}else if("numberfield".equals(tfi.getType())) {
+						if(!isNumeric(valor[0])) {
+							errores= errores + "El dato "+tfi.getLabel()+" no es numérico. ";
+						}
+					}else if("datefield".equals(tfi.getType())) {
+						try {
+							Date fecha = ft.parse(valor[0]);
+						} catch (ParseException e) {
+							try {
+								Date fecha = ft2.parse(valor[0]);
+							} catch (Exception e2) {
+								errores= errores + "El dato "+tfi.getLabel()+" no es una fecha correcta. "; 
+							}
+							
+						}
+					}
+				}
+			}
+		}
+		if(!"".equals(errores)) {
+			return errores;
+		}
+		return null;
+	}
+	
+	private boolean isNumeric(String str) {
+		try {
+			Double.parseDouble(str);  
+		    return true;
+		 	} 
+		catch(NumberFormatException e){  
+		    return false;  
+		  }  
+	}
+
 	public Boolean save(Map<String,String[]> valores) throws Exception{
 		DtoGenericForm dto = new DtoGenericForm();
 		Long idTarea = 0L;
@@ -397,7 +502,7 @@ public class AgendaAdapter {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
+	public DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
 		GenericForm genericForm = actGenericFormManager.get(tar.getTareaExterna().getId());
 
@@ -412,7 +517,11 @@ public class AgendaAdapter {
 				if (nombreCampo.equals(((Map.Entry) stringStringEntry).getKey())) {
 					String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
 					if (valorCampo != null && !valorCampo.isEmpty() && nombreCampo.toUpperCase().contains("FECHA")) {
-						valorCampo = valorCampo.substring(6, 10) + "-" + valorCampo.substring(3, 5) + "-" + valorCampo.substring(0, 2);
+						try {
+							valorCampo = valorCampo.substring(6, 10) + "-" + valorCampo.substring(3, 5) + "-" + valorCampo.substring(0, 2);
+						}catch (Exception e) {
+							//que hacemos
+						}
 					}
 					valores[i] = valorCampo;
 					break;
@@ -796,7 +905,7 @@ public class AgendaAdapter {
 		}
 	}
 
-	@Transactional
+	@Transactional(readOnly = false)
 	public boolean lanzarTareaAdministrativa(DtoSaltoTarea dto) throws Exception {
 		//Validacion de documentos de reserva si salta con reserva a ResultadoPBC o Posicionamiento y firma
 		updaterTransitionService.validarContratoYJustificanteReserva(dto);
@@ -837,5 +946,89 @@ public class AgendaAdapter {
 	public String getIdAgrByNumAgr(Long id) {
 		Long idAgrupacion = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(id);
 		return idAgrupacion.toString();
+	}
+	
+	public Boolean saltoFin(Long idTareaExterna) {
+		try {
+			tareaActivoApi.saltoFin(idTareaExterna);
+		}catch(Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public Boolean saltoResolucionExpedienteApple(Long idTareaExterna){
+		try{
+			tareaActivoApi.saltoResolucionExpedienteApple(idTareaExterna);
+		}catch(Exception e){
+			return false;
+		}
+		return true;
+	}
+	
+	public DtoGenericForm convetirValoresToDto(Map<String,String[]> valoresDependiente) {
+		Long idTarea = 0L;
+		DtoGenericForm dto = null;
+		
+		Map<String, String> camposFormulario = new HashMap<String,String>();
+		for (Map.Entry<String, String[]> entry : valoresDependiente.entrySet()) {
+			String key = entry.getKey();
+			if (!"idTarea".equals(key)){
+				camposFormulario.put(key, entry.getValue()[0]);
+			}else{
+				idTarea = Long.parseLong(entry.getValue()[0]);
+			}
+		}
+		
+		if (!Checks.esNulo(idTarea) && !Checks.estaVacio(camposFormulario)) {
+			try {
+				dto = rellenaDTO(idTarea,camposFormulario);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+		
+		return dto;
+	}
+	
+	public boolean avanzarOfertasDependientes(Map<String,String[]> valores) throws Exception {
+		String idTareaOfertaPrincipal = "";
+		Oferta oferta;
+		List<Oferta> ofertasDependientes = null;
+		TareaActivo tarea;
+		Map<String,String[]> valoresDependientes;
+		DtoGenericForm dto = null;
+		
+		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
+			String key = entry.getKey();
+			if ("idTarea".equals(key)){
+				idTareaOfertaPrincipal = entry.getValue()[0];
+			}
+		}
+		
+		if (!"".equals(idTareaOfertaPrincipal)) {
+			oferta = ofertaApi.tareaOferta(Long.parseLong(idTareaOfertaPrincipal));
+			if (!Checks.esNulo(oferta) && ofertaApi.isOfertaPrincipal(oferta)) {
+				ofertasDependientes = ofertaApi.ofertasAgrupadasDependientes(oferta); 
+				if (!Checks.estaVacio(ofertasDependientes)) {
+					for (Oferta avanzaOferta : ofertasDependientes) {
+						tarea = tareaActivoApi.tareaOfertaDependiente(avanzaOferta);
+						if (!Checks.esNulo(tarea) && !Checks.estaVacio(valores)) {
+							valoresDependientes = tareaActivoApi.valoresTareaDependiente(valores, tarea, oferta);
+							dto = convetirValoresToDto(valoresDependientes);
+							if (!Checks.esNulo(dto)) {
+								try {
+									actGenericFormManager.saveValues(dto);									
+								} catch (Exception e) {
+									logger.error(e.getMessage());
+									throw new Exception(ERROR_TAREA_DEPENDIENTE);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 }

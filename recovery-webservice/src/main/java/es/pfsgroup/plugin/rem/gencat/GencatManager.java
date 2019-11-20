@@ -101,6 +101,7 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -277,8 +278,17 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					}
 					gencatDto.setIdLeadSF(visitaGencat.getIdLeadSF());
 				}
-				
-				
+				if(!Checks.esNulo(gencatDto.getSancion()) && DDSancionGencat.COD_EJERCE.equals(gencatDto.getSancion())) {
+					List<OfertaGencat> ofertasGencatActivo = genericDao.getList(OfertaGencat.class, filtroIdComunicacion);
+					
+					for(OfertaGencat ofertaGencat: ofertasGencatActivo) {
+						if(!Checks.esNulo(ofertaGencat) && !Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !Checks.esNulo(ofertaGencat.getOferta())
+								&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaGencat.getOferta().getEstadoOferta().getCodigo())) {
+							gencatDto.setOfertaGencat(ofertaGencat.getOferta().getNumOferta());
+							break;
+						}
+					}
+				}
 			}
 			catch (IllegalAccessException e) {
 				logger.error("Error en gencatManager", e);

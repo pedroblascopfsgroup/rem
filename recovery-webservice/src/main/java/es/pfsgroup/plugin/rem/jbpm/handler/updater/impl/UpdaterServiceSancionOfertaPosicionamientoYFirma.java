@@ -68,7 +68,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
     private static final String ASISTENCIA_PBC = "asistenciaPBC";
     private static final String ASISTENCIA_PBC_OBSERVACIONES = "obsAsisPBC";
     private static final String CODIGO_T013_POSICIONAMIENTOYFIRMA = "T013_PosicionamientoYFirma";
-
+    private static final String CODIGO_T017_POSICIONAMIENTOYFIRMA = "T017_PosicionamientoYFirma";
     	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -215,7 +215,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_POSICIONAMIENTOYFIRMA};
+		return new String[]{CODIGO_T013_POSICIONAMIENTOYFIRMA, CODIGO_T017_POSICIONAMIENTOYFIRMA};
 	}
 
 	public String[] getKeys() {

@@ -55,7 +55,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var esInvisibleEcActivo = false;
         var esInvisibleEcTrabajo = false;
         var esInvisibleEcExpediente = true;
-
         //Bucle que busca los enlaces en el array me.campos,
         // para mantener funcionalidad "TareaGenerica", los enlaces deben retirarse de me.campos
         var numEnlaces = 0;
@@ -148,6 +147,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     combo.allowBlank = me.campos[i].noObligatorio;
                     combo.blankText = me.campos[i].blankText;
                     combo.msgTarget = me.campos[i].msgTarget;
+                    if(me.campos[i].value != null){
+                    	combo.value = me.campos[i].value; 
+                    }
                     camposFiltrados.push(combo);
                     break;
 
@@ -230,6 +232,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     me.campos[i].allowBlank = me.campos[i].noObligatorio;
                     camposFiltrados.push(me.campos[i]);
                     break;
+                    
+                case 'numberfield2':
+                	me.campos[i].xtype = 'numberfield';
+                    me.campos[i].hideTrigger = true;
+                    me.campos[i].minValue = 0;
+                    me.campos[i].maxValue = 99;
+                    me.campos[i].allowBlank = me.campos[i].noObligatorio;
+                    camposFiltrados.push(me.campos[i]);
+                    break;
 
                 case 'datemaxtoday':
                     me.campos[i].xtype = 'datefield';
@@ -254,7 +265,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     checkbox.uncheckedValue = false;
                     camposFiltrados.push(checkbox);
                     break;
-
                 default:
                     camposFiltrados.push(me.campos[i]);
                     break;
@@ -484,6 +494,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	                    			store = grid.getStore();
 	                    			store.load();
 	                    		}
+	                    	} else if(CONST.TAREAS['T013_DEFINICIONOFERTA'] == codigoTarea || CONST.TAREAS['T013_RESOLUCIONCOMITE'] == codigoTarea){
+	                    		var url = $AC.getRemoteUrl('agenda/avanzarOfertasDependientes');
+	                    		var data;
+	                    		Ext.Ajax.request({
+					    			url:url,
+					    			params: parametros,
+					    			success: function(response, opts) {
+					    				 data = Ext.decode(response.responseText);
+					    				if (data.success === "false" && data.msgError.length > 0) {
+					    					me.fireEvent("errorToast", data.msgError);
+				    						me.parent.fireEvent('aftersaveTarea', me.parent);
+					    				}
+					    			}
+					    		});
 	                    	}
                     	}
                     }
@@ -517,7 +541,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         });
 
     },
-
     obtenerIdEnlaces: {
         //Obtiene los ids necesarios para las entidades referenciadas en los enlaces
 
@@ -816,44 +839,65 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
 
     T004_FijacionPlazoValidacion: function() {
+
         var me = this;
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-        
+
         me.down('[name=fechaTope]').allowBlank = true;
+        me.down('[name=fechaConcreta]').allowBlank = true;
+        me.down('[name=horaConcreta]').allowBlank = true;
+        
         if(CONST.CARTERA['CERBERUS'] == codigoCartera || CONST.CARTERA['EGEO'] == codigoCartera){
         	me.down('[name=fechaConcreta]').allowBlank = false;
         }else{
         	me.down('[name=fechaConcreta]').allowBlank = true;
         }
-        me.down('[name=horaConcreta]').allowBlank = true;
         
-        if (me.down('[name=fechaTope]').value != null) {
-            me.down('[name=fechaConcreta]').reset();
-            me.down('[name=horaConcreta]').reset();
-        } else if (me.down('[name=fechaConcreta]').value != null) {
-            me.down('[name=fechaTope]').reset();
-        } else {
-            
-        }
-
-        me.down('[name=fechaTope]').addListener('focus', function(campo) {
-            me.down('[name=fechaConcreta]').reset();
-            me.down('[name=horaConcreta]').reset();
-            me.down('[name=fechaConcreta]').setValue('');
-            me.down('[name=horaConcreta]').setValue('');
+        me.down('[name=fechaTope]').addListener('change', function(combo) {
+	       if (combo.value != '' && combo.value != null) {
+		       me.borrarCampo(me.down('[name=fechaConcreta]'));
+		       me.borrarCampo(me.down('[name=horaConcreta]'));
+		       me.down('[name=fechaConcreta]').allowBlank = true;
+	           me.down('[name=horaConcreta]').allowBlank = true;
+	           me.down('[name=fechaTope]').allowBlank = false;
+	           me.down('[name=fechaConcreta]').validate();
+	           me.down('[name=horaConcreta]').validate();
+	       } else {
+		       me.down('[name=fechaTope]').allowBlank = true;
+		       me.down('[name=fechaTope]').validate();
+	       }
         });
-
-        me.down('[name=fechaConcreta]').addListener('focus', function(campo) {
-            me.down('[name=fechaTope]').reset();
-            me.down('[name=fechaTope]').setValue('');
+        
+        me.down('[name=fechaConcreta]').addListener('change', function(combo) {    	
+	       if (combo.value != '' && combo.value != null) {
+		       me.borrarCampo(me.down('[name=fechaTope]'));
+		       me.down('[name=fechaConcreta]').allowBlank = false;
+		       me.down('[name=horaConcreta]').allowBlank = false;
+		       me.down('[name=fechaTope]').allowBlank = true;
+		       me.down('[name=fechaTope]').validate();
+	       } else {
+	       		me.down('[name=fechaConcreta]').allowBlank = true;
+	       		me.down('[name=horaConcreta]').allowBlank = true;
+	       		me.down('[name=fechaConcreta]').validate();
+	       		me.down('[name=horaConcreta]').validate();
+	       }
         });
-
-        me.down('[name=horaConcreta]').addListener('focus', function(campo) {
-            me.down('[name=fechaTope]').reset();
-            me.down('[name=fechaTope]').setValue('');
-        })
+        
+        me.down('[name=horaConcreta]').addListener('change', function(combo) {
+	       if (combo.value != '' && combo.value != null) {
+	       	me.borrarCampo(me.down('[name=fechaTope]'));
+	       	me.down('[name=fechaConcreta]').allowBlank = false;
+	           me.down('[name=horaConcreta]').allowBlank = false;
+	           me.down('[name=fechaTope]').allowBlank = true;
+	           me.down('[name=fechaTope]').validate();
+	       } else {
+	       	me.down('[name=fechaConcreta]').allowBlank = true;
+	           me.down('[name=horaConcreta]').allowBlank = true;
+	           me.down('[name=fechaConcreta]').validate();
+	           me.down('[name=horaConcreta]').validate();
+	       }
+        });        
     },
-
 
     T004_ResultadoNoTarificadaValidacion: function() {
         var me = this;
@@ -1159,10 +1203,97 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var comiteSuperior = me.down('[name=comiteSuperior]');
 		var comite = me.down('[name=comite]');
+		var comitePropuesto = me.down('[name=comitePropuesto]');
+		var importeTotalOfertaAgrupada = me.down('[name=importeTotalOfertaAgrupada]');
+		var huecoVenta = me.down('[name=huecoVenta]');
+		var numOfertaPrincipal = me.down('[name=numOfertaPrincipal]');
+		var comboConflicto = me.down('[name=comboConflicto]');
+		var comboRiesgo   = me.down('[name=comboRiesgo]');
+		var fechaEnvio = me.down('[name=fechaEnvio]');
+		var observaciones = me.down('[name=observaciones]');
+		
+		me.ocultarCampo(comiteSuperior);
+		me.ocultarCampo(comitePropuesto);
+		me.ocultarCampo(importeTotalOfertaAgrupada);
+		me.ocultarCampo(huecoVenta);
+		me.ocultarCampo(numOfertaPrincipal);
+	
 		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.desocultarCampo(comiteSuperior);
-		}else{
-			me.ocultarCampo(comiteSuperior);
+			
+		}else if(CONST.CARTERA['LIBERBANK'] == codigoCartera) {	
+			
+			var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+			var expedienteMain = Ext.ComponentQuery.query('[itemId="expediente_'+idExp+'"]')[0];
+			var claseOferta;
+			if(!Ext.isEmpty(expedienteMain)){
+				claseOferta = expedienteMain.getViewModel().get('datosbasicosoferta.claseOfertaCodigo');
+				if(claseOferta == '01'){
+					me.ocultarCampo(comite);
+					me.campoNoObligatorio(comite);
+					me.desocultarCampo(comitePropuesto);
+					me.campoNoObligatorio(comitePropuesto);
+					me.desocultarCampo(importeTotalOfertaAgrupada);
+					me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
+					me.desocultarCampo(huecoVenta);  	
+				}else if(claseOferta == '02'){
+					 me.desocultarCampo(numOfertaPrincipal);
+					 me.bloquearCampo(me.down('[name=numOfertaPrincipal]'));
+					 me.ocultarCampo(comitePropuesto);
+					 me.ocultarCampo(comboConflicto);
+					 me.ocultarCampo(comboRiesgo);
+					 me.ocultarCampo(fechaEnvio);
+					 me.ocultarCampo(observaciones);
+					 me.ocultarCampo(comite);
+					 me.desocultarCampo(huecoVenta);
+					 
+				}else{					
+					 me.ocultarCampo(comite);
+					 me.campoNoObligatorio(comite);
+					 me.desocultarCampo(comitePropuesto);
+					 me.campoNoObligatorio(comitePropuesto);
+					 me.desocultarCampo(importeTotalOfertaAgrupada);
+					 me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
+					 me.desocultarCampo(huecoVenta);
+				}
+			}else{
+				var url = $AC.getRemoteUrl('ofertas/getClaseOferta');
+		    	Ext.Ajax.request({
+		    			url:url,
+		    			params: {idExpediente : idExp},
+		    			success: function(response,opts){
+		    				 var claseOferta = Ext.JSON.decode(response.responseText).claseOferta;
+		    				 if(claseOferta == '01'){
+		    						me.ocultarCampo(comite);
+		    						me.campoNoObligatorio(comite);
+		    						me.desocultarCampo(comitePropuesto);
+		    						me.campoNoObligatorio(comitePropuesto);
+		    						me.desocultarCampo(importeTotalOfertaAgrupada);
+		    						me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
+		    						me.desocultarCampo(huecoVenta);  	
+		    					}else if(claseOferta == '02'){
+		    						 me.desocultarCampo(numOfertaPrincipal);
+		    						 me.bloquearCampo(me.down('[name=numOfertaPrincipal]'));
+		    						 me.ocultarCampo(comitePropuesto);
+		    						 me.ocultarCampo(comboConflicto);
+		    						 me.ocultarCampo(comboRiesgo);
+		    						 me.ocultarCampo(fechaEnvio);
+		    						 me.ocultarCampo(observaciones);
+		    						 me.ocultarCampo(comite);
+		    						 me.desocultarCampo(huecoVenta);
+		    						 
+		    					}else{					
+		    						 me.ocultarCampo(comite);
+		    						 me.campoNoObligatorio(comite);
+		    						 me.desocultarCampo(comitePropuesto);
+		    						 me.campoNoObligatorio(comitePropuesto);
+		    						 me.desocultarCampo(importeTotalOfertaAgrupada);
+		    						 me.bloquearCampo(me.down('[name=importeTotalOfertaAgrupada]'));
+		    						 me.desocultarCampo(huecoVenta);
+		    					}
+		    			}
+		    	});
+			}			
 		}
 	},
 	T013_DocumentosPostVentaValidacion: function() {
@@ -1236,7 +1367,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T013_ResolucionComiteValidacion: function() {
         var me = this;
         var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
-        
+        var idExp = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+        var comboResolucion = me.down('[name=comboResolucion]');
+        var comitePropuesto = me.down('[name=comitePropuesto]');
+        var importeTotalOfertaAgrupada = me.down('[name=importeTotalOfertaAgrupada]');
+        var comboResolucionComite = me.down('[name=comiteSancionador]');
+
         if (me.down('[name=comboResolucion]').getValue() != '03') {
             me.deshabilitarCampo(me.down('[name=numImporteContra]'));
         }
@@ -1253,6 +1389,27 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
 			me.down('[name=fechaReunionComite]').hide();
 			me.down('[name=comiteInternoSancionador]').hide();
+			me.ocultarCampo(comitePropuesto);
+			me.ocultarCampo(importeTotalOfertaAgrupada);
+		}else{
+			me.desbloquearCampo(comboResolucion);
+			me.bloquearCampo(comitePropuesto);
+			
+			var filters = comboResolucionComite.getStore().getFilters();
+			filters.add({ property: 'carteraCodigo', value: '08' });
+			
+			var url = $AC.getRemoteUrl('ofertas/getClaseOferta');
+	    	Ext.Ajax.request({
+	    			url:url,
+	    			params: {idExpediente : idExp},
+	    			success: function(response,opts){
+	    				 var claseOferta = Ext.JSON.decode(response.responseText).claseOferta;
+	    				 if(claseOferta == '03'){
+	    					 me.ocultarCampo(comitePropuesto);
+	    					 me.ocultarCampo(importeTotalOfertaAgrupada);
+	    				 }
+	    			}
+	    	});
 		}
 		if(CONST.CARTERA['GIANTS'] == codigoCartera && $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL'])){
     		if(me.down('[name=fechaRespuesta]').getValue() != null && me.down('[name=fechaRespuesta]').getValue() != ""){
@@ -1271,6 +1428,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));
+                me.down('[name=numImporteContra]').allowBlank = false;
             } else {
                 me.deshabilitarCampo(me.down('[name=numImporteContra]'));
             }
@@ -1651,7 +1809,19 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	me.campoNoObligatorio(me.down('[name=documento]'));
     		}        	
     	});
- 
+    	
+    	me.down('[name=tipoImpuesto]').addListener('change', function(){
+    		
+    		var tipoImpuesto = me.down('[name=tipoImpuesto]');
+    		
+    		if(tipoImpuesto.value){
+    			me.down('[name=porcentajeImpuesto]').noObligatorio=false;
+    		} else {
+    			me.down('[name=porcentajeImpuesto]').noObligatorio=true;
+    		}
+    		
+    		me.campoObligatorio(me.down('[name=porcentajeImpuesto]'));
+    	});
     },
     
     T015_FirmaValidacion: function(){
@@ -2022,6 +2192,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.deshabilitarCampo(me.down('[name=motivo]'));
     	me.deshabilitarCampo(me.down('[name=importeContraoferta]'));
     	
+    	me.campoObligatorio(me.down('[name=resolucionExpediente]'));
     	me.down('[name=resolucionExpediente]').addListener('change', function(){
     		
     		var resolucionExpediente = me.down('[name=resolucionExpediente]');
@@ -2044,7 +2215,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     		}else{
     			
-    			me.down('[name=motivo]').noObligatorio=true;
+    			me.down('[name=motivo]').noObligatorio=false;
     			me.down('[name=importeContraoferta]').noObligatorio=true;
     			
     			me.habilitarCampo(me.down('[name=motivo]'));
@@ -2142,7 +2313,294 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         fecha.setReadOnly(true);
         fechaComunicacion.allowBlank = false;
     },
+    
+	T017_DefinicionOfertaValidacion: function() {		
+		var me = this;
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		var comiteSuperior = me.down('[name=comiteSuperior]');
+		var comite = me.down('[name=comite]');
+		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+			me.desocultarCampo(comiteSuperior);
+		}else{
+			me.ocultarCampo(comiteSuperior);
+		}
+	},
+	
+    T017_AnalisisPMValidacion: function(){
+    	var me = this;
+    	var comboResolucion = me.down('[name=comboResolucion]');
+    	var comboContraoferta = me.down('[name=numImporteContra]');
+    	me.deshabilitarCampo(comboContraoferta);
+		
+    	comboResolucion.addListener('change', function(){
+	        if(comboResolucion.value == '03'){
+	        	me.habilitarCampo(comboContraoferta);
+	        	comboContraoferta.allowBlank = false;
+	        	comboContraoferta.validate();
+	        }else{
+	        	me.deshabilitarCampo(comboContraoferta);
+	        	comboContraoferta.reset();
+	        	comboContraoferta.allowBlank = true;
+	        	comboContraoferta.validate();
+	        }
+        });
+    },
+    
+    T017_ResolucionCESValidacion: function(){
+    	var me = this;
+    	var comboResolucion = me.down('[name=comboResolucion]');
+    	var comboContraoferta = me.down('[name=numImporteContra]');
+    	me.deshabilitarCampo(comboContraoferta);
+		
+    	comboResolucion.addListener('change', function(){
+	        if(comboResolucion.value == '03'){
+	        	me.habilitarCampo(comboContraoferta);
+	        	comboContraoferta.allowBlank = false;
+	        	comboContraoferta.validate();
+	        }else{
+	        	me.deshabilitarCampo(comboContraoferta);
+	        	comboContraoferta.reset();
+	        	comboContraoferta.allowBlank = true;
+	        	comboContraoferta.validate();
+	        }
+        });
+    },
+    T017_RatificacionComiteCESValidacion: function(){
+    	var me = this;
+    	var comboRatificacion = me.down('[name=comboRatificacion]');
+    	var importeContraoferta = me.down('[name=numImporteContra]');
+    	var importeOferta = me.down('[name=numImporteOferta]');
+    	me.deshabilitarCampo(importeContraoferta);
+    	me.bloquearCampo(importeOferta);
+		
+    	comboRatificacion.addListener('change', function(){
+	        if(comboRatificacion.value == '03'){
+	        	me.habilitarCampo(importeContraoferta);
+	        	importeContraoferta.allowBlank = false;
+	        	importeContraoferta.validate();
+	        }else{
+	        	me.deshabilitarCampo(importeContraoferta);
+	        	importeContraoferta.reset();
+	        	importeContraoferta.allowBlank = true;
+	        	importeContraoferta.validate();
+	        }
+        });
+    },
+    T017_RespuestaOfertantePMValidacion: function () {
+    	var me = this;
+    	var comboRespuestaOfertante = me.down( '[name=comboRespuesta]' ),
+    		comboFechaRespuestaPM = me.down ( '[name=fechaRespuesta]' );
+    		
+    		me.campoObligatorio(comboRespuestaOfertante);
+    		comboFechaRespuestaPM.validate();
+    		me.campoObligatorio(comboFechaRespuestaPM);
+    		comboRespuestaOfertante.validate();
+    		me.desbloquearCampo(comboFechaRespuestaPM);
+    },
+    T017_RespuestaOfertanteCESValidacion: function() {
+    	var me = this;
+    	var comboRespuestaOfertante = me.down( '[name=comboRespuesta]' ),
+    		comboFechaRespuesta = me.down ( '[name=fechaRespuesta]' ),
+    		numImporteContraOfertaOfertante = me.down( '[name=importeContraofertaOfertante]' );
+    		
+    		console.log(comboRespuestaOfertante);
+    		console.log(comboFechaRespuesta);
+    		comboRespuestaOfertante.allowBlank = false;
+    		me.campoObligatorio(comboRespuestaOfertante);
+    		comboRespuestaOfertante.validate();
+    		me.campoObligatorio(comboFechaRespuesta);
+    		comboFechaRespuesta.validate();
+    		me.desbloquearCampo(comboFechaRespuesta);
+    		me.campoObligatorio(numImporteContraOfertaOfertante);
+    		
+    		if (comboRespuestaOfertante.getValue() != '03') {
+	            me.deshabilitarCampo(numImporteContraOfertaOfertante);
+	        }
+	    	comboRespuestaOfertante.addListener('change', function(combo) {
+	            if (combo.value == '03') {
+	                me.habilitarCampo(numImporteContraOfertaOfertante);
+	            } else {
+	                me.deshabilitarCampo(numImporteContraOfertaOfertante);
+	                numImporteContraOfertaOfertante.reset();
+	            }
+	        });
+    },
+    T017_AdvisoryNoteValidacion: function () {
+    	var me = this;
+    	var fechaEnvio = me.down('[name=fechaEnvio]');
+    	me.campoObligatorio(fechaEnvio);
+    	fechaEnvio.validate();
+    	me.desbloquearCampo(fechaEnvio);
+    },
+    T017_RecomendCESValidacion: function(){
+    	var me = this;
+    	var comboRespuesta = me.down('[name=comboRespuesta]'),
+    		fechaRespuesta = me.down('[name=fechaRespuesta]'),
+    		observaciones = me.down('[name=observaciones]');
+    		
+    		me.campoObligatorio(comboRespuesta);
+    		comboRespuesta.validate();
+    		me.campoObligatorio(fechaRespuesta);
+    		me.campoObligatorio(observaciones);
+    		me.desbloquearCampo(fechaRespuesta);
+    		me.desbloquearCampo(observaciones);
+    		observaciones.validate();
+			fechaRespuesta.validate();
+    },
+    T017_ResolucionPROManzanaValidacion: function () {
+    	var me = this ;
+    	var comboRespuesta = me.down('[name=comboRespuesta]'),
+    		fechaRespuesta = me.down('[name=fechaRespuesta]');
+    	
+    		me.campoObligatorio(comboRespuesta);
+    		comboRespuesta.validate();
+    		me.campoObligatorio(fechaRespuesta);
+    		me.desbloquearCampo(fechaRespuesta);
+    		fechaRespuesta.validate();
+    },
+   T017_ObtencionContratoReservaValidacion: function(){
+    	var me = this;
+        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+        var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
+        var idExpediente = me.up('tramitesdetalle').getViewModel().get('tramite.idExpediente');
+        
+        var parametros = me.down("form").getValues();
+        parametros.idExpediente = idExpediente;
+        
+        var urlFechaFirma =  $AC.getRemoteUrl('reserva/getFechaFirmaByIdExpediente');
+        
+        Ext.Ajax.request({
+			url: urlFechaFirma,
+		    params: parametros,
+		    success: function(response, opts) {
+		    	var data = Ext.decode(response.responseText);
+		    	var fechaFirma = new Date(data.fechaFirma);
+		    	me.down('[name=fechaFirma]').setValue(Ext.Date.format(fechaFirma, 'd/m/Y'));
+		    }
+		});
+		
+    	if((me.down('[name=fechaFirma]').getValue()!=null && me.down('[name=fechaFirma]').getValue()!="") || 
+    			(CONST.CARTERA['LIBERBANK'] == codigoCartera || (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == codigoSubcartera))){
+    		me.down('[name=fechaFirma]').setReadOnly(true);
+    		me.campoObligatorio(me.down('[name=fechaFirma]'));
+    	}
+    },
+        T017_ResolucionExpedienteValidacion: function() {
+        var me = this;
+        var tipoArras = me.down('[name=tipoArras]');
+        var estadoReserva = me.down('[name=estadoReserva]');
+        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 
+        me.deshabilitarCampo(me.down('[name=comboProcede]'));
+        if(CONST.CARTERA['BANKIA'] == codigoCartera) {
+        	me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+        } else {
+        	me.campoNoObligatorio(me.down('[name=comboMotivoAnulacionReserva]'));
+        	me.down('[name=comboMotivoAnulacionReserva]').setHidden(true);
+        }
+
+        if (!Ext.isEmpty(estadoReserva) && estadoReserva.value == 'Firmada') {
+            me.habilitarCampo(me.down('[name=comboProcede]'));
+        }
+
+        me.down('[name=comboProcede]').addListener('change', function(combo) {
+            if (combo.value == '01' && tipoArras.value == 'Confirmatorias') {
+                me.down('[name=comboProcede]').blankText = HreRem.i18n('tarea.validacion.error.valor.no.permitido.by.tipo.arras');
+                me.down('[name=comboProcede]').reset();
+            } else if((combo.value == '01' || combo.value == '02' || combo.value == '03') && CONST.CARTERA['BANKIA'] == codigoCartera) {
+            	me.habilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+            	me.down('[name=comboMotivoAnulacionReserva]').reset();
+            } else if(combo.value == '03' && CONST.CARTERA['BANKIA'] == codigoCartera) {
+            	//me.deshabilitarCampo(me.down('[name=comboMotivoAnulacionReserva]'));
+            	//me.down('[name=comboMotivoAnulacionReserva]').reset();
+            }
+        });
+    },
+    T017_PosicionamientoYFirmaValidacion: function() {
+        var me = this;
+
+        me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+        me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
+        me.deshabilitarCampo(me.down('[name=obsAsisPBC]'));
+        me.down('[name=tieneReserva]').hide();
+
+        me.down('[name=comboFirma]').addListener('change', function(combo) {
+            if (combo.value == '01') {
+                me.habilitarCampo(me.down('[name=fechaFirma]'));
+                me.habilitarCampo(me.down('[name=numProtocolo]'));
+                me.habilitarCampo(me.down('[name=comboCondiciones]'));
+                me.habilitarCampo(me.down('[name=condiciones]'));
+
+                me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
+                me.down('[name=motivoNoFirma]').reset();
+
+            } else {
+
+                var tieneReserva = me.down('[name=tieneReserva]');
+                if (tieneReserva.value == '01') {
+                    me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
+                    me.down('[name=motivoNoFirma]').reset();
+                } else {
+                    me.habilitarCampo(me.down('[name=motivoNoFirma]'));
+                }
+                me.deshabilitarCampo(me.down('[name=fechaFirma]'));
+                me.deshabilitarCampo(me.down('[name=numProtocolo]'));
+                me.deshabilitarCampo(me.down('[name=comboCondiciones]'));
+                me.deshabilitarCampo(me.down('[name=condiciones]'));
+                me.down('[name=fechaFirma]').reset();
+                me.down('[name=numProtocolo]').reset();
+                me.down('[name=comboCondiciones]').reset();
+                me.down('[name=condiciones]').reset();
+            }
+        });
+        
+        me.down('[name=asistenciaPBC]').addListener('change', function(combo) {
+            if (combo.value == '01') {
+                me.deshabilitarCampo(me.down('[name=obsAsisPBC]'));
+            } else {
+            	me.habilitarCampo(me.down('[name=obsAsisPBC]'));
+            }
+        });
+    },
+	T017_DocsPosVentaValidacion: function() {
+		var me = this;
+		var fechaIngreso = me.down('[name=fechaIngreso]');
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
+		fechaIngreso.setMaxValue($AC.getCurrentDate());
+		
+		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
+			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
+			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+			me.campoObligatorio(me.down('[name=fechaIngreso]'));
+		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
+			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
+			me.bloquearCampo(me.down('[name=fechaIngreso]'));
+		}else if(CONST.CARTERA['SAREB'] == codigoCartera) {
+        	me.down('[name=fechaIngreso]').allowBlank = false;
+		}else if(CONST.CARTERA['CAJAMAR'] == codigoCartera) {
+        	me.down('[name=fechaIngreso]').allowBlank = false;
+		}else if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] == codigoSubcartera) {
+        	me.down('[name=fechaIngreso]').allowBlank = false;	
+		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
+			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
+			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+		}
+
+		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
+			if(CONST.CARTERA['LIBERBANK'] != codigoCartera && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)){
+				if (newValue) {
+	            	me.habilitarCampo(me.down('[name=fechaIngreso]'));
+	            	me.down('[name=fechaIngreso]').allowBlank = false;
+	            	me.down('[name=fechaIngreso]').validate();
+	            } else {
+	            	me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+	            	me.campoNoObligatorio(me.down('[name=fechaIngreso]'));
+	            	me.down('[name=fechaIngreso]').reset();
+	            }
+			}
+        })
+	},
     habilitarCampo: function(campo) {
         var me = this;
         campo.setDisabled(false);

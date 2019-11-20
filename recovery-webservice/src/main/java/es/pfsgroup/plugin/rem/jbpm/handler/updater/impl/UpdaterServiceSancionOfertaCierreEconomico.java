@@ -15,13 +15,16 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 @Component
 public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterService {
 
    	private static final String CODIGO_T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
+   	private static final String CODIGO_T017_CIERRE_ECONOMICO = "T017_CierreEconomico";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	
 	@Autowired
@@ -33,10 +36,14 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 	@Autowired
 	private ActivoAdapter activoAdapter;
 	
+    @Autowired
+    private OfertaApi ofertaApi;
+	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		// Finaliza el trámite
 		Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 		tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+		
 		genericDao.save(ActivoTramite.class, tramite);
 		
 		activoApi.actualizarOfertasTrabajosVivos(tramite.getActivo());
@@ -48,7 +55,7 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_CIERRE_ECONOMICO};
+		return new String[]{CODIGO_T013_CIERRE_ECONOMICO, CODIGO_T017_CIERRE_ECONOMICO};
 	}
 
 	public String[] getKeys() {

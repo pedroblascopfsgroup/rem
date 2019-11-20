@@ -81,6 +81,9 @@ Ext.define('HreRem.model.OfertaComercial', {
             {
             	name: 'pedirDoc',
             	type : 'boolean'
+            },
+            {
+            	name:'numOferPrincipal'
             }
             
     ],

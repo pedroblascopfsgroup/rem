@@ -14,17 +14,20 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
@@ -312,6 +315,24 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				dtoAviso.setDescripcion("Publicado con precio oculto");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
+			}
+		}
+
+		// Aviso 19: Es Piso Piloto
+		
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getAgrupaciones())) {
+			for(ActivoAgrupacionActivo act_agr : activo.getAgrupaciones()){
+				if(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(act_agr.getAgrupacion().getTipoAgrupacion().getCodigo())
+					&& !Checks.esNulo(activo.getSubcartera().getCodigo()) &&
+					DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo()) &&
+					!Checks.esNulo(activo.getEstadoActivo().getCodigo())) {
+					DtoAviso dtoAviso = new DtoAviso();
+					if (activoApi.isPisoPiloto(activo)) {
+						dtoAviso.setDescripcion("Piso Piloto");
+						dtoAviso.setId(String.valueOf(id));
+						listaAvisos.add(dtoAviso);
+					}
+				}
 			}
 		}
 

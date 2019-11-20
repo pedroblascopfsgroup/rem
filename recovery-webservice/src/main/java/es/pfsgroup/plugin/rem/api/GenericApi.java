@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -260,4 +261,6 @@ public interface GenericApi {
 	 * @return
 	 */
 	public List<DDTipoTituloActivoTPA> getComboTipoTituloActivoTPA(Long idActivo);
+
+	public List<DDTipoDocumentoTributos> getDiccionarioTiposDocumentoTributo();
 }

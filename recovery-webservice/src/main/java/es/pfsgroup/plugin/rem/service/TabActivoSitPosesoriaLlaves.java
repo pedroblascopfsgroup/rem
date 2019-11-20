@@ -32,6 +32,8 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
@@ -299,7 +301,29 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		if (!Checks.esNulo(dto.getTieneOkTecnico())){
 			activo.setTieneOkTecnico(dto.getTieneOkTecnico());
 		}
+		//HREOS-7085 - establecer campo “Servicer”
+		String codCS = (!Checks.esNulo(activo.getCesionSaneamiento())) ? activo.getCesionSaneamiento().getCodigo() : null;
+		String codTitulo = null;
 		
+		if(activo.getSituacionPosesoria().getConTitulo() != null) {
+			codTitulo= activo.getSituacionPosesoria().getConTitulo().getCodigo();
+		}		
+		
+		if(DDCesionSaneamiento.CODIGO_CMS_SANEADO_ALTAMIRA.equals(codCS) 
+				|| DDCesionSaneamiento.CODIGO_CMS_SANEADO_Y_COMERCIALIZADO_ALTAMIRA.equals(codCS) 
+				|| DDCesionSaneamiento.CODIGO_CMS_SANEADO_INTRUM.equals(codCS) 
+				|| DDCesionSaneamiento.CODIGO_CMS_SANEADO_Y_COMERCIALIZADO_INTRUM.equals(codCS) ) {
+			
+			if((activo.getSituacionPosesoria().getOcupado() == 0 && !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()))
+					|| activo.getSituacionPosesoria().getOcupado() == 1 
+							&& DDTipoTituloActivoTPA.tipoTituloSi.equals(codTitulo) 
+							&& !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion()) ) {
+				
+				Filter filtroServicerActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDServicerActivo.CODIGO_SRA_HAYA);
+				DDServicerActivo servicerActivo = genericDao.get(DDServicerActivo.class, filtroServicerActivo);
+				activo.setServicerActivo(servicerActivo);
+			}
+		}
 		return activo;
 	}
 	

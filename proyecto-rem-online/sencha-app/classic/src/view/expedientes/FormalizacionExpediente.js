@@ -763,6 +763,15 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 								bind : {
 									disabled : '{!expediente.bloqueado}'
 								}
+							}, {
+								xtype : 'button',
+								reference : 'btnAdvisoryNoteExpediente',
+								text : HreRem.i18n('button.title.advisory.note'),
+								handler : 'onClickAdvisoryNoteExpediente',
+								margin : '10 10 10 10',
+								bind : {
+									hidden:'{!esCarteraApple}'
+								}
 							}]
 				},
 				// Apartado Subsanaciones.

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -20,15 +22,20 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 
 @Component
@@ -48,12 +55,17 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 
     @Autowired
     private UtilDiccionarioApi utilDiccionarioApi;
+    
+    @Autowired
+	private TareaActivoApi tareaActivoApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResultadoPBC.class);
 
     private static final String COMBO_RESULTADO = "comboResultado";
+    private static final String COMBO_RESPUESTA = "comboRespuesta";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
     public static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
+    public static final String CODIGO_T017_PBC_VENTA = "T017_PBCVenta";
     private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -61,6 +73,8 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Activo activo = ofertaAceptada.getActivoPrincipal();
+		
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
@@ -68,28 +82,32 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 
 				for(TareaExternaValor valor :  valores){
 
-					if(COMBO_RESULTADO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if(COMBO_RESULTADO.equals(valor.getNombre())
+							|| COMBO_RESPUESTA.equals(valor.getNombre())
+							&& !Checks.esNulo(valor.getValor())) {
 						//TODO: Rellenar campo PBC del expediente cuando esté creado.
 						if(DDSiNo.NO.equals(valor.getValor())) {
-							if(!ofertaApi.checkReserva(ofertaAceptada)){
+							expediente.setEstadoPbc(0);
+							if(!ofertaApi.checkReserva(ofertaAceptada) || 
+							(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
+							&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
 								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								expediente.setEstado(estado);
 								expediente.setFechaVenta(null);
-								expediente.setEstadoPbc(0);
 								expediente.setFechaAnulacion(new Date());
-
-								genericDao.save(ExpedienteComercial.class, expediente);
-
 								//Finaliza el trámite
+								
 								Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
 								tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
 								genericDao.save(ActivoTramite.class, tramite);
 
 								//Rechaza la oferta y descongela el resto
 								ofertaApi.rechazarOferta(ofertaAceptada);
+								ofertaApi.finalizarOferta(ofertaAceptada);
 								try {
 									ofertaApi.descongelarOfertas(expediente);
+									ofertaApi.finalizarOferta(ofertaAceptada);
 								} catch (Exception e) {
 									logger.error("Error descongelando ofertas.", e);
 								}
@@ -107,6 +125,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 										throw new UserException(e.getMessage());
 									}
 								}
+								
 							}
 
 							//Motivo anulación
@@ -124,9 +143,24 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								ofertaAceptada.setMotivoRechazo(motivoRechazo);
 								genericDao.save(Oferta.class, ofertaAceptada);
 							}
-						} else {
-							expediente.setEstadoPbc(1);
 							genericDao.save(ExpedienteComercial.class, expediente);
+						} else {
+							
+							if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
+									&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())
+									&& ofertaApi.checkReserva(ofertaAceptada)) {
+
+								if(Integer.valueOf(2).equals(expediente.getEstadoPbc())) {
+									expediente.setEstadoPbc(1);
+								} else {
+									expediente.setEstadoPbc(2);
+								}
+								
+							} else {
+								expediente.setEstadoPbc(1);
+							}
+							genericDao.save(ExpedienteComercial.class, expediente);
+							
 							//LLamada servicio web Bankia para modificaciones según tipo propuesta (MOD3) 
 							if(!Checks.estaVacio(valores)){
 								if(!Checks.esNulo(ofertaAceptada.getActivoPrincipal()) 
@@ -146,7 +180,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_RESULTADO_PBC};
+		return new String[]{CODIGO_T013_RESULTADO_PBC, CODIGO_T017_PBC_VENTA};
 	}
 
 	public String[] getKeys() {

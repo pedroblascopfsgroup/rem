@@ -61,6 +61,21 @@ Ext.define('HreRem.model.AdmisionDocumento', {
     		},
     		{
     			name: 'tipoCalificacionCodigo'    			
+    		},
+    		{
+    			name: 'dataIdDocumento'
+    		},
+    		{
+    			name: 'letraConsumo'
+    		},
+    		{
+    			name: 'consumo'
+    		},
+    		{
+    			name: 'emision'
+    		},
+    		{
+    			name: 'registro'
     		}
     ],
     

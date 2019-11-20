@@ -42,6 +42,7 @@ public interface ActivoTramiteApi {
 	public static final String CODIGO_TRAMITE_COMUNICACION_GENCAT = "T016";
 	public static final String CODIGO_TRAMITE_COMERCIAL_ALQUILER = "T015";
 	public static final String CODIGO_TAREA_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
+	public static final String CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE = "T017";
 	
 	/**
 	 * Recupera un trámite pasándole su id.
@@ -299,6 +300,20 @@ public interface ActivoTramiteApi {
 			String uGestion, Long idTareaProcedimiento);
 
 	ExpedienteComercial findOne(Long id);
+	
 
+	/*
+	 * Devuelve true si la tarea viene de RatificacionComiteCES, en caso contrario False
+	 * @param idTramite
+	 * @return Boolean
+	 */
+	Boolean checkVieneDeRatificacionCES(Long idTramite);
+	
+	/*
+	 * Devuelve true si el tramite tiene las tareas Informe Juridico y Resolución Pro Manzana completadas, en caso contrario False
+	 * @param idTramite
+	 * @return Boolean
+	 */
+	Boolean checkInformeJuridicoYResolucionManzanaCompletadas(Long idTramite);
 }
 

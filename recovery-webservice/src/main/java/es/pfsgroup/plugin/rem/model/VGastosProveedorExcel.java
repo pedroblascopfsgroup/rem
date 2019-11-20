@@ -143,6 +143,12 @@ public class VGastosProveedorExcel implements Serializable {
 	
 	@Column(name="DD_CRA_DESCRIPCION")
 	private String entidadPropietariaDescripcion;
+	
+	@Column(name="DD_SCR_CODIGO")
+	private String subentidadPropietariaCodigo;
+	
+	@Column(name="DD_SCR_DESCRIPCION")
+	private String subentidadPropietariaDescripcion;
 
 	@Column(name="PVE_ID_GESTORIA")
 	private String idGestoria;
@@ -498,6 +504,22 @@ public class VGastosProveedorExcel implements Serializable {
 	public void setEntidadPropietariaDescripcion(
 			String entidadPropietariaDescripcion) {
 		this.entidadPropietariaDescripcion = entidadPropietariaDescripcion;
+	}
+
+	public String getSubentidadPropietariaCodigo() {
+		return subentidadPropietariaCodigo;
+	}
+
+	public void setSubentidadPropietariaCodigo(String subentidadPropietariaCodigo) {
+		this.subentidadPropietariaCodigo = subentidadPropietariaCodigo;
+	}
+
+	public String getSubentidadPropietariaDescripcion() {
+		return subentidadPropietariaDescripcion;
+	}
+
+	public void setSubentidadPropietariaDescripcion(String subentidadPropietariaDescripcion) {
+		this.subentidadPropietariaDescripcion = subentidadPropietariaDescripcion;
 	}
 
 	public String getIdGestoria() {

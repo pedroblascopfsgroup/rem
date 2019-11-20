@@ -20,6 +20,26 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 
     	me.items = [
     		{
+    			xtype: 'label',
+    			cls:'x-form-item',
+    			html: HreRem.i18n('msg.oferta.activo.no.tramitable'),
+    			style: 'color: red; font-weight: bold; font-size: small;',
+    			readOnly: true,
+    			hidden: true,
+    			reference: 'labelActivoNoTramitable',
+    			bind : {
+    				hidden: '{comercial.tramitable}'
+    			},
+    			listeners:{
+    				
+    				afterrender: function(){
+    					var me = this;
+    					me.lookupController().usuarioTieneFuncionPermitirTramitarOferta();
+    					
+    				}
+				}
+    		},
+    		{
     			xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				collapsible: true,
@@ -125,6 +145,47 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 						   disabled: !isLogUsuGestComerSupComerSupAdmin
 						}
 				]
+			}, 
+			{
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				collapsible: true,
+				reference: 'autorizacionTramOfertas',
+				hidden: true,
+				title: HreRem.i18n('title.autorizacion.tramitacion.ofertas'),
+				items :
+					[{
+						xtype : 'comboboxfieldbase',
+			        	fieldLabel: HreRem.i18n('fieldlabel.motivo.autorizacion'),
+			        	reference: 'motivoAutorizacionTramitacionCodigo',
+			        	editable: true,
+			        	bind : {
+						      store : '{comboMotivoAutorizacionTramitacion}',
+						      value : '{comercial.motivoAutorizacionTramitacionCodigo}'
+						      
+			        	}
+					},
+					{
+						xtype: 'textareafieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),
+			        	reference: 'observacionesAutorizacionTramite',
+						maxLength: 250,
+						bind:{
+							value: '{comercial.observacionesAutoTram}',
+							disabled: '{!esOtrosotivoAutorizacionTramitacion}'
+						}
+
+					},
+					{
+						xtype: 'button',
+						text: HreRem.i18n('btn.autorizar.tramitacion.ofertas'),
+						reference: 'insertarAutoTramOfer',
+						handler: 'onInsertarAutorizacionTramOfertas',
+						bind: {
+							disabled: '{!esSelecionadoAutorizacionTramitacion}'	
+						}
+					}
+				]
 			},
 			{
 				xtype: 'comercialactivotabpanel' 
@@ -132,12 +193,13 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
     	];
 
     	me.callParent();
+    	
     },
 
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
-		me.lookupController().cargarTabData(me);
+		me.lookupController().cargarTabDataComercial(me);
 		me.up('activosdetallemain').lookupReference('comercialactivotabpanelref').funcionRecargar();
 		me.evaluarEdicion();
     },

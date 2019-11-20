@@ -3,11 +3,13 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
@@ -30,6 +32,8 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 	private static final int COL_ENTIDAD_FINANCIERA = 2;
 	private static final int COL_NUM_EXPEDIENTE = 3;
 	private static final int COL_TIPO_DE_FINANCIACION = 4;
+	private static final int COL_CAPITAL_CONCEDIDO = 5;
+	private static final int COL_FECHA_POSICIONAMIENTO_PREVISTA = 6;
 	private static final int DATOS_PRIMERA_FILA = 1;
 	private static final String SI = "SI";
 	private static final String NO = "NO";
@@ -71,6 +75,15 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 				}
 			}
 		}
+		
+		if (!Checks.esNulo(exc.dameCelda(fila, COL_FECHA_POSICIONAMIENTO_PREVISTA))) {
+			if (exc.dameCelda(fila, COL_FECHA_POSICIONAMIENTO_PREVISTA).trim().equals("@")) {
+				expediente.setFechaPosicionamientoPrevista(null);
+			} else {
+				expediente.setFechaPosicionamientoPrevista(new SimpleDateFormat(DateFormat.DATE_FORMAT)
+						.parse(exc.dameCelda(fila, COL_FECHA_POSICIONAMIENTO_PREVISTA)));;
+			}
+		}
 
 		// Numero de expediente
 		Formalizacion form = genericDao.get(Formalizacion.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id",expediente.getId()));
@@ -90,6 +103,14 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 				DDTipoRiesgoClase tipoRiesgoClase = genericDao.get(DDTipoRiesgoClase.class, genericDao
 						.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, COL_TIPO_DE_FINANCIACION)));
 				form.setTipoRiesgoClase(tipoRiesgoClase);
+			}
+		}
+		
+		if (!Checks.esNulo(exc.dameCelda(fila, COL_CAPITAL_CONCEDIDO))) {
+			if (exc.dameCelda(fila, COL_CAPITAL_CONCEDIDO).trim().equals("@")) {
+				form.setCapitalConcedido(null);
+			} else {
+				form.setCapitalConcedido(Double.parseDouble(exc.dameCelda(fila, COL_CAPITAL_CONCEDIDO)));
 			}
 		}
 

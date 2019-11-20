@@ -2,13 +2,12 @@ package es.pfsgroup.framework.paradise.fileUpload.adapter;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +22,14 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
+
 
 @Service
 public class UploadAdapter {
+
 	
 	@Autowired
-	private GenericABMDao genericDao;
-	
+	private GenericABMDao genericDao;	
 	@Resource
 	Properties appProperties;
 	
@@ -94,5 +93,8 @@ public class UploadAdapter {
 		return adj.getFileItem();
 
 	}
+	
+	
+
 	
 }

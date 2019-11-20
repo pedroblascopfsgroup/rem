@@ -76,7 +76,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', {
 						value: '{oferta.cesionDatos}'
 					},
 					name: 'cesionDatos',
-					margin: '50px 0 0 200px',
+					margin: '50px 0 0 210px',
+					labelWidth: '100%',
 					reference: 'chkbxCesionDatosHaya',
 					readOnly: false,
 					listeners: {
@@ -92,7 +93,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', {
 						value: '{oferta.comunicacionTerceros}'
 					},
 					name: 'comunicacionTerceros',
-					margin: '10px 0 0 200px',
+					margin: '10px 0 0 210px',
+					labelWidth: '100%',
 					reference: 'chkbxcComunicacionTerceros',
 					readOnly: false,
 					listeners: {
@@ -108,7 +110,8 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumento', {
 						value: '{oferta.transferenciasInternacionales}'
 					},
 					name: 'transferenciasInternacionales',
-					margin: '10px 0 0 200px',
+					margin: '10px 0 0 210px',
+					labelWidth: '100%',
 					reference: 'chkbxTransferenciasInternacionales',
 					readOnly: false,
 					listeners: {

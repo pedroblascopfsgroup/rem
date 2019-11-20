@@ -1,8 +1,12 @@
 Ext.define('HreRem.view.administracion.AdministracionModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.administracion',
-    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision'],
+    requires: ['HreRem.ux.data.Proxy','HreRem.model.Gasto', 'HreRem.model.Provision', 'HreRem.model.ActivoJuntaPropietarios', 'HreRem.model.ComboBase', 'HreRem.model.JuntasPropietarios', 
+    	'HreRem.model.TipoDocumentoExpediente', 'HreRem.model.AdjuntoJuntas', 'HreRem.model.Activo', 'HreRem.model.Plusvalia'],
 
+    data: {
+    	junta: null
+    },
     stores: {
 
     	gastosAdministracion: {
@@ -20,6 +24,38 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	        listeners : {
 	            beforeload : 'paramLoading'
 	        }
+    	},    	
+
+    	plusvaliaAdministracion: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Plusvalia',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/plusvalia.json',
+		        remoteUrl: 'activo/getListPlusvalia'
+	    	},
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true,
+	        listeners : {
+	            beforeload : 'paramLoading'
+	        }
+    	},
+
+    	juntas: {
+    		pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.JuntasPropietarios',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/activojuntapropietarios.json',
+		        remoteUrl: 'activojuntapropietarios/getListJuntas'
+	    	},
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true,	    		       
+	    	listeners : {
+	            beforeload : 'paramLoadingJuntas'
+	        }	        
     	},
 
     	provisiones: {
@@ -50,8 +86,8 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
 	    	}
 
     	},
-
-    	comboEstadosProvision: {
+    	
+     	comboEstadosProvision: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
@@ -185,7 +221,49 @@ Ext.define('HreRem.view.administracion.AdministracionModel', {
         remoteUrl: 'generic/getDiccionario',
         extraParams: {diccionario: 'motivosAvisoGasto'}
       }
-    }
+    },
+	comboSiNoJuntas: {
+		data : [
+	        {"codigo":"1", "descripcion":"Si"},
+	        {"codigo":"2", "descripcion":"No"}
+	    ]
+	},
+	
+	// STORE PESTA�A DOCUMENTOS TIPO DE JUNTA
+    	comboTipoDocumento: {
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+	    		type: 'uxproxy', 
+	    		remoteUrl: 'generic/getDiccionario',
+	    		extraParams: {diccionario: 'tipoDocJunta'}
+	    		
+	    	},
+	    	autoLoad: false,
+    		sorters: 'descripcion'
+    	},
+    	
+	storeActivos: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.JuntasPropietarios',
+	    	proxy: {
+	    		type: 'uxproxy', 
+	    		remoteUrl: 'activojuntapropietarios/getActivosJuntas',
+	    		extraParams: {idJunta: '{junta.id}'}
+	    	},
+	    	autoLoad: false
+    	},
+
+	
+	storeDocumentosJuntas: {
+		 pageSize: $AC.getDefaultPageSize(),
+		 model: 'HreRem.model.JuntasPropietarios',
+ 	     proxy: {
+ 	        type: 'uxproxy',
+ 	        remoteUrl: 'activojuntapropietarios/getListAdjuntos',
+ 	        extraParams: {idJunta: '{junta.id}'}
+     	 },
+     	 groupField: 'descripcionTipo'
+	}
 
   }
 

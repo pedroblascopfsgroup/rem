@@ -73,9 +73,26 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 		}
     },
     
-    paramLoading: function(store, operation, opts) {
+    paramLoadingProveedores: function(store, operation, opts) {
 		var initialData = {};
 		var searchForm = this.getReferences().configuracionProveedoresFiltros;
+		var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+		
+		Ext.Object.each(criteria, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete criteria[key];
+			}
+		});
+
+		store.getProxy().extraParams = criteria;
+		
+		return true;
+	},
+	
+	paramLoadingPerfiles: function(store, operation, opts) {
+		var initialData = {};
+		var searchForm = this.getReferences().configuracionPerfilesBusqueda;
+		var itemSelector = this.getReferences().itemselFunciones; 
 		var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
 		
 		Ext.Object.each(criteria, function(key, val) {
@@ -85,7 +102,6 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 		});	
 
 		store.getProxy().extraParams = criteria;
-		
 		return true;
 	},
     
@@ -93,12 +109,22 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 	abrirPestanyaProveedor: function(grid, record)  {
 	   	 var me = this;
 	   	 me.getView().fireEvent('abrirDetalleProveedor', record);
-   },
+	},
+	
+	abrirPestanyaPerfil: function(grid, record)  {
+	   	 var me = this;
+	   	 me.getView().fireEvent('abrirDetallePerfil', record);
+	},
     
     // Función que se ejecuta al hacer click en el botón Buscar.
-	onSearchClick: function(btn) {
+	onSearchProveedoresClick: function(btn) {
 		var me = this;
 		me.getViewModel().getData().configuracionproveedores.load(1);
+	},
+	
+	onSearchPerfilesClick: function(btn) {
+		var me = this;
+		me.getViewModel().getData().configuracionperfiles.load(1);
 	},
 	
 	// Función que se ejecuta al hacer click en el botón de Limpiar.

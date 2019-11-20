@@ -1,22 +1,23 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
 
 /**
  * Dto que gestiona la informacion de los datos básicos de una oferta.
- *  
+ *
  * @author Jose Villel
  *
  */
 public class DtoDatosBasicosOferta extends WebDto {
-	
-	
-  
+
+
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3574353502838449106L;
 	
@@ -31,6 +32,14 @@ public class DtoDatosBasicosOferta extends WebDto {
     private String tipoOfertaDescripcion;
     
     private String tipoOfertaCodigo;
+    
+    private Long numOferPrincipal;
+    
+    private String claseOfertaDescripcion;
+    
+    private String claseOfertaCodigo;
+    
+    private Long nuevoNumOferPrincipal;
     
     private Date fechaNotificacion;
     
@@ -67,22 +76,51 @@ public class DtoDatosBasicosOferta extends WebDto {
     private String comitePropuestoCodigo;
    
 	private String ofertaExpress;
-	
+
 	private String necesitaFinanciacion;
-	
+
 	private String observaciones;
-	
+
 	private String ventaCartera;
-	
+
 	private String tipoAlquilerCodigo;
-	
+
 	private String tipoInquilinoCodigo;
 
 	private String numContratoPrinex;
-	
+
 	private String refCircuitoCliente;
-	
+
 	private Boolean permiteProponer;
+
+	private Long idGestorComercialPrescriptor;
+
+	private Double importeContraofertaPM;
+
+	private Date fechaRespuestaPM;
+
+	private Date fechaRespuestaOfertantePM;
+
+	private Double importeContraofertaCES;
+
+  private Date fechaRespuestaCES;
+
+	private Boolean isCarteraCerberusApple;
+
+	private Boolean isCarteraLbkVenta;
+	private Boolean isLbkOfertaComercialPrincipal;
+	private Boolean muestraOfertaComercial;
+
+	private Double importeTotal;
+	
+	private Date fechaResolucionCES;
+
+	private Date fechaRespuesta;
+	
+	private Double importeContraofertaOfertanteCES;
+	
+	private String ofertaSingular;
+
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -107,6 +145,47 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setTipoOfertaDescripcion(String tipoOfertaDescripcion) {
 		this.tipoOfertaDescripcion = tipoOfertaDescripcion;
 	}
+	public String getClaseOfertaDescripcion() {
+		return claseOfertaDescripcion;
+	}
+
+	public void setClaseOfertaDescripcion(String claseOfertaDescripcion) {
+		this.claseOfertaDescripcion = claseOfertaDescripcion;
+	}
+
+	public String getClaseOfertaCodigo() {
+		return claseOfertaCodigo;
+	}
+
+	public void setClaseOfertaCodigo(String claseOfertaCodigo) {
+		this.claseOfertaCodigo = claseOfertaCodigo;
+	}
+
+
+	public Long getNumOferPrincipal() {
+		return numOferPrincipal;
+	}
+
+	public void setImporteTotal(Double importeTotal) {
+		this.importeTotal = importeTotal;
+	}
+
+	public Double getImporteTotal() {
+		return importeTotal;
+	}
+
+	public void setNumOferPrincipal(Long numOferPrincipal) {
+		this.numOferPrincipal = numOferPrincipal;
+	}
+
+	public Long getNuevoNumOferPrincipal() {
+		return nuevoNumOferPrincipal;
+	}
+	
+	public void setNuevoNumOferPrincipal(Long nuevoNumOferPrincipal) {
+		this.nuevoNumOferPrincipal = nuevoNumOferPrincipal;
+	}
+	
 
 	public Date getFechaNotificacion() {
 		return fechaNotificacion;
@@ -284,7 +363,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setPermiteProponer(Boolean permiteProponer) {
 		this.permiteProponer = permiteProponer;
 	}
-	
+
 	public String getTipoAlquilerCodigo() {
 		return tipoAlquilerCodigo;
 	}
@@ -332,5 +411,115 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setIdEco(Long idEco) {
 		this.idEco = idEco;
 	}
+	public Long getIdGestorComercialPrescriptor() {
+		return idGestorComercialPrescriptor;
+	}
 
+	public void setIdGestorComercialPrescriptor(Long idGestorComercialPrescriptor) {
+		this.idGestorComercialPrescriptor = idGestorComercialPrescriptor;
+	}
+
+	public Double getImporteContraofertaPM() {
+		return importeContraofertaPM;
+	}
+
+	public void setImporteContraofertaPM(Double importeContraofertaPM) {
+		this.importeContraofertaPM = importeContraofertaPM;
+	}
+
+	public Date getFechaRespuestaPM() {
+		return fechaRespuestaPM;
+	}
+
+	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
+		this.fechaRespuestaPM = fechaRespuestaPM;
+	}
+
+	public Date getFechaRespuestaOfertantePM() {
+		return fechaRespuestaOfertantePM;
+	}
+
+	public void setFechaRespuestaOfertantePM(Date fechaRespuestaOfertantePM) {
+		this.fechaRespuestaOfertantePM = fechaRespuestaOfertantePM;
+	}
+
+	public Double getImporteContraofertaCES() {
+		return importeContraofertaCES;
+	}
+
+	public void setImporteContraofertaCES(Double importeContraofertaCES) {
+		this.importeContraofertaCES = importeContraofertaCES;
+	}
+
+	public Date getFechaResolucionCES() {
+		return fechaResolucionCES;
+	}
+
+	public void setFechaResolucionCES(Date fechaResolucionCES) {
+		this.fechaResolucionCES = fechaResolucionCES;
+	}
+
+	public Date getFechaRespuestaCES() {
+		return fechaRespuestaCES;
+	}
+
+	public void setFechaRespuestaCES(Date fechaRespuestaCES) {
+		this.fechaRespuestaCES = fechaRespuestaCES;
+	}
+
+	public Boolean getIsCarteraCerberusApple() {
+		return isCarteraCerberusApple;
+	}
+
+	public void setIsCarteraCerberusApple(Boolean isCarteraCerberusApple) {
+		this.isCarteraCerberusApple = isCarteraCerberusApple;
+	}
+	
+	public Boolean getIsCarteraLbkVenta() {
+		return isCarteraLbkVenta;
+	}
+
+	public void setIsCarteraLbkVenta(Boolean isCarteraLbkVenta) {
+		this.isCarteraLbkVenta = isCarteraLbkVenta;
+	}
+
+	public Boolean getIsLbkOfertaComercialPrincipal() {
+		return isLbkOfertaComercialPrincipal;
+	}
+
+	public void setIsLbkOfertaComercialPrincipal(Boolean isLbkOfertaComercialPrincipal) {
+		this.isLbkOfertaComercialPrincipal = isLbkOfertaComercialPrincipal;
+	}
+
+	public Boolean getMuestraOfertaComercial() {
+		return muestraOfertaComercial;
+	}
+
+	public void setMuestraOfertaComercial(Boolean muestraOfertaComercial) {
+		this.muestraOfertaComercial = muestraOfertaComercial;
+	}
+
+	public Date getFechaRespuesta() {
+		return fechaRespuesta;
+	}
+
+	public void setFechaRespuesta(Date fechaRespuesta) {
+		this.fechaRespuesta = fechaRespuesta;
+	}
+
+	public Double getImporteContraofertaOfertanteCES() {
+		return importeContraofertaOfertanteCES;
+	}
+
+	public void setImporteContraofertaOfertanteCES(Double importeContraofertaOfertanteCES) {
+		this.importeContraofertaOfertanteCES = importeContraofertaOfertanteCES;
+	}
+
+	public String getOfertaSingular() {
+		return ofertaSingular;
+	}
+
+	public void setOfertaSingular(String ofertaSingular) {
+		this.ofertaSingular = ofertaSingular;
+	}
 }

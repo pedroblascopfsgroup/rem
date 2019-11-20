@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteSancionOferta">
-
+	
 	<start-state name="inicio">
-		<transition to="T013_DefinicionOferta"></transition>
-	</start-state>
+		<transition to="router"></transition>
+	</start-state>	
+
+	<!--  Router BPM  -->
+	<node name="router">
+		<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+			<targetBean>
+				routerBPMSancionOfertaHandler
+			</targetBean>
+		</action>
+		<!--  Avance a otros nodos dependiendo del "target" devuelto por el router(actua como si fuera el nodo de <decision></decision>) -->
+		
+		<transition to="forkYubai" name="inicioTramiteVentaSobrePlano"></transition>
+		<transition to="T013_DefinicionOferta" name="avanzaBPM"></transition>
+		<transition to="T013_InstruccionesReserva" name="T013_InstruccionesReserva"></transition>
+		<transition to="T013_PosicionamientoYFirma" name="T013_PosicionamientoYFirma"></transition>
+		<transition to="T013_ResolucionExpediente" name="T013_ResolucionExpediente"></transition>
+	</node>	
+	
+	<fork name="forkYubai">
+		<transition to="T013_DefinicionOferta" name="oferta"></transition>
+		<transition to="T013_InformeJuridico" name="informe"></transition>
+	</fork>
 	
 	<state name="T013_DefinicionOferta">
 		<event type="node-enter">
@@ -37,6 +60,7 @@
 		<transition to="forkSinReservaSinTanteo" name="ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo"></transition>
 		<transition to="forkReservaCajamar" name="ApruebaConReservaCajamar"></transition>
 		<transition to="forkSinReservaSinTanteoCajamar" name="ApruebaSinReservaSinTanteoCajamar"></transition>
+		<transition to="T013_ResultadoPBC" name="esYubai"></transition>
 	</decision>
 	
 
@@ -119,6 +143,7 @@
 		<transition to="forkSinReservaSinTanteo" name="ApruebaSinReservaSinTanteo"></transition>
 		<transition to="forkReservaCajamar" name="ApruebaConReservaCajamar"></transition>
 		<transition to="forkSinReservaSinTanteoCajamar" name="ApruebaSinReservaSinTanteoCajamar"></transition>
+		<transition to="T013_ResultadoPBC" name="esYubai"></transition>
 	</decision>
 
 	<state name="T013_RespuestaOfertante">
@@ -146,6 +171,7 @@
 	<decision name ="T013_RespuestaOfertanteDecision" expression="#{T013_RespuestaOfertanteDecision}">
 		<transition to="T013_RatificacionComite" name="AceptaBankia"></transition>
 		<transition to="forkReserva" name="AceptaConReserva"></transition>
+		<transition to="T013_ResultadoPBC" name="esYubai"></transition>
 		<transition to="forkSinReservaSinTanteo" name="AceptaSinReservaSinTanteo"></transition>
 		<transition to="forkReservaCajamar" name="AceptaConReservaCajamar"></transition>
 		<transition to="forkSinReservaSinTanteoCajamar" name="AceptaSinReservaSinTanteoCajamar"></transition>
@@ -175,9 +201,10 @@
 	</state>
 	
 	<decision name="T013_RatificacionComiteDecision" expression="#{T013_RatificacionComiteDecision}">
-		<transition to="forkReserva" name="AceptaConReserva"></transition>
+		<transition to="forkReserva" name="AceptaConReserva"></transition>		
 		<transition to="T013_RespuestaOfertante" name="Contraoferta"></transition>
 		<transition to="forkSinReservaSinTanteo" name="AceptaSinReservaSinTanteo"></transition>
+		<transition to="T013_ResultadoPBC" name="esYubai"></transition>
 		<transition to="Fin" name="Rechaza"></transition>
 	</decision>
 	
@@ -270,6 +297,7 @@
 	</state>
 	
 	<decision name ="T013_ResultadoPBCDecision" expression="#{T013_ResultadoPBCDecision}">
+		<transition to="router" name="esYubai"></transition>
 		<transition to="T013_PosicionamientoYFirma" name="Aprobado"></transition>
 		<transition to="T013_ResolucionExpediente" name="NoAprobadoConReserva"></transition>
 		<transition to="Fin" name="NoAprobadoSinReserva"></transition>
@@ -471,7 +499,29 @@
 		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
-
+	
+	<state name="T013_ValidacionClientes">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
 	<end-state name="Fin">
 		<event type="node-enter">
 			<action name="myAction" config-type="bean"

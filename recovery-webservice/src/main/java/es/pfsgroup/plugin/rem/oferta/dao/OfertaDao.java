@@ -34,11 +34,10 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	/**
 	 * Devuelve un listado de ofertas por usuario gestoría, filtrando por número de activo.
 	 * 
-	 * @param dtoOfertasFilter Este filtro debe incluir el número de activo. 
-	 * @param usuarioGestoria 
+	 * @param dtoOfertasFilter Este filtro debe incluir el número de activo y el id de usuario gestoría. 
 	 * @return
 	 */
-	DtoPage getListOfertasGestoria(DtoOfertasFilter dtoOfertasFilter, Usuario usuarioGestoria);
+	DtoPage getListOfertasGestoria(DtoOfertasFilter dtoOfertasFilter);
 
 	public Long getNextNumOfertaRem();
 	
@@ -89,4 +88,17 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr);
 	
 	public void flush();
+	
+	public Oferta getOfertaPrincipal(Long numOferta);
+
+	/**
+	 * Devuelve una lista de ofertas CES
+	 * 
+	 * @param dtoOfertasFilter
+	 * @return DtoPage
+	 */
+	DtoPage getListOfertasCES(DtoOfertasFilter dtoOfertasFilter);
+
+	public Boolean tieneTareaActiva(String tarea, String numOferta);
+
 }

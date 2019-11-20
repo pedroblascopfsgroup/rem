@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 
 public interface ExcelReportGeneratorApi {
 	
@@ -26,5 +27,7 @@ public interface ExcelReportGeneratorApi {
 	public int getStart();
 	
 	public int getLimit();
+
+	File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request);
 
 }

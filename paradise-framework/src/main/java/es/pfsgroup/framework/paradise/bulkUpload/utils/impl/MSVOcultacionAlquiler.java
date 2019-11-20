@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
@@ -126,28 +128,13 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 			mapaErrores.put(DESTINO_FINAL_NO_ALQUILER, destinoFinalNoAlquilerByRows(exc));
 			mapaErrores.put(ACTIVO_OCULTO, activoOcultoByRows(exc));
 
-			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
-				||!mapaErrores.get(ACTIVO_VENDIDO).isEmpty()
-				||!mapaErrores.get(NO_ES_ACTIVO_PRINCIPAL).isEmpty()
-				||!mapaErrores.get(ACTIVO_NO_PUBLICABLE).isEmpty()
-				||!mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty()
-				||!mapaErrores.get(DESTINO_FINAL_NO_ALQUILER).isEmpty()
-				||!mapaErrores.get(ACTIVO_NO_PUBLICADO).isEmpty()
-				||!mapaErrores.get(ACTIVO_OCULTO).isEmpty()
-				||!mapaErrores.get(MOTIVO_NOT_EXISTS).isEmpty()
-				||!mapaErrores.get(MOTIVO_CODIGO_OCULTACION_NO_ESTA_DEFINIDO).isEmpty()
-				||!mapaErrores.get(MOTIVO_TEXTO_LIBRE_SUPERA_LIMITE).isEmpty()
-				||!mapaErrores.get(AGRUPACION_ACTIVO_NO_PUBLICABLE).isEmpty()
-				||!mapaErrores.get(AGRUPACION_ACTIVO_NO_COMERCIALIZABLE).isEmpty()
-				||!mapaErrores.get(AGRUPACION_DESTINO_FINAL_NO_ALQUILER).isEmpty()
-				||!mapaErrores.get(AGRUPACION_ACTIVO_OCULTO).isEmpty()){
-
+			Set<String> keySet = mapaErrores.keySet();			
+			for (String key : keySet) {				
+				if(!Checks.estaVacio(mapaErrores.get(key))) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
-					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-			}
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+				}
+			}	
 		}
 
 		exc.cerrar();
@@ -495,12 +482,12 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 		int i = 0;
 		try{
 			for(i=1;i<this.numFilasHoja;i++){
-				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)){
-					if(!particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))){
+				if(particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)), AGRUPACION_RESTRINGIDA)
+						&& !particularValidator.esActivoPrincipalEnAgrupacion(Long.parseLong(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))){
 						listaFilas.add(i);
 					}
 				}
-			}
+			
 		}catch (Exception e){
 			if (i != 0) listaFilas.add(i);
 			logger.error(e.getMessage());

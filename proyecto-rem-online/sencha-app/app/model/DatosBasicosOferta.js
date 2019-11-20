@@ -3,10 +3,10 @@
  */
 Ext.define('HreRem.model.DatosBasicosOferta', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
+    alias: 'viewmodel.datosBasicosOferta',
 
-    fields: [ 
-    		
+    fields: [
+
 		    {
 		    	name: 'idOferta'
 		    },
@@ -60,9 +60,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'numVisita'
-    		}, 
+    		},
     		{
-    			name: 'estadoVisitaOfertaCodigo'	
+    			name: 'estadoVisitaOfertaCodigo'
     		},
     		{
     			name:'estadoVisitaOfertaDescripcion'
@@ -82,6 +82,34 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		{
     			name: 'ventaCartera'
     		},
+     		{
+			name:'fechaRespuestaCES',
+			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+			name:'fechaRespuesta',
+			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    			name: 'isCarteraCerberusApple',
+    			type: 'boolean'
+     		},
     		{
     			name: 'tipoAlquilerCodigo'
     		},
@@ -118,19 +146,94 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'idEco'
+    		},
+    		{
+    			name:'idGestorComercialPrescriptor'
+        },
+        {
+    			name:'importeContraofertaPM'
+    		},
+    		{
+    			name:'fechaRespuestaPM',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    			name:'fechaRespuestaOfertantePM',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    			name:'importeContraofertaCES'
+    		},
+    		{
+    			name:'fechaResolucionCES',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
+    		},
+    		{
+    			name:'numOferPrincipal'	
+    		},
+    		{
+    			name: 'isCarteraLbkVenta',
+    			type: 'boolean'
+     		},
+    		{
+    			name: 'isLbkOfertaComercialPrincipal',
+    			type: 'boolean'
+     		},
+    		{
+    			name: 'muestraOfertaComercial',
+    			type: 'boolean'
+     		},
+    		{
+    			name:'importeTotal'	
+    		},
+    		{
+    			name:'nuevoNumOferPrincipal'	
+    		},
+    		{
+    			name:'claseOfertaCodigo'	
+    		},
+    		{
+    			name:'importeContraofertaOfertanteCES'
+    		},
+    		{
+    			name:'ofertaSingular'
     		}
     ],
-    
+
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'expedienteComercial.json',
-		
+
 		api: {
             read: 'expedientecomercial/getTabExpediente',
             update: 'expedientecomercial/saveDatosBasicosOferta'
         },
-		
+
         extraParams: {tab: 'datosbasicosoferta'}
-    }    
+    }
 
 });

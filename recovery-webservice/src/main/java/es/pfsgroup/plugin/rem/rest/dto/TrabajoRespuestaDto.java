@@ -27,7 +27,6 @@ public class TrabajoRespuestaDto implements Serializable {
 	private boolean urgentePrioridadReq;
 	private boolean riesgoPrioridadReq;
 	private List<Long> numActivo;
-	private Long idTarea;
 
 	public Long getNumTrabajo() {
 		return numTrabajo;
@@ -148,13 +147,4 @@ public class TrabajoRespuestaDto implements Serializable {
 	public void setNumActivo(List<Long> numActivo) {
 		this.numActivo = numActivo;
 	}
-
-	public Long getIdTarea() {
-		return idTarea;
-	}
-
-	public void setIdTarea(Long idTarea) {
-		this.idTarea = idTarea;
-	}
-
 }

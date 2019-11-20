@@ -1,0 +1,152 @@
+Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
+    extend : 'HreRem.view.common.FormBase',
+    xtype : 'plusvaliaactivo',
+    cls : 'panel-base shadow-panel',
+    collapsed : false,
+    refreshAfterSave : true,
+    reference : 'plusvaliaactivoref',
+    scrollable : 'y',
+
+    listeners : {
+	    boxready : function() {
+		    var me = this;
+		    me.lookupController().cargarTabData(me);
+	    }
+    },
+    
+    recordName : 'plusvalia',
+
+    recordClass : 'HreRem.model.PlusvaliaActivoModel',
+
+    requires : [ 'HreRem.model.PlusvaliaActivoModel' ],
+
+    initComponent : function() {
+	    var me = this;
+
+	    me.setTitle(HreRem.i18n('title.plusvalia.activo'));
+
+	    var items = [
+
+	    {
+	        xtype : 'fieldsettable',
+	        defaultType : 'textfieldbase',
+	        title : HreRem.i18n('title.plusvalia.activo'),
+	        collapsible : false,
+	        items : [ {
+	            xtype : 'datefieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.fecha.recepcion.plusvalia'),
+	            bind : {
+		            value : '{plusvalia.dateRecepcionPlus}'
+	            },
+	            allowBlank: false
+	        }, {
+	            xtype : 'datefieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.fecha.pago.plusvalia'),
+	            bind : {
+		            value : '{plusvalia.datePresentacionPlus}'
+	            },
+	            allowBlank: false
+	        }, {
+	            xtype : 'datefieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.fecha.presentacion.recurso'),
+	            bind : {
+		            value : '{plusvalia.datePresentacionRecu}'
+	            },
+	            allowBlank: false
+	        }, {
+	            xtype : 'datefieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.fecha.respuesta.recurso'),
+	            bind : {
+		            value : '{plusvalia.dateRespuestaRecu}'
+	            },
+	            allowBlank: false
+	        }, {
+	            xtype : 'comboboxfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.apertura.expediente'),
+	            bind : {
+	                store : '{comboSiNoPlusvalia}',
+	                value : '{plusvalia.aperturaSeguimientoExp}'
+	            },
+	            allowBlank: false
+	        }, {
+	            xtype : 'numberfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.importe.plusvalia'),
+	            bind : {
+		            value : '{plusvalia.importePagado}'
+	            },
+	            allowBlank: false
+	        }, {
+	            xtype : 'numberfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.gasto'),
+	            bind : {
+		            value : '{plusvalia.numGastoHaya}'
+	            }
+	        }, {
+	            xtype : 'comboboxfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.minusvalia'),
+	            bind : {
+	                store : '{comboSiNoPlusvalia}',
+	                value : '{plusvalia.minusvalia}'
+	            },
+	            allowBlank: false
+	        }, {
+	        	xtype : 'comboboxfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.exento'),
+	            bind : {
+	                store : '{comboSiNoPlusvalia}',
+	                value : '{plusvalia.exento}'
+	            },
+	            allowBlank: false
+	        }, {
+	        	xtype : 'comboboxfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.autoliquidacion'),
+	            bind : {
+	                store : '{comboSiNoPlusvalia}',
+	                value : '{plusvalia.autoliquidacion}'
+	            },
+	            allowBlank: false
+	        }, {
+	        	xtype: 'textareafieldbase',
+            	labelWidth: 200,
+            	rowspan: 5,
+            	height: 130,
+            	labelAlign: 'top',
+            	fieldLabel: HreRem.i18n('fieldlabel.plusvalia.observaciones'),
+            	bind:{
+            		value: '{plusvalia.observaciones}'
+            	},
+            	allowBlank: false
+	        } ]
+	    },{
+	    	
+	    xtype : 'fieldsettable',
+        defaultType : 'textfieldbase',
+        title : HreRem.i18n('title.documentos'),
+        collapsible : true,
+        items : [ 
+        		{
+	        		xtype:'adjuntosplusvalias',
+	        		reference: 'listadoadjuntosplusvalias',
+					colspan: 3
+        		}
+        	]
+    	}
+	    ];
+
+	    me.addPlugin({
+	        ptype : 'lazyitems',
+	        items : items
+	    });
+	    me.callParent();
+    },
+
+    funcionRecargar : function() {
+	    var me = this;
+	    me.recargar = false;
+	    Ext.Array.each(me.query('grid'), function(grid) {
+		    grid.getStore().load();
+	    });
+	    me.lookupController().cargarTabData(me);
+    }
+
+});

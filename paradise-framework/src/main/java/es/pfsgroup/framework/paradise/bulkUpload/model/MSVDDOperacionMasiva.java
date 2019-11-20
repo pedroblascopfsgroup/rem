@@ -92,6 +92,16 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_OFERTAS_GTAM = "CMOFG";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS = "CMGET";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FORMALIZACION="FORM";
+
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_PUBLICACION = "CMEP";
+	public static final String CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION = "SUFDP";
+	public static final String CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES = "SUPGR";
+	public static final String CODE_FILE_BULKUPLOAD_VALORES_PERIMETRO_APPLE = "VALPA";	
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_LPO="CML";
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_DOCUMENTACION_ADMINISTRATIVA="MSDOCADM";
+	public static final String CODE_FILE_BULKUPLOAD_CONTROL_TRIBUTOS="MASCT";
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES_PLUSVALIAS="MRP";
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_JUNTAS="CMJOE";
 	
 
 	private static final long serialVersionUID = 5938440720826995243L;
@@ -111,17 +121,17 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 
     @Column(name = "DD_OPM_DESCRIPCION_LARGA")
     private String descripcionLarga;
-    
+
     @ManyToOne
     @JoinColumn(name = "FUN_ID")
     private Funcion funcion;
-    
+
     @Column(name="DD_OPM_VALIDACION_FORMATO")
     private String validacionFormato;
-    
+
     @Column(name="DD_OPM_RESULTADO")
     private Boolean resultado;
-    
+
     @Embedded
     private Auditoria auditoria;
 
@@ -200,5 +210,5 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 		this.resultado = resultado;
 	}
 
-	
+
 }

@@ -9,8 +9,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 	recordName: "detalleeconomico",
 	recordClass: "HreRem.model.DetalleEconomicoGasto",
     refreshAfterSave: true,
-    
-    requires: ['HreRem.model.DetalleEconomicoGasto'],
+    requires: ['HreRem.model.DetalleEconomicoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes','HreRem.model.AdjuntoGasto', 'HreRem.model.GastoRefacturableGridExistenteStore'],
     
     listeners: {
 		boxready:'cargarTabData',
@@ -27,6 +26,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 			else{
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(false);
 			}
+		},
+		beforeShow: function (e){
+			//var me = this;
+			//me.lookupController().visibilidadComponentesDetalleEconomico();
 		}
 	},
 	
@@ -42,6 +45,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
     initComponent: function () {
 
         var me = this;
+        
 		me.setTitle(HreRem.i18n('title.gasto.detalle.economico'));
         var items= [
        
@@ -153,7 +157,25 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														},
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
-											                bind: '{detalleeconomico.importeRecargo}'
+															reference: 'importerecargoref',
+														               bind: '{detalleeconomico.importeRecargo}',
+														               listeners:{
+														            	   change: function(){
+															               	var me = this;
+															               	if (me.up('gastodetallemain').getViewModel().get('gasto').get('cartera') == CONST.CARTERA['BANKIA'] && 
+															               	(me.getValue() == null || me.getValue() == 0)){
+															                me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = true;
+																               	if (me.up('gastodetallemain').lookupReference('destinatariosPago').getValue() == null){
+																               		me.up('gastodetallemain').lookupReference('destinatariosPago')  == true;
+																               		
+																               	} else {
+																               		me.up('gastodetallemain').lookupReference('destinatariosPago').allowBlank = false;
+																               		me.up('gastodetallemain').lookupReference('destinatariosPago').isValid() == false;
+																               		
+																               	}
+															               	}        	   
+														            	   	}
+														               	}
 														},
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.interes.demora'),
@@ -243,7 +265,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															xtype: 'comboboxfieldbase',
 											               	fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.tipo.impuesto.indirecto'),
 													      	reference: 'cbTipoImpuesto',
-													      	allowBlank: false,
+													      	allowBlank: me.editableSoloPago(),
 													      	readOnly: me.editableSoloPago(),
 											               	bind: {
 												           		store: '{comboTipoImpuesto}',
@@ -532,7 +554,9 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											    reference: 'destinatariosPago',
 												bind: {
 													store: '{comboDestinatarioPago}',
-												    value: '{detalleeconomico.destinatariosPagoCodigo}'
+												    value: '{detalleeconomico.destinatariosPagoCodigo}',
+												    allowBlank: '{!importeRecargoVacio}'
+
 												},
 												allowBlank: true,
 												colspan: 2
@@ -845,7 +869,48 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											}				
 
 									]
-								}
+								},
+								{   
+									xtype:'fieldsettable',
+									title: HreRem.i18n('fieldlabel.gasto.refacturable'),
+									items :
+										[
+											{
+							                	xtype:'checkboxfieldbase',
+												fieldLabel: HreRem.i18n('fieldlabel.gasto.refacturable'),
+												reference: 'checkboxActivoRefacturable',
+												colspan:4,
+												name: 'gastoRefacturableB', 
+												bind:{
+													value:'{detalleeconomico.gastoRefacturableB}',
+													readOnly: '{deshabilitarCheckGastoRefacturable}'
+												},
+												listeners:{						                
+							        				change: function(){
+							        					var me = this;
+							        					if (me.getValue == true) {
+							        						me.up('gastodetallemain').lookupReference('gastoRefacturadoGridExistente').setDisabled(true);
+							        					} else {
+							        						me.up('gastodetallemain').lookupReference('gastoRefacturadoGridExistente').setDisabled(false);
+							        					}
+							        				}
+								                }
+											},
+											 {				
+												xtype: 'gastoRefacturadoGridExistentes', 
+												width: '500px',
+												name: 'gastoRefac',
+												colspan: 3,
+												rowspan: 9,
+												reference: 'gastoRefacturadoGridExistente',
+												bind: {
+													disabled: '{detalleeconomico.gastoRefacturableB}'
+												}
+											}
+										]
+										
+					           }
+								
            
     	];
     
@@ -857,6 +922,9 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
     	var me = this; 
 		me.recargar = false;		
 		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load(grid.loadCallbackFunction);
+  		});
 		//me.lookupController().refrescarGasto(true);    	
     }
 });

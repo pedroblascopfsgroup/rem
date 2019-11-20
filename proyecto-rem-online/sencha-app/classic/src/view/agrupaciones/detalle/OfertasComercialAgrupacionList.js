@@ -240,7 +240,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 					}
 				}
 				if(agrupacion.get('cambioEstadoPublicacion')){
-					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA'])){
+					if($AU.userHasFunction(['CAMBIAR_ESTADO_OFERTA_BANKIA']) || activo.get('estadoVentaCodigo') == '03'){
 						me.fireEvent("warnToast", HreRem.i18n("msg.cambio.estado.publicacion"));
 					}else{
 						me.fireEvent("errorToast", HreRem.i18n("msg.cambio.estado.publicacion"));
@@ -372,6 +372,11 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.rechazar.motivos"));
 				return false;
 			}
+		}
+		
+		if(!me.up('agrupacionesdetallemain').down('fichaagrupacion').getBindRecord().data.tramitable && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+			me.fireEvent("errorToast", HreRem.i18n("msg.oferta.no.tramitable"));
+			return false
 		}
 		
 		return true;		

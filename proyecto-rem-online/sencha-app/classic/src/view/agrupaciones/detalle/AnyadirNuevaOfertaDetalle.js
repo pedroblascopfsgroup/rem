@@ -335,6 +335,21 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										readOnly: true,
 										allowBlank: true,
 							        	colspan: 2
+									},
+									{
+										xtype: 'comboboxfieldbase',
+	    					        	fieldLabel:  HreRem.i18n('fieldlabel.claseOferta'),
+	    					        	itemId: 'claseOferta',
+	    					        	name: 'tipoOferta',
+	    					        	flex:	1,
+	    					        	allowBlank: false,
+	    					        	bind: {
+	    				            		store: '{getClaseOferta}',
+	    				            		value: '{oferta.claseOferta}'
+	    				            	
+	    				            	},
+	    				            	displayField: 'descripcion',
+	    	    						valueField: 'codigo'
 									}
 								]
 				}

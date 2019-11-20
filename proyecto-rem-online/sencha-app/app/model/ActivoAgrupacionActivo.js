@@ -70,6 +70,10 @@ Ext.define('HreRem.model.ActivoAgrupacionActivo', {
     		},
     		{
     			name: 'condPublAlquiler'
+    		},
+    		{
+    			name:'esPisoPiloto',
+    			type: 'boolean'
     		}
     ],
     

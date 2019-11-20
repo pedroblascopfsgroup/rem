@@ -49,6 +49,7 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 	private static final String FECHA_INGRESO = "fechaIngreso";
 	private static final String CHECKBOX_VENTA_DIRECTA = "checkboxVentaDirecta";
 	private static final String CODIGO_T013_DOCUMENTOS_POST_VENTA = "T013_DocumentosPostVenta";
+	private static final String CODIGO_T017_DOCUMENTOS_POST_VENTA = "T017_DocsPosVenta";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -130,7 +131,7 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[] { CODIGO_T013_DOCUMENTOS_POST_VENTA };
+		return new String[] {CODIGO_T013_DOCUMENTOS_POST_VENTA, CODIGO_T017_DOCUMENTOS_POST_VENTA};
 	}
 
 	public String[] getKeys() {

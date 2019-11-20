@@ -95,6 +95,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'fechaVenta',
     			type:'date',
     			dateFormat: 'c' 
+    		}, 
+    		{
+    			name: 'fechaContabilizacionReserva',
+    			type: 'date',
+    			dateFormat: 'c'
     		},
     		{
     			name: 'mediador'
@@ -181,7 +186,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'riesgoReputacional'	
-    		},
+			},
+			{
+				name:'estadoPbcR'
+			},
     		{
     			name:'tipoAlquiler'
     		},
@@ -217,6 +225,14 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'subcarteraCodigo'
+			},
+			{
+    			name: 'isSubcarteraApple',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && data.subcarteraCodigo == CONST.SUBCARTERA['APPLEINMOBILIARIO'];
+    			},
+				depends: 'subcarteraCodigo',
+				depends: 'entidadPropietariaCodigo'
     		},
     		{
     			name:'estaFirmado',
@@ -235,6 +251,58 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name:'noEsOfertaFinalGencat',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'fechaEnvioAdvisoryNote',
+    			type:'date', 
+        		dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaRecomendacionCes',
+    			type:'date', 
+        		dateFormat: 'c'
+    		},
+			{
+				name: 'esCarteraLiberbankVenta',
+				calculate: function(data) { 
+					if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
+						return true;
+					}
+					return false;
+				},
+				depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
+			},
+    		{
+				name:'fechaAprobacionProManzana',
+				convert: function(value) {
+	    				if (!Ext.isEmpty(value)) {
+							if  ((typeof value) == 'string') {
+		    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+		    				} else {
+		    					return value;
+		    				}
+	    				}
+	    		}
+    		},
+    		{
+    			name: 'tituloCarteraLiberbankVenta',
+    			calculate: function(data) {
+    				if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
+    					return 'Comité';
+    				}
+    				return 'Comité sancionador';
+    			},
+    			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
+    		},
+    		{
+    			name: 'comiteComboboxLabel',
+    			calculate: function(data) {
+    				if((data.tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA']) && (CONST.CARTERA['LIBERBANK'] === data.entidadPropietariaCodigo)){
+    					return 'Comité sancionador';
+    				}
+    				return 'Comité seleccionado';
+    			},
+    			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
     		}
     ],
     formulas: {

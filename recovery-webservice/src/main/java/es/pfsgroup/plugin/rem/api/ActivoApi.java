@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -38,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
@@ -53,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
@@ -70,6 +74,8 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
@@ -689,6 +695,15 @@ public interface ActivoApi {
 	 * @return
 	 */
 	Oferta tieneOfertaAceptada(Activo activo);
+	
+	/**
+	 * Averigua si el activo tiene ofertas acpetadas // MODIFICACIÓN: Mira si el expediente está aprobado (y estados posteriores).
+	 *
+	 * @param activo
+	 * @return
+	 */
+	Oferta tieneOfertaTramitadaOCongeladaConReserva(Activo activo);
+
 
 	/**
 	 * Comprueba que los tipos de activo del activo y del informe comercial sean distintos.
@@ -837,6 +852,7 @@ public interface ActivoApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	boolean saveComercialActivo(DtoComercialActivo dto);
+	
 
 	/**
 	 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo Obra Nueva ó Asistida (PDV)
@@ -923,6 +939,14 @@ public interface ActivoApi {
 	 * @return
 	 */
 	List<Oferta> getOfertasPendientesOTramitadasByActivoAgrupacion(ActivoAgrupacion activoAgrupacion);
+	
+	/**
+	 * Devuelve un lista con las ofertas en estado "Tramitada" de un activo
+	 *
+	 * @param activo
+	 * @return
+	 */
+	List<Oferta> getOfertasTramitadasByActivo(Activo activo);
 
 	/**
 	 * Este método llama al api del ActivoDao el cual obtiene el siguiente número de la secuencia para el campo de 'ACT_NUM_ACTIVO_REM'.
@@ -1131,7 +1155,9 @@ public interface ActivoApi {
 
 	public boolean isActivoBloqueadoGencat(Activo activo);
 
-	
+
+	public boolean isPisoPiloto(Activo activo);
+
 	/**
 	 * Devuelve la calificacion negativa de un activo a partir de un motivo
 	 * @param idActivo
@@ -1173,8 +1199,6 @@ public interface ActivoApi {
 	void actualizarMotivoOcultacionUAs(DtoActivoPatrimonio patrimonioDto, Long id);
 	
 	void actualizarOfertasTrabajosVivos(Activo activo);
-
-	Boolean bloquearChecksComercializacionActivo(Activo activo, Integer action);
 	
 	boolean isActivoMatriz(Long idActivo);
 
@@ -1195,5 +1219,51 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
+
+	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
+	
+	/**
+	 * Comprueba si un activo ha superado el plazo para que sea tramitable
+	 * @param activo
+	 */
+	public boolean isTramitable(Activo activo);
+	
+	/**
+	 * Devulve la fecha de inicio del bloqueo de la tramitación
+	 * @param activo
+	 */
+	public Date getFechaInicioBloqueo(Activo activo);
+	/**
+	 * Insertar en la base de datos una Autorizacion Tramitacion
+	 * @param dto
+	 */	
+	public boolean insertarActAutoTram(DtoComercialActivo dto);
+
+	List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto) throws GestorDocumentalException;
+	
+	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo);
+	
+	boolean deleteActivoTributo(DtoActivoTributos dto);
+	
+	/**
+	 * Devuelve una lista de plusvalias aplicando el filtro que recibe.
+	 * @param dtoPlusvaliaFilter con los parametros de filtro
+	 * @return DtoPage 
+	 */
+	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
+
+	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
+	
+	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
+
+	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
+	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
+
+	@BusinessOperationDefinition("activoManager.uploadDocumentoPlusvalia")
+	String uploadDocumentoPlusvalia(WebFileItem webFileItem,ActivoPlusvalia activoPlusvaliaEntrada, String matricula) throws Exception;
+
+	FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto);
+
+	ActivoDto getDatosActivo(Long activoId);
 
 }

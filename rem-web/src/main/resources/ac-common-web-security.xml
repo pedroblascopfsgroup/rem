@@ -13,7 +13,7 @@
     
     <!-- Provide an alias for the authenticationManager -->
     <beans:bean id="authenticationManager"
-		class="org.springframework.security.providers.ProviderManager">
+		class="es.capgemini.pfs.security.PFSProviderManager">
 		<beans:property name="providers">
 			<beans:list>
                 <beans:ref local="hayaAuthenticationProvider"/>

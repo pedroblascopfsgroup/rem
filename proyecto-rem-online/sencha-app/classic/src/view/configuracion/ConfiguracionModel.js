@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.configuracion',
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Proveedor', 'HreRem.model.ComboMunicipio'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Proveedor', 'HreRem.model.Perfil', 'HreRem.model.ComboMunicipio'],
 
     stores: { 
 //    	comboFiltroMunicipios: {
@@ -20,7 +20,22 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 	    	remoteSort: true,
 	    	remoteFilter: true,
 	    	listeners : {
-	            beforeload : 'paramLoading'
+	            beforeload : 'paramLoadingProveedores'
+	        }
+   		},
+   		configuracionperfiles: {    
+   		 	pageSize: $AC.getDefaultPageSize(),
+   		 	model: 'HreRem.model.Perfil',
+       		proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'perfil/getPerfiles',
+	        	actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+	    	},
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true,
+	    	listeners : {
+	            beforeload : 'paramLoadingPerfiles'
 	        }
    		},
 		comboEstadoProveedor: {

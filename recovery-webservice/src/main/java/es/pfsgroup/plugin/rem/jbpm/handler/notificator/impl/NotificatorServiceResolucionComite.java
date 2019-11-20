@@ -19,6 +19,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
@@ -32,7 +34,9 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 
 @Component
@@ -40,6 +44,11 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 
 	public static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
     public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+    public static final String CODIGO_T017_ANALISIS_PM = "T017_AnalisisPM";
+	public static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
+	public static final String CODIGO_T017_RATIFIACION_COMITE_CES = "T017_RatificacionComiteCES";
+	private static final String COMBO_RESOLUCION = "comboResolucion";
+	private static final String COMBO_RATIFICACION = "comboRatificacion";
 
 	
 	@Resource
@@ -61,17 +70,21 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 	
 	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
 	private GenericABMDao genericDao;
 	
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_PFS = "buzonpfs";
+	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	
 
 	List<String> mailsPara = new ArrayList<String>();
 	List<String> mailsCC = new ArrayList<String>();
-	
-	
-	
 	
 	@Override
 	public String[] getKeys() {
@@ -81,7 +94,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T013_RESOLUCION_COMITE};
+		return new String[]{CODIGO_T013_RESOLUCION_COMITE, CODIGO_T017_ANALISIS_PM, CODIGO_T017_RESOLUCION_CES, CODIGO_T017_RATIFIACION_COMITE_CES};
 	}
 	
 	@Override
@@ -110,27 +123,60 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			
 			Usuario gestor = null;
 			Usuario supervisor = null;
+			Usuario gestorBackoffice = null;
+			Usuario usuarioBackOffice = null;
 			Usuario buzonRem = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_REM));
 			Usuario buzonPfs = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_PFS));
+			Usuario buzonOfertaApple = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_OFR_APPLE));
 			
-			for (TareaActivo tareaActivo : tramite.getTareas()) {				
-				if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-					gestor = tareaActivo.getUsuario();
-				}
-				else if(CODIGO_T013_RESOLUCION_COMITE.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-					supervisor = tareaActivo.getSupervisorActivo();
+			if(expedienteComercialApi.esApple(valores.get(0).getTareaExterna())){
+				gestor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);;
+				gestorBackoffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			} else {
+				for (TareaActivo tareaActivo : tramite.getTareas()) {				
+					if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						gestor = tareaActivo.getUsuario();
+					}
+					else if(CODIGO_T013_RESOLUCION_COMITE.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						supervisor = tareaActivo.getSupervisorActivo();
+					}
 				}
 			}
 
+			if(activo != null){
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(usuarioBackOffice)){
+						mailsPara.add(usuarioBackOffice.getEmail());
+					}	
+				}
+			}
 			
 			List<Usuario> usuarios = new ArrayList<Usuario>();
-			usuarios.add(gestor);
-			usuarios.add(supervisor);
+			if(!Checks.esNulo(gestor)) {
+				usuarios.add(gestor);
+			}
+			if (!Checks.esNulo(supervisor)) {
+				usuarios.add(supervisor);
+			}
+			if(!Checks.esNulo(gestorBackoffice)) {
+				usuarios.add(gestorBackoffice);
+			}
 			if(!Checks.esNulo(buzonRem)) {
 				usuarios.add(buzonRem);
 			}
 			if(!Checks.esNulo(buzonPfs)) {
 				usuarios.add(buzonPfs);
+			}
+			if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				usuarios.add(buzonOfertaApple);
 			}
 			
 		    mailsPara = getEmailsNotificacionContraoferta(usuarios);
@@ -166,8 +212,29 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			dtoSendNotificator.setTitulo("Notificación REM");
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		} else {
+			Boolean permiteNotificarAprobacion = true;
+			Boolean correoLlegadaTarea = false;
+			Boolean aprueba = false;
+			String codTareaActual = null;
+			
+			for (TareaExternaValor valor : valores) {
+				if ((COMBO_RESOLUCION.equals(valor.getNombre()) || COMBO_RATIFICACION.equals(valor.getNombre()) )&& !Checks.esNulo(valor.getValor())) {
+					aprueba = DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor()) ? true : false;
+					break;
+				}
+			}
+			
+			if(CODIGO_T017_ANALISIS_PM.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo())) {
+				permiteNotificarAprobacion = false;
+			}
+			
+			if((CODIGO_T017_ANALISIS_PM.equals(valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo()) && aprueba)) {
+				correoLlegadaTarea = true;
+				codTareaActual = valores.get(0).getTareaExterna().getTareaProcedimiento().getCodigo();
+			}
+			
 			// Para los otros estados posibles, genero una notificacion de aceptacion o rechazo segun corresponda.
-			notificatorServiceSancionOfertaAceptacionYRechazo.generaNotificacion(tramite, true, true);
+			notificatorServiceSancionOfertaAceptacionYRechazo.generaNotificacion(tramite, true, permiteNotificarAprobacion, correoLlegadaTarea, codTareaActual);
 		}
 	}
 	

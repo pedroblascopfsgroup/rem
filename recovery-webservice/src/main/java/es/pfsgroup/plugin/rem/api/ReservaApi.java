@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -32,5 +33,12 @@ public interface ReservaApi {
 	 */
 	public DDEstadosReserva getDDEstadosReservaByCodigo(String codigo);
 	
+	/**
+	 * Devuelve la fecha de firma según el id de expediente.
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	public Date getFechaFirmaByIdExpediente(String idExpediente);
 
 }

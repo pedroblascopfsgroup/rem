@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'agrupacionessearch',
-    isSearchForm: true,
+    isSearchFormAgrupaciones: true,
     cls	: 'panel-base shadow-panel',
     collapsible: true,
     collapsed: false,

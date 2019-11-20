@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
 
@@ -72,6 +73,9 @@ public class VisitaDto implements Serializable {
 	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefonoContactoVisitas;
 	
+	@Diccionary(clase = DDOrigenComprador.class, message = "El codOrigenComprador no existe", groups = {
+			Insert.class, Update.class })
+	private String codOrigenComprador;
 	
 	public Long getIdVisitaWebcom() {
 		return idVisitaWebcom;
@@ -195,6 +199,12 @@ public class VisitaDto implements Serializable {
 	}
 	public void setIdLeadSalesforce(String idLeadSalesforce) {
 		this.idLeadSalesforce = idLeadSalesforce;
+	}
+	public String getCodOrigenComprador() {
+		return codOrigenComprador;
+	}
+	public void setCodOrigenComprador(String codOrigenComprador) {
+		this.codOrigenComprador = codOrigenComprador;
 	}
 	
 }

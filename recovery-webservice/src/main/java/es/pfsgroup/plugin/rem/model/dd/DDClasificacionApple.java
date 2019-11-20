@@ -34,6 +34,9 @@ public class DDClasificacionApple implements Auditable, Dictionary {
 	public static final String COD_NORMAL ="01";
 	public static final String COD_SINTETICO ="02";
 	public static final String COD_118 ="03";
+	public static final String COD_CONTINGENTE_VENTA ="04";
+	public static final String COD_CONTINGENTE_EXCLUIDO ="05";
+	public static final String COD_BAJA_CONTABLE ="06";
 	
 	/**
 	 * 

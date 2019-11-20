@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.VisitaApi;
@@ -28,6 +29,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -45,6 +47,9 @@ public class VisitasController {
 	@Autowired
 	private VisitaGencatApi visitaGencatApi;
 
+	@Autowired
+	private UsuarioManager usuarioManager;
+
 	private final Log logger = LogFactory.getLog(getClass());
 
 	/**
@@ -57,7 +62,7 @@ public class VisitasController {
 	 * "2016-01-01T10:10:10", "idUsuarioRemAccion": "1",
 	 * "idProveedorRemPrescriptor": "5045", "idProveedorRemCustodio": "1010",
 	 * "idProveedorRemResponsable": "1010", "idProveedorRemFdv": "1010" ,
-	 * "idProveedorRemVisita": "1010", "observaciones": "Observaciones" }]}
+	 * "idProveedorRemVisita": "1010","codOrigenComprador":"02", "observaciones": "Observaciones" }]}
 	 * 
 	 * @param model
 	 * @param request
@@ -161,6 +166,8 @@ public class VisitasController {
 
 		List<DtoVisitasFilter> listaVisitas = (List<DtoVisitasFilter>) visitaApi.getListVisitas(dtoVisitasFilter)
 				.getResults();
+		
+		new EmptyParamDetector().isEmpty(listaVisitas.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
 
 		ExcelReport report = new VisitasExcelReport(listaVisitas);
 

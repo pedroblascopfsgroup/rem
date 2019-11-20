@@ -14,5 +14,4 @@ public interface UpdaterService extends GenericService{
 
 	public String[] getCodigoTarea();
 	
-
 }

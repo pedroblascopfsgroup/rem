@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -49,6 +50,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK = "GCOIN";
 	public static final String CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK = "GCOINM";
 	public static final String CODIGO_GESTOR_LIBERBANK_RESIDENCIAL = "GLIBRES";
+	public static final String CODIGO_GESTOR_CAPA_CONTROL_LIBERBANK = "GCCLBK";
 	public static final String CODIGO_GESTOR_COMERCIAL_ALQUILERES = "GESTCOMALQ";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES = "SUPCOMALQ";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK= "SBACKOFFICEINMLIBER";
@@ -64,6 +66,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_SUPERVISOR_PUBLICACION = "SPUBL";
 	public static final String CODIGO_GESTOR_DE_ADMINISTRACION = "GADMT";
 	public static final String CODIGO_GESTOR_FORMALIZACION_ADMINISTRACION = "GFORMADM";
+	public static final String CODIGO_GESTOR_PORTFOLIO_MANAGER = "GPM";
 	public static final String USU_PROVEEDOR_BANKIA_SAREB_TINSA = "proveedor.tinsa";
 	public static final String USU_PROVEEDOR_HOMESERVE = "proveedor.homeserve";
 	public static final String USU_PROVEEDOR_AESCTECTONICA = "proveedor.aesctectonica";
@@ -73,10 +76,14 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String BUZON_REM = "buzon.rem";
 	public static final String BUZON_PFS = "buzon.pfs";
 	public static final String USU_PROVEEDOR_ELECNOR = "proveedor.elecnor";
+	public static final String USU_PROVEEDOR_PACI = "proveedor.paci";
+	
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 
 	Usuario getGestorByActivoYTipo(Activo activo, Long tipo);
+	
+	GestorEntidad getGestorEntidadByActivoYTipo(Activo activo, String codigoTipo);
 	
 	Usuario getDirectorEquipoByGestor(Usuario gestor);
 	
@@ -156,4 +163,10 @@ public interface GestorActivoApi extends GestorEntidadApi {
 
 	public void borrarGestorAdicionalEntidad(GestorEntidadDto dto);
 	
+	/**
+	 * Obtiene el usuario de grupo que realiza ciertas tareas del trámite comercial Apple
+	 * @param codigoTarea
+	 * @return
+	 */
+	public Usuario usuarioTareaApple(String codigoTarea);
 }

@@ -17,6 +17,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -151,7 +152,26 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TAL_ID")
     private DDTipoAlquiler tipoAlquiler;
-		
+	
+	@Column(name = "AGR_COMERCIALIZABLE_CONS_PLANO")
+	private Boolean comercializableConsPlano;
+	
+	@Column(name = "AGR_EXISTE_PISO_PILOTO")
+	private Boolean existePiloto;
+	
+	@Column(name = "AGR_VISITABLE")
+	private Boolean esVisitable;
+	
+	@Column(name = "AGR_EMPRESA_PROMOTORA")
+	private String empresaPromotora;
+	
+	@Column(name = "AGR_EMPRESA_COMERCIALIZADORA")
+	private String empresaComercializadora;
+
+	@OneToOne(mappedBy = "activoAgrupacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "AGR_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
 
 	public Long getId() {
 		return id;
@@ -376,6 +396,54 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	public void setNumAgrupPrinexHPM(String numAgrupPrinexHPM) {
 		this.numAgrupPrinexHPM = numAgrupPrinexHPM;
 	}
+
+	public Boolean isComercializableConsPlano() {
+		return comercializableConsPlano;
+	}
+
+	public void setComercializableConsPlano(Boolean comercializableConsPlano) {
+		this.comercializableConsPlano = comercializableConsPlano;
+	}
+
+	public Boolean isExistePiloto() {
+		return existePiloto;
+	}
+
+	public void setExistePiloto(Boolean existePiloto) {
+		this.existePiloto = existePiloto;
+	}
+
+	public Boolean isEsVisitable() {
+		return esVisitable;
+	}
+
+	public void setEsVisitable(Boolean esVisitable) {
+		this.esVisitable = esVisitable;
+	}
+
+	public String getEmpresaPromotora() {
+		return empresaPromotora;
+	}
+
+	public void setEmpresaPromotora(String empresaPromotora) {
+		this.empresaPromotora = empresaPromotora;
+	}
+
+	public String getEmpresaComercializadora() {
+		return empresaComercializadora;
+	}
+
+	public void setEmpresaComercializadora(String empresaComercializadora) {
+		this.empresaComercializadora = empresaComercializadora;
+	}
 	
+	public ActivoAutorizacionTramitacionOfertas getActivoAutorizacionTramitacionOfertas() {
+		return activoAutorizacionTramitacionOfertas;
+	}
+
+	public void setActivoAutorizacionTramitacionOfertas(
+			ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas) {
+		this.activoAutorizacionTramitacionOfertas = activoAutorizacionTramitacionOfertas;
+	}
 
 }

@@ -128,6 +128,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						ofertaApi.rechazarOferta(ofertaAceptada);
 						try {
 							ofertaApi.descongelarOfertas(expediente);
+							ofertaApi.finalizarOferta(ofertaAceptada);
 						} catch (Exception e) {
 							logger.error("Error descongelando ofertas.", e);
 						}

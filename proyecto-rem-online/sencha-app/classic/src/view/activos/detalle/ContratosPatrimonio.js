@@ -52,7 +52,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										xtype:'datefieldbase',
 										formatter: 'date("d/m/Y")',
 										fieldLabel : HreRem.i18n('fieldlabel.fecha.ultima.actualizacion'),
-										bind : '{contrato.ultimoReciboPagado}',
+										bind : '{contrato.fechaCreacion}',
 										readOnly : true
 									},
 									{
@@ -65,6 +65,16 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										xtype : 'displayfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
 										bind : '{contrato.idContrato}',
+										readOnly : true
+										
+									},
+									{ //Número de contrato antiguo
+										xtype : 'displayfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.numero.contrato.alquiler.antiguo'),
+										bind: {
+												hidden : '{!contrato.esDivarian}',
+												value: '{contrato.idContratoAntiguo}'
+											},
 										readOnly : true
 										
 									},

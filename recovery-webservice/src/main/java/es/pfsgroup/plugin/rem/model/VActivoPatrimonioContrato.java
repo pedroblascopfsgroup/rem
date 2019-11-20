@@ -40,6 +40,9 @@ public class VActivoPatrimonioContrato implements Serializable {
 	@Column(name = "DCA_NOM_PRINEX")
 	private String nombrePrinex;
 
+	@Column(name = "DCA_ID_CONTRATO_ANTIGUO")
+	private String idContratoAntiguo;
+	
 	public Long getActivo() {
 		return activo;
 	}
@@ -87,5 +90,14 @@ public class VActivoPatrimonioContrato implements Serializable {
 	public void setNombrePrinex(String nombrePrinex) {
 		this.nombrePrinex = nombrePrinex;
 	}
+
+	public String getIdContratoAntiguo() {
+		return idContratoAntiguo;
+	}
+
+	public void setIdContratoAntiguo(String idContratoAntiguo) {
+		this.idContratoAntiguo = idContratoAntiguo;
+	}
+	
 }
 	

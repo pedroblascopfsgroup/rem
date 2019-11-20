@@ -267,4 +267,22 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 
 		return HibernateQueryUtils.uniqueResult(this, hb);
 	}
+	
+	@Override
+	public Activo getPisoPilotoByIdAgrupacion(long idAgrupacion) {
+		
+ 		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aga ");
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.agrupacion.id", idAgrupacion);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.pisoPiloto", true);
+		HQLBuilder.addFiltroIgualQue(hb, "aga.auditoria.borrado", false);
+		HQLBuilder.addFiltroIgualQue(hb, "aga.agrupacion.auditoria.borrado", false);
+		
+		ActivoAgrupacionActivo actAga = HibernateQueryUtils.uniqueResult(this, hb);
+		if(!Checks.esNulo(actAga)) {
+			return actAga.getActivo();
+		}else {
+			return null;
+		}
+	}
 }

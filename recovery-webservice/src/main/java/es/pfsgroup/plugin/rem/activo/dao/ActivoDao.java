@@ -7,29 +7,29 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -299,4 +299,17 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return boolean true or false
 	 */
 	Boolean existeActivo(Long numActivo);
+	
+	/**
+	 * 
+	 * @param idActivo
+	 * @return ActivoPlusvalia
+	 */
+	public ActivoPlusvalia getPlusvaliaByIdActivo(Long idActivo);
+
+	DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
+
+	ActivoAgrupacionActivo getActivoAgrupacionActivoObraNuevaPorActivoID(Long id);
+	
+	ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo);
 }

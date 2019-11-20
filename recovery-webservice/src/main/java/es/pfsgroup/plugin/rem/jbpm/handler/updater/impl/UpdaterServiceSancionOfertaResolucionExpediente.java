@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
@@ -101,13 +102,13 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	@Autowired
 	private ActivoApi activoApi;
 	
-	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
     private static final String COMBO_PROCEDE = "comboProcede";
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
     public static final String MOTIVO_ANULACION_RESERVA = "comboMotivoAnulacionReserva";
     private static final String CODIGO_T013_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
+    private static final String CODIGO_T017_RESOLUCION_EXPEDIENTE = "T017_ResolucionExpediente";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -343,11 +344,16 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				activoApi.actualizarOfertasTrabajosVivos(activo);
 			}
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+			
+			if(ofertaApi.isOfertaDependiente(ofertaAceptada)) {
+				OfertasAgrupadasLbk agrupada = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente", ofertaAceptada));
+				genericDao.deleteById(OfertasAgrupadasLbk.class, agrupada.getId());
+			}
 		}
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T013_RESOLUCION_EXPEDIENTE};
+		return new String[]{CODIGO_T013_RESOLUCION_EXPEDIENTE, CODIGO_T017_RESOLUCION_EXPEDIENTE};
 	}
 
 	public String[] getKeys() {

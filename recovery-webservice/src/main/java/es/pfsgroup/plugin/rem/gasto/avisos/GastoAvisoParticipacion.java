@@ -1,7 +1,10 @@
 package es.pfsgroup.plugin.rem.gasto.avisos;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,22 +33,26 @@ public class GastoAvisoParticipacion implements GastoAvisadorApi {
 	public DtoAviso getAviso(GastoProveedor gasto, Usuario usuarioLogado) {
 
 		DtoAviso dtoAviso = new DtoAviso();	
-		BigDecimal participacionTotal= new BigDecimal("0.00");
-		BigDecimal participacionCien= new BigDecimal("100.00");
-				
+		BigDecimal participacionTotal = BigDecimal.ZERO;
+		BigDecimal participacionCien = BigDecimal.TEN.multiply(BigDecimal.TEN);
+		NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
+        format.setMinimumFractionDigits(2);
+        format.setMaximumFractionDigits(5);
+        format.setRoundingMode(RoundingMode.HALF_EVEN);
+        
 		if(!Checks.esNulo(gasto)){
 			
 			List<VBusquedaGastoActivo> activosGasto= gastoProveedorApi.getListActivosGastos(gasto.getId());
 			if(activosGasto.size()>0) {
 				for(VBusquedaGastoActivo ag: activosGasto){
+					
 					if(!Checks.esNulo(ag.getParticipacion())) {
-						String participacion = ag.getParticipacion().toString();
-						participacion = participacion.replace(',', '.');
-						participacionTotal = participacionTotal.add(new BigDecimal(participacion));
+						BigDecimal participacion = new BigDecimal(Double.toString(ag.getParticipacion()));
+						participacionTotal = participacionTotal.add(participacion);
 					}
 				}
 				
-				if(!participacionCien.equals(participacionTotal)){
+				if(!format.format(participacionCien).equals(format.format(participacionTotal))){
 					dtoAviso.setDescripcion("% participación de activos incorrecto");
 					dtoAviso.setId(String.valueOf(gasto.getId()));	
 				}

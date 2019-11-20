@@ -460,6 +460,11 @@
 			</dependency>
 		    <dependency>
 		        <groupId>es.pfsgroup.plugin</groupId>
+		        <artifactId>rem-logs</artifactId>
+		        <version>${project.version}</version>
+		    </dependency>
+		    <dependency>
+		        <groupId>es.pfsgroup.plugin</groupId>
 		        <artifactId>recovery-webservice</artifactId>
 		       <version>9.1.0-REM</version>
 		    </dependency>
@@ -637,6 +642,7 @@
 			</activation>
 			<modules>
 				<module>proyecto-rem-online</module>
+				<module>rem-logs</module>
 				<module>recovery-webservice</module>
 				<module>paradise-framework</module>
 				<module>recovery-gestordocumentalREM-plugin</module>	
@@ -650,6 +656,7 @@
 			</activation>
 			<modules>
 				<module>proyecto-rem-online</module>
+				<module>rem-logs</module>
 				<module>recovery-webservice</module>
 				<module>paradise-framework</module>
 				<!--<module>recovery-message-broker</module>-->

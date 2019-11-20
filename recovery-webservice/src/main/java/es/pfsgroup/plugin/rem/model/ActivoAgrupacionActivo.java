@@ -69,6 +69,8 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 	@Column(name = "ACT_AGA_ID_PRINEX_HPM")
 	private String idPrinexHPM;
 	
+	@Column(name = "PISO_PILOTO")
+	private Boolean pisoPiloto = false;
 	
 	@Version   
 	private Long version;
@@ -150,6 +152,14 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 
 	public void setIdPrinexHPM(String idPrinexHPM) {
 		this.idPrinexHPM = idPrinexHPM;
+	}
+
+	public Boolean getPisoPiloto() {
+		return pisoPiloto;
+	}
+
+	public void setPisoPiloto(Boolean pisoPiloto) {
+		this.pisoPiloto = pisoPiloto;
 	}
 	
 }

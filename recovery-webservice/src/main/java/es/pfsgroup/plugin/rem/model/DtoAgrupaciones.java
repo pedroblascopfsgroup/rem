@@ -70,6 +70,15 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean cambioEstadoPublicacion;
 	private Boolean cambioEstadoPrecio;
 	private Boolean cambioEstadoActivo; 
+	private Boolean comercializableConsPlano;
+	private Boolean existePiloto;
+	private Boolean esVisitable;
+	private Long pisoPiloto;
+	private String empresaPromotora;
+	private String empresaComercializadora;
+	private Boolean tramitable;
+	private String motivoAutorizacionTramitacionCodigo;
+	private String observacionesAutoTram;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -427,5 +436,60 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setCambioEstadoActivo(Boolean cambioEstadoActivo) {
 		this.cambioEstadoActivo = cambioEstadoActivo;
+	}
+	public Boolean getComercializableConsPlano() {
+		return comercializableConsPlano;
+	}
+	public void setComercializableConsPlano(Boolean comercializableConsPlano) {
+		this.comercializableConsPlano = comercializableConsPlano;
+	}
+	public Boolean getExistePiloto() {
+		return existePiloto;
+	}
+	public void setExistePiloto(Boolean existePiloto) {
+		this.existePiloto = existePiloto;
+	}
+	public Boolean getEsVisitable() {
+		return esVisitable;
+	}
+	public void setEsVisitable(Boolean esVisitable) {
+		this.esVisitable = esVisitable;
+	}
+	public Long getPisoPiloto() {
+		return pisoPiloto;
+	}
+	public void setPisoPiloto(Long pisoPiloto) {
+		this.pisoPiloto = pisoPiloto;
+	}
+	public String getEmpresaPromotora() {
+		return empresaPromotora;
+	}
+	public void setEmpresaPromotora(String empresaPromotora) {
+		this.empresaPromotora = empresaPromotora;
+	}
+	public String getEmpresaComercializadora() {
+		return empresaComercializadora;
+	}
+	public void setEmpresaComercializadora(String empresaComercializadora) {
+		this.empresaComercializadora = empresaComercializadora;
+	}
+	
+	public Boolean getTramitable() {
+		return tramitable;
+	}
+	public void setTramitable(Boolean tramitable) {
+		this.tramitable = tramitable;
+	}
+	public String getMotivoAutorizacionTramitacionCodigo() {
+		return motivoAutorizacionTramitacionCodigo;
+	}
+	public void setMotivoAutorizacionTramitacionCodigo(String motivoAutorizacionTramitacionCodigo) {
+		this.motivoAutorizacionTramitacionCodigo = motivoAutorizacionTramitacionCodigo;
+	}
+	public String getObservacionesAutoTram() {
+		return observacionesAutoTram;
+	}
+	public void setObservacionesAutoTram(String observacionesAutoTram) {
+		this.observacionesAutoTram = observacionesAutoTram;
 	}
 }

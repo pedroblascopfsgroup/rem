@@ -892,4 +892,30 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
 		return tieneTramiteGENCATVigenteByIdActivo(expediente.getId());
 	}
+	
+	@Override
+	public Boolean checkVieneDeRatificacionCES(Long idTramite) {
+		Boolean vieneDeRatificacion = false;
+		List<TareaActivo>  tareasTramite = tareaActivoApi.getTareasActivoByIdTramite(idTramite);
+		for(TareaActivo tareaActivo : tareasTramite){
+			if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento())){
+				if(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) { 
+					vieneDeRatificacion = false;
+				}
+				if(ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())){
+					vieneDeRatificacion = true;
+				}
+			}
+		}
+		
+		return vieneDeRatificacion;
+	}
+	
+	@Override
+	public Boolean checkInformeJuridicoYResolucionManzanaCompletadas(Long idTramite) {
+		Boolean informeCompletado = tareaActivoApi.getSiTareaHaSidoCompletada(idTramite, ComercialUserAssigantionService.CODIGO_T017_INFORME_JURIDICO);
+		Boolean resManzanaCompletado = tareaActivoApi.getSiTareaHaSidoCompletada(idTramite, ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_PRO_MANZANA);
+		
+		return informeCompletado && resManzanaCompletado;
+	}
 }

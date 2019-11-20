@@ -199,7 +199,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	private DDComiteSancion comitePropuesto;
     
     @Column(name="ECO_ESTADO_PBC")
-    private Integer estadoPbc;   
+	private Integer estadoPbc; 
+	
+	@Column(name="ECO_ESTADO_PBC_R")
+    private Integer estadoPbcR; 
     
     @Column(name="ECO_FECHA_VENTA")
     private Date fechaVenta;
@@ -261,6 +264,12 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_FECHA_POSICIONAMIENTO_PREVISTA")
     private Date fechaPosicionamientoPrevista;  
+    
+    @Column(name="ECO_FECHA_ENVIO_ADVISORY_NOTE")
+    private Date fechaEnvioAdvisoryNote;
+    
+    @Column(name="ECO_FECHA_RECOMENDACION_CES")
+    private Date fechaRecomendacionCes;
 
     @Column(name="ECO_CORRECW")
     private Long correcw;
@@ -635,6 +644,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setEstadoPbc(Integer estadoPbc) {
 		this.estadoPbc = estadoPbc;
 	}
+	public Integer getEstadoPbcR() {
+		return estadoPbcR;
+	}
+
+	public void setEstadoPbcR(Integer estadoPbcR) {
+		this.estadoPbcR = estadoPbcR;
+	}
 
 	public Date getFechaVenta() {
 		return fechaVenta;
@@ -795,6 +811,23 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setFechaPosicionamientoPrevista(Date fechaPosicionamientoPrevista) {
 		this.fechaPosicionamientoPrevista = fechaPosicionamientoPrevista;
+	}
+	
+	public Date getFechaEnvioAdvisoryNote() {
+		return fechaEnvioAdvisoryNote;
+	}
+
+	public void setFechaEnvioAdvisoryNote(Date fechaEnvioAdvisoryNote) {
+		this.fechaEnvioAdvisoryNote = fechaEnvioAdvisoryNote;
+	}
+	
+
+	public Date getFechaRecomendacionCes() {
+		return fechaRecomendacionCes;
+	}
+
+	public void setFechaRecomendacionCes(Date fechaRecomendacionCes) {
+		this.fechaRecomendacionCes = fechaRecomendacionCes;
 	}
 
 	public Long getCorrecw() {

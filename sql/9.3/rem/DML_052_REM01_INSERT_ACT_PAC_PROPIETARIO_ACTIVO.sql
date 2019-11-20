@@ -1,0 +1,85 @@
+--/*
+--##########################################
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20190830
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-4883
+--## PRODUCTO=NO
+--##
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+DECLARE
+
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_MSQL VARCHAR2(4000 CHAR);
+	V_ID NUMBER;
+    ERR_NUM NUMBER; -- Numero de errores
+    ERR_MSG VARCHAR2(2048); -- Mensaje de error
+
+    -- EDITAR NÚMERO DE ITEM
+    V_ITEM VARCHAR2(20) := 'REMVIP-4883';
+
+    -- EDITAR: FUNCIONES
+    TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
+    V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
+		T_FUNCION('6893441'), 
+		T_FUNCION('6893442'), 
+		T_FUNCION('6893443'),
+		T_FUNCION('6893444'),
+		T_FUNCION('6893445'),
+		T_FUNCION('6893446'),
+		T_FUNCION('6895767')
+
+    ); 
+    V_TMP_FUNCION T_FUNCION;
+
+   
+BEGIN	
+    
+    DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+    
+    FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST 
+    LOOP
+        V_TMP_FUNCION := V_FUNCION(I);
+        
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO WHERE ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||V_TMP_FUNCION(1)||')';
+        EXECUTE IMMEDIATE V_MSQL INTO V_ID;
+        IF V_ID < 1 THEN
+        	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_PAC_PROPIETARIO_ACTIVO(PAC_ID, ACT_ID, PRO_ID, DD_TGP_ID, PAC_PORC_PROPIEDAD, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+						SELECT '||V_ESQUEMA||'.S_ACT_PAC_PROPIETARIO_ACTIVO.NEXTVAL, 
+								(SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||V_TMP_FUNCION(1)||'),
+								(SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = ''B87850194''),
+								(SELECT DD_TGP_ID FROM '||V_ESQUEMA||'.DD_TGP_TIPO_GRADO_PROPIEDAD WHERE DD_TGP_CODIGO = ''01''),
+								100,
+								0,
+								'''||V_ITEM||''',
+								SYSDATE,
+								0 FROM DUAL';      
+			EXECUTE IMMEDIATE V_MSQL;
+        END IF;
+	END LOOP;
+    
+    COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

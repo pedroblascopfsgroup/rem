@@ -1,3 +1,4 @@
+
 package es.pfsgroup.plugin.gestorDocumental.model;
 
 import java.util.HashMap;
@@ -17,6 +18,8 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_TIPO_EXPEDIENTE_HAYA_CORPORATIVO = "HA";
 	public static final String CODIGO_TIPO_EXPEDIENTE_OPERACIONES = "OP";
 	public static final String CODIGO_TIPO_EXPEDIENTE_PROPUESTAS = "PR";
+	public static final String CODIGO_TIPO_JUNTA = "OP";
+	public static final String CODIGO_TIPO_PLUSVALIAS = "OP";
 	
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROYECTO = "01";
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROMOCION = "02";
@@ -25,6 +28,10 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_CLASE_PROMOCIONES = "09";
 	public static final String CODIGO_CLASE_ACTUACION_TECNICA = "13";
 	public static final String CODIGO_CLASE_TRABAJO = "13";
+
+	public static final String CODIGO_CLASE_TRIBUTOS = "32";
+	public static final String CODIGO_CLASE_JUNTA = "33";
+	public static final String CODIGO_CLASE_PLUSVALIAS = "34";
 	
 	public static final String TIPO_CONSULTA_RELACION_EXPEDIENTE = "Tipo Expediente";
 	public static final String TIPO_CONSULTA_RELACION_GLOBAL = "Global";

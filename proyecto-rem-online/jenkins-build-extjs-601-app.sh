@@ -51,7 +51,6 @@ echo -e "\e[92m\e[1m[INFO]\e[0m Launch Docker container with a process request"
 
 docker run -u $(id -u):$(id -g) --rm -t -v $EXTJS_IN_FOLDER:/input -v $EXTJS_OUT_FOLDER:/output docker-repo.pfsgroup.es:5000/extjs/cmd-6.0.1.76:1.0 sencha-build.sh $(id -u) $(id -g) $BUILD_MODE $DEBUG_MODE
 
-
 if [[ ! -f $EXTJS_OUT_FOLDER/index.jsp ]]; then
 	echo -e "\e[91m\e[1m[ERROR]\e[0m Sencha build has failed; The expected code has not been generated"
 else

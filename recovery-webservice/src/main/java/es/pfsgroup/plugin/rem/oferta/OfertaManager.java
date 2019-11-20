@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -28,6 +27,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -55,15 +55,25 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.comisionamiento.ComisionamientoApi;
+import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
+import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
+import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.ListaOfertasCESExcelReport;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
@@ -90,14 +100,21 @@ import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.ProveedorGestorCajamar;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VListOfertasCES;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
@@ -105,12 +122,14 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCategoriaContable;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
@@ -122,12 +141,15 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
+import es.pfsgroup.plugin.rem.oferta.dao.VListadoOfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -137,6 +159,7 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
@@ -147,15 +170,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private final Log logger = LogFactory.getLog(OfertaManager.class);
 	SimpleDateFormat groovyft = new SimpleDateFormat("yyyy-MM-dd");
 
-	private static final Map<String, String> TIPO_HONORARIOS = new HashMap<String, String>() {
-
-		private static final long serialVersionUID = -7097784886920388173L;
-
-		{
-			put(DDAccionGastos.CODIGO_COLABORACION, "C");
-			put(DDAccionGastos.CODIGO_PRESCRIPCION, "P");
-		}
-	};
+	private static final String T017 = "T017";
 
 	@Resource
 	MessageService messageServices;
@@ -187,6 +202,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private TrabajoApi trabajoApi;
 
+//	@Autowired
+//	private OfertaApi ofertaApi;
+
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 
@@ -210,11 +228,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
+	
+	@Autowired
+	private TareaActivoApi tareaActivoApi;
 
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
+	@Autowired
+	GastosExpedienteApi gastosExpedienteApi;
+	
 	@Autowired
 	private ActivoApi activoApi;
 
@@ -231,13 +255,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private AgrupacionAdapter agrupacionAdapter;
 
 	@Autowired
-	ActivoTareaExternaApi activoTareaExternaApi;
+	private ActivoTareaExternaApi activoTareaExternaApi;
 
 	@Autowired
 	private ActivoAdapter activoAdapterApi;
-	
+
 	@Autowired
 	private GencatApi gencatApi;
+
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+
+	@Autowired
+	private ActivoTareaExternaDao activoTareaExternaDao;
+	@Autowired
+	private VListadoOfertasAgrupadasLbkDao vOfertasAgrupadasLbkDao;
+
+	@Autowired
+	private OfertasAgrupadasLbkDao ofertasAgrupadasLbkDao;
+	
+	@Autowired
+	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -251,6 +289,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private GestorExpedienteComercialManager gestorExpedienteComercialManager;
+	
+	@Autowired
+	private ComisionamientoApi comisionamientoApi;
 
 	@Override
 	public Oferta getOfertaById(Long id) {
@@ -266,6 +307,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return oferta;
 	}
+ 
+	@Override
+	public Oferta getOfertaPrincipalById(Long id) {
+		Oferta oferta = null;
+
+		if (id != null) {
+			try {
+	
+				oferta = ofertaDao.getOfertaPrincipal(id);
+	
+			} catch (Exception ex) {
+				logger.error("error en OfertasManager", ex);
+			}
+		}
+
+		return oferta;
+	}
+	 
 
 	/**
 	 * usa el metdodo ofertaDao.getOfertaByIdwebcom
@@ -388,16 +447,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return ofertaDao.getListOfertas(dto, usuarioGestor, usuarioGestoria);
 	}
-	
-	public DtoPage getListOfertasGestoria(DtoOfertasFilter dto) {
-		Usuario usuarioGestoria = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", dto.getGestoria()));
 
-		if (usuarioGestoria != null) {			
-			return ofertaDao.getListOfertasGestoria(dto, usuarioGestoria);
-		}
-		
-		return null;
-		
+	public DtoPage getListOfertasGestoria(DtoOfertasFilter dto) {
+		return ofertaDao.getListOfertasGestoria(dto);
 	}
 
 	@Override
@@ -446,7 +498,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 
-			
+
 			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
@@ -464,6 +516,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					genericDao.createFilter(FilterType.EQUALS, "idClienteRem", ofertaDto.getIdClienteRem()));
 			if (Checks.esNulo(cliente)) {
 				errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
+			}else {
+				if (Checks.esNulo(cliente.getDocumento()) || Checks.esNulo(cliente.getTipoDocumento())) {
+					errorsList.put("idClienteRem", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
@@ -472,18 +528,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDSubcartera subcartera = null;
 			ActivoPropietario propietario = null;
 			Integer geolocalizacion = 0;
-			
+
 			if (!Checks.esNulo(numActivos) && !numActivos.isEmpty()) {
 				for (int i=0; i<numActivos.size(); i++) {
 					Activo activo = activoApi.getByNumActivo(numActivos.get(i).getIdActivoHaya());
-					
+
 					if (Checks.esNulo(activo)) {
 						errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 						break;
 
 					} else {
 						this.validacionesActivoOfertaLote(errorsList, activo);
-						
+
 						if (i==0) {
 							cartera = activo.getCartera();
 							subcartera = activo.getSubcartera();
@@ -582,6 +638,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}
+		
+		if (!Checks.esNulo(ofertaDto.getOrigenLeadProveedor())) {
+			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
+					"codigo", ofertaDto.getOrigenLeadProveedor()));
+			if (Checks.esNulo(origenComprador)) {
+				errorsList.put("origenLeadProveedor", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
+		}
 
 		return errorsList;
 	}
@@ -596,8 +660,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// ValidateAlta
 		errorsList = validateOfertaPostRequestData(ofertaDto, null, true);
 		if (errorsList.isEmpty()) {
-			if (!Checks.esNulo(ofertaDto.getOfertaLote()) 
-						&& ofertaDto.getOfertaLote() 
+			if (!Checks.esNulo(ofertaDto.getOfertaLote())
+						&& ofertaDto.getOfertaLote()
 						&& !Checks.esNulo(ofertaDto.getActivosLote())
 						&& !ofertaDto.getActivosLote().isEmpty()) {
 				DtoAgrupacionesCreateDelete dtoAgrupacion = new DtoAgrupacionesCreateDelete();
@@ -626,7 +690,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				agrup = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(
 						FilterType.EQUALS, "numAgrupRem", numAgrupacionRem));
-				for (int i=0; i<ofertaDto.getActivosLote().size(); i++) {					
+				for (int i=0; i<ofertaDto.getActivosLote().size(); i++) {
 					try {
 						Activo activo = activoApi.getByNumActivo(ofertaDto.getActivosLote().get(i).getIdActivoHaya());
 						agrup.setTipoAlquiler(activo.getTipoAlquiler());
@@ -669,7 +733,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getOfertaLote()) && ofertaDto.getOfertaLote()) {
 				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 				boolean esLoteComercial = false;
-				
+
 				for (ActivosLoteOfertaDto idActivo : ofertaDto.getActivosLote()) {
 					ActivoAgrupacion agrupacion = null;
 					List<ActivoOferta> buildListaActOfr = new ArrayList<ActivoOferta>();
@@ -678,26 +742,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Activo activo = genericDao.get(Activo.class,
 							genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo.getIdActivoHaya()));
 					if (!Checks.esNulo(activo)) {
-				
+
 						// Comprobamos si el activo pertenece a una agrupación
 						// restringida o de lote comercial
 						DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
 						dtoAgrupActivo.setActId(activo.getId());
 						dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 						listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-						
+
 						if (Checks.esNulo(listaAgrups) || listaAgrups.isEmpty()) {
 							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA);
 							listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
 							esLoteComercial = true;
 						}
-						
+
 						if (Checks.esNulo(listaAgrups) || listaAgrups.isEmpty()) {
 							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER);
 							listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
 							esLoteComercial = true;
 						}
-						
+
 						if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
 							ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
 							if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
@@ -706,7 +770,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								oferta.setAgrupacion(agrupacion);
 							}
 						}
-			
+
 						if (!Checks.esNulo(agrupacion)) {
 							// Oferta sobre 1 lote restringido de n activos
 							buildListaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
@@ -720,12 +784,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 				}
-				
+
 				// Seteamos la lista de ActivosOferta
 				oferta.setActivosOferta(listaActOfr);
 				// Seteamos la agrupación a la que pertenece la oferta
 				oferta.setAgrupacion(agrup);
-				
+
 			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
 				ActivoAgrupacion agrupacion = null;
 				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
@@ -806,7 +870,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setFdv(fdv);
 				}
 			}
-			
+
 			if (!Checks.esNulo(oferta.getTitularesAdicionales())) {
 				oferta.setTitularesAdicionales(null);
 			}
@@ -822,6 +886,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
 			}
+			
+			if (!Checks.esNulo(ofertaDto.getOrigenLeadProveedor())) {
+				DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getOrigenLeadProveedor()));
+				if (!Checks.esNulo(origenComprador)) {
+					oferta.setOrigenComprador(origenComprador);
+				}
+			} else {
+				DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
+				oferta.setOrigenComprador(origenComprador);
+			}
 
 			Long idOferta = this.saveOferta(oferta);
 			ofertaDao.flush();
@@ -830,7 +906,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setTitularesAdicionales(null);
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta, false);
 			}
-			
+
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 
@@ -841,23 +917,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
-			
+
 			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
 			
+			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())) {
+				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
+			}
+
 		}
 
 		return errorsList;
 	}
-	
+
 	@Transactional(readOnly = false)
 	private Long saveOferta(Oferta oferta){
 		return ofertaDao.save(oferta);
 	}
-	
+
 	@Transactional(readOnly = false)
 	private void saveOrUpdateListaTitualesAdicionalesOferta(OfertaDto ofertaDto, Oferta oferta, Boolean update){
 		List<TitularesAdicionalesOferta> listaTit = new ArrayList<TitularesAdicionalesOferta>();
@@ -878,7 +958,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				titAdi.setTipoDocumento((DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento())));
 				titAdi.setApellidos(titDto.getApellidos());
-				
+
 				String dir = "";
 				if (!Checks.esNulo(titDto.getCodTipoVia()))
 					dir = titDto.getCodTipoVia()+" ";
@@ -893,7 +973,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(titDto.getEscalera()))
 					dir = dir.concat(", esc "+titDto.getEscalera());
 				titAdi.setDireccion(dir);
-				
+
 				if (titDto.getCodMunicipio() != null) {
 					titAdi.setLocalidad((Localidad) genericDao.get(Localidad.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodMunicipio())));
@@ -922,7 +1002,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(titDto.getTransferenciasInternacionales() != null){
 					titAdi.setRechazarCesionDatosPublicidad(!titDto.getTransferenciasInternacionales());
 				}
-				
+
 				titAdi.setRazonSocial(titDto.getRazonSocial());
 				titAdi.setTelefono1(titDto.getTelefono1());
 				titAdi.setTelefono2(titDto.getTelefono2());
@@ -937,11 +1017,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoPersona())));
 				}
 				if (!Checks.esNulo(titDto.getCodPais())) {
-					titAdi.setPais(genericDao.get(DDPaises.class, 
+					titAdi.setPais(genericDao.get(DDPaises.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodPais())));
 				}
 				if (!Checks.esNulo(titDto.getCodTipoDocumentoRepresentante())) {
-					titAdi.setTipoDocumentoRepresentante(genericDao.get(DDTipoDocumento.class, 
+					titAdi.setTipoDocumentoRepresentante(genericDao.get(DDTipoDocumento.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumentoRepresentante())));
 				}
 				if (!Checks.esNulo(titDto.getDocumentoRepresentante())) {
@@ -954,22 +1034,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					titAdi.setProvinciaRepresentante(genericDao.get(DDProvincia.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodProvinciaRepresentante())));
 				}
-				
+
 				if (!Checks.esNulo(titDto.getCodMunicipioRepresentante())) {
 					titAdi.setMunicipioRepresentante(genericDao.get(Localidad.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodMunicipioRepresentante())));
 				}
-				
+
 				if (!Checks.esNulo(titDto.getCodPaisRepresentante())) {
-					titAdi.setPaisRepresentante(genericDao.get(DDPaises.class, 
+					titAdi.setPaisRepresentante(genericDao.get(DDPaises.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodPaisRepresentante())));
 				}
-				
+
 				if (!Checks.esNulo(titDto.getCodigoPostalRepresentante())) {
 					titAdi.setCodPostalRepresentante(titDto.getCodigoPostalRepresentante());
 				}
-				
-				listaTit.add(titAdi);			
+
+				listaTit.add(titAdi);
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);
 			}
 		}
@@ -1014,6 +1094,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					&& ofertaDto.getIsExpress().equals(oferta.getOfertaExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
 			}
+			
+			if (!Checks.esNulo(ofertaDto.getOrigenLeadProveedor())) {
+				DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigo", ofertaDto.getOrigenLeadProveedor()));
+				if (!Checks.esNulo(origenComprador)) {
+					oferta.setOrigenComprador(origenComprador);
+				}
+			}
 
 			if (modificado) {
 				ofertaDao.saveOrUpdate(oferta);
@@ -1035,6 +1123,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
+			
+			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())
+					&& ofertaDto.getEsOfertaSingular().equals(oferta.getOfertaSingular())) {
+				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
+			}
+
 		}
 
 		return errorsList;
@@ -1099,7 +1193,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (oferta.getOfertaExpress()) {
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
-				
+
 				// Congelar resto de ofertas
 				for (ActivoOferta actOfer : oferta.getActivoPrincipal().getOfertas()) {
 
@@ -1142,11 +1236,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expComercial.setEstado(estadoExpCom);
 				expComercial.setFechaSancion(new Date());
-				
+
 				genericDao.update(ExpedienteComercial.class, expComercial);
 
 			}else{
-				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));	
+				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
 			}
 		}
 
@@ -1205,7 +1299,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Mapa con los valores Tasacion/Aprobado venta de cada activo
 			Map<String, Double> valoresTasacion = new HashMap<String, Double>();
 			List<ActivoAgrupacionActivo> listaActivos = new ArrayList<ActivoAgrupacionActivo>();
-			if(Checks.esNulo(agrupacion.getActivos()) || Checks.estaVacio(agrupacion.getActivos())) {				
+			if(Checks.esNulo(agrupacion.getActivos()) || Checks.estaVacio(agrupacion.getActivos())) {
 				listaActivos = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionID(agrupacion.getId());
 			} else {
 				listaActivos = agrupacion.getActivos();
@@ -1256,7 +1350,59 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return listaActOfr;
 	}
+	
+	//TODO meter la las comprobaciones cuando el cliente lo tenga claro, a la espera de Pier
+	@Override
+	public List<OfertasAgrupadasLbk> buildListaOfertasAgrupadasLbk(Oferta principal, Oferta dependiente, String claseOferta)
+			throws Exception {
+		List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
 
+ 		OfertasAgrupadasLbk oferAgrupa = new OfertasAgrupadasLbk();
+ 		if (claseOferta.equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {
+			oferAgrupa.setOfertaPrincipal(principal);
+			oferAgrupa.setOfertaDependiente(dependiente);
+
+ 			
+			Auditoria auditoria = Auditoria.getNewInstance();
+			oferAgrupa.setAuditoria(auditoria);
+			ofertasAgrupadas.add(oferAgrupa);
+ 		}
+		
+		return ofertasAgrupadas;
+	}
+	
+	public void actualizaPrincipalId (OfertasAgrupadasLbk ofertaAgrupada, Oferta nuevaOfertaPrincipal) {
+
+		ofertaAgrupada.setOfertaPrincipal(nuevaOfertaPrincipal);
+		genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupada);
+	}
+
+	/**
+	 * nuevaOfertaPrincipal es el nuevo ID al que deben ir las ofertas agrupadas
+	 * ofertasAgrupadas es el listado de ofertas al que hay que cambiarle el id principal
+	 */
+	public void actualizaListadoPrincipales (Oferta nuevaOfertaPrincipal, List<OfertasAgrupadasLbk> ofertasAgrupadas) {
+		if (!Checks.esNulo(ofertasAgrupadas)) {
+			for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
+				lisOf.setOfertaPrincipal(nuevaOfertaPrincipal);
+				genericDao.update(OfertasAgrupadasLbk.class, lisOf);
+			}
+		}
+	}
+
+	public void actualizaClaseOferta (Oferta oferta, String codigoOferta) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoOferta);
+		DDClaseOferta claseOferta = genericDao.get(DDClaseOferta.class, filtro);
+
+		oferta.setClaseOferta(claseOferta);
+		genericDao.update(Oferta.class, oferta);
+	}
+	
+	public void borradoOfertaAgrupadaDependiente(Oferta oferta) {
+		Long idOfertaLBK = ofertasAgrupadasLbkDao.getIdOfertaAgrupadaLBK(oferta.getId());
+		genericDao.deleteById(OfertasAgrupadasLbk.class, idOfertaLBK);
+	}
+	
 	@Override
 	public DDEstadoOferta getDDEstadosOfertaByCodigo(String codigo) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
@@ -1304,6 +1450,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public Boolean rechazarOferta(Oferta oferta) {
 		try {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
@@ -1322,7 +1469,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return true;
 
 	}
-	
+
 	@Transactional(readOnly = false)
 	@Override
 	public void descongelarOfertas(ExpedienteComercial expediente) throws Exception {
@@ -1354,7 +1501,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							oferta.setEstadoOferta(estado);
 							updateStateDispComercialActivosByOferta(oferta);
 							genericDao.save(Oferta.class, oferta);
-	
+
 							if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
 								List<ActivoTramite> tramites = activoTramiteApi
 										.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
@@ -1446,6 +1593,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return true;
 	}
+	@Override
+	public Boolean finalizarOferta(Oferta oferta) {
+		try {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA);
+			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
+			oferta.setEstadoOferta(estado);
+			updateStateDispComercialActivosByOferta(oferta);
+			genericDao.save(Oferta.class, oferta);
+
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+			if (!Checks.esNulo(expediente)) {
+				Trabajo trabajo = expediente.getTrabajo();
+				List<ActivoTramite> tramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+				ActivoTramite tramite = tramites.get(0);
+
+				Set<TareaActivo> tareasTramite = tramite.getTareas();
+				for (TareaActivo tarea : tareasTramite) {
+					if (Checks.esNulo(tarea.getFechaFin())) {
+						tarea.setFechaFin(new Date());
+						tarea.getAuditoria().setBorrado(true);
+					}
+				}
+			}
+			descongelarOfertas(expediente);
+		} catch (Exception e) {
+			logger.error("error en OfertasManager", e);
+			return false;
+		}
+		return true;
+	}
+
 
 	@Override
 	public Oferta tareaExternaToOferta(TareaExterna tareaExterna) {
@@ -1601,23 +1779,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
-	
+
 	@Override
 	public Boolean checkProvinciaCompradores(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			
+
 			if(!Checks.esNulo(ofertaAceptada.getAgrupacion())){
 				ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
-				
+
 				ActivoAgrupacionActivo aga = agrupacion.getActivos().get(0);
-				
+
 				if(!Checks.esNulo(expediente) && !Checks.esNulo(aga) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
 					List<CompradorExpediente> listaCex = expediente.getCompradores();
 					Boolean tienenProvincia = true;
-					
+
 					for(CompradorExpediente cex: listaCex){
 						Comprador com = cex.getPrimaryKey().getComprador();
 						if(!Checks.esNulo(com) && Checks.esNulo(com.getProvincia())){
@@ -1625,7 +1803,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							break;
 						}
 					}
-					
+
 					return tienenProvincia;
 				} else if (!Checks.esNulo(aga) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
 					return true;
@@ -1633,11 +1811,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else{
 				List<ActivoOferta> activosOferta = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada.getId()));
 				Activo activo = activosOferta.get(0).getPrimaryKey().getActivo();
-				
+
 				if(!Checks.esNulo(expediente) && !Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
 					List<CompradorExpediente> listaCex = expediente.getCompradores();
 					Boolean tienenProvincia = true;
-					
+
 					for(CompradorExpediente cex: listaCex){
 						Comprador com = cex.getPrimaryKey().getComprador();
 						if(!Checks.esNulo(com) && Checks.esNulo(com.getProvincia())){
@@ -1645,35 +1823,35 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							break;
 						}
 					}
-					
+
 					return tienenProvincia;
 				} else if (!Checks.esNulo(activo) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
 					return true;
 				}
 			}
-			
+
 		}
 		return false;
 	}
-	
+
 	@Override
 	public Boolean checkNifConyugueLBB(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		
+
 		try {
 			if (!Checks.esNulo(ofertaAceptada)) {
 				ExpedienteComercial expediente = expedienteComercialApi
 						.expedienteComercialPorOferta(ofertaAceptada.getId());
-				
+
 				if(!Checks.esNulo(ofertaAceptada.getAgrupacion())){
 					ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
-					
+
 					ActivoAgrupacionActivo aga = agrupacion.getActivos().get(0);
-					
+
 					if(!Checks.esNulo(expediente) && !Checks.esNulo(aga) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
 						List<CompradorExpediente> listaCex = expediente.getCompradores();
 						Boolean tieneNifConyugue = true;
-						
+
 						for(CompradorExpediente cex: listaCex){
 							if(!Checks.esNulo(cex) && cex.getEstadoCivil() != null && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())
 									&& DDRegimenesMatrimoniales.COD_GANANCIALES.equals(cex.getRegimenMatrimonial().getCodigo())){
@@ -1681,7 +1859,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								break;
 							}
 						}
-						
+
 						return tieneNifConyugue;
 					} else if (!Checks.esNulo(aga) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(aga.getActivo().getCartera().getCodigo())){
 						return true;
@@ -1689,11 +1867,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}else{
 					List<ActivoOferta> activosOferta = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada.getId()));
 					Activo activo = activosOferta.get(0).getPrimaryKey().getActivo();
-					
+
 					if(!Checks.esNulo(expediente) && !Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
 						List<CompradorExpediente> listaCex = expediente.getCompradores();
 						Boolean tieneNifConyugue = true;
-						
+
 						for(CompradorExpediente cex: listaCex){
 							if(!Checks.esNulo(cex) && !Checks.esNulo(cex.getEstadoCivil()) && !Checks.esNulo(cex.getRegimenMatrimonial())
 									&& DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())
@@ -1702,13 +1880,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								break;
 							}
 						}
-						
+
 						return tieneNifConyugue;
 					} else if (!Checks.esNulo(activo) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
 						return true;
 					}
 				}
-				
+
 			}
 		} catch (NullPointerException e) {
 			e.printStackTrace();
@@ -1772,7 +1950,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem"))) {
 					map.put("codigoAgrupacionComercialRem", errorsList.get("codigoAgrupacionComercialRem"));
 				}
-				
+
 				if(!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getNumAgrupRem())
 						&& (ofertaDto.getOfertaLote() != null  && ofertaDto.getOfertaLote())) {
 					map.put("idAgrupacionComercialRem", oferta.getAgrupacion().getNumAgrupRem());
@@ -1810,7 +1988,76 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Override
 	public boolean checkAtribuciones(TareaExterna tareaExterna) {
 		Oferta oferta = tareaExternaToOferta(tareaExterna);
-		return checkAtribuciones(oferta);
+		if (!Checks.esNulo(oferta)) {
+
+			if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				List<ActivoOferta> actOfr = oferta.getActivosOferta();
+
+				for (int i = 0; i < actOfr.size(); i++) {
+
+					Activo activo = actOfr.get(i).getPrimaryKey().getActivo();
+
+					List<ActivoValoraciones> activoValoraciones = genericDao.getList(ActivoValoraciones.class,
+							genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+
+					Double deudaBruta = null;
+					Double valorNetoContable = null;
+
+					for (ActivoValoraciones valoracion : activoValoraciones) {
+						if (DDTipoPrecio.CODIGO_TPC_DEUDA_BRUTA_LIBERBANK.equals(valoracion.getTipoPrecio().getCodigo())) {
+							deudaBruta = valoracion.getImporte();
+						} else if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK
+								.equals(valoracion.getTipoPrecio().getCodigo())) {
+							valorNetoContable = valoracion.getImporte();
+						}
+					}
+
+					if (!Checks.esNulo(deudaBruta) && !Checks.esNulo(valorNetoContable)) {
+						if (deudaBruta > DDTipoPrecio.MAX_DEUDA_BRUTA_LIBERBANK) {
+							if (DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo())
+									|| DDTipoActivo.COD_EN_COSTRUCCION.equals(activo.getTipoActivo().getCodigo())) {
+
+								if (1D - valorNetoContable / deudaBruta > 0.6D) {
+									return false;
+								}
+							} else if (1D - valorNetoContable / deudaBruta > 0.5D) {
+								return false;
+							}
+						}
+					}
+
+				}
+			}
+
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+			if (!Checks.esNulo(expediente)) {
+				if (!Checks.esNulo(expediente.getComiteSancion())) {
+					String codigoComiteSancion = expediente.getComiteSancion().getCodigo();
+					if (DDComiteSancion.CODIGO_HAYA_CAJAMAR.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_SAREB.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_TANGO.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_TANGO_TANGO.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_THIRD_PARTIES_YUBAI.equals(codigoComiteSancion))
+						return true;
+				} else {
+					if (trabajoApi.checkBankia(tareaExterna)) {
+						String codigoComite = null;
+						try {
+							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+						} catch (Exception e) {
+							logger.error("error en OfertasManager", e);
+						}
+						if (DDComiteSancion.CODIGO_PLATAFORMA.equals(codigoComite))
+							return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 
@@ -1830,9 +2077,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							|| DDComiteAlquiler.CODIGO_HAYA_BANKIA.equals(codigoComiteSancionAlquiler)
 							|| DDComiteAlquiler.CODIGO_HAYA_OTRAS.equals(codigoComiteSancionAlquiler)
 							|| DDComiteAlquiler.CODIGO_HAYA_HyT.equals(codigoComiteSancionAlquiler)
-							|| DDComiteAlquiler.CODIGO_HAYA_CERBERUS.equals(codigoComiteSancionAlquiler)
-							|| DDComiteAlquiler.CODIGO_HAYA_THIRD_PARTIES.equals(codigoComiteSancionAlquiler)
-							)
+							|| DDComiteAlquiler.CODIGO_HAYA_CERBERUS.equals(codigoComiteSancionAlquiler))
 						return true;
 				}
 			}
@@ -1845,7 +2090,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta oferta = trabajoToOferta(trabajo);
 		return checkAtribuciones(oferta);
 	}
-	
 	@Override
 	public boolean checkAtribuciones(Oferta oferta) {
 		if (!Checks.esNulo(oferta)) {
@@ -1899,7 +2143,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							|| DDComiteSancion.CODIGO_HAYA_HYT.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_THIRD_PARTIES.equals(codigoComiteSancion)
 							|| DDComiteSancion.CODIGO_HAYA_GIANTS.equals(codigoComiteSancion)
-							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion))
+							|| DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoComiteSancion)
+							|| DDComiteSancion.CODIGO_THIRD_PARTIES_YUBAI.equals(codigoComiteSancion))
 						return true;
 				} else {
 					if (Checks.esNulo(oferta.getActivoPrincipal())
@@ -1985,7 +2230,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, codComiteSuperior);
 
 			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
-			
+
 			this.guardarUvemCodigoAgrupacionInmueble(expediente, resultadoDto);
 
 			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
@@ -2007,7 +2252,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	/**
 	 * Añadir código de la oferta en FFDD
-	 * 
+	 *
 	 * @param expediente
 	 * @param resultadoDto
 	 */
@@ -2016,7 +2261,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (expediente.getOferta().getAgrupacion() != null && resultadoDto.getCodigoAgrupacionInmueble() != null
 				&& resultadoDto.getCodigoAgrupacionInmueble().compareTo(0) > 0) {
 			expediente.getOferta().getAgrupacion().setUvemCodigoAgrupacionInmueble(resultadoDto.getCodigoAgrupacionInmueble());
-			
+
 		}
 	}
 
@@ -2440,53 +2685,119 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		DtoGastoExpediente dto = new DtoGastoExpediente();
 		ActivoProveedor proveedor = null;
-		String codigoOferta = oferta.getTipoOferta().getCodigo();
-
-			// Los honorarios de colaboración serán asignados al FDV de la oferta si
-			// existe,
-			// sino al custodio de la oferta si existe,
-			// sino al mediador del activo.
-			if (accion.equals(DDAccionGastos.CODIGO_COLABORACION)) {
-
-				if (!Checks.esNulo(oferta.getFdv())) {
-					proveedor = oferta.getFdv();
-				} else if (!Checks.esNulo(oferta.getCustodio())) {
-					proveedor = oferta.getCustodio();
-				} else if (!Checks.esNulo(activo.getInfoComercial())) {
-					proveedor = activo.getInfoComercial().getMediadorInforme();
-				}
-				// Los gastos de prescripcion serán asignados al al prescriptor de
-				// la oferta
-			} else if (accion.equals(DDAccionGastos.CODIGO_PRESCRIPCION)) {
-
-				if (!Checks.esNulo(oferta.getPrescriptor())) {
-					proveedor = oferta.getPrescriptor();
-				}
+		String codigoOferta = null;
+		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
+		Double importe = null;
+		if (!Checks.esNulo(oferta)) {
+			if(!Checks.esNulo(oferta.getImporteContraOferta())) {
+				importe = oferta.getImporteContraOferta();
+			}else {
+				importe = oferta.getImporteOferta();
 			}
-			// TODO: Falta definir a quien asignar los honorarios para
-			// CODIGO_RESPONSABLE_CLIENTE (Doble
-			// prescripción)
-
-			// Información del receptor del honorario
-			if (!Checks.esNulo(proveedor)) {
-
-				if (!Checks.esNulo(proveedor.getTipoProveedor())) {
-					dto.setTipoProveedor(proveedor.getTipoProveedor().getDescripcion());
-				}
-				dto.setProveedor(proveedor.getNombre());
-				dto.setIdProveedor(proveedor.getCodigoProveedorRem());
+			if (!Checks.esNulo(oferta.getTipoOferta())) {
+				codigoOferta = oferta.getTipoOferta().getCodigo();
 			}
-
-			// Información del tipo de honorario
-			DDAccionGastos accionGastoC = (DDAccionGastos) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDAccionGastos.class, accion);
-			if (!Checks.esNulo(accionGastoC)) {
-				dto.setCodigoTipoComision(accionGastoC.getCodigo());
-				dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
+		}
+		
+		String codLeadOrigin = null;
+		String codTipoActivo = null;
+		String tipoComercializar = null;
+		String codSubtipoActivo = null;
+		String codPortfolio = null;
+		String codSubportfolio = null;
+		String classType = null;
+		
+		if (!Checks.esNulo(activo)) {
+			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
+				codLeadOrigin = oferta.getOrigenComprador().getCodigo();
+			} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
+				codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
+			} else {
+				codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
 			}
+			
+			if (!Checks.esNulo(activo.getTipoComercializar())) {
+				tipoComercializar = activo.getTipoComercializar().getCodigo();
+			}
+			
+			if(!Checks.esNulo(activo.getTipoActivo())) {
+				codTipoActivo = activo.getTipoActivo().getCodigo();
+			}
+			
+			
+			if(!Checks.esNulo(activo.getSubtipoActivo())) {
+				codSubtipoActivo = activo.getSubtipoActivo().getCodigo();
+			}
+			
+			if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getCartera().getCodigo())) {
+				codPortfolio = activo.getCartera().getCodigo();
+			}
+			
+			if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && !Checks.esNulo(activo.getSubcartera().getCodigo())) {
+				codSubportfolio = activo.getSubcartera().getCodigo();
+			}
+			
+			if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
+				classType = activoBancario.getClaseActivo().getCodigo();
+			}
+		} 
 
-			Long idProveedor = !Checks.esNulo(proveedor) ? proveedor.getId() : null;
+		ConsultaComisionDto consultaComisionDto = new ConsultaComisionDto();
+		consultaComisionDto.setAmount(importe);
+		consultaComisionDto.setLeadOrigin(codLeadOrigin);
+		consultaComisionDto.setOfferType(codigoOferta);
+		consultaComisionDto.setComercialType(tipoComercializar);
+		consultaComisionDto.setAssetType(codTipoActivo);
+		consultaComisionDto.setAssetSubtype(codSubtipoActivo);
+		consultaComisionDto.setPortfolio(codPortfolio);
+		consultaComisionDto.setSubPortfolio(codSubportfolio);
+		consultaComisionDto.setClassType(classType);
 
+		// Los honorarios de colaboración serán asignados al FDV de la oferta si
+		// existe,
+		// sino al custodio de la oferta si existe,
+		// sino al mediador del activo.
+		if (accion.equals(DDAccionGastos.CODIGO_COLABORACION)) {
+
+			if (!Checks.esNulo(oferta.getFdv())) {
+				proveedor = oferta.getFdv();
+			} else if (!Checks.esNulo(oferta.getCustodio())) {
+				proveedor = oferta.getCustodio();
+			} else if (!Checks.esNulo(activo.getInfoComercial())) {
+				proveedor = activo.getInfoComercial().getMediadorInforme();
+			}
+			// Los gastos de prescripcion serán asignados al al prescriptor de
+			// la oferta
+		} else if (accion.equals(DDAccionGastos.CODIGO_PRESCRIPCION)) {
+
+			if (!Checks.esNulo(oferta.getPrescriptor())) {
+				proveedor = oferta.getPrescriptor();
+			}
+		}
+		// TODO: Falta definir a quien asignar los honorarios para
+		// CODIGO_RESPONSABLE_CLIENTE (Doble
+		// prescripción)
+
+		// Información del receptor del honorario
+		if (!Checks.esNulo(proveedor)) {
+
+			if (!Checks.esNulo(proveedor.getTipoProveedor())) {
+				dto.setTipoProveedor(proveedor.getTipoProveedor().getDescripcion());
+			}
+			dto.setProveedor(proveedor.getNombre());
+			dto.setIdProveedor(proveedor.getCodigoProveedorRem());
+		}
+
+		// Información del tipo de honorario
+		DDAccionGastos accionGastoC = (DDAccionGastos) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDAccionGastos.class, accion);
+		if (!Checks.esNulo(accionGastoC)) {
+			dto.setCodigoTipoComision(accionGastoC.getCodigo());
+			dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
+		}
+
+		
 		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
 			// Información del tipo de cálculo. Por defecto siempre son porcentajes
 			DDTipoCalculo tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
@@ -2498,182 +2809,179 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			// Información del cálculo de la comisión para venta
-			BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion),
-					activo.getId(), idProveedor);
-			if (!Checks.esNulo(calculoComision)) {
-				Double calculoImporteC = calculoComision.doubleValue();
-				dto.setImporteCalculo(calculoImporteC);
-
-				if (!Checks.esNulo(activo)) {
-					if (!Checks.esNulo(oferta.getImporteOferta())) {
-						for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-							if (activoOferta.getPrimaryKey().getActivo().getId().equals(activo.getId())) {
-								if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
-									Double result = (activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
-									dto.setHonorarios(result);
-								}
-							}
-						}
-					}
-				}
-			} else { // Si el importe calculo está vacío mostrar 0.00 y honorarios a 0.00
-				dto.setImporteCalculo(0.00);
-				dto.setHonorarios(0.00);
+			/*BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion),activo.getId(), idProveedor);*/
+			RespuestaComisionResultDto calculoComision = null;
+			try {
+				calculoComision = comisionamientoApi.createCommission(consultaComisionDto,accion);
+			} catch (Exception e) {
+				logger.error("Error en la llamada al comisionamiento: " + e);
 			}
-		} else if(DDTipoOferta.CODIGO_ALQUILER.equals(codigoOferta)) {
-			DDTipoCalculo tipoCalculoC = null;
-			// Determinar tipo de calculo para alquiler
-			BigDecimal calculoComision = ofertaDao.getImporteCalculoAlquiler(oferta.getId(), TIPO_HONORARIOS.get(accion), idProveedor);
-
-			if (!Checks.esNulo(calculoComision)) {
-				Double calculoImporteC = calculoComision.doubleValue();
-				dto.setImporteCalculo(calculoImporteC);
-
-				if (!Checks.esNulo(activo) && !Checks.esNulo(oferta.getImporteOferta())) {
-					for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-						if (activoOferta.getPrimaryKey().getActivo().getId().equals(activo.getId()) && !Checks.esNulo(activoOferta.getImporteActivoOferta())) {
-
-							Double result = 0d;
-							if(!Checks.esNulo(calculoImporteC) && !calculoImporteC.equals(0d)){
-								result = (activoOferta.getImporteActivoOferta() * 12 * calculoImporteC / 100);
-							}
-
-							if(!Checks.esNulo(oferta.getPrescriptor())) {
-
-								ActivoProveedor activoProveedor = oferta.getPrescriptor();
-
-								if (!Checks.esNulo(activoProveedor.getTipoProveedor()) && !Checks.esNulo(activoProveedor.getTipoProveedor().getCodigo())) {
-
-									if (DDTipoProveedor.COD_MEDIADOR.equals(activoProveedor.getTipoProveedor().getCodigo())
-											&& !Checks.esNulo(activoProveedor.getCustodio()) && activoProveedor.getCustodio().equals(1)) {
-
-										// 1
-
-										if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-											dto.setHonorarios(0d);
-											// API Custodio - Colaborador
-											tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-													DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-											dto.setImporteCalculo(0d);
-										} else if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-											// API Custodio - Prescripcion
-											if(result != 0 && result < 100) {
-													dto.setHonorarios(100d);
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-													dto.setImporteCalculo(0d);
-											} else {
-													dto.setHonorarios(result);
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
-											}
-										}
-
-									} else if (DDTipoProveedor.COD_MEDIADOR.equals(activoProveedor.getTipoProveedor().getCodigo())
-											&& (Checks.esNulo(activoProveedor.getCustodio()) || ( !Checks.esNulo(activoProveedor.getCustodio()) && !activoProveedor.getCustodio().equals(1) ) )) {
-
-										// 0
-
-										if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-											// API No Custodio - Colaborador
-											if(result != 0 && result < 100) {
-													dto.setHonorarios(100d);
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-													dto.setImporteCalculo(0d);
-											}else {
-													dto.setHonorarios(result);
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
-											}
-
-										} else if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-											// API No Custodio - Prescripcion
-											if(result != 0 && result < 100) {
-													dto.setHonorarios(100d);
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-													dto.setImporteCalculo(0d);
-											}else {
-													dto.setHonorarios(activoOferta.getImporteActivoOferta());
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_MENSUALIDAD_ALQ);
-													dto.setImporteCalculo(1d);
-											}
-										}
-
-									} else if (DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(activoProveedor.getTipoProveedor().getCodigo())) {
-
-										if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-											// FvD - Colaboracion
-											if(result != 0 && result < 100) {
-													dto.setHonorarios(100d);
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-													dto.setImporteCalculo(0d);
-											}else {
-													dto.setHonorarios(result);
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
-											}
-										}
-										if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-											// FvD - Prescripcion
-											dto.setHonorarios(0d);
-											tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-													DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-											dto.setImporteCalculo(0d);
-										}
-
-									} else if ( !Checks.esNulo(activo.getInfoComercial()) && (DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(activoProveedor.getTipoProveedor().getCodigo())
-											|| DDTipoProveedor.COD_OFICINA_BANKIA.equals(activoProveedor.getTipoProveedor().getCodigo()))) {
-
-										if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-											// Oficina - Colaboracion
-											if(result != 0 && result < 100) {
-												dto.setHonorarios(100d);
-												tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-														DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-												dto.setImporteCalculo(0d);
-											}else {
-												dto.setHonorarios(result);
-												tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-														DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
-											}
-										}
-
-										if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-											// Oficina - Prescripcion
-											dto.setHonorarios(0d);
-											tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-													DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-											dto.setImporteCalculo(0d);
-										}
-									}
-
-								}
-
-							}
-
-						}
-					}
-				}
-
-				if (!Checks.esNulo(tipoCalculoC)) {
-					dto.setTipoCalculo(tipoCalculoC.getDescripcion());
-					dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
-				}
-
-			}else { // Si el importe calculo está vacío mostrar 0.00 y honorarios a 0.00
+			
+			if (!Checks.esNulo(calculoComision) && !Checks.esNulo(calculoComision.getAmount()) && !Checks.esNulo(calculoComision.getRule().getCommissionPercentage())) {
+				dto.setImporteCalculo(Double.valueOf(calculoComision.getRule().getCommissionPercentage()));
+				dto.setHonorarios(Double.valueOf(calculoComision.getAmount()));
+			} else {
 				dto.setImporteCalculo(0.00);
 				dto.setHonorarios(0.00);
 			}
 			
-			//Si el honorario es menor de 100 € el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149 + HREOS-5244
-			if((dto.getHonorarios() != null && dto.getHonorarios() < 100.00) && !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo()))) {
-				dto.setHonorarios(100.00);
-			}else {
-				dto.setHonorarios(dto.getHonorarios());
+		} else if(DDTipoOferta.CODIGO_ALQUILER.equals(codigoOferta)) {
+			DDTipoCalculo tipoCalculoC = null;
+
+			// Determinar tipo de calculo para alquiler
+			/*BigDecimal calculoComision = ofertaDao.getImporteCalculoAlquiler(oferta.getId(), TIPO_HONORARIOS.get(accion), idProveedor);*/
+			RespuestaComisionResultDto calculoComision = null;
+			try {
+				calculoComision = comisionamientoApi.createCommission(consultaComisionDto, accion);
+			} catch (Exception e) {
+				logger.error("Error en la llamada al comisionamiento: " + e);
+			}
+			
+			dto.setImporteCalculo(0.00);
+			dto.setHonorarios(0.00);
+			
+			if (!Checks.esNulo(calculoComision)) {
+				if (!Checks.esNulo(calculoComision.getAmount()) && !Checks.esNulo(calculoComision.getRule().getCommissionPercentage())) {
+					
+					Double calculoImporteC = Double.valueOf(calculoComision.getRule().getCommissionPercentage());
+					dto.setImporteCalculo(calculoImporteC);
+	
+					if (!Checks.esNulo(activo) && !Checks.esNulo(oferta.getImporteOferta())) {
+						for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+							if (activoOferta.getPrimaryKey().getActivo().getId().equals(activo.getId()) && !Checks.esNulo(activoOferta.getImporteActivoOferta())) {
+	
+								Double result = 0d;
+								if(!Checks.esNulo(calculoImporteC) && !calculoImporteC.equals(0d)){
+									result = Double.valueOf(calculoComision.getAmount());
+								}
+	
+								if(!Checks.esNulo(oferta.getPrescriptor())) {
+	
+									ActivoProveedor activoProveedor = oferta.getPrescriptor();
+	
+									if (!Checks.esNulo(activoProveedor.getTipoProveedor()) && !Checks.esNulo(activoProveedor.getTipoProveedor().getCodigo())) {
+	
+										if (DDTipoProveedor.COD_MEDIADOR.equals(activoProveedor.getTipoProveedor().getCodigo())
+												&& !Checks.esNulo(activoProveedor.getCustodio()) && activoProveedor.getCustodio().equals(1)) {
+	
+											// 1
+	
+											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
+												dto.setHonorarios(0d);
+												// API Custodio - Colaborador
+												tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+														DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
+												dto.setImporteCalculo(0d);
+											} else if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
+												// API Custodio - Prescripcion
+												if(result <= 100) {
+														dto.setHonorarios(100d);
+														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
+														dto.setImporteCalculo(0d);
+												} else {
+														dto.setHonorarios(result);
+														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+																DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
+												}
+											}
+	
+										} else if (DDTipoProveedor.COD_MEDIADOR.equals(activoProveedor.getTipoProveedor().getCodigo())
+												&& (Checks.esNulo(activoProveedor.getCustodio()) || ( !Checks.esNulo(activoProveedor.getCustodio()) && !activoProveedor.getCustodio().equals(1) ) )) {
+	
+											// 0
+	
+											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
+												// API No Custodio - Colaborador
+												if(result <= 100) {
+														dto.setHonorarios(100d);
+														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
+														dto.setImporteCalculo(0d);
+												}else {
+														dto.setHonorarios(result);
+														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+																DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
+												}
+	
+											} else if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
+												// API No Custodio - Prescripcion
+												if(result <= 100) {
+														dto.setHonorarios(100d);
+														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
+														dto.setImporteCalculo(0d);
+												}else {
+														dto.setHonorarios(activoOferta.getImporteActivoOferta());
+														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+																DDTipoCalculo.TIPO_CALCULO_MENSUALIDAD_ALQ);
+														dto.setImporteCalculo(1d);
+												}
+											}
+	
+										} else if (DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(activoProveedor.getTipoProveedor().getCodigo())) {
+	
+											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
+												// FvD - Colaboracion
+												if(result <= 100) {
+														dto.setHonorarios(100d);
+														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
+														dto.setImporteCalculo(0d);
+												}else {
+														dto.setHonorarios(result);
+														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+																DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
+												}
+											}
+											if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
+												// FvD - Prescripcion
+												dto.setHonorarios(0d);
+												tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+														DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
+												dto.setImporteCalculo(0d);
+											}
+	
+										} else if ( !Checks.esNulo(activo.getInfoComercial()) && (DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(activoProveedor.getTipoProveedor().getCodigo())
+												|| DDTipoProveedor.COD_OFICINA_BANKIA.equals(activoProveedor.getTipoProveedor().getCodigo()))) {
+	
+											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
+												// Oficina - Colaboracion
+												if(result <= 100) {
+													dto.setHonorarios(100d);
+													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+															DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
+													dto.setImporteCalculo(0d);
+												}else {
+													dto.setHonorarios(result);
+													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+															DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
+												}
+											}
+	
+											if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
+												// Oficina - Prescripcion
+												dto.setHonorarios(0d);
+												tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+														DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
+												dto.setImporteCalculo(0d);
+											}
+										}
+	
+									}
+	
+								}
+	
+							}
+						}
+					}
+	
+					if (!Checks.esNulo(tipoCalculoC)) {
+						dto.setTipoCalculo(tipoCalculoC.getDescripcion());
+						dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
+					}
+
+				}
 			}
 		}
 
@@ -2790,7 +3098,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
-								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))) {
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.APROBADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.RESERVADO_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo()))) {
 
 					return true;
 				}
@@ -2884,6 +3195,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return false;
 	}
+	
+	
 
 	@Override
 	public List<DDTipoProveedor> getDiccionarioSubtipoProveedorCanal() {
@@ -3018,11 +3331,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
-		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-				&& !DDSubcartera.CODIGO_BAN_BH
-						.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())) {
+		if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+			&& !DDSubcartera.CODIGO_BAN_BH
+			.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo()))
+		||(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+			&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO
+				.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())) ) {
 
-			if (!DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo())) {
+			if (((!Checks.esNulo(expediente.getReserva()))
+				&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
+				&& !DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()))
+				|| Checks.esNulo(expediente.getReserva())
+				|| !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva()) && expediente.getCondicionante().getSolicitaReserva() == 0) {
 				result = false;
 			}
 		}
@@ -3112,21 +3432,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 	}
-	
+
 	@Override
 	public Double getImporteOferta(Oferta oferta) {
-				
+
 		if (!Checks.esNulo(oferta.getImporteContraOferta())) {
 			return oferta.getImporteContraOferta();
 		}else {
 			return oferta.getImporteOferta();
 		}
 	}
-	
+
 	@Override
 	public boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+//			DDComiteSancion comite = this.calculoComiteLiberbank(ofertaAceptada, null);
 			DDComiteSancion comite = this.calculoComiteLiberbank(ofertaAceptada);
 			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 			Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta()))
@@ -3156,8 +3477,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 											DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
 									if(minimoAutorizadoAux != null){
 										minimoAutorizado += minimoAutorizadoAux;
-									}										
-								}								
+									}
+								}
 							}
 						}
 						if (!Checks.esNulo(minimoAutorizado)) {
@@ -3172,6 +3493,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
+	
 	@Override
 	public DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada) {
 		if(!Checks.esNulo(ofertaAceptada)){
@@ -3345,6 +3667,515 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return null;
 		}
 	}
+	
+//	@Override
+//	public DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
+//		if(!Checks.esNulo(ofertaAceptada)){
+//			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+//			
+//			// Oferta sobre un solo activo
+//			if(Checks.esNulo(agrupacion)) {
+//				List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
+//				return calculoComiteLiberbankActivoSolo(ofertaAceptada, gastosExpediente, nuevaOfertaAgrupadaLbk);
+//
+//			// Oferta sobre un lote
+//			} else {
+//				List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
+//				return calculoComiteLiberbankLoteActivos(ofertaAceptada, gastosExpediente, nuevaOfertaAgrupadaLbk);
+//			}
+//		}else{
+//			return null;
+//		}
+//	}
+
+	@Override
+	public DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
+		if(!Checks.esNulo(ofertaAceptada)){
+			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+			
+			// Oferta sobre un solo activo
+			if(Checks.esNulo(agrupacion)) {
+				return calculoComiteLiberbankActivoSolo(ofertaAceptada, gastosExpediente, nuevaOfertaAgrupadaLbk);
+
+			// Oferta sobre un lote
+			} else {
+				return calculoComiteLiberbankLoteActivos(ofertaAceptada, gastosExpediente, nuevaOfertaAgrupadaLbk);
+			}
+		}else{
+			return null;
+		}
+	}
+	@Override
+	public boolean faltanDatosCalculo (Long idOferta) {
+		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
+		Oferta ofertaAceptada = this.getOfertaById(idOferta);
+		Activo activoPrincipal = ofertaAceptada.getActivoPrincipal();
+		
+		if(ofertaAceptada != null && !Checks.esNulo(activoPrincipal)) {
+			if(!Checks.estaVacio(activoPrincipal.getTasacion()) 
+					&& !Checks.esNulo(activoPrincipal.getTasacion().get(activoPrincipal.getTasacion().size()-1).getImporteTasacionFin())) {
+				vta += activoPrincipal.getTasacion().get(activoPrincipal.getTasacion().size()-1).getImporteTasacionFin();
+			}
+			pvb = ofertaAceptada.getImporteOferta();
+	
+			
+			// Cuando son ofertas agrupadas, las recorro
+			if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) 
+					&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
+	
+				Oferta principal = getOfertaPrincipalById(ofertaAceptada.getId());
+				List<OfertasAgrupadasLbk> ofertasAgrupadas = principal.getOfertasAgrupadas();
+	
+				List<Oferta> listaOfertas = new ArrayList<Oferta>();
+				
+				// Añado la oferta principal
+				listaOfertas.add(principal);
+	
+				
+				// Añado las dependientes
+				for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
+					listaOfertas.add(lisOf.getOfertaDependiente());
+				}	
+				
+				// Recorro todas las ofertas que tiene la agrupada
+				for (Oferta oferta : listaOfertas) {
+	
+					ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
+					if (expedienteComercial == null) continue;
+					if (!Checks.esNulo(expedienteComercial) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+						List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
+						
+						for (GastosExpediente gex : listaHonorarios) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
+						
+					}
+				}
+	
+				List<ActivoValoraciones> valoraciones = activoPrincipal.getValoracion();
+	
+				for (ActivoValoraciones valoracion : valoraciones) {
+					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
+					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+						vnc += valoracion.getImporte();
+					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+						vr  += valoracion.getImporte();
+					}
+				}
+				
+				
+			// Si son ofertas individuales o principales se calculan ellas solas
+			} else {
+				vnc = 0.1;
+				vr = 0.1;
+				cco = 0.1;
+			}
+			
+			pvn = pvb - cco;
+			
+	
+			
+			if (vta== 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private List<Double> getImportesAcumulados(Oferta ofertaAceptada, Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr, OfertasAgrupadasLbk nuevafertaAgrupadaLbk){
+		List<Double> listaImportesAcumulados = new ArrayList<Double>();
+		//Acumular pvb, cco de las ofertas dependientes
+		//A nivel de expediente
+		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(ofertaAceptada.getClaseOferta()) && !Checks.esNulo(ofertaAceptada.getClaseOferta().getCodigo()) &&  DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
+			List <OfertasAgrupadasLbk> listaOfertasAgrupadas = ofertaAceptada.getOfertasAgrupadas();
+			if (!Checks.esNulo(nuevafertaAgrupadaLbk)) {
+				if (nuevafertaAgrupadaLbk.getAuditoria().isBorrado() && listaOfertasAgrupadas.contains(nuevafertaAgrupadaLbk)) {
+					listaOfertasAgrupadas.remove(nuevafertaAgrupadaLbk);
+				}else if(!nuevafertaAgrupadaLbk.getAuditoria().isBorrado() && !listaOfertasAgrupadas.contains(nuevafertaAgrupadaLbk)) {
+					listaOfertasAgrupadas.add(nuevafertaAgrupadaLbk);
+				}
+			}
+			if(!Checks.estaVacio(listaOfertasAgrupadas)) {
+				for (OfertasAgrupadasLbk ofertaAgrupada : listaOfertasAgrupadas) {
+					if (!ofertaAgrupada.getAuditoria().isBorrado()) {
+						Oferta ofertaDependiente = ofertaAgrupada.getOfertaDependiente();
+						//Acumular pvb
+						pvb += ofertaDependiente.getImporteOferta();
+						//Acumular cco
+						ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaDependiente.getId());
+						if(!Checks.esNulo(eco) && Checks.esNulo(eco.getHonorarios())){
+							for ( GastosExpediente gex: eco.getHonorarios()) {
+								if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+									cco += gex.getImporteFinal() * gex.getImporteCalculo();
+								}
+							}
+						} else {
+							List<DtoGastoExpediente> honorarios = new ArrayList<DtoGastoExpediente>();
+							Activo activo =  ofertaDependiente.getActivoPrincipal();
+							String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
+							for (int i = 0; i < acciones.length; i++) {
+								honorarios.add(calculaHonorario(ofertaDependiente, acciones[i], activo));
+							}
+							for (DtoGastoExpediente gex: honorarios) {
+								if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+									cco += gex.getImporteFinal() * gex.getImporteCalculo();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	
+		//Acumular vta, vn, vr de las ofertas dependeintes
+		//A nievl de activos
+		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(ofertaAceptada.getClaseOferta()) && !Checks.esNulo(DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
+			List <OfertasAgrupadasLbk> listaOfertasAgrupadas = ofertaAceptada.getOfertasAgrupadas();
+			if(!Checks.estaVacio(listaOfertasAgrupadas)) {
+				//Recorrer las fertas dependientes de la principal
+				for (OfertasAgrupadasLbk ofertaAgrupada : listaOfertasAgrupadas) {
+					if (!ofertaAgrupada.getAuditoria().isBorrado()) {
+						ActivoAgrupacion activoAgrupacion = ofertaAgrupada.getOfertaDependiente().getAgrupacion();
+						//Si la oferta dependiente es de una agrupacion, recorrer todos los activos de la agrupacion
+						if (!Checks.esNulo(activoAgrupacion)) {
+							List<ActivoAgrupacionActivo> listaActivos = activoAgrupacion.getActivos();
+							if (!Checks.estaVacio(listaActivos)) {
+								for(ActivoAgrupacionActivo aga : listaActivos) {
+									Activo activo = aga.getActivo();
+									//Acumular vta
+									if(!Checks.estaVacio(activo.getTasacion())) {
+										vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+									}
+									List<ActivoValoraciones> listaValoraciones = activo.getValoracion();
+									//Acumular vn y vr
+									for (ActivoValoraciones valoracion : listaValoraciones) {
+										String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
+										if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+											vnc += valoracion.getImporte();
+										}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+											vr  += valoracion.getImporte();
+										}
+									}
+								}
+							}
+						//Si la oferta dependiente es de un activo solo
+						} else {
+							Activo activo = ofertaAgrupada.getOfertaDependiente().getActivoPrincipal();
+							//Acumular vta
+							if(!Checks.estaVacio(activo.getTasacion())) {
+								vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+							}
+							
+							//Acumular vn y vr
+							List<ActivoValoraciones> listaValoraciones = activo.getValoracion();
+							for (ActivoValoraciones valoracion : listaValoraciones) {
+								String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
+								if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+									vnc += valoracion.getImporte();
+								}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+									vr  += valoracion.getImporte();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		pvn = pvb - cco;
+		
+		listaImportesAcumulados.add(vta);
+		listaImportesAcumulados.add(pvb);
+		listaImportesAcumulados.add(cco);
+		listaImportesAcumulados.add(pvn);
+		listaImportesAcumulados.add(vnc);
+		listaImportesAcumulados.add(vr);
+		
+		return listaImportesAcumulados;
+	}
+	
+	@Override
+	public DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
+			
+		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
+
+		// Si son ofertas agrupadas el cálculo se hace del conjunto
+		if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) 
+					&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
+			return calculoComiteLiberbankOfertasDependientes(ofertaAceptada, gastosExpediente, false);
+			
+		// Si la oferta es individual o principal (aún no tiene dependientes) el cálculo se hace sobre si misma
+		}else {
+			if(!Checks.estaVacio(ofertaAceptada.getActivoPrincipal().getTasacion())) {
+				vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+			}
+			
+			pvb = ofertaAceptada.getImporteOferta();
+
+			// Cuando es una oferta que se está creando nos tienen que pasar los honorarios
+			if (!Checks.estaVacio(gastosExpediente)) {
+				for (GastosExpediente gex : gastosExpediente) {
+					cco += gex.getImporteFinal() * gex.getImporteCalculo();
+				}
+			// Cuando no nos pasan la lista de gastos es porque ya existe el expediente y lo recuperamos de ahí
+			}else {
+				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
+				if(!Checks.esNulo(eco.getHonorarios())){
+					for ( GastosExpediente gex: eco.getHonorarios()) {
+						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
+					}
+				}else {
+				
+					List<DtoGastoExpediente> honorarios = new ArrayList<DtoGastoExpediente>();
+					
+					Activo activo =  ofertaAceptada.getActivoPrincipal();
+					String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
+					for (int i = 0; i < acciones.length; i++) {
+						honorarios.add(calculaHonorario(ofertaAceptada, acciones[i], activo));
+					}
+					
+					for ( DtoGastoExpediente gex: honorarios) {
+						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
+					}
+				}
+			}
+			
+			pvn = pvb - cco;
+
+			List<ActivoValoraciones> valoraciones = ofertaAceptada.getActivoPrincipal().getValoracion();
+	
+			for (ActivoValoraciones valoracion : valoraciones) {
+				String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
+				if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+					vnc += valoracion.getImporte();
+				}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+					vr  += valoracion.getImporte();
+				}
+			}
+			
+			List<Double> importesAcumulados = getImportesAcumulados(ofertaAceptada, vta, pvb, cco, pvn, vnc, vr, nuevaOfertaAgrupadaLbk);
+			
+			vta = importesAcumulados.get(0);
+			pvb = importesAcumulados.get(1);
+			cco = importesAcumulados.get(2);
+			pvn = importesAcumulados.get(3);
+			vnc = importesAcumulados.get(4);
+			vr = importesAcumulados.get(5);
+			
+			// Asignación del comité
+			return devuelveComiteSancionador(vta, pvb, cco, pvn, vnc, vr);
+		}
+	}
+
+	@Override
+	public DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
+			
+		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
+
+		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+
+		// Cuando son ofertas agrupadas, las recorro
+		if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
+			return calculoComiteLiberbankOfertasDependientes(ofertaAceptada, gastosExpediente, true);
+		}else {
+			for(ActivoAgrupacionActivo aga : activos) {
+				Activo activo = aga.getActivo();
+				
+				if(!Checks.estaVacio(activo.getTasacion())) {
+					vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				}
+				
+				List<ActivoValoraciones> valoraciones = activo.getValoracion();
+				
+				for (ActivoValoraciones valoracion : valoraciones) {
+					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
+					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+						vnc += valoracion.getImporte();
+					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+						vr  += valoracion.getImporte();
+					}
+				}
+			}
+			
+			pvb += ofertaAceptada.getImporteOferta();
+
+			// Cuando es una oferta que se está creando no tienen que pasar los honorarios
+			if (!Checks.estaVacio(gastosExpediente)) {
+				for (GastosExpediente gex : gastosExpediente) {
+					cco += gex.getImporteFinal() * gex.getImporteCalculo();
+				}
+			// Cuando no nos pasan la lista de gastos es porque ya existe el expediente y lo recuperamos de ahí
+			}else {
+				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
+				if(!Checks.esNulo(eco) && !Checks.esNulo(eco.getHonorarios())){
+					for ( GastosExpediente gex: eco.getHonorarios()) {
+						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
+					}
+				}else {
+				
+					List<DtoGastoExpediente> honorarios = new ArrayList<DtoGastoExpediente>();
+					
+					Activo activo =  ofertaAceptada.getActivoPrincipal();
+					String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION,DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
+					for (int i = 0; i < acciones.length; i++) {
+						honorarios.add(calculaHonorario(ofertaAceptada, acciones[i], activo));
+					}
+					
+					for ( DtoGastoExpediente gex: honorarios) {
+						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
+							cco += gex.getImporteFinal() * gex.getImporteCalculo();
+						}
+					}
+				}
+	
+			}
+			
+		
+			
+			pvn = pvb - cco;
+			
+			List<Double> importesAcumulados = getImportesAcumulados(ofertaAceptada, vta, pvb, cco, pvn, vnc, vr, nuevaOfertaAgrupadaLbk);
+			
+			vta = importesAcumulados.get(0);
+			pvb = importesAcumulados.get(1);
+			cco = importesAcumulados.get(2);
+			pvn = importesAcumulados.get(3);
+			vnc = importesAcumulados.get(4);
+			vr = importesAcumulados.get(5);
+			
+			// Asignación del comité
+			return devuelveComiteSancionador(vta, pvb, cco, pvn, vnc, vr);
+		}
+	}
+	
+	private DDComiteSancion devuelveComiteSancionador (Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr) {
+		Double importeUmbral = 500000.0;
+		Double perdida = pvn-vnc;
+		Double perdidaValorAbsoluto = Math.abs(perdida);
+		Double porcentajevnc = vnc * 0.2;
+		Double umbralPerdida = 100000.0;
+		
+		if (vta== 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
+			return null;
+		} else {
+			Filter filtroGestion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_GESTION_INMOBILIARIA);
+			
+			Filter filtroGestionDir = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_DIRECTOR_GESTION_INMOBILIARIA);
+			
+			Filter filtroInversion= genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_INVERSION_INMOBILIARIA);
+			
+			Filter filtroDireccion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIRECCION);
+			
+			if(vta > (importeUmbral * 10)) {
+				return genericDao.get(DDComiteSancion.class, filtroDireccion);
+			}else if(vta <= (importeUmbral * 10) && vta >= importeUmbral) {
+				if(perdida > 0 || (perdidaValorAbsoluto <= umbralPerdida && perdidaValorAbsoluto <= porcentajevnc)) {
+					return genericDao.get(DDComiteSancion.class, filtroInversion);
+				}else if(perdidaValorAbsoluto > umbralPerdida || perdidaValorAbsoluto > porcentajevnc) {
+					return genericDao.get(DDComiteSancion.class, filtroDireccion);
+				}
+			}else if(vta < importeUmbral){
+				if(pvn < vr) {
+					if (perdida > 0 || perdidaValorAbsoluto <= (porcentajevnc / 2)) {
+						return genericDao.get(DDComiteSancion.class, filtroGestionDir);
+					}else if (perdidaValorAbsoluto <= umbralPerdida && perdidaValorAbsoluto > (porcentajevnc / 2)){
+						return genericDao.get(DDComiteSancion.class, filtroInversion);
+					}else if(perdidaValorAbsoluto > umbralPerdida && perdidaValorAbsoluto > (porcentajevnc / 2)) {
+						return genericDao.get(DDComiteSancion.class, filtroDireccion);
+					}
+				}else if(pvn >= vr) {
+					return genericDao.get(DDComiteSancion.class, filtroGestion);
+				}
+			}
+		}
+		return null;
+	}
+
+	public DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote) {
+
+		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
+		List<Oferta> listaOfertas = new ArrayList<Oferta>();
+		DDComiteSancion comiteSancionador = null;
+
+		// La oferta actual que estamos creando la suma por separado a la agrupación
+		
+		if (esLote) {
+			ActivoAgrupacion agrupacion = ofertaNueva.getAgrupacion();
+			List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+			
+			for(ActivoAgrupacionActivo aga : activos) {
+				Activo activo = aga.getActivo();
+				
+				if(!Checks.estaVacio(activo.getTasacion())) {
+					vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+				}
+
+				// Cálculo del VNC y VR
+				List<ActivoValoraciones> valoraciones = activo.getValoracion();
+				for (ActivoValoraciones valoracion : valoraciones) {
+					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
+					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+						vnc += valoracion.getImporte();
+					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+						vr  += valoracion.getImporte();
+					}
+				}
+			}
+		}else {
+			if(!Checks.estaVacio(ofertaNueva.getActivoPrincipal().getTasacion())) {
+				vta += ofertaNueva.getActivoPrincipal().getTasacion().get(ofertaNueva.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
+			}
+			List<ActivoValoraciones> valoraciones = ofertaNueva.getActivoPrincipal().getValoracion();
+			for (ActivoValoraciones valoracion : valoraciones) {
+				String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
+				if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+					vnc += valoracion.getImporte();
+				}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+					vr  += valoracion.getImporte();
+				}
+			}
+		}
+
+		pvb += ofertaNueva.getImporteOferta();
+		
+		// Cuando es una oferta que se está creando nos tienen que pasar los honorarios
+		if (!Checks.esNulo(gastosExpediente)) {
+			for (GastosExpediente gex : gastosExpediente) {
+				cco += gex.getImporteFinal() * gex.getImporteCalculo();
+			}
+		// Cuando no nos pasan la lista de gastos es porque ya existe el expediente y lo recuperamos de ahí
+		}else {
+			ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaNueva.getId());
+			for (GastosExpediente gex : eco.getHonorarios()) {
+				cco += gex.getImporteFinal() * gex.getImporteCalculo();
+			}
+		}
+
+		pvn += pvb - cco;
+			
+		
+		// Calculamos el comité sancionador en función a los datos sumados de todas las ofertas que forman parte de la agrupación
+		comiteSancionador = devuelveComiteSancionador(vta, pvb, cco, pvn, vnc, vr);
+		
+		// Recorremos todas las ofertas para ponerle el nuevo comité sancionador
+		for (Oferta oferta : listaOfertas) {
+			ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
+			if(!Checks.esNulo(expedienteComercial)) {
+				expedienteComercial.setComiteSancion(comiteSancionador);
+				expedienteComercial.setComitePropuesto(comiteSancionador);
+			}
+		}
+		
+		return comiteSancionador;
+	}
 
 	private void validacionesActivoOfertaLote(HashMap<String, String> errorsList, Activo activo) {
 		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class,
@@ -3469,22 +4300,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<DtoPropuestaAlqBankia> listaDto = expedienteComercialApi.getListaDtoPropuestaAlqBankiaByExpId(ecoId);
 		return listaDto;
 	}
-	
+
 	@Override
 	public boolean checkPedirDoc(Long idActivo, Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc) {
 		List<ClienteGDPR> clienteGDPR = null; Comprador comprador = null;
 		ClienteComercial clienteCom = null; ActivoAgrupacion agrupacion = null;
 		Activo activo = null; ExpedienteComercial expedienteCom = null;
 		boolean esCarteraInternacional = false;
-		
+
 		Filter filterComprador = null, filterCodigoTpoDoc = null;
 		if (!Checks.esNulo(dniComprador) && !Checks.esNulo(codtipoDoc)) {
 			filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", codtipoDoc);
-		
+
 			if ((!Checks.esNulo(idActivo) || !Checks.esNulo(idAgrupacion)) && Checks.esNulo(idExpediente)) {
 				filterComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento", dniComprador);
 				clienteGDPR = genericDao.getList(ClienteGDPR.class, filterComprador, filterCodigoTpoDoc);
-				
+
 				if (Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)) {
 					agrupacion = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
 					if(!Checks.esNulo(agrupacion.getActivoPrincipal())) {
@@ -3499,25 +4330,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				filterComprador = genericDao.createFilter(FilterType.EQUALS, "documento", dniComprador);
 				expedienteCom = expedienteComercialDao.get(idExpediente);
 				comprador = genericDao.get(Comprador.class, filterComprador, filterCodigoTpoDoc);
-				
+
 				if (!Checks.esNulo(expedienteCom)) {
 					activo = expedienteCom.getOferta().getActivoPrincipal();
 				}
 			}
 		}
-		
+
 		if (!Checks.estaVacio(clienteGDPR)) {
 			clienteCom = clienteGDPR.get(0).getCliente();
 		}
-		
+
 		//Se comprueba si es una cartera internacional.
-		if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
+		if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
 				|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
 				|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
 				|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())) {
 			esCarteraInternacional = true;
 		}
-		
+
 		//Si viene de oferta (Activo/Agrupacion) se comprueban los checks del Cliente Comercial.
 		// para saber si tiene el documento
 		// True = Tiene documento adjunto, por lo tanto NO hay que pedirlo.
@@ -3543,7 +4374,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				} else return false;
 			} else return false;
 		}
-		
+
 		return false;
 	}
 
@@ -3616,7 +4447,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					codtipoDoc);
 
 			List<ClienteGDPR> clientesGDPR = genericDao.getList(ClienteGDPR.class, filterComprador,filterCodigoTpoDoc);
-			
+
 			if(!clientesGDPR.isEmpty()) {
 				for(ClienteGDPR cl : clientesGDPR){
 					if(cl.getCliente() != null && !Checks.esNulo(cl.getCliente().getIdPersonaHaya())){
@@ -3627,12 +4458,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(clienteGDPR == null){
 					clienteGDPR = clientesGDPR.get(0);
 				}
-				
+
 			}
 		}
 		if(!Checks.esNulo(clienteGDPR)) {
 			clienteCom = clienteGDPR.getCliente();
-			
+
 			try {
 				if(!Checks.esNulo(clienteCom)) {
 					beanUtilNotNull.copyProperties(clienteCom,clienteComercialDto);
@@ -3658,7 +4489,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if(!Checks.esNulo(clienteCom.getTipoPersona())) {
 						clienteComercialDto.setTipoPersonaCodigo(clienteCom.getTipoPersona().getCodigo());
 						clienteComercialDto.setTipoPersonaDescripcion(clienteCom.getTipoPersona().getDescripcion());
-					}				
+					}
 					if(!Checks.esNulo(clienteCom.getTipoDocumento())) {
 						clienteComercialDto.setTipoDocumentoCodigo(clienteCom.getTipoDocumento().getCodigo());
 						clienteComercialDto.setTipoDocumentoDescripcion(clienteCom.getTipoDocumento().getDescripcion());
@@ -3681,28 +4512,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return clienteComercialDto;
 	}
-	
+
 	@Override
 	public void llamadaMaestroPersonas(Long idExpediente, String cartera) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		
+
 		Thread maestroPersona = new Thread( new MaestroDePersonas(idExpediente,usuarioLogado.getUsername(),cartera ));
 	   	maestroPersona.start();
 	}
-	
+
 	@Override
 	public void llamadaMaestroPersonas(String numDocCliente, String cartera) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		
+
 		Thread maestroPersona = new Thread( new MaestroDePersonas(numDocCliente, usuarioLogado.getUsername(), cartera));
 	   	maestroPersona.start();
 	}
 
-	private void validacionesLote(HashMap<String, String> errorsList, Activo activo, DDCartera cartera, 
-			DDSubcartera subcartera, ActivoPropietario propietario, Integer geolocalizacion) {		
-		if (activo.getCartera() != cartera 
+	private void validacionesLote(HashMap<String, String> errorsList, Activo activo, DDCartera cartera,
+			DDSubcartera subcartera, ActivoPropietario propietario, Integer geolocalizacion) {
+		if (activo.getCartera() != cartera
 				|| activo.getSubcartera() != subcartera
 				|| activo.getPropietarioPrincipal() != propietario
 				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {
@@ -3725,7 +4556,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	    return dtoOferta;
 	}
-	
+
 	public String getDestinoComercialActivo(Long idActivo, Long idAgrupacion, Long idExpediente) {
 		String destinoComercial = "";
 		if (!Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)) {
@@ -3741,28 +4572,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial exp = expedienteComercialApi.findOne(idExpediente);
 			destinoComercial = exp.getOferta().getActivoPrincipal().getActivoPublicacion().getTipoComercializacion().getDescripcion();
 		}
-		
+
 	return destinoComercial;
-		
+
 	}
-	
+
 	public boolean existeClienteOComprador(Long idActivo, Long idAgrupacion, Long idExpediente, String docCliente, String codtipoDoc) {
 		ClienteGDPR clienteGDPR = null; Comprador comprador = null;
-		
+
 		Filter filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", codtipoDoc);
 		Boolean existeCliOCom = false;
 		if(!Checks.esNulo(idActivo) || !Checks.esNulo(idAgrupacion)) {
-			clienteGDPR = genericDao.get(ClienteGDPR.class, 
+			clienteGDPR = genericDao.get(ClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente), filterCodigoTpoDoc);
 			if(!Checks.esNulo(clienteGDPR)) existeCliOCom = true;
 		} else if(!Checks.esNulo(idExpediente)) {
-			comprador = genericDao.get(Comprador.class, 
+			comprador = genericDao.get(Comprador.class,
 					genericDao.createFilter(FilterType.EQUALS, "documento", docCliente), filterCodigoTpoDoc);
 			if(!Checks.esNulo(comprador)) existeCliOCom = true;
 		}
 		return existeCliOCom;
 	}
-	
+
 	public boolean esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente) {
 		Boolean esCarteraInternacional = false;
 		String codCartera = null;
@@ -3778,7 +4609,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		} else {
 			codCartera = expedienteComercialApi.findOne(idExpediente).getOferta().getActivoPrincipal().getCartera().getCodigo();
 		}
-		
+
 		if(!Checks.esNulo(codCartera)) {
 			if(codCartera.equals(DDCartera.CODIGO_CARTERA_CERBERUS)
 					|| codCartera.equals(DDCartera.CODIGO_CARTERA_GIANTS)
@@ -3789,11 +4620,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				esCarteraInternacional = false;
 			}
 		}
-		
+
 	return esCarteraInternacional;
-		
+
 	}
-	
+
+	public Long getIdTareaByNumOfertaAndCodTarea(Long ofrNumOferta, String codTarea) {
+		Long idTarea =null;
+		List<Long> tareasTramite = activoTareaExternaDao.getTareasByIdOfertaCodigoTarea(ofrNumOferta,codTarea);
+        if(!Checks.esNulo(tareasTramite) && !tareasTramite.isEmpty()) {
+        	idTarea = tareasTramite.get(0);
+        }
+		return idTarea;
+	}
+
 	public void darDebajaAgrSiOfertaEsLoteCrm(Oferta oferta) {
 		if (OfertaApi.ORIGEN_WEBCOM.equals(oferta.getOrigen())) {
 			ActivoAgrupacion agr = oferta.getAgrupacion();
@@ -3805,5 +4645,384 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			}
 		}
+	}
+
+	@Override
+	public GestorEntidad getGestorEntidad(Oferta oferta) {
+		GestorActivo gestor = null;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", oferta.getGestorComercialPrescriptor());
+		gestor = genericDao.get(GestorActivo.class, filtro);
+ 		return gestor;
+	}
+
+	@Override
+	public Usuario calcularGestorComercialPrescriptorOferta(Oferta oferta) {
+
+			ActivoProveedor activoProveedor = oferta.getPrescriptor();
+			ProveedorGestorCajamar proveedorGestorCajamar = null;
+			boolean isPreescriptorTipoOficina;
+			boolean isTipoComercializarRetail;
+			boolean isComprobarMultipleActivos = false;
+
+			if(!DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				return null;
+			}
+
+			List<ActivoOferta> listaActivos=oferta.getActivosOferta();
+			List<GestorEntidad> listaGestoresActivosOferta = new ArrayList<GestorEntidad>();
+
+			if(!Checks.esNulo(listaActivos)
+					&& !Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo())
+					&& !Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar())) {
+				if(!Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo())
+						&& !Checks.esNulo(activoProveedor.getTipoProveedor().getCodigo())) {
+					isTipoComercializarRetail = DDTipoComercializar.CODIGO_RETAIL.equals(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo());
+					isPreescriptorTipoOficina = DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(activoProveedor.getTipoProveedor().getCodigo());
+
+					if(isTipoComercializarRetail) {
+						if(isPreescriptorTipoOficina) {
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoProveedor.id", activoProveedor.getId());
+							proveedorGestorCajamar = genericDao.get(ProveedorGestorCajamar.class, filtro);
+							if(!Checks.esNulo(proveedorGestorCajamar)
+									&& !Checks.esNulo(proveedorGestorCajamar.getUsuario())
+									&& !Checks.esNulo(proveedorGestorCajamar.getUsuario().getId())) {
+								return proveedorGestorCajamar.getUsuario();
+							}
+						}else {
+							isComprobarMultipleActivos = true;
+						}
+					} else {
+						isComprobarMultipleActivos = true;
+					}
+				}
+				else {
+					return null;
+				}
+			}
+
+			if(isComprobarMultipleActivos) {
+				for(ActivoOferta activoOferta: listaActivos) {
+					GestorEntidad gestorEntidad = gestorActivoApi.getGestorEntidadByActivoYTipo(activoOferta.getPrimaryKey().getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+					if(Checks.estaVacio(listaGestoresActivosOferta)) {
+						listaGestoresActivosOferta.add(gestorEntidad);
+					}else if(gestorEntidad.getUsuario().getId() != listaGestoresActivosOferta.get(0).getUsuario().getId()) {
+						return null;
+					}
+				}
+				if(!Checks.estaVacio(listaGestoresActivosOferta) && listaGestoresActivosOferta.size() == 1) {
+					return listaGestoresActivosOferta.get(0).getUsuario();
+				}
+			}
+			return null;
+		}
+
+	@Override
+	public Oferta getOfertaByIdExpediente(Long idExpediente) {
+		return genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente)).getOferta();
+	}
+
+	@Override
+	public Boolean esTareaFinalizada(ActivoTramite tramite, String codigoTarea) {
+
+		Boolean resultado = false;
+
+		if(!Checks.esNulo(codigoTarea) && !Checks.esNulo(tramite)) {
+
+			Filter filtroTRA = genericDao.createFilter(FilterType.EQUALS, "tramite", tramite);
+
+			List<TareaActivo> listaTareas = genericDao.getList(TareaActivo.class, filtroTRA);
+
+			if(!Checks.estaVacio(listaTareas)) {
+				for(TareaActivo tarea : listaTareas) {
+					if(codigoTarea.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						resultado = !Checks.esNulo(tarea.getTareaFinalizada()) ? tarea.getTareaFinalizada() : false;
+
+						if(!resultado || (resultado && T017.equals(tramite.getTipoTramite().getCodigo()))) break;
+					}
+				}
+			}
+		}
+
+		return resultado;
+	}
+
+	@Override
+	public boolean checkEsYubai(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			Activo activo = ofertaAceptada.getActivoPrincipal();
+			if (!Checks.esNulo(activo) && (!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera()))) {
+				return (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public DtoPage getListOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dto) {
+		
+		DtoPage ofertasAgrupadasPage;
+		
+		Oferta oferta = genericDao.get(Oferta.class,
+				genericDao.createFilter(FilterType.EQUALS, "numOferta",dto.getNumOfertaPrincipal()));
+		
+		if(!Checks.esNulo(oferta) && !Checks.estaVacio(oferta.getActivosOferta()) && 
+				DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())){
+			ofertasAgrupadasPage = vOfertasAgrupadasLbkDao.getListOfertasAgrupadasLbk(dto);
+		}else {
+			ofertasAgrupadasPage = new DtoPage(new ArrayList<VListadoOfertasAgrupadasLbk>(),0);
+		}
+			
+		return ofertasAgrupadasPage;
+	}
+	
+	@Override
+	public DtoPage getListActivosOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dto) {
+		
+		DtoPage ofertasAgrupadasPage;
+		
+		Oferta oferta = genericDao.get(Oferta.class,
+				genericDao.createFilter(FilterType.EQUALS, "numOferta",dto.getNumOfertaPrincipal()));
+		
+		if(!Checks.esNulo(oferta) && !Checks.estaVacio(oferta.getActivosOferta()) && 
+				DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())){
+			ofertasAgrupadasPage = vOfertasAgrupadasLbkDao.getListActivosOfertasAgrupadasLbk(dto);
+		}else {
+			ofertasAgrupadasPage = new DtoPage(new ArrayList<VListadoOfertasAgrupadasLbk>(),0);
+		}
+			
+		return ofertasAgrupadasPage;
+	}
+
+	@Override
+	public boolean isOfertaPrincipal(Oferta oferta) {
+		if(!Checks.esNulo(oferta) && DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) 
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo()) 
+				&& !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())){
+			return true;	
+		}
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ExcelReport generarExcelOfertasCES(DtoOfertasFilter dtoOfertasFilter) {
+		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
+		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
+		
+		List<VListOfertasCES> listaOfertas = (List<VListOfertasCES>) ofertaDao.getListOfertasCES(dtoOfertasFilter).getResults();
+		
+		ExcelReport report = new ListaOfertasCESExcelReport(listaOfertas);
+		return report;
+	}
+	
+	public void actualizaOfertasDependientes (Long nuevoId, Long ofertaDependiente) {
+		Oferta principal = getOfertaPrincipalById(ofertaDependiente);
+		List<OfertasAgrupadasLbk> ofertasAgrupadas = principal.getOfertasAgrupadas();
+		
+		for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
+			ofertasAgrupadasLbkDao.actualizaPrincipalId(nuevoId, lisOf.getOfertaDependiente().getId());
+		} 
+	}
+
+	public boolean isOfertaDependiente(Oferta oferta) {
+		if(!Checks.esNulo(oferta) && DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) 
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo()) 
+				&& !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())){
+				return true;	
+		}
+		return false;
+	}
+	
+	@Override
+	public List<Oferta> ofertasAgrupadasDependientes(Oferta oferta) {
+		List<Oferta> listaOfertas = new ArrayList<Oferta>();
+		if (!Checks.esNulo(oferta) && isOfertaPrincipal(oferta)) { 
+			Filter ofertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());
+			List<OfertasAgrupadasLbk> listaOfertasIndividuales = genericDao.getList(OfertasAgrupadasLbk.class, ofertaPrincipal);
+			if (!Checks.estaVacio(listaOfertasIndividuales)) {
+				for (OfertasAgrupadasLbk ofertaIndividual : listaOfertasIndividuales) {
+					if (!Checks.esNulo(ofertaIndividual)) {
+						listaOfertas.add(ofertaIndividual.getOfertaDependiente());
+					}
+				}
+			}
+		}
+		return listaOfertas;
+	}
+	
+	@Override
+	public Oferta tareaOferta(Long idTarea) {
+		Oferta oferta = null;
+		Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", idTarea);
+		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, filtroTarea);
+		if (!Checks.esNulo(tareaExterna)) {
+			TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
+			if (!Checks.esNulo(tareaActivo)) {
+				ActivoTramite tramite = tareaActivo.getTramite();
+				if (!Checks.esNulo(tramite)) {
+					Trabajo trabajo = tramite.getTrabajo();
+					if (!Checks.esNulo(trabajo)) {
+						Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+						ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+						if (!Checks.esNulo(expediente)) {
+							oferta = expediente.getOferta();
+						}
+					}
+				}
+			}
+		}
+		return oferta;
+	}
+	
+	@Override
+	public String isValidateOfertasDependientes(TareaExterna tareaExterna, Map<String, Map<String,String>> valores) {
+		Oferta oferta = tareaOferta(tareaExterna.getTareaPadre().getId());
+		if (!Checks.esNulo(oferta) && isOfertaPrincipal(oferta)) {
+			try {
+				return tareaActivoApi.validarTareaDependientes(tareaExterna, oferta, valores);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public boolean ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(Oferta ofertaDependiente, Oferta ofertaPrincipal) 
+	{
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", ofertaPrincipal.getId());	
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+		
+		// En esta lista insertaré todos los activos que pertenecen a las ofertas dependientes.
+		List<Activo> activosEnLaAgrupacion = new ArrayList<Activo>();		
+		for(OfertasAgrupadasLbk ogrLbk : ofertasAgrupadasLbk) {
+			List<ActivoOferta> actOfrDependList = ogrLbk.getOfertaDependiente().getActivosOferta();
+			for(ActivoOferta actOfr : actOfrDependList) {
+				activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+			}
+		}
+		// Tambien incluyo los activos relacionados con la oferta principal.
+		List<ActivoOferta> actOfrPrincList = ofertaPrincipal.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrPrincList) {
+			activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+		}
+		
+		List<ActivoOferta> actOfrNuevaDependList = ofertaDependiente.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrNuevaDependList) {
+			for(Activo act : activosEnLaAgrupacion) {
+				if(actOfr.getActivoId().equals(act.getId()))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean activoYaIncluidoEnOfertaAgrupadaLbk(Long idActivo, Oferta ofertaPrincipal) 
+	{
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", ofertaPrincipal.getId());	
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+		
+		// En esta lista insertaré todos los activos que pertenecen a las ofertas dependientes.
+		List<Activo> activosEnLaAgrupacion = new ArrayList<Activo>();		
+		for(OfertasAgrupadasLbk ogrLbk : ofertasAgrupadasLbk) {
+			List<ActivoOferta> actOfrDependList = ogrLbk.getOfertaDependiente().getActivosOferta();
+			for(ActivoOferta actOfr : actOfrDependList) {
+				activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+			}
+		}
+		// Tambien incluyo los activos relacionados con la oferta principal.
+		List<ActivoOferta> actOfrPrincList = ofertaPrincipal.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrPrincList) {
+			activosEnLaAgrupacion.add(actOfr.getPrimaryKey().getActivo());
+		}
+		
+		for(Activo act : activosEnLaAgrupacion) {
+			if(idActivo.equals(act.getId()))
+				return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean agrupacionConActivoYaIncluidoEnOfertaAgrupadaLbk(Long idAgrupacion, Oferta ofertaPrincipal) 
+	{
+		Filter filtroIdOferta = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", ofertaPrincipal.getId());	
+		Filter filtroBorradoOferta = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		List<OfertasAgrupadasLbk> ofertasAgrupadasLbk = genericDao.getList(OfertasAgrupadasLbk.class, filtroIdOferta, filtroBorradoOferta);
+		
+		// En esta lista insertaré todos los activos que pertenecen a las ofertas dependientes.
+		List<Activo> activosEnLaOfertaAgrupada = new ArrayList<Activo>();		
+		for(OfertasAgrupadasLbk ogrLbk : ofertasAgrupadasLbk) {
+			List<ActivoOferta> actOfrDependList = ogrLbk.getOfertaDependiente().getActivosOferta();
+			for(ActivoOferta actOfr : actOfrDependList) {
+				activosEnLaOfertaAgrupada.add(actOfr.getPrimaryKey().getActivo());
+			}
+		}
+		// Tambien incluyo los activos relacionados con la oferta principal.
+		List<ActivoOferta> actOfrPrincList = ofertaPrincipal.getActivosOferta();
+		for(ActivoOferta actOfr : actOfrPrincList) {
+			activosEnLaOfertaAgrupada.add(actOfr.getPrimaryKey().getActivo());
+		}
+		
+		Filter filtroIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion);	
+		Filter filtroBorradoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtroIdAgrupacion, filtroBorradoAgrupacion);
+		
+		List<Activo> activosEnAgrupacion = new ArrayList<Activo>();
+		
+		for (ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+			activosEnAgrupacion.add(aga.getActivo());
+		}
+		
+		for(Activo actOfr : activosEnLaOfertaAgrupada) {
+			for(Activo actAgr : activosEnAgrupacion)
+			{
+				if(actAgr.getId().equals(actOfr.getId()))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkTipoImpuesto(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(ofertaAceptada);
+			if (!Checks.esNulo(expediente)) {
+				CondicionanteExpediente condicionante = expediente.getCondicionante();
+				if (!Checks.esNulo(condicionante)) {
+					DDTiposImpuesto tipoImpuesto = condicionante.getTipoImpuesto();
+					if (!Checks.esNulo(tipoImpuesto)) {
+						if (!Checks.esNulo(tipoImpuesto.getCodigo())) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+	
+	@Override
+	public boolean checkReservaInformada(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			ExpedienteComercial expediente = expedienteComercialApi
+					.expedienteComercialPorOferta(ofertaAceptada.getId());
+			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
+				return true;
+			}
+
+		}
+		return false;
 	}
 }

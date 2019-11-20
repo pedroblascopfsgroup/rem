@@ -197,7 +197,7 @@ Ext.define('HreRem.view.common.TareaController', {
 				  me.getViewModel().set("textoAdvertenciaTarea", advertencia);
 			  }
 			});
-      },    
+		},
 
 		verBotonEnlaceTrabajo: function(window, invisible) {
 		

@@ -31,9 +31,11 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -89,6 +91,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 
+			//ActivoInfoRegistral infoRegistral = activo.getInfoRegistral();
+			
 			// Evalua si ha encontrado un registro de perimetro para el activo
 			// dado.
 			// En caso de que no exista, crea uno nuevo relacionado sin datos
@@ -108,6 +112,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			String tmpMotivoAplicaFormalizar = exc.dameCelda(fila, 11);
 			Integer tmpAplicaPublicar = getCheckValue(exc.dameCelda(fila, 12));
 			String tmpMotivoAplicaPublicar = exc.dameCelda(fila, 13);
+			String tmpEquipoGestion = exc.dameCelda(fila, 14);
 
 			perimetroActivo.setActivo(activo);
 			// Incluido en perimetro ---------------------------
@@ -251,7 +256,12 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 			if (!Checks.esNulo(tmpMotivoAplicaPublicar))
 				perimetroActivo.setMotivoAplicaPublicar(tmpMotivoAplicaPublicar);
-
+			
+			// Equipo de Gestion	
+			if (!Checks.esNulo(tmpEquipoGestion))
+				activo.setEquipoGestion((DDEquipoGestion) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEquipoGestion.class, tmpEquipoGestion.substring(0, 2)));
+			
 			// ---------------------------
 			// Persiste los datos, creando el registro de perimetro
 			// Todos los datos son de PerimetroActivo, a excepcion del tipo

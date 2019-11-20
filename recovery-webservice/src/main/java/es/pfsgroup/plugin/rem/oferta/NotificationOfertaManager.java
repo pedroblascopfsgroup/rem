@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -42,6 +43,17 @@ import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 @Service
 public class NotificationOfertaManager extends AbstractNotificatorService {
 
+	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
+	private static final String BUZON_REM = "buzonrem";
+	private static final String BUZON_PFS = "buzonpfs";
+	private static final String BUZON_OFR_APPLE = "buzonofrapple";
+	private static final String STR_MISSING_VALUE = "---";
+	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};
+		
+	private List<String> mailsPara 	= new ArrayList<String>();
+	private List<String> mailsCC 	= new ArrayList<String>();
+	private List<String> mailsSustituto	= new ArrayList<String>();
+	
 	@Autowired
 	private GenericAdapter genericAdapter;
 
@@ -56,16 +68,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	
 	@Autowired
 	private UsuarioRemApi usuarioRemApiImpl;
-	
-	private static final String STR_MISSING_VALUE = "---";
-	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};
-	
-	private static final String BUZON_REM = "buzonrem";
-	private static final String BUZON_PFS = "buzonpfs";
-		
-	private List<String> mailsPara 	= new ArrayList<String>();
-	private List<String> mailsCC 	= new ArrayList<String>();
-	
+
 	@Autowired
 	private UsuarioManager usuarioManager;
 
@@ -80,7 +83,11 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 		Usuario usuario = null;
 		Usuario supervisor= null;
+		String emailPrescriptor = null;
+		Usuario buzonOfertaApple = null;
 		Activo activo = oferta.getActivoPrincipal();
+		Usuario usuarioBackOffice = null;
+		List<String> mailsSustituto = null;
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) 
 		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
@@ -92,8 +99,12 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				supervisor= gestorActivoManager.getGestorByActivoYTipo(oferta.getAgrupacion().getActivos().get(0).getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 			}
 
-		} else {
+		} else if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())){
 			// por activo
+			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+			emailPrescriptor = oferta.getPrescriptor().getEmail();
+			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		} else {
 			if(!Checks.esNulo(activo)) {
 				usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 				supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
@@ -126,23 +137,61 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 
 			List<String> mailsPara 		= new ArrayList<String>();
-			List<String> mailsCC 		= new ArrayList<String>();
-			
-			if(oferta.getActivoPrincipal() != null){
+			List<String> mailsCC 		= new ArrayList<String>();	
+
+			if(activo != null){
 				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);	
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(usuarioBackOffice)){						
+						if(Checks.estaVacio(mailsSustituto)){
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+						}else {
+							mailsSustituto.clear();
+							mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);	
+						}						
+						if (!Checks.estaVacio(mailsSustituto)){
+							mailsPara.addAll(mailsSustituto);
+							mailsCC.add(usuarioBackOffice.getEmail());
+						}else{
+							mailsPara.add(usuarioBackOffice.getEmail());
+						}
+					}	
+				}
+			}
+
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);	
+
+			}
+			
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					|| (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))){
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, mailsPara, mailsCC, false);
+			}
+			
+			if(!Checks.esNulo(usuario)){		
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
+				if(!Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, true);
 				}
 			}
 			
-			if(!Checks.esNulo(usuario)){
-				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
-				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, true);
-			}
-			
-			
 			if(!Checks.esNulo(supervisor)){
 				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL, mailsPara, mailsCC, false);
+			}
+			
+			if(!Checks.esNulo(emailPrescriptor)) {
+				mailsPara.add(emailPrescriptor);
 			}
 			
 			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
@@ -159,6 +208,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			if (!Checks.esNulo(buzonPfs)) {
 				mailsPara.add(buzonPfs.getEmail());
+			}
+			if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				mailsPara.add(buzonOfertaApple.getEmail());
 			}
 
 			mailsCC.add(this.getCorreoFrom());
@@ -233,17 +285,15 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			} else {
 				genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 			}
-			
 		}
 	}
-	
 	
 	/**
 	 * Al proponer una oferta, 
 	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
 	 * 
 	 * @param tramite
-	 */
+	 **/
 	public void sendNotificationPropuestaOferta(Oferta oferta, FileItem file) {
 
 		Usuario usuario = null;
@@ -285,6 +335,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		
 		ActivoProveedor prescriptor = null;
 		ActivoProveedor custodio = null;
+		Usuario usuarioBackOffice = null;
+		List<String> mailsSustituto = new ArrayList<String>();
 		
 		for (String codigoGestor: DESTINATARIOS_CORREO_APROBACION) {
 			usuarioRemApiImpl.rellenaListaCorreos(activo, codigoGestor, mailsPara, mailsCC, false);		
@@ -302,6 +354,29 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		}
 		if(!Checks.esNulo(custodio) && !Checks.esNulo(custodio.getEmail())){
 			mailsPara.add(custodio.getEmail());
+		}
+
+		if(ofertaAceptada.getActivoPrincipal() != null){
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_GIANTS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_TANGO.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_GALEON.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_EGEO.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_HYT.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())){
+				usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+				if(!Checks.esNulo(usuarioBackOffice)){
+					mailsSustituto.clear();
+					mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+					if (!Checks.estaVacio(mailsSustituto)){
+						mailsPara.addAll(mailsSustituto);
+						mailsCC.add(usuarioBackOffice.getEmail());
+					}else{
+						mailsPara.add(usuarioBackOffice.getEmail());
+					}
+				}	
+			}
 		}
 		
 	}

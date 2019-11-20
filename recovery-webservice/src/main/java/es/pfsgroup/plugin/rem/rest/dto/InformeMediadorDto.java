@@ -72,10 +72,10 @@ public class InformeMediadorDto implements Serializable {
 	private Long idProveedorRemAnterior;
 
 	//Guarda idProveedorRem como mediador del activo
-//	@NotNull(groups = { Insert.class, Update.class })
-// 	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
-// 			Update.class })
-// 	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")
+	@NotNull(groups = { Insert.class, Update.class })
+ 	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
+ 			Update.class })
+ 	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")
 	private Long idProveedorRem;
 
 	@EntityDefinition(propertyName = "posibleInforme" ,transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
@@ -95,7 +95,7 @@ public class InformeMediadorDto implements Serializable {
 	private Date fechaUltimaVisita;
 
 	@NotNull(groups = Insert.class)
-	@Diccionary(clase = DDTipoVia.class, message = "El codTpoVivienda de activo no existe", groups = { Insert.class,
+	@Diccionary(clase = DDTipoVia.class, message = "El codTpoVia de activo no existe", groups = { Insert.class,
 			Update.class })
 	@EntityDefinition(propertyName = "tipoVia", classObj = DDTipoVia.class)
 	private String codTipoVia;

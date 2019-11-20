@@ -184,8 +184,29 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	},
     
 	onClickBotonGuardar: function(btn) {
-		var me = this;	
-		me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());				
+		var me = this;
+		var codCartera = me.getViewModel().get("agrupacionficha.codigoCartera"),
+	  	codSubcartera = me.getViewModel().get("agrupacionficha.codSubcartera"),
+	  	pisoPiloto = me.getViewModel().get("agrupacionficha.pisoPiloto"),
+	  	existePisoPiloto = me.lookupReference("existePiloto");
+
+		if ((CONST.CARTERA['THIRD'] === codCartera && codSubcartera === CONST.SUBCARTERA['YUBAI'])
+			&& CONST.COMBO_TRUE_FALSE['FALSE'] == existePisoPiloto.getValue() && pisoPiloto != null) {
+        		Ext.Msg.show({
+        			   title: HreRem.i18n('title.confirmar.eliminacion'),
+        			   msg: HreRem.i18n('title.confirmacion.guardar.cambios'), 
+        			   buttons: Ext.MessageBox.YESNO,
+        			   fn: function(buttonId) {
+        			        if (buttonId == 'yes') {
+        			        	me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());
+					            // Si la pestaña necesita botones de edición 
+        			        }
+        			   }
+    			});
+		} else{
+			me.onSaveFormularioCompletoForm(btn, btn.up('tabpanel').getActiveTab());
+		}
+						
 	},
 	
 	onClickBotonCancelar: function(btn) {
@@ -681,7 +702,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	window.close();
 	},
 
-	// Método que es llamado cuando se solicita exportar losa ctivos de la agrupación tipo 'lote comercial'.
+	// M�todo que es llamado cuando se solicita exportar losa ctivos de la agrupaci�n tipo 'lote comercial'.
     onClickExportarActivosLoteComercial: function() {
 	  	var me = this;
 	  	var config = {};
@@ -1005,8 +1026,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
+            combobox.setAllowblank(false);
         } else {
             combobox.setDisabled(true);
+            combobox.setAllowblank(true);
             combobox.clearValue();
         }
 
@@ -1143,6 +1166,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		textArea.setDisabled(true);
     	}
     },
+
     onClickActivoMatriz: function(){
 		var me = this;
 		var numActivo = me.getViewModel().get('agrupacionficha.activoMatriz');
@@ -1167,5 +1191,72 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		     }
     		 });    
 		}
-	}
+    },
+
+    onChangeComboComercializableConsPlano: function(combo){
+		var me = this;
+		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('existePiloto').setValue(false);
+			me.lookupReference('esVisitable').setValue(false);
+			me.lookupReference('pisoPiloto').setValue(null);
+		}
+	},
+	
+	onChangeComboExistePisoPiloto: function(combo){
+		var me = this;
+		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('esVisitable').setValue(false);
+			me.lookupReference('pisoPiloto').setValue(null);
+		}
+	},
+	
+	onChangeComboEsVisitable: function(combo){
+		var me = this;
+		if(CONST.COMBO_TRUE_FALSE['TRUE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('pisoPiloto').setAllowBlank(false);
+		}
+		if(CONST.COMBO_TRUE_FALSE['FALSE'] == combo.getSelection().get('codigo')) {
+			me.lookupReference('pisoPiloto').setValue(null);
+		}
+	},
+	
+	onInsertarAutorizacionTramOfertasAgrupacion: function(btn){
+		
+		var me = this;	
+		Ext.Msg.confirm(
+				HreRem.i18n("title.autorizar.tramitacion.ofertas"),
+				HreRem.i18n("msg.autorizar.tramitacion.activo.ofertas"),
+				function(boton){
+					if (boton == "yes"){
+				    	var url =  $AC.getRemoteUrl('agrupacion/insertarActAutoTram');
+				    	var parametros = btn.up("comercialagrupacion").getBindRecord().getData();
+				    	parametros.id = me.getViewModel().get("agrupacionficha.id");
+				
+				    	Ext.Ajax.request({
+				    		
+				    	     url: url,
+				    	     params: parametros,
+				
+				    	     success: function(response, opts) {
+				  
+				    	         if(Ext.decode(response.responseText).success == "false") {
+									me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
+									// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    	         }else{
+				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botoneditar]").setVisible(false);
+				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botonguardar]").setVisible(false);
+				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botoncancelar]").setVisible(false);
+				    	        	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	        	 //se fuerza el valor a true dado que desde java llega bien pero en algunas pocas lecturas Sencha sigue mostrando false (HREOS-8034)
+				    	        	 btn.up('agrupacionesdetallemain').getViewModel().set("agrupacionficha.tramitable", true);
+				    	        	 btn.up("comercialagrupacion").funcionRecargar();
+				    	         }
+				    	     },
+				    	     failure: function (a, operation, context) {
+				           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				           }
+				    	 });
+					}
+				});
+    }
 });

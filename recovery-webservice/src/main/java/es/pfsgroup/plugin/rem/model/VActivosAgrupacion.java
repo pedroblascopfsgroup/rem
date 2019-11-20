@@ -124,6 +124,10 @@ public class VActivosAgrupacion implements Serializable {
 
 	@Column(name = "ESTADO_TITULO")
 	private String estadoTitulo;
+	
+	@Column(name = "ES_PISO_PILOTO")
+	private Boolean esPisoPiloto;
+
 
 	public Long getId() {
 		return id;
@@ -403,5 +407,13 @@ public class VActivosAgrupacion implements Serializable {
 
 	public void setImporteAprobadoRenta(Double importeAprobadoRenta) {
 		this.importeAprobadoRenta = importeAprobadoRenta;
+	}
+
+	public Boolean getEsPisoPiloto() {
+		return esPisoPiloto;
+	}
+
+	public void setEsPisoPiloto(Boolean esPisoPiloto) {
+		this.esPisoPiloto = esPisoPiloto;
 	}
 }

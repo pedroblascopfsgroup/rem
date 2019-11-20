@@ -13,9 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -33,6 +37,9 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 
 	@Autowired
 	private GastosExpedienteDao gastosExpedienteDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@Override
 	public String managerName() {
@@ -153,4 +160,14 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+	public GastosExpediente getGastoExpedienteByActivoYAccion(Long idActivo, Long idExpediente, String accion) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "accionGastos.codigo", accion);
+		
+		return genericDao.get(GastosExpediente.class, filtro, filtro2, filtro3);	
+	}
 }

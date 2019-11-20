@@ -61,15 +61,17 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
 	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
+	private static final String CODIGO_T017_DEFINICION_OFERTA = "T017_DefinicionOferta";
 	//private static final String FECHA_ENVIO_COMITE = "fechaEnvio";
 	private static final String COMBO_CONFLICTO = "comboConflicto";
 	private static final String COMBO_RIESGO = "comboRiesgo";
 	private static final String COMBO_COMITE_SUPERIOR = "comiteSuperior";
 	private static final String CAMPO_COMITE = "comite";
+	private static final String T017 = "T017";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
+	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		/*
 		 * Si tiene atribuciones guardamos la fecha de aceptación de la tarea
 		 * como fecha de sanción, en caso contrario, la fecha de sanción será la
@@ -78,8 +80,26 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi
 				.expedienteComercialPorOferta(ofertaAceptada.getId());
+		/*Integer reservaNecesaria = 0;
+		
+		if(ofertaApi.esOfertaPrincipal(ofertaAceptada)) {
+			//recorremos la lista de dependientes
+				//pillamos la tarea y la avanzamos
+			if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
+
+				reservaNecesaria = expediente.getCondicionante().getSolicitaReserva();
+			}
+			
+			
+			for ofertaDependiente
+			expediente.getCondiciona
+		}*/
+		
+		String tipoTramite = tramite.getTipoTramite().getCodigo();
+		
 		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(expediente)) {	
-			if (ofertaApi.checkAtribuciones(tramite.getTrabajo())) {
+			//Si tiene atribuciones y no es T017 podra entrar (aunque el comité de T017 no deberia entrar de por si)
+			if (ofertaApi.checkAtribuciones(tramite.getTrabajo()) && !T017.equals(tipoTramite)) {
 				List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 				for (ActivoOferta activoOferta : listActivosOferta) {
 					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
@@ -109,14 +129,17 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 				for (Oferta oferta : listaOfertas) {
 					if (!oferta.getId().equals(ofertaAceptada.getId())
-							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo()) && !ofertaApi.isOfertaPrincipal(oferta) && !ofertaApi.isOfertaDependiente(oferta)) {
 						ofertaApi.congelarOferta(oferta);
 					}
 				}
 
 				// Se comprueba si cada activo tiene KO de admisión o de gestión
 				// y se envía una notificación
-				notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
+				if(!expediente.getComiteSancion().getCodigo().equals(DDComiteSancion.CODIGO_APPLE_CERBERUS)){
+
+					notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
+				}
 			} else {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.PTE_SANCION);
@@ -139,7 +162,12 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 			
 			boolean aplicaSuperior = false;
 			DDComiteSancion comite = null;
-			for (TareaExternaValor valor : valores) {			
+			for (TareaExternaValor valor : valores) {		
+				if(expedienteComercialApi.esApple(valor.getTareaExterna())){
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANALISIS_PM);
+					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setEstado(estado);
+				}	
 				if (COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					if (DDSiNo.SI.equals(valor.getValor())) {
 						expediente.setRiesgoReputacional(1);
@@ -186,10 +214,13 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setComiteSancion(comite);
 			}
 		}
+
+		
+		
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[] { CODIGO_T013_DEFINICION_OFERTA };
+		return new String[] { CODIGO_T013_DEFINICION_OFERTA , CODIGO_T017_DEFINICION_OFERTA };
 	}
 
 	public String[] getKeys() {

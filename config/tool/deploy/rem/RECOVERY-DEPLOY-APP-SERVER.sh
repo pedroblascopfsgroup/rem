@@ -22,8 +22,12 @@ if [ "$1" == "val03" ] ; then
     BASE_DIR=/home/map017
 fi
 
+if [ "$1" == "val02" ] ; then
+    BASE_DIR=/home/map019
+fi
+
 if [ "$1" == "val04" ] ; then
-    BASE_DIR=/home/map019	
+    BASE_DIR=/home/map027   
 fi
 
 if [ "$1" == "val05" ] ; then

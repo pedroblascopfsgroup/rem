@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
+import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -52,9 +54,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.model.DestinatariosRest;
 import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
-import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApiImpl;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService
@@ -62,6 +64,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	private static final String STR_MISSING_VALUE = "---";
 	private final Log logger = LogFactory.getLog(getClass());
+	SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 
 	private static final String GESTOR_PRESCRIPTOR = "prescriptor";
 	private static final String GESTOR_MEDIADOR = "mediador";
@@ -80,8 +83,22 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_BACKOFFICE_SUS = "gestor-backoffice-sustituto";
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
 	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "gestor-comercial-backoffice-inmobiliario";
+	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS = "gestor-comercial-backoffice-inmobiliario-sustituto";
+	
+	//Variables de buzones	
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_PFS = "buzonpfs";
+	private static final String BUZON_FDV = "buzonfdv";
+	private static final String BUZON_OFR_APPLE = "buzonofrapple";
+	private static final String BUZON_FOR_APPLE = "buzonforapple";
+	private static final String BUZON_CES_APPLE = "buzoncesapple";
+	
+	//Variables de tareas
+	private static final String CODIGO_T017_ANALISIS_PM = "T017_AnalisisPM";
+	private static final String CODIGO_T017_RESOLUCION_CES = "T017_ResolucionCES";
+	private static final String CODIGO_T017_ADVISORY_NOTE = "T017_AdvisoryNote";
+	private static final String CODIGO_T017_RECOMENDACION_CES = "T017_RecomendCES";
+	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
 
 	@Resource
 	private Properties appProperties;
@@ -120,12 +137,24 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	public final void notificator(ActivoTramite tramite) {
 
 	}
+	//genera notificacion llegada
+	public void generaNotificacionLlegadaDesdeUpdater(ActivoTramite tramite, boolean correoLlegadaTarea, String codTareaActual) {
+		generaNotificacion(tramite, false, false, correoLlegadaTarea, codTareaActual);
+	}
 
-	protected void generaNotificacion(ActivoTramite tramite, boolean permieRechazar,
-			boolean permiteNotificarAprobacion) {
+	protected void generaNotificacion(ActivoTramite tramite, boolean permiteRechazar,
+			boolean permiteNotificarAprobacion, boolean correoLlegadaTarea, String codTareaActual) {
 
 		if (tramite.getActivo() != null && tramite.getTrabajo() != null) {
-			sendNotification(tramite, permieRechazar, getExpComercial(tramite), permiteNotificarAprobacion);
+			sendNotification(tramite, permiteRechazar, getExpComercial(tramite).getOferta(), permiteNotificarAprobacion, correoLlegadaTarea, codTareaActual);
+		}
+
+	}
+	
+	protected void generaNotificacionReserva(ActivoTramite tramite, Date fechaFirma) {
+
+		if (tramite.getActivo() != null && tramite.getTrabajo() != null) {
+			sendNotificationReserva(tramite, getExpComercial(tramite), fechaFirma);
 		}
 
 	}
@@ -145,22 +174,27 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		return expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
 	}
 
-	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, ExpedienteComercial expediente,
-			boolean permiteNotificarAprobacion) {
+	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Oferta oferta,
+			boolean permiteNotificarAprobacion, boolean correoLlegadaTarea, String codTareaActual) {
 
 		ArrayList<String> destinatarios = new ArrayList<String>();
 
 		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
-		Oferta oferta = null;
-		if (expediente != null) {
-			oferta = expediente.getOferta();
-		}
-
+		Usuario buzonfdv = usuarioManager.getByUsername(BUZON_FDV);
+		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		Usuario buzonFormApple = usuarioManager.getByUsername(BUZON_FOR_APPLE);
+		Usuario usuarioBackOffice = null;
+		Usuario supervisorComercial = null;
+		ActivoProveedor proveedor = oferta.getPrescriptor();
+		String codProveedor = null;
+		
 		if (!Checks.esNulo(oferta)) {
+			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
 			Activo activo = oferta.getActivoPrincipal();
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
-					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROBACIÓN
+					&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+							|| DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA.equals(expediente.getEstado().getCodigo()))) { // APROBACIÓN
 
 				destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
 
@@ -173,6 +207,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					if (oferta.getPrescriptor() != null && oferta.getPrescriptor().getEmail() != null) {
 						destinatarios.add(oferta.getPrescriptor().getEmail());
 					}
+				}else if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+					if (oferta.getPrescriptor() != null && oferta.getPrescriptor().getEmail() != null) {
+						destinatarios.add(oferta.getPrescriptor().getEmail());
+					}
 				}
 
 				if (!Checks.esNulo(buzonRem)) {
@@ -180,6 +218,46 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 				if (!Checks.esNulo(buzonPfs)) {
 					destinatarios.add(buzonPfs.getEmail());
+				}
+				
+				if(!Checks.esNulo(oferta.getPrescriptor())) {
+					proveedor = oferta.getPrescriptor();
+					if(!Checks.esNulo(proveedor.getTipoProveedor())) {
+						if(!Checks.esNulo(proveedor.getTipoProveedor().getCodigo())) {
+							codProveedor = proveedor.getTipoProveedor().getCodigo();
+						}
+					}
+				}
+				if (!Checks.esNulo(buzonfdv) && DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(codProveedor)) {
+					destinatarios.add(buzonfdv.getEmail());
+				}
+				if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+					destinatarios.add(buzonOfertaApple.getEmail());
+				}
+				if(!Checks.esNulo(buzonFormApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+					destinatarios.add(buzonFormApple.getEmail());
+				}
+
+				if(oferta.getActivoPrincipal() != null){
+					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+							|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+						usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+						if(!Checks.esNulo(usuarioBackOffice)){
+							destinatarios.add(usuarioBackOffice.getEmail());
+						}	
+					}
+				}
+				
+				supervisorComercial = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+				
+				if(!Checks.esNulo(supervisorComercial)) {
+					destinatarios.add(supervisorComercial.getEmail());
 				}
 
 				this.enviaNotificacionAceptar(tramite, oferta, expediente, destinatarios.toArray(new String[] {}));
@@ -188,21 +266,28 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					&& DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) { // RECHAZO
 				String prescriptor = getPrescriptor(activo, oferta);
 				String gestorComercial = getGestorComercial(activo, oferta);
+				Usuario gestorBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 				if (!Checks.esNulo(prescriptor)) {
 					destinatarios.add(prescriptor);
 				}
+				
+				if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+					String gestorFormalizacion = null;
+					if (ofertaApi.checkReserva(oferta)) {
+						gestorFormalizacion = getGestorFormalizacion(activo, oferta, expediente);
+					}
 
-				String gestorFormalizacion = null;
-				if (ofertaApi.checkReserva(oferta)) {
-					gestorFormalizacion = getGestorFormalizacion(activo, oferta, expediente);
-				}
-
+					if (!Checks.esNulo(gestorFormalizacion)) {
+						destinatarios.add(gestorFormalizacion);
+					}
+				}	
+				
 				if (!Checks.esNulo(gestorComercial)) {
 					destinatarios.add(gestorComercial);
 				}
-
-				if (!Checks.esNulo(gestorFormalizacion)) {
-					destinatarios.add(gestorFormalizacion);
+				
+				if(!Checks.esNulo(gestorBackOffice) && !Checks.esNulo(gestorBackOffice.getEmail())) {
+					destinatarios.add(gestorBackOffice.getEmail());
 				}
 
 				if (!Checks.esNulo(buzonRem)) {
@@ -211,10 +296,67 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				if (!Checks.esNulo(buzonPfs)) {
 					destinatarios.add(buzonPfs.getEmail());
 				}
+				if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+					destinatarios.add(buzonOfertaApple.getEmail());
+				}
+
+				if(oferta.getActivoPrincipal() != null){
+					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+							|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+						usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+						if(!Checks.esNulo(usuarioBackOffice)){
+							destinatarios.add(usuarioBackOffice.getEmail());
+						}	
+					}
+				}
 
 				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));
 			}
+			
+			//Si se pide notificacion de entrada a la siguiente tarea, se monta en el siguiente método
+			if(!Checks.esNulo(correoLlegadaTarea) && correoLlegadaTarea && !Checks.esNulo(codTareaActual)) {
+				enviaNotificacionLlegadaTarea(tramite, codTareaActual, activo, oferta);
+			}
 		}
+	}
+	
+	private void sendNotificationReserva(ActivoTramite tramite, ExpedienteComercial expediente, Date fechaFirma) {		
+		String asunto = null, cuerpo = null;
+		
+		Oferta oferta = expediente.getOferta();
+		
+		ArrayList<String> destinatarios = getDestinatariosNotificacion(oferta.getActivoPrincipal(), oferta, expediente);
+		
+		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		
+		asunto = "Notificación de reserva de la oferta " + oferta.getNumOferta();
+		
+		cuerpo = "La oferta " + oferta.getNumOferta() + " ha sido reservada a fecha de " + formato.format(fechaFirma);
+		
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
+		dtoSendNotificator.setTitulo(asunto);
+
+		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
+		
+		if (!Checks.esNulo(buzonRem)) {
+			destinatarios.add(buzonRem.getEmail());
+		}
+		if (!Checks.esNulo(buzonPfs)) {
+			destinatarios.add(buzonPfs.getEmail());
+		}
+		if(!Checks.esNulo(buzonOfertaApple)) {
+			destinatarios.add(buzonOfertaApple.getEmail());
+		}
+
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, false, oferta, destinatarios.toArray(new String[] {}));
 	}
 
 	protected void generaNotificacionSinTramite(Long idOferta) {
@@ -228,8 +370,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		// como si viniera de un tramite
 		ActivoTramite tramiteSimulado = new ActivoTramite();
 		tramiteSimulado.setActivo(activo);
-		ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(idOferta);
-		sendNotification(tramiteSimulado, true, eco, true);
+		
+		sendNotification(tramiteSimulado, true, oferta, true, false, null);
 	}
 
 	private String getPrescriptor(Activo activo, Oferta ofertaAceptada) {
@@ -278,10 +420,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())
-					|| (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) && 
-							DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
-				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+					|| DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS));
 			}
 
 			if (formalizacion) {
@@ -293,14 +433,25 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial,
 					GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS,
-					GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+					GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS));
 			if (formalizacion) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 				clavesGestores.addAll(Arrays.asList(GESTOR_GESTORIA_FASE_3, GESTOR_GESTORIA_FASE_3_SUS));
 			}
+		} else if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+			clavesGestores.addAll(Arrays.asList(claveGestorComercial, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, GESTOR_GESTORIA_FASE_3));
 		}
 		clavesGestores.add(GESTOR_FORMALIZACION);
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getSubcartera()) && !DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+			clavesGestores.add(SUPERVISOR_COMERCIAL);
+		
+		} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+			clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+		}
+
+		clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION));
 		clavesGestores.add(SUPERVISOR_COMERCIAL);
+
 		return clavesGestores.toArray(new String[] {});
 	}
 
@@ -521,6 +672,23 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				addMail(s, gestores.put(s, extractEmail(
 						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM"))),
 						gestores);
+				
+				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id",
+						gesBackInmobiliario.getId());
+				List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
+				if (!Checks.esNulo(sgsList)) {
+					for (GestorSustituto sgs : sgsList) {
+						if (!Checks.esNulo(sgs)) {
+							if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date())
+									&& !Checks.esNulo(sgs.getFechaInicio())
+									&& (sgs.getFechaInicio().before(new Date())
+											|| sgs.getFechaInicio().equals(new Date()))) {
+								addMail(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS, extractEmail(sgs.getUsuarioGestorSustituto()),
+										gestores);
+							}
+						}
+					}
+				}
 			} else if (SUPERVISOR_COMERCIAL.equals(s)) {
 				Usuario sComercial = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente,
 						"SCOM");
@@ -745,6 +913,56 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, false, oferta, destinatarios);
 	}
+	
+	private void enviaNotificacionLlegadaTarea(ActivoTramite tramite, String codTareaActual, Activo activo, Oferta oferta) {
+		String asunto = null, cuerpo = null;
+		
+		ArrayList<String> destinatarios = new ArrayList<String>();
+		
+		String tareaAPasar = CODIGO_T017_ANALISIS_PM.equals(codTareaActual) ? "Resolución CES" 
+				: CODIGO_T017_ADVISORY_NOTE.equals(codTareaActual) ? "Recomendación CES"
+				: CODIGO_T017_RECOMENDACION_CES.equals(codTareaActual) ? "Resolución Promontoria Manzana"
+				: "";
+		
+		asunto = "La oferta " + oferta.getNumOferta() + " ha llegado a la tarea " + tareaAPasar;
+		
+		cuerpo = asunto + " en REM.";
+		
+		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
+		dtoSendNotificator.setTitulo(asunto);
+
+		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
+		
+		String buzon = (CODIGO_T017_ANALISIS_PM.equals(codTareaActual) || CODIGO_T017_ADVISORY_NOTE.equals(codTareaActual)) ? BUZON_CES_APPLE : null;
+		
+		if(!Checks.esNulo(buzon)) {
+			Usuario buzonces = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_CES_APPLE));
+			if(!Checks.esNulo(buzon)) {
+				destinatarios.add(buzonces.getEmail());
+			}
+		}else{
+			List<GrupoUsuario> grupoManzana = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "grupo.username", GrupoUsuario.GRUPO_MANZANA));
+			
+			for(GrupoUsuario usuario: grupoManzana) {
+				if(!Checks.esNulo(usuario)) {
+					destinatarios.add(usuario.getUsuario().getEmail());
+				}
+			}
+			
+		}
+		
+		Usuario buzonpfs = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_PFS));
+		Usuario buzonrem = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_REM));
+		
+		if(!Checks.esNulo(buzonpfs)) {
+			destinatarios.add(buzonpfs.getEmail());
+		}
+		if(!Checks.esNulo(buzonrem)) {
+			destinatarios.add(buzonrem.getEmail());
+		}
+		
+		enviaNotificacionGenerico(tramite.getActivo(), asunto, cuerpoCorreo, false, oferta, destinatarios.toArray(new String[] {}));
+	}
 
 	private void enviaNotificacionGenerico(Activo activo, String asunto, String cuerpoCorreo,
 			boolean adjuntaInstrucciones, Oferta oferta, String... destinatarios) {
@@ -828,14 +1046,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
 				}
-
+				// ADJUNTOS SI ES CERBERUS APPLE
 			} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)
 					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
-				f1 = FileItemUtils.fromResource("docs/Vfinal_instrucciones_reserva_y_formalizacion_APPLE.pdf");
-				if (f1 != null) {
-					adjuntos.add(createAdjunto(f1, "Vfinal_instrucciones_reserva_y_formalizacion_APPLE.pdf"));
+				f2 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_APPLE.docx");
+				if ( f2 != null ) {
+					adjuntos.add(createAdjunto(f2, "instrucciones_reserva_y_formalizacion_APPLE.docx"));
 				}
-
 			}
 		}
 		List<String> mailsPara = new ArrayList<String>();

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=RLB
---## FECHA_CREACION=20190702
+--## FECHA_CREACION=20190909
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4606
+--## INCIDENCIA_LINK=REMVIP-5203
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -31,6 +31,7 @@
 --##        0.18 David Gonzalez - HREOS-6184 - Ajustes joins
 --##        0.19 Adrián Molina - REMVIP-4259 - Se añade la columna del combo otros
 --##        0.20 GUILLEM REY - REMVIP-4606 - Discleimer "Ocupado con título" para Activos Matrices
+--##        0.21 Remus Ovidiu - REMVIP-5203 - Quitamos activos Bankia del calculo de posesion por fecha de posesion, ya que estos se calculan por situacion juridica
 --##########################################
 --*/
 
@@ -96,7 +97,7 @@ AS
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) 
                     THEN 1 
                     ELSE 
-						CASE WHEN (sps1.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2) 
+						CASE WHEN (sps1.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2 and act.dd_cra_id <> 21) 
 							THEN 1 
 							ELSE 0 
 						END 
@@ -191,7 +192,22 @@ AS
 
 	EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO REMWS';*/
 
+
+  COMMIT;
+
+  
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;   
+
 END;
+
 /
 
 EXIT;

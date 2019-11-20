@@ -1426,6 +1426,29 @@
 					</senchaResources>
 				</configuration>
 			</plugin>
+		    <plugin>
+		      <artifactId>maven-antrun-plugin</artifactId>
+		      <version>1.4</version>
+		      <executions>
+		        <execution>
+		          <id>copy</id>
+		          <phase>package</phase>
+		          <configuration>
+		            <tasks>
+		              <copy file="../config/hooks/pre-commit" tofile="../.git/hooks/pre-commit"/>
+		              <chmod file="../.git/hooks/pre-commit" perm="+x"/>
+		              <copy file="../config/hooks/commit-msg" tofile="../.git/hooks/commit-msg"/>
+		              <chmod file="../.git/hooks/commit-msg" perm="+x"/>
+		              <copy file="../config/hooks/prepare-commit-msg" tofile="../.git/hooks/prepare-commit-msg"/>
+		              <chmod file="../.git/hooks/prepare-commit-msg" perm="+x"/>
+		            </tasks>
+		          </configuration>
+		          <goals>
+		            <goal>run</goal>
+		          </goals>
+		        </execution> 
+		      </executions>
+		    </plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -1516,7 +1539,10 @@
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-rem-online</artifactId>
 				</dependency>
-
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>rem-logs</artifactId>
+				</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-webservice</artifactId>
@@ -1603,7 +1629,10 @@
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-rem-online</artifactId>
 				</dependency>
-
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>rem-logs</artifactId>
+				</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-webservice</artifactId>

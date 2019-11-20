@@ -42,7 +42,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
 		printInfoNode("Sale nodo", executionContext);
-
+		
 		// Llamamos al nodo genérico de transición
 		if (delegateTransitionClass instanceof ActivoJBPMLeaveEventHandler) {
 			((ActivoJBPMLeaveEventHandler) delegateTransitionClass).onLeave(executionContext);
@@ -58,7 +58,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 				if (isDecisionNode(executionContext)) {
 					String nombreDecision = getNombreNodo(executionContext) + "Decision";
 					setVariable(nombreDecision, getDecision(executionContext), executionContext);
-					logger.debug("\tDecisión de la tarea: " + getVariable(nombreDecision, executionContext));
+					logger.error("\tDecisión de la tarea: " + getVariable(nombreDecision, executionContext));
 				}
 				
 				this.borraTimersTarea(getTareaExterna(executionContext).getId());

@@ -54,7 +54,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 
     initComponent: function () {
         var me = this;
-        
         var estadoRenderer =  function(condicionado) {
         	var src = '',
         	alt = '',
@@ -223,8 +222,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 					            }
 				        	}
 				 ]
-    		},  		
-		    {
+    		},
+    		{
 	            dataIndex: 'numActivo',
 	            text: HreRem.i18n('header.numero.activo.haya'),
 	            flex: 0.6,
@@ -403,7 +402,30 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		            text: HreRem.i18n('header.listaActivos.GENCAT'),
 		            flex: 0.5,
 		            sortable: false
-	        }
+	        },{
+		        xtype: 'actioncolumn',
+		        reference: 'esPisoPiloto',
+		        bind: {
+		        	hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}' // Agrupación Third Party - Yubai
+		        },
+		        flex: 1,
+		        width: 30,
+		        text: HreRem.i18n('header.pisoPiloto'),
+				hideable: false,
+				items: [
+				        	{ // Check si es piso piloto
+					            getClass: function(v, meta, rec) {
+					            	if (rec.get('esPisoPiloto') != 1) {
+					                	this.items[0].handler = 'onMarcarPrincipalClick';
+					                    return 'fa fa-check';
+					                } else {
+			            				this.items[0].handler = 'onMarcarPrincipalClick';
+					                    return 'fa fa-check green-color';
+					                }
+					            }
+				        	}
+				 ]
+    		}
         ];
 
         me.saveSuccessFn = function() {

@@ -1,0 +1,200 @@
+--/*
+--###########################################
+--## AUTOR=VIOREL REMUS OVIDIU
+--## FECHA_CREACION=20190828
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-5902
+--## PRODUCTO=NO
+--## 
+--## Finalidad: UPDATEAR AUX USUARIOS Y USU_USUARIOS
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--###########################################
+----*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+  V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+  V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+  ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+  V_USUARIO VARCHAR2(100 CHAR) := 'REMVIP-5902';
+  
+  TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+  TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+	        T_TIPO_DATA('A82838350','---------.1'),
+		T_TIPO_DATA('B97279012','---------.2'),
+		T_TIPO_DATA('A79252219','---------.3'),
+		T_TIPO_DATA('B54448097','---------.4'),
+		T_TIPO_DATA('B97600001','---------.5'),
+		T_TIPO_DATA('A28346054','---------.6'),
+		T_TIPO_DATA('B97518138','---------.7'),
+		T_TIPO_DATA('B86546900','---------.8'),
+		T_TIPO_DATA('B85097962','---------.9'),
+		T_TIPO_DATA('42793075B','---------.10'),
+		T_TIPO_DATA('B95299947','---------.11'),
+		T_TIPO_DATA('A80884372','---------.12'),
+		T_TIPO_DATA('B66899261','---------.13'),
+		T_TIPO_DATA('A78601945','---------.14'),
+		T_TIPO_DATA('B05201249','---------.15'),
+		T_TIPO_DATA('07214799K','---------.16'),
+		T_TIPO_DATA('E83658567','---------.17'),
+		T_TIPO_DATA('A84259027','---------.18'),
+		T_TIPO_DATA('25108836N','---------.19'),
+		T_TIPO_DATA('E84026277','---------.20'),
+		T_TIPO_DATA('B82802075','---------.21'),
+		T_TIPO_DATA('A78798998','---------.22'),
+		T_TIPO_DATA('B35828995','---------.23'),
+		T_TIPO_DATA('B91236398','---------.24'),
+		T_TIPO_DATA('B96565981','---------.25'),
+		T_TIPO_DATA('B12640637','---------.26'),
+		T_TIPO_DATA('B98350077','---------.27'),
+		T_TIPO_DATA('B08658601','---------.28'),
+		T_TIPO_DATA('A48027056','---------.29'),
+		T_TIPO_DATA('A83263772','---------.30'),
+		T_TIPO_DATA('A81948077','---------.31'),
+		T_TIPO_DATA('B96836739','---------.32')
+	); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
+	V_MSQL := '
+    	UPDATE '||V_ESQUEMA||'.AUX_USUARIOS_NUEVO_ANTIGUO T1
+    	SET T1.USU_ID = NULL';
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('	[INFO]: '||SQL%ROWCOUNT||' USU_ID BORRADOS EN TABLA AUXILIAR');
+
+    DBMS_OUTPUT.PUT_LINE('	[INFO]: ACTUALIZAR AUX USUARIOS');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    
+        --Comprobamos el dato a insertar
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.AUX_USUARIOS_NUEVO_ANTIGUO WHERE USERNAME_ACTUAL = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;  
+        
+        IF V_NUM_TABLAS > 0 THEN		
+			
+			V_MSQL := '
+				UPDATE '||V_ESQUEMA||'.AUX_USUARIOS_NUEVO_ANTIGUO
+				SET USERNAME_DEFINITIVO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+				WHERE USERNAME_ACTUAL = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';			
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('	[INFO]: ACTUALIZADO CORRECTAMENTE EL USUARIO '||TRIM(V_TMP_TIPO_DATA(1))||' EN TABLA AUXILIAR');
+
+			IF TRIM(V_TMP_TIPO_DATA(2)) LIKE 'usuario_borrado.%' THEN
+
+				V_MSQL := '
+					UPDATE '||V_ESQUEMA_M||'.USU_USUARIOS T1
+					SET BORRADO = 1, USUARIOBORRAR = '''||V_USUARIO||''', FECHABORRAR = SYSDATE
+					WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('	[INFO]: BORRADO CORRECTAMENTE EL USUARIO '||TRIM(V_TMP_TIPO_DATA(1))||' EN TABLA USU_USUARIOS');
+
+			ELSE
+
+				V_MSQL := '
+					UPDATE '||V_ESQUEMA_M||'.USU_USUARIOS T1
+					SET USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||''', USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE
+					WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+						AND NOT EXISTS (
+							SELECT 1
+							FROM '||V_ESQUEMA_M||'.USU_USUARIOS T2
+							WHERE T2.USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+							)';
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('	[INFO]: ACTUALIZADO CORRECTAMENTE EL USUARIO '||TRIM(V_TMP_TIPO_DATA(1))||' EN TABLA USU_USUARIOS');
+
+			END IF;
+		
+		ELSE
+			  
+			V_MSQL := '
+				INSERT INTO '||V_ESQUEMA||'.AUX_USUARIOS_NUEVO_ANTIGUO 
+					VALUES (
+						NULL
+						, '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+						, '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+						)';
+			EXECUTE IMMEDIATE V_MSQL;
+
+			IF SQL%ROWCOUNT > 0 THEN
+				
+				DBMS_OUTPUT.PUT_LINE('	[INFO]: INSERTADO CORRECTAMENTE EL USUARIO '||TRIM(V_TMP_TIPO_DATA(1))||'');
+				
+				V_MSQL := '
+					UPDATE '||V_ESQUEMA_M||'.USU_USUARIOS T1
+					SET USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||''', USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE
+					WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+						AND NOT EXISTS (
+							SELECT 1
+							FROM '||V_ESQUEMA_M||'.USU_USUARIOS T2
+							WHERE T2.USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+							)';
+				EXECUTE IMMEDIATE V_MSQL;
+
+				IF SQL%ROWCOUNT > 0  THEN
+
+					DBMS_OUTPUT.PUT_LINE('	[INFO]: ACTUALIZADO CORRECTAMENTE EL USUARIO '||TRIM(V_TMP_TIPO_DATA(1))||' EN TABLA USU_USUARIOS');
+
+				ELSE
+
+					DBMS_OUTPUT.PUT_LINE('	[INFO]: NO EXISTE EL ANTIGUO USUARIO O YA EXISTE EL NUEVO USUARIO PARA LA PAREJA 
+						'||TRIM(V_TMP_TIPO_DATA(1))||'/'||TRIM(V_TMP_TIPO_DATA(2))||' EN LA TABLA USU_USUARIOS');
+
+				END IF;
+			
+			END IF;
+			
+		END IF;	
+		
+    END LOOP;
+
+    V_MSQL := '
+    	MERGE INTO '||V_ESQUEMA||'.AUX_USUARIOS_NUEVO_ANTIGUO T1
+    	USING '||V_ESQUEMA_M||'.USU_USUARIOS T2
+    	ON (T1.USERNAME_DEFINITIVO = T2.USU_USERNAME)
+    	WHEN MATCHED THEN UPDATE SET
+    		T1.USU_ID = T2.USU_ID';
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('	[INFO]: '||SQL%ROWCOUNT||' USU_ID ACTUALIZADOS EN TABLA AUXILIAR');
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+EXCEPTION
+
+   WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+        DBMS_OUTPUT.put_line(err_msg);
+
+        ROLLBACK;
+        RAISE;          
+
+END;
+
+/
+
+EXIT

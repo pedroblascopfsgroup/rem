@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
@@ -80,6 +81,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	public static final String NO_APLICA = "No aplica";
 	public static final String TIPO_CAMPO_TEXTFIELD = "textfield";
 	public static final String TIPO_CAMPO_COMBO_READONLY = "comboboxreadonly";
+	public static final String TIPO_CAMPO_COMBO = "combobox";
+	public static final String TIPO_CAMPO_FECHA_MIN_TO_DAY = "datemintoday";
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
@@ -268,7 +271,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     /** Ejecuta la validación definida en la tarea. El script debe devolver null para continuar, o un string indicando el error a mostrar
      * @param tareaExterna
      */
-    private String validacionPreviaDeLaTarea(TareaExterna tareaExterna) {
+    public String validacionPreviaDeLaTarea(TareaExterna tareaExterna) {
         String script = tareaExterna.getTareaProcedimiento().getScriptValidacion();
 
         //script = "!isEmbargosConFechaSolicitud() ? 'Antes de realizar la tarea es necesario marcar los bienes con fecha de solicitud de embargo' : null";
@@ -432,8 +435,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			}
             		}
             	}
-            	if(item.getType().equals(TIPO_CAMPO_TEXTFIELD))
-            	{
+            	
+            	if(item.getType().equals(TIPO_CAMPO_TEXTFIELD)) {
+            		
             		if(item.getNombre().equals("tieneReserva")){
             			Boolean reserva = ofertaApi.checkReserva(tareaExterna);
             			if(reserva){
@@ -442,10 +446,25 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				item.setValue(DDSiNo.NO);
             			}
             		}
+            		
+            		if(item.getNombre().equals("comitePropuesto")) {
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if(!Checks.esNulo(expediente)) {
+            					DDComiteSancion comitePropuesto = expedienteComercialApi.comitePropuestoByIdExpediente(expediente.getId());
+            					if(!Checks.esNulo(comitePropuesto)) {
+            						item.setValue(comitePropuesto.getDescripcion());
+            					}
+            				}
+            			}
+            		}
             	}
+            	
             	if(item.getType().equals(TIPO_CAMPO_FECHA))
             	{
-            		if(item.getNombre().equals("fechaFirma") && tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_ObtencionContratoReserva")){
+            		if(item.getNombre().equals("fechaFirma") && (tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_ObtencionContratoReserva") 
+            				|| tareaExterna.getTareaProcedimiento().getCodigo().equals("T017_ObtencionContratoReserva"))){
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -531,6 +550,26 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			}
             		}
             		
+            	}
+            	if(item.getType().equals(TIPO_CAMPO_FECHA_MIN_TO_DAY)){
+            		if(item.getNombre().equals("fechaTope"))
+            		{
+            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+            			Trabajo trabajo = tramite.getTrabajo();
+            			Date fecha = trabajo.getFechaTope();
+            			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+            			if(!Checks.esNulo(fecha))
+            				item.setValue(formatoFecha.format(fecha));
+            		}
+            		if(item.getNombre().equals("fechaConcreta"))
+            		{
+            			ActivoTramite tramite = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite();
+            			Trabajo trabajo = tramite.getTrabajo();
+            			Date fecha = trabajo.getFechaHoraConcreta();
+            		    SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+            		    if(!Checks.esNulo(fecha))
+            		    	item.setValue(formatoFecha.format(fecha));
+            		}
             	}
             	if(item.getType().equals(TIPO_CAMPO_FECHA_MAX_TO_DAY))
             	{
@@ -618,13 +657,12 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					}
             				
             			}
-            		}           		
+            		}
             			
             	}
             	if(item.getType().equals(TIPO_COMBOBOX_INICIAL_ED))
             	{
-            		if(item.getNombre().equals("comboResolucion") || item.getNombre().equals("comboRatificacion"))
-            		{
+            		if(item.getNombre().equals("comboResolucion") || item.getNombre().equals("comboRatificacion")) {
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if(!Checks.esNulo(ofertaAceptada)){
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -654,12 +692,13 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
             				}
             			}
-            		} 
+            		}
             	}
+            	
             	if(item.getType().equals(TIPO_CAMPO_COMBO_READONLY)) {
             		
-            		if(item.getNombre().equals("comite"))
-            		{
+            		if(item.getNombre().equals("comite") || item.getNombre().equals("comitePropuesto")) {
+            			
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -680,7 +719,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
+//			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada, null);
 			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada);
+
 			            				if(!Checks.esNulo(comite)) {
 			            					codigoComite = comite.getCodigo();
 			            				}
@@ -688,7 +729,12 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            				}
 			            			}else if(trabajoApi.checkCerberusAgoraApple(tareaExterna)){
-			            				codigoComite = DDComiteSancion.CODIGO_CERBERUS;
+										if(expedienteComercialApi.esApple(tareaExterna)){
+											codigoComite = DDComiteSancion.CODIGO_APPLE_CERBERUS;
+										}else{
+
+											codigoComite = DDComiteSancion.CODIGO_CERBERUS;
+										}
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            			}else {
@@ -701,9 +747,33 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				}
             			}
             		}
+            		
             	}
-            	if(item.getType().equals(TIPO_CAMPO_NUMBER))
-            	{
+
+            	if(item.getType().equals(TIPO_CAMPO_COMBO)) {
+            		
+            		if(item.getNombre().equals("comiteInternoSancionador") || item.getNombre().equals("comiteSancionador")) {
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getComiteSancion())) {
+            					Filter filtroComiteSancionador = genericDao.createFilter(FilterType.EQUALS, "id", expediente.getComiteSancion().getId());
+            					Filter filtroComiteSancionadorBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+            					DDComiteSancion comiteSancionador= genericDao.get(DDComiteSancion.class, filtroComiteSancionador, filtroComiteSancionadorBorrado);
+            					if(!Checks.esNulo(comiteSancionador)) {
+            						if(item.getNombre().equals("comiteSancionador")) {
+            							item.setValue(comiteSancionador.getCodigo());
+            						}else {
+            							item.setValue(comiteSancionador.getDescripcion());
+            						}
+            					}
+            				}
+            			}
+            		}
+            	}
+            	
+            	if(item.getType().equals(TIPO_CAMPO_NUMBER)) {
+            		
             		if(item.getNombre().equals("numImporteContra"))
             		{
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
@@ -732,6 +802,54 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				}
             			}
             		}
+            		
+					if (item.getNombre().equals("importeTotalOfertaAgrupada")) {
+
+						Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+						try {
+							if (!Checks.esNulo(ofertaAceptada) && ofertaApi.isOfertaPrincipal(ofertaAceptada)) {
+									List<OfertasAgrupadasLbk> ofertasAgrupadas = ofertaAceptada.getOfertasAgrupadas();
+									Double importeTotalOfertaAgrupada = ofertaAceptada.getImporteOferta();
+									
+									if(!Checks.esNulo(ofertasAgrupadas)) {
+										for (OfertasAgrupadasLbk ofertaAgrupada : ofertasAgrupadas) {
+											 if(ofertaAceptada.getId() != ofertaAgrupada.getOfertaDependiente().getId()) {
+												 importeTotalOfertaAgrupada += ofertaAgrupada.getOfertaDependiente().getImporteOferta();
+											 }
+										}
+									}
+									item.setValue(importeTotalOfertaAgrupada.toString());
+							}
+						} catch (Exception e) {
+							logger.error("error", e);
+						}
+
+					}
+					
+					if(item.getNombre().equals("numOfertaPrincipal")) {
+            			Oferta ofertaAceptada  = ofertaApi.tareaExternaToOferta(tareaExterna);
+						try {
+							if (!Checks.esNulo(ofertaAceptada)) {
+								Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", ofertaAceptada.getId());
+		            			OfertasAgrupadasLbk ofertaDependiente = genericDao.get(OfertasAgrupadasLbk.class, filtroOferta);
+		            			Long numOfertaPrincipal = 0l;
+		            			if(!Checks.esNulo(ofertaDependiente)) {
+		            				 numOfertaPrincipal = ofertaDependiente.getOfertaPrincipal().getNumOferta();
+		            			}
+									item.setValue(numOfertaPrincipal.toString());
+							}
+						} catch (Exception e) {
+							logger.error("error", e);
+						}
+            		}
+					if(item.getNombre().equals("numImporteOferta"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if(!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(ofertaAceptada.getImporteContraOferta())){
+            				item.setValue(ofertaAceptada.getImporteContraOferta().toString());
+            			}
+            		}
+            		
             	}
             }
         }

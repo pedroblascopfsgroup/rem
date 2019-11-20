@@ -68,7 +68,7 @@ BEGIN
 			tbj.tbj_importe_total, 
 			tbj.tbj_fecha_ejecutado,
           	NVL2 (agr.agr_num_agrup_rem, agr.agr_num_agrup_rem, act.act_num_activo) AS num_activo_agrupacion,
-          	'''' AS tipo_entidad, 
+          	NVL2 (agr.agr_num_agrup_rem, ''agrupaciones'', NVL2 (tbj.act_id, ''activo'', ''listado'')) AS tipo_entidad,
 			ttr.dd_ttr_codigo, 
 			ttr.dd_ttr_descripcion, 
 			str.dd_str_codigo, 
@@ -125,6 +125,21 @@ BEGIN
 
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_TRABAJOS...Creada OK');
+
+  COMMIT;
+
+  EXCEPTION
+	     WHEN OTHERS THEN
+	          err_num := SQLCODE;
+	          err_msg := SQLERRM;
+	
+	          DBMS_OUTPUT.PUT_LINE('KO no modificada');
+	          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+	          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+	          DBMS_OUTPUT.put_line(err_msg);
+	
+	          ROLLBACK;
+	          RAISE;   
   
 END;
 /

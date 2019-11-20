@@ -13,10 +13,44 @@ Ext.define('HreRem.view.activos.detalle.VisitasComercialActivo', {
         me.setTitle(HreRem.i18n("title.activos.listado.visitas"));
 
         me.items = [      			
-    			{	
-    				xtype: 'visitascomercialactivolist',
-    				reference: 'visitascomercialactivolistref'        				
-    			}
+        	{
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.lista.visitas'),
+				collapsible: true,
+				items :
+					[
+		    			{	
+		    				xtype: 'visitascomercialactivolist',
+		    				reference: 'visitascomercialactivolistref'        				
+		    			}
+    			]
+        	},
+        	{
+        		xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('fieldlabel.numero.visitasTotal'),
+				reference: 'detalleOfertaFieldsetref',
+				collapsible: true,
+				bind: {
+					hidden:'{!activo.isSubcarteraApple}'
+				},
+				items :
+					[
+						{
+							xtype: 'textfield',
+							fieldLabel: HreRem.i18n('fieldlabel.numero.visitasTotal'),
+							bind: {
+								value: '{activo.visitasTotal}'								
+							},
+							readOnly: true,
+							colspan: 3,
+							width: 410
+						}
+						
+					]
+        	}
+			
         ];
 
         me.callParent();

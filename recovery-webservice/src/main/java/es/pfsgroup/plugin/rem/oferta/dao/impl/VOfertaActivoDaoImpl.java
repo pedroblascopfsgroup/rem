@@ -23,14 +23,14 @@ public class VOfertaActivoDaoImpl extends AbstractEntityDao<VOfertasActivosAgrup
 		HQLBuilder hb = new HQLBuilder(" from VOfertasActivosAgrupacion voferta");
 
 		if (!Checks.esNulo(dtoOfertasFilter.getNumOferta())) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numOferta", dtoOfertasFilter.getNumOferta().toString());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numOferta", dtoOfertasFilter.getNumOferta());
 		}
 
 		if (!Checks.esNulo(dtoOfertasFilter.getNumAgrupacion())) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoAgrupacion", dtoOfertasFilter.getNumAgrupacion().toString());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.numActivoAgrupacion", dtoOfertasFilter.getNumAgrupacion());
 		}
 		if (!Checks.esNulo(dtoOfertasFilter.getIdActivo())) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", dtoOfertasFilter.getIdActivo().toString());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", dtoOfertasFilter.getIdActivo());
 		}
 		
 		if (!Checks.esNulo(dtoOfertasFilter.getExcluirGencat()) && dtoOfertasFilter.getExcluirGencat()) {
@@ -41,7 +41,7 @@ public class VOfertaActivoDaoImpl extends AbstractEntityDao<VOfertasActivosAgrup
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoEstadoOferta", dtoOfertasFilter.getEstadoOferta());
 		
 		if (!Checks.esNulo(dtoOfertasFilter.getIdOferta())) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idOferta", dtoOfertasFilter.getIdOferta().toString());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idOferta", dtoOfertasFilter.getIdOferta());
 		}
 
 		hb.orderBy("voferta.fechaModificar", HQLBuilder.ORDER_DESC);

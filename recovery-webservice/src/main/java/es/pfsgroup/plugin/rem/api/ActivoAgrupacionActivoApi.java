@@ -60,4 +60,12 @@ public interface ActivoAgrupacionActivoApi {
 	 */
 	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion);
 
+	
+	/**
+	 * Devuelve un objeto de tipo Activo a partir del id de una agrupación para obtener su piso piloto
+	 * @param idAgrupacion
+	 * @return Activo
+	 */
+	public Activo getPisoPilotoByIdAgrupacion(long idAgrupacion);
+
 }

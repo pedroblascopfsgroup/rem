@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
@@ -9,6 +8,8 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -25,7 +26,6 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
-import es.pfsgroup.plugin.rem.model.VGastosProvision;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 
 
@@ -37,7 +37,6 @@ public interface GastoProveedorApi {
 	     * @return ExpedienteComercial
 	     */
 	    public GastoProveedor findOne(Long id);
-	    
 		
 		/**
 		 * Devuelve una lista de gastos aplicando el filtro que recibe.
@@ -353,6 +352,44 @@ public interface GastoProveedorApi {
 
 		List<VTasasImpuestos> getListTasasImpuestos();
 
+
+		AdjuntoGasto createAdjuntoGasto(WebFileItem fileItem, GastoProveedor gasto, Long idDocRestClient)
+				throws Exception;
+		public List<String> getGastosRefacturados(String listaGastos, String nifPropietario);
+
+
+		List<String> getGastosNoRefacturados(String listaGastos, List<String> gastosRefacturables);
+
+
+		Boolean isCarteraPropietarioBankiaSareb(ActivoPropietario propietario);
+
+
+		List<Long> getGastosRefacturablesGastoCreado(Long id);
+		
+		/**
+		 * Devuelve los gastos refacturables asociados al Gasto
+		 * @param id
+		 * @return
+		 */
+		List<GastoProveedor> getGastosRefacturablesGasto(Long id);
+
+
+		public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista);
+
+
+		public Boolean eliminarGastoRefacturado(Long idGasto, Long numGastoRefacturado);
+		
+		/*HREOS-7241*/
+		public boolean esGastoRefacturable(GastoProveedor gasto);
+
+		/**
+		 * Devuelve si el gasto es posible refacturable, es decir, cumple las condiciones para serlo
+		 * @param id
+		 * @return
+		 */
+		public boolean isPosibleRefacturable(GastoProveedor gasto);
+
+		void validarGastosARefacturar(String idGasto, String listaGastos);
 
 }
 

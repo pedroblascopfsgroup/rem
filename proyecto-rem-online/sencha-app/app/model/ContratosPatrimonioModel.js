@@ -69,7 +69,20 @@ Ext.define('HreRem.model.ContratosPatrimonioModel', {
     		},
     		{
     			name: 'idExpediente'
-    		}
+    		},
+    		{
+    			name: 'esDivarian',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'idContratoAntiguo'
+    		},
+    		{
+				name:'fechaCreacion',
+    			type:'date',
+    			dateFormat: 'c'
+			}
+    		
     ],
     
 	proxy: {

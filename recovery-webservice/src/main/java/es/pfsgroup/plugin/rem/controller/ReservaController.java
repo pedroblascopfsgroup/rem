@@ -14,8 +14,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -158,6 +160,13 @@ public class ReservaController {
 		
 		restApi.sendResponse(response, model,request);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getFechaFirmaByIdExpediente(String idExpediente, ModelMap model) {
+		model.put("fechaFirma", reservaApi.getFechaFirmaByIdExpediente(idExpediente));
+		return JsonViewer.createModelAndViewJson(model);
 	}
 
 

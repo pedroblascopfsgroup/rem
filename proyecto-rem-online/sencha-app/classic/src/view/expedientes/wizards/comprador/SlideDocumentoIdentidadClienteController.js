@@ -134,7 +134,7 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDocumentoIdentidadCli
 		        			}
 		        			wizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;
 		        			wizard.setX( Ext.Element.getViewportWidth() / 2 - ((Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5) / 2));
-		        			wizard.height = Ext.Element.getViewportHeight() > 600 ? 600 : Ext.Element.getViewportHeight() -100;
+		        			wizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100;
 		        			wizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 600 ? 600 : Ext.Element.getViewportHeight() -100)/2));
 	
 		    			}else{

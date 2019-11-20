@@ -7486,7 +7486,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dtoHistoricoDiarioGestion.setSubEstadoDesc(historicoDiarioGestion.getSubestadoGestion().getDescripcion());
 				}
 				if(!Checks.esNulo(historicoDiarioGestion.getUsuario())) {
-					dtoHistoricoDiarioGestion.setNombreGestorDesc(historicoDiarioGestion.getUsuario().getNombre());
+					dtoHistoricoDiarioGestion.setNombreGestorDesc(historicoDiarioGestion.getUsuario().getUsername());
 				}
 				dtoHistoricoDiarioGestion.setFechaCambioEstado(historicoDiarioGestion.getFechaInicio());
 				

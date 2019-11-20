@@ -76,6 +76,10 @@ BEGIN
 	
 		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE 
 				   SET TRA_PROCESS_BPM = NULL,
+				   DD_EPR_ID = 30,
+				   BORRADO = 0,
+				   FECHABORRAR = NULL, 
+				   TRA_FECHA_FIN = NULL,
 				   USUARIOMODIFICAR = '''||V_USR||''',
 				   FECHAMODIFICAR = SYSDATE 
 				   WHERE TRA_ID = '||TRA_ID;

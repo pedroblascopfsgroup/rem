@@ -386,7 +386,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.getListActivos")
-	public Page getListActivos(DtoActivoFilter dto, Usuario usuarioLogado) {
+	public Object getListActivos(DtoActivoFilter dto, Usuario usuarioLogado) {
 		return activoDao.getListActivos(dto, usuarioLogado);
 	}
 

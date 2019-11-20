@@ -198,7 +198,7 @@
 			me.collapsible= true;
 			me.collapsed= false;
 			me.buttonAlign = 'left';
-			me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickProvisionesSearch' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelProvisionGastos'}];
+			me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickProvisionesSearch' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelProvisionGastos', disabled: !exportarGastos}];
     	}
 
     	if (me.isSaveForm) {

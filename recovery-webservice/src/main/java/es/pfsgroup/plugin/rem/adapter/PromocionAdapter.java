@@ -84,6 +84,7 @@ public class PromocionAdapter {
 						adj.setGestor(adjuntosPromocion.getAuditoria().getUsuarioCrear());
 					}
 					adj.setTamanyo(adjuntosPromocion.getTamanyo());
+					adj.setFechaDocumento(adjuntosPromocion.getFechaDocumento());
 				}
 			}
 
@@ -110,6 +111,7 @@ public class PromocionAdapter {
 				dto.setDescripcionTipo(adjuntoPromocion.getTipoDocumentoPromocion().getDescripcion());
 				dto.setGestor(adjuntoPromocion.getAuditoria().getUsuarioCrear());
 				dto.setCodPromo(codPromo);
+				dto.setFechaDocumento(adjuntoPromocion.getFechaDocumento());
 
 				listaAdjuntos.add(dto);
 			}

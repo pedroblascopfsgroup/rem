@@ -1877,6 +1877,13 @@ public class Activo implements Serializable, Auditable {
        }
        return null;
   }
+  
+  public AdjuntosProyecto getAdjuntoProyectoGD(Long id) {
+	  for (AdjuntosProyecto adj : getAdjuntosProyecto()) {
+          if (!Checks.esNulo(adj.getIdDocRest()) && adj.getIdDocRest().equals(id)) { return adj; }
+      }
+      return null;
+  }
    
   public void addAdjuntoProyecto(FileItem fileItem) {
 	   AdjuntosProyecto adjuntosProyecto = new AdjuntosProyecto(fileItem);

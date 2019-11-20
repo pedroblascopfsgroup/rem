@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -463,5 +464,19 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			
 		return  HibernateUtils.castList(MapeoGestorDocumental.class, criteria.list());
 		
+	}
+	
+	@Override
+	public Boolean cambiaMediador(Long nActivo, String pveCodRem, String userName) {
+		String procedureHQL = "BEGIN CAMBIO_MEDIADOR(:idActivoParam, :pveCodRemParam, :userNameParam, :outputParam);  END;";
+		String output="";
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("idActivoParam", nActivo);
+		callProcedureSql.setParameter("pveCodRemParam", pveCodRem);
+		callProcedureSql.setParameter("userNameParam", userName);
+		callProcedureSql.setParameter("outputParam", output);
+		int resultado = callProcedureSql.executeUpdate();
+
+		return resultado == 1;
 	}
 }

@@ -297,5 +297,13 @@ public interface ProveedoresApi {
 	List<DDCartera> getCarteraPorProveedor(Long idProveedor);
 
 	List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera);
+	
+	/** Este método cambia .el proveedor asociado a un activo por el recibido en pvrCodRem
+	 * 
+	 * @param numActivo: Número del activo ACT_NUM_ACTIVO (se gestiona histórico).
+	 * @param pvrCodRem: Código de proveedor que sustituirá al actual
+	 * @return Devuelve un Booleano.
+	 */
+	public Boolean cambiaMediador(String numActivo, String pveCodRem, String userName);
 
 }

@@ -4092,4 +4092,34 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "01".equals(resultado);
 	}
 	
+    @Override
+    public Boolean isProveedorUnsuscribed(String pveCodRem) {
+            if(Checks.esNulo(pveCodRem)) {
+                    return false;
+            }
+
+            String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+                            + "              FROM ACT_PVE_PROVEEDOR WHERE"
+                            + "              PVE_COD_REM = '" + pveCodRem + "'"
+                            + "              AND PVE_FECHA_BAJA IS NOT NULL"
+                            + "              AND BORRADO = 0"
+                            );
+
+            return !"0".equals(resultado);
+    }
+	
+    @Override
+    public Boolean existeProveedorByCodRem(String pveCodRem) {
+            if(Checks.esNulo(pveCodRem)) {
+                    return false;
+            }
+
+            String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+                            + "              FROM ACT_PVE_PROVEEDOR WHERE"
+                            + "              PVE_COD_REM = '" + pveCodRem + "'"
+                            + "      AND BORRADO = 0"
+                            );
+            return !"0".equals(resultado);
+    }
+
 }

@@ -973,5 +973,18 @@ public interface ParticularValidatorApi {
 	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo);
 
 	Boolean esExpedienteVenta(String numExpediente);
+	
+	/**
+	 * @param pveCodRem
+	 * @return true si el proveedor ha sido dado de baja
+	 */
+	public Boolean isProveedorUnsuscribed(String pveCodRem);
+	
+	/**
+	 * @param pveCodRem 
+	 * @return true si el al menos hay un proveedor con el código rem
+	 */
+
+	public Boolean existeProveedorByCodRem(String pveCodRem);
 
 }

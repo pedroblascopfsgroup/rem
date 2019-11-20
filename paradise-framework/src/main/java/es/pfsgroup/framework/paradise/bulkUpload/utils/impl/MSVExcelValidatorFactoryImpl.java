@@ -188,7 +188,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVActualizacionFasesPublicacionValidator FasesPublicacion;
-		
+	
+	@Autowired
+	private MSVCambioApiValidator cambioApiValidator;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -312,6 +314,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return gastosRefacturables;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FASES_PUBLICACION.equals(codTipoOperacion)) {
 			return FasesPublicacion;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_API_VALIDATOR.equals(codTipoOperacion)) {
+			return cambioApiValidator;
 		}
 		return null;
 	}

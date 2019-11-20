@@ -106,4 +106,12 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	List<ActivoProveedorCartera> getActivoProveedorCartera(Long idProveedor, DDCartera cartera, DDSubcartera subcartera);
 
 	List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera);
+	
+	/** Este método cambia .el proveedor asociado a un activo por el recibido en pvrCodRem
+	 * 
+	 * @param numActivo: Número del activo ACT_NUM_ACTIVO (se gestiona histórico).
+	 * @param pvrCodRem: Código de proveedor que sustituirá al actual
+	 * @return Devuelve un Booleano.
+	 */
+	public Boolean cambiaMediador(Long nActivo, String pveCodRem, String userName);
 }

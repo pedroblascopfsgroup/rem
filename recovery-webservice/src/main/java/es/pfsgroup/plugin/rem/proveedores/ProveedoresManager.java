@@ -10,6 +10,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1550,5 +1551,16 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 		return proveedoresDao.getSubcarteraPorProveedor(idProveedor, codigoCartera);
 
+	}
+	
+	@Override
+	public Boolean cambiaMediador(String numActivo, String pveCodRem, String userName) {
+		Boolean resultado = false;
+		if (!Checks.esNulo(numActivo) && !Checks.esNulo(pveCodRem) && !Checks.esNulo(userName) 
+				&& NumberUtils.isNumber(numActivo) && NumberUtils.isNumber(pveCodRem)) {
+			Long nActivo = Long.parseLong(numActivo);
+			resultado = proveedoresDao.cambiaMediador(nActivo, pveCodRem, userName);
+		}
+		return resultado;
 	}
 }

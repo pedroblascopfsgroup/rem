@@ -23,6 +23,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
 /**
@@ -62,6 +63,10 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	
 	@Column(name = "ONV_ACREEDOR_PDV")
 	private String acreedorPDV;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ONV_VENTA_PLANO")
+	private DDSinSiNo ventaPlano;
 	
 	@OneToMany(mappedBy = "obraNueva", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_ID")
@@ -127,5 +132,12 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	public Integer getIncluidos() {
 		return Checks.estaVacio(this.getActivos()) ? 0 : this.getActivos().size();
 	}
+	
+	public DDSinSiNo getVentaPlano() {
+		return ventaPlano;
+	}
 
+	public void setVentaPlano(DDSinSiNo ventaPlano) {
+		this.ventaPlano = ventaPlano;
+	}
 }

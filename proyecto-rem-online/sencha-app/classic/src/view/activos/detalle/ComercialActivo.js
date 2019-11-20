@@ -148,8 +148,9 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.venta.sobre.plano'),
 				        	bind: {
-			            		store: '{comboSiNoRem}',
-			            		value:'{comercial.ventaSobrePlano}'
+			            		store: '{comboSiNoBoolean}',
+			            		value:'{comercial.ventaSobrePlano}',
+			            		readOnly: true  //'{!esAgrupacionObraNueva}'
 			            	}
 						}
 				]

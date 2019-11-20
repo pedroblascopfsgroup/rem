@@ -82,6 +82,7 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean ventaSobrePlano;
 	private Boolean esGestorComercialEnActivo;
 
+
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
 	}

@@ -286,6 +286,9 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name = "OFR_CONTRAOFERTA_OFERTANTE_CES")
 	private Double importeContraofertaOfertanteCES;
+	
+	@Column(name="OFR_OFERTA_SINGULAR")
+	private Boolean ofertaSingular;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -855,5 +858,13 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setImporteContraofertaOfertanteCES(Double importeContraofertaOfertanteCES) {
 		this.importeContraofertaOfertanteCES = importeContraofertaOfertanteCES;
+	}
+	
+	public Boolean getOfertaSingular() {
+		return ofertaSingular;
+	}
+
+	public void setOfertaSingular(Boolean ofertaSingular) {
+		this.ofertaSingular = ofertaSingular;
 	}
 }

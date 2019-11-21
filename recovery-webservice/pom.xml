@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>es.pfsgroup</groupId>
 		<artifactId>recovery</artifactId>
-		<version>9.1-SNAPSHOT</version>
+		<version>3.0.0-REM</version>
 	</parent>
 	<properties>
 		<sonar.projectKey>es.pfsgroup:rem_2</sonar.projectKey>

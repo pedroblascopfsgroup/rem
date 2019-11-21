@@ -5245,8 +5245,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (this.isIntegradoAgrupacionObraNuevaOrAsistida(activo))
 			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
-		else if (DDTipoUsoDestino.TIPO_USO_PRIMERA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo())
-				|| DDTipoUsoDestino.TIPO_USO_SEGUNDA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo()))
+		else if (activo.getTipoUsoDestino() != null && (DDTipoUsoDestino.TIPO_USO_PRIMERA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo())
+				|| DDTipoUsoDestino.TIPO_USO_SEGUNDA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo())))
 			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
 		else {
 			Double importeLimite = (double) 500000;

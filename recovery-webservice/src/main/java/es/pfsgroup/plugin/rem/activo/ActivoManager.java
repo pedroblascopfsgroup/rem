@@ -3109,8 +3109,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			fechaBaja = !Checks.esNulo(fechaBaja) ? new Date(fechaBaja.getTime()) : null;
 
 			if (!Checks.esNulo(agrupacionActivo.getAgrupacion().getTipoAgrupacion())
-					&& agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
-							.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)
+					&& (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()))
 					&& (fechaBaja == null || fechaBaja.after(new Date()))) {
 				return true;
 			}

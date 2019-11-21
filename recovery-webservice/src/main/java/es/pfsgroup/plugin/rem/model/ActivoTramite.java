@@ -59,6 +59,9 @@ public class ActivoTramite implements Serializable, Auditable{
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private ActivoTramite tramitePadre;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ACT_ID")
+	private Activo activo;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TBJ_ID")
@@ -125,24 +128,30 @@ public class ActivoTramite implements Serializable, Auditable{
 	}
 
 	public Activo getActivo() {
-		return getActivos().get(0);
+		//return activo;
+		if(!Checks.estaVacio(getActivos()))
+			return getActivos().get(0);
+		else
+			return null;
 	}
 	
 	public List<Activo> getActivos(){
 		List<Activo> listaActivos = new ArrayList<Activo>();
-		if(!Checks.esNulo(trabajo)) {
-			for(ActivoTrabajo activotrabajo : trabajo.getActivosTrabajo())
-				listaActivos.add(activotrabajo.getActivo());
+		if(!Checks.esNulo(activo)) {
+			listaActivos.add(activo);
+		} else {
+			
+			if(!Checks.esNulo(trabajo)) {
+				for(ActivoTrabajo activotrabajo : trabajo.getActivosTrabajo())
+					listaActivos.add(activotrabajo.getActivo());
+			}
 		}
 			
 		return listaActivos;
 	}	
 
 	public void setActivo(Activo activo) {
-		ActivoTrabajo nuevaRelacion = new ActivoTrabajo();
-		nuevaRelacion.setTrabajo(this.getTrabajo());
-		nuevaRelacion.setActivo(activo);
-		trabajo.getActivosTrabajo().add(nuevaRelacion);
+		this.activo = activo;
 	}
 
 	public Trabajo getTrabajo() {

@@ -92,7 +92,7 @@ public class ProyectoAdapter {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosProyecto(codAgrupacion);
 				
 					for (DtoAdjuntoProyecto adj : listaAdjuntos) {
-						AdjuntosProyecto adjuntosProyecto = activo.getAdjuntoProyecto(adj.getId());
+						AdjuntosProyecto adjuntosProyecto = activo.getAdjuntoProyectoGD(adj.getId());
 						if (!Checks.esNulo(adjuntosProyecto)) {
 							if (!Checks.esNulo(adjuntosProyecto.getTipoDocumentoProyecto())) {
 								adj.setDescripcionTipo(adjuntosProyecto.getTipoDocumentoProyecto().getDescripcion());
@@ -102,6 +102,7 @@ public class ProyectoAdapter {
 								adj.setGestor(adjuntosProyecto.getAuditoria().getUsuarioCrear());
 							}
 							adj.setTamanyo(adjuntosProyecto.getTamanyo());
+							adj.setFechaDocumento(adjuntosProyecto.getFechaDocumento());
 						}
 					}
 				}catch(GestorDocumentalException gex){

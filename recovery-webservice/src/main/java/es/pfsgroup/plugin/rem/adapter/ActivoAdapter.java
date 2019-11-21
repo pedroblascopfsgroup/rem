@@ -2661,6 +2661,7 @@ public class ActivoAdapter {
 						adj.setGestor(adjuntoActivo.getAuditoria().getUsuarioCrear());
 					}
 					adj.setTamanyo(adjuntoActivo.getTamanyo());
+					adj.setFechaDocumento(adjuntoActivo.getFechaDocumento());
 				}else {
 					//Si en un adjunto que se ha subido al GD desde fuera de REM el tipo de documento es nulo, lo obtenemos a través de la matrícula
 					Filter filtroVisible = genericDao.createFilter(FilterType.EQUALS, "visible", true);

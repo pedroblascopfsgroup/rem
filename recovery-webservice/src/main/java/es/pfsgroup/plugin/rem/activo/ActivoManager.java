@@ -95,6 +95,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoCargasDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -220,6 +221,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";
 	public static final String ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO = "Ya existe un registro 'Presentación en registro', y está activo";
+	public static final String ERROR_ANYADIR_EN_REGISTRO = "Ya existe un registro '%s', y está activo";
 	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -7255,12 +7257,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,Long idActivo) throws Exception {
+	public boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,Long idActivo) throws HistoricoTramitacionException {
 		
 		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
 		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
 		String estadoTitulo = null;
-		
 			try {
 				beanUtilNotNull.copyProperty(htt, "titulo", titulo);
 				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
@@ -7269,16 +7270,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(tramitacionDto.getEstadoPresentacion())) {
 					DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
+					this.doCheckEstadoTramitacionTitulo(titulo, estadoPresentacion);
 					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
 					if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
-						List<DtoHistoricoTramitacionTitulo> listaTramitacionTitulo = getHistoricoTramitacionTitulo(idActivo);
-						
-						for(DtoHistoricoTramitacionTitulo dtoHistoricoTramTitulo : listaTramitacionTitulo) {
-							if(DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(dtoHistoricoTramTitulo.getCodigoEstadoPresentacion()) &&
-									DDEstadoTitulo.ESTADO_EN_TRAMITACION.equals(titulo.getEstado().getCodigo()))
-								throw new Exception(ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO);
-						}
-						
 						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
 					}
 					
@@ -7318,15 +7312,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		genericDao.save(HistoricoTramitacionTitulo.class, htt);
 		return true;
 	}
-	
+
+
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) {
+	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) throws Exception {
 		
 		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
 		String estadoTitulo = null;
-		ActivoTitulo activoTitulo = null;
-		
+		ActivoTitulo activoTitulo = htt.getTitulo();
 		try {
 				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
 					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro", tramitacionDto.getFechaPresentacionRegistro());
@@ -7340,13 +7334,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						htt.setFechaInscripcion(null);
 						htt.setFechaCalificacion(null);
 					}
-					
 					if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo()) && !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
-						htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 						estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
 						htt.setFechaCalificacion(null);
 					}
-					
 					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
 						htt.setFechaInscripcion(null);
@@ -7357,9 +7349,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
 					beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
-					Long idTitulo = htt.getTitulo().getId();
-					Filter idTituloFiltro = genericDao.createFilter(FilterType.EQUALS, "id", idTitulo);
-					activoTitulo = genericDao.get(ActivoTitulo.class, idTituloFiltro);
 					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 				}
 				if(!Checks.esNulo(tramitacionDto.getObservaciones())) {
@@ -7377,7 +7366,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (!Checks.esNulo(estadoTitulo)) {
 			DDEstadoTitulo ddEstadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoTitulo));
 			if (!Checks.esNulo(ddEstadoTitulo)) {
-				htt.getTitulo().setEstado(ddEstadoTitulo);
+				activoTitulo.setEstado(ddEstadoTitulo);
 			}
 		}
 		
@@ -7391,10 +7380,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) {
-		if(!Checks.esNulo(tramitacionDto.getIdHistorico())) {
-			genericDao.deleteById(HistoricoTramitacionTitulo.class, tramitacionDto.getIdHistorico());
+		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,
+				genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
+		if (htt != null) {
+			if (htt.getTitulo() != null) {
+				ActivoTitulo titulo = htt.getTitulo();
+				if (titulo != null) {
+					boolean gridConDatos = getHistoricoTramitacionTitulo(titulo.getActivo().getId()).isEmpty();
+					String nuevoEstado = gridConDatos ? DDEstadoTitulo.ESTADO_SUBSANAR : DDEstadoTitulo.ESTADO_EN_TRAMITACION
+							;
+					DDEstadoTitulo estadoTitulo = (DDEstadoTitulo) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoTitulo.class, nuevoEstado);
+					titulo.setEstado(estadoTitulo);
+					genericDao.save(ActivoTitulo.class, titulo);
+				}
+			}
+			genericDao.deleteById(HistoricoTramitacionTitulo.class, htt.getId());
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	public void existeCalificacionNegativa(List<DtoHistoricoTramitacionTitulo> listaDto, DtoActivoDatosRegistrales dto) {
@@ -7502,5 +7506,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		List lista = genericDao.getListOrdered(DDFasePublicacion.class, order, filtro);
 		
 		return lista;
+	}
+	
+	
+	private void doCheckEstadoTramitacionTitulo(ActivoTitulo titulo, DDEstadoPresentacion estado) throws HistoricoTramitacionException {
+		List<DtoHistoricoTramitacionTitulo> listaTramitacionTitulo = getHistoricoTramitacionTitulo(
+				titulo.getActivo().getId());
+		if (!listaTramitacionTitulo.isEmpty()) {
+			String estadoPresentacion = listaTramitacionTitulo.get(0) != null ? listaTramitacionTitulo.get(0).getCodigoEstadoPresentacion() : "";
+			if (!DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion)) {
+				throw new HistoricoTramitacionException(HistoricoTramitacionException.getErrorAlAnyadirRegistroAlTitulo(estado.getDescripcion()));
+				
+			}
+				
+		}
 	}
 }

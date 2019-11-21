@@ -52,11 +52,12 @@ import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionUAsFieldTabMap;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -3019,12 +3020,13 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = activoApi.createHistoricoTramtitacionTitulo(tramitacionDto, idActivo);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
-		} catch (Exception e) {
-			if(ActivoManager.ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO.equalsIgnoreCase(e.getMessage())) {
-				model.put(RESPONSE_ERROR_MESSAGE_KEY, ActivoManager.ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO);
-			}
-			logger.error("error en activoController", e);
+		}catch (HistoricoTramitacionException histError) {
+			model.put(RESPONSE_SUCCESS_KEY, false); 
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, histError.getMessage());	
+		}catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, false);
 		}
 
 		return createModelAndViewJson(model);
@@ -3037,7 +3039,10 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = activoApi.updateHistoricoTramtitacionTitulo(tramitacionDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
-		} catch (Exception e) {
+		} catch (Exception e) { 
+			if(ActivoManager.ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO.equalsIgnoreCase(e.getMessage())) {
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, ActivoManager.ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO);
+			}
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}

@@ -220,6 +220,11 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 			//SETEAMOS TODOS LOS CAMPOS REQUERIDOS EN LA TABLA BIE_AJD_ADJUDICACION
 			taJudicial.setAdjudicacionBien(adjudicacionBien);
 
+			if (!Checks.esNulo(celdaPoblacionJuzgado)) {
+				Filter filtroPob = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaPoblacionJuzgado);
+				TipoPlaza poblacion = genericDao.get(TipoPlaza.class, filtroPob);
+				taJudicial.setPlazaJuzgado(ES_BORRAR.equalsIgnoreCase(celdaPoblacionJuzgado) ? null : poblacion);
+			}
 			
 			if (!Checks.esNulo(celdaTipoJuzgado)) {
 				Filter filtroTipoJuz = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaTipoJuzgado);
@@ -227,12 +232,6 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 				taJudicial.setJuzgado(ES_BORRAR.equalsIgnoreCase(celdaTipoJuzgado) ? null : tipoJuzgado);
 			}
 			
-			if (!Checks.esNulo(celdaPoblacionJuzgado)) {
-				Filter filtroPob = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaPoblacionJuzgado);
-				TipoPlaza poblacion = genericDao.get(TipoPlaza.class, filtroPob);
-				taJudicial.setPlazaJuzgado(ES_BORRAR.equalsIgnoreCase(celdaPoblacionJuzgado) ? null : poblacion);
-			}
-
 			if (!Checks.esNulo(celdaNumAutos))
 				taJudicial.setNumAuto(ES_BORRAR.equalsIgnoreCase(celdaNumAutos) ? null : celdaNumAutos);
 

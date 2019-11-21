@@ -972,4 +972,8 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean existeEntidadHipotecaria(String codigo);
 
+	public Boolean existeTipoJuzgado(String celda);
+
+	public Boolean existePoblacionJuzgado(String celda);
+
 }

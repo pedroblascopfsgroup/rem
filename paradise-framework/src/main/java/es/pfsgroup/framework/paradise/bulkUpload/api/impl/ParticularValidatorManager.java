@@ -4048,4 +4048,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	public Boolean existeTipoJuzgado(String codigo) {
+		if (Checks.esNulo(codigo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM DD_JUZ_JUZGADOS_PLAZA "
+					+"		WHERE DD_JUZ_CODIGO = '"+ codigo +"'");
+
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existePoblacionJuzgado(String codigo) {
+		if (Checks.esNulo(codigo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM DD_PLA_PLAZAS "
+					+"		WHERE DD_PLA_CODIGO = '"+ codigo +"'");
+
+		return !"0".equals(resultado);
+	}
 }

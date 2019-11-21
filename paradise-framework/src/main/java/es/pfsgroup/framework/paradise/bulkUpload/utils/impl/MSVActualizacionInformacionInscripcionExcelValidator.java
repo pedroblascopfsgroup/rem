@@ -217,7 +217,7 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 		ArrayList<Integer> errList = null;
 		
 		String[] listaValidos = { "SI", "NO" };
-		String[] listaResMoratoria = { "FAV", "DES" };
+		String[] listaResMoratoria = { "01", "02" };
 		String[] listaEstAdj = { "01", "02", "03" };
 		
 		String celda;
@@ -256,7 +256,6 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 					case COL_F_SENYAL_LANZ:
 					case COL_F_LANZ_EFECTUADO:
 					case COL_F_SOL_MORATORIA:
-					case COL_F_RES_MORATORIA:
 						valorOK = Checks.esNulo(celda) || esBorrar(celda) || esFechaValida(celda);
 						break;
 						
@@ -271,7 +270,6 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 						valorOK = Checks.esNulo(celda) || esBorrar(celda) || esNumericoDecimal(celda);
 						break;
 					
-					
 					case COL_ID_ASUNTOS:
 						valorOK = Checks.esNulo(celda) || esBorrar(celda) || StringUtils.isNumeric(celda);
 						break;
@@ -281,17 +279,23 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 						break;
 						
 					case COL_RES_MORATORIA:						
-						valorOK = Checks.esNulo(celda) || esBorrar(celda) || Arrays.asList(listaResMoratoria).contains(celda.toUpperCase());						
+						valorOK = Checks.esNulo(celda) || esBorrar(celda) || Arrays.asList(listaResMoratoria).contains(celda);						
 						break;
 						
 					case COL_ENT_EJEC_HIPOTECARIA:
 						valorOK = Checks.esNulo(celda) || esBorrar(celda)  || particularValidator.existeEntidadHipotecaria(celda);						
 						break;
 					
+					case COL_TIPO_JUZGADO:
+						valorOK = Checks.esNulo(celda) || esBorrar(celda)  || particularValidator.existeTipoJuzgado(celda);						
+						break;
+						
+					case COL_POBLACION_JUZGADO:
+						valorOK = Checks.esNulo(celda) || esBorrar(celda)  || particularValidator.existePoblacionJuzgado(celda);						
+						break;
+						
 					case COL_NUM_EXP:	
 					case COL_NOMBRE:				
-					case COL_TIPO_JUZGADO:
-					case COL_POBLACION_JUZGADO:
 					case COL_NUM_AUTOS:
 					case COL_PROCURADOR:
 					case COL_LETRADO:

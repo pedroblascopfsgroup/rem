@@ -1011,17 +1011,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosProveedor(proveedor);
 			} catch (GestorDocumentalException gex) {
-				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
-					
-					Integer idExpediente;
-					try{
-						idExpediente = gestorDocumentalAdapterApi.crearProveedor(actProvCar, username);
-						logger.debug("GESTOR DOCUMENTAL [ crearProveedor para " + proveedor.getCodigoProveedorRem() + "]: ID PROVEEDOR RECIBIDO " + idExpediente);
-					} catch (GestorDocumentalException gexc) {
-						logger.error(gexc.getMessage(),gexc);
-					}
-					
-				}
 				throw gex;
 			}
 		} else {

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Kevin Fernández
---## FECHA_CREACION=20170110
+--## AUTOR=Mª José Ponce
+--## FECHA_CREACION=20191121
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1313
+--## INCIDENCIA_LINK=HREOS-8584
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en PEF_PERFILES los datos añadidos en T_ARRAY_DATA.
@@ -25,10 +25,11 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.        
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'PEF_PERFILES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref. 
+    V_USUARIO_CREAR VARCHAR2(50 CHAR) := 'HREOS-8584'; -- Vble. auxiliar para almacenar el usuario crear
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
@@ -39,7 +40,9 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     --				Codigo						Descripcion								Descripcion Larga
     	T_TIPO_DATA('GESTIAFORM',			'Gestoría de formalización',			'Gestoría de formalización'),
-    	T_TIPO_DATA('GESTCOMBACKOFFICE',	'Gestor comercial de back office',		'Gestor comercial de back office')
+    	T_TIPO_DATA('GESTCOMBACKOFFICE',	'Gestor comercial de back office',		'Gestor comercial de back office'),
+      T_TIPO_DATA('HAYAGESTCOM',	'Gestor comercial',		'Gestor comercial'),
+      T_TIPO_DATA('HAYAGBOINM',	'Gestor Comercial Backoffice Inmobiliario',		'Gestor Comercial Backoffice Inmobiliario')      
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -57,21 +60,21 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||'  WHERE PEF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
-        --Si existe lo modificamos
+        --Si existe no se hace nada
        IF V_NUM_TABLAS > 0 THEN			       
-         DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.PEF_PERFILES...no se modifica nada.');
+         DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.'||V_TEXT_TABLA||'...no se modifica nada.');
          
        ELSE
-       
+        -- Si no existe se inserta
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_PEF_PERFILES.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.PEF_PERFILES (' ||
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (' ||
                       'PEF_ID, PEF_CODIGO, PEF_DESCRIPCION, PEF_DESCRIPCION_LARGA, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''',''DML'',SYSDATE,0 FROM DUAL';
+                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''|| V_USUARIO_CREAR ||''',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         
@@ -83,12 +86,12 @@ BEGIN
 
 EXCEPTION
      WHEN OTHERS THEN
-          err_num := SQLCODE;
-          err_msg := SQLERRM;
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
 
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.put_line(err_msg);
+          DBMS_OUTPUT.put_line(ERR_MSG);
 
           ROLLBACK;
           RAISE;          

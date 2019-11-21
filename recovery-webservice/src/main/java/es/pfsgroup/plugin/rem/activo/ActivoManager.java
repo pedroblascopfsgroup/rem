@@ -7342,6 +7342,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
 						htt.setFechaInscripcion(null);
+						htt.getTitulo().setFechaInscripcionReg(null);
 					}
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {

@@ -571,18 +571,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL, mailsPara, mailsCC, false);
 					}
 					
-
-					Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
-					Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
-
-					if (!Checks.esNulo(buzonRem)) {
-						mailsPara.add(buzonRem.getEmail());
-					}
-					if (!Checks.esNulo(buzonPfs)) {
-						mailsPara.add(buzonPfs.getEmail());
-					}
 					String contenido = null;
-					mailsCC.add(this.getCorreoFrom());
 					if (!Checks.esNulo(activo.getId())) {
 						nActivo = activo.getNumActivo();
 					}

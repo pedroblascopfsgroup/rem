@@ -4,7 +4,7 @@
 	<groupId>es.pfsgroup</groupId>
 	<artifactId>recovery</artifactId>
 	<packaging>pom</packaging>
-	<version>9.1-SNAPSHOT</version>
+	<version>3.0.0-REM</version>
 
 	<properties>
 		<devon.version>1.1.0</devon.version>
@@ -466,12 +466,12 @@
 		    <dependency>
 		        <groupId>es.pfsgroup.plugin</groupId>
 		        <artifactId>recovery-webservice</artifactId>
-		       <version>9.1.0-REM</version>
+		       <version>${project.version}</version>
 		    </dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>paradise-framework</artifactId>
-				<version>9.1.0-REM</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -482,7 +482,7 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-gestordocumentalREM-plugin</artifactId>
-				<version>9.1.0-REM</version>
+				<version>${project.version}</version>
 			</dependency>
 		    <!-- EVOLUTION -->
 			<dependency>

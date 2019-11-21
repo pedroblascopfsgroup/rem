@@ -92,7 +92,7 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setIdEntidad(new Long(idnDoc.getId_activo()));
 				dtoAdj.setNombre(idnDoc.getNombreNodo());
 				dtoAdj.setCodigoTipo(idnDoc.getTdn1() + "-" + idnDoc.getTdn2());
-				dtoAdj.setDescripcionTipo("");
+				dtoAdj.setDescripcionTipo(idnDoc.getTdn2_desc());
 				dtoAdj.setContentType(idnDoc.getContentType());
 				dtoAdj.setTamanyo(idnDoc.getFileSizeInLongBytes());
 				dtoAdj.setGestor(null);
@@ -102,12 +102,17 @@ public class GestorDocToRecoveryAssembler {
 				Date fechaDocumento = null;
 				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
 					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
-				    }
-				dtoAdj.setFechaDocumento(fechaDocumento);
+				}
+				
 				Date createDate = null;
 				if(!Checks.esNulo(idnDoc.getCreatedate())){
 					createDate = new Timestamp(stringToDate(idnDoc.getCreatedate()).getTime());
-				    }
+				}
+				if(!Checks.esNulo(fechaDocumento)) {
+					dtoAdj.setFechaDocumento(fechaDocumento);
+				}else {
+					dtoAdj.setFechaDocumento(createDate);
+				}
 				dtoAdj.setCreateDate(createDate);
 				dtoAdj.setFileSize(idnDoc.getFileSize());
 				dtoAdj.setId_activo(idnDoc.getId_activo());
@@ -137,8 +142,8 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setNombre(idnDoc.getNombreNodo());
 				dtoAdj.setCodigoTipo(idnDoc.getTdn1() + "-" + idnDoc.getTdn2());
 				dtoAdj.setDescripcionTipo("");
-				dtoAdj.setContentType(null);
-				dtoAdj.setTamanyo(null);
+				dtoAdj.setContentType(idnDoc.getContentType());
+				dtoAdj.setTamanyo(idnDoc.getFileSizeInLongBytes());
 				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
 				dtoAdj.setMatricula(idnDoc.getTipoExpediente() +"-"+idnDoc.getSerieDocumental()+"-"+idnDoc.getTdn1()+"-"+idnDoc.getTdn2());
 						        
@@ -146,11 +151,17 @@ public class GestorDocToRecoveryAssembler {
 				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
 					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
 				    }
-				dtoAdj.setFechaDocumento(fechaDocumento);
+				
 				Date createDate = null;
 				if(!Checks.esNulo(idnDoc.getCreatedate())){
 					createDate = new Timestamp(stringToDate(idnDoc.getCreatedate()).getTime());
 				    }
+				
+				if(!Checks.esNulo(fechaDocumento)) {
+					dtoAdj.setFechaDocumento(fechaDocumento);
+				}else {
+					dtoAdj.setFechaDocumento(createDate);
+				}
 				dtoAdj.setCreateDate(createDate);
 				dtoAdj.setFileSize(idnDoc.getFileSize());
 				dtoAdj.setCodPromo(idnDoc.getId_activo());
@@ -180,8 +191,8 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setNombre(idnDoc.getNombreNodo());
 				dtoAdj.setCodigoTipo(idnDoc.getTdn1() + "-" + idnDoc.getTdn2());
 				dtoAdj.setDescripcionTipo("");
-				dtoAdj.setContentType(null);
-				dtoAdj.setTamanyo(null);
+				dtoAdj.setContentType(idnDoc.getContentType());
+				dtoAdj.setTamanyo(idnDoc.getFileSizeInLongBytes());
 				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
 				dtoAdj.setMatricula(idnDoc.getTipoExpediente() +"-"+idnDoc.getSerieDocumental()+"-"+idnDoc.getTdn1()+"-"+idnDoc.getTdn2());
 						        
@@ -189,11 +200,17 @@ public class GestorDocToRecoveryAssembler {
 				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
 					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
 				    }
-				dtoAdj.setFechaDocumento(fechaDocumento);
+				
 				Date createDate = null;
 				if(!Checks.esNulo(idnDoc.getCreatedate())){
 					createDate = new Timestamp(stringToDate(idnDoc.getCreatedate()).getTime());
 				    }
+				
+				if(!Checks.esNulo(fechaDocumento)) {
+					dtoAdj.setFechaDocumento(fechaDocumento);
+				}else {
+					dtoAdj.setFechaDocumento(createDate);
+				}
 				dtoAdj.setCreateDate(createDate);
 				dtoAdj.setFileSize(idnDoc.getFileSize());
 				dtoAdj.setCodProyecto(idnDoc.getId_activo()); //@TODO ver que hay que setear en el codProyecto
@@ -283,7 +300,7 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setFechaDocumento((idnDoc.getCreatedate()).substring(0,10));
 				dtoAdj.setDescripcionTipo(idnDoc.getDescripcionDocumento());
 				dtoAdj.setContentType(idnDoc.getContentType());
-				dtoAdj.setTamanyo(idnDoc.getFileSize());
+				dtoAdj.setTamanyo(idnDoc.getFileSizeInLongBytes().toString());
 				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
 				dtoAdj.setMatricula(idnDoc.getTipoExpediente() +"-"+idnDoc.getSerieDocumental()+"-"+idnDoc.getTdn1()+"-"+idnDoc.getTdn2());
 						       

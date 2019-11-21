@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.AdjuntoExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.DDSubtipoDocumentoExpedienteDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
@@ -51,6 +52,7 @@ public class ExpedienteComercialAdapter {
 	private static final String OPERACION_ALTA = "Alta";
 	private static final String ERROR_CREACION_CONTENEDOR = "Error creando el contenedor de la persona";
 	private static final String CREANDO_CONTENEDOR = "Creando contenedor...";
+	private static final String GESTOR_GD_EXTERNO = "Gestor externo";
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
@@ -75,6 +77,9 @@ public class ExpedienteComercialAdapter {
 	
 	@Autowired
 	private AdjuntoExpedienteComercialDao adjuntoExpedienteComercialDao;
+	
+	@Autowired
+	private DDSubtipoDocumentoExpedienteDao ddSubtipoDocumentoExpedienteDao;
 	
 	
 	protected static final Log logger = LogFactory.getLog(ExpedienteComercialAdapter.class);
@@ -103,6 +108,15 @@ public class ExpedienteComercialAdapter {
 							adj.setGestor(adjuntoExpedienteComercial.getAuditoria().getUsuarioCrear());
 						}
 						adj.setTamanyo(adjuntoExpedienteComercial.getTamanyo());
+					} else {
+						DDSubtipoDocumentoExpediente subtipoExp = ddSubtipoDocumentoExpedienteDao.getSubtipoDocumentoExpedienteComercialPorMatricula(adj.getMatricula());
+						
+						if(!Checks.esNulo(subtipoExp)) {
+							if(!Checks.esNulo(subtipoExp.getTipoDocumentoExpediente())) {
+								adj.setDescripcionTipo(subtipoExp.getTipoDocumentoExpediente().getDescripcion());
+							}
+							adj.setDescripcionSubtipo(subtipoExp.getDescripcion());
+						}
 					}
 				}
 			} catch (GestorDocumentalException gex) {

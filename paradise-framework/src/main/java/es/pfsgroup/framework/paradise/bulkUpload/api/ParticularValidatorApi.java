@@ -987,4 +987,6 @@ public interface ParticularValidatorApi {
 
 	public Boolean existeProveedorByCodRem(String pveCodRem);
 
+	Boolean esExpedienteValido(String numExpediente);
+
 }

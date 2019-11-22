@@ -63,13 +63,11 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
-	
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
-	
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -439,13 +437,10 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
+				gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
 
 				ActivoAdjuntoJuntas adjuntoGD = activoJunta.getAdjuntoGD(dtoAdjunto.getId());
 
-				if (adjuntoGD == null) {
-					borrado = false;
-				}
 				activoJunta.getAdjuntos().remove(adjuntoGD);
 				activoJuntaPropietariosDao.save(activoJunta);
 

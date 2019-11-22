@@ -218,6 +218,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'importeContraofertaOfertanteCES'
+    		},
+    		{
+    			name:'ofertaSingular'
     		}
     ],
 

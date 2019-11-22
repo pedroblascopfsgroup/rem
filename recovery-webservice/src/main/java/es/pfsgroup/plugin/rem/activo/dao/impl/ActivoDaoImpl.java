@@ -95,7 +95,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 
 	@Override
-	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
+	public Object getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
 
 		HQLBuilder hb = new HQLBuilder(buildFrom(dto));
 		 
@@ -237,8 +237,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(!Checks.esNulo(dto.getNumAgrupacion())) {
 			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and act.id = aga.activo.id)");
 		}
-		
-		return HibernateQueryUtils.page(this, hb, dto);
+
+		if(!Checks.esNulo(dto.isListPage()) && dto.isListPage())
+			return HibernateQueryUtils.page(this, hb, dto);
+		else
+			return HibernateQueryUtils.list(this, hb);
 	}
 
 	private String buildFrom(DtoActivoFilter dto) {

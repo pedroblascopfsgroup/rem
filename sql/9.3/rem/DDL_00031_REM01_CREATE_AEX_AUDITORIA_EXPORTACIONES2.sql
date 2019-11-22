@@ -1,6 +1,6 @@
 --/*
 --#########################################
---## AUTOR=Juan Torrella
+--## AUTOR=GUILLEM REY
 --## FECHA_CREACION=20191122
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
@@ -81,8 +81,8 @@ BEGIN
                     USUARIOBORRAR 			VARCHAR2(50 CHAR),
                     FECHABORRAR 			TIMESTAMP(6),
                     BORRADO 				NUMBER(1,0) DEFAULT 0 NOT NULL,
-                    CONSTRAINT PK_AEX_ID PRIMARY KEY (AEX_ID),
-                    CONSTRAINT FK_USU_USUARIOS FOREIGN KEY (USU_ID) REFERENCES '||V_ESQUEMA_M||'.USU_USUARIOS (USU_ID)
+                    CONSTRAINT PK_AEX_ID2 PRIMARY KEY (AEX_ID),
+                    CONSTRAINT FK_USU_USUARIOS2 FOREIGN KEY (USU_ID) REFERENCES '||V_ESQUEMA_M||'.USU_USUARIOS (USU_ID)
 					)';
 	EXECUTE IMMEDIATE V_SENTENCIA;
 

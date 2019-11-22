@@ -113,7 +113,7 @@ public class ProyectoAdapter {
 							.equals(gex.getCodigoError())) {
 						Thread hilo = new Thread(
 								gestorDocumentalAdapterApi.crearProyecto(activo, proyecto, usuarioLogado.getUsername(),GestorDocumentalConstants.CODIGO_CLASE_PROYECTO));
-						hilo.run();
+						hilo.start();
 					}
 				}
 			}

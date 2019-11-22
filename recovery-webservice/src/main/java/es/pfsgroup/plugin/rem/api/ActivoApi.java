@@ -136,7 +136,7 @@ public interface ActivoApi {
 	 * @return List<Activo>
 	 */
 	@BusinessOperationDefinition("activoManager.getListActivos")
-	Page getListActivos(DtoActivoFilter dto, Usuario usuarioLogado);
+	Object getListActivos(DtoActivoFilter dto, Usuario usuarioLogado);
 
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionRestringida")
 	boolean isIntegradoAgrupacionRestringida(Long id, Usuario usuarioLogado);

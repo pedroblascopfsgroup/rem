@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.NonUniqueObjectException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +35,7 @@ import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -60,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -156,6 +159,12 @@ public class TrabajoController extends ParadiseJsonController {
 	private UsuarioManager usuarioManager;
 
 	private final Log logger = LogFactory.getLog(getClass());
+
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	private static final String RESPONSE_SUCCESS_KEY = "success";	
+	private static final String RESPONSE_DATA_KEY = "data";
 
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
@@ -1139,12 +1148,51 @@ public class TrabajoController extends ParadiseJsonController {
 		@SuppressWarnings("unchecked")
 		List<VBusquedaTrabajos> listaTrabajos = (List<VBusquedaTrabajos>) trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado()).getResults();
 		
-		new EmptyParamDetector().isEmpty(listaTrabajos.size(), "ofertas",  usuarioManager.getUsuarioLogado().getUsername());
+		new EmptyParamDetector().isEmpty(listaTrabajos.size(), "trabajos",  usuarioManager.getUsuarioLogado().getUsername());
 		
 		ExcelReport report = new TrabajoExcelReport(listaTrabajos);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional()
+	public ModelAndView registrarExportacion(DtoTrabajoFilter dtoTrabajoFilter, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelMap model = new ModelMap();
+		
+		try {
+			int count = trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado()).getTotalCount();
+			AuditoriaExportaciones ae = new AuditoriaExportaciones();
+			ae.setBuscador("trabajos");
+			ae.setFechaExportacion(new Date());
+			ae.setNumRegistros(Long.valueOf(count));
+			ae.setUsuario(usuarioManager.getUsuarioLogado());
+			ae.setFiltros(parameterParser(request.getParameterMap()));
+			ae.setAccion(exportar);
+			genericDao.save(AuditoriaExportaciones.class, ae);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, count);
+		}catch(Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en trabajoController", e);
+		}
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private String parameterParser(Map map) {
+		StringBuilder mapAsString = new StringBuilder("{");
+	    for (Object key : map.keySet()) {
+	    	if(!key.toString().equals("buscador") && !key.toString().equals("exportar"))
+	    		mapAsString.append(key.toString() + "=" + ((String[])map.get(key))[0] + ",");
+	    }
+	    mapAsString.delete(mapAsString.length()-1, mapAsString.length());
+	    if(mapAsString.length()>0)
+	    	mapAsString.append("}");
+	    return mapAsString.toString();
 	}
 		
 	@SuppressWarnings("unchecked")

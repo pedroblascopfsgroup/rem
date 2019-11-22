@@ -1,0 +1,173 @@
+--/*
+--##########################################
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20191118
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-5774
+--## PRODUCTO=NO
+--##
+--## Finalidad:  
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-5774'; -- USUARIOCREAR/USUARIOMODIFICAR.
+
+    V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
+    
+    TYPE T_JBV IS TABLE OF VARCHAR2(32000);
+    TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
+	
+	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
+--              ACT_NUM_ACTIVO   DD_UPO_CODIGO
+		T_JBV('7228837', '300304900' ),
+		T_JBV('7075659', '300160000' ),
+		T_JBV('7073471', '40790001' ),
+		T_JBV('7073477', '40790001' ),
+		T_JBV('7073474', '40790001' ),
+		T_JBV('7073496', '40790001' ),
+		T_JBV('7073389', '40790001' ),
+		T_JBV('7073425', '40790001' ),
+		T_JBV('7073437', '40790001' ),
+		T_JBV('7073423', '40790001' ),
+		T_JBV('7031972', '300304400' ),
+		T_JBV('7228957', '40130002' ),
+		T_JBV('7075661', '300304900' ),
+		T_JBV('7075179', '300240200' ),
+		T_JBV('7074581', '40860000' ),
+		T_JBV('7073482', '40790001' ),
+		T_JBV('7073492', '40790001' ),
+		T_JBV('7073382', '40790001' ),
+		T_JBV('7073422', '40790001' ),
+		T_JBV('7073412', '40790001' ),
+		T_JBV('7073392', '40790001' ),
+		T_JBV('7073436', '40790001' ),
+		T_JBV('7073335', '40790001' ),
+		T_JBV('6891565', '300301700' ),
+		T_JBV('7073439', '40790001' ),
+		T_JBV('7073450', '40790001' ),
+		T_JBV('7073434', '40790001' ),
+		T_JBV('7073361', '40790001' ),
+		T_JBV('7030344', '40790001' ),
+		T_JBV('6979201', '300302400' ),
+		T_JBV('7020139', '300301700' ),
+		T_JBV('6973096', '40130002' ),
+		T_JBV('7017659', '300304900' ),
+		T_JBV('6946615', '300302107' ),
+		T_JBV('6889807', '300304900' ),
+		T_JBV('7073301', '300301700' ),
+		T_JBV('7029406', '40790001' ),
+		T_JBV('6969509', '40130000' ),
+		T_JBV('6886840', '40790001' ),
+		T_JBV('7075258', '430370000' ),
+		T_JBV('7068145', '300303500' ),
+		T_JBV('7069027', '300303700' ),
+		T_JBV('7075205', '300304900' ),
+		T_JBV('7074941', '300303700' ),
+		T_JBV('7073459', '40790001' ),
+		T_JBV('7073467', '40790001' ),
+		T_JBV('7073432', '40790001' ),
+		T_JBV('7073433', '40790001' ),
+		T_JBV('7073368', '40790001' ),
+		T_JBV('7073356', '40790001' ),
+		T_JBV('7069054', '300303700' ),
+		T_JBV('7069046', '300303700' ),
+		T_JBV('7031979', '300304900' ),
+		T_JBV('7030338', '300160000' ),
+		T_JBV('7030310', '40660006' ),
+		T_JBV('7101248', '40351001' ),
+		T_JBV('7075652', '300303500' ),
+		T_JBV('7073483', '40660006' ),
+		T_JBV('7073478', '40790001' ),
+		T_JBV('7073502', '40790001' ),
+		T_JBV('7073480', '40790001' ),
+		T_JBV('7073458', '40790001' ),
+		T_JBV('6886869', '300304900' ),
+		T_JBV('7073388', '40790001' ),
+		T_JBV('6940959', '300304900' ),
+		T_JBV('7073391', '40790001' ),
+		T_JBV('6972866', '40380013' ),
+		T_JBV('6979172', '300302400' ),
+		T_JBV('7020226', '290670001' ),
+		T_JBV('7073427', '40790001' ),		
+		T_JBV('7075260', '300304900' ),
+		T_JBV('7073396', '40790001' ),
+		T_JBV('7073429', '40790001' ),
+		T_JBV('7073443', '40790001' ),
+		T_JBV('7073419', '40790001' ),
+		T_JBV('7075086', '300370005' ),
+		T_JBV('7074988', '40130005' ),
+		T_JBV('7032159', '300301000' ),
+		T_JBV('7073431', '40790001' ),
+		T_JBV('7073398', '40790001' ),
+		T_JBV('7073455', '40790001' ),
+		T_JBV('7073464', '40790001' ),
+		T_JBV('7073384', '40790001' ),
+		T_JBV('7074398', '300300900' ),
+		T_JBV('7073421', '40790001' ),
+		T_JBV('7073469', '40790001' ),
+		T_JBV('6969503', '40130000' ),
+		T_JBV('7032305', '40790001' ),
+		T_JBV('6886232', '300301000' ),
+		T_JBV('7074611', '120400000' ),
+		T_JBV('7075528', '300300300' ),
+		T_JBV('7074976', '300303500' )
+
+
+	); 
+	V_TMP_JBV T_JBV;
+    
+BEGIN	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZACION ');
+	
+	FOR I IN V_JBV.FIRST .. V_JBV.LAST
+	
+	LOOP
+ 
+	V_TMP_JBV := V_JBV(I);
+
+	
+	V_SQL := 'UPDATE ' || V_ESQUEMA || '.BIE_LOCALIZACION
+		  SET DD_UPO_ID = ( SELECT DD_UPO_ID FROM ' || V_ESQUEMA_M || '.DD_UPO_UNID_POBLACIONAL WHERE DD_UPO_CODIGO = ''' || V_TMP_JBV(2) || ''' ),
+		      DD_LOC_ID = ( SELECT DD_LOC_ID FROM ' || V_ESQUEMA_M || '.DD_UPO_UNID_POBLACIONAL WHERE DD_UPO_CODIGO = ''' || V_TMP_JBV(2) || ''' )
+		  WHERE BIE_ID = ( SELECT BIE_ID 
+				   FROM ACT_ACTIVO 	
+				   WHERE 1 = 1
+				   AND ACT_NUM_ACTIVO = ''' || V_TMP_JBV(1) || ''' ) ' ;
+	
+	EXECUTE IMMEDIATE V_SQL;
+			
+	V_COUNT_UPDATE := V_COUNT_UPDATE + 1;
+						
+	END LOOP;
+		
+	COMMIT;
+	
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE||' registros');
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

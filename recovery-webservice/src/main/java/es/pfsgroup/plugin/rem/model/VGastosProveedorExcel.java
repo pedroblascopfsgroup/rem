@@ -183,6 +183,9 @@ public class VGastosProveedorExcel implements Serializable {
 	@Column(name="ACT_NUM_ACTIVO")
 	private String numActivo;
 	
+	@Column(name="PTDA_PRESUPUESTARIA")
+	private String ptdaPresupuestaria;
+	
 	@Transient
 	private boolean esGastoAgrupado; 
 	
@@ -633,6 +636,14 @@ public class VGastosProveedorExcel implements Serializable {
 	public void setMotivoRechazoProp(String motivoRechazoProp) {
 		this.motivoRechazoProp = motivoRechazoProp;
 	}
+
+	public String getPtdaPresupuestaria() {
+		return ptdaPresupuestaria;
+	}
+
+	public void setPtdaPresupuestaria(String ptdaPresupuestaria) {
+		this.ptdaPresupuestaria = ptdaPresupuestaria;
+	}	
 	
 	
 }

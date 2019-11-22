@@ -7302,6 +7302,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
 						htt.setFechaInscripcion(null);
 						htt.setFechaCalificacion(null);
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 					}
 					if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo()) && !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
 						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
@@ -7311,7 +7312,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
 						htt.setFechaInscripcion(null);
-						htt.getTitulo().setFechaInscripcionReg(null);
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 					}
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
@@ -7357,8 +7358,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoTitulo titulo = htt.getTitulo();
 				if (titulo != null) {
 					boolean gridConDatos = getHistoricoTramitacionTitulo(titulo.getActivo().getId()).isEmpty();
-					String nuevoEstado = gridConDatos ? DDEstadoTitulo.ESTADO_SUBSANAR : DDEstadoTitulo.ESTADO_EN_TRAMITACION
-							;
+					String nuevoEstado = gridConDatos ? DDEstadoTitulo.ESTADO_SUBSANAR : DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+					
 					DDEstadoTitulo estadoTitulo = (DDEstadoTitulo) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDEstadoTitulo.class, nuevoEstado);
 					titulo.setEstado(estadoTitulo);

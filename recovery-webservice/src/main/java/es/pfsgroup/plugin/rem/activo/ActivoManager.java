@@ -4465,22 +4465,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
-			
-//			if (!Checks.esNulo(dto.getVentaSobrePlano())){
-//				
-//				if(dto.getVentaSobrePlano()) {
-//					activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI)));
-//				}else {
-//					activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO)));
-//				}
-//	
-//				
-//			}
-//			if(!Checks.esNulo(dto.getMotivoAutorizacionTramitacionCodigo())) {
-//				if(DDMotivoAutorizacionTramitacion.COD_OTROS.equals(activo.getOfertas().get(0))) {
-//					
-//				}
-//			}
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 			return false;

@@ -49,16 +49,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     	
 	     },
 	     
-	     usuarioEditarVentaPlano: function(get){
-				var me = this;
-				var user = $AU.userIsRol("HAYASUPER") || $AU.userIsRol("HAYAGESTCOM");
-				
-				if(user){
-					return false;
-				}
-				return true;
-		},
-	     
 	     esAgrupacionPromocionAlquiler: function(get) {
 	    	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo') ;
 	    	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
@@ -723,7 +713,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    				return !funcion;
 	    			}
 	    		return true;
-	    	}
+	    	},
+		     esUsuarioGestorComercialAgrupacionObraNueva: function(get) {
+			     	return CONST.TIPOS_AGRUPACION['OBRA_NUEVA'] && ($AU.userIsRol("HAYASUPER") || get('agrupacionficha.esGestorComercialEnActivo'));
+			     }
     },
     stores: {
     	comboCartera: {

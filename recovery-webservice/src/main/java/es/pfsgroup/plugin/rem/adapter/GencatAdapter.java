@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -24,8 +26,6 @@ import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 
 
@@ -52,6 +52,8 @@ public class GencatAdapter {
 	
 	@Autowired
 	private ActivoManager activoManager;
+	
+	protected static final Log logger = LogFactory.getLog(GencatAdapter.class);
 
 	private String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
 
@@ -94,15 +96,21 @@ public class GencatAdapter {
 							//Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el documento realmente, sólo insertando la fila.
 							File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
 							BufferedWriter out = new BufferedWriter(new FileWriter(file));
-						    out.write("pfs");
-						    out.close();					    
-						    FileItem fileItem = new FileItem();
-							fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
-							fileItem.setFile(file);
-							fileItem.setLength(file.length());			
-							webFileItem.setFileItem(fileItem);
-							activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
-							file.delete();
+							try {
+								out.write("pfs");
+								FileItem fileItem = new FileItem();
+								fileItem.setFileName("idDocRestClient[" + idDocRestClient + "]");
+								fileItem.setFile(file);
+								fileItem.setLength(file.length());
+								webFileItem.setFileItem(fileItem);
+								activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+							}finally {
+								 out.close();
+								 if(!file.delete()){
+									 logger.info("No se podido borrar el temporarl de descarga");
+								 }
+							}
+						   
 				}
 			}
 			else {

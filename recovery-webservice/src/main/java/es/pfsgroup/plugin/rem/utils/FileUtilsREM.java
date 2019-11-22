@@ -1,14 +1,10 @@
 package es.pfsgroup.plugin.rem.utils;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -34,17 +30,22 @@ import com.itextpdf.text.pdf.PdfWriter;
 import es.pfsgroup.commons.utils.Checks;
 
 public class FileUtilsREM {
+	
+	private FileUtilsREM() {
+		throw new IllegalStateException("Utility class");
+	}
 
-	private final static Log logger = LogFactory.getLog(FileUtilsREM.class);
 
-	private final static String CODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	private static final  Log logger = LogFactory.getLog(FileUtilsREM.class);
+
+	private static final String CODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 	public static String base64Encode(File file) throws IOException {
 		byte[] bytes = read(file);
 		return base64Encode(bytes);
 	}
 
-	private static String base64Encode(byte[] in) throws IOException {
+	private static String base64Encode(byte[] in){
 		logger.debug("------------ Llamada a base64Encode-----------------");
 
 		StringBuilder out = new StringBuilder((in.length * 4) / 3);
@@ -92,25 +93,27 @@ public class FileUtilsREM {
 				if (ous != null)
 					ous.close();
 			} catch (IOException e) {
+				logger.error(e.getMessage(),e);
 			}
 			try {
 				if (ios != null)
 					ios.close();
 			} catch (IOException e) {
+				logger.error(e.getMessage(),e);
 			}
 		}
 		return ous.toByteArray();
 	}
 
 	// Este método evita nulos hacia el PDF y formatea Fechas, Double...
-	public static String stringify(Object obj) throws Exception {
+	public static String stringify(Object obj){
 		String cadena = "-";
 
 		if (!Checks.esNulo(obj)) {
 
 			if (obj instanceof Date) {
 				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-				cadena = dateFormat.format((Date) obj).toString();
+				cadena = dateFormat.format((Date) obj);
 
 			} else if (obj instanceof Float || obj instanceof Double || obj instanceof BigDecimal) {
 				DecimalFormat df = new DecimalFormat();
@@ -121,10 +124,7 @@ public class FileUtilsREM {
 				df.setMinimumFractionDigits(2);
 				df.setDecimalFormatSymbols(symbols);
 				
-				//df.applyLocalizedPattern("###,###.00");
 				cadena = df.format(obj);
-				//df.applyLocalizedPattern("###.###,00");
-				//cadena = df.format(cadena);
 				if (cadena.equals(",00")) {
 					cadena = "0,00";
 				}
@@ -178,45 +178,6 @@ public class FileUtilsREM {
 		outputStream.close();
 
 		return document;
-	}
-
-	public static void mergeFiles(List<File> files, File mergedFile) {
-		logger.debug("------------ Llamada a mergeFiles-----------------");
-
-		FileWriter fstream = null;
-		BufferedWriter out = null;
-		try {
-			fstream = new FileWriter(mergedFile, true);
-			out = new BufferedWriter(fstream);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		for (File f : files) {
-			System.out.println("merging: " + f.getName());
-			FileInputStream fis;
-			try {
-				fis = new FileInputStream(f);
-				BufferedReader in = new BufferedReader(new InputStreamReader(fis));
-
-				String aLine;
-				while ((aLine = in.readLine()) != null) {
-					out.write(aLine);
-					out.newLine();
-				}
-
-				in.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		try {
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	public static void concatenatePdfs(List<File> listOfPdfFiles, File outputFile)

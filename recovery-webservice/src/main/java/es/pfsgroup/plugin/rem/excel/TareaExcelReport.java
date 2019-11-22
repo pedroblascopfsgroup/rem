@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.excel;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
 public class TareaExcelReport extends AbstractExcelReport implements ExcelReport {
@@ -37,8 +38,14 @@ public class TareaExcelReport extends AbstractExcelReport implements ExcelReport
 			fila.add(tarea.getContrato()); //Nº trámite
 			fila.add(tarea.getDescripcionEntidad()); //Tipo de trámite
 			fila.add(tarea.getGestor());//Reponsable
-			fila.add(tarea.getFechaInicio().toString());
-			fila.add(tarea.getFechaVenc().toString());
+			if(!Checks.esNulo(tarea.getFechaInicio()))
+				fila.add(tarea.getFechaInicio().toString());
+			else
+				fila.add("");
+			if(!Checks.esNulo(tarea.getFechaVenc()))
+				fila.add(tarea.getFechaVenc().toString());
+			else
+				fila.add("");
 			valores.add(fila);
 		}
 		

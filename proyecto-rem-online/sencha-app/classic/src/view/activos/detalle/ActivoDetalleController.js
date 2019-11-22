@@ -2975,7 +2975,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             success: function(record, operation) {
            		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
            		 me.getView().unmask();
-           		 grid.getStore().load();
+           		 grid.up().funcionRecargar();
             },
             failure: function(record, operation) {
                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

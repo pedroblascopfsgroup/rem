@@ -188,12 +188,11 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
                       me.unmask();
                       me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
 						me.saveSuccessFn();											
-						
                   },
                   
-					failure: function (a, operation) {
-                  	context.store.load();
+				failure: function (a, operation) {
                   	try {
+                  		
                   		var response = Ext.JSON.decode(operation.getResponse().responseText)
                   		
                   	}catch(err) {}
@@ -205,7 +204,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
                   	}                        	
 						me.unmask();
                   }
-              });                            
+               });                            
       		me.disablePagingToolBar(false);
       		me.getSelectionModel().deselectAll();
       		editor.isNew = false;
@@ -273,28 +272,22 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
    
    isDeshabilitarAddButton: function(){
    	var me = this;
-   	var tieneDatosStore = me.store.data.length > 0;
+   	var tieneDatosStore = me.store.data.length > 0; 
    	var isBankia = me.lookupController().getViewModel().get('activo.isCarteraBankia'); 
-   	if (isBankia) {
-   		return true;
-   	}
-   	if(tieneDatosStore){
-	    	var CalificacionNegativa = me.getUltimoRegistro().data.codigoEstadoPresentacion;
-	    	if(CalificacionNegativa == CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']){
-	    		if(me.getUltimoRegistro().data.tieneCalificacionNoSubsanada == 1 ){
-	    			return true;
-	    		} else {
-	    			return false;
-	    		}
-	    	} else if (CalificacionNegativa == CONST.DD_ESP_ESTADO_PRESENTACION['PRESENTACION_EN_REGISTRO']) {
-	    		return false;
-	    	} else {
-	    		return true;
-	    	}
-    }else{
-    	return false;
-    }
-   	return true;
+   	if (isBankia)	return true;
+	if (tieneDatosStore) {
+		var codigoUltimoRegistro = me.getUltimoRegistro().data.codigoEstadoPresentacion;
+		if (codigoUltimoRegistro != CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']) {
+			return true;
+		} else if (codigoUltimoRegistro === CONST.DD_ESP_ESTADO_PRESENTACION['CALIFICADO_NEGATIVAMENTE']
+					&& me.getUltimoRegistro().data.tieneCalificacionNoSubsanada == 1) {
+				return true;
+			} else {
+				return false;
+			}
+		}else{ 
+			return false;
+		}
    },
    
    isDeshabilitarRemoveButton:function(grid, records){

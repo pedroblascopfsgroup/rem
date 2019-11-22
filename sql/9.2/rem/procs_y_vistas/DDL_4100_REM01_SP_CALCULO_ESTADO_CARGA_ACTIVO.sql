@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Daniel
---## FECHA_CREACION=20190930
+--## AUTOR=Mª José Ponce
+--## FECHA_CREACION=20191120
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7859
+--## INCIDENCIA_LINK=HREOS-8527
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que calcula el DD_ECA_ID de la tabla ACT_CRG_CARGAS.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial HREOS-7859
+--##        0.2 Añadir opción sin carga HREOS-8527
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -21,7 +22,7 @@ SET DEFINE OFF;
 CREATE OR REPLACE PROCEDURE SP_CALCULO_ESTADO_CARGA_ACTIVO (
     P_ACT_ID        IN NUMBER DEFAULT NULL,
     V_USUARIO       VARCHAR2 DEFAULT 'SP_CALCULO_ESTADO_CARGA_ACTIVO') AS
---v0.1
+--v0.2
 
     V_ESQUEMA VARCHAR2(15 CHAR) := 'REM01';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER';
@@ -188,6 +189,25 @@ BEGIN
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,ACT.FECHAMODIFICAR = SYSDATE';
+
+        EXECUTE IMMEDIATE V_MSQL;
+
+    --------------------------------------------------------------------
+    ----------- Si no hay cargas. --------------------------------------
+    --------------------------------------------------------------------
+
+        V_MSQL := 'MERGE INTO ACT_ACTIVO ACT
+                   USING (
+                        SELECT AUX_ACT.ACT_ID FROM '|| V_ESQUEMA ||'.ACT_ACTIVO AUX_ACT
+                        LEFT JOIN '|| V_ESQUEMA ||'.ACT_CRG_CARGAS CRG ON AUX_ACT.ACT_ID = CRG.ACT_ID AND CRG.BORRADO = 0
+                        WHERE CRG.CRG_ID IS NULL AND AUX_ACT.BORRADO=0'||V_ACT_ID||
+                        ') AUX
+                   ON (ACT.ACT_ID = AUX.ACT_ID)
+                   WHEN MATCHED THEN
+                   UPDATE SET
+                    ACT.DD_ECA_ID = NULL
+                    , ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
+                    , ACT.FECHAMODIFICAR = SYSDATE';
 
         EXECUTE IMMEDIATE V_MSQL;
         

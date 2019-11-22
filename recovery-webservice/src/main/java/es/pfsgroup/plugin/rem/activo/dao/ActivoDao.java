@@ -34,7 +34,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacio
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
-	Page getListActivos(DtoActivoFilter dtoActivoFiltro, Usuario usuLogado);
+	Object getListActivos(DtoActivoFilter dtoActivoFiltro, Usuario usuLogado);
 	
 	List<Activo> getListActivosLista(DtoActivoFilter dto, Usuario usuLogado);
 	

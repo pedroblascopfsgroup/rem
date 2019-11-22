@@ -118,6 +118,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Date fechaRespuesta;
 	
 	private Double importeContraofertaOfertanteCES;
+	
+	private String ofertaSingular;
 
 
 	public Long getIdOferta() {
@@ -511,5 +513,13 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setImporteContraofertaOfertanteCES(Double importeContraofertaOfertanteCES) {
 		this.importeContraofertaOfertanteCES = importeContraofertaOfertanteCES;
+	}
+
+	public String getOfertaSingular() {
+		return ofertaSingular;
+	}
+
+	public void setOfertaSingular(String ofertaSingular) {
+		this.ofertaSingular = ofertaSingular;
 	}
 }

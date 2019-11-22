@@ -100,7 +100,6 @@ public class FacturasProveedoresExcelReport extends AbstractExcelReport implemen
 		listaCabeceras.add("CARACTERÍSTICA");
 		listaCabeceras.add("RUTA");
 		listaCabeceras.add("ETAPA");
-		listaCabeceras.add("PTDA_PRESUPUESTARIA");
 		
 		return listaCabeceras;
 	}
@@ -614,12 +613,6 @@ public class FacturasProveedoresExcelReport extends AbstractExcelReport implemen
 			
 			if(!Checks.esNulo(factura.getEtapa())) {
 				fila.add(factura.getEtapa());
-			}else {
-				fila.add("");
-			}
-			
-			if(!Checks.esNulo(factura.getPtdaPresupuestaria())) {
-				fila.add(factura.getPtdaPresupuestaria());
 			}else {
 				fila.add("");
 			}

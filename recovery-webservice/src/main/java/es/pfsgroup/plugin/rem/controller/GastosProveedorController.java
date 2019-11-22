@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +26,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -48,6 +52,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -58,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -96,6 +102,12 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@Autowired
 	private LogTrustEvento trustMe;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	private static final String RESPONSE_SUCCESS_KEY = "success";	
+	private static final String RESPONSE_DATA_KEY = "data";
 
 	/**
 	 * Método que recupera un conjunto de datos del gasto según su id 
@@ -909,6 +921,45 @@ public class GastosProveedorController extends ParadiseJsonController {
 		ExcelReport report = new GestionGastosExcelReport(listaGastosProveedor);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional()
+	public ModelAndView registrarExportacion(DtoGastosFilter dtoGastosFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelMap model = new ModelMap();
+		
+		try {
+			int count = gastoProveedorApi.getListGastosExcel(dtoGastosFilter).getTotalCount();
+			AuditoriaExportaciones ae = new AuditoriaExportaciones();
+			ae.setBuscador(buscador);
+			ae.setFechaExportacion(new Date());
+			ae.setNumRegistros(Long.valueOf(count));
+			ae.setUsuario(usuarioManager.getUsuarioLogado());
+			ae.setFiltros(parameterParser(request.getParameterMap()));
+			ae.setAccion(exportar);
+			genericDao.save(AuditoriaExportaciones.class, ae);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, count);
+		}catch(Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en gastosProveedorController", e);
+		}
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private String parameterParser(Map map) {
+		StringBuilder mapAsString = new StringBuilder("{");
+	    for (Object key : map.keySet()) {
+	    	if(!key.toString().equals("buscador") && !key.toString().equals("exportar"))
+	    		mapAsString.append(key.toString() + "=" + ((String[])map.get(key))[0] + ",");
+	    }
+	    mapAsString.delete(mapAsString.length()-1, mapAsString.length());
+	    if(mapAsString.length()>0)
+	    	mapAsString.append("}");
+	    return mapAsString.toString();
 	}
 	
 	private String formateaAviso(String descripcion) {

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -49,10 +51,12 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -130,6 +134,9 @@ public class OfertasController {
 	@Autowired
 	private ActivoAgrupacionDao activoAgrupacionDao;
 		
+	private static final String RESPONSE_SUCCESS_KEY = "success";	
+	private static final String RESPONSE_DATA_KEY = "data";
+	
 	private final static String CLIENTE_HAYA = "HAYA";
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 
@@ -218,6 +225,45 @@ public class OfertasController {
 		ExcelReport report = new OfertasExcelReport(listaOfertas, dtoCarteraCodigo, usuarioCartera, fechasReunionComite, sancionadores);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
+	}	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional()
+	public ModelAndView registrarExportacion(DtoOfertasFilter dtoOfertasFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelMap model = new ModelMap();
+		
+		try {
+			int count = ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getTotalCount();
+			AuditoriaExportaciones ae = new AuditoriaExportaciones();
+			ae.setBuscador(buscador);
+			ae.setFechaExportacion(new Date());
+			ae.setNumRegistros(Long.valueOf(count));
+			ae.setUsuario(usuarioManager.getUsuarioLogado());
+			ae.setFiltros(parameterParser(request.getParameterMap()));
+			ae.setAccion(exportar);
+			genericDao.save(AuditoriaExportaciones.class, ae);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, count);
+		}catch(Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en ofertasController", e);
+		}
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private String parameterParser(Map map) {
+		StringBuilder mapAsString = new StringBuilder("{");
+	    for (Object key : map.keySet()) {
+	    	if(!key.toString().equals("buscador") && !key.toString().equals("exportar"))
+	    		mapAsString.append(key.toString() + "=" + ((String[])map.get(key))[0] + ",");
+	    }
+	    mapAsString.delete(mapAsString.length()-1, mapAsString.length());
+	    if(mapAsString.length()>0)
+	    	mapAsString.append("}");
+	    return mapAsString.toString();
 	}
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {

@@ -923,6 +923,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
+			
+			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())) {
+				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
+			}
 
 		}
 
@@ -1119,6 +1123,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
+			
+			if (!Checks.esNulo(ofertaDto.getEsOfertaSingular())
+					&& ofertaDto.getEsOfertaSingular().equals(oferta.getOfertaSingular())) {
+				oferta.setOfertaSingular(ofertaDto.getEsOfertaSingular());
+			}
+
 		}
 
 		return errorsList;

@@ -46,6 +46,8 @@ public class ProveedorDto implements WebcomRESTDto {
 	private BooleanDataType abierta;
 	@MappedColumn("TELFONO_CONTACTO_VISITAS")
 	private StringDataType telefonoContactoVisitas;
+	private LongDataType numeroDelegaciones;
+	private StringDataType nombreComercial;
 	
 	
 
@@ -274,6 +276,22 @@ public class ProveedorDto implements WebcomRESTDto {
 
 	public void setTelefonoContactoVisitas(StringDataType telefonoContactoVisitas) {
 		this.telefonoContactoVisitas = telefonoContactoVisitas;
+	}
+
+	public LongDataType getNumeroDelegaciones() {
+		return numeroDelegaciones;
+	}
+
+	public void setNumeroDelegaciones(LongDataType numeroDelegaciones) {
+		this.numeroDelegaciones = numeroDelegaciones;
+	}
+
+	public StringDataType getNombreComercial() {
+		return nombreComercial;
+	}
+
+	public void setNombreComercial(StringDataType nombreComercial) {
+		this.nombreComercial = nombreComercial;
 	}
 
 	

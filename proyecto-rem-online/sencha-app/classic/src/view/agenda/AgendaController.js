@@ -223,13 +223,14 @@ Ext.define('HreRem.view.agenda.AgendaController', {
     	
     },
     
-    onClickDescargarExcelTareas: function(btn) {
+    onClickDescargarExcel: function(btn,buscador) {
 		
     	var me = this,
+    	view = me.getView(),
 		config = {};
 		 
 		var initialData = {};
-
+		view.mask(HreRem.i18n("msg.mask.loading"));
 		var searchForm = btn.up('formBase');
 		if (searchForm.isValid()) {
 			var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
@@ -240,70 +241,93 @@ Ext.define('HreRem.view.agenda.AgendaController', {
 				}
 			});
         }
-		
-		params.codigoTipoTarea = "1";
-		params.esAlerta = false;
+		if(buscador == 'avisos'){
+			params.codigoTipoTarea = "3";
+		}else{
+			params.codigoTipoTarea = "1";
+		}		
+		if(buscador == 'alertas'){
+			params.esAlerta = true;
+		}else{
+			params.esAlerta = false;
+		}
+		params.buscador = buscador;
 		config.params = params;
 		config.url= $AC.getRemoteUrl("agenda/generateExcel");
-		
-		me.fireEvent("downloadFile", config);		
+		var url = $AC.getRemoteUrl("agenda/registrarExportacion");
+		Ext.Ajax.request({			
+		     url: url,
+		     params: params,
+		     method: 'POST'
+		    ,success: function (a, operation, context) {
+		    	var count = Ext.decode(a.responseText).data;
+		    	if(count < 1000){	
+		    		config.params.exportar = true;
+		    		Ext.Ajax.request({			
+		   		     url: url,
+				     params: params,
+				     method: 'POST'
+				    ,success: function (a, operation, context) {
+				    	me.fireEvent("downloadFile", config);
+			    		view.unmask();
+		           },           
+		           failure: function (a, operation, context) {
+		           	  Ext.toast({
+						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
+						     width: 360,
+						     height: 100,
+						     align: 't'
+						 });
+		           	  view.unmask();
+		           }
+			     
+				});
+		    		
+		       }else {
+		    		var win = Ext.create('HreRem.view.common.WindowExportar', {
+		        		title: 'Exportar '+buscador,
+		        		height: 150,
+		        		width: 700,
+		        		modal: true,
+		        		config: config,
+		        		count: count,
+		        		params: params,
+		        		url: url,
+		        		view: view,
+		        		renderTo: view.body		        		
+		        	});
+		        	win.show();
+		    	}
+           },           
+           failure: function (a, operation, context) {
+           	  Ext.toast({
+				     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
+				     width: 360,
+				     height: 100,
+				     align: 't'
+				 });
+           	  view.unmask();
+           }
+	     
+		});
     	
+    	
+    },
+    onClickDescargarExcelTareas: function(btn) {
+		var me = this;
+    	me.onClickDescargarExcel(btn, 'tareas');
     	
     },
     
     onClickDescargarExcelAvisos: function(btn) {
-		
-    	var me = this,
-		config = {};
-		 
-		var initialData = {};
-
-		var searchForm = btn.up('formBase');
-		if (searchForm.isValid()) {
-			var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-			
-			Ext.Object.each(params, function(key, val) {
-				if (Ext.isEmpty(val)) {
-					delete params[key];
-				}
-			});
-        }
-		
-		params.codigoTipoTarea = "1";
-		params.esAlerta = false;
-		config.params = params;
-		config.url= $AC.getRemoteUrl("agenda/generateExcel");
-		
-		me.fireEvent("downloadFile", config);		
-    	
+		var me = this;
+    	me.onClickDescargarExcel(btn, 'avisos');   	
     	
     },
     
-    onClickDescargarExcelAlertas: function(btn) {
-		
-    	var me = this,
-		config = {};
-		 
-		var initialData = {};
-
-		var searchForm = btn.up('formBase');
-		if (searchForm.isValid()) {
-			var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-			
-			Ext.Object.each(params, function(key, val) {
-				if (Ext.isEmpty(val)) {
-					delete params[key];
-				}
-			});
-        }
-		
-		params.codigoTipoTarea = "1";
-		params.esAlerta = true;
-		config.params = params;
-		config.url= $AC.getRemoteUrl("agenda/generateExcel");
-		
-		me.fireEvent("downloadFile", config);		
-    	
+    onClickDescargarExcelAlertas: function(btn) {		
+		var me = this;
+    	me.onClickDescargarExcel(btn, 'alertas');
     	
     },
     

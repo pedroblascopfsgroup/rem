@@ -1834,6 +1834,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setIdGestorComercialPrescriptor(0l);
 			}
 		}
+		
+		if(!Checks.esNulo(oferta.getOfertaSingular())) {
+			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
+		}
 
 		return dto;
 	}
@@ -5897,12 +5901,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		if (!Checks.esNulo(dto.getCodigoProveedorRem())) {
+			Date fechaHoy = new Date();
 			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
 					dto.getCodigoProveedorRem());
 			ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroProveedor);
 
 			if (Checks.esNulo(proveedor) || Checks.esNulo(proveedor.getTipoProveedor())
-					|| !proveedor.getTipoProveedor().getCodigo().equals(dto.getCodigoTipoProveedor())) {
+					|| !proveedor.getTipoProveedor().getCodigo().equals(dto.getCodigoTipoProveedor())
+					|| proveedor.getFechaBaja().before(fechaHoy)) {
 				throw new JsonViewerException(ExpedienteComercialManager.PROVEDOR_NO_EXISTE_O_DISTINTO_TIPO);
 			}
 
@@ -6568,9 +6574,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						solicitaFinanciacion = condiciones.getSolicitaFinanciacion();
 					}
 
-					condiciones.setSolicitaFinanciacion(solicitaFinanciacion);
+					if(!Checks.esNulo(solicitaFinanciacion)) {
+						condiciones.setSolicitaFinanciacion(solicitaFinanciacion);
+					}
 
-					if (solicitaFinanciacion == 1) {
+					if (!Checks.esNulo(solicitaFinanciacion) && solicitaFinanciacion == 1) {
 						if (!Checks.esNulo(dto.getEntidadFinancieraCodigo())){
 							DDEntidadFinanciera entidadFinanciera = (DDEntidadFinanciera) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDEntidadFinanciera.class, dto.getEntidadFinancieraCodigo());
@@ -6582,7 +6590,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								formalizacion.setTipoRiesgoClase(null);
 							}
 						}
-					} else if (solicitaFinanciacion == 0) {
+					} else if (!Checks.esNulo(solicitaFinanciacion) && solicitaFinanciacion == 0) {
 						condiciones.setEntidadFinanciera(null);
 						formalizacion.setNumExpediente(null);
 						formalizacion.setTipoRiesgoClase(null);
@@ -10079,27 +10087,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public void finalizarTareaValidacionClientes (ExpedienteComercial expedienteComercial){
-		TareaNotificacion tarNot = new TareaNotificacion();
-		ActivoTramite tramite = tramiteDao.getTramiteComercialVigenteByTrabajo(expedienteComercial.getTrabajo().getId());
-		if (!Checks.esNulo(tramite)){
+	public void finalizarTareaValidacionClientes(ExpedienteComercial expedienteComercial) {
+		TareaNotificacion tarNot = null;
+		ActivoTramite tramite = tramiteDao
+				.getTramiteComercialVigenteByTrabajo(expedienteComercial.getTrabajo().getId());
+		if (!Checks.esNulo(tramite)) {
 			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
-			for (TareaExterna tarea : tareasActivas){
-				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
-					tarNot = tarea.getTareaPadre();
-					if (!Checks.esNulo(tarNot)){
-						tarNot.setFechaFin(new Date());
+			if (tareasActivas != null && !tareasActivas.isEmpty()) {
+				for (TareaExterna tarea : tareasActivas) {
+					if (ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES
+							.equals(tarea.getTareaProcedimiento().getCodigo())) {
+						tarNot = tarea.getTareaPadre();
+						if (!Checks.esNulo(tarNot)) {
+							tarNot.setFechaFin(new Date());
 
-						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-						if (!Checks.esNulo(usuarioLogado)){
-							tarNot.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
-							tarNot.getAuditoria().setFechaBorrar(new Date());
-							tarNot.getAuditoria().setBorrado(true);
+							Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+							if (!Checks.esNulo(usuarioLogado)) {
+								tarNot.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+								tarNot.getAuditoria().setFechaBorrar(new Date());
+								tarNot.getAuditoria().setBorrado(true);
 
-							genericDao.update(TareaNotificacion.class, tarNot);
+								genericDao.update(TareaNotificacion.class, tarNot);
+							}
 						}
-					}
 
+					}
 				}
 			}
 			genericaRestDaoImp.doFlush();

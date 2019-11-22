@@ -3109,8 +3109,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			fechaBaja = !Checks.esNulo(fechaBaja) ? new Date(fechaBaja.getTime()) : null;
 
 			if (!Checks.esNulo(agrupacionActivo.getAgrupacion().getTipoAgrupacion())
-					&& agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
-							.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)
+					&& (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()))
 					&& (fechaBaja == null || fechaBaja.after(new Date()))) {
 				return true;
 			}
@@ -5245,8 +5245,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (this.isIntegradoAgrupacionObraNuevaOrAsistida(activo))
 			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
-		else if (DDTipoUsoDestino.TIPO_USO_PRIMERA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo())
-				|| DDTipoUsoDestino.TIPO_USO_SEGUNDA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo()))
+		else if (activo.getTipoUsoDestino() != null && (DDTipoUsoDestino.TIPO_USO_PRIMERA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo())
+				|| DDTipoUsoDestino.TIPO_USO_SEGUNDA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo())))
 			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
 		else {
 			Double importeLimite = (double) 500000;

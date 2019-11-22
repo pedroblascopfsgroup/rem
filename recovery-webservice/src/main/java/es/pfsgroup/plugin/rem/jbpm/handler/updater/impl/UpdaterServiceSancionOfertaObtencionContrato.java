@@ -104,9 +104,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 			for (ActivoOferta activoOferta : listActivosOferta) {
 				ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-				if (((!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()))
-						|| (Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())))
-						&& activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())) {
+				if (activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())) {
 					Oferta oferta = expediente.getOferta();
 					OfertaGencat ofertaGencat = null;
 					if (!Checks.esNulo(comunicacionGencat)) {
@@ -173,26 +171,26 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 			genericDao.save(ExpedienteComercial.class, expediente);
 			
-			//Si es T017, revisamos GENCAT
-			if(T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada) {
-				for (ActivoOferta activoOferta : listActivosOferta) {
-					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
-					if(!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
-						Oferta oferta = expediente.getOferta();	
-						OfertaGencat ofertaGencat = null;
-						if (!Checks.esNulo(comunicacionGencat)) {
-							ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
-						}
-						if(!Checks.esNulo(ofertaGencat)) {
-								if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
-									gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
-								}
-						}else{	
-							gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
-						}					
-					}
-				}
-			}
+//			//Si es T017, revisamos GENCAT
+//			if(T017.equals(tramite.getTipoTramite().getCodigo()) && proManzanaFinalizada) {
+//				for (ActivoOferta activoOferta : listActivosOferta) {
+//					ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
+//					if(!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+//						Oferta oferta = expediente.getOferta();	
+//						OfertaGencat ofertaGencat = null;
+//						if (!Checks.esNulo(comunicacionGencat)) {
+//							ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
+//						}
+//						if(!Checks.esNulo(ofertaGencat)) {
+//								if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+//									gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+//								}
+//						}else{	
+//							gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+//						}					
+//					}
+//				}
+//			}
 
 			//Actualizar el estado comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);

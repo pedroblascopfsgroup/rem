@@ -299,7 +299,12 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 	type: 'boolean'
                 },
                 {
-                	name: 'ventaSobrePlano'
+                	name: 'ventaSobrePlano',
+                	type: 'boolean'
+                },
+                {
+                	name: 'esGestorComercialEnActivo',
+                	type: 'boolean'
                 }
     ],
     

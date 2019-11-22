@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -68,6 +67,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -121,7 +121,6 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -276,6 +275,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -508,6 +510,7 @@ public class AgrupacionAdapter {
 							dtoAgrupacion.setEsVisitable(agrupacion.isEsVisitable());
 						}
 					}
+					dtoAgrupacion.setEsGestorComercialEnActivo(esGestorComercial(agrupacion));
 					// SI ES TIPO RESTRINGIDA
 				} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 					ActivoRestringida agrupacionTemp = (ActivoRestringida) agrupacion;
@@ -806,6 +809,8 @@ public class AgrupacionAdapter {
 		return dtoAgrupacion;
 
 	}
+
+
 
 	public Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem) {
 		return activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(numAgrupRem);
@@ -4310,5 +4315,23 @@ public class AgrupacionAdapter {
 		}
 
 		return dtoAgrupacion;
+	}
+	
+	private Boolean esGestorComercial(ActivoAgrupacion agrupacion) {
+		final String CODIGO_GESTOR_COMERCIAL = "GCOM";
+		boolean esGestorComercial = false;
+		if (!agrupacion.getActivos().isEmpty()) {
+			Usuario usu = genericAdapter.getUsuarioLogado();
+			for (int i = 0; i < agrupacion.getActivos().size(); i++) {
+				ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(i);
+				if (agrupacionActivo != null && agrupacionActivo.getActivo() != null 
+				&& usu.equals(gestorActivoApi
+						.getGestorComercialActual(agrupacionActivo.getActivo(), CODIGO_GESTOR_COMERCIAL))) {
+					esGestorComercial = true;
+					break;
+				}
+			}
+		}
+		return esGestorComercial;
 	}
 }

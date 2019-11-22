@@ -4459,7 +4459,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
-			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 			return false;

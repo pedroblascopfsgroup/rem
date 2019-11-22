@@ -713,7 +713,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    				return !funcion;
 	    			}
 	    		return true;
-	    	}
+	    	},
+		     esUsuarioGestorComercialAgrupacionObraNueva: function(get) {
+			     	return CONST.TIPOS_AGRUPACION['OBRA_NUEVA'] && ($AU.userIsRol("HAYASUPER") || get('agrupacionficha.esGestorComercialEnActivo'));
+			     }
     },
     stores: {
     	comboCartera: {

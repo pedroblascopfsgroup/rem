@@ -1534,7 +1534,7 @@ public class ActivoAdapter {
 
 	}
 	
-	public Page getActivos(DtoActivoFilter dtoActivoFiltro) {
+	public Object getActivos(DtoActivoFilter dtoActivoFiltro) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
@@ -1549,7 +1549,7 @@ public class ActivoAdapter {
 			}
 		}
 		
-		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
+		return activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
 	}
 
 	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {

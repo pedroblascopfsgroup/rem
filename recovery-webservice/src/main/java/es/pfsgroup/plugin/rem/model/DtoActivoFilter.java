@@ -93,6 +93,7 @@ public class DtoActivoFilter extends WebDto {
 	private String codigoPromocionPrinex;
 	private String tipoTituloPosesorio;
 	private String estadoComunicacionGencatCodigo;
+	private boolean listPage;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -591,5 +592,12 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setEstadoComunicacionGencatCodigo(String estadoComunicacionGencatCodigo) {
 		this.estadoComunicacionGencatCodigo = estadoComunicacionGencatCodigo;
+	}
+	public boolean isListPage() {
+		return listPage;
+	}
+	public void setListPage(boolean listPage) {
+		this.listPage = listPage;
 	}	
+	
 }

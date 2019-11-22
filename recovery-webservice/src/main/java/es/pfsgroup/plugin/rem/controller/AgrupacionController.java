@@ -69,6 +69,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	private static final String FALTAN_DATOS = "Faltan datos para proponer";
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
+	private static final String RESPONSE_DATA_KEY = "data";
 	
 	
 	@Autowired
@@ -97,8 +98,6 @@ public class AgrupacionController extends ParadiseJsonController {
 	@Autowired
 	private GenericABMDao genericDao;
 	
-	private static final String RESPONSE_SUCCESS_KEY = "success";	
-	private static final String RESPONSE_DATA_KEY = "data";
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
 	 * 

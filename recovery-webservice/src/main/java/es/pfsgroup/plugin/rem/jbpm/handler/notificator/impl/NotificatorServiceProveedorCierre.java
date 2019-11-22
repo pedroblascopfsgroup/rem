@@ -11,7 +11,10 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
@@ -22,11 +25,15 @@ import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 public class NotificatorServiceProveedorCierre extends AbstractNotificatorService implements NotificatorService {
 
 	private static final String CODIGO_T004_CIERRE_ECONOMICO = "T004_CierreEconomico";
+
+	private static final String BUZON_ELECNOR = "buzonelecnor";
+	private static final String PVC_NOMBRE_ELECNOR = "ELECNOR, S.A.";
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
-	
+	@Autowired
+	private GenericABMDao genericDao;	
 	
 	@Override
 	public String[] getKeys() {
@@ -53,7 +60,14 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 			List<String> mailsCC = new ArrayList<String>();
 			String correos = null;
 			
-			correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+			Usuario buzonElecnor = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_ELECNOR));
+			
+			if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
+		    	correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+			    if(PVC_NOMBRE_ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getNombre())) {
+					correos += "," + buzonElecnor.getEmail();
+				}
+		    }
 			
 			if(!Checks.esNulo(correos)) {
 				Collections.addAll(mailsPara, correos.split(";"));

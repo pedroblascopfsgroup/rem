@@ -26,6 +26,7 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	private Boolean unidadAlquilable;
 	private String estadoLocalizacion;
 	private String subestadoGestion;
+	private Integer asistenciaJuntaObligatoria;
 	
 
 	public Date getFechaComunicacionComunidad() {
@@ -48,6 +49,12 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	}
 	public Integer getContactoTel() {
 		return contactoTel;
+	}
+	public Integer getAsistenciaJuntaObligatoria() {
+		return asistenciaJuntaObligatoria;
+	}
+	public void setAsistenciaJuntaObligatoria(Integer asistenciaJuntaObligatoria) {
+		this.asistenciaJuntaObligatoria = asistenciaJuntaObligatoria;
 	}
 	public void setContactoTel(Integer contactoTel) {
 		this.contactoTel = contactoTel;

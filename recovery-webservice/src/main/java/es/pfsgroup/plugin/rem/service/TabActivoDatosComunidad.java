@@ -208,6 +208,10 @@ public class TabActivoDatosComunidad implements TabActivoService {
 				if (!Checks.esNulo(activoComunidadPropietariosDto.getFechaEnvioCarta())) {
 					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "fechaEnvioCarta", activoComunidadPropietariosDto.getFechaEnvioCarta());
 				}
+				if (!Checks.esNulo(activoComunidadPropietariosDto.getAsistenciaJuntaObligatoria())
+				&& !Checks.esNulo(activo.getComunidadPropietarios())) {
+					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios().getAsistenciaJuntaObligatoria(), "asistenciaJuntaObligatoria", activoComunidadPropietariosDto.getAsistenciaJuntaObligatoria());
+				} 
 				
 				activo.setComunidadPropietarios(genericDao.save(ActivoComunidadPropietarios.class, activo.getComunidadPropietarios()));
 				activoApi.saveOrUpdate(activo);				

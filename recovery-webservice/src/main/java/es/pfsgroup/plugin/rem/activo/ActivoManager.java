@@ -5883,6 +5883,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				comPropietarios.setContactoTel(actCom.getContactoTel());
 				comPropietarios.setVisita(actCom.getVisita());
 				comPropietarios.setBurofax(actCom.getBurofax());
+				comPropietarios.setAsistenciaJuntaObligatoria(actCom.getAsistenciaJuntaObligatoria());
 			}
 		}
 

@@ -166,7 +166,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																		bind: '{detalleeconomico.importePrincipalNoSujeto}'											                
 																	},
 																	{ 
-																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
+																		fieldLabel: HreRem.i18n('header.gasto.importe.recargo'),
 																		bind: '{detalleeconomico.importeRecargo}',
 																		listeners:{
 														        			change: function(){	

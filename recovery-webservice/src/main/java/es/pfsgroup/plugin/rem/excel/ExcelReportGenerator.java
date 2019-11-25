@@ -653,10 +653,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	
 	
 	@Override
-	public File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) {
+	public File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException {
 		
 		ServletContext sc = request.getSession().getServletContext();		
-		
+		FileOutputStream fileOutStream = null;
 		
 		try {
 
@@ -664,7 +664,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			
 			File fileOut = new File(poiFile.getAbsolutePath().replace("Report",""));
 			FileInputStream fis = new FileInputStream(poiFile);
-			FileOutputStream fileOutStream = new FileOutputStream(fileOut);
+			fileOutStream = new FileOutputStream(fileOut);
 			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis);
 		
 			XSSFSheet mySheet;
@@ -2791,12 +2791,17 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			}
 			
 			myWorkBook.write(fileOutStream);
-			fileOutStream.close();
+			//fileOutStream.close();
 			
 			return fileOut;
 			
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+		}finally {
+			if(fileOutStream != null) {
+				fileOutStream.close();
+			}
+			
 		}
 		
 		

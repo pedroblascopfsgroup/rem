@@ -1708,14 +1708,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.uploadDocumento")
 	@Transactional(readOnly = false)
 	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activoEntrada, String matricula)
-			throws Exception {
+			throws UserException {
 		Activo activo;
 		DDTipoDocumentoActivo tipoDocumento = null;
 		if (Checks.esNulo(activoEntrada)) {
 			activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
 
 			if (webFileItem.getParameter("tipo") == null)
-				throw new Exception("Tipo no valido");
+				throw new UserException("Tipo no valido");
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
 			tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtro);
@@ -1754,7 +1754,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				activoDao.save(activo);
 			} else {
-				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
+				throw new UserException("No se ha encontrado activo o tipo para relacionar adjunto");
 			}
 
 		} catch (Exception e) {
@@ -2856,13 +2856,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "fechaSubsanacion", activo.getFechaSubsanacion());
 				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());	
 				
-				
-				HistoricoTramitacionCalificacionNegativa histCalNeg = genericDao.get(HistoricoTramitacionCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "activoCalificacionNegativa.id",  activo.getId()));
-
-				if(!Checks.esNulo(histCalNeg) && !Checks.esNulo(histCalNeg.getHistoricoTramitacionTitulo())) {
-					dto.setFechaCalificacionNegativa(histCalNeg.getHistoricoTramitacionTitulo().getFechaCalificacion());
-					dto.setFechaPresentacionRegistroCN(histCalNeg.getHistoricoTramitacionTitulo().getFechaPresentacionRegistro());
+				if(!Checks.esNulo(activo.getHistoricoTramitacionTitulo())) {
+					dto.setFechaCalificacionNegativa(activo.getHistoricoTramitacionTitulo().getFechaCalificacion());
+					dto.setFechaPresentacionRegistroCN(activo.getHistoricoTramitacionTitulo().getFechaPresentacionRegistro());
 				}
+		
 				//existeCalificacionNegativa(getHistoricoTramitacionTitulo(idActivo), dto);
 				
 				activoCNListDto.add(dto);
@@ -5818,8 +5816,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 				
+
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "titulo.id", activo.getTitulo().getId());
+			
+				Order order = new Order(OrderType.DESC, "id");
+				List<HistoricoTramitacionTitulo> historicoTramitacionTituloList = genericDao.getListOrdered(HistoricoTramitacionTitulo.class, order, filter);
+			
+				if(!Checks.estaVacio(historicoTramitacionTituloList)) {
+					activoCalificacionNegativa.setHistoricoTramitacionTitulo(historicoTramitacionTituloList.get(0));
+				}
 				genericDao.save(ActivoCalificacionNegativa.class, activoCalificacionNegativa);
-				
+			
+				/*
 				if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTitulo())){
 					HistoricoTramitacionCalificacionNegativa historicoTramitacionCalificacionNegativa = new HistoricoTramitacionCalificacionNegativa();
 					historicoTramitacionCalificacionNegativa.setActivoCalificacionNegativa(activoCalificacionNegativa);
@@ -5841,6 +5849,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					
 					genericDao.save(HistoricoTramitacionCalificacionNegativa.class, historicoTramitacionCalificacionNegativa);
 				}
+				*/
 				
 				return true;
 			}
@@ -5883,6 +5892,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				comPropietarios.setContactoTel(actCom.getContactoTel());
 				comPropietarios.setVisita(actCom.getVisita());
 				comPropietarios.setBurofax(actCom.getBurofax());
+				comPropietarios.setAsistenciaJuntaObligatoria(actCom.getAsistenciaJuntaObligatoria());
 			}
 		}
 
@@ -7325,6 +7335,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
 						htt.setFechaInscripcion(null);
 						htt.setFechaCalificacion(null);
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 					}
 					if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo()) && !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
 						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
@@ -7334,7 +7345,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
 						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
 						htt.setFechaInscripcion(null);
-						htt.getTitulo().setFechaInscripcionReg(null);
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
 					}
 				}
 				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
@@ -7380,8 +7391,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoTitulo titulo = htt.getTitulo();
 				if (titulo != null) {
 					boolean gridConDatos = getHistoricoTramitacionTitulo(titulo.getActivo().getId()).isEmpty();
-					String nuevoEstado = gridConDatos ? DDEstadoTitulo.ESTADO_SUBSANAR : DDEstadoTitulo.ESTADO_EN_TRAMITACION
-							;
+					String nuevoEstado = gridConDatos ? DDEstadoTitulo.ESTADO_SUBSANAR : DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+					
 					DDEstadoTitulo estadoTitulo = (DDEstadoTitulo) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDEstadoTitulo.class, nuevoEstado);
 					titulo.setEstado(estadoTitulo);

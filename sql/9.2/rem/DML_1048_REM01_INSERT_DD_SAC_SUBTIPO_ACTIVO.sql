@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20191118
+--## FECHA_CREACION=20191120
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5757
@@ -73,15 +73,13 @@ BEGIN
 
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
 					   DD_'||V_TEXT_CHARS||'_ID, 
-                       DD_TPA_ID, 
-                       DD_TPA_COD_UVEM,                       
+                       DD_TPA_ID,                                           
                        DD_'||V_TEXT_CHARS||'_CODIGO, 
                        DD_'||V_TEXT_CHARS||'_DESCRIPCION, 
                        DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, 
                        VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
 					  SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL,
-                       TPA.DD_TPA_ID,  
-                       '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''',                       
+                       TPA.DD_TPA_ID,         
                        '''|| TRIM(V_TMP_TIPO_DATA(3)) ||''', 
                        '''|| TRIM(V_TMP_TIPO_DATA(4)) ||''', 
                        '''|| TRIM(V_TMP_TIPO_DATA(4)) ||''', 
@@ -101,9 +99,9 @@ EXCEPTION
           ERR_NUM := SQLCODE;
           ERR_MSG := SQLERRM;
 
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
-          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.put_line(err_msg);
+          DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.PUT_LINE(ERR_MSG);
 
           ROLLBACK;
           RAISE;          

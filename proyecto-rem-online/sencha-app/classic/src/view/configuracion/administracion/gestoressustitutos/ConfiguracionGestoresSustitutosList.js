@@ -46,6 +46,7 @@ Ext.define('HreRem.view.configuracion.administracion.gestoressustitutos.Configur
 		            },
 		            editor: { 
 						xtype: 'comboboxsearchfieldbase',
+						allowBlank: false,
 						bind: {
 							store: '{comboUsuarios}'
 						}
@@ -63,6 +64,7 @@ Ext.define('HreRem.view.configuracion.administracion.gestoressustitutos.Configur
 		            },
 		            editor: { 
 						xtype: 'comboboxsearchfieldbase',
+						allowBlank: false,
 						bind: {
 							store: '{comboUsuarios}'
 						}

@@ -28,6 +28,6 @@ public interface ExcelReportGeneratorApi {
 	
 	public int getLimit();
 
-	File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request);
+	File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException;
 
 }

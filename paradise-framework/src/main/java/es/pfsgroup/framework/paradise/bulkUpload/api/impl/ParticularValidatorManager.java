@@ -3981,7 +3981,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
-	
+	@Override
+	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion) {
+		if (Checks.esNulo(codSubFasePublicacion) || Checks.esNulo(codFasePublicacion)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_FSP_FASE_PUBLICACION FSP "
+				+ "JOIN DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_FSP_ID = FSP.DD_FSP_ID"
+				+ "WHERE FSP.DD_FSP_CODIGO = '" + codFasePublicacion) + "' "
+				+ "AND SFP.DD_SFP_CODIGO = '" + codSubFasePublicacion + "'"
+				+ "AND FSP.BORRADO = 0 AND SFP.BORRADO = 0";
+		return !"0".equals(resultado);
+	}
 	@Override
 	public Boolean existeEstadoDocumento(String codEstadoDoc) {
 		if (Checks.esNulo(codEstadoDoc)) return false;

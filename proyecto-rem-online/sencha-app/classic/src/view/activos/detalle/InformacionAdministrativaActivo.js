@@ -90,7 +90,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 					                	bind: '{infoAdministrativa.fechaCalificacion}'
 					                },
 					                { 
-					                	xtype: 'numberfieldbase',
+					                	xtype: 'textfieldbase',
+					                	maskRe: /[A-Za-z0-9]/,
 								 		fieldLabel: HreRem.i18n('fieldlabel.expediente.calificacion'), // N� expediente calificaci�n
 								 		bind: '{infoAdministrativa.numExpediente}'
 									},

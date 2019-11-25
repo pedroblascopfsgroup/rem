@@ -297,51 +297,157 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	// Función que se ejecuta al hacer click en el botón de Exportar en gestión gastos.
 	onClickDescargarExcelGestionGastos: function(btn) {
 		var me = this,
-		config = {};
-
-		var initialData = {};
-
-		var searchForm = btn.up('formBase');
-		if (!searchForm.isValid()) { 
-			return;
-		}
-		var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-
-		Ext.Object.each(params, function(key, val) {
-			if (Ext.isEmpty(val)) {
-				delete params[key];
-			}
-		});
-
-		config.params = params;
-		config.url= $AC.getRemoteUrl("gastosproveedor/generateExcelGestionGastos");
+    	view = me.getView(),
+		config = {};	
 		
-		me.fireEvent("downloadFile", config);		
+		var initialData = {};
+		view.mask(HreRem.i18n("msg.mask.loading"));
+		var searchForm = btn.up('formBase');
+		if (searchForm.isValid()) {
+			var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+			
+			Ext.Object.each(params, function(key, val) {
+				if (Ext.isEmpty(val)) {
+					delete params[key];
+				}
+			});
+        }
+		params.buscador = 'gastos';
+		config.params = params;		
+		config.url= $AC.getRemoteUrl("gastosproveedor/generateExcelGestionGastos");
+		var url = $AC.getRemoteUrl("gastosproveedor/registrarExportacion");
+		Ext.Ajax.request({			
+		     url: url,
+		     params: params,
+		     method: 'POST'
+		    ,success: function (a, operation, context) {
+		    	var count = Ext.decode(a.responseText).data;
+		    	if(count < 1000){
+		    		config.params.exportar = true;
+		    		Ext.Ajax.request({			
+		   		     url: url,
+				     params: params,
+				     method: 'POST'
+				    ,success: function (a, operation, context) {
+				    	me.fireEvent("downloadFile", config);
+			    		view.unmask();
+		           },           
+		           failure: function (a, operation, context) {
+		           	  Ext.toast({
+						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
+						     width: 360,
+						     height: 100,
+						     align: 't'
+						 });
+		           	  view.unmask();
+		           }
+			     
+				});
+		    	}else {
+		    		var win = Ext.create('HreRem.view.common.WindowExportar', {
+		        		title: 'Exportar gastos',
+		        		height: 150,
+		        		width: 700,
+		        		modal: true,
+		        		config: config,
+		        		params: params,
+		        		url: url,
+		        		count: count,
+		        		view: view,
+		        		renderTo: view.body		        		
+		        	});
+		        	win.show();
+		    	}
+           },           
+           failure: function (a, operation, context) {
+           	  Ext.toast({
+				     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
+				     width: 360,
+				     height: 100,
+				     align: 't'
+				 });
+           	  view.unmask();
+           }
+	     
+		});	
 	},
 
 	// Función que se ejecuta al hacer click en el botón de Exportar en agrupaciones de gastos.
 	onClickDescargarExcelProvisionGastos: function(btn) {
 		var me = this,
-		config = {};
-
-		var initialData = {};
-
-		var searchForm = btn.up('formBase');
-		if (!searchForm.isValid()) { 
-			return;
-		}
-		var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-
-		Ext.Object.each(params, function(key, val) {
-			if (Ext.isEmpty(val)) {
-				delete params[key];
-			}
-		});
-
-		config.params = params;
-		config.url= $AC.getRemoteUrl("provisiongastos/generateExcelProvisionGastos");
+    	view = me.getView(),
+		config = {};	
 		
-		me.fireEvent("downloadFile", config);		
+		var initialData = {};
+		view.mask(HreRem.i18n("msg.mask.loading"));
+		var searchForm = btn.up('formBase');
+		if (searchForm.isValid()) {
+			var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+			
+			Ext.Object.each(params, function(key, val) {
+				if (Ext.isEmpty(val)) {
+					delete params[key];
+				}
+			});
+        }
+		params.buscador = 'provisiongastos';
+		config.params = params;		
+		config.url= $AC.getRemoteUrl("provisiongastos/generateExcelProvisionGastos");
+		var url = $AC.getRemoteUrl("provisiongastos/registrarExportacion");
+		Ext.Ajax.request({			
+		     url: url,
+		     params: params,
+		     method: 'POST'
+		    ,success: function (a, operation, context) {
+		    	var count = Ext.decode(a.responseText).data;
+		    	if(count < 1000){
+		    		config.params.exportar = true;
+		    		Ext.Ajax.request({			
+		   		     url: url,
+				     params: params,
+				     method: 'POST'
+				    ,success: function (a, operation, context) {
+				    	me.fireEvent("downloadFile", config);
+			    		view.unmask();
+		           },           
+		           failure: function (a, operation, context) {
+		           	  Ext.toast({
+						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
+						     width: 360,
+						     height: 100,
+						     align: 't'
+						 });
+		           	  view.unmask();
+		           }
+			     
+				});
+		    	}else {
+		    		var win = Ext.create('HreRem.view.common.WindowExportar', {
+		        		title: 'Exportar agrupaciones gastos',
+		        		height: 150,
+		        		width: 700,
+		        		modal: true,
+		        		config: config,
+		        		params: params,
+		        		url: url,
+		        		count: count,
+		        		view: view,
+		        		renderTo: view.body		        		
+		        	});
+		        	win.show();
+		    	}
+           },           
+           failure: function (a, operation, context) {
+           	  Ext.toast({
+				     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACI\u00d3N',
+				     width: 360,
+				     height: 100,
+				     align: 't'
+				 });
+           	  view.unmask();
+           }
+	     
+		});
 	},
 
 	// Función que se ejecuta al hacer click en el botón de Exportar en gastos por agrupación.

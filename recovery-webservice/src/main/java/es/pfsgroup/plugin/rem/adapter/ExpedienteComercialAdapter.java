@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.AdjuntoExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.DDSubtipoDocumentoExpedienteDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
@@ -51,6 +52,7 @@ public class ExpedienteComercialAdapter {
 	private static final String OPERACION_ALTA = "Alta";
 	private static final String ERROR_CREACION_CONTENEDOR = "Error creando el contenedor de la persona";
 	private static final String CREANDO_CONTENEDOR = "Creando contenedor...";
+	private static final String GESTOR_GD_EXTERNO = "Gestor externo";
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
@@ -75,6 +77,9 @@ public class ExpedienteComercialAdapter {
 	
 	@Autowired
 	private AdjuntoExpedienteComercialDao adjuntoExpedienteComercialDao;
+	
+	@Autowired
+	private DDSubtipoDocumentoExpedienteDao ddSubtipoDocumentoExpedienteDao;
 	
 	
 	protected static final Log logger = LogFactory.getLog(ExpedienteComercialAdapter.class);
@@ -103,10 +108,18 @@ public class ExpedienteComercialAdapter {
 							adj.setGestor(adjuntoExpedienteComercial.getAuditoria().getUsuarioCrear());
 						}
 						adj.setTamanyo(adjuntoExpedienteComercial.getTamanyo());
+					} else {
+						DDSubtipoDocumentoExpediente subtipoExp = ddSubtipoDocumentoExpedienteDao.getSubtipoDocumentoExpedienteComercialPorMatricula(adj.getMatricula());
+						
+						if(!Checks.esNulo(subtipoExp)) {
+							if(!Checks.esNulo(subtipoExp.getTipoDocumentoExpediente())) {
+								adj.setDescripcionTipo(subtipoExp.getTipoDocumentoExpediente().getDescripcion());
+							}
+							adj.setDescripcionSubtipo(subtipoExp.getDescripcion());
+						}
 					}
 				}
 			} catch (GestorDocumentalException gex) {
-				//if (error.length > 0 &&  (error[2].trim().contains(EXCEPTION_ACTIVO_NOT_FOUND_COD))) {
 				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 					
 					Integer idExpediente;
@@ -175,7 +188,7 @@ public class ExpedienteComercialAdapter {
 				}
 			}
 
-			if (!Checks.esNulo(adjuntoComprador)) {
+			if (adjuntoComprador != null) {
 				dtoAdjunto.setId(adjuntoComprador.getId());
 				dtoAdjunto.setMatricula(adjuntoComprador.getMatricula());
 				dtoAdjunto.setNombre(adjuntoComprador.getNombreAdjunto());
@@ -245,7 +258,7 @@ public class ExpedienteComercialAdapter {
 
 		// Filtro para conseguir el registro del Adjunto
 		Filter filtroDocumento = null;
-		if (!Checks.esNulo(adj) && Checks.esNulo(idDocRestClient)) {
+		if (adj != null && Checks.esNulo(idDocRestClient)) {
 			filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "adjunto", adj.getId());
 		} else if (Checks.esNulo(adj) && !Checks.esNulo(idDocRestClient)) {
 			filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", idDocRestClient);
@@ -385,21 +398,29 @@ public class ExpedienteComercialAdapter {
 						if(!Checks.esNulo(subtipoDocumento.getTipoDocumentoActivo())) {
 							webFileItem.putParameter("tipo", subtipoDocumento.getTipoDocumentoActivo().getCodigo());
 						}
-						for(int i = 0; i < arrayActivos.length; i++){
-							Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i],10));
-							//Según item HREOS-2379:
-							//Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el documento realmente, sólo insertando la fila.
-							File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
+						for (int i = 0; i < arrayActivos.length; i++) {
+							Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i], 10));
+							// Según item HREOS-2379:
+							// Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el
+							// documento realmente, sólo insertando la fila.
+							File file = File.createTempFile("idDocRestClient[" + idDocRestClient + "]", ".pdf");
 							BufferedWriter out = new BufferedWriter(new FileWriter(file));
-						    out.write("pfs");
-						    out.close();					    
-						    FileItem fileItem = new FileItem();
-							fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
-							fileItem.setFile(file);
-							fileItem.setLength(file.length());			
-							webFileItem.setFileItem(fileItem);
-							activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
-							file.delete();
+							try {
+								out.write("pfs");
+								FileItem fileItem = new FileItem();
+								fileItem.setFileName("idDocRestClient[" + idDocRestClient + "]");
+								fileItem.setFile(file);
+								fileItem.setLength(file.length());
+								webFileItem.setFileItem(fileItem);
+								activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+							} finally {
+								out.close();
+								if(!file.delete()) {
+									logger.error("Imposible borrar temporal");
+								}
+							}
+
+							
 						}
 					}
 										
@@ -432,7 +453,7 @@ public class ExpedienteComercialAdapter {
 					if (borrado && !Checks.esNulo(dtoAdjunto) && !Checks.esNulo(dtoAdjunto.getId())) 
 						borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(),e);
 				}
 			} else {
 				borrado = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
@@ -442,12 +463,7 @@ public class ExpedienteComercialAdapter {
 
 	
 	public List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta){
-		
-		
-		 List<VListadoOfertasAgrupadasLbk> listaOfertasAgrupadas = expedienteComercialApi.getListActivosAgrupacionById(idOferta);
-		
-		
-		return listaOfertasAgrupadas;
+		return expedienteComercialApi.getListActivosAgrupacionById(idOferta);
 	}
 	
 }

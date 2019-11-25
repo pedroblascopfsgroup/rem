@@ -11,7 +11,10 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
@@ -24,12 +27,17 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 
 	private static final String CODIGO_T004_RESULTADO_TARIFICADA = "T004_ResultadoTarificada";
 	private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
+	private static final String BUZON_ELECNOR = "buzonelecnor";
+	private static final String PVC_NOMBRE_ELECNOR = "ELECNOR, S.A.";
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Override
 	public String[] getKeys() {
@@ -53,8 +61,17 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 		List<String> mailsPara = new ArrayList<String>();
 		List<String> mailsCC = new ArrayList<String>();
 		
+		Usuario buzonElecnor = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_ELECNOR));
 		
-	    String correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+	    String correos = "";
+	   
+	    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
+	    	correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+		    if(PVC_NOMBRE_ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getNombre())) {
+				correos += "," + buzonElecnor.getEmail();
+			}
+	    }
+	    
 	    if(correos != null && !correos.isEmpty()){
 	    	 Collections.addAll(mailsPara, correos.split(";"));
 	    }

@@ -215,7 +215,11 @@ Ext.define('HreRem.model.GastoProveedor', {
    		{
    			name: 'bloquearEdicionFechasRecepcion',
    			type: 'boolean'
-   		}
+   		},
+   		{
+   			name: 'estadoEmisor'   			
+   		}   		
+   		
     ],
     
 	proxy: {

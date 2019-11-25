@@ -703,7 +703,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				if (!Checks.esNulo(expediente)){
-            					if(trabajoApi.checkFormalizacion(tareaExterna)){
+            					if(trabajoApi.checkFormalizacion(tareaExterna) && !expedienteComercialApi.esOmega(tareaExterna)){
             						String codigoComite = null;
 			            			if(trabajoApi.checkBankia(tareaExterna)){
 										try {
@@ -761,7 +761,11 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             					Filter filtroComiteSancionadorBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
             					DDComiteSancion comiteSancionador= genericDao.get(DDComiteSancion.class, filtroComiteSancionador, filtroComiteSancionadorBorrado);
             					if(!Checks.esNulo(comiteSancionador)) {
-            						item.setValue(comiteSancionador.getDescripcion());
+            						if(item.getNombre().equals("comiteSancionador")) {
+            							item.setValue(comiteSancionador.getCodigo());
+            						}else {
+            							item.setValue(comiteSancionador.getDescripcion());
+            						}
             					}
             				}
             			}

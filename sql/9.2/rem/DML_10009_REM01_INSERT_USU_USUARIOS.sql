@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Juan Torrella
---## FECHA_CREACION=201910311
+--## FECHA_CREACION=20191113
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5152
@@ -38,7 +38,7 @@ V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'USU_USUARIOS'; -- Vble. auxiliar para almac
 BEGIN
 
         --Comprobacion de la tabla
-        V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = ''USU_USUARIOS'''; 
+        V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA_M||''' AND TABLE_NAME = ''USU_USUARIOS'''; 
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         IF V_NUM_TABLAS > 0 THEN              
@@ -52,17 +52,25 @@ BEGIN
             EXECUTE IMMEDIATE V_MSQL INTO V_ENTORNO; 
 
             IF V_ENTORNO = 1 THEN
-            	V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
-		          VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzonfdv'', ''DqhVAq'', ''BUZON APROBACIONES FDV'', ''aprobacionesfdv@haya.es'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';
-		      DBMS_OUTPUT.PUT_LINE('[INFO] Insertando usuario ficticio buzonfdv.......');
+                 V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' WHERE USU_USERNAME = ''buzonfdv'''; 
+                EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+            	IF V_NUM_TABLAS = 0 THEN
+                    V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
+    		          VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzonfdv'', ''DqhVAq'', ''BUZON APROBACIONES FDV'', ''aprobacionesfdv@haya.es'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';
+    		      
+                    DBMS_OUTPUT.PUT_LINE('[INFO] Insertando usuario ficticio buzonfdv.......');
 
-		        EXECUTE IMMEDIATE V_MSQL;
-
+    		        EXECUTE IMMEDIATE V_MSQL;
+                END IF;
 		    ELSE 
-		    	V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
-		          VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzonfdv'', ''1234'', ''BUZON APROBACIONES FDV'', ''pruebashrem@gmail.com'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';
-		      	DBMS_OUTPUT.PUT_LINE('[INFO] Insertando usuario ficticio buzonfdv.......');
-				EXECUTE IMMEDIATE V_MSQL;
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' WHERE USU_USERNAME = ''buzonfdv'''; 
+                EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+                IF V_NUM_TABLAS = 0 THEN
+    		    	V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
+    		          VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzonfdv'', ''1234'', ''BUZON APROBACIONES FDV'', ''pruebashrem@gmail.com'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';
+    		      	DBMS_OUTPUT.PUT_LINE('[INFO] Insertando usuario ficticio buzonfdv.......');
+    				EXECUTE IMMEDIATE V_MSQL;
+                END IF;
 			END IF;		 
       
         ELSE

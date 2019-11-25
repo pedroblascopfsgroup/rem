@@ -57,8 +57,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', {
 			   {
 		            text: 'Fecha subida',
 		            dataIndex: 'fechaDocumento',
-		            flex: 2,
-		        	formatter: 'date("d/m/Y")'
+		            flex: 2//,
+		        	//formatter: 'date("d/m/Y")'
 		            
 		       },
 		       {

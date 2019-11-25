@@ -172,7 +172,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		        }
 		];
 		
-		me.cloneExpedienteButton = true; // No modificar este, la logica de mostrar o no el botón está en el metodo calcularMostrarBotonClonarExpediente
+		me.cloneExpedienteButton = true; // No modificar este, la logica de mostrar o no el botï¿½n estï¿½ en el metodo calcularMostrarBotonClonarExpediente
 		
         me.callParent(); 
         
@@ -480,7 +480,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
    	calcularMostrarBotonClonarExpediente: function(){
 		var me = this;
 
-		mostrarCloneButtonExpediente = ($AU.userIsRol('HAYASUPER')
+		mostrarCloneButtonExpediente = ($AU.userIsRol('HAYASUPER') || $AU.userIsRol('HAYAGESTCOM') || $AU.userIsRol('HAYAGBOINM')
 										&& (me.lookupController().getViewModel().data.agrupacionficha.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['VENTA'] 
 											|| me.lookupController().getViewModel().data.agrupacionficha.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
 										/*&& (me.lookupController().getViewModel().data.agrupacionficha.data.codSubcartera === CONST.SUBCARTERA['APPLEINMOBILIARIO'] 

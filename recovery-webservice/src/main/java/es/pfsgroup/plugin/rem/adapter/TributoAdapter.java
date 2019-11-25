@@ -3,10 +3,13 @@ package es.pfsgroup.plugin.rem.adapter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -36,6 +39,8 @@ public class TributoAdapter {
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";	
 	
+	 protected final Log logger = LogFactory.getLog(getClass());
+	
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
@@ -56,6 +61,8 @@ public class TributoAdapter {
 	
 	@Autowired
 	private DownloaderFactoryApi downloaderFactoryApi;
+	
+
 	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	
@@ -97,18 +104,8 @@ public class TributoAdapter {
 					
 					for(int i = 0; i < arrayActivos.length; i++){
 						Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i],10));
-						File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
-						BufferedWriter out = new BufferedWriter(new FileWriter(file));
-					    out.write("pfs");
-					    out.close();					    
-					    FileItem fileItem = new FileItem();
-						fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
-						fileItem.setFile(file);
-						fileItem.setLength(file.length());			
-						webFileItem.setFileItem(fileItem);
-						activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
-						file.delete();
-						
+						crearFicheroRelacion( activoEntrada, webFileItem,  matricula,  idDocRestClient);
+
 					}
 				}
 				
@@ -121,7 +118,29 @@ public class TributoAdapter {
 	}
 	
 	
-	
+	private void crearFicheroRelacion(Activo activoEntrada,WebFileItem webFileItem, String matricula, Long idDocRestClient) throws Exception{
+		BufferedWriter out = null;
+		try {
+			File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
+			out = new BufferedWriter(new FileWriter(file));
+		    out.write("pfs");
+						    
+		    FileItem fileItem = new FileItem();
+			fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
+			fileItem.setFile(file);
+			fileItem.setLength(file.length());			
+			webFileItem.setFileItem(fileItem);
+			activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+			if(!file.delete()) {
+				logger.error("Imposible borrar fichero temporal");
+			}
+		}finally {
+			if(out != null){
+				out.close();	
+			}
+		}
+		
+	}
 	
 	public String upload(WebFileItem webFileItem) throws Exception {
 		return uploadDocumento(webFileItem, null);

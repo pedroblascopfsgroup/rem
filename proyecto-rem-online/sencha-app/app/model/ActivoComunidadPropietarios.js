@@ -49,6 +49,9 @@ Ext.define('HreRem.model.ActivoComunidadPropietarios', {
     		{
     			name: 'unidadAlquilable',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'asistenciaJuntaObligatoria'
     		}
     ],
     

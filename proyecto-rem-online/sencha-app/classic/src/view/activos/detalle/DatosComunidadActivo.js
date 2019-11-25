@@ -226,7 +226,16 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 											value: '{datosComunidad.fechaEnvioCarta}',
 											readOnly: '{datosComunidad.unidadAlquilable}'
 										}
-									  }
+									},
+									{
+										xtype : 'comboboxfieldbase',
+									    fieldLabel : HreRem.i18n('fieldlabel.asistencia.junta.obligatoria'),
+									    bind : {
+									      store : '{comboSiNoRemActivo}',
+									      value : '{datosComunidad.asistenciaJuntaObligatoria}',
+									      readOnly: '{!esEditableAsistenciaJuntaObligatoria}'
+									    }
+									}
 						]
 				},
 				{

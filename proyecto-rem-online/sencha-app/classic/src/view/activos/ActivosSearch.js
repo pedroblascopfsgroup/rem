@@ -507,7 +507,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	    //readOnly: $AU.userTipoGestor()=="GIAFORM"
 						            	},
 										reference: 'tipoGestor',
-										name: 'tipoGestor',
+										name: 'tipoGestorCodigo',
 			        					chainedStore: 'comboUsuarios',
 										chainedReference: 'usuarioGestor',
 						            	displayField: 'descripcion',
@@ -559,7 +559,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		mode: 'local',
 							    		forceSelection	: false,
 							    		editable: true,
-							    		minChars: 3,
+							    		minChars: 0,
 							    		emptyText: 'Introduzca nombre mediador',
 										listeners: {
 											'keyup': function() {
@@ -572,6 +572,9 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 													    anyMatch: true,
 													    caseSensitive: false
 													})
+												}else if (this.getRawValue().length == 0) {
+													this.getStore().clearFilter();
+													this.getStore().load();
 												}
 											},
 											'beforequery': function(queryEvent) {

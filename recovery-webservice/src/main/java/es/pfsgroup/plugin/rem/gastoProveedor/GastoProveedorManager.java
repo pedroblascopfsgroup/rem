@@ -343,6 +343,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setCodigoEmisor(gasto.getProveedor().getCodProveedorUvem());
 				dto.setBuscadorCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
 				dto.setCodigoProveedorRem(gasto.getProveedor().getCodigoProveedorRem());
+				dto.setEstadoEmisor(Checks.esNulo(gasto.getProveedor().getEstadoProveedor()) ? null : gasto.getProveedor().getEstadoProveedor().getDescripcion());
 			}
 
 			if (!Checks.esNulo(gasto.getPropietario())) {
@@ -2314,6 +2315,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							adj.setCodigoTipo(tipoDocumento.getDescripcion());
 							adj.setDescripcionTipo(tipoDocumento.getDescripcion());
 						}
+						adj.setFechaDocumento(adj.getFechaDocumento());
 					}
 				}
 
@@ -2352,6 +2354,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setIdEntidad(gasto.getId());
 				dto.setDescripcionTipo(adjunto.getTipoDocumentoGasto().getDescripcion());
 				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
+				dto.setFechaDocumento(adjunto.getFechaDocumento());
 
 				listaAdjuntos.add(dto);
 			}

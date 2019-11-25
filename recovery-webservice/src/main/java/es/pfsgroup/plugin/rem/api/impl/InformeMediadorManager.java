@@ -1219,8 +1219,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			activo = (Activo) genericDao.get(Activo.class,
 					genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo));
 			if (activo != null) {
-				objetoEntity = genericDao.get(ActivoInfoComercial.class,
-						genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+				objetoEntity = (ActivoInfoComercial) genericDao.get(ActivoInfoComercial.class,
+						genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", numActivo));
 			}
 
 		}
@@ -1242,25 +1242,21 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	@Transactional(readOnly = false)
 	private Long parcheEspecificacionTablas(Object objeto, InformeMediadorDto informe) throws Exception {
 		Long idProveedor = null;
-		if (objeto instanceof ActivoLocalComercial || objeto instanceof ActivoPlazaAparcamiento
-				|| objeto instanceof ActivoVivienda) {
+		ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity
+				.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
 
-			ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity
-					.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
-
-			if (infoAux != null && infoAux.getId() != null) {
-				if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
-						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null
-								&& !infoAux.getActivo().getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-						|| ((ActivoInfoComercial) objeto).getId() == null) {
-					if (infoAux.getMediadorInforme() != null) {
-						idProveedor = infoAux.getMediadorInforme().getId();
-					}
-
-					genericaRestDaoImp.deleteInformeMediador(infoAux);
+		if (infoAux != null && infoAux.getId() != null) {
+//			if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
+//					&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
+//					|| (infoAux.getId() != null && infoAux.getTipoActivo() == null
+//							&& !infoAux.getActivo().getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
+//					|| ((ActivoInfoComercial) objeto).getId() == null) {
+				if (infoAux.getMediadorInforme() != null) {
+					idProveedor = infoAux.getMediadorInforme().getId();
 				}
-			}
+
+				genericaRestDaoImp.deleteInformeMediador(infoAux);
+//			}
 		}
 
 		return idProveedor;
@@ -1279,7 +1275,12 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			// proveedor de confianza, puede editar el informe, sin tramite de
 			// aceptacion
 			boolean autorizacionWebProveedor = false;
-
+			Long idProveedorParche = null;
+			ActivoInfoComercial informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(
+					informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
+			if (!informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO) && !informe.getCodTipoActivo().equals(DDTipoActivo.COD_INDUSTRIAL)) {
+				idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
+			}
 			map = new HashMap<String, Object>();
 			HashMap<String, String> errorsList = null;
 			if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
@@ -1339,59 +1340,123 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 				}
 			}
-			ActivoInfoComercial informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(
-					informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
-			if(informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL) && !DDTipoInfoComercial.COD_LOCAL_COMERCIAL.equals(informeEntity.getTipoInfoComercial().getCodigo())
-					|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS) && !DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO.equals(informeEntity.getTipoInfoComercial().getCodigo())
-					|| informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA) && !DDTipoInfoComercial.COD_VIVIENDA.equals(informeEntity.getTipoInfoComercial().getCodigo())) {
-				errorsList.put("codTipoActivo", "El tipo de Activo no concuerda con el tipo de Informe Comercial del Activo que es '" + informeEntity.getTipoInfoComercial().getDescripcion() + "'");
-			}
 			
 			if (errorsList.size() == 0) {
 				boolean tieneInformeComercialAceptado = false;
-				Long idProveedorParche = null;
+				
 				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
 
 				HistoricoFasePublicacionActivo histFasePublicacionActivo = historicoFasePublicacionActivoDao.getHistoricoFasesPublicacionActivoActualById(activo.getId());
 				if (!Checks.esNulo(histFasePublicacionActivo) && DDFasePublicacion.CODIGO_FASE_III.equals(histFasePublicacionActivo.getFasePublicacion().getCodigo()) 
 						&& (DDSubfasePublicacion.CODIGO_PENDIENTE_DE_INFORMACION.equals(histFasePublicacionActivo.getSubFasePublicacion().getCodigo()) 
 								|| DDSubfasePublicacion.CODIGO_DEVUELTO.equals(histFasePublicacionActivo.getSubFasePublicacion().getCodigo()))) {
-					if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
-						ArrayList<Serializable> entitys = new ArrayList<Serializable>();
-						if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
-							informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
-							idProveedorParche =  parcheEspecificacionTablas(informeEntity, informe);
-							((ActivoLocalComercial)informeEntity).setMtsAlturaLibre(informe.getAltura());
-							entitys.add(informeEntity);
-	
-						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)) {
-							informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
-									ActivoInfoComercial.class, "activo.numActivo");
-							entitys.add(informeEntity);
-						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_INDUSTRIAL)) {
-							informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
-									ActivoInfoComercial.class, "activo.numActivo");
-							entitys.add(informeEntity);
-						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
-							informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
-							idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
-							informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
-							((ActivoPlazaAparcamiento)informeEntity).setAparcamientoAltura(informe.getAltura());
-							entitys.add(informeEntity);
-						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)) {
-							informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
-									ActivoInfoComercial.class, "activo.numActivo");
-							entitys.add(informeEntity);
-						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
-							informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
-									ActivoVivienda.class, "activo.numActivo");
-							if (informe.getDistribucionInterior() != null) {
-								((ActivoVivienda)informeEntity).setDistribucionTxt(informe.getDistribucionInterior());	
-							}
-							idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
+					ArrayList<Serializable> entitys = new ArrayList<Serializable>();
+				if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
+					
+					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
+						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");						
+						((ActivoLocalComercial)informeEntity).setMtsAlturaLibre(informe.getAltura());
+						informeEntity.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, 
+								genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoInfoComercial.COD_LOCAL_COMERCIAL)));
+						entitys.add(informeEntity);
+
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EN_COSTRUCCION)) {
+						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoInfoComercial.class, "activo.numActivo");
+						entitys.add(informeEntity);
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_INDUSTRIAL)) {
+						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoInfoComercial.class, "activo.numActivo");
+						entitys.add(informeEntity);
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
+						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
+						informeEntity.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, 
+								genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoInfoComercial.COD_PLAZA_APARCAMIENTO)));
+						((ActivoPlazaAparcamiento)informeEntity).setAparcamientoAltura(informe.getAltura());
+						entitys.add(informeEntity);
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO)) {
+						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoInfoComercial.class, "activo.numActivo");
+						entitys.add(informeEntity);
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
+						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoVivienda.class, "activo.numActivo");
+						if (informe.getDistribucionInterior() != null) {
+							((ActivoVivienda)informeEntity).setDistribucionTxt(informe.getDistribucionInterior());	
+						}			
+						informeEntity.setTipoInfoComercial(genericDao.get(DDTipoInfoComercial.class, 
+								genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoInfoComercial.COD_VIVIENDA)));
+						ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
+								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
+										"infoComercial.activo.numActivo");
+						activoInfraestructura.setInfoComercial(informeEntity);
+						ActivoCarpinteriaInterior activoCarpinteriaInt = (ActivoCarpinteriaInterior) dtoToEntity
+								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCarpinteriaInterior.class,
+										"infoComercial.activo.numActivo");
+						activoCarpinteriaInt.setInfoComercial(informeEntity);
+						ActivoCarpinteriaExterior activoCarpinteriaExterior = (ActivoCarpinteriaExterior) dtoToEntity
+								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoCarpinteriaExterior.class,
+										"infoComercial.activo.numActivo");
+						activoCarpinteriaExterior.setInfoComercial(informeEntity);
+						ActivoParamentoVertical paramientoVertical = (ActivoParamentoVertical) dtoToEntity
+								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoParamentoVertical.class,
+										"infoComercial.activo.numActivo");
+						paramientoVertical.setInfoComercial(informeEntity);
+						ActivoSolado solado = (ActivoSolado) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoSolado.class, "infoComercial.activo.numActivo");
+						solado.setInfoComercial(informeEntity);
+						ActivoCocina cocina = (ActivoCocina) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoCocina.class, "infoComercial.activo.numActivo");
+						cocina.setInfoComercial(informeEntity);
+						ActivoBanyo banyo = (ActivoBanyo) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoBanyo.class, "infoComercial.activo.numActivo");
+						banyo.setInfoComercial(informeEntity);
+						ActivoInstalacion instalacion = (ActivoInstalacion) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoInstalacion.class, "infoComercial.activo.numActivo");
+						instalacion.setInfoComercial(informeEntity);
+						ActivoZonaComun zonaComun = (ActivoZonaComun) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoZonaComun.class, "infoComercial.activo.numActivo");
+						zonaComun.setInfoComercial(informeEntity);
+						ActivoPropietarioActivo propActivo = (ActivoPropietarioActivo) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoPropietarioActivo.class, "activo.numActivo");
+						
+						entitys.add(informeEntity);
+						entitys.add(activoInfraestructura);
+						entitys.add(activoCarpinteriaInt);
+						entitys.add(activoCarpinteriaExterior);
+						entitys.add(paramientoVertical);
+						entitys.add(solado);
+						entitys.add(cocina);
+						entitys.add(banyo);
+						entitys.add(instalacion);
+						entitys.add(zonaComun);
+						entitys.add(propActivo);
+					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_EDIFICIO_COMPLETO)) {
+						informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+								ActivoInfoComercial.class, "activo.numActivo");
+						// ActivoEdificio edificioEntity = (ActivoEdificio)
+						// dtoToEntity.obtenerObjetoEntity(
+						// informe.getIdActivoHaya(), ActivoEdificio.class,
+						// "infoComercial.activo.numActivo");
+						// edificioEntity.setInfoComercial(informeEntity);
+						entitys.add(informeEntity);
+						// entitys.add(edificioEntity);
+
+					}
+					ActivoEdificio edificioEntity = null;
+					if(informeEntity.getId() != null ){
+						edificioEntity = (ActivoEdificio) dtoToEntity.obtenerObjetoEntity(
+								informe.getIdActivoHaya(), ActivoEdificio.class, "infoComercial.activo.numActivo");
+					}else{
+						edificioEntity = new ActivoEdificio();
+					}
+					entitys.add(edificioEntity);
+
+					if (informeEntity.getActivo() == null) {
+						informeEntity.setActivo(activo);
+					}
 					
 	
 							ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
@@ -1519,7 +1584,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	
 							}
 						}
-					}
 				
 					if (!tieneInformeComercialAceptado) {
 						adapter.crearTramiteAprobacionInformeComercial(activo.getId());

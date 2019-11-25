@@ -95,7 +95,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 
 	@Override
-	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
+	public Object getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
 
 		HQLBuilder hb = new HQLBuilder(buildFrom(dto));
 		 
@@ -223,7 +223,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "perac.aplicaGestion", dto.getPerimetroGestion());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.flagRating", dto.getRatingCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conCargas", dto.getConCargas());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
+		if(!Checks.esNulo(dto.getUsuarioGestor())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ga.tipoGestor.codigo", dto.getTipoGestorCodigo());	
+		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat",
 				dto.getEstadoComunicacionGencatCodigo());
 		
@@ -234,8 +237,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(!Checks.esNulo(dto.getNumAgrupacion())) {
 			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and act.id = aga.activo.id)");
 		}
-		
-		return HibernateQueryUtils.page(this, hb, dto);
+
+		if(!Checks.esNulo(dto.isListPage()) && dto.isListPage())
+			return HibernateQueryUtils.page(this, hb, dto);
+		else
+			return HibernateQueryUtils.list(this, hb);
 	}
 
 	private String buildFrom(DtoActivoFilter dto) {

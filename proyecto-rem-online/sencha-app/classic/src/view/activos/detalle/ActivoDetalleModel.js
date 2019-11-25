@@ -20,6 +20,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
     formulas: {
 	     
+    	esEditableAsistenciaJuntaObligatoria: function(get){
+    		var isEditable = $AU.userIsRol('HAYAADM') || $AU.userIsRol('HAYASADM') || $AU.userIsRol('HAYAGESTADMT') || $AU.userIsRol('HAYASUPER');
+    		return isEditable;
+    	},
+    	
+    	
     	/**
     	 * Formula para generar el objeto center que servirá para cargar el componente gmap
     	 * @param {} get

@@ -912,13 +912,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         me.deshabilitarCampo(fechaFinalizacion);
         me.deshabilitarCampo(motivoNoRealizacion);
 
-        comboModificacion.addListener('change', function(combo) {
-            if (combo.value == '01') {
-                me.deshabilitarCampo(fechaFinalizacion);
-            } else if (combo.value == '02') {
-                me.habilitarCampo(fechaFinalizacion);
-            }
-        });
+//        comboModificacion.addListener('change', function(combo) {
+//            if (combo.value == '01') {
+//                me.deshabilitarCampo(fechaFinalizacion);
+//            } else if (combo.value == '02') {
+//                me.habilitarCampo(fechaFinalizacion);
+//            }
+//        });
         comboRealizacion.addListener('change', function(combo) {
         	 if (combo.value == '02') {
         		 
@@ -938,7 +938,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         		me.habilitarCampo(comboModificacion);
               	me.habilitarCampo(fechaAtPrimaria);
               	me.habilitarCampo(observaciones);
-              	
+              	me.habilitarCampo(fechaFinalizacion);
+              	 
               	me.deshabilitarCampo(motivoNoRealizacion);
               	me.borrarCampo(motivoNoRealizacion);
         	 }

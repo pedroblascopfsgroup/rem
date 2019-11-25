@@ -63,13 +63,11 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
-	
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
-	
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -251,12 +249,11 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 							adj.setGestor(adjuntoJunta.getAuditoria().getUsuarioCrear());
 						}
 						if (!Checks.esNulo(adjuntoJunta.getTamnyo())) {
-							adj.setTamanyo(adjuntoJunta.getTamnyo().longValue());
+							adj.setTamanyo(adjuntoJunta.getTamnyo());
 						}
 					}
 				}
 			} catch (GestorDocumentalException gex) {
-				//if (error.length > 0 &&  (error[2].trim().contains(EXCEPTION_ACTIVO_NOT_FOUND_COD))) {
 				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 					
 					Integer idJunta;
@@ -368,14 +365,18 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 					
 						File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
 						BufferedWriter out = new BufferedWriter(new FileWriter(file));
-						out.write("pfs");
-						out.close();					    
-						FileItem fileItem = new FileItem();
-						fileItem.setFile(file);
-						fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
-						fileItem.setLength(webFileItem.getFileItem().getLength());			
-						webFileItem.setFileItem(fileItem);
-						activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+						try {
+							out.write("pfs");
+							out.close();					    
+							FileItem fileItem = new FileItem();
+							fileItem.setFile(file);
+							fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
+							fileItem.setLength(webFileItem.getFileItem().getLength());			
+							webFileItem.setFileItem(fileItem);
+							activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+						}finally {
+							out.close();
+						}
 					}
 				}
 				ActivoAdjuntoJuntas adjuntoJunta = new ActivoAdjuntoJuntas();
@@ -436,24 +437,17 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
+				gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
 
 				ActivoAdjuntoJuntas adjuntoGD = activoJunta.getAdjuntoGD(dtoAdjunto.getId());
 
-				if (adjuntoGD == null) {
-					borrado = false;
-				}
 				activoJunta.getAdjuntos().remove(adjuntoGD);
 				activoJuntaPropietariosDao.save(activoJunta);
 
 			} else {
-				if (adjunto == null) {
-					borrado = false;
-				}
 				activoJunta.getAdjuntos().remove(adjunto);
 				activoJuntaPropietariosDao.save(activoJunta);
 			}
-			borrado = true;
 		} catch (Exception ex) {
 			logger.debug(ex.getMessage());
 			borrado = false;

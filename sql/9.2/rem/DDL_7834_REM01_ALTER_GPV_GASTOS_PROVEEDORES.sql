@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MARIAM LLISO
---## FECHA_CREACION=20191002
+--## FECHA_CREACION=20191001
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7830
@@ -91,47 +91,55 @@ BEGIN
   V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA_GDE||'''';
   EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
   
-  IF V_NUM_TABLAS > 0 THEN             
+  IF V_NUM_TABLAS > 0 THEN         
+  
+		V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA_REF_TRG||'''';
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+  
+		IF V_NUM_TABLAS > 0 THEN    
             
-            ---------		GDE_EXISTE_RECARGO
-                         
-            V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA_GDE||''' AND COLUMN_NAME = '''||V_COL_GDE||'''';
-            EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
-            
-            IF V_NUM_TABLAS = 0 THEN
-                DBMS_OUTPUT.PUT_LINE('  [INFO] Insertamos los campos '||V_COL_GDE||'');  
-                
-                -- Añadimos el campo
-                EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA_GDE||' ADD '||V_COL_GDE||' '||V_TIPO_NUM_BOOL||' DEFAULT 0';
-	  			-- Añadimos el comentario al campo
-                EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA_GDE||'.'||V_COL_GDE||' IS ''Identificador si existe recargo o no'''; 					
-            ELSE
-                DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA_GDE||'.'||V_COL_GDE||'... YA existe.');
-            END IF;    
-
-			---------		GDE_EXISTE_RECARGO
-			V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA_GDE||''' AND COLUMN_NAME = '''||V_COL_DD_TRG||'''';
-            EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
-            
-            IF V_NUM_TABLAS = 0 THEN
-                DBMS_OUTPUT.PUT_LINE('  [INFO] Insertamos los campos '||V_COL_DD_TRG||'');  
-                
-                -- Añadimos el campo
-                EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA_GDE||' ADD '||V_COL_DD_TRG||' '||V_TIPO_NUM||'';   
-                -- Añadimos LA CLAVE AJENA
-                EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA_GDE||' ADD CONSTRAINT '||V_KEY_NAME_TRG||' FOREIGN KEY ('||V_COL_DD_TRG||')
-	  								REFERENCES '||V_ESQUEMA||'.'||V_TABLA_REF_TRG||' ('||V_COL_DD_TRG||') ON DELETE SET NULL ENABLE';
-	  			-- Añadimos el comentario al campo
-                EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA_GDE||'.'||V_COL_DD_TRG||' IS ''Código identificador único del diccionario.'''; 					
-            ELSE
-                DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA_GDE||'.'||V_COL_DD_TRG||'... YA existe.');
-            END IF;  
+					---------		GDE_EXISTE_RECARGO
+								
+					V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA_GDE||''' AND COLUMN_NAME = '''||V_COL_GDE||'''';
+					EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
+					
+					IF V_NUM_TABLAS = 0 THEN
+						DBMS_OUTPUT.PUT_LINE('  [INFO] Insertamos los campos '||V_COL_GDE||'');  
+						
+						-- Añadimos el campo
+						EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA_GDE||' ADD '||V_COL_GDE||' '||V_TIPO_NUM_BOOL||' DEFAULT 0';
+						-- Añadimos el comentario al campo
+						EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA_GDE||'.'||V_COL_GDE||' IS ''Identificador si existe recargo o no'''; 					
+					ELSE
+						DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA_GDE||'.'||V_COL_GDE||'... YA existe.');
+					END IF;    
+		
+					---------		GDE_EXISTE_RECARGO
+					V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA_GDE||''' AND COLUMN_NAME = '''||V_COL_DD_TRG||'''';
+					EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
+					
+					IF V_NUM_TABLAS = 0 THEN
+						DBMS_OUTPUT.PUT_LINE('  [INFO] Insertamos los campos '||V_COL_DD_TRG||'');                  
+						-- Añadimos el campo
+						EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA_GDE||' ADD '||V_COL_DD_TRG||' '||V_TIPO_NUM||'';   
+						-- Añadimos LA CLAVE AJENA
+						EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA_GDE||' ADD CONSTRAINT '||V_KEY_NAME_TRG||' FOREIGN KEY ('||V_COL_DD_TRG||')
+											REFERENCES '||V_ESQUEMA||'.'||V_TABLA_REF_TRG||' ('||V_COL_DD_TRG||') ON DELETE SET NULL ENABLE';
+						-- Añadimos el comentario al campo
+						EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA_GDE||'.'||V_COL_DD_TRG||' IS ''Código identificador único del diccionario.'''; 					
+					ELSE
+						DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA_GDE||'.'||V_COL_DD_TRG||'... YA existe.');
+					END IF;  
+		
+	ELSE
+	DBMS_OUTPUT.PUT_LINE(' [INFO] '''||V_TABLA_REF_TRG||'''... No existe.');
+	END IF;
+		
   ELSE
       DBMS_OUTPUT.PUT_LINE(' [INFO] '''||V_TABLA_GDE||'''... No existe.');  
+  
   END IF;
-  DBMS_OUTPUT.PUT_LINE('[FIN CAMPOS NUEVOS EN '||V_TABLA_GDE||']');
-	
-	
+  DBMS_OUTPUT.PUT_LINE('[FIN CAMPOS NUEVOS EN '||V_TABLA_GDE||']');	
 	
   COMMIT;
            

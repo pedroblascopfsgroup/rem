@@ -1181,8 +1181,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		crearGastosExpediente(nuevoExpediente);
 
-		crearGastosExpediente(oferta, nuevoExpediente);
-
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
 

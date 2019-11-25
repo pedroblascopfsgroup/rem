@@ -107,6 +107,7 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -187,6 +188,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
+import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
@@ -363,8 +365,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private ActivoCargasDao activoCargasDao;
+	
+	@Autowired
+	private GastosExpedienteApi gastosExpedienteApi;
 
-		
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
 
@@ -1174,6 +1178,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
+		
+		crearGastosExpediente(nuevoExpediente);
 
 		crearGastosExpediente(oferta, nuevoExpediente);
 
@@ -3089,25 +3095,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
-
-	private List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) {
-		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
-		List<String> acciones = new ArrayList<String>();
-		String codigoOferta = oferta.getTipoOferta().getCodigo();
-
-		acciones.add(DDAccionGastos.CODIGO_COLABORACION);
-		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
-
-		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
-			acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
-		}
+	
+	@Transactional(readOnly = false)
+	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente) {
 		
-		for(ActivoOferta activoOferta : oferta.getActivosOferta()) {
-			Activo activo = activoOferta.getPrimaryKey().getActivo();
-
-			for (String accion : acciones) {
-				GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo, accion);
-				gastosExpediente.add(gex);
+		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
+		
+		ComisionDto filtroDto = new ComisionDto();
+		
+		filtroDto.setIdOfertaRem(nuevoExpediente.getOferta().getNumOferta());
+		List<GastosExpediente> listaGastos = gastosExpedienteApi.getListaGastosExpediente(filtroDto);
+		
+		if(listaGastos == null || listaGastos.isEmpty()) {
+		
+			List<String> acciones = new ArrayList<String>();
+			String codigoOferta = nuevoExpediente.getOferta().getTipoOferta().getCodigo();
+	
+			acciones.add(DDAccionGastos.CODIGO_COLABORACION);
+			acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
+	
+			if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
+				acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+			}
+			
+			for(ActivoOferta activoOferta : nuevoExpediente.getOferta().getActivosOferta()) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+	
+				for (String accion : acciones) {
+					GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(), activo, accion);
+					gastosExpediente.add(gex);
+				}
 			}
 		}
 

@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191127
+--## FECHA_CREACION=20191128
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-5853
@@ -512,6 +512,7 @@ BEGIN
 		
 		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL (ICO_ID,
 										ACT_ID,
+										ICO_MEDIADOR_ID,
 										BORRADO,
 										USUARIOCREAR,
 										FECHACREAR,
@@ -519,6 +520,7 @@ BEGIN
 					   VALUES (
 						   REM01.S_ACT_ICO_INFO_COMERCIAL.NEXTVAL,
 						   '||ACT_ID||',
+						   '||MEDIADOR_ID||',
 						   0,
 						   '''||V_USR||''',
 						   SYSDATE, 

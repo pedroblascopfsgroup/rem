@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20191016
+--## FECHA_CREACION=20191125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7805
+--## INCIDENCIA_LINK=HREOS-8531
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que ACTUALIZA o INSERTA en DD_OPM_OPERACION_MASIVA los datos añadidos en T_ARRAY_DATA.
---## INSTRUCCIONES:
+--## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Reemplaza a HREOS-7805 cambiando la obligatoriedad del campo DD_SFP_CODIGO, ya no es obligatorio
 --##########################################
 --*/
 
@@ -36,7 +37,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	     T_FUNCION('CMFP', 'Carga Masiva Fases de Publicación', 'Carga Masiva Fases de Publicación','CARGA_FASES_PUBLICACION','n*,s*,s*,s*')
+	     T_FUNCION('CMFP', 'Carga Masiva Fases de Publicación', 'Carga Masiva Fases de Publicación','CARGA_FASES_PUBLICACION','n*,s*,s,s*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     
@@ -44,7 +45,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
   V_TABLA := 'DD_OPM_OPERACION_MASIVA';
-	V_USUARIO := 'HREOS-7805'; 
+	V_USUARIO := 'HREOS-8531'; 
   V_TABLA_2 := 'FUN_FUNCIONES';
     -- LOOP para insertar los valores en ZON_PEF_USU -----------------------------------------------------------------
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_OPM_OPERACION_MASIVA ');

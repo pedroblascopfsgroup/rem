@@ -988,5 +988,11 @@ public interface ParticularValidatorApi {
 	public Boolean existeProveedorByCodRem(String pveCodRem);
 
 	Boolean esExpedienteValido(String numExpediente);
-
+	
+	/**
+	 * @param codSubFasePublicacion
+	 * @param codFasePublicacion
+	 * @return true si la subfase pertenece a la fase de publicación
+	 */
+	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion);
 }

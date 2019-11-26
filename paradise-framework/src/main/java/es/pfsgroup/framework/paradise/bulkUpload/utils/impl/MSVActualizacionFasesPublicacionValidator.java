@@ -38,18 +38,20 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
 public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidatorAbstract {
-		
+	
 	public static final class INDICES {
+		private INDICES() {}
 		static final int FILA_CABECERA = 0;
 		static final int DATOS_PRIMERA_FILA = 1;
 		static final int ACT_NUM_ACTIVO = 0;
 		static final int FASE_PUBLICACION = 1;
 		static final int SUBFASE_PUBLICACION = 2;
-		
 	};
+	
 	public static final String ACTIVO_NO_EXISTE = "El activo debe existir.";
 	public static final String FASE_PUBLICACION_NO_EXISTE = "La fase de publicación no existe.";
 	public static final String SUBFASE_PUBLICACION_NO_EXISTE = "La subfase de publicación no existe.";
+	public static final String SUBFASE_PUBLICACION_ERRONEA = "La subfase de publicación no pertenece a la fase de publicación propuesta";
 	public static final String CODIGO_FASES_PUBLICACION = "CMFP";
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -61,13 +63,13 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 	private MSVBusinessValidationRunner validationRunner;
 	
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-	
-	@Autowired
 	private ParticularValidatorApi particularValidator;
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	@Resource
     MessageService messageServices;
@@ -95,20 +97,21 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 		try {
 			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 		
-		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-			// if (!isActiveExists(exc)){
+		if (Boolean.FALSE.equals(dtoValidacionContenido.getFicheroTieneErrores())) {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(ACTIVO_NO_EXISTE, isActivoNotExistsRows(exc));
 			mapaErrores.put(FASE_PUBLICACION_NO_EXISTE, isFasePublicacionNotExistsRows(exc));
 			mapaErrores.put(SUBFASE_PUBLICACION_NO_EXISTE, isSubfasePublicacionNotExistsRows(exc));
+			mapaErrores.put(SUBFASE_PUBLICACION_ERRONEA, perteneceFaseASubFasePublicacion(exc));
 
-			if (!mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() 
-					|| !mapaErrores.get(FASE_PUBLICACION_NO_EXISTE).isEmpty()
-					|| !mapaErrores.get(SUBFASE_PUBLICACION_NO_EXISTE).isEmpty()) {
+			if (Boolean.FALSE.equals(mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty()) 
+					|| Boolean.FALSE.equals(mapaErrores.get(FASE_PUBLICACION_NO_EXISTE).isEmpty())
+					|| Boolean.FALSE.equals(mapaErrores.get(SUBFASE_PUBLICACION_NO_EXISTE).isEmpty())
+					|| Boolean.FALSE.equals(mapaErrores.get(SUBFASE_PUBLICACION_ERRONEA).isEmpty())
+					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -117,7 +120,6 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 			}
 		}
 		exc.cerrar();
-		
 		
 		return dtoValidacionContenido;
 	}
@@ -164,11 +166,11 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
 			return fileItem.getFile();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		return null;
 	}
-		
+		          
 	private List<Integer> isActivoNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
@@ -183,10 +185,10 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 			}
 			} catch (IllegalArgumentException e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e);
 			} catch (IOException e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e);
 			}
 		return listaFilas;
 	}
@@ -205,17 +207,18 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 			}
 			} catch (IllegalArgumentException e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e);
+				
 			} catch (IOException e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e);			
 			}
 		return listaFilas;
 	}
 	
 	private List<Integer> isSubfasePublicacionNotExistsRows(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
+	
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
@@ -227,11 +230,35 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 			}
 			} catch (IllegalArgumentException e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e);
 			} catch (IOException e) {
 				listaFilas.add(0);
-				e.printStackTrace();
+				logger.error(e);
 			}
 		return listaFilas;
-	}	
+	}
+	private List<Integer> perteneceFaseASubFasePublicacion(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
+							&& Boolean.FALSE.equals(particularValidator.existeSubfasePublicacion(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
+							&& Boolean.FALSE.equals(particularValidator.existeFasePublicacion(exc.dameCelda(i, INDICES.FASE_PUBLICACION)))
+							&& Boolean.FALSE.equals(particularValidator.perteneceSubfaseAFasePublicacion(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION), exc.dameCelda(i, INDICES.FASE_PUBLICACION)))
+							)
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			logger.error(e);
+		} catch (IOException e) {
+			listaFilas.add(0);
+			logger.error(e);
+		}
+		return listaFilas;
+	}
 }

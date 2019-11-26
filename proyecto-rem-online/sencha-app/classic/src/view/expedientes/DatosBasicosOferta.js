@@ -422,7 +422,7 @@ beforeedit: 'numVisitaIsEditable'
 						},*/
 						colspan : 3,
 						items : [{
-							xtype : "textfield",
+							xtype : "textfieldbase",
 							fieldLabel : HreRem
 									.i18n('fieldlabel.comerical.oferta.detalle.cajamar.ofertaExpress'),
 							bind : {
@@ -432,6 +432,16 @@ beforeedit: 'numVisitaIsEditable'
 							readOnly : true,
 							width : 410
 						}, {
+							xtype: "textfieldbase",
+							fieldLabel: HreRem.i18n('fieldlabel.detalle.oferta.singular'),
+							bind: {
+								value: '{datosbasicosoferta.ofertaSingular}'
+							},
+		    				readOnly: true,
+		    				width: 410
+		    			}, 
+						
+						{
 							xtype : "textareafieldbase",
 							fieldLabel : HreRem
 									.i18n('fieldlabel.comerical.oferta.detalle.cajamar.observaciones'),

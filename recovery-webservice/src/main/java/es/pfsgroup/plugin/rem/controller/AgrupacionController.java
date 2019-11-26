@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +26,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -39,6 +42,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
+import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
@@ -50,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
@@ -86,6 +91,11 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	private static final String RESPONSE_SUCCESS_KEY = "success";	
+	private static final String RESPONSE_DATA_KEY = "data";
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
 	 * 
@@ -711,6 +721,45 @@ public class AgrupacionController extends ParadiseJsonController {
 		ExcelReport report = new AgrupacionExcelReport(listaAgrupaciones);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional()
+	public ModelAndView registrarExportacion(DtoAgrupacionFilter dtoAgrupacionFilter, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelMap model = new ModelMap();
+
+		try {
+			int count = adapter.getListAgrupaciones(dtoAgrupacionFilter).getTotalCount();
+			AuditoriaExportaciones ae = new AuditoriaExportaciones();
+			ae.setBuscador("agrupaciones");
+			ae.setFechaExportacion(new Date());
+			ae.setNumRegistros(Long.valueOf(count));
+			ae.setUsuario(usuarioManager.getUsuarioLogado());
+			ae.setFiltros(parameterParser(request.getParameterMap()));
+			ae.setAccion(exportar);
+			genericDao.save(AuditoriaExportaciones.class, ae);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, count);
+		}catch(Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en agrupacionController", e);
+		}
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private String parameterParser(Map map) {
+		StringBuilder mapAsString = new StringBuilder("{");
+	    for (Object key : map.keySet()) {
+	    	if(!key.toString().equals("buscador") && !key.toString().equals("exportar"))
+	    		mapAsString.append(key.toString() + "=" + ((String[])map.get(key))[0] + ",");
+	    }
+	    mapAsString.delete(mapAsString.length()-1, mapAsString.length());
+	    if(mapAsString.length()>0)
+	    	mapAsString.append("}");
+	    return mapAsString.toString();
 	}
 
 	@SuppressWarnings("unchecked")

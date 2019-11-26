@@ -55,21 +55,34 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 			
 			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
 			
-			// Si la cartera es BANKIA, SAREB o TANGO o GIANTS, el gestor de las tareas es TINSA CERTIFY
-			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()) 
-			|| DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) 
-			|| DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())
-			|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera.getCodigo())
-			){
+			// Si la cartera es TANGO o GIANTS, el gestor de las tareas es TINSA CERTIFY
+			if(DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())
+			|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera.getCodigo())){
 				//Usuario del Proveedor Tinsa para asignar a tareas (encontrado por CIF)
 				
-				Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_BANKIA_SAREB_TINSA));
-				Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
+				Filter filtroUsuProveedorTangoGiants = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_BANKIA_SAREB_TINSA));
+				Usuario usuProveedorTangoGiants = genericDao.get(Usuario.class, filtroUsuProveedorTangoGiants);
 				
-				if(!Checks.esNulo(usuProveedorBankiaSareb))
-					return usuProveedorBankiaSareb;
+				if(!Checks.esNulo(usuProveedorTangoGiants))
+					return usuProveedorTangoGiants;
 
-			} else {
+			} else if (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())) {
+				
+				Filter filtroUsuProveedorBankia = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_PACI));
+				Usuario usuProveedorBankia = genericDao.get(Usuario.class, filtroUsuProveedorBankia);
+				
+				if(!Checks.esNulo(usuProveedorBankia))
+					return usuProveedorBankia;
+				
+			}else if (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())){
+				
+				Filter filtroUsuProveedorSareb = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_ELECNOR));
+				Usuario usuProveedorSareb = genericDao.get(Usuario.class, filtroUsuProveedorSareb);
+				
+				if(!Checks.esNulo(usuProveedorSareb))
+					return usuProveedorSareb;
+				
+			}else {
 			//Otras carteras, el gestor de las tareas es el proveedor del trabajo
 				ActivoProveedorContacto proveedor = tareaActivo.getTramite().getTrabajo().getProveedorContacto();
 				if(!Checks.esNulo(proveedor))

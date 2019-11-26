@@ -1534,7 +1534,7 @@ public class ActivoAdapter {
 
 	}
 	
-	public Page getActivos(DtoActivoFilter dtoActivoFiltro) {
+	public Object getActivos(DtoActivoFilter dtoActivoFiltro) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
@@ -1549,7 +1549,7 @@ public class ActivoAdapter {
 			}
 		}
 		
-		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
+		return activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
 	}
 
 	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {
@@ -3580,7 +3580,7 @@ public class ActivoAdapter {
 					for (ActivoTrabajo activoTrabajo : listaTrabajos) {
 						//System.out.println(activoTrabajo.getTrabajo().getNumTrabajo());
 						Usuario usuResponsable = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
-						String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
+						String estadoTrabajo = Checks.esNulo(activoTrabajo.getTrabajo().getEstado()) ? null : activoTrabajo.getTrabajo().getEstado().getCodigo();
 						Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo,
 								GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 						if (DDEstadoTrabajo.ESTADO_SOLICITADO.equals(estadoTrabajo)

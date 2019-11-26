@@ -66,6 +66,8 @@ public class TributoAdapter {
 	@Autowired
 	private DownloaderFactoryApi downloaderFactoryApi;
 	
+	protected static final Log logger = LogFactory.getLog(TributoAdapter.class);
+	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	protected static final Log logger = LogFactory.getLog(ActivoAdapter.class);
 	
@@ -109,15 +111,23 @@ public class TributoAdapter {
 						Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i],10));
 						File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
 						BufferedWriter out = new BufferedWriter(new FileWriter(file));
+						try {
+							FileItem fileItem = new FileItem();
+							fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
+							fileItem.setFile(file);
+							fileItem.setLength(file.length());			
+							webFileItem.setFileItem(fileItem);
+							activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+						}finally {
+							 out.close();
+							 if(!file.delete()){
+								 logger.info("No se podido borrar el temporarl de descarga");
+							 }
+						}
 					    out.write("pfs");
-					    out.close();					    
-					    FileItem fileItem = new FileItem();
-						fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
-						fileItem.setFile(file);
-						fileItem.setLength(file.length());			
-						webFileItem.setFileItem(fileItem);
-						activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
-						file.delete();
+					   					    
+					    
+						
 						
 					}
 				}

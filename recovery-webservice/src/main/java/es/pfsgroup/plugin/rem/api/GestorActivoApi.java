@@ -76,6 +76,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String BUZON_REM = "buzon.rem";
 	public static final String BUZON_PFS = "buzon.pfs";
 	public static final String USU_PROVEEDOR_ELECNOR = "proveedor.elecnor";
+	public static final String USU_PROVEEDOR_PACI = "proveedor.paci";
 	
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);

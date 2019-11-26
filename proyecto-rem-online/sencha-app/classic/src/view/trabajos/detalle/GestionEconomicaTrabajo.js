@@ -118,9 +118,16 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		            					return Ext.util.Format.currency(value)
 		            				},
 	    				            flex: 1,
-	    				            summaryType: 'sum',
+	    				            summaryType: function(){
+	    								var store = this;
+	    			                    var records = store.getData().items;
+	    			                    
+	    			                    if(!Ext.isEmpty(records) || !Ext.isEmpty(records[0])){
+	    			                    	return records[0].get('importeTotalTarifas');
+	    			                    }
+	    			                   return 0; 
+	    							},
 	    				            summaryRenderer: function(value, summaryData, dataIndex) {
-	    				            	
 	    				            	return "<span>"+Ext.util.Format.currency(value)+"</span>"
 	    				            }
 	    						}

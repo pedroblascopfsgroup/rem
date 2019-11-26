@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -102,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 
@@ -199,6 +201,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private GastosExpedienteApi gastosExpedienteApi;
 	
 	@Override
 	public boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion) throws JsonViewerException, Exception, Error {
@@ -922,24 +927,34 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return expedienteComercial;
 	}
 	
-	private List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) {
+	@Override
+	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) {
 		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
-		List<String> acciones = new ArrayList<String>();
-		String codigoOferta = oferta.getTipoOferta().getCodigo();
-
-		acciones.add(DDAccionGastos.CODIGO_COLABORACION);
-		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
-
-		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
-			acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
-		}
 		
-		for(ActivoOferta activoOferta : oferta.getActivosOferta()) {
-			Activo activo = activoOferta.getPrimaryKey().getActivo();
-
-			for (String accion : acciones) {
-				GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo, accion);
-				gastosExpediente.add(gex);
+		ComisionDto filtroDto = new ComisionDto();
+		
+		filtroDto.setIdOfertaRem(nuevoExpediente.getOferta().getNumOferta());
+		List<GastosExpediente> listaGastos = gastosExpedienteApi.getListaGastosExpediente(filtroDto);
+		
+		if(listaGastos == null || listaGastos.isEmpty()) {
+		
+			List<String> acciones = new ArrayList<String>();
+			String codigoOferta = nuevoExpediente.getOferta().getTipoOferta().getCodigo();
+	
+			acciones.add(DDAccionGastos.CODIGO_COLABORACION);
+			acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
+	
+			if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
+				acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+			}
+			
+			for(ActivoOferta activoOferta : nuevoExpediente.getOferta().getActivosOferta()) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+	
+				for (String accion : acciones) {
+					GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(), activo, accion);
+					gastosExpediente.add(gex);
+				}
 			}
 		}
 

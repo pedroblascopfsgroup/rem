@@ -44,6 +44,8 @@ public class TributoAdapter {
 	
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";	
+	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
+	protected static final Log logger = LogFactory.getLog(TributoAdapter.class);	
 	
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
@@ -66,12 +68,6 @@ public class TributoAdapter {
 	@Autowired
 	private DownloaderFactoryApi downloaderFactoryApi;
 	
-	protected static final Log logger = LogFactory.getLog(TributoAdapter.class);
-	
-	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
-	protected static final Log logger = LogFactory.getLog(ActivoAdapter.class);
-	
-
 	public String uploadDocumento(WebFileItem webFileItem, String matricula) throws Exception {
 		ActivoTributos activoTributo = activoTributoApi.getTributo(Long.parseLong(webFileItem.getParameter("idTributo")));
 		

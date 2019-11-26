@@ -155,6 +155,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
+import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
@@ -388,6 +389,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (PESTANA_FICHA.equals(tab)) {
 			dto = expedienteToDtoFichaExpediente(expediente);
+			activoApi.crearGastosExpediente(expediente);
 		} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 			dto = expedienteToDtoDatosBasicosOferta(expediente);
 		}

@@ -32,7 +32,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 				{
 					text: 'Id Activo',
 					dataIndex: 'idActivo',
-					//hidden: true,
+					hidden: true,
 					hideable: false
 				},
 		        {

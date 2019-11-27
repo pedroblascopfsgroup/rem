@@ -1271,6 +1271,4 @@ public interface ActivoApi {
 
 	Long activoPerteneceDND(Activo activo);
 
-	Long activoPerteneceDND(Activo activo);
-
 }

@@ -201,7 +201,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
                   		me.fireEvent("errorToast", response.msgError);
                   	} else {
                   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                  	}                        	
+                  	}     
+                  		me.up('tituloinformacionregistralactivo').funcionRecargar();
 						me.unmask();
                   }
                });                            
@@ -230,8 +231,9 @@ Ext.define('HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', {
 			                  },
 			            	success: function (a, operation, c) {
                                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								me.unmask();
-								me.deleteSuccessFn();
+                               me.up('tituloinformacionregistralactivo').funcionRecargar();
+							   me.unmask();
+							   me.deleteSuccessFn();
                            },
                            
                            failure: function (a, operation) {

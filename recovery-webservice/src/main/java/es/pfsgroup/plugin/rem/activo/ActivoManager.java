@@ -7230,8 +7230,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
 		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
+		Order order = new Order(OrderType.DESC, "id");
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "titulo.activo.id", idActivo);
+		List<HistoricoTramitacionTitulo> listasTramitacion = genericDao.getListOrdered(HistoricoTramitacionTitulo.class, order, filtro);
 		String estadoTitulo = null;
 			try {
+				if(!Checks.estaVacio(listasTramitacion)) {
+					if(!Checks.esNulo(listasTramitacion.get(0).getFechaCalificacion()) && listasTramitacion.get(0).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())) {
+						throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de calificación negativa anterior.");
+					}else if(!Checks.esNulo(listasTramitacion.get(0).getEstadoPresentacion()) && listasTramitacion.get(0).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())){
+						throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de presentación anterior.");
+					}
+					
+				}
 				beanUtilNotNull.copyProperty(htt, "titulo", titulo);
 				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
 					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro", tramitacionDto.getFechaPresentacionRegistro());

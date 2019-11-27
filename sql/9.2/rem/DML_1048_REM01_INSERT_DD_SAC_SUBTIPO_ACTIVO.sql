@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20191120
+--## FECHA_CREACION=20191127
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5757
@@ -37,7 +37,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        --T_TIPO_DATA('DD_TPN_CODIGO','DD_TPA_CODIGO','DD_SAC_CODIGO','DD_SAC_DESCRIPCION','DD_SAC_DESCRIPCION_LARGA')
+        --T_TIPO_DATA('DD_TPN_CODIGO','DD_TPA_CODIGO','DD_SAC_CODIGO','DD_SAC_DESCRIPCION')
           T_TIPO_DATA('0924','01','27','No Urbanizable'),
           T_TIPO_DATA('0929','03','28','Parque Medianas'),
           T_TIPO_DATA('0930','03','29','Gasolinera'),
@@ -64,14 +64,14 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
         --Comprobar el dato a insertar.
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTROS;
 
         IF V_NUM_REGISTROS = 0 THEN
        	-- Si no existe se inserta.
-          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(3)) ||'''');                    
+        	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(3)) ||'''');                    
 
-          V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
+          	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
 					   DD_'||V_TEXT_CHARS||'_ID, 
                        DD_TPA_ID,                                           
                        DD_'||V_TEXT_CHARS||'_CODIGO, 
@@ -85,8 +85,25 @@ BEGIN
                        '''|| TRIM(V_TMP_TIPO_DATA(4)) ||''', 
                        0, '''|| V_USUARIO_CREAR ||''', SYSDATE, 0 
                       FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA WHERE TPA.DD_TPA_CODIGO = '|| TRIM(V_TMP_TIPO_DATA(2)) ||'';
-          EXECUTE IMMEDIATE V_MSQL;
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+          	EXECUTE IMMEDIATE V_MSQL;
+          	DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+          
+       ELSIF V_NUM_REGISTROS = 1 THEN
+       -- Si existe se modifica.
+       		DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(3)) ||'''');
+       		
+       		V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'                        
+                    SET DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''|| TRIM(V_TMP_TIPO_DATA(4)) ||''', 
+                    	DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''|| TRIM(V_TMP_TIPO_DATA(4)) ||''', 
+                       	USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||''',
+					   	FECHAMODIFICAR = SYSDATE,
+					   	DD_TPA_ID = (SELECT TPA.DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA WHERE TPA.DD_TPA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''),
+					   	DD_TPA_COD_UVEM = NULL
+					WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
+					
+       		EXECUTE IMMEDIATE V_MSQL;
+          	DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+       		
        END IF;
       END LOOP;
       

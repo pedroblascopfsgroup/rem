@@ -67,7 +67,7 @@ V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     T_TIPO_DATA(2, '31', 'Comunidad de propietarios: Carta para localización', 'Comunidad de propietarios: Carta para localización', 'EN-05-COMU-67'),
     T_TIPO_DATA(2, '32', 'Comunidad de propietarios: Burofax para localización', 'Comunidad de propietarios: Burofax para localización', 'EN-05-COMU-76'),
     T_TIPO_DATA(2, '33', 'Certificado no deuda', 'Certificado no deuda', 'EN-05-CERJ-11'),
-    T_TIPO_DATA(2, '34', 'Acta Junta (Comunidad de propietarios)', 'Acta Junta (Comunidad de propietarios)', 'EN-05-ACTR-07')
+    T_TIPO_DATA(2, '34', 'Acta Junta (Comunidad de propietarios)', 'Acta Junta (Comunidad de propietarios)', 'EN-05-ACTR-07');
 
 V_TMP_TIPO_DATA T_TIPO_DATA;
 

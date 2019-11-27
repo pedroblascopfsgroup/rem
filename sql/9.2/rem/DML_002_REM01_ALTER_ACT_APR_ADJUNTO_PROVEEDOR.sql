@@ -56,7 +56,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO]: Mergeo en ACT_APR_ADJUNTO_PROVEEDOR');
 V_MSQL := '
     MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' apr
     USING (
-        SELECT * FROM aux_tdp_sdp
+        SELECT * FROM '||V_ESQUEMA||'.aux_tdp_sdp
     ) tmp
     ON (tmp.dd_tdp_id = apr.dd_tdp_id)
     WHEN MATCHED THEN

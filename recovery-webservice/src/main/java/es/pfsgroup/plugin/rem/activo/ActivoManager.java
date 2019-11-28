@@ -2866,7 +2866,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dto.setFechaPresentacionRegistroCN(activo.getHistoricoTramitacionTitulo().getFechaPresentacionRegistro());
 				}
 		
-				//existeCalificacionNegativa(getHistoricoTramitacionTitulo(idActivo), dto);
 				
 				activoCNListDto.add(dto);
 			}
@@ -5843,29 +5842,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				genericDao.save(ActivoCalificacionNegativa.class, activoCalificacionNegativa);
 			
-				/*
-				if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTitulo())){
-					HistoricoTramitacionCalificacionNegativa historicoTramitacionCalificacionNegativa = new HistoricoTramitacionCalificacionNegativa();
-					historicoTramitacionCalificacionNegativa.setActivoCalificacionNegativa(activoCalificacionNegativa);
-				
-					Filter filter = genericDao.createFilter(FilterType.EQUALS, "titulo.id", activo.getTitulo().getId());
-					List<HistoricoTramitacionTitulo> historicoTramitacionTituloList = genericDao.getList(HistoricoTramitacionTitulo.class, filter);
-					Long idMasAlta = 0L;
-					int posicionIDmasAlta = 0;
-					
-					for (int i = 0; i < historicoTramitacionTituloList.size(); i++) {
-						
-						if(idMasAlta < historicoTramitacionTituloList.get(i).getId()) {
-							idMasAlta = historicoTramitacionTituloList.get(i).getId();
-							posicionIDmasAlta = i;
-						}					
-					}
-					HistoricoTramitacionTitulo historicoTramitacionTitulo = historicoTramitacionTituloList.get(posicionIDmasAlta);
-					historicoTramitacionCalificacionNegativa.setHistoricoTramitacionTitulo(historicoTramitacionTitulo);
-					
-					genericDao.save(HistoricoTramitacionCalificacionNegativa.class, historicoTramitacionCalificacionNegativa);
-				}
-				*/
 				
 				return true;
 			}
@@ -7279,8 +7255,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
 		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
+		Order order = new Order(OrderType.DESC, "id");
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "titulo.activo.id", idActivo);
+		List<HistoricoTramitacionTitulo> listasTramitacion = genericDao.getListOrdered(HistoricoTramitacionTitulo.class, order, filtro);
 		String estadoTitulo = null;
 			try {
+				if(!Checks.estaVacio(listasTramitacion)) {
+					if(!Checks.esNulo(listasTramitacion.get(0).getFechaCalificacion()) && listasTramitacion.get(0).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())) {
+						throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de calificación negativa anterior.");
+					}else if(!Checks.esNulo(listasTramitacion.get(0).getEstadoPresentacion()) && listasTramitacion.get(0).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())){
+						throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de presentación anterior.");
+					}
+					
+				}
 				beanUtilNotNull.copyProperty(htt, "titulo", titulo);
 				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
 					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro", tramitacionDto.getFechaPresentacionRegistro());
@@ -7413,6 +7400,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							.dameValorDiccionarioByCod(DDEstadoTitulo.class, nuevoEstado);
 					titulo.setEstado(estadoTitulo);
 					genericDao.save(ActivoTitulo.class, titulo);
+					
+					List<ActivoCalificacionNegativa> calNegList = genericDao.getList(ActivoCalificacionNegativa.class,
+							genericDao.createFilter(FilterType.EQUALS, "historicoTramitacionTitulo.id", htt.getId()));
+					for(ActivoCalificacionNegativa calNeg : calNegList ) {
+						calNeg.getAuditoria().setBorrado(true);
+						calNeg.getAuditoria().setFechaBorrar(new Date());
+						calNeg.getAuditoria().setUsuarioBorrar(usuarioApi.getUsuarioLogado().getUsername());
+						
+						genericDao.save(ActivoCalificacionNegativa.class, calNeg);
+					}
 				}
 			}
 			genericDao.deleteById(HistoricoTramitacionTitulo.class, htt.getId());

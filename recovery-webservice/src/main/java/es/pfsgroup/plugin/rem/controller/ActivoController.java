@@ -3116,6 +3116,10 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			boolean success = activoApi.updateHistoricoTramtitacionTitulo(tramitacionDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			
+		}catch (HistoricoTramitacionException histError) {
+			model.put(RESPONSE_SUCCESS_KEY, false); 
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, histError.getMessage());	
 
 		} catch (Exception e) { 
 			if(ActivoManager.ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO.equalsIgnoreCase(e.getMessage())) {

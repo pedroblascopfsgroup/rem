@@ -22,6 +22,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 //import es.pfsgroup.plugin.rem.activo.DtoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -1238,7 +1239,7 @@ public interface ActivoApi {
 	 * @return boolean
 	 * @throws Exception 
 	 */
-	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo) throws Exception;
+	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo) throws HistoricoTramitacionException;
 	
 	/**
 	 * actualiza el historico de tramitacion de titulo de un activo

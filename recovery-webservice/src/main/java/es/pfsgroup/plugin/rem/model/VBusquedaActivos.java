@@ -307,6 +307,18 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "ESTADO_PUBLICACION_ALQUILER")
 	private String estadoPublicacionAlquiler;
 	
+	@Column(name = "FASE_PUBLICACION_CODIGO")
+	private String fasePublicacionCodigo;
+	
+	@Column(name = "FASE_PUBLICACION_DESCRIPCION")
+	private String fasePublicacionDescripcion;
+	
+	@Column(name = "SUBFASE_PUBLICACION_CODIGO")
+	private String subFasePublicacionCodigo;
+	
+	@Column(name = "SUBFASE_PUBLICACION_DESCRIPCION")
+	private String subFasePublicacionDescripcion;
+	
 	
 	public Long getId() {
 		return id;
@@ -748,5 +760,37 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setApiPrimarioId(Long apiPrimarioId) {
 		this.apiPrimarioId = apiPrimarioId;
+	}
+
+	public String getFasePublicacionCodigo() {
+		return fasePublicacionCodigo;
+	}
+
+	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
+		this.fasePublicacionCodigo = fasePublicacionCodigo;
+	}
+
+	public String getFasePublicacionDescripcion() {
+		return fasePublicacionDescripcion;
+	}
+
+	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
+		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
+	}
+
+	public String getSubFasePublicacionCodigo() {
+		return subFasePublicacionCodigo;
+	}
+
+	public void setSubFasePublicacionCodigo(String subFasePublicacionCodigo) {
+		this.subFasePublicacionCodigo = subFasePublicacionCodigo;
+	}
+
+	public String getSubFasePublicacionDescripcion() {
+		return subFasePublicacionDescripcion;
+	}
+
+	public void setSubFasePublicacionDescripcion(String subFasePublicacionDescripcion) {
+		this.subFasePublicacionDescripcion = subFasePublicacionDescripcion;
 	}
 }

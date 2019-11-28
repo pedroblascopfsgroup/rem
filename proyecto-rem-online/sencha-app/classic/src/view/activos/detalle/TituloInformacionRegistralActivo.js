@@ -959,22 +959,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							items :
 							[
 								{
-
-									xtype: "checkboxfieldbase", 
-									reference: "calificacionNegativaCheckbox",
-									name : 'calificacionNegativaCheckbox',
-									fieldLabel: 'Calificación Negativa:',
-						            colspan: 3,
-						            bind:{
-						            	value:'{datosRegistrales.puedeEditarCalificacionNegativa}',
-						            	readOnly:true
-						            },
-						            addUxReadOnlyEditFieldPlugin: true,
-						            hidden:true
-						            
-						            
-								},
-								{
 									xtype: "calificacionnegativagrid", 
 									// TODO Falta una funcion aqui que esta en informeComercialActivo de ese estilo
 									reference: "calificacionnegativagrid", 

@@ -98,6 +98,8 @@ public class DtoActivoFilter extends WebDto {
 	private Long gestoria;
 	private String fasePublicacionCodigo;
 	private String fasePublicacionDescripcion;
+	private String subFasePublicacionCodigo;
+	private String subFasePublicacionDescripcion;
 	private String gestoriaAdmision;
 	private String gestoriaAdministracion;
 	private String gestoriaFormalizacion;
@@ -736,5 +738,17 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setListPage(boolean listPage) {
 		this.listPage = listPage;
+	}
+	public String getSubFasePublicacionCodigo() {
+		return subFasePublicacionCodigo;
+	}
+	public void setSubFasePublicacionCodigo(String subFasePublicacionCodigo) {
+		this.subFasePublicacionCodigo = subFasePublicacionCodigo;
+	}
+	public String getSubFasePublicacionDescripcion() {
+		return subFasePublicacionDescripcion;
+	}
+	public void setSubFasePublicacionDescripcion(String subFasePublicacionDescripcion) {
+		this.subFasePublicacionDescripcion = subFasePublicacionDescripcion;
 	}	
 }

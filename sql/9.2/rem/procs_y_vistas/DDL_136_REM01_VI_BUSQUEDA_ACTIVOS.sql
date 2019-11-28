@@ -1,17 +1,18 @@
 --/*
 --##########################################
---## AUTOR=JIN LI HU
---## FECHA_CREACION=20191118
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20191127
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8476
+--## INCIDENCIA_LINK=HREOS-8539
 --## PRODUCTO=NO
 --## Finalidad: añadir el codigo de la subcartera para poder utilizarlo en el grid
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 Añadidos campos necesarios para mostrar las 3 columnas nuevas que se han añadido en el grid de buscador de activos.
+--##        0.2 Añadidos campos necesarios para mostrar las 3 columnas nuevas que se han añadido en el grid de buscador de activos. - JIN LI HU - HREOS-8476 - 20191118
+--##		0.3 Añadidos campos necesarios para filtar y mostrar las fases y subfases de publicación del activo.
 --##########################################
 --*/
 
@@ -143,7 +144,11 @@ BEGIN
 				ELSE NULL
 			END TAS_IMPORTE_TAS_FIN,
 			EPV.DD_EPV_CODIGO AS ESTADO_PUBLICACION_VENTA,
-			EPA.DD_EPA_CODIGO AS ESTADO_PUBLICACION_ALQUILER
+			EPA.DD_EPA_CODIGO AS ESTADO_PUBLICACION_ALQUILER,
+ 			FSP.DD_FSP_CODIGO AS FASE_PUBLICACION_CODIGO,
+       		FSP.DD_FSP_DESCRIPCION AS FASE_PUBLICACION_DESCRIPCION,
+		    SFP.DD_SFP_CODIGO AS SUBFASE_PUBLICACION_CODIGO,
+       		SFP.DD_SFP_DESCRIPCION AS SUBFASE_PUBLICACION_DESCRIPCION
   
 		FROM ' || V_ESQUEMA || '.ACT_ACTIVO ACT 
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_LOC_LOCALIZACION ACT_LOC ON ACT_LOC.ACT_ID = ACT.ACT_ID
@@ -175,6 +180,9 @@ BEGIN
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT.DD_TCO_ID  AND TCO.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID AND EPV.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_EPA_ESTADO_PUB_ALQUILER EPA ON EPA.DD_EPA_ID = APU.DD_EPA_ID AND EPV.BORRADO = 0
+ 		LEFT JOIN REM01.ACT_HFP_HIST_FASES_PUB HFP ON HFP.ACT_ID = ACT.ACT_ID
+        LEFT JOIN REM01.DD_FSP_FASE_PUBLICACION FSP ON FSP.DD_FSP_ID = HFP.DD_FSP_ID
+        LEFT JOIN REM01.DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID
 		LEFT JOIN (SELECT CAT.ACT_ID, LISTAGG(CAT.CAT_REF_CATASTRAL,'','') WITHIN GROUP (ORDER BY ACT_ID) AS CAT_REF_CATASTRAL FROM ' || V_ESQUEMA || '.ACT_CAT_CATASTRO CAT
 		GROUP BY CAT.ACT_ID) CATASTRO ON CATASTRO.ACT_ID = ACT.ACT_ID  
 		LEFT JOIN (SELECT GAC.ACT_ID, USU.USU_USERNAME

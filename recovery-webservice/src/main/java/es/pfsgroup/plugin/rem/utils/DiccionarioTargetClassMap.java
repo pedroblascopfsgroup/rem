@@ -241,6 +241,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoGestionPlusvalia", DDEstadoGestionPlusv.class);
 		mapa.put("faseDePublicacion", DDFasePublicacion.class);
 		mapa.put("subfaseDePublicacion", DDSubfasePublicacion.class);
+		mapa.put("cesionUso", DDCesionUso.class);
+		mapa.put("DDSiNo", DDSinSiNo.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

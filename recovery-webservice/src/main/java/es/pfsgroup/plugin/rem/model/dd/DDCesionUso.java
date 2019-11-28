@@ -1,3 +1,5 @@
+
+
 package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
@@ -18,51 +20,56 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
+/**
+ * Modelo que gestiona el diccionario de los tipos de cesion de uso
+ * 
+ * @author Rasul Abdulaev
+ *
+ */
 @Entity
-@Table(name = "DD_IGE_IDENTIFICACION_GESTORIA", schema = "${entity.schema}")
+@Table(name = "DD_CDU_CESION_USO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDIdentificacionGestoria implements Auditable, Dictionary {
+public class DDCesionUso implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CARITAS= "01";
+	public static final String CESION_GENERALITAT_CX = "02";
+	public static final String CESION_OTRAS_OPERACIONES= "03";
+	public static final String EN_TRAMITE_OTRAS_OPERACIONES= "04";
+	public static final String NO_APLICA= "05";
 
 	@Id
-	@Column(name = "DD_IGE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoCargaGenerator")
-	@SequenceGenerator(name = "DDEstadoCargaGenerator", sequenceName = "S_DD_IGE_IDENTIFICACION_GESTORIA")
+	@Column(name = "DD_CDU_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDCesionUsoGenerator")
+	@SequenceGenerator(name = "DDCesionUsoGenerator", sequenceName = "S_DD_CDU_CESION_USO")
 	private Long id;
-	 
-	@Column(name = "DD_IGE_CODIGO")   
+	    
+	@Column(name = "DD_CDU_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_IGE_DESCRIPCION")   
+	@Column(name = "DD_CDU_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_IGE_DESCRIPCION_LARGA")   
+	@Column(name = "DD_CDU_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	
 	    
+
 	@Version   
 	private Long version;
 
 	@Embedded
-	private Auditoria auditoria;	 
-	 
-	 
+	private Auditoria auditoria;
+
+	
+	
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
 	}
 
 	public String getDescripcion() {
@@ -79,7 +86,15 @@ public class DDIdentificacionGestoria implements Auditable, Dictionary {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
-	}	
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 
 	public Long getVersion() {
 		return version;
@@ -98,3 +113,6 @@ public class DDIdentificacionGestoria implements Auditable, Dictionary {
 	}
 
 }
+
+
+

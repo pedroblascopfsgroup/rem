@@ -860,6 +860,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
          			return true;
          		}
     		}
+    	},
+    	isCesionUsoEditable: function () {
+    		return $AU.userIsRol('GESTALQ');
     	}
     	    
 	 }, 
@@ -2266,7 +2269,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoFasesDePublicacionActivo',
 				extraParams: {id: '{activo.id}'}
 			}
+		},
+		comboCesionUso :{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'cesionUso'}
+			}
+		},
+				
+		comboSinSino: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'DDSiNo'}
+			}
 		}
-		
      }
 });

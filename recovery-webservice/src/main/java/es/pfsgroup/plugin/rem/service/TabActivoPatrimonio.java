@@ -7,10 +7,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +18,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -30,7 +28,6 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
@@ -38,9 +35,24 @@ import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class TabActivoPatrimonio implements TabActivoService {
+	private static final String ES_ACTIVO_CON_CHECK_PUBLICAR_COMERCIALIZAR_FORMALIZAR_ERROR = "msg.error.activo.cesion.uso.con.checks.publicar.comercializar.formalizar";
+	private static final String ES_ACTIVO_ALQUILADO_ERROR = "msg.error.es.activo.alquilado";
+	private static final String ES_ACTIVO_CON_OFERTAS_VIVAS_ERROR="msg.error.es.activo.con.ofertas.vivas";
+	
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -67,6 +79,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
+	
+	@Autowired
+	private ParticularValidatorApi particularValidator;
 
 	@Override
 	public String[] getKeys() {
@@ -77,6 +92,11 @@ public class TabActivoPatrimonio implements TabActivoService {
 	public String[] getCodigoTab() {
 		return new String[]{TabActivoService.TAB_PATRIMONIO};
 	}
+	@Resource
+	private MessageService messageServices;
+	
+	
+	
 	public DtoActivoPatrimonio getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoPatrimonio activoPatrimonioDto = new DtoActivoPatrimonio();
 
@@ -320,6 +340,19 @@ public class TabActivoPatrimonio implements TabActivoService {
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
 			}
 		}
+		
+		if (activoPatrimonioDto.getCesionUso() != null) {
+			this.isActivoConPublicarComercializarFormalizar(activo);
+			DDCesionUso cesionUso = genericDao.get(DDCesionUso.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getCesionUso()));
+			activoPatrimonio.setCesionUso(cesionUso);
+		}
+		if (activoPatrimonioDto.getTramiteAlquilerSocial() != null) {
+			if (DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getTramiteAlquilerSocial())) {
+				this.isActivoConOfertasEnVueloOAlquilado(activo, activoPatrimonio);
+			}	
+			activoPatrimonio.setTramiteAlquilerSocial(DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getTramiteAlquilerSocial()));
+		}
 
 		activoPatrimonioDao.save(activoPatrimonio);
 
@@ -336,5 +369,27 @@ public class TabActivoPatrimonio implements TabActivoService {
 		}
 
 		return activo;
+	}
+	
+	private void isActivoConOfertasEnVueloOAlquilado(Activo activo, ActivoPatrimonio activoPatrimonio) {
+		if ( activoPatrimonio != null && activoPatrimonio.getTipoEstadoAlquiler() != null
+				&& DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo())) {
+			throw new JsonViewerException(messageServices.getMessage(ES_ACTIVO_ALQUILADO_ERROR));
+		}
+		if ( particularValidator.existeActivoConOfertaVivaEstadoExpediente(activo.getNumActivo().toString())) {
+			throw new JsonViewerException(messageServices.getMessage(ES_ACTIVO_CON_OFERTAS_VIVAS_ERROR));
+		}
+		
+		
+	}
+
+	private void isActivoConPublicarComercializarFormalizar(Activo activo) {
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+		if ((perimetroActivo.getAplicaPublicar() != null&& perimetroActivo.getAplicaPublicar())
+			||(perimetroActivo.getAplicaComercializar() != null && perimetroActivo.getAplicaComercializar() == 1)
+			||(perimetroActivo.getAplicaFormalizar() != null && perimetroActivo.getAplicaFormalizar() == 1)) {
+			throw new JsonViewerException(messageServices.getMessage(ES_ACTIVO_CON_CHECK_PUBLICAR_COMERCIALIZAR_FORMALIZAR_ERROR));
+		}
+		
 	}
 }

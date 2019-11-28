@@ -5845,6 +5845,66 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else {
 			comboSubfase.setAllowBlank(true);
 		}
+	},
+	comboTipoAlquilerOnChange: function( check, newVal, oldVal, eOps){
+		var me = this;
+		try{
+			if ( CONST.TIPO_ALQUILER['CARITAS'] === newVal) {
+				var cesionDatosValue = me.lookupReference('cesionDeUsoRef').getValue();
+				if (CONST.DD_CDU_CESION_USO['CESION_GENERALITAT_CX'] === cesionDatosValue){
+					check.reset();
+					throw  HreRem.i18n("msg.exception.no.se.puede.seleccionar.caritas");
+				}else{
+					me.lookupReference('cesionDeUsoRef').on('expand', me.doCesionUsoFilter);				
+				}
+			}else{
+				me.doClearFilter(me.lookupReference('cesionDeUsoRef'));
+				me.lookupReference('cesionDeUsoRef').un('expand', me.doCesionUsoFilter);
+			}
+		}catch(error){
+			me.fireEvent("errorToast", error); 
+		}
+	},
+	comboCesionUsoOnChage:function(check, newVal, oldVal, eOps){
+		var me = this;
+		try{ 
+			if (CONST.DD_CDU_CESION_USO['CESION_GENERALITAT_CX'] === newVal){
+				var tipoAlquilerValue = me.lookupReference('comboTipoAlquilerRef').getValue();
+				if ( CONST.TIPO_ALQUILER['CARITAS'] === tipoAlquilerValue){
+					check.reset();
+					throw  HreRem.i18n("msg.exception.no.se.puede.seleccionar.cesion.generalitad.cx");
+				}else{
+					me.lookupReference('comboTipoAlquilerRef').on('expand', me.doTipoAlquilerFilter);
+				}
+			}else{
+				this.doClearFilter(me.lookupReference('comboTipoAlquilerRef'));
+				me.lookupReference('comboTipoAlquilerRef').un('expand', me.doTipoAlquilerFilter);
+			}
+		}catch(error){
+			me.fireEvent("errorToast", error); 
+		}
+	},
+	doCesionUsoFilter: function () {
+		var me=this;
+		me.getStore().filter({
+    		fn: function(record) {
+					return CONST.DD_CDU_CESION_USO['CESION_GENERALITAT_CX'] !== record.data.codigo;
+		    },
+		    scope: this
+		})
+	},
+	doTipoAlquilerFilter:function (){
+		var me=this;
+		me.getStore().filter({
+    		fn: function(record) {
+					return CONST.TIPO_ALQUILER['CARITAS'] !== record.data.codigo;
+		    },
+		    scope: this
+		})
+	},
+	doClearFilter: function(dom){
+		if ( dom !== null && typeof dom !== 'undefined' && typeof dom.getStore === 'function'){
+			dom.getStore().clearFilter();
+		}
 	}
-	
 });

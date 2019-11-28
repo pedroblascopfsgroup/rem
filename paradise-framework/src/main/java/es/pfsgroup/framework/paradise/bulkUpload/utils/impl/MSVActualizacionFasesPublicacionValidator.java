@@ -52,7 +52,10 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 	public static final String FASE_PUBLICACION_NO_EXISTE = "La fase de publicación no existe.";
 	public static final String SUBFASE_PUBLICACION_NO_EXISTE = "La subfase de publicación no existe.";
 	public static final String SUBFASE_PUBLICACION_ERRONEA = "La subfase de publicación no pertenece a la fase de publicación propuesta";
+	public static final String FASE_NA_SUBFASE_RELLENA = "La subfase de publicación debe estar vacía cuando la fase no aplica (01)";
 	public static final String CODIGO_FASES_PUBLICACION = "CMFP";
+	
+	public static final String CODIGO_FASE_NA = "01";
 	@Autowired
 	private MSVExcelParser excelParser;
 	
@@ -105,12 +108,14 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 			mapaErrores.put(ACTIVO_NO_EXISTE, isActivoNotExistsRows(exc));
 			mapaErrores.put(FASE_PUBLICACION_NO_EXISTE, isFasePublicacionNotExistsRows(exc));
 			mapaErrores.put(SUBFASE_PUBLICACION_NO_EXISTE, isSubfasePublicacionNotExistsRows(exc));
-			mapaErrores.put(SUBFASE_PUBLICACION_ERRONEA, perteneceFaseASubFasePublicacion(exc));
+			mapaErrores.put(SUBFASE_PUBLICACION_ERRONEA, perteneceSubfaseAFasePublicacion(exc));
+			mapaErrores.put(FASE_NA_SUBFASE_RELLENA, isSubfasePublicacionNotEmptyAndFaseNA(exc));
 
 			if (Boolean.FALSE.equals(mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty()) 
 					|| Boolean.FALSE.equals(mapaErrores.get(FASE_PUBLICACION_NO_EXISTE).isEmpty())
 					|| Boolean.FALSE.equals(mapaErrores.get(SUBFASE_PUBLICACION_NO_EXISTE).isEmpty())
 					|| Boolean.FALSE.equals(mapaErrores.get(SUBFASE_PUBLICACION_ERRONEA).isEmpty())
+					|| Boolean.FALSE.equals(mapaErrores.get(FASE_NA_SUBFASE_RELLENA).isEmpty())
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -177,7 +182,9 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, INDICES.ACT_NUM_ACTIVO)) && !particularValidator.existeActivo(exc.dameCelda(i, INDICES.ACT_NUM_ACTIVO)))
+					if(Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.ACT_NUM_ACTIVO))) 
+						&& Boolean.FALSE.equals(particularValidator.existeActivo(exc.dameCelda(i, INDICES.ACT_NUM_ACTIVO)))
+					)
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -199,7 +206,9 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, INDICES.FASE_PUBLICACION)) && !particularValidator.existeFasePublicacion(exc.dameCelda(i, INDICES.FASE_PUBLICACION)))
+					if(Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.FASE_PUBLICACION))) 
+						&& Boolean.FALSE.equals(particularValidator.existeFasePublicacion(exc.dameCelda(i, INDICES.FASE_PUBLICACION)))
+					)
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -222,7 +231,10 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)) && !particularValidator.existeSubfasePublicacion(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
+					if(Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
+							&& Boolean.FALSE.equals(particularValidator.existeSubfasePublicacion(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
+							
+							)
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -237,14 +249,45 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 			}
 		return listaFilas;
 	}
-	private List<Integer> perteneceFaseASubFasePublicacion(MSVHojaExcel exc){
+	
+	private List<Integer> isSubfasePublicacionNotEmptyAndFaseNA(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		/*
+		 * Utilizo el código '01' que es el actual código para la fase de publicación NO APLICA.
+		 * Si por algún motivo se cambia dicho código hay que modificar la constante CODIGO_FASE_NA.  
+		 * 
+		 */
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.FASE_PUBLICACION)))
+							&& Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
+							&& exc.dameCelda(i, INDICES.FASE_PUBLICACION).equals(CODIGO_FASE_NA)
+							)
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				logger.error(e);
+			} catch (IOException e) {
+				listaFilas.add(0);
+				logger.error(e);
+			}
+		return listaFilas;
+	}	
+	
+	private List<Integer> perteneceSubfaseAFasePublicacion(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
-							&& Boolean.FALSE.equals(particularValidator.existeSubfasePublicacion(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
-							&& Boolean.FALSE.equals(particularValidator.existeFasePublicacion(exc.dameCelda(i, INDICES.FASE_PUBLICACION)))
+					if(Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.FASE_PUBLICACION)))
+							&& Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
+							&& Boolean.TRUE.equals(particularValidator.existeSubfasePublicacion(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
+							&& Boolean.TRUE.equals(particularValidator.existeFasePublicacion(exc.dameCelda(i, INDICES.FASE_PUBLICACION)))
 							&& Boolean.FALSE.equals(particularValidator.perteneceSubfaseAFasePublicacion(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION), exc.dameCelda(i, INDICES.FASE_PUBLICACION)))
 							)
 						listaFilas.add(i);

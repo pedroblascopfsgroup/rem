@@ -902,6 +902,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo){
 
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
+		Double umbralAskingPrice=200000.0;
 
 		if (!Checks.esNulo(oferta.getVisita())) {
 			DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
@@ -1121,7 +1122,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
-
+			ActivoValoraciones precioAprVenta =getValoracionAprobadoVenta(activo);
 			boolean esFinanciero = false;
 			if (!Checks.esNulo(activoBancario)) {
 				if (!Checks.esNulo(activoBancario.getClaseActivo()) && activoBancario.getClaseActivo().getCodigo()
@@ -1135,11 +1136,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
 				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())||
-					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
-					{
+					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
-					}else if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_APPLE_CERBERUS)));
+					
+					}else if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){	
+						if(!Checks.esNulo(oferta.getImporteOferta()) && (umbralAskingPrice>=oferta.getImporteOferta()*1.05) && (precioAprVenta.getImporte()>=oferta.getImporteOferta()*0.95)) {
+							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_APPLE_CERBERUS)));
+						}else {
+							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
+						}		
+					}else if(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){	
+							if(!Checks.esNulo(oferta.getImporteOferta()) && umbralAskingPrice>=oferta.getImporteOferta()*1.05 && precioAprVenta.getImporte()>=oferta.getImporteOferta()*0.95) {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+										genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIVARIAN_REAMING)));
+							}else {
+								
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+										genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
+							}
+							
+					}else if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIVARIAN_ARROW)));
+							
 					}else {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
 					}
@@ -1211,7 +1232,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
-
 		return nuevoExpediente;
 	}
 

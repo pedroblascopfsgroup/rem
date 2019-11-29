@@ -194,7 +194,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVActualizacionFasesPublicacionValidator FasesPublicacion;
-		
+	
+	@Autowired
+	private MSVBorradoTrabajosValidator borradoTrabajosValidator;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -322,6 +324,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return tomaPosesion;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FASES_PUBLICACION.equals(codTipoOperacion)) {
 			return FasesPublicacion;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SUPER_BORRADO_TRABAJOS.equals(codTipoOperacion)) {
+			return borradoTrabajosValidator; 
 		}
 		return null;
 	}

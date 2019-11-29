@@ -3051,14 +3051,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean existeTrabajo(String numTrabajo) {
 		if(Checks.esNulo(numTrabajo))
-			return true;
+			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ACT_TBJ_TRABAJO"
 				+"		WHERE TBJ_NUM_TRABAJO = "+numTrabajo+""
 				+"		AND BORRADO= 0");
 
-		return !"1".equals(resultado);
+		return !"0".equals(resultado);
 
 	}
 
@@ -4235,4 +4235,34 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeTramiteTrabajo(String numTrabajo) {
+	    if (Boolean.TRUE.equals(Checks.esNulo(numTrabajo))) return false;
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	            + "    FROM ACT_TBJ_TRABAJO TBJ\n" 
+	            + "    JOIN ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID = TBJ.TBJ_ID\n" 
+	            + "    WHERE TBJ_NUM_TRABAJO = " + numTrabajo 
+	            + "    AND TRA.BORRADO = 0 " 
+	            + "    AND TBJ.BORRADO = 0 "
+	            );
+	    
+	    return !"0".equals(resultado);
+	}
+	
+	@Override
+    public Boolean existenTareasEnTrabajo(String numTrabajo) {
+        if (Boolean.TRUE.equals(Checks.esNulo(numTrabajo))) return false;
+        String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " 
+                + "     FROM ACT_TBJ_TRABAJO TBJ " 
+                + "     JOIN ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID = TBJ.TBJ_ID "
+                + "     JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID = TRA.TRA_ID " 
+                + "     WHERE TBJ_NUM_TRABAJO = " + numTrabajo 
+                + "     AND TRA.BORRADO = 0 "
+                + "     AND TBJ.BORRADO = 0"
+                );
+        
+        return !"0".equals(resultado);
+    }
+	
 }

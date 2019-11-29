@@ -54,7 +54,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Recalcular Situacion comercial '); 
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.AUX_REMVIP_5440_V1 
-		   SET DD_SCM_ID = ( SELECT DD_SCM_ID 
+		   SET SCM_ID = ( SELECT DD_SCM_ID 
 				     FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT 
 				     WHERE ACT.ACT_NUM_ACTIVO = AUX_REMVIP_5440_V1.ACT_NUM_ACTIVO )
 	           WHERE 1=1 ';
@@ -128,7 +128,7 @@ BEGIN
 	
 	    HORA_FIN := SYSTIMESTAMP;
 	    
-	    DBMS_OUTPUT.PUT_LINE('[FIN] Ha finalizado la ejecución ');
+	    DBMS_OUTPUT.PUT_LINE('[FIN] Ha finalizado la ejecución '||HORA_FIN||' ');
 	    
 	    v_n := HORA_FIN - HORA_INI;
 	    

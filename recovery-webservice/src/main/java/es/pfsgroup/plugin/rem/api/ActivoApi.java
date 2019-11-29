@@ -1247,7 +1247,7 @@ public interface ActivoApi {
 	 * @return boolean
 	 * @throws Exception 
 	 */
-	boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) throws Exception;
+	boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) throws Exception, HistoricoTramitacionException;
 	
 	/**
 	 * borra el historico de tramitacion de titulo de un activo

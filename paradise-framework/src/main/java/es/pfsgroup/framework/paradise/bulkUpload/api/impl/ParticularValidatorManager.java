@@ -3976,26 +3976,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(subfasePublicacion) || !StringUtils.isAlphanumeric(subfasePublicacion))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		 FROM DD_SFP_SUBFASE_PUBLICACION WHERE"
-				+ "		 	DD_SFP_CODIGO ='"+subfasePublicacion+"' "
-				+ "		 	AND BORRADO = 0");
+				+ "	     FROM DD_SFP_SUBFASE_PUBLICACION WHERE"
+				+ "	     DD_SFP_CODIGO ='"+subfasePublicacion+"' "
+				+ "      AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 	@Override
 	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion) {
 		if (Checks.esNulo(codSubFasePublicacion) || Checks.esNulo(codFasePublicacion)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_FSP_FASE_PUBLICACION FSP "
-				+ "JOIN DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_FSP_ID = FSP.DD_FSP_ID"
-				+ "WHERE FSP.DD_FSP_CODIGO = '" + codFasePublicacion) + "' "
-				+ "AND SFP.DD_SFP_CODIGO = '" + codSubFasePublicacion + "'"
-				+ "AND FSP.BORRADO = 0 AND SFP.BORRADO = 0";
+				+ " JOIN DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_FSP_ID = FSP.DD_FSP_ID"
+				+ " WHERE FSP.DD_FSP_CODIGO = '" + codFasePublicacion + "' "
+				+ " AND SFP.DD_SFP_CODIGO = '" + codSubFasePublicacion + "'"
+				+ " AND FSP.BORRADO = 0 AND SFP.BORRADO = 0");
 		return !"0".equals(resultado);
 	}
 	@Override
 	public Boolean existeEstadoDocumento(String codEstadoDoc) {
 		if (Checks.esNulo(codEstadoDoc)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_EDC_ESTADO_DOCUMENTO "
-				+" WHERE DD_EDC_CODIGO = '" + codEstadoDoc +"'");
+				+ " WHERE DD_EDC_CODIGO = '" + codEstadoDoc +"'");
 		return !"0".equals(resultado);
 	}
 	
@@ -4003,7 +4003,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean existeCalificacionEnergetica(String codCE) {
 		if (Checks.esNulo(codCE)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TCE_TIPO_CALIF_ENERGETICA "
-				+" WHERE DD_TCE_CODIGO = '" + codCE +"'");
+				+ " WHERE DD_TCE_CODIGO = '" + codCE +"'");
 		return !"0".equals(resultado);
 	}
 
@@ -4011,8 +4011,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean esDocumentoCEE(String codDocumento) {
 		if (Checks.esNulo(codDocumento)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
-				+" WHERE DD_TPD_CODIGO =  '"+ codDocumento + "'"
-				+ "AND DD_TPD_CODIGO IN ('25')");
+				+ " WHERE DD_TPD_CODIGO =  '"+ codDocumento + "'"
+				+ " AND DD_TPD_CODIGO IN ('25')");
 		return !"0".equals(resultado);
 	}
 	

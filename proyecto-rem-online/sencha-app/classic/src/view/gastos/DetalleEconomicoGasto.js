@@ -57,7 +57,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											{   
 												xtype:'fieldsettable',
 												border: false,
-												height: 250,
+												height: 320,
 												margin: '10 0 10 0',
 												defaultType: 'currencyfieldbase',
 												collapsible: false,
@@ -67,7 +67,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														{   
 															xtype:'fieldset',
 															border: false,
-															height: 250,
+															height: 320,
 															margin: '10 0 10 0',
 															defaultType: 'currencyfieldbase',
 															defaults: {
@@ -207,19 +207,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																	{ 
 																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.provisiones.suplidos'),
 																		bind: '{detalleeconomico.importeProvisionesSuplidos}'
-																	}
-																	
-																]
-														},
-														{   
-															xtype:'fieldset',
-															border: false,
-															height: 250,
-															margin: '10 0 10 0',
-															defaultType: 'currencyfieldbase',
-															items :
-															[
-																{ 
+																	},
+																	{ 
 																	xtype: 'comboboxfieldbase',
 																	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
 																	reference: 'existeRecargo',
@@ -253,15 +242,15 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														           		value: '{detalleeconomico.tipoRecargo}'	
 														         	}
 																}
-																
-															]
+																	
+																]
 														}
 													]	
 												},
 											{   
 												xtype:'fieldset',
 												border: false,
-												height: 250,
+												height: 320,
 				        						margin: '10 0 10 0',
 				        						defaultType: 'currencyfieldbase',
 				        						reference:'fieldGastos',
@@ -304,7 +293,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											{   
 												xtype:'fieldset',
 												defaultType: 'textfieldbase',
-												height: 250,
+												height: 320,
 				        						margin: '0 10 10 0',
 				        						reference: 'impuestoindirecto',
 												title: HreRem.i18n('title.gasto.detalle.economico.impuesto.indirecto'),
@@ -453,7 +442,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											{   
 												xtype:'fieldset',
 												defaultType: 'textfieldbase',
-												height: 250,
+												height: 320,
 				        						margin: '0 10 10 0',
 				        						reference: 'impuestodirecto',
 												title: HreRem.i18n('title.gasto.detalle.economico.impuesto.directo.retencion'),

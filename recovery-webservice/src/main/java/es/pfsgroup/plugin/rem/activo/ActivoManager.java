@@ -7321,12 +7321,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) throws Exception {
+	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) throws Exception, HistoricoTramitacionException{
 		
 		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
 		String estadoTitulo = null;
 		ActivoTitulo activoTitulo = htt.getTitulo();
+		Order order = new Order(OrderType.DESC, "id");
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "titulo.activo.id", tramitacionDto.getIdActivo());
+		List<HistoricoTramitacionTitulo> listasTramitacion = genericDao.getListOrdered(HistoricoTramitacionTitulo.class, order, filtro);
 		try {
+				
+				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
+					//Comprobar que la fecha de presentación de una segunda presentación no es inferiór a la de primera calificación o en su defecto de primera presentación
+					if(!Checks.estaVacio(listasTramitacion) && listasTramitacion.size() > 1) {
+						if(!Checks.esNulo(listasTramitacion.get(1).getFechaCalificacion()) && listasTramitacion.get(1).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())) {
+							throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de calificación negativa anterior.");
+						}else if(!Checks.esNulo(listasTramitacion.get(1).getEstadoPresentacion()) && listasTramitacion.get(1).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())){
+							throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de presentación anterior.");
+						}
+					}
+					//Comprobar que no se edite la fecha de presentación no sea menor que la fecha de calificación
+					if(!Checks.estaVacio(listasTramitacion) && !Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro()) && !Checks.esNulo(listasTramitacion.get(0).getFechaCalificacion()) 
+							&& Checks.esNulo(tramitacionDto.getFechaCalificacion()) && tramitacionDto.getFechaPresentacionRegistro().after(listasTramitacion.get(0).getFechaCalificacion())){
+						throw new HistoricoTramitacionException("La fecha de calificación negativa no puede ser menor a la fecha de presentación.");
+					}
+					//Comprobar que no se edite la fecha de presentación para que sea después de la fecha de inscripción.
+					if(!Checks.estaVacio(listasTramitacion) && !Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro()) && !Checks.esNulo(listasTramitacion.get(0).getFechaInscripcion()) &&
+							Checks.esNulo(tramitacionDto.getFechaInscripcion()) && tramitacionDto.getFechaPresentacionRegistro().after(listasTramitacion.get(0).getFechaInscripcion())){
+						throw new HistoricoTramitacionException("La fecha de inscripción no puede ser menor a la fecha de presentación.");
+					}
+				}
 				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
 					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro", tramitacionDto.getFechaPresentacionRegistro());
 				}

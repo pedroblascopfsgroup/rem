@@ -71,6 +71,13 @@ public interface ParticularValidatorApi {
 
 	Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto);
 	
+	/**
+     * Comprueba si existe un trabajo
+     *
+     * @param numTrabajo
+     * @return true si el trabajo existe, false si recibe un null o no existe el trabajo
+     */
+	
 	Boolean existeTrabajo(String numTrabajo);
 	
 	Boolean existeGastoTrabajo(String numTrabajo);
@@ -995,4 +1002,18 @@ public interface ParticularValidatorApi {
 	 * @return true si la subfase pertenece a la fase de publicación
 	 */
 	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion);
+	
+	 /***
+     * @param numTrabajo
+     * @return true si existe al menos un trámite en el trabajo.
+     */
+	
+	public Boolean existeTramiteTrabajo(String numTrabajo);
+	
+	/***
+     * @param numTrabajo
+     * @return true si existe al menos una tarea asociada al trabajo.
+     */
+	
+	public Boolean existenTareasEnTrabajo(String numTrabajo);
 }

@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -81,6 +82,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.notificacion.NotificationActivoManager;
+import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoEstadoPublicacionManager")
@@ -143,8 +146,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private ApiProxyFactory proxyFactory;
 
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-
-
+	
+	@Autowired
+	private NotificationActivoManager notificationActivoManager;
+	
+	@Autowired
+	private UsuarioRemApi usuarioRemApiImpl;
 
 	@Override
 	public DtoDatosPublicacionActivo getDatosPublicacionActivo(Long idActivo) {
@@ -599,6 +606,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		if(this.actualizarDatosEstadoActualPublicaciones(dto, activosPublicacion)) {
 			this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
+
+			enviarCorreoAlPublicarActivo(dto);
 		}
 
 		return false;
@@ -1451,6 +1460,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					}
 					
 					genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivo);
+					enviarCorreoFasePublicacion(dto);
 				} else {
 					throw new JsonViewerException("El usuario "+usuarioLogado.getUsername()+" no puede realizar el cambio");
 				}
@@ -1520,6 +1530,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 							}
 							
 							genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFasePublicacionActivo);
+							enviarCorreoFasePublicacion(dto);
 						} else {
 							throw new JsonViewerException("El usuario "+usuarioLogado.getUsername()+" no puede realizar el cambio");
 						}
@@ -1539,7 +1550,60 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			genericDao.save(HistoricoFasePublicacionActivo.class, fasePublicacionActivoVigente);
 		}
 		
+		
+		
 		return true;
+	}
+
+	private void enviarCorreoFasePublicacion(DtoFasePublicacionActivo dto) {
+		String fasePublicacionCod = dto.getFasePublicacionCodigo();
+		String subFasePublicacionCod = dto.getSubfasePublicacionCodigo();
+		Activo activo = activoApi.get(dto.getIdActivo());
+		String asunto = "El activo ha entrado en la siguiente fase de publicación";
+		String cuerpo = "";
+		ArrayList<String> mailsPara = new ArrayList<String>();
+		ArrayList<String> mailsCC = new ArrayList<String>();
+		if( !Checks.esNulo(activo)) {
+			if(DDFasePublicacion.CODIGO_FASE_0.equals(fasePublicacionCod) && DDSubfasePublicacion.CODIGO_CALIDAD_PENDIENTE.equals(subFasePublicacionCod)) {
+				cuerpo = String.format("El activo "+activo.getNumActivo()+" ha entrado en la siguiente fase de publicación: Fase 0: Calidad pendiente.");
+				
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_PUBLICACION, mailsPara, mailsCC, false);
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO, mailsPara, mailsCC, false);
+				
+			} else if(DDFasePublicacion.CODIGO_FASE_III.equals(fasePublicacionCod) && DDSubfasePublicacion.CODIGO_PENDIENTE_DE_INFORMACION.equals(subFasePublicacionCod) ) {
+				cuerpo = String.format("El activo "+activo.getNumActivo()+" ha entrado en la siguiente fase de publicación: Fase III: Pendiente de información.");
+				mailsPara.add(activo.getInfoComercial().getMediadorInforme().getEmail());
+			}
+			if(!Checks.estaVacio(mailsPara) || !Checks.estaVacio(mailsCC)) {
+				notificationActivoManager.sendMailFasePublicacion(activo, asunto,cuerpo,mailsPara,mailsCC);
+			}			
+		}
+			
+	}
+	
+	private void enviarCorreoAlPublicarActivo(DtoDatosPublicacionActivo dto) {
+		
+		Activo activo = activoApi.get(dto.getIdActivo());
+		String asunto = "Notificación de activo publicado";
+		String cuerpo = "";
+		ArrayList<String> mailsPara = new ArrayList<String>();
+		ArrayList<String> mailsCC = new ArrayList<String>();
+		if(!Checks.esNulo(activo)) {
+			if(!Checks.esNulo(dto.getPublicarAlquiler()) && !Checks.esNulo( dto.getPublicarVenta())) {
+				if(dto.getPublicarAlquiler() || dto.getPublicarVenta()) {
+					cuerpo = String.format("El activo "+activo.getNumActivo()+" ha sido publicado.");
+					
+					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
+					if(!Checks.esNulo(activo.getInfoComercial()) 
+							&& !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+						mailsPara.add(activo.getInfoComercial().getMediadorInforme().getEmail());
+					}
+					
+					notificationActivoManager.sendMailFasePublicacion(activo, asunto,cuerpo,mailsPara,mailsCC);
+				}
+			}
+		}
 	}
 	
 	@Override

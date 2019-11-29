@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.HistoricoFasePublicacionActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -25,8 +27,12 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.notificacion.NotificationActivoManager;
 
 @Component
 public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial implements UpdaterService {
@@ -49,7 +55,11 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
     @Resource
     private MessageService messageService;
     
+   @Autowired
+   private HistoricoFasePublicacionActivoDao historicoFasePublicacionActivoDao;
    
+   @Autowired
+   private NotificationActivoManager notificationActivoManager;
     
     
     private static final String COMBO_ACEPTACION = "comboAceptacion";
@@ -139,6 +149,33 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 				// activo.setFechaPublicable(null);
 				
 				// Se termina el tramite
+				
+				//SE ENVIA CORREO NOTIFICACION
+				
+				Activo act = tramite.getActivo();
+				HistoricoFasePublicacionActivo histFasePub = historicoFasePublicacionActivoDao.getHistoricoFasesPublicacionActivoActualById(activo.getId());
+				
+				if(!Checks.esNulo(act)) {
+					String asunto = "Revisar el informe comercial enviado del activo "+act.getId();
+					String cuerpo = "";
+					ArrayList<String> mailsPara = new ArrayList<String>();
+					ArrayList<String> mailsCC = new ArrayList<String>();
+					if(!Checks.esNulo(histFasePub) && !Checks.esNulo(histFasePub.getFasePublicacion()) && !Checks.esNulo(histFasePub.getSubFasePublicacion())) {
+						
+						if(DDFasePublicacion.CODIGO_FASE_III.equals(histFasePub.getFasePublicacion().getCodigo()) 
+								&& DDSubfasePublicacion.CODIGO_DEVUELTO.equals(histFasePub.getSubFasePublicacion().getCodigo())) {
+							cuerpo = String.format("El informe comercial correspondiente al activo "+act.getNumActivo()
+							+" ha sido rechazado, por lo que, rogamos que lo revise, y realice las modificaciones necesarias para subsanarlo. Posteriormente, proceda de nuevo a su envío.");
+							if(!Checks.esNulo(act.getInfoComercial()) 
+									&& !Checks.esNulo(act.getInfoComercial().getMediadorInforme())) {
+								mailsPara.add(act.getInfoComercial().getMediadorInforme().getEmail());
+							}
+						}
+						if(!Checks.estaVacio(mailsPara) || !Checks.estaVacio(mailsCC)) {
+							notificationActivoManager.sendMailFasePublicacion(act, asunto,cuerpo,mailsPara,mailsCC);
+						}
+					}
+				}
 		}
 		
 		

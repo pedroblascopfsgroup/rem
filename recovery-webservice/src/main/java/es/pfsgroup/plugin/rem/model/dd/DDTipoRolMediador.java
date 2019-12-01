@@ -52,15 +52,15 @@ public class DDTipoRolMediador implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_TRL_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
+	
+	@Column(name = "DD_TRL_OCULTAR")
+	private Boolean ocultar;
 	    
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-
-	 
-	 
 	 
 	public Long getId() {
 		return id;
@@ -109,6 +109,14 @@ public class DDTipoRolMediador implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Boolean getOcultar() {
+		return ocultar;
+	}
+
+	public void setOcultar(Boolean ocultar) {
+		this.ocultar = ocultar;
 	}
 
 }

@@ -35,7 +35,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-            -- CODIGO  			DESCRIPCION     DESCRIPCION_LARGA   BORRADO
+            -- CODIGO  			DESCRIPCION     DESCRIPCION_LARGA   OCULTAR
       T_TIPO_DATA('01',			'Primario',			'Primario',           0),
       T_TIPO_DATA('02',			'Espejo',		    'Espejo',             0),
       T_TIPO_DATA('03',			'Custodio',		  'Custodio',           1)
@@ -70,7 +70,7 @@ BEGIN
 	    USUARIOMODIFICAR = '''||V_USUARIO||''',
             FECHAMODIFICAR = SYSDATE
 			    WHERE DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
-			    AND BORRADO = '||V_TMP_TIPO_DATA(4)||'';
+			    AND DD_TRL_OCULTAR = '||V_TMP_TIPO_DATA(4)||'';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
         
@@ -83,7 +83,7 @@ BEGIN
         V_MSQL := '
           	INSERT INTO '|| V_ESQUEMA ||'.'||V_TABLA||' (
 				DD_'||V_CHARS||'_ID, DD_'||V_CHARS||'_CODIGO, DD_'||V_CHARS||'_DESCRIPCION, DD_'||V_CHARS||'_DESCRIPCION_LARGA, 
-				VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+				VERSION, USUARIOCREAR, FECHACREAR, DD_TRL_OCULTAR)
           	SELECT 
 	            '|| V_ID || ',
 	            '''||V_TMP_TIPO_DATA(1)||''',

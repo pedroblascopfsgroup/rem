@@ -54,7 +54,7 @@ public class ActivoInformeComercialHistoricoMediador implements Serializable , A
     private Activo activo;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_TLR_ID")
+	@JoinColumn(name = "DD_TRL_ID")
 	private DDTipoRolMediador tipoRolMediador;
 	
 	@Version   

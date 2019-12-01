@@ -344,7 +344,7 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	@ManyToOne
 	@JoinColumn(name = "ICO_MEDIADOR_ESPEJO_ID")
-	private ActivoProveedor proveedorEspejo;
+	private ActivoProveedor mediadorEspejo;
 	
 
 	public Float getCuotaOrientativaComunidad() {
@@ -987,12 +987,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 		this.motivoNoPosibleInforme = motivoNoPosibleInforme;
 	}
 
-	public ActivoProveedor getProveedorEspejo() {
-		return proveedorEspejo;
+	public ActivoProveedor getMediadorEspejo() {
+		return mediadorEspejo;
 	}
 
-	public void setProveedorEspejo(ActivoProveedor proveedorEspejo) {
-		this.proveedorEspejo = proveedorEspejo;
+	public void setMediadorEspejo(ActivoProveedor mediadorEspejo) {
+		this.mediadorEspejo = mediadorEspejo;
 	}
 	
 

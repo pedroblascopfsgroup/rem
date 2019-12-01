@@ -27,6 +27,10 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	private String nombreMediador;
 	private String emailMediador;
 	private String telefonoMediador;
+	private Long codigoMediadorEspejo;
+	private String nombreMediadorEspejo;
+	private String emailMediadorEspejo;
+	private String telefonoMediadorEspejo;
 	
 	//Para la info de viviendas
 	private String ultimaPlanta;
@@ -1731,6 +1735,30 @@ public class DtoActivoInformacionComercial extends DtoTabActivo {
 	}
 	public void setManiobrabilidadCodigo(String maniobrabilidadCodigo) {
 		this.maniobrabilidadCodigo = maniobrabilidadCodigo;
+	}
+	public Long getCodigoMediadorEspejo() {
+		return codigoMediadorEspejo;
+	}
+	public String getNombreMediadorEspejo() {
+		return nombreMediadorEspejo;
+	}
+	public String getEmailMediadorEspejo() {
+		return emailMediadorEspejo;
+	}
+	public String getTelefonoMediadorEspejo() {
+		return telefonoMediadorEspejo;
+	}
+	public void setCodigoMediadorEspejo(Long codigoMediadorEspejo) {
+		this.codigoMediadorEspejo = codigoMediadorEspejo;
+	}
+	public void setNombreMediadorEspejo(String nombreMediadorEspejo) {
+		this.nombreMediadorEspejo = nombreMediadorEspejo;
+	}
+	public void setEmailMediadorEspejo(String emailMediadorEspejo) {
+		this.emailMediadorEspejo = emailMediadorEspejo;
+	}
+	public void setTelefonoMediadorEspejo(String telefonoMediadorEspejo) {
+		this.telefonoMediadorEspejo = telefonoMediadorEspejo;
 	}
 	
 	

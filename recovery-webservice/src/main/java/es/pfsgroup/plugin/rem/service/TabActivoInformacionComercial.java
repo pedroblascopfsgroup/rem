@@ -97,6 +97,13 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());
 			}
 			
+			if(activo.getInfoComercial().getMediadorEspejo() != null) {
+				BeanUtils.copyProperty(activoDto, "codigoMediadorEspejo", activo.getInfoComercial().getMediadorEspejo().getId());
+				BeanUtils.copyProperty(activoDto, "nombreMediadorEspejo", activo.getInfoComercial().getMediadorEspejo().getNombre());
+				BeanUtils.copyProperty(activoDto, "telefonoMediadorEspejo", activo.getInfoComercial().getMediadorEspejo().getTelefono1());
+				BeanUtils.copyProperty(activoDto, "emailMediadorEspejo", activo.getInfoComercial().getMediadorEspejo().getEmail());
+			}
+			
 			if (!Checks.esNulo(activo.getInfoComercial().getInfoDistribucionInterior())) {
 				BeanUtils.copyProperty(activoDto, "distribucionTxt", (activo.getInfoComercial()).getInfoDistribucionInterior());
 			}

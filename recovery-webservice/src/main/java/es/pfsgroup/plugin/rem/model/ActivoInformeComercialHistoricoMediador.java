@@ -21,6 +21,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 
 /**
  * Modelo que gestiona el historico de estados del Informe Comercial del activo.
@@ -51,6 +52,10 @@ public class ActivoInformeComercialHistoricoMediador implements Serializable , A
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private Activo activo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TLR_ID")
+	private DDTipoRolMediador tipoRolMediador;
 	
 	@Version   
 	private Long version;
@@ -112,6 +117,14 @@ public class ActivoInformeComercialHistoricoMediador implements Serializable , A
 
 	public void setActivo(Activo activo) {
 		this.activo = activo;
+	}
+
+	public DDTipoRolMediador getTipoRolMediador() {
+		return tipoRolMediador;
+	}
+
+	public void setTipoRolMediador(DDTipoRolMediador tipoRolMediador) {
+		this.tipoRolMediador = tipoRolMediador;
 	}
 	
 }

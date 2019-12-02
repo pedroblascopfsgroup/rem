@@ -925,19 +925,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         		me.deshabilitarCampo(comboModificacion);
               	me.deshabilitarCampo(fechaFinalizacion);
               	me.deshabilitarCampo(fechaAtPrimaria);
-              	me.deshabilitarCampo(observaciones);
               	
               	me.borrarCampo(comboModificacion);
               	me.borrarCampo(fechaFinalizacion);
               	me.borrarCampo(fechaAtPrimaria);
-              	me.borrarCampo(observaciones);
               	
               	me.habilitarCampo(motivoNoRealizacion);
 
         	 }else if (combo.value == '01'){
         		me.habilitarCampo(comboModificacion);
               	me.habilitarCampo(fechaAtPrimaria);
-              	me.habilitarCampo(observaciones);
               	me.habilitarCampo(fechaFinalizacion);
               	 
               	me.deshabilitarCampo(motivoNoRealizacion);
@@ -963,18 +960,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
        		 
              me.deshabilitarCampo(fechaFinalizacion);
              me.deshabilitarCampo(fechaAtPrimaria);
-             me.deshabilitarCampo(observaciones);
              	
              me.borrarCampo(fechaFinalizacion);
              me.borrarCampo(fechaAtPrimaria);
-             me.borrarCampo(observaciones);
              	
              me.habilitarCampo(motivoNoRealizacion);
 
        	 }else if (combo.value == '01'){
        		 
        		 me.habilitarCampo(fechaAtPrimaria);
-       		 me.habilitarCampo(observaciones);
              me.habilitarCampo(fechaFinalizacion);
        		 
        		 me.deshabilitarCampo(motivoNoRealizacion);

@@ -4,25 +4,31 @@ Ext.define('HreRem.view.common.ComboBoxSearchFieldBase', {
     displayField	: 'descripcion',      
     valueField		: 'codigo',    
     editable		: true,
-    emptyText: 'Escribe minimo 3 letras para buscar', 
-    hideTrigger: true,
+    emptyText: 'Escribe m\u00ednimo 3 letras para buscar', 
+    triggerCls: Ext.baseCSSPrefix + 'form-search-trigger',
 	minLength: 3,
 	queryMode: 'local',
+	triggerAction: 'query',
 	anyMatch: true,
 	
-	//Override del onTriggerClick con el nuevo atributo que indicar� si se carga de nuevo
-	//el diccionario al hacer trigger o no (por defecto no se har�)
-	
 	privates: {
+	onRender: function(){
+		this.store.clearFilter(true);
+		this.callParent();
+	},
+		
+	onTriggerClick: function() {
+		if(!Ext.isEmpty(this.rawValue) && this.rawValue.length >= 3)
+			this.expand();
+		else
+			this.collapse();
+	},
 	
     onExpand: function(){
-		if(!Ext.isEmpty(this.rawValue)){ 
-			if(this.rawValue.length < 3){
-				this.collapse();
-			}else{								
-				this.expand();
-			}
-		}							
+    	if(!Ext.isEmpty(this.rawValue) && this.rawValue.length >= 3)
+			this.expand();
+		else
+			this.collapse();					
 	},
 	onChange: function(newValue, oldValue){
 		if(!Ext.isEmpty(newValue)){
@@ -43,9 +49,8 @@ Ext.define('HreRem.view.common.ComboBoxSearchFieldBase', {
 		}
 	},
     
-	initComponent: function() {    	
-    	var me = this;    	
-    	// Aqui configuraciones únicas para el CheckBoxFieldBase
+	initComponent: function() {
+    	var me = this;
    		me.callParent();
     }
 	}

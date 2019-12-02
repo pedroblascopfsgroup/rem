@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GestorSustitutoAdapter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
@@ -53,12 +54,17 @@ public class GestorSustitutoController extends ParadiseJsonController {
 	public ModelAndView createGestorSustituto(DtoGestoresSustitutosFilter dtoGestoresSustitutosFiltro, ModelMap model) {
 
 		try {
-			DtoGestoresSustitutosFilter gsDto = adapter.createGestorSustituto(dtoGestoresSustitutosFiltro);
-			model.put("data", gsDto);
-			model.put("success", true);
-
+			
+			String result = adapter.createGestorSustituto(dtoGestoresSustitutosFiltro);
+			if(!Checks.esNulo(result) && result.length() > 0) {			
+				model.put("data", result);
+				model.put("success", false);
+			}else {
+				model.put("success", true);
+			}
 		} catch (Exception e) {
 			logger.error(e);
+			model.put("data", e.getMessage());
 			model.put("success", false);
 		}
 
@@ -70,11 +76,12 @@ public class GestorSustitutoController extends ParadiseJsonController {
 	public ModelAndView deleteGestorSustitutoById(DtoGestoresSustitutosFilter dtoGestoresSustitutosFiltro, ModelMap model) {
 
 		try {
-			boolean success = adapter.deleteGestorSustitutoById(dtoGestoresSustitutosFiltro);
-			model.put("success", success);
-
+			adapter.deleteGestorSustitutoById(dtoGestoresSustitutosFiltro);
+			model.put("success", true);
+			
 		} catch (Exception e) {
 			logger.error(e);
+			model.put("data", e.getMessage());
 			model.put("success", false);
 		}
 

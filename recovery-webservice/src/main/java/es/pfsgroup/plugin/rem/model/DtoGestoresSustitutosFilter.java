@@ -19,6 +19,7 @@ public class DtoGestoresSustitutosFilter extends WebDto{
 	private Date fechaInicio;
 	private Date fechaFin;
 	private Boolean vigente;
+	private String accion;
 	
 	
 	public String getId() {
@@ -70,4 +71,11 @@ public class DtoGestoresSustitutosFilter extends WebDto{
 	public void setFechaFin(Date fechaFin) {
 		this.fechaFin = fechaFin;
 	}
+	public String getAccion() {
+		return accion;
+	}
+	public void setAccion(String accion) {
+		this.accion = accion;
+	}
+	
 }

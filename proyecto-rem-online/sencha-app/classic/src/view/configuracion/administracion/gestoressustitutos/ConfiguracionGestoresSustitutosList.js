@@ -77,7 +77,16 @@ Ext.define('HreRem.view.configuracion.administracion.gestoressustitutos.Configur
 		            formatter: 'date("d/m/Y")',
 		            editor: {
 			        	xtype:'datefield',
-			        	allowBlank: false
+			        	reference: 'fechaini',
+			        	allowBlank: false,
+			        	listeners:{
+			        		change: function(field, newValue, oldValue){
+			        			if(field.up().down('[reference=fechafin]').getValue() > newValue){
+			        				field.up().down('[reference=fechafin]').setValue();
+			        			}
+			        			field.up().down('[reference=fechafin]').setMinValue(newValue);
+			        		}
+			        	}
 		            }
 		        },
 		        {
@@ -86,7 +95,8 @@ Ext.define('HreRem.view.configuracion.administracion.gestoressustitutos.Configur
 		            flex: .5,
 		            formatter: 'date("d/m/Y")',		            
 		            editor: {
-			        	xtype:'datefield'
+			        	xtype:'datefield',
+			        	reference: 'fechafin'			        	
 	        		}
 		        },
 		        {
@@ -125,8 +135,8 @@ Ext.define('HreRem.view.configuracion.administracion.gestoressustitutos.Configur
 	                    		
 	                    	}catch(err) {}
 	                    	
-	                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-	                    		me.fireEvent("errorToast", response.msg);
+	                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.data)) {
+	                    		me.fireEvent("errorToast", response.data);
 	                    	} else {
 	                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                    	}                        	

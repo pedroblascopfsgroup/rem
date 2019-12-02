@@ -15,18 +15,18 @@ public class GestorSustitutoAdapter {
 
 	public Page getGestoresSustitutos(DtoGestoresSustitutosFilter dtoGestoresSustitutosFiltro) {
 		
-		return gestorSustitutoApi.getListGestoresSustitutos(dtoGestoresSustitutosFiltro);
+		return gestorSustitutoApi.getPageGestoresSustitutos(dtoGestoresSustitutosFiltro);
 	}
 	
 	@Transactional(readOnly = false)
-	public DtoGestoresSustitutosFilter createGestorSustituto(DtoGestoresSustitutosFilter dtoGestoresSustitutosFiltro) {
+	public String createGestorSustituto(DtoGestoresSustitutosFilter dtoGestoresSustitutosFiltro) {
 		
 		return gestorSustitutoApi.createGestorSustituto(dtoGestoresSustitutosFiltro);
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean deleteGestorSustitutoById(DtoGestoresSustitutosFilter dtoGestoresSustitutosFiltro) {
+	public void deleteGestorSustitutoById(DtoGestoresSustitutosFilter dtoGestoresSustitutosFiltro) {
 		
-		return gestorSustitutoApi.deleteGestorSustitutoById(dtoGestoresSustitutosFiltro);
+		gestorSustitutoApi.deleteGestorSustitutoById(dtoGestoresSustitutosFiltro);
 	}
 }

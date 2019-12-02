@@ -11,10 +11,10 @@ public interface GestorSustitutoApi {
 	 * Recupera la lista completa de Gestores Sustitutos
 	 *
 	 */
-	Page getListGestoresSustitutos(DtoGestoresSustitutosFilter dto);
+	Page getPageGestoresSustitutos(DtoGestoresSustitutosFilter dto);
 
-	DtoGestoresSustitutosFilter createGestorSustituto(DtoGestoresSustitutosFilter dto);
+	String createGestorSustituto(DtoGestoresSustitutosFilter dto);
 
-	boolean deleteGestorSustitutoById(DtoGestoresSustitutosFilter dto);
+	void deleteGestorSustitutoById(DtoGestoresSustitutosFilter dto);
 	
 }

@@ -19,6 +19,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     },
 
     formulas: {
+    	
+    	editableCES: function(get){	
+    		var isEditable = $AU.userIsRol('DIRTERRITORIAL') || $AU.userIsRol('HAYASUPER');
+    		return isEditable;
+    	},
 	     
     	esEditableAsistenciaJuntaObligatoria: function(get){
     		var isEditable = $AU.userIsRol('HAYAADM') || $AU.userIsRol('HAYASADM') || $AU.userIsRol('HAYAGESTADMT') || $AU.userIsRol('HAYASUPER');
@@ -2270,6 +2275,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			}
 		},
+
 		comboCesionUso :{
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -2286,6 +2292,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'DDSiNo'}
 			}
+		},
+
+		comboDireccionComercial: {
+			 model: 'HreRem.model.ComboBase',
+			 proxy: {
+			      type: 'uxproxy', 
+			      remoteUrl: 'generic/getDiccionario',
+			      extraParams: {diccionario: 'tipoDireccionComercial'}
+			 },
+			 autoLoad: true,
+			 sorters: 'descripcion'
 		}
      }
 });

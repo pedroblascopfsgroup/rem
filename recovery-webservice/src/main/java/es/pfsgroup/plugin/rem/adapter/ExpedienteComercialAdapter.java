@@ -407,20 +407,18 @@ public class ExpedienteComercialAdapter {
 							BufferedWriter out = new BufferedWriter(new FileWriter(file));
 							try {
 								out.write("pfs");
-								FileItem fileItem = new FileItem();
-								fileItem.setFileName("idDocRestClient[" + idDocRestClient + "]");
-								fileItem.setFile(file);
-								fileItem.setLength(file.length());
-								webFileItem.setFileItem(fileItem);
-								activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
-							} finally {
+							}finally {
 								out.close();
-								if(!file.delete()) {
-									logger.error("Imposible borrar temporal");
-								}
 							}
-
-							
+							FileItem fileItem = new FileItem();
+							fileItem.setFileName("idDocRestClient[" + idDocRestClient + "]");
+							fileItem.setFile(file);
+							fileItem.setLength(file.length());
+							webFileItem.setFileItem(fileItem);
+							activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+							if(!file.delete()) {
+								logger.error("Imposible borrar temporal");
+							}
 						}
 					}
 										

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20191127
+--## FECHA_CREACION=20191202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8639
@@ -29,6 +29,9 @@ DECLARE
     V_CAMPOS_V_TABLA VARCHAR(1024);
     V_USUARIO VARCHAR2(25 CHAR);
     V_COUNT NUMBER(16);
+    V_COD_FASE VARCHAR(30 CHAR); --Vble. codigo fase a eliminar para las subfases.
+    V_COD_SUBFASE VARCHAR(30 CHAR); -- vbl. codigo subfase a eliminar para las subfases.
+
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	  
@@ -42,7 +45,8 @@ DECLARE
     V_TMP_FUNCION T_FUNCION;
     
 BEGIN	
-	
+	V_COD_FASE := '03';
+  V_COD_SUBFASE := '06';
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
   V_TABLA := 'DD_SFP_SUBFASE_PUBLICACION';
   V_CAMPOS_V_TABLA:=' (DD_SFP_ID,'
@@ -60,14 +64,15 @@ BEGIN
         V_TMP_FUNCION := V_FUNCION(I);
         V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||
          '  SET DD_SFP_DESCRIPCION ='''||V_TMP_FUNCION(2)||''', DD_SFP_DESCRIPCION_LARGA ='''||V_TMP_FUNCION(2)|| ''''||
-         'WHERE DD_SFP_DESCRIPCION = '''||V_TMP_FUNCION(1)||'''';
+         ' WHERE DD_SFP_DESCRIPCION = '''||V_TMP_FUNCION(1)||'''';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.'||V_TABLA||' actualizados correctamente.');
     END LOOP;
     ---- Eliminando registro con descripción concreta -----------------------------------------------
     DBMS_OUTPUT.PUT_LINE('[INFO]: Eliminando  subfase con código 06 de la Fase I');
-    V_MSQL := 'DELETE from '||V_ESQUEMA||'.'||V_TABLA||
-     ' WHERE DD_FSP_ID = (SELECT DD_FSP_ID FROM DD_FSP_FASE_PUBLICACION WHERE DD_FSP_CODIGO = ''03'' AND DD_SFP_CODIGO = ''06'')';
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET BORRADO = 1,  USUARIOBORRAR= '''||V_USUARIO||''', FECHABORRAR = SYSDATE ' ||
+     ' WHERE DD_FSP_ID = (SELECT DD_FSP_ID FROM DD_FSP_FASE_PUBLICACION WHERE DD_FSP_CODIGO = '''||V_COD_FASE||''' AND DD_SFP_CODIGO = '''||
+     V_COD_SUBFASE||''')';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.'||V_TABLA||' Eliminados correctamente.');
     ----- Insertando subfase "Pendiente de documentacion si no existe "

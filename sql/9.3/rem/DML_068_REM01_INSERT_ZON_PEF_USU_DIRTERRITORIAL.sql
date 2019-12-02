@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JIN LI HU
---## FECHA_CREACION=20191125
+--## FECHA_CREACION=20191202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8604
@@ -48,39 +48,45 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-        --Comprobar el dato a insertar.
+        
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
 					WHERE USU_ID = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(1))||''')  
 					AND PEF_ID = (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''DIRTERRITORIAL'')';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
         IF V_NUM_TABLAS = 1 THEN
-        DBMS_OUTPUT.PUT_LINE('[INFO]: El usuario '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya tiene el perfil DIRTERRITORIAL asignado');
-       ELSE
-       	-- Si no existe se inserta.
-          V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
-          EXECUTE IMMEDIATE V_MSQL INTO V_ID;
-          V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-					  ZON_ID,
-					  PEF_ID,
-					  USU_ID,
-					  ZPU_ID,
-					  VERSION,
-					  USUARIOCREAR,
-					  FECHACREAR,
-					  BORRADO) VALUES (
-                      19504,
-                      (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''DIRTERRITORIAL''),
-                      (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(1))||'''),
-                      '||V_ID||',
-                      0,
-                      ''HREOS-8604'',
-                      SYSDATE,
-                      0
-                      )';
-          EXECUTE IMMEDIATE V_MSQL;
-          DBMS_OUTPUT.PUT_LINE('[INFO]: Se le ha asignado el perfil DIRTERRITORIAL al usuario '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
-
-       END IF;
+			DBMS_OUTPUT.PUT_LINE('[INFO]: El usuario '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya tiene el perfil DIRTERRITORIAL asignado');
+		ELSE
+			V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+			
+			IF V_NUM_TABLAS = 1 THEN 
+				  V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
+				  EXECUTE IMMEDIATE V_MSQL INTO V_ID;
+				  V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
+							  ZON_ID,
+							  PEF_ID,
+							  USU_ID,
+							  ZPU_ID,
+							  VERSION,
+							  USUARIOCREAR,
+							  FECHACREAR,
+							  BORRADO) VALUES (
+							  19504,
+							  (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''DIRTERRITORIAL''),
+							  (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(1))||'''),
+							  '||V_ID||',
+							  0,
+							  ''HREOS-8604'',
+							  SYSDATE,
+							  0
+							  )';
+				  EXECUTE IMMEDIATE V_MSQL;
+				  DBMS_OUTPUT.PUT_LINE('[INFO]: Se le ha asignado el perfil DIRTERRITORIAL al usuario '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
+			 ELSE 
+				  DBMS_OUTPUT.PUT_LINE('[INFO]: El usuario '''||TRIM(V_TMP_TIPO_DATA(1))||''' no existe');
+			 END IF;
+        END IF;
       END LOOP;
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA '||V_TEXT_TABLA||' ACTUALIZADO CORRECTAMENTE ');

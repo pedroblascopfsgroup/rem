@@ -104,12 +104,12 @@ public class RemCorreoUtils {
 			prepararBodyMensaje(message, list, cuerpoEmail);
 
 			// Lo enviamos.
-			//if (esCorreoActivado()) {
+			if (esCorreoActivado()) {
 				if (emailFrom != null) {
 					message.setFrom(new InternetAddress(emailFrom));
 				}
 				doSend(message, session, props);
-			//}
+			}
 			traza.setResultado(true);
 		} catch (Exception e) {
 			StringWriter errors = new StringWriter();

@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Gabriel De Toni
---## FECHA_CREACION=20191202
+--## FECHA_CREACION=20191203
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8658
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que modifica la columna TAP_SCRIPT_DECISION para las tarea T013
+--## Finalidad: Script que modifica la columna TAP_SCRIPT_VALIDACION para las tarea T013
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
@@ -25,28 +25,26 @@ DECLARE
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     V_TAP_CODIGO VARCHAR (2000 CHAR);
-    V_TAP_SCRIPT_DECISION VARCHAR(30000 CHAR);
+    V_TAP_SCRIPT_VALIDACION VARCHAR(30000 CHAR);
     V_USUARIO VARCHAR2(30 CHAR);
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     
 BEGIN	
-	
 	V_USUARIO := 'HREOS-8658';
 	V_TAP_CODIGO := 'T013_DefinicionOferta';
-	V_TAP_SCRIPT_DECISION := 'esOmega() ? checkReserva() ? ''''esOmegaConReserva'''': ''''esOmegaSinReserva'''' : checkFormalizacion() ? valores[''''T013_DefinicionOferta''''][''''comiteSuperior''''] != DDSiNo.SI ? checkAtribuciones() ? checkReserva() == false ? esYubai() ? ''''esYubai''''  :''''ConFormalizacionSinTanteoConAtribucionSinReservaSinTanteo'''' : esYubai() ? ''''esYubai'''' : ''''ConFormalizacionSinTanteoConAtribucionConReserva'''' : ''''ConFormalizacionSinTanteoSinAtribucion'''' : ''''ConFormalizacionSinTanteoSinAtribucion'''' : ''''SinFormalizacion''''';
-	
+	V_TAP_SCRIPT_VALIDACION := 'esOmega() ? checkReservaInformada() ? null : ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.'''' : existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI  ?  ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : comprobarComiteLiberbankPlantillaPropuesta() ? existeAdjuntoUGCarteraValidacion("36", "E", "08") : definicionOfertaT013(valores[''''T013_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01")';
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
     V_MSQL := 'Select count(1) from TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TAP_CODIGO||'''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 	IF V_NUM_TABLAS > 0 THEN
-		V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-		SET TAP_SCRIPT_DECISION = '''||V_TAP_SCRIPT_DECISION||''', 
-		USUARIOMODIFICAR = '''||V_USUARIO||''',
-		FECHAMODIFICAR = SYSDATE
-		WHERE TAP_CODIGO = '''||V_TAP_CODIGO||'''';
+		V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+		' SET TAP_SCRIPT_VALIDACION = '''||V_TAP_SCRIPT_VALIDACION||''',' ||
+		' USUARIOMODIFICAR = '''||V_USUARIO||''','||
+		' FECHAMODIFICAR = SYSDATE' ||
+		' WHERE TAP_CODIGO = '''||V_TAP_CODIGO||'''';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('	[INFO] REGISTRO MODIFICADO CORRECTAMENTE');

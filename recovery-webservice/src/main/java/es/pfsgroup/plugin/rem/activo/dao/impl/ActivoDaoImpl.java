@@ -187,6 +187,14 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimarioId", dto.getApiPrimarioId());
 		}
 		
+		if (dto.getEstadoPublicacionVenta() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionCodigo", dto.getEstadoPublicacionVenta());
+		}
+		
+		if (dto.getEstadoPublicacionAlquiler() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionCodigo", dto.getEstadoPublicacionAlquiler());	
+		}
+		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigoAvanzado());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoActivoCodigo", dto.getTipoActivoCodigo());

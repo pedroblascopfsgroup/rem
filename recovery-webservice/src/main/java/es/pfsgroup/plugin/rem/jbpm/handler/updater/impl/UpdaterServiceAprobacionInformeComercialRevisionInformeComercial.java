@@ -156,7 +156,7 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 				HistoricoFasePublicacionActivo histFasePub = historicoFasePublicacionActivoDao.getHistoricoFasesPublicacionActivoActualById(activo.getId());
 				
 				if(!Checks.esNulo(act)) {
-					String asunto = "Revisar el informe comercial enviado del activo "+act.getId();
+					String asunto = "Revisar el informe comercial enviado del activo "+act.getNumActivo();
 					String cuerpo = "";
 					ArrayList<String> mailsPara = new ArrayList<String>();
 					ArrayList<String> mailsCC = new ArrayList<String>();

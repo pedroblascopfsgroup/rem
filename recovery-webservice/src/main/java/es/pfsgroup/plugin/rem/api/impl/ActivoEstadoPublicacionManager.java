@@ -1590,18 +1590,17 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		ArrayList<String> mailsPara = new ArrayList<String>();
 		ArrayList<String> mailsCC = new ArrayList<String>();
 		if(!Checks.esNulo(activo)) {
-			if(!Checks.esNulo(dto.getPublicarAlquiler()) && !Checks.esNulo( dto.getPublicarVenta())) {
-				if(dto.getPublicarAlquiler() || dto.getPublicarVenta()) {
-					cuerpo = String.format("El activo "+activo.getNumActivo()+" ha sido publicado.");
-					
-					usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
-					if(!Checks.esNulo(activo.getInfoComercial()) 
-							&& !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
-						mailsPara.add(activo.getInfoComercial().getMediadorInforme().getEmail());
-					}
-					
-					notificationActivoManager.sendMailFasePublicacion(activo, asunto,cuerpo,mailsPara,mailsCC);
+			if((!Checks.esNulo(dto.getPublicarAlquiler()) && dto.getPublicarAlquiler()) || 
+					(!Checks.esNulo( dto.getPublicarVenta()) && dto.getPublicarVenta())) {
+				cuerpo = String.format("El activo "+activo.getNumActivo()+" ha sido publicado.");
+				
+				usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
+				if(!Checks.esNulo(activo.getInfoComercial()) 
+						&& !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+					mailsPara.add(activo.getInfoComercial().getMediadorInforme().getEmail());
 				}
+				
+				notificationActivoManager.sendMailFasePublicacion(activo, asunto,cuerpo,mailsPara,mailsCC);
 			}
 		}
 	}

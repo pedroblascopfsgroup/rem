@@ -75,7 +75,6 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -233,7 +232,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return list;
 	}
 
-	@Override
+	/*@Override
 	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		List<DtoAdjunto> list = new ArrayList<DtoAdjunto>();
@@ -290,9 +289,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 						genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", adjunto.getId()));
 				if (!Checks.estaVacio(listAdjuntoProveedor)) {
 					adjunto.setDescripcionTipo(listAdjuntoProveedor.get(0).getTipoDocumentoProveedor().getDescripcion());
-					if(!Checks.esNulo(listAdjuntoProveedor.get(0).getSubtipoDocumentoProveedor())) {
-						adjunto.setDescripcionSubtipo(listAdjuntoProveedor.get(0).getSubtipoDocumentoProveedor().getDescripcion());
-					}
 					adjunto.setGestor(listAdjuntoProveedor.get(0).getAuditoria().getUsuarioCrear());
 					adjunto.setFechaDocumento(listAdjuntoProveedor.get(0).getAuditoria().getFechaCrear());
 				}
@@ -300,7 +296,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 
 		return list;
-	}
+	}*/
 
 	@Override
 	public Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception {
@@ -532,7 +528,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return idExpediente;	
 	}	
 
-	@Override	
+	/*@Override	
 	public Integer crearProveedor(ActivoProveedorCartera activoProveedorCartera, String username) throws GestorDocumentalException {		
 		
 		String idSistemaOrigen = "";		
@@ -575,7 +571,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 		
 		return null;
-	}
+	}*/
 	
 	public Integer crearActuacionTecnica(Trabajo trabajo, String username) throws GestorDocumentalException {		
 		String idTrabajo = trabajo.getNumTrabajo().toString();
@@ -719,7 +715,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return respuesta;
 	}
 	
-	@Override
+	/*@Override
 	public Long uploadDocumentoProveedor(ActivoProveedorCartera proveedorCartera,
 			WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
@@ -740,7 +736,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 
 		return respuesta;
-	}
+	}*/
 
 	@Override
 	public Long uploadDocumentoExpedienteComercial(ExpedienteComercial expedienteComercial,

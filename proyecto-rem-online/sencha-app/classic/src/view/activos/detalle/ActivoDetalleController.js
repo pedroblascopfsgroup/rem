@@ -509,7 +509,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	chainedCombo = me.lookupReference(combo.chainedReference);   
     	
     	me.getViewModel().notify();
-    	if(!Ext.isEmpty(chainedCombo.getValue())) {
+    	if(!Ext.isEmpty(chainedCombo.store) && !Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
     	
@@ -518,7 +518,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			chainedCombo.bindStore(storeSubfaseFiltered);
 			storeSubfaseFiltered.getProxy().setExtraParams({'codFase':combo.getValue()});	
 		}
-    	
+		else if (combo.chainedStore == 'comboSubestadoGestionFiltered'){
+			var storeSubestadoGestionFiltered = me.getViewModel().get("comboSubestadoGestionFiltered");
+			chainedCombo.bindStore(storeSubestadoGestionFiltered);
+			storeSubestadoGestionFiltered.getProxy().setExtraParams({'codLocalizacion':combo.getValue()});	
+		}
+		
 		chainedCombo.getStore().load({ 			
 			callback: function(records, operation, success) {
    				if(!Ext.isEmpty(records) && records.length > 0) {

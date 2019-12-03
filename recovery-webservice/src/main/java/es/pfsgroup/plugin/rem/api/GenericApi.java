@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -278,4 +279,8 @@ public interface GenericApi {
 	 * @return Devuelve las subfases correspondientes de la fase seleccionada
 	 */
 	List<DDSubfasePublicacion> getComboSubfaseFiltered(String codFase);
+
+	List<DDSubestadoGestion> getComboSubestadoGestionFiltered(String codLocalizacion);
+
+	public DDSubestadoGestion getSubestadoGestion(Long idActivo);
 }

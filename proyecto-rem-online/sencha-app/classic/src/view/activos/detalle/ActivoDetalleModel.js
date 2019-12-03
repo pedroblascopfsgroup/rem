@@ -869,7 +869,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     	isCesionUsoEditable: function () {
     		return $AU.userIsRol('GESTALQ');
     	}
-    	    
+    	
 	 }, 
 	 
 	 stores: {
@@ -2091,11 +2091,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tipoSubestadoGestion'}
+				remoteUrl: 'generic/getSubestadoGestion',
+				extraParams: {idActivo: '{activo.id}'}
 			}
 		},
 		
+		comboSubestadoGestionFiltered: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboSubestadoGestionFiltered'
+			}
+		},
 		
 		comboAdecuacionAlquiler: {
 			model: 'HreRem.model.ComboBase',

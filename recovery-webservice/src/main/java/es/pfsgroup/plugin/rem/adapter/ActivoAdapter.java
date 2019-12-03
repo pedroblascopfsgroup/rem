@@ -1594,7 +1594,7 @@ public class ActivoAdapter {
 			dtoActivoFiltro.setUsuarioGestoria(false);
 		}
 		
-		return (Page) activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
+		return activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
 	}
 
 	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {

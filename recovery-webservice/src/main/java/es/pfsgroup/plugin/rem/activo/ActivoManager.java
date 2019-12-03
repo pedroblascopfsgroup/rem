@@ -131,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -1171,13 +1172,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 
-		// El combo "Comité seleccionado" vendrá informado para cartera
-		// Liberbank
-		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
-				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLiberbank(oferta));
-		}
 		// El combo "Comité seleccionado" vendrá informado para cartera Cajamar
 		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
@@ -1212,6 +1206,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
 
+		// El combo "Comité seleccionado" vendrá informado para cartera
+		// Liberbank
+		
+		//Ponemos el if aqui porque necesitamos que se creen los gastos de expediente antes de calcular el comité
+		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			if (!Checks.esNulo(oferta.getClaseOferta())) {
+				if(oferta.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {
+					Oferta ofertaPrincipal = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevoExpediente.getOferta().getId())).getOfertaPrincipal();
+					//En caso de que estemos tramitando una oferta dependiente, llamamos al calculocomiteLBK de su oferta principal (Se calcula tanto el comite de la agrupacion de ofertas como el de las ofertas dependientes)
+					ofertaApi.calculoComiteLBK(ofertaPrincipal, null);
+				}
+				else {
+					ofertaApi.calculoComiteLBK(oferta, nuevoExpediente);
+				}
+			}
+
+		}
 		return nuevoExpediente;
 	}
 

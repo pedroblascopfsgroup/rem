@@ -152,10 +152,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			boolean isLiberbankTerciaria = false;*/
 			Boolean isHayaLbk = false;
 			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(tareaActivo.getTramite().getTrabajo().getId());
-			Oferta oferta = expediente.getOferta();
-
-//			DDComiteSancion comiteSancion = ofertaApi.calculoComiteLiberbank(oferta, null);
-			DDComiteSancion comiteSancion = ofertaApi.calculoComiteLiberbank(oferta);
+			
+			DDComiteSancion comiteSancion = expediente.getComiteSancion();
 			String codigoCalculo = (!Checks.esNulo(comiteSancion) ? comiteSancion.getCodigo() : null);
 
 				if (!Checks.esNulo(codigoCalculo)) {

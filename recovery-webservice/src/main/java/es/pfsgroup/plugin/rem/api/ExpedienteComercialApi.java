@@ -836,8 +836,9 @@ public interface ExpedienteComercialApi {
 	 * Este método calcula y actualiza el importe por cada honorario(GastoExpediente) de un Expediente. Sólo se actualizan los honorarios cuyos tipos de cálculo es 'porcentaje'.
 	 *
 	 * @param idTramite: ID del trámite.
+	 * @return devuelve la lista de los honorarios calculados
 	 */
-	void actualizarHonorariosPorExpediente(Long idTramite);
+	List<GastosExpediente> actualizarHonorariosPorExpediente(Long idTramite);
 
 	String uploadDocumento(WebFileItem fileItem, Long idDocRestClient, ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception;
 
@@ -1287,4 +1288,3 @@ public interface ExpedienteComercialApi {
 	boolean esOmega(TareaExterna tareaExterna);
 
 }
-

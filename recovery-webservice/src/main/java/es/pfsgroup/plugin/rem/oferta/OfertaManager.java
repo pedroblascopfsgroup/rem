@@ -101,6 +101,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.DtoVariablesCalculoComiteLBK;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
@@ -113,6 +114,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VDatosCalculoLBK;
 import es.pfsgroup.plugin.rem.model.VListOfertasCES;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -162,6 +164,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 @Service("ofertaManager")
@@ -3446,741 +3449,138 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return oferta.getImporteOferta();
 		}
 	}
-
-	@Override
-	public boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna) {
-		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
-		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
-//			DDComiteSancion comite = this.calculoComiteLiberbank(ofertaAceptada, null);
-			DDComiteSancion comite = this.calculoComiteLiberbank(ofertaAceptada);
-			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
-			Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta()))
-					? ofertaAceptada.getImporteContraOferta() : ofertaAceptada.getImporteOferta();
-			if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(comite)) {
-				if (!DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(comite.getCodigo())) {
-					if (Checks.esNulo(agrupacion)) {
-						Activo activo = ofertaAceptada.getActivoPrincipal();
-						Double minimoAutorizado = activoApi.getImporteValoracionActivoByCodigo(activo,
-								DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
-
-						if (!Checks.esNulo(activo) && !Checks.esNulo(minimoAutorizado)) {
-							if (importeOferta < (minimoAutorizado * 0.85)) {
-								return true;
-							}
-						}
-					} else {
-						DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
-						dtoAgrupActivo.setAgrId(agrupacion.getId());
-						List<ActivoAgrupacionActivo> activos = activoAgrupacionActivoApi
-								.getListActivosAgrupacion(dtoAgrupActivo);
-						Double minimoAutorizado = 0.0;
-						if (!Checks.esNulo(dtoAgrupActivo)) {
-							for (ActivoAgrupacionActivo activo : activos) {
-								if(activo != null && activo.getActivo() != null){
-									Double minimoAutorizadoAux = activoApi.getImporteValoracionActivoByCodigo(activo.getActivo(),
-											DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
-									if(minimoAutorizadoAux != null){
-										minimoAutorizado += minimoAutorizadoAux;
-									}
-								}
-							}
-						}
-						if (!Checks.esNulo(minimoAutorizado)) {
-							if (importeOferta < (minimoAutorizado * 0.85)) {
-								return true;
-							}
-						}
-					}
-				}
-
-			}
-		}
-		return false;
-	}
 	
 	@Override
-	public DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada) {
-		if(!Checks.esNulo(ofertaAceptada)){
-			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
-			Double importeOferta = this.getImporteOferta(ofertaAceptada);
-			Double importeUmbral = 500000.0;
-
-			// Oferta sobre un solo activo
-			if(Checks.esNulo(agrupacion)) {
-				Activo activo = ofertaAceptada.getActivoPrincipal();
-
-				// Si disponemos de un activo, recuperamos los datos a comprobar
-				if(!Checks.esNulo(activo)) {
-					ActivoTasacion tasacion = activoApi.getTasacionMasReciente(activo);
-					Double importeTasacion = null;
-					Double precioAprobadoVenta = null;
-					Double precioMinimoAutorizado = null;
-					Double precioDescuentoPublicado = null;
-
-					importeTasacion = (!Checks.esNulo(tasacion)) ? tasacion.getImporteTasacionFin() : null;
-					List<VPreciosVigentes> precios = activoApi.getPreciosVigentesById(activo.getId());
-					for(VPreciosVigentes p : precios) {
-						if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(p.getCodigoTipoPrecio())) {
-							precioAprobadoVenta = p.getImporte();
-						} else if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(p.getCodigoTipoPrecio())) {
-							precioMinimoAutorizado = p.getImporte();
-						}  else if(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO.equals(p.getCodigoTipoPrecio())) {
-							precioDescuentoPublicado = p.getImporte();
-						}
-					}
-
-					Filter filterInfLiber = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					ActivoInfoLiberbank activoInfoLiberbank = genericDao.get(ActivoInfoLiberbank.class, filterInfLiber);
-
-					if(!Checks.esNulo(activoInfoLiberbank) && !Checks.esNulo(activoInfoLiberbank.getCategoriaContable())
-							&& DDCategoriaContable.COD_INMOVILIZADO.equals(activoInfoLiberbank.getCategoriaContable().getCodigo())) {
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_INVERSION_INMOBILIARIA);
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-						return comiteSancion;
-					}
-
-					if (!Checks.esNulo(activoInfoLiberbank) && !Checks.esNulo(activoInfoLiberbank.getCodPromocion()) && !Checks.esNulo(activoInfoLiberbank.getCategoriaContable()) &&
-							DDCategoriaContable.COD_INMOVILIZADO.equals(activoInfoLiberbank.getCategoriaContable().getCodigo())){
-
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-						return comiteSancion;
-
-					}else if(((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral)
-							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))
-					|| ((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral)
-							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioDescuentoPublicado) && importeOferta >= precioDescuentoPublicado))
-					|| ((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral)
-							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))) {
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-						return comiteSancion;
-					} else if((((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral)
-							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta < precioMinimoAutorizado))
-							|| (!Checks.esNulo(importeTasacion) && importeTasacion >= importeUmbral))
-					|| (((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral)
-							&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta < precioMinimoAutorizado))
-							|| (!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta >= importeUmbral))) {
-
-						DDTipoActivo tipoActivo = activo.getTipoActivo();
-						DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
-						if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo())
-								|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo.getCodigo())
-								|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo())) {
-
-							Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_RESIDENCIAL);
-							DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-							return comiteSancion;
-						} else {
-							Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_SINGULAR_TERCIARIO);
-							DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-							return comiteSancion;
-						}
-					}
-				}
-
-			// Oferta sobre un lote
-			} else {
-				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
-				Double sumaTasaciones = 0.0;
-				Double sumaPrecioActivos = 0.0;
-
-				List<VTasacionCalculoLBK> vista = activoApi.getVistaTasacion(agrupacion.getId());
-
-				for(VTasacionCalculoLBK reg: vista) {
-					Double importeTasacion = reg.getImporteTasacion();
-					Double precioAprobadoVenta = reg.getImportePrecioAprobado();
-					Double precioMinimoAutorizado = reg.getImportePrecioMinimo();
-					Double precioDescuentoPublicado = reg.getImportePrecioDescuento();
-					Double precioMinimoActivo = CompareDoubles(precioAprobadoVenta, precioMinimoAutorizado, precioDescuentoPublicado);
-
-					if(!Checks.esNulo(precioMinimoActivo)) {
-						sumaPrecioActivos += precioMinimoActivo;
-					}
-
-					sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
-				}
-
-				Integer tipoResidencial = 0;
-				Integer tipoSingularTerciario = 0;
-
-				for(ActivoAgrupacionActivo aga : activos) {
-					Activo activo = aga.getActivo();
-					DDTipoActivo tipoActivo = activo.getTipoActivo();
-					DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
-
-					Filter filterInfLiber = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					ActivoInfoLiberbank activoInfoLiberbank = genericDao.get(ActivoInfoLiberbank.class, filterInfLiber);
-
-					if(!Checks.esNulo(activoInfoLiberbank) && !Checks.esNulo(activoInfoLiberbank.getCategoriaContable())
-							&& DDCategoriaContable.COD_INMOVILIZADO.equals(activoInfoLiberbank.getCategoriaContable().getCodigo())) {
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_INVERSION_INMOBILIARIA);
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-						return comiteSancion;
-					}
-
-					if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo())
-							|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo.getCodigo())
-							|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo())) {
-
-						tipoResidencial++;
-					} else {
-						tipoSingularTerciario++;
-					}
-				}
-
-				if(((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral)
-						&& (!Checks.esNulo(importeOferta) && importeOferta >= sumaPrecioActivos))) {
-					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
-					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-					return comiteSancion;
-				} else if((((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral)
-						&& (!Checks.esNulo(importeOferta) && importeOferta <= sumaPrecioActivos))
-						|| (sumaTasaciones >= importeUmbral))) {
-
-					if(tipoResidencial != 0 && tipoSingularTerciario != 0) {
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_INVERSION_INMOBILIARIA);
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-						return comiteSancion;
-					} else if(tipoResidencial > 0) {
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_RESIDENCIAL);
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-						return comiteSancion;
-					} else if(tipoSingularTerciario > 0) {
-						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_SINGULAR_TERCIARIO);
-						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-
-						return comiteSancion;
-					}
-				}
-
-			}
-
-			return null;
-
-		}else{
-			return null;
-		}
-	}
-	
-//	@Override
-//	public DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
-//		if(!Checks.esNulo(ofertaAceptada)){
-//			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
-//			
-//			// Oferta sobre un solo activo
-//			if(Checks.esNulo(agrupacion)) {
-//				List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
-//				return calculoComiteLiberbankActivoSolo(ofertaAceptada, gastosExpediente, nuevaOfertaAgrupadaLbk);
-//
-//			// Oferta sobre un lote
-//			} else {
-//				List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
-//				return calculoComiteLiberbankLoteActivos(ofertaAceptada, gastosExpediente, nuevaOfertaAgrupadaLbk);
-//			}
-//		}else{
-//			return null;
-//		}
-//	}
-
-	@Override
-	public DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
-		if(!Checks.esNulo(ofertaAceptada)){
-			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
-			
-			// Oferta sobre un solo activo
-			if(Checks.esNulo(agrupacion)) {
-				return calculoComiteLiberbankActivoSolo(ofertaAceptada, gastosExpediente, nuevaOfertaAgrupadaLbk);
-
-			// Oferta sobre un lote
-			} else {
-				return calculoComiteLiberbankLoteActivos(ofertaAceptada, gastosExpediente, nuevaOfertaAgrupadaLbk);
-			}
-		}else{
-			return null;
-		}
-	}
-	@Override
-	public boolean faltanDatosCalculo (Long idOferta) {
-		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
-		Oferta ofertaAceptada = this.getOfertaById(idOferta);
-		Activo activoPrincipal = ofertaAceptada.getActivoPrincipal();
+	public void calculoComiteLBK(Oferta oferta, ExpedienteComercial eco) {
+		if(!cumpleRequisitosCalculoLBK(oferta, eco)) throw new JSONException("Faltan datos en algún activo para calcular el comité");
 		
-		if(ofertaAceptada != null && !Checks.esNulo(activoPrincipal)) {
-			if(!Checks.estaVacio(activoPrincipal.getTasacion()) 
-					&& !Checks.esNulo(activoPrincipal.getTasacion().get(activoPrincipal.getTasacion().size()-1).getImporteTasacionFin())) {
-				vta += activoPrincipal.getTasacion().get(activoPrincipal.getTasacion().size()-1).getImporteTasacionFin();
-			}
-			pvb = ofertaAceptada.getImporteOferta();
-	
-			
-			// Cuando son ofertas agrupadas, las recorro
-			if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) 
-					&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
-	
-				Oferta principal = getOfertaPrincipalById(ofertaAceptada.getId());
-				List<OfertasAgrupadasLbk> ofertasAgrupadas = principal.getOfertasAgrupadas();
-	
-				List<Oferta> listaOfertas = new ArrayList<Oferta>();
-				
-				// Añado la oferta principal
-				listaOfertas.add(principal);
-	
-				
-				// Añado las dependientes
-				for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
-					listaOfertas.add(lisOf.getOfertaDependiente());
-				}	
-				
-				// Recorro todas las ofertas que tiene la agrupada
-				for (Oferta oferta : listaOfertas) {
-	
-					ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
-					if (expedienteComercial == null) continue;
-					if (!Checks.esNulo(expedienteComercial) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-						List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
-						
-						for (GastosExpediente gex : listaHonorarios) {
-							cco += gex.getImporteFinal() * gex.getImporteCalculo();
-						}
-						
-					}
-				}
-	
-				List<ActivoValoraciones> valoraciones = activoPrincipal.getValoracion();
-	
-				for (ActivoValoraciones valoracion : valoraciones) {
-					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-						vnc += valoracion.getImporte();
-					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-						vr  += valoracion.getImporte();
-					}
-				}
-				
-				
-			// Si son ofertas individuales o principales se calculan ellas solas
-			} else {
-				vnc = 0.1;
-				vr = 0.1;
-				cco = 0.1;
-			}
-			
-			pvn = pvb - cco;
-			
-	
-			
-			if (vta== 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
-				return true;
+		DtoVariablesCalculoComiteLBK variables = calculoVariablesComiteLBK(oferta, eco);
+		
+		//Si la oferta es principal, tomamos en cuenta todas las variables de todos los activos contemplados en todas las ofertas de la agrupacion de ofertas.
+		//Además se calcula y asigna el comité individualmente a cada oferta dependiente
+		if(oferta.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL)) {
+			Filter filtroDependientes = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());
+			List<OfertasAgrupadasLbk> listaDependientes = genericDao.getList(OfertasAgrupadasLbk.class, filtroDependientes);
+			for(OfertasAgrupadasLbk ogr : listaDependientes) {
+				DtoVariablesCalculoComiteLBK variablesOfertaDependiente = calculoVariablesComiteLBK(ogr.getOfertaDependiente(), null);
+				variables.setCco(variables.getCco() + variablesOfertaDependiente.getCco());
+				variables.setPmin(variables.getPmin() + variablesOfertaDependiente.getPmin());
+				variables.setPvb(variables.getPvb() + variablesOfertaDependiente.getPvb());
+				variables.setPvn(variables.getPvn() + variablesOfertaDependiente.getPvn());
+				variables.setVnc(variables.getVnc() + variablesOfertaDependiente.getVnc());
+				variables.setVr(variables.getVr() + variablesOfertaDependiente.getVr());
+				variables.setVta(variables.getVta() + variablesOfertaDependiente.getVta());			
+				calculoComiteLBK(ogr.getOfertaDependiente(), null);
 			}
 		}
 		
-		return false;
-	}
-	
-	private List<Double> getImportesAcumulados(Oferta ofertaAceptada, Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr, OfertasAgrupadasLbk nuevafertaAgrupadaLbk){
-		List<Double> listaImportesAcumulados = new ArrayList<Double>();
-		//Acumular pvb, cco de las ofertas dependientes
-		//A nivel de expediente
-		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(ofertaAceptada.getClaseOferta()) && !Checks.esNulo(ofertaAceptada.getClaseOferta().getCodigo()) &&  DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
-			List <OfertasAgrupadasLbk> listaOfertasAgrupadas = ofertaAceptada.getOfertasAgrupadas();
-			if (!Checks.esNulo(nuevafertaAgrupadaLbk)) {
-				if (nuevafertaAgrupadaLbk.getAuditoria().isBorrado() && listaOfertasAgrupadas.contains(nuevafertaAgrupadaLbk)) {
-					listaOfertasAgrupadas.remove(nuevafertaAgrupadaLbk);
-				}else if(!nuevafertaAgrupadaLbk.getAuditoria().isBorrado() && !listaOfertasAgrupadas.contains(nuevafertaAgrupadaLbk)) {
-					listaOfertasAgrupadas.add(nuevafertaAgrupadaLbk);
-				}
-			}
-			if(!Checks.estaVacio(listaOfertasAgrupadas)) {
-				for (OfertasAgrupadasLbk ofertaAgrupada : listaOfertasAgrupadas) {
-					if (!ofertaAgrupada.getAuditoria().isBorrado()) {
-						Oferta ofertaDependiente = ofertaAgrupada.getOfertaDependiente();
-						//Acumular pvb
-						pvb += ofertaDependiente.getImporteOferta();
-						//Acumular cco
-						ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaDependiente.getId());
-						if(!Checks.esNulo(eco) && Checks.esNulo(eco.getHonorarios())){
-							for ( GastosExpediente gex: eco.getHonorarios()) {
-								if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
-									cco += gex.getImporteFinal() * gex.getImporteCalculo();
-								}
-							}
-						} else {
-							List<DtoGastoExpediente> honorarios = new ArrayList<DtoGastoExpediente>();
-							Activo activo =  ofertaDependiente.getActivoPrincipal();
-							String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
-							for (int i = 0; i < acciones.length; i++) {
-								honorarios.add(calculaHonorario(ofertaDependiente, acciones[i], activo));
-							}
-							for (DtoGastoExpediente gex: honorarios) {
-								if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
-									cco += gex.getImporteFinal() * gex.getImporteCalculo();
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	
-		//Acumular vta, vn, vr de las ofertas dependeintes
-		//A nievl de activos
-		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(ofertaAceptada.getClaseOferta()) && !Checks.esNulo(DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
-			List <OfertasAgrupadasLbk> listaOfertasAgrupadas = ofertaAceptada.getOfertasAgrupadas();
-			if(!Checks.estaVacio(listaOfertasAgrupadas)) {
-				//Recorrer las fertas dependientes de la principal
-				for (OfertasAgrupadasLbk ofertaAgrupada : listaOfertasAgrupadas) {
-					if (!ofertaAgrupada.getAuditoria().isBorrado()) {
-						ActivoAgrupacion activoAgrupacion = ofertaAgrupada.getOfertaDependiente().getAgrupacion();
-						//Si la oferta dependiente es de una agrupacion, recorrer todos los activos de la agrupacion
-						if (!Checks.esNulo(activoAgrupacion)) {
-							List<ActivoAgrupacionActivo> listaActivos = activoAgrupacion.getActivos();
-							if (!Checks.estaVacio(listaActivos)) {
-								for(ActivoAgrupacionActivo aga : listaActivos) {
-									Activo activo = aga.getActivo();
-									//Acumular vta
-									if(!Checks.estaVacio(activo.getTasacion())) {
-										vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
-									}
-									List<ActivoValoraciones> listaValoraciones = activo.getValoracion();
-									//Acumular vn y vr
-									for (ActivoValoraciones valoracion : listaValoraciones) {
-										String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-										if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-											vnc += valoracion.getImporte();
-										}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-											vr  += valoracion.getImporte();
-										}
-									}
-								}
-							}
-						//Si la oferta dependiente es de un activo solo
-						} else {
-							Activo activo = ofertaAgrupada.getOfertaDependiente().getActivoPrincipal();
-							//Acumular vta
-							if(!Checks.estaVacio(activo.getTasacion())) {
-								vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
-							}
-							
-							//Acumular vn y vr
-							List<ActivoValoraciones> listaValoraciones = activo.getValoracion();
-							for (ActivoValoraciones valoracion : listaValoraciones) {
-								String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-								if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-									vnc += valoracion.getImporte();
-								}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-									vr  += valoracion.getImporte();
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		pvn = pvb - cco;
-		
-		listaImportesAcumulados.add(vta);
-		listaImportesAcumulados.add(pvb);
-		listaImportesAcumulados.add(cco);
-		listaImportesAcumulados.add(pvn);
-		listaImportesAcumulados.add(vnc);
-		listaImportesAcumulados.add(vr);
-		
-		return listaImportesAcumulados;
-	}
-	
-	@Override
-	public DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
-			
-		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
-
-		// Si son ofertas agrupadas el cálculo se hace del conjunto
-		if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) 
-					&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
-			return calculoComiteLiberbankOfertasDependientes(ofertaAceptada, gastosExpediente, false);
-			
-		// Si la oferta es individual o principal (aún no tiene dependientes) el cálculo se hace sobre si misma
-		}else {
-			if(!Checks.estaVacio(ofertaAceptada.getActivoPrincipal().getTasacion())) {
-				vta += ofertaAceptada.getActivoPrincipal().getTasacion().get(ofertaAceptada.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
-			}
-			
-			pvb = ofertaAceptada.getImporteOferta();
-
-			// Cuando es una oferta que se está creando nos tienen que pasar los honorarios
-			if (!Checks.estaVacio(gastosExpediente)) {
-				for (GastosExpediente gex : gastosExpediente) {
-					cco += gex.getImporteFinal() * gex.getImporteCalculo();
-				}
-			// Cuando no nos pasan la lista de gastos es porque ya existe el expediente y lo recuperamos de ahí
-			}else {
-				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
-				if(!Checks.esNulo(eco.getHonorarios())){
-					for ( GastosExpediente gex: eco.getHonorarios()) {
-						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
-							cco += gex.getImporteFinal() * gex.getImporteCalculo();
-						}
-					}
-				}else {
-				
-					List<DtoGastoExpediente> honorarios = new ArrayList<DtoGastoExpediente>();
-					
-					Activo activo =  ofertaAceptada.getActivoPrincipal();
-					String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION, DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
-					for (int i = 0; i < acciones.length; i++) {
-						honorarios.add(calculaHonorario(ofertaAceptada, acciones[i], activo));
-					}
-					
-					for ( DtoGastoExpediente gex: honorarios) {
-						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
-							cco += gex.getImporteFinal() * gex.getImporteCalculo();
-						}
-					}
-				}
-			}
-			
-			pvn = pvb - cco;
-
-			List<ActivoValoraciones> valoraciones = ofertaAceptada.getActivoPrincipal().getValoracion();
-	
-			for (ActivoValoraciones valoracion : valoraciones) {
-				String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-				if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-					vnc += valoracion.getImporte();
-				}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-					vr  += valoracion.getImporte();
-				}
-			}
-			
-			List<Double> importesAcumulados = getImportesAcumulados(ofertaAceptada, vta, pvb, cco, pvn, vnc, vr, nuevaOfertaAgrupadaLbk);
-			
-			vta = importesAcumulados.get(0);
-			pvb = importesAcumulados.get(1);
-			cco = importesAcumulados.get(2);
-			pvn = importesAcumulados.get(3);
-			vnc = importesAcumulados.get(4);
-			vr = importesAcumulados.get(5);
-			
-			// Asignación del comité
-			return devuelveComiteSancionador(vta, pvb, cco, pvn, vnc, vr);
-		}
-	}
-
-	@Override
-	public DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
-			
-		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
-
-		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
-		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
-
-		// Cuando son ofertas agrupadas, las recorro
-		if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
-			return calculoComiteLiberbankOfertasDependientes(ofertaAceptada, gastosExpediente, true);
-		}else {
-			for(ActivoAgrupacionActivo aga : activos) {
-				Activo activo = aga.getActivo();
-				
-				if(!Checks.estaVacio(activo.getTasacion())) {
-					vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
-				}
-				
-				List<ActivoValoraciones> valoraciones = activo.getValoracion();
-				
-				for (ActivoValoraciones valoracion : valoraciones) {
-					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-						vnc += valoracion.getImporte();
-					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-						vr  += valoracion.getImporte();
-					}
-				}
-			}
-			
-			pvb += ofertaAceptada.getImporteOferta();
-
-			// Cuando es una oferta que se está creando no tienen que pasar los honorarios
-			if (!Checks.estaVacio(gastosExpediente)) {
-				for (GastosExpediente gex : gastosExpediente) {
-					cco += gex.getImporteFinal() * gex.getImporteCalculo();
-				}
-			// Cuando no nos pasan la lista de gastos es porque ya existe el expediente y lo recuperamos de ahí
-			}else {
-				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
-				if(!Checks.esNulo(eco) && !Checks.esNulo(eco.getHonorarios())){
-					for ( GastosExpediente gex: eco.getHonorarios()) {
-						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
-							cco += gex.getImporteFinal() * gex.getImporteCalculo();
-						}
-					}
-				}else {
-				
-					List<DtoGastoExpediente> honorarios = new ArrayList<DtoGastoExpediente>();
-					
-					Activo activo =  ofertaAceptada.getActivoPrincipal();
-					String[] acciones = { DDAccionGastos.CODIGO_COLABORACION, DDAccionGastos.CODIGO_PRESCRIPCION,DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE };
-					for (int i = 0; i < acciones.length; i++) {
-						honorarios.add(calculaHonorario(ofertaAceptada, acciones[i], activo));
-					}
-					
-					for ( DtoGastoExpediente gex: honorarios) {
-						if(!Checks.esNulo(gex.getImporteFinal()) && !Checks.esNulo(gex.getImporteCalculo())) {
-							cco += gex.getImporteFinal() * gex.getImporteCalculo();
-						}
-					}
-				}
-	
-			}
-			
-		
-			
-			pvn = pvb - cco;
-			
-			List<Double> importesAcumulados = getImportesAcumulados(ofertaAceptada, vta, pvb, cco, pvn, vnc, vr, nuevaOfertaAgrupadaLbk);
-			
-			vta = importesAcumulados.get(0);
-			pvb = importesAcumulados.get(1);
-			cco = importesAcumulados.get(2);
-			pvn = importesAcumulados.get(3);
-			vnc = importesAcumulados.get(4);
-			vr = importesAcumulados.get(5);
-			
-			// Asignación del comité
-			return devuelveComiteSancionador(vta, pvb, cco, pvn, vnc, vr);
-		}
-	}
-	
-	private DDComiteSancion devuelveComiteSancionador (Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr) {
 		Double importeUmbral = 500000.0;
-		Double perdida = pvn-vnc;
-		Double perdidaValorAbsoluto = Math.abs(perdida);
-		Double porcentajevnc = vnc * 0.2;
+		Double perdida = variables.getPvn() - variables.getVnc();
+		Double perdidaValorAbs = Math.abs(perdida);
+		Double porcentajeSobreVNC1 = variables.getVnc() * 0.1;
+		Double porcentajeSobreVNC2 = variables.getVnc() * 0.2;
 		Double umbralPerdida = 100000.0;
+		Double importeMax = 5000000.0;
 		
-		if (vta== 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
-			return null;
-		} else {
-			Filter filtroGestion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_GESTION_INMOBILIARIA);
-			
-			Filter filtroGestionDir = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_DIRECTOR_GESTION_INMOBILIARIA);
-			
-			Filter filtroInversion= genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_INVERSION_INMOBILIARIA);
-			
-			Filter filtroDireccion = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIRECCION);
-			
-			if(vta > (importeUmbral * 10)) {
-				return genericDao.get(DDComiteSancion.class, filtroDireccion);
-			}else if(vta <= (importeUmbral * 10) && vta >= importeUmbral) {
-				if(perdida > 0 || (perdidaValorAbsoluto <= umbralPerdida && perdidaValorAbsoluto <= porcentajevnc)) {
-					return genericDao.get(DDComiteSancion.class, filtroInversion);
-				}else if(perdidaValorAbsoluto > umbralPerdida || perdidaValorAbsoluto > porcentajevnc) {
-					return genericDao.get(DDComiteSancion.class, filtroDireccion);
-				}
-			}else if(vta < importeUmbral){
-				if(pvn < vr) {
-					if (perdida > 0 || perdidaValorAbsoluto <= (porcentajevnc / 2)) {
-						return genericDao.get(DDComiteSancion.class, filtroGestionDir);
-					}else if (perdidaValorAbsoluto <= umbralPerdida && perdidaValorAbsoluto > (porcentajevnc / 2)){
-						return genericDao.get(DDComiteSancion.class, filtroInversion);
-					}else if(perdidaValorAbsoluto > umbralPerdida && perdidaValorAbsoluto > (porcentajevnc / 2)) {
-						return genericDao.get(DDComiteSancion.class, filtroDireccion);
-					}
-				}else if(pvn >= vr) {
-					return genericDao.get(DDComiteSancion.class, filtroGestion);
+		Filter filtroGestion = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDComiteSancion.CODIGO_GESTION_INMOBILIARIA);
+
+		Filter filtroGestionDir = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDComiteSancion.CODIGO_DIRECTOR_GESTION_INMOBILIARIA);
+
+		Filter filtroInversion = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDComiteSancion.CODIGO_COMITE_INVERSION_INMOBILIARIA);
+
+		Filter filtroDireccion = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDComiteSancion.CODIGO_COMITE_DIRECCION);
+
+		Filter filtroComiteHRE = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDComiteSancion.CODIGO_HAYA_LIBERBANK);
+
+
+		DDComiteSancion comiteSeleccionado = null;
+		if (variables.getVta() < importeUmbral) {
+			if (variables.getPvb() >= variables.getPmin()) {
+				comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroComiteHRE);
+			} else if (variables.getPvn() >= variables.getVr()) {
+				comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroGestion);
+			} else if (variables.getPvn() < variables.getVr()) {
+				if (perdida < 0 && perdidaValorAbs <= porcentajeSobreVNC1) {
+					comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroGestionDir);
+				} else if ((perdida < 0 && perdidaValorAbs > porcentajeSobreVNC1) && perdidaValorAbs <= umbralPerdida) {
+					comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroInversion);
+				} else if ((perdida < 0 && perdidaValorAbs > porcentajeSobreVNC1) && perdidaValorAbs > umbralPerdida) {
+					comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroDireccion);
 				}
 			}
+		} else if (importeUmbral <= variables.getVta() && variables.getVta() <= importeMax) {
+			if (perdida > 0 || ((perdidaValorAbs <= porcentajeSobreVNC2) && perdidaValorAbs <= umbralPerdida)) {
+				comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroInversion);
+			} else if (perdidaValorAbs > porcentajeSobreVNC2 || perdidaValorAbs > importeUmbral) {
+				comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroDireccion);
+			}
+		} else if (variables.getVta() > importeMax) {
+			comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroDireccion);
 		}
-		return null;
+		
+		if (Checks.esNulo(eco)) {
+			eco = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+		}
+		if(!Checks.esNulo(eco)) {
+			eco.setComiteSancion(comiteSeleccionado);
+			if(Checks.esNulo(eco.getComitePropuesto())) {
+				eco.setComitePropuesto(comiteSeleccionado);
+			}
+			expedienteComercialDao.saveOrUpdate(eco);
+			
+		}
+
 	}
+	
+	private DtoVariablesCalculoComiteLBK calculoVariablesComiteLBK(Oferta oferta, ExpedienteComercial eco) {
 
-	public DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote) {
-
-		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
-		List<Oferta> listaOfertas = new ArrayList<Oferta>();
-		DDComiteSancion comiteSancionador = null;
-
-		// La oferta actual que estamos creando la suma por separado a la agrupación
+		DtoVariablesCalculoComiteLBK variables = new DtoVariablesCalculoComiteLBK();
 		
-		if (esLote) {
-			ActivoAgrupacion agrupacion = ofertaNueva.getAgrupacion();
-			List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		//Seteamos los valores iniciales porque de lo contrario tienen por defecto null y nos lanzaria un NullPointer
+		variables.setCco(0.0);
+		variables.setPmin(0.0);
+		variables.setPvb(0.0);
+		variables.setPvn(0.0);
+		variables.setVnc(0.0);
+		variables.setVr(0.0);
+		variables.setVta(0.0);
+		
+		//Se suman todas las variables de todos los activos que hay en la oferta
+		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
+		variables.setPvb(oferta.getImporteOferta());
+		for(ActivoOferta activoActual: listaActivos) {
+			Activo act = activoActual.getPrimaryKey().getActivo();
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", act.getId());
+			VDatosCalculoLBK datos = genericDao.get(VDatosCalculoLBK.class, filtroActivo);
 			
-			for(ActivoAgrupacionActivo aga : activos) {
-				Activo activo = aga.getActivo();
-				
-				if(!Checks.estaVacio(activo.getTasacion())) {
-					vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
-				}
-
-				// Cálculo del VNC y VR
-				List<ActivoValoraciones> valoraciones = activo.getValoracion();
-				for (ActivoValoraciones valoracion : valoraciones) {
-					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-						vnc += valoracion.getImporte();
-					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-						vr  += valoracion.getImporte();
-					}
-				}
-			}
-		}else {
-			if(!Checks.estaVacio(ofertaNueva.getActivoPrincipal().getTasacion())) {
-				vta += ofertaNueva.getActivoPrincipal().getTasacion().get(ofertaNueva.getActivoPrincipal().getTasacion().size()-1).getImporteTasacionFin();
-			}
-			List<ActivoValoraciones> valoraciones = ofertaNueva.getActivoPrincipal().getValoracion();
-			for (ActivoValoraciones valoracion : valoraciones) {
-				String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-				if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-					vnc += valoracion.getImporte();
-				}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-					vr  += valoracion.getImporte();
-				}
-			}
+			variables.setPmin(variables.getPmin() + datos.getImporteMinAutorizado());
+			variables.setVta(variables.getVta() + datos.getTasacionActual());
+			variables.setVnc(variables.getVnc() + datos.getValorNetoContable());
+			variables.setVr(variables.getVr() + datos.getValorRazonable());
 		}
-
-		pvb += ofertaNueva.getImporteOferta();
 		
-		// Cuando es una oferta que se está creando nos tienen que pasar los honorarios
-		if (!Checks.esNulo(gastosExpediente)) {
-			for (GastosExpediente gex : gastosExpediente) {
-				cco += gex.getImporteFinal() * gex.getImporteCalculo();
-			}
-		// Cuando no nos pasan la lista de gastos es porque ya existe el expediente y lo recuperamos de ahí
-		}else {
-			ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaNueva.getId());
-			for (GastosExpediente gex : eco.getHonorarios()) {
-				cco += gex.getImporteFinal() * gex.getImporteCalculo();
-			}
+		//Calculamos los costes de comercialización y el Precio de venta neto asociado
+		if (Checks.esNulo(eco)) {
+			eco = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
 		}
-
-		pvn += pvb - cco;
+		if (!Checks.esNulo(eco)) {
 			
-		
-		// Calculamos el comité sancionador en función a los datos sumados de todas las ofertas que forman parte de la agrupación
-		comiteSancionador = devuelveComiteSancionador(vta, pvb, cco, pvn, vnc, vr);
-		
-		// Recorremos todas las ofertas para ponerle el nuevo comité sancionador
-		for (Oferta oferta : listaOfertas) {
-			ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
-			if(!Checks.esNulo(expedienteComercial)) {
-				expedienteComercial.setComiteSancion(comiteSancionador);
-				expedienteComercial.setComitePropuesto(comiteSancionador);
+			List<GastosExpediente> listaGex = (!Checks.esNulo(eco.getHonorarios()) ? eco.getHonorarios() : expedienteComercialApi.actualizarHonorariosPorExpediente(eco.getId()));
+			
+			for(GastosExpediente gex : listaGex) {
+				variables.setCco(variables.getCco() + gex.getImporteFinal() * gex.getImporteCalculo());
 			}
+			
+			variables.setPvn(variables.getPvb() - variables.getCco());
 		}
-		
-		return comiteSancionador;
+		return variables;	
 	}
-
+	
 	private void validacionesActivoOfertaLote(HashMap<String, String> errorsList, Activo activo) {
 		PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", activo.getNumActivo()));
@@ -5041,5 +4441,47 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean cumpleRequisitosCalculoLBK(Oferta oferta, ExpedienteComercial eco) {
+		if(Checks.esNulo(oferta)) return false;
+		
+		//En caso de que sea una oferta agrupada tiene que cumplir los requisitos todos los activos de todas las ofertas
+		if(oferta.getClaseOferta().equals(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL)) {
+			Filter filtroDependientes = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());
+			List<OfertasAgrupadasLbk> listaDependientes = genericDao.getList(OfertasAgrupadasLbk.class, filtroDependientes);
+			for(OfertasAgrupadasLbk ogr: listaDependientes) {
+				if(!cumpleRequisitosCalculoLBK(ogr.getOfertaDependiente(), null)) return false;
+			}
+		}
+		
+		//Aqui se comprueba que todos los activos implicados en la oferta tienen los precios informados
+		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
+		for(ActivoOferta activoActual: listaActivos) {
+			Activo act = activoActual.getPrimaryKey().getActivo();
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", act.getId());
+			VDatosCalculoLBK datos = genericDao.get(VDatosCalculoLBK.class, filtroActivo);
+			if (Checks.esNulo(datos) 
+					|| (Checks.esNulo(datos.getImporteMinAutorizado()) || datos.getImporteMinAutorizado() <= 0)
+					|| (Checks.esNulo(datos.getTasacionActual()) || datos.getTasacionActual() <= 0)
+					|| (Checks.esNulo(datos.getValorNetoContable()) || datos.getValorNetoContable() <= 0)
+					|| (Checks.esNulo(datos.getValorRazonable()) || datos.getValorRazonable() <= 0)
+					|| (Checks.esNulo(oferta.getImporteOferta()) || oferta.getImporteOferta() <= 0))
+				return false;
+		}
+		
+		//Se comprueba que la oferta tiene los datos necesarios para calcular los honorarios.
+		eco = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+		
+		if (Checks.esNulo(eco)) {
+			return false;
+		}
+		//En caso de que no tenga los honorarios se comprueba si pueden calcularse.
+		if(Checks.esNulo(eco.getHonorarios()) && Checks.esNulo(expedienteComercialApi.actualizarHonorariosPorExpediente(eco.getId()))) {
+			return false;
+		}
+		
+		return true;
 	}
 }

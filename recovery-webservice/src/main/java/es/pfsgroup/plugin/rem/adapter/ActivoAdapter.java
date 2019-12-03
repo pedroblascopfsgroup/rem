@@ -3862,20 +3862,10 @@ public class ActivoAdapter {
 
 			List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
 
-			
-//			if(!Checks.esNulo(dto.getClaseOferta())) {
-//				if (dto.getClaseOferta().equals(DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE) && !Checks.esNulo(dto.getNumOferPrincipal())) {
-//					Oferta oferPrincipal = null;
-//					oferPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
-//
-//					// Se le pasa primero la oferta PRINCIPAL y luego la DEPENDIENTE, siendo la principal la que introduce el usuario y la dependiente la actual que estamos creando
-//					ofertasAgrupadas = ofertaApi.buildListaOfertasAgrupadasLbk(oferPrincipal, oferta, dto.getClaseOferta());
-//				}
-//			}
-
+			Oferta oferPrincipal = null;
 			if (!Checks.esNulo(dto.getNumOferPrincipal()) || (Checks.esNulo(dto.getNumOferPrincipal()) && !Checks.esNulo(dto.getClaseOferta()))){
-				// Se le pasa primero la oferta PRINCIPAL y luego la DEPENDIENTE, siendo la principal la que introduce el usuario y la dependiente la actual que estamos creando
-				Oferta oferPrincipal = null;
+				// Si la oferta que estamos creando va a ser dependiente de otra
+				
 				if (!Checks.esNulo(dto.getNumOferPrincipal())) {
 					oferPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
 					
@@ -3889,7 +3879,6 @@ public class ActivoAdapter {
 			
 			oferta.setOfertasAgrupadas(ofertasAgrupadas);
 			
-
 			oferta.setOfertaExpress(false);
 			
 			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,

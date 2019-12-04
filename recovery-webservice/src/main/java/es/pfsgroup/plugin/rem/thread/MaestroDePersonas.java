@@ -22,7 +22,6 @@ import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
@@ -336,7 +335,7 @@ public class MaestroDePersonas implements Runnable {
 				}
 				
 			// LLAMADA MAESTRO PERSONAS PROVEEDOR
-			} else if (!Checks.esNulo(proveedor)) {
+			} /*else if (!Checks.esNulo(proveedor)) {
 				
 				String cliente = null;
 				ActivoProveedorCartera activoProveedorCartera = null;
@@ -443,7 +442,7 @@ public class MaestroDePersonas implements Runnable {
 						}
 					}
 				}
-			}
+			}*/
 			sessionObj.close();
 		} catch (Exception e) {
 			logger.error("Error maestro de personas", e);
@@ -519,7 +518,7 @@ public class MaestroDePersonas implements Runnable {
 		return  HibernateUtils.castObject(Comprador.class, criteria.uniqueResult());
 	}
 	
-	private ActivoProveedorCartera llamadaActivoProveedorCartera(Session sessionObj, DDCartera cartera, DDSubcartera subcartera, String clienteGestorDocumental) {
+	/*private ActivoProveedorCartera llamadaActivoProveedorCartera(Session sessionObj, DDCartera cartera, DDSubcartera subcartera, String clienteGestorDocumental) {
 		Criteria criteria = sessionObj.createCriteria(ActivoProveedorCartera.class);
 		criteria.add(Restrictions.eq("proveedor", proveedor));
 		if(Checks.esNulo(subcartera)) {
@@ -538,7 +537,7 @@ public class MaestroDePersonas implements Runnable {
 			criteria.add(Restrictions.eq("clienteGestorDocumental", clienteGestorDocumental));
 		}
 		return  HibernateUtils.castObject(ActivoProveedorCartera.class, criteria.uniqueResult());
-	}
+	}*/
 	
 	private MapeoGestorDocumental llamadaMapeoGestorDocumental(Session sessionObj, DDCartera cartera, DDSubcartera subcartera) {
 		Criteria criteria = sessionObj.createCriteria(MapeoGestorDocumental.class);

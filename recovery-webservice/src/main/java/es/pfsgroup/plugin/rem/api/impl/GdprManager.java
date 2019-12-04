@@ -50,7 +50,7 @@ public class GdprManager implements GdprApi {
 		} else {
 			List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "documento", docCliente));
-			if (clientes != null && clientes.isEmpty()) {
+			if (clientes != null && !clientes.isEmpty()) {
 				for (ClienteComercial clc : clientes) {
 					if (clc.getIdPersonaHaya() != null) {
 						idPersonaHaya = clc.getIdPersonaHaya();

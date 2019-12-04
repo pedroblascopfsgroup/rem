@@ -50,7 +50,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorDireccion;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -79,7 +78,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
@@ -1130,9 +1128,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	   	Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
 		DDTipoDocumentoProveedor tipoDocumento = genericDao.get(DDTipoDocumentoProveedor.class, filtro);
 		
-	   	Filter filtroSubTipoDoc = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
-		DDSubtipoDocumentoProveedor subtipoDocumentoProveedor = genericDao.get(DDSubtipoDocumentoProveedor.class, filtroSubTipoDoc);
-		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			
 			Long idDocRestClient = null;
@@ -1577,27 +1572,5 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			resultado = usuario.getPerfiles().contains(perfilProveedorHaya);
 		}
 		return resultado;
-	}
-	
-	@Override
-	public List<DDSubtipoDocumentoProveedor> getSubtipoDocProveedor(String codigoTipoDoc){
-		List<DDSubtipoDocumentoProveedor> lista = new ArrayList<DDSubtipoDocumentoProveedor>();
-		
-		lista = genericDao.getList(DDSubtipoDocumentoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoProveedor.codigo", codigoTipoDoc));
-		
-		return lista;
-	}
-	
-	@Override
-	public List<DDCartera> getCarteraPorProveedor(Long idProveedor){
-		
-		return proveedoresDao.getCarteraPorProveedor(idProveedor);
-	}
-	
-	@Override
-	public List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera){
-		
-		return proveedoresDao.getSubcarteraPorProveedor(idProveedor, codigoCartera);
-		
 	}
 }

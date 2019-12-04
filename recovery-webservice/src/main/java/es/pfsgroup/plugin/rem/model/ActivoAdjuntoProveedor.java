@@ -26,7 +26,6 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumentoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 
 
@@ -86,10 +85,6 @@ public class ActivoAdjuntoProveedor implements Serializable, Auditable {
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "DD_EDP_ID")
 	private DDEstadoDocumentoProveedor estadoDocumentoProveedor;
-	
-	@ManyToOne
-    @JoinColumn(name = "DD_SDP_ID")
-    private DDSubtipoDocumentoProveedor subtipoDocumentoProveedor; 
 	
 	@Version   
 	private Long version;
@@ -198,14 +193,6 @@ public class ActivoAdjuntoProveedor implements Serializable, Auditable {
 
 	public void setIdDocRestClient(Long idDocRestClient) {
 		this.idDocRestClient = idDocRestClient;
-	}
-	
-	public DDSubtipoDocumentoProveedor getSubtipoDocumentoProveedor() {
-		return subtipoDocumentoProveedor;
-	}
-
-	public void setSubtipoDocumentoProveedor(DDSubtipoDocumentoProveedor subtipoDocumentoProveedor) {
-		this.subtipoDocumentoProveedor = subtipoDocumentoProveedor;
 	}
 
 	public Long getVersion() {

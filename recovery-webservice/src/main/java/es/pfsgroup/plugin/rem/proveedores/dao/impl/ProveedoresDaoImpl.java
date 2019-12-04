@@ -24,7 +24,6 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
@@ -367,69 +366,14 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		return listaProveedores;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<DDCartera> getCarteraPorProveedor(Long idProveedor){
-		List<DDCartera> carterasProveedor = new ArrayList<DDCartera>();
-		
-		HQLBuilder hb = new HQLBuilder("select cra from DDCartera cra, VCarteraTrabajosProveedor vis ");
-
-		hb.appendWhere("cra.id = vis.idCartera");
-		hb.appendWhere("vis.idProveedor = " + idProveedor);
-		
-		carterasProveedor = (List<DDCartera>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hb.toString()).list();
-		
-		return carterasProveedor;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera){
-		List<DDSubcartera> carterasProveedor = new ArrayList<DDSubcartera>();
-		
-		HQLBuilder hb = new HQLBuilder("select scr from DDSubcartera scr, DDCartera cra, VSubcarteraCarteraTrabajosProveedor vis ");
-
-		hb.appendWhere("cra.id = vis.idCartera");
-		hb.appendWhere("scr.id = vis.idSubcartera");
-		hb.appendWhere("vis.idProveedor = " + idProveedor);
-		if(!Checks.esNulo(codigoCartera)) {
-			hb.appendWhere("cra.codigo = " + codigoCartera);
-		}
-		
-		carterasProveedor = (List<DDSubcartera>) this.getSessionFactory().getCurrentSession()
-				.createQuery(hb.toString()).list();
-		
-		return carterasProveedor;
-	}
-	
-	@Override
+	/*@Override
 	public List<ActivoProveedorCartera> getProveedoresCarteraById(Long idProveedor) {
 		
 		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoProveedorCartera.class);
 		criteria.add(Restrictions.eq("proveedor.id", idProveedor));
 			
 		return  HibernateUtils.castList(ActivoProveedorCartera.class, criteria.list());
-	}
-	
-	@Override
-	public List<ActivoProveedorCartera> getActivoProveedorCartera(Long idProveedor, DDCartera cartera, DDSubcartera subcartera) {
-		
-		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoProveedorCartera.class);
-		criteria.add(Restrictions.eq("proveedor.id", idProveedor));
-		if(Checks.esNulo(subcartera)) {
-			criteria.add(Restrictions.isNull("subcartera"));
-		} else {
-			criteria.add(Restrictions.eq("subcartera", subcartera));
-		}
-		if(Checks.esNulo(cartera)) {
-			criteria.add(Restrictions.isNull("cartera"));
-		} else {
-			criteria.add(Restrictions.eq("cartera", cartera));
-		}
-			
-		return  HibernateUtils.castList(ActivoProveedorCartera.class, criteria.list());
-	}
+	}*/
 	
 	@SuppressWarnings("unchecked")
 	@Override

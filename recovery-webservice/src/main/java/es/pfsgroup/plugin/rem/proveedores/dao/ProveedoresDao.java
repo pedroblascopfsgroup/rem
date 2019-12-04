@@ -7,7 +7,6 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
@@ -95,15 +94,7 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
 	public ActivoProveedorContacto getActivoProveedorContactoPorUsernameUsuario(String username);
 
-	List<DDCartera> getCarteraPorProveedor(Long idProveedor);
-
-	List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera);
-
-	List<ActivoProveedorCartera> getProveedoresCarteraById(Long idProveedor);
-
 	public List<MapeoGestorDocumental> getCarteraClientesProveedores();
-
-	List<ActivoProveedorCartera> getActivoProveedorCartera(Long idProveedor, DDCartera cartera, DDSubcartera subcartera);
 
 	List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera);
 }

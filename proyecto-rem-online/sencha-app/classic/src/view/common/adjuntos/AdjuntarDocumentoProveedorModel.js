@@ -15,37 +15,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedorModel', {
 			},
 			autoLoad: true,
     		sorters: 'descripcion'
-    	},
-    	
-    	comboSubTipoDocumento: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'proveedores/getSubtipoDocProveedor',
-				extraParams: {codigoTipoDoc: '{tipo.value}'}
-			},
-	    	autoLoad: false,
-	    	sorters: 'descripcion'
-    	},
-    	
-    	comboCarteraPorProveedor: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'proveedores/getCarteraPorProveedor',
-				extraParams: {idProveedor: '{proveedor.id}'}
-			},
-	    	autoLoad: true
-    	},
-    	
-    	comboSubcarteraPorProveedor: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'proveedores/getSubcarterasProveedor',
-				extraParams: {idProveedor: '{proveedor.id}', codigoCartera: '{cartera.value}'}
-			},
-	    	autoLoad: false
     	}
     }
 });

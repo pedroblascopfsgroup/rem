@@ -679,16 +679,6 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 											change: 'hiddenMotivosOcultacionVenta'
 										}
 									},
-									{ 
-									   	xtype: 'comboboxfieldbase',
-							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivos.ocultacion'),
-							        	name: 'motivosOcultacionCodigo',
-							        	reference: 'motivosOcultacionVenta',
-							        	bind: {
-							        		hidden: true,
-						            		store: '{comboMotivoOcultacion}'
-						            	}
-									},
 									{
 										xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('combolabel.activos.estado.publicacion.alquiler'),
@@ -701,9 +691,19 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 											change: 'hiddenMotivosOcultacionAlquiler'
 										}
 							        },
+									{ 
+									   	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.venta'),
+							        	name: 'motivosOcultacionCodigo',
+							        	reference: 'motivosOcultacionVenta',
+							        	bind: {
+							        		hidden: true,
+						            		store: '{comboMotivoOcultacion}'
+						            	}
+									},
 					        		{ 
 							        	xtype: 'comboboxfieldbase',
-							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivos.ocultacion'),
+							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.alquiler'),
 							        	name: 'motivosOcultacionCodigo',
 							        	reference: 'motivosOcultacionAlquiler',
 							        	bind: {

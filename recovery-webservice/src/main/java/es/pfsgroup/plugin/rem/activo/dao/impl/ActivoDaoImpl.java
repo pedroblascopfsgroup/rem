@@ -187,12 +187,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimarioId", dto.getApiPrimarioId());
 		}
 		
-		if (dto.getEstadoPublicacionVenta() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionCodigo", dto.getEstadoPublicacionVenta());
+		if (dto.getEstadoPublicacionVentaCodigo() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionVenta", dto.getEstadoPublicacionVentaCodigo());
 		}
 		
-		if (dto.getEstadoPublicacionAlquiler() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionCodigo", dto.getEstadoPublicacionAlquiler());	
+		if (dto.getEstadoPublicacionAlquilerCodigo() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionAlquiler", dto.getEstadoPublicacionAlquilerCodigo());	
+		}
+		
+		if(dto.getMotivosOcultacionVenta() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.motivoOcultacionVenta", dto.getMotivosOcultacionVenta());
+		}
+		
+		if(dto.getMotivosOcultacionAlquiler() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.motivoOcultacionAlquiler", dto.getMotivosOcultacionAlquiler());
 		}
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());

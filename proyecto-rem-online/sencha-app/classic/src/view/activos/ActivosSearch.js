@@ -694,7 +694,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 									{ 
 									   	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.venta'),
-							        	name: 'motivosOcultacionCodigo',
+							        	name: 'motivosOcultacionVenta',
 							        	reference: 'motivosOcultacionVenta',
 							        	bind: {
 							        		hidden: true,
@@ -704,7 +704,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 					        		{ 
 							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.alquiler'),
-							        	name: 'motivosOcultacionCodigo',
+							        	name: 'motivosOcultacionAlquiler',
 							        	reference: 'motivosOcultacionAlquiler',
 							        	bind: {
 							        		hidden: true,

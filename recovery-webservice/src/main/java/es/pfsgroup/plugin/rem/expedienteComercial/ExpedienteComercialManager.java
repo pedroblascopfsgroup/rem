@@ -111,6 +111,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -1604,6 +1605,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private DtoDatosBasicosOferta expedienteToDtoDatosBasicosOferta(ExpedienteComercial expediente) {
 		DtoDatosBasicosOferta dto = new DtoDatosBasicosOferta();
 		Oferta oferta = expediente.getOferta();
+		Boolean isMayoristaOSingular = false;
 
 		dto.setIdOferta(oferta.getId());
 		dto.setNumOferta(oferta.getNumOferta());
@@ -1821,7 +1823,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setIdEco(expediente.getId());
 		}
 		
-		if (DDTipoComercializar.CODIGO_SINGULAR.equals(oferta.getActivoPrincipal().getTipoComercializar().getCodigo())) {
+		if (!Checks.esNulo(oferta.getActivoPrincipal().getEquipoGestion())) {
+			if(DDEquipoGestion.CODIGO_MAYORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo())) {
+				isMayoristaOSingular = true;
+			}
+		} else if (!Checks.esNulo(oferta.getActivoPrincipal().getTipoComercializar()) 
+				&& DDTipoComercializar.CODIGO_SINGULAR.equals(oferta.getActivoPrincipal().getTipoComercializar().getCodigo())) {
+			isMayoristaOSingular = true;
+		}
+		
+		if (isMayoristaOSingular) {
 			Usuario gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			if (!Checks.esNulo(gestorComercialPrescriptor)) {
 				if (!Checks.esNulo(oferta.getAgrupacion()))

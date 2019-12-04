@@ -3451,7 +3451,63 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	public void calculoComiteLBK(Oferta oferta, ExpedienteComercial eco) {
+		public boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna) {
+			Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+			if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertaAceptada.getId());
+				DDComiteSancion comite = eco.getComiteSancion();
+				
+				if (Checks.esNulo(comite)) {
+					comite = this.calculoComiteLBK(ofertaAceptada, eco);
+				}
+				ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
+				Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta()))
+						? ofertaAceptada.getImporteContraOferta() : ofertaAceptada.getImporteOferta();
+				if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(comite)) {
+					if (!DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(comite.getCodigo())) {
+						if (Checks.esNulo(agrupacion)) {
+							Activo activo = ofertaAceptada.getActivoPrincipal();
+							Double minimoAutorizado = activoApi.getImporteValoracionActivoByCodigo(activo,
+									DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+	
+							if (!Checks.esNulo(activo) && !Checks.esNulo(minimoAutorizado)) {
+								if (importeOferta < (minimoAutorizado * 0.85)) {
+									return true;
+								}
+							}
+						} else {
+							DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
+							dtoAgrupActivo.setAgrId(agrupacion.getId());
+							List<ActivoAgrupacionActivo> activos = activoAgrupacionActivoApi
+									.getListActivosAgrupacion(dtoAgrupActivo);
+							Double minimoAutorizado = 0.0;
+							if (!Checks.esNulo(dtoAgrupActivo)) {
+								for (ActivoAgrupacionActivo activo : activos) {
+									if(activo != null && activo.getActivo() != null){
+										Double minimoAutorizadoAux = activoApi.getImporteValoracionActivoByCodigo(activo.getActivo(),
+												DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+										if(minimoAutorizadoAux != null){
+											minimoAutorizado += minimoAutorizadoAux;
+										}
+									}
+								}
+							}
+							if (!Checks.esNulo(minimoAutorizado)) {
+								if (importeOferta < (minimoAutorizado * 0.85)) {
+									return true;
+								}
+							}
+						}
+					}
+	
+				}
+			}
+			return false;
+		}
+
+	
+	@Override
+	public DDComiteSancion calculoComiteLBK(Oferta oferta, ExpedienteComercial eco) {
 		if(!cumpleRequisitosCalculoLBK(oferta, eco)) throw new JSONException("Faltan datos en algún activo para calcular el comité");
 		
 		DtoVariablesCalculoComiteLBK variables = calculoVariablesComiteLBK(oferta, eco);
@@ -3535,6 +3591,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 		}
 
+		return comiteSeleccionado;
 	}
 	
 	private DtoVariablesCalculoComiteLBK calculoVariablesComiteLBK(Oferta oferta, ExpedienteComercial eco) {

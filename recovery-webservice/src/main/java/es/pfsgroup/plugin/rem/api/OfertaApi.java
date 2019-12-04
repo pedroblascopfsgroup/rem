@@ -806,6 +806,9 @@ public interface OfertaApi {
 	 * y a las ofertas dependientes se le calcula y asigna su propio comité
 	 *
 	 * @param oferta
+	 * @return DDComiteSancion
 	 */
-	void calculoComiteLBK(Oferta oferta, ExpedienteComercial eco);
+	DDComiteSancion calculoComiteLBK(Oferta oferta, ExpedienteComercial eco);
+
+	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 }

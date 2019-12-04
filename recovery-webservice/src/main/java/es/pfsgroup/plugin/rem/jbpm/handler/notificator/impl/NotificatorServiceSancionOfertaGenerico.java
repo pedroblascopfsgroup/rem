@@ -222,15 +222,23 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					destinatarios.add(buzonPfs.getEmail());
 				}
 				
-				if(!Checks.esNulo(oferta.getPrescriptor())) {
-					proveedor = oferta.getPrescriptor();
-					if(!Checks.esNulo(proveedor.getTipoProveedor())) {
-						if(!Checks.esNulo(proveedor.getTipoProveedor().getCodigo())) {
-							codProveedor = proveedor.getTipoProveedor().getCodigo();
+				if(!Checks.esNulo(proveedor)) {					
+					codProveedor = Checks.esNulo(proveedor.getTipoProveedor()) ? null : proveedor.getTipoProveedor().getCodigo();
+					if(DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+							&& !Checks.esNulo(proveedor.getEmail()) 
+							&& !destinatarios.contains(proveedor.getEmail())){
+							destinatarios.add(proveedor.getEmail());
 						}
 					}
-				}
-				if (!Checks.esNulo(buzonfdv) && DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(codProveedor)) {
+				
+				if(DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+						&& !Checks.esNulo(oferta.getCustodio()) 
+						&& !Checks.esNulo(oferta.getCustodio().getEmail())
+						&& !destinatarios.contains(oferta.getCustodio().getEmail())){
+					destinatarios.add(oferta.getCustodio().getEmail());
+					}				
+				
+				if (!Checks.esNulo(buzonfdv) && (DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(codProveedor) || DDTipoProveedor.COD_CAT.equals(codProveedor))) {
 					destinatarios.add(buzonfdv.getEmail());
 				}
 				if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {

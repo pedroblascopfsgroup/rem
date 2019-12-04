@@ -203,6 +203,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
 	private static final String DESCRIPCION_COMITE_HAYA = "Haya";
 	private static final String PROBLEMA = "Problema";
+	private static final String AVISO = "Aviso";
+	private static final String TITULAR_NO_CLIENTE_URSUS = "Titular NO cliente en URSUS";
 	private static final String OFERTA_SIN_GESTOR_COMERCIAL_ASIGNADO = "Oferta sin gestor comercial asignado, revise la parametrización";
 	private static final String OFERTA_NA_LOTE = "N/A lote";
 	private static final String OFERTA_DICCIONARIO_CODIGO_NULO = "0";
@@ -9991,6 +9993,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						crearTareaValidacionClientes (expediente);
 						genericDao.update(Comprador.class, comprador);
 						return true;
+					}else if(AVISO.equals(datosClienteProblemasVentaDto.getTipoMensaje()) && TITULAR_NO_CLIENTE_URSUS.equals(datosClienteProblemasVentaDto.getLiavi1())) {						
+						comprador.setProblemasUrsus(false);
+						finalizarTareaValidacionClientes(expediente);
+						genericDao.update(Comprador.class, comprador);
+						return false;
 					}
 				}
 				if(!problemasPorComprador) {

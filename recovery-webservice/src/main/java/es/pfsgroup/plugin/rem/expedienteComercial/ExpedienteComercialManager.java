@@ -9696,6 +9696,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if(PROBLEMA.equals(datosClienteProblemasVentaDto.getTipoMensaje())){
 						problemasPorComprador = true;
 						return true;
+					}else if(AVISO.equals(datosClienteProblemasVentaDto.getTipoMensaje()) && TITULAR_NO_CLIENTE_URSUS.equals(datosClienteProblemasVentaDto.getLiavi1())) {
+						return false;
 					}
 				}
 				if(!problemasPorComprador) {

@@ -74,7 +74,6 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																style: 'text-align: right',
 																fieldStyle:'text-align:right;',
 																labelStyle: 'text-align:left;',
-																symbol: HreRem.i18n("symbol.euro"),
 																listeners:{
 																	edit: function(){
 																		Ext.global.console.log(me.up('gastodetallemain').getViewModel().get('gasto').get('asignadoATrabajos'));
@@ -158,12 +157,48 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																					this.setValue(0);
 																				
 																			}
-																		}
+																		},
+																		symbol: HreRem.i18n("symbol.euro")
 																	},
 																	{ 
 																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.principal.no.sujeto'),
 																		reference: 'importePrincipalNoSujeto',
-																		bind: '{detalleeconomico.importePrincipalNoSujeto}'											                
+																		bind: '{detalleeconomico.importePrincipalNoSujeto}',
+																		symbol: HreRem.i18n("symbol.euro")
+																	},
+																	{ 
+																		xtype: 'comboboxfieldbase',
+																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
+																		reference: 'existeRecargo',
+																		
+														               	bind: {
+															           		store: '{comboSiNoRem}',
+															           		value: '{detalleeconomico.existeRecargo}'	
+															         	},
+															         	listeners:{
+														        			change: function(){	
+														        				var me = this;
+														        				
+														        				var tipoRecargo = me.up('gastodetallemain').lookupReference('tipoRecargo');
+														        				if(me.getValue() =='' || me.getValue() == CONST.DD_SINO['NO']){
+														        					tipoRecargo.setDisabled(true);
+															        				tipoRecargo.setValue('');
+															        			}else{	
+															        				tipoRecargo.setDisabled(false);
+														        					tipoRecargo.setValue(CONST.DD_TIPO_RECARGO['NO_EVITABLE']);
+															        			}
+														        			
+														        			}
+															         	}
+																	},
+																	{ 
+																		xtype: 'comboboxfieldbase',
+																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.recargo'),
+																		reference: 'tipoRecargo',
+														               	bind: {
+															           		store: '{comboTipoRecargo}',
+															           		value: '{detalleeconomico.tipoRecargo}'	
+															         	}
 																	},
 																	{ 
 																		fieldLabel: HreRem.i18n('header.gasto.importe.recargo'),
@@ -194,54 +229,24 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																	},
 																	{ 
 																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.interes.demora'),
-																		bind: '{detalleeconomico.importeInteresDemora}'
+																		bind: '{detalleeconomico.importeInteresDemora}',
+																		symbol: HreRem.i18n("symbol.euro")
 																	},
 																	{ 
 																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.costas'),
-																		bind: '{detalleeconomico.importeCostas}'
+																		bind: '{detalleeconomico.importeCostas}',
+																		symbol: HreRem.i18n("symbol.euro")
 																	},
 																	{ 
 																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.otros.incrementos'),
-																		bind: '{detalleeconomico.importeOtrosIncrementos}'
+																		bind: '{detalleeconomico.importeOtrosIncrementos}',
+																		symbol: HreRem.i18n("symbol.euro")
 																	},
 																	{ 
 																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.provisiones.suplidos'),
-																		bind: '{detalleeconomico.importeProvisionesSuplidos}'
-																	},
-																	{ 
-																	xtype: 'comboboxfieldbase',
-																	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.recargo'),
-																	reference: 'existeRecargo',
-																	
-													               	bind: {
-														           		store: '{comboSiNoRem}',
-														           		value: '{detalleeconomico.existeRecargo}'	
-														         	},
-														         	listeners:{
-													        			change: function(){	
-													        				var me = this;
-													        				
-													        				var tipoRecargo = me.up('gastodetallemain').lookupReference('tipoRecargo');
-													        				if(me.getValue() =='' || me.getValue() == CONST.DD_SINO['NO']){
-													        					tipoRecargo.setDisabled(true);
-														        				tipoRecargo.setValue('');
-														        			}else{	
-														        				tipoRecargo.setDisabled(false);
-													        					tipoRecargo.setValue(CONST.DD_TIPO_RECARGO['NO_EVITABLE']);
-														        			}
-													        			
-													        			}
-														         	}
-																},
-																{ 
-																	xtype: 'comboboxfieldbase',
-																	fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.recargo'),
-																	reference: 'tipoRecargo',
-													               	bind: {
-														           		store: '{comboTipoRecargo}',
-														           		value: '{detalleeconomico.tipoRecargo}'	
-														         	}
-																}
+																		bind: '{detalleeconomico.importeProvisionesSuplidos}',
+																		symbol: HreRem.i18n("symbol.euro")
+																	}
 																	
 																]
 														}

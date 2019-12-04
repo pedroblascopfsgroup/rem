@@ -413,25 +413,6 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		return  HibernateUtils.castList(ActivoProveedorCartera.class, criteria.list());
 	}
 	
-	@Override
-	public List<ActivoProveedorCartera> getActivoProveedorCartera(Long idProveedor, DDCartera cartera, DDSubcartera subcartera) {
-		
-		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoProveedorCartera.class);
-		criteria.add(Restrictions.eq("proveedor.id", idProveedor));
-		if(Checks.esNulo(subcartera)) {
-			criteria.add(Restrictions.isNull("subcartera"));
-		} else {
-			criteria.add(Restrictions.eq("subcartera", subcartera));
-		}
-		if(Checks.esNulo(cartera)) {
-			criteria.add(Restrictions.isNull("cartera"));
-		} else {
-			criteria.add(Restrictions.eq("cartera", cartera));
-		}
-			
-		return  HibernateUtils.castList(ActivoProveedorCartera.class, criteria.list());
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly = false)

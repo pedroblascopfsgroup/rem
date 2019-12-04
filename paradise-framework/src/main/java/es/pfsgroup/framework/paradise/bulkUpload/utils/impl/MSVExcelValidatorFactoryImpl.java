@@ -184,10 +184,10 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVGastosRefacturablesExcelValidator gastosRefacturables;
 	
 	@Autowired
-	private MSVActualizacionInformacionInscripcionExcelValidator informacionInscripcion;
+	private MSVActualizacionTomaPosesionExcelValidator informacionInscripcion;
 	
 	@Autowired
-	private MSVActualizacionInformacionInscripcionExcelValidator tomaPosesion;
+	private MSVActualizacionTomaPosesionExcelValidator tomaPosesion;
 		
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {

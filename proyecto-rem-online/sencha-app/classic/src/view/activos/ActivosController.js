@@ -246,6 +246,7 @@ Ext.define('HreRem.view.activos.ActivosController', {
     	} else {
     		motivosOcultacionVenta.setHidden(true);
 	    }
+	    motivosOcultacionVenta.reset();
 	},
 	
 	// Función para que el combo "Motivos de ocultación" del "Estado publicación Alquiler" 
@@ -259,6 +260,7 @@ Ext.define('HreRem.view.activos.ActivosController', {
     		motivosOcultacionAlquiler.setHidden(false);
     	} else {
     		motivosOcultacionAlquiler.setHidden(true);
-	    }	
+	    }
+	    motivosOcultacionAlquiler.reset();
     }
 });

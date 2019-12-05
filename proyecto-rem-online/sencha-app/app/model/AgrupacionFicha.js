@@ -301,6 +301,10 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 {
                 	name: 'ventaSobrePlano',
                 	type: 'boolean'
+                },
+                {
+                	name: 'esGestorComercialEnActivo',
+                	type: 'boolean'
                 }
     ],
     

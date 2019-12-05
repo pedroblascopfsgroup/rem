@@ -64,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -134,7 +135,7 @@ public interface ActivoApi {
 	 * @return List<Activo>
 	 */
 	@BusinessOperationDefinition("activoManager.getListActivos")
-	Page getListActivos(DtoActivoFilter dto, Usuario usuarioLogado);
+	Object getListActivos(DtoActivoFilter dto, Usuario usuarioLogado);
 
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionRestringida")
 	boolean isIntegradoAgrupacionRestringida(Long id, Usuario usuarioLogado);
@@ -1265,6 +1266,8 @@ public interface ActivoApi {
 	FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto);
 
 	ActivoDto getDatosActivo(Long activoId);
+	
+	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente);
 
 	Long activoPerteneceDND(Activo activo);
 

@@ -269,9 +269,6 @@ public class VFacturasProveedores implements Serializable{
 	
 	@Column(name = "ETAPA")
 	private String etapa;
-	
-	@Column(name = "PTDA_PRESUPUESTARIA")
-	private String ptdaPresupuestaria;
 
 	public String getSociedad() {
 		return sociedad;
@@ -951,14 +948,6 @@ public class VFacturasProveedores implements Serializable{
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getPtdaPresupuestaria() {
-		return ptdaPresupuestaria;
-	}
-
-	public void setPtdaPresupuestaria(String ptdaPresupuestaria) {
-		this.ptdaPresupuestaria = ptdaPresupuestaria;
 	}
 	
 }

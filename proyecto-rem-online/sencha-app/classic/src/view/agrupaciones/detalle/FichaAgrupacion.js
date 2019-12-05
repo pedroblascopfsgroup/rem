@@ -386,10 +386,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 				        	reference: 'ventaPlano',
 						
 				        	bind: {	
-				        		readOnly: '{usuarioEditarVentaPlano}',
+				        		readOnly: '{!esUsuarioGestorComercialAgrupacionObraNueva}',
 			            		store: '{comboSiNoBoolean}',
-			            		value: '{agrupacionficha.ventaSobrePlano}',
-			            		hidden: '{!esAgrupacionObraNueva}'
+			            		value: '{agrupacionficha.ventaSobrePlano}'
 			            	}
 						}
 				]

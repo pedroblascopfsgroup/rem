@@ -80,6 +80,7 @@ public class DtoAgrupaciones extends WebDto {
 	private String motivoAutorizacionTramitacionCodigo;
 	private String observacionesAutoTram;
 	private Boolean ventaSobrePlano;
+	private Boolean esGestorComercialEnActivo;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -498,5 +499,11 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
 		this.ventaSobrePlano = ventaSobrePlano;
+	}
+	public Boolean getEsGestorComercialEnActivo() {
+		return esGestorComercialEnActivo;
+	}
+	public void setEsGestorComercialEnActivo(Boolean esGestorComercialEnActivo) {
+		this.esGestorComercialEnActivo = esGestorComercialEnActivo;
 	}
 }

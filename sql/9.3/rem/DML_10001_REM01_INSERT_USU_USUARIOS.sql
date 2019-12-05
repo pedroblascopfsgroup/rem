@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=Juan Torrella
---## FECHA_CREACION=20191115
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20191121
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-REMVIP-5627
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-5627
 --## PRODUCTO=SI
 --## 
 --## Finalidad: Inserción USU_USUARIOS
@@ -52,18 +52,40 @@ BEGIN
             EXECUTE IMMEDIATE V_MSQL INTO V_ENTORNO; 
 
             IF V_ENTORNO = 1 THEN
-            	V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
-		          VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzonelecnor'', ''kQtgqb'', ''BUZON ELECNOR'', ''trabajoshaya@quasarsoftware.es'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';
-		      DBMS_OUTPUT.PUT_LINE('[INFO] Insertando usuario ficticio buzonelecnor.......');
+              	--Comprobar el dato a insertar.
+        		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' 
+							WHERE USU_USERNAME = ''buzonelecnor''
+							AND USU_NOMBRE = ''BUZON ELECNOR'' 
+							AND USU_MAIL = ''trabajoshaya@quasarsoftware.es''';
+        		EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTROS;
 
-		        EXECUTE IMMEDIATE V_MSQL;
+		        IF V_NUM_REGISTROS > 0 THEN
+		          DBMS_OUTPUT.PUT_LINE('[INFO] El usuario YA existe.......');
+		        ELSE
+		      		V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
+		          				VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzonelecnor'', ''kQtgqb'', ''BUZON ELECNOR'', ''trabajoshaya@quasarsoftware.es'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';		     		
+		        	EXECUTE IMMEDIATE V_MSQL;
+		        	DBMS_OUTPUT.PUT_LINE('[INFO] Creado usuario buzonelecnor.......');
+		        END IF;
+          			
 
-		    ELSE 
-		    	V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
-		          VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzonelecnor'', ''1234'', ''BUZON ELECNOR'', ''pruebashrem@gmail.com'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';
-		      	DBMS_OUTPUT.PUT_LINE('[INFO] Insertando usuario ficticio buzonelecnor.......');
-				EXECUTE IMMEDIATE V_MSQL;
-			END IF;		 
+		    ELSE
+		    	--Comprobar el dato a insertar.
+        		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' 
+							WHERE USU_USERNAME = ''buzonelecnor''
+							AND USU_NOMBRE = ''BUZON ELECNOR'' 
+							AND USU_MAIL = ''pruebashrem@gmail.com''';
+        		EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTROS;		    	
+		    	
+        		IF V_NUM_REGISTROS > 0 THEN
+		          DBMS_OUTPUT.PUT_LINE('[INFO] El usuario YA existe.......');
+		        ELSE		    
+			    	V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
+			          VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzonelecnor'', ''1234'', ''BUZON ELECNOR'', ''pruebashrem@gmail.com'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';
+			      	DBMS_OUTPUT.PUT_LINE('[INFO] Insertando usuario ficticio buzonelecnor.......');
+					EXECUTE IMMEDIATE V_MSQL;
+				END IF;
+			END IF;
       
         ELSE
             DBMS_OUTPUT.PUT_LINE('  [INFO] '''||V_ESQUEMA_M||''' USU_USUARIOS... No existe.');  
@@ -74,12 +96,12 @@ BEGIN
 EXCEPTION
   WHEN OTHERS THEN 
     DBMS_OUTPUT.PUT_LINE('KO!');
-    err_num := SQLCODE;
-    err_msg := SQLERRM;
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
     
-    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
-    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-    DBMS_OUTPUT.put_line(err_msg);
+    DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.PUT_LINE(err_msg);
     
     ROLLBACK;
     RAISE;          

@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -178,6 +179,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
+import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
@@ -348,6 +350,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private ActivoTributoApi activoTributoApi;
+	
+	@Autowired
+	private GastosExpedienteApi gastosExpedienteApi;
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
@@ -390,7 +395,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.getListActivos")
-	public Page getListActivos(DtoActivoFilter dto, Usuario usuarioLogado) {
+	public Object getListActivos(DtoActivoFilter dto, Usuario usuarioLogado) {
 		return activoDao.getListActivos(dto, usuarioLogado);
 	}
 
@@ -1168,6 +1173,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
+		
+		crearGastosExpediente(nuevoExpediente);
 
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
@@ -3074,25 +3081,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
-
-	private List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) {
-		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
-		List<String> acciones = new ArrayList<String>();
-		String codigoOferta = oferta.getTipoOferta().getCodigo();
-
-		acciones.add(DDAccionGastos.CODIGO_COLABORACION);
-		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
-
-		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
-			acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
-		}
+	
+	@Transactional(readOnly = false)
+	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente) {
 		
-		for(ActivoOferta activoOferta : oferta.getActivosOferta()) {
-			Activo activo = activoOferta.getPrimaryKey().getActivo();
-
-			for (String accion : acciones) {
-				GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo, accion);
-				gastosExpediente.add(gex);
+		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
+		
+		ComisionDto filtroDto = new ComisionDto();
+		
+		filtroDto.setIdOfertaRem(nuevoExpediente.getOferta().getNumOferta());
+		List<GastosExpediente> listaGastos = gastosExpedienteApi.getListaGastosExpediente(filtroDto);
+		
+		if(listaGastos == null || listaGastos.isEmpty()) {
+		
+			List<String> acciones = new ArrayList<String>();
+			String codigoOferta = nuevoExpediente.getOferta().getTipoOferta().getCodigo();
+	
+			acciones.add(DDAccionGastos.CODIGO_COLABORACION);
+			acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
+	
+			if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
+				acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+			}
+			
+			for(ActivoOferta activoOferta : nuevoExpediente.getOferta().getActivosOferta()) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+	
+				for (String accion : acciones) {
+					GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(), activo, accion);
+					gastosExpediente.add(gex);
+				}
 			}
 		}
 
@@ -3123,8 +3141,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			fechaBaja = !Checks.esNulo(fechaBaja) ? new Date(fechaBaja.getTime()) : null;
 
 			if (!Checks.esNulo(agrupacionActivo.getAgrupacion().getTipoAgrupacion())
-					&& agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
-							.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)
+					&& (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())
+							|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()))
 					&& (fechaBaja == null || fechaBaja.after(new Date()))) {
 				return true;
 			}
@@ -4465,24 +4483,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
-			
-
-//			if (!Checks.esNulo(dto.getVentaSobrePlano())){
-//				
-//				if(dto.getVentaSobrePlano()) {
-//					activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI)));
-//				}else {
-//					activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO)));
-//				}
-//	
-//				
-//			}
-//			if(!Checks.esNulo(dto.getMotivoAutorizacionTramitacionCodigo())) {
-//				if(DDMotivoAutorizacionTramitacion.COD_OTROS.equals(activo.getOfertas().get(0))) {
-//					
-//				}
-//			}
-
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 			return false;
@@ -5286,8 +5286,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (this.isIntegradoAgrupacionObraNuevaOrAsistida(activo))
 			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
-		else if (DDTipoUsoDestino.TIPO_USO_PRIMERA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo())
-				|| DDTipoUsoDestino.TIPO_USO_SEGUNDA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo()))
+		else if (activo.getTipoUsoDestino() != null && (DDTipoUsoDestino.TIPO_USO_PRIMERA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo())
+				|| DDTipoUsoDestino.TIPO_USO_SEGUNDA_RESIDENCIA.equals(activo.getTipoUsoDestino().getCodigo())))
 			codigoTipoComercializacion = DDTipoComercializar.CODIGO_RETAIL;
 		else {
 			Double importeLimite = (double) 500000;

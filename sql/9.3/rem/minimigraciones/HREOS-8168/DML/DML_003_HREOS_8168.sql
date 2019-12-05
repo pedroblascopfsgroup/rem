@@ -1,0 +1,115 @@
+--/*
+--#########################################
+--## AUTOR=Mª José Ponce
+--## FECHA_CREACION=20191204
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-8168
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Actualizacion tarifas Galeon y Zeus en la tabla ACT_CFT_CONFIG_TARIFA.
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+	V_TABLA_TMP VARCHAR2(30 CHAR) := 'TMP_ACT_CFT_CONFIG_TARIFA'; -- Variable para tabla de salida para el borrado
+	V_TABLA_TARIFA VARCHAR2(40 CHAR):='ACT_CFT_CONFIG_TARIFA';--Variable para la tabla de volcado	
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error
+	V_SQL VARCHAR2(4000 CHAR);
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-8168';
+	
+
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]'||CHR(10));
+	
+    DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE VOLCADO SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_TARIFA||'.');
+	--Insertamos las tarifas para la cartera de Cerberus - Subcartera ZEUS Inmobiliario
+	V_SQL:= ('INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TARIFA||' (
+		CFT_ID,
+		DD_TTF_ID,
+		DD_TTR_ID,
+		DD_STR_ID, 
+		DD_CRA_ID, 
+		CFT_PRECIO_UNITARIO, 
+		CFT_UNIDAD_MEDIDA, 
+		VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+        
+		SELECT '||V_ESQUEMA||'.S_'||V_TABLA_TARIFA||'.NEXTVAL,
+		TARIF.DD_TTF_ID,		
+		TMP.TIPO_TRABAJO,
+		TMP.SUBTIPO_TRABAJO,
+		(SELECT CAR.DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CAR
+		INNER JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SUB ON SUB.DD_CRA_ID=CAR.DD_CRA_ID
+		WHERE SUB.DD_SCR_CODIGO=133), 
+		PRECIO_AVANZA,
+		TMP.UNIDAD_MEDIDA,
+		0, '''||V_USUARIO||''', SYSDATE,0
+
+        FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' TMP
+		INNER JOIN '||V_ESQUEMA||'.DD_TTF_TIPO_TARIFA TARIF ON TARIF.DD_TTF_CODIGO=TMP.CODIGO
+		'
+   	
+        );
+
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||SQL%ROWCOUNT||' registros para la cartera de ZEUS en la tabla '||V_TABLA_TARIFA);
+	COMMIT;
+
+	--Insertamos las tarifas para la cartera de GALEON
+	V_SQL:= ('INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TARIFA||' (
+		CFT_ID,
+		DD_TTF_ID,
+		DD_TTR_ID,
+		DD_STR_ID, 
+		DD_CRA_ID, 
+		CFT_PRECIO_UNITARIO, 
+		CFT_UNIDAD_MEDIDA, 
+		VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+        
+		SELECT '||V_ESQUEMA||'.S_'||V_TABLA_TARIFA||'.NEXTVAL,
+		TARIF.DD_TTF_ID,		
+		TMP.TIPO_TRABAJO,
+		TMP.SUBTIPO_TRABAJO,
+		(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO=15), 
+		PRECIO_AVANZA,
+		TMP.UNIDAD_MEDIDA,
+		0, '''||V_USUARIO||''', SYSDATE,0
+
+        FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' TMP
+		INNER JOIN '||V_ESQUEMA||'.DD_TTF_TIPO_TARIFA TARIF ON TARIF.DD_TTF_CODIGO=TMP.CODIGO
+		'
+   	
+        );
+
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||SQL%ROWCOUNT||' registros para la cartera de GALEON en la tabla '||V_TABLA_TARIFA);
+	COMMIT;
+
+	PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
+	DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+
+EXCEPTION
+    WHEN OTHERS THEN
+      PL_OUTPUT := PL_OUTPUT ||'[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE)||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||'-----------------------------------------------------------'||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||SQLERRM||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||V_SQL||CHR(10);
+      DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

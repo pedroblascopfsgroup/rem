@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=JIN LI HU
---## FECHA_CREACION=20191118
+--## FECHA_CREACION=20191205
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8476
+--## INCIDENCIA_LINK=HREOS-8754
 --## PRODUCTO=NO
 --## Finalidad: añadir el codigo de la subcartera para poder utilizarlo en el grid
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Añadidos campos necesarios para mostrar las 3 columnas nuevas que se han añadido en el grid de buscador de activos.
+--##		0.3 Corregir el fallo del CASE de TAS_IMPORTE_TAS_FIN 
 --##########################################
 --*/
 

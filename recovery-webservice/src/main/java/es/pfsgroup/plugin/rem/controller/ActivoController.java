@@ -588,16 +588,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListVisitasActivoById(Long id, ModelMap model) {
-		try {
-			model.put(RESPONSE_DATA_KEY, adapter.getListVisitasActivoById(id));
-
-		} catch (IllegalAccessException e) {
-			logger.error("error en activoController", e);
-
-		} catch (InvocationTargetException e) {
-			logger.error("error en activoController", e);
-
-		}
+		model.put(RESPONSE_DATA_KEY, adapter.getListVisitasActivoById(id));
 
 		return createModelAndViewJson(model);
 	}

@@ -184,7 +184,7 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVGastosRefacturablesExcelValidator gastosRefacturables;
 	
 	@Autowired
-	private MSVActualizacionTomaPosesionExcelValidator informacionInscripcion;
+	private MSVActualizacionInformacionInscripcionExcelValidator informacionInscripcion;
 	
 	@Autowired
 	private MSVActualizacionTomaPosesionExcelValidator tomaPosesion;

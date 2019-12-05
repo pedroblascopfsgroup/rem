@@ -199,12 +199,12 @@ pipeline {
             steps {
 
                 timeout (time:15, unit:'MINUTES') {
-                    deployFrontal("recovecp@iap04", 2228)
+                    deployFrontal("recovecp@iap04", 2230)
 
                 }
 
                 timeout (time:10, unit:'MINUTES') {
-                    deployProcesos("recovecb@iap04", 2228)
+                    deployProcesos("recovecb@iap04", 2230)
 
                 }
             }

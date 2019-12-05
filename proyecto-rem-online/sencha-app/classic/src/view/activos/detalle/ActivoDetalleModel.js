@@ -2308,7 +2308,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			      remoteUrl: 'generic/getDiccionario',
 			      extraParams: {diccionario: 'tipoDireccionComercial'}
 			 },
-			 autoLoad: true,
 			 sorters: 'descripcion'
 		}
      }

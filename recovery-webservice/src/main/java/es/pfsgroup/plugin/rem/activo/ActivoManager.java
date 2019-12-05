@@ -145,6 +145,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
@@ -4483,6 +4484,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
 				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 			}
+			if(!Checks.esNulo(activo.getTerritorio())) {
+				beanUtilNotNull.copyProperty(dto, "direccionComercial", activo.getTerritorio().getCodigo()); 
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -4551,6 +4555,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
+			if(!Checks.esNulo(dto.getDireccionComercial())) {
+				DDTerritorio territorio = (DDTerritorio) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTerritorio.class, dto.getDireccionComercial());
+				
+				activo.setTerritorio(territorio);
+				
+			}
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -4560,7 +4571,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en activoManager", e);
 			return false;
 		}
-
+		
 		activo.setEstaEnPuja(dto.getPuja());
 		activoDao.save(activo);
 

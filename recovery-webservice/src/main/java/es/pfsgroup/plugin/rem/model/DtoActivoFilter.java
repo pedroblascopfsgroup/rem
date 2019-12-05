@@ -115,8 +115,10 @@ public class DtoActivoFilter extends WebDto {
 	  No se puede utilizar el tipoComercializacionCodigo que hay definido más arriba porque es el que utiliza el filtro para buscar.*/
 	private String  tipoComercializacionCodigoAuxiliar;
 	private Long precioTasacionActivo;
-	private String estadoPublicacionVenta;
-	private String estadoPublicacionAlquiler;
+	private String estadoPublicacionVentaCodigo;
+	private String estadoPublicacionAlquilerCodigo;
+	private String motivosOcultacionVenta;
+	private String motivosOcultacionAlquiler;
 	private String tipoGestorCodigo;
 	private String estadoPublicacionActivoListadoCodigo;
 	private boolean listPage;
@@ -685,18 +687,6 @@ public class DtoActivoFilter extends WebDto {
 	public void setPrecioTasacionActivo(Long precioTasacionActivo) {
 		this.precioTasacionActivo = precioTasacionActivo;
 	}
-	public String getEstadoPublicacionVenta() {
-		return estadoPublicacionVenta;
-	}
-	public void setEstadoPublicacionVenta(String estadoPublicacionVenta) {
-		this.estadoPublicacionVenta = estadoPublicacionVenta;
-	}
-	public String getEstadoPublicacionAlquiler() {
-		return estadoPublicacionAlquiler;
-	}
-	public void setEstadoPublicacionAlquiler(String estadoPublicacionAlquiler) {
-		this.estadoPublicacionAlquiler = estadoPublicacionAlquiler;
-	}
 	public String getFasePublicacionCodigo() {
 		return fasePublicacionCodigo;
 	}
@@ -750,5 +740,29 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setSubFasePublicacionDescripcion(String subFasePublicacionDescripcion) {
 		this.subFasePublicacionDescripcion = subFasePublicacionDescripcion;
+	}
+	public String getEstadoPublicacionVentaCodigo() {
+		return estadoPublicacionVentaCodigo;
+	}
+	public void setEstadoPublicacionVentaCodigo(String estadoPublicacionVentaCodigo) {
+		this.estadoPublicacionVentaCodigo = estadoPublicacionVentaCodigo;
+	}
+	public String getEstadoPublicacionAlquilerCodigo() {
+		return estadoPublicacionAlquilerCodigo;
+	}
+	public void setEstadoPublicacionAlquilerCodigo(String estadoPublicacionAlquilerCodigo) {
+		this.estadoPublicacionAlquilerCodigo = estadoPublicacionAlquilerCodigo;
+	}
+	public String getMotivosOcultacionVenta() {
+		return motivosOcultacionVenta;
+	}
+	public void setMotivosOcultacionVenta(String motivosOcultacionVenta) {
+		this.motivosOcultacionVenta = motivosOcultacionVenta;
+	}
+	public String getMotivosOcultacionAlquiler() {
+		return motivosOcultacionAlquiler;
+	}
+	public void setMotivosOcultacionAlquiler(String motivosOcultacionAlquiler) {
+		this.motivosOcultacionAlquiler = motivosOcultacionAlquiler;
 	}	
 }

@@ -187,12 +187,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimarioId", dto.getApiPrimarioId());
 		}
 		
-		if (dto.getEstadoPublicacionVenta() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionCodigo", dto.getEstadoPublicacionVenta());
+		if (dto.getEstadoPublicacionVentaCodigo() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionVenta", dto.getEstadoPublicacionVentaCodigo());
 		}
 		
-		if (dto.getEstadoPublicacionAlquiler() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionCodigo", dto.getEstadoPublicacionAlquiler());	
+		if (dto.getEstadoPublicacionAlquilerCodigo() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionAlquiler", dto.getEstadoPublicacionAlquilerCodigo());	
+		}
+		
+		if(dto.getMotivosOcultacionVenta() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.motivoOcultacionVenta", dto.getMotivosOcultacionVenta());
+		}
+		
+		if(dto.getMotivosOcultacionAlquiler() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.motivoOcultacionAlquiler", dto.getMotivosOcultacionAlquiler());
 		}
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
@@ -246,9 +254,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and act.id = aga.activo.id)");
 		}
 		
-		if(!Checks.esNulo(dto.getFasePublicacionCodigo())) {
-			hb.appendWhere(" act.fasePublicacionCodigo = "+ dto.getFasePublicacionCodigo());
-		}
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
 
 		if(!Checks.esNulo(dto.isListPage()) && dto.isListPage())
 			return HibernateQueryUtils.page(this, hb, dto);

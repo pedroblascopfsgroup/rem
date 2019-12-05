@@ -32,6 +32,7 @@ import es.capgemini.pfs.tareaNotificacion.VencimientoUtils;
 import es.capgemini.pfs.tareaNotificacion.VencimientoUtils.TipoCalculo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
+import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
@@ -40,10 +41,10 @@ import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
@@ -622,6 +623,20 @@ public class TareaActivoManager implements TareaActivoApi {
 		}
 		
 		return null;
+	}
+
+	 @Override
+	public Boolean deleteTareaActivoOnCascade(TareaActivo tarea) {
+	     genericDao.deleteById(TareaActivo.class, tarea.getId());
+         genericDao.update(TareaActivo.class, tarea);
+	     EXTTareaNotificacion tareaNotificacion = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", tarea.getId()));
+	     if ( tareaNotificacion != null ) {
+	         genericDao.deleteById(EXTTareaNotificacion.class, tareaNotificacion.getId());
+             genericDao.update(EXTTareaNotificacion.class, tareaNotificacion);
+
+	         return true;
+	     }
+	     return false;
 	}
 	
 }

@@ -46,11 +46,10 @@ BEGIN
 	
 	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-				      SELECT * 
+				      SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto
 					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01'' and 
-					    not EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_can_calificacion_neg can where can.borrado = 0 and can.act_id = tit.act_id)
+					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01''
 				) T2
 				ON (T1.TIT_ID = T2.TIT_ID)
 				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
@@ -74,15 +73,14 @@ BEGIN
 					0)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS TRAMITACIÓN CASO 1 ');
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS TRAMITACIÓN 2ª PRESENTACIÓN NULA ');
 
 	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-				     SELECT * 
+				     SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto 
 					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01'' and 
-					    not EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_can_calificacion_neg can where can.borrado = 0 and can.act_id = tit.act_id)
+					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01'' 
    
 				) T2
 				ON (T1.TIT_ID = T2.TIT_ID)
@@ -109,7 +107,7 @@ BEGIN
 					0)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS TRAMITACIÓN CASO 2.1 ');
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS TRAMITACIÓN 2ª PRESENTACIÓN CALIFICACIÓN NEGATIVA ');
 	   
 	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
                                          TIT_ID, 
@@ -132,21 +130,19 @@ BEGIN
 											0
 											FROM '||V_ESQUEMA||'.act_tit_titulo tit
 											left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01'' and 
-											not EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_can_calificacion_neg can where can.borrado = 0 and can.act_id = tit.act_id)
+											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01'' 
 											and EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_aht_hist_tram_titulo aht where aht.borrado = 0 
 											and aht.dd_esp_id = (select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02'') and aht.tit_id = tit.tit_id)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS TRAMITACIÓN CASO 2.2 ');
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS TRAMITACIÓN 2ª PRESENTACIÓN NO NULA ');
 	   
 	    	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-				     SELECT *    
-						FROM '||V_ESQUEMA||'.act_tit_titulo tit
-						    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-						    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''06'' and 
-						    not EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_can_calificacion_neg can where can.borrado = 0 and can.act_id = tit.act_id)
+					SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto     
+					FROM '||V_ESQUEMA||'.act_tit_titulo tit
+					left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
+					where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''06''
 				) T2
 				ON (T1.TIT_ID = T2.TIT_ID)
 				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
@@ -172,16 +168,15 @@ BEGIN
 					0)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS SUBSANAR CASO 1 ');
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS SUBSANAR 2ª PRESENTACIÓN NULA');
 	  
 	   
 	   V_MSQL:= 'MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-				      SELECT * 
+				      SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto 
                         FROM '||V_ESQUEMA||'.act_tit_titulo tit
                         left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-                        where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''06'' and 
-                        not EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_can_calificacion_neg can where can.borrado = 0 and can.act_id = tit.act_id)
+                        where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''06''
 				) T2
 				ON (T1.TIT_ID = T2.TIT_ID)
 				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
@@ -207,7 +202,7 @@ BEGIN
 					0)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS SUBSANAR CASO 2.1 '); 
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS SUBSANAR 2ª PRESENTACIÓN CALIFICACIÓN NEGATIVA '); 
 
 	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
                                          TIT_ID, 
@@ -232,22 +227,20 @@ BEGIN
 											0
 											FROM '||V_ESQUEMA||'.act_tit_titulo tit
 											left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''06'' and 
-											not EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_can_calificacion_neg can where can.borrado = 0 and can.act_id = tit.act_id)
+											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''06'' 
 											and EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_aht_hist_tram_titulo aht where aht.borrado = 0 
 											and aht.dd_esp_id = (select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02'') and aht.tit_id = tit.tit_id)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS SUBSANAR CASO 2.2 '); 
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS SUBSANAR 2ª PRESENTACIÓN CALIFICACIÓN NEGATIVA QUE YA TIENE UNA'); 
 	   -- No correcto pero se puede tratar usando solo la segunda fecha de presentación
 	   
 	     V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-				     SELECT * 
+				     SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto 
 					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and eti.dd_eti_codigo = ''02'' and tit.TIT_FECHA_INSC_REG is not null and
-					    not EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_can_calificacion_neg can where can.borrado = 0 and can.act_id = tit.act_id)
+					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and eti.dd_eti_codigo = ''02'' and tit.TIT_FECHA_INSC_REG is not null
    			) T2
 				ON (T1.TIT_ID = T2.TIT_ID)
 				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
@@ -273,16 +266,14 @@ BEGIN
 					0)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS INSCRITO CASO 1 '); 
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS INSCRITO TRAMITACIÓN 2ª PRESENTACIÓN NULA '); 
 
 	   	    V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-				     SELECT * 
+				     SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto 
 					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
 					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is not null and eti.dd_eti_codigo = ''02''
-						and tit.TIT_FECHA_INSC_REG is not null and
-					    not EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_can_calificacion_neg can where can.borrado = 0 and can.act_id = tit.act_id)
    
    			) T2
 				ON (T1.TIT_ID = T2.TIT_ID)
@@ -309,7 +300,7 @@ BEGIN
 					0)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS INSCRITO CASO 2.1 '); 
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS INSCRITO 2ª PRESENTACIÓN CALIFICACIÓN NEGATIVA '); 
 	   
 	   
 	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
@@ -335,14 +326,13 @@ BEGIN
 											0
 											FROM '||V_ESQUEMA||'.act_tit_titulo tit
 											left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is not null and eti.dd_eti_codigo = ''02'' and 
-											not EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_can_calificacion_neg can where can.borrado = 0 and can.act_id = tit.act_id)
+											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is not null and eti.dd_eti_codigo = ''02'' 
 											and EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_aht_hist_tram_titulo aht where aht.borrado = 0 
 											and aht.dd_esp_id = (select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02'') and aht.tit_id = tit.tit_id)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS INSCRITO CASO 2.2 '); 
-	   -- No correcto pero se puede tratar usando solo la segunda fecha de presentación
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS INSCRITO TRAMITACIÓN 2ª PRESENTACIÓN NO NULA '); 
+	   -- No correcto pero se puede tratar usando solo la segunda fecha de presentación*/
 	   
 	   
 	   

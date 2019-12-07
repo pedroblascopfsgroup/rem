@@ -100,7 +100,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.tit_fecha_envio_auto,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -291,7 +291,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.tit_fecha_envio_auto,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -356,7 +356,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.TIT_FECHA_ENVIO_AUTO,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -490,7 +490,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.TIT_FECHA_ENVIO_AUTO,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''01''),
 					NULL,
 					0, 
@@ -524,7 +524,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.TIT_FECHA_ENVIO_AUTO,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -558,7 +558,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.TIT_FECHA_ENVIO_AUTO,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -657,7 +657,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.tit_fecha_envio_auto,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -720,7 +720,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.tit_fecha_envio_auto,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -745,7 +745,7 @@ BEGIN
 											S_'||V_TEXT_TABLA||'.NEXTVAL,
 											tit.tit_id, 
 											tit.TIT_FECHA_PRESENT2_REG,
-											tit.tit_fecha_envio_auto,
+											TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 											NULL,
 											0, 
@@ -785,7 +785,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.tit_fecha_envio_auto,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -1079,7 +1079,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT2_REG,
-					T2.TIT_FECHA_ENVIO_AUTO,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -1376,7 +1376,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
-					T2.TIT_FECHA_ENVIO_AUTO,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -1901,7 +1901,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
-					T2.tit_fecha_envio_auto,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -2011,7 +2011,7 @@ BEGIN
 	   EXECUTE IMMEDIATE V_MSQL;
 	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 64-65 ');
 
-	   /*	   	   	   	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
+	   	   	   	   	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
 					SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto     
 					FROM '||V_ESQUEMA||'.act_tit_titulo tit
@@ -2048,7 +2048,6 @@ BEGIN
 	   	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
                                          TIT_ID, 
                                          AHT_FECHA_PRES_REGISTRO,
-										 AHT_FECHA_INSCRIPCION,
                                          DD_ESP_ID,
                                          AHT_OBSERVACIONES,
                                          VERSION, 
@@ -2059,8 +2058,7 @@ BEGIN
 											S_'||V_TEXT_TABLA||'.NEXTVAL,
 											tit.tit_id, 
 											tit.TIT_FECHA_PRESENT2_REG,
-											TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
-											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''03''),
+											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''01''),
 											NULL,
 											0, 
 											'''||V_USU||''', 
@@ -2074,7 +2072,7 @@ BEGIN
 											and aht.dd_esp_id = (select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02'') and aht.tit_id = tit.tit_id)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 66-67 ');*/
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 66-67 ');
 
 	   	   	   	   	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
@@ -2536,6 +2534,70 @@ BEGIN
 					
 	   EXECUTE IMMEDIATE V_MSQL;
 	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 81 ');
+
+	   	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
+				USING(
+				     SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto 
+					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
+					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
+					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01'' 
+						and tit.tit_fecha_envio_auto is null
+   
+				) T2
+				ON (T1.TIT_ID = T2.TIT_ID)
+				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
+												 TIT_ID, 
+												 AHT_FECHA_PRES_REGISTRO, 
+												 AHT_FECHA_CALIFICACION,
+				                                 DD_ESP_ID,
+				                                 AHT_OBSERVACIONES,
+												 VERSION, 
+												 USUARIOCREAR, 
+												 FECHACREAR, 
+												 BORRADO)
+				
+				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
+					T2.tit_id, 
+					T2.TIT_FECHA_PRESENT1_REG,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
+					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
+					NULL,
+					0, 
+					'''||V_USU||''', 
+					SYSDATE, 
+					0)';
+					
+	   EXECUTE IMMEDIATE V_MSQL;
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS TRAMITACIÓN 2ª PRESENTACIÓN CALIFICACIÓN NEGATIVA NULA ');
+	   
+	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
+                                         TIT_ID, 
+                                         AHT_FECHA_PRES_REGISTRO, 
+                                         DD_ESP_ID,
+                                         AHT_OBSERVACIONES,
+                                         VERSION, 
+                                         USUARIOCREAR, 
+                                         FECHACREAR, 
+                                         BORRADO)
+											SELECT 
+											S_'||V_TEXT_TABLA||'.NEXTVAL,
+											tit.tit_id, 
+											tit.TIT_FECHA_PRESENT2_REG,
+											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''01''),
+											NULL,
+											0, 
+											'''||V_USU||''', 
+											SYSDATE, 
+											0
+											FROM '||V_ESQUEMA||'.act_tit_titulo tit
+											left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
+											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01'' 
+											and tit.tit_fecha_envio_auto is null
+											and EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_aht_hist_tram_titulo aht where aht.borrado = 0 
+											and aht.dd_esp_id = (select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02'') and aht.tit_id = tit.tit_id)';
+					
+	   EXECUTE IMMEDIATE V_MSQL;
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS TRAMITACIÓN 2ª PRESENTACIÓN NO NULA ');	  
 
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_ESQUEMA||'.'||V_TEXT_TABLA);
    	

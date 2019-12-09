@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=Alfonso Rodriguez
---## FECHA_CREACION=20191203
+--## FECHA_CREACION=20191209
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8577
@@ -34,62 +34,60 @@ DECLARE
 	V_TABLA VARCHAR2(50 CHAR) := 'GRU_GRUPOS_USUARIOS';
 	V_ENTIDAD_ID NUMBER(16);
 	V_ID NUMBER(16);
-
-	TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
-	TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
-	V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-		T_FUNCION( 'grucoces1' , 'grucoces1'),
-		T_FUNCION( 'grucoces1' , 'ext.mkelly'),
-		T_FUNCION( 'grucoces1' , 'ext.bcunningham'),
-		T_FUNCION( 'grucoces1' , 'ext.drubio'),
-		T_FUNCION( 'grucoces1' , 'ext.jperezb'),
-		T_FUNCION( 'grucoces1' , 'ext.ibastosmendes'),
-		T_FUNCION( 'grucoces1' , 'ext.crenilla'),
-		T_FUNCION( 'grucoces1' , 'ext.gcalnan'),
-		T_FUNCION( 'grucoces1' , 'ext.jprieto'),
-		T_FUNCION( 'grucoces1' , 'lcarrillo'),
-		T_FUNCION( 'grucoces1' , 'lrisco'),
-		T_FUNCION( 'grucoces1' , 'msanzi'),
-		T_FUNCION( 'grucoces1' , 'ext.dmilone'),
-		T_FUNCION( 'grucoces1' , 'imartin'),
-		T_FUNCION( 'grucoces1' , 'elopezg')
-	); 
-	V_TMP_FUNCION T_FUNCION;
     
 BEGIN	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] '); 
 	-- LOOP para insertar los valores en ZON_PEF_USU -----------------------------------------------------------------
 	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TABLA||'] ');
-	FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST
-	LOOP
-		V_TMP_FUNCION := V_FUNCION(I);
 	
-		DBMS_OUTPUT.PUT_LINE('****************************************************');	
-		DBMS_OUTPUT.PUT_LINE('[INFO]: Comprobando si existe el usuario '''||V_TMP_FUNCION(2)||''' asociado al grupo '''||V_TMP_FUNCION(1)||'');
-		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.'||V_TABLA||' 
-			WHERE USU_ID_GRUPO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(1)||''') 
-			AND USU_ID_USUARIO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(2)||''')';
-		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	DBMS_OUTPUT.PUT_LINE('****************************************************');	
+	DBMS_OUTPUT.PUT_LINE('[INFO]: Comprobando si existe el usuario  asociado al grupo');
+
+
+	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.usu_usuarios WHERE USU_USERNAME = ''grucoces1''';
+
+	DBMS_OUTPUT.PUT_LINE(V_SQL);	
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+		
+	-- Si existe la FILA
+	IF V_NUM_TABLAS > 0 THEN	  
+		DBMS_OUTPUT.PUT_LINE('[INFO]: No hacemos nada. Existe el grupo');		
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO]: 	Insertando relación');
+
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TABLA||'' ||
+			' (GRU_ID, USU_ID_GRUPO, USU_ID_USUARIO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
+			' SELECT '||V_ESQUEMA_M||'.S_'||V_TABLA||'.NEXTVAL' ||
+			',(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = ''grucoces1'')' ||
+			',(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = ''grucoces1'')' ||
+			',0, '''||V_USUARIO||''', SYSDATE, 0 FROM DUAL 
+			WHERE NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA_M||'.'||V_TABLA||' AUX_GRU 
+			WHERE USU_ID_USUARIO = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = ''grucoces1''))';
+	    	
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Relación insertada correctamente.');
+
+	END IF;
+
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS (GRU_ID, USU_ID_GRUPO, USU_ID_USUARIO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
+			SELECT '||V_ESQUEMA_M||'.S_GRU_GRUPOS_USUARIOS.NEXTVAL
+			,  (SELECT grupo.usu_id FROM '||V_ESQUEMA_M||'.usu_usuarios grupo where grupo.borrado = 0 and grupo.usu_username = ''grucoces1'') grupo
+			, gru.usu_id_usuario
+			, 0
+			, '''||V_USUARIO||'''
+			, SYSDATE
+			, 0
+			FROM '||V_ESQUEMA_M||'.usu_usuarios usu
+			left join '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS gru on usu.usu_id = gru.usu_id_grupo and gru.borrado = 0
+			where usu.borrado = 0 and usu.usu_username = ''grucoces'' and not exists (select 1 from '||V_ESQUEMA_M||'.usu_usuarios aux where aux.usu_username = ''grucoces'' and aux.usu_id = gru.usu_id_usuario)
+			and not exists (SELECT 1 FROM '||V_ESQUEMA_M||'.usu_usuarios usu_aux left join '||V_ESQUEMA_M||'.GRU_GRUPOS_USUARIOS grucoces1 on usu_aux.usu_id = grucoces1.usu_id_grupo and grucoces1.borrado = 0
+			where usu_aux.borrado = 0 and usu_aux.usu_username = ''grucoces1'' and grucoces1.usu_id_usuario = gru.usu_id_usuario)';
+	    	
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Relación insertada correctamente.');
 			
-		-- Si existe la FILA
-		IF V_NUM_TABLAS > 0 THEN	  
-			DBMS_OUTPUT.PUT_LINE('[INFO]: Ya existe el usuario en ese grupo.');		
-		ELSE
-			DBMS_OUTPUT.PUT_LINE('[ OK ]: 	No existe.');
-			DBMS_OUTPUT.PUT_LINE('[INFO]: 	Insertando relación '''||V_TMP_FUNCION(1)||''' - '''||V_TMP_FUNCION(2)||'''.');
-			V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TABLA||'' ||
-				' (GRU_ID, USU_ID_GRUPO, USU_ID_USUARIO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
-			
-				' SELECT '||V_ESQUEMA_M||'.S_'||V_TABLA||'.NEXTVAL' ||
-				',(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(1)||''')' ||
-				',(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||V_TMP_FUNCION(2)||''')' ||
-				',0, '''||V_USUARIO||''', SYSDATE, 0 FROM DUAL';
-		    	
-			EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE('[INFO] Relación insertada correctamente.');
-				
-		END IF;	
-	END LOOP;
+	
 	
 	COMMIT;
 	--ROLLBACK;

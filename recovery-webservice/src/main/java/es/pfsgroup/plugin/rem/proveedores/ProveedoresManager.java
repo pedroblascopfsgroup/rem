@@ -47,7 +47,6 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -1311,5 +1310,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			resultado = usuario.getPerfiles().contains(perfilProveedorHaya);
 		}
 		return resultado;
+	}
+	
+	@Override
+	public List<ActivoProveedor> getMediadoresActivos() {		
+		
+		return proveedoresDao.getMediadoresActivos();
 	}
 }

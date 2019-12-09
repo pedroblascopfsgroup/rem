@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
@@ -359,6 +360,15 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		return listaProveedores;
 	}
 	
-	
+	@Override
+	public List<ActivoProveedor> getMediadoresActivos() {
+		HQLBuilder hb = new HQLBuilder(
+				"select proveedor.id, proveedor.codigoProveedorRem, proveedor.nombre from ActivoProveedor proveedor");
+		hb.appendWhere("proveedor.tipoProveedor.codigo = " + DDTipoProveedor.COD_MEDIADOR);
+		hb.appendWhere("proveedor.estadoProveedor.codigo = " + DDEstadoProveedor.ESTADO_BIGENTE);
+		hb.appendWhere("proveedor.homologado = 1");
+
+		return HibernateQueryUtils.list(this, hb);
+	}
 	
 }

@@ -6,6 +6,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
@@ -286,4 +287,6 @@ public interface ProveedoresApi {
 	 * @return Devuelve True si el usuario tiene el perfil de proveedor, False si no lo tiene.
 	 */
 	public Boolean esUsuarioConPerfilProveedor(Usuario usuario);
+	
+	public List<ActivoProveedor> getMediadoresActivos();
 }

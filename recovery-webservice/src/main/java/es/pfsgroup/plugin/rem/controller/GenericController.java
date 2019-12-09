@@ -194,6 +194,11 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionario(diccionario)));
 
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioRolesMediador() {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioRolesMediador()));
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getIndicadorCondicionPrecioFiltered(String codigoCartera){

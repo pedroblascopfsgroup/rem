@@ -86,7 +86,7 @@ BEGIN
 	IF V_NUM_FILAS_3 > 0 THEN
 	
 		V_MSQL := 'UPDATE '||V_ESQUEMA||'.TEX_TAREA_EXTERNA  
-				   BORRADO = 1,   
+				   SET BORRADO = 1,   
 				   USUARIOBORRAR = '''||V_USR||''',
 				   FECHABORRAR = SYSDATE 
 				   WHERE TEX_ID = 9571961';

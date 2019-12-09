@@ -1201,7 +1201,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 		
-		crearGastosExpediente(nuevoExpediente);
+		getGastosExpediente(nuevoExpediente);
 
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
@@ -3132,39 +3132,44 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
-	
-	@Transactional(readOnly = false)
-	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente) {
 		
-		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
+	public List<GastosExpediente> getGastosExpediente(ExpedienteComercial nuevoExpediente) {
 		
-		ComisionDto filtroDto = new ComisionDto();
+		ComisionDto filtroDto = new ComisionDto();		
 		
 		filtroDto.setIdOfertaRem(nuevoExpediente.getOferta().getNumOferta());
-		List<GastosExpediente> listaGastos = gastosExpedienteApi.getListaGastosExpediente(filtroDto);
+		List<GastosExpediente> gastosExpediente = gastosExpedienteApi.getListaGastosExpediente(filtroDto);
 		
-		if(listaGastos == null || listaGastos.isEmpty()) {
-		
-			List<String> acciones = new ArrayList<String>();
-			String codigoOferta = nuevoExpediente.getOferta().getTipoOferta().getCodigo();
-	
-			acciones.add(DDAccionGastos.CODIGO_COLABORACION);
-			acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
-	
-			if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
-				acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
-			}
-			
-			for(ActivoOferta activoOferta : nuevoExpediente.getOferta().getActivosOferta()) {
-				Activo activo = activoOferta.getPrimaryKey().getActivo();
-	
-				for (String accion : acciones) {
-					GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(), activo, accion);
-					gastosExpediente.add(gex);
-				}
-			}
-		}
+		if(gastosExpediente == null || gastosExpediente.isEmpty())
+			gastosExpediente = crearGastosExpedientes(nuevoExpediente);
 
+		return gastosExpediente;
+	}
+
+	@Transactional(readOnly = false)
+	public List<GastosExpediente> crearGastosExpedientes(ExpedienteComercial nuevoExpediente) {
+				
+		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
+		
+		List<String> acciones = new ArrayList<String>();
+		String codigoOferta = nuevoExpediente.getOferta().getTipoOferta().getCodigo();
+
+		acciones.add(DDAccionGastos.CODIGO_COLABORACION);
+		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
+
+		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
+			acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+		}
+		
+		for(ActivoOferta activoOferta : nuevoExpediente.getOferta().getActivosOferta()) {
+			Activo activo = activoOferta.getPrimaryKey().getActivo();
+
+			for (String accion : acciones) {
+				GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(), activo, accion);
+				gastosExpediente.add(gex);
+			}
+		
+		}
 		return gastosExpediente;
 	}
 

@@ -1312,7 +1312,7 @@ public interface ActivoApi {
 
 	ActivoDto getDatosActivo(Long activoId);
 	
-	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente);
+	public List<GastosExpediente> getGastosExpediente(ExpedienteComercial nuevoExpediente);
 
 	Boolean getVisibilidadTabFasesPublicacion(Activo activo);
 

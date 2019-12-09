@@ -627,14 +627,15 @@ public class TareaActivoManager implements TareaActivoApi {
 
 	 @Override
 	public Boolean deleteTareaActivoOnCascade(TareaActivo tarea) {
-	     genericDao.deleteById(TareaActivo.class, tarea.getId());
-         genericDao.update(TareaActivo.class, tarea);
-	     EXTTareaNotificacion tareaNotificacion = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", tarea.getId()));
-	     if ( tareaNotificacion != null ) {
-	         genericDao.deleteById(EXTTareaNotificacion.class, tareaNotificacion.getId());
-             genericDao.update(EXTTareaNotificacion.class, tareaNotificacion);
-
+	     if (Boolean.FALSE.equals(Checks.esNulo(tarea))) {
+	         genericDao.deleteById(TareaActivo.class, tarea.getId());
+	         genericDao.update(TareaActivo.class, tarea);
+	         EXTTareaNotificacion tareaNotificacion = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", tarea.getId()));
+	         if ( tareaNotificacion != null ) {
+	             genericDao.deleteById(EXTTareaNotificacion.class, tareaNotificacion.getId());
+	             genericDao.update(EXTTareaNotificacion.class, tareaNotificacion);
 	         return true;
+	         }
 	     }
 	     return false;
 	}

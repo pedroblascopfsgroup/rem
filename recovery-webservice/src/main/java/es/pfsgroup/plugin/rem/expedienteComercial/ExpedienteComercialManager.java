@@ -9931,14 +9931,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!existeTareaValidacion){
 			tramiteDao.creaTareaValidacion(usuarioLogado.getUsername(), expedienteComercial.getNumExpediente().toString());
 			Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(tramite.getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			TareaNotificacion tarNot = new TareaNotificacion();
+			TareaNotificacion tarNot;
 			List<TareaExterna> tareasActivas2 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 			for (TareaExterna tarea : tareasActivas2){
 				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
 					tarNot = tarea.getTareaPadre();
 					if (!Checks.esNulo(tarNot)){
 						TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS,"id", tarNot.getId()));
-						Auditoria au = new Auditoria();
+						Auditoria au = tac.getAuditoria();
 
 						if(!Checks.esNulo(tac)) {
 							au.setFechaModificar(new Date());
@@ -9949,25 +9949,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								tac.setUsuario(usuarioLogado);
 							}
 							tac.setAuditoria(au);
-							tarNot.getAuditoria().setFechaCrear(new Date());
-							tarNot.getAuditoria().setUsuarioCrear(usuarioLogado.getUsername());
+							tarNot.setAuditoria(Auditoria.getNewInstance());
 							genericDao.update(TareaActivo.class, tac);
 							genericDao.update(TareaNotificacion.class, tarNot);
 						}
 						else {
-							au.setFechaCrear(new Date());
-							au.setUsuarioCrear(usuarioLogado.getUsername());
 							TareaActivo tacNuevo = new TareaActivo();
 							tacNuevo.setActivo(tramite.getActivo());
 							tacNuevo.setId(tarNot.getId());
 							tacNuevo.setTramite(tramite);
-
+							tacNuevo.setAuditoria(Auditoria.getNewInstance());
+							
 							if(!Checks.esNulo(gestor)) {
 								tacNuevo.setUsuario(gestor);
 							}else {
 								tacNuevo.setUsuario(usuarioLogado);
 							}
-							tacNuevo.setAuditoria(au);
 							genericDao.save(TareaActivo.class, tacNuevo);
 						}
 					}

@@ -10,7 +10,6 @@ GZ-A15;Limpieza ESPECIAL de piso. Ud.;122,85;116,71;Actuación técnica;Limpieza;¤
 GZ-A16;Limpieza de sumideros/rebosaderos obturados. Ud.;13,87;13,18;Actuación técnica;Limpieza de sumideros;¤/ud
 GZ-A17;Limpieza de arquetas de saneamiento. Ud.;25,46;24,19;Actuación técnica;Limpieza de sumideros;¤/ud
 GZ-A18;Limpieza de canalón. Ml.;43,47;41,30;Actuación técnica;Limpieza de sumideros;¤/ml
-GZ-A19;Retirada de nidos. Ud.;65,21;61,95;Actuación técnica;Retirada nidos;¤/ud
 GZ-A20;Limpieza de grafiti. M²;18,53;17,60;Actuación técnica;Limpieza;¤/m2
 GZ-A21;Tratamientos desinsectación, desratización y desinfección. 3D. Hasta 80 M². SIN Certificado. ;90,25;85,74;Actuación técnica;Desinfección;¤/ud
 GZ-A22;Tratamientos desinsectación, desratización y desinfección.3D. De 80 M² a 150 M².SIN Certificado.;114,00;108,30;Actuación técnica;Desinfección;¤/ud
@@ -50,23 +49,23 @@ GZ-A68;Mantenimiento de solares. Suministro e instalación de puerta doble metáli
 GZ-L1;Reparar fuga en conducto de conexión a red de suministro de agua. Ud.;147,81;140,42;Actuación técnica;Fontanería;¤/ud
 GZ-L2;Punto de reparación de instalación de fontanería. Ml.;122,38;116,26;Actuación técnica;Fontanería;¤/ml
 GZ-L3;Reparación puntual en sanitario. Ud.;44,39;42,17;Actuación técnica;Fontanería;¤/ud
-GZ-L4;"Sustitución tuberías ascend.AF,ACS,calefacción(ida-retorno).Hasta 1 1/2"" y 35MM diámetro.1ml";71,63;68,05;Actuación técnica;Fontanería;¤/ud
-GZ-L5;"Sust. tuberías ascend.AF,ACS,calefacción(ida-retorno).Hasta 1 1/2"" y 35MM diámetro.De 1a 3ml";112,16;106,55;Actuación técnica;Fontanería;¤/ud
-GZ-L6;"Sust. Tuberías ascend.AF,ACS,calefacción(ida-retorno).1 1/2"" y 35MM diám.";55,69;52,91;Actuación técnica;Fontanería;¤/ud
-GZ-L7;"Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).Hasta 1 1/2"" y 35MM.diám.Sustitución T";92,29;87,68;Actuación técnica;Fontanería;¤/ud
-GZ-L8;"Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).1 1/2"" y 35MM.de diámetro.Sust.""T""cobre";106,92;101,57;Actuación técnica;Fontanería;¤/ud
-GZ-L9;"Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).1 1/2"" y 35MM 2 1/2"" y 63MM diám..1ml";90,78;86,24;Actuación técnica;Fontanería;¤/ud
-GZ-L10;"Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).1 1/2"" y 35MM 2 1/2"" y 63MM.diám.1 ml a 3ml";115,86;110,07;Actuación técnica;Fontanería;¤/ud
-GZ-L11;"Sust.tub.ascend.AF,ACS,calefac.(ida-ret).1 1/2""-35MM 2 1/2""-63MM diám.Rep.abrazadera Gebo ";80,96;76,91;Actuación técnica;Fontanería;¤/ud
-GZ-L12;"Sust.tuberías ascend.AF,ACS,calef.(ida-ret.).1 ?"",35 MM-2 ?"",63MM.diám.Rep.soldadura";36,02;34,22;Actuación técnica;Fontanería;¤/ud
-GZ-L13;"Sust.tuberías ascend.AF,ACS,calef.(ida-ret.).1 ?"",35MM-2 ?"",63MM diám.Sust.""T""hierro";128,86;122,42;Actuación técnica;Fontanería;¤/ud
-GZ-L14;"Sust.tuberías ascend.AF,ACS,calef.(ida-ret.).1 ?"",35MM-2 ?"",63MM diám.Sust.""T""cobre";128,86;122,42;Actuación técnica;Fontanería;¤/ud
-GZ-L15;"Sustitución tubería distrib.de AF,ACS,calef.(ida-ret.).2 ?"",63MM diám.Hasta1ml";71,51;67,93;Actuación técnica;Fontanería;¤/ud
-GZ-L16;"Sustitución tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 ?"",63MM diám.De 1a 2ml";88,10;83,70;Actuación técnica;Fontanería;¤/ud
-GZ-L17;"Sust. tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 ?"",63MM diám.2ml.+ml";11,22;10,66;Actuación técnica;Fontanería;¤/ud
-GZ-L18;"Sust.tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 ?"",63MM diám.Sust.""T""hierro";87,85;83,46;Actuación técnica;Fontanería;¤/ud
-GZ-L19;"Sust. tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 ?"",63MM diám.Sust.""T""cobre";87,85;83,46;Actuación técnica;Fontanería;¤/ud
-GZ-L20;"Sust. tubería de distrib. de AF,ACS,calef.(ida y ret.).Hasta 2 ?"",63MM diám.Rep.";61,38;58,31;Actuación técnica;Fontanería;¤/ud
+GZ-L4;Sustitución tuberías ascend.AF,ACS,calefacción(ida-retorno).1 1/2pul.-35MM diám.1ml;71,63;68,05;Actuación técnica;Fontanería;¤/ud
+GZ-L5;Sust. tuberías ascend.AF,ACS,calefacción(ida-retorno).Hasta 1 1/2pul.-35MM diám.De 1a 3ml;112,16;106,55;Actuación técnica;Fontanería;¤/ud
+GZ-L6;Sust. Tuberías ascend.AF,ACS,calefacción(ida-retorno).1 1/2pul. y 35MM diám.;55,69;52,91;Actuación técnica;Fontanería;¤/ud
+GZ-L7;Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).Hasta 1 1/2pul. y 35MM.diám.Sust. T;92,29;87,68;Actuación técnica;Fontanería;¤/ud
+GZ-L8;Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).1 1/2pul.-35MM.de diámetro.Sust.T cobre;106,92;101,57;Actuación técnica;Fontanería;¤/ud
+GZ-L9;Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).1 1/2pul.-35MM 2 1/2pul.-63MM diám.1ml;90,78;86,24;Actuación técnica;Fontanería;¤/ud
+GZ-L10;Sust.tub.ascend.AF,ACS,calefac.(ida-retorno).1 1/2pul.- 35MM 2 1/2pul.-63MM.diám.1-3ml;115,86;110,07;Actuación técnica;Fontanería;¤/ud
+GZ-L11;Sust.tub.ascend.AF,ACS,calefac.(ida-ret).1 1/2pul.-35MM 2 1/2pul.-63MM diám.Rep.abraz.Gebo ;80,96;76,91;Actuación técnica;Fontanería;¤/ud
+GZ-L12;Sust.tuberías ascend.AF,ACS,calef.(ida-ret.).1 0,5pul.,35 MM-2 0,5pul.,63MM.diám.Rep.soldadura;36,02;34,22;Actuación técnica;Fontanería;¤/ud
+GZ-L13;Sust.tuberías ascend.AF,ACS,calef.(ida-ret.).1 0,5pul.,35MM-2 0,5pul.,63MM diám.Sust.T hierro;128,86;122,42;Actuación técnica;Fontanería;¤/ud
+GZ-L14;Sust.tuberías ascend.AF,ACS,calef.(ida-ret.).1 0,5pul.,35MM-2 0,5pul.,63MM diám.Sust.T cobre;128,86;122,42;Actuación técnica;Fontanería;¤/ud
+GZ-L15;Sustitución tubería distrib.de AF,ACS,calef.(ida-ret.).2 0,5pul.,63MM diám.Hasta1ml;71,51;67,93;Actuación técnica;Fontanería;¤/ud
+GZ-L16;Sustitución tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 0,5pul.,63MM diám.1-2ml;88,10;83,70;Actuación técnica;Fontanería;¤/ud
+GZ-L17;Sust. tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 0,5pul.,63MM diám.2ml.+ml;11,22;10,66;Actuación técnica;Fontanería;¤/ud
+GZ-L18;Sust.tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 0,5pul.,63MM diám.Sust.T hierro;87,85;83,46;Actuación técnica;Fontanería;¤/ud
+GZ-L19;Sust. tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 0,5pul.,63MM diám.Sust.T cobre;87,85;83,46;Actuación técnica;Fontanería;¤/ud
+GZ-L20;Sust. tubería de distrib. de AF,ACS,calef.(ida y ret.).Hasta 2 0,5pul.,63MM diám.Rep.;61,38;58,31;Actuación técnica;Fontanería;¤/ud
 GZ-L22;Sustitución de bajantes de hasta 160 MM. Sustitución tramo de tubería. Hasta 1 ml. Ud.;58,90;55,96;Actuación técnica;Fontanería;¤/ud
 GZ-L23;Sustitución de bajantes de hasta 160 MM. Sustitución tramo de tubería. De más de 1 ml. hasta 3ml;145,84;138,55;Actuación técnica;Fontanería;¤/ud
 GZ-L24;Sust.de bajantes de hasta 160 MM. Sust. de codo en desvío de bajada (juego de codos) Hasta 0,5 ml;70,14;66,63;Actuación técnica;Fontanería;¤/ud
@@ -86,14 +85,14 @@ GZ-L36;Sustitución de sifones/válvulas. Sustitución de válvula y rebosadero. Ud.
 GZ-L37;Sustitución de sifones/válvulas. Sustitución de válvula y rebosadero con desagües. Ud.;44,39;42,17;Actuación técnica;Fontanería;¤/ud
 GZ-L38;Sustitución de sifones/válvulas. Reparación o ajuste de sifón, válvula y/o rebosadero. Ud.;32,15;30,54;Actuación técnica;Fontanería;¤/ud
 GZ-L39;Sustitución bote sifónico. Sustitución de bote sifónico de PVC. Ud.;83,73;79,54;Actuación técnica;Fontanería;¤/ud
-GZ-L40;"Sustitución bote sifónico. Sustitución de bote sifónico de gran capacidad, ""colgado"" de PVC. Ud.";91,76;87,17;Actuación técnica;Fontanería;¤/ud
+GZ-L40;Sustitución bote sifónico. Sustitución de bote sifónico de gran capacidad, colgado de PVC.;91,76;87,17;Actuación técnica;Fontanería;¤/ud
 GZ-L41;Sustitución bote sifónico. Reparación de bote sifónico (PVC / Plomo), con soldadura estaño-plomo;52,22;49,61;Actuación técnica;Fontanería;¤/ud
 GZ-L42;Sustitución bote sifónico. Reparación de bote sifónico con camisa interior de fibra de poliéster;52,22;49,61;Actuación técnica;Fontanería;¤/ud
 GZ-L43;Sustitución bote sifónico. Reposición de tapa de bote sifónico Ud.;9,33;8,86;Actuación técnica;Fontanería;¤/ud
 GZ-L44;Sustitución manguetas. Sustitución de mangueta incluido desagüe. Hasta 2 ml. Ud.;108,67;103,24;Actuación técnica;Fontanería;¤/ud
 GZ-L45;Sustitución manguetas. Sustitución de mangueta con 2 desagües. Ud.;128,95;122,50;Actuación técnica;Fontanería;¤/ud
 GZ-L46;Sustitución manguetas. Sustitución de mangueta con más de 2 desagües. Ud.;142,15;135,04;Actuación técnica;Fontanería;¤/ud
-GZ-L47;"Sustitución manguetas. Reparación de mangueta con soldadura de ""estaño - plomo"". Ud.";71,51;67,93;Actuación técnica;Fontanería;¤/ud
+GZ-L47;Sustitución manguetas. Reparación de mangueta con soldadura de estaño - plomo. Ud.;71,51;67,93;Actuación técnica;Fontanería;¤/ud
 GZ-L48;Sustitución de grifería. Sin incluir material. Solo mano de obra. Ud.;19,76;18,77;Actuación técnica;Fontanería;¤/ud
 GZ-L49;Sust.grifería.Sum. y colocación grifería monomando cromada ducha,gama media,aireador, flexible cm;89,17;84,71;Actuación técnica;Fontanería;¤/ud
 GZ-L50;Sust.grifería.Sum.y colocación grifería monomando cromada bañera,gama media,aireador,flexible cm;94,11;89,40;Actuación técnica;Fontanería;¤/ud
@@ -128,7 +127,7 @@ GZ-L56;Sustitución de mecanismo de cisterna (no se incluye material). Ud.;21,74;
 GZ-L57;Sustitución de mecanismo de cisterna (se incluye material). Ud.;36,56;34,73;Actuación técnica;Fontanería;¤/ud
 GZ-L59;Graduar boya de cisterna. Ud.;10,17;9,66;Actuación técnica;Fontanería;¤/ud
 GZ-L61;Desatranco de desagües de cocina o baño con guías (máximo 2 h). Ud.;41,02;38,97;Actuación técnica;Fontanería;¤/ud
-GZ-L62;"Sustitución de llave de paso, agua caliente o fría hasta 1"" (no se incluye material). Ud.";23,71;22,52;Actuación técnica;Fontanería;¤/ud
+GZ-L62;Sustitución de llave de paso, agua caliente o fría hasta 1pul. (no se incluye material);23,71;22,52;Actuación técnica;Fontanería;¤/ud
 GZ-L63;Sustitución llaves de corte por aparato (no se incluye material). Ud.;21,74;20,65;Actuación técnica;Fontanería;¤/ud
 GZ-L64;Saneamiento completo por puntos de cocina o baño. Ud.;50,63;48,10;Actuación técnica;Fontanería;¤/ud
 GZ-N13;Bomba de achique en sótano. Ud.;489,35;464,88;Actuación técnica;Fontanería;¤/ud
@@ -470,7 +469,6 @@ GZ-O14;Proyectos de legalización de las instalaciones. PCI (garaje). Ud.;1111,50
 GZ-O15;Boletines y certificados de las instalaciones. Fontanería. Ud.;78,00;74,10;Obtención documentación;Boletín agua;¤/ud
 GZ-O16;Boletines y certificados de las instalaciones. Gas. Ud.;98,92;93,97;Obtención documentación;Boletín gas;¤/ud
 GZ-O17;Boletines y certificados de las instalaciones. Electricidad. Ud.;141,66;134,58;Obtención documentación;Boletín electricidad;¤/ud
-GZ-O18;Boletines y certificados de las instalaciones. PCI (garaje). Ud.;137,75;130,86;Obtención documentación;Boletín PCI;¤/ud
 GZ-P1;Imp.mín.intervención viv.(INFORME, OKUPAS, VISITAS INFRUCTUOSAS);29,45;27,98;Actuación técnica;Informe ocupación;¤/ud
 GZ-P2;Mín.facturar imp.suma partidas rep.no sup.50¤.Imp.sup.31¤ fact.según servicio;29,45;27,98;Actuación técnica;Obra menor tarificada;¤/ud
 GZ-P3;Imp.actuaciones urgentes 19:00-8:00h.días lab.,sáb.,domingos y festivos;33,25;31,59;Actuación técnica;Obra menor tarificada;¤/ud

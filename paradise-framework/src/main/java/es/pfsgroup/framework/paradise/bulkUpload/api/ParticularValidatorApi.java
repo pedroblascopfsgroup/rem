@@ -976,4 +976,12 @@ public interface ParticularValidatorApi {
 
 	public Boolean existePoblacionJuzgado(String celda);
 
+	/**
+	 * 
+	 * @param idActivo
+	 * @param tipoAdjudicacion
+	 * @return true si el idActivo es del tipo de adjudicación que le estamos pasando por parámetros
+	 */
+	Boolean verificaTipoDeAdjudicacion(String idActivo, String tipoAdjudicacion);
+
 }

@@ -4070,4 +4070,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean verificaTipoDeAdjudicacion(String idActivo, String tipoAdjudicacion) {
+		if (Checks.esNulo(idActivo) || Checks.esNulo(tipoAdjudicacion)) {
+			return false;
+		}
+	
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO "
+					+"		WHERE ACT_NUM_ACTIVO = "+ idActivo +" AND DD_TTA_ID = (SELECT DD_TTA_ID "
+					+"                                                       FROM DD_TTA_TIPO_TITULO_ACTIVO "
+					+"                                                       WHERE DD_TTA_CODIGO = '"+ tipoAdjudicacion +"')");
+
+		return !"0".equals(resultado);
+	}
+	
 }

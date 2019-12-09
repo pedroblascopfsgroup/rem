@@ -244,7 +244,7 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 						break;
 
 					case COL_TIPO_ADJ:								
-						valorOK = !Checks.esNulo(celda) && checkAdjudicacion(fila, celda, exc);
+						valorOK = !Checks.esNulo(celda) && checkAdjudicacion(fila, celda, exc) && checkAdjudicacionCorrecta(fila, exc);
 						break;
 						
 					case COL_F_TITULO:
@@ -401,6 +401,28 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 			logger.error(e.getMessage());
 		}
 		return null;
+	}
+	
+	private boolean checkAdjudicacionCorrecta(int fila,  MSVHojaExcel exc) {
+		boolean respuesta = true;
+		try {
+			String numActivo = exc.dameCelda(fila, COL_ID_ACTIVO);
+			String tipoAdjudicacion = exc.dameCelda(fila, COL_TIPO_ADJ);
+			
+			if ("01".equals(tipoAdjudicacion) && !particularValidator.verificaTipoDeAdjudicacion(numActivo, tipoAdjudicacion)) {
+				errJudicial.add(fila);
+				respuesta = false;
+
+				
+			}else if("02".equals(tipoAdjudicacion) && !particularValidator.verificaTipoDeAdjudicacion(numActivo, tipoAdjudicacion)){
+				errNotarial.add(fila);
+				respuesta = false;
+			}
+		}catch (Exception e){
+			logger.error(e.getMessage());
+			respuesta = false;
+		}
+		return respuesta;
 	}
 	
 	private boolean checkAdjudicacion(int fila, String codigo, MSVHojaExcel exc) {

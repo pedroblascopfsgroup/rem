@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191202
+--## FECHA_CREACION=20191209
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8607
@@ -1144,7 +1144,7 @@ BEGIN
 				
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
-					T2.TIT_FECHA_PRESENT2_REG,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					T2.TIT_FECHA_ENVIO_AUTO,
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,

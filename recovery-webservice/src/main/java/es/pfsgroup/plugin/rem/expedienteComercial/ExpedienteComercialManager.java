@@ -10156,6 +10156,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public List<DtoDiccionario> calcularGestorComercialPrescriptor(Long idExpediente) {
 		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
+		Boolean isMinoristaOResidencial = false;
 		if (expediente != null) {
 			Oferta ofr = expediente.getOferta();
 			if (ofr != null) {
@@ -10165,8 +10166,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if (listadoActivos.get(i).getPrimaryKey() != null) {
 							Activo act = listadoActivos.get(i).getPrimaryKey().getActivo();
 							if (act != null) {
-								if (act.getTipoComercializar() != null && DDTipoComercializar.CODIGO_RETAIL
-										.equals(act.getTipoComercializar().getCodigo())) {
+								if (!Checks.esNulo(ofr.getActivoPrincipal().getEquipoGestion())) {
+									if(DDEquipoGestion.CODIGO_MINORISTA.equals(ofr.getActivoPrincipal().getEquipoGestion().getCodigo())) {
+										return calcularGestorComercialPrescriptorResidencial(expediente, listadoActivos);
+									}
+								} else if (!Checks.esNulo(ofr.getActivoPrincipal().getTipoComercializar()) 
+										&& DDTipoComercializar.CODIGO_RETAIL.equals(ofr.getActivoPrincipal().getTipoComercializar().getCodigo())) {
 									return calcularGestorComercialPrescriptorResidencial(expediente, listadoActivos);
 								}
 							}
@@ -10176,10 +10181,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if (listadoActivos.get(0).getPrimaryKey() != null) {
 						Activo act = listadoActivos.get(0).getPrimaryKey().getActivo();
 						if (act != null)
-							if (act.getTipoComercializar() != null && DDTipoComercializar.CODIGO_RETAIL.equals(act.getTipoComercializar().getCodigo())) {
+							if (!Checks.esNulo(ofr.getActivoPrincipal().getEquipoGestion())) {
+								if(DDEquipoGestion.CODIGO_MINORISTA.equals(ofr.getActivoPrincipal().getEquipoGestion().getCodigo())) {
+									isMinoristaOResidencial = true;
+								}
+							} else if (!Checks.esNulo(ofr.getActivoPrincipal().getTipoComercializar()) 
+									&& DDTipoComercializar.CODIGO_RETAIL.equals(ofr.getActivoPrincipal().getTipoComercializar().getCodigo())) {
+								isMinoristaOResidencial = true;
+							}
+							if (isMinoristaOResidencial) {
 								return calcularGestorComercialPrescriptorResidencial(expediente, listadoActivos);
-							} else if (act.getTipoComercializar() != null && DDTipoComercializar.CODIGO_SINGULAR.equals(act.getTipoComercializar().getCodigo()) 
-									&& Checks.esNulo(ofr.getAgrupacion())) {
+							} else if (Checks.esNulo(ofr.getAgrupacion())) {
 								List<DtoDiccionario> listado= new ArrayList<DtoDiccionario>();
 								DtoDiccionario diccionario = new DtoDiccionario();
 								diccionario = new DtoDiccionario();

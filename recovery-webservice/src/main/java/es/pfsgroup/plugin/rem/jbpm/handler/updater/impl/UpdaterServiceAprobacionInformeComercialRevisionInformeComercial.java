@@ -160,17 +160,35 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 					String cuerpo = "";
 					ArrayList<String> mailsPara = new ArrayList<String>();
 					ArrayList<String> mailsCC = new ArrayList<String>();
-					if(!Checks.esNulo(histFasePub) && !Checks.esNulo(histFasePub.getFasePublicacion()) && !Checks.esNulo(histFasePub.getSubFasePublicacion())) {
+					if(!Checks.esNulo(histFasePub)) {
 						
-						if(DDFasePublicacion.CODIGO_FASE_III.equals(histFasePub.getFasePublicacion().getCodigo()) 
-								&& DDSubfasePublicacion.CODIGO_DEVUELTO.equals(histFasePub.getSubFasePublicacion().getCodigo())) {
-							cuerpo = String.format("El informe comercial correspondiente al activo "+act.getNumActivo()
-							+" ha sido rechazado, por lo que, rogamos que lo revise, y realice las modificaciones necesarias para subsanarlo. Posteriormente, proceda de nuevo a su envío.");
-							if(!Checks.esNulo(act.getInfoComercial()) 
-									&& !Checks.esNulo(act.getInfoComercial().getMediadorInforme())) {
-								mailsPara.add(act.getInfoComercial().getMediadorInforme().getEmail());
-							}
+						if(!(DDFasePublicacion.CODIGO_FASE_III.equals(histFasePub.getFasePublicacion().getCodigo()) 
+								&& DDSubfasePublicacion.CODIGO_DEVUELTO.equals(histFasePub.getSubFasePublicacion().getCodigo()))) {
+							
+							HistoricoFasePublicacionActivo nuevaFase = new HistoricoFasePublicacionActivo();
+							Filter faseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_III);
+							DDFasePublicacion faseTres = genericDao.get(DDFasePublicacion.class, faseFiltro);
+							Filter subfaseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_DEVUELTO);
+							DDSubfasePublicacion subfaseDevuelto = genericDao.get(DDSubfasePublicacion.class, subfaseFiltro);
+							
+							histFasePub.setFechaFin(new Date());
+							nuevaFase.setActivo(act);
+							nuevaFase.setUsuario(genericAdapter.getUsuarioLogado());
+							nuevaFase.setFasePublicacion(faseTres);
+							nuevaFase.setSubFasePublicacion(subfaseDevuelto);
+							nuevaFase.setFechaInicio(new Date());
+							genericDao.save(HistoricoFasePublicacionActivo.class, histFasePub);
+							genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFase);
 						}
+						
+						cuerpo = String.format("El informe comercial correspondiente al activo "+act.getNumActivo()
+						+" ha sido rechazado, por lo que, rogamos que lo revise, y realice las modificaciones necesarias para subsanarlo. Posteriormente, proceda de nuevo a su envío.");
+						
+						if(!Checks.esNulo(act.getInfoComercial()) 
+								&& !Checks.esNulo(act.getInfoComercial().getMediadorInforme())) {
+							mailsPara.add(act.getInfoComercial().getMediadorInforme().getEmail());
+						}
+						
 						if(!Checks.estaVacio(mailsPara) || !Checks.estaVacio(mailsCC)) {
 							notificationActivoManager.sendMailFasePublicacion(act, asunto,cuerpo,mailsPara,mailsCC);
 						}

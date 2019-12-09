@@ -875,7 +875,10 @@ Ext.define('HreRem.model.Activo', {
 			{
     			name:'esSarebProyecto',
     			type:'boolean'
-    		}
+    		},
+    		{
+    			name: 'sociedadPagoAnterior'
+    		},
     ],
     
 	proxy: {

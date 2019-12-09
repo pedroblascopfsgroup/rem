@@ -831,7 +831,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if (!Checks.esNulo(activo.getDireccionTerritorial())){
 			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialCodigo", activo.getDireccionTerritorial().getCodigo());
 			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialDescripcion", activo.getDireccionTerritorial().getDescripcion());
-		}				
+		}	
+		
+		if (!Checks.esNulo(activo.getSociedadPagoAnterior())) {
+			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadPagoAnterior().getDescripcion());
+		}
 
 		Boolean visualizarTabFasesPublicacion = activoApi.getVisibilidadTabFasesPublicacion(activo);
 		

@@ -878,7 +878,7 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'sociedadPagoAnterior'
-    		},
+    		}
     ],
     
 	proxy: {

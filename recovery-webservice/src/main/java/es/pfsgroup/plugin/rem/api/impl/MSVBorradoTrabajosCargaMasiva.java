@@ -29,6 +29,7 @@ public class MSVBorradoTrabajosCargaMasiva extends AbstractMSVActualizador imple
 	private static final int DATOS_PRIMERA_FILA = 1;
 	private static final int COL_NUM_TRABAJO = 0;
 	
+	private static final String ESTADO_FINALIZADO = "12";
 	@Autowired
     private GenericABMDao genericDao;
 	
@@ -54,21 +55,23 @@ public class MSVBorradoTrabajosCargaMasiva extends AbstractMSVActualizador imple
 	        Long numTrabajo = Long.parseLong(exc.dameCelda(fila, COL_NUM_TRABAJO)); 
 	        if (Boolean.FALSE.equals(Checks.esNulo(numTrabajo)) ) {             
 	                Trabajo trabajo = trabajoApi.getTrabajoByNumeroTrabajo(numTrabajo);
-	                List <ActivoTramite> activosTramite = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-	                for (ActivoTramite activoTramite : activosTramite) {
-	                    genericDao.deleteById(ActivoTramite.class, activoTramite.getId());
-	                    genericDao.update(ActivoTramite.class, activoTramite);
-	                     
-	                    if (activoTramite.getTareas() != null && !activoTramite.getTareas().isEmpty()) {
-	                        Set<TareaActivo> tareasActivo = activoTramite.getTareas();
-	                        for (TareaActivo tareaActivo :tareasActivo) {
-	                            tareaActivoApi.deleteTareaActivoOnCascade(tareaActivo);	                        
-	                        }
-	                        
-	                    }
-	                }              
-	                genericDao.deleteById(Trabajo.class, trabajo.getId());
-	                genericDao.update(Trabajo.class, trabajo);
+	                if (trabajo.getEstado() != null && trabajo.getEstado().getCodigo() != null
+	                        && ESTADO_FINALIZADO.equals(trabajo.getEstado().getCodigo())) {
+    	                List <ActivoTramite> activosTramite = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+    	                for (ActivoTramite activoTramite : activosTramite) {
+                           if (activoTramite.getTareas() != null && !activoTramite.getTareas().isEmpty()) {
+                                Set<TareaActivo> tareasActivo = activoTramite.getTareas();
+                                for (TareaActivo tareaActivo :tareasActivo) {
+                                    tareaActivoApi.deleteTareaActivoOnCascade(tareaActivo);                         
+                                }
+                                
+                            }
+    	                    genericDao.deleteById(ActivoTramite.class, activoTramite.getId());
+    	                    genericDao.update(ActivoTramite.class, activoTramite);
+    	                }              
+    	                genericDao.deleteById(Trabajo.class, trabajo.getId());
+    	                genericDao.update(Trabajo.class, trabajo);
+	                }
 	                
 	        } else {
 	          throw new ParseException("Error al procesar la fila ", fila);

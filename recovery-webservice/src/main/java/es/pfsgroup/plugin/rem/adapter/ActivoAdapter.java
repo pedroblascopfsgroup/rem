@@ -1894,13 +1894,11 @@ public class ActivoAdapter {
 
 	public List<DtoValoracion> getListValoracionesById(Long id) {
 
-		// FIXME Hacer el get bien del listado de cargas cuando estén las tablas
-		// de activo.
 		Activo activo = activoApi.get(id);
 		List<DtoValoracion> listaDtoValoracion = new ArrayList<DtoValoracion>();
 
 		for (int i = 0; i < activo.getValoracion().size(); i++) {
-			if (activo.getValoracion() != null && activo.getValoracion().size() > 0) {
+			if (activo.getValoracion() != null && !activo.getValoracion().isEmpty()) {
 				DtoValoracion valoracionDto = new DtoValoracion();
 				try {
 					BeanUtils.copyProperties(valoracionDto, activo.getValoracion().get(i));
@@ -1925,8 +1923,6 @@ public class ActivoAdapter {
 
 	public List<DtoTasacion> getListTasacionById(Long id) {
 
-		// FIXME Hacer el get bien del listado de cargas cuando estén las tablas
-		// de activo.
 		Activo activo = activoApi.get(id);
 		List<DtoTasacion> listaDtoTasacion = new ArrayList<DtoTasacion>();
 
@@ -3367,13 +3363,13 @@ public class ActivoAdapter {
 				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
 		}else if(!DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo()) && gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES)
 				&& (!DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO.equals(activo.getEstadoActivo().getCodigo())
-						& !DDEstadoActivo.ESTADO_ACTIVO_RUINA.equals(activo.getEstadoActivo().getCodigo())
-						& !DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_PARADA.equals(activo.getEstadoActivo().getCodigo())
-						& !DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())
-						& !DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())
-						& !DDEstadoActivo.ESTADO_ACTIVO_EDIFICIO_A_REHABILITAR.equals(activo.getEstadoActivo().getCodigo())
-						& !DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo())
-						& !DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo()))){
+						&& !DDEstadoActivo.ESTADO_ACTIVO_RUINA.equals(activo.getEstadoActivo().getCodigo())
+						&& !DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_PARADA.equals(activo.getEstadoActivo().getCodigo())
+						&& !DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())
+						&& !DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())
+						&& !DDEstadoActivo.ESTADO_ACTIVO_EDIFICIO_A_REHABILITAR.equals(activo.getEstadoActivo().getCodigo())
+						&& !DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo())
+						&& !DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo()))){
 			// BORRAR GESTOR Y SUPERVISOR EDIFICACIONES
 			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
 			this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);

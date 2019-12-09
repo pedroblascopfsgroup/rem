@@ -22,7 +22,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -31,7 +30,6 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -89,17 +87,14 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						try {
 							expediente.setFechaSancion(ft.parse(valor.getValor()));
 						} catch (ParseException e) {
-							e.printStackTrace();
+							logger.error(e.getMessage(),e);
 						}
 	
 					}
 					
 					if (COMITE_SANCIONADOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) 
-							&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-							&& !Checks.esNulo(valor.getValor())) {
-
+							&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 							expediente.setComiteSancion(expedienteComercialApi.comiteSancionadorByCodigo(valor.getValor()));
-						
 					}
 					
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -175,8 +170,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 									logger.error("Error descongelando ofertas.", e);
 								}
 	
-							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) 
+							} else if (DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) {
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO);
+							}
 						}
 	
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
@@ -189,7 +185,6 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 						ofertaAceptada.setImporteContraOferta(Double.valueOf(doubleValue));
 						genericDao.save(Oferta.class, ofertaAceptada);
 	
-						// Actualizamos la participación de los activos en la oferta;
 						expedienteComercialApi.updateParticipacionActivosOferta(ofertaAceptada);
 						expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 						

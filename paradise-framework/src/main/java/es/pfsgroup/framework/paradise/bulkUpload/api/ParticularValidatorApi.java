@@ -973,8 +973,6 @@ public interface ParticularValidatorApi {
 	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo);
 
 	Boolean esExpedienteVenta(String numExpediente);
-
-	Boolean esExpedienteValido(String numExpediente);
 	
 	/**
 	 * @param codSubFasePublicacion
@@ -982,4 +980,14 @@ public interface ParticularValidatorApi {
 	 * @return true si la subfase pertenece a la fase de publicación
 	 */
 	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion);
+
+	Boolean esExpedienteValidoFirmado(String numExpediente);
+
+	Boolean esExpedienteValidoReservado(String numExpediente);
+
+	Boolean esExpedienteValidoVendido(String numExpediente);
+
+	Boolean esExpedienteValidoAnulado(String numExpediente);
+
+	Boolean esExpedienteValidoAprobado(String numExpediente);
 }

@@ -5,6 +5,8 @@ import java.util.List;
 
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +63,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	private final Log logger = LogFactory.getLog(getClass());
 	
 	@Override
 	public Boolean getStateAdmision(Activo activo) {
@@ -241,14 +245,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		}
 
 		//Si todos los argumentos son null, se devuelve un 100% de participación.
-		if((activosLista == null || activosLista.size() == 0) && codigoTipoTrabajo == null && activo_check == null){
+		if((activosLista == null || activosLista.isEmpty()) || codigoTipoTrabajo == null || activo_check == null){
 			return 100d;
 		}
 
-		if(activosLista == null || activosLista.size() == 0){
-			return 100d;
-		}
-
+		
 		try{
 			//Si el tipo de trabajo es OBTENCION_DOCUMENTAL o ACTUACION_TECNICA.
 			if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
@@ -428,28 +429,28 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				if(reglaSeleccionada.equals("00")){//A partes iguales.
 					return (100d / activosLista.size());
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT)){//Valor neto contable.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT) && valorNetoTotal > 0){//Valor neto contable.
 					return ((valorNeto_act * 100d) / valorNetoTotal);
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO)){//Valor mínimo autorizado.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO)  && valorMinimoTotal > 0){//Valor mínimo autorizado.
 					return ((valorMinimo_act * 100d) / valorMinimoTotal);
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_FSV_VENTA)){//First sale value.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_FSV_VENTA)   && fsvTotal > 0){//First sale value.
 					return (fsv_act * 100d) / fsvTotal;
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VACBE)){//Valor actualizado contable banco España.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VACBE) && vacbeTotal > 0){//Valor actualizado contable banco España.
 					return (vacbe_act * 100d) / vacbeTotal;
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_PT)){//Precio transferencia.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_PT)  && precioTransferenciaTotal > 0){//Precio transferencia.
 					return (precioTransferencia_act * 100d) / precioTransferenciaTotal;
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA)){//Valor referencia.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA) && valorReferenciaTotal > 0){//Valor referencia.
 					return (valorReferencia_act * 100d) / valorReferenciaTotal;
 
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 
 		//}//Si el tabajo no es ni de tipo OBTENCION_DOCUMENTAL ni de tipo ACTUACION_TECNICA. 
@@ -486,7 +487,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				genericDao.update(ActivoTrabajo.class, activoTrabajo);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 	}
 	

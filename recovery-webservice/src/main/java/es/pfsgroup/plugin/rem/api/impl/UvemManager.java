@@ -1,9 +1,8 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -153,6 +152,8 @@ public class UvemManager implements UvemManagerApi {
 
 	@Autowired
 	private LogTrustWebService trustMe;
+	
+	private Random rand = null;
 
 	private static final int MASK = (-1) >>> 1; // all ones except the sign bit
 
@@ -217,9 +218,8 @@ public class UvemManager implements UvemManagerApi {
 			servicio.execute();
 		} else {
 			logger.error("UVEM: Servicios desactividos");
-			Random rand = new Random();
 			if (servicio instanceof GMPETS07_INS) {
-				((GMPETS07_INS) servicio).setNumeroIdentificadorDeTasacionlnuita2(rand.nextInt() & MASK);
+				((GMPETS07_INS) servicio).setNumeroIdentificadorDeTasacionlnuita2(getRandomInt() & MASK);
 			} else if (servicio instanceof GMPAJC11_INS) {
 				VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
 				StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
@@ -243,7 +243,7 @@ public class UvemManager implements UvemManagerApi {
 				//Ejemplo Grid para Problemas con la venta en Cliente Ursus:
 				//Rellenaremos 'iter' ocurrencias (estructuras) de un máximo de 10 para almacenarlas en el vector VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu.
 				Short iter = 2;
-				((GMPAJC93_INS) servicio).setNumeroDeOcurrenciasDeAvisonuocav(Short.valueOf(iter));
+				((GMPAJC93_INS) servicio).setNumeroDeOcurrenciasDeAvisonuocav(iter);
 				VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
 				StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu estructura = new StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
 				//Cada estructura llevará un código cotlav, un código comeav y un liavi1 correspondiente con los dos primeros:
@@ -282,6 +282,23 @@ public class UvemManager implements UvemManagerApi {
 			}
 		}
 		return servicio;
+	}
+	
+	private int getRandomInt() {
+		if(rand == null) {
+			try {
+				rand = SecureRandom.getInstanceStrong();
+			} catch (NoSuchAlgorithmException e) {
+				logger.error(e.getMessage(),e);
+				return 0;
+			}
+			return rand.nextInt();
+		}else {
+			rand.nextInt();
+		}
+		
+		return 0;
+		
 	}
 
 	/**
@@ -602,11 +619,9 @@ public class UvemManager implements UvemManagerApi {
 		String qcenre = dtoCliente.getQcenre();
 
 		List<DatosClienteDto> clientes = ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
-		if (clientes != null && clientes.isEmpty()) {
-			if (clientes.get(0).getNumeroClienteUrsus() != null && !clientes.get(0).getNumeroClienteUrsus().isEmpty()) {
-				resultado = ejecutarDatosCliente(Integer.valueOf(clientes.get(0).getNumeroClienteUrsus()), qcenre);
-			}
-
+		if (clientes != null && clientes.isEmpty() && clientes.get(0).getNumeroClienteUrsus() != null
+				&& !clientes.get(0).getNumeroClienteUrsus().isEmpty()) {
+			resultado = ejecutarDatosCliente(Integer.valueOf(clientes.get(0).getNumeroClienteUrsus()), qcenre);
 		}
 
 		return resultado;
@@ -1208,7 +1223,7 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPDJB13_INS.setImporteMonetarioDeLaReservaBISA(importeMonetarioReserva);
 			if (instanciaDecisionDto.getImporteReserva() == null
-					|| instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0
+					|| instanciaDecisionDto.getImporteReserva().compareTo(Double.valueOf(0)) == 0
 					|| Checks.esNulo(instanciaListData.get(0).getPorcentajeImpuesto())
 					|| instanciaListData.get(0).getPorcentajeImpuesto() == 0) {
 				servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv(' ');

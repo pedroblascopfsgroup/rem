@@ -147,16 +147,13 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 						{ 
 							 xtype: 'comboboxfieldbase',
 							 fieldLabel:  HreRem.i18n('fieldlabel.direccion.comercial'),
-							// msgTarget: 'side', 
+							 allowBlank: false,
 							 bind: {
-							        store: '{comboDireccionComercial}',
-									value : '{comercial.direccionComercial}',
-									readOnly: '{!editableCES}'
-							       },
-							displayField: 'descripcion',
-							valueField: 'codigo',
-							allowBlank: false
-							}
+								readOnly: '{!editableCES}',
+						        store: '{comboDireccionComercial}',
+								value : '{comercial.direccionComercial}'									
+							 }
+						}
 				]
 			}, 
 			{

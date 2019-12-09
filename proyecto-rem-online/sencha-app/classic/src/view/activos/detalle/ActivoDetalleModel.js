@@ -2302,13 +2302,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 
 		comboDireccionComercial: {
-			 model: 'HreRem.model.ComboBase',
-			 proxy: {
-			      type: 'uxproxy', 
-			      remoteUrl: 'generic/getDiccionario',
-			      extraParams: {diccionario: 'tipoDireccionComercial'}
-			 },
-			 sorters: 'descripcion'
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+			    extraParams: {diccionario: 'tipoDireccionComercial'}
+			 }
 		}
      }
 });

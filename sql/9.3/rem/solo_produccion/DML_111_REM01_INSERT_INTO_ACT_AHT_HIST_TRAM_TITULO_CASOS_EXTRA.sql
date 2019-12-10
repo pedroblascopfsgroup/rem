@@ -403,7 +403,7 @@ BEGIN
 	   
 	   /*	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-				      SELECT * 
+				      SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto  
 					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
 					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01''
@@ -569,7 +569,7 @@ BEGIN
 
 	   /*	   	   	    	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-					SELECT *     
+					SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto      
 					FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
 					where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is not null and eti.dd_eti_codigo is null

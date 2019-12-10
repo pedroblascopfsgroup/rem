@@ -40,9 +40,13 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
+import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  
  @Component
@@ -51,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	//En el caso de Apple existen varias tareas en que no se asignan a gestores si no a usuario de grupo
 	public static final String USERNAME_GRUPO_CES ="grucoces";
 	public static final String USERNAME_PROMONTORIA_MANZANA ="gruproman";
+	public static final String USERNAME_COMITE_ARROW = "grucoarrow";
  	
  	@Autowired
  	private GenericABMDao genericDao;
@@ -81,9 +86,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	
  	@Autowired
  	private ActivoAdapter activoAdapter;
- 	
- 	@Autowired
- 	private GestorActivoHistoricoDao gestorActivoHistoricoDao;
  	
  	public static final String CODIGO_TGE_PROVEEDOR_TECNICO = "PTEC";
  	public static final String USERNAME = "username";
@@ -520,4 +522,71 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		
 		return userTarea;
 	}
+ 	
+ 	@Override
+ 	@Transactional(readOnly = false)
+	public Usuario supervisorTareaApple(String codigoTarea) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		return genericDao.get(Usuario.class, filtro);
+	}
+ 	
+ 	@Override
+ 	@Transactional(readOnly = false)
+	public Usuario supervisorTareaDivarian(String codigoTarea) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		return genericDao.get(Usuario.class, filtro);
+	}
+ 	 	 	
+ 	@Override
+	public DDIdentificacionGestoria isGestoria(Usuario usuario) {
+		List<GrupoUsuario> grupos = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+		if (!Checks.estaVacio(grupos)) {
+			for (GrupoUsuario grupo : grupos) {
+				ConfiguracionAccesoGestoria cag = genericDao.get(ConfiguracionAccesoGestoria.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGrupo.id", grupo.getGrupo().getId()));
+				if (!Checks.esNulo(cag)) {
+					return cag.getGestoria();
+				}
+			}
+		}
+		return null;
+	}  
+ 	/* Se comenta por que no lo llama nadie ni llama a nada, pero se anyadio recientemente, por si hay necesidad de recuperarlo pronto
+ 	@Override
+ 	public List<ConfiguracionAccesoGestoria> getUsuariosGestorias(List<GrupoUsuario> grupos){
+		ArrayList<String> idGrupos = new ArrayList<String>();
+		List<ConfiguracionAccesoGestoria> config = new ArrayList<ConfiguracionAccesoGestoria>();
+		for (int i = 0 ; i < grupos.size(); i++) {
+			idGrupos.add(grupos.get(i).getUsuario().getId().toString());
+		}
+		if ( !idGrupos.isEmpty() )
+			config = gestorActivoDao.getConfiguracionGestorias(idGrupos);
+		return config;
+ 	}*/
+
+ 	@Override
+ 	@Transactional(readOnly = false)
+ 	public Usuario usuarioTareaDivarian(String codigoTarea) {
+		Usuario userTarea = null;
+		Filter filtro = null;
+		if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_ARROW.equals(codigoTarea)) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_COMITE_ARROW);
+		}
+		if(!Checks.esNulo(filtro)) {
+			userTarea = genericDao.get(Usuario.class, filtro);
+		}
+		
+		return userTarea;
+	}
+ 	
+ 	@Override
+ 	@Transactional(readOnly = false)
+ 	public Boolean isGestorMantenimiento(Activo activo, Usuario usuario){
+ 		 
+ 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_ACTIVO);
+ 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+ 		
+ 		List<Usuario> usuariosAdmision = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+ 		return usuariosAdmision.contains(usuario);
+ 	}
+ 	
  }

@@ -28,6 +28,7 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_PATRIMONIO = "patrimonio";
     public static final String TAB_CALIFICACION_NEGATIVA = "calificacionNegativa";
     public static final String TAB_PLUSVALIA = "plusvalia";
+    public static final String TAB_FASE_PUBLICACION = "fasepublicacionactivo";
     
 
 
@@ -526,7 +527,7 @@ public class ActivoPropagacionFieldTabMap {
 
     	pmap.put(TAB_COMERCIAL,
     			Arrays.asList(
-					"id", // ID de activo.
+					//"id", // ID de activo.
 					"situacionComercialCodigo",
 					"fechaVenta",
 					"expedienteComercialVivo",

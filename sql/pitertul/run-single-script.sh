@@ -230,11 +230,11 @@ cp -f $BASEDIR/scripts/reg*.sql $BASEDIR/tmp/
 chmod u+x $BASEDIR/tmp/$nombreSinDirSinExt.sh
 
 # print_ouput_console $FICHERO
-ESQUEMA=`echo $PW | cut -d'/' -f1`
+ESQUEMA=`echo $PW | cut -d'/' -f2`
 if [[ "$ESQUEMA" == "null" ]] ; then
 	ESQUEMA=' '
 else
-	ESQUEMA='- Esquema: '$ESQUEMA
+	ESQUEMA='- Servicio: '$ESQUEMA
 fi
 echo -e "\nFichero: $FICHERO - Modo: V=$VERBOSE P=$PACKAGE C=$COMPILE $ESQUEMA" 
 
@@ -245,6 +245,6 @@ if [[ $VERBOSE == 1 ]]; then
 fi
 
 if [[ $VERBOSE == 1 ]]; then
-    echo $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW $INPUT_PARAM_OPTION
+    echo $BASEDIR/tmp/$nombreSinDirSinExt.sh "*******" $INPUT_PARAM_OPTION
 fi
 $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW $INPUT_PARAM_OPTION

@@ -105,7 +105,6 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 								store : '{comboSiNoRem}'
 							}
 						}
-				        
 				    ]},
 				    {
 			    	defaults: {
@@ -143,7 +142,12 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.referencia.catastral'),
 				        	name: 'refCatastral'
-				        }
+				        },
+				    	{ 
+				    		xtype: 'currencyfieldbase',
+				    		fieldLabel: HreRem.i18n('fieldlabel.numero.de.agrupacion'),
+				    		name: 'numAgrupacion'
+				    	}
 				    ]}
 			    ]
     		},
@@ -502,7 +506,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	    //readOnly: $AU.userTipoGestor()=="GIAFORM"
 						            	},
 										reference: 'tipoGestor',
-										name: 'tipoGestor',
+										name: 'tipoGestorCodigo',
 			        					chainedStore: 'comboUsuarios',
 										chainedReference: 'usuarioGestor',
 						            	displayField: 'descripcion',
@@ -543,7 +547,43 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 												queryEvent.combo.onLoad();
 											}
 		    						    }
-								    }
+								    },
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.api.primario'),
+							    		name: 'apiPrimarioId',
+							    		valueField : 'id',
+										displayField : 'nombre',
+							    		enableKeyEvents:true,
+							    		mode: 'local',
+							    		forceSelection	: false,
+							    		editable: true,
+							    		minChars: 0,
+							    		emptyText: 'Introduzca nombre mediador',
+										listeners: {
+											'keyup': function() {
+												if(this.getRawValue().length >= 3)
+												{
+													this.getStore().clearFilter();
+												   	this.getStore().filter({
+													    property: 'nombre',
+													    value: this.getRawValue(),
+													    anyMatch: true,
+													    caseSensitive: false
+													})
+												}else if (this.getRawValue().length == 0) {
+													this.getStore().clearFilter();
+													this.getStore().load();
+												}
+											},
+											'beforequery': function(queryEvent) {
+											 	queryEvent.combo.onLoad();
+											}
+										},
+							    		bind: {
+							    			store: '{comboApiPrimario}'
+							    		}
+							    	}
 								]
 			            }
 		            ]},
@@ -610,14 +650,74 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		bind: {
 							    			store: '{comboEstadoComunicacionGencat}'
 							    		}
-							    	}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.direccion.territorial'),
+							    		name: 'direccionTerritorialCodigo',
+							    		bind: {
+							    			store: '{comboDireccionTerritorial}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.fase.de.publicacion'),
+							    		name: 'fasePublicacionCodigo',
+							    		bind: {
+							    			store: '{comboFasePublicacion}'
+							    		}
+							    	},
+							    	{
+								        xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('combolabel.activos.estado.publicacion.venta'),
+							        	name: 'estadoPublicacionVentaCodigo',
+							        	reference: 'estadoPublicacionVenta',
+							        	bind: {
+						            		store: '{comboEstadoPublicacionVenta}'
+							        	},
+										listeners: {
+											change: 'hiddenMotivosOcultacionVenta'
+										}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('combolabel.activos.estado.publicacion.alquiler'),
+							        	name: 'estadoPublicacionAlquilerCodigo',
+							        	reference: 'estadoPublicacionAlquiler',
+							        	bind: {
+						            		store: '{comboEstadoPublicacionAlquiler}'
+						            	},
+										listeners: {
+											change: 'hiddenMotivosOcultacionAlquiler'
+										}
+							        },
+									{ 
+									   	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.venta'),
+							        	name: 'motivosOcultacionVenta',
+							        	reference: 'motivosOcultacionVenta',
+							        	bind: {
+							        		hidden: true,
+						            		store: '{comboMotivoOcultacion}'
+						            	}
+									},
+					        		{ 
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.alquiler'),
+							        	name: 'motivosOcultacionAlquiler',
+							        	reference: 'motivosOcultacionAlquiler',
+							        	bind: {
+							        		hidden: true,
+						            		store: '{comboMotivoOcultacion}'
+						            	}
+					        		}
 								]
 			            }
 		            ]}
 		            
     			]
     		}
-	    ],
+	    ];
 		
 		me.callParent();
 		

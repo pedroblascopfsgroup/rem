@@ -75,6 +75,12 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											value: '{gasto.numGastoDestinatario}'													
 										}
 									},
+				                	{
+										xtype: 'textfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.gasto.identificador.unico'),
+										bind:		'{gasto.identificadorUnico}',
+										readOnly: true
+									},
 									{
 										xtype: 'textfieldbase',
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.referencia.emisor'),

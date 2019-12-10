@@ -242,7 +242,8 @@ public class MSVSuperGestEcoTrabajosExcelValidator extends MSVExcelValidatorAbst
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(particularValidator.existeTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO)))
+				    // Modifico la función particularValidator.existeTrabajo pues retornaba lógica confusa.
+					if(Boolean.FALSE.equals(particularValidator.existeTrabajo(exc.dameCelda(i, COL_NUM.COL_NUM_TRABAJO))))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);

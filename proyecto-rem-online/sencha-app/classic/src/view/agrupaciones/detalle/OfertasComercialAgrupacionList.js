@@ -9,6 +9,16 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion', 'HreRem.view.activos.detalle.MotivoRechazoOfertaForm'],
     
    	removeButton: false,
+   	
+    listeners	: {
+    	select: 'onSelectedRow',
+    	deselect: 'onDeselectedRow',
+    	boxready: function(){
+    		me = this;    		
+			me.calcularMostrarBotonClonarExpediente();
+    	}
+    },
+    
     initComponent: function () {
     	        
         var me = this;
@@ -161,7 +171,9 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		            }
 		        }
 		];
-		    
+		
+		me.cloneExpedienteButton = true; // No modificar este, la logica de mostrar o no el bot�n est� en el metodo calcularMostrarBotonClonarExpediente
+		
         me.callParent(); 
         
     },
@@ -406,8 +418,76 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
     	}  
 		
+	},
+   	
+   	onClickCloneExpedienteButton : function(btn) {
+
+		var me = this;
+
+		var selectionModel = me.getSelectionModel();
+
+		var ofertasData = me.getNavigationModel().store.data.items;
+		var ofertaSeleccionadaData = selectionModel.getSelection()[0].data;
+
+		var sePuedeClonarExpediente = ofertaSeleccionadaData.codigoEstadoOferta == CONST.ESTADOS_OFERTA['RECHAZADA'];
+				
+		if (!sePuedeClonarExpediente) {
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.clonar.oferta.no.anulada"));
+			return false;
+		}
+				
+		if(!ofertaSeleccionadaData.numExpediente){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.clonar.oferta.sin.expediente"));
+			return false;
+		}
+		
+		if (!ofertaSeleccionadaData.idAgrupacion) {
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.clonar.oferta.agrupacion.sin.agrupacion"));
+			return false;
+		}
+
+		sePuedeClonarExpediente = ofertaSeleccionadaData.codigoTipoOferta === CONST.TIPOS_COMERCIALIZACION['VENTA'];
+		
+		if (!sePuedeClonarExpediente) {
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.clonar.oferta.no.venta"));
+			return false;
+		}
+		
+		for (var i = 0, len = ofertasData.length; i < len; i++) {
+			if (ofertasData[i].data.codigoEstadoOferta == CONST.ESTADOS_OFERTA['ACEPTADA']) {
+				sePuedeClonarExpediente = false;
+				break;
+			}
+		}
+		if (!sePuedeClonarExpediente) {
+			me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.clonar.mas.ofertas.tramitadas"));
+		} else {
+			var ofertasGrid = btn.up().up();
+			
+			Ext.Msg.confirm(
+				HreRem.i18n("msg.info.clonar.expediente"),
+				HreRem.i18n("msg.confirm.clonar.oferta"),
+				function(btnConfirm){
+					if (btnConfirm == "yes"){
+						ofertasGrid.mask(HreRem.i18n("msg.mask.loading"));
+						me.lookupController().clonateOferta(ofertaSeleccionadaData.id, ofertasGrid);
+					}
+				}
+			);
+		}
+	},
+   	
+   	calcularMostrarBotonClonarExpediente: function(){
+		var me = this;
+
+		mostrarCloneButtonExpediente = ($AU.userIsRol('HAYASUPER') || $AU.userIsRol('HAYAGESTCOM') || $AU.userIsRol('HAYAGBOINM')
+										&& (me.lookupController().getViewModel().data.agrupacionficha.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['VENTA'] 
+											|| me.lookupController().getViewModel().data.agrupacionficha.data.tipoComercializacionCodigo === CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
+										/*&& (me.lookupController().getViewModel().data.agrupacionficha.data.codSubcartera === CONST.SUBCARTERA['APPLEINMOBILIARIO'] 
+											|| me.lookupController().getViewModel().data.agrupacionficha.data.codSubcartera === CONST.SUBCARTERA['DIVARIAN'])*/
+										);
+		me.mostrarBotonClonarExpediente(mostrarCloneButtonExpediente);
 	}
-
-
+   	
 });
 

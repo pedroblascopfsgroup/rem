@@ -140,6 +140,9 @@ Ext.define('HreRem.model.Activo', {
     			name:'paisCodigo'
     		},
     		{
+    			name:'direccionTerritorial'
+    		},
+    		{
     			name: 'idufir'
     		},
     		{
@@ -861,6 +864,20 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'checkFormalizarReadOnly',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'nombreMediador'
+    		},
+    		{
+    			name: 'visualizarTabFasesPublicacion',
+    			type: 'boolean'
+			},
+			{
+    			name:'esSarebProyecto',
+    			type:'boolean'
+    		},
+    		{
+    			name: 'sociedadPagoAnterior'
     		}
     ],
     

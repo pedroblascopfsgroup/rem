@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
@@ -20,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
+import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionActivo;
 
 @Component
@@ -112,6 +114,22 @@ public class TabActivoDatosComunidad implements TabActivoService {
 				}
 			}
 			
+			if(!Checks.esNulo(activo.getComunidadPropietarios())) {
+				Filter filtroComunidadPropietarios = genericDao.createFilter(FilterType.EQUALS, "comunidadPropietarios.id", activo.getComunidadPropietarios().getId());
+				Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+				
+				GestionCCPP gestionAnterior  = genericDao.get(GestionCCPP.class, filtroComunidadPropietarios, filtroFechaFin );
+				
+				if(!Checks.esNulo(gestionAnterior)) {
+					if(!Checks.esNulo(gestionAnterior.getEstadoLocalizacion())) {
+						datosComunidad.setEstadoLocalizacion(gestionAnterior.getEstadoLocalizacion().getCodigo());
+					}
+					if(!Checks.esNulo(gestionAnterior.getSubestadoGestion())) {
+						datosComunidad.setSubestadoGestion(gestionAnterior.getSubestadoGestion().getCodigo());
+					}
+				}
+			}
+			
 			if(activoDao.isUnidadAlquilable(activo.getId())) {    
 				datosComunidad.setUnidadAlquilable(true);
 			}else {
@@ -190,6 +208,10 @@ public class TabActivoDatosComunidad implements TabActivoService {
 				if (!Checks.esNulo(activoComunidadPropietariosDto.getFechaEnvioCarta())) {
 					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "fechaEnvioCarta", activoComunidadPropietariosDto.getFechaEnvioCarta());
 				}
+				if (!Checks.esNulo(activoComunidadPropietariosDto.getAsistenciaJuntaObligatoria())
+				&& !Checks.esNulo(activo.getComunidadPropietarios())) {
+					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios().getAsistenciaJuntaObligatoria(), "asistenciaJuntaObligatoria", activoComunidadPropietariosDto.getAsistenciaJuntaObligatoria());
+				} 
 				
 				activo.setComunidadPropietarios(genericDao.save(ActivoComunidadPropietarios.class, activo.getComunidadPropietarios()));
 				activoApi.saveOrUpdate(activo);				

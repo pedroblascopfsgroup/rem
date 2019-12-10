@@ -1340,15 +1340,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		// Tramites [FASE 1] -----------------------
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)) { 	// Obtención
-																										// documental
+																								// documental
 			if((DDSubtipoTrabajo.CODIGO_CEE.equals(trabajo.getSubtipoTrabajo().getCodigo())
 				|| DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())
 				|| DDSubtipoTrabajo.CODIGO_BOLETIN_GAS.equals(trabajo.getSubtipoTrabajo().getCodigo())
 				|| DDSubtipoTrabajo.CODIGO_BOLETIN_AGUA.equals(trabajo.getSubtipoTrabajo().getCodigo())
 				|| DDSubtipoTrabajo.CODIGO_BOLETIN_ELECTRICIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())
 				|| DDSubtipoTrabajo.CODIGO_CFO.equals(trabajo.getSubtipoTrabajo().getCodigo())
-				|| DDSubtipoTrabajo.CODIGO_LPO.equals(trabajo.getSubtipoTrabajo().getCodigo()) )
+				|| DDSubtipoTrabajo.CODIGO_LPO.equals(trabajo.getSubtipoTrabajo().getCodigo())
+				|| tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(trabajo))
 				&& this.checkSareb(trabajo)) {
+
 				Filter filtroUsuProveedorSareb = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_ELECNOR));
 				Usuario usuProveedorSareb = genericDao.get(Usuario.class, filtroUsuProveedorSareb);
 				if(!Checks.esNulo(usuProveedorSareb)) {
@@ -1476,10 +1478,23 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			else {
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC); // Trámite
 																													// de
-																													// obtención
-																													// documental
-				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
-				if(this.checkBankia(trabajo) /*|| this.checkSareb(trabajo) */|| this.checkTango(trabajo) || this.checkGiants(trabajo)) {
+				if(this.tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(trabajo) && this.checkBankia(trabajo))
+						//&& gestorActivoApi.isGestorMantenimiento(trabajo.getActivo(), trabajo.getSolicitante()) )	
+					{
+						Filter filtroUsuProveedorBankia = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_PACI));
+						Usuario usuProveedorBankia = genericDao.get(Usuario.class, filtroUsuProveedorBankia);
+						if(!Checks.esNulo(usuProveedorBankia)) {
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuProveedorBankia);
+							Filter filtro2 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
+							List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+									filtro,filtro2);
+							if(!Checks.estaVacio(listaPVC)){
+								trabajo.setProveedorContacto(listaPVC.get(0));
+								trabajo = genericDao.save(Trabajo.class, trabajo);
+							}
+						}
+						//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
+					}else if(this.checkBankia(trabajo) /*|| this.checkSareb(trabajo) */|| this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 
 					Usuario gestorAdmision = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ADMISION);
 
@@ -1546,6 +1561,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
 			boolean esApple = false;
+			boolean esDivarian = false;
 			if ( !Checks.esNulo(expedienteComercial)) {
 				for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
 					Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
@@ -1554,7 +1570,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
 						esApple = true;
 					}
-					if (!esApple) {
+					esDivarian = false;
+					if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
+							DDSubcartera.CODIGO_DIVARIAN.equals(activo.getSubcartera().getCodigo())) {
+						esDivarian = true;
+					}
+					if (!esApple && !esDivarian) {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 					}else {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE);
@@ -4206,4 +4227,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
         }
 		return idTarea;
 	}
+	
+	@Override
+ 	public Boolean tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(Trabajo trabajo){
+ 	
+ 		Boolean esTramiteValido = false;
+	 	if(!Checks.esNulo(trabajo) && !Checks.esNulo(trabajo.getSubtipoTrabajo())  
+		&&	(DDSubtipoTrabajo.CODIGO_BOLETIN_AGUA.equals(trabajo.getSubtipoTrabajo().getCodigo())
+				 || DDSubtipoTrabajo.CODIGO_BOLETIN_GAS.equals(trabajo.getSubtipoTrabajo().getCodigo())
+				 || DDSubtipoTrabajo.CODIGO_BOLETIN_ELECTRICIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())
+				 || DDSubtipoTrabajo.CODIGO_CFO.equals(trabajo.getSubtipoTrabajo().getCodigo())
+				 || DDSubtipoTrabajo.CODIGO_LPO.equals(trabajo.getSubtipoTrabajo().getCodigo())
+				 || DDSubtipoTrabajo.CODIGO_VPO_AUTORIZACION_VENTA.equals(trabajo.getSubtipoTrabajo().getCodigo())
+				 || DDSubtipoTrabajo.CODIGO_VPO_NOTIFICACION_ADJUDICACION.equals(trabajo.getSubtipoTrabajo().getCodigo())
+				 || DDSubtipoTrabajo.CODIGO_VPO_SOLICITUD_DEVOLUCION.equals(trabajo.getSubtipoTrabajo().getCodigo())
+			 )
+		) {
+			esTramiteValido = true;
+		}
+	 	
+	 	return esTramiteValido;
+ 	}
 }

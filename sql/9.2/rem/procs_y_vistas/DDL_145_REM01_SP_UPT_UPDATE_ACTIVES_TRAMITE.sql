@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20190509
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20191114
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=bau_jaus
---## INCIDENCIA_LINK=REMVIP-3283
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-8441
 --## PRODUCTO=NO
 --## Finalidad: correción errores SP
 --##           
@@ -17,6 +17,7 @@
 --##		0.5 Pablo Meseguer - actualizamos el tipo de activo junto con el subtipo a traves del COTSIN
 --##		0.6 Maria Presencia - Modificado fallo en PROD
 --##    0.7 DAP - Modificado ultimo cambio posesión
+--##    0.8 Daniel Algaba - HREOS-8087 - Modificación cálculo situación del título
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -25,7 +26,7 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
-
+--0.8
 create or replace PROCEDURE SP_UPT_UPDATE_ACTIVES_TRAMITE (
       V_USUARIO VARCHAR2 DEFAULT 'SP_UPT_TRAMITE',
       PL_OUTPUT       OUT VARCHAR2
@@ -34,7 +35,7 @@ AS
 
 V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
 V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
-V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+V_SQL VARCHAR2(6000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
 V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
 
@@ -80,6 +81,10 @@ V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
   --[8]TABLA ACT_ADM_INF_ADMINISTRATIVA
                       --DD_TVP_ID
   --[9]TABLA ACT_TIT_TITULO
+              --[9.1]--ACT_TIT_TITULO
+              --[9.2]--DD_ETI_ID
+              --[9.3]--ACT_AHT_HIST_TRAM_TITULO
+              --[9.4]-- ACTUALIZAR ETI EN ACT_TIT_TITULO CON ACT_AHT_HIST_TRAM_TITULO
   TYPE T_TIPO_TABLA10 IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_TABLA10 IS TABLE OF T_TIPO_TABLA10;
     V_TIPO_TABLA10 T_ARRAY_TABLA10 := T_ARRAY_TABLA10(
@@ -1354,6 +1359,7 @@ BEGIN
 --T_TIPO_TABLA10('FEC_ENVIO_AUTO_ADICCION','TIT_FECHA_ENVIO_AUTO'),
 --T_TIPO_TABLA10('FEC_SEGUNDA_PRESEN_REG','TIT_FECHA_PRESENT2_REG'),
 --T_TIPO_TABLA10('FEC_INSCRIPCION_TITULO','TIT_FECHA_INSC_REG')
+--[9.1]--ACT_TIT_TITULO
 FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
     LOOP
 
@@ -1447,7 +1453,176 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
 
           END IF;
 
+--[9.3]--ACT_AHT_HIST_TRAM_TITULO
+          V_SQL := '
+                    INSERT INTO '||V_ESQUEMA||'.ACT_AHT_HIST_TRAM_TITULO
+                    (
+                    AHT_ID
+                    , TIT_ID
+                    , AHT_FECHA_PRES_REGISTRO
+                    , AHT_FECHA_CALIFICACION
+                    , AHT_FECHA_INSCRIPCION
+                    , DD_ESP_ID
+                    , VERSION
+                    , USUARIOCREAR
+                    , FECHACREAR
+                    , BORRADO
+                    )
+                    WITH DISTINTOS AS (
+                      SELECT AHT.AHT_ID, AHT.TIT_ID, AHT.AHT_FECHA_PRES_REGISTRO, AHT.AHT_FECHA_CALIFICACION, AHT.DD_ESP_ID, row_number() over (partition by  AHT.TIT_ID order by AHT.AHT_ID desc) as rn 
+                      FROM '||V_ESQUEMA||'.ACT_AHT_HIST_TRAM_TITULO AHT WHERE AHT.BORRADO = 0
+                    )
+                    SELECT 
+                    '||V_ESQUEMA||'.S_ACT_AHT_HIST_TRAM_TITULO.NEXTVAL
+                    , TIT.TIT_ID TIT_ID
+                    , COALESCE(TIT.TIT_FECHA_PRESENT2_REG,TIT.TIT_FECHA_PRESENT1_REG, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) AHT_FECHA_PRES_REGISTRO
+                    , CASE
+                    WHEN ETI.DD_ETI_CODIGO IN (''06'') THEN SYSDATE
+                    END AHT_FECHA_CALIFICACION
+                    , CASE
+                    WHEN ETI.DD_ETI_CODIGO IN (''02'') THEN TIT.TIT_FECHA_INSC_REG
+                    WHEN ETI.DD_ETI_CODIGO IS NULL AND TIT.TIT_FECHA_INSC_REG IS NOT NULL THEN TIT.TIT_FECHA_INSC_REG
+                    END AHT_FECHA_INSCRIPCION
+                    , CASE
+                    WHEN ETI.DD_ETI_CODIGO NOT IN (''02'',''06'')
+                    THEN (
+                    SELECT DD_ESP_ID
+                    FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                    WHERE  DD_ESP_CODIGO = ''01''
+                    )
+                    WHEN ETI.DD_ETI_CODIGO IN (''02'')
+                    THEN (
+                    SELECT DD_ESP_ID
+                    FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                    WHERE  DD_ESP_CODIGO = ''03''
+                    )
+                    WHEN ETI.DD_ETI_CODIGO IN (''06'')
+                    THEN (
+                    SELECT DD_ESP_ID
+                    FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                    WHERE  DD_ESP_CODIGO = ''02''
+                    )
+                    WHEN ETI.DD_ETI_CODIGO IS NULL AND TIT.TIT_FECHA_INSC_REG IS NOT NULL
+                    THEN (
+                    SELECT DD_ESP_ID
+                    FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                    WHERE  DD_ESP_CODIGO = ''03''
+                    )
+                    WHEN ETI.DD_ETI_CODIGO IS NULL AND COALESCE(TIT.TIT_FECHA_PRESENT2_REG,TIT.TIT_FECHA_PRESENT1_REG, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) IS NOT NULL
+                    THEN (
+                    SELECT DD_ESP_ID
+                    FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                    WHERE  DD_ESP_CODIGO = ''01''
+                    )
+                    END DD_ESP_ID
+                    , 0 VERSION
+                    , '''||V_USUARIO||'''
+                    , SYSDATE
+                    , 0 BORRADO
+                    FROM '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+                    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = TIT.ACT_ID AND ACT.BORRADO = 0
+                    LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
+                    LEFT JOIN '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI ON TIT.DD_ETI_ID = ETI.DD_ETI_ID AND ETI.BORRADO = 0
+                    LEFT JOIN DISTINTOS AHT ON TIT.TIT_ID = AHT.TIT_ID AND AHT.RN = 1
+                    WHERE CRA.DD_CRA_CODIGO = ''03'' AND
+                    (
+                    AHT.AHT_ID IS NULL
+                    OR COALESCE(TIT.TIT_FECHA_PRESENT2_REG,TIT.TIT_FECHA_PRESENT1_REG, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) <> AHT.AHT_FECHA_PRES_REGISTRO
+                    OR (ETI.DD_ETI_CODIGO IN (''06'') AND AHT.AHT_FECHA_CALIFICACION IS NULL)
+                    OR CASE
+                        WHEN ETI.DD_ETI_CODIGO NOT IN (''02'',''06'')
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''01''
+                        )
+                        WHEN ETI.DD_ETI_CODIGO IN (''02'')
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''03''
+                        )
+                        WHEN ETI.DD_ETI_CODIGO IN (''06'')
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''02''
+                        )
+                        WHEN ETI.DD_ETI_CODIGO IS NULL AND TIT.TIT_FECHA_INSC_REG IS NOT NULL
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''03''
+                        )
+                        WHEN ETI.DD_ETI_CODIGO IS NULL AND COALESCE(TIT.TIT_FECHA_PRESENT2_REG,TIT.TIT_FECHA_PRESENT1_REG, TO_DATE(''01/01/1900'',''DD/MM/YYYY'')) IS NOT NULL
+                        THEN (
+                        SELECT DD_ESP_ID
+                        FROM   '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION
+                        WHERE  DD_ESP_CODIGO = ''01''
+                        )
+                        END <> AHT.DD_ESP_ID
+                    )
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := SQL%ROWCOUNT;
 
+          IF V_NUM_TABLAS != 0 THEN
+
+            DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS INSERTADOS EN '||V_ESQUEMA||'.ACT_AHT_HIST_TRAM_TITULO '||V_NUM_TABLAS||' Registros.');
+            PL_OUTPUT := PL_OUTPUT||'[INFO] REGISTROS INSERTADOS EN '||V_ESQUEMA||'.ACT_AHT_HIST_TRAM_TITULO '||V_NUM_TABLAS||' Registros. '||CHR(10)||CHR(10);
+            DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------');
+
+            COMMIT;
+
+          END IF;
+          
+--[9.4]-- ACTUALIZAR ETI EN ACT_TIT_TITULO CON ACT_AHT_HIST_TRAM_TITULO
+
+          V_SQL := '
+				      MERGE INTO '||V_ESQUEMA||'.ACT_TIT_TITULO TIT USING
+				      (
+				        WITH ULT_REG AS (
+				          SELECT AHT.AHT_ID, AHT.TIT_ID, AHT.AHT_FECHA_PRES_REGISTRO, AHT.AHT_FECHA_CALIFICACION, AHT.DD_ESP_ID, ROW_NUMBER() OVER (PARTITION BY  AHT.TIT_ID ORDER BY AHT.AHT_ID DESC) AS RN
+				          FROM '||V_ESQUEMA||'.ACT_AHT_HIST_TRAM_TITULO AHT WHERE AHT.BORRADO = 0
+				        )
+				        SELECT 
+				        TIT.TIT_ID 
+				        , CASE WHEN ESP.DD_ESP_CODIGO = ''01'' THEN (SELECT ETI.DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI WHERE ETI.DD_ETI_CODIGO = ''01'')
+				        WHEN ESP.DD_ESP_CODIGO = ''02'' THEN (SELECT ETI.DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI WHERE ETI.DD_ETI_CODIGO = ''06'')
+				        WHEN ESP.DD_ESP_CODIGO = ''03'' THEN (SELECT ETI.DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI WHERE ETI.DD_ETI_CODIGO = ''02'')
+				        END DD_ETI_ID
+				        FROM '||V_ESQUEMA||'.ACT_TIT_TITULO TIT
+				        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON TIT.ACT_ID = ACT.ACT_ID
+				        JOIN ULT_REG AHT ON TIT.TIT_ID = AHT.TIT_ID AND AHT.RN = 1
+				        LEFT JOIN '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION ESP ON AHT.DD_ESP_ID = ESP.DD_ESP_ID
+				        LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.BORRADO = 0
+				        WHERE CRA.DD_CRA_CODIGO = ''03'' AND TIT.DD_ETI_ID <>
+						CASE WHEN ESP.DD_ESP_CODIGO = ''01'' THEN (SELECT ETI.DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI WHERE ETI.DD_ETI_CODIGO = ''01'')
+						WHEN ESP.DD_ESP_CODIGO = ''02'' THEN (SELECT ETI.DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI WHERE ETI.DD_ETI_CODIGO = ''06'')
+						WHEN ESP.DD_ESP_CODIGO = ''03'' THEN (SELECT ETI.DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO ETI WHERE ETI.DD_ETI_CODIGO = ''02'')
+						END OR TIT.DD_ETI_ID IS NULL
+				      ) TMP
+				      ON (TIT.TIT_ID = TMP.TIT_ID)
+				      WHEN MATCHED THEN UPDATE SET
+				      TIT.DD_ETI_ID = TMP.DD_ETI_ID,
+				      TIT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+				      TIT.FECHAMODIFICAR = SYSDATE
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := SQL%ROWCOUNT;
+
+          IF V_NUM_TABLAS != 0 THEN
+
+            DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS ACTUALIZADOS EN '||V_ESQUEMA||'.ACT_TIT_TITULO '||V_NUM_TABLAS||' Registros.');
+            PL_OUTPUT := PL_OUTPUT||'[INFO] REGISTROS ACTUALIZADOS EN '||V_ESQUEMA||'.ACT_TIT_TITULO '||V_NUM_TABLAS||' Registros. '||CHR(10)||CHR(10);
+            DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------');
+
+            COMMIT;
+
+          END IF;
+          
 -------------------------------------
 ---- [10] ACT_OLE_OCUPANTE_LEGAL ----
 -------------------------------------

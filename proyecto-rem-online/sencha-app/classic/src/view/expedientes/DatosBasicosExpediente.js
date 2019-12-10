@@ -299,7 +299,17 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		               		hidden:'{!esCarteraApple}'
 		              	},
 		             	readOnly: true   
-		             }
+		             },
+		             {
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.contabilizacion.venta'),
+			        	bind: {
+			        		value:'{expediente.fechaContabilizacionVenta}',
+			        		hidden: '{!esCarteraAppleoLiberbank}'
+			        	},
+			        	readOnly: true
+	            	 }
 				]	
            },
            {    

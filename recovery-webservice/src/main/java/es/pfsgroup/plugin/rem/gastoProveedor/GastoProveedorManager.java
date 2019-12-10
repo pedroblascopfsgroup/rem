@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -140,6 +141,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
 	private static final String COD_PEF_GESTORIA_POSTVENTA = "GTOPOSTV";
 	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
+	
+	private static final String COD_SI = "1";
+	private static final String COD_NO = "0";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -352,6 +356,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setDestinatario(gasto.getDestinatarioGasto().getCodigo());
 			}
 
+			if (!Checks.esNulo(gasto.getIdentificadorUnico())) {
+				dto.setIdentificadorUnico(gasto.getIdentificadorUnico());
+			}
+			
 			dto.setFechaEmision(gasto.getFechaEmision());
 
 			if (!Checks.esNulo(gasto.getTipoPeriocidad())) {
@@ -603,6 +611,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtipoGastoCodigo());
 			gastoProveedor.setSubtipoGasto(subtipoGasto);
 		}
+		
+		if (!Checks.esNulo(dto.getIdentificadorUnico())) {
+			gastoProveedor.setIdentificadorUnico(dto.getIdentificadorUnico());
+		}
 
 		gastoProveedor.setFechaEmision(dto.getFechaEmision());
 		gastoProveedor.setReferenciaEmisor(dto.getReferenciaEmisor());
@@ -711,6 +723,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		if (!Checks.esNulo(dto.getGastoSinActivos())) {
 			gastoProveedor.setGastoSinActivos(BooleanUtils.toIntegerObject(dto.getGastoSinActivos()));
+		}
+		
+		if (!Checks.esNulo(dto.getIdentificadorUnico())) {
+			gastoProveedor.setIdentificadorUnico(dto.getIdentificadorUnico());
 		}
 		
 		updateEjercicio(gastoProveedor);
@@ -1153,6 +1169,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
  				}
 			}
 
+			if (!Checks.esNulo(detalleGasto.getImporteRecargo()) &&  detalleGasto.getImporteRecargo() != 0.0) {
+				
+				if(!Checks.esNulo(detalleGasto.getExisteRecargo()) && detalleGasto.getExisteRecargo() && !Checks.esNulo(detalleGasto.getTipoRecargoGasto())){
+					dto.setExisteRecargo(COD_SI);
+					dto.setTipoRecargo(detalleGasto.getTipoRecargoGasto().getCodigo());
+				}else {
+					dto.setExisteRecargo(COD_NO);
+					dto.setTipoRecargo(null);
+				}
+			}else {
+				dto.setExisteRecargo(null);
+				dto.setTipoRecargo(null);
+			}
 		}
 
 		return dto;
@@ -1312,6 +1341,21 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					//updaterStateApi.updaterStates(gasto, gasto.getEstadoGasto().getCodigo());
 				}else {
 					updaterStateApi.updaterStates(gasto, null);
+				}
+				
+				if(!Checks.esNulo(dto.getExisteRecargo()) && COD_SI.equals(dto.getExisteRecargo())) {			
+					detalleGasto.setExisteRecargo(true);
+				}else {
+					detalleGasto.setExisteRecargo(false);
+					detalleGasto.setTipoRecargoGasto(null);
+				}
+				
+				if(!Checks.esNulo(dto.getTipoRecargo())) {
+					
+					DDTipoRecargoGasto tipoRecargo = genericDao.get(DDTipoRecargoGasto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoRecargo()));
+					if(!Checks.esNulo(tipoRecargo)) {
+						detalleGasto.setTipoRecargoGasto(tipoRecargo);
+					}
 				}
 
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
@@ -1758,6 +1802,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			// Volvemos a establecer propietario.
 			// gasto = asignarPropietarioGasto(gasto); HREOS-7939 se solicita que no se recalcule el propietario al borrar un activo afectado.
+
 			// Volvemos a establecer la cuenta contable y partida.
 			gasto = asignarCuentaContableYPartidaGasto(gasto);
 
@@ -2270,6 +2315,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							adj.setCodigoTipo(tipoDocumento.getDescripcion());
 							adj.setDescripcionTipo(tipoDocumento.getDescripcion());
 						}
+						adj.setFechaDocumento(adj.getFechaDocumento());
 					}
 				}
 
@@ -2308,6 +2354,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setIdEntidad(gasto.getId());
 				dto.setDescripcionTipo(adjunto.getTipoDocumentoGasto().getDescripcion());
 				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
+				dto.setFechaDocumento(adjunto.getFechaDocumento());
 
 				listaAdjuntos.add(dto);
 			}

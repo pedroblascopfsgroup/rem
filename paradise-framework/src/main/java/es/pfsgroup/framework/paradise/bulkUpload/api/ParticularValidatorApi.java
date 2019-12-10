@@ -2,7 +2,10 @@ package es.pfsgroup.framework.paradise.bulkUpload.api;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
+
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 
 public interface ParticularValidatorApi {
 
@@ -67,6 +70,13 @@ public interface ParticularValidatorApi {
 	Boolean esActivoAsistido(String numActivo);
 
 	Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto);
+	
+	/**
+     * Comprueba si existe un trabajo
+     *
+     * @param numTrabajo
+     * @return true si el trabajo existe, false si recibe un null o no existe el trabajo
+     */
 	
 	Boolean existeTrabajo(String numTrabajo);
 	
@@ -782,8 +792,29 @@ public interface ParticularValidatorApi {
 	 * @return true si el activo pertenece a un activo de venta.
 	 */
 	
-	public Boolean activosVendidos(String numExpedienteComercial);	
-
+	public Boolean activosVendidos(String numExpedienteComercial);
+	
+	/**
+	 * @param importe Suma de la columna de importes en la hoja
+	 * @param numExpedienteComercial
+	 * @return true si el total de la oferta es distinto a la suma de los activos en la hoja.
+	 */
+	public Boolean isTotalOfertaDistintoSumaActivos(Double importe, String numExpedienteComercial);
+	
+	/**
+	 * 
+	 * @param numExpedienteComercial
+	 * @return true si existe un activo en el Expediente Comercial con importe nulo
+	 */
+	public Boolean isNullImporteActivos(String numExpedienteComercial);
+	
+	/**
+	 * @param numExpedienteComercial
+	 * @param List <activos> contiene una lista con los activos que se supone componen la oferta 
+	 * @return false si el nº de los activos de la oferta no coincide con los de la lista 
+	 */
+	public Boolean isAllActivosEnOferta(String numExpedienteComercial, Hashtable <String, Integer> activos); 
+	
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 	Boolean existeActivoAsociado(String numActivo);
@@ -818,12 +849,6 @@ public interface ParticularValidatorApi {
 	 * @return true si ambos gastos son de la misma cartera
 	 */
 	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto);
-
-	/**
-	 * @param numActivo
-	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
-	 */
-	Boolean activoEnAgrupacionProyecto(String numActivo);
 
 	/** 
 	 * @param codigoServicer
@@ -913,11 +938,22 @@ public interface ParticularValidatorApi {
 	 * @param numGasto
 	 * @return true si el gasto es refacturable
 	 */
+
 	Boolean esGastoRefacturable(String numGasto);
 
 	Boolean existeGastoRefacturable(String numGasto);
 
-	Boolean esGastoDestinatarioPropietario(String numGasto);
+	Boolean esGastoDestinatarioPropietario(String numGasto);	
+	
+	Boolean existeFasePublicacion(String fasePublicacion);
+	
+	Boolean existeSubfasePublicacion(String subfasePublicacion);
+
+	/**
+	 * @param numActivo
+	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
+	 */
+	Boolean activoEnAgrupacionProyecto(String numActivo);
 
 	/**
 	 * @param codDocumento
@@ -937,4 +973,55 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
 
+	/**
+	 * @param numExpediente, numActivo
+	 * @return true si un activo esta relacionado con un expediente
+	 */
+	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo);
+
+	Boolean esExpedienteVenta(String numExpediente);
+	
+	/**
+	 * @param pveCodRem
+	 * @return true si el proveedor ha sido dado de baja
+	 */
+	public Boolean isProveedorUnsuscribed(String pveCodRem);
+	
+	/**
+	 * @param pveCodRem 
+	 * @return true si el al menos hay un proveedor con el código rem
+	 */
+
+	public Boolean existeProveedorByCodRem(String pveCodRem);
+
+	/**
+	 * @param codSubFasePublicacion
+	 * @param codFasePublicacion
+	 * @return true si la subfase pertenece a la fase de publicación
+	 */
+	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion);
+	
+	 /***
+     * @param numTrabajo
+     * @return true si existe al menos un trámite en el trabajo.
+     */
+	
+	public Boolean existeTramiteTrabajo(String numTrabajo);
+	
+	/***
+     * @param numTrabajo
+     * @return true si existe al menos una tarea asociada al trabajo.
+     */
+	
+	public Boolean existenTareasEnTrabajo(String numTrabajo);
+
+	Boolean esExpedienteValidoFirmado(String numExpediente);
+
+	Boolean esExpedienteValidoReservado(String numExpediente);
+
+	Boolean esExpedienteValidoVendido(String numExpediente);
+
+	Boolean esExpedienteValidoAnulado(String numExpediente);
+
+	Boolean esExpedienteValidoAprobado(String numExpediente);
 }

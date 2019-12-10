@@ -106,6 +106,16 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	            },
 	            allowBlank: false
 	        }, {
+	        	xtype : 'comboboxfieldbase',
+	        	name :'comboEstadoGestPlusv',
+	        	referende:'comboEstadoGestPlusv',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.estado.estion'),
+	            bind : {
+	                store : '{comboEstadoGestionPlusvalia}',
+	                value : '{plusvalia.estadoGestion}',
+	                readOnly: '{checkEditEstadoGestionPlusvalia}'
+	            }
+	        }, {
 	        	xtype: 'textareafieldbase',
             	labelWidth: 200,
             	rowspan: 5,
@@ -113,7 +123,7 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
             	labelAlign: 'top',
             	fieldLabel: HreRem.i18n('fieldlabel.plusvalia.observaciones'),
             	bind:{
-            		value: '{plusvalia.observaciones}'
+            		value: '{plusvalia.observaciones}'            		
             	},
             	allowBlank: false
 	        } ]

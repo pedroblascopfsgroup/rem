@@ -229,7 +229,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					                	}
 					                }
 								]
-							}
+							},
+					        {
+					        	xtype: 'textfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
+					        	bind: '{activo.sociedadPagoAnterior}',
+					        	readOnly: true,
+					        	style:'margin-left:10px'
+					        }
+							
 						]
 					},
 					{ // Columna 3 
@@ -349,18 +357,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			            	        '</tpl>'
 			            	)
 						},
-						{
-		                	xtype: 'button',
-		                	reference: 'botonVerificarDireccion',
-		                	disabled: true,
-		                	bind:{
-		                		disabled: '{editableTipoActivo}'
-		                	},
-		                	rowspan: 2,
-		                	text: HreRem.i18n('btn.verificar.direccion'),
-		                	handler: 'onClickVerificarDireccion'
-		                	
-		                },	
+		                {
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.direccionTerritorial'),
+							reference: 'direccionTerritorialCombo',							
+			            	bind: {
+			            		readOnly : '{esUA}',
+			            		store: '{comboDireccionTerritorial}',
+			            		value: '{activo.direccionTerritorialCodigo}'			            		
+			            	}
+		                },
+						
 		                // fila 4
 		                {
 							fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
@@ -380,7 +387,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							valueField: 'id',
 							allowBlank: false
 								
-					     },					
+					     },
+				        {
+			                	xtype: 'button',
+			                	reference: 'botonVerificarDireccion',
+			                	disabled: true,
+			                	bind:{
+			                		disabled: '{editableTipoActivo}'
+			                	},
+			                	rowspan: 2,
+			                	text: HreRem.i18n('btn.verificar.direccion'),
+			                	handler: 'onClickVerificarDireccion'
+			                	
+			             },
 						 // fila 5
  						{ 
 		                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),

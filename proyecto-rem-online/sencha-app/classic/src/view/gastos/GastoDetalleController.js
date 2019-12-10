@@ -350,20 +350,24 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    		chkboxActivoRefacturable = me.lookupReference("checkboxActivoRefacturable");
 		    		
 			    	if(!Utils.isEmptyJSON(data.data)){
-			    		me.getViewModel().set('controlPestanyaGastoRefacturable', data.data);
-						var id= data.data.id;
-		    		    var nombrePropietario= data.data.nombre;
+			    		if (CONST.CIF_PROPIETARIO['OMEGA'] == data.data.docIdentificativo) {
+			    			me.fireEvent("errorToast", HreRem.i18n("msg.buscador.propietario.no.admitido"));
+			    		    buscadorNifPropietario.markInvalid(HreRem.i18n("msg.buscador.propietario.no.admitido"));
+			    		} else {
+			    			me.getViewModel().set('controlPestanyaGastoRefacturable', data.data);
+							var id= data.data.id;
+			    		    var nombrePropietario= data.data.nombre;
 
-		    		    if(!Ext.isEmpty(buscadorNifPropietario)) {
-		    		    	buscadorNifPropietario.setValue(nifPropietario);
-		    		    	
-		    		    }
-		    		    if(!Ext.isEmpty(nombrePropietarioGasto)) {
-		    		    	nombrePropietarioGasto.setValue(nombrePropietario);
+			    		    if(!Ext.isEmpty(buscadorNifPropietario)) {
+			    		    	buscadorNifPropietario.setValue(nifPropietario);
+			    		    	
+			    		    }
+			    		    if(!Ext.isEmpty(nombrePropietarioGasto)) {
+			    		    	nombrePropietarioGasto.setValue(nombrePropietario);
 
+				    		}
+			    		    //chkboxActivoRefacturable.existePropietario=true;
 			    		}
-		    		    //chkboxActivoRefacturable.existePropietario=true;
-
 			    	} else {
 			    		if(!Ext.isEmpty(nombrePropietarioGasto)) {
 			    			//chkboxActivoRefacturable.existePropietario=false;

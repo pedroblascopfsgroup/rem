@@ -262,6 +262,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			type:'date', 
         		dateFormat: 'c'
     		},
+    		{
+    			name: 'fechaContabilizacionVenta',
+    			type:'date', 
+        		dateFormat: 'c'
+    		},
 			{
 				name: 'esCarteraLiberbankVenta',
 				calculate: function(data) { 

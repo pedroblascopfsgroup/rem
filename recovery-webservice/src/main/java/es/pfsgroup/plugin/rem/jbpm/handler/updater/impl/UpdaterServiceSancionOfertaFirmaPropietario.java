@@ -56,6 +56,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
     private static final String FECHA_FIRMA = "fechaFirma";
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
+    private static final String CODIGO_SUBCARTERA_OMEGA = "65";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -63,6 +64,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 
 		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Activo activoAceptado = ofertaAceptada.getActivoPrincipal();
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		
@@ -72,9 +74,20 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 				{
 					if(DDSiNo.SI.equals(valor.getValor())){
 						//Expediente se marca a vendido
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
-						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-						expediente.setEstado(estado);
+						String codSubCartera = null;
+						if (!Checks.esNulo(activoAceptado.getSubcartera())) {
+							codSubCartera = activoAceptado.getSubcartera().getCodigo();
+						}
+						if (CODIGO_SUBCARTERA_OMEGA.equals(codSubCartera)) {
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+						} else {
+							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
+							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+							expediente.setEstado(estado);
+						}
+						
 						genericDao.save(ExpedienteComercial.class, expediente);
 						
 						//Finaliza el trámite

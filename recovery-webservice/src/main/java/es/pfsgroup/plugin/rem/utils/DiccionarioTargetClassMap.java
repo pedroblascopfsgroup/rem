@@ -50,7 +50,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposUsoDestino", DDTipoUsoDestino.class);
 		mapa.put("acabadosCarpinteria", DDAcabadoCarpinteria.class);
 		mapa.put("estadosActivo", DDEstadoActivo.class);
-		mapa.put("paises", DDCicCodigoIsoCirbeBKP.class);
 		mapa.put("tiposCuota", DDTipoCuota.class);
 		mapa.put("tiposVpo", DDTipoVpo.class);
 		mapa.put("tiposPosesorio", DDTipoTituloPosesorio.class);
@@ -78,7 +77,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposCarga", DDTipoCargaActivo.class);
 		mapa.put("subtiposCarga", DDSubtipoCarga.class);
 		mapa.put("tiposHabitaculo", DDTipoHabitaculo.class);
-		mapa.put("estadosCarga", DDSituacionCarga.class);
+		mapa.put("situacionCarga", DDSituacionCarga.class);
+		mapa.put("estadosCarga", DDEstadoCarga.class);
+		mapa.put("subestadosCarga", DDSubestadoCarga.class);
 		mapa.put("estadosAdjudicacion", DDEstadoAdjudicacion.class);
 		mapa.put("tiposJuzgado", TipoJuzgado.class);
 		mapa.put("entidadesAdjudicacion", DDEntidadAdjudicataria.class);
@@ -133,6 +134,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoDireccionProveedor", DDTipoDireccionProveedor.class);
 		mapa.put("cargoProveedor", DDCargoProveedorContacto.class);
 		mapa.put("tipoDocumentoProveedor", DDTipoDocumentoProveedor.class);
+		mapa.put("tipoContenedorProveedor", DDTipoContenedorProveedor.class);
 		mapa.put("motivoAplicaComercializarActivo", DDMotivoComercializacion.class);
 		mapa.put("claseActivoBancario", DDClaseActivoBancario.class);
 		mapa.put("subtipoClaseActivoBancario", DDSubtipoClaseActivoBancario.class);
@@ -206,6 +208,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoSeguroRentas", DDEstadoSeguroRentas.class);
 		mapa.put("entidadesAvalistas", DDEntidadesAvalistas.class);
 		mapa.put("tiposDocumentoPromocion", DDTipoDocumentoPromocion.class);
+		mapa.put("tiposDocumentoProyecto", DDTipoDocumentoProyecto.class);
 		mapa.put("estadosReserva", DDEstadosReserva.class);
 		mapa.put("situacionActivo", DDSituacionActivo.class);
 		mapa.put("calificacionNegativa", DDCalificacionNegativa.class);
@@ -220,18 +223,28 @@ public class DiccionarioTargetClassMap{
 		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("clasificacionApple", DDClasificacionApple.class);
 		mapa.put("entidadFinanciera", DDEntidadFinanciera.class);
-		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
-		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("origenComprador", DDOrigenComprador.class);
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
+		mapa.put("EstadoPresentacion", DDEstadoPresentacion.class);
+		mapa.put("fasePublicacion", DDFasePublicacion.class);
+		mapa.put("tipoDocumentoAgrupacion", DDTipoDocumentoAgrupacion.class);
 		mapa.put("claseOferta", DDClaseOferta.class);
 		mapa.put("servicerActivo", DDServicerActivo.class);
 		mapa.put("cesionSaneamiento", DDCesionSaneamiento.class);
 		mapa.put("tiposEquipoGestion", DDEquipoGestion.class);
+		mapa.put("tiposDeRecargo", DDTipoRecargoGasto.class);
+		mapa.put("tipoEstadoLoc", DDEstadoLocalizacion.class);
+		mapa.put("tipoSubestadoGestion", DDSubestadoGestion.class);
 		mapa.put("motivoAutorizacionTramitacion", DDMotivoAutorizacionTramitacion.class);
 		mapa.put("tipoSolicitudTributo", DDTipoSolicitudTributo.class);
 		mapa.put("tipoDocJunta", DDTipoDocJuntas.class);
 		mapa.put("tipoDocumentoPlusvalia", DDTipoDocPlusvalias.class);
+		mapa.put("estadoGestionPlusvalia", DDEstadoGestionPlusv.class);
+		mapa.put("faseDePublicacion", DDFasePublicacion.class);
+		mapa.put("subfaseDePublicacion", DDSubfasePublicacion.class);
+		mapa.put("cesionUso", DDCesionUso.class);
+		mapa.put("DDSiNo", DDSinSiNo.class);
+		mapa.put("tipoDireccionComercial", DDTerritorio.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

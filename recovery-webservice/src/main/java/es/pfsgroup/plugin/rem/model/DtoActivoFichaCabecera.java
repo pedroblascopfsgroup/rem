@@ -53,6 +53,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subtipoActivoDescripcionBde;
 	private String latitud;
 	private String longitud;
+	private String direccionTerritorialCodigo;
+	private String direccionTerritorialDescripcion;
 	private String entidadPropietaria;
 	private String entidadPropietariaCodigo;
 	private String entidadPropietariaDescripcion;
@@ -124,6 +126,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean pertenceAgrupacionProyecto;
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
+	private Boolean esSarebProyecto;
 	
 	//Perimetro datos:
 	private Boolean incluidoEnPerimetro;
@@ -266,6 +269,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	// Es tramitable bankia
 	private Boolean tramitable;
 
+	private String nombreMediador;
+	private String sociedadPagoAnterior; 
+	private Boolean visualizarTabFasesPublicacion;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -788,6 +795,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setLongitud(String longitud) {
 		this.longitud = longitud;
+	}	
+
+	public String getDireccionTerritorialCodigo() {
+		return direccionTerritorialCodigo;
+	}
+
+	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
+		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
+	}
+
+	public String getDireccionTerritorialDescripcion() {
+		return direccionTerritorialDescripcion;
+	}
+
+	public void setDireccionTerritorialDescripcion(String direccionTerritorialDescripcion) {
+		this.direccionTerritorialDescripcion = direccionTerritorialDescripcion;
 	}
 
 	public String getInferiorMunicipioCodigo() {
@@ -2010,7 +2033,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCheckFormalizarReadOnly(Boolean checkFormalizarReadOnly) {
 		this.checkFormalizarReadOnly = checkFormalizarReadOnly;
 	}
+	
+	public String getNombreMediador() {
+		return nombreMediador;
+	}
 
+	public void setNombreMediador(String nombreMediador) {
+		this.nombreMediador = nombreMediador;
+	}
+
+	public Boolean getVisualizarTabFasesPublicacion() {
+		return visualizarTabFasesPublicacion;
+	}
+
+	public void setVisualizarTabFasesPublicacion(Boolean visualizarTabFasesPublicacion) {
+		this.visualizarTabFasesPublicacion = visualizarTabFasesPublicacion;
+	}
 	public Boolean getTramitable() {
 		return tramitable;
 	}
@@ -2018,4 +2056,21 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setTramitable(Boolean tramitable) {
 		this.tramitable = tramitable;
 	}
+
+	public Boolean getEsSarebProyecto() {
+		return esSarebProyecto;
+	}
+
+	public void setEsSarebProyecto(Boolean esSarebProyecto) {
+		this.esSarebProyecto = esSarebProyecto;
+	}
+
+	public String getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+
+	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
+	
 }

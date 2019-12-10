@@ -703,7 +703,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				if (!Checks.esNulo(expediente)){
-            					if(trabajoApi.checkFormalizacion(tareaExterna)){
+            					if(trabajoApi.checkFormalizacion(tareaExterna) && !expedienteComercialApi.esOmega(tareaExterna)){
             						String codigoComite = null;
 			            			if(trabajoApi.checkBankia(tareaExterna)){
 										try {
@@ -719,24 +719,14 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
-//			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada, null);
-			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada);
-
+			            				DDComiteSancion comite = expediente.getComiteSancion();
+			            				
 			            				if(!Checks.esNulo(comite)) {
 			            					codigoComite = comite.getCodigo();
 			            				}
 			            				if(!Checks.esNulo(codigoComite)) {
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            				}
-			            			}else if(trabajoApi.checkCerberusAgoraApple(tareaExterna)){
-										if(expedienteComercialApi.esApple(tareaExterna)){
-											codigoComite = DDComiteSancion.CODIGO_APPLE_CERBERUS;
-										}else{
-
-											codigoComite = DDComiteSancion.CODIGO_CERBERUS;
-										}
-										if(!Checks.esNulo(codigoComite))
-											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            			}else {
 			            				if(!Checks.esNulo(expediente.getComiteSancion()))
 			            					item.setValue(expediente.getComiteSancion().getCodigo());

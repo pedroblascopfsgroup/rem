@@ -5,6 +5,8 @@ import java.util.List;
 
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,14 +64,16 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
 	
+	private final Log logger = LogFactory.getLog(getClass());
+	
 	@Override
 	public Boolean getStateAdmision(Activo activo) {
-		return Checks.esNulo(activo.getAdmision()) ? false :  activo.getAdmision();
+		return Checks.esNulo(activo.getAdmision()) ? Boolean.FALSE :  activo.getAdmision();
 	}
 
 	@Override
 	public Boolean getStateGestion(Activo activo) {
-		return (Checks.esNulo(activo.getGestion()) ? false : activo.getGestion());
+		return (Checks.esNulo(activo.getGestion()) ? Boolean.FALSE : activo.getGestion());
 	}
 
 	@Override
@@ -121,13 +125,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
 		this.updaterStateDisponibilidadComercial(activo);
 		activoApi.saveOrUpdate(activo);
-		//activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 		this.updaterStateDisponibilidadComercialAndSave(activo,false);
 	}
 
 	@Override
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo, Boolean express) {
-		//ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		if(express){
 			String codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
 			activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigo));
@@ -136,13 +138,9 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			activoApi.saveOrUpdate(activo);
 		}
 
-		//idActivoActualizarPublicacion.add(activo.getId());
-		//activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
-		//activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
 	public void updaterStateDisponibilidadComercial(Activo activo) {
 		
 		String codigoSituacion = this.getCodigoSituacionComercialFromActivo(activo);
@@ -230,58 +228,16 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		String activoModificado = activoApi.getCodigoTipoComercializarByActivo(activo.getId());
 		String codigoComercializacionNuevo = !Checks.esNulo(activoModificado) ? activoModificado : "";
 		
-		if(!codigoComercializacionActual.equals(codigoComercializacionNuevo))
+		if(!codigoComercializacionActual.equals(codigoComercializacionNuevo)) {
 			gestorActivoApi.actualizarTareas(activo.getId());
-		/*
-		 * TODO: Se deja así, hasta que se definan los siguientes cambios por funconales.
-		 *	
-		PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
-		//Si el activo tiene activado el bloqueo para el cambio automático o No es comercializable, no hará nada
-		if(!activo.getBloqueoTipoComercializacionAutomatico() && (Checks.esNulo(perimetro) || perimetro.getAplicaComercializar() == 1)) {
-			String codigoTipoComercializacion = this.getCodigoTipoComercializacionFromActivo(activo); 
-			
-			//Si el tipoComercializacion calculado no es nulo y es distinto al actual del Activo, entonces...
-			if(!Checks.esNulo(codigoTipoComercializacion) && !Checks.esNulo(activo.getTipoComercializar()) && !codigoTipoComercializacion.equals(activo.getTipoComercializar().getCodigo())) {
-				
-				HashMap<String,String> mapaComercial = new HashMap<String,String> ();
-				mapaComercial.put(DDTipoComercializar.CODIGO_SINGULAR, "GCOMSIN");
-				mapaComercial.put(DDTipoComercializar.CODIGO_RETAIL, "GCOMRET");
-				
-				//Comprobamos que se pueda realizar el cambio, analizando tareas activas comerciales y si hay gestor adecuado en el activo
-				if(gestorActivoApi.existeGestorEnActivo(activo, mapaComercial.get(codigoTipoComercializacion))) {
-					activo.setTipoComercializar((DDTipoComercializar)utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class,codigoTipoComercializacion));
-					genericDao.update(Activo.class, activo);
-					gestorActivoApi.actualizarTareas(activo.getId());
-				}
-				//Si no existe el gestor comercial adecuado, pero no hay tareas activas para dicho tipo, se puede realizar el cambio en el activo de tipo comercializar
-				else if(!activoTareaExternaApi.existenTareasActivasByTramiteAndTipoGestor(activo, ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA, mapaComercial.get(codigoTipoComercializacion))) {
-					
-					activo.setTipoComercializar((DDTipoComercializar)utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class,codigoTipoComercializacion));
-				}
-			}
-		}*/
-	}
-	
-	/**
-	 * (Activo en Promocion Obra Nueva o Asistida // Activo de 1ª o 2ª Residencia )-> Retail
-	 * Cajamar: VNC <= 500000 -> Retail), en caso contrario -> Singular
-	 * Sareb/Bankia: AprobadoVenta (si no hay, valorTasacion) <= 500000 -> Retail), en caso contrario -> Singular
-	 * @param activo
-	 * @return
-	 */
-	@SuppressWarnings("unused")
-	@Deprecated
-	private String getCodigoTipoComercializacionFromActivo(Activo activo) {
+		}
 		
-		return activoApi.getCodigoTipoComercializacionFromActivo(activo);
-	}	
-	
+	}
 	
 	public String calcularParticipacionPorActivo(Activo activo_check){//
 		return "100";
 	}
 	
-	@SuppressWarnings("unused")
 	public Double calcularParticipacionPorActivo(String codigoTipoTrabajo, List<Activo> activosLista, Activo activo_check){
 		//Si algún parámetro es nulo, omitimos el procedimiento.
 		if (codigoTipoTrabajo == null || activo_check == null) {
@@ -289,14 +245,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		}
 
 		//Si todos los argumentos son null, se devuelve un 100% de participación.
-		if((activosLista == null || activosLista.size() == 0) && codigoTipoTrabajo == null && activo_check == null){
+		if((activosLista == null || activosLista.isEmpty()) || codigoTipoTrabajo == null || activo_check == null){
 			return 100d;
 		}
 
-		if(activosLista == null || activosLista.size() == 0){
-			return 100d;
-		}
-
+		
 		try{
 			//Si el tipo de trabajo es OBTENCION_DOCUMENTAL o ACTUACION_TECNICA.
 			if ((DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(codigoTipoTrabajo)) || 
@@ -476,28 +429,28 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				if(reglaSeleccionada.equals("00")){//A partes iguales.
 					return (100d / activosLista.size());
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT)){//Valor neto contable.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT) && valorNetoTotal > 0){//Valor neto contable.
 					return ((valorNeto_act * 100d) / valorNetoTotal);
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO)){//Valor mínimo autorizado.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO)  && valorMinimoTotal > 0){//Valor mínimo autorizado.
 					return ((valorMinimo_act * 100d) / valorMinimoTotal);
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_FSV_VENTA)){//First sale value.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_FSV_VENTA)   && fsvTotal > 0){//First sale value.
 					return (fsv_act * 100d) / fsvTotal;
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VACBE)){//Valor actualizado contable banco España.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VACBE) && vacbeTotal > 0){//Valor actualizado contable banco España.
 					return (vacbe_act * 100d) / vacbeTotal;
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_PT)){//Precio transferencia.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_PT)  && precioTransferenciaTotal > 0){//Precio transferencia.
 					return (precioTransferencia_act * 100d) / precioTransferenciaTotal;
 
-				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA)){//Valor referencia.
+				}else if(reglaSeleccionada.equals(DDTipoPrecio.CODIGO_TPC_VALOR_REFERENCIA) && valorReferenciaTotal > 0){//Valor referencia.
 					return (valorReferencia_act * 100d) / valorReferenciaTotal;
 
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 
 		//}//Si el tabajo no es ni de tipo OBTENCION_DOCUMENTAL ni de tipo ACTUACION_TECNICA. 
@@ -534,7 +487,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				genericDao.update(ActivoTrabajo.class, activoTrabajo);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 	}
 	

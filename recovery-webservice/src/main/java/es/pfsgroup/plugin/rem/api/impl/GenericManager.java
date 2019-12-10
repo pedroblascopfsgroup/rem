@@ -60,8 +60,11 @@ import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
+import es.pfsgroup.plugin.rem.model.LocalizacionSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
@@ -70,9 +73,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -400,7 +406,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			for (ActivoProveedor seguro : listaSeguros) {
 				DtoDiccionario seguroDD = new DtoDiccionario();
-				;
 				try {
 					beanUtilNotNull.copyProperty(seguroDD, "id", seguro.getId());
 					beanUtilNotNull.copyProperty(seguroDD, "descripcion", seguro.getNombre());
@@ -812,7 +817,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
 		}
 
-		return null;
+		return new ArrayList<DDMotivoRechazoOferta>();
 	}
 
 	@Override
@@ -888,14 +893,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			filtroCartera = genericDao.createFilter(FilterType.EQUALS,"cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getList(DDComiteSancion.class,filtro,filtroCartera);
 
-		}
-		if(Checks.esNulo(subcarteraCodigo) || listaComites.isEmpty()){
+		}else{
 			filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
-			List<DDComiteSancion> copiaListaComites =  genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
-			for (DDComiteSancion comite : copiaListaComites) {
-				if(comite.getSubcartera()!=null){
-					listaComites.remove(comite);
+			
+			if(listaComites != null && !listaComites.isEmpty()) {
+				List<DDComiteSancion> copiaListaComites =  new  ArrayList<DDComiteSancion>(listaComites);
+				for (DDComiteSancion comite : copiaListaComites) {
+					if(comite.getSubcartera()!=null){
+						listaComites.remove(comite);
+					}
 				}
 			}
 
@@ -954,8 +961,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDTipoComercializacion> getComboTipoDestinoComercialCreaFiltered() {
 
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
-		List<DDTipoComercializacion> listaDD = (List<DDTipoComercializacion>) genericDao
-				.getListOrdered(DDTipoComercializacion.class, order);
+		List<DDTipoComercializacion> listaDD = genericDao.getListOrdered(DDTipoComercializacion.class, order);
 		List<DDTipoComercializacion> listaTiposFiltered = new ArrayList<DDTipoComercializacion>();
 
 		for (DDTipoComercializacion tipo : listaDD) {
@@ -969,8 +975,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	public List<DDTiposPorCuenta> getDiccionarioPorCuenta(String tipoCodigo) {
-		List<DDTiposPorCuenta> listaTiposPorCuenta = (List<DDTiposPorCuenta>) genericDao
-				.getList(DDTiposPorCuenta.class);
+		List<DDTiposPorCuenta> listaTiposPorCuenta = genericDao.getList(DDTiposPorCuenta.class);
 		List<DDTiposPorCuenta> listaTiposPorCuentaFiltered = new ArrayList<DDTiposPorCuenta>();
 
 		if (!Checks.esNulo(tipoCodigo)) {
@@ -1099,17 +1104,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	public List<DDTipoAgrupacion> getComboTipoAgrupacion() {
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		return genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
-				filtroBorrado);
+		return genericDao.getList(DDTipoAgrupacion.class, filtroBorrado);
 	}
 
-	@Override
-	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion() {
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		return genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
-				filtroBorrado);
-	}
-	
 	@Override
 	public List<DDTipoTituloActivoTPA> getComboTipoTituloActivoTPA(Long numActivo) {
 
@@ -1151,5 +1148,70 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDTipoDocumentoTributos> getDiccionarioTiposDocumentoTributo() {
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		return genericDao.getList(DDTipoDocumentoTributos.class, filtroBorrado);
+	}
+	
+	@Override
+	public List<DDSubfasePublicacion> getComboSubfase(Long idActivo) {
+
+		List<DDSubfasePublicacion> listaSubfase = new ArrayList<DDSubfasePublicacion>();
+		if (!Checks.esNulo(idActivo)){
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+			HistoricoFasePublicacionActivo fasePublicacion = genericDao.get(HistoricoFasePublicacionActivo.class, filtroActivo, filtroFechaFin);
+			if (!Checks.esNulo(fasePublicacion.getFasePublicacion())) {
+				Filter filtroFase = genericDao.createFilter(FilterType.EQUALS, "fasePublicacion.codigo", fasePublicacion.getFasePublicacion().getCodigo());
+				listaSubfase = genericDao.getList(DDSubfasePublicacion.class, filtroFase);
+			}
+		} 
+
+		return listaSubfase;
+	}
+	
+	@Override
+	public List<DDSubfasePublicacion> getComboSubfaseFiltered(String codFase) {
+
+		List<DDSubfasePublicacion> listaSubfase = new ArrayList<DDSubfasePublicacion>();
+		if (!Checks.esNulo(codFase)) {
+			Filter filtroFase = genericDao.createFilter(FilterType.EQUALS, "fasePublicacion.codigo", codFase);
+			listaSubfase = genericDao.getList(DDSubfasePublicacion.class, filtroFase);
+		}
+
+		return listaSubfase;
+	}
+
+	@Override
+	public List<DDSubestadoGestion> getComboSubestadoGestionFiltered(String codLocalizacion) {
+		List<DDSubestadoGestion> listaSubestadoGestion = new ArrayList<DDSubestadoGestion>();
+		
+		if (!Checks.esNulo(codLocalizacion)) {
+			Filter filtroLocCod = genericDao.createFilter(FilterType.EQUALS, "codigo", codLocalizacion);
+			DDEstadoLocalizacion estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, filtroLocCod);
+			
+			Filter filtroRelacion = genericDao.createFilter(FilterType.EQUALS, "estadoLocalizacion", estadoLocalizacion.getId());
+			List<LocalizacionSubestadoGestion> listRelaciones = genericDao.getList(LocalizacionSubestadoGestion.class, filtroRelacion);
+			
+			for (LocalizacionSubestadoGestion lsg : listRelaciones) {
+				Filter filtroSegId = genericDao.createFilter(FilterType.EQUALS, "id", lsg.getSubestadoGestion());
+				listaSubestadoGestion.add(genericDao.get(DDSubestadoGestion.class, filtroSegId));
+			}
+		}
+
+		return listaSubestadoGestion;
+	}
+
+	@Override
+	public DDSubestadoGestion getSubestadoGestion(Long idActivo) {
+		GestionCCPP gestion = null;
+		Activo activo = activoApi.get(idActivo);
+		if(!Checks.esNulo(activo)) {
+			if(!Checks.esNulo(activo.getComunidadPropietarios())) {
+				Filter filtroComunidadPropietarios = genericDao.createFilter(FilterType.EQUALS, "comunidadPropietarios.id", activo.getComunidadPropietarios().getId());
+				Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
+				
+				gestion = genericDao.get(GestionCCPP.class, filtroComunidadPropietarios, filtroFechaFin);
+			}
+		}
+		
+		return gestion.getSubestadoGestion();
 	}
 }

@@ -1,0 +1,517 @@
+Código;Descripción;Precio CIA Homeserve;AVANZA;TIPO_TRABAJO;SUBTIPO_TRABAJO;UNIDAD_MEDIDA
+GZ-A8;Limpieza básica de piso. Viviendas de hasta 60 M². Ud.;70,73;67,19;Actuación técnica;Limpieza;¤/ud
+GZ-A9;Limpieza básica de piso. Viviendas de 61 a 80 M². Ud.;88,10;83,70;Actuación técnica;Limpieza;¤/ud
+GZ-A10;Limpieza básica de piso. Viviendas de 81 a 100 M². Ud.;105,48;100,21;Actuación técnica;Limpieza;¤/ud
+GZ-A11;Limpieza básica de piso. Viviendas de 101 a 120 M². Ud.;122,85;116,71;Actuación técnica;Limpieza;¤/ud
+GZ-A12;Limpieza básica de piso. Viviendas de 121 M² a 150 M². Ud.;138,70;131,77;Actuación técnica;Limpieza;¤/ud
+GZ-A13;Limpieza básica de piso. Adicional por cada 20 M². Ud.;14,25;13,54;Actuación técnica;Limpieza;¤/ud
+GZ-A14;Limpieza básica de piso. Limpieza Dúplex / Triplex o > 150 m². M²;0,81;0,77;Actuación técnica;Limpieza extraordinaria más de 150 m2;¤/m2
+GZ-A15;Limpieza ESPECIAL de piso. Ud.;122,85;116,71;Actuación técnica;Limpieza;¤/ud
+GZ-A16;Limpieza de sumideros/rebosaderos obturados. Ud.;13,87;13,18;Actuación técnica;Limpieza de sumideros;¤/ud
+GZ-A17;Limpieza de arquetas de saneamiento. Ud.;25,46;24,19;Actuación técnica;Limpieza de sumideros;¤/ud
+GZ-A18;Limpieza de canalón. Ml.;43,47;41,30;Actuación técnica;Limpieza de sumideros;¤/ml
+GZ-A20;Limpieza de grafiti. M²;18,53;17,60;Actuación técnica;Limpieza;¤/m2
+GZ-A21;Tratamientos desinsectación, desratización y desinfección. 3D. Hasta 80 M². SIN Certificado. ;90,25;85,74;Actuación técnica;Desinfección;¤/ud
+GZ-A22;Tratamientos desinsectación, desratización y desinfección.3D. De 80 M² a 150 M².SIN Certificado.;114,00;108,30;Actuación técnica;Desinfección;¤/ud
+GZ-A23;Tratamientos desinsectación, desratización y desinfección.3D.De 150 M² a 300 M².SIN Certificado.;190,00;180,50;Actuación técnica;Desinfección;¤/ud
+GZ-A24;Tratamientos desinsectación, desratización y desinfección. 3D. > 300 M². SIN Certificado. M²;0,21;0,20;Actuación técnica;Desinfección;¤/m2
+GZ-A25;Tratamientos desinsectación, desratización y desinfección.3D. Hasta 80 M². CON Certificado. ;161,50;153,43;Actuación técnica;Desinfección;¤/ud
+GZ-A26;Tratamientos desinsectación, desratización y desinfección.3D.De 80 M² a 150 M². CON Certificado.;199,50;189,53;Actuación técnica;Desinfección;¤/ud
+GZ-A27;Tratamientos desinsectación, desratización y desinfección.3D.De 150 M² a 300 M². CON Certificado.;285,00;270,75;Actuación técnica;Desinfección;¤/ud
+GZ-A28;Tratamientos desinsectación, desratización y desinfección. 3D. > 300 M². CON Certificado. M²;0,31;0,29;Actuación técnica;Desinfección;¤/m2
+GZ-A29;Limpieza de piscinas, con vaciado a servicio de alcantarillado. Ud.;341,15;324,09;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-A30;Limpieza de piscinas, con transporte a depuradora y certificado de reciclaje. Ud.;439,90;417,91;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-A31;Servicio de retirada de animales muertos, avisperos y desinfección. Ud.;156,63;148,80;Actuación técnica;Desratización;¤/ud
+GZ-A63;Tratamiento fitosanitario. Hasta 250 M². Ud.;273,60;259,92;Actuación técnica;Desinfección;¤/ud
+GZ-A64;Tratamiento fitosanitario. Desde 250 M² hasta 1.000 M². Ud.;570,00;541,50;Actuación técnica;Desinfección;¤/ud
+GZ-A65;Tratamiento fitosanitario. Más de 1.000 M². Ud.;855,00;812,25;Actuación técnica;Desinfección;¤/ud
+GZ-A59;Tratamiento fitosanitario. SIN certificación. M²;1,52;1,44;Actuación técnica;Desinfección;¤/m2
+GZ-A60;Tratamiento fitosanitario. CON certificación. M²;2,26;2,15;Actuación técnica;Desinfección;¤/m2
+GZ-A52;Limpieza de solares. Limpieza y desbroce de parcelas con medios manuales hasta 300 M².;218,50;207,58;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-A53;Limpieza de solares. Limpieza y desbroce parcelas  medios manuales desde 300 M² hasta 1.000 M².;551,00;523,45;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-A54;Limpieza de solares. Limpieza y desbroce de parcelas con medios manuales superiores a 1.000 M².;0,47;0,45;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/m2
+GZ-A55;Limpieza de solares. Arranque de árbol hasta 15 cm diámetro y traslado a vertedero.;22,91;21,76;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-A56;Limpieza de solares. Arranque de árbol desde 16 cm hasta 30 cm diámetro y traslado a vertedero.;22,91;21,76;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-A57;Limpieza de solares. Arranque de árbol desde 31 cm hasta 60 cm diámetro y traslado a vertedero.;52,18;49,57;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-A58;Limpieza de solares. Arranque de árbol desde 61 cm diámetro y traslado a vertedero;109,79;104,30;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-A61;Limpieza de solares. Tratamiento herbicida SIN certificación. M²;0,19;0,18;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/m2
+GZ-A62;Limpieza de solares. Tratamiento herbicida CON certificación. M²;1,52;1,44;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/m2
+GZ-A1;Desalojo de enseres y/o escombros.Retirada de enseres, escombro, basura en saco hasta 1 M³ 50Kg;38,00;36,10;Actuación técnica;Limpieza y retirada de enseres;¤/ud
+GZ-A2;Desalojo de enseres y/o escombros. Retirada de enseres, hasta 4 M³. Ud.;123,50;117,33;Actuación técnica;Limpieza y retirada de enseres;¤/ud
+GZ-A3;Desalojo de enseres y/o escombros. Retirada de enseres, hasta 6 M³. Ud.;152,00;144,40;Actuación técnica;Limpieza y retirada de enseres;¤/ud
+GZ-A4;Desalojo de enseres y/o escombros. Retirada de enseres hasta 8 M³ (1 contenedor). Ud.;175,75;166,96;Actuación técnica;Limpieza y retirada de enseres;¤/ud
+GZ-A5;Desalojo de enseres y/o escombros. Retirada de enseres, hasta 16 M³ (2 contenedores). Ud.;323,00;306,85;Actuación técnica;Limpieza y retirada de enseres;¤/ud
+GZ-A6;Desalojo de enseres y/o escombros. Retirada de enseres, hasta 24 M³ (3 contenedores). Ud.;463,60;440,42;Actuación técnica;Limpieza y retirada de enseres;¤/ud
+GZ-A7;Desalojo de enseres y/o escombros. VOLUMEN ADICIONAL. M³;18,05;17,15;Actuación técnica;Limpieza y retirada de enseres;¤/m3
+GZ-A66;Mantenimiento de solares. Suministro e instalación de malla metálica de simple torsión h=2m.Ml;16,97;16,12;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ml
+GZ-A67;Mantenimiento de solares. Suministro e instalación de puerta simple metálica de 2x1m. Ud.;218,50;207,58;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-A68;Mantenimiento de solares. Suministro e instalación de puerta doble metálica de (2+2)x2m. Ud.;375,25;356,49;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ud
+GZ-L1;Reparar fuga en conducto de conexión a red de suministro de agua. Ud.;147,81;140,42;Actuación técnica;Fontanería;¤/ud
+GZ-L2;Punto de reparación de instalación de fontanería. Ml.;122,38;116,26;Actuación técnica;Fontanería;¤/ml
+GZ-L3;Reparación puntual en sanitario. Ud.;44,39;42,17;Actuación técnica;Fontanería;¤/ud
+GZ-L4;Sustitución tuberías ascend.AF,ACS,calefacción(ida-retorno).1 1/2pul.-35MM diám.1ml;71,63;68,05;Actuación técnica;Fontanería;¤/ud
+GZ-L5;Sust. tuberías ascend.AF,ACS,calefacción(ida-retorno).Hasta 1 1/2pul.-35MM diám.De 1a 3ml;112,16;106,55;Actuación técnica;Fontanería;¤/ud
+GZ-L6;Sust. Tuberías ascend.AF,ACS,calefacción(ida-retorno).1 1/2pul. y 35MM diám.;55,69;52,91;Actuación técnica;Fontanería;¤/ud
+GZ-L7;Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).Hasta 1 1/2pul. y 35MM.diám.Sust. T;92,29;87,68;Actuación técnica;Fontanería;¤/ud
+GZ-L8;Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).1 1/2pul.-35MM.de diámetro.Sust.T cobre;106,92;101,57;Actuación técnica;Fontanería;¤/ud
+GZ-L9;Sust.tuberías ascend.AF,ACS,calefac.(ida-retorno).1 1/2pul.-35MM 2 1/2pul.-63MM diám.1ml;90,78;86,24;Actuación técnica;Fontanería;¤/ud
+GZ-L10;Sust.tub.ascend.AF,ACS,calefac.(ida-retorno).1 1/2pul.- 35MM 2 1/2pul.-63MM.diám.1-3ml;115,86;110,07;Actuación técnica;Fontanería;¤/ud
+GZ-L11;Sust.tub.ascend.AF,ACS,calefac.(ida-ret).1 1/2pul.-35MM 2 1/2pul.-63MM diám.Rep.abraz.Gebo ;80,96;76,91;Actuación técnica;Fontanería;¤/ud
+GZ-L12;Sust.tuberías ascend.AF,ACS,calef.(ida-ret.).1 0,5pul.,35 MM-2 0,5pul.,63MM.diám.Rep.soldadura;36,02;34,22;Actuación técnica;Fontanería;¤/ud
+GZ-L13;Sust.tuberías ascend.AF,ACS,calef.(ida-ret.).1 0,5pul.,35MM-2 0,5pul.,63MM diám.Sust.T hierro;128,86;122,42;Actuación técnica;Fontanería;¤/ud
+GZ-L14;Sust.tuberías ascend.AF,ACS,calef.(ida-ret.).1 0,5pul.,35MM-2 0,5pul.,63MM diám.Sust.T cobre;128,86;122,42;Actuación técnica;Fontanería;¤/ud
+GZ-L15;Sustitución tubería distrib.de AF,ACS,calef.(ida-ret.).2 0,5pul.,63MM diám.Hasta1ml;71,51;67,93;Actuación técnica;Fontanería;¤/ud
+GZ-L16;Sustitución tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 0,5pul.,63MM diám.1-2ml;88,10;83,70;Actuación técnica;Fontanería;¤/ud
+GZ-L17;Sust. tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 0,5pul.,63MM diám.2ml.+ml;11,22;10,66;Actuación técnica;Fontanería;¤/ud
+GZ-L18;Sust.tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 0,5pul.,63MM diám.Sust.T hierro;87,85;83,46;Actuación técnica;Fontanería;¤/ud
+GZ-L19;Sust. tubería de distrib.de AF,ACS,calef.(ida-ret.).Hasta 2 0,5pul.,63MM diám.Sust.T cobre;87,85;83,46;Actuación técnica;Fontanería;¤/ud
+GZ-L20;Sust. tubería de distrib. de AF,ACS,calef.(ida y ret.).Hasta 2 0,5pul.,63MM diám.Rep.;61,38;58,31;Actuación técnica;Fontanería;¤/ud
+GZ-L22;Sustitución de bajantes de hasta 160 MM. Sustitución tramo de tubería. Hasta 1 ml. Ud.;58,90;55,96;Actuación técnica;Fontanería;¤/ud
+GZ-L23;Sustitución de bajantes de hasta 160 MM. Sustitución tramo de tubería. De más de 1 ml. hasta 3ml;145,84;138,55;Actuación técnica;Fontanería;¤/ud
+GZ-L24;Sust.de bajantes de hasta 160 MM. Sust. de codo en desvío de bajada (juego de codos) Hasta 0,5 ml;70,14;66,63;Actuación técnica;Fontanería;¤/ud
+GZ-L25;Sustitución de bajantes de hasta 160 MM. Sustitución desvío de bajada. De más 0,5 ml.a 3ml;124,48;118,26;Actuación técnica;Fontanería;¤/ud
+GZ-L26;Sustitución de bajantes de hasta 160 MM. Reparación de bajada;68,30;64,89;Actuación técnica;Fontanería;¤/ud
+GZ-N8;Sustitución de bajante de hasta 125 MM. de diámetro unión por enchufe. Ml.;20,05;19,05;Actuación técnica;Fontanería;¤/ml
+GZ-N12;Sustitución de bajante de hasta 125 MM. de diámetro unión por junta elástica. Ml.;20,05;19,05;Actuación técnica;Fontanería;¤/ml
+GZ-N11;Sellado de bajante. Ud.;34,05;32,35;Actuación técnica;Fontanería;¤/ud
+GZ-L27;Sust.de injerto de hasta 160 MM. Sustitución injerto sencillo incluido tramo de tubería necesario;85,08;80,83;Actuación técnica;Fontanería;¤/ud
+GZ-L28;Sust.de injerto de hasta 160 MM. Sustitución injerto doble incluido tramo de tubería necesario;107,31;101,94;Actuación técnica;Fontanería;¤/ud
+GZ-L29;Sust.de injerto de hasta 160 MM. Sustitución injerto de esquina incluido tramo de tubería necesario;113,12;107,46;Actuación técnica;Fontanería;¤/ud
+GZ-L30;Sustitución de injerto de hasta 160 MM. Reparación de injerto. Ud.;66,05;62,75;Actuación técnica;Fontanería;¤/ud
+GZ-L31;Sust.de desagües de PVC/ plomo hasta 50 MM. Sustitución tramo de tubería. I/ codos. Hasta 1 ml;55,08;52,33;Actuación técnica;Fontanería;¤/ud
+GZ-L32;Sust.desagües de PVC/ plomo hasta 50MM.Sust.tramo de tubería. I/ codos. De más de 1 ml.a 3ml;59,16;56,20;Actuación técnica;Fontanería;¤/ud
+GZ-L33;Sustitución de desagües de PVC/ plomo hasta 50 MM. Reparación de tubería. Ud.;47,67;45,29;Actuación técnica;Fontanería;¤/ud
+GZ-L36;Sustitución de sifones/válvulas. Sustitución de válvula y rebosadero. Ud.;37,86;35,97;Actuación técnica;Fontanería;¤/ud
+GZ-L37;Sustitución de sifones/válvulas. Sustitución de válvula y rebosadero con desagües. Ud.;44,39;42,17;Actuación técnica;Fontanería;¤/ud
+GZ-L38;Sustitución de sifones/válvulas. Reparación o ajuste de sifón, válvula y/o rebosadero. Ud.;32,15;30,54;Actuación técnica;Fontanería;¤/ud
+GZ-L39;Sustitución bote sifónico. Sustitución de bote sifónico de PVC. Ud.;83,73;79,54;Actuación técnica;Fontanería;¤/ud
+GZ-L40;Sustitución bote sifónico. Sustitución de bote sifónico de gran capacidad, colgado de PVC.;91,76;87,17;Actuación técnica;Fontanería;¤/ud
+GZ-L41;Sustitución bote sifónico. Reparación de bote sifónico (PVC / Plomo), con soldadura estaño-plomo;52,22;49,61;Actuación técnica;Fontanería;¤/ud
+GZ-L42;Sustitución bote sifónico. Reparación de bote sifónico con camisa interior de fibra de poliéster;52,22;49,61;Actuación técnica;Fontanería;¤/ud
+GZ-L43;Sustitución bote sifónico. Reposición de tapa de bote sifónico Ud.;9,33;8,86;Actuación técnica;Fontanería;¤/ud
+GZ-L44;Sustitución manguetas. Sustitución de mangueta incluido desagüe. Hasta 2 ml. Ud.;108,67;103,24;Actuación técnica;Fontanería;¤/ud
+GZ-L45;Sustitución manguetas. Sustitución de mangueta con 2 desagües. Ud.;128,95;122,50;Actuación técnica;Fontanería;¤/ud
+GZ-L46;Sustitución manguetas. Sustitución de mangueta con más de 2 desagües. Ud.;142,15;135,04;Actuación técnica;Fontanería;¤/ud
+GZ-L47;Sustitución manguetas. Reparación de mangueta con soldadura de estaño - plomo. Ud.;71,51;67,93;Actuación técnica;Fontanería;¤/ud
+GZ-L48;Sustitución de grifería. Sin incluir material. Solo mano de obra. Ud.;19,76;18,77;Actuación técnica;Fontanería;¤/ud
+GZ-L49;Sust.grifería.Sum. y colocación grifería monomando cromada ducha,gama media,aireador, flexible cm;89,17;84,71;Actuación técnica;Fontanería;¤/ud
+GZ-L50;Sust.grifería.Sum.y colocación grifería monomando cromada bañera,gama media,aireador,flexible cm;94,11;89,40;Actuación técnica;Fontanería;¤/ud
+GZ-L51;Sust.grifería.Sum.y colocación grifería monomando cromada lavabo,gama media,aireador,flexible cm;82,42;78,30;Actuación técnica;Fontanería;¤/ud
+GZ-L52;Sust.grifería.Sum.y coloc.grifería monomando fregadero,gama media,caño fijo o giratorio,aireador;113,00;107,35;Actuación técnica;Fontanería;¤/ud
+GZ-L53;Sust.grifería. Suministro y colocación de grifería monomando cromada para bidé, gama media;84,72;80,48;Actuación técnica;Fontanería;¤/ud
+GZ-L54;Sust.grifería.Latón cromado,mont.roscado,25mm diám.,PN-16 mando palanca,salida racor 2piezas;25,43;24,16;Actuación técnica;Fontanería;¤/ud
+GZ-L55;Limpiar filtros de grifos (no se incluye material). Ud.;4,07;3,87;Actuación técnica;Fontanería;¤/ud
+GZ-L68;Embellecedor de grifo. Ud.;17,45;16,58;Actuación técnica;Fontanería;¤/ud
+GZ-L70;Suministro e instalación de barra de ducha y teléfono Ud.;39,88;37,89;Actuación técnica;Fontanería;¤/ud
+GZ-L72;Suministro e instalación de tapón cromado Ud.;14,99;14,24;Actuación técnica;Fontanería;¤/ud
+GZ-L73;Tapa de WC o bidé gama media. Ud.;49,78;47,29;Actuación técnica;Fontanería;¤/ud
+GZ-L75;Sustitución de aparatos sanitarios. Desmontaje y montaje de lavabo con pedestal. Ud.;39,18;37,22;Actuación técnica;Fontanería;¤/ud
+GZ-L76;Sustitución de aparatos sanitarios. Desmontaje y montaje de bidé. Ud.;39,18;37,22;Actuación técnica;Fontanería;¤/ud
+GZ-L77;Sustitución de aparatos sanitarios. Desmontaje y montaje de inodoro con cisterna baja. Ud.;39,18;37,22;Actuación técnica;Fontanería;¤/ud
+GZ-L78;Sustitución de aparatos sanitarios. Desmontaje y montaje de bañera. Ud.;54,34;51,62;Actuación técnica;Fontanería;¤/ud
+GZ-L79;Sustitución de aparatos sanitarios. Desmontaje y montaje de plato de ducha. Ud.;45,51;43,23;Actuación técnica;Fontanería;¤/ud
+GZ-L65;Conexionado de fontanería. Ud.;29,93;28,43;Actuación técnica;Fontanería;¤/ud
+GZ-L80;Desmontaje y montaje de fregadero de dos senos (sin material). Ud.;24,51;23,28;Actuación técnica;Fontanería;¤/ud
+GZ-M7;Suministro e instalación de fregadero de cocina. Ud.;74,67;70,94;Actuación técnica;Fontanería;¤/ud
+GZ-N1;Portarrollos. Ud.;22,55;21,42;Actuación técnica;Albañilería;¤/ud
+GZ-N2;Toallero. Ud.;26,75;25,41;Actuación técnica;Albañilería;¤/ud
+GZ-N3;Barra sujeción para minusválidos. Ud.;57,00;54,15;Actuación técnica;Albañilería;¤/ud
+GZ-N4;Asiento para minusválidos. Ud.;247,00;234,65;Actuación técnica;Albañilería;¤/ud
+GZ-N5;Espejo. Ud.;68,40;64,98;Actuación técnica;Cristalería;¤/ud
+GZ-N6;Mampara en bañera. M².;238,78;226,84;Actuación técnica;Cristalería;¤/m2
+GZ-N7;Mampara en ducha/ bañera. M².;364,33;346,11;Actuación técnica;Cristalería;¤/m2
+GZ-N9;Sellado de sanitarios con silicona. Ml.;13,46;12,79;Actuación técnica;Albañilería;¤/ml
+GZ-N10;Sellado de sanitarios con cemento blanco. Ml.;21,09;20,04;Actuación técnica;Albañilería;¤/ml
+GZ-L60;Sellado de sanitarios por olores. Ud.;20,75;19,71;Actuación técnica;Albañilería;¤/ud
+GZ-L56;Sustitución de mecanismo de cisterna (no se incluye material). Ud.;21,74;20,65;Actuación técnica;Fontanería;¤/ud
+GZ-L57;Sustitución de mecanismo de cisterna (se incluye material). Ud.;36,56;34,73;Actuación técnica;Fontanería;¤/ud
+GZ-L59;Graduar boya de cisterna. Ud.;10,17;9,66;Actuación técnica;Fontanería;¤/ud
+GZ-L61;Desatranco de desagües de cocina o baño con guías (máximo 2 h). Ud.;41,02;38,97;Actuación técnica;Fontanería;¤/ud
+GZ-L62;Sustitución de llave de paso, agua caliente o fría hasta 1pul. (no se incluye material);23,71;22,52;Actuación técnica;Fontanería;¤/ud
+GZ-L63;Sustitución llaves de corte por aparato (no se incluye material). Ud.;21,74;20,65;Actuación técnica;Fontanería;¤/ud
+GZ-L64;Saneamiento completo por puntos de cocina o baño. Ud.;50,63;48,10;Actuación técnica;Fontanería;¤/ud
+GZ-N13;Bomba de achique en sótano. Ud.;489,35;464,88;Actuación técnica;Fontanería;¤/ud
+GZ-L81;Sustitución de puerta de contador de agua. Ud.;50,27;47,76;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ8;Punto de reparación de instalación de calefacción. Ud.;42,30;40,19;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ1;Sustitución de radiador de aluminio blanco. Hasta 3 elementos. Ud.;58,20;55,29;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ2;Sustitución de radiador de aluminio blanco. De 4 a 7 elementos. Ud.;81,99;77,89;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ3;Sustitución de radiador de aluminio blanco. Mas de 7 elementos + ud. adicional. Ud.;113,72;108,03;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ10;Sustitución de radiador sin modificar tomas (no se incluye material). Ud.;24,51;23,28;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ11;Comprobación de radiadores, purgado, llenado de circuito y cambio juntas necesarias;32,15;30,54;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ9;Sustitución de llave de radiador o detentor (no se incluye material). Ud.;28,82;27,38;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ12;Sustitución de llave termostática en radiador. Ud.;49,27;46,81;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ13;Sustitución de termostato de ambiente. Ud.;48,91;46,46;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ25;Sustitución de termostato y/o mandos. Ud.;47,23;44,87;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ5;Sustitución de caldera. Ud.;1235,62;1173,84;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ7;Revisión de caldera (correcto funcionamiento). Ud.;60,85;57,81;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ27;Acometida para gas. Ud.;796,70;756,87;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ28;Finalización de las tuberías de la instalación de gas hasta el armario de la estación receptora. Ml.;12,72;12,08;Actuación técnica;Fontanería;¤/ml
+GZ-Ñ29;Armario regulador 100 M³/h. Ud.;1008,16;957,75;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ30;Llave de gas. Ud.;100,87;95,83;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ31;Engrase, ajuste y limpieza de arqueta y llave de gas. Ud.;29,25;27,79;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ32;Contadores de gas. Ud.;527,40;501,03;Actuación técnica;Fontanería;¤/ud
+GZ-M1;Calentador a gas. Ud.;363,59;345,41;Actuación técnica;Fontanería;¤/ud
+GZ-M3;Revisión de calentador, incluye pequeño material. Ud.;61,05;58,00;Actuación técnica;Fontanería;¤/ud
+GZ-M4;Termo eléctrico de 50 lts a 80 lts. Ud.;271,81;258,22;Actuación técnica;Fontanería;¤/ud
+GZ-M6;Revisión de termo eléctrico. Ud.;43,88;41,69;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ15;Sustitución de unidad exterior aparatos autónomos tipo Split (hasta 2.200 frigorías);375,47;356,70;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ17;Sustitución de unidad exterior aparatos autónomos tipo Split (de 2.200 a 4.200 frigorías);487,92;463,52;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ19;Sustitución de climatizador tipo Split (hasta 2.200 frigorías). Ud.;166,89;158,55;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ21;Sustitución de climatizador tipo Split (de 2.200 a 4.200 frigorías). Ud.;206,79;196,45;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ23;Revisión en instalación de AA. Ud.;59,75;56,76;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ24;Recarga de gas refrigerante. Ud.;85,50;81,23;Actuación técnica;Fontanería;¤/ud
+GZ-Ñ26;Sustitución de compresor. Ud.;216,57;205,74;Actuación técnica;Fontanería;¤/ud
+GZ-B19;Apertura y cierre de hueco para localización y reparación de avería (en fábricas). Ud.;56,08;53,28;Actuación técnica;Albañilería;¤/ud
+GZ-B20;Apertura y cierre de hueco para localización y reparación de avería (en pladur o escayola);53,59;50,91;Actuación técnica;Albañilería;¤/ud
+GZ-B1;Apertura de rozas/calas localiz. de avería en paramentos cerámicos y fábricas. Hasta 1 ml;25,19;23,93;Actuación técnica;Albañilería;¤/ud
+GZ-B2;Apertura de rozas/calas para localiz.avería paramentos cerámicos y fábricas.De 1-2 ml;37,21;35,35;Actuación técnica;Albañilería;¤/ud
+GZ-B3;Apertura de rozas/calas localiz.avería en paramentos cerámicos y fábricas.A partir 2 ml+ml;7,60;7,22;Actuación técnica;Albañilería;¤/ml
+GZ-B4;Apertura de rozas/calas para localización de avería en paramentos ligeros. Hasta 1 ml;25,19;23,93;Actuación técnica;Albañilería;¤/ud
+GZ-B5;Apertura de rozas/calas para localización de avería en paramentos ligeros. De 1a 2 ml;37,21;35,35;Actuación técnica;Albañilería;¤/ud
+GZ-B6;Apertura de rozas/calas para localiz.avería en paramentos ligeros.A partir 2 ml+ml;7,60;7,22;Actuación técnica;Albañilería;
+GZ-B7;Tapado rozas-calas posterior localiz.avería,paramentos cerámicos,fábricas,sin acab.final.1ml;14,20;13,49;Actuación técnica;Albañilería;¤/ud
+GZ-B8;Tapado rozas-calas posterior localiz.avería,paramentos cerám.,fábricas,sin acab.final.1-2 ml;21,00;19,95;Actuación técnica;Albañilería;¤/ud
+GZ-B9;Tapado rozas-calas posterior localiz.avería,paramentos cerám.fábricas,sin acab.final.2ml+ml;4,29;4,08;Actuación técnica;Albañilería;¤/ml
+GZ-B10;Tapado rozas-calas posterior localiz.avería,paramentos cerám.fábricas.1 ml;49,40;46,93;Actuación técnica;Albañilería;¤/ud
+GZ-B11;Tapado rozas-calas posterior localiz.avería,paramentos cerám.,fábricas.1-2ml;82,12;78,01;Actuación técnica;Albañilería;¤/ud
+GZ-B12;Tapado rozas-calas posterior localiz.avería,paramentos cerám.,fábricas.2ml+ml;14,70;13,97;Actuación técnica;Albañilería;¤/ml
+GZ-B13;Tapado de rozas posterior a la localización de avería, sobre paramentos ligeros.1 ml;14,11;13,40;Actuación técnica;Albañilería;¤/ud
+GZ-B14;Tapado de rozas posterior a la localización de avería, sobre paramentos ligeros.1-2 ml;20,98;19,93;Actuación técnica;Albañilería;¤/ud
+GZ-B15;Tapado de rozas posterior a la localización de avería, sobre paramentos ligeros.2ml+ml;4,29;4,08;Actuación técnica;Albañilería;¤/ml
+GZ-B16;Apertura y cierre de rozas/calas en pavimentos de todo tipo o solera de hormigón.1ml;49,40;46,93;Actuación técnica;Albañilería;¤/ud
+GZ-B17;Apertura y cierre de rozas/calas en pavimentos de todo tipo o solera de hormigón.1-2ml;96,08;91,28;Actuación técnica;Albañilería;¤/ud
+GZ-B18;Apertura y cierre de rozas/calas en pavimentos de todo tipo o solera de hormigón.2ml+ml;32,60;30,97;Actuación técnica;Albañilería;¤/ml
+GZ-C30;Apertura de hueco (máx. 15 cm. de diámetro). Ud.;6,55;6,22;Actuación técnica;Albañilería;¤/ud
+GZ-B21;Alquiler de saco escombros de 1 M³. Ud.;48,03;45,63;Actuación técnica;Limpieza, retirada de enseres y descerraje;¤/ud
+GZ-B22;Alquiler de contenedor de 4 M³. Ud.;92,00;87,40;Actuación técnica;Limpieza, retirada de enseres y descerraje;¤/ud
+GZ-B23;Alquiler de contenedor de 6 M³. Ud.;128,25;121,84;Actuación técnica;Limpieza, retirada de enseres y descerraje;¤/ud
+GZ-C1;Fábrica de ladrillo H/D tabicón. Hasta 5 M². Ud.;112,26;106,65;Actuación técnica;Albañilería;¤/ud
+GZ-C2;Fábrica de ladrillo H/D tabicón. A partir de 5 M² + M² adicional. M²;19,48;18,51;Actuación técnica;Albañilería;¤/m2
+GZ-C3;Fábrica de ladrillo H/S . Hasta 5 M². Ud.;100,16;95,15;Actuación técnica;Albañilería;¤/ud
+GZ-C4;Fábrica de ladrillo H/S . A partir de 5 M² + M² adicional. M²;14,23;13,52;Actuación técnica;Albañilería;¤/m2
+GZ-C5;Fábrica de bloque de hormigón gris 40x20x10cm. Hasta 5 M². Ud.;158,45;150,53;Actuación técnica;Albañilería;¤/ud
+GZ-C6;Fábrica de bloque de hormigón gris 40x20x10cm. A partir de 5 M² + M² adicional. M²;26,14;24,83;Actuación técnica;Albañilería;¤/m2
+GZ-C7;Enfoscado a buena vista en paramentos verticales (interior o exterior).5M²;75,95;72,15;Actuación técnica;Albañilería;¤/ud
+GZ-C8;Enfoscado a buena vista en paramentos verticales (interior o exterior).5M²+M²;13,46;12,79;Actuación técnica;Albañilería;¤/m2
+GZ-C9;Enfoscado maestreado en paramentos verticales (interior o exterior). Hasta 5 M². Ud.;83,36;79,19;Actuación técnica;Albañilería;¤/ud
+GZ-C10;Enfoscado maestreado en paramentos verticales (interior o exterior).5M²+M²;14,70;13,97;Actuación técnica;Albañilería;¤/m2
+GZ-C11;Enfoscado a buena vista en paramentos horizontales (interior o exterior).5M²;91,76;87,17;Actuación técnica;Albañilería;¤/ud
+GZ-C12;Enfoscado a buena vista en paramentos horizontales (interior o exterior).5M²+M²;16,18;15,37;Actuación técnica;Albañilería;¤/m2
+GZ-C13;Enfoscado maestreado en paramentos horizontales o inclinados (interior o exterior).5M²;91,76;87,17;Actuación técnica;Albañilería;¤/ud
+GZ-C14;Enfoscado maestreado en paramentos horizontales o inclinados (interior o exterior).5M²+M²;16,18;15,37;Actuación técnica;Albañilería;¤/m2
+GZ-C15;Guarnecido de yeso a buena vista paramentos verticales. Hasta 5 M². Ud.;53,48;50,81;Actuación técnica;Albañilería;¤/m2
+GZ-C16;Guarnecido de yeso a buena vista paramentos verticales. A partir de 5 M² + ml. Adicional;9,11;8,65;Actuación técnica;Albañilería;¤/m2
+GZ-C17;Guarnecido de yeso a buena vista paramentos horizontales o inclinados. Hasta 5 M²;53,48;50,81;Actuación técnica;Albañilería;¤/ud
+GZ-C18;Guarnecido de yeso a buena vista paramentos horizontales o inclinados.5M²+ml;9,51;9,03;Actuación técnica;Albañilería;¤/m2
+GZ-C19;Enyesado maestreado en paramentos verticales. Hasta 5 M². Ud.;53,48;50,81;Actuación técnica;Albañilería;¤/ud
+GZ-C20;Enyesado maestreado en paramentos verticales. A partir de 5 M² + ml. adicional. M²;9,51;9,03;Actuación técnica;Albañilería;¤/m2
+GZ-C21;Enyesado maestreado en paramentos horizontales o inclinados. Hasta 5 M². Ud.;53,48;50,81;Actuación técnica;Albañilería;¤/ud
+GZ-C22;Enyesado maestreado en paramentos horizontales o inclinados. A partir de 5M²+ml;9,51;9,03;Actuación técnica;Albañilería;¤/m2
+GZ-C23;Incremento por colocación de malla de fibra de vidrio. M²;2,90;2,76;Actuación técnica;Albañilería;¤/m2
+GZ-C24;Reparación de fisura en paramentos de yeso o enfoscado (MEDIC.SUPERIOR 2 ML).5ml;55,58;52,80;Actuación técnica;Albañilería;¤/ud
+GZ-C25;Reparación de fisura en paramentos de yeso o enfoscado (MEDIC.SUPERIOR 2 ML).5ml+ml;9,88;9,39;Actuación técnica;Albañilería;¤/ml
+GZ-C26;Recibido de bañera. Ud.;54,34;51,62;Actuación técnica;Albañilería;¤/ud
+GZ-C27;Recibido de plato de ducha. Ud.;29,93;28,43;Actuación técnica;Albañilería;¤/ud
+GZ-C28;Reparación de moldura de escayola. Hasta 2 M². Ud.;29,13;27,67;Actuación técnica;Albañilería;¤/ud
+GZ-C29;Reparación de moldura de escayola. A partir de 2 ml. + ml. adicional. Ml.;9,29;8,83;Actuación técnica;Albañilería;¤/ml
+GZ-D35;Yeso laminado. Apertura de cala (hasta 1 M²). Ud.;8,96;8,51;Actuación técnica;Albañilería;¤/ud
+GZ-D36;Yeso laminado. Demolición adicional (M²). M²;4,09;3,89;Actuación técnica;Albañilería;¤/m2
+GZ-D37;Yeso laminado. Tapado de cala (hasta 1 M²) (tapado de cala e instalación sumin.material);48,04;45,64;Actuación técnica;Albañilería;¤/ud
+GZ-D38;Yeso laminado. Instalación adicional (M²) (tapado de cala e instalación sumin.material);26,92;25,57;Actuación técnica;Albañilería;¤/m2
+GZ-D39;Falso techos, continuos o registrables de placas de escayola. Apertura de cala (hasta 1 M²);7,71;7,32;Actuación técnica;Albañilería;¤/ud
+GZ-D40;Falso techos, continuos o registrables de placas de escayola. Demolición adicional (M²);4,09;3,89;Actuación técnica;Albañilería;¤/m2
+GZ-D41;Falso techos,continuos-registrables placas escayola.Tapado cala.1M².Tapado e instal.;47,06;44,71;Actuación técnica;Albañilería;¤/ud
+GZ-D42;Falso techos, continuos-registrables placas escayola.Inst.adicional M².Tapado e inst.;22,27;21,16;Actuación técnica;Albañilería;¤/m2
+GZ-D2;Pavimentos de gres. Hasta 5 M². Ud.;148,29;140,88;Actuación técnica;Albañilería;¤/ud
+GZ-D3;Pavimentos de gres. De 5 a 15 M². Ud.;428,23;406,82;Actuación técnica;Albañilería;¤/ud
+GZ-D4;Pavimentos de gres. A partir de 15 M² + M² adicional. M²;23,79;22,60;Actuación técnica;Albañilería;¤/m2
+GZ-D6;Rodapié de gres. Hasta 20 ml. Ud.;209,51;199,03;Actuación técnica;Albañilería;¤/ud
+GZ-D7;Rodapié de gres. A partir de 20 ml. + ml. adicional. Ml.;8,38;7,96;Actuación técnica;Albañilería;¤/ml
+GZ-D8;Terrazo micrograno o grano medio. Hasta 5 M². Ud.;157,66;149,78;Actuación técnica;Albañilería;¤/ud
+GZ-D9;Terrazo micrograno o grano medio. De 5 a 15 M². Ud.;371,64;353,06;Actuación técnica;Albañilería;¤/ud
+GZ-D10;Terrazo micrograno o grano medio. A partir de 15 M² + M² adicional. M²;22,52;21,39;Actuación técnica;Albañilería;¤/m2
+GZ-D11;Rodapié de terrazo micrograno o grano medio. Hasta 20 ml. Ud.;140,05;133,05;Actuación técnica;Albañilería;¤/ud
+GZ-D12;Rodapié de terrazo micrograno o grano medio. A partir de 20 ml. + ml. Adicional;6,22;5,91;Actuación técnica;Albañilería;¤/ml
+GZ-D13;Baldosa punta de diamante para exteriores. Hasta 5 M². Ud.;145,24;137,98;Actuación técnica;Albañilería;¤/ud
+GZ-D14;Baldosa punta de diamante para exteriores. De 5 a 15 M². Ud.;346,05;328,75;Actuación técnica;Albañilería;¤/ud
+GZ-D15;Baldosa punta de diamante para exteriores. A partir de 15 M² + M² adicional;29,39;27,92;Actuación técnica;Albañilería;¤/m2
+GZ-D16;Baldosín catalán. Hasta 5 M². Ud.;151,17;143,61;Actuación técnica;Albañilería;¤/ud
+GZ-D17;Baldosín catalán. De 5 a 15 M². Ud.;356,33;338,51;Actuación técnica;Albañilería;¤/ud
+GZ-D18;Baldosín catalán. A partir de 15 M² + M² adicional. M²;21,60;20,52;Actuación técnica;Albañilería;¤/m2
+GZ-D20;Alicatado. Hasta 5 M². Ud.;162,20;154,09;Actuación técnica;Albañilería;¤/ud
+GZ-D21;Alicatado. De 5 a 15 M². Ud.;382,33;363,21;Actuación técnica;Albañilería;¤/ud
+GZ-D24;Aplacados de mármol nacional. Hasta 5 M². Ud.;428,17;406,76;Actuación técnica;Albañilería;¤/ud
+GZ-D25;Aplacados de mármol nacional. De 5 a 15 M². Ud.;1009,25;958,79;Actuación técnica;Albañilería;¤/ud
+GZ-D26;Aplacados de mármol nacional. A partir de 15 M² + M² adicional. M²;61,17;58,11;Actuación técnica;Albañilería;¤/m2
+GZ-D27;Retirada y sustitución de cantonera en alicatados (metálica o plástica). Hasta 5 ml;55,65;52,87;Actuación técnica;Albañilería;¤/ud
+GZ-D28;Retirada y sustitución de cantonera en alicatados (metálica o plástica).5ml+ml;7,90;7,51;Actuación técnica;Albañilería;¤/ml
+GZ-D29;Rejuntado de mortero fino. Hasta 5 M². Ud.;49,40;46,93;Actuación técnica;Albañilería;¤/ud
+GZ-D30;Rejuntado de mortero fino. De 5 a 15 M². Ud.;98,80;93,86;Actuación técnica;Albañilería;¤/ud
+GZ-D31;Rejuntado de mortero fino. A partir de 15 M² + M² adicional. M²;4,57;4,34;Actuación técnica;Albañilería;¤/m2
+GZ-D33;Rehacer mocheta de dos o tres caras. Hasta 2 ml. Ml.;89,41;84,94;Actuación técnica;Albañilería;¤/ml
+GZ-D34;Rehacer mocheta de dos o tres caras. A partir de 2 ml. + ml. adicional. Ml;41,62;39,54;Actuación técnica;Albañilería;¤/ml
+GZ-G1;Ajuste de herrajes/cierres de carpintería de aluminio. Ud.;36,68;34,85;Actuación técnica;Carpintería;¤/ud
+GZ-G2;Herrajes/cierres en carpintería de aluminio. Ud.;30,67;29,14;Actuación técnica;Carpintería;¤/ud
+GZ-G4;Sellado exterior de ventanas/balconera de carpintería de aluminio. Ml.;6,55;6,22;Actuación técnica;Carpintería;¤/ml
+GZ-G5;Sustitución ventana de aluminio anodizado/lacado practicable abatible. M²;300,48;285,46;Actuación técnica;Carpintería;¤/m2
+GZ-G6;Sustitución de ventana de aluminio anodizado/lacado corredera. M²;268,49;255,07;Actuación técnica;Carpintería;¤/m2
+GZ-G7;Sust.ventana aluminio anodizado/lacado,practicable abatible,rotura puente térmico;358,52;340,59;Actuación técnica;Carpintería;¤/m2
+GZ-G8;Sust.ventana aluminio anodizado/lacado corredera,rotura puente térmico;346,17;328,86;Actuación técnica;Carpintería;¤/m2
+GZ-G9;Sustitución de ventana de PVC practicable abatible. M²;322,21;306,10;Actuación técnica;Carpintería;¤/m2
+GZ-G10;Retirada de ventana de PVC corredera. M²;309,37;293,90;Actuación técnica;Carpintería;¤/m2
+GZ-H1;Sustitución de persiana enrollable de PVC. M²;43,47;41,30;Actuación técnica;Carpintería;¤/m2
+GZ-H2;Sustitución de persiana enrollable de PVC (accionamiento motorizado). M²;159,93;151,93;Actuación técnica;Carpintería;¤/m2
+GZ-H3;Sustitución de persiana enrollable de aluminio (manual). M²;57,81;54,92;Actuación técnica;Carpintería;¤/m2
+GZ-H4;Sustitución de persiana enrollable de aluminio (accionamiento motorizado). M²;179,45;170,48;Actuación técnica;Carpintería;¤/m2
+GZ-H5;Cinta para persianas. Ud.;19,36;18,39;Actuación técnica;Carpintería;¤/ud
+GZ-H6;Tope para persianas. Ud.;10,87;10,33;Actuación técnica;Carpintería;¤/ud
+GZ-H7;Cajón capialzado de persiana. Ud.;33,74;32,05;Actuación técnica;Carpintería;¤/ud
+GZ-H8;Tapa registrable en cajón de persiana. Ud.;18,86;17,92;Actuación técnica;Carpintería;¤/ud
+GZ-H9;Repaso de mecanismo de persiana manual. Ud.;19,37;18,40;Actuación técnica;Carpintería;¤/ud
+GZ-H10;Repaso de mecanismo de persiana motorizada. Ud.;19,37;18,40;Actuación técnica;Carpintería;¤/ud
+GZ-H11;Mecanismo de persiana motorizada. Ud.;147,71;140,32;Actuación técnica;Carpintería;¤/ud
+GZ-I1;Acristalamiento Climalit 4/6,8/4 mm. M²;40,51;38,48;Actuación técnica;Carpintería;¤/m2
+GZ-I2;Sellado de vidrio con silicona o gomas. Ml.;6,55;6,22;Actuación técnica;Carpintería;¤/ml
+GZ-I3;Retirada, suministro y colocación de espejo. M²;72,00;68,40;Actuación técnica;Carpintería;¤/m2
+GZ-I4;Suministro y colocación de espejo. M²;67,93;64,53;Actuación técnica;Carpintería;¤/m2
+GZ-F20;Sustitución de puerta de entrada de madera barnizada lisa, en block. Ud.;600,83;570,79;Actuación técnica;Carpintería;¤/ud
+GZ-F22;Sustitución de puerta de entrada blindada madera y acabado chapa barnizada;579,50;550,53;Actuación técnica;Carpintería;¤/ud
+GZ-F24;Hoja de puerta de entrada de madera barnizada. Ud.;444,60;422,37;Actuación técnica;Carpintería;¤/ud
+GZ-F25;Sust.puerta paso interior batiente sencilla ciega,block,madera barnizada;253,55;240,87;Actuación técnica;Carpintería;¤/ud
+GZ-F26;Hoja de puerta de paso interior batiente ciega, en madera barnizada;177,22;168,36;Actuación técnica;Carpintería;¤/ud
+GZ-F27;Puerta de paso interior batiente sencilla vidriera, en block, de madera barnizada;276,98;263,13;Actuación técnica;Carpintería;¤/ud
+GZ-F28;Hoja de puerta de paso interior batiente vidriera, en madera barnizada;213,41;202,74;Actuación técnica;Carpintería;¤/ud
+GZ-F29;Hoja batiente de armario de madera barnizada. Ud.;151,16;143,60;Actuación técnica;Carpintería;¤/ud
+GZ-F30;Hoja corredera de armario de madera barnizada. Ud.;177,22;168,36;Actuación técnica;Carpintería;¤/ud
+GZ-F3;Cambio de cerradura en puerta de entrada. Ud.;136,96;130,11;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-F4;Ajuste general de puertas de madera. Ud.;37,17;35,31;Actuación técnica;Carpintería;¤/ud
+GZ-F5;Ajuste general de puertas y cajones de armarios. Ud.;25,45;24,18;Actuación técnica;Carpintería;¤/ud
+GZ-F7;Reparación de carpintería de madera. Ud.;38,16;36,25;Actuación técnica;Carpintería;¤/ud
+GZ-F2;Sustitución de cercos y jambas. Ud.;127,28;120,92;Actuación técnica;Carpintería;¤/ud
+GZ-F8;Tapajuntas completo de madera barnizada en puertas sencillas. Ud.;55,01;52,26;Actuación técnica;Carpintería;¤/ud
+GZ-F9;Tapajuntas completo de madera lacada en puertas sencillas. Ud.;60,01;57,01;Actuación técnica;Carpintería;¤/ud
+GZ-F10;Tapajuntas completo de madera barnizada en puertas dobles. Ud.;67,54;64,16;Actuación técnica;Carpintería;¤/ud
+GZ-F11;Tapajuntas completo de madera lacada en puertas dobles. Ud.;72,94;69,29;Actuación técnica;Carpintería;¤/ud
+GZ-F12;Fijación tapajuntas o rodapié. Ml.;3,54;3,36;Actuación técnica;Carpintería;¤/ml
+GZ-F13;Reposición de herrajes de puertas interiores. Ud.;36,73;34,89;Actuación técnica;Carpintería;¤/ud
+GZ-F15;Rep. de juego de manillas,tiradores o pomos,para puertas interiores o entrada;38,04;36,14;Actuación técnica;Carpintería;¤/ud
+GZ-F17;Repaso de cerradura de puerta acceso a vivienda. Ud.;57,67;54,79;Actuación técnica;Carpintería;¤/ud
+GZ-F18;Suministro y colocación de tablero barnizado para exterior puerta blindada..;95,10;90,35;Actuación técnica;Carpintería;¤/ud
+GZ-F21;Supl.lacado una cara puerta blindada-paso,incluido soporte,material,mano de obra;47,03;44,68;Actuación técnica;Carpintería;¤/ud
+GZ-F31;Módulo individual de mobiliario de cocina. Ud.;117,18;111,32;Actuación técnica;Mobiliario de cocina;¤/ud
+GZ-F32;Sustitución puerta o panel individual de mobiliario de cocina. Ud.;43,32;41,15;Actuación técnica;Mobiliario de cocina;¤/ud
+GZ-F33;Mueble de baño. Ud.;224,05;212,85;Actuación técnica;Carpintería;¤/ud
+GZ-F37;Sellado de carpintería de madera. Ml.;6,55;6,22;Actuación técnica;Carpintería;¤/ml
+GZ-M10;Sum.instal.encimera melamina-PVC parte proporcional copete,cantonera,remates 3,60ML;242,25;230,14;Actuación técnica;Mobiliario de cocina;¤/ud
+GZ-M11;Sum.instal.encimera melamina o PVC parte proporcional copete,cantonera y remates;63,12;59,96;Actuación técnica;Mobiliario de cocina;¤/ud
+GZ-F34;Reparación de balaustres de barandilla de madera barnizada/ lacada;10,17;9,66;Actuación técnica;Carpintería;¤/ud
+GZ-F35;Reparación de pasamanos de madera barnizada/ lacada. Ml.;4,63;4,40;Actuación técnica;Carpintería;¤/ml
+GZ-F36;Elementos decorativos de barandilla. Ud.;30,17;28,66;Actuación técnica;Carpintería;¤/ud
+GZ-K1;Localización de avería. Ud.;29,26;27,80;Actuación técnica;Verificación de averías;¤/ud
+GZ-K2;Revisión de la instalación eléctrica en vivienda. Ud.;100,11;95,10;Actuación técnica;Electricidad;¤/ud
+GZ-K3;Interruptor diferencial. Sustitución de diferencial de 2*25 A. o 2*40 A. en 30 mA. Ud.;86,20;81,89;Actuación técnica;Electricidad;¤/ud
+GZ-K4;Interruptor diferencial. Sustitución de diferencial de 2*63 A. en 30 mA. Ud.;249,37;236,90;Actuación técnica;Electricidad;¤/ud
+GZ-K5;Interruptor diferencial. Sustitución de diferencial de 2*25 A. o 2*40 A. en 300 mA. Ud.;100,33;95,31;Actuación técnica;Electricidad;¤/ud
+GZ-K6;Interruptor diferencial. Sustitución de diferencial de 2*63 A. en 300 mA. Ud.;175,94;167,14;Actuación técnica;Electricidad;¤/ud
+GZ-K7;Interruptor diferencial. Sustitución de diferencial de 4*63 A. en 30 mA. Ud.;359,88;341,89;Actuación técnica;Electricidad;¤/ud
+GZ-K8;Interruptor diferencial. Sustitución de diferencial de 4*25 A. o 4*40 A. en 300 mA. Ud.;158,44;150,52;Actuación técnica;Electricidad;¤/ud
+GZ-K9;Interruptor diferencial. Sustitución de diferencial de 4*63 A. en 300 mA. Ud.;208,86;198,42;Actuación técnica;Electricidad;¤/ud
+GZ-K10;Reparación de punto de luz o enchufe. Ud.;29,49;28,02;Actuación técnica;Electricidad;¤/ud
+GZ-K11;Zumbador. Ud.;31,96;30,36;Actuación técnica;Electricidad;¤/ud
+GZ-K12;Sustitución de circuitos. Sustitución de circuito en 1,5 o 2,5 mM².Desde C.G.P.a registro;38,40;36,48;Actuación técnica;Electricidad;¤/ud
+GZ-K13;Sustitución de circuitos. Sustitución de circuito en 4 o 6 mM². Desde C.G.P. a registro;87,56;83,18;Actuación técnica;Electricidad;¤/ud
+GZ-K14;Sust.de circuitos.Sustitución circuito adicional en 4 o 6mM² Desde C.G.P.a registro;78,79;74,85;Actuación técnica;Electricidad;¤/ud
+GZ-K16;Derivaciones individuales. Línea de derivación individual de 10 mM². Ud.;227,49;216,12;Actuación técnica;Electricidad;¤/ud
+GZ-K17;Derivaciones individuales. Línea de derivación individual de 16 mM². Ud.;256,88;244,04;Actuación técnica;Electricidad;¤/ud
+GZ-K18;Derivaciones individuales. Línea de derivación individual de 25 mM². Ud.;322,09;305,99;Actuación técnica;Electricidad;¤/ud
+GZ-K19;Derivaciones individuales. Línea de derivación individual adicional de 10 mM². Ud.;193,15;183,49;Actuación técnica;Electricidad;¤/ud
+GZ-K20;Derivaciones individuales. Línea de derivación individual adicional de 16 mM². Ud.;220,45;209,43;Actuación técnica;Electricidad;¤/ud
+GZ-K21;Derivaciones individuales. Línea de derivación individual adicional de 25 mM². Ud.;241,44;229,37;Actuación técnica;Electricidad;¤/ud
+GZ-K22;Derivaciones individuales. Suplemento por derivación individual de 10 mM²;30,94;29,39;Actuación técnica;Electricidad;¤/ud
+GZ-K23;Derivaciones individuales. Suplemento de derivación individual de 16 mM²;33,71;32,02;Actuación técnica;Electricidad;¤/ud
+GZ-K24;Derivaciones individuales. Suplemento de derivación individual de 25 mM²;36,76;34,92;Actuación técnica;Electricidad;¤/ud
+GZ-K25;Interruptores magnetotérmicos.Sust.interruptor magnetotérmico 2*10A. A 2*40A;49,12;46,66;Actuación técnica;Electricidad;¤/ud
+GZ-K26;Interruptores magnetotérmicos.Sust.interruptor magnetotérmico 2*50A a 2*63A;96,79;91,95;Actuación técnica;Electricidad;¤/ud
+GZ-K27;Interruptores magnetotérmicos.Sust.interruptor magnetotérmico DPN 2*10A-2*40A;49,12;46,66;Actuación técnica;Electricidad;¤/ud
+GZ-K28;Interruptores magnetotérmicos.Sust.interruptor magnetotérmico 4*10 A a 4*40A;101,54;96,46;Actuación técnica;Electricidad;¤/ud
+GZ-K29;Interruptores magnetotérmicos.Sust.interruptor magnetotérmico 4*50A;167,46;159,09;Actuación técnica;Electricidad;¤/ud
+GZ-K31;Downlight halógeno 50 W. Ud.;45,60;43,32;Actuación técnica;Electricidad;¤/ud
+GZ-K32;Sustitución de lámpara halógena 50 W. Ud.;10,45;9,93;Actuación técnica;Electricidad;¤/ud
+GZ-K34;Conexión de luminarias. Ud.;7,09;6,74;Actuación técnica;Electricidad;¤/ud
+GZ-K35;Temporizador. Ud.;53,34;50,67;Actuación técnica;Electricidad;¤/ud
+GZ-J1;Pintura temple liso. Hasta 10 M². Ud.;42,70;40,57;Actuación técnica;Pintura;¤/ud
+GZ-J2;Pintura temple liso. De 10 M² a 20 M². Ud.;64,11;60,90;Actuación técnica;Pintura;¤/ud
+GZ-J3;Pintura temple liso. De 20 M² a 50 M². Ud.;134,41;127,69;Actuación técnica;Pintura;¤/ud
+GZ-J4;Pintura temple liso. A partir de 50 M² + M² adicional. M²;2,74;2,60;Actuación técnica;Pintura;¤/m2
+GZ-J5;Pintura temple liso. Plástico o temple en totalidad vivienda hasta 60M²;420,31;399,29;Actuación técnica;Pintura;¤/ud
+GZ-J6;Pintura temple liso.Plástico-temple en totalidad vivienda de 61 a 80M²;541,30;514,24;Actuación técnica;Pintura;¤/ud
+GZ-J7;Pintura temple liso.Plástico-temple totalidad vivienda de 81 a 100M²;662,31;629,19;Actuación técnica;Pintura;¤/ud
+GZ-J8;Pintura temple liso.Plástico-temple totalidad vivienda de 101 a 120M²;783,33;744,16;Actuación técnica;Pintura;¤/ud
+GZ-J9;Pintura temple liso. Plástico o temple adicional por cada 20 M². Ud.;57,00;54,15;Actuación técnica;Pintura;¤/ud
+GZ-J10;Pintado parament.verticales,horiz.yeso-pladur pintura plástica lisa.Hasta 10M²;51,32;48,75;Actuación técnica;Pintura;¤/ud
+GZ-J11;Pintado parament.verticales,horiz.yeso-pladur pint.plástica lisa.De10M² a 20M²;76,99;73,14;Actuación técnica;Pintura;¤/ud
+GZ-J12;Pintado parament. verticales,horiz.yeso-pladur pint.plástica lisa.De20M² a 50M²;190,13;180,62;Actuación técnica;Pintura;¤/ud
+GZ-J13;Pintado parament. verticales,horiz.yeso-pladur pint.plástica lisa.50M²+M²;3,83;3,64;Actuación técnica;Pintura;¤/m2
+GZ-J14;Pintado parament.vertical,horiz.yeso-pladur pint.plástica lisa.Plást.liso viv.60M²;420,31;399,29;Actuación técnica;Pintura;¤/ud
+GZ-J15;Pintado parament.vert.,horiz.yeso-pladur pint.plástica lisa.Plást.liso viv.61a80M²;541,30;514,24;Actuación técnica;Pintura;¤/ud
+GZ-J16;Pintado parament.vert.,horiz.yeso-pladur pint.plástica lisa.Plást.liso viv.81-100M²;662,31;629,19;Actuación técnica;Pintura;¤/ud
+GZ-J17;Pintado parament.vert,horiz,yeso-pladur pint.plástica lisa.Plást.tot.viv.101-120M²;783,33;744,16;Actuación técnica;Pintura;¤/ud
+GZ-J18;Pintado parament. vert,horiz.yeso-pladur pint.plástica lisa.Plást.liso 20M² viv.;61,75;58,66;Actuación técnica;Pintura;¤/ud
+GZ-J19;Pintado parament.vert.,horiz.yeso-pladur pint.plástica gotelé. Hasta 10M²;73,57;69,89;Actuación técnica;Pintura;¤/ud
+GZ-J20;Pintado parament.vert,horiz.yeso-pladur pint.plástica gotelé.10M²-20M²;103,25;98,09;Actuación técnica;Pintura;¤/ud
+GZ-J21;Pintado parament.vert,horiz.yeso-pladur pint.plástica gotelé.De 20-50 M²;237,49;225,62;Actuación técnica;Pintura;¤/ud
+GZ-J22;Pintado parament.vert,horiz.yeso-pladur pint.plástica gotelé.50M²+M²;4,57;4,34;Actuación técnica;Pintura;¤/m2
+GZ-J23;Pintado parament.vert,horiz.yeso-pladur pint.plástica gotelé.Plást.liso viv.60M²;420,31;399,29;Actuación técnica;Pintura;¤/ud
+GZ-J24;Pintado parament.vert,horiz.yeso-pladur pint.plástica gotelé.Plást-liso viv.61-80M²;541,30;514,24;Actuación técnica;Pintura;¤/ud
+GZ-J25;Pintado parament.vert,horiz.yeso-pladur pint.plástica gotelé.Plást.liso vivi.81-100M²;662,31;629,19;Actuación técnica;Pintura;¤/ud
+GZ-J26;Pintado parament.vert,horiz.yeso-pladur pint.plástica gotelé.Plást.liso viv.101-120M²;783,33;744,16;Actuación técnica;Pintura;¤/ud
+GZ-J27;Pintado parament.vert,horiz.yeso-pladur pint.plástica gotelé.Plást.liso viv.20M²;66,50;63,18;Actuación técnica;Pintura;¤/ud
+GZ-J28;Limpieza paramentos producto fungicida,repintado pint,plástica lisa.Hasta 20M²;116,10;110,30;Actuación técnica;Pintura;¤/ud
+GZ-J29;Limpieza paramentos producto fungicida,repintado pint.plástica lisa.De 20M² a 50M²;294,30;279,59;Actuación técnica;Pintura;¤/ud
+GZ-J30;Limpiiza paramentos producto fungicida,repintado pint. plástica lisa.50M²+M²;5,68;5,40;Actuación técnica;Pintura;¤/m2
+GZ-J31;Limpieza paramentos producto fungicida,repintado pint.plástica gotelé.20M²;142,02;134,92;Actuación técnica;Pintura;¤/ud
+GZ-J32;Limpieza paramentos producto fungicida,repintado pint.plástica gotelé.20-50M²;332,34;315,72;Actuación técnica;Pintura;¤/ud
+GZ-J33;Limpieza paramentos producto fungicida,repintado pint.plástica gotelé.50 M²+M²;6,42;6,10;Actuación técnica;Pintura;¤/m2
+GZ-J34;Pintura antihumedad. Hasta 20 M². Ud.;98,93;93,98;Actuación técnica;Pintura;¤/ud
+GZ-J35;Pintura antihumedad. De 20 M² a 50 M². Ud.;304,02;288,82;Actuación técnica;Pintura;¤/ud
+GZ-J36;Pintura antihumedad. A partir de 50 M² + M² adicional. M²;6,20;5,89;Actuación técnica;Pintura;¤/m2
+GZ-J37;Incremento por aplicación de veladura en paramentos. M²;5,30;5,04;Actuación técnica;Pintura;¤/m2
+GZ-J38;Revestimiento de pintura para exteriores en fachada. Hasta 20 M². Ud.;144,25;137,04;Actuación técnica;Pintura;¤/ud
+GZ-J39;Revestimiento de pintura para exteriores en fachada. De 20 M² a 50 M². Ud.;331,84;315,25;Actuación técnica;Pintura;¤/ud
+GZ-J40;Revestimiento de pintura para exteriores en fachada. A partir de 50 M² + M²;6,42;6,10;Actuación técnica;Pintura;¤/m2
+GZ-J41;Revestimiento de pintura sobre enfoscados. Hasta 20 M². Ud.;144,25;137,04;Actuación técnica;Pintura;¤/ud
+GZ-J42;Revestimiento de pintura sobre enfoscados. De 20 M² a 50 M². Ud.;263,18;250,02;Actuación técnica;Pintura;¤/ud
+GZ-J43;Revestimiento de pintura sobre enfoscados. A partir de 50 M² + M² adicional. M²;5,80;5,51;Actuación técnica;Pintura;¤/m2
+GZ-J44;Barniz hidrófugo en fachadas. Hasta 20 M². Ud.;110,19;104,68;Actuación técnica;Pintura;¤/ud
+GZ-J45;Barniz hidrófugo en fachadas. De 20 M² a 50 M². Ud.;251,01;238,46;Actuación técnica;Pintura;¤/ud
+GZ-J46;Barniz hidrófugo en fachadas. A partir de 50 M² + M² adicional. M²;4,90;4,66;Actuación técnica;Pintura;¤/m2
+GZ-J47;Tratamiento superficial antigrafiti. Hasta 20 M². Ud.;222,19;211,08;Actuación técnica;Pintura;¤/ud
+GZ-J48;Tratamiento superficial antigrafiti. A partir de 20 M² + M² adicional. M²;9,88;9,39;Actuación técnica;Pintura;¤/m2
+GZ-J49;Pintado de líneas de plazas de aparcamiento. Hasta a 50 ml. Ud.;214,71;203,97;Actuación técnica;Pintura;¤/ud
+GZ-J50;Pintado de líneas de plazas de aparcamiento. A partir de 50 ml. + M²;4,19;3,98;Actuación técnica;Pintura;¤/ml
+GZ-J51;Pintado de zócalo (o franja) en garaje. Hasta 50 M². Ud.;419,90;398,91;Actuación técnica;Pintura;¤/ud
+GZ-J52;Pintado de zócalo (o franja) en garaje. A partir de 50 M² + M² adicional;7,41;7,04;Actuación técnica;Pintura;¤/m2
+GZ-J53;Pintado de número de plaza de aparcamiento. Hasta 4 ud. Ud.;16,86;16,02;Actuación técnica;Pintura;¤/ud
+GZ-J54;Pintado de número de plaza de aparcamiento. A partir de 4 ud. + ud.;3,37;3,20;Actuación técnica;Pintura;¤/ud
+GZ-J55;Barnizado sobre carpintería de madera (barniz sintético). Hasta 15 M².;114,06;108,36;Actuación técnica;Pintura;¤/ud
+GZ-J56;Barnizado sobre carpintería de madera (barniz sintético). A partir de 15 M² + M²;6,91;6,56;Actuación técnica;Pintura;¤/m2
+GZ-J57;Barnizado sobre barandilla/pasamanos de madera. Hasta 10 ml. Ud.;60,10;57,10;Actuación técnica;Pintura;¤/ud
+GZ-J58;Barnizado sobre barandilla/pasamanos de madera. A partir de 10 ml. + M²;4,81;4,57;Actuación técnica;Pintura;¤/m2
+GZ-J59;Pintura sobre carpintería de madera. Hasta 15 M². Ud.;181,36;172,29;Actuación técnica;Pintura;¤/ud
+GZ-J60;Pintura sobre carpintería de madera. A partir de 15 M² + M² adicional. M²;10,51;9,98;Actuación técnica;Pintura;¤/m2
+GZ-J61;Pintura sobre carpintería metálica. Hasta 15 M². Ud.;242,68;230,55;Actuación técnica;Pintura;¤/ud
+GZ-J62;Pintura sobre carpintería metálica. A partir de 15 M² + M² adicional. M²;14,33;13,61;Actuación técnica;Pintura;¤/m2
+GZ-J63;Pintado sobre cerrajería metálica. Hasta 15 M². Ud.;246,26;233,95;Actuación técnica;Pintura;¤/ud
+GZ-J64;Pintado sobre cerrajería metálica. A partir de 15 M² + M² adicional. M²;15,31;14,54;Actuación técnica;Pintura;¤/m2
+GZ-J65;Pintura sobre tubos de instalaciones. Hasta 10 ml. Ud.;95,84;91,05;Actuación técnica;Pintura;¤/ud
+GZ-J66;Pintura sobre tubos de instalaciones. A partir de 10 ml. + M² adicional. M²;6,05;5,75;Actuación técnica;Pintura;¤/m2
+GZ-A32;Apertura de puerta. Ud.;26,60;25,27;Actuación técnica;Limpieza, retirada de enseres y descerraje;¤/ud
+GZ-A33;Sustitución de bombillo normal (gama media). Incluido descerraje. Ud.;71,81;68,22;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A34;Sustitución de bombillo de seguridad (gama media). Incluido descerraje. Ud.;117,34;111,47;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A35;Sustitución de cerradura monopunto (gama media). Incluido descerraje. Ud.;95,38;90,61;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A36;Sustitución de cerradura de seguridad multipunto (gama media).Incl. descerraje;156,75;148,91;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A37;Descerrajamiento de cerradura bombín estándar. Ud.;26,60;25,27;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A38;Descerrajamiento de cerradura bombín cerradura de seguridad gama media;33,25;31,59;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A39;Apertura de candado. Ud.;23,75;22,56;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A40;Cambio de bombín cerradura estándar. Ud.;51,68;49,10;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A41;Cambio de bombín cerradura de seguridad gama media. Ud.;97,20;92,34;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A42;Suministro de mando garaje y codificación del mismo. Ud.;26,32;25,00;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A43;Sumin. juego 1LLAVE viv.,anexos,incl. accesos portal,zonas comunes MÁX.5CERR./VIV.;31,35;29,78;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A44;Suministro y colocación de candado. INCLUYE CADENA si fuese necesario;52,97;50,32;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-A45;Instalación de cepos de garaje. Ud.;99,15;94,19;Actuación técnica;Cepo garaje;¤/ud
+GZ-A46;Suministro e instalación puerta antiokupas. Ud.;603,25;573,09;Actuación técnica;Colocación puertas antiocupa;¤/ud
+GZ-A47;Desinstalación y transporte de puerta antiokupas. Ud.;81,74;77,65;Actuación técnica;Colocación puertas antiocupa;¤/ud
+GZ-A48;Instalación de puerta antiokupas. Ud.;160,96;152,91;Actuación técnica;Colocación puertas antiocupa;¤/ud
+GZ-E3;Pavimento de tarima sobre rastreles. M²;81,36;77,29;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E9;Pavimento flotante sintético. Hasta 10 M². Ud.;335,16;318,40;Actuación técnica;Adecuación suelos;¤/ud
+GZ-E11;Pavimento flotante sintético. A partir de 25 M² + M² adicional. M²;26,61;25,28;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E13;Pavimento de tarima de madera flotante. Hasta 10 M². Ud.;483,13;458,97;Actuación técnica;Adecuación suelos;¤/ud
+GZ-E14;Pavimento de tarima de madera flotante. De 10 a 25 M². Ud.;889,57;845,09;Actuación técnica;Adecuación suelos;¤/ud
+GZ-E15;Pavimento de tarima de madera flotante. A partir de 25 M² + M²;42,24;40,13;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E17;Parqué. Hasta 10 M². Ud.;412,49;391,87;Actuación técnica;Adecuación suelos;¤/ud
+GZ-E18;Parqué. De 10 a 25 M². Ud.;948,73;901,29;Actuación técnica;Adecuación suelos;¤/ud
+GZ-E19;Parqué. A partir de 25 M² + M² adicional. M²;36,31;34,49;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E20;Lijado y barnizado de pavimentos de madera. Hasta 10 M². Ud.;175,37;166,60;Actuación técnica;Adecuación suelos;¤/ud
+GZ-E21;Lijado y barnizado de pavimentos de madera. De 10 a 25 M². Ud.;351,73;334,14;Actuación técnica;Adecuación suelos;¤/ud
+GZ-E22;Lijado y barnizado de pavimentos de madera. A partir de 25 M² + M²;14,08;13,38;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E23;Barnizado de pavimentos de madera. Hasta 10 M². Ud.;127,82;121,43;Actuación técnica;Adecuación suelos;¤/ud
+GZ-E24;Barnizado de pavimentos de madera. De 10 a 25 M². Ud.;290,97;276,42;Actuación técnica;Adecuación suelos;¤/ud
+GZ-E25;Barnizado de pavimentos de madera. A partir de 25 M² + M² adicional. M²;10,74;10,20;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E27;Rodapié macizo de madera 7/8,5 cm. Hasta 20 ml. Ud.;151,18;143,62;Actuación técnica;Albañilería;¤/ud
+GZ-E28;Rodapié macizo de madera 7/8,5 cm. A partir de 20 ml. + ml;6,91;6,56;Actuación técnica;Albañilería;¤/ml
+GZ-E30;Rodapié macizo de madera 10 cm. Hasta 20 ml. Ud.;182,04;172,94;Actuación técnica;Albañilería;¤/ud
+GZ-E31;Rodapié macizo de madera 10 cm. A partir de 20 ml. + ml;8,03;7,63;Actuación técnica;Albañilería;¤/ml
+GZ-E33;Rodapié de DM chapado de madera 7/8,5 cm. Hasta 20 ml. Ud.;102,77;97,63;Actuación técnica;Albañilería;¤/ud
+GZ-E34;Rodapié de DM chapado de madera 7/8,5 cm. A partir de 20 ml. + ml;4,70;4,47;Actuación técnica;Albañilería;¤/ml
+GZ-E36;Rodapié de DM chapado de madera 10 cm. Hasta 20 ml. Ud.;138,56;131,63;Actuación técnica;Albañilería;¤/ud
+GZ-E37;Rodapié de DM chapado de madera 10 cm. A partir de 20 ml. + ml;6,33;6,01;Actuación técnica;Albañilería;¤/ml
+GZ-E39;Rodapié de DM lacado 7/8,5 cm. Hasta 20 ml. Ud.;102,77;97,63;Actuación técnica;Albañilería;¤/ud
+GZ-E40;Rodapié de DM lacado 7/8,5 cm. A partir de 20 ml. + ml. Adicional;4,70;4,47;Actuación técnica;Albañilería;¤/ml
+GZ-E41;Rodapié de DM lacado 10 cm. Hasta 20 ml. Ud.;138,56;131,63;Actuación técnica;Albañilería;¤/ud
+GZ-E42;Rodapié de DM lacado 10 cm. A partir de 20 ml. + ml. Adicional;6,33;6,01;Actuación técnica;Albañilería;¤/ml
+GZ-E43;Peldaño de escalera de madera barnizada. Ml.;85,01;80,76;Actuación técnica;Adecuación suelos;¤/ml
+GZ-E45;Reparación y ajuste de pavimento flotante. M²;7,73;7,34;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E1;Ret.paviment.tarima flotante,prep. soporte.Levantado paviment.madera maciza(M²);5,51;5,23;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E2;Ret.paviment.tarima flotante,prep. soporte.Levantado paviment.laminado(M²);3,93;3,73;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E7;Ret.paviment.tarima flotante,prep.soporte.Mortero nivelación;6,52;6,19;Actuación técnica;Adecuación suelos;¤/m2
+GZ-E47;Suministro y colocación de chapa en paso puerta. Ml.;9,47;9,00;Actuación técnica;Adecuación suelos;¤/ml
+GZ-E48;Suministro y colocación de junta de dilatación en tarima flotante;13,09;12,44;Actuación técnica;Adecuación suelos;¤/ml
+GZ-E49;Emplastecido y barnizado de rodapié. Ml.;4,08;3,88;Actuación técnica;Adecuación suelos;¤/ml
+GZ-O1;Sustitución de horno. Ud.;304,10;288,90;Actuación técnica;Electrodomésticos;¤/ud
+GZ-O3;Sustitución de placa vitrocerámica. Ud.;252,14;239,53;Actuación técnica;Electrodomésticos;¤/ud
+GZ-O5;Sustitución de campana extractora. Ud.;152,39;144,77;Actuación técnica;Electrodomésticos;¤/ud
+GZ-O7;Sustitución de lavadora. Ud.;351,89;334,30;Actuación técnica;Electrodomésticos;¤/ud
+GZ-O9;Sustitución de lavavajillas. Ud.;401,76;381,67;Actuación técnica;Electrodomésticos;¤/ud
+GZ-O11;Proyectos de legalización de las instalaciones. Fontanería. Ud.;1185,60;1126,32;Obtención documentación;Boletín agua;¤/ud
+GZ-O12;Proyectos de legalización de las instalaciones. Gas. Ud.;790,40;750,88;Obtención documentación;Boletín gas;¤/ud
+GZ-O13;Proyectos de legalización de las instalaciones. Electricidad. Ud.;1086,80;1032,46;Obtención documentación;Boletín electricidad;¤/ud
+GZ-O14;Proyectos de legalización de las instalaciones. PCI (garaje). Ud.;1111,50;1055,93;Obtención documentación;Informes;¤/ud
+GZ-O15;Boletines y certificados de las instalaciones. Fontanería. Ud.;78,00;74,10;Obtención documentación;Boletín agua;¤/ud
+GZ-O16;Boletines y certificados de las instalaciones. Gas. Ud.;98,92;93,97;Obtención documentación;Boletín gas;¤/ud
+GZ-O17;Boletines y certificados de las instalaciones. Electricidad. Ud.;141,66;134,58;Obtención documentación;Boletín electricidad;¤/ud
+GZ-P1;Imp.mín.intervención viv.(INFORME, OKUPAS, VISITAS INFRUCTUOSAS);29,45;27,98;Actuación técnica;Informe ocupación;¤/ud
+GZ-P2;Mín.facturar imp.suma partidas rep.no sup.50¤.Imp.sup.31¤ fact.según servicio;29,45;27,98;Actuación técnica;Obra menor tarificada;¤/ud
+GZ-P3;Imp.actuaciones urgentes 19:00-8:00h.días lab.,sáb.,domingos y festivos;33,25;31,59;Actuación técnica;Obra menor tarificada;¤/ud
+GZ-P4;Plus servicio urg.menos 3h(urgencia que se solicita horario de 20:00-08:00);25,65;24,37;Actuación técnica;Obra menor tarificada;¤/ud
+GZ-P5;Plus servicio urg.1 h(urgencia solicitada entre semana horario 7:00-22:00);67,45;64,08;Actuación técnica;Obra menor tarificada;¤/ud
+GZ-P6;Plus por servicio para el mismo día el fin de semana en horario de 7:00 a 22:00;25,65;24,37;Actuación técnica;Obra menor tarificada;¤/ud
+GZ-P7;Plus servicio urg.1h(fines de semana en horario de 7:00 a 22:00);67,45;64,08;Actuación técnica;Obra menor tarificada;¤/ud
+GZ-P8;Plus servicio urg.1h(cualquier día semana+fines semana horario noct.22:00-7:00);67,45;64,08;Actuación técnica;Obra menor tarificada;¤/ud
+GZ-ST;Actuaciones sin verificar;;0,00;Actuación técnica;Obra menor no tarificada;¤/ud
+GZ-A51;Limpieza de solares. Limpieza y desbroce de parcelas con medios mecánicos;0,60;0,57;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/m2
+GZ-D22;Alicatado. A partir de 15 M² + M² adicional. M²;23,17;22,01;Actuación técnica;Albañilería;¤/m2
+GZ-K30;Interruptores magnetotérmicos. Sust.interruptor magnetotérmico de 4*63 A;227,29;215,93;Actuación técnica;Electricidad;¤/ud
+GZ-Q1;Sumin.colocación 1cadena 50cm.long., mín.6mm grosor,+candado 60 mm acerado;42,40;40,28;Actuación técnica;Cambio de cerradura;¤/ud
+GZ-Q2;Derribo zonas peligro desprend.falsos techos,Sup:30m2,retirada,transp.vertedero;150,48;142,96;Actuación técnica;Albañilería; ¤/m2
+GZ-Q3;Cualquier obra que ocupe 1/2 día de dos operarios.;139,20;132,24;Actuación técnica;Obra menor tarificada;¤/ (1/2) jornada 
+GZ-Q4;Corte selectiva: Desbroce y poda puntual y selectiva. Manual;0,61;0,58;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares; ¤/m2
+GZ-Q5;Vallado con bloque de hormigón 20cm,hasta altura 2m enfoscado,maestreado;74,29;70,58;Actuación técnica;Vallado de hormigón;¤/ml
+GZ-Q6;Vallado con bloque de hormigón 20cm,hasta altura 1m enfoscado,maestreado;47,32;44,95;Actuación técnica;Vallado de hormigón;¤/ml
+GZ-Q7;Vallado con chapa metálica nervada hasta 2m de altura;54,72;51,98;Actuación técnica;Vallado de chapa;¤/ml
+GZ-Q8;Cercado de 1,50 m. de altura realizado con malla simple;15,00;14,25;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ml
+GZ-Q9;Cercado de 1 m. de altura realizado con malla simple ;13,16;12,50;Actuación técnica;Limpieza, desinfección, desbroces y vallados de solares;¤/ml
+GZ-Q10;Puerta metálica malla-chapa acero galvanizado acceso peatonal(0,8 - 1m);225,36;214,09;Actuación técnica;Puerta peatonal;¤/ud
+GZ-Q11;Puerta abatible de 3x2m.cerramiento exterior,bastidor tubo acero laminado;698,40;663,48;Actuación técnica;Puerta abatible;¤/ud
+GZ-Q12;Desmontado por medios manuales de cercado de malla simple;2,70;2,57;Actuación técnica;Desmontado cercado;¤/ml
+GZ-Q13;RETIRADA RESIDUOS:Retirada residuos inertes(restos de obra, basuras, etc.);36,06;34,26;Actuación técnica;Retirada residuos;¤/kg
+GZ-Q14;Retirada,desmontaje y acond.residuos contaminados fibrocemento;68,32;64,90;Actuación técnica;Retirada fibrocemento;¤/kg
+GZ-Q15;Aislamiento mediante espuma rígida de poliuretano hidrofugo;11,40;10,83;Actuación técnica;Aislamiento;¤/m2
+GZ-R1;Demolición INFERIOR A 200 M2 CONSTRUIDOS de Edificación Aislada;40,13;38,12;Actuación técnica;Albañilería;¤/m2
+GZ-R2;Demolición INFERIOR A 200 M2  CONSTRUIDOS de Edificación;59,79;56,80;Actuación técnica;Albañilería;¤/m2
+GZ-R3;Edificio Estructura Metálica Aislado (PARA SUPERFICIES <200M2 CONSTRUIDOS);35,99;34,19;Actuación técnica;Albañilería;¤/m2
+GZ-R4;Edificio estructura metálica entre medianeras (SUP.<200M2 CONSTRUIDOS);55,06;52,31;Actuación técnica;Albañilería;¤/m2
+GZ-S1;Demolición de Edificación Aislada, (SUP. 200M2 INFERIOR 1000M2 CONST.);38,13;36,22;Actuación técnica;Albañilería;¤/m2
+GZ-S2;Demolición de Edificación entre medianeras(SUP.200M2 INF.1000M2 CONS.);46,27;43,96;Actuación técnica;Albañilería;¤/m2
+GZ-S3;Edificio Estructura Metálica Aislado,trabajos contención(SUP. 200-1.000M2);33,97;32,27;Actuación técnica;Albañilería;¤/m2
+GZ-S4;Edificio estruc.metálica entre medianeras,trab.contención(SUP.200-1.000M2);41,55;39,47;Actuación técnica;Albañilería;¤/m2
+GZ-T1;Demolición de Edificación Aislada (ENTRE 1.000 Y 3.000 M2 CONSTRUIDOS);37,76;35,87;Actuación técnica;Albañilería;¤/m2
+GZ-T2;Demolición de Edificación (ENTRE 1.000 Y 3.000 M2 CONSTRUIDOS);43,88;41,69;Actuación técnica;Albañilería;¤/m2
+GZ-T3;Edificio Estructura Metálica Aislado (ENTRE 1.000 Y 3.000 M2 CONSTRUIDOS);33,62;31,94;Actuación técnica;Albañilería;¤/m2
+GZ-T4;Edificio estructura metálica (ENTRE 1.000 Y 3.000 M2 CONSTRUIDOS);39,17;37,21;Actuación técnica;Albañilería;¤/m2
+GZ-U1;Demolición de Edificación Aislada(PARA SUPERFICIES SUPERIORES A 3.000M2);37,76;35,87;Actuación técnica;Albañilería;¤/m2
+GZ-U2;Demolición de Edificación(PARA SUPERFICIES SUPERIORES A 3.000 M2);43,88;41,69;Actuación técnica;Albañilería;¤/m2
+GZ-U3;Edificio Estructura Metálica Aislado(PARA SUP. SUPERIORES A 3.000M2);33,62;31,94;Actuación técnica;Albañilería;¤/m2
+GZ-U4;Edificio estructura metálica (PARA SUPERFICIES SUP. A 3.000M2);39,17;37,21;Actuación técnica;Albañilería;¤/m2
+GZ-U5;CEE viviendas de hasta 100 m ² (tasas no incluidas);78,00;74,10;Obtención documentación;Certificado Eficiencia Energética (CEE);¤/ud
+GZ-U6;CEE viviendas de más de 100 m ² (tasas no incluidas);96,00;91,20;Obtención documentación;Certificado Eficiencia Energética (CEE);¤/ud
+GZ-U7;Informe comercial ;35,00;33,25;Obtención documentación;Informes;¤/ud

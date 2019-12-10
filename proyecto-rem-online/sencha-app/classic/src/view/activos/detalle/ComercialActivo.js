@@ -143,6 +143,16 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 					     		value: '{comercial.puja}'
 						   },
 						   disabled: !isLogUsuGestComerSupComerSupAdmin
+						},
+						{ 
+							 xtype: 'comboboxfieldbase',
+							 fieldLabel:  HreRem.i18n('fieldlabel.direccion.comercial'),
+							 allowBlank: false,
+							 bind: {
+								readOnly: '{!editableCES}',
+						        store: '{comboDireccionComercial}',
+								value : '{comercial.direccionComercial}'									
+							 }
 						}
 				]
 			}, 
@@ -202,6 +212,10 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 		me.lookupController().cargarTabDataComercial(me);
 		me.up('activosdetallemain').lookupReference('comercialactivotabpanelref').funcionRecargar();
 		me.evaluarEdicion();
+		
+		if(me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref')){
+			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').calcularMostrarBotonClonarExpediente();
+		}
     },
     
    evaluarEdicion: function() {
@@ -225,7 +239,6 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 		}
 		else{
 			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').setTopBar(true);
-		}
-		
+		}		
    }
 });

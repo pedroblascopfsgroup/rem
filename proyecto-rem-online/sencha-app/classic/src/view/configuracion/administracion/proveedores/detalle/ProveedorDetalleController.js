@@ -377,5 +377,20 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     		combo.up('proveedoresdetallemain').lookupReference('dateConstitucionProveedor').reset();
     		combo.up('proveedoresdetallemain').lookupReference('cbLocalizada').reset();
     	}
+    },
+    
+    onChangeCheckboxTodasCarteras: function(chkBox, nValue) {
+    	var comboCartera = chkBox.up().down('[name="cartera"]');
+    	var comboSubcartera = chkBox.up().down('[name="subcartera"]');
+    	var carteras = comboCartera.getStore().getTotalCount();
+    	
+    	if(nValue){
+    		comboCartera.clearValue();
+    		comboCartera.disable();
+    		comboSubcartera.clearValue();
+    		comboSubcartera.disable();
+    	}else if(carteras != 0){
+    		comboCartera.enable();
+    	}
     }
 });

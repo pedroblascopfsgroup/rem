@@ -62,6 +62,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 					        },
 					        {   text: HreRem.i18n('header.tipo'),
 					        	dataIndex: 'descripcionTipo',
+					        	flex: 1,
+					        	hidden: true
+					        },
+					        {   text: HreRem.i18n('header.subtipo'),
+					        	dataIndex: 'descripcionSubtipo',
 					        	flex: 1
 					        },	
 							{
@@ -94,6 +99,16 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 					        {	
 					        	text: HreRem.i18n('header.gestor'),
 					        	dataIndex: 'gestor',
+					        	flex: 1					        	
+					        },
+					        {	
+					        	text: HreRem.i18n('header.cartera'),
+					        	dataIndex: 'cartera',
+					        	flex: 1					        	
+					        },
+					        {	
+					        	text: HreRem.i18n('header.subcartera'),
+					        	dataIndex: 'subcartera',
 					        	flex: 1					        	
 					        },
 					        {   text: HreRem.i18n('header.entidad.aplica'),

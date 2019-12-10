@@ -31,6 +31,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_JUNTAS_COMPENSACION = "01";
+	public static final String CODIGO_COMUNIDADES_VECINOS = "02";
 
 	@Id
 	@Column(name = "DD_TDP_ID")
@@ -45,7 +48,10 @@ public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 	private String descripcion;
 	    
 	@Column(name = "DD_TDP_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	private String descripcionLarga;
+	
+	@Column(name = "DD_TDP_MATRICULA_GD")   
+	private String matricula;	
 
 	@Version   
 	private Long version;
@@ -83,6 +89,14 @@ public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
+	}
+	
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
 	}
 
 	public Long getVersion() {

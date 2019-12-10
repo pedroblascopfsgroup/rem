@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.activo.publicacion.dao;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 
 import java.util.Date;
 
@@ -66,4 +67,11 @@ public interface ActivoPublicacionDao extends AbstractDao<ActivoPublicacion, Lon
 	 * @return Devuelve un objeto fecha si el activo consta de estado de publicación, null de otro modo.
 	 */
 	Date getFechaInicioEstadoActualPublicacionVenta(Long idActivo);
+	
+	/**
+	 * Este método obtiene la fase de publicacion del activo
+	 * @param idActivo: ID del activo del que obtener la fase de publicacion
+	 * @return Devuelve un objeto HistoricoFasePublicacionActivo si el activo consta alguna fase de publicacion vigente, null de otro modo.
+	 */
+	HistoricoFasePublicacionActivo getFasePublicacionVigentePorIdActivo(Long idActivo);
 }

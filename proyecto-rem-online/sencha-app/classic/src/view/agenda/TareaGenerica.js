@@ -902,17 +902,79 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T004_ResultadoNoTarificadaValidacion: function() {
         var me = this;
 
-        me.deshabilitarCampo(me.down('[name=fechaFinalizacion]'));
+        var fechaFinalizacion = me.down('[name=fechaFinalizacion]');
+        var motivoNoRealizacion = me.down('[name=motivoNoRealizacion]');
+        var comboModificacion = me.down('[name=comboModificacion]');
+        var fechaAtPrimaria = me.down('[name=fechaAtPrimaria]');
+        var comboRealizacion = me.down('[name=comboRealizacion]');
+        var observaciones = me.down('[name=observaciones]');
+        
+        me.deshabilitarCampo(fechaFinalizacion);
+        me.deshabilitarCampo(motivoNoRealizacion);
 
-        me.down('[name=comboModificacion]').addListener('change', function(combo) {
-            if (combo.value == '01') {
-                me.deshabilitarCampo(me.down('[name=fechaFinalizacion]'));
-            } else {
-                me.habilitarCampo(me.down('[name=fechaFinalizacion]'));
-            }
-        })
+//        comboModificacion.addListener('change', function(combo) {
+//            if (combo.value == '01') {
+//                me.deshabilitarCampo(fechaFinalizacion);
+//            } else if (combo.value == '02') {
+//                me.habilitarCampo(fechaFinalizacion);
+//            }
+//        });
+        comboRealizacion.addListener('change', function(combo) {
+        	 if (combo.value == '02') {
+        		 
+        		me.deshabilitarCampo(comboModificacion);
+              	me.deshabilitarCampo(fechaFinalizacion);
+              	me.deshabilitarCampo(fechaAtPrimaria);
+              	
+              	me.borrarCampo(comboModificacion);
+              	me.borrarCampo(fechaFinalizacion);
+              	me.borrarCampo(fechaAtPrimaria);
+              	
+              	me.habilitarCampo(motivoNoRealizacion);
 
+        	 }else if (combo.value == '01'){
+        		me.habilitarCampo(comboModificacion);
+              	me.habilitarCampo(fechaAtPrimaria);
+              	me.habilitarCampo(fechaFinalizacion);
+              	 
+              	me.deshabilitarCampo(motivoNoRealizacion);
+              	me.borrarCampo(motivoNoRealizacion);
+        	 }
+        });
 
+    },
+    
+    T004_ResultadoTarificadaValidacion: function() {
+    	var me = this;
+    	
+    	var fechaFinalizacion = me.down('[name=fechaFinalizacion]');
+    	var fechaAtPrimaria = me.down('[name=fechaAtPrimaria]');
+    	var comboRealizacion = me.down('[name=comboRealizacion]');
+    	var motivoNoRealizacion = me.down('[name=motivoNoRealizacion]');
+    	var observaciones = me.down('[name=observaciones]');
+    	
+    	me.deshabilitarCampo(motivoNoRealizacion);
+    	
+    	comboRealizacion.addListener('change', function(combo) {
+       	 if (combo.value == '02') {
+       		 
+             me.deshabilitarCampo(fechaFinalizacion);
+             me.deshabilitarCampo(fechaAtPrimaria);
+             	
+             me.borrarCampo(fechaFinalizacion);
+             me.borrarCampo(fechaAtPrimaria);
+             	
+             me.habilitarCampo(motivoNoRealizacion);
+
+       	 }else if (combo.value == '01'){
+       		 
+       		 me.habilitarCampo(fechaAtPrimaria);
+             me.habilitarCampo(fechaFinalizacion);
+       		 
+       		 me.deshabilitarCampo(motivoNoRealizacion);
+       		 me.borrarCampo(motivoNoRealizacion);
+       	 }
+       	}); 
     },
 
     T004_ValidacionTrabajoValidacion: function() {
@@ -1125,12 +1187,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
 
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
+        me.campoObligatorio(me.down('[name=comboTramitar]'));
 
         me.down('[name=comboTramitar]').addListener('change', function(combo) {
             if (combo.value == '01') {
                 me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
             } else {
                 me.habilitarCampo(me.down('[name=motivoDenegacion]'));
+                me.down('[name=motivoDenegacion]').noObligatorio=false;
             }
         })
     },
@@ -1296,6 +1360,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			}			
 		}
 	},
+	
+	T013_PBCReservaValidacion: function() {
+        var me = this;
+        me.campoObligatorio(me.down('[name=comboRespuesta]'));
+    }, 
+	
 	T013_DocumentosPostVentaValidacion: function() {
 		var me = this;
 		var fechaIngreso = me.down('[name=fechaIngreso]');
@@ -1425,12 +1495,15 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			me.down('[name=observaciones]').setReadOnly(true);
     		}
     	}
+    	
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));
                 me.down('[name=numImporteContra]').allowBlank = false;
             } else {
                 me.deshabilitarCampo(me.down('[name=numImporteContra]'));
+                me.down('[name=numImporteContra]').reset();
+                me.down('[name=numImporteContra]').allowBlank = true;
             }
         })
     },
@@ -1489,6 +1562,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			});
 		}
     	
+    },
+    
+    T013_ResultadoPBCValidacion: function() {
+        var me = this;
+        
+        var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
+        if (CONST.SUBCARTERA['OMEGA'] == codigoSubcartera) {
+        	me.title = HreRem.i18n('fieldset.salto.tarea.pbc.venta');
+        } else {
+        	me.title = HreRem.i18n('fieldset.salto.tarea.resultado.pbc');
+        }
     },
 
     T013_ResolucionTanteoValidacion: function() {
@@ -2232,6 +2316,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	
     },
     
+    T015_AceptacionClienteValidacion: function(){
+    	var me = this; 
+    	me.down('[name=aceptacionContraoferta]').noObligatorio=false;
+    	me.campoObligatorio(me.down('[name=aceptacionContraoferta]'));
+    },
+    
     T015_ResolucionPBCValidacion: function(){
     	var me = this;
     	me.down('[name=resultadoPBC]').noObligatorio=false;
@@ -2365,6 +2455,26 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	        }
         });
     },
+    T017_ResolucionArrowValidacion: function(){
+    	var me = this;
+    	var comboResolucion = me.down('[name=comboResolucion]');
+    	var comboContraoferta = me.down('[name=numImporteContra]');
+    	me.deshabilitarCampo(comboContraoferta);
+		
+    	comboResolucion.addListener('change', function(){
+	        if(comboResolucion.value == '03'){
+	        	me.habilitarCampo(comboContraoferta);
+	        	comboContraoferta.allowBlank = false;
+	        	comboContraoferta.validate();
+	        }else{
+	        	me.deshabilitarCampo(comboContraoferta);
+	        	comboContraoferta.reset();
+	        	comboContraoferta.allowBlank = true;
+                comboContraoferta.validate();
+            }
+        });
+    },
+
     T017_RatificacionComiteCESValidacion: function(){
     	var me = this;
     	var comboRatificacion = me.down('[name=comboRatificacion]');
@@ -2448,6 +2558,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			fechaRespuesta.validate();
     },
     T017_ResolucionPROManzanaValidacion: function () {
+    	var me = this ;
+    	var comboRespuesta = me.down('[name=comboRespuesta]'),
+    		fechaRespuesta = me.down('[name=fechaRespuesta]');
+    	
+    		me.campoObligatorio(comboRespuesta);
+    		comboRespuesta.validate();
+    		me.campoObligatorio(fechaRespuesta);
+    		me.desbloquearCampo(fechaRespuesta);
+    		fechaRespuesta.validate();
+    },
+    T017_ResolucionDivarianValidacion: function () {
     	var me = this ;
     	var comboRespuesta = me.down('[name=comboRespuesta]'),
     		fechaRespuesta = me.down('[name=fechaRespuesta]');
@@ -2575,7 +2696,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.campoObligatorio(me.down('[name=fechaIngreso]'));
 		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
-			me.bloquearCampo(me.down('[name=fechaIngreso]'));
 		}else if(CONST.CARTERA['SAREB'] == codigoCartera) {
         	me.down('[name=fechaIngreso]').allowBlank = false;
 		}else if(CONST.CARTERA['CAJAMAR'] == codigoCartera) {
@@ -2584,7 +2704,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         	me.down('[name=fechaIngreso]').allowBlank = false;	
 		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
-			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {

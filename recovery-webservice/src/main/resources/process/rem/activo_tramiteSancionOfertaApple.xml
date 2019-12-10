@@ -24,55 +24,8 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_AnalisisPM" name="avanzaBPM"></transition>
-	</state> <!-- Transicion directa a analisis PM-->
-    <state name="T017_AnalisisPM">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="T017_AnalisisPMDecision" name="avanzaBPM"></transition>
-	</state> <!-- Transicion a Decision  3 caminos-->
-    <decision name ="T017_AnalisisPMDecision" expression="#{T017_AnalisisPMDecision}">
-		<transition to="T017_ResolucionCES" name="Aprueba"></transition>
-        <transition to="T017_RespuestaOfertantePM" name="Contraoferta"></transition>
-		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
-	</decision> <!-- Decision de AnalisisPM : "ResolucionCES / Respuesta Ofertante PM-->
-	    <state name="T017_RespuestaOfertantePM">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
 		<transition to="T017_ResolucionCES" name="avanzaBPM"></transition>
-	</state> <!--Transicion directa a ResolucionCES-->
+	</state> <!-- Transicion directa a resolucion CES-->
 	<state name="T017_ResolucionCES">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -229,6 +182,7 @@
 		<transition to="T017_RecomendCESDecision" name="avanzaBPM"></transition>
 	</state> <!--Transicion a decision T017_RecomendCESDecision -->
 	<decision name ="T017_RecomendCESDecision" expression="#{T017_RecomendCESDecision}">
+        <transition to="T017_ResolucionDivarian" name="AceptaArrowRemaining"></transition>
         <transition to="T017_ResolucionPROManzana" name="Acepta"></transition>
 		<transition to="T017_ResolucionExpediente" name="DeniegaConReserva"></transition>
 		<transition to="T017_ResolucionExpediente" name="DeniegaSinReserva"></transition>
@@ -254,6 +208,32 @@
 		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
     </state> <!--Transicion directa a Fin -->
+    <state name="T017_ResolucionDivarian">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T017_ResolucionDivarianDecision" name="avanzaBPM"></transition>
+	</state>
+	<decision name ="T017_ResolucionDivarianDecision" expression="#{T017_ResolucionDivarianDecision}">
+        <transition to="join1" name="Acepta"></transition> <!--Nodo de union-->
+        <transition to="T017_ResolucionExpediente" name="DeniegaConReserva"></transition>
+		<transition to="T017_ResolucionExpediente" name="DeniegaSinReservaONoExiste"></transition>
+	</decision>
     <state name="T017_ResolucionPROManzana">
 		<event type="node-enter">
 			<action name="miTarea"

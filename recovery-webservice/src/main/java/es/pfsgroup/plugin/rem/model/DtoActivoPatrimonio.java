@@ -32,8 +32,8 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private int conTitulo;
 	
 	private List<?> activosPropagables;
-	
-	
+	private String cesionUso;
+	private String tramiteAlquilerSocial;
 	//Grid historico adecuaciones patrimonio activo
 	private Date fechaInicioAdecuacion;
 	private Date fechaFinAdecuacion;
@@ -153,6 +153,18 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	}
 	public void setActivosPropagables(List<?> activosPropagables) {
 		this.activosPropagables = activosPropagables;
+	}
+	public String getCesionUso() {
+		return cesionUso;
+	}
+	public void setCesionUso(String cesionUso) {
+		this.cesionUso = cesionUso;
+	}
+	public String getTramiteAlquilerSocial() {
+		return tramiteAlquilerSocial;
+	}
+	public void setTramiteAlquilerSocial(String tramiteAlquilerSocial) {
+		this.tramiteAlquilerSocial = tramiteAlquilerSocial;
 	}
     
 }

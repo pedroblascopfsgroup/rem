@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -69,7 +70,9 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDireccionTerritorial;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -111,6 +114,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final Integer CHECK_PUBLICACION = 2;
 	private static final Integer CHECK_COMERCIALIZAR = 3;
 	private static final Integer CHECK_FORMALIZAR = 4;
+	private static final String  CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -228,6 +232,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}
 		
+		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+			BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
+		}
+			
 		if (activo.getMotivoActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "motivoActivo", activo.getMotivoActivo());
 		}
@@ -417,6 +425,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionAsistida", pertenceAgrupacionAsistida);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionObraNueva", pertenceAgrupacionObraNueva);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionProyecto", pertenceAgrupacionProyecto);
+			
+			if(pertenceAgrupacionProyecto && !Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+				activoDto.setEsSarebProyecto(true);
+			}else {
+				activoDto.setEsSarebProyecto(false);
+			}
 		}
 
 		for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
@@ -816,6 +830,20 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getServicerActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "servicerActivoCodigo", activo.getServicerActivo().getCodigo());
 		}
+		
+		if (!Checks.esNulo(activo.getDireccionTerritorial())){
+			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialCodigo", activo.getDireccionTerritorial().getCodigo());
+			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialDescripcion", activo.getDireccionTerritorial().getDescripcion());
+		}	
+		
+		if (!Checks.esNulo(activo.getSociedadPagoAnterior())) {
+			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadPagoAnterior().getDescripcion());
+		}
+
+		Boolean visualizarTabFasesPublicacion = activoApi.getVisibilidadTabFasesPublicacion(activo);
+		
+		activoDto.setVisualizarTabFasesPublicacion(visualizarTabFasesPublicacion);
+
 		if (activo.getCartera() != null
 				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()))
 			BeanUtils.copyProperty(activoDto, "tramitable", isTramitable(activo));
@@ -900,6 +928,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCesionSaneamientoCodigo());
 				DDCesionSaneamiento cesionNuevo = (DDCesionSaneamiento) genericDao.get(DDCesionSaneamiento.class, filtro);
 				activo.setCesionSaneamiento(cesionNuevo);
+			}
+			
+			if (!Checks.esNulo(dto.getDireccionTerritorialCodigo())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getDireccionTerritorialCodigo());
+				DDDireccionTerritorial direccionTerritorial = genericDao.get(DDDireccionTerritorial.class, filtro);
+				activo.setDireccionTerritorial(direccionTerritorial);
 			}
 			
 			if (!Checks.esNulo(dto.getServicerActivoCodigo())) {
@@ -1033,7 +1067,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setAplicaAsignarMediador(dto.getAplicaAsignarMediador() ? 1 : 0);
 					perimetroActivo.setFechaAplicaAsignarMediador(new Date());
 				}
-				if(!Checks.esNulo(dto.getAplicaComercializar())) {					
+				if ((dto.getAplicaComercializar() != null && dto.getAplicaComercializar())
+				|| (dto.getAplicaPublicar() != null && dto.getAplicaPublicar())
+				|| (dto.getAplicaFormalizar() != null && dto.getAplicaFormalizar())) {
+					this.isActivoInCesionUso(activo);
+				}
+				if(!Checks.esNulo(dto.getAplicaComercializar())) {	
+					
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaComercializar(new Date());					
 					
@@ -1043,11 +1083,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
+					
 					perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaFormalizar(new Date());
 
 					//Validacion al desmarcar check formalizar
 					if(!dto.getAplicaFormalizar()) {
+						
 						this.validarPerimetroActivo(activo,2);
 					}
 				}
@@ -1310,6 +1352,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		return activo;
 	}
 	
+
+
 	/**
 	 * Acciones al desmarcar check Comercializar
 	 * 1. Valida si se puede demarcar (Activo sin ofertas vivas).
@@ -1498,6 +1542,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 		return tramitable;
+	}
+	private void isActivoInCesionUso(Activo activo) {
+		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+		if (activoP != null && activoP.getCesionUso() != null) {
+			DDCesionUso cesion =  activoP.getCesionUso();
+			List<String> types = new ArrayList<String>(
+					Arrays.asList(DDCesionUso.CARITAS, DDCesionUso.CESION_GENERALITAT_CX,
+							DDCesionUso.CESION_OTRAS_OPERACIONES, DDCesionUso.EN_TRAMITE_OTRAS_OPERACIONES));
+			if (types.contains(cesion.getCodigo())) {
+				throw new JsonViewerException(messageServices.getMessage(CESION_USO_ERROR));
+			}
+			
+		}
 	}
 
 }

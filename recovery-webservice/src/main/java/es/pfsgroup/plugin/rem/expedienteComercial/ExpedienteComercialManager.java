@@ -380,7 +380,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return resultado;
 	}
-
 	@Override
 	public Object getTabExpediente(Long id, String tab) {
 		ExpedienteComercial expediente = this.findOne(id);
@@ -389,7 +388,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (PESTANA_FICHA.equals(tab)) {
 			dto = expedienteToDtoFichaExpediente(expediente);
-			activoApi.crearGastosExpediente(expediente);
+			activoApi.getGastosExpediente(expediente);
 		} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 			dto = expedienteToDtoDatosBasicosOferta(expediente);
 		}
@@ -615,17 +614,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			}
 		}
-		
+		//En este array se van a introducir las ofertas afectadas en los cambios de clases de ofertas de LBK pra recalcular su comite sancionador tomando en cuenta las modificaciones
+		List<Oferta> listaOfertasLBK = new ArrayList<Oferta>();
 		// Si estoy en una oferta dependiente que pasa a ser dependiente de otra oferta.
 		if (Checks.esNulo(dto.getClaseOfertaCodigo())) {			
 			if (!Checks.esNulo(dto.getNumOferPrincipal())) {
 				try {				
 					Oferta nuevaOfertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
-					Filter idFilter = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
-					Filter deletedFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
-					OfertasAgrupadasLbk oALbk = genericDao.get(OfertasAgrupadasLbk.class, idFilter, deletedFilter);
-					Oferta antiguoOfertaPrincipal = oALbk.getOfertaPrincipal();
-					
+										
 					if(!Checks.esNulo(nuevaOfertaPrincipal)) {	
 						if(!ofertaApi.ofertaConActivoYaIncluidoEnOfertaAgrupadaLbk(oferta, nuevaOfertaPrincipal))
 						{
@@ -641,6 +637,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId());	
 								Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
 								OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+								
+								//Nos guardamos la antigua oferta principal para poder calcular su comité despues de hacer los cambios
+								listaOfertasLBK.add(ofertaAgrupadaLbk.getOfertaPrincipal());
+								
+								//Nos guardamos la antigua oferta principal de la oferta dependiente
+								Filter filtroId2 = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
+								Filter filtroBorrado2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+								OfertasAgrupadasLbk ofertaAgrupadaLbk2 = genericDao.get(OfertasAgrupadasLbk.class, filtroId2, filtroBorrado2);
+								listaOfertasLBK.add(ofertaAgrupadaLbk2.getOfertaPrincipal());
+								
+								
 								Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
 								auditoria.setBorrado(true);
 								auditoria.setFechaBorrar(new Date());
@@ -670,21 +677,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
 							nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);						
 							genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
-							
-							//Re calculo de comité
-							//Dependiente de una oferta princiapl -> Dependiente de otra oferta princiapl
-							//La antigua oferta principal
-							ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(antiguoOfertaPrincipal);
-							DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(antiguoOfertaPrincipal, getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), nuevaOfertaAgrupadaLbk);
-							antiguoEcoPrincipal.setComitePropuesto(comiteLbkA);
-							genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
-							
-							//El nuevo ofertaprincipal
-							ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
-							DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
-							nuevoEcoPrincipal.setComitePropuesto(comiteLbkB);
-							genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
-							
+							//Nueva oferta principal
+							listaOfertasLBK.add(nuevaOfertaPrincipal);
 						}
 						else {
 							logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
@@ -708,7 +702,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				// Si estoy en una oferta individual que pasa a ser a principal
 				if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(dto.getClaseOfertaCodigo())) {
 					try {
-						oferta.setClaseOferta(dtoClaseOferta);						
+						oferta.setClaseOferta(dtoClaseOferta);
 					} catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta individual a principal.", ex);
 						return false;
@@ -733,6 +727,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId());	
 									Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
 									OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+									
+									//Para recalcular el comite de la agrupacion de ofertas a la que se le extrae la oferta dependiente que será la nueva principal
+									listaOfertasLBK.add(ofertaAgrupadaLbk.getOfertaPrincipal());
+									
 									Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
 									auditoria.setBorrado(true);
 									auditoria.setFechaBorrar(new Date());
@@ -752,12 +750,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
 								nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);							
 								genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
-								
-								ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
-//								DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), nuevaOfertaAgrupadaLbk);
-								DDComiteSancion comiteLbk = ofertaApi.calculoComiteLiberbank(nuevaOfertaPrincipal);
-								nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
-								genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
+
+								//Nueva oferta principal 
+								listaOfertasLBK.add(nuevaOfertaPrincipal);
 							}
 							else {
 								logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
@@ -784,6 +779,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
 						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
 						OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+						
+						//Nos guardamos la oferta principal de la agrupacion de ofertas a la que pertenecia la oferta dependiente para recalcular su comité
+						listaOfertasLBK.add(ofertaAgrupadaLbk.getOfertaPrincipal());
+						
 						Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
 						auditoria.setBorrado(true);
 						auditoria.setFechaBorrar(new Date());
@@ -791,12 +790,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						ofertaAgrupadaLbk.setAuditoria(auditoria);					
 						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
 						
-						ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
-//						DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), null);
-						DDComiteSancion comiteLbk = ofertaApi.calculoComiteLiberbank(ofertaAgrupadaLbk.getOfertaPrincipal());
-						antiguoEcoPrincipal.setComitePropuesto(comiteLbk);
-						genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
-						
+						//Recalculamos el comite de la oferta que ha salido de la agrupacion
+						listaOfertasLBK.add(oferta);			
 					} catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta dependiente a individual.", ex);
 						return false;
@@ -810,23 +805,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						// Ponemos borrado a 1 en la tabla relacional para sacarla de la agrupacion actual.
 						Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
 						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
-						OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
+						OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);						
+						
+						//Nos guardamos la oferta principal de la agrupacion de ofertas a la que pertenecia la oferta dependiente para recalcular su comité
+						listaOfertasLBK.add(ofertaAgrupadaLbk.getOfertaPrincipal());
+										
 						Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
 						auditoria.setBorrado(true);
 						auditoria.setFechaBorrar(new Date());
 						auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 						ofertaAgrupadaLbk.setAuditoria(auditoria);					
-						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
-						
-						ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
-						DDComiteSancion comiteLbkA = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), ofertaAgrupadaLbk);
-						antiguoEcoPrincipal.setComitePropuesto(comiteLbkA);
-						genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
-						
-						ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(oferta);
-						DDComiteSancion comiteLbkB = ofertaApi.calculoComiteLBK(oferta, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
-						expedienteComercial.setComitePropuesto(comiteLbkB);
-						
+						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);			
+
+						//Recalculamos el comite de la oferta que ha salido de la agrupacion
+						listaOfertasLBK.add(oferta);	
 					} catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta dependiente a principal.", ex);
 						return false;
@@ -875,23 +867,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										genericDao.update(Oferta.class, nuevaOfertaPrincipal);	
 																			
 										oferta.setClaseOferta(dtoClaseOferta);
+										
+										//Recalculamos el comite de la nueva oferta principal y de la nueva dependiente
+										listaOfertasLBK.add(nuevaOfertaPrincipal);	
 									}					
 									// Si la nueva oferta principal es Dependiente, la sacamos de la agrupacion actual y la convertimos en Principal.
 									else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE)) {									
 										OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, 
 												genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", nuevaOfertaPrincipal.getId()), 
 												genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+										
+										//Nos guardamos la antigua oferta principal para recalcular el comite de sus ofertas 
+										//al extraer la oferta dependiente que va a ser la nueva principal
+										listaOfertasLBK.add(ofertaAgrupadaLbk.getOfertaPrincipal());	
+										//Nos guardamos la antigua oferta dependiente que va a ser la nueva oferta principal para recalcular el comite de la agrupacion
+										listaOfertasLBK.add(ofertaAgrupadaLbk.getOfertaDependiente());	
+
 										Auditoria auditoria = ofertaAgrupadaLbk.getAuditoria();
 										auditoria.setBorrado(true);
 										auditoria.setFechaBorrar(new Date());
 										auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 										ofertaAgrupadaLbk.setAuditoria(auditoria);					
 										genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
-										
-										ExpedienteComercial antiguoEcoPrincipal = findOneByOferta(ofertaAgrupadaLbk.getOfertaPrincipal());
-										DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(ofertaAgrupadaLbk.getOfertaPrincipal(), getListaGastosExpedienteByIdExpediente(antiguoEcoPrincipal.getId()), null);
-										antiguoEcoPrincipal.setComitePropuesto(comiteLbk);
-										genericDao.update(ExpedienteComercial.class, antiguoEcoPrincipal);
 										
 										Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
 										DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);						
@@ -904,6 +901,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL)) {
 		
 										oferta.setClaseOferta(dtoClaseOferta);
+										//Recalculamos comite de la agrupacion de ofertas
+										listaOfertasLBK.add(nuevaOfertaPrincipal);	
+
 									}
 									
 									// Insertamos el nuevo registro de las dos ofertas cambiadas de "rol".
@@ -912,10 +912,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);					
 									genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
 									
-									ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
-									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), nuevaOfertaAgrupadaLbk);
-									nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
-									genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
 								}
 								else {
 									logger.error("La oferta que se está intentando introducir tiene un activo ya contenido en la agrupación.");
@@ -968,11 +964,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
 									genericDao.update(Oferta.class, nuevaOfertaPrincipal);
 									
-									ExpedienteComercial nuevoEcoPrincipal = findOneByOferta(nuevaOfertaPrincipal);
-									DDComiteSancion comiteLbk = ofertaApi.calculoComiteLBK(nuevaOfertaPrincipal, getListaGastosExpedienteByIdExpediente(nuevoEcoPrincipal.getId()), null);
-									nuevoEcoPrincipal.setComitePropuesto(comiteLbk);
-									genericDao.update(ExpedienteComercial.class, nuevoEcoPrincipal);
-									
+									//Recalculamos el comite de la agrupacion de ofertas despues de permutar la oferta principal con una de sus dependientes
+									listaOfertasLBK.add(nuevaOfertaPrincipal);	
+				
 								} 
 								// Si la oferta principal tiene ofertas dependientes, no puede pasar a ser dependiente de otra agrupacion que no sea la suya.
 								else {
@@ -989,6 +983,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}				
 			}
+		}
+				
+		//Se aplica el comité correspondiente a las ofertas añadidas a la lista
+		for(Oferta ofr : listaOfertasLBK) {
+			ofertaApi.calculoComiteLBK(ofr, null);
 		}
 				
 		
@@ -1161,15 +1160,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		expedienteComercial.setOferta(oferta);
-
-		Activo activo = oferta.getActivoPrincipal();
-
-		if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(dto.getImporteOferta())
-				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
-//			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta, null));
-			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
-		}
-
+	
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
@@ -1505,6 +1496,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expediente.getFechaVenta())) {
 					dto.setFechaVenta(expediente.getFechaVenta());
 				}
+				if(!Checks.esNulo(expediente.getFechaContabilizacionVenta())) {
+					dto.setFechaContabilizacionVenta(expediente.getFechaContabilizacionVenta());
+				}
 
 				if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())) {
 					// DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler)
@@ -1555,6 +1549,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(!Checks.esNulo(oferta.getFechaAprobacionProManzana())) {
 					dto.setFechaAprobacionProManzana(oferta.getFechaAprobacionProManzana());
 				}
+								
 				dto.setDefinicionOfertaScoring(false);
 
 				if (!Checks.esNulo(expediente.getTrabajo()) && !Checks.esNulo(expediente.getTrabajo().getId())) {
@@ -3670,7 +3665,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public ExpedienteComercial expedienteComercialPorOferta(Long idOferta) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
 
@@ -4451,10 +4445,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public void actualizarHonorariosPorExpediente(Long idExpediente) {
+	public List<GastosExpediente> actualizarHonorariosPorExpediente(Long idExpediente) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
 		List<GastosExpediente> gastosExpediente = genericDao.getList(GastosExpediente.class, filtro);
-
+		List<GastosExpediente> honorarios = new ArrayList<GastosExpediente>();
+		
+		
 		for (GastosExpediente gastoExpediente : gastosExpediente) {
 			// Solo actualizar los importes finales si el gasto utiliza porcentajes sobre el
 			// importe de oferta o contra-oferta.
@@ -4474,9 +4470,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 
+				honorarios.add(gastoExpediente);
 				genericDao.save(GastosExpediente.class, gastoExpediente);
 			}
 		}
+		return honorarios;
 	}
 
 	@Transactional(readOnly = false)
@@ -6427,10 +6425,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			for (ActivoOferta activoOferta : listaOfertas) {
 				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
 
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+				if (oferta != null && oferta.getEstadoOferta() != null &&
+						DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialPorOferta(oferta.getId());
 
-					if (!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())
+					if (expediente != null && expediente.getEstado() != null 
+							&& !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.PTE_SANCION.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
@@ -7566,6 +7566,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String validaBloqueoExpediente(Long idExpediente) {
 		String codigoError = "";
 
@@ -7612,7 +7613,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								&& condiciones.getSituacionPosesoriaCodigo()
 										.equals(condiciones.getSituacionPosesoriaCodigoInformada())
 								&& condiciones.getPosesionInicial() != null
-								&& condiciones.getPosesionInicialInformada() != null & condiciones.getPosesionInicial()
+								&& condiciones.getPosesionInicialInformada() != null && condiciones.getPosesionInicial()
 										.equals(condiciones.getPosesionInicialInformada())
 								&& condiciones.getEstadoTitulo() != null
 								&& condiciones.getEstadoTituloInformada() != null
@@ -8860,7 +8861,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
 
-		if(esApple(tareaExterna)) {
+		if(esApple(tareaExterna) || esDivarian(tareaExterna)) {
 			return true;
 		}
 
@@ -8877,6 +8878,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean esDivarian(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esDivarian = false;
+		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+			esDivarian=false;
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
+				DDSubcartera.CODIGO_DIVARIAN.equals(activo.getSubcartera().getCodigo())) {
+				esDivarian = true;
+			}
+		}
+		return esDivarian;
 	}
 
 	@Override
@@ -8902,7 +8918,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
 
-		if(esApple(tareaExterna)) {
+		if(esApple(tareaExterna) || esDivarian(tareaExterna)) {
 			return true;
 		}
 
@@ -9860,14 +9876,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!existeTareaValidacion){
 			tramiteDao.creaTareaValidacion(usuarioLogado.getUsername(), expedienteComercial.getNumExpediente().toString());
 			Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(tramite.getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			TareaNotificacion tarNot = new TareaNotificacion();
+			TareaNotificacion tarNot;
 			List<TareaExterna> tareasActivas2 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 			for (TareaExterna tarea : tareasActivas2){
 				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
 					tarNot = tarea.getTareaPadre();
 					if (!Checks.esNulo(tarNot)){
 						TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS,"id", tarNot.getId()));
-						Auditoria au = new Auditoria();
+						Auditoria au = tac.getAuditoria();
 
 						if(!Checks.esNulo(tac)) {
 							au.setFechaModificar(new Date());
@@ -9878,25 +9894,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								tac.setUsuario(usuarioLogado);
 							}
 							tac.setAuditoria(au);
-							tarNot.getAuditoria().setFechaCrear(new Date());
-							tarNot.getAuditoria().setUsuarioCrear(usuarioLogado.getUsername());
+							tarNot.setAuditoria(Auditoria.getNewInstance());
 							genericDao.update(TareaActivo.class, tac);
 							genericDao.update(TareaNotificacion.class, tarNot);
 						}
 						else {
-							au.setFechaCrear(new Date());
-							au.setUsuarioCrear(usuarioLogado.getUsername());
 							TareaActivo tacNuevo = new TareaActivo();
 							tacNuevo.setActivo(tramite.getActivo());
 							tacNuevo.setId(tarNot.getId());
 							tacNuevo.setTramite(tramite);
-
+							tacNuevo.setAuditoria(Auditoria.getNewInstance());
+							
 							if(!Checks.esNulo(gestor)) {
 								tacNuevo.setUsuario(gestor);
 							}else {
 								tacNuevo.setUsuario(usuarioLogado);
 							}
-							tacNuevo.setAuditoria(au);
 							genericDao.save(TareaActivo.class, tacNuevo);
 						}
 					}
@@ -10280,6 +10293,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return esYubai;
 	}
+	
+	@Override
+	public boolean esOmega(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esOmega = false;
+		if ( !Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) ) {
+			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
+			if ( !Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera())) {
+				esOmega = ( DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo()) 
+							&& DDSubcartera.CODIGO_OMEGA.equals(activo.getSubcartera().getCodigo()) );
+			}
+		}
+		return esOmega;
+	}
 
 	@Override
 	public List<VListadoOfertasAgrupadasLbk> getListActivosAgrupacionById(Long idOferta){
@@ -10576,5 +10603,5 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return true;
-	}
+	}	
 }

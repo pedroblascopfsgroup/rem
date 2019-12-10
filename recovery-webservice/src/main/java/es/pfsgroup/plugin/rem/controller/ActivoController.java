@@ -53,10 +53,12 @@ import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionUAsFieldTabMap;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -106,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
+import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
@@ -113,6 +116,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
@@ -496,7 +500,12 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView saveActivoComunidadPropietarios(DtoComunidadpropietariosActivo activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
-			if (success) adapter.actualizarEstadoPublicacionActivo(id);
+			if (success) {
+				adapter.actualizarEstadoPublicacionActivo(id);	
+				if(!Checks.esNulo(activoDto.getEstadoLocalizacion()) || !Checks.esNulo(activoDto.getSubestadoGestion()))  {
+					 activoApi.crearHistoricoDiarioGestion(activoDto,id);
+				}		
+			}
 
 			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
@@ -585,16 +594,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListVisitasActivoById(Long id, ModelMap model) {
-		try {
-			model.put(RESPONSE_DATA_KEY, adapter.getListVisitasActivoById(id));
-
-		} catch (IllegalAccessException e) {
-			logger.error("error en activoController", e);
-
-		} catch (InvocationTargetException e) {
-			logger.error("error en activoController", e);
-
-		}
+		model.put(RESPONSE_DATA_KEY, adapter.getListVisitasActivoById(id));
 
 		return createModelAndViewJson(model);
 	}
@@ -771,17 +771,6 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request) {
 		try {
-			Oferta oferta = ofertaApi.getOfertaById(ofertaActivoDto.getIdOferta());
-			if (!Checks.esNulo(oferta)) {
-				Activo activo = oferta.getActivoPrincipal();
-				
-				if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) 
-						&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) 
-						&& ofertaApi.faltanDatosCalculo(ofertaActivoDto.getIdOferta())) {
-					model.put("advertencia", FALTAN_DATOS);
-				}
-			}
-			
 			boolean success = activoApi.saveOfertaActivo(ofertaActivoDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 			trustMe.registrarSuceso(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR);
@@ -2061,7 +2050,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			//solo son venta directa desde masivo
 			dtoOferta.setVentaDirecta(false);
-			boolean success = adapter.createOfertaActivo(dtoOferta);
+			boolean success = !Checks.esNulo(adapter.createOfertaActivo(dtoOferta));
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -3074,6 +3063,60 @@ public class ActivoController extends ParadiseJsonController {
 	public List<DtoActivoDatosRegistrales> getCalificacionNegativabyId(Long id) {
 		return activoApi.getActivoCalificacionNegativaCodigos(id);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoTramitacionTitulo(Long id, ModelMap model) {
+		try {
+			model.put(RESPONSE_DATA_KEY, activoApi.getHistoricoTramitacionTitulo(id));
+			} catch (Exception e) {
+				logger.error("error en activoController", e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, @RequestParam Long idActivo, ModelMap model) {
+		try {
+			boolean success = activoApi.createHistoricoTramtitacionTitulo(tramitacionDto, idActivo);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		}catch (HistoricoTramitacionException histError) {
+			model.put(RESPONSE_SUCCESS_KEY, false); 
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, histError.getMessage());	
+		}catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, ModelMap model) {
+		try {
+			boolean success = activoApi.updateHistoricoTramtitacionTitulo(tramitacionDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+			
+		}catch (HistoricoTramitacionException histError) {
+			model.put(RESPONSE_SUCCESS_KEY, false); 
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, histError.getMessage());	
+
+		} catch (Exception e) { 
+			if(ActivoManager.ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO.equalsIgnoreCase(e.getMessage())) {
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, ActivoManager.ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO);
+			}
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -3113,19 +3156,31 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,
+			ModelMap model) {
+		try {
+			boolean success = activoApi.destroyHistoricoTramtitacionTitulo(tramitacionDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView insertarActAutoTram(DtoComercialActivo dto, ModelMap model, HttpServletRequest request) {
 		try {
 			model.put(RESPONSE_SUCCESS_KEY, activoApi.insertarActAutoTram(dto));
-
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorCode", "msg.operacion.ko");
 		}
-
 		return new ModelAndView("jsonView", model);
 	}
 	
@@ -3133,19 +3188,28 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter, ModelMap model) {
 		try {
-
 			DtoPage page = activoApi.getListPlusvalia(dtoPlusvaliaFilter);
-
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
-
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 			model.put("success", false);
 			model.put("exception", e.getMessage());
 		}
-
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboApiPrimario(ModelMap model) {			
+		try{
+			model.put(RESPONSE_DATA_KEY, activoApi.getComboApiPrimario());
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
 		return createModelAndViewJson(model);
 	}
 	
@@ -3259,5 +3323,90 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoDiarioGestion(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoApi.getHistoricoDiarioGestion(id));
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboImpideVenta(String codEstadoCarga, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, adapter.getComboImpideVenta(codEstadoCarga));
+
+		return new ModelAndView("jsonView", model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView clonateOferta(String idOferta, ModelMap model) {
+		try {
+			boolean success = !Checks.esNulo(adapter.clonateOfertaActivo(idOferta));
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			if (e.getMessage().equals(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG)) {
+				model.put(RESPONSE_MESSAGE_KEY, ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			} else {
+				logger.error("error en activoController", e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveFasePublicacionActivo(DtoFasePublicacionActivo dto, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveFasePublicacionActivo(dto));
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		} catch (Exception e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error al guardar la fase de publicacion del activo", e);
+		} 
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getFasePublicacionActivo(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getFasePublicacionActivo(id));
+		model.put(RESPONSE_SUCCESS_KEY, true);
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoFasesDePublicacionActivo(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getHistoricoFasesDePublicacionActivo(id));
+		model.put(RESPONSE_SUCCESS_KEY, true);
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioFasePublicacion(ModelMap model) {
+
+		try {
+			model.put("data", activoApi.getDiccionarioFasePublicacion());
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en activoController", e);
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

@@ -105,4 +105,6 @@ public interface TareaActivoApi {
 		 */
 		public String validarTareaDependientes(TareaExterna tareaExterna, Oferta oferta, Map<String, Map<String,String>> valores) throws Exception;
 
+        Boolean deleteTareaActivoOnCascade(TareaActivo tarea);
+
     }

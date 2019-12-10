@@ -20,19 +20,13 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
-import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 public class MaestroDePersonas implements Runnable {
@@ -49,8 +43,8 @@ public class MaestroDePersonas implements Runnable {
 	@Autowired
 	private HibernateUtils hibernateUtils;
 	
-	@Autowired
-	private ProveedoresDao proveedoresDao;
+	/*@Autowired
+	private ProveedoresDao proveedoresDao;*/
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -64,21 +58,21 @@ public class MaestroDePersonas implements Runnable {
 
 	private String cartera = null;
 	
-	private DDCartera ddCartera = null;
+	/*private DDCartera ddCartera = null;
 	
 	private DDSubcartera subcartera = null;
 	
-	private List<MapeoGestorDocumental> listaMapeoGD = null;
+	private List<MapeoGestorDocumental> listaMapeoGD = null;*/
 
 	private String idPersonaHayaNoExiste = "1001";
 
 	private static final String ID_CLIENTE_HAYA = "HAYA";
-	private static final String ID_HAYA = "ID_HAYA";
+	//private static final String ID_HAYA = "ID_HAYA";
 	private static final String MOTIVO_OPERACION_ALTA = "ALTA";
 	private static final String ID_ORIGEN_REM = "REM";
 	private static final String ID_TIPO_IDENTIFICADOR_NIF_CIF = "NIF/CIF";
 	private static final String ID_ROL_16 = "16";
-	private static final String ID_ROL_PROVEEDOR_29 = "29";
+	//private static final String ID_ROL_PROVEEDOR_29 = "29";
 	private static final String ID_PERSONA_SIMULACION = "simulacion";
 
 	private PersonaInputDto personaDto = new PersonaInputDto();
@@ -101,7 +95,7 @@ public class MaestroDePersonas implements Runnable {
 		this.cartera = cartera;
 	}
 	
-	public MaestroDePersonas(ActivoProveedor proveedor, String userName, DDCartera ddCartera, DDSubcartera subcartera, List<MapeoGestorDocumental> listaMapeoGD) {
+	/*public MaestroDePersonas(ActivoProveedor proveedor, String userName, DDCartera ddCartera, DDSubcartera subcartera, List<MapeoGestorDocumental> listaMapeoGD) {
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
@@ -109,7 +103,7 @@ public class MaestroDePersonas implements Runnable {
 		this.ddCartera = ddCartera;
 		this.subcartera = subcartera;
 		this.listaMapeoGD = listaMapeoGD;
-	}
+	}*/
 
 	@Transactional(readOnly = false)	
 	public void run() {
@@ -338,7 +332,7 @@ public class MaestroDePersonas implements Runnable {
 			// LLAMADA MAESTRO PERSONAS PROVEEDOR
 			} else if (!Checks.esNulo(proveedor)) {
 				
-				String cliente = null;
+				/*String cliente = null;
 				ActivoProveedorCartera activoProveedorCartera = null;
 				String idPersonaHaya = null;
 				
@@ -421,7 +415,7 @@ public class MaestroDePersonas implements Runnable {
 									mgd = llamadaMapeoGestorDocumental(sessionObj, ddCartera, subcartera, actPro);
 								}
 								
-							} else {*/
+							} else {
 								mgd = llamadaMapeoGestorDocumental(sessionObj, ddCartera, subcartera, null);
 							//}
 							
@@ -456,7 +450,7 @@ public class MaestroDePersonas implements Runnable {
 							genericDao.save(ActivoProveedorCartera.class, activoProveedorCartera);
 						}
 					}
-				}
+				}*/
 			}
 			sessionObj.close();
 		} catch (Exception e) {
@@ -464,7 +458,7 @@ public class MaestroDePersonas implements Runnable {
 		}
 	}
 	
-	private void llamadaEjecutarPersona(String cliente, String rol) {
+	/*private void llamadaEjecutarPersona(String cliente, String rol) {
 		personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
 		personaDto.setIdPersonaOrigen(proveedor.getDocIdentificativo());
 		personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
@@ -502,7 +496,7 @@ public class MaestroDePersonas implements Runnable {
 		} else {
 			logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
 		}
-	}
+	}*/
 
 	private ExpedienteComercial llamadaExpedienteComercial(Session sessionObj) {
 		Criteria criteria = sessionObj.createCriteria(ExpedienteComercial.class);
@@ -533,7 +527,7 @@ public class MaestroDePersonas implements Runnable {
 		return  HibernateUtils.castObject(Comprador.class, criteria.uniqueResult());
 	}
 	
-	private ActivoProveedorCartera llamadaActivoProveedorCartera(Session sessionObj, DDCartera cartera, DDSubcartera subcartera, String clienteGestorDocumental) {
+	/*private ActivoProveedorCartera llamadaActivoProveedorCartera(Session sessionObj, DDCartera cartera, DDSubcartera subcartera, String clienteGestorDocumental) {
 		Criteria criteria = sessionObj.createCriteria(ActivoProveedorCartera.class);
 		criteria.add(Restrictions.eq("proveedor", proveedor));
 		if(Checks.esNulo(subcartera)) {
@@ -572,7 +566,7 @@ public class MaestroDePersonas implements Runnable {
 			criteria.add(Restrictions.eq("activoPropietario", actPro));
 		}
 		return  HibernateUtils.castObject(MapeoGestorDocumental.class, criteria.uniqueResult());
-	}
+	}*/
 	
 	@SuppressWarnings("unchecked")
 	private List<ClienteComercial> llamadaClienteComercial(Session sessionObj, String numCliente) {

@@ -377,7 +377,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     		combo.up('proveedoresdetallemain').lookupReference('dateConstitucionProveedor').reset();
     		combo.up('proveedoresdetallemain').lookupReference('cbLocalizada').reset();
     	}
-    },
+    }/*,
     
     onChangeCheckboxTodasCarteras: function(chkBox, nValue) {
     	var comboCartera = chkBox.up().down('[name="cartera"]');
@@ -392,5 +392,5 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
     	}else if(carteras != 0){
     		comboCartera.enable();
     	}
-    }
+    }*/
 });

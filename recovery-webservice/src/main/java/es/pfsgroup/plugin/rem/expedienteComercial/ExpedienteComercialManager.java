@@ -380,7 +380,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return resultado;
 	}
-
 	@Override
 	public Object getTabExpediente(Long id, String tab) {
 		ExpedienteComercial expediente = this.findOne(id);
@@ -1497,6 +1496,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(expediente.getFechaVenta())) {
 					dto.setFechaVenta(expediente.getFechaVenta());
 				}
+				if(!Checks.esNulo(expediente.getFechaContabilizacionVenta())) {
+					dto.setFechaContabilizacionVenta(expediente.getFechaContabilizacionVenta());
+				}
 
 				if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())) {
 					// DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler)
@@ -1547,6 +1549,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(!Checks.esNulo(oferta.getFechaAprobacionProManzana())) {
 					dto.setFechaAprobacionProManzana(oferta.getFechaAprobacionProManzana());
 				}
+								
 				dto.setDefinicionOfertaScoring(false);
 
 				if (!Checks.esNulo(expediente.getTrabajo()) && !Checks.esNulo(expediente.getTrabajo().getId())) {

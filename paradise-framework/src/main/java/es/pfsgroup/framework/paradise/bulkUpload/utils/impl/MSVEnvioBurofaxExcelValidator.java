@@ -32,12 +32,12 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVAltaActivosExcelValidator.COL_NUM;
 
 @Component
 public class MSVEnvioBurofaxExcelValidator extends MSVExcelValidatorAbstract {
 	
 	private static final String ACTIVO_NO_EXISTE = "msg.error.masivo.listado.validator.activos.deben.existir";
+	private static final String ACTIVO_SIN_COM_PROPIETARIOS = "msg.error.masivo.listado.validator.activos.sin.comunidad.propietarios";
 	private static final String FECHA_COMUNICACION = "msg.error.fecha.comunicacion.envio.burofax";
 	private static final String CARACTER_ENVIO_NO_VALIDO = "msg.error.masivo.caracter.invalido.envio.cartas";
 	private static final String NUMERO_CARTAS_NO_VALIDO = "msg.error.fecha.comunicacion.numero.cartas";
@@ -100,6 +100,7 @@ public class MSVEnvioBurofaxExcelValidator extends MSVExcelValidatorAbstract {
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), isActiveNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_COM_PROPIETARIOS), activoEnComunidadPropietarios(exc));
 			mapaErrores.put(messageServices.getMessage(FECHA_COMUNICACION), isColumnNotDateByRows(exc, COL_NUM.COL_NUM_FECHA_COMUNICACION));
 			mapaErrores.put(messageServices.getMessage(CARACTER_ENVIO_NO_VALIDO), isColumnNotBoolByRows(exc, COL_NUM.COL_NUM_ENVIO_CARTAS));
 			mapaErrores.put(messageServices.getMessage(NUMERO_CARTAS_NO_VALIDO), isCantidadCartasErronea(exc, COL_NUM.COL_NUM_NUMERO_CARTAS));
@@ -108,6 +109,7 @@ public class MSVEnvioBurofaxExcelValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(messageServices.getMessage(CARACTER_BUROFAX_NO_VALIDO), isColumnNotBoolByRows(exc, COL_NUM.COL_NUM_BUROFAX));
 			
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+				|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_COM_PROPIETARIOS)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(FECHA_COMUNICACION)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(CARACTER_ENVIO_NO_VALIDO)).isEmpty()
 				|| !mapaErrores.get(messageServices.getMessage(NUMERO_CARTAS_NO_VALIDO)).isEmpty()
@@ -266,6 +268,19 @@ public class MSVEnvioBurofaxExcelValidator extends MSVExcelValidatorAbstract {
 		return listaFilas;
 	}
 	
+	private List<Integer> activoEnComunidadPropietarios(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		for (int i = 1; i < this.numFilasHoja; i++) {
+			try {
+				String numActivo = exc.dameCelda(i, COL_NUM.COL_NUM_ID_ACTIVO_HAYA);				
+				if (!particularValidator.activoEnComunidadPropietarios(numActivo))
+					listaFilas.add(i);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return listaFilas;
+	}
 	
 }
 

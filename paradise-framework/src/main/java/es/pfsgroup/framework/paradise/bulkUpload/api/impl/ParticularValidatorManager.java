@@ -3978,4 +3978,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean activoEnComunidadPropietarios(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(CPR_ID) "
+				+ "		 FROM ACT_ACTIVO WHERE"
+				+ "		 	ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
 }

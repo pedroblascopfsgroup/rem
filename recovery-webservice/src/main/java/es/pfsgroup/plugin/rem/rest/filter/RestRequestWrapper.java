@@ -49,13 +49,13 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 				stringBuilder.append("");
 			}
 		} catch (IOException ex) {
-			throw ex;
+			logger.error(ex.getMessage(),ex);
 		} finally {
 			if (bufferedReader != null) {
 				try {
 					bufferedReader.close();
 				} catch (IOException ex) {
-					throw ex;
+					logger.error(ex.getMessage(),ex);
 				}
 			}
 		}
@@ -72,12 +72,11 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
 		final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body.getBytes());
-		ServletInputStream servletInputStream = new ServletInputStream() {
+		return new ServletInputStream() {
 			public int read() throws IOException {
 				return byteArrayInputStream.read();
 			}
 		};
-		return servletInputStream;
 	}
 
 	@Override

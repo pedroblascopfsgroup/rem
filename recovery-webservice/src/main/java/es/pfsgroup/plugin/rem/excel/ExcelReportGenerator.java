@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-//import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
@@ -174,16 +173,16 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	}
 	
 	@Override
-	public File generateBankiaReport(List<DtoPropuestaAlqBankia> l_DtoPropuestaAlq, HttpServletRequest request) {
+	public File generateBankiaReport(List<DtoPropuestaAlqBankia> lDtoPropuestaAlq, HttpServletRequest request) throws IOException {
 		
-		ServletContext sc = request.getSession().getServletContext();		
+		ServletContext sc = request.getSession().getServletContext();
+		FileOutputStream fileOutStream;
+		File poiFile = new File(sc.getRealPath("plantillas/plugin/Propuesta_alquileres_bankia/PROPUESTA_BANKIA.xlsx"));
+		File fileOut = new File(poiFile.getAbsolutePath().replace("_BANKIA",""));
+		FileInputStream fis = new FileInputStream(poiFile);
+		fileOutStream = new FileOutputStream(fileOut);
 		
-		try {
-
-			File poiFile = new File(sc.getRealPath("plantillas/plugin/Propuesta_alquileres_bankia/PROPUESTA_BANKIA.xlsx"));
-			File fileOut = new File(poiFile.getAbsolutePath().replace("_BANKIA",""));
-			FileInputStream fis = new FileInputStream(poiFile);
-			FileOutputStream fileOutStream = new FileOutputStream(fileOut);
+		try {			
 			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis);
 			
 			boolean primero = true; 
@@ -195,9 +194,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 			
 			// En el ultimo elemento esta el resumen por eso cogemos todos los DTO menos el ultimo
-			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
+			for (int i = 0; i < lDtoPropuestaAlq.size()-1; i++) {
 				
-				DtoPropuestaAlqBankia dtoPAB = l_DtoPropuestaAlq.get(i);
+				DtoPropuestaAlqBankia dtoPAB = lDtoPropuestaAlq.get(i);
 				
 				
 				if (primero) {
@@ -383,10 +382,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 			
 
-			if (l_DtoPropuestaAlq.size()-2 > 0) {
-				mySheet.shiftRows(currentRow, currentRow+1, l_DtoPropuestaAlq.size()-2);
+			if (lDtoPropuestaAlq.size()-2 > 0) {
+				mySheet.shiftRows(currentRow, currentRow+1, lDtoPropuestaAlq.size()-2);
 				
-				for (int i = currentRow-1; i < currentRow-1 + l_DtoPropuestaAlq.size()-1; i++) {
+				for (int i = currentRow-1; i < currentRow-1 + lDtoPropuestaAlq.size()-1; i++) {
 					mySheet.createRow(i);
 					r = mySheet.getRow(i);
 					for (int j = 0; j < NUMERO_COLUMNAS; j++) {
@@ -399,18 +398,13 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			}
 				
 			
-			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
+			for (int i = 0; i < lDtoPropuestaAlq.size()-1; i++) {
 				
-				dtoPAB = l_DtoPropuestaAlq.get(i);
+				dtoPAB = lDtoPropuestaAlq.get(i);
 				numActivo = dtoPAB.getNumActivoUvem(); // El numero de activo lo necesitamos para referenciar el resto de hojas en las formulas
 				String formula;
 				
-//				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE SE DEJA EN BLANCO
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				if (!Checks.esNulo(dtoPAB.getNumeroAgrupacion())) { 
-//					c.setCellValue(dtoPAB.getNumeroAgrupacion().toString());
-//				}
+
 				
 				cellReference = new CellReference("B" + Integer.toString(currentRow)); // ACTIVO 
 				r = mySheet.getRow(cellReference.getRow());
@@ -518,12 +512,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 				c.setCellFormula(formula);
 				
-//				formula = "'"+numActivo.toString()+"'!B50";
-//				cellReference = new CellReference("S" + Integer.toString(currentRow)); // PAX SE DEJA EN BLANCO 
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
 			
 				formula = "'"+numActivo.toString()+"'!B49";
 				cellReference = new CellReference("T" + Integer.toString(currentRow)); // INGRESOS NETOS
@@ -536,7 +524,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
   				++currentRow; // Siguiente fila
 					
 			}
-			int fila = 6 + l_DtoPropuestaAlq.size()-2; 
+			int fila = 6 + lDtoPropuestaAlq.size()-2; 
 			mySheet.createRow(currentRow);
 			r = mySheet.getRow(currentRow);
 			for (int j = 0; j < NUMERO_COLUMNAS; j++) {
@@ -544,7 +532,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(j);
 			}
 			
-			dtoPAB = l_DtoPropuestaAlq.get(l_DtoPropuestaAlq.size()-1);
+			dtoPAB = lDtoPropuestaAlq.get(lDtoPropuestaAlq.size()-1);
 			numActivo = dtoPAB.getNumActivoUvem();
 			
 			
@@ -607,12 +595,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			c.setCellFormula(formula);
 			c.setCellStyle(style);
 			
-//			formula = "SUM(O6:O"+fila+")";
 			cellReference = new CellReference("S" + Integer.toString(currentRow)); // RENTA BONIFICADA
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
-//			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//			c.setCellFormula(formula);
 			c.setCellStyle(style);
 			
 
@@ -622,12 +607,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			
 			return fileOut;
 			
-		} catch (IOException e) {
-			logger.error(e.getMessage());
+		}finally {
+			fileOutStream.close();
 		}
-		
-		
-		return null;
 	}
 
 	/* (non-Javadoc)
@@ -789,7 +771,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesCompletosNegritaBlanco.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			styleBordesCompletosNegritaBlanco.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 			styleBordesCompletosNegritaBlanco.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-			//styleBordesCompletosNegritaBlanco.setVerticalAlignment(XSSFCellStyle.VERTICAL_TOP);
 			styleBordesCompletosNegritaBlanco.setWrapText(true);
 			styleBordesCompletosNegritaBlanco.setFont(font);
 			
@@ -2373,7 +2354,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					default:
 						break;
 				}
-			};
+			}
 			
 			cellRangeAddress = new CellRangeAddress(iniciobucle, currentRow, 1,1);
 			mySheet.addMergedRegion(cellRangeAddress);
@@ -2791,7 +2772,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			}
 			
 			myWorkBook.write(fileOutStream);
-			//fileOutStream.close();
 			
 			return fileOut;
 			

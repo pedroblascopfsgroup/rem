@@ -10,6 +10,7 @@ import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -30,7 +31,7 @@ public class RestLauncherController {
 	 */
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void actualizarVistasMaterializadas(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -54,7 +55,7 @@ public class RestLauncherController {
 	 */
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCambiosWebcom(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 
@@ -72,7 +73,7 @@ public class RestLauncherController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCambiosNoOptimizados(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 
@@ -96,7 +97,7 @@ public class RestLauncherController {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoProveedoresWebcom(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -113,7 +114,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarProveedoresWebcom(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -136,7 +137,7 @@ public class RestLauncherController {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoUsuariosWebcom(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -153,7 +154,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarUsuariosWebcom(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -176,7 +177,7 @@ public class RestLauncherController {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoObrasNuevasCampanyas(HttpServletRequest req, ModelMap model,
 			HttpServletResponse response) throws ErrorServicioWebcom {
 		try {
@@ -193,7 +194,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarObrasNuevasCampanyas(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -216,7 +217,7 @@ public class RestLauncherController {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoCabecerasObrasNuevas(HttpServletRequest req, ModelMap model,
 			HttpServletResponse response) throws ErrorServicioWebcom {
 		try {
@@ -233,7 +234,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCabecerasObrasNuevas(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -256,7 +257,7 @@ public class RestLauncherController {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoStockWebcom(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -273,7 +274,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarStockWebcom(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -290,7 +291,7 @@ public class RestLauncherController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarStockWebcomNoOptimizado(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -307,7 +308,7 @@ public class RestLauncherController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarStockWebcomOptimizado(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -331,7 +332,7 @@ public class RestLauncherController {
 	 */
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoActivosObrasNuevas(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -348,7 +349,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarActivosObrasNuevas(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -372,7 +373,7 @@ public class RestLauncherController {
 	 */
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoEstadoNotificacion(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -388,7 +389,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarEstadoNotificacion(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -410,7 +411,7 @@ public class RestLauncherController {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoPeticionTrabajo(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -426,7 +427,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarPeticionTrabajo(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -448,7 +449,7 @@ public class RestLauncherController {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoEstadoOferta(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -464,7 +465,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarEstadoOferta(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -486,7 +487,7 @@ public class RestLauncherController {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoEstadosInformeMediador(HttpServletRequest req, ModelMap model,
 			HttpServletResponse response) throws ErrorServicioWebcom {
 		try {
@@ -502,7 +503,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarEstadosInformeMediador(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -524,7 +525,7 @@ public class RestLauncherController {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarCompletoVentasYcomisiones(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {
@@ -540,7 +541,7 @@ public class RestLauncherController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public void enviarVentasYcomisiones(HttpServletRequest req, ModelMap model, HttpServletResponse response)
 			throws ErrorServicioWebcom {
 		try {

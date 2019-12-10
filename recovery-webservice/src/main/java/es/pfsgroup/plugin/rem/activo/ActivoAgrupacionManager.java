@@ -114,15 +114,15 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Autowired
 	private UsuarioManager usuarioApi;
 
-	// @Override
-	// public String managerName() {
-	// return "activoAgrupacionManager";
-	// }
-
+	
 	@Autowired
 	private ActivoAgrupacionFactoryApi activoAgrupacionFactoryApi;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
+	private String USUARIO_IT = "HAYASUPER";
+	private String GESTOR_COMERCIAL_ALQUILER = "HAYAGESTCOM";  
+	private String SUPERVISOR_COMERCIAL_ALQUILER = "HAYASUPCOM";
 
 	@Override
 	@BusinessOperation(overrides = "activoAgrupacionManager.get")
@@ -236,14 +236,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 			activoFoto.setAgrupacion(agrupacion);
 
-			/*
-			 * Filter filtro = genericDao.createFilter(FilterType.EQUALS,
-			 * "codigo", fileItem.getParameter("tipo")); DDTipoFoto tipoFoto =
-			 * (DDTipoFoto) genericDao.get(DDTipoFoto.class, filtro);
-			 * 
-			 * activoFoto.setTipoFoto(tipoFoto);
-			 */
-
 			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
 
 			activoFoto.setNombre(fileItem.getFileItem().getFileName());
@@ -253,15 +245,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			activoFoto.setPrincipal(true);
 
 			activoFoto.setFechaDocumento(new Date());
-
-			// activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
-
-			/*
-			 * Integer orden =
-			 * activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.
-			 * getParameter( "idEntidad"))); orden++;
-			 * activoFoto.setOrden(orden);
-			 */
 
 			Auditoria.save(activoFoto);
 
@@ -284,7 +267,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
-		//ActivoAgrupacion agrupacion = this.get(agrupacionId);
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 		try {
@@ -324,10 +306,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					activoFoto.setOrden(Integer.valueOf(fileItem.getMetadata().get("orden")));
 				}
 
-				// Auditoria.save(activoFoto);
-
-				// agrupacion.getFotos().add(activoFoto);
-
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
@@ -347,7 +325,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		BigDecimal subdivisionId = new BigDecimal(fileItem.getParameter("id"));
 		Long agrupacionId = Long.parseLong(fileItem.getParameter("agrId"));
 		Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-		DDTipoFoto tipoFoto = (DDTipoFoto) genericDao.get(DDTipoFoto.class, filtroTipo);
+		DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtroTipo);
 		TIPO tipo = null;
 		SITUACION situacion;
 		PRINCIPAL principal = null;
@@ -467,10 +445,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 				activoFoto.setOrden(orden);
 
-				// Auditoria.save(activoFoto);
-
-				// agrupacion.getFotos().add(activoFoto);
-
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
@@ -511,6 +485,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<ActivoFoto> getFotosSubdivision(DtoSubdivisiones subdivision) {
 		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
 		if (gestorDocumentalFotos.isActive() && (listaFotos == null || listaFotos.isEmpty())) {
@@ -544,6 +519,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<ActivoFoto> getFotosAgrupacionById(Long id) {
 
 		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
@@ -552,7 +528,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 			try {
-				if (agrupacion != null) { //TODO: Si el gestor documental activo traer las fotos del gestor documental del AM y no de la agrupación.
+				if (agrupacion != null) {
 					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.AGRUPACION, agrupacion.getNumAgrupRem());
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
@@ -718,12 +694,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 	
 	public Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto) {
-			if(!activoApi.darDeBajaCondicionEspecifica(dto)) {
-				return false;			
-			}
-		
-		return true;
-	
+		return activoApi.darDeBajaCondicionEspecifica(dto);	
 	}
 	@Override
 	public Usuario getGestorComercialAgrupacion(List<ActivosLoteOfertaDto> dtoActivos) {
@@ -758,10 +729,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Override
 	public List<DtoTipoAgrupacion> getComboTipoAgrupacion() {
 		
-		String USUARIO_IT = "HAYASUPER";
-		String GESTOR_COMERCIAL_ALQUILER = "HAYAGESTCOM";  
-		String SUPERVISOR_COMERCIAL_ALQUILER = "HAYASUPCOM";
-		
 		boolean perfilValido = false;
 		
 		List<Perfil> usu= proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getPerfiles();
@@ -771,7 +738,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		DDTipoAgrupacion promocionAlquiler = genericDao.get(DDTipoAgrupacion.class, filtro);
 		
 		List <DtoTipoAgrupacion> listDtoTipoAgrupacion = new ArrayList <DtoTipoAgrupacion>();
-		List <DDTipoAgrupacion> listaDDTipoAgrupacion= new ArrayList <DDTipoAgrupacion>();
 		
 		for(Perfil p : usu) {
 			if(p.getCodigo().equals(USUARIO_IT) || p.getCodigo().equals(GESTOR_COMERCIAL_ALQUILER) || p.getCodigo().equals(SUPERVISOR_COMERCIAL_ALQUILER)) {
@@ -779,7 +745,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			}
 		}
 
-		listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);
+		List <DDTipoAgrupacion> listaDDTipoAgrupacion = genericDao.getList(DDTipoAgrupacion.class);
 		
 		if(perfilValido) {
 			

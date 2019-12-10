@@ -10535,6 +10535,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return true;
 	}
 	
+	
+	public boolean fechaReservaPBCReserva(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean fechaReserva = false;
+		if ( !Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta()) 
+				&& !Checks.esNulo(expedienteComercial.getReserva().getFechaFirma())) {
+			fechaReserva=true;
+			
+		}
+		return fechaReserva;
+	}
+	
+	
 	@Override
 	@Transactional(readOnly = false)
 	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191107
+--## AUTOR=JIN LI HU
+--## FECHA_CREACION=20191210
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=REMVIP-5609
@@ -26,6 +26,7 @@
 --## 		1.07 (20191010) - Jin Li Hu - Se añade el código de la caretra Cajamar para todas la queries donde se filtra por cartera, y se ha modificado una query según la descripción del item - HREOS-7988
 --##		1.08 (20191016) - Viorel Remus Ovidiu - Se añadie filtro de borrado en reservas
 --##		1.09 (20191107) - Viorel Remus Ovidiu - Se mezclan los cambios de subcartera (1.07) con los filtros de borrado (1.08)
+--##		1.10 (20191210) - Jin Li Hu - La fecha cobro venta para las carteras Apple y Liberbank se escribe en el campo ECO_FECHA_CONT_VENTA
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -61,7 +62,11 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_ERE_ID                        NUMBER(16) := -1;
     V_NUM_RESERVA                   VARCHAR2(16 CHAR);
     V_ID_COBRO                      VARCHAR2(16 CHAR);
-
+	
+    --CODIGOS
+    V_CARTERA						VARCHAR2(20 CHAR);
+    V_SUBCARTERA					VARCHAR2(20 CHAR);
+    
     --Info
     V_OP_1_DESC                     VARCHAR2(400 CHAR) := '[OPERATORIA] Para todos los registros con Fecha de Cobro de reserva informada cuyo expediente no esté en los estados ("Reservado", "Firmado","Vendido", "En Devolución", "Anulado").';
     V_OP_2_DESC                     VARCHAR2(400 CHAR) := '[OPERATORIA] Para todos los registros con Fecha de Devolución informada cuyo expediente esté en estado "Reservado".';
@@ -1161,15 +1166,41 @@ BEGIN
                         EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
                         V_VALOR_NUEVO := FECHA_COBRO_VENTA_DATE;
-
-                        V_MSQL := '
-                        UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
-                        SET ECO_FECHA_CONT_PROPIETARIO = '''||FECHA_COBRO_VENTA_DATE||''',
-                        USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                        FECHAMODIFICAR = SYSDATE
-                        WHERE ECO_ID = '||V_ECO_ID||'
-                        AND OFR_ID = '||V_OFR_ID||'
-                        ';
+						
+                        EXECUTE IMMEDIATE 'SELECT DD_CRA_CODIGO
+									   	   FROM '||V_ESQUEMA||'.DD_CRA_CARTERA CRA
+									   	   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.DD_CRA_ID = CRA.DD_CRA_ID
+									   	   WHERE ACT.ACT_ID = '||V_ACT_ID INTO V_CARTERA;
+									   
+	                    EXECUTE IMMEDIATE 'SELECT DD_SCR_CODIGO
+										   FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR
+										   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.DD_SCR_ID = SCR.DD_SCR_ID 
+										   WHERE ACT.ACT_ID = '||V_ACT_ID INTO V_SUBCARTERA;
+										   
+	                    IF (V_CARTERA = '08' OR (V_CARTERA = '07' AND V_SUBCARTERA = '138')) THEN
+                        
+	                        V_MSQL := '
+	                        UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
+	                        SET ECO_FECHA_CONT_VENTA = '''||FECHA_COBRO_VENTA_DATE||''',
+	                        USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+	                        FECHAMODIFICAR = SYSDATE
+	                        WHERE ECO_ID = '||V_ECO_ID||'
+	                        AND OFR_ID = '||V_OFR_ID||'
+	                        ';
+	                    
+	                    ELSE
+	                    	
+	                    	V_MSQL := '
+	                        UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
+	                        SET ECO_FECHA_CONT_PROPIETARIO = '''||FECHA_COBRO_VENTA_DATE||''',
+	                        USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+	                        FECHAMODIFICAR = SYSDATE
+	                        WHERE ECO_ID = '||V_ECO_ID||'
+	                        AND OFR_ID = '||V_OFR_ID||'
+	                        ';
+                        
+                        END IF;
+                        
                         --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                         EXECUTE IMMEDIATE V_MSQL;
 

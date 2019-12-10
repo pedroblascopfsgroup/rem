@@ -155,6 +155,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
@@ -1459,6 +1460,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "mediador", historico.getMediadorInforme().getNombre());
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "telefono", historico.getMediadorInforme().getTelefono1());
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email", historico.getMediadorInforme().getEmail());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "rol", historico.getTipoRolMediador().getDescripcion());
 				}
 				if (historico.getAuditoria() != null) {
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "responsableCambio", historico.getAuditoria().getUsuarioCrear());
@@ -1483,6 +1485,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoInformeComercialHistoricoMediador historicoMediadorPrimero = new ActivoInformeComercialHistoricoMediador();
 		Activo activo = null;
 		Date fechaHoy = new Date();
+		DDTipoRolMediador tipoRol = genericDao.get(DDTipoRolMediador.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRol()));
 
 		if (!Checks.esNulo(dto.getIdActivo())) {
 			activo = activoDao.get(dto.getIdActivo());
@@ -1490,6 +1493,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		if (activo == null)
 			return false;
+		
+		//Primero hacemos las validaciones de nuevo mediador
+		validateNewMediador(activo, dto.getMediador(), tipoRol);
 
 		if (Checks.esNulo(activo.getInfoComercial())) {
 			ActivoInfoComercial infoComercial = new ActivoInfoComercial();
@@ -1506,21 +1512,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			// Terminar periodo de vigencia del último proveedor (fecha hasta).
 			if (!Checks.esNulo(activo)) {
+				
+				//Buscamos la lista ordenada por id y recogemos el ultimo mediador para ese rol
 				Filter activoIDFiltro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				Filter tipoRolFiltro = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador", tipoRol);
 				Order order = new Order(OrderType.DESC, "id");
-				List<ActivoInformeComercialHistoricoMediador> historicoMediadorlist = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoIDFiltro);
-				if (!Checks.estaVacio(historicoMediadorlist)) {
-					ActivoInformeComercialHistoricoMediador historicoAnteriorMediador = historicoMediadorlist.get(0); // El primero es el de ID más alto (el último).
-					beanUtilNotNull.copyProperty(historicoAnteriorMediador, "fechaHasta", fechaHoy);
-					genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoAnteriorMediador);
+				List<ActivoInformeComercialHistoricoMediador> listadoHistoricoMediadorRol = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoIDFiltro, tipoRolFiltro);
+				ActivoInformeComercialHistoricoMediador historicoMediadorRol = null;
+				
+				if(listadoHistoricoMediadorRol != null && !listadoHistoricoMediadorRol.isEmpty()) 
+					historicoMediadorRol = listadoHistoricoMediadorRol.get(0);
+				
+				//si no tiene fecha hasta, se la ponemos. Si la tiene, no hacemos nada ya que es el mismo caso que si no hubiese mediador.
+				if (historicoMediadorRol != null && historicoMediadorRol.getFechaHasta() == null) {
+					beanUtilNotNull.copyProperty(historicoMediadorRol, "fechaHasta", fechaHoy);
+					genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorRol);
 
 				} else {
 					// Si la lista esta vacia es porque es la primera vez que se modifica el historico de mediadores, por lo que tenemos que introducir el que
 					// habia antes. La fecha desde se deja vacia por ahora.
-					if (!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+					if (!Checks.esNulo(activo.getInfoComercial().getMediadorInforme()) 
+							&& !DDTipoRolMediador.CODIGO_TIPO_ESPEJO.equals(tipoRol.getCodigo())) {
 						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "fechaHasta", fechaHoy);
 						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "activo", activo);
 						beanUtilNotNull.copyProperty(historicoMediadorPrimero, "mediadorInforme", activo.getInfoComercial().getMediadorInforme());
+						
+						historicoMediadorPrimero.setTipoRolMediador(tipoRol);
+						
 						genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorPrimero);
 					}
 				}
@@ -1529,9 +1547,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// Generar la nueva entrada de HistoricoMediador.
 			beanUtilNotNull.copyProperty(historicoMediador, "fechaDesde", fechaHoy);
 			beanUtilNotNull.copyProperty(historicoMediador, "activo", activo);
+			historicoMediador.setTipoRolMediador(tipoRol);
 
-			if (!Checks.esNulo(dto.getCodigo()) || !dto.getCodigo().equals("")) { // si no se selecciona mediador en el combo, se devuelve mediador "", no null.
-				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(dto.getCodigo()));
+			if (!Checks.esNulo(dto.getMediador()) || !dto.getMediador().equals("")) { // si no se selecciona mediador en el combo, se devuelve mediador "", no null.
+				Filter proveedorFiltro = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.parseLong(dto.getMediador()));
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, proveedorFiltro);
 
 				if (Checks.esNulo(proveedor)) {
@@ -1546,8 +1565,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(historicoMediador, "mediadorInforme", proveedor);
 
 				// Asignar el nuevo proveedor de tipo mediador al activo, informacion comercial.
-				if (!Checks.esNulo(activo.getInfoComercial())) {
+				if (!Checks.esNulo(activo.getInfoComercial()) && DDTipoRolMediador.CODIGO_TIPO_PRIMARIO.equals(tipoRol.getCodigo())) {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "mediadorInforme", proveedor);
+					genericDao.save(Activo.class, activo);
+				}else {
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "mediadorEspejo", proveedor);
 					genericDao.save(Activo.class, activo);
 				}
 
@@ -1582,6 +1604,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return true;
+	}
+
+	private void validateNewMediador(Activo activo, String codigoMediador, DDTipoRolMediador tipoRol) {
+		Filter activoFiltro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter tipoRolFiltro = null;
+		Boolean esTipoEspejo = false;
+		
+		if(DDTipoRolMediador.CODIGO_TIPO_PRIMARIO.equals(tipoRol.getCodigo())) {
+			tipoRolFiltro = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_ESPEJO);
+		}else {
+			esTipoEspejo = true;
+			tipoRolFiltro = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_PRIMARIO);
+		}
+		Order order = new Order(OrderType.DESC, "id");
+		List<ActivoInformeComercialHistoricoMediador> listadoHistoricoMediadorRol = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoFiltro, tipoRolFiltro);
+		ActivoInformeComercialHistoricoMediador historicoMediadorRolContrario = null;
+		
+		if(listadoHistoricoMediadorRol != null && !listadoHistoricoMediadorRol.isEmpty()) {
+			historicoMediadorRolContrario = listadoHistoricoMediadorRol.get(0);
+			
+			if(codigoMediador.equals(historicoMediadorRolContrario.getMediadorInforme().getCodigoProveedorRem().toString())
+					&& historicoMediadorRolContrario.getFechaHasta() == null) {
+				throw new JsonViewerException("No se puede asignar el mismo mediador que se tiene de tipo api " 
+						+ historicoMediadorRolContrario.getTipoRolMediador().getDescripcion() + " al tipo " + tipoRol.getDescripcion());
+			}
+			
+		}else if(esTipoEspejo){
+			throw new JsonViewerException("No se puede asignar Api Espejo sin Api Primario asignado");
+		}
+		
 	}
 
 	@Override

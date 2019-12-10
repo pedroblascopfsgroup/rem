@@ -96,5 +96,7 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
 	public List<MapeoGestorDocumental> getCarteraClientesProveedores();
 
+	List<ActivoProveedor> getMediadoresActivos();
+
 	List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera);
 }

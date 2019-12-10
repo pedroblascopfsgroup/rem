@@ -36,15 +36,52 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		        {
 		            dataIndex: 'codigo',
 		            text: HreRem.i18n('title.publicaciones.mediador.codigo'),
-		            editor: {
-		            	xtype: 'numberfield',
-		            	allowBlank: false
-		            },
 		            flex: 0.5
 		        },
 		        {
 		            dataIndex: 'mediador',
 		            text: HreRem.i18n('title.publicaciones.mediador.mediador'),
+		            editor: {
+		            	xtype: 'combobox',
+		            	allowBlank: false,
+		            	reference: 'comboMediador',
+		            	store: new Ext.data.Store({
+							model: 'HreRem.model.ComboProveedorHistoricoMediadorModel',
+							proxy: {
+								type: 'uxproxy',
+								remoteUrl: 'proveedores/getMediadoresActivos'
+							},
+							autoLoad: true
+						}),
+						displayField: 'nombre',
+    					valueField: 'codigoProveedorRem',
+    					enableKeyEvents: true,
+    					minChars: 0,
+						emptyText: 'Introduzca nombre mediador',
+						listeners: {
+							'keyup': function() {
+								if(this.getRawValue().length >= 3){
+							 		this.getStore().clearFilter();
+							 		this.getStore().filter({
+							 		    property: 'nombre',
+							 		    value: this.getRawValue(),
+							 		    anyMatch: true,
+							 		    caseSensitive: false
+							 		});
+								}else if (this.getRawValue().length == 0) {
+									this.getStore().clearFilter();
+									this.getStore().load(); 												
+								}
+							},
+							'beforequery': function(queryEvent) {
+						 		queryEvent.combo.onLoad();
+						 	},
+						 	'focusleave': function(){
+						 		this.getStore().clearFilter();
+								this.getStore().load(); 
+						 	}
+						}
+		            },
 		            flex: 1
 		        },
 		        {
@@ -60,6 +97,25 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		        {
 		        	dataIndex: 'responsableCambio',
 		            text: HreRem.i18n('header.responsable.cambio'),
+		            flex: 1
+		        },
+		        {
+		            dataIndex: 'rol',
+		            text: HreRem.i18n('titulo.grid.mediador.rol'),
+		            editor: {
+		            	xtype: 'combobox',
+		            	allowBlank: false,
+		            	store: new Ext.data.Store({
+							model: 'HreRem.model.ComboBase',
+							proxy: {
+								type: 'uxproxy',
+								remoteUrl: 'generic/getDiccionarioRolesMediador'
+							},
+							autoLoad: true
+						}),
+						displayField: 'descripcion',
+    					valueField: 'codigo'
+		            },
 		            flex: 1
 		        }
 		    ];

@@ -47,8 +47,15 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 	public static final String SOLO_UN_CAMPO_RELLENO = "Solo debe rellenar un campo: ACTIVO, AGRUPACION o EXPEDIENTE.";
 	public static final String USUARIO_NO_ES_TIPO_GESTOR= "El usuario no corresponde con el Tipo de gestor";
 	public static final String COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA= "Combinación tipo de gestor- cartera - agrupación/activo/expediente invalida";
-	public static final String MEDIADOR_NO_EXISTE = "El mediador introducido no existe o esta dado de baja en REM";
+	public static final String PRIMARIO_NO_EXISTE = "El API Primario introducido no existe o esta dado de baja en REM";
 	public static final String CODIGO_MEDIADOR = "MED";
+	public static final String PONER_NULL_A_APIS = "0";
+	public static final String PRIMARIO_IGUAL_QUE_ESPEJO = "El API espejo no puede ser igual que el API primario";
+	public static final String NO_TIENE_API_PRIMARIO = "No puedes asignar API espejo a un activo sin API primario";
+	public static final String PRIMARIO_TIPO_MEDIADOR_INCORRECTO = "Tipo de proveedor DEL API primario incorrecto (Mediador o Fuerza venta directa)";
+	public static final String ESPEJO_TIPO_MEDIADOR_INCORRECTO = "Tipo de proveedor DEL API espejo incorrecto (Mediador o Fuerza venta directa)";
+	public static final String ESPEJO_NO_EXISTE = "El API Espejo introducido no existe o esta dado de baja en REM";
+	public static final String ACTIVO_NO_ESTA_RELLENO = "Los cambios de API Primario y API Espejo solo se aplican a nivel de activo";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -109,7 +116,13 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 			mapaErrores.put(SOLO_UN_CAMPO_RELLENO, soloUnCampoRelleno(exc));
 			mapaErrores.put(USUARIO_NO_ES_TIPO_GESTOR, usuarioEsTipoGestor(exc));
 			mapaErrores.put(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA, combinacionGestorCarteraAcagexValida(exc));
-			mapaErrores.put(MEDIADOR_NO_EXISTE, mediadorExiste(exc));
+			mapaErrores.put(ACTIVO_NO_ESTA_RELLENO, activoNoEstaRelleno(exc));
+			mapaErrores.put(PRIMARIO_NO_EXISTE, apiPrimarioExiste(exc));
+			mapaErrores.put(ESPEJO_NO_EXISTE, apiEspejoExiste(exc));
+			mapaErrores.put(PRIMARIO_IGUAL_QUE_ESPEJO, espejoIgualQuePrimario(exc));
+			mapaErrores.put(NO_TIENE_API_PRIMARIO, tieneMediadorPrimario(exc));
+			mapaErrores.put(PRIMARIO_TIPO_MEDIADOR_INCORRECTO, esTipoMediadorPrimarioCorrecto(exc));
+			mapaErrores.put(ESPEJO_TIPO_MEDIADOR_INCORRECTO, esTipoMediadorEspejoCorrecto(exc));
 
 			if (!mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() || !mapaErrores.get(AGRUPACION_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(EXPEDIENTE_COMERCIAL_NO_EXISTE).isEmpty()
@@ -118,7 +131,13 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(SOLO_UN_CAMPO_RELLENO).isEmpty()
 					|| !mapaErrores.get(USUARIO_NO_ES_TIPO_GESTOR).isEmpty()
 					|| !mapaErrores.get(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA).isEmpty()
-					|| !mapaErrores.get(MEDIADOR_NO_EXISTE).isEmpty()) {
+					|| !mapaErrores.get(ACTIVO_NO_ESTA_RELLENO).isEmpty()
+					|| !mapaErrores.get(PRIMARIO_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(ESPEJO_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(PRIMARIO_IGUAL_QUE_ESPEJO).isEmpty()
+					|| !mapaErrores.get(NO_TIENE_API_PRIMARIO).isEmpty()
+					|| !mapaErrores.get(PRIMARIO_TIPO_MEDIADOR_INCORRECTO).isEmpty()
+					|| !mapaErrores.get(ESPEJO_TIPO_MEDIADOR_INCORRECTO).isEmpty()) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -395,7 +414,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		
 	}
 	
-	private List<Integer> mediadorExiste(MSVHojaExcel exc){
+	private List<Integer> apiPrimarioExiste(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		try{
@@ -403,7 +422,9 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 				try {
 					String codMediador = exc.dameCelda(i, 5);
 					
-					if(!Checks.esNulo(codMediador) && !particularValidator.mediadorExisteVigente(codMediador)) {
+					if(!Checks.esNulo(codMediador) 
+							&& !PONER_NULL_A_APIS.equals(codMediador)
+							&& !particularValidator.mediadorExisteVigente(codMediador)) {
 						listaFilas.add(i);
 					}
 					
@@ -423,6 +444,209 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		
 		
 		
+	}
+	
+	private List<Integer> apiEspejoExiste(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String codMediador = exc.dameCelda(i, 6);
+					
+					if(!Checks.esNulo(codMediador) 
+							&& !PONER_NULL_A_APIS.equals(codMediador)
+							&& !particularValidator.mediadorExisteVigente(codMediador)) {
+						listaFilas.add(i);
+					}
+					
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		}catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> espejoIgualQuePrimario(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try {
+			for (int i=1; i<this.numFilasHoja;i++) {
+				try {
+					if (CODIGO_MEDIADOR.equals(exc.dameCelda(i, 0))) {
+						String numActivo = exc.dameCelda(i, 2);
+						String codMediadorPrimario = exc.dameCelda(i, 5);
+						String codMediadorEspejo = exc.dameCelda(i, 6);
+						
+						if (!Checks.esNulo(numActivo)) {
+							if (Checks.esNulo(codMediadorPrimario) 
+									&& !Checks.esNulo(codMediadorEspejo)
+									&& !PONER_NULL_A_APIS.equals(codMediadorEspejo)) {
+								codMediadorPrimario = particularValidator.getCodigoMediadorPrimarioByActivo(numActivo);
+							} else if (Checks.esNulo(codMediadorEspejo) 
+									&& !Checks.esNulo(codMediadorPrimario)
+									&& !PONER_NULL_A_APIS.equals(codMediadorPrimario)) {
+								codMediadorEspejo = particularValidator.getCodigoMediadorEspejoByActivo(numActivo);
+							}
+							
+							if (!Checks.esNulo(codMediadorPrimario) 
+									&& !Checks.esNulo(codMediadorEspejo)
+									&& !PONER_NULL_A_APIS.equals(codMediadorPrimario)
+									&& !PONER_NULL_A_APIS.equals(codMediadorEspejo)) {
+								if(codMediadorEspejo.equals(codMediadorPrimario)) {
+									listaFilas.add(i);
+								}
+							}
+						}
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		}catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer>  tieneMediadorPrimario(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try {
+			for (int i=1; i<this.numFilasHoja;i++) {
+				try {
+					if (CODIGO_MEDIADOR.equals(exc.dameCelda(i, 0))) {
+						String numActivo = exc.dameCelda(i, 2);
+						String codMediadorPrimario = exc.dameCelda(i, 5);
+						String codMediadorEspejo = exc.dameCelda(i, 6);
+						
+						if (!Checks.esNulo(numActivo)) {
+							if (Checks.esNulo(codMediadorPrimario) 
+									&& !Checks.esNulo(codMediadorEspejo)
+									&& !PONER_NULL_A_APIS.equals(codMediadorEspejo)) {
+								if (Checks.esNulo(particularValidator.getCodigoMediadorPrimarioByActivo(numActivo))) {
+									listaFilas.add(i);
+								}
+							}
+						}
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		}catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer>  esTipoMediadorPrimarioCorrecto(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try {
+			for (int i=1; i<this.numFilasHoja;i++) {
+				try {
+					String numActivo = exc.dameCelda(i, 2);
+					String codMediadorPrimario = exc.dameCelda(i, 5);
+					if (CODIGO_MEDIADOR.equals(exc.dameCelda(i, 0)) 
+							&& !Checks.esNulo(codMediadorPrimario) 
+							&& particularValidator.mediadorExisteVigente(codMediadorPrimario)
+							&& !Checks.esNulo(numActivo)
+							&& !particularValidator.esTipoMediadorCorrecto(codMediadorPrimario)
+							&& !PONER_NULL_A_APIS.equals(codMediadorPrimario)) {
+						listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		}catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer>  esTipoMediadorEspejoCorrecto(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try {
+			for (int i=1; i<this.numFilasHoja;i++) {
+				try {
+					String numActivo = exc.dameCelda(i, 2);
+					String codMediadorEspejo = exc.dameCelda(i, 6);
+					if (CODIGO_MEDIADOR.equals(exc.dameCelda(i, 0)) 
+							&& !Checks.esNulo(codMediadorEspejo) 
+							&& particularValidator.mediadorExisteVigente(codMediadorEspejo)
+							&& !Checks.esNulo(numActivo)
+							&& !particularValidator.esTipoMediadorCorrecto(codMediadorEspejo)
+							&& !PONER_NULL_A_APIS.equals(codMediadorEspejo)) {
+						listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		}catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer>  activoNoEstaRelleno(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		 
+		try {
+			for (int i=1; i<this.numFilasHoja;i++) {
+				try {
+					String numActivo = exc.dameCelda(i, 2);
+					String codMediadorApi = exc.dameCelda(i, 5);
+					String codMediadorEspejo = exc.dameCelda(i, 6);
+					
+					if (Checks.esNulo(numActivo) 
+							&& (!Checks.esNulo(codMediadorApi) || !Checks.esNulo(codMediadorEspejo))) {
+						listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		}catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
 	}
 	
 }

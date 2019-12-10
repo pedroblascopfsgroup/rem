@@ -961,6 +961,24 @@ public interface ParticularValidatorApi {
 	 * @return true si la Agrupación de tipo alquiler tiene precio
 	 */
 	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
+	
+	/**
+	 * @param numActivo
+	 * @return Codigo del mediador Api del activo
+	 */
+	String getCodigoMediadorPrimarioByActivo(String numActivo);
+	
+	/**
+	 * @param numActivo
+	 * @return Codigo del mediador Espejo del activo
+	 */
+	String getCodigoMediadorEspejoByActivo(String numActivo);
+	
+	/**
+	 * @param Codigo Proveedor Rem
+	 * @return true si el Codigo Proveedor Rem corresponde a mediador o fuerza venta directa
+	 */
+	Boolean esTipoMediadorCorrecto(String codMediador);
 
 	/**
 	 * @param numExpediente, numActivo

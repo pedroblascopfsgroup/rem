@@ -16,6 +16,7 @@ public class DtoHistoricoMediador {
 	private String telefono;
 	private String email;
 	private String responsableCambio;
+	private String rol;
 	
 	
 	public String getId() {
@@ -74,6 +75,12 @@ public class DtoHistoricoMediador {
 	}
 	public void setResponsableCambio(String responsableCambio) {
 		this.responsableCambio = responsableCambio;
+	}
+	public String getRol() {
+		return rol;
+	}
+	public void setRol(String rol) {
+		this.rol = rol;
 	}
 	
 	

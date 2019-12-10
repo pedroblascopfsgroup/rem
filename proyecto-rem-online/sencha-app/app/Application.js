@@ -17,7 +17,7 @@ Ext.define('HreRem.Application', {
         'WindowsController', 'RefreshController'
     ],
 
-    stores: ['dd.EntidadPropietaria', 'dd.EstadosPropuesta', 'dd.Provincias', 'dd.EstadosPropuestaActivo', 'dd.Municipios', 'dd.Usuarios'],
+    stores: ['dd.EntidadPropietaria', 'dd.EstadosPropuesta', 'dd.Provincias', 'dd.EstadosPropuestaActivo', 'dd.Municipios', 'dd.UsuariosGestorSustituto'],
 
     bundle: {
         bundle: 'messages',

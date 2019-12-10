@@ -1,7 +1,7 @@
-Ext.define('HreRem.store.dd.Usuarios', {
+Ext.define('HreRem.store.dd.UsuariosGestorSustituto', {
      extend: 'Ext.data.Store',
-     storeId: 'usuarios',
-     alias: 'store.dd.usuarios',
+     storeId: 'usuariosgestorsustituto',
+     alias: 'store.dd.usuariosgestorsustituto',
      model: 'HreRem.model.ComboBase',
      proxy: {
 		type: 'uxproxy',

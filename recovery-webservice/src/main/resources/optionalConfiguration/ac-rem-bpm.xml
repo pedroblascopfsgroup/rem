@@ -665,6 +665,10 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkContabilizacionReserva(tareaExterna);
 			}
+			def fechaReservaPBCReserva = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.fechaReservaPBCReserva(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

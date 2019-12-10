@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Serrano
---## FECHA_CREACION=20190610
+--## FECHA_CREACION=20191128
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6666
@@ -32,7 +32,7 @@ DECLARE
     V_TABLA VARCHAR2(2400 CHAR):= 'TAP_TAREA_PROCEDIMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_USU_MODIFICAR VARCHAR2(1024 CHAR):= 'HREOS-6666';
     V_VALIDACION VARCHAR2(2000 CHAR) := q'[checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''El activo est&aacute; vendido'' : (checkComercializable() ? (checkPoliticaCorporativa() ? null : ''El estado de la pol%iacute;tica corporativa no es el correcto para poder avanzar.'') : ''El activo debe ser comercializable'') ) : ''Los compradores deben sumar el 100%'') : ''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'']';
-    V_VALIDACION_JBPM VARCHAR2(2000 CHAR) := q'[valores[''T017_RespuestaOfertanteCES''][''comboRespuesta''] == DDRespuestaOfertante.CODIGO_RECHAZA ? null : respuestaOfertanteCesT017(valores[''T017_RespuestaOfertanteCES''][''importeOfertante''])]';
+    V_VALIDACION_JBPM VARCHAR2(2000 CHAR) := q'[valores[''T017_RespuestaOfertanteCES''][''comboRespuesta''] == DDRespuestaOfertante.CODIGO_RECHAZA ? null : respuestaOfertanteT013(valores[''T017_RespuestaOfertanteCES''][''importeOfertante''])]';
         
 BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INICIO] Actualizar datos de '||V_TABLA);

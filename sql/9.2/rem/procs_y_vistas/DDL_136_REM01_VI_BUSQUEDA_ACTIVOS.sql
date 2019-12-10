@@ -1,19 +1,20 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20191127
+--## AUTOR=JIN LI HU
+--## FECHA_CREACION=20191205
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8539
+--## INCIDENCIA_LINK=HREOS-8754
 --## PRODUCTO=NO
 --## Finalidad: añadir el codigo de la subcartera para poder utilizarlo en el grid
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
---##        0.2 Añadidos campos necesarios para mostrar las 3 columnas nuevas que se han añadido en el grid de buscador de activos. - JIN LI HU - HREOS-8476 - 20191118
+--##    0.1 Versión inicial
+--##    0.2 Añadidos campos necesarios para mostrar las 3 columnas nuevas que se han añadido en el grid de buscador de activos. - JIN LI HU - HREOS-8476 - 20191118
 --##		0.3 Añadidos campos necesarios para filtar y mostrar las fases y subfases de publicación del activo.
 --##		0.4 Añadidos campos necesarios para filtrar por motivos de ocultacion de alquiler y de venta - Joaquin Bahamonde - HREOS-8518 - 20191204
+--##		0.5 Corregir el fallo del CASE de TAS_IMPORTE_TAS_FIN 
 --##########################################
 --*/
 
@@ -122,26 +123,11 @@ BEGIN
 			TCO.DD_TCO_CODIGO,
 		    CASE TCO.DD_TCO_CODIGO
 				WHEN ''01''
-				THEN (SELECT VAL.VAL_IMPORTE 
-					  	FROM ACT_VAL_VALORACIONES VAL
-						JOIN DD_TPC_TIPO_PRECIO TPC ON VAL.DD_TPC_ID = TPC.DD_TPC_ID
-					  	WHERE VAL.ACT_ID = ACT.ACT_ID
-						AND TPC.DD_TPC_CODIGO = ''02''
-						AND VAL.BORRADO = 0)
+				THEN VAL_02.VAL_IMPORTE
 				WHEN ''02''
-				THEN (SELECT VAL.VAL_IMPORTE 
-					  	FROM ACT_VAL_VALORACIONES VAL
-						JOIN DD_TPC_TIPO_PRECIO TPC ON VAL.DD_TPC_ID = TPC.DD_TPC_ID
-					  	WHERE VAL.ACT_ID = ACT.ACT_ID
-						AND TPC.DD_TPC_CODIGO = ''02''
-						AND VAL.BORRADO = 0)
+				THEN VAL_02.VAL_IMPORTE
 				WHEN ''03''
-				THEN (SELECT VAL.VAL_IMPORTE 
-					  	FROM ACT_VAL_VALORACIONES VAL
-						JOIN DD_TPC_TIPO_PRECIO TPC ON VAL.DD_TPC_ID = TPC.DD_TPC_ID
-					  	WHERE VAL.ACT_ID = ACT.ACT_ID
-						AND TPC.DD_TPC_CODIGO = ''03''
-						AND VAL.BORRADO = 0)
+				THEN VAL_03.VAL_IMPORTE
 				ELSE NULL
 			END TAS_IMPORTE_TAS_FIN,
 			EPV.DD_EPV_CODIGO AS ESTADO_PUBLICACION_VENTA,
@@ -196,6 +182,16 @@ BEGIN
                     INNER JOIN ' || V_ESQUEMA_MASTER || '.DD_TGE_TIPO_GESTOR TGE ON GEE.DD_TGE_ID = TGE.DD_TGE_ID AND TGE.BORRADO = 0
                     INNER JOIN ' || V_ESQUEMA || '.GAC_GESTOR_ADD_ACTIVO GAC ON GAC.GEE_ID = GEE.GEE_ID
                     WHERE TGE.DD_TGE_CODIGO = ''GPUBL'') GPUBL ON GPUBL.ACT_ID = ACT.ACT_ID
+		LEFT JOIN (SELECT VAL.ACT_ID, VAL.VAL_IMPORTE, ROW_NUMBER() OVER(PARTITION BY VAL.ACT_ID ORDER BY VAL.VAL_FECHA_FIN DESC) RN
+					  	FROM ' || V_ESQUEMA || '.ACT_VAL_VALORACIONES VAL
+						JOIN ' || V_ESQUEMA || '.DD_TPC_TIPO_PRECIO TPC ON VAL.DD_TPC_ID = TPC.DD_TPC_ID
+					  	WHERE TPC.DD_TPC_CODIGO IN (''02'') AND SYSDATE BETWEEN VAL.VAL_FECHA_INICIO AND NVL(VAL.VAL_FECHA_FIN,SYSDATE + 1) 
+						AND VAL.BORRADO = 0) VAL_02 ON VAL_02.ACT_ID = ACT.ACT_ID AND VAL_02.RN = 1
+        LEFT JOIN (SELECT VAL.ACT_ID, VAL.VAL_IMPORTE, ROW_NUMBER() OVER(PARTITION BY VAL.ACT_ID ORDER BY VAL.VAL_FECHA_FIN DESC) RN
+					  	FROM ' || V_ESQUEMA || '.ACT_VAL_VALORACIONES VAL
+						JOIN ' || V_ESQUEMA || '.DD_TPC_TIPO_PRECIO TPC ON VAL.DD_TPC_ID = TPC.DD_TPC_ID
+					  	WHERE TPC.DD_TPC_CODIGO IN (''03'') AND SYSDATE BETWEEN VAL.VAL_FECHA_INICIO AND NVL(VAL.VAL_FECHA_FIN,SYSDATE + 1) 
+						AND VAL.BORRADO = 0) VAL_03 ON VAL_03.ACT_ID = ACT.ACT_ID AND VAL_03.RN = 1
 
 		WHERE ACT.BORRADO = 0';
 		

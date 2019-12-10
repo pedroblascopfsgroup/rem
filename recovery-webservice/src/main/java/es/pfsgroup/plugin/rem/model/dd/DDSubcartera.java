@@ -64,6 +64,8 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_YUBAI = "139";
 	public static final String CODIGO_OMEGA = "65";
 	public static final String CODIGO_DIVARIAN = "150";
+	public static final String CODIGO_DIVARIAN_ARROW_INMB = "151";
+	public static final String CODIGO_DIVARIAN_REMAINING_INMB = "152";
 
 	@Id
 	@Column(name = "DD_SCR_ID")

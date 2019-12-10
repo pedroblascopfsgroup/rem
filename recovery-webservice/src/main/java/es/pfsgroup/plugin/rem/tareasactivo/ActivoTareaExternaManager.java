@@ -67,35 +67,33 @@ public class ActivoTareaExternaManager /*extends TareaExternaManager*/ implement
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.rem.test.tareas.ActivoTareaExternaManagerApi#getActivasByIdTramite(java.lang.Long)
 	 */
-	@SuppressWarnings("finally")
 	@Override
 	public List<TareaExterna> getActivasByIdTramite(Long idTramite, Usuario usuarioLogado) {
 
-		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		
-		// Implementacion de gestores sustitutos, metemos a los USU_ID como si fueran grupos para que luego al tirar la query HQL recupere las tareas de los sustituidos
-		try {
-			List<GestorSustituto> gestoresSustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorSustituto", usuarioLogado));
+		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 
-			for (GestorSustituto gestor : gestoresSustitutos) {
-				if (!Checks.esNulo(gestor.getFechaFin())) {
-					if (gestor.getFechaFin().after(new Date()) || DateUtils.isSameDay(gestor.getFechaFin(), new Date())) {
-						EXTGrupoUsuarios gestorSustituto = new EXTGrupoUsuarios();
-						gestorSustituto.setGrupo(gestor.getUsuarioGestorOriginal());
-						grupos.add(gestorSustituto);
-					}
-				} else {
+		// Implementacion de gestores sustitutos, metemos a los USU_ID como si fueran
+		// grupos para que luego al tirar la query HQL recupere las tareas de los
+		// sustituidos
+		List<GestorSustituto> gestoresSustitutos = genericDao.getList(GestorSustituto.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuarioGestorSustituto", usuarioLogado));
+
+		for (GestorSustituto gestor : gestoresSustitutos) {
+			if (!Checks.esNulo(gestor.getFechaFin())) {
+				if (gestor.getFechaFin().after(new Date()) || DateUtils.isSameDay(gestor.getFechaFin(), new Date())) {
 					EXTGrupoUsuarios gestorSustituto = new EXTGrupoUsuarios();
 					gestorSustituto.setGrupo(gestor.getUsuarioGestorOriginal());
-					grupos.add(gestorSustituto);			
+					grupos.add(gestorSustituto);
 				}
+			} else {
+				EXTGrupoUsuarios gestorSustituto = new EXTGrupoUsuarios();
+				gestorSustituto.setGrupo(gestor.getUsuarioGestorOriginal());
+				grupos.add(gestorSustituto);
 			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			return activoTareaExternaDao.getTareasTramite(idTramite, usuarioLogado, grupos);
 		}
+
+		return activoTareaExternaDao.getTareasTramite(idTramite, usuarioLogado, grupos);
 	}
 	
 	/* (non-Javadoc)

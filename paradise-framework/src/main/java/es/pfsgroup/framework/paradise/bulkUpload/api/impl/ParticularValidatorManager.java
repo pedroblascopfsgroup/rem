@@ -4132,16 +4132,47 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     }
 
 	@Override
-	public Boolean esExpedienteValido(String numExpediente) {
+	public Boolean esExpedienteValidoAprobado(String numExpediente) {
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND ECO.DD_EEC_ID NOT IN (SELECT EEC.DD_EEC_ID"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
 				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
-				+"		WHERE EEC.DD_EEC_CODIGO IN ('03','06','08','11'))");
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('11'))");
+
+		return "1".equals(resultado);
+	}
+	
+	
+	//---------------------------------------------------------------------
+	@Override
+	public Boolean esExpedienteValidoFirmado(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('03'))");
+
+		return "1".equals(resultado);
+	}
+	@Override
+	public Boolean esExpedienteValidoReservado(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('06'))");
 
 		return "1".equals(resultado);
 	}
@@ -4175,4 +4206,35 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
         return !"0".equals(resultado);
     }
 	
+	@Override
+	public Boolean esExpedienteValidoVendido(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('08'))");
+
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esExpedienteValidoAnulado(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('02'))");
+
+		return "1".equals(resultado);
+	}
+	
+	//-------------------------------------------------------------------------
 }

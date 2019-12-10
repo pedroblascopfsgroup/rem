@@ -3665,7 +3665,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public ExpedienteComercial expedienteComercialPorOferta(Long idOferta) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
 
@@ -7567,6 +7566,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String validaBloqueoExpediente(Long idExpediente) {
 		String codigoError = "";
 
@@ -7613,7 +7613,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								&& condiciones.getSituacionPosesoriaCodigo()
 										.equals(condiciones.getSituacionPosesoriaCodigoInformada())
 								&& condiciones.getPosesionInicial() != null
-								&& condiciones.getPosesionInicialInformada() != null & condiciones.getPosesionInicial()
+								&& condiciones.getPosesionInicialInformada() != null && condiciones.getPosesionInicial()
 										.equals(condiciones.getPosesionInicialInformada())
 								&& condiciones.getEstadoTitulo() != null
 								&& condiciones.getEstadoTituloInformada() != null

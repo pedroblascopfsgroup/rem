@@ -994,8 +994,6 @@ public interface ParticularValidatorApi {
 
 	public Boolean existeProveedorByCodRem(String pveCodRem);
 
-	Boolean esExpedienteValido(String numExpediente);
-	
 	/**
 	 * @param codSubFasePublicacion
 	 * @param codFasePublicacion
@@ -1016,4 +1014,14 @@ public interface ParticularValidatorApi {
      */
 	
 	public Boolean existenTareasEnTrabajo(String numTrabajo);
+
+	Boolean esExpedienteValidoFirmado(String numExpediente);
+
+	Boolean esExpedienteValidoReservado(String numExpediente);
+
+	Boolean esExpedienteValidoVendido(String numExpediente);
+
+	Boolean esExpedienteValidoAnulado(String numExpediente);
+
+	Boolean esExpedienteValidoAprobado(String numExpediente);
 }

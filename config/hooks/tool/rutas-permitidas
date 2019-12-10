@@ -47,5 +47,7 @@ func-rem-omega|func-rem-Divarian-F2
 func-rem-Divarian|R-Navelina
 R-Navelina|func-rem-Divarian-F2
 func-rem-Divarian-F2|R-Barberina
+func-rem-Divarian-F2|func-rem-Divarian-F3
 func-rem-Divarian-F2|func-HREOS-8656
 func-HREOS-8656|func-rem-Divarian-F2
+func-rem-Divarian-F3|R-Barberina

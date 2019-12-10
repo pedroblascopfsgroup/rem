@@ -49,7 +49,11 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								store: '{comboTipoAlquiler}',
 								disabled: '{enableComboTipoAlquiler}',
 								value: '{patrimonio.tipoAlquilerCodigo}'
+							},
+							listeners: {
+								change: 'comboTipoAlquilerOnChange'
 							}
+							
 						},
 						{
 							xtype: 'comboboxfieldbase',
@@ -59,7 +63,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								store: '{comboAdecuacionAlquiler}',
 								disabled: '{enableComboAdecuacion}',
 								value: '{patrimonio.codigoAdecuacion}'
-							}
+							},
+							colspan:1
 						}
 						,
 						{
@@ -101,7 +106,32 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								store: '{comboSiNoRem}',
 								value: '{patrimonio.comboRentaAntigua}'								
 							},
-							colspan: 3
+							colspan: 1
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.tramite.alquiler.social'),
+							reference: 'tramiteAlquilerSocialRef',
+							colspan: 1,
+							bind: {
+								readOnly: '{!isCesionUsoEditable}',
+								store: '{comboSinSino}',
+								value: '{patrimonio.tramiteAlquilerSocial}'
+							}
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.cesion.de.uso'),
+							reference: 'cesionDeUsoRef',
+							colspan: 2,
+							bind: {
+								readOnly: '{!isCesionUsoEditable}',
+								store: '{comboCesionUso}',
+								value: '{patrimonio.cesionUso}'
+							},
+							listeners: {
+								change:'comboCesionUsoOnChage'
+							}
 						},
 							{
 							xtype:'fieldsettable',

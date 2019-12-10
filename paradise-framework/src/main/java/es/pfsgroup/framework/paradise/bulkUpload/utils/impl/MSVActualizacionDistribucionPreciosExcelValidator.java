@@ -56,7 +56,11 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 	public static final String SUMA_ACTIVOS_DISTINTA_IMPORTE_TOTAL_OFERTA = "La suma de los importes de participación de los distintos activos no coincide con el importe total de la oferta";
 	public static final String ACTIVO_NO_PERTENECE_EXPEDIENTE_COMERCIAL = "El activo no pertenece al expediente comercial";
 	public static final String EXPEDIENTE_NO_VENTA = "El expediente que se está actualizando no es de tipo venta";
-	public static final String EXPEDIENTE_VALIDO = "El expediente no es válido";
+	public static final String EXPEDIENTE_VALIDO_APROBADO = "El expediente seleccionado se encuentra en estado aprobado";
+	public static final String EXPEDIENTE_VALIDO_FIRMADO = "El expediente seleccionado se encuentra en estado firmado";
+	public static final String EXPEDIENTE_VALIDO_RESERVADO= "El expediente seleccionado se encuentra en estado reservado";
+	public static final String EXPEDIENTE_VALIDO_VENDIDO= "El expediente seleccionado se encuentra en estado vendido";
+	public static final String EXPEDIENTE_VALIDO_ANULADO= "El expediente seleccionado se encuentra en estado anulado";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -116,7 +120,11 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 			mapaErrores.put(ACTIVO_NO_PERTENECE_EXPEDIENTE_COMERCIAL, activoConRelacionExpedienteComercial(exc));
 			mapaErrores.put(EXPEDIENTE_COMERCIAL_FALTAN_ACTIVOS, isAllActivosOferta(exc));
 			mapaErrores.put(EXPEDIENTE_NO_VENTA, isExpedienteVenta(exc));
-			mapaErrores.put(EXPEDIENTE_VALIDO, isExpedienteValido(exc));
+			mapaErrores.put(EXPEDIENTE_VALIDO_APROBADO, isExpedienteValidoAprobado(exc));
+			mapaErrores.put(EXPEDIENTE_VALIDO_FIRMADO, esExpedienteValidoFirmado(exc));
+			mapaErrores.put(EXPEDIENTE_VALIDO_RESERVADO, esExpedienteValidoReservado(exc));
+			mapaErrores.put(EXPEDIENTE_VALIDO_VENDIDO, esExpedienteValidoVendido(exc));
+			mapaErrores.put(EXPEDIENTE_VALIDO_ANULADO, esExpedienteValidoAnulado(exc));
 			
 			if (!mapaErrores.get(EXPEDIENTE_COMERCIAL_NO_EXISTE).isEmpty() 
 					|| !mapaErrores.get(ACTIVO_NO_PERTENECE_EXPEDIENTE_COMERCIAL).isEmpty()
@@ -125,7 +133,11 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 					|| !mapaErrores.get(SUMA_ACTIVOS_DISTINTA_IMPORTE_TOTAL_OFERTA).isEmpty()
 					|| !mapaErrores.get(EXPEDIENTE_COMERCIAL_FALTAN_ACTIVOS).isEmpty()
 					|| !mapaErrores.get(EXPEDIENTE_NO_VENTA).isEmpty()
-					|| !mapaErrores.get(EXPEDIENTE_VALIDO).isEmpty()
+					|| !mapaErrores.get(EXPEDIENTE_VALIDO_APROBADO).isEmpty()
+					|| !mapaErrores.get(EXPEDIENTE_VALIDO_FIRMADO).isEmpty()
+					|| !mapaErrores.get(EXPEDIENTE_VALIDO_RESERVADO).isEmpty()
+					|| !mapaErrores.get(EXPEDIENTE_VALIDO_VENDIDO).isEmpty()
+					|| !mapaErrores.get(EXPEDIENTE_VALIDO_ANULADO).isEmpty()
 				)
 			{
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -438,15 +450,15 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 	}
 	
 	
-	//No aprobado, ni reservado ni firmado ni vendido
-	private List<Integer> isExpedienteValido(MSVHojaExcel exc) {
+	//aprobado, ni reservado
+	private List<Integer> isExpedienteValidoAprobado(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
 		try {
 			for (int i = 1; i < this.numFilasHoja; i++) {
 				try {
 					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))
-							&& !particularValidator.esExpedienteValido(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))) {
+							&& particularValidator.esExpedienteValidoAprobado(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))) {
 						listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -462,6 +474,116 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 		}
 		return listaFilas;
 	}
+	
+	
+	//-----------------------------------------------------------
+	
+	//firmado 
+	private List<Integer> esExpedienteValidoFirmado(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		try {
+			for (int i = 1; i < this.numFilasHoja; i++) {
+				try {
+					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))
+							&& particularValidator.esExpedienteValidoFirmado(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))) {
+						listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	
+	//  reservado 
+	private List<Integer> esExpedienteValidoReservado(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		try {
+			for (int i = 1; i < this.numFilasHoja; i++) {
+				try {
+					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))
+							&& particularValidator.esExpedienteValidoReservado(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))) {
+						listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	//vendido
+	private List<Integer> esExpedienteValidoVendido(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		try {
+			for (int i = 1; i < this.numFilasHoja; i++) {
+				try {
+					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))
+							&& particularValidator.esExpedienteValidoVendido(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))) {
+						listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	
+	//Anulado
+	private List<Integer> esExpedienteValidoAnulado(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		try {
+			for (int i = 1; i < this.numFilasHoja; i++) {
+				try {
+					if (!Checks.esNulo(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))
+							&& particularValidator.esExpedienteValidoAnulado(exc.dameCelda(i, COL_NUM.EXP_NUM_EXPEDIENTE))) {
+						listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	//------------------------------------------------------------------------------------------------------------------------
+	
+	
+	
 	
 	public Integer getNumFilasHoja() {
 		return numFilasHoja;

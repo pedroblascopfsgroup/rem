@@ -30,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,6 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
-import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -146,6 +144,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
@@ -820,6 +819,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce) throws Exception {
 		TransactionStatus transaction = null;
 		ExpedienteComercial expedienteComercial = null;
@@ -862,7 +862,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return expedienteComercial;
 	}
 
-	@Transactional(readOnly = false)
 	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
 		// HREOS-2799
 		// Activos de Cajamar, debe tener en Reserva - tipo de Arras por
@@ -903,6 +902,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo){
 
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
+		Double umbralAskingPrice=200000.0;
 
 		if (!Checks.esNulo(oferta.getVisita())) {
 			DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
@@ -1122,7 +1122,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
-
+			ActivoValoraciones precioAprVenta =getValoracionAprobadoVenta(activo);
 			boolean esFinanciero = false;
 			if (!Checks.esNulo(activoBancario)) {
 				if (!Checks.esNulo(activoBancario.getClaseActivo()) && activoBancario.getClaseActivo().getCodigo()
@@ -1136,11 +1136,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
 				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())||
-					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
-					{
+					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
-					}else if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_APPLE_CERBERUS)));
+					
+						
+					}else if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){	
+						if(oferta.getImporteOferta() != null 
+						&& oferta.getImporteOferta()<umbralAskingPrice
+						&& (oferta.getImporteOferta()>=precioAprVenta.getImporte()*0.95)){
+							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_APPLE_CERBERUS)));
+						}else {
+							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
+						}
+						
+					}else if(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){	
+						if(!Checks.esNulo(oferta.getImporteOferta()) && (oferta.getImporteOferta()<=umbralAskingPrice) 
+								||(oferta.getImporteOferta()>=precioAprVenta.getImporte()*0.95)) {
+							
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+										genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIVARIAN_REAMING)));
+							}else {
+								
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+										genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
+							}
+							
+					}else if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIVARIAN_ARROW)));
+							
 					}else {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
 					}
@@ -3279,7 +3305,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					int diff = 0;
 
 					// Si no existe ningun adjunto de tipo ocupacionDesocupacion o si lo hay y tiene una fecha superior a los 30 dias se ha de mostrar el disclaimer
-					if (Checks.esNulo(adjuntoAux) || adjuntoAux.getFechaDocumento()==null) {
+					if (adjuntoAux == null  || adjuntoAux.getFechaDocumento()==null) {
 						tieneAdjunto = true;
 					} else {
 						diffInMillies = Math.abs(System.currentTimeMillis() - adjuntoAux.getFechaDocumento().getTime());
@@ -4480,6 +4506,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
 				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 			}
+			if(!Checks.esNulo(activo.getTerritorio())) {
+				beanUtilNotNull.copyProperty(dto, "direccionComercial", activo.getTerritorio().getCodigo()); 
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -4548,6 +4577,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
+			if(!Checks.esNulo(dto.getDireccionComercial())) {
+				DDTerritorio territorio = (DDTerritorio) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTerritorio.class, dto.getDireccionComercial());
+				
+				activo.setTerritorio(territorio);
+				
+			}
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -4557,7 +4593,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en activoManager", e);
 			return false;
 		}
-
+		
 		activo.setEstaEnPuja(dto.getPuja());
 		activoDao.save(activo);
 
@@ -6409,20 +6445,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		byte[] bytes = null;
+		FormDataMultiPart multipart = new FormDataMultiPart();
 		RespuestaDescargarDocumento respuesta2 = null;
-		MultiPart multipart = new FormDataMultiPart().field("nombre", dtoGenerarDocGDPR.getNombre())
-				.field("documento", dtoGenerarDocGDPR.getDocumento()).field("gdpr1", gdpr1).field("gdpr2", gdpr2)
-				.field("gdpr3", gdpr3)
-				.field("codRemPresciptor", String.valueOf(getCodRemPrescriptor(dtoGenerarDocGDPR)))
-				.field("signature", signature);
 		try {
+			multipart.field("nombre", dtoGenerarDocGDPR.getNombre())
+					.field("documento", dtoGenerarDocGDPR.getDocumento()).field("gdpr1", gdpr1).field("gdpr2", gdpr2)
+					.field("gdpr3", gdpr3)
+					.field("codRemPresciptor", String.valueOf(getCodRemPrescriptor(dtoGenerarDocGDPR)))
+					.field("signature", signature);
+
 			ServerRequest serverRequest = new ServerRequest();
 			serverRequest.setMethod(RestClientManager.METHOD_POST);
 			serverRequest.setRestClientUrl(url);
 			serverRequest.setMultipart(multipart);
 			serverRequest.setResponseClass(RespuestaDescargarDocumento.class);
 			Object respuesta = this.getBinaryResponse(serverRequest, "", dtoGenerarDocGDPR, signature);
-			
 
 			if (respuesta instanceof byte[]) {
 				bytes = (byte[]) respuesta;
@@ -6431,10 +6468,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			respuesta2 = this.rellenarRespuestaDescarga(dtoGenerarDocGDPR.getDocumento());
 		} finally {
-			if(multipart != null) {
-				multipart.close();
-			}
-			
+			multipart.close();
 		}
 		return GestorDocToRecoveryAssembler.getFileItem(bytes, respuesta2);
 	}
@@ -7741,13 +7775,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<Dictionary> getDiccionarioFasePublicacion() throws Exception {
+	public List<DDFasePublicacion> getDiccionarioFasePublicacion() throws Exception {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order order = new Order(OrderType.ASC, "codigo");
-		List lista = genericDao.getListOrdered(DDFasePublicacion.class, order, filtro);
-		
-		return lista;
+		return genericDao.getListOrdered(DDFasePublicacion.class, order, filtro);
 	}
 	
 	

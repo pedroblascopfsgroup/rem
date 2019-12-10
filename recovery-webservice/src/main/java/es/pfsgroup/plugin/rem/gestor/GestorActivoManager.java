@@ -1,7 +1,6 @@
  package es.pfsgroup.plugin.rem.gestor;
  
- import java.util.ArrayList;
-import java.util.Date;
+ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,9 +86,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	
  	@Autowired
  	private ActivoAdapter activoAdapter;
- 	
- 	@Autowired
- 	private GestorActivoHistoricoDao gestorActivoHistoricoDao;
  	
  	public static final String CODIGO_TGE_PROVEEDOR_TECNICO = "PTEC";
  	public static final String USERNAME = "username";

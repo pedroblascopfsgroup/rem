@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.files.FileItem;
@@ -56,16 +55,13 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 
 	public abstract String getValidOperation();
 
-	@Transactional(readOnly = false)
 	public abstract ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException, Exception;
 
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, ProcesoMasivoContext context) throws IOException, ParseException, JsonViewerException, SQLException,
 			Exception {
 		return this.procesaFila(exc, fila, prmToken);
 	}
 	
-	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken,Object[] extraArgs)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception{
 			return this.procesaFila(exc, fila, prmToken);
@@ -161,17 +157,14 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 		return true;
 	}
 
-	@Transactional(readOnly = false)
 	public Integer getNumFilas(MSVDocumentoMasivo file, MSVHojaExcel exc) throws IOException {
 		return exc.getNumeroFilasByHoja(0, file.getProcesoMasivo().getTipoOperacion());
 	}
 
-	@Transactional(readOnly = false)
 	public void preProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 		this.preProcesado(exc, null);
 	}
 
-	@Transactional(readOnly = false)
 	public void preProcesado(MSVHojaExcel exc, ProcesoMasivoContext context) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 

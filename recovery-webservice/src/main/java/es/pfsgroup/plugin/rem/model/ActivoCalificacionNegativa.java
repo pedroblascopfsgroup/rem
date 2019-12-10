@@ -74,6 +74,10 @@ public class ActivoCalificacionNegativa implements Serializable, Auditable {
     @Column(name = "ACT_FECHA_SUBSANACION")
 	private Date fechaSubsanacion;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "AHT_ID")
+  	private HistoricoTramitacionTitulo historicoTramitacionTitulo;
+    
 	@Version   
 	private Long version;
 	
@@ -159,6 +163,14 @@ public class ActivoCalificacionNegativa implements Serializable, Auditable {
 	}
 	public void setResponsableSubsanar(DDResponsableSubsanar responsableSubsanar) {
 		this.responsableSubsanar = responsableSubsanar;
+	}
+
+	public HistoricoTramitacionTitulo getHistoricoTramitacionTitulo() {
+		return historicoTramitacionTitulo;
+	}
+
+	public void setHistoricoTramitacionTitulo(HistoricoTramitacionTitulo historicoTramitacionTitulo) {
+		this.historicoTramitacionTitulo = historicoTramitacionTitulo;
 	}
 	
 }

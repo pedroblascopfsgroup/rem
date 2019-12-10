@@ -46,7 +46,7 @@ public class TributoAdapter {
 	private static final String OPERACION_ALTA = "Alta";	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	protected static final Log logger = LogFactory.getLog(TributoAdapter.class);	
-	
+		
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
@@ -105,26 +105,8 @@ public class TributoAdapter {
 					
 					for(int i = 0; i < arrayActivos.length; i++){
 						Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i],10));
-						File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
-						BufferedWriter out = new BufferedWriter(new FileWriter(file));
-						try {
-							FileItem fileItem = new FileItem();
-							fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
-							fileItem.setFile(file);
-							fileItem.setLength(file.length());			
-							webFileItem.setFileItem(fileItem);
-							activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
-						}finally {
-							 out.close();
-							 if(!file.delete()){
-								 logger.info("No se podido borrar el temporarl de descarga");
-							 }
-						}
-					    out.write("pfs");
-					   					    
-					    
-						
-						
+						crearFicheroRelacion( activoEntrada, webFileItem,  matricula,  idDocRestClient);
+
 					}
 				}
 				
@@ -137,7 +119,29 @@ public class TributoAdapter {
 	}
 	
 	
-	
+	private void crearFicheroRelacion(Activo activoEntrada,WebFileItem webFileItem, String matricula, Long idDocRestClient) throws Exception{
+		BufferedWriter out = null;
+		try {
+			File file = File.createTempFile("idDocRestClient["+idDocRestClient+"]", ".pdf");
+			out = new BufferedWriter(new FileWriter(file));
+		    out.write("pfs");
+						    
+		    FileItem fileItem = new FileItem();
+			fileItem.setFileName("idDocRestClient["+idDocRestClient+"]");
+			fileItem.setFile(file);
+			fileItem.setLength(file.length());			
+			webFileItem.setFileItem(fileItem);
+			activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+			if(!file.delete()) {
+				logger.error("Imposible borrar fichero temporal");
+			}
+		}finally {
+			if(out != null){
+				out.close();	
+			}
+		}
+		
+	}
 	
 	public String upload(WebFileItem webFileItem) throws Exception {
 		return uploadDocumento(webFileItem, null);

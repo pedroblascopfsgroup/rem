@@ -12,6 +12,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,13 +56,16 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
@@ -323,20 +327,30 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
 			}
 		
-		List<ActivoCalificacionNegativa> activoCNList = activoDao.getListActivoCalificacionNegativaByIdActivo(activo.getId());
-		Boolean puedeEditar = false, campoMarcado = false;
 		
-		for(ActivoCalificacionNegativa acn : activoCNList) {
-			if(!Checks.esNulo(acn.getEstadoMotivoCalificacionNegativa()) 
-					&&DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO.equals(acn.getEstadoMotivoCalificacionNegativa().getCodigo())) {
+		Boolean puedeEditar = false;
+		Long idMasAlta = 0L;
+		int posicionIDmasAlta = 0;
+		
+		if(!Checks.esNulo(activo.getTitulo())) {
+			List <HistoricoTramitacionTitulo> tramitacionTitulo = genericDao.getList(HistoricoTramitacionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "titulo.id", activo.getTitulo().getId()));
+			for (int i = 0; i < tramitacionTitulo.size(); i++) {
+				if(idMasAlta < tramitacionTitulo.get(i).getId()) {
+					idMasAlta = tramitacionTitulo.get(i).getId();
+					posicionIDmasAlta = i;
+				}					
+			}
+			
+			if(!Checks.estaVacio(tramitacionTitulo) && !Checks.esNulo(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion())
+				&& DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(tramitacionTitulo.get(posicionIDmasAlta).getEstadoPresentacion().getCodigo())
+				&& !Checks.esNulo(activo.getTitulo().getEstado()) && DDEstadoTitulo.ESTADO_SUBSANAR.equals(activo.getTitulo().getEstado().getCodigo())
+			) {
 				puedeEditar = true;
-				campoMarcado = true;
-				break;
+
 			}
 		}
+		activoDto.setPuedeEditarCalificacionNegativa(puedeEditar);
 
-		activoDto.setPuedeEditarCalificacionNegativa(campoMarcado);
-		activoDto.setIsCalificacionNegativaEnabled(puedeEditar);
 		Usuario usuario = usuarioApi.getUsuarioLogado();
 		List<Perfil> perfiles = usuario.getPerfiles();
 		Boolean tienePerfil = false;

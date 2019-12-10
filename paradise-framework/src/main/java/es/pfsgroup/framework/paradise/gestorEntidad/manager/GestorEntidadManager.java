@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -41,7 +40,7 @@ import es.pfsgroup.recovery.api.ExpedienteApi;
 public class GestorEntidadManager implements GestorEntidadApi {
 
 	@Autowired
-	GenericABMDao genericDao;
+	protected GenericABMDao genericDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;

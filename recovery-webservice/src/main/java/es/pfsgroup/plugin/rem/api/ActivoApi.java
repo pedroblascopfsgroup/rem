@@ -21,6 +21,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 //import es.pfsgroup.plugin.rem.activo.DtoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -52,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
@@ -61,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -76,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
@@ -1204,6 +1208,36 @@ public interface ActivoApi {
 	 * @param activo
 	 */
 	public boolean isOcupadoConTituloOrEstadoAlquilado(Activo activo);
+	
+	/**
+	 * Devuelve una lista del Historico de tramitacion de titulo
+	 * @param id 
+	 * @return List<DtoHistoricoTramitacionTitulo>
+	 */
+	List<DtoHistoricoTramitacionTitulo> getHistoricoTramitacionTitulo(Long id);
+
+	/**
+	 * Guarda el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 * @throws Exception 
+	 */
+	boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo) throws HistoricoTramitacionException;
+	
+	/**
+	 * actualiza el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 * @throws Exception 
+	 */
+	boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) throws Exception, HistoricoTramitacionException;
+	
+	/**
+	 * borra el historico de tramitacion de titulo de un activo
+	 * @param tramitacionDto
+	 * @return boolean
+	 */
+	Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto);
 
 	List<DDCesionSaneamiento> getPerimetroAppleCesion(String codigoServicer);
 	
@@ -1241,6 +1275,8 @@ public interface ActivoApi {
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
 
+	List<DtoProveedorMediador> getComboApiPrimario();
+
 	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
 	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
 
@@ -1251,4 +1287,11 @@ public interface ActivoApi {
 
 	ActivoDto getDatosActivo(Long activoId);
 
+	/**
+	 * Devuelve la lista ordenada de valores del diccionario Fase de Publicacion.
+	 * @return List
+	 * @throws Exception
+	 */
+	public List<DDFasePublicacion> getDiccionarioFasePublicacion() throws Exception;
+	
 }

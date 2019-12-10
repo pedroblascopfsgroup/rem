@@ -40,7 +40,8 @@ public interface AgrupacionValidator extends GenericService{
 	public static final String ERROR_ACTIVO_NO_CANARIAS = "El activo que se intenta añadir a la agrupación canaria no es de Canarias";
 	public static final String ERROR_ACTIVO_CANARIAS = "El activo es de Canarias, no se puede añadir a una agrupación que no sea canaria";
 	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "El propietario del activo es distinto al propietario de la agrupación";
-
+	public static final String ERROR_EN_OTRA_PROYECTO = "El activo ya se encuentra dentro de una agrupación de tipo Proyecto";
+	
 
 	/**
 	 * C�digo de tipo de operaci�n para el que aplica este validador.

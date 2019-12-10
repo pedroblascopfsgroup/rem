@@ -248,13 +248,7 @@ public interface GenericApi {
 	 */
 	public List<DDTipoAgrupacion> getComboTipoAgrupacion();
 	
-	/**
-	 * Este método obtiene una lista con todos los tipos de agrupaciones.
-	 * 
-	 * @return Devuelve una lista de tipos de agrupaciones
-	 */
-	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion();
-
+	
 	/**
 	 * Devuelve los tipos de titulo, filtrando por la posesión del activo
 	 * Si no se pasa ningun activo, devuelve la lista completa de tipos.

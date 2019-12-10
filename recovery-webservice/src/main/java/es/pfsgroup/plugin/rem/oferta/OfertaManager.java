@@ -1403,8 +1403,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	public void borradoOfertaAgrupadaDependiente(Oferta oferta) {
-		Long idOfertaLBK = ofertasAgrupadasLbkDao.getIdOfertaAgrupadaLBK(oferta.getId());
-		genericDao.deleteById(OfertasAgrupadasLbk.class, idOfertaLBK);
+		try {
+			Long idOfertaLBK = ofertasAgrupadasLbkDao.getIdOfertaAgrupadaLBK(oferta.getId());
+			genericDao.deleteById(OfertasAgrupadasLbk.class, idOfertaLBK);
+		}catch(Exception e) {
+			logger.error(e.getMessage());
+		}
 	}
 	
 	@Override
@@ -1570,6 +1574,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 
+	@Transactional(readOnly = false)
 	@Override
 	public Boolean congelarOferta(Oferta oferta) {
 		try {
@@ -1597,6 +1602,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return true;
 	}
+	
+	@Transactional(readOnly = false)
 	@Override
 	public Boolean finalizarOferta(Oferta oferta) {
 		try {
@@ -4463,7 +4470,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (activo.getCartera() != cartera
 				|| activo.getSubcartera() != subcartera
 				|| activo.getPropietarioPrincipal() != propietario
-				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {
+				|| !activoApi.getGeolocalizacion(activo).equals(geolocalizacion)) {
 			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
 	}

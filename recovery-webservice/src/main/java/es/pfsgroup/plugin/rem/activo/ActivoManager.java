@@ -29,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +50,7 @@ import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -64,6 +64,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -75,17 +76,18 @@ import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoCargasDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTributoDaoImpl;
+import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -104,120 +106,28 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
+import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoAutorizacionTramitacionOfertas;
-import es.pfsgroup.plugin.rem.model.ActivoBancario;
-import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
-import es.pfsgroup.plugin.rem.model.ActivoCargas;
-import es.pfsgroup.plugin.rem.model.ActivoCatastro;
-import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
-import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.ActivoCopropietario;
-import es.pfsgroup.plugin.rem.model.ActivoCopropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
-import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
-import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
-import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
-import es.pfsgroup.plugin.rem.model.ActivoLlave;
-import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
-import es.pfsgroup.plugin.rem.model.ActivoOcupacionIlegal;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
-import es.pfsgroup.plugin.rem.model.ActivoReglasPublicacionAutomatica;
-import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ActivoTributos;
-import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.AdjuntoPlusvalias;
-import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
-import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
-import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
-import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
-import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
-import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
-import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
-import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
-import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
-import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
-import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
-import es.pfsgroup.plugin.rem.model.DtoLlaves;
-import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
-import es.pfsgroup.plugin.rem.model.DtoOcupacionIlegal;
-import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
-import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
-import es.pfsgroup.plugin.rem.model.DtoPropietario;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
-import es.pfsgroup.plugin.rem.model.DtoTasacion;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastosExpediente;
-import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
-import es.pfsgroup.plugin.rem.model.ImpuestosActivo;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
-import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VActivosAfectosGencat;
-import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatBloqueados;
-import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
-import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
-import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
-import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
@@ -227,6 +137,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -278,6 +189,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_MOTIVO_CALIFICACION = "activo.aviso.motivo.calificacion.duplicado";
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";
+	public static final String ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO = "Ya existe un registro 'Presentación en registro', y está activo";
+	public static final String ERROR_ANYADIR_EN_REGISTRO = "Ya existe un registro '%s', y está activo";
+	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -405,8 +319,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private ActivoTributoDaoImpl tributoDaoImpl;
 
 	@Autowired
+	private ActivoCargasDao activoCargasDao;
+	
+	@Autowired
 	private GastosExpedienteApi gastosExpedienteApi;
 
+	@Autowired
+	private GestorActivoManager gestorActivoManager;
 
 	@Override
 	public String managerName() {
@@ -750,14 +669,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.uploadDocumento")
 	@Transactional(readOnly = false)
 	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activoEntrada, String matricula)
-			throws Exception {
+			throws UserException {
 		Activo activo;
 		DDTipoDocumentoActivo tipoDocumento = null;
 		if (Checks.esNulo(activoEntrada)) {
 			activo = get(Long.parseLong(webFileItem.getParameter("idEntidad")));
 
 			if (webFileItem.getParameter("tipo") == null)
-				throw new Exception("Tipo no valido");
+				throw new UserException("Tipo no valido");
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
 			tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtro);
@@ -796,7 +715,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				activoDao.save(activo);
 			} else {
-				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
+				throw new UserException("No se ha encontrado activo o tipo para relacionar adjunto");
 			}
 
 		} catch (Exception e) {
@@ -1896,7 +1815,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(dto, "codigoResponsableSubsanar", activo.getResponsableSubsanar().getCodigo());
 				}
 				beanUtilNotNull.copyProperty(dto, "fechaSubsanacion", activo.getFechaSubsanacion());
-				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());	
+				
+				if(!Checks.esNulo(activo.getHistoricoTramitacionTitulo())) {
+					dto.setFechaCalificacionNegativa(activo.getHistoricoTramitacionTitulo().getFechaCalificacion());
+					dto.setFechaPresentacionRegistroCN(activo.getHistoricoTramitacionTitulo().getFechaPresentacionRegistro());
+				}
+		
 				
 				activoCNListDto.add(dto);
 			}
@@ -2258,7 +2183,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					int diff = 0;
 
 					// Si no existe ningun adjunto de tipo ocupacionDesocupacion o si lo hay y tiene una fecha superior a los 30 dias se ha de mostrar el disclaimer
-					if (Checks.esNulo(adjuntoAux) || adjuntoAux.getFechaDocumento()==null) {
+					if (adjuntoAux == null  || adjuntoAux.getFechaDocumento()==null) {
 						tieneAdjunto = true;
 					} else {
 						diffInMillies = Math.abs(System.currentTimeMillis() - adjuntoAux.getFechaDocumento().getTime());
@@ -2272,11 +2197,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					tieneAdjunto = true;
 				}
 			} catch (IllegalAccessException e) {
-				logger.error(e.getMessage(),e);
+				logger.error(e.getMessage(), e);
 			} catch (InvocationTargetException e) {
-				logger.error(e.getMessage(),e);
+				logger.error(e.getMessage(), e);
 			} catch (GestorDocumentalException e) {
-				logger.error(e.getMessage(),e);
+				logger.error(e.getMessage(), e);
 			}
 
 
@@ -2691,13 +2616,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoAdjuntoTributo adjuntoTributo = null;
 				
 				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-
 					filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id",
 							tributo.getId());
 					filtroRest = genericDao.createFilter(FilterType.NOTNULL, "idDocRestClient");
 					adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest,
 							filtroAuditoria);
-
 				} else {
 
 					filtroRest = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
@@ -3599,9 +3522,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperties(cargaSeleccionada.getCargaBien(), cargaDto);
 
 			if (!Checks.esNulo(cargaDto.getEstadoCodigo())) {
-				DDSituacionCarga situacionCarga = (DDSituacionCarga) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDSituacionCarga.class, cargaDto.getEstadoCodigo());
-				cargaSeleccionada.getCargaBien().setSituacionCarga(situacionCarga);
+				DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadoCarga.class, cargaDto.getEstadoCodigo());
+				cargaSeleccionada.setEstadoCarga(estadoCarga);
+			}
+			
+			if(!Checks.esNulo(cargaDto.getCodigoImpideVenta())) {
+				DDSiNo dd = genericDao.get(DDSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", cargaDto.getCodigoImpideVenta()));
+				cargaSeleccionada.setImpideVenta(dd);
 			}
 
 			if (!Checks.esNulo(cargaDto.getEstadoEconomicaCodigo())) {
@@ -3621,6 +3549,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						.dameValorDiccionarioByCod(DDSubtipoCarga.class, cargaDto.getSubtipoCargaCodigo());
 				cargaSeleccionada.setSubtipoCarga(subtipoCarga);
 			}
+			
+			if (!Checks.esNulo(cargaDto.getSubestadoCodigo())) {
+				DDSubestadoCarga subestadoCarga = (DDSubestadoCarga) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDSubestadoCarga.class, cargaDto.getSubestadoCodigo());
+				cargaSeleccionada.setSubestadoCarga(subestadoCarga);
+			}
 
 			// HREOS-2733
 			if (!Checks.esNulo(cargaDto.getOrigenDatoCodigo())) {
@@ -3637,6 +3571,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		activoCargasApi.saveOrUpdate(cargaSeleccionada);
+		
+		if (!Checks.esNulo(cargaSeleccionada) && !Checks.esNulo(cargaSeleccionada.getActivo()) && !Checks.esNulo(cargaSeleccionada.getActivo().getId())) {
+			activoCargasDao.calcularEstadoCargaActivo(cargaSeleccionada.getActivo().getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+		}
 
 		return true;
 	}
@@ -3975,7 +3913,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean deleteCarga(DtoActivoCargas dto) {
-		genericDao.deleteById(ActivoCargas.class, dto.getIdActivoCarga());
+		ActivoCargas carga = null;
+		if (!Checks.esNulo(dto.getIdActivoCarga())) {
+			carga = genericDao.get(ActivoCargas.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivoCarga()));
+			if (!Checks.esNulo(carga)) {
+				genericDao.deleteById(ActivoCargas.class, carga.getId());
+				if (!Checks.esNulo(carga.getActivo()) && !Checks.esNulo(carga.getActivo().getId())) {
+					activoCargasDao.calcularEstadoCargaActivo(carga.getActivo().getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+				}
+			} else {
+				return false;
+			}
+		}
 
 		return true;
 	}
@@ -4570,8 +4519,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 				
+
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "titulo.id", activo.getTitulo().getId());
+			
+				Order order = new Order(OrderType.DESC, "id");
+				List<HistoricoTramitacionTitulo> historicoTramitacionTituloList = genericDao.getListOrdered(HistoricoTramitacionTitulo.class, order, filter);
+			
+				if(!Checks.estaVacio(historicoTramitacionTituloList)) {
+					activoCalificacionNegativa.setHistoricoTramitacionTitulo(historicoTramitacionTituloList.get(0));
+				}
 				genericDao.save(ActivoCalificacionNegativa.class, activoCalificacionNegativa);
-				
+			
 				
 				return true;
 			}
@@ -4886,22 +4844,51 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		String idActivo = null;
 		String idCartera = null;
-
+		Boolean esGestoria = false;
+		Boolean esGestoriaDelActivo = false;
+		
 		try {
-
-			idCartera = String.valueOf(rawDao.getExecuteSQL(
-					"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId()));
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			DDIdentificacionGestoria ige = gestorActivoManager.isGestoria(usuarioLogado);
+			esGestoria = !Checks.esNulo(ige);
+			Filter numActivoFilter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+			Activo activo = genericDao.get(Activo.class, numActivoFilter);
 			
-			if(!Checks.esNulo(idCartera)) {
-				idActivo = String.valueOf(rawDao.getExecuteSQL(
-						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0"));
+			if (esGestoria) {
+				esGestoriaDelActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT COUNT(*) "
+						 + "FROM V_BUSQUEDA_ACTIVOS_GESTORIAS "
+						 + "WHERE DD_IGE_ID = "+ige.getId()+ " AND ACT_ID = "+activo.getId())) >= 1;
+						 
+				if (esGestoriaDelActivo) {
+					idCartera = rawDao.getExecuteSQL(
+							"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+					
+					if(!Checks.esNulo(idCartera)) {
+						idActivo = rawDao.getExecuteSQL(
+								"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+					} else {
+						idActivo = rawDao.getExecuteSQL(
+								"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+					}
+					
+					return Long.parseLong(idActivo);
+				} else {
+					return null;
+				}
 			} else {
-				idActivo = String.valueOf(rawDao.getExecuteSQL(
-						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0"));
+				idCartera = rawDao.getExecuteSQL(
+						"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+				
+				if(!Checks.esNulo(idCartera)) {
+					idActivo = rawDao.getExecuteSQL(
+							"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+				} else {
+					idActivo = rawDao.getExecuteSQL(
+							"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+				}
+				
+				return Long.parseLong(idActivo);
 			}
-			
-			return Long.parseLong(idActivo);
-
 		} catch (Exception e) {
 			return null;
 		}
@@ -5092,20 +5079,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		byte[] bytes = null;
+		FormDataMultiPart multipart = new FormDataMultiPart();
 		RespuestaDescargarDocumento respuesta2 = null;
-		MultiPart multipart = new FormDataMultiPart().field("nombre", dtoGenerarDocGDPR.getNombre())
-				.field("documento", dtoGenerarDocGDPR.getDocumento()).field("gdpr1", gdpr1).field("gdpr2", gdpr2)
-				.field("gdpr3", gdpr3)
-				.field("codRemPresciptor", String.valueOf(getCodRemPrescriptor(dtoGenerarDocGDPR)))
-				.field("signature", signature);
 		try {
+			multipart.field("nombre", dtoGenerarDocGDPR.getNombre())
+					.field("documento", dtoGenerarDocGDPR.getDocumento()).field("gdpr1", gdpr1).field("gdpr2", gdpr2)
+					.field("gdpr3", gdpr3)
+					.field("codRemPresciptor", String.valueOf(getCodRemPrescriptor(dtoGenerarDocGDPR)))
+					.field("signature", signature);
+
 			ServerRequest serverRequest = new ServerRequest();
 			serverRequest.setMethod(RestClientManager.METHOD_POST);
 			serverRequest.setRestClientUrl(url);
 			serverRequest.setMultipart(multipart);
 			serverRequest.setResponseClass(RespuestaDescargarDocumento.class);
 			Object respuesta = this.getBinaryResponse(serverRequest, "", dtoGenerarDocGDPR, signature);
-			
 
 			if (respuesta instanceof byte[]) {
 				bytes = (byte[]) respuesta;
@@ -5114,10 +5102,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			respuesta2 = this.rellenarRespuestaDescarga(dtoGenerarDocGDPR.getDocumento());
 		} finally {
-			if(multipart != null) {
-				multipart.close();
-			}
-			
+			multipart.close();
 		}
 		return GestorDocToRecoveryAssembler.getFileItem(bytes, respuesta2);
 	}
@@ -5285,6 +5270,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			dto.setCodigoResponsableSubsanar(actCalNeg.getResponsableSubsanar().getCodigo());
 			dto.setResponsableSubsanar(actCalNeg.getResponsableSubsanar().getDescripcion());
 			dto.setCodigoMotivoCalificacionNegativa(actCalNeg.getMotivoCalificacionNegativa().getCodigo());
+			
 		}
 		return dto;
 	}
@@ -5911,6 +5897,285 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public List<DtoHistoricoTramitacionTitulo> getHistoricoTramitacionTitulo(Long id){
+		List<DtoHistoricoTramitacionTitulo> listaDto = new ArrayList<DtoHistoricoTramitacionTitulo>();
+		try {
+			ActivoTitulo titulo = activoAdapter.getActivoById(id).getTitulo();
+			if(!Checks.esNulo(titulo)) {
+				Order order  = new Order(OrderType.DESC, "id");
+				List<HistoricoTramitacionTitulo> listaObjeto = genericDao.getListOrdered(HistoricoTramitacionTitulo.class, order, genericDao.createFilter(FilterType.EQUALS, "titulo", titulo));
+				if(!Checks.esNulo(listaObjeto) && !Checks.estaVacio(listaObjeto)) {
+					for(HistoricoTramitacionTitulo htt: listaObjeto) {
+						
+						DtoHistoricoTramitacionTitulo aux = new DtoHistoricoTramitacionTitulo();
+						beanUtilNotNull.copyProperty(aux, "idActivo", id);
+						beanUtilNotNull.copyProperty(aux, "titulo", htt.getTitulo().getId());
+						
+						beanUtilNotNull.copyProperty(aux, "estadoPresentacion", htt.getEstadoPresentacion().getDescripcion());
+						beanUtilNotNull.copyProperty(aux, "codigoEstadoPresentacion", htt.getEstadoPresentacion().getCodigo());
+						beanUtilNotNull.copyProperty(aux, "fechaPresentacionRegistro", htt.getFechaPresentacionRegistro());
+						beanUtilNotNull.copyProperty(aux, "idHistorico", htt.getId());
+						if(!Checks.esNulo(htt.getFechaCalificacion())){
+							beanUtilNotNull.copyProperty(aux, "fechaCalificacion", htt.getFechaCalificacion());
+						}
+						if(!Checks.esNulo(htt.getFechaInscripcion())){
+							beanUtilNotNull.copyProperty(aux, "fechaInscripcion", htt.getFechaInscripcion());
+						}
+						if(!Checks.esNulo(htt.getObservaciones())){
+							beanUtilNotNull.copyProperty(aux, "observaciones", htt.getObservaciones());
+						}
+						
+						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
+						List<ActivoCalificacionNegativa> ActivoTieneCalificacionNegativa = genericDao.getList(ActivoCalificacionNegativa.class, filtroActivo);
+						if(ActivoTieneCalificacionNegativa.isEmpty()) {
+							beanUtilNotNull.copyProperty(aux, "tieneCalificacionNoSubsanada",1);
+						}else {
+							Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "estadoMotivoCalificacioNegativa.codigo",DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO);
+							List<ActivoCalificacionNegativa> actCalNeg = genericDao.getList(ActivoCalificacionNegativa.class, filtroActivo,filtroMotivo);
+						
+							beanUtilNotNull.copyProperty(aux, "tieneCalificacionNoSubsanada", actCalNeg.isEmpty() ? 0 : 1);
+						}
+						
+						listaDto.add(aux);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			logger.error("Error en getHistoricoTramitacionTitulo", ex);
+		}
+		return listaDto;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,Long idActivo) throws HistoricoTramitacionException {
+		
+		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
+		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
+		Order order = new Order(OrderType.DESC, "id");
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "titulo.activo.id", idActivo);
+		List<HistoricoTramitacionTitulo> listasTramitacion = genericDao.getListOrdered(HistoricoTramitacionTitulo.class, order, filtro);
+		String estadoTitulo = null;
+			try {
+				if(!Checks.estaVacio(listasTramitacion)) {
+					if(!Checks.esNulo(listasTramitacion.get(0).getFechaCalificacion()) && listasTramitacion.get(0).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())) {
+						throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de calificación negativa anterior.");
+					}else if(!Checks.esNulo(listasTramitacion.get(0).getEstadoPresentacion()) && listasTramitacion.get(0).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())){
+						throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de presentación anterior.");
+					}
+					
+				}
+				beanUtilNotNull.copyProperty(htt, "titulo", titulo);
+				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
+					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro", tramitacionDto.getFechaPresentacionRegistro());
+				}
+				if(!Checks.esNulo(tramitacionDto.getEstadoPresentacion())) {
+					DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
+					this.doCheckEstadoTramitacionTitulo(titulo, estadoPresentacion);
+					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
+					if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+					}
+					
+					if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo()) && !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+						htt.getTitulo().setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+						estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
+					}
+					
+					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+					}
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
+					beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+					beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
+				}
+				if(!Checks.esNulo(tramitacionDto.getObservaciones())) {
+					beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());
+				}
+				
+			} catch (IllegalAccessException e) {
+				logger.error("Error en activoManager", e);
+				return false;
+
+			} catch (InvocationTargetException e) {
+				logger.error("Error en activoManager", e);
+				return false;
+			}
+			
+			DDEstadoTitulo ddEstadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoTitulo));
+			if (!Checks.esNulo(ddEstadoTitulo)) {
+				htt.getTitulo().setEstado(ddEstadoTitulo);
+			}
+			
+		genericDao.save(HistoricoTramitacionTitulo.class, htt);
+		return true;
+	}
+
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) throws Exception, HistoricoTramitacionException{
+		
+		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
+		String estadoTitulo = null;
+		ActivoTitulo activoTitulo = htt.getTitulo();
+		Order order = new Order(OrderType.DESC, "id");
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "titulo.activo.id", tramitacionDto.getIdActivo());
+		List<HistoricoTramitacionTitulo> listasTramitacion = genericDao.getListOrdered(HistoricoTramitacionTitulo.class, order, filtro);
+		try {
+				
+				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
+					//Comprobar que la fecha de presentación de una segunda presentación no es inferiór a la de primera calificación o en su defecto de primera presentación
+					if(!Checks.estaVacio(listasTramitacion) && listasTramitacion.size() > 1) {
+						if(!Checks.esNulo(listasTramitacion.get(1).getFechaCalificacion()) && listasTramitacion.get(1).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())) {
+							throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de calificación negativa anterior.");
+						}else if(!Checks.esNulo(listasTramitacion.get(1).getEstadoPresentacion()) && listasTramitacion.get(1).getFechaCalificacion().after(tramitacionDto.getFechaPresentacionRegistro())){
+							throw new HistoricoTramitacionException("La fecha de presentación no puede ser menor que la fecha de presentación anterior.");
+						}
+					}
+					//Comprobar que no se edite la fecha de presentación no sea menor que la fecha de calificación
+					if(!Checks.estaVacio(listasTramitacion) && !Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro()) && !Checks.esNulo(listasTramitacion.get(0).getFechaCalificacion()) 
+							&& Checks.esNulo(tramitacionDto.getFechaCalificacion()) && tramitacionDto.getFechaPresentacionRegistro().after(listasTramitacion.get(0).getFechaCalificacion())){
+						throw new HistoricoTramitacionException("La fecha de calificación negativa no puede ser menor a la fecha de presentación.");
+					}
+					//Comprobar que no se edite la fecha de presentación para que sea después de la fecha de inscripción.
+					if(!Checks.estaVacio(listasTramitacion) && !Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro()) && !Checks.esNulo(listasTramitacion.get(0).getFechaInscripcion()) &&
+							Checks.esNulo(tramitacionDto.getFechaInscripcion()) && tramitacionDto.getFechaPresentacionRegistro().after(listasTramitacion.get(0).getFechaInscripcion())){
+						throw new HistoricoTramitacionException("La fecha de inscripción no puede ser menor a la fecha de presentación.");
+					}
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaPresentacionRegistro())) {
+					beanUtilNotNull.copyProperty(htt, "fechaPresentacionRegistro", tramitacionDto.getFechaPresentacionRegistro());
+				}
+				if(!Checks.esNulo(tramitacionDto.getEstadoPresentacion())) {
+					DDEstadoPresentacion estadoPresentacion = (DDEstadoPresentacion) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoPresentacion.class, tramitacionDto.getEstadoPresentacion());
+					beanUtilNotNull.copyProperty(htt, "estadoPresentacion", estadoPresentacion);
+					if (DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+						htt.setFechaInscripcion(null);
+						htt.setFechaCalificacion(null);
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+					}
+					if (DDEstadoPresentacion.INSCRITO.equals(estadoPresentacion.getCodigo()) && !Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+						estadoTitulo = DDEstadoTitulo.ESTADO_INSCRITO;
+						htt.setFechaCalificacion(null);
+					}
+					if (DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion.getCodigo())) {
+						estadoTitulo = DDEstadoTitulo.ESTADO_SUBSANAR;
+						htt.setFechaInscripcion(null);
+						activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+					}
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaCalificacion())) {
+					beanUtilNotNull.copyProperty(htt, "fechaCalificacion", tramitacionDto.getFechaCalificacion());
+				}
+				if(!Checks.esNulo(tramitacionDto.getFechaInscripcion())) {
+					beanUtilNotNull.copyProperty(htt, "fechaInscripcion", tramitacionDto.getFechaInscripcion());
+					activoTitulo.setFechaInscripcionReg(tramitacionDto.getFechaInscripcion());
+				}
+				if(!Checks.esNulo(tramitacionDto.getObservaciones())) {
+					beanUtilNotNull.copyProperty(htt, "observaciones", tramitacionDto.getObservaciones());
+				}
+				
+			} catch (IllegalAccessException e) {
+				logger.error("Error en activoManager", e);
+				return false;
+
+			} catch (InvocationTargetException e) {
+				logger.error("Error en activoManager", e);
+				return false;
+			}
+		if (!Checks.esNulo(estadoTitulo)) {
+			DDEstadoTitulo ddEstadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estadoTitulo));
+			if (!Checks.esNulo(ddEstadoTitulo)) {
+				activoTitulo.setEstado(ddEstadoTitulo);
+			}
+		}
+		
+		if (!Checks.esNulo(activoTitulo)) {
+			genericDao.save(ActivoTitulo.class, activoTitulo);
+		}
+		genericDao.save(HistoricoTramitacionTitulo.class, htt);
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) {
+		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,
+				genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
+		if (htt != null) {
+			if (htt.getTitulo() != null) {
+				ActivoTitulo titulo = htt.getTitulo();
+				if (titulo != null) {
+					boolean gridConDatos = getHistoricoTramitacionTitulo(titulo.getActivo().getId()).isEmpty();
+					String nuevoEstado = gridConDatos ? DDEstadoTitulo.ESTADO_SUBSANAR : DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+					
+					DDEstadoTitulo estadoTitulo = (DDEstadoTitulo) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoTitulo.class, nuevoEstado);
+					titulo.setEstado(estadoTitulo);
+					genericDao.save(ActivoTitulo.class, titulo);
+					
+					List<ActivoCalificacionNegativa> calNegList = genericDao.getList(ActivoCalificacionNegativa.class,
+							genericDao.createFilter(FilterType.EQUALS, "historicoTramitacionTitulo.id", htt.getId()));
+					for(ActivoCalificacionNegativa calNeg : calNegList ) {
+						calNeg.getAuditoria().setBorrado(true);
+						calNeg.getAuditoria().setFechaBorrar(new Date());
+						calNeg.getAuditoria().setUsuarioBorrar(usuarioApi.getUsuarioLogado().getUsername());
+						
+						genericDao.save(ActivoCalificacionNegativa.class, calNeg);
+					}
+				}
+			}
+			genericDao.deleteById(HistoricoTramitacionTitulo.class, htt.getId());
+			return true;
+		}
+		return false;
+	}
+	
+	public void existeCalificacionNegativa(List<DtoHistoricoTramitacionTitulo> listaDto, DtoActivoDatosRegistrales dto) {
+		try {
+			if (!listaDto.isEmpty()) {
+				for(DtoHistoricoTramitacionTitulo item: listaDto) {
+					if (item.getCodigoEstadoPresentacion().equals(DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE)) {
+						beanUtilNotNull.copyProperty(dto, "fechaPresentacionRegistroCN", item.getFechaPresentacionRegistro());
+						if (item.getFechaInscripcion()!=null) {
+							beanUtilNotNull.copyProperty(dto, "fechaCalificacionNegativa", item.getFechaInscripcion());
+						}else if (item.getFechaCalificacion()!=null) {
+							beanUtilNotNull.copyProperty(dto, "fechaCalificacionNegativa", item.getFechaCalificacion());
+						}
+						break;
+					}
+				}
+			}
+		}catch (Exception e) {
+			logger.error("Error en Activo Manager (existeCalificacionNegativa)", e);
+		}
+	}
+	
+
+	@Override
+	public List<DtoProveedorMediador> getComboApiPrimario() {
+		
+		List<ActivoProveedor> comboApiPrimario = activoDao.getComboApiPrimario();
+		
+		List<DtoProveedorMediador> listaDto = new ArrayList<DtoProveedorMediador>();
+		
+		for (ActivoProveedor activoProveedor : comboApiPrimario) {
+			DtoProveedorMediador dto = new DtoProveedorMediador();
+			dto.setNombre(activoProveedor.getNombre());
+			dto.setId(activoProveedor.getId());
+			listaDto.add(dto);
+		}
+		
+		return listaDto;
+	}
 	public boolean isActivoPerteneceAgrupacionRestringida(Activo activo) {
 		for(ActivoAgrupacionActivo agrupacion: activo.getAgrupaciones()){
 			if(Checks.esNulo(agrupacion.getAgrupacion().getFechaBaja())) {
@@ -5966,4 +6231,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activoDto;
 	}
 
+	public void deleteActOfr(Long idActivo, Long idOferta) {
+		activoDao.deleteActOfr(idActivo, idOferta);
+	}
+	
+	@Override
+	public List<DDFasePublicacion> getDiccionarioFasePublicacion() throws Exception {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order order = new Order(OrderType.ASC, "codigo");
+		return genericDao.getListOrdered(DDFasePublicacion.class, order, filtro);
+	}
+	
+	
+	private void doCheckEstadoTramitacionTitulo(ActivoTitulo titulo, DDEstadoPresentacion estado) throws HistoricoTramitacionException {
+		List<DtoHistoricoTramitacionTitulo> listaTramitacionTitulo = getHistoricoTramitacionTitulo(
+				titulo.getActivo().getId());
+		if (!listaTramitacionTitulo.isEmpty()) {
+			String estadoPresentacion = listaTramitacionTitulo.get(0) != null ? listaTramitacionTitulo.get(0).getCodigoEstadoPresentacion() : "";
+			if (!DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(estadoPresentacion)) {
+				throw new HistoricoTramitacionException(HistoricoTramitacionException.getErrorAlAnyadirRegistroAlTitulo(estado.getDescripcion()));
+				
+			}
+				
+		}
+	}
 }

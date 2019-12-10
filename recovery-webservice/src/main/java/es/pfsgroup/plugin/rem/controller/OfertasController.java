@@ -51,7 +51,6 @@ import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
-import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoVListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -673,6 +672,7 @@ public class OfertasController {
 	 * @return model
 	 */
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/ofertas/avanzaOferta")
 	public void avanzaOferta( ModelMap model, RestRequestWrapper request, HttpServletResponse response){
 		TareaRequestDto jsonData = null;
@@ -819,6 +819,7 @@ public class OfertasController {
 
 
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
 		{
@@ -839,6 +840,7 @@ public class OfertasController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
 		{

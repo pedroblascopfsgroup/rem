@@ -2934,7 +2934,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		me.fireEvent("downloadFile", config);
 	},
-	
+	onClickDescargaPlantillaExcel : function(btn) {
+		var me = this;
+		var config = {};
+		config.params = {};
+		config.params.idExpediente = me.getViewModel().get(
+				"expediente.id");
+		config.url = $AC
+				.getRemoteUrl("expedientecomercial/getExcelPlantillaDistribucionPrecios");
+
+		me.fireEvent("downloadFile", config);
+	},
 	onClickAdvisoryNoteExpediente : function(btn) {
 		var me = this;
 

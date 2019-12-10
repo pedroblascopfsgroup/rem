@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,22 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -53,6 +68,24 @@ public class GenericAdapter {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+    private ActivoManager activoManager;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private AgrupacionAdapter agrupacionAdapter;
+	
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasApi;
 	
 	@Resource
 	private Properties appProperties;
@@ -325,16 +358,194 @@ public class GenericAdapter {
 				|| usuario.getPerfiles().contains(FVDNEGOCIO);		
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Object dameValorDiccionarioByMatricula(Class clase, String valor) {
-		if (Checks.esNulo(valor)) {
-			return null;
+	public Oferta clonateOferta(String idOferta, boolean esAgrupacion) {
+		Long numIdOferta = Long.parseLong(idOferta);
+		
+		Oferta ofertaOrigen = ofertaApi.getOfertaById(numIdOferta);
+		Oferta ofertaCreada = null;
+		
+		ExpedienteComercial expedienteOfertaNueva = null;
+
+		if(!Checks.esNulo(ofertaOrigen)) {			
+			try {
+				// CLONANDO OFERTA NUEVA
+				logger.error("Clonando oferta " + ofertaOrigen.getNumOferta() + "...");
+				
+				DtoOfertasFilter dtoOfertaNueva = new DtoOfertasFilter();
+				
+				dtoOfertaNueva.setVentaDirecta(false);
+				
+				dtoOfertaNueva.setIdActivo(ofertaOrigen.getActivoPrincipal().getId());
+				dtoOfertaNueva.setTipoOferta(ofertaOrigen.getTipoOferta().getCodigo());
+				
+				ClienteComercial clienteOfertaOrigen = ofertaOrigen.getCliente();
+				dtoOfertaNueva.setTipoDocumento(clienteOfertaOrigen.getTipoDocumento().getCodigo());
+				dtoOfertaNueva.setNombreCliente(clienteOfertaOrigen.getNombre());
+				dtoOfertaNueva.setApellidosCliente(clienteOfertaOrigen.getApellidos());
+				dtoOfertaNueva.setNumDocumentoCliente(clienteOfertaOrigen.getDocumento());
+				dtoOfertaNueva.setRazonSocialCliente(clienteOfertaOrigen.getRazonSocial());
+				dtoOfertaNueva.setTipoPersona(clienteOfertaOrigen.getTipoPersona().getCodigo());
+				
+				if(!Checks.esNulo(clienteOfertaOrigen.getEstadoCivil())) {
+					dtoOfertaNueva.setEstadoCivil(clienteOfertaOrigen.getEstadoCivil().getCodigo());
+				}
+				
+				DDRegimenesMatrimoniales reg = clienteOfertaOrigen.getRegimenMatrimonial();
+				if(!Checks.esNulo(reg)) {
+					dtoOfertaNueva.setRegimenMatrimonial(reg.getCodigo());					
+				}			
+				
+				dtoOfertaNueva.setCesionDatos(clienteOfertaOrigen.getCesionDatos());
+				dtoOfertaNueva.setTransferenciasInternacionales(clienteOfertaOrigen.getTransferenciasInternacionales());
+				dtoOfertaNueva.setComunicacionTerceros(clienteOfertaOrigen.getComunicacionTerceros());
+				dtoOfertaNueva.setImporteOferta("" + ofertaOrigen.getImporteOferta());
+				dtoOfertaNueva.setDerechoTanteo(ofertaOrigen.getDesdeTanteo());
+				if(!Checks.esNulo(ofertaOrigen.getPrescriptor())) {
+					dtoOfertaNueva.setCodigoPrescriptor("" + ofertaOrigen.getPrescriptor().getCodigoProveedorRem());
+				}
+				Integer intencionFinanciar = ofertaOrigen.getIntencionFinanciar();
+				dtoOfertaNueva.setIntencionFinanciar((Checks.esNulo(intencionFinanciar)) ? null : intencionFinanciar == 1); // No entiendo por qué hay gente que usa los booleanos como Integers
+
+				// En las ofertas no se están guardando el código de la sucursal. 
+				// Lo que se está haciendo es un cálculo de oficina y luego guarda el valor oficina+sucursal,
+				// por lo que tengo que hacer el calculo inverso para que a la hora de crear la nueva oferta,
+				// se le pase el código de sucursal "limpio".
+				if(!esAgrupacion) {
+					if(!Checks.esNulo(ofertaOrigen.getSucursal())) {
+						String oficinaSucursal = ofertaOrigen.getSucursal().getCodProveedorUvem();
+						String sucursal;
+						if (ofertaOrigen.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)
+							|| ofertaOrigen.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+							sucursal = oficinaSucursal.substring(4, oficinaSucursal.length());
+							dtoOfertaNueva.setCodigoSucursal(sucursal);
+						}					
+					}
+				}
+				
+				Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaOrigen.getId());
+				ExpedienteComercial expedienteOrigen = genericDao.get(ExpedienteComercial.class, filtroExpediente);	
+				
+				Filter filtroIdExpediente = null;
+				Long idExpediente = null;
+				Comprador compradorPrincipalOfertaOrigen = null;
+				if(!Checks.esNulo(expedienteOrigen)) {
+					
+					Filter compradorDocumento = genericDao.createFilter(FilterType.EQUALS, "documento", ofertaOrigen.getCliente().getDocumento());
+					compradorPrincipalOfertaOrigen = genericDao.get(Comprador.class, compradorDocumento);
+					idExpediente = expedienteOrigen.getId();
+					filtroIdExpediente = genericDao.createFilter(FilterType.EQUALS, "expediente", idExpediente);
+					if(!Checks.esNulo(compradorPrincipalOfertaOrigen)) {
+						if(!Checks.esNulo(compradorPrincipalOfertaOrigen.getAdjunto())) {
+							dtoOfertaNueva.setIdDocAdjunto(compradorPrincipalOfertaOrigen.getAdjunto().getId());
+						}
+					}
+					else {
+						logger.error("No se ha podido encontrar el comprador relacionado con la oferta que se está intentando clonar.");
+						return null;
+					}
+				}
+				else {
+					logger.error("No se ha podido encontrar el expediente relacionado con la oferta que se está intentando clonar.");
+					return null;
+				}
+				
+				if(esAgrupacion) {
+					dtoOfertaNueva.setIdAgrupacion(ofertaOrigen.getAgrupacion().getId());
+					dtoOfertaNueva.setIdUvem(ofertaOrigen.getIdUvem());
+				}
+				if(!esAgrupacion) {
+					ofertaCreada = activoAdapter.createOfertaActivo(dtoOfertaNueva);
+				}
+				else {
+					ofertaCreada = agrupacionAdapter.createOfertaAgrupacion(dtoOfertaNueva);
+				}
+				
+				logger.error("Oferta " + ofertaOrigen.getNumOferta() + " clonada correctamente.");
+				
+				// TRAMITANDO OFERTA NUEVA
+				
+				logger.error("Tramitando la oferta clonada...");
+				
+				DtoOfertaActivo dtoTramitar = new DtoOfertaActivo();
+				
+				dtoTramitar.setIdOferta(ofertaCreada.getId());
+				dtoTramitar.setCodigoEstadoOferta(DDEstadoOferta.CODIGO_ACEPTADA);
+				
+				if(!Checks.esNulo(ofertaOrigen.getActivoPrincipal()))
+					dtoTramitar.setIdActivo(ofertaOrigen.getActivoPrincipal().getId()); 
+				if(!Checks.esNulo(ofertaOrigen.getAgrupacion()))
+					dtoTramitar.setIdAgrupacion(ofertaOrigen.getAgrupacion().getId());
+				tramitacionOfertasApi.saveOferta(dtoTramitar, esAgrupacion);
+							
+				logger.error("Oferta clonada tramitada correctamente.");
+				
+				// COPIANDO DATOS DE COMPRADORES
+				 
+				logger.error("Copiando valores de compradores...");
+				
+				Filter filtroExpedienteOfertaNueva = genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaCreada.getId());
+				expedienteOfertaNueva = genericDao.get(ExpedienteComercial.class, filtroExpedienteOfertaNueva);	
+				
+				List<CompradorExpediente> compradoresOfertaOrigen = expedienteOrigen.getCompradores();
+				List<CompradorExpediente> compradoresOfertaNueva = expedienteOfertaNueva.getCompradores();
+				
+				for (CompradorExpediente cexOfertaOrigen : compradoresOfertaOrigen) {
+					if(!cexOfertaOrigen.getComprador().equals(compradorPrincipalOfertaOrigen.getId())) {
+						CompradorExpediente cexOfertaNueva = new CompradorExpediente();
+						BeanUtils.copyProperties(cexOfertaNueva, cexOfertaOrigen);
+											
+						cexOfertaNueva.setExpediente(expedienteOfertaNueva.getId());
+						
+						CompradorExpedientePk pk = new CompradorExpedientePk();
+						pk.setComprador(cexOfertaOrigen.getPrimaryKey().getComprador());
+						pk.setExpediente(expedienteOfertaNueva);					
+						cexOfertaNueva.setPrimaryKey(pk);
+						
+						compradoresOfertaNueva.add(cexOfertaNueva);		
+					}
+				}
+				
+				expedienteOfertaNueva.setCompradores(compradoresOfertaNueva);
+								
+				genericDao.update(ExpedienteComercial.class, expedienteOfertaNueva);
+								
+				logger.error("Compradores copiados correctamente.");
+							
+				logger.error("Oferta clonada sin problemas.");
+				
+				try {
+					ofertaApi.congelarOfertasPendientes(expedienteOfertaNueva);
+					logger.error("Las ofertas pendientes han sido congeladas.");
+				} catch (Exception e) {
+					logger.error("Error descongelando ofertas.", e);
+				}
+				
+			}catch(Exception ex) {
+				logger.error("Error al intentar clonar la oferta. Es posible que se haya cambiado la forma de crear ofertas y la funcion de clonarlas este obsoleta.", ex);
+				if(!Checks.esNulo(ofertaCreada)) {
+					if(!Checks.esNulo(expedienteOfertaNueva)) {
+						genericDao.deleteById(ExpedienteComercial.class, expedienteOfertaNueva.getId());
+					}
+					activoManager.deleteActOfr(ofertaCreada.getActivoPrincipal().getId(), ofertaCreada.getId());
+					genericDao.deleteById(Oferta.class, ofertaCreada.getId());
+				}
+			}			
 		}
-		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "matricula", valor);
-		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		Object obj = genericDao.get(clase, f1, f2);
-		//List lista = genericDao.getList(clazz, filtro);
-		return obj;
+		else {
+			logger.error("No se ha podido encontrar la oferta que se está intentando clonar.");
+			return null;
+		}	
+		
+		return ofertaCreada;		
 	}
+	
+	 public <T extends Dictionary> T dameValorDiccionarioByMatricula(Class<T> clase, String valor) {
+	  if (Checks.esNulo(valor)) {
+	   return null;
+	  }
+	  Filter f1 = genericDao.createFilter(FilterType.EQUALS, "matricula", valor);
+	  Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+	  return genericDao.get(clase, f1, f2);
+	 }
 
 }

@@ -7,8 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 
@@ -20,7 +18,7 @@ public interface ExcelReportGeneratorApi {
 
 	public File generateReport(ExcelReport report);
 	
-	public File generateBankiaReport(List<DtoPropuestaAlqBankia> l_DtoPropuestaAlq, HttpServletRequest rm);
+	public File generateBankiaReport(List<DtoPropuestaAlqBankia> lDtoPropuestaAlq, HttpServletRequest rm)  throws IOException;
 
 	public void generateAndSend(ExcelReport report, HttpServletResponse response) throws IOException;
 	

@@ -42,7 +42,6 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 
 	@Override
 	public String[] getCodigoTarea() {
-		//TODO: poner los códigos de tipos de tareas
 		return new String[]{CODIGO_T004_CIERRE_ECONOMICO};
 	}
 	
@@ -69,7 +68,7 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 				}
 		    }
 			
-			if(!Checks.esNulo(correos)) {
+			if(correos != null) {
 				Collections.addAll(mailsPara, correos.split(";"));
 			}
 				
@@ -86,7 +85,6 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 			
 			titulo = "Notificación de aceptación de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
 			 
-			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreoOld(contenido));
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
 		
@@ -95,7 +93,7 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 	
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		
+		//empty
 	}
 
 }

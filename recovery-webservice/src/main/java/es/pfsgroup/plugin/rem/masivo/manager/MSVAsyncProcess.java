@@ -3,14 +3,10 @@ package es.pfsgroup.plugin.rem.masivo.manager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
-import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
@@ -45,7 +41,7 @@ public class MSVAsyncProcess implements Runnable {
 			restApi.doSessionConfig(this.userName);
 			this.startProcess();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 		
 	}
@@ -58,7 +54,6 @@ public class MSVAsyncProcess implements Runnable {
 		this.userName = userName;
 	}
 
-	@Transactional(readOnly = false)
 	public void startProcess() {
 		
 		MSVLiberator lib = this.getLiberator(this.idOperation);
@@ -67,13 +62,11 @@ public class MSVAsyncProcess implements Runnable {
 				MSVDocumentoMasivo document = msvProcesoApi.getMSVDocumento(idProcess);
 				lib.liberaFichero(document);
 			} catch (Exception e) {
-				logger.error("Error en el proceso masivo:" + lib.getClass());
-				e.printStackTrace();
+				logger.error("Error en el proceso masivo:" + lib.getClass(),e);
 			}
 		}		
 	}
 	
-	@Transactional(readOnly = false)
 	private MSVLiberator getLiberator(Long idOperation) {
 		
 		MSVDDOperacionMasiva tipoOperacion = msvProcesoApi.getOperacionMasiva(idOperation);

@@ -403,7 +403,7 @@ BEGIN
 	   
 	   /*	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-				      SELECT * 
+				      SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto  
 					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
 					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01''
@@ -479,7 +479,6 @@ BEGIN
 				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
 												 TIT_ID, 
 												 AHT_FECHA_PRES_REGISTRO, 
-												 AHT_FECHA_CALIFICACION,
 				                                 DD_ESP_ID,
 				                                 AHT_OBSERVACIONES,
 												 VERSION, 
@@ -490,7 +489,6 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''01''),
 					NULL,
 					0, 
@@ -571,7 +569,7 @@ BEGIN
 
 	   /*	   	   	    	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
-					SELECT *     
+					SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto      
 					FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
 					where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is not null and eti.dd_eti_codigo is null

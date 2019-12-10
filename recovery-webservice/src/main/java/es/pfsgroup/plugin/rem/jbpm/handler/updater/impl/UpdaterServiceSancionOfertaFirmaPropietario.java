@@ -78,15 +78,11 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						if (!Checks.esNulo(activoAceptado.getSubcartera())) {
 							codSubCartera = activoAceptado.getSubcartera().getCodigo();
 						}
-						if (CODIGO_SUBCARTERA_OMEGA.equals(codSubCartera)) {
-							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
-							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-							expediente.setEstado(estado);
-						} else {
-							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
-							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-							expediente.setEstado(estado);
-						}
+						
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setEstado(estado);
+						
 						
 						genericDao.save(ExpedienteComercial.class, expediente);
 						

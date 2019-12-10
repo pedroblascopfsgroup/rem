@@ -30,7 +30,7 @@ Ext.define('HreRem.view.configuracion.administracion.gestoressustitutos.Configur
 						fieldLabel:  HreRem.i18n('fieldlabel.gestoressustitutos.gestorasustituir'),						
 						name: 'usernameOrigen',						
 						bind: {
-							store: '{comboUsuarios}'
+							store: '{comboUsuariosGestorSustituto}'
 						}						
 					},
 					{ 
@@ -38,7 +38,7 @@ Ext.define('HreRem.view.configuracion.administracion.gestoressustitutos.Configur
 						fieldLabel:  HreRem.i18n('fieldlabel.gestoressustitutos.gestorsustituto'),
 						name: 'usernameSustituto',
 						bind: {
-							store: '{comboUsuarios}'
+							store: '{comboUsuariosGestorSustituto}'
 						}
 					}
 				]

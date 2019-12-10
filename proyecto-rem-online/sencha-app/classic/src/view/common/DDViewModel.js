@@ -2,11 +2,7 @@ Ext.define('HreRem.view.common.DDViewModel', {
     extend: 'Ext.app.ViewModel',
     alias: 'viewmodel.ddviewmodel',
 
-    stores: {
-	    	comboUsuarios: {
-		   		source: 'usuarios',
-		   		loadSource: true
-			},
+    stores: {	    	
 			
     		comboFiltroProvincias: {
     	   		source: 'provincias',

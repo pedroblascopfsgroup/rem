@@ -7,7 +7,12 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 //    	comboFiltroMunicipios: {
 //	   		source: 'municipios',
 //	   		loadSource: true
-//		},      	
+//		},   
+    	comboUsuariosGestorSustituto: {
+	   		source: 'usuariosgestorsustituto',
+	   		loadSource: true
+		},
+		
 		configuracionproveedores: {    
    		 	pageSize: $AC.getDefaultPageSize(),
    		 	model: 'HreRem.model.Proveedor',

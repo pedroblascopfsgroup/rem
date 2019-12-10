@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -153,7 +151,7 @@ public class UvemManager implements UvemManagerApi {
 	@Autowired
 	private LogTrustWebService trustMe;
 	
-	private Random rand = null;
+	//private Random rand = null;
 
 	private static final int MASK = (-1) >>> 1; // all ones except the sign bit
 
@@ -218,8 +216,9 @@ public class UvemManager implements UvemManagerApi {
 			servicio.execute();
 		} else {
 			logger.error("UVEM: Servicios desactividos");
+			Random rand = new Random();
 			if (servicio instanceof GMPETS07_INS) {
-				((GMPETS07_INS) servicio).setNumeroIdentificadorDeTasacionlnuita2(getRandomInt() & MASK);
+				((GMPETS07_INS) servicio).setNumeroIdentificadorDeTasacionlnuita2(rand.nextInt() & MASK);
 			} else if (servicio instanceof GMPAJC11_INS) {
 				VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
 				StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
@@ -284,8 +283,13 @@ public class UvemManager implements UvemManagerApi {
 		return servicio;
 	}
 	
+	/**
+	 * No compila con java6, lo activamos cuando todos los jovs compilen con java7
+	 * @return
+	 */
+	@SuppressWarnings("unused")
 	private int getRandomInt() {
-		if(rand == null) {
+		/*if(rand == null) {
 			try {
 				rand = SecureRandom.getInstanceStrong();
 			} catch (NoSuchAlgorithmException e) {
@@ -297,6 +301,7 @@ public class UvemManager implements UvemManagerApi {
 			rand.nextInt();
 		}
 		
+		return 0;*/
 		return 0;
 		
 	}

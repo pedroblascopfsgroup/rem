@@ -4176,5 +4176,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "1".equals(resultado);
 	}
 	
+	
+	@Override
+	public Boolean idHayaExiste(String idHaya){
+		if(Checks.esNulo(idHaya) || !StringUtils.isNumeric(idHaya))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO "
+				+ "		WHERE ACT_RECOVERY_ID = " + idHaya);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean direccionComercialExiste(String direccionComercial){
+		if(Checks.esNulo(direccionComercial))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM DD_TDC_TERRITORIOS_DIR_COM "
+				+ "		WHERE DD_TDC_CODIGO = '"+ direccionComercial +"'");
+		return !"0".equals(resultado);
+	}
+	
 	//-------------------------------------------------------------------------
 }

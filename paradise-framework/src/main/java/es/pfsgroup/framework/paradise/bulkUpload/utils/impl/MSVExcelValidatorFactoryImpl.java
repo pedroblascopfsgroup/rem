@@ -188,6 +188,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVActualizacionFasesPublicacionValidator FasesPublicacion;
+	
+	@Autowired
+	private MSVActualizacionDireccionesComercialesValidator direccionesComerciales;
 		
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -312,6 +315,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return gastosRefacturables;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FASES_PUBLICACION.equals(codTipoOperacion)) {
 			return FasesPublicacion;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_DIRECCIONES_COMERCIALES.equals(codTipoOperacion)) {
+			return direccionesComerciales;
 		}
 		return null;
 	}

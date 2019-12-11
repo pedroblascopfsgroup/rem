@@ -937,10 +937,4 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
 
-	/**
-	 * @param numActivo
-	 * @return true si el Activo tiene Comunidad de Propietarios
-	 */
-	public Boolean activoEnComunidadPropietarios(String numActivo);
-
 }

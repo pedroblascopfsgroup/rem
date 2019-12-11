@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=MIGUEL LOPEZ
---## FECHA_CREACION=20190724
+--## AUTOR=Joaquin Bahamonde
+--## FECHA_CREACION=20191210
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.17.0
 --## INCIDENCIA_LINK=HREOS-7051

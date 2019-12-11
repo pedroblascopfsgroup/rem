@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -24,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
@@ -38,6 +40,8 @@ public class UpdaterTransitionService {
 	@Resource
     MessageService messageServices;
 	
+	@Autowired
+	private ActivoApi activoApi;
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -238,7 +242,12 @@ public class UpdaterTransitionService {
 		estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 		
 		expediente.setEstado(estado);
-		
+		if (expediente.getEstado() != null
+				&& DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+				&& activoTramite.getActivo() != null) {
+			activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activoTramite.getActivo().getId(),
+					DDEstadoGestionPlusv.COD_EN_CURSO);
+		}
 		updateExpediente(expediente, dto);
 		
 		updateOferta(ofertaAceptada, dto);

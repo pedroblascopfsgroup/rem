@@ -11,8 +11,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -20,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 @Component
@@ -34,7 +36,10 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	ActivoManager activoApi;
+	ActivoApi activoApi;
+	
+	@Autowired
+	ActivoDao activoDao;
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
@@ -66,6 +71,7 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
 					genericDao.save(ExpedienteComercial.class, expediente);
+					activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activo.getId(), DDEstadoGestionPlusv.COD_EN_CURSO);
 				}
 			}
 		}

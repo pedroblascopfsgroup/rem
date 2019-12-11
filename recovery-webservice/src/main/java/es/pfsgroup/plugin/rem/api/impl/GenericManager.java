@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
@@ -1214,5 +1215,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		
 		return gestion.getSubestadoGestion();
+	}
+
+	@Override
+	public List<DDComiteSancion> getComitesResolucionLiberbank() {
+		List<DDComiteSancion> listaComites = new ArrayList<DDComiteSancion>();
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", DDCartera.CODIGO_CARTERA_LIBERBANK);
+		listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
+		
+		List<String> comitesResolucionComiteCodigos = new ArrayList<String>(Arrays.asList(new String[] { "34", "35", "36", "37"}));
+		
+		if(listaComites != null && !listaComites.isEmpty()) {
+			for (int i = listaComites.size() -1; i >= 0 ; i--) {
+				if(!comitesResolucionComiteCodigos.contains(listaComites.get(i).getCodigo())){
+					listaComites.remove(i);
+				}
+			}
+		}
+		
+		return listaComites;
 	}
 }

@@ -1465,8 +1465,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.desbloquearCampo(comboResolucion);
 			me.bloquearCampo(comitePropuesto);
 			
-			var filters = comboResolucionComite.getStore().getFilters();
-			filters.add({ property: 'carteraCodigo', value: '08' });
+			comboResolucionComite.setStore(new Ext.data.Store({
+													model: 'HreRem.model.DDBase',
+												    autoLoad: true,
+												    proxy: Ext.create('HreRem.ux.data.Proxy',{
+														remoteUrl: 'generic/getComitesResolucionLiberbank'
+													})
+												})
+											);
 			
 			var url = $AC.getRemoteUrl('ofertas/getClaseOferta');
 	    	Ext.Ajax.request({

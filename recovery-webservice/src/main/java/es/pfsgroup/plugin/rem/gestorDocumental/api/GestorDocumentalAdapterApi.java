@@ -12,8 +12,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
@@ -27,7 +25,6 @@ import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoContenedorProveedor;
 
 public interface GestorDocumentalAdapterApi {
 	
@@ -125,13 +122,13 @@ public interface GestorDocumentalAdapterApi {
 
 	FileItem getFileItemAgrupacion(Long id, String nombreDocumento) throws Exception;
 
-	Integer crearProveedor(ActivoProveedorCartera actProvCar, String username) throws GestorDocumentalException;
+	//Integer crearProveedor(ActivoProveedorCartera actProvCar, String username) throws GestorDocumentalException;
 	
 	public String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro);
 
-	Long uploadDocumentoProveedor(ActivoProveedorCartera proveedorCartera, WebFileItem webFileItem, String userLogin, DDTipoContenedorProveedor tipoContenedor, String matricula) throws GestorDocumentalException;
+	//Long uploadDocumentoProveedor(ActivoProveedorCartera proveedorCartera, WebFileItem webFileItem, String userLogin, DDTipoContenedorProveedor tipoContenedor, String matricula) throws GestorDocumentalException;
 
-	List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException;
+	//List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException;
 
 	Runnable crearProyecto(Activo activo, ActivoProyecto proyecto, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
 

@@ -25,7 +25,6 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
@@ -368,7 +367,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		return listaProveedores;
 	}
 	
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	@Override
 	public List<DDCartera> getCarteraPorProveedor(Long idProveedor){
 		List<DDCartera> carterasProveedor = new ArrayList<DDCartera>();
@@ -445,7 +444,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 			
 		return  HibernateUtils.castList(MapeoGestorDocumental.class, criteria.list());
 		
-	}
+	}*/
 	
 	@Override
 	public Boolean cambiaMediador(Long nActivo, String pveCodRem, String userName) {

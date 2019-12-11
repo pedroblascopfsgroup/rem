@@ -7,14 +7,10 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.VProveedores;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
@@ -95,9 +91,9 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
 	public ActivoProveedorContacto getActivoProveedorContactoPorUsernameUsuario(String username);
 
-	public List<MapeoGestorDocumental> getCarteraClientesProveedores();
+	/*public List<MapeoGestorDocumental> getCarteraClientesProveedores();
 
-	List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera);
+	List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera);*/
 	
 	/** Este método cambia .el proveedor asociado a un activo por el recibido en pvrCodRem
 	 * 
@@ -107,9 +103,9 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	 */
 	public Boolean cambiaMediador(Long nActivo, String pveCodRem, String userName);
 
-	List<ActivoProveedorCartera> getProveedoresCarteraById(Long idProveedor);
+	/*List<ActivoProveedorCartera> getProveedoresCarteraById(Long idProveedor);
 
 	List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera);
 
-	List<DDCartera> getCarteraPorProveedor(Long idProveedor);
+	List<DDCartera> getCarteraPorProveedor(Long idProveedor);*/
 }

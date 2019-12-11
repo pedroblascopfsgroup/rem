@@ -7,7 +7,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorCartera;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
@@ -20,8 +19,6 @@ import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
 import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 public interface ProveedoresApi {
 	
@@ -156,12 +153,11 @@ public interface ProveedoresApi {
 	 * Este método obtiene una lista de documentos asociados al ID del proveedor.
 	 * 
 	 * @param id: ID del proveedor.
-	 * @param cartera: cartera seleccionada en el método upload (documento).
-	 * @param subcartera: subcartera seleccionada en el método upload (documento).
 	 * @return Devuelve una lista de documentos con los resultados obtenidos.
 	 * @throws GestorDocumentalException 
 	 */
-	public List<DtoAdjunto> getAdjuntos(Long id, ActivoProveedorCartera actProvCar, String username) throws GestorDocumentalException;
+	//public List<DtoAdjunto> getAdjuntos(Long id, ActivoProveedorCartera actProvCar, String username) throws GestorDocumentalException;
+	public List<DtoAdjunto> getAdjuntos(Long id);
 
 	/**
 	 * Verificación de adjunto existente la lista de proveedores de 1 activo.
@@ -294,9 +290,9 @@ public interface ProveedoresApi {
 	 */
 	public Boolean esUsuarioConPerfilProveedor(Usuario usuario);
 
-	List<DDCartera> getCarteraPorProveedor(Long idProveedor);
+	/*List<DDCartera> getCarteraPorProveedor(Long idProveedor);
 
-	List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera);
+	List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera);*/
 	
 	/** Este método cambia .el proveedor asociado a un activo por el recibido en pvrCodRem
 	 * 

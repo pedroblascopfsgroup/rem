@@ -334,11 +334,12 @@ public class ProveedoresController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntos(Long id, ModelMap model, HttpServletRequest request){
 		try {
-			model.put("data", proveedoresApi.getAdjuntos(id, null, null));
+			model.put("data", proveedoresApi.getAdjuntos(id));
+			/*model.put("data", proveedoresApi.getAdjuntos(id, null, null));
 		} catch (GestorDocumentalException gex) {
 			logger.error("Error en ProveedoresController sobre el Gestor Documental", gex);
 			model.put("success", false);
-			model.put("errorMessage", "Ha habido un problema al recuperar los archivos desde el gestor documental.");
+			model.put("errorMessage", "Ha habido un problema al recuperar los archivos desde el gestor documental.");*/
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
 			model.put("success", false);
@@ -377,17 +378,17 @@ public class ProveedoresController extends ParadiseJsonController {
 			model.put("errores", errores);
 			model.put("success", errores == null);
 			
-		} catch (GestorDocumentalException ex) {
+		/*} catch (GestorDocumentalException ex) {
 			logger.error("Error en ProveedoresController sobre el Gestor Documental", ex);
 			model.put("success", false);
-			model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");
+			model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");*/
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
 			if (ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR.equals(e.getMessage())) {
 				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
-			} else if(ProveedoresManager.ERROR_SUBTIPO_DOCUMENTO_PROVEEDOR.equals(e.getMessage())) {
+			} /*else if(ProveedoresManager.ERROR_SUBTIPO_DOCUMENTO_PROVEEDOR.equals(e.getMessage())) {
 				model.put("errorMessage", ProveedoresManager.ERROR_SUBTIPO_DOCUMENTO_PROVEEDOR);
-			}
+			}*/
 			model.put("success", false);
 			model.put("errores", e.getCause());
 		}
@@ -615,7 +616,7 @@ public class ProveedoresController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCarteraPorProveedor(Long idProveedor) {
 		ModelMap model = new ModelMap();
@@ -658,5 +659,5 @@ public class ProveedoresController extends ParadiseJsonController {
 		}		
 		
 		return createModelAndViewJson(model);
-	}
+	}*/
 }

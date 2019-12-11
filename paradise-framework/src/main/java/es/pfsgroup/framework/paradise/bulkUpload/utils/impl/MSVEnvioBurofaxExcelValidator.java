@@ -32,7 +32,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVAltaActivosExcelValidator.COL_NUM;
 
 @Component
 public class MSVEnvioBurofaxExcelValidator extends MSVExcelValidatorAbstract {

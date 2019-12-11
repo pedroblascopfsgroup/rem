@@ -189,13 +189,12 @@ SELECT
                                     CASE WHEN GDE_IMP_IND_TIPO_IMPOSITIVO IS NOT NULL AND GDE_IMP_IND_TIPO_IMPOSITIVO <> 0 THEN '' GASTO DE GESTORÍA PERO TIENE IVA INFORMADO '' || GDE_IMP_IND_TIPO_IMPOSITIVO || '' | '' END ||
                                     CASE WHEN GDE_IMP_IND_EXENTO = 1 THEN '' EL GASTO TIENE ACTIVO EL CHECK DE ''''Iva Exento'''' |'' END ||
                                     CASE WHEN COALESCE( GDE_PRINCIPAL_NO_SUJETO, 0 ) = 0 THEN ''EL IMPORTE DEL GASTO ES 0 |'' END                                   
-                              /*  
+                              
                                 ELSE
-                                */
 
                                     /* PENDIENTE CASO REFACTURABLE */
 				    CASE WHEN (     GDE.GDE_GASTO_REFACTURABLE = 1 
-						AND GPV.DD_DEG_ID = ( SELECT DD_DEG_ID FROM REM01.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_ID=GPV.DD_DEG_ID AND DD_DEG_CODIGO = '02' ) 
+						AND GPV.DD_DEG_ID = ( SELECT DD_DEG_ID FROM REM01.DD_DEG_DESTINATARIOS_GASTO DEG WHERE DEG.DD_DEG_ID=GPV.DD_DEG_ID AND DD_DEG_CODIGO = ''02'' ) )
 					THEN ''GASTO REFACTURABLE Y CON DESTINATARIO ''''HAYA'''': NO SE ENVÍA A ''''UVEM''''  '' END	 
 
                                 END

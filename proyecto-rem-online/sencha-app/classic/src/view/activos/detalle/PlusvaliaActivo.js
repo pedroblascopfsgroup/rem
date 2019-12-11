@@ -114,6 +114,12 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	                store : '{comboEstadoGestionPlusvalia}',
 	                value : '{plusvalia.estadoGestion}',
 	                readOnly: '{checkEditEstadoGestionPlusvalia}'
+	            },
+	            listeners: {
+	            	expand: function(){
+	            	var me = this;
+	            		me.lookupController().doFilterEstadoGestionByUserRol(me);
+	            	}
 	            }
 	        }, {
 	        	xtype: 'textareafieldbase',

@@ -5850,6 +5850,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else {
 			comboSubfase.setAllowBlank(true);
 		}
+	},
+	doFilterEstadoGestionByUserRol: function(combo) {
+		if ($AU.userIsRol(CONST.PERFILES['GESTIAFORM'])){
+			if (combo !== null 
+			&& typeof combo !== "undefined") {
+				combo.getStore()
+					.filter({
+						fn: function(record){
+							return CONST.DD_ESTADO_GEST_PLUVS["RECHAZADO"] !== record.data.codigo;
+						},
+						scope: this
+					});
+			}
+		}
 	}
-	
 });

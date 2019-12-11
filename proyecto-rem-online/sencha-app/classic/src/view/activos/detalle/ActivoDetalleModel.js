@@ -850,7 +850,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     	
     	checkEditEstadoGestionPlusvalia: function(get) {
     		var estadoGestion = get('plusvalia.estadoGestion');    	
-    		
+    		var usuariosPermitidosAdmin = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']);
+    		if (usuariosPermitidosAdmin) {
+    			return !usuariosPermitidosAdmin;
+    		}
     		if(Ext.isEmpty(estadoGestion)){    			
     			return true;
     		} else {

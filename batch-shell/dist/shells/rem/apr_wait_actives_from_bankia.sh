@@ -1,7 +1,8 @@
 #!/bin/bash
  
 fichero=URSTOCK
-fichero_ET=URSTOCK_ET.txt
+fichero_ET=TRAMITE
+fichero_ET2=URSTOCK_ET
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
     echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
@@ -42,9 +43,10 @@ if [ "$hora_actual" -ge "$hora_limite" ]
 then
    echo "$(basename $0) Tiempo límite alcanzado: fichero $fichero_ET no encontrado"
 else
-	if [ -e  fichero_ETTxt ]; then
+	if [ -e  $fichero_ETTxt ]; then
 		fichero_ETTxt=$DIR_INPUT_AUX$fichero_ET$extensionTxt
-		mv $fichero_ETTxt $DIR_DESTINO
+		fichero_ETTxt2=$fichero_ET2$extensionTxt
+		mv $fichero_ETTxt $DIR_DESTINO/$fichero_ETTxt2
 		echo "$(basename $0) fichero $fichero_ET encontrado"
 	else
 		echo "No encontrado el fichero $fichero_ET"

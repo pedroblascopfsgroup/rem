@@ -3784,7 +3784,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialApi
 							.expedienteComercialPorOferta(ofertaAux.getId());
-					if (!Checks.esNulo(expediente)) { // Si el expediente está
+					if (!Checks.esNulo(expediente) && expediente.getEstado() != null) { // Si el expediente está
 														// aprobado (o estados
 														// posteriores).
 						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
